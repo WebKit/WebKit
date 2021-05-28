@@ -64,7 +64,7 @@ public:
     {
         auto next = smallestNodeGreaterThanFrom(point, this->root());
         if (!next)
-            return WTF::nullopt;
+            return std::nullopt;
         return next->data();
     }
 

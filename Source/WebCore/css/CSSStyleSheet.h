@@ -49,7 +49,7 @@ class Scope;
 class CSSStyleSheet final : public StyleSheet {
 public:
     static Ref<CSSStyleSheet> create(Ref<StyleSheetContents>&&, CSSImportRule* ownerRule = 0);
-    static Ref<CSSStyleSheet> create(Ref<StyleSheetContents>&&, Node& ownerNode, const Optional<bool>& isOriginClean = WTF::nullopt);
+    static Ref<CSSStyleSheet> create(Ref<StyleSheetContents>&&, Node& ownerNode, const Optional<bool>& isOriginClean = std::nullopt);
     static Ref<CSSStyleSheet> createInline(Ref<StyleSheetContents>&&, Element& owner, const TextPosition& startPosition);
 
     virtual ~CSSStyleSheet();

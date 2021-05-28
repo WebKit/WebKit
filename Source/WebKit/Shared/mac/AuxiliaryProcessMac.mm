@@ -200,7 +200,7 @@ static Optional<Vector<char>> fileContents(const String& path, bool shouldLock =
     FileHandle file = shouldLock ? FileHandle(path, FileSystem::FileOpenMode::Read, lockMode) : FileHandle(path, FileSystem::FileOpenMode::Read);
     file.open();
     if (!file)
-        return WTF::nullopt;
+        return std::nullopt;
 
     char chunk[4096];
     constexpr size_t chunkSize = WTF_ARRAY_LENGTH(chunk);
@@ -255,7 +255,7 @@ static Optional<CString> setAndSerializeSandboxParameters(const SandboxInitializ
     if (isProfilePath) {
         auto contents = fileContents(profileOrProfilePath);
         if (!contents)
-            return WTF::nullopt;
+            return std::nullopt;
         builder.appendCharacters(contents->data(), contents->size());
     } else
         builder.append(profileOrProfilePath);

@@ -672,7 +672,7 @@ bool PageClientImpl::handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, const Fra
 
 bool PageClientImpl::showShareSheet(const ShareDataWithParsedURL& shareData, WTF::CompletionHandler<void(bool)>&& completionHandler)
 {
-    [m_contentView _showShareSheet:shareData inRect:WTF::nullopt completionHandler:WTFMove(completionHandler)];
+    [m_contentView _showShareSheet:shareData inRect:std::nullopt completionHandler:WTFMove(completionHandler)];
     return true;
 }
 
@@ -962,7 +962,7 @@ void PageClientImpl::cancelPointersForGestureRecognizer(UIGestureRecognizer* ges
     [m_contentView cancelPointersForGestureRecognizer:gestureRecognizer];
 }
 
-WTF::Optional<unsigned> PageClientImpl::activeTouchIdentifierForGestureRecognizer(UIGestureRecognizer* gestureRecognizer)
+std::optional<unsigned> PageClientImpl::activeTouchIdentifierForGestureRecognizer(UIGestureRecognizer* gestureRecognizer)
 {
     return [m_contentView activeTouchIdentifierForGestureRecognizer:gestureRecognizer];
 }

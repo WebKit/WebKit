@@ -60,7 +60,7 @@ public:
     HashSet<String> allDomains();
     Optional<Vector<Cookie>> searchCookies(const URL& firstParty, const URL& requestUrl, const Optional<bool>& httpOnly, const Optional<bool>& secure, const Optional<bool>& session);
     Vector<Cookie> getAllCookies();
-    bool setCookie(const URL& firstParty, const URL&, const String& cookie, Source, Optional<Seconds> cappedLifetime = WTF::nullopt);
+    bool setCookie(const URL& firstParty, const URL&, const String& cookie, Source, Optional<Seconds> cappedLifetime = std::nullopt);
     bool setCookie(const Cookie&);
 
     bool deleteCookie(const String& url, const String& name);

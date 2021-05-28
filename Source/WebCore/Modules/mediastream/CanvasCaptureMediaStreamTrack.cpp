@@ -140,7 +140,7 @@ const RealtimeMediaSourceSettings& CanvasCaptureMediaStreamTrack::Source::settin
 void CanvasCaptureMediaStreamTrack::Source::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
 {
     if (settings.containsAny({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height }))
-        m_currentSettings = WTF::nullopt;
+        m_currentSettings = std::nullopt;
 }
 
 void CanvasCaptureMediaStreamTrack::Source::canvasResized(CanvasBase& canvas)

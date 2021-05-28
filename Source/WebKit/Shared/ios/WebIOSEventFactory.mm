@@ -170,7 +170,7 @@ WebKit::WebWheelEvent WebIOSEventFactory::createWebWheelEvent(UIScrollEvent *eve
         wheelTicks,
         WebKit::WebWheelEvent::Granularity::ScrollByPixelWheelEvent,
         false,
-        overridePhase.valueOr(toWebPhase(event.phase)),
+        overridePhase.value_or(toWebPhase(event.phase)),
         WebKit::WebWheelEvent::PhaseNone,
         true,
         1,

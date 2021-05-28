@@ -53,12 +53,12 @@ struct AudioIOPosition {
         Optional<Seconds> position;
         decoder >> position;
         if (!position)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<MonotonicTime> timestamp;
         decoder >> timestamp;
         if (!timestamp)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return AudioIOPosition { *position, *timestamp };
     }

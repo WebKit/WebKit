@@ -87,7 +87,7 @@ OptionSet<WheelEventProcessingSteps> ScrollingTree::computeWheelProcessingSteps(
 #if ENABLE(WHEEL_EVENT_REGIONS)
     auto eventListenerTypes = eventListenerRegionTypesForPoint(position);
     if (eventListenerTypes.contains(EventListenerRegionType::NonPassiveWheel)) {
-        if (m_treeState.gestureState.valueOr(WheelScrollGestureState::Blocking) == WheelScrollGestureState::NonBlocking)
+        if (m_treeState.gestureState.value_or(WheelScrollGestureState::Blocking) == WheelScrollGestureState::NonBlocking)
             return { WheelEventProcessingSteps::ScrollingThread, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch };
 
         return { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch };
@@ -110,7 +110,7 @@ OptionSet<WheelEventProcessingSteps> ScrollingTree::determineWheelEventProcessin
         return latchedNodeAndSteps->processingSteps;
     }
     if (wheelEvent.isGestureStart() || wheelEvent.isNonGestureEvent())
-        m_treeState.gestureState = WTF::nullopt;
+        m_treeState.gestureState = std::nullopt;
 
     auto processingSteps = computeWheelProcessingSteps(wheelEvent);
 

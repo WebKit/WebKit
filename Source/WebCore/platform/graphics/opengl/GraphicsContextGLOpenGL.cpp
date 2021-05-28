@@ -231,25 +231,25 @@ Optional<PixelBuffer> GraphicsContextGLOpenGL::paintRenderingResultsToPixelBuffe
 {
     // Reading premultiplied alpha would involve unpremultiplying, which is lossy.
     if (contextAttributes().premultipliedAlpha)
-        return WTF::nullopt;
+        return std::nullopt;
     return readRenderingResultsForPainting();
 }
 
 Optional<PixelBuffer> GraphicsContextGLOpenGL::readRenderingResultsForPainting()
 {
     if (!makeContextCurrent())
-        return WTF::nullopt;
+        return std::nullopt;
     if (getInternalFramebufferSize().isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
     return readRenderingResults();
 }
 
 Optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResultsForPainting()
 {
     if (!makeContextCurrent())
-        return WTF::nullopt;
+        return std::nullopt;
     if (getInternalFramebufferSize().isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
     return readCompositedResults();
 }
 

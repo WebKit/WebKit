@@ -97,7 +97,7 @@ void RemoteImageDecoderAVFProxy::setData(ImageDecoderIdentifier identifier, cons
 {
     ASSERT(m_imageDecoders.contains(identifier));
     if (!m_imageDecoders.contains(identifier)) {
-        completionHandler(0, { }, false, WTF::nullopt);
+        completionHandler(0, { }, false, std::nullopt);
         return;
     }
 

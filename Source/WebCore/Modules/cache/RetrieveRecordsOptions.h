@@ -53,27 +53,27 @@ template<class Decoder> inline Optional<RetrieveRecordsOptions> RetrieveRecordsO
     Optional<ResourceRequest> request;
     decoder >> request;
     if (!request)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> ignoreSearch;
     decoder >> ignoreSearch;
     if (!ignoreSearch)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> ignoreMethod;
     decoder >> ignoreMethod;
     if (!ignoreMethod)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> ignoreVary;
     decoder >> ignoreVary;
     if (!ignoreVary)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> shouldProvideResponse;
     decoder >> shouldProvideResponse;
     if (!shouldProvideResponse)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return { { WTFMove(*request), WTFMove(*ignoreSearch), WTFMove(*ignoreMethod), WTFMove(*ignoreVary), WTFMove(*shouldProvideResponse) } };
 }

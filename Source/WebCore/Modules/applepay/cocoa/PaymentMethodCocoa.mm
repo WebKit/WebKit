@@ -64,7 +64,7 @@ static ApplePayPaymentPass::ActivationState convert(PKPaymentPassActivationState
 static Optional<ApplePayPaymentPass> convert(PKPaymentPass *paymentPass)
 {
     if (!paymentPass)
-        return WTF::nullopt;
+        return std::nullopt;
 
     ApplePayPaymentPass result;
 
@@ -94,7 +94,7 @@ static Optional<ApplePayPaymentMethod::Type> convert(PKPaymentMethodType payment
         return ApplePayPaymentMethod::Type::Store;
     case PKPaymentMethodTypeUnknown:
     default:
-        return WTF::nullopt;
+        return std::nullopt;
     }
 }
 
@@ -118,7 +118,7 @@ static void convert(CNLabeledValue<CNPostalAddress*> *postalAddress, ApplePayPay
 static Optional<ApplePayPaymentContact> convert(CNContact *billingContact)
 {
     if (!billingContact)
-        return WTF::nullopt;
+        return std::nullopt;
 
     ApplePayPaymentContact result;
     

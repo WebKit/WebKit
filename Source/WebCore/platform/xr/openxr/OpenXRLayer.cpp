@@ -61,7 +61,7 @@ Optional<Device::FrameData::LayerData> OpenXRLayerProjection::startFrame()
 {
     auto texture = m_swapchain->acquireImage();
     if (!texture)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return Device::FrameData::LayerData { *texture };
 }

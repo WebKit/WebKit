@@ -59,7 +59,7 @@ Optional<ApplePayDetailsUpdateData> ApplePayDetailsUpdateData::decode(Decoder& d
 {
     ApplePayDetailsUpdateData result;
     if (!result.decodeData(decoder))
-        return WTF::nullopt;
+        return std::nullopt;
     return result;
 }
 

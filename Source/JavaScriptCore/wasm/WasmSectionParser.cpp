@@ -776,7 +776,7 @@ auto SectionParser::parseData() -> PartialResult
             WASM_PARSER_FAIL_IF(!parseVarUInt32(dataByteLength), "can't get ", segmentNumber, "th Data segment's data byte length");
             WASM_PARSER_FAIL_IF(dataByteLength > maxModuleSize, segmentNumber, "th Data segment's data byte length is too big ", dataByteLength, " maximum ", maxModuleSize);
 
-            auto segment = Segment::create(WTF::nullopt, dataByteLength, Segment::Kind::Passive);
+            auto segment = Segment::create(std::nullopt, dataByteLength, Segment::Kind::Passive);
             WASM_PARSER_FAIL_IF(!segment, "can't allocate enough memory for ", segmentNumber, "th Data segment of size ", dataByteLength);
             for (uint32_t dataByte = 0; dataByte < dataByteLength; ++dataByte) {
                 uint8_t byte;

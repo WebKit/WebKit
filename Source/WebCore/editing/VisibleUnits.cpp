@@ -1742,7 +1742,7 @@ Optional<SimpleRange> enclosingTextUnitOfGranularity(const VisiblePosition& vp, 
 {
     // This is particularly inefficient.  We could easily obtain the answer with the boundaries computed below.
     if (!withinTextUnitOfGranularity(vp, granularity, direction))
-        return WTF::nullopt;
+        return std::nullopt;
 
     VisiblePosition prevBoundary;
     VisiblePosition nextBoundary;
@@ -1794,14 +1794,14 @@ Optional<SimpleRange> enclosingTextUnitOfGranularity(const VisiblePosition& vp, 
 
         default:
             ASSERT_NOT_REACHED();
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     if (prevBoundary.isNull() || nextBoundary.isNull())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (vp < prevBoundary || vp > nextBoundary)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return makeSimpleRange(prevBoundary, nextBoundary);
 }
@@ -1852,7 +1852,7 @@ void charactersAroundPosition(const VisiblePosition& position, UChar32& oneAfter
 Optional<SimpleRange> wordRangeFromPosition(const VisiblePosition& position)
 {
     if (position.isNull())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (auto range = enclosingTextUnitOfGranularity(position, TextGranularity::WordGranularity, SelectionDirection::Backward))
         return range;

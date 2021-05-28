@@ -80,10 +80,10 @@ Optional<WebCore::AttributedString> ArgumentCoder<WebCore::AttributedString>::de
 {
     RetainPtr<NSAttributedString> attributedString;
     if (!IPC::decode(decoder, attributedString))
-        return WTF::nullopt;
+        return std::nullopt;
     RetainPtr<NSDictionary> documentAttributes;
     if (!IPC::decode(decoder, documentAttributes))
-        return WTF::nullopt;
+        return std::nullopt;
     return { { WTFMove(attributedString), WTFMove(documentAttributes) } };
 }
 
@@ -100,7 +100,7 @@ Optional<WebCore::PaymentInstallmentConfiguration> ArgumentCoder<WebCore::Paymen
 {
     auto configuration = IPC::decode<PKPaymentInstallmentConfiguration>(decoder, PAL::getPKPaymentInstallmentConfigurationClass());
     if (!configuration)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return { WTFMove(*configuration) };
 }
@@ -116,7 +116,7 @@ Optional<WebCore::Payment> ArgumentCoder<WebCore::Payment>::decode(Decoder& deco
 {
     auto payment = IPC::decode<PKPayment>(decoder, PAL::getPKPaymentClass());
     if (!payment)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return Payment { WTFMove(*payment) };
 }
@@ -132,12 +132,12 @@ Optional<WebCore::PaymentAuthorizationResult> ArgumentCoder<WebCore::PaymentAuth
     Optional<PaymentAuthorizationStatus> status;
     decoder >> status;
     if (!status)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Vector<RefPtr<ApplePayError>>> errors;
     decoder >> errors;
     if (!errors)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ WTFMove(*status), WTFMove(*errors) }};
 }
@@ -151,7 +151,7 @@ Optional<WebCore::PaymentContact> ArgumentCoder<WebCore::PaymentContact>::decode
 {
     auto contact = IPC::decode<PKContact>(decoder, PAL::getPKContactClass());
     if (!contact)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return WebCore::PaymentContact { WTFMove(*contact) };
 }
@@ -165,7 +165,7 @@ Optional<WebCore::PaymentMerchantSession> ArgumentCoder<WebCore::PaymentMerchant
 {
     auto paymentMerchantSession = IPC::decode<PKPaymentMerchantSession>(decoder, PAL::getPKPaymentMerchantSessionClass());
     if (!paymentMerchantSession)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return WebCore::PaymentMerchantSession { WTFMove(*paymentMerchantSession) };
 }
@@ -179,7 +179,7 @@ Optional<WebCore::PaymentMethod> ArgumentCoder<WebCore::PaymentMethod>::decode(D
 {
     auto paymentMethod = IPC::decode<PKPaymentMethod>(decoder, PAL::getPKPaymentMethodClass());
     if (!paymentMethod)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return PaymentMethod { WTFMove(*paymentMethod) };
 }
@@ -364,7 +364,7 @@ Optional<RefPtr<ApplePayError>> ArgumentCoder<RefPtr<ApplePayError>>::decode(Dec
     Optional<bool> isValid;
     decoder >> isValid;
     if (!isValid)
-        return WTF::nullopt;
+        return std::nullopt;
 
     RefPtr<ApplePayError> error;
     if (!*isValid)
@@ -372,7 +372,7 @@ Optional<RefPtr<ApplePayError>> ArgumentCoder<RefPtr<ApplePayError>>::decode(Dec
 
     error = ApplePayError::decode(decoder);
     if (!error)
-        return WTF::nullopt;
+        return std::nullopt;
     return error;
 }
 
@@ -385,7 +385,7 @@ Optional<WebCore::PaymentSessionError> ArgumentCoder<WebCore::PaymentSessionErro
 {
     auto platformError = IPC::decode<NSError>(decoder);
     if (!platformError)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return { WTFMove(*platformError) };
 }
@@ -414,7 +414,7 @@ void ArgumentCoder<WebCore::FontAttributes>::encodePlatformData(Encoder& encoder
 Optional<FontAttributes> ArgumentCoder<WebCore::FontAttributes>::decodePlatformData(Decoder& decoder, WebCore::FontAttributes& attributes)
 {
     if (!IPC::decode(decoder, attributes.font))
-        return WTF::nullopt;
+        return std::nullopt;
     return attributes;
 }
 
@@ -472,60 +472,60 @@ Optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder&
     Optional<FontOrientation> orientation;
     decoder >> orientation;
     if (!orientation.hasValue())
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontWidthVariant> widthVariant;
     decoder >> widthVariant;
     if (!widthVariant.hasValue())
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<TextRenderingMode> textRenderingMode;
     decoder >> textRenderingMode;
     if (!textRenderingMode.hasValue())
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<float> size;
     decoder >> size;
     if (!size.hasValue())
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> syntheticBold;
     decoder >> syntheticBold;
     if (!syntheticBold.hasValue())
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> syntheticOblique;
     decoder >> syntheticOblique;
     if (!syntheticOblique.hasValue())
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<RetainPtr<CFDictionaryRef>> attributes;
     decoder >> attributes;
     if (!attributes)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> includesCreationData;
     decoder >> includesCreationData;
     if (!includesCreationData.hasValue())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (includesCreationData.value()) {
         Optional<Ref<SharedBuffer>> fontFaceData;
         decoder >> fontFaceData;
         if (!fontFaceData.hasValue())
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<String> itemInCollection;
         decoder >> itemInCollection;
         if (!itemInCollection.hasValue())
-            return WTF::nullopt;
+            return std::nullopt;
 
         auto fontCustomPlatformData = createFontCustomPlatformData(fontFaceData.value(), itemInCollection.value());
         if (!fontCustomPlatformData)
-            return WTF::nullopt;
+            return std::nullopt;
         auto baseFontDescriptor = fontCustomPlatformData->fontDescriptor.get();
         if (!baseFontDescriptor)
-            return WTF::nullopt;
+            return std::nullopt;
         auto fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(baseFontDescriptor, attributes->get()));
         auto ctFont = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size.value(), nullptr));
 
@@ -536,16 +536,16 @@ Optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder&
     Optional<String> referenceURL;
     decoder >> referenceURL;
     if (!referenceURL.hasValue())
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<String> postScriptName;
     decoder >> postScriptName;
     if (!postScriptName.hasValue())
-        return WTF::nullopt;
+        return std::nullopt;
 
     RetainPtr<CTFontDescriptorRef> fontDescriptor = findFontDescriptor(referenceURL.value(), postScriptName.value());
     if (!fontDescriptor)
-        return WTF::nullopt;
+        return std::nullopt;
     fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor.get(), attributes->get()));
     auto ctFont = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size.value(), nullptr));
 

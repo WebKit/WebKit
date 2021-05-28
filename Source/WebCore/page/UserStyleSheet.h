@@ -43,7 +43,7 @@ public:
     {
     }
 
-    UserStyleSheet(const String& source, const URL& url, Vector<String>&& allowlist, Vector<String>&& blocklist, UserContentInjectedFrames injectedFrames, UserStyleLevel level, Optional<PageIdentifier> pageID = WTF::nullopt)
+    UserStyleSheet(const String& source, const URL& url, Vector<String>&& allowlist, Vector<String>&& blocklist, UserContentInjectedFrames injectedFrames, UserStyleLevel level, Optional<PageIdentifier> pageID = std::nullopt)
         : m_source(source)
         , m_url(url)
         , m_allowlist(WTFMove(allowlist))

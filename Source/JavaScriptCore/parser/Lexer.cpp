@@ -1539,7 +1539,7 @@ ALWAYS_INLINE auto Lexer<T>::parseHex() -> Optional<NumberParseResult>
     do {
         if (m_current == '_') {
             if (UNLIKELY(!isASCIIHexDigit(peek(1))))
-                return WTF::nullopt;
+                return std::nullopt;
 
             shift();
         }
@@ -1566,7 +1566,7 @@ ALWAYS_INLINE auto Lexer<T>::parseHex() -> Optional<NumberParseResult>
     while (isASCIIHexDigitOrSeparator(m_current)) {
         if (m_current == '_') {
             if (UNLIKELY(!isASCIIHexDigit(peek(1))))
-                return WTF::nullopt;
+                return std::nullopt;
 
             shift();
         }
@@ -1597,7 +1597,7 @@ ALWAYS_INLINE auto Lexer<T>::parseBinary() -> Optional<NumberParseResult>
     do {
         if (m_current == '_') {
             if (UNLIKELY(!isASCIIBinaryDigit(peek(1))))
-                return WTF::nullopt;
+                return std::nullopt;
 
             shift();
         }
@@ -1617,7 +1617,7 @@ ALWAYS_INLINE auto Lexer<T>::parseBinary() -> Optional<NumberParseResult>
     while (isASCIIBinaryDigitOrSeparator(m_current)) {
         if (m_current == '_') {
             if (UNLIKELY(!isASCIIBinaryDigit(peek(1))))
-                return WTF::nullopt;
+                return std::nullopt;
 
             shift();
         }
@@ -1630,7 +1630,7 @@ ALWAYS_INLINE auto Lexer<T>::parseBinary() -> Optional<NumberParseResult>
         return NumberParseResult { makeIdentifier(m_buffer8.data(), m_buffer8.size()) };
 
     if (isASCIIDigit(m_current))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return NumberParseResult { parseIntOverflow(m_buffer8.data(), m_buffer8.size(), 2) };
 }
@@ -1653,7 +1653,7 @@ ALWAYS_INLINE auto Lexer<T>::parseOctal() -> Optional<NumberParseResult>
     do {
         if (m_current == '_') {
             if (UNLIKELY(!isASCIIOctalDigit(peek(1)) || isLegacyLiteral))
-                return WTF::nullopt;
+                return std::nullopt;
 
             shift();
         }
@@ -1673,7 +1673,7 @@ ALWAYS_INLINE auto Lexer<T>::parseOctal() -> Optional<NumberParseResult>
     while (isASCIIOctalDigitOrSeparator(m_current)) {
         if (m_current == '_') {
             if (UNLIKELY(!isASCIIOctalDigit(peek(1)) || isLegacyLiteral))
-                return WTF::nullopt;
+                return std::nullopt;
 
             shift();
         }
@@ -1686,7 +1686,7 @@ ALWAYS_INLINE auto Lexer<T>::parseOctal() -> Optional<NumberParseResult>
         return NumberParseResult { makeIdentifier(m_buffer8.data(), m_buffer8.size()) };
 
     if (isASCIIDigit(m_current))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return NumberParseResult { parseIntOverflow(m_buffer8.data(), m_buffer8.size(), 8) };
 }
@@ -1712,7 +1712,7 @@ ALWAYS_INLINE auto Lexer<T>::parseDecimal() -> Optional<NumberParseResult>
         do {
             if (m_current == '_') {
                 if (UNLIKELY(!isASCIIDigit(peek(1)) || isLegacyLiteral))
-                    return WTF::nullopt;
+                    return std::nullopt;
 
                 shift();
             }
@@ -1733,7 +1733,7 @@ ALWAYS_INLINE auto Lexer<T>::parseDecimal() -> Optional<NumberParseResult>
     while (isASCIIDigitOrSeparator(m_current)) {
         if (m_current == '_') {
             if (UNLIKELY(!isASCIIDigit(peek(1)) || isLegacyLiteral))
-                return WTF::nullopt;
+                return std::nullopt;
 
             shift();
         }
@@ -1745,7 +1745,7 @@ ALWAYS_INLINE auto Lexer<T>::parseDecimal() -> Optional<NumberParseResult>
     if (UNLIKELY(m_current == 'n' && !isLegacyLiteral))
         return NumberParseResult { makeIdentifier(m_buffer8.data(), m_buffer8.size()) };
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template <typename T>

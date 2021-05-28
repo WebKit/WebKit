@@ -193,16 +193,16 @@ template<typename T> static Optional<Vector<uint8_t>> base64DecodeInternal(const
             ++equalsSignCount;
             // There should never be more than 2 padding characters.
             if (options.contains(Base64DecodeOptions::ValidatePadding) && equalsSignCount > 2) {
-                return WTF::nullopt;
+                return std::nullopt;
             }
         } else {
             char decodedCharacter = ch < decodeMapSize ? decodeMap[ch] : nonAlphabet;
             if (decodedCharacter != nonAlphabet) {
                 if (equalsSignCount)
-                    return WTF::nullopt;
+                    return std::nullopt;
                 destination[destinationLength++] = decodedCharacter;
             } else if (!options.contains(Base64DecodeOptions::IgnoreSpacesAndNewLines) || (!isLatin1(ch) || !isASCIISpace(ch) || (options.contains(Base64DecodeOptions::DiscardVerticalTab) && ch == '\v'))) {
-                return WTF::nullopt;
+                return std::nullopt;
             }
         }
     }
@@ -214,23 +214,23 @@ template<typename T> static Optional<Vector<uint8_t>> base64DecodeInternal(const
 
     if (!destinationLength) {
         if (equalsSignCount)
-            return WTF::nullopt;
+            return std::nullopt;
         return Vector<uint8_t> { };
     }
 
     // The should be no padding if length is a multiple of 4.
     // We use (destinationLength + equalsSignCount) instead of length because we don't want to account for ignored characters (i.e. spaces).
     if (options.contains(Base64DecodeOptions::ValidatePadding) && equalsSignCount && (destinationLength + equalsSignCount) % 4)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Valid data is (n * 4 + [0,2,3]) characters long.
     if ((destinationLength % 4) == 1)
-        return WTF::nullopt;
+        return std::nullopt;
     
     // 4-byte to 3-byte conversion
     destinationLength -= (destinationLength + 3) / 4;
     if (!destinationLength)
-        return WTF::nullopt;
+        return std::nullopt;
 
     unsigned sidx = 0;
     unsigned didx = 0;
@@ -274,14 +274,14 @@ Optional<Vector<uint8_t>> base64Decode(StringView input, OptionSet<Base64DecodeO
 Optional<Vector<uint8_t>> base64Decode(const Vector<uint8_t>& input, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
 {
     if (input.size() > std::numeric_limits<unsigned>::max())
-        return WTF::nullopt;
+        return std::nullopt;
     return base64DecodeInternal(input.data(), input.size(), options, map);
 }
 
 Optional<Vector<uint8_t>> base64Decode(const Vector<char>& input, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
 {
     if (input.size() > std::numeric_limits<unsigned>::max())
-        return WTF::nullopt;
+        return std::nullopt;
     return base64DecodeInternal(reinterpret_cast<const uint8_t*>(input.data()), input.size(), options, map);
 }
 
@@ -314,14 +314,14 @@ Optional<Vector<uint8_t>> base64URLDecode(StringView input)
 Optional<Vector<uint8_t>> base64URLDecode(const Vector<uint8_t>& input)
 {
     if (input.size() > std::numeric_limits<unsigned>::max())
-        return WTF::nullopt;
+        return std::nullopt;
     return base64DecodeInternal(input.data(), input.size(), { }, Base64DecodeMap::URL);
 }
 
 Optional<Vector<uint8_t>> base64URLDecode(const Vector<char>& input)
 {
     if (input.size() > std::numeric_limits<unsigned>::max())
-        return WTF::nullopt;
+        return std::nullopt;
     return base64DecodeInternal(reinterpret_cast<const uint8_t*>(input.data()), input.size(), { }, Base64DecodeMap::URL);
 }
 

@@ -1058,7 +1058,7 @@ void RealtimeMediaSource::setSampleRate(int rate)
 
 Optional<Vector<int>> RealtimeMediaSource::discreteSampleRates() const
 {
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void RealtimeMediaSource::setSampleSize(int size)
@@ -1074,7 +1074,7 @@ void RealtimeMediaSource::setSampleSize(int size)
 
 Optional<Vector<int>> RealtimeMediaSource::discreteSampleSizes() const
 {
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void RealtimeMediaSource::setEchoCancellation(bool echoCancellation)

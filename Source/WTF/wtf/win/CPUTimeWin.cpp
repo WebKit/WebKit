@@ -56,7 +56,7 @@ Optional<CPUTime> CPUTime::get()
     FILETIME kernelTime;
     FILETIME userTime;
     if (!::GetProcessTimes(::GetCurrentProcess(), &creationTime, &exitTime, &kernelTime, &userTime))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return CPUTime { MonotonicTime::now(), fileTimeToSeconds(userTime), fileTimeToSeconds(kernelTime) };
 }

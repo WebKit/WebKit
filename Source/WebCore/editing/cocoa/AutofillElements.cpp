@@ -82,7 +82,7 @@ AutofillElements::AutofillElements(RefPtr<HTMLInputElement>&& username, RefPtr<H
 Optional<AutofillElements> AutofillElements::computeAutofillElements(Ref<HTMLInputElement> start)
 {
     if (!start->document().page())
-        return WTF::nullopt;
+        return std::nullopt;
     FocusController& focusController = start->document().page()->focusController();
     if (start->isPasswordField()) {
         auto previousElement = previousAutofillableElement(start.ptr(), focusController);
@@ -105,7 +105,7 @@ Optional<AutofillElements> AutofillElements::computeAutofillElements(Ref<HTMLInp
         }
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void AutofillElements::autofill(String username, String password)

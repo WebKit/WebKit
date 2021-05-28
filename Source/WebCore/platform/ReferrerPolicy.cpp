@@ -64,7 +64,7 @@ static Optional<ReferrerPolicy> parseReferrerPolicyToken(StringView policy, Shou
     if (!policy.isNull() && policy.isEmpty())
         return ReferrerPolicy::EmptyString;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
     
 Optional<ReferrerPolicy> parseReferrerPolicy(StringView policyString, ReferrerPolicySource source)
@@ -86,7 +86,7 @@ Optional<ReferrerPolicy> parseReferrerPolicy(StringView policyString, ReferrerPo
         return parseReferrerPolicyToken(policyString, ShouldParseLegacyKeywords::No);
     }
     ASSERT_NOT_REACHED();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 String referrerPolicyToString(const ReferrerPolicy& referrerPolicy)

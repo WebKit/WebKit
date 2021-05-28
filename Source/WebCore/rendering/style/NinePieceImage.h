@@ -90,7 +90,7 @@ inline Optional<BoxSide> imagePieceHorizontalSide(ImagePiece piece)
     if (piece == BottomLeftPiece || piece == BottomPiece || piece == BottomRightPiece)
         return BoxSide::Bottom;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 inline Optional<BoxSide> imagePieceVerticalSide(ImagePiece piece)
@@ -101,7 +101,7 @@ inline Optional<BoxSide> imagePieceVerticalSide(ImagePiece piece)
     if (piece == TopRightPiece || piece == RightPiece || piece == BottomRightPiece)
         return BoxSide::Right;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 class NinePieceImage {

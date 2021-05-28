@@ -84,7 +84,7 @@ Optional<BuiltInCharacterClassID> unicodeMatchPropertyValue(WTF::String unicodeP
         propertyIndex = generalCategoryHashTable.entry(unicodePropertyValue);
 
     if (propertyIndex == -1)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return Optional<BuiltInCharacterClassID>(static_cast<BuiltInCharacterClassID>(static_cast<int>(BuiltInCharacterClassID::BaseUnicodePropertyID) + propertyIndex));
 }
@@ -98,7 +98,7 @@ Optional<BuiltInCharacterClassID> unicodeMatchProperty(WTF::String unicodeProper
         propertyIndex = generalCategoryHashTable.entry(unicodePropertyValue);
     
     if (propertyIndex == -1)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return Optional<BuiltInCharacterClassID>(static_cast<BuiltInCharacterClassID>(static_cast<int>(BuiltInCharacterClassID::BaseUnicodePropertyID) + propertyIndex));
 }

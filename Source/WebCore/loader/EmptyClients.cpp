@@ -237,7 +237,7 @@ public:
     EmptyEditorClient() = default;
 
 private:
-    bool shouldDeleteRange(const Optional<SimpleRange>&) final { return false; }
+    bool shouldDeleteRange(const std::optional<SimpleRange>&) final { return false; }
     bool smartInsertDeleteEnabled() final { return false; }
     bool isSelectTrailingWhitespaceEnabled() const final { return false; }
     bool isContinuousSpellCheckingEnabled() final { return false; }
@@ -248,11 +248,11 @@ private:
 
     bool shouldBeginEditing(const SimpleRange&) final { return false; }
     bool shouldEndEditing(const SimpleRange&) final { return false; }
-    bool shouldInsertNode(Node&, const Optional<SimpleRange>&, EditorInsertAction) final { return false; }
-    bool shouldInsertText(const String&, const Optional<SimpleRange>&, EditorInsertAction) final { return false; }
-    bool shouldChangeSelectedRange(const Optional<SimpleRange>&, const Optional<SimpleRange>&, Affinity, bool) final { return false; }
+    bool shouldInsertNode(Node&, const std::optional<SimpleRange>&, EditorInsertAction) final { return false; }
+    bool shouldInsertText(const String&, const std::optional<SimpleRange>&, EditorInsertAction) final { return false; }
+    bool shouldChangeSelectedRange(const std::optional<SimpleRange>&, const std::optional<SimpleRange>&, Affinity, bool) final { return false; }
 
-    bool shouldApplyStyle(const StyleProperties&, const Optional<SimpleRange>&) final { return false; }
+    bool shouldApplyStyle(const StyleProperties&, const std::optional<SimpleRange>&) final { return false; }
     void didApplyStyle() final { }
     bool shouldMoveRangeAfterDelete(const SimpleRange&, const SimpleRange&) final { return false; }
 
@@ -265,9 +265,9 @@ private:
     void didUpdateComposition() final { }
     void didEndEditing() final { }
     void didEndUserTriggeredSelectionChanges() final { }
-    void willWriteSelectionToPasteboard(const Optional<SimpleRange>&) final { }
+    void willWriteSelectionToPasteboard(const std::optional<SimpleRange>&) final { }
     void didWriteSelectionToPasteboard() final { }
-    void getClientPasteboardData(const Optional<SimpleRange>&, Vector<String>&, Vector<RefPtr<SharedBuffer>>&) final { }
+    void getClientPasteboardData(const std::optional<SimpleRange>&, Vector<String>&, Vector<RefPtr<SharedBuffer>>&) final { }
     void requestCandidatesForSelection(const VisibleSelection&) final { }
     void handleAcceptedCandidateWithSoftSpaces(TextCheckingResult) final { }
 
@@ -402,19 +402,19 @@ class EmptyInspectorClient final : public InspectorClient {
 #if ENABLE(APPLE_PAY)
 
 class EmptyPaymentCoordinatorClient final : public PaymentCoordinatorClient {
-    Optional<String> validatedPaymentNetwork(const String&) final { return WTF::nullopt; }
+    std::optional<String> validatedPaymentNetwork(const String&) final { return std::nullopt; }
     bool canMakePayments() final { return false; }
     void canMakePaymentsWithActiveCard(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler) final { callOnMainThread([completionHandler = WTFMove(completionHandler)]() mutable { completionHandler(false); }); }
     void openPaymentSetup(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler) final { callOnMainThread([completionHandler = WTFMove(completionHandler)]() mutable { completionHandler(false); }); }
     bool showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest&) final { return false; }
     void completeMerchantValidation(const PaymentMerchantSession&) final { }
-    void completeShippingMethodSelection(Optional<ApplePayShippingMethodUpdate>&&) final { }
-    void completeShippingContactSelection(Optional<ApplePayShippingContactUpdate>&&) final { }
-    void completePaymentMethodSelection(Optional<ApplePayPaymentMethodUpdate>&&) final { }
+    void completeShippingMethodSelection(std::optional<ApplePayShippingMethodUpdate>&&) final { }
+    void completeShippingContactSelection(std::optional<ApplePayShippingContactUpdate>&&) final { }
+    void completePaymentMethodSelection(std::optional<ApplePayPaymentMethodUpdate>&&) final { }
 #if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    void completePaymentMethodModeChange(Optional<ApplePayPaymentMethodModeUpdate>&&) final { }
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    void completePaymentSession(Optional<PaymentAuthorizationResult>&&) final { }
+    void completePaymentMethodModeChange(std::optional<ApplePayPaymentMethodModeUpdate>&&) final { }
+#endif
+    void completePaymentSession(std::optional<PaymentAuthorizationResult>&&) final { }
     void cancelPaymentSession() final { }
     void abortPaymentSession() final { }
     void paymentCoordinatorDestroyed() final { }
@@ -425,7 +425,7 @@ class EmptyPaymentCoordinatorClient final : public PaymentCoordinatorClient {
 
 class EmptyPluginInfoProvider final : public PluginInfoProvider {
     void refreshPlugins() final { };
-    Vector<PluginInfo> pluginInfo(Page&, Optional<Vector<SupportedPluginIdentifier>>&) final { return { }; }
+    Vector<PluginInfo> pluginInfo(Page&, std::optional<Vector<SupportedPluginIdentifier>>&) final { return { }; }
     Vector<PluginInfo> webVisiblePluginInfo(Page&, const URL&) final { return { }; }
 };
 
@@ -550,9 +550,11 @@ std::unique_ptr<DateTimeChooser> EmptyChromeClient::createDateTimeChooser(DateTi
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
+
 void EmptyChromeClient::storeAppHighlight(AppHighlight&&) const
 {
 }
+
 #endif
 
 void EmptyChromeClient::setTextIndicator(const TextIndicatorData&) const
@@ -603,6 +605,491 @@ RefPtr<Widget> EmptyFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugInEl
 {
     return nullptr;
 }
+
+std::optional<FrameIdentifier> EmptyFrameLoaderClient::frameID() const
+{
+    return std::nullopt;
+}
+
+std::optional<PageIdentifier> EmptyFrameLoaderClient::pageID() const
+{
+    return std::nullopt;
+}
+
+bool EmptyFrameLoaderClient::hasWebView() const
+{
+    return true; // mainly for assertions
+}
+
+void EmptyFrameLoaderClient::makeRepresentation(DocumentLoader*)
+{
+}
+
+#if PLATFORM(IOS_FAMILY)
+
+bool EmptyFrameLoaderClient::forceLayoutOnRestoreFromBackForwardCache()
+{
+    return false;
+}
+
+#endif
+
+void EmptyFrameLoaderClient::forceLayoutForNonHTML()
+{
+}
+
+void EmptyFrameLoaderClient::setCopiesOnScroll()
+{
+}
+
+void EmptyFrameLoaderClient::detachedFromParent2()
+{
+}
+
+void EmptyFrameLoaderClient::detachedFromParent3()
+{
+}
+
+void EmptyFrameLoaderClient::convertMainResourceLoadToDownload(DocumentLoader*, const ResourceRequest&, const ResourceResponse&)
+{
+}
+
+void EmptyFrameLoaderClient::assignIdentifierToInitialRequest(unsigned long, DocumentLoader*, const ResourceRequest&)
+{
+}
+
+bool EmptyFrameLoaderClient::shouldUseCredentialStorage(DocumentLoader*, unsigned long)
+{
+    return false;
+}
+
+void EmptyFrameLoaderClient::dispatchWillSendRequest(DocumentLoader*, unsigned long, ResourceRequest&, const ResourceResponse&)
+{
+}
+
+void EmptyFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long, const AuthenticationChallenge&)
+{
+}
+
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+
+bool EmptyFrameLoaderClient::canAuthenticateAgainstProtectionSpace(DocumentLoader*, unsigned long, const ProtectionSpace&)
+{
+    return false;
+}
+
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+
+RetainPtr<CFDictionaryRef> EmptyFrameLoaderClient::connectionProperties(DocumentLoader*, unsigned long)
+{
+    return nullptr;
+}
+
+#endif
+
+void EmptyFrameLoaderClient::dispatchDidReceiveResponse(DocumentLoader*, unsigned long, const ResourceResponse&)
+{
+}
+
+void EmptyFrameLoaderClient::dispatchDidReceiveContentLength(DocumentLoader*, unsigned long, int)
+{
+}
+
+void EmptyFrameLoaderClient::dispatchDidFinishLoading(DocumentLoader*, unsigned long)
+{
+}
+
+#if ENABLE(DATA_DETECTION)
+
+void EmptyFrameLoaderClient::dispatchDidFinishDataDetection(NSArray *)
+{
+}
+
+#endif
+
+void EmptyFrameLoaderClient::dispatchDidFailLoading(DocumentLoader*, unsigned long, const ResourceError&)
+{
+}
+
+bool EmptyFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader*, const ResourceRequest&, const ResourceResponse&, int)
+{
+    return false;
+}
+
+void EmptyFrameLoaderClient::dispatchDidDispatchOnloadEvents()
+{
+}
+
+void EmptyFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
+{
+}
+
+void EmptyFrameLoaderClient::dispatchDidCancelClientRedirect()
+{
+}
+
+void EmptyFrameLoaderClient::dispatchWillPerformClientRedirect(const URL&, double, WallTime, LockBackForwardList)
+{
+}
+
+void EmptyFrameLoaderClient::dispatchDidChangeLocationWithinPage()
+{
+}
+
+void EmptyFrameLoaderClient::dispatchDidPushStateWithinPage()
+{
+}
+
+void EmptyFrameLoaderClient::dispatchDidReplaceStateWithinPage()
+{
+}
+
+void EmptyFrameLoaderClient::dispatchDidPopStateWithinPage()
+{
+}
+
+void EmptyFrameLoaderClient::dispatchWillClose()
+{
+}
+
+void EmptyFrameLoaderClient::dispatchDidStartProvisionalLoad()
+{
+}
+
+void EmptyFrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection&)
+{
+}
+
+void EmptyFrameLoaderClient::dispatchDidCommitLoad(std::optional<HasInsecureContent>, std::optional<UsedLegacyTLS>)
+{
+}
+
+void EmptyFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError&, WillContinueLoading)
+{
+}
+
+void EmptyFrameLoaderClient::dispatchDidFailLoad(const ResourceError&)
+{
+}
+
+void EmptyFrameLoaderClient::dispatchDidFinishDocumentLoad()
+{
+}
+
+void EmptyFrameLoaderClient::dispatchDidFinishLoad()
+{
+}
+
+void EmptyFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<LayoutMilestone>)
+{
+}
+
+void EmptyFrameLoaderClient::dispatchDidReachVisuallyNonEmptyState()
+{
+}
+
+Frame* EmptyFrameLoaderClient::dispatchCreatePage(const NavigationAction&, NewFrameOpenerPolicy)
+{
+    return nullptr;
+}
+
+void EmptyFrameLoaderClient::dispatchShow()
+{
+}
+
+void EmptyFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceResponse&, const ResourceRequest&, PolicyCheckIdentifier, const String&, FramePolicyFunction&&)
+{
+}
+
+void EmptyFrameLoaderClient::cancelPolicyCheck()
+{
+}
+
+void EmptyFrameLoaderClient::dispatchUnableToImplementPolicy(const ResourceError&)
+{
+}
+
+void EmptyFrameLoaderClient::revertToProvisionalState(DocumentLoader*)
+{
+}
+
+void EmptyFrameLoaderClient::setMainDocumentError(DocumentLoader*, const ResourceError&)
+{
+}
+
+void EmptyFrameLoaderClient::setMainFrameDocumentReady(bool)
+{
+}
+
+void EmptyFrameLoaderClient::startDownload(const ResourceRequest&, const String&)
+{
+}
+
+void EmptyFrameLoaderClient::willChangeTitle(DocumentLoader*)
+{
+}
+
+void EmptyFrameLoaderClient::didChangeTitle(DocumentLoader*)
+{
+}
+
+void EmptyFrameLoaderClient::willReplaceMultipartContent()
+{
+}
+
+void EmptyFrameLoaderClient::didReplaceMultipartContent()
+{
+}
+
+void EmptyFrameLoaderClient::committedLoad(DocumentLoader*, const char*, int)
+{
+}
+
+void EmptyFrameLoaderClient::finishedLoading(DocumentLoader*)
+{
+}
+
+ResourceError EmptyFrameLoaderClient::cancelledError(const ResourceRequest&) const
+{
+    return { ResourceError::Type::Cancellation };
+}
+
+ResourceError EmptyFrameLoaderClient::blockedError(const ResourceRequest&) const
+{
+    return { };
+}
+
+ResourceError EmptyFrameLoaderClient::blockedByContentBlockerError(const ResourceRequest&) const
+{
+    return { };
+}
+
+ResourceError EmptyFrameLoaderClient::cannotShowURLError(const ResourceRequest&) const
+{
+    return { };
+}
+
+ResourceError EmptyFrameLoaderClient::interruptedForPolicyChangeError(const ResourceRequest&) const
+{
+    return { };
+}
+
+#if ENABLE(CONTENT_FILTERING)
+
+ResourceError EmptyFrameLoaderClient::blockedByContentFilterError(const ResourceRequest&) const
+{
+    return { };
+}
+
+#endif
+
+ResourceError EmptyFrameLoaderClient::cannotShowMIMETypeError(const ResourceResponse&) const
+{
+    return { };
+}
+
+ResourceError EmptyFrameLoaderClient::fileDoesNotExistError(const ResourceResponse&) const
+{
+    return { };
+}
+
+ResourceError EmptyFrameLoaderClient::pluginWillHandleLoadError(const ResourceResponse&) const
+{
+    return { };
+}
+
+bool EmptyFrameLoaderClient::shouldFallBack(const ResourceError&) const
+{
+    return false;
+}
+
+bool EmptyFrameLoaderClient::canHandleRequest(const ResourceRequest&) const
+{
+    return false;
+}
+
+bool EmptyFrameLoaderClient::canShowMIMEType(const String&) const
+{
+    return false;
+}
+
+bool EmptyFrameLoaderClient::canShowMIMETypeAsHTML(const String&) const
+{
+    return false;
+}
+
+bool EmptyFrameLoaderClient::representationExistsForURLScheme(const String&) const
+{
+    return false;
+}
+
+String EmptyFrameLoaderClient::generatedMIMETypeForURLScheme(const String&) const
+{
+    return emptyString();
+}
+
+void EmptyFrameLoaderClient::frameLoadCompleted()
+{
+}
+
+void EmptyFrameLoaderClient::restoreViewState()
+{
+}
+
+void EmptyFrameLoaderClient::provisionalLoadStarted()
+{
+}
+
+void EmptyFrameLoaderClient::didFinishLoad()
+{
+}
+
+void EmptyFrameLoaderClient::prepareForDataSourceReplacement()
+{
+}
+
+void EmptyFrameLoaderClient::updateCachedDocumentLoader(DocumentLoader&)
+{
+}
+
+void EmptyFrameLoaderClient::setTitle(const StringWithDirection&, const URL&)
+{
+}
+
+String EmptyFrameLoaderClient::userAgent(const URL&) const
+{
+    return emptyString();
+}
+
+void EmptyFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame*)
+{
+}
+
+void EmptyFrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame*)
+{
+}
+
+#if PLATFORM(IOS_FAMILY)
+
+void EmptyFrameLoaderClient::didRestoreFrameHierarchyForCachedFrame()
+{
+}
+
+#endif
+
+void EmptyFrameLoaderClient::transitionToCommittedForNewPage()
+{
+}
+
+
+void EmptyFrameLoaderClient::didRestoreFromBackForwardCache()
+{
+}
+
+
+void EmptyFrameLoaderClient::updateGlobalHistory()
+{
+}
+
+void EmptyFrameLoaderClient::updateGlobalHistoryRedirectLinks()
+{
+}
+
+bool EmptyFrameLoaderClient::shouldGoToHistoryItem(HistoryItem&) const
+{
+    return false;
+}
+
+void EmptyFrameLoaderClient::saveViewStateToItem(HistoryItem&)
+{
+}
+
+bool EmptyFrameLoaderClient::canCachePage() const
+{
+    return false;
+}
+
+void EmptyFrameLoaderClient::didDisplayInsecureContent()
+{
+}
+
+void EmptyFrameLoaderClient::didRunInsecureContent(SecurityOrigin&, const URL&)
+{
+}
+
+void EmptyFrameLoaderClient::didDetectXSS(const URL&, bool)
+{
+}
+
+ObjectContentType EmptyFrameLoaderClient::objectContentType(const URL&, const String&)
+{
+    return ObjectContentType::None;
+}
+
+String EmptyFrameLoaderClient::overrideMediaType() const
+{
+    return { };
+}
+
+void EmptyFrameLoaderClient::redirectDataToPlugin(Widget&)
+{
+}
+
+void EmptyFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld&)
+{
+}
+
+#if PLATFORM(COCOA)
+
+RemoteAXObjectRef EmptyFrameLoaderClient::accessibilityRemoteObject()
+{
+    return nullptr;
+}
+
+void EmptyFrameLoaderClient::willCacheResponse(DocumentLoader*, unsigned long, NSCachedURLResponse *response, CompletionHandler<void(NSCachedURLResponse *)>&& completionHandler) const
+{
+    completionHandler(response);
+}
+
+#endif
+
+#if USE(CFURLCONNECTION)
+
+bool EmptyFrameLoaderClient::shouldCacheResponse(DocumentLoader*, unsigned long, const ResourceResponse&, const unsigned char*, unsigned long long)
+{
+    return true;
+}
+
+#endif
+
+bool EmptyFrameLoaderClient::isEmptyFrameLoaderClient() const
+{
+    return true;
+}
+
+void EmptyFrameLoaderClient::prefetchDNS(const String&)
+{
+}
+
+#if USE(QUICK_LOOK)
+
+RefPtr<LegacyPreviewLoaderClient> EmptyFrameLoaderClient::createPreviewLoaderClient(const String&, const String&)
+{
+    return nullptr;
+}
+
+#endif
+
+#if ENABLE(RESOURCE_LOAD_STATISTICS)
+
+bool EmptyFrameLoaderClient::hasFrameSpecificStorageAccess()
+{
+    return false;
+}
+
+#endif
 
 inline EmptyFrameNetworkingContext::EmptyFrameNetworkingContext()
     : FrameNetworkingContext { nullptr }

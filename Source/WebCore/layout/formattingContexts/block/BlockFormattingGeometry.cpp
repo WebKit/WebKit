@@ -70,8 +70,8 @@ ContentHeightAndMargin BlockFormattingGeometry::inFlowNonReplacedContentHeightAn
 
         auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
         auto computedVerticalMargin = FormattingGeometry::computedVerticalMargin(layoutBox, horizontalConstraints);
-        auto nonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) }; 
-        auto borderAndPaddingTop = boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0);
+        auto nonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.value_or(0), computedVerticalMargin.after.value_or(0) }; 
+        auto borderAndPaddingTop = boxGeometry.borderTop() + boxGeometry.paddingTop().value_or(0);
         auto height = overriddenVerticalValues.height ? overriddenVerticalValues.height.value() : computedHeight(layoutBox);
 
         if (height)
@@ -155,14 +155,14 @@ ContentWidthAndMargin BlockFormattingGeometry::inFlowNonReplacedContentWidthAndM
         UsedHorizontalMargin usedHorizontalMargin;
         auto borderLeft = boxGeometry.borderLeft();
         auto borderRight = boxGeometry.borderRight();
-        auto paddingLeft = boxGeometry.paddingLeft().valueOr(0);
-        auto paddingRight = boxGeometry.paddingRight().valueOr(0);
+        auto paddingLeft = boxGeometry.paddingLeft().value_or(0);
+        auto paddingRight = boxGeometry.paddingRight().value_or(0);
 
         // #1
         if (width) {
-            auto horizontalSpaceForMargin = containingBlockWidth - (computedHorizontalMargin.start.valueOr(0) + borderLeft + paddingLeft + *width + paddingRight + borderRight + computedHorizontalMargin.end.valueOr(0));
+            auto horizontalSpaceForMargin = containingBlockWidth - (computedHorizontalMargin.start.value_or(0) + borderLeft + paddingLeft + *width + paddingRight + borderRight + computedHorizontalMargin.end.value_or(0));
             if (horizontalSpaceForMargin < 0)
-                usedHorizontalMargin = { computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) };
+                usedHorizontalMargin = { computedHorizontalMargin.start.value_or(0), computedHorizontalMargin.end.value_or(0) };
         }
 
         // #2
@@ -190,7 +190,7 @@ ContentWidthAndMargin BlockFormattingGeometry::inFlowNonReplacedContentWidthAndM
 
         // #4
         if (!width) {
-            usedHorizontalMargin = { computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) };
+            usedHorizontalMargin = { computedHorizontalMargin.start.value_or(0), computedHorizontalMargin.end.value_or(0) };
             width = containingBlockWidth - (usedHorizontalMargin.start + borderLeft + paddingLeft + paddingRight + borderRight + usedHorizontalMargin.end);
         }
 
@@ -203,8 +203,8 @@ ContentWidthAndMargin BlockFormattingGeometry::inFlowNonReplacedContentWidthAndM
         auto shouldApplyCenterAlignForBlockContent = containingBlockStyle.textAlign() == TextAlignMode::WebKitCenter && (computedHorizontalMargin.start || computedHorizontalMargin.end);
         if (shouldApplyCenterAlignForBlockContent) {
             auto borderBoxWidth = (borderLeft + paddingLeft  + *width + paddingRight + borderRight);
-            auto marginStart = computedHorizontalMargin.start.valueOr(0);
-            auto marginEnd = computedHorizontalMargin.end.valueOr(0);
+            auto marginStart = computedHorizontalMargin.start.value_or(0);
+            auto marginEnd = computedHorizontalMargin.end.value_or(0);
             auto centeredLogicalLeftForMarginBox = std::max((containingBlockWidth - borderBoxWidth - marginStart - marginEnd) / 2, 0_lu);
             usedHorizontalMargin.start = centeredLogicalLeftForMarginBox + marginStart;
             usedHorizontalMargin.end = containingBlockWidth - borderBoxWidth - marginStart + marginEnd;
@@ -326,7 +326,7 @@ ContentWidthAndMargin BlockFormattingGeometry::computedContentWidthAndMargin(con
             contentWidthAndMargin = maxWidthAndMargin;
     }
 
-    auto minWidth = computedMinWidth(layoutBox, availableWidth).valueOr(0);
+    auto minWidth = computedMinWidth(layoutBox, availableWidth).value_or(0);
     auto minWidthAndMargin = compute(horizontalConstraints, minWidth);
     if (contentWidthAndMargin.contentWidth < minWidthAndMargin.contentWidth)
         contentWidthAndMargin = minWidthAndMargin;
@@ -337,12 +337,12 @@ IntrinsicWidthConstraints BlockFormattingGeometry::intrinsicWidthConstraints(con
 {
     auto fixedMarginBorderAndPadding = [&](auto& layoutBox) {
         auto& style = layoutBox.style();
-        return fixedValue(style.marginStart()).valueOr(0)
+        return fixedValue(style.marginStart()).value_or(0)
             + LayoutUnit { style.borderLeftWidth() }
-            + fixedValue(style.paddingLeft()).valueOr(0)
-            + fixedValue(style.paddingRight()).valueOr(0)
+            + fixedValue(style.paddingLeft()).value_or(0)
+            + fixedValue(style.paddingRight()).value_or(0)
             + LayoutUnit { style.borderRightWidth() }
-            + fixedValue(style.marginEnd()).valueOr(0);
+            + fixedValue(style.marginEnd()).value_or(0);
     };
 
     auto computedIntrinsicWidthConstraints = [&]() -> IntrinsicWidthConstraints {

@@ -186,7 +186,7 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header, ContentSecuri
         m_hasAPIPolicy = true;
     }
 
-    m_cachedResponseHeaders = WTF::nullopt;
+    m_cachedResponseHeaders = std::nullopt;
 
     // RFC2616, section 4.2 specifies that headers appearing multiple times can
     // be combined with a comma. Walk the header string, and parse each comma

@@ -196,7 +196,7 @@ public:
         m_ref16 = MacroAssemblerCodeRef<Yarr16BitPtrTag>();
         m_matchOnly8 = MacroAssemblerCodeRef<YarrMatchOnly8BitPtrTag>();
         m_matchOnly16 = MacroAssemblerCodeRef<YarrMatchOnly16BitPtrTag>();
-        m_failureReason = WTF::nullopt;
+        m_failureReason = std::nullopt;
     }
 
 private:

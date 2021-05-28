@@ -130,7 +130,7 @@ Optional<FloatSize> getVideoResolutionFromCaps(const GstCaps* caps)
 {
     if (!doCapsHaveType(caps, GST_VIDEO_CAPS_TYPE_PREFIX)) {
         GST_WARNING("Failed to get the video resolution, these are not a video caps");
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     int width = 0, height = 0;
@@ -145,7 +145,7 @@ Optional<FloatSize> getVideoResolutionFromCaps(const GstCaps* caps)
         GstVideoInfo info;
         gst_video_info_init(&info);
         if (!gst_video_info_from_caps(&info, caps))
-            return WTF::nullopt;
+            return std::nullopt;
 
         width = GST_VIDEO_INFO_WIDTH(&info);
         height = GST_VIDEO_INFO_HEIGHT(&info);
@@ -153,7 +153,7 @@ Optional<FloatSize> getVideoResolutionFromCaps(const GstCaps* caps)
         pixelAspectRatioDenominator = GST_VIDEO_INFO_PAR_D(&info);
     }
 
-    return makeOptional(FloatSize(width, height * (static_cast<float>(pixelAspectRatioDenominator) / static_cast<float>(pixelAspectRatioNumerator))));
+    return std::make_optional(FloatSize(width, height * (static_cast<float>(pixelAspectRatioDenominator) / static_cast<float>(pixelAspectRatioNumerator))));
 }
 
 bool getSampleVideoInfo(GstSample* sample, GstVideoInfo& videoInfo)
@@ -253,7 +253,7 @@ bool ensureGStreamerInitialized()
             WTFLogAlways("The USE_PLAYBIN3 variable was detected in the environment. Expect playback issues or please unset it.");
 
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-        Vector<String> parameters = s_UIProcessCommandLineOptions.valueOr(extractGStreamerOptionsFromCommandLine());
+        Vector<String> parameters = s_UIProcessCommandLineOptions.value_or(extractGStreamerOptionsFromCommandLine());
         s_UIProcessCommandLineOptions.reset();
         char** argv = g_new0(char*, parameters.size() + 2);
         int argc = parameters.size() + 1;

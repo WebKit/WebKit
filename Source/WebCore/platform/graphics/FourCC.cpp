@@ -32,7 +32,7 @@ Optional<FourCC> FourCC::fromString(const String& stringValue)
 {
     auto asciiValue = stringValue.ascii();
     if (asciiValue.length() != 4)
-        return WTF::nullopt;
+        return std::nullopt;
 
     const char* data = asciiValue.data();
     ASSERT(asciiValue.data());

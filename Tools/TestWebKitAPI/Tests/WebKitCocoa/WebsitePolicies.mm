@@ -371,7 +371,7 @@ TEST(WebpagePreferences, WebsitePoliciesPlayAfterPreventedAutoplay)
 
     NSPoint playButtonClickPoint = NSMakePoint(20, 256);
 
-    receivedAutoplayEvent = WTF::nullopt;
+    receivedAutoplayEvent = std::nullopt;
     NSURLRequest *jsPlayRequest = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"js-play-with-controls" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:jsPlayRequest];
     [webView waitForMessage:@"loaded"];
@@ -383,7 +383,7 @@ TEST(WebpagePreferences, WebsitePoliciesPlayAfterPreventedAutoplay)
     ASSERT_TRUE(*receivedAutoplayEventFlags & _WKAutoplayEventFlagsHasAudio);
     ASSERT_TRUE(*receivedAutoplayEventFlags & _WKAutoplayEventFlagsPlaybackWasPrevented);
 
-    receivedAutoplayEvent = WTF::nullopt;
+    receivedAutoplayEvent = std::nullopt;
     [webView loadHTMLString:@"" baseURL:nil];
 
     NSURLRequest *autoplayRequest = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"autoplay-with-controls" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
@@ -398,7 +398,7 @@ TEST(WebpagePreferences, WebsitePoliciesPlayAfterPreventedAutoplay)
     ASSERT_TRUE(*receivedAutoplayEventFlags & _WKAutoplayEventFlagsHasAudio);
     ASSERT_TRUE(*receivedAutoplayEventFlags & _WKAutoplayEventFlagsPlaybackWasPrevented);
 
-    receivedAutoplayEvent = WTF::nullopt;
+    receivedAutoplayEvent = std::nullopt;
     [webView loadHTMLString:@"" baseURL:nil];
 
     NSURLRequest *noAutoplayRequest = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"no-autoplay-with-controls" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
@@ -407,9 +407,9 @@ TEST(WebpagePreferences, WebsitePoliciesPlayAfterPreventedAutoplay)
     [webView mouseDownAtPoint:playButtonClickPoint simulatePressure:NO];
     [webView mouseUpAtPoint:playButtonClickPoint];
     [webView waitForMessage:@"played"];
-    ASSERT_TRUE(receivedAutoplayEvent == WTF::nullopt);
+    ASSERT_TRUE(receivedAutoplayEvent == std::nullopt);
 
-    receivedAutoplayEvent = WTF::nullopt;
+    receivedAutoplayEvent = std::nullopt;
     [webView loadHTMLString:@"" baseURL:nil];
 
     [delegate setAutoplayPolicyForURL:^(NSURL *) {
@@ -446,7 +446,7 @@ TEST(WebpagePreferences, WebsitePoliciesPlayingWithUserGesture)
     [webView setNavigationDelegate:delegate.get()];
     [webView setUIDelegate:delegate.get()];
 
-    receivedAutoplayEvent = WTF::nullopt;
+    receivedAutoplayEvent = std::nullopt;
 
 #if PLATFORM(MAC)
     NSPoint playButtonClickPoint = NSMakePoint(20, 580);
@@ -467,7 +467,7 @@ TEST(WebpagePreferences, WebsitePoliciesPlayingWithUserGesture)
     ASSERT_TRUE(*receivedAutoplayEventFlags & _WKAutoplayEventFlagsHasAudio);
     ASSERT_FALSE(*receivedAutoplayEventFlags & _WKAutoplayEventFlagsMediaIsMainContent);
 
-    receivedAutoplayEvent = WTF::nullopt;
+    receivedAutoplayEvent = std::nullopt;
 
     request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"video-with-play-button" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:request];
@@ -502,7 +502,7 @@ TEST(WebpagePreferences, WebsitePoliciesPlayingWithoutInterference)
     [webView setNavigationDelegate:delegate.get()];
     [webView setUIDelegate:delegate.get()];
 
-    receivedAutoplayEvent = WTF::nullopt;
+    receivedAutoplayEvent = std::nullopt;
     NSURLRequest *jsPlayRequest = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"js-autoplay-audio" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:jsPlayRequest];
     runUntilReceivesAutoplayEvent(_WKAutoplayEventDidAutoplayMediaPastThresholdWithoutUserInterference);
@@ -526,20 +526,20 @@ TEST(WebpagePreferences, WebsitePoliciesUserInterferenceWithPlaying)
     [webView setNavigationDelegate:delegate.get()];
     [webView setUIDelegate:delegate.get()];
 
-    receivedAutoplayEvent = WTF::nullopt;
+    receivedAutoplayEvent = std::nullopt;
     NSURLRequest *jsPlayRequest = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"js-play-with-controls" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
     [webView loadRequest:jsPlayRequest];
     [webView waitForMessage:@"playing"];
-    ASSERT_TRUE(receivedAutoplayEvent == WTF::nullopt);
+    ASSERT_TRUE(receivedAutoplayEvent == std::nullopt);
 
     WKPageSetMuted([webView _pageForTesting], _WKMediaAudioMuted);
     runUntilReceivesAutoplayEvent(_WKAutoplayEventUserDidInterfereWithPlayback);
     ASSERT_TRUE(*receivedAutoplayEventFlags & _WKAutoplayEventFlagsHasAudio);
 
-    receivedAutoplayEvent = WTF::nullopt;
+    receivedAutoplayEvent = std::nullopt;
     [webView loadRequest:jsPlayRequest];
     [webView waitForMessage:@"playing"];
-    ASSERT_TRUE(receivedAutoplayEvent == WTF::nullopt);
+    ASSERT_TRUE(receivedAutoplayEvent == std::nullopt);
 
 #if PLATFORM(MAC)
     const NSPoint muteButtonClickPoint = NSMakePoint(80, 256);
@@ -552,10 +552,10 @@ TEST(WebpagePreferences, WebsitePoliciesUserInterferenceWithPlaying)
     runUntilReceivesAutoplayEvent(_WKAutoplayEventUserDidInterfereWithPlayback);
     ASSERT_TRUE(*receivedAutoplayEventFlags & _WKAutoplayEventFlagsHasAudio);
 
-    receivedAutoplayEvent = WTF::nullopt;
+    receivedAutoplayEvent = std::nullopt;
     [webView loadRequest:jsPlayRequest];
     [webView waitForMessage:@"playing"];
-    ASSERT_TRUE(receivedAutoplayEvent == WTF::nullopt);
+    ASSERT_TRUE(receivedAutoplayEvent == std::nullopt);
 
 #if PLATFORM(MAC)
     const NSPoint playButtonClickPoint = NSMakePoint(20, 256);
@@ -765,7 +765,7 @@ TEST(WebpagePreferences, WebsitePoliciesUpdates)
     [webView _updateWebpagePreferences:preferences.get()];
 
     // A script should no longer be able to autoplay media.
-    receivedAutoplayEvent = WTF::nullopt;
+    receivedAutoplayEvent = std::nullopt;
     [webView stringByEvaluatingJavaScript:@"playVideo()"];
     runUntilReceivesAutoplayEvent(_WKAutoplayEventDidPreventFromAutoplaying);
 }
@@ -828,7 +828,7 @@ TEST(WebpagePreferences, WebsitePoliciesAutoplayQuirks)
     [webView waitForMessage:@"did-not-play"];
     [webView waitForMessage:@"on-pause"];
 
-    receivedAutoplayEvent = WTF::nullopt;
+    receivedAutoplayEvent = std::nullopt;
     [webView loadHTMLString:@"" baseURL:nil];
 
     NSURLRequest *requestWithAudioInFrame = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"autoplay-check-in-iframe" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
@@ -846,7 +846,7 @@ TEST(WebpagePreferences, WebsitePoliciesAutoplayQuirks)
     [webView waitForMessage:@"did-not-play"];
     [webView waitForMessage:@"on-pause"];
 
-    receivedAutoplayEvent = WTF::nullopt;
+    receivedAutoplayEvent = std::nullopt;
     [webView loadHTMLString:@"" baseURL:nil];
 
     NSURLRequest *requestThatInheritsGesture = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"autoplay-inherits-gesture-from-document" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
@@ -874,7 +874,7 @@ TEST(WebpagePreferences, WebsitePoliciesPerDocumentAutoplayBehaviorQuirks)
     WKPreferencesSetNeedsSiteSpecificQuirks(preferences.get(), true);
     WKPageGroupSetPreferences(WKPageGetPageGroup([webView _pageForTesting]), preferences.get());
 
-    receivedAutoplayEvent = WTF::nullopt;
+    receivedAutoplayEvent = std::nullopt;
 
     NSURLRequest *requestWithMultipleMediaElements = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"autoplaying-multiple-media-elements" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
 
@@ -903,7 +903,7 @@ TEST(WebpagePreferences, WebsitePoliciesPerDocumentAutoplayBehaviorQuirks)
 
     // Now let's test this without the quirk.
     [webView loadHTMLString:@"" baseURL:nil];
-    receivedAutoplayEvent = WTF::nullopt;
+    receivedAutoplayEvent = std::nullopt;
 
     [delegate setAllowedAutoplayQuirksForURL:^_WKWebsiteAutoplayQuirk(NSURL *url) {
         return 0;
@@ -951,7 +951,7 @@ TEST(WebpagePreferences, WebsitePoliciesAutoplayQuirksAsyncPolicyDelegate)
     [webView waitForMessage:@"did-not-play"];
     [webView waitForMessage:@"on-pause"];
 
-    receivedAutoplayEvent = WTF::nullopt;
+    receivedAutoplayEvent = std::nullopt;
     [webView loadHTMLString:@"" baseURL:nil];
 
     NSURLRequest *requestWithAudioInFrame = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"autoplay-check-in-iframe" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];

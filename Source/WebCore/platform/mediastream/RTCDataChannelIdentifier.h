@@ -51,12 +51,12 @@ inline Optional<RTCDataChannelIdentifier> RTCDataChannelIdentifier::decode(Decod
     Optional<ProcessIdentifier> processIdentifier;
     decoder >> processIdentifier;
     if (!processIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<RTCDataChannelLocalIdentifier> channelIdentifier;
     decoder >> channelIdentifier;
     if (!channelIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
     return RTCDataChannelIdentifier { *processIdentifier, *channelIdentifier };
 }
 

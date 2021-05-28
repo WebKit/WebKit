@@ -78,7 +78,7 @@ bool WebSocketExtensionDeflateFrame::processResponse(const HashMap<String, Strin
     int windowBits = 15;
     auto parameter = serverParameters.find("max_window_bits");
     if (parameter != serverParameters.end()) {
-        windowBits = parseIntegerAllowingTrailingJunk<int>(parameter->value).valueOr(0);
+        windowBits = parseIntegerAllowingTrailingJunk<int>(parameter->value).value_or(0);
         if (windowBits < 8 || windowBits > 15) {
             m_failureReason = "Received invalid max_window_bits parameter"_s;
             return false;

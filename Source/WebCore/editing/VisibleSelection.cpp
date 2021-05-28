@@ -162,7 +162,7 @@ RefPtr<Document> VisibleSelection::document() const
 Optional<SimpleRange> VisibleSelection::firstRange() const
 {
     if (isNoneOrOrphaned())
-        return WTF::nullopt;
+        return std::nullopt;
     // FIXME: Seems likely we don't need to call parentAnchoredEquivalent here.
     return makeSimpleRange(m_start.parentAnchoredEquivalent(), m_end.parentAnchoredEquivalent());
 }
@@ -170,7 +170,7 @@ Optional<SimpleRange> VisibleSelection::firstRange() const
 Optional<SimpleRange> VisibleSelection::toNormalizedRange() const
 {
     if (isNoneOrOrphaned())
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Make sure we have an updated layout since this function is called
     // in the course of running edit commands which modify the DOM.
@@ -180,7 +180,7 @@ Optional<SimpleRange> VisibleSelection::toNormalizedRange() const
 
     // Check again, because updating layout can clear the selection.
     if (isNoneOrOrphaned())
-        return WTF::nullopt;
+        return std::nullopt;
 
     Position s, e;
     if (isCaret()) {

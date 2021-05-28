@@ -104,11 +104,11 @@ Optional<PolicyCheckIdentifier> PolicyCheckIdentifier::decode(Decoder& decoder)
 {
     auto process = ProcessIdentifier::decode(decoder);
     if (!process)
-        return WTF::nullopt;
+        return std::nullopt;
 
     uint64_t policyCheck;
     if (!decoder.decode(policyCheck))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return PolicyCheckIdentifier { *process, policyCheck };
 }
@@ -208,17 +208,17 @@ Optional<SystemPreviewInfo> SystemPreviewInfo::decode(Decoder& decoder)
     Optional<ElementContext> element;
     decoder >> element;
     if (!element)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<IntRect> previewRect;
     decoder >> previewRect;
     if (!previewRect)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> isPreview;
     decoder >> isPreview;
     if (!isPreview)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return { { WTFMove(*element), WTFMove(*previewRect), WTFMove(*isPreview) } };
 }

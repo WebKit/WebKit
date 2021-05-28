@@ -59,17 +59,17 @@ template<class Decoder> inline Optional<TextList> TextList::decode(Decoder& deco
     Optional<uint8_t> style;
     decoder >> style;
     if (!style)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<int> startingItemNumber;
     decoder >> startingItemNumber;
     if (!startingItemNumber)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> ordered;
     decoder >> ordered;
     if (!ordered)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ static_cast<ListStyleType>(WTFMove(*style)), WTFMove(*startingItemNumber), WTFMove(*ordered) }};
 }

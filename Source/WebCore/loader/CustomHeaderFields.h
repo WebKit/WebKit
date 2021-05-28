@@ -54,12 +54,12 @@ Optional<CustomHeaderFields> CustomHeaderFields::decode(Decoder& decoder)
     Optional<Vector<HTTPHeaderField>> fields;
     decoder >> fields;
     if (!fields)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<Vector<String>> thirdPartyDomains;
     decoder >> thirdPartyDomains;
     if (!thirdPartyDomains)
-        return WTF::nullopt;
+        return std::nullopt;
     
     return {{ WTFMove(*fields), WTFMove(*thirdPartyDomains) }};
 }

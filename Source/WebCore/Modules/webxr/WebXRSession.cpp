@@ -376,7 +376,7 @@ void WebXRSession::didCompleteShutdown()
     // Resolve end promise from XRSession::end()
     if (m_endPromise) {
         m_endPromise->resolve();
-        m_endPromise = WTF::nullopt;
+        m_endPromise = std::nullopt;
     }
 
     // From https://immersive-web.github.io/webxr/#shut-down-the-session

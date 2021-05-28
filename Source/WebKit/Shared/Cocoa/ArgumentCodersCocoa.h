@@ -76,7 +76,7 @@ Optional<RetainPtr<T>> decode(Decoder& decoder, NSArray<Class> *allowedClasses)
 {
     auto result = decodeObject(decoder, allowedClasses);
     if (!result)
-        return WTF::nullopt;
+        return std::nullopt;
     ASSERT(!*result || isObjectClassAllowed((*result).get(), allowedClasses));
     return { *result };
 }

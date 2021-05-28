@@ -574,7 +574,7 @@ LengthBox RenderThemeIOS::popupInternalPaddingBox(const RenderStyle& style, cons
     float padding = MenuListButtonPaddingAfter;
     if (settings.iOSFormControlRefreshEnabled()) {
         auto emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_EMS);
-        padding = emSize->computeLength<float>(CSSToLengthConversionData(&style, nullptr, nullptr, nullptr, 1.0, WTF::nullopt));
+        padding = emSize->computeLength<float>(CSSToLengthConversionData(&style, nullptr, nullptr, nullptr, 1.0, std::nullopt));
     }
 
     if (style.appearance() == MenulistButtonPart) {
@@ -1123,7 +1123,7 @@ void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* elemen
     // Since the element might not be in a document, just pass nullptr for the root element style,
     // the parent element style, and the render view.
     auto emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_EMS);
-    int pixels = emSize->computeLength<int>(CSSToLengthConversionData(&style, nullptr, nullptr, nullptr, 1.0, WTF::nullopt));
+    int pixels = emSize->computeLength<int>(CSSToLengthConversionData(&style, nullptr, nullptr, nullptr, 1.0, std::nullopt));
     style.setPaddingBox(LengthBox(0, pixels, 0, pixels));
 
     if (!element)
@@ -1354,7 +1354,7 @@ static inline Optional<Color> systemColorFromCSSValueSystemColorInformation(CSSV
         return systemColor;
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static Optional<Color> systemColorFromCSSValueID(CSSValueID cssValueID, bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
@@ -1366,7 +1366,7 @@ static Optional<Color> systemColorFromCSSValueID(CSSValueID cssValueID, bool use
             return systemColorFromCSSValueSystemColorInformation(cssValueSystemColorInformation, useDarkAppearance);
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static RenderThemeIOS::CSSValueToSystemColorMap& globalCSSValueToSystemColorMap()
@@ -2562,7 +2562,7 @@ void RenderThemeIOS::paintMenuListButtonDecorationsWithFormControlRefresh(const 
     }
 
     auto emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_EMS);
-    auto emPixels = emSize->computeLength<float>(CSSToLengthConversionData(&style, nullptr, nullptr, nullptr, 1.0, WTF::nullopt));
+    auto emPixels = emSize->computeLength<float>(CSSToLengthConversionData(&style, nullptr, nullptr, nullptr, 1.0, std::nullopt));
     auto glyphScale = 0.65f * emPixels / glyphSize.width();
     glyphSize = glyphScale * glyphSize;
 
@@ -2590,7 +2590,7 @@ void RenderThemeIOS::adjustSearchFieldDecorationPartStyle(RenderStyle& style, co
     constexpr int searchFieldDecorationEmSize = 1;
     constexpr int searchFieldDecorationMargin = 4;
 
-    CSSToLengthConversionData conversionData(&style, nullptr, nullptr, nullptr, 1.0, WTF::nullopt);
+    CSSToLengthConversionData conversionData(&style, nullptr, nullptr, nullptr, 1.0, std::nullopt);
 
     auto emSize = CSSPrimitiveValue::create(searchFieldDecorationEmSize, CSSUnitType::CSS_EMS);
     auto size = emSize->computeLength<float>(conversionData);

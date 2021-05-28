@@ -102,7 +102,7 @@ public:
     Optional<bool> writable() const
     {
         if (!hasWritable())
-            return WTF::nullopt;
+            return std::nullopt;
         return extractTriState(WritableShift) == TriState::True;
     }
 
@@ -114,7 +114,7 @@ public:
     Optional<bool> configurable() const
     {
         if (!hasConfigurable())
-            return WTF::nullopt;
+            return std::nullopt;
         return extractTriState(ConfigurableShift) == TriState::True;
     }
 
@@ -126,7 +126,7 @@ public:
     Optional<bool> enumerable() const
     {
         if (!hasEnumerable())
-            return WTF::nullopt;
+            return std::nullopt;
         return extractTriState(EnumerableShift) == TriState::True;
     }
 

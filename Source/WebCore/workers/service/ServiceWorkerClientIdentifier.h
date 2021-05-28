@@ -63,12 +63,12 @@ Optional<ServiceWorkerClientIdentifier> ServiceWorkerClientIdentifier::decode(De
     Optional<SWServerConnectionIdentifier> serverConnectionIdentifier;
     decoder >> serverConnectionIdentifier;
     if (!serverConnectionIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<DocumentIdentifier> contextIdentifier;
     decoder >> contextIdentifier;
     if (!contextIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return { { *serverConnectionIdentifier, *contextIdentifier } };
 }

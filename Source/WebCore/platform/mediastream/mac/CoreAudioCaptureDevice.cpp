@@ -127,7 +127,7 @@ Optional<CoreAudioCaptureDevice> CoreAudioCaptureDevice::create(uint32_t deviceI
     String persistentID;
     String label;
     if (!getDeviceInfo(deviceID, type, persistentID, label))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return CoreAudioCaptureDevice(deviceID, persistentID, type, label, groupID.isNull() ? persistentID : groupID);
 }

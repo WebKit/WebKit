@@ -75,37 +75,37 @@ public:
         Optional<MediaTime> presentationTime;
         decoder >> presentationTime;
         if (!presentationTime)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<MediaTime> duration;
         decoder >> duration;
         if (!duration)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<String> sourceID;
         decoder >> sourceID;
         if (!sourceID)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<String> identifier;
         decoder >> identifier;
         if (!identifier)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<String> originalStartTime;
         decoder >> originalStartTime;
         if (!originalStartTime)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<String> settings;
         decoder >> settings;
         if (!settings)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<String> cueText;
         decoder >> cueText;
         if (!cueText)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{
             WTFMove(*presentationTime),

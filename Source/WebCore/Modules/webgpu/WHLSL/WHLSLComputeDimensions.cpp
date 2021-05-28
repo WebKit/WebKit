@@ -57,7 +57,7 @@ Optional<ComputeDimensions> computeDimensions(Program& program, AST::FunctionDef
             }), functionAttribute);
             if (!success) {
                 // Cannot declare multiple numthread attributes on a single function.
-                return WTF::nullopt;
+                return std::nullopt;
             }
         }
     }

@@ -363,7 +363,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     ASSERT(_eventHandler);
     {
         JSC::JSLock::DropAllLocks dropAllLocks(commonVM());
-        UserGestureIndicator gestureIndicator(_eventHandler->currentEventIsUserGesture() ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : WTF::nullopt);
+        UserGestureIndicator gestureIndicator(_eventHandler->currentEventIsUserGesture() ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : std::nullopt);
         acceptedEvent = [_pluginPackage.get() pluginFuncs]->event(plugin, event);
     }
     [self didCallPlugInFunction];

@@ -86,7 +86,7 @@ bool InlineFormattingQuirks::inlineLevelBoxAffectsLineBox(const LineBox::InlineL
         }
         // Non-root inline boxes (e.g. <span>).
         auto& boxGeometry = formattingContext().geometryForBox(inlineLevelBox.layoutBox());
-        if (boxGeometry.horizontalBorder() || boxGeometry.horizontalPadding().valueOr(0_lu)) {
+        if (boxGeometry.horizontalBorder() || boxGeometry.horizontalPadding().value_or(0_lu)) {
             // Horizontal border and padding make the inline box stretch the line (e.g. <span style="padding: 10px;"></span>).
             return true;
         }

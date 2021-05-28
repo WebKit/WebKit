@@ -64,7 +64,7 @@ struct FormDataElement {
         Optional<Data> data;
         decoder >> data;
         if (!data)
-            return WTF::nullopt;
+            return std::nullopt;
         return FormDataElement(WTFMove(*data));
     }
 
@@ -97,22 +97,22 @@ struct FormDataElement {
             Optional<String> filename;
             decoder >> filename;
             if (!filename)
-                return WTF::nullopt;
+                return std::nullopt;
             
             Optional<int64_t> fileStart;
             decoder >> fileStart;
             if (!fileStart)
-                return WTF::nullopt;
+                return std::nullopt;
             
             Optional<int64_t> fileLength;
             decoder >> fileLength;
             if (!fileLength)
-                return WTF::nullopt;
+                return std::nullopt;
             
             Optional<Optional<WallTime>> expectedFileModificationTime;
             decoder >> expectedFileModificationTime;
             if (!expectedFileModificationTime)
-                return WTF::nullopt;
+                return std::nullopt;
 
             return {{
                 WTFMove(*filename),
@@ -140,7 +140,7 @@ struct FormDataElement {
             Optional<URL> url;
             decoder >> url;
             if (!url)
-                return WTF::nullopt;
+                return std::nullopt;
 
             return {{ WTFMove(*url) }};
         }

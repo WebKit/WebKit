@@ -154,7 +154,7 @@ template<> Optional<TestObj::EnumType> parseEnumeration<TestObj::EnumType>(JSGlo
         return TestObj::EnumType::EnumValue2;
     if (stringValue == "EnumValue3")
         return TestObj::EnumType::EnumValue3;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<> const char* expectedEnumerationValues<TestObj::EnumType>()
@@ -194,7 +194,7 @@ template<> Optional<TestObj::Optional> parseEnumeration<TestObj::Optional>(JSGlo
         return TestObj::Optional::OptionalValue2;
     if (stringValue == "OptionalValue3")
         return TestObj::Optional::OptionalValue3;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<> const char* expectedEnumerationValues<TestObj::Optional>()
@@ -226,7 +226,7 @@ template<> Optional<AlternateEnumName> parseEnumeration<AlternateEnumName>(JSGlo
         return AlternateEnumName::EnumValue1;
     if (stringValue == "EnumValue2")
         return AlternateEnumName::EnumValue2;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<> const char* expectedEnumerationValues<AlternateEnumName>()
@@ -256,7 +256,7 @@ template<> Optional<TestObj::EnumA> parseEnumeration<TestObj::EnumA>(JSGlobalObj
     auto stringValue = value.toWTFString(&lexicalGlobalObject);
     if (stringValue == "A")
         return TestObj::EnumA::A;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<> const char* expectedEnumerationValues<TestObj::EnumA>()
@@ -288,7 +288,7 @@ template<> Optional<TestObj::EnumB> parseEnumeration<TestObj::EnumB>(JSGlobalObj
     auto stringValue = value.toWTFString(&lexicalGlobalObject);
     if (stringValue == "B")
         return TestObj::EnumB::B;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<> const char* expectedEnumerationValues<TestObj::EnumB>()
@@ -320,7 +320,7 @@ template<> Optional<TestObj::EnumC> parseEnumeration<TestObj::EnumC>(JSGlobalObj
     auto stringValue = value.toWTFString(&lexicalGlobalObject);
     if (stringValue == "C")
         return TestObj::EnumC::C;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<> const char* expectedEnumerationValues<TestObj::EnumC>()
@@ -354,7 +354,7 @@ template<> Optional<TestObj::Kind> parseEnumeration<TestObj::Kind>(JSGlobalObjec
         return TestObj::Kind::Quick;
     if (stringValue == "dead")
         return TestObj::Kind::Dead;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<> const char* expectedEnumerationValues<TestObj::Kind>()
@@ -386,7 +386,7 @@ template<> Optional<TestObj::Size> parseEnumeration<TestObj::Size>(JSGlobalObjec
         return TestObj::Size::Small;
     if (stringValue == "much-much-larger")
         return TestObj::Size::MuchMuchLarger;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<> const char* expectedEnumerationValues<TestObj::Size>()
@@ -418,7 +418,7 @@ template<> Optional<TestObj::Confidence> parseEnumeration<TestObj::Confidence>(J
         return TestObj::Confidence::High;
     if (stringValue == "kinda-low")
         return TestObj::Confidence::KindaLow;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<> const char* expectedEnumerationValues<TestObj::Confidence>()
@@ -656,7 +656,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
         result.nullableEnum = convert<IDLNullable<IDLEnumeration<TestObj::EnumType>>>(lexicalGlobalObject, nullableEnumValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
-        result.nullableEnum = WTF::nullopt;
+        result.nullableEnum = std::nullopt;
     JSValue nullableIntegerWithDefaultValue;
     if (isNullOrUndefined)
         nullableIntegerWithDefaultValue = jsUndefined();
@@ -668,7 +668,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
         result.nullableIntegerWithDefault = convert<IDLNullable<IDLLong>>(lexicalGlobalObject, nullableIntegerWithDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
-        result.nullableIntegerWithDefault = WTF::nullopt;
+        result.nullableIntegerWithDefault = std::nullopt;
     JSValue nullableNodeValue;
     if (isNullOrUndefined)
         nullableNodeValue = jsUndefined();
@@ -704,7 +704,7 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(JSGlobalOb
         result.nullableUnionMember = convert<IDLNullable<IDLUnion<IDLLong, IDLInterface<Node>>>>(lexicalGlobalObject, nullableUnionMemberValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
-        result.nullableUnionMember = WTF::nullopt;
+        result.nullableUnionMember = std::nullopt;
     JSValue requiredBufferSourceValueValue;
     if (isNullOrUndefined)
         requiredBufferSourceValueValue = jsUndefined();
@@ -6959,7 +6959,7 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunction_methodWithOptionalR
     UNUSED_PARAM(callFrame);
     auto& impl = castedThis->wrapped();
     EnsureStillAliveScope argument0 = callFrame->argument(0);
-    auto record = argument0.value().isUndefined() ? WTF::nullopt : convert<IDLNullable<IDLRecord<IDLDOMString, IDLLong>>>(*lexicalGlobalObject, argument0.value());
+    auto record = argument0.value().isUndefined() ? std::nullopt : convert<IDLNullable<IDLRecord<IDLDOMString, IDLLong>>>(*lexicalGlobalObject, argument0.value());
     RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
     RELEASE_AND_RETURN(throwScope, JSValue::encode(toJS<IDLUndefined>(*lexicalGlobalObject, throwScope, [&]() -> decltype(auto) { return impl.methodWithOptionalRecord(WTFMove(record)); })));
 }

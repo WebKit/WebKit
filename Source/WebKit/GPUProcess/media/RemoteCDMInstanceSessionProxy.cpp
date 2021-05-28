@@ -78,14 +78,14 @@ void RemoteCDMInstanceSessionProxy::requestLicense(LicenseType type, AtomString 
 void RemoteCDMInstanceSessionProxy::updateLicense(String sessionId, LicenseType type, IPC::SharedBufferCopy&& response, LicenseUpdateCallback&& completion)
 {
     if (!response.buffer()) {
-        completion(true, { }, WTF::nullopt, WTF::nullopt, false);
+        completion(true, { }, std::nullopt, std::nullopt, false);
         return;
     }
 
     // Implement the CDMPrivate::sanitizeResponse() check here:
     auto sanitizedResponse = m_cdm->sanitizeResponse(*response.buffer());
     if (!sanitizedResponse) {
-        completion(false, { }, WTF::nullopt, WTF::nullopt, false);
+        completion(false, { }, std::nullopt, std::nullopt, false);
         return;
     }
 
@@ -99,7 +99,7 @@ void RemoteCDMInstanceSessionProxy::loadSession(LicenseType type, String session
     // Implement the CDMPrivate::sanitizeSessionId() check here:
     auto sanitizedSessionId = m_cdm->sanitizeSessionId(sessionId);
     if (!sanitizedSessionId) {
-        completion(WTF::nullopt, WTF::nullopt, WTF::nullopt, false, CDMInstanceSession::SessionLoadFailure::MismatchedSessionType);
+        completion(std::nullopt, std::nullopt, std::nullopt, false, CDMInstanceSession::SessionLoadFailure::MismatchedSessionType);
         return;
     }
 

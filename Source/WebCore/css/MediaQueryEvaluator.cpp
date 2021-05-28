@@ -260,7 +260,7 @@ static bool compareAspectRatioValue(CSSValue* value, int width, int height, Medi
 static Optional<double> doubleValue(CSSValue* value)
 {
     if (!is<CSSPrimitiveValue>(value) || !downcast<CSSPrimitiveValue>(*value).isNumber())
-        return WTF::nullopt;
+        return std::nullopt;
     return downcast<CSSPrimitiveValue>(*value).doubleValue(CSSUnitType::CSS_NUMBER);
 }
 
@@ -485,21 +485,21 @@ static bool gridEvaluate(CSSValue* value, const CSSToLengthConversionData&, Fram
 static Optional<double> computeLength(CSSValue* value, bool strict, const CSSToLengthConversionData& conversionData)
 {
     if (!is<CSSPrimitiveValue>(value))
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
     if (primitiveValue.isNumber()) {
         double value = primitiveValue.doubleValue();
         // The only unitless number value allowed in strict mode is zero.
         if (strict && value)
-            return WTF::nullopt;
+            return std::nullopt;
         return value;
     }
 
     if (primitiveValue.isLength())
         return primitiveValue.computeLength<double>(conversionData);
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static bool deviceHeightEvaluate(CSSValue* value, const CSSToLengthConversionData& conversionData, Frame& frame, MediaFeaturePrefix op)
@@ -872,7 +872,7 @@ static bool displayModeEvaluate(CSSValue* value, const CSSToLengthConversionData
 
     auto keyword = downcast<CSSPrimitiveValue>(*value).valueID();
 
-    auto manifest = frame.page() ? frame.page()->applicationManifest() : WTF::nullopt;
+    auto manifest = frame.page() ? frame.page()->applicationManifest() : std::nullopt;
     if (!manifest)
         return keyword == CSSValueBrowser;
 
@@ -926,7 +926,7 @@ bool MediaQueryEvaluator::evaluate(const MediaQueryExpression& expression) const
         return false;
     
     // Pass `nullptr` for `parentStyle` because we are in the context of a media query.
-    return function(expression.value(), { m_style, document.documentElement()->renderStyle(), nullptr, document.renderView(), 1, WTF::nullopt }, *frame, NoPrefix);
+    return function(expression.value(), { m_style, document.documentElement()->renderStyle(), nullptr, document.renderView(), 1, std::nullopt }, *frame, NoPrefix);
 }
 
 bool MediaQueryEvaluator::mediaAttributeMatches(Document& document, const String& attributeValue)

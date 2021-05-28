@@ -40,7 +40,7 @@ Ref<WebXRRenderState> WebXRRenderState::create(XRSessionMode mode)
 {
     // https://immersive-web.github.io/webxr/#initialize-the-render-state
     // depthNear, depthFar and baseLayer are initialized in the class definition
-    return adoptRef(*new WebXRRenderState(mode == XRSessionMode::Inline ? makeOptional(piOverTwoDouble) : WTF::nullopt));
+    return adoptRef(*new WebXRRenderState(mode == XRSessionMode::Inline ? std::make_optional(piOverTwoDouble) : std::nullopt));
 }
 
 WebXRRenderState::WebXRRenderState(Optional<double> inlineVerticalFieldOfView)

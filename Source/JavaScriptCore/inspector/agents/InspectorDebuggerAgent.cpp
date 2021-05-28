@@ -70,7 +70,7 @@ static Optional<JSC::Breakpoint::Action::Type> breakpointActionTypeForString(Pro
     auto type = Protocol::Helpers::parseEnumValueFromString<Protocol::Debugger::BreakpointAction::Type>(typeString);
     if (!type) {
         errorString = makeString("Unknown breakpoint action type: "_s, typeString);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     switch (*type) {
@@ -88,7 +88,7 @@ static Optional<JSC::Breakpoint::Action::Type> breakpointActionTypeForString(Pro
     }
 
     ASSERT_NOT_REACHED();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template <typename T>
@@ -129,16 +129,16 @@ static T parseBreakpointOptions(Protocol::ErrorString& errorString, RefPtr<JSON:
 
                 // Specifying an identifier is optional. They are used to correlate probe samples
                 // in the frontend across multiple backend probe actions and segregate object groups.
-                action.id = actionObject->getInteger(Protocol::Debugger::BreakpointAction::idKey).valueOr(JSC::noBreakpointActionID);
+                action.id = actionObject->getInteger(Protocol::Debugger::BreakpointAction::idKey).value_or(JSC::noBreakpointActionID);
 
-                action.emulateUserGesture = actionObject->getBoolean(Protocol::Debugger::BreakpointAction::emulateUserGestureKey).valueOr(false);
+                action.emulateUserGesture = actionObject->getBoolean(Protocol::Debugger::BreakpointAction::emulateUserGestureKey).value_or(false);
 
                 actions.append(WTFMove(action));
             }
         }
 
-        autoContinue = options->getBoolean(Protocol::Debugger::BreakpointOptions::autoContinueKey).valueOr(false);
-        ignoreCount = options->getInteger(Protocol::Debugger::BreakpointOptions::ignoreCountKey).valueOr(0);
+        autoContinue = options->getBoolean(Protocol::Debugger::BreakpointOptions::autoContinueKey).value_or(false);
+        ignoreCount = options->getInteger(Protocol::Debugger::BreakpointOptions::ignoreCountKey).value_or(0);
     }
 
     return callback(condition, WTFMove(actions), autoContinue, ignoreCount);
@@ -498,7 +498,7 @@ void InspectorDebuggerAgent::didDispatchAsyncCall()
     auto& asyncStackTrace = it->value;
     asyncStackTrace->didDispatchAsyncCall();
 
-    m_currentAsyncCallIdentifier = WTF::nullopt;
+    m_currentAsyncCallIdentifier = std::nullopt;
 
     if (!asyncStackTrace->isPending())
         m_pendingAsyncCalls.remove(identifier);
@@ -534,8 +534,8 @@ static bool parseLocation(Protocol::ErrorString& errorString, const JSON::Object
         return false;
     }
 
-    sourceID = parseIntegerAllowingTrailingJunk<JSC::SourceID>(scriptIDStr).valueOr(0);
-    columnNumber = location.getInteger(Protocol::Debugger::Location::columnNumberKey).valueOr(0);
+    sourceID = parseIntegerAllowingTrailingJunk<JSC::SourceID>(scriptIDStr).value_or(0);
+    columnNumber = location.getInteger(Protocol::Debugger::Location::columnNumberKey).value_or(0);
     return true;
 }
 
@@ -546,7 +546,7 @@ Protocol::ErrorStringOr<std::tuple<Protocol::Debugger::BreakpointId, Ref<JSON::A
 
     Protocol::ErrorString errorString;
 
-    auto protocolBreakpoint = ProtocolBreakpoint::fromPayload(errorString, !!url ? url : urlRegex, !!urlRegex, lineNumber, columnNumber.valueOr(0), WTFMove(options));
+    auto protocolBreakpoint = ProtocolBreakpoint::fromPayload(errorString, !!url ? url : urlRegex, !!urlRegex, lineNumber, columnNumber.value_or(0), WTFMove(options));
     if (!protocolBreakpoint)
         return makeUnexpected(errorString);
 
@@ -730,16 +730,16 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::continueToLocation(Ref<JSO
 
 Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>>> InspectorDebuggerAgent::searchInContent(const Protocol::Debugger::ScriptId& scriptId, const String& query, Optional<bool>&& caseSensitive, Optional<bool>&& isRegex)
 {
-    auto it = m_scripts.find(parseIntegerAllowingTrailingJunk<JSC::SourceID>(scriptId).valueOr(0));
+    auto it = m_scripts.find(parseIntegerAllowingTrailingJunk<JSC::SourceID>(scriptId).value_or(0));
     if (it == m_scripts.end())
         return makeUnexpected("Missing script for given scriptId"_s);
 
-    return ContentSearchUtilities::searchInTextByLines(it->value.source, query, caseSensitive.valueOr(false), isRegex.valueOr(false));
+    return ContentSearchUtilities::searchInTextByLines(it->value.source, query, caseSensitive.value_or(false), isRegex.value_or(false));
 }
 
 Protocol::ErrorStringOr<String> InspectorDebuggerAgent::getScriptSource(const Protocol::Debugger::ScriptId& scriptId)
 {
-    auto it = m_scripts.find(parseIntegerAllowingTrailingJunk<JSC::SourceID>(scriptId).valueOr(0));
+    auto it = m_scripts.find(parseIntegerAllowingTrailingJunk<JSC::SourceID>(scriptId).value_or(0));
     if (it == m_scripts.end())
         return makeUnexpected("Missing script for given scriptId");
 
@@ -1015,7 +1015,7 @@ Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, Optiona
     Optional<bool> wasThrown;
     Optional<int> savedResultIndex;
 
-    injectedScript.evaluateOnCallFrame(errorString, m_currentCallStack.get(), callFrameId, expression, objectGroup, includeCommandLineAPI.valueOr(false), returnByValue.valueOr(false), generatePreview.valueOr(false), saveResult.valueOr(false), result, wasThrown, savedResultIndex);
+    injectedScript.evaluateOnCallFrame(errorString, m_currentCallStack.get(), callFrameId, expression, objectGroup, includeCommandLineAPI.value_or(false), returnByValue.value_or(false), generatePreview.value_or(false), saveResult.value_or(false), result, wasThrown, savedResultIndex);
 
     if (pauseAndMute)
         unmuteConsole();
@@ -1031,8 +1031,8 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setShouldBlackboxURL(const
     if (url.isEmpty())
         return makeUnexpected("URL must not be empty"_s);
 
-    bool caseSensitive = optionalCaseSensitive.valueOr(false);
-    bool isRegex = optionalIsRegex.valueOr(false);
+    bool caseSensitive = optionalCaseSensitive.value_or(false);
+    bool isRegex = optionalIsRegex.value_or(false);
 
     if (!caseSensitive && !isRegex && isWebKitInjectedScript(url))
         return makeUnexpected("Blackboxing of internal scripts is controlled by 'Debugger.setPauseForInternalScripts'"_s);
@@ -1096,7 +1096,7 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setPauseForInternalScripts
 
     m_pauseForInternalScripts = shouldPause;
 
-    auto blackboxType = !m_pauseForInternalScripts ? Optional<JSC::Debugger::BlackboxType>(JSC::Debugger::BlackboxType::Ignored) : WTF::nullopt;
+    auto blackboxType = !m_pauseForInternalScripts ? Optional<JSC::Debugger::BlackboxType>(JSC::Debugger::BlackboxType::Ignored) : std::nullopt;
     for (auto& [sourceID, script] : m_scripts) {
         if (!isWebKitInjectedScript(script.sourceURL))
             continue;
@@ -1404,7 +1404,7 @@ void InspectorDebuggerAgent::clearExceptionValue()
 void InspectorDebuggerAgent::clearAsyncStackTraceData()
 {
     m_pendingAsyncCalls.clear();
-    m_currentAsyncCallIdentifier = WTF::nullopt;
+    m_currentAsyncCallIdentifier = std::nullopt;
 
     didClearAsyncStackTraceData();
 }

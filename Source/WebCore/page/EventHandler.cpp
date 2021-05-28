@@ -1418,14 +1418,14 @@ void EventHandler::updateCursor(FrameView& view, const HitTestResult& result, bo
 Optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bool shiftKey)
 {
     if (m_resizeLayer && m_resizeLayer->inResizeMode())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!m_frame.page())
-        return WTF::nullopt;
+        return std::nullopt;
 
 #if ENABLE(PAN_SCROLLING)
     if (m_frame.mainFrame().eventHandler().panScrollInProgress())
-        return WTF::nullopt;
+        return std::nullopt;
 #endif
 
     Ref<Frame> protectedFrame(m_frame);
@@ -1440,7 +1440,7 @@ Optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bool sh
 
     Node* node = result.targetNode();
     if (!node)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto renderer = node->renderer();
     auto* style = renderer ? &renderer->style() : nullptr;
@@ -1462,7 +1462,7 @@ Optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bool sh
         case SetCursor:
             return overrideCursor;
         case DoNotSetCursor:
-            return WTF::nullopt;
+            return std::nullopt;
         }
     }
 
@@ -2305,7 +2305,7 @@ static Optional<DragOperation> convertDropZoneOperationToDragOperation(const Str
         return DragOperation::Move;
     if (dragOperation == "link")
         return DragOperation::Link;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static String convertDragOperationToDropZoneOperation(Optional<DragOperation> operation)
@@ -2367,7 +2367,7 @@ EventHandler::DragTargetResponse EventHandler::dispatchDragEnterOrDragOverEvent(
     dataTransfer->makeInvalidForSecurity();
     if (accept && !dataTransfer->dropEffectIsUninitialized())
         return { true, dataTransfer->destinationOperationMask() };
-    return { accept, WTF::nullopt };
+    return { accept, std::nullopt };
 }
 
 EventHandler::DragTargetResponse EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, const std::function<std::unique_ptr<Pasteboard>()>& makePasteboard, OptionSet<DragOperation> sourceOperationMask, bool draggingFiles)
@@ -2868,7 +2868,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& wheelEvent, Option
 {
 #if ENABLE(KINETIC_SCROLLING)
     if (wheelEvent.isGestureStart())
-        m_wheelScrollGestureState = WTF::nullopt;
+        m_wheelScrollGestureState = std::nullopt;
 #endif
 
     OptionSet<EventHandling> handling;
@@ -3068,7 +3068,7 @@ Optional<WheelScrollGestureState> EventHandler::updateWheelGestureState(const Pl
 #else
     UNUSED_PARAM(wheelEvent);
     UNUSED_PARAM(eventHandling);
-    return WTF::nullopt;
+    return std::nullopt;
 #endif
 }
 

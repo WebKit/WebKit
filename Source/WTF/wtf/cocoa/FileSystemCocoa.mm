@@ -177,7 +177,7 @@ Optional<bool> allowsMaterializingDatalessFiles(PolicyScope scope)
     if (ret == IOPOL_MATERIALIZE_DATALESS_FILES_OFF)
         return false;
     LOG_ERROR("FileSystem::allowsMaterializingDatalessFiles(): getiopolicy_np call failed, errno: %d", errno);
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 #if PLATFORM(IOS_FAMILY)

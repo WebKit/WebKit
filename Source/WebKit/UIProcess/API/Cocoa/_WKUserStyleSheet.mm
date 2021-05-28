@@ -57,7 +57,7 @@
 
     WebKit::InitializeWebKit2();
 
-    API::Object::constructInWrapper<API::UserStyleSheet>(self, WebCore::UserStyleSheet { source, baseURL, makeVector<String>(includeMatchPatternStrings), makeVector<String>(excludeMatchPatternStrings), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, API::toWebCoreUserStyleLevel(level), webView ? Optional<WebCore::PageIdentifier>([webView _page]->webPageID()) : WTF::nullopt }, contentWorld ? *contentWorld->_contentWorld : API::ContentWorld::pageContentWorld());
+    API::Object::constructInWrapper<API::UserStyleSheet>(self, WebCore::UserStyleSheet { source, baseURL, makeVector<String>(includeMatchPatternStrings), makeVector<String>(excludeMatchPatternStrings), forMainFrameOnly ? WebCore::UserContentInjectedFrames::InjectInTopFrameOnly : WebCore::UserContentInjectedFrames::InjectInAllFrames, API::toWebCoreUserStyleLevel(level), webView ? Optional<WebCore::PageIdentifier>([webView _page]->webPageID()) : std::nullopt }, contentWorld ? *contentWorld->_contentWorld : API::ContentWorld::pageContentWorld());
 
     return self;
 }

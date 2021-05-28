@@ -46,12 +46,12 @@ struct FrameTreeNodeData {
         Optional<FrameInfoData> info;
         decoder >> info;
         if (!info)
-            return WTF::nullopt;
+            return std::nullopt;
         
         Optional<Vector<FrameTreeNodeData>> children;
         decoder >> children;
         if (!children)
-            return WTF::nullopt;
+            return std::nullopt;
         
         return {{
             WTFMove(*info),

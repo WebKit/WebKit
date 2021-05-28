@@ -561,7 +561,7 @@ void AutoTableLayout::layout()
                 numAutoEmptyCellsOnly++;
             else {
                 ++numberOfNonEmptyAuto;
-                totalAuto = totalAuto.valueOr(0.f) + m_layoutStruct[i].effectiveMaxLogicalWidth;
+                totalAuto = totalAuto.value_or(0.f) + m_layoutStruct[i].effectiveMaxLogicalWidth;
                 allocAuto += cellLogicalWidth;
             }
             break;

@@ -50,7 +50,7 @@ struct SVGPropertyTraits<Color> {
     {
         Color color = CSSParser::parseColor(string.stripWhiteSpace());
         if (!color.isValid())
-            return WTF::nullopt;
+            return std::nullopt;
         return color;
     }
     static String toString(const Color& type) { return serializationForHTML(type); }
@@ -90,7 +90,7 @@ struct SVGPropertyTraits<float> {
     static float initialValue() { return 0; }
     static float fromString(const String& string)
     {
-        return parseNumber(string).valueOr(0);
+        return parseNumber(string).value_or(0);
     }
     static Optional<float> parse(const QualifiedName&, const String& string)
     {
@@ -104,7 +104,7 @@ struct SVGPropertyTraits<std::pair<float, float>> {
     static std::pair<float, float> initialValue() { return { }; }
     static std::pair<float, float> fromString(const String& string)
     {
-        return parseNumberOptionalNumber(string).valueOr(std::pair<float, float> { });
+        return parseNumberOptionalNumber(string).value_or(std::pair<float, float> { });
     }
     static Optional<std::pair<float, float>> parse(const QualifiedName&, const String&) { ASSERT_NOT_REACHED(); return initialValue(); }
     static String toString(std::pair<float, float>) { ASSERT_NOT_REACHED(); return emptyString(); }
@@ -115,7 +115,7 @@ struct SVGPropertyTraits<FloatPoint> {
     static FloatPoint initialValue() { return FloatPoint(); }
     static FloatPoint fromString(const String& string)
     {
-        return parsePoint(string).valueOr(FloatPoint { });
+        return parsePoint(string).value_or(FloatPoint { });
     }
     static Optional<FloatPoint> parse(const QualifiedName&, const String& string)
     {
@@ -132,7 +132,7 @@ struct SVGPropertyTraits<FloatRect> {
     static FloatRect initialValue() { return FloatRect(); }
     static FloatRect fromString(const String& string)
     {
-        return parseRect(string).valueOr(FloatRect { });
+        return parseRect(string).value_or(FloatRect { });
     }
     static Optional<FloatRect> parse(const QualifiedName&, const String& string)
     {

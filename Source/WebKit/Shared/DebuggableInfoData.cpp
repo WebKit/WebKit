@@ -56,27 +56,27 @@ Optional<DebuggableInfoData> DebuggableInfoData::decode(IPC::Decoder& decoder)
     Optional<Inspector::DebuggableType> debuggableType;
     decoder >> debuggableType;
     if (!debuggableType)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<String> targetPlatformName;
     decoder >> targetPlatformName;
     if (!targetPlatformName)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<String> targetBuildVersion;
     decoder >> targetBuildVersion;
     if (!targetBuildVersion)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<String> targetProductVersion;
     decoder >> targetProductVersion;
     if (!targetProductVersion)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> targetIsSimulator;
     decoder >> targetIsSimulator;
     if (!targetIsSimulator)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{
         *debuggableType,

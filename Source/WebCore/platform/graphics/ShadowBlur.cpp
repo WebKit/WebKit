@@ -404,7 +404,7 @@ Optional<ShadowBlur::LayerImageProperties> ShadowBlur::calculateLayerBoundingRec
     if (m_shadowsIgnoreTransforms && !transform.isIdentity()) {
         FloatQuad transformedPolygon = transform.mapQuad(FloatQuad(shadowedRect));
         transformedPolygon.move(m_offset);
-        layerRect = transform.inverse().valueOr(AffineTransform()).mapQuad(transformedPolygon).boundingBox();
+        layerRect = transform.inverse().value_or(AffineTransform()).mapQuad(transformedPolygon).boundingBox();
     } else {
         layerRect = shadowedRect;
         layerRect.move(m_offset);
@@ -422,7 +422,7 @@ Optional<ShadowBlur::LayerImageProperties> ShadowBlur::calculateLayerBoundingRec
     if (!clipRect.contains(enclosingIntRect(layerRect))) {
         // If we are totally outside the clip region, we aren't painting at all.
         if (intersection(layerRect, clipRect).isEmpty())
-            return WTF::nullopt;
+            return std::nullopt;
 
         IntRect inflatedClip = clipRect;
         // Pixels at the edges can be affected by pixels outside the buffer,

@@ -42,38 +42,38 @@ ALWAYS_INLINE Optional<uint32_t> parseIndex(const CharType* characters, unsigned
 {
     // An empty string is not a number.
     if (!length)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Get the first character, turning it into a digit.
     uint32_t value = characters[0] - '0';
     if (value > 9)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Check for leading zeros. If the first characher is 0, then the
     // length of the string must be one - e.g. "042" is not equal to "42".
     if (!value && length > 1)
-        return WTF::nullopt;
+        return std::nullopt;
 
     while (--length) {
         // Multiply value by 10, checking for overflow out of 32 bits.
         if (value > 0xFFFFFFFFU / 10)
-            return WTF::nullopt;
+            return std::nullopt;
         value *= 10;
 
         // Get the next character, turning it into a digit.
         uint32_t newValue = *(++characters) - '0';
         if (newValue > 9)
-            return WTF::nullopt;
+            return std::nullopt;
 
         // Add in the old value, checking for overflow out of 32 bits.
         newValue += value;
         if (newValue < value)
-            return WTF::nullopt;
+            return std::nullopt;
         value = newValue;
     }
 
     if (!isIndex(value))
-        return WTF::nullopt;
+        return std::nullopt;
     return value;
 }
 
@@ -276,9 +276,9 @@ ALWAYS_INLINE Optional<uint32_t> parseIndex(const Identifier& identifier)
 {
     auto uid = identifier.impl();
     if (!uid)
-        return WTF::nullopt;
+        return std::nullopt;
     if (uid->isSymbol())
-        return WTF::nullopt;
+        return std::nullopt;
     return parseIndex(*uid);
 }
 

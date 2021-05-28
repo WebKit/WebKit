@@ -113,13 +113,13 @@ bool Navigator::onLine() const
 static Optional<URL> shareableURLForShareData(ScriptExecutionContext& context, const ShareData& data)
 {
     if (data.url.isNull())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto url = context.completeURL(data.url);
     if (!url.isValid())
-        return WTF::nullopt;
+        return std::nullopt;
     if (!url.protocolIsInHTTPFamily() && !url.protocolIsData())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return url;
 }

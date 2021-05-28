@@ -519,7 +519,7 @@ void RenderMathMLToken::updateMathVariantGlyph()
 {
     ASSERT(m_mathVariantGlyphDirty);
 
-    m_mathVariantCodePoint = WTF::nullopt;
+    m_mathVariantCodePoint = std::nullopt;
     m_mathVariantGlyphDirty = false;
 
     // Early return if the token element contains RenderElements.

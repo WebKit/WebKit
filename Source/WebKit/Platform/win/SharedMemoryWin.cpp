@@ -142,15 +142,15 @@ Optional<HANDLE> SharedMemory::Handle::decodeHandle(IPC::Decoder& decoder)
 {
     uint64_t sourceHandle;
     if (!decoder.decode(sourceHandle))
-        return WTF::nullopt;
+        return std::nullopt;
 
     uint32_t sourcePID;
     if (!decoder.decode(sourcePID))
-        return WTF::nullopt;
+        return std::nullopt;
 
     HANDLE duplicatedHandle;
     if (!getDuplicatedHandle(reinterpret_cast<HANDLE>(sourceHandle), sourcePID, duplicatedHandle))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return duplicatedHandle;
 }

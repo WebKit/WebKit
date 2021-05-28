@@ -69,8 +69,8 @@
 
 #undef RELEASE_LOG_IF_ALLOWED
 #undef RELEASE_LOG_ERROR_IF_ALLOWED
-#define PAGE_ID ((frame() ? frame()->pageID().valueOr(PageIdentifier()) : PageIdentifier()).toUInt64())
-#define FRAME_ID ((frame() ? frame()->frameID().valueOr(FrameIdentifier()) : FrameIdentifier()).toUInt64())
+#define PAGE_ID ((frame() ? frame()->pageID().value_or(PageIdentifier()) : PageIdentifier()).toUInt64())
+#define FRAME_ID ((frame() ? frame()->frameID().value_or(FrameIdentifier()) : FrameIdentifier()).toUInt64())
 #if RELEASE_LOG_DISABLED
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) UNUSED_VARIABLE(this)
 #define RELEASE_LOG_ERROR_IF_ALLOWED(fmt, ...) UNUSED_VARIABLE(this)
@@ -479,7 +479,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
             m_loadingMultipartContent = true;
 
             // We don't count multiParts in a CachedResourceLoader's request count
-            m_requestCountTracker = WTF::nullopt;
+            m_requestCountTracker = std::nullopt;
             if (!m_resource->isImage()) {
                 RELEASE_LOG_IF_ALLOWED("didReceiveResponse: canceling load because something about a multi-part non-image");
                 cancel();
@@ -862,7 +862,7 @@ void SubresourceLoader::notifyDone(LoadCompletionType type)
     if (reachedTerminalState())
         return;
 
-    m_requestCountTracker = WTF::nullopt;
+    m_requestCountTracker = std::nullopt;
     bool shouldPerformPostLoadActions = true;
 #if PLATFORM(IOS_FAMILY)
     if (m_state == CancelledWhileInitializing)

@@ -82,7 +82,7 @@ static size_t removeTerminationCharacters(const uint8_t* data, size_t dataLength
 static Optional<std::pair<Vector<uint8_t>, bool>> cookieDataForHandshake(const NetworkStorageSession* networkStorageSession, const CookieRequestHeaderFieldProxy& headerFieldProxy)
 {
     if (!networkStorageSession)
-        return WTF::nullopt;
+        return std::nullopt;
     
     auto [cookieDataString, secureCookiesAccessed] = networkStorageSession->cookieRequestHeaderFieldValue(headerFieldProxy);
     if (cookieDataString.isEmpty())

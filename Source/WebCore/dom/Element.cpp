@@ -273,7 +273,7 @@ Optional<int> Element::tabIndexSetExplicitly() const
 {
     switch (tabIndexState()) {
     case TabIndexState::NotSet:
-        return WTF::nullopt;
+        return std::nullopt;
     case TabIndexState::Zero:
         return 0;
     case TabIndexState::NegativeOne:
@@ -283,7 +283,7 @@ Optional<int> Element::tabIndexSetExplicitly() const
         return elementRareData()->unusualTabIndex();
     }
     ASSERT_NOT_REACHED();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 int Element::defaultTabIndex() const
@@ -313,7 +313,7 @@ void Element::setTabIndexForBindings(int value)
 
 bool Element::isKeyboardFocusable(KeyboardEvent*) const
 {
-    if (!(isFocusable() && !shouldBeIgnoredInSequentialFocusNavigation() && tabIndexSetExplicitly().valueOr(0) >= 0))
+    if (!(isFocusable() && !shouldBeIgnoredInSequentialFocusNavigation() && tabIndexSetExplicitly().value_or(0) >= 0))
         return false;
     if (auto* root = shadowRoot()) {
         if (root->delegatesFocus())
@@ -823,7 +823,7 @@ void Element::setBeingDragged(bool flag)
 
 inline ScrollAlignment toScrollAlignmentForInlineDirection(Optional<ScrollLogicalPosition> position, WritingMode writingMode, bool isLTR)
 {
-    switch (position.valueOr(ScrollLogicalPosition::Nearest)) {
+    switch (position.value_or(ScrollLogicalPosition::Nearest)) {
     case ScrollLogicalPosition::Start: {
         switch (writingMode) {
         case WritingMode::TopToBottom:
@@ -866,7 +866,7 @@ inline ScrollAlignment toScrollAlignmentForInlineDirection(Optional<ScrollLogica
 
 inline ScrollAlignment toScrollAlignmentForBlockDirection(Optional<ScrollLogicalPosition> position, WritingMode writingMode)
 {
-    switch (position.valueOr(ScrollLogicalPosition::Start)) {
+    switch (position.value_or(ScrollLogicalPosition::Start)) {
     case ScrollLogicalPosition::Start: {
         switch (writingMode) {
         case WritingMode::TopToBottom:
@@ -936,7 +936,7 @@ void Element::scrollIntoView(Optional<Variant<bool, ScrollIntoViewOptions>>&& ar
         isHorizontal ? alignX : alignY,
         isHorizontal ? alignY : alignX,
         ShouldAllowCrossOriginScrolling::No,
-        options.behavior.valueOr(ScrollBehavior::Auto),
+        options.behavior.value_or(ScrollBehavior::Auto),
         SmoothScrollFeatureEnablement::Default
     };
     renderer()->scrollRectToVisible(absoluteBounds, insideFixed, visibleOptions);
@@ -1039,7 +1039,7 @@ void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping, 
         clampToInteger(scrollToOptions.top.value() * renderer->style().effectiveZoom())
     );
 
-    auto animated = useSmoothScrolling(scrollToOptions.behavior.valueOr(ScrollBehavior::Auto), this) ? AnimatedScroll::Yes : AnimatedScroll::No;
+    auto animated = useSmoothScrolling(scrollToOptions.behavior.value_or(ScrollBehavior::Auto), this) ? AnimatedScroll::Yes : AnimatedScroll::No;
     auto scrollPositionChangeOptions = ScrollPositionChangeOptions::createProgrammaticWithOptions(clamping, animated, snapPointSelectionMethod);
     renderer->setScrollPosition(scrollPosition, scrollPositionChangeOptions);
 }
@@ -1594,10 +1594,10 @@ static Optional<std::pair<RenderObject*, LayoutRect>> listBoxElementBoundingBox(
         selectElement = downcast<HTMLOptGroupElement>(element).ownerSelectElement();
         isGroup = true;
     } else
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!selectElement || !selectElement->renderer() || !is<RenderListBox>(selectElement->renderer()))
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto& renderer = downcast<RenderListBox>(*selectElement->renderer());
     Optional<LayoutRect> boundingBox;
@@ -1618,7 +1618,7 @@ static Optional<std::pair<RenderObject*, LayoutRect>> listBoxElementBoundingBox(
     }
 
     if (!boundingBox)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return std::pair<RenderObject*, LayoutRect> { &renderer, boundingBox.value() };
 }
@@ -1662,7 +1662,7 @@ Optional<std::pair<RenderObject*, FloatRect>> Element::boundingAbsoluteRectWitho
         renderBoxModelObject->absoluteQuads(quads);
 
     if (quads.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return std::make_pair(renderer, unitedBoundingBoxes(quads));
 }
@@ -4354,7 +4354,7 @@ void Element::didDetachRenderers()
 Optional<Style::ElementStyle> Element::resolveCustomStyle(const RenderStyle&, const RenderStyle*)
 {
     ASSERT(hasCustomStyleResolveCallbacks());
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void Element::cloneAttributesFromElement(const Element& other)

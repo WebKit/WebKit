@@ -175,12 +175,12 @@ static Vector<uint8_t> decodeEscaped(const DecodeTask& task)
 static Optional<Result> decodeSynchronously(DecodeTask& task, Mode mode)
 {
     if (!task.process())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (task.isBase64) {
         auto decodedData = decodeBase64(task, mode);
         if (!decodedData)
-            return WTF::nullopt;
+            return std::nullopt;
         task.result.data = WTFMove(*decodedData);
     } else
         task.result.data = decodeEscaped(task);

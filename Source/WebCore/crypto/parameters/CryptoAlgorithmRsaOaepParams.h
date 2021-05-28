@@ -46,7 +46,7 @@ public:
             return m_labelVector;
 
         BufferSource labelBuffer = WTFMove(*label);
-        label = WTF::nullopt;
+        label = std::nullopt;
         if (!labelBuffer.length())
             return m_labelVector;
 

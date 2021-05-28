@@ -582,7 +582,7 @@ uint64_t PlaybackSessionModelMediaElement::legibleMediaSelectedIndex() const
     if (!selectedIndex && displayMode == MediaControlsHost::forcedOnlyKeyword())
         selectedIndex = offIndex;
 
-    return selectedIndex.valueOr(std::numeric_limits<uint64_t>::max());
+    return selectedIndex.value_or(std::numeric_limits<uint64_t>::max());
 }
 
 bool PlaybackSessionModelMediaElement::externalPlaybackEnabled() const

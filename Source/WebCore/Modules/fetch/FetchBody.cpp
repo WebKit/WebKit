@@ -95,7 +95,7 @@ Optional<FetchBody> FetchBody::fromFormData(ScriptExecutionContext& context, For
     }
 
     // FIXME: Support form data bodies.
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void FetchBody::arrayBuffer(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)

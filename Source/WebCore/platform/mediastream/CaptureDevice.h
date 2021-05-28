@@ -95,37 +95,37 @@ public:
         Optional<String> persistentId;
         decoder >> persistentId;
         if (!persistentId)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<String> label;
         decoder >> label;
         if (!label)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<String> groupId;
         decoder >> groupId;
         if (!groupId)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> enabled;
         decoder >> enabled;
         if (!enabled)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> isDefault;
         decoder >> isDefault;
         if (!isDefault)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<CaptureDevice::DeviceType> type;
         decoder >> type;
         if (!type)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> isMockDevice;
         decoder >> isMockDevice;
         if (!isMockDevice)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<CaptureDevice> device = {{ WTFMove(*persistentId), WTFMove(*type), WTFMove(*label), WTFMove(*groupId) }};
         device->setEnabled(*enabled);

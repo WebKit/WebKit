@@ -61,7 +61,7 @@ Optional<ApplePayLineItemData> ApplePayLineItemData::decode(Decoder& decoder)
 {
     ApplePayLineItemData result;
     if (!result.decodeData(decoder))
-        return WTF::nullopt;
+        return std::nullopt;
     return result;
 }
 

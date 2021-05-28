@@ -1008,7 +1008,7 @@ Optional<LayoutRect> RenderObject::computeVisibleRectInContainer(const LayoutRec
         bool isEmpty = !downcast<RenderBox>(*parent).applyCachedClipAndScrollPosition(adjustedRect, container, context);
         if (isEmpty) {
             if (context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
-                return WTF::nullopt;
+                return std::nullopt;
             return adjustedRect;
         }
     }

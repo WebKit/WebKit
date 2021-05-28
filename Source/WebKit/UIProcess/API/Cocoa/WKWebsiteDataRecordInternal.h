@@ -82,7 +82,7 @@ static inline Optional<WebsiteDataType> toWebsiteDataType(NSString *websiteDataT
     if ([websiteDataType isEqualToString:_WKWebsiteDataTypeAlternativeServices])
         return WebsiteDataType::AlternativeServices;
 #endif
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static inline OptionSet<WebKit::WebsiteDataType> toWebsiteDataTypes(NSSet *websiteDataTypes)

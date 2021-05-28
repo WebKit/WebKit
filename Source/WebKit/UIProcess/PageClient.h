@@ -267,7 +267,7 @@ public:
 
     virtual bool handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, const FrameInfoData&, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) { return false; }
     virtual bool showShareSheet(const WebCore::ShareDataWithParsedURL&, WTF::CompletionHandler<void (bool)>&&) { return false; }
-    virtual void showContactPicker(const WebCore::ContactsRequestData&, WTF::CompletionHandler<void(Optional<Vector<WebCore::ContactInfo>>&&)>&& completionHandler) { completionHandler(WTF::nullopt); }
+    virtual void showContactPicker(const WebCore::ContactsRequestData&, WTF::CompletionHandler<void(Optional<Vector<WebCore::ContactInfo>>&&)>&& completionHandler) { completionHandler(std::nullopt); }
 
     virtual void didChangeContentSize(const WebCore::IntSize&) = 0;
 
@@ -609,7 +609,7 @@ public:
 
 #if PLATFORM(COCOA)
     virtual void cancelPointersForGestureRecognizer(UIGestureRecognizer*) { }
-    virtual WTF::Optional<unsigned> activeTouchIdentifierForGestureRecognizer(UIGestureRecognizer*) { return WTF::nullopt; }
+    virtual std::optional<unsigned> activeTouchIdentifierForGestureRecognizer(UIGestureRecognizer*) { return std::nullopt; }
 #endif
 
 #if USE(WPE_RENDERER)

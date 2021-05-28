@@ -38,7 +38,7 @@ Optional<Vector<uint8_t>> ISOProtectionSystemSpecificHeaderBox::peekSystemID(JSC
 {
     auto peekResult = ISOBox::peekBox(view, offset);
     if (!peekResult || peekResult.value().first != boxTypeName())
-        return WTF::nullopt;
+        return std::nullopt;
 
     ISOProtectionSystemSpecificHeaderBox psshBox;
     psshBox.parse(view, offset);

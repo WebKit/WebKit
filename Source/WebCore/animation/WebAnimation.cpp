@@ -206,8 +206,8 @@ void WebAnimation::setEffectInternal(RefPtr<AnimationEffect>&& newEffect, bool d
 
     auto oldEffect = std::exchange(m_effect, WTFMove(newEffect));
 
-    Optional<const Styleable> previousTarget = is<KeyframeEffect>(oldEffect) ? downcast<KeyframeEffect>(oldEffect.get())->targetStyleable() : WTF::nullopt;
-    Optional<const Styleable> newTarget = is<KeyframeEffect>(m_effect) ? downcast<KeyframeEffect>(m_effect.get())->targetStyleable() : WTF::nullopt;
+    Optional<const Styleable> previousTarget = is<KeyframeEffect>(oldEffect) ? downcast<KeyframeEffect>(oldEffect.get())->targetStyleable() : std::nullopt;
+    Optional<const Styleable> newTarget = is<KeyframeEffect>(m_effect) ? downcast<KeyframeEffect>(m_effect.get())->targetStyleable() : std::nullopt;
 
     // Update the effect-to-animation relationships and the timeline's animation map.
     if (oldEffect) {
@@ -237,7 +237,7 @@ void WebAnimation::setTimeline(RefPtr<AnimationTimeline>&& timeline)
 
     // 4. If the animation start time of animation is resolved, make animation's hold time unresolved.
     if (m_startTime)
-        m_holdTime = WTF::nullopt;
+        m_holdTime = std::nullopt;
 
     if (is<KeyframeEffect>(m_effect)) {
         if (auto target = downcast<KeyframeEffect>(m_effect.get())->targetStyleable()) {
@@ -296,7 +296,7 @@ void WebAnimation::effectTargetDidChange(const Optional<const Styleable>& previo
 Optional<double> WebAnimation::bindingsStartTime() const
 {
     if (!m_startTime)
-        return WTF::nullopt;
+        return std::nullopt;
     return secondsToWebAnimationsAPITime(*m_startTime);
 }
 
@@ -305,7 +305,7 @@ void WebAnimation::setBindingsStartTime(Optional<double> newStartTime)
     if (newStartTime)
         setStartTime(Seconds::fromMilliseconds(*newStartTime));
     else
-        setStartTime(WTF::nullopt);
+        setStartTime(std::nullopt);
 }
 
 void WebAnimation::setStartTime(Optional<Seconds> newStartTime)
@@ -316,11 +316,11 @@ void WebAnimation::setStartTime(Optional<Seconds> newStartTime)
     // 1. Let timeline time be the current time value of the timeline that animation is associated with. If
     //    there is no timeline associated with animation or the associated timeline is inactive, let the timeline
     //    time be unresolved.
-    auto timelineTime = m_timeline ? m_timeline->currentTime() : WTF::nullopt;
+    auto timelineTime = m_timeline ? m_timeline->currentTime() : std::nullopt;
 
     // 2. If timeline time is unresolved and new start time is resolved, make animation's hold time unresolved.
     if (!timelineTime && newStartTime)
-        m_holdTime = WTF::nullopt;
+        m_holdTime = std::nullopt;
 
     // 3. Let previous current time be animation's current time.
     auto previousCurrentTime = currentTime();
@@ -336,7 +336,7 @@ void WebAnimation::setStartTime(Optional<Seconds> newStartTime)
         // If new start time is resolved,
         // If animation's playback rate is not zero, make animation's hold time unresolved.
         if (m_playbackRate)
-            m_holdTime = WTF::nullopt;
+            m_holdTime = std::nullopt;
     } else {
         // Otherwise (new start time is unresolved),
         // Set animation's hold time to previous current time even if previous current time is unresolved.
@@ -360,14 +360,14 @@ Optional<double> WebAnimation::bindingsCurrentTime() const
 {
     auto time = currentTime();
     if (!time)
-        return WTF::nullopt;
+        return std::nullopt;
     return secondsToWebAnimationsAPITime(time.value());
 }
 
 ExceptionOr<void> WebAnimation::setBindingsCurrentTime(Optional<double> currentTime)
 {
     if (!currentTime)
-        return setCurrentTime(WTF::nullopt);
+        return setCurrentTime(std::nullopt);
     return setCurrentTime(Seconds::fromMilliseconds(currentTime.value()));
 }
 
@@ -393,10 +393,10 @@ Optional<Seconds> WebAnimation::currentTime(RespectHoldTime respectHoldTime, Opt
     //     3. the animation's start time is unresolved.
     // The current time is an unresolved time value.
     if (!m_timeline || !m_timeline->currentTime() || !m_startTime)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Otherwise, current time = (timeline time - start time) * playback rate
-    return (*m_timeline->currentTime() - startTime.valueOr(*m_startTime)) * m_playbackRate;
+    return (*m_timeline->currentTime() - startTime.value_or(*m_startTime)) * m_playbackRate;
 }
 
 ExceptionOr<void> WebAnimation::silentlySetCurrentTime(Optional<Seconds> seekTime)
@@ -431,10 +431,10 @@ ExceptionOr<void> WebAnimation::silentlySetCurrentTime(Optional<Seconds> seekTim
 
     // 3. If animation has no associated timeline or the associated timeline is inactive, make animation's start time unresolved.
     if (!m_timeline || !m_timeline->currentTime())
-        m_startTime = WTF::nullopt;
+        m_startTime = std::nullopt;
 
     // 4. Make animation's previous current time unresolved.
-    m_previousCurrentTime = WTF::nullopt;
+    m_previousCurrentTime = std::nullopt;
 
     return { };
 }
@@ -458,7 +458,7 @@ ExceptionOr<void> WebAnimation::setCurrentTime(Optional<Seconds> seekTime)
         // 2. Apply any pending playback rate to animation.
         applyPendingPlaybackRate();
         // 3. Make animation's start time unresolved.
-        m_startTime = WTF::nullopt;
+        m_startTime = std::nullopt;
         // 4. Cancel the pending pause task.
         m_timeToRunPendingPauseTask = TimeToRunPendingTask::NotScheduled;
         // 5. Resolve animation's current ready promise with animation.
@@ -489,7 +489,7 @@ void WebAnimation::setPlaybackRate(double newPlaybackRate)
     // https://drafts.csswg.org/web-animations-1/#updating-the-playback-rate-of-an-animation
 
     // 1. Clear any pending playback rate on animation.
-    m_pendingPlaybackRate = WTF::nullopt;
+    m_pendingPlaybackRate = std::nullopt;
     
     // 2. Let previous time be the value of the current time of animation before changing the playback rate.
     auto previousTime = currentTime();
@@ -577,7 +577,7 @@ void WebAnimation::applyPendingPlaybackRate()
     m_playbackRate = m_pendingPlaybackRate.value();
 
     // 3. Clear animation's pending playback rate.
-    m_pendingPlaybackRate = WTF::nullopt;
+    m_pendingPlaybackRate = std::nullopt;
 }
 
 auto WebAnimation::playState() const -> PlayState
@@ -654,14 +654,14 @@ void WebAnimation::cancel()
         //    to origin-relative time, let the scheduled event time be the result of applying that procedure to timeline time. Otherwise, the
         //    scheduled event time is an unresolved time value.
         // Otherwise, queue a task to dispatch cancelEvent at animation. The task source for this task is the DOM manipulation task source.
-        enqueueAnimationPlaybackEvent(eventNames().cancelEvent, WTF::nullopt, m_timeline ? m_timeline->currentTime() : WTF::nullopt);
+        enqueueAnimationPlaybackEvent(eventNames().cancelEvent, std::nullopt, m_timeline ? m_timeline->currentTime() : std::nullopt);
     }
 
     // 2. Make animation's hold time unresolved.
-    m_holdTime = WTF::nullopt;
+    m_holdTime = std::nullopt;
 
     // 3. Make animation's start time unresolved.
-    m_startTime = WTF::nullopt;
+    m_startTime = std::nullopt;
 
     timingDidChange(DidSeek::No, SynchronouslyNotify::No);
 
@@ -760,7 +760,7 @@ ExceptionOr<void> WebAnimation::finish()
     // 6. If there is a pending pause task and start time is resolved,
     if (hasPendingPauseTask() && m_startTime) {
         // 1. Let the hold time be unresolved.
-        m_holdTime = WTF::nullopt;
+        m_holdTime = std::nullopt;
         // 2. Cancel the pending pause task.
         m_timeToRunPendingPauseTask = TimeToRunPendingTask::NotScheduled;
         // 3. Resolve the current ready promise of animation with animation.
@@ -845,7 +845,7 @@ void WebAnimation::updateFinishedState(DidSeek didSeek, SynchronouslyNotify sync
             if (didSeek == DidSeek::Yes && m_holdTime)
                 m_startTime = m_timeline->currentTime().value() - (m_holdTime.value() / m_playbackRate);
             // 2. Let the hold time be unresolved.
-            m_holdTime = WTF::nullopt;
+            m_holdTime = std::nullopt;
         }
     }
 
@@ -907,7 +907,7 @@ void WebAnimation::finishNotificationSteps()
     //    queue along with its target, animation. For the scheduled event time, use the result of converting animation's target
     //    effect end to an origin-relative time.
     //    Otherwise, queue a task to dispatch finishEvent at animation. The task source for this task is the DOM manipulation task source.
-    enqueueAnimationPlaybackEvent(eventNames().finishEvent, currentTime(), m_timeline ? m_timeline->currentTime() : WTF::nullopt);
+    enqueueAnimationPlaybackEvent(eventNames().finishEvent, currentTime(), m_timeline ? m_timeline->currentTime() : std::nullopt);
 
     if (is<KeyframeEffect>(m_effect)) {
         if (auto target = makeRefPtr(downcast<KeyframeEffect>(*m_effect).target())) {
@@ -980,7 +980,7 @@ ExceptionOr<void> WebAnimation::play(AutoRewind autoRewind)
 
     // 6. If animation's hold time is resolved, let its start time be unresolved.
     if (m_holdTime)
-        m_startTime = WTF::nullopt;
+        m_startTime = std::nullopt;
 
     // 7. If has pending ready promise is false, let animation's current ready promise be a new (pending) Promise object.
     if (!hasPendingReadyPromise)
@@ -1026,18 +1026,18 @@ void WebAnimation::runPendingPlayTask()
         // Subsequently, the resulting readyTime value can be null. Unify behavior between C++17 and
         // C++14 builds (the latter using WTF's Optional) and avoid null Optional dereferencing
         // by defaulting to a Seconds(0) value. See https://bugs.webkit.org/show_bug.cgi?id=186189.
-        auto newStartTime = readyTime.valueOr(0_s);
+        auto newStartTime = readyTime.value_or(0_s);
         if (m_playbackRate)
             newStartTime -= m_holdTime.value() / m_playbackRate;
         // 3. Set the start time of animation to new start time.
         m_startTime = newStartTime;
         // 4. If animation's playback rate is not 0, make animation's hold time unresolved.
         if (m_playbackRate)
-            m_holdTime = WTF::nullopt;
+            m_holdTime = std::nullopt;
     } else if (m_startTime && m_pendingPlaybackRate) {
         // If animation's start time is resolved and animation has a pending playback rate,
         // 1. Let current time to match be the result of evaluating (ready time - start time) × playback rate for animation.
-        auto currentTimeToMatch = (readyTime.valueOr(0_s) - m_startTime.value()) * m_playbackRate;
+        auto currentTimeToMatch = (readyTime.value_or(0_s) - m_startTime.value()) * m_playbackRate;
         // 2. Apply any pending playback rate on animation.
         applyPendingPlaybackRate();
         // 3. If animation's playback rate is zero, let animation's hold time be current time to match.
@@ -1045,7 +1045,7 @@ void WebAnimation::runPendingPlayTask()
             m_holdTime = currentTimeToMatch;
         // 4. Let new start time be the result of evaluating ready time - current time to match / playback rate for animation.
         // If the playback rate is zero, let new start time be simply ready time.
-        auto newStartTime = readyTime.valueOr(0_s);
+        auto newStartTime = readyTime.value_or(0_s);
         if (m_playbackRate)
             newStartTime -= currentTimeToMatch / m_playbackRate;
         // 5. Set the start time of animation to new start time.
@@ -1182,14 +1182,14 @@ void WebAnimation::runPendingPauseTask()
         // Subsequently, the resulting readyTime value can be null. Unify behavior between C++17 and
         // C++14 builds (the latter using WTF's Optional) and avoid null Optional dereferencing
         // by defaulting to a Seconds(0) value. See https://bugs.webkit.org/show_bug.cgi?id=186189.
-        m_holdTime = (readyTime.valueOr(0_s) - animationStartTime.value()) * m_playbackRate;
+        m_holdTime = (readyTime.value_or(0_s) - animationStartTime.value()) * m_playbackRate;
     }
 
     // 3. Apply any pending playback rate on animation.
     applyPendingPlaybackRate();
 
     // 4. Make animation's start time unresolved.
-    m_startTime = WTF::nullopt;
+    m_startTime = std::nullopt;
 
     // 5. Resolve animation's current ready promise with animation.
     if (!m_readyPromise->isFulfilled())

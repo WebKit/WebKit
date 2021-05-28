@@ -119,7 +119,7 @@ inline Optional<uint32_t> JSValue::tryGetAsUint32Index()
         if (static_cast<double>(asUint) == number && isIndex(asUint))
             return asUint;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 inline Optional<int32_t> JSValue::tryGetAsInt32()
@@ -132,7 +132,7 @@ inline Optional<int32_t> JSValue::tryGetAsInt32()
         if (static_cast<double>(asInt) == number)
             return asInt;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 inline JSValue jsNaN()
@@ -857,7 +857,7 @@ ALWAYS_INLINE Optional<uint32_t> JSValue::toUInt32AfterToNumeric(JSGlobalObject*
     RETURN_IF_EXCEPTION(scope, { });
     if (LIKELY(result.isInt32()))
         return static_cast<uint32_t>(result.asInt32());
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 ALWAYS_INLINE JSValue JSValue::toBigIntOrInt32(JSGlobalObject* globalObject) const

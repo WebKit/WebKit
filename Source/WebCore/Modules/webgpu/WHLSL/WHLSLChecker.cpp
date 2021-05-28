@@ -218,7 +218,7 @@ static AST::NativeFunctionDeclaration resolveWithReferenceComparator(CodeLocatio
     AST::VariableDeclarations parameters;
     parameters.append(makeUniqueRef<AST::VariableDeclaration>(location, AST::Qualifiers(), argumentType.copyRef(), String(), nullptr, nullptr));
     parameters.append(makeUniqueRef<AST::VariableDeclaration>(location, AST::Qualifiers(), WTFMove(argumentType), String(), nullptr, nullptr));
-    return AST::NativeFunctionDeclaration(AST::FunctionDeclaration(location, AST::AttributeBlock(), WTF::nullopt, WTFMove(returnType), String("operator==", String::ConstructFromLiteral), WTFMove(parameters), nullptr, isOperator, ParsingMode::StandardLibrary));
+    return AST::NativeFunctionDeclaration(AST::FunctionDeclaration(location, AST::AttributeBlock(), std::nullopt, WTFMove(returnType), String("operator==", String::ConstructFromLiteral), WTFMove(parameters), nullptr, isOperator, ParsingMode::StandardLibrary));
 }
 
 enum class Acceptability {
@@ -248,7 +248,7 @@ static Optional<AST::NativeFunctionDeclaration> resolveByInstantiation(const Str
         if (success)
             return resolveWithReferenceComparator(location, types[0].get(), types[1].get(), intrinsics);
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static bool checkSemantics(Vector<EntryPointItem>& inputItems, Vector<EntryPointItem>& outputItems, const Optional<AST::EntryPointType>& entryPointType, const Intrinsics& intrinsics)
@@ -737,7 +737,7 @@ auto Checker::recurseAndGetInfo(AST::Expression& expression, bool requiresLeftVa
 {
     Visitor::visit(expression);
     if (hasError())
-        return WTF::nullopt;
+        return std::nullopt;
     return getInfo(expression, requiresLeftValue);
 }
 
@@ -749,7 +749,7 @@ auto Checker::getInfo(AST::Expression& expression, bool requiresLeftValue) -> Op
     const auto& typeAnnotation = expression.typeAnnotation();
     if (requiresLeftValue && typeAnnotation.isRightValue()) {
         setError(Error("Unexpected rvalue.", expression.codeLocation()));
-        return WTF::nullopt;
+        return std::nullopt;
     }
     return {{ *typeIterator->value, typeAnnotation }};
 }

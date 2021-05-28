@@ -824,7 +824,7 @@ ExceptionOr<float> CSSPrimitiveValue::getFloatValue(CSSUnitType unitType) const
 
 double CSSPrimitiveValue::doubleValue(CSSUnitType unitType) const
 {
-    return doubleValueInternal(unitType).valueOr(0);
+    return doubleValueInternal(unitType).value_or(0);
 }
 
 double CSSPrimitiveValue::doubleValue() const
@@ -835,21 +835,21 @@ double CSSPrimitiveValue::doubleValue() const
 Optional<bool> CSSPrimitiveValue::isZero() const
 {
     if (primitiveUnitType() == CSSUnitType::CSS_CALC)
-        return WTF::nullopt;
+        return std::nullopt;
     return !m_value.num;
 }
 
 Optional<bool> CSSPrimitiveValue::isPositive() const
 {
     if (primitiveUnitType() == CSSUnitType::CSS_CALC)
-        return WTF::nullopt;
+        return std::nullopt;
     return m_value.num > 0;
 }
 
 Optional<bool> CSSPrimitiveValue::isNegative() const
 {
     if (primitiveUnitType() == CSSUnitType::CSS_CALC)
-        return WTF::nullopt;
+        return std::nullopt;
     return m_value.num < 0;
 }
 
@@ -861,7 +861,7 @@ bool CSSPrimitiveValue::isCenterPosition() const
 Optional<double> CSSPrimitiveValue::doubleValueInternal(CSSUnitType requestedUnitType) const
 {
     if (!isValidCSSUnitTypeForDoubleConversion(primitiveUnitType()) || !isValidCSSUnitTypeForDoubleConversion(requestedUnitType))
-        return WTF::nullopt;
+        return std::nullopt;
 
     CSSUnitType sourceUnitType = primitiveType();
     if (requestedUnitType == sourceUnitType || requestedUnitType == CSSUnitType::CSS_DIMENSION)
@@ -876,20 +876,20 @@ Optional<double> CSSPrimitiveValue::doubleValueInternal(CSSUnitType requestedUni
 
     // Cannot convert between unrelated unit categories if one of them is not CSSUnitCategory::Number.
     if (sourceCategory != targetCategory && sourceCategory != CSSUnitCategory::Number && targetCategory != CSSUnitCategory::Number)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (targetCategory == CSSUnitCategory::Number) {
         // We interpret conversion to CSSUnitType::CSS_NUMBER as conversion to a canonical unit in this value's category.
         targetUnitType = canonicalUnitTypeForCategory(sourceCategory);
         if (targetUnitType == CSSUnitType::CSS_UNKNOWN)
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     if (sourceUnitType == CSSUnitType::CSS_NUMBER) {
         // We interpret conversion from CSSUnitType::CSS_NUMBER in the same way as CSSParser::validUnit() while using non-strict mode.
         sourceUnitType = canonicalUnitTypeForCategory(targetCategory);
         if (sourceUnitType == CSSUnitType::CSS_UNKNOWN)
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     double convertedValue = doubleValue();

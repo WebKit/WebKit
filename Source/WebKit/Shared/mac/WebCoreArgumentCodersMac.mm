@@ -285,12 +285,12 @@ Optional<WebCore::KeypressCommand> ArgumentCoder<WebCore::KeypressCommand>::deco
     Optional<String> commandName;
     decoder >> commandName;
     if (!commandName)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<String> text;
     decoder >> text;
     if (!text)
-        return WTF::nullopt;
+        return std::nullopt;
     
     WebCore::KeypressCommand command;
     command.commandName = WTFMove(*commandName);
@@ -410,11 +410,11 @@ Optional<WebCore::SerializedPlatformDataCueValue>  ArgumentCoder<WebCore::Serial
     ASSERT(platformType == WebCore::SerializedPlatformDataCueValue::PlatformType::ObjC);
 
     if (platformType != WebCore::SerializedPlatformDataCueValue::PlatformType::ObjC)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto object = decodeObject(decoder, WebCore::SerializedPlatformDataCueMac::allowedClassesForNativeValues());
     if (!object)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return WebCore::SerializedPlatformDataCueValue { platformType, object.value().get() };
 }

@@ -47,7 +47,7 @@ static Optional<Exception> setMethod(ResourceRequest& request, const String& ini
     if (isForbiddenMethod(initMethod))
         return Exception { TypeError, "Method is forbidden."_s };
     request.setHTTPMethod(normalizeHTTPMethod(initMethod));
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static ExceptionOr<String> computeReferrer(ScriptExecutionContext& context, const String& referrer)
@@ -119,7 +119,7 @@ static Optional<Exception> buildOptions(FetchOptions& options, ResourceRequest& 
             return exception;
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static bool methodCanHaveBody(const ResourceRequest& request)
@@ -273,7 +273,7 @@ ExceptionOr<void> FetchRequest::setBody(FetchRequest& request)
 
 ExceptionOr<Ref<FetchRequest>> FetchRequest::create(ScriptExecutionContext& context, Info&& input, Init&& init)
 {
-    auto request = adoptRef(*new FetchRequest(context, WTF::nullopt, FetchHeaders::create(FetchHeaders::Guard::Request), { }, { }, { }));
+    auto request = adoptRef(*new FetchRequest(context, std::nullopt, FetchHeaders::create(FetchHeaders::Guard::Request), { }, { }, { }));
 
     if (WTF::holds_alternative<String>(input)) {
         auto result = request->initializeWith(WTF::get<String>(input), WTFMove(init));
@@ -322,7 +322,7 @@ ExceptionOr<Ref<FetchRequest>> FetchRequest::clone(ScriptExecutionContext& conte
     if (isDisturbedOrLocked())
         return Exception { TypeError, "Body is disturbed or locked"_s };
 
-    auto clone = adoptRef(*new FetchRequest(context, WTF::nullopt, FetchHeaders::create(m_headers.get()), ResourceRequest { m_request }, FetchOptions { m_options}, String { m_referrer }));
+    auto clone = adoptRef(*new FetchRequest(context, std::nullopt, FetchHeaders::create(m_headers.get()), ResourceRequest { m_request }, FetchOptions { m_options}, String { m_referrer }));
     clone->cloneBody(*this);
     clone->m_signal->signalFollow(m_signal);
     return clone;

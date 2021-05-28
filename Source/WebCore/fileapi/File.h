@@ -52,7 +52,7 @@ public:
         return file;
     }
 
-    static Ref<File> deserialize(ScriptExecutionContext* context, const String& path, const URL& srcURL, const String& type, const String& name, const Optional<int64_t>& lastModified = WTF::nullopt)
+    static Ref<File> deserialize(ScriptExecutionContext* context, const String& path, const URL& srcURL, const String& type, const String& name, const Optional<int64_t>& lastModified = std::nullopt)
     {
         auto file = adoptRef(*new File(deserializationContructor, context, path, srcURL, type, name, lastModified));
         file->suspendIfNeeded();

@@ -308,14 +308,14 @@ Optional<ResourceError> validateCrossOriginResourcePolicy(const SecurityOrigin& 
 {
     if (shouldCrossOriginResourcePolicyCancelLoad(origin, response))
         return ResourceError { errorDomainWebKitInternal, 0, requestURL, makeString("Cancelled load to ", response.url().stringCenterEllipsizedToLength(), " because it violates the resource's Cross-Origin-Resource-Policy response header."), ResourceError::Type::AccessControl };
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<ResourceError> validateRangeRequestedFlag(const ResourceRequest& request, const ResourceResponse& response)
 {
     if (response.isRangeRequested() && response.httpStatusCode() == 206 && response.type() == ResourceResponse::Type::Opaque && !request.hasHTTPHeaderField(HTTPHeaderName::Range))
         return ResourceError({ }, 0, response.url(), { }, ResourceError::Type::General);
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace WebCore

@@ -135,7 +135,7 @@ StringView URL::host() const
 
 Optional<uint16_t> URL::port() const
 {
-    return m_portLength ? parseInteger<uint16_t>(StringView(m_string).substring(m_hostEnd + 1, m_portLength - 1)) : WTF::nullopt;
+    return m_portLength ? parseInteger<uint16_t>(StringView(m_string).substring(m_hostEnd + 1, m_portLength - 1)) : std::nullopt;
 }
 
 String URL::hostAndPort() const
@@ -159,11 +159,11 @@ String URL::protocolHostAndPort() const
 static Optional<LChar> decodeEscapeSequence(StringView input, unsigned index, unsigned length)
 {
     if (index + 3 > length || input[index] != '%')
-        return WTF::nullopt;
+        return std::nullopt;
     auto digit1 = input[index + 1];
     auto digit2 = input[index + 2];
     if (!isASCIIHexDigit(digit1) || !isASCIIHexDigit(digit2))
-        return WTF::nullopt;
+        return std::nullopt;
     return toASCIIHexValue(digit1, digit2);
 }
 

@@ -251,7 +251,7 @@ Optional<CodeOrigin> PCToCodeOriginMap::findPC(void* pc) const
 {
     uintptr_t pcAsInt = bitwise_cast<uintptr_t>(pc);
     if (!(m_pcRangeStart <= pcAsInt && pcAsInt <= m_pcRangeEnd))
-        return WTF::nullopt;
+        return std::nullopt;
 
     uintptr_t currentPC = 0;
     BytecodeIndex currentBytecodeIndex = BytecodeIndex(0);
@@ -300,7 +300,7 @@ Optional<CodeOrigin> PCToCodeOriginMap::findPC(void* pc) const
     }
 
     RELEASE_ASSERT_NOT_REACHED();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace JSC

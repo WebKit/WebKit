@@ -63,7 +63,7 @@ Optional<StreamServerConnectionBase::Span> StreamServerConnectionBase::tryAcquir
 {
     ServerLimit serverLimit = sharedServerLimit().load(std::memory_order_acquire);
     if (serverLimit == ServerLimit::serverIsSleepingTag)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto result = alignedSpan(m_serverOffset, clampedLimit(serverLimit));
     if (result.size < minimumMessageSize) {
@@ -72,7 +72,7 @@ Optional<StreamServerConnectionBase::Span> StreamServerConnectionBase::tryAcquir
     }
 
     if (result.size < minimumMessageSize)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return result;
 }

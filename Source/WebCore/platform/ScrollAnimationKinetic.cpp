@@ -174,8 +174,8 @@ void ScrollAnimationKinetic::start(const FloatPoint& initialPosition, const Floa
 
     if (!velocity.x() && !velocity.y()) {
         m_position = initialPosition;
-        m_horizontalData = WTF::nullopt;
-        m_verticalData = WTF::nullopt;
+        m_horizontalData = std::nullopt;
+        m_verticalData = std::nullopt;
         return;
     }
 
@@ -202,14 +202,14 @@ void ScrollAnimationKinetic::start(const FloatPoint& initialPosition, const Floa
             extents.maximumScrollPosition.x(),
             initialPosition.x(), accumulateVelocity(velocity.x(), m_horizontalData));
     } else
-        m_horizontalData = WTF::nullopt;
+        m_horizontalData = std::nullopt;
 
     if (mayVScroll) {
         m_verticalData = PerAxisData(extents.minimumScrollPosition.y(),
             extents.maximumScrollPosition.y(),
             initialPosition.y(), accumulateVelocity(velocity.y(), m_verticalData));
     } else
-        m_verticalData = WTF::nullopt;
+        m_verticalData = std::nullopt;
 
     m_position = initialPosition;
     m_startTime = MonotonicTime::now() - tickTime / 2.;
@@ -221,10 +221,10 @@ void ScrollAnimationKinetic::animationTimerFired()
     auto delta = deltaToNextFrame();
 
     if (m_horizontalData && !m_horizontalData.value().animateScroll(delta))
-        m_horizontalData = WTF::nullopt;
+        m_horizontalData = std::nullopt;
 
     if (m_verticalData && !m_verticalData.value().animateScroll(delta))
-        m_verticalData = WTF::nullopt;
+        m_verticalData = std::nullopt;
 
     // If one of the axes didn't finish its animation we must continue it.
     if (m_horizontalData || m_verticalData)

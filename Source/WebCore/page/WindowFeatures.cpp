@@ -133,7 +133,7 @@ static void setWindowFeature(WindowFeatures& features, StringView key, StringVie
     if (value.isEmpty() || equalLettersIgnoringASCIICase(value, "yes"))
         numericValue = 1;
     else
-        numericValue = parseIntegerAllowingTrailingJunk<int>(value).valueOr(0);
+        numericValue = parseIntegerAllowingTrailingJunk<int>(value).value_or(0);
 
     // We treat key of "resizable" here as an additional feature rather than setting resizeable to true.
     // This is consistent with Firefox, but could also be handled at another level.
@@ -185,8 +185,8 @@ WindowFeatures parseDialogFeatures(const String& dialogFeaturesString, const Flo
     features.locationBarVisible = false;
     features.dialog = true;
 
-    float width = floatFeature(featuresMap, "dialogwidth", 100, screenAvailableRect.width()).valueOr(620); // default here came from frame size of dialog in MacIE
-    float height = floatFeature(featuresMap, "dialogheight", 100, screenAvailableRect.height()).valueOr(450); // default here came from frame size of dialog in MacIE
+    float width = floatFeature(featuresMap, "dialogwidth", 100, screenAvailableRect.width()).value_or(620); // default here came from frame size of dialog in MacIE
+    float height = floatFeature(featuresMap, "dialogheight", 100, screenAvailableRect.height()).value_or(450); // default here came from frame size of dialog in MacIE
 
     features.width = width;
     features.height = height;
@@ -194,16 +194,16 @@ WindowFeatures parseDialogFeatures(const String& dialogFeaturesString, const Flo
     features.x = floatFeature(featuresMap, "dialogleft", screenAvailableRect.x(), screenAvailableRect.maxX() - width);
     features.y = floatFeature(featuresMap, "dialogtop", screenAvailableRect.y(), screenAvailableRect.maxY() - height);
 
-    if (boolFeature(featuresMap, "center").valueOr(true)) {
+    if (boolFeature(featuresMap, "center").value_or(true)) {
         if (!features.x)
             features.x = screenAvailableRect.x() + (screenAvailableRect.width() - width) / 2;
         if (!features.y)
             features.y = screenAvailableRect.y() + (screenAvailableRect.height() - height) / 2;
     }
 
-    features.resizable = boolFeature(featuresMap, "resizable").valueOr(false);
-    features.scrollbarsVisible = boolFeature(featuresMap, "scroll").valueOr(true);
-    features.statusBarVisible = boolFeature(featuresMap, "status").valueOr(false);
+    features.resizable = boolFeature(featuresMap, "resizable").value_or(false);
+    features.scrollbarsVisible = boolFeature(featuresMap, "scroll").value_or(true);
+    features.statusBarVisible = boolFeature(featuresMap, "status").value_or(false);
 
     return features;
 }
@@ -212,7 +212,7 @@ static Optional<bool> boolFeature(const DialogFeaturesMap& features, const char*
 {
     auto it = features.find(key);
     if (it == features.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto& value = it->value;
     return value.isNull()
@@ -225,14 +225,14 @@ static Optional<float> floatFeature(const DialogFeaturesMap& features, const cha
 {
     auto it = features.find(key);
     if (it == features.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     // FIXME: The toDouble function does not offer a way to tell "0q" from string with no digits in it: Both
     // return the number 0 and false for ok. But "0q" should yield the minimum rather than the default.
     bool ok;
     double parsedNumber = it->value.toDouble(&ok);
     if ((!parsedNumber && !ok) || std::isnan(parsedNumber))
-        return WTF::nullopt;
+        return std::nullopt;
     if (parsedNumber < min || max <= min)
         return min;
     if (parsedNumber > max)

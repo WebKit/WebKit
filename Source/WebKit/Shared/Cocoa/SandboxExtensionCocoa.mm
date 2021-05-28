@@ -41,7 +41,7 @@ namespace WebKit {
 class SandboxExtensionImpl {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<SandboxExtensionImpl> create(const char* path, SandboxExtension::Type type, Optional<audit_token_t> auditToken = WTF::nullopt, OptionSet<SandboxExtension::Flags> flags = SandboxExtension::Flags::Default)
+    static std::unique_ptr<SandboxExtensionImpl> create(const char* path, SandboxExtension::Type type, Optional<audit_token_t> auditToken = std::nullopt, OptionSet<SandboxExtension::Flags> flags = SandboxExtension::Flags::Default)
     {
         std::unique_ptr<SandboxExtensionImpl> impl { new SandboxExtensionImpl(path, type, auditToken, flags) };
         if (!impl->m_token)
@@ -162,7 +162,7 @@ auto SandboxExtension::Handle::decode(IPC::Decoder& decoder) -> Optional<Handle>
 {
     IPC::DataReference dataReference;
     if (!decoder.decode(dataReference))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (dataReference.isEmpty())
         return {{ }};
@@ -224,14 +224,14 @@ Optional<SandboxExtension::HandleArray> SandboxExtension::HandleArray::decode(IP
     Optional<uint64_t> size;
     decoder >> size;
     if (!size)
-        return WTF::nullopt;
+        return std::nullopt;
 
     SandboxExtension::HandleArray handles;
     for (size_t i = 0; i < *size; ++i) {
         Optional<SandboxExtension::Handle> handle;
         decoder >> handle;
         if (!handle)
-            return WTF::nullopt;
+            return std::nullopt;
         handles.append(WTFMove(*handle));
     }
     return WTFMove(handles);
@@ -280,7 +280,7 @@ bool SandboxExtension::createHandleWithoutResolvingPath(const String& path, Type
 {
     ASSERT(!handle.m_sandboxExtension);
 
-    handle.m_sandboxExtension = SandboxExtensionImpl::create(path.utf8().data(), type, WTF::nullopt, SandboxExtension::Flags::DoNotCanonicalize);
+    handle.m_sandboxExtension = SandboxExtensionImpl::create(path.utf8().data(), type, std::nullopt, SandboxExtension::Flags::DoNotCanonicalize);
     if (!handle.m_sandboxExtension) {
         LOG_ERROR("Could not create a sandbox extension for '%s'", path.utf8().data());
         return false;

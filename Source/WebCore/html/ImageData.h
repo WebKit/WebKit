@@ -44,7 +44,7 @@ public:
     WEBCORE_EXPORT static RefPtr<ImageData> create(Optional<PixelBuffer>&&);
     WEBCORE_EXPORT static RefPtr<ImageData> create(const IntSize&);
     WEBCORE_EXPORT static RefPtr<ImageData> create(const IntSize&, Ref<Uint8ClampedArray>&&, PredefinedColorSpace);
-    WEBCORE_EXPORT static ExceptionOr<Ref<ImageData>> createUninitialized(unsigned rows, unsigned pixelsPerRow, PredefinedColorSpace defaultColorSpace, Optional<ImageDataSettings> = WTF::nullopt);
+    WEBCORE_EXPORT static ExceptionOr<Ref<ImageData>> createUninitialized(unsigned rows, unsigned pixelsPerRow, PredefinedColorSpace defaultColorSpace, Optional<ImageDataSettings> = std::nullopt);
     WEBCORE_EXPORT static ExceptionOr<Ref<ImageData>> create(unsigned sw, unsigned sh, Optional<ImageDataSettings>);
     WEBCORE_EXPORT static ExceptionOr<Ref<ImageData>> create(Ref<Uint8ClampedArray>&&, unsigned sw, Optional<unsigned> sh, Optional<ImageDataSettings>);
 

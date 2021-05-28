@@ -60,7 +60,7 @@ WebXRView::~WebXRView() = default;
 Optional<double> WebXRView::recommendedViewportScale() const
 {
     // Return null if the system does not implement a heuristic or method for determining a recommended scale.
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 // https://immersive-web.github.io/webxr/#dom-xrview-requestviewportscale

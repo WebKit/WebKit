@@ -90,7 +90,7 @@ RemoteMediaPlayerProxy::RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy& ma
 RemoteMediaPlayerProxy::~RemoteMediaPlayerProxy()
 {
     if (m_performTaskAtMediaTimeCompletionHandler)
-        m_performTaskAtMediaTimeCompletionHandler(WTF::nullopt, WTF::nullopt);
+        m_performTaskAtMediaTimeCompletionHandler(std::nullopt, std::nullopt);
     setShouldEnableAudioSourceProvider(false);
 }
 
@@ -984,7 +984,7 @@ void RemoteMediaPlayerProxy::performTaskAtMediaTime(const MediaTime& taskTime, M
         // MediaPlayerPrivateAVFoundationObjC::performTaskAtMediaTime), so cancel the existing
         // CompletionHandler.
         auto handler = WTFMove(m_performTaskAtMediaTimeCompletionHandler);
-        handler(WTF::nullopt, WTF::nullopt);
+        handler(std::nullopt, std::nullopt);
     }
 
     auto now = MonotonicTime::now();

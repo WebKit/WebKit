@@ -54,7 +54,7 @@ Optional<CPUTime> CPUTime::get()
     mach_msg_type_number_t threadInfoCount = TASK_THREAD_TIMES_INFO_COUNT;
     kern_return_t result = task_info(mach_task_self(), TASK_THREAD_TIMES_INFO, reinterpret_cast<task_info_t>(&threadInfoData), &threadInfoCount);
     if (result != KERN_SUCCESS)
-        return WTF::nullopt;
+        return std::nullopt;
 
     int64_t userTime = timeValueToMicroseconds(threadInfoData.user_time);
     int64_t systemTime = timeValueToMicroseconds(threadInfoData.system_time);
@@ -64,7 +64,7 @@ Optional<CPUTime> CPUTime::get()
     mach_msg_type_number_t taskInfoCount = TASK_BASIC_INFO_COUNT;
     result = task_info(mach_task_self(), TASK_BASIC_INFO, reinterpret_cast<task_info_t>(&taskInfoData), &taskInfoCount);
     if (result != KERN_SUCCESS)
-        return WTF::nullopt;
+        return std::nullopt;
 
     userTime += timeValueToMicroseconds(taskInfoData.user_time);
     systemTime += timeValueToMicroseconds(taskInfoData.system_time);

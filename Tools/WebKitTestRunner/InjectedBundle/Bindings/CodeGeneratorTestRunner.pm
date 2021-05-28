@@ -529,7 +529,7 @@ sub _platformTypeVariableDeclaration
     if ($platformType eq "JSValueRef") {
         $nullValue = "JSValueMakeUndefined(context)";
     } elsif (defined $nonPointerTypes{$platformType} || $$self{codeGenerator}->IsNumericType($type)) {
-        $nullValue = $type->isNullable ? "WTF::nullopt" : "$platformType()";
+        $nullValue = $type->isNullable ? "std::nullopt" : "$platformType()";
     }
 
     return "bool $variableName = $condition && $constructor;" if $condition && $platformType eq "bool";

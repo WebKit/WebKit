@@ -70,7 +70,7 @@ private:
     const char* renderName() const override { return "RenderSVGRoot"; }
 
     LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred  = ComputeActual) const override;
-    LayoutUnit computeReplacedLogicalHeight(Optional<LayoutUnit> estimatedUsedWidth = WTF::nullopt) const override;
+    LayoutUnit computeReplacedLogicalHeight(Optional<LayoutUnit> estimatedUsedWidth = std::nullopt) const override;
     void layout() override;
     void paintReplaced(PaintInfo&, const LayoutPoint&) override;
 

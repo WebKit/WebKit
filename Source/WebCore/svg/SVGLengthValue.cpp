@@ -185,7 +185,7 @@ Optional<SVGLengthValue> SVGLengthValue::construct(SVGLengthMode lengthMode, Str
 {
     SVGLengthValue length { lengthMode };
     if (length.setValueAsString(valueAsString).hasException())
-        return WTF::nullopt;
+        return std::nullopt;
     return length;
 }
 

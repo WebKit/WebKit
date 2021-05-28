@@ -55,31 +55,31 @@ Optional<RTCPacketOptions> RTCPacketOptions::decode(IPC::Decoder& decoder)
 
     rtc::DiffServCodePoint dscp;
     if (!decoder.decode(dscp))
-        return WTF::nullopt;
+        return std::nullopt;
     options.dscp = dscp;
 
     Optional<int32_t> packetId;
     decoder >> packetId;
     if (!packetId)
-        return WTF::nullopt;
+        return std::nullopt;
     options.packet_id = packetId.value();
 
     Optional<int> rtpSendtimeExtensionId;
     decoder >> rtpSendtimeExtensionId;
     if (!rtpSendtimeExtensionId)
-        return WTF::nullopt;
+        return std::nullopt;
     params.rtp_sendtime_extension_id = rtpSendtimeExtensionId.value();
 
     Optional<int64_t> srtpAuthTagLength;
     decoder >> srtpAuthTagLength;
     if (!srtpAuthTagLength)
-        return WTF::nullopt;
+        return std::nullopt;
     params.srtp_auth_tag_len = srtpAuthTagLength.value();
 
     if (params.srtp_auth_tag_len > 0) {
         IPC::DataReference srtpAuthKey;
         if (!decoder.decode(srtpAuthKey))
-            return WTF::nullopt;
+            return std::nullopt;
 
         params.srtp_auth_key = std::vector<char>(static_cast<size_t>(srtpAuthKey.size()));
         memcpy(params.srtp_auth_key.data(), reinterpret_cast<const char*>(srtpAuthKey.data()), srtpAuthKey.size() * sizeof(char));
@@ -88,7 +88,7 @@ Optional<RTCPacketOptions> RTCPacketOptions::decode(IPC::Decoder& decoder)
     Optional<int64_t> srtpPacketIndex;
     decoder >> srtpPacketIndex;
     if (!srtpPacketIndex)
-        return WTF::nullopt;
+        return std::nullopt;
     params.srtp_packet_index = srtpPacketIndex.value();
 
     options.packet_time_params = WTFMove(params);

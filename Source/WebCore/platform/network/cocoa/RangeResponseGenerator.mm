@@ -172,7 +172,7 @@ Optional<size_t> RangeResponseGenerator::expectedContentLengthFromData(const Dat
     // FIXME: ResourceResponseBase::expectedContentLength() should return Optional<size_t> instead of us doing this check here.
     auto expectedContentLength = data.originalResponse.expectedContentLength();
     if (expectedContentLength == NSURLResponseUnknownLength)
-        return WTF::nullopt;
+        return std::nullopt;
     return expectedContentLength;
 }
 

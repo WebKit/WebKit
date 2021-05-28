@@ -140,7 +140,7 @@ static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cook
 Optional<Cookie> parseCookieHeader(const String& cookieLine)
 {
     if (cookieLine.length() >= MAX_COOKIE_LINE)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // This Algorithm is based on the algorithm defined in RFC 6265 5.2 https://tools.ietf.org/html/rfc6265#section-5.2/
 

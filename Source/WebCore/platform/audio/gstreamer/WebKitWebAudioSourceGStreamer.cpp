@@ -303,7 +303,7 @@ static Optional<Vector<GRefPtr<GstBuffer>>> webKitWebAudioSrcAllocateBuffers(Web
     if (!priv->destination || !priv->bus) {
         GST_ELEMENT_ERROR(src, CORE, FAILED, ("Internal WebAudioSrc error"), ("Can't start without destination or bus"));
         gst_task_stop(src->priv->task.get());
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     ASSERT(priv->pool);
@@ -319,7 +319,7 @@ static Optional<Vector<GRefPtr<GstBuffer>>> webKitWebAudioSrcAllocateBuffers(Web
             // FLUSHING and EOS are not errors.
             if (ret < GST_FLOW_EOS || ret == GST_FLOW_NOT_LINKED)
                 GST_ELEMENT_ERROR(src, CORE, PAD, ("Internal WebAudioSrc error"), ("Failed to allocate buffer for flow: %s", gst_flow_get_name(ret)));
-            return WTF::nullopt;
+            return std::nullopt;
         }
 
         ASSERT(buffer);
@@ -330,7 +330,7 @@ static Optional<Vector<GRefPtr<GstBuffer>>> webKitWebAudioSrcAllocateBuffers(Web
         channelBufferList.uncheckedAppend(WTFMove(buffer));
     }
 
-    return makeOptional(channelBufferList);
+    return std::make_optional(channelBufferList);
 }
 
 static void webKitWebAudioSrcRenderAndPushFrames(GRefPtr<GstElement>&& element, Vector<GRefPtr<GstBuffer>>&& channelBufferList)

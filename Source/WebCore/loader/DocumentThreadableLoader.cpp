@@ -302,7 +302,7 @@ void DocumentThreadableLoader::clearResource()
         resource->removeClient(*this);
     }
     if (m_preflightChecker)
-        m_preflightChecker = WTF::nullopt;
+        m_preflightChecker = std::nullopt;
 }
 
 void DocumentThreadableLoader::redirectReceived(CachedResource& resource, ResourceRequest&& request, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
@@ -506,7 +506,7 @@ void DocumentThreadableLoader::didFail(unsigned long, const ResourceError& error
         m_options.serviceWorkersMode = ServiceWorkersMode::None;
         makeCrossOriginAccessRequestWithPreflight(WTFMove(m_bypassingPreflightForServiceWorkerRequest.value()));
         ASSERT(m_bypassingPreflightForServiceWorkerRequest->isNull());
-        m_bypassingPreflightForServiceWorkerRequest = WTF::nullopt;
+        m_bypassingPreflightForServiceWorkerRequest = std::nullopt;
         return;
     }
 #endif
@@ -522,7 +522,7 @@ void DocumentThreadableLoader::preflightSuccess(ResourceRequest&& request)
     ResourceRequest actualRequest(WTFMove(request));
     updateRequestForAccessControl(actualRequest, securityOrigin(), m_options.storedCredentialsPolicy);
 
-    m_preflightChecker = WTF::nullopt;
+    m_preflightChecker = std::nullopt;
 
     // It should be ok to skip the security check since we already asked about the preflight request.
     loadRequest(WTFMove(actualRequest), SecurityCheckPolicy::SkipSecurityCheck);
@@ -530,7 +530,7 @@ void DocumentThreadableLoader::preflightSuccess(ResourceRequest&& request)
 
 void DocumentThreadableLoader::preflightFailure(unsigned long identifier, const ResourceError& error)
 {
-    m_preflightChecker = WTF::nullopt;
+    m_preflightChecker = std::nullopt;
 
     InspectorInstrumentation::didFailLoading(m_document.frame(), m_document.frame()->loader().documentLoader(), identifier, error);
 

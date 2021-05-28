@@ -74,12 +74,16 @@ my @paths;
 find(\&wanted, "Source/JavaScriptCore");
 find(\&wanted, "Source/WTF");
 find(\&wanted, "Source/WebCore");
+find(\&wanted, "Source/WebDriver");
 find(\&wanted, "Source/WebKitLegacy");
 find(\&wanted, "Source/WebKit");
 find(\&wanted, "Tools/gdb");
 find(\&wanted, "Tools/lldb");
 find(\&wanted, "Tools/DumpRenderTree");
+find(\&wanted, "Tools/MiniBrowser");
+find(\&wanted, "Tools/TestRunnerShared");
 find(\&wanted, "Tools/TestWebKitAPI");
+find(\&wanted, "Tools/WebKitTestRunner");
 
 sub wanted
 {
@@ -102,12 +106,12 @@ sub wanted
 my $isDOMTypeRename = 0;
 my %renames = (
     # Renames go here in the form of:
-    "DragOperationCopy" => "DragOperation::Copy",
-    "DragOperationLink" => "DragOperation::Link",
-    "DragOperationGeneric" => "DragOperation::Generic",
-    "DragOperationPrivate" => "DragOperation::Private",
-    "DragOperationMove" => "DragOperation::Move",
-    "DragOperationDelete" => "DragOperation::Delete",
+    "valueOr" => "value_or",
+    "WTF::nullopt" => "std::nullopt",
+    "WTF::nullopt_t" => "std::nullopt_t",
+    "WTF::Optional" => "std::optional",
+    "WTF::makeOptional" => "std::make_optional",
+    "makeOptional" => "std::make_optional",
 );
 
 my %renamesContemplatedForTheFuture = (

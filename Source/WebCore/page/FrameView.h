@@ -493,13 +493,13 @@ public:
     FloatPoint convertToContainingView(const FloatPoint&) const final;
     IntPoint convertFromContainingView(const IntPoint&) const final;
 
-    float documentToAbsoluteScaleFactor(Optional<float> effectiveZoom = WTF::nullopt) const;
-    float absoluteToDocumentScaleFactor(Optional<float> effectiveZoom = WTF::nullopt) const;
+    float documentToAbsoluteScaleFactor(Optional<float> effectiveZoom = std::nullopt) const;
+    float absoluteToDocumentScaleFactor(Optional<float> effectiveZoom = std::nullopt) const;
 
-    WEBCORE_EXPORT FloatRect absoluteToDocumentRect(FloatRect, Optional<float> effectiveZoom = WTF::nullopt) const;
-    WEBCORE_EXPORT FloatPoint absoluteToDocumentPoint(FloatPoint, Optional<float> effectiveZoom = WTF::nullopt) const;
+    WEBCORE_EXPORT FloatRect absoluteToDocumentRect(FloatRect, Optional<float> effectiveZoom = std::nullopt) const;
+    WEBCORE_EXPORT FloatPoint absoluteToDocumentPoint(FloatPoint, Optional<float> effectiveZoom = std::nullopt) const;
 
-    FloatRect absoluteToClientRect(FloatRect, Optional<float> effectiveZoom = WTF::nullopt) const;
+    FloatRect absoluteToClientRect(FloatRect, Optional<float> effectiveZoom = std::nullopt) const;
 
     FloatSize documentToClientOffset() const;
     WEBCORE_EXPORT FloatRect documentToClientRect(FloatRect) const;

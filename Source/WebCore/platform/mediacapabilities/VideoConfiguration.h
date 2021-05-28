@@ -68,47 +68,47 @@ Optional<VideoConfiguration> VideoConfiguration::decode(Decoder& decoder)
     Optional<String> contentType;
     decoder >> contentType;
     if (!contentType)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<uint32_t> width;
     decoder >> width;
     if (!width)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<uint32_t> height;
     decoder >> height;
     if (!height)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<uint64_t> bitrate;
     decoder >> bitrate;
     if (!bitrate)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<double> framerate;
     decoder >> framerate;
     if (!framerate)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<bool>> alphaChannel;
     decoder >> alphaChannel;
     if (!alphaChannel)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<ColorGamut>> colorGamut;
     decoder >> colorGamut;
     if (!colorGamut)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<HdrMetadataType>> hdrMetadataType;
     decoder >> hdrMetadataType;
     if (!hdrMetadataType)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<TransferFunction>> transferFunction;
     decoder >> transferFunction;
     if (!transferFunction)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{
         *contentType,

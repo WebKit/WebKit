@@ -224,7 +224,7 @@ static NSArray<NSString *> *controlArray()
         if (CGRectContainsPoint(windowSpaceRect, initialPoint))
             return index;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 - (NSString *)_controlForEvent:(NSEvent *)event

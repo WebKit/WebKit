@@ -59,7 +59,7 @@ const Optional<const Styleable> DeclarativeAnimation::owningElement() const
 {
     if (m_owningElement)
         return Styleable(*m_owningElement.get(), m_owningPseudoId);
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void DeclarativeAnimation::tick()
@@ -350,7 +350,7 @@ void DeclarativeAnimation::enqueueDOMEvent(const AtomString& eventType, Seconds 
 
     auto time = secondsToWebAnimationsAPITime(elapsedTime) / 1000;
     auto pseudoId = pseudoIdAsString(m_owningPseudoId);
-    auto timelineTime = timeline() ? timeline()->currentTime() : WTF::nullopt;
+    auto timelineTime = timeline() ? timeline()->currentTime() : std::nullopt;
     auto event = createEvent(eventType, time, pseudoId, timelineTime);
     event->setTarget(m_owningElement.get());
     enqueueAnimationEvent(WTFMove(event));

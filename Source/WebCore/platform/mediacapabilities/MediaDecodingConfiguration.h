@@ -51,17 +51,17 @@ Optional<MediaDecodingConfiguration> MediaDecodingConfiguration::decode(Decoder&
 {
     auto mediaConfiguration = MediaConfiguration::decode(decoder);
     if (!mediaConfiguration)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<MediaDecodingType> type;
     decoder >> type;
     if (!type)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> canExposeVP9;
     decoder >> canExposeVP9;
     if (!canExposeVP9)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{
         *mediaConfiguration,

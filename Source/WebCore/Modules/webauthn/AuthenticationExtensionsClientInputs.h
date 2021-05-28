@@ -53,13 +53,13 @@ Optional<AuthenticationExtensionsClientInputs> AuthenticationExtensionsClientInp
     Optional<String> appid;
     decoder >> appid;
     if (!appid)
-        return WTF::nullopt;
+        return std::nullopt;
     result.appid = WTFMove(*appid);
 
     Optional<bool> googleLegacyAppidSupport;
     decoder >> googleLegacyAppidSupport;
     if (!googleLegacyAppidSupport)
-        return WTF::nullopt;
+        return std::nullopt;
     result.googleLegacyAppidSupport = WTFMove(*googleLegacyAppidSupport);
 
     return result;

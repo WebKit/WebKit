@@ -34,7 +34,7 @@ WebKitPopupMenu::WebKitPopupMenu(GtkWidget* webView, WebPopupMenuProxy::Client& 
 
 static void menuCloseCallback(WebKitPopupMenu* popupMenu)
 {
-    popupMenu->activateItem(WTF::nullopt);
+    popupMenu->activateItem(std::nullopt);
 }
 
 void WebKitPopupMenu::showPopupMenu(const IntRect& rect, TextDirection direction, double pageScaleFactor, const Vector<WebPopupItem>& items, const PlatformPopupMenuData& platformData, int32_t selectedIndex)

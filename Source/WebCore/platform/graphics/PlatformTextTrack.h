@@ -87,42 +87,42 @@ Optional<PlatformTextTrackData> PlatformTextTrackData::decode(Decoder& decoder)
     Optional<String> label;
     decoder >> label;
     if (!label)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<String> language;
     decoder >> language;
     if (!language)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<String> url;
     decoder >> url;
     if (!url)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<TrackMode> mode;
     decoder >> mode;
     if (!mode)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<TrackKind> kind;
     decoder >> kind;
     if (!kind)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<TrackType> type;
     decoder >> type;
     if (!type)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<int> uniqueId;
     decoder >> uniqueId;
     if (!uniqueId)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> isDefault;
     decoder >> isDefault;
     if (!isDefault)
-        return WTF::nullopt;
+        return std::nullopt;
 
     PlatformTextTrackData data = {
         WTFMove(*label),

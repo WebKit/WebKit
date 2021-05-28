@@ -74,7 +74,7 @@ inline static Optional<SharedStringHash> linkHashForElement(const Element& eleme
         return downcast<HTMLAnchorElement>(element).visitedLinkHash();
     if (is<SVGAElement>(element))
         return downcast<SVGAElement>(element).visitedLinkHash();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void VisitedLinkState::invalidateStyleForLink(SharedStringHash linkHash)

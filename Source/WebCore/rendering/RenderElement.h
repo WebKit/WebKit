@@ -146,7 +146,7 @@ public:
     bool isTransparent() const { return style().opacity() < 1.0f; }
     float opacity() const { return style().opacity(); }
 
-    bool visibleToHitTesting(Optional<HitTestRequest> hitTestRequest = WTF::nullopt) const
+    bool visibleToHitTesting(Optional<HitTestRequest> hitTestRequest = std::nullopt) const
     {
         if (style().visibility() != Visibility::Visible)
             return false;

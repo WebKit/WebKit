@@ -52,12 +52,12 @@ Optional<MediaConfiguration> MediaConfiguration::decode(Decoder& decoder)
     Optional<Optional<VideoConfiguration>> video;
     decoder >> video;
     if (!video)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<AudioConfiguration>> audio;
     decoder >> audio;
     if (!audio)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{
         *video,

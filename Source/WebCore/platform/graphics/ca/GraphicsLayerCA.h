@@ -480,7 +480,7 @@ private:
         {
             if (m_beginTime)
                 return *m_beginTime - m_timeOffset;
-            return WTF::nullopt;
+            return std::nullopt;
         }
 
         RefPtr<PlatformCAAnimation> m_animation;

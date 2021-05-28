@@ -1121,7 +1121,7 @@ RefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storageID)
             size = data->size();
         else {
             path = FileSystem::pathByAppendingComponent(flatFileDirectory, path);
-            size = FileSystem::fileSize(path).valueOr(0);
+            size = FileSystem::fileSize(path).value_or(0);
         }
         
         String mimeType = cacheStatement->columnText(3);
@@ -1309,11 +1309,11 @@ Optional<Vector<URL>> ApplicationCacheStorage::manifestURLs()
 
     openDatabase(false);
     if (!m_database.isOpen())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto selectURLs = m_database.prepareStatement("SELECT manifestURL FROM CacheGroups"_s);
     if (!selectURLs)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Vector<URL> urls;
     while (selectURLs->step() == SQLITE_ROW)
@@ -1450,7 +1450,7 @@ long long ApplicationCacheStorage::flatFileAreaSize()
     String flatFileDirectory = FileSystem::pathByAppendingComponent(m_cacheDirectory, m_flatFileSubdirectoryName);
     while (selectPaths->step() == SQLITE_ROW) {
         auto fullPath = FileSystem::pathByAppendingComponent(flatFileDirectory, selectPaths->columnText(0));
-        totalSize += FileSystem::fileSize(fullPath).valueOr(0);
+        totalSize += FileSystem::fileSize(fullPath).value_or(0);
     }
     
     return totalSize;

@@ -75,22 +75,22 @@ struct AppBoundNavigationTestingData {
         Optional<bool> hasLoadedAppBoundRequestTesting;
         decoder >> hasLoadedAppBoundRequestTesting;
         if (!hasLoadedAppBoundRequestTesting)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> hasLoadedNonAppBoundRequestTesting;
         decoder >> hasLoadedNonAppBoundRequestTesting;
         if (!hasLoadedNonAppBoundRequestTesting)
-            return WTF::nullopt;
+            return std::nullopt;
         
         Optional<bool> didPerformSoftUpdate;
         decoder >> didPerformSoftUpdate;
         if (!didPerformSoftUpdate)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<HashMap<RequestDomain, ContextDomain>> contextData;
         decoder >> contextData;
         if (!contextData)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{ *hasLoadedAppBoundRequestTesting, *hasLoadedNonAppBoundRequestTesting, *didPerformSoftUpdate, WTFMove(*contextData) }};
     }

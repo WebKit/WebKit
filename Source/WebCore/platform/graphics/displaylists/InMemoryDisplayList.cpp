@@ -48,7 +48,7 @@ Optional<ItemHandle> WARN_UNUSED_RETURN InMemoryDisplayList::ReadingClient::deco
     ItemHandle result { handleLocation };
     if (dataHandle.safeCopy(type, result))
         return result;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 InMemoryDisplayList::InMemoryDisplayList()

@@ -162,12 +162,12 @@ GPUProcessProxy::GPUProcessProxy()
 #endif
 #if PLATFORM(IOS_FAMILY)
     if (WebCore::deviceHasAGXCompilerService()) {
-        parameters.compilerServiceExtensionHandles = SandboxExtension::createHandlesForMachLookup(WebCore::agxCompilerServices(), WTF::nullopt);
-        parameters.dynamicIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(WebCore::agxCompilerClasses(), WTF::nullopt);
+        parameters.compilerServiceExtensionHandles = SandboxExtension::createHandlesForMachLookup(WebCore::agxCompilerServices(), std::nullopt);
+        parameters.dynamicIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(WebCore::agxCompilerClasses(), std::nullopt);
     }
 
     if (!WebCore::IOSApplication::isMobileSafari())
-        parameters.dynamicMachExtensionHandles = SandboxExtension::createHandlesForMachLookup(nonBrowserServices(), WTF::nullopt);
+        parameters.dynamicMachExtensionHandles = SandboxExtension::createHandlesForMachLookup(nonBrowserServices(), std::nullopt);
 #endif
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
@@ -209,13 +209,13 @@ static inline bool addCameraSandboxExtensions(Vector<SandboxExtension::Handle>& 
 #if HAVE(AUDIT_TOKEN)
         if (shouldCreateAppleCameraServiceSandboxExtension()) {
             SandboxExtension::Handle appleCameraServicePathSandboxExtensionHandle;
-            if (!SandboxExtension::createHandleForMachLookup("com.apple.applecamerad"_s, WTF::nullopt, appleCameraServicePathSandboxExtensionHandle)) {
+            if (!SandboxExtension::createHandleForMachLookup("com.apple.applecamerad"_s, std::nullopt, appleCameraServicePathSandboxExtensionHandle)) {
                 RELEASE_LOG_ERROR(WebRTC, "Unable to create com.apple.applecamerad sandbox extension");
                 return false;
             }
 #if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
             SandboxExtension::Handle additionalAppleCameraServicePathSandboxExtensionHandle;
-            if (!SandboxExtension::createHandleForMachLookup("com.apple.appleh13camerad"_s, WTF::nullopt, additionalAppleCameraServicePathSandboxExtensionHandle)) {
+            if (!SandboxExtension::createHandleForMachLookup("com.apple.appleh13camerad"_s, std::nullopt, additionalAppleCameraServicePathSandboxExtensionHandle)) {
                 RELEASE_LOG_ERROR(WebRTC, "Unable to create com.apple.appleh13camerad sandbox extension");
                 return false;
             }

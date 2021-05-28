@@ -288,7 +288,7 @@ OverflowingTextContent InlineContentBreaker::processOverflowingContentWithText(c
         // FIXME: Add support for subsequent empty inline boxes e.g.
         auto trailingCandidateIndex = breakableRunIndex - 1;
         auto isAtInlineBox = runs[trailingCandidateIndex].inlineItem.isInlineBoxStart();
-        return !isAtInlineBox ? trailingCandidateIndex : trailingCandidateIndex ? makeOptional(trailingCandidateIndex - 1) : WTF::nullopt;
+        return !isAtInlineBox ? trailingCandidateIndex : trailingCandidateIndex ? std::make_optional(trailingCandidateIndex - 1) : std::nullopt;
     };
 
     // Check where the overflow occurs and use the corresponding style to figure out the breaking behaviour.
@@ -341,7 +341,7 @@ OverflowingTextContent InlineContentBreaker::processOverflowingContentWithText(c
                 // since it's either at hyphen position or the entire run is returned.
                 ASSERT(partialRun->length);
                 auto runIsFullyAccommodated = partialRun->length == downcast<InlineTextItem>(run.inlineItem).length();
-                return OverflowingTextContent::BreakingPosition { index, OverflowingTextContent::BreakingPosition::TrailingContent { false, runIsFullyAccommodated ? WTF::nullopt : partialRun } };
+                return OverflowingTextContent::BreakingPosition { index, OverflowingTextContent::BreakingPosition::TrailingContent { false, runIsFullyAccommodated ? std::nullopt : partialRun } };
             }
         }
         return { };

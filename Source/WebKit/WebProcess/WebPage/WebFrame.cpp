@@ -194,7 +194,7 @@ FrameInfoData WebFrame::info() const
         ResourceRequest(url()),
         SecurityOriginData::fromFrame(m_coreFrame.get()),
         m_frameID,
-        parent ? Optional<WebCore::FrameIdentifier> { parent->frameID() } : WTF::nullopt,
+        parent ? Optional<WebCore::FrameIdentifier> { parent->frameID() } : std::nullopt,
     };
 
     return info;
@@ -243,7 +243,7 @@ void WebFrame::invalidatePolicyListener()
     m_policyDownloadID = { };
     m_policyListenerID = 0;
     auto identifier = m_policyIdentifier;
-    m_policyIdentifier = WTF::nullopt;
+    m_policyIdentifier = std::nullopt;
     if (auto function = std::exchange(m_policyFunction, nullptr))
         function(PolicyAction::Ignore, *identifier);
     m_policyFunctionForNavigationAction = ForNavigationAction::No;
@@ -259,7 +259,7 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& po
         return;
 
     ASSERT(policyDecision.identifier == m_policyIdentifier);
-    m_policyIdentifier = WTF::nullopt;
+    m_policyIdentifier = std::nullopt;
 
     FramePolicyFunction function = WTFMove(m_policyFunction);
     bool forNavigationAction = m_policyFunctionForNavigationAction == ForNavigationAction::Yes;
@@ -293,7 +293,7 @@ void WebFrame::startDownload(const WebCore::ResourceRequest& request, const Stri
         ASSERT_NOT_REACHED();
         return;
     }
-    auto policyDownloadID = *std::exchange(m_policyDownloadID, WTF::nullopt);
+    auto policyDownloadID = *std::exchange(m_policyDownloadID, std::nullopt);
 
     Optional<NavigatingToAppBoundDomain> isAppBound = NavigatingToAppBoundDomain::No;
     isAppBound = m_isNavigatingToAppBoundDomain;
@@ -306,7 +306,7 @@ void WebFrame::convertMainResourceLoadToDownload(DocumentLoader* documentLoader,
         ASSERT_NOT_REACHED();
         return;
     }
-    auto policyDownloadID = *std::exchange(m_policyDownloadID, WTF::nullopt);
+    auto policyDownloadID = *std::exchange(m_policyDownloadID, std::nullopt);
 
     SubresourceLoader* mainResourceLoader = documentLoader->mainResourceLoader();
 

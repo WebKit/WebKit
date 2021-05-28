@@ -180,9 +180,9 @@ bool NetworkStorageSession::shouldExemptDomainPairFromThirdPartyCookieBlocking(c
 
 Optional<Seconds> NetworkStorageSession::maxAgeCacheCap(const ResourceRequest& request)
 {
-    if (m_cacheMaxAgeCapForPrevalentResources && shouldBlockCookies(request, WTF::nullopt, WTF::nullopt, ShouldRelaxThirdPartyCookieBlocking::No))
+    if (m_cacheMaxAgeCapForPrevalentResources && shouldBlockCookies(request, std::nullopt, std::nullopt, ShouldRelaxThirdPartyCookieBlocking::No))
         return m_cacheMaxAgeCapForPrevalentResources;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void NetworkStorageSession::setAgeCapForClientSideCookies(Optional<Seconds> seconds)
@@ -335,7 +335,7 @@ void NetworkStorageSession::setCacheMaxAgeCapForPrevalentResources(Seconds secon
     
 void NetworkStorageSession::resetCacheMaxAgeCapForPrevalentResources()
 {
-    m_cacheMaxAgeCapForPrevalentResources = WTF::nullopt;
+    m_cacheMaxAgeCapForPrevalentResources = std::nullopt;
 }
 
 void NetworkStorageSession::didCommitCrossSiteLoadWithDataTransferFromPrevalentResource(const RegistrableDomain& toDomain, PageIdentifier pageID)
@@ -415,7 +415,7 @@ Optional<HashSet<RegistrableDomain>> NetworkStorageSession::subResourceDomainsIn
     auto it = storageAccessQuirks().find(topFrameDomain);
     if (it != storageAccessQuirks().end())
         return it->value;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<RegistrableDomain> NetworkStorageSession::findAdditionalLoginDomain(const TopFrameDomain& topDomain, const SubResourceDomain& subDomain)
@@ -426,7 +426,7 @@ Optional<RegistrableDomain> NetworkStorageSession::findAdditionalLoginDomain(con
     if (subDomain.string() == "sonyentertainmentnetwork.com"_s && topDomain.string() == "playstation.com"_s)
         return RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sony.com"_s);
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 #endif // ENABLE(RESOURCE_LOAD_STATISTICS)

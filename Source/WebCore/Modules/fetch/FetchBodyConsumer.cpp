@@ -112,16 +112,16 @@ static Optional<MimeType> parseMIMEType(const String& contentType)
     String input = stripLeadingAndTrailingHTTPSpaces(contentType);
     size_t slashIndex = input.find('/');
     if (slashIndex == notFound)
-        return WTF::nullopt;
+        return std::nullopt;
 
     String type = input.substring(0, slashIndex);
     if (!type.length() || !isValidHTTPToken(type))
-        return WTF::nullopt;
+        return std::nullopt;
     
     size_t semicolonIndex = input.find(';', slashIndex);
     String subtype = stripLeadingAndTrailingHTTPSpaces(input.substring(slashIndex + 1, semicolonIndex - slashIndex - 1));
     if (!subtype.length() || !isValidHTTPToken(subtype))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ WTFMove(type), WTFMove(subtype), parseParameters(StringView(input), semicolonIndex + 1) }};
 }
@@ -175,13 +175,13 @@ static RefPtr<DOMFormData> packageFormData(ScriptExecutionContext* context, cons
     
     auto parseMultipartBoundary = [] (const Optional<MimeType>& mimeType) -> Optional<String> {
         if (!mimeType)
-            return WTF::nullopt;
+            return std::nullopt;
         if (equalIgnoringASCIICase(mimeType->type, "multipart") && equalIgnoringASCIICase(mimeType->subtype, "form-data")) {
             auto iterator = mimeType->parameters.find("boundary"_s);
             if (iterator != mimeType->parameters.end())
                 return iterator->value;
         }
-        return WTF::nullopt;
+        return std::nullopt;
     };
 
     auto form = DOMFormData::create(UTF8Encoding());

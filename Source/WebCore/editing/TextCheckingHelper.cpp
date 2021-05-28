@@ -139,7 +139,7 @@ void TextCheckingParagraph::invalidateParagraphRangeValues()
     m_checkingStart.reset();
     m_automaticReplacementStart.reset();
     m_automaticReplacementLength.reset();
-    m_offsetAsRange = WTF::nullopt;
+    m_offsetAsRange = std::nullopt;
     m_text = String();
 }
 

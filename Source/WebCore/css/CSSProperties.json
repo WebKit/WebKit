@@ -51,7 +51,7 @@
         "",
         "* conditional-converter:",
         "Similar to property converter, but the converter function returns a",
-        "WTF::Optional<> to indicate if the property setter should be called",
+        "std::optional<> to indicate if the property setter should be called",
         "or not.",
         "",
         "* custom:",

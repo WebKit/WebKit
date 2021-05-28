@@ -480,16 +480,16 @@ Optional<MediaSample::ByteRange> MediaSampleAVFObjC::byteRangeForAttachment(CFSt
 {
     auto byteOffsetCF = dynamic_cf_cast<CFNumberRef>(PAL::CMGetAttachment(m_sample.get(), key, nullptr));
     if (!byteOffsetCF)
-        return WTF::nullopt;
+        return std::nullopt;
 
     int64_t byteOffset = 0;
     if (!CFNumberGetValue(byteOffsetCF, kCFNumberSInt64Type, &byteOffset))
-        return WTF::nullopt;
+        return std::nullopt;
 
     CMItemCount sizeArrayEntries = 0;
     PAL::CMSampleBufferGetSampleSizeArray(m_sample.get(), 0, nullptr, &sizeArrayEntries);
     if (sizeArrayEntries != 1)
-        return WTF::nullopt;
+        return std::nullopt;
 
     size_t singleSizeEntry = 0;
     PAL::CMSampleBufferGetSampleSizeArray(m_sample.get(), 1, &singleSizeEntry, nullptr);

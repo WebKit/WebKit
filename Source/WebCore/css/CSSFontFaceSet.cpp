@@ -330,13 +330,13 @@ static FontSelectionRequest computeFontSelectionRequest(CSSPropertyParserHelpers
 
     // Because this is a FontRaw, we know we should be able to dereference stretchSelectionValue as
     // consumeFontStretchKeywordValueRaw only returns results valid to pass to fontStretchValue.
-    auto stretchSelectionValue = fontStretchValue(font.stretch.valueOr(CSSValueNormal));
+    auto stretchSelectionValue = fontStretchValue(font.stretch.value_or(CSSValueNormal));
     ASSERT(stretchSelectionValue);
 
     auto styleKeyword = font.style ? font.style->style : CSSValueNormal;
     auto styleSelectionValue = [&] () -> Optional<FontSelectionValue> {
         if (styleKeyword == CSSValueNormal)
-            return WTF::nullopt;
+            return std::nullopt;
         if (styleKeyword == CSSValueItalic)
             return italicValue();
         ASSERT(font.style && styleKeyword == CSSValueOblique);

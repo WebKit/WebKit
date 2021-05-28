@@ -69,7 +69,7 @@ static Optional<SRGBA<uint8_t>> makeSimpleColorFromNSColor(NSColor *color)
     // FIXME: ExtendedColor - needs to handle color spaces.
 
     if (!color)
-        return WTF::nullopt;
+        return std::nullopt;
 
     CGFloat redComponent;
     CGFloat greenComponent;

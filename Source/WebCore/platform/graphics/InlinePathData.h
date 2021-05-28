@@ -95,7 +95,7 @@ template<class Decoder> Optional<MoveData> MoveData::decode(Decoder& decoder)
 {
     MoveData data;
     if (!decoder.decode(data.location))
-        return WTF::nullopt;
+        return std::nullopt;
     return data;
 }
 
@@ -109,10 +109,10 @@ template<class Decoder> Optional<LineData> LineData::decode(Decoder& decoder)
 {
     LineData data;
     if (!decoder.decode(data.start))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(data.end))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return data;
 }
@@ -132,25 +132,25 @@ template<class Decoder> Optional<ArcData> ArcData::decode(Decoder& decoder)
 {
     ArcData data;
     if (!decoder.decode(data.start))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(data.center))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(data.radius))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(data.startAngle))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(data.endAngle))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(data.clockwise))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(data.type))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return data;
 }
@@ -166,13 +166,13 @@ template<class Decoder> Optional<QuadCurveData> QuadCurveData::decode(Decoder& d
 {
     QuadCurveData data;
     if (!decoder.decode(data.startPoint))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(data.controlPoint))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(data.endPoint))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return data;
 }
@@ -189,16 +189,16 @@ template<class Decoder> Optional<BezierCurveData> BezierCurveData::decode(Decode
 {
     BezierCurveData data;
     if (!decoder.decode(data.startPoint))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(data.controlPoint1))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(data.controlPoint2))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(data.endPoint))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return data;
 }

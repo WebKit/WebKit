@@ -141,7 +141,7 @@ ExceptionOr<bool> DOMTokenList::toggle(const AtomString& token, Optional<bool> f
     auto& tokens = this->tokens();
 
     if (tokens.contains(token)) {
-        if (!force.valueOr(false)) {
+        if (!force.value_or(false)) {
             tokens.removeFirst(token);
             updateAssociatedAttributeFromTokens();
             return false;

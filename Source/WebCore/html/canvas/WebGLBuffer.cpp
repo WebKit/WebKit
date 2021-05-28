@@ -242,7 +242,7 @@ Optional<unsigned> WebGLBuffer::getCachedMaxIndex(GCGLenum type)
         if (cache.type == type)
             return cache.maxIndex;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void WebGLBuffer::setCachedMaxIndex(GCGLenum type, unsigned value)

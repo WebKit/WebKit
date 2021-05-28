@@ -216,7 +216,7 @@ static Optional<MeasureUnit> sanctionedSimpleUnitIdentifier(StringView unitIdent
         });
     if (iterator != std::end(simpleUnits) && iterator->subType == unitIdentifier)
         return *iterator;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 struct WellFormedUnit {
@@ -246,21 +246,21 @@ static Optional<WellFormedUnit> wellFormedUnitIdentifier(StringView unitIdentifi
     auto per = StringView("-per-"_s);
     auto position = unitIdentifier.find(per);
     if (position == WTF::notFound)
-        return WTF::nullopt;
+        return std::nullopt;
     if (unitIdentifier.find(per, position + per.length()) != WTF::notFound)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // If the result of IsSanctionedSimpleUnitIdentifier(numerator) is false, then return false.
     auto numerator = unitIdentifier.substring(0, position);
     auto numeratorUnit = sanctionedSimpleUnitIdentifier(numerator);
     if (!numeratorUnit)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // If the result of IsSanctionedSimpleUnitIdentifier(denominator) is false, then return false.
     auto denominator = unitIdentifier.substring(position + per.length());
     auto denominatorUnit = sanctionedSimpleUnitIdentifier(denominator);
     if (!denominatorUnit)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return WellFormedUnit(numeratorUnit.value(), denominatorUnit.value());
 }

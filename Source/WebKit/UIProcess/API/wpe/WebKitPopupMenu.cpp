@@ -42,7 +42,7 @@ WebKitPopupMenu::WebKitPopupMenu(WKWPE::View& view, WebPopupMenuProxy::Client& c
 
 static void menuCloseCallback(WebKitPopupMenu* popupMenu)
 {
-    popupMenu->activateItem(WTF::nullopt);
+    popupMenu->activateItem(std::nullopt);
 }
 
 void WebKitPopupMenu::showPopupMenu(const IntRect& rect, TextDirection direction, double pageScaleFactor, const Vector<WebPopupItem>& items, const PlatformPopupMenuData& platformData, int32_t selectedIndex)
@@ -78,7 +78,7 @@ void WebKitPopupMenu::selectItem(unsigned itemIndex)
 void WebKitPopupMenu::activateItem(Optional<unsigned> itemIndex)
 {
     if (m_client)
-        m_client->valueChangedForPopupMenu(this, itemIndex.valueOr(m_selectedItem.valueOr(-1)));
+        m_client->valueChangedForPopupMenu(this, itemIndex.value_or(m_selectedItem.value_or(-1)));
     if (m_menu) {
         g_signal_handlers_disconnect_matched(m_menu.get(), G_SIGNAL_MATCH_DATA, 0, 0, nullptr, nullptr, this);
         m_menu = nullptr;

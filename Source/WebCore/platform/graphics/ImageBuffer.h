@@ -122,8 +122,8 @@ public:
     virtual void convertToLuminanceMask() = 0;
     virtual void transformToColorSpace(const DestinationColorSpace&) = 0;
 
-    virtual String toDataURL(const String& mimeType, Optional<double> quality = WTF::nullopt, PreserveResolution = PreserveResolution::No) const = 0;
-    virtual Vector<uint8_t> toData(const String& mimeType, Optional<double> quality = WTF::nullopt) const = 0;
+    virtual String toDataURL(const String& mimeType, Optional<double> quality = std::nullopt, PreserveResolution = PreserveResolution::No) const = 0;
+    virtual Vector<uint8_t> toData(const String& mimeType, Optional<double> quality = std::nullopt) const = 0;
 
     virtual Optional<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const = 0;
     virtual void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint = { }, AlphaPremultiplication destFormat = AlphaPremultiplication::Premultiplied) = 0;

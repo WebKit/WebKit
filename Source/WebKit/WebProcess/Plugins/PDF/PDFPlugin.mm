@@ -2013,13 +2013,13 @@ IntPoint PDFPlugin::convertFromRootViewToPlugin(const IntPoint& point) const
 IntPoint PDFPlugin::convertFromPDFViewToRootView(const IntPoint& point) const
 {
     IntPoint pointInPluginCoordinates(point.x(), size().height() - point.y());
-    return m_rootViewToPluginTransform.inverse().valueOr(AffineTransform()).mapPoint(pointInPluginCoordinates);
+    return m_rootViewToPluginTransform.inverse().value_or(AffineTransform()).mapPoint(pointInPluginCoordinates);
 }
 
 IntRect PDFPlugin::convertFromPDFViewToRootView(const IntRect& rect) const
 {
     IntRect rectInPluginCoordinates(rect.x(), rect.y(), rect.width(), rect.height());
-    return m_rootViewToPluginTransform.inverse().valueOr(AffineTransform()).mapRect(rectInPluginCoordinates);
+    return m_rootViewToPluginTransform.inverse().value_or(AffineTransform()).mapRect(rectInPluginCoordinates);
 }
 
 IntPoint PDFPlugin::convertFromRootViewToPDFView(const IntPoint& point) const
@@ -2052,7 +2052,7 @@ IntRect PDFPlugin::boundsOnScreen() const
         return { };
 
     FloatRect bounds = FloatRect(FloatPoint(), size());
-    FloatRect rectInRootViewCoordinates = m_rootViewToPluginTransform.inverse().valueOr(AffineTransform()).mapRect(bounds);
+    FloatRect rectInRootViewCoordinates = m_rootViewToPluginTransform.inverse().value_or(AffineTransform()).mapRect(bounds);
     auto* page = m_frame->coreFrame()->page();
     if (!page)
         return { };
@@ -2079,7 +2079,7 @@ void PDFPlugin::geometryDidChange(const IntSize& pluginSize, const IntRect&, con
         return;
 
     m_size = pluginSize;
-    m_rootViewToPluginTransform = pluginToRootViewTransform.inverse().valueOr(AffineTransform());
+    m_rootViewToPluginTransform = pluginToRootViewTransform.inverse().value_or(AffineTransform());
     [m_pdfLayerController setFrameSize:pluginSize];
 
     [CATransaction begin];
@@ -2606,7 +2606,7 @@ void PDFPlugin::openWithNativeApplication()
 void PDFPlugin::writeItemsToPasteboard(NSString *pasteboardName, NSArray *items, NSArray *types)
 {
     auto pasteboardTypes = makeVector<String>(types);
-    auto pageIdentifier = m_frame && m_frame->coreFrame() ? m_frame->coreFrame()->pageID() : WTF::nullopt;
+    auto pageIdentifier = m_frame && m_frame->coreFrame() ? m_frame->coreFrame()->pageID() : std::nullopt;
 
     int64_t newChangeCount;
     auto& webProcess = WebProcess::singleton();

@@ -66,47 +66,47 @@ struct TrackPrivateRemoteConfiguration {
         Optional<AtomString> trackId;
         decoder >> trackId;
         if (!trackId)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<AtomString> label;
         decoder >> label;
         if (!label)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<AtomString> language;
         decoder >> language;
         if (!language)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<MediaTime> startTimeVariance;
         decoder >> startTimeVariance;
         if (!startTimeVariance)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<int> trackIndex;
         decoder >> trackIndex;
         if (!trackIndex)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> enabled;
         decoder >> enabled;
         if (!enabled)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<WebCore::AudioTrackPrivate::Kind> audioKind;
         decoder >> audioKind;
         if (!audioKind)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> selected;
         decoder >> selected;
         if (!selected)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<WebCore::VideoTrackPrivate::Kind> videoKind;
         decoder >> videoKind;
         if (!videoKind)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{
             WTFMove(*trackId),

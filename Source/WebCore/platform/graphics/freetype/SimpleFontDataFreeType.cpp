@@ -94,7 +94,7 @@ static Optional<unsigned> fontUnitsPerEm(FT_Face freeTypeFace)
     if (auto* ttHeader = static_cast<TT_Header*>(FT_Get_Sfnt_Table(freeTypeFace, ft_sfnt_head)))
         return ttHeader->Units_Per_EM;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void Font::platformInit()

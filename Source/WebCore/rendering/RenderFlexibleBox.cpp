@@ -1174,7 +1174,7 @@ bool RenderFlexibleBox::updateAutoMarginsInCrossAxis(RenderBox& child, LayoutUni
 
 LayoutUnit RenderFlexibleBox::marginBoxAscentForChild(const RenderBox& child)
 {
-    LayoutUnit ascent = child.firstLineBaseline().valueOr(crossAxisExtentForChild(child));
+    LayoutUnit ascent = child.firstLineBaseline().value_or(crossAxisExtentForChild(child));
     return ascent + flowAwareMarginBeforeForChild(child);
 }
 
@@ -1209,16 +1209,16 @@ void RenderFlexibleBox::prepareOrderIteratorAndMargins()
 LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(RenderBox& child, LayoutUnit childSize)
 {
     Length max = mainSizeLengthForChild(MaxSize, child);
-    Optional<LayoutUnit> maxExtent = WTF::nullopt;
+    Optional<LayoutUnit> maxExtent = std::nullopt;
     if (max.isSpecifiedOrIntrinsic()) {
         maxExtent = computeMainAxisExtentForChild(child, MaxSize, max);
-        childSize = std::min(childSize, maxExtent.valueOr(childSize));
+        childSize = std::min(childSize, maxExtent.value_or(childSize));
     }
 
     Length min = mainSizeLengthForChild(MinSize, child);
     // Intrinsic sizes in child's block axis are handled by the min-size:auto code path.
     if (min.isSpecified() || (min.isIntrinsic() && mainAxisIsChildInlineAxis(child)))
-        return std::max(childSize, std::max(0_lu, computeMainAxisExtentForChild(child, MinSize, min).valueOr(childSize)));
+        return std::max(childSize, std::max(0_lu, computeMainAxisExtentForChild(child, MinSize, min).value_or(childSize)));
     
     if (shouldApplyMinSizeAutoForChild(child)) {
         // FIXME: If the min value is expected to be valid here, we need to come up with a non optional version of computeMainAxisExtentForChild and
@@ -1228,17 +1228,17 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(RenderBox& child, Layo
         if (child.isRenderReplaced() && useChildAspectRatio(child))
             contentSize = computeMainSizeFromAspectRatioUsing(child, childCrossSizeLength);
         else
-            contentSize = computeMainAxisExtentForChild(child, MinSize, Length(LengthType::MinContent)).valueOr(0);
+            contentSize = computeMainAxisExtentForChild(child, MinSize, Length(LengthType::MinContent)).value_or(0);
         if (child.hasIntrinsicAspectRatio() && child.intrinsicSize().height())
             contentSize = adjustChildSizeForAspectRatioCrossAxisMinAndMax(child, contentSize);
         ASSERT(contentSize >= 0);
-        contentSize = std::min(contentSize, maxExtent.valueOr(contentSize));
+        contentSize = std::min(contentSize, maxExtent.value_or(contentSize));
         
         Length mainSize = mainSizeLengthForChild(MainOrPreferredSize, child);
         if (childMainSizeIsDefinite(child, mainSize)) {
-            LayoutUnit resolvedMainSize = computeMainAxisExtentForChild(child, MainOrPreferredSize, mainSize).valueOr(0);
+            LayoutUnit resolvedMainSize = computeMainAxisExtentForChild(child, MainOrPreferredSize, mainSize).value_or(0);
             ASSERT(resolvedMainSize >= 0);
-            LayoutUnit specifiedSize = std::min(resolvedMainSize, maxExtent.valueOr(resolvedMainSize));
+            LayoutUnit specifiedSize = std::min(resolvedMainSize, maxExtent.value_or(resolvedMainSize));
             return std::max(childSize, std::min(specifiedSize, contentSize));
         }
 
@@ -1325,9 +1325,9 @@ FlexItem RenderFlexibleBox::constructFlexItem(RenderBox& child, bool relayoutChi
         // by definition we have an indefinite flex basis here and thus percentages should not resolve.
         if (child.needsLayout() || !m_intrinsicSizeAlongMainAxis.contains(&child)) {
             if (isHorizontalWritingMode() == child.isHorizontalWritingMode())
-                child.setOverridingContainingBlockContentLogicalHeight(WTF::nullopt);
+                child.setOverridingContainingBlockContentLogicalHeight(std::nullopt);
             else
-                child.setOverridingContainingBlockContentLogicalWidth(WTF::nullopt);
+                child.setOverridingContainingBlockContentLogicalWidth(std::nullopt);
             child.clearOverridingContentSize();
             child.setChildNeedsLayout(MarkOnlyThis);
             child.layoutIfNeeded();
@@ -2085,7 +2085,7 @@ LayoutUnit RenderFlexibleBox::computeGap(RenderFlexibleBox::GapType gapType) con
     if (LIKELY(gapLength.isNormal()))
         return { };
 
-    auto availableSize = usesRowGap ? availableLogicalHeightForPercentageComputation().valueOr(0_lu) : contentLogicalWidth();
+    auto availableSize = usesRowGap ? availableLogicalHeightForPercentageComputation().value_or(0_lu) : contentLogicalWidth();
     return minimumValueForLength(gapLength.length(), availableSize);
 }
 }

@@ -80,23 +80,23 @@ struct RunJavaScriptParameters {
     {
         String source;
         if (!decoder.decode(source))
-            return WTF::nullopt;
+            return std::nullopt;
 
         URL sourceURL;
         if (!decoder.decode(sourceURL))
-            return WTF::nullopt;
+            return std::nullopt;
 
         RunAsAsyncFunction runAsAsyncFunction;
         if (!decoder.decode(runAsAsyncFunction))
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<ArgumentWireBytesMap> arguments;
         if (!decoder.decode(arguments))
-            return WTF::nullopt;
+            return std::nullopt;
 
         ForceUserGesture forceUserGesture;
         if (!decoder.decode(forceUserGesture))
-            return WTF::nullopt;
+            return std::nullopt;
 
         return { RunJavaScriptParameters { WTFMove(source), WTFMove(sourceURL), runAsAsyncFunction, WTFMove(arguments), forceUserGesture } };
     }

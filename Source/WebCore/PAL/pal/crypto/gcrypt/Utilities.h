@@ -63,7 +63,7 @@ static inline Optional<int> aesAlgorithmForKeySize(size_t keySize)
     case 256:
         return GCRY_CIPHER_AES256;
     default:
-        return WTF::nullopt;
+        return std::nullopt;
     }
 }
 

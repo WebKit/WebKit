@@ -515,7 +515,7 @@ void WebPageProxy::openPDFFromTemporaryFolderWithNativeApplication(FrameInfoData
 void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu, PDFPluginIdentifier identifier, CompletionHandler<void(Optional<int32_t>&&)>&& completionHandler)
 {
     if (!contextMenu.items.size())
-        return completionHandler(WTF::nullopt);
+        return completionHandler(std::nullopt);
     
     RetainPtr<WKPDFMenuTarget> menuTarget = adoptNS([[WKPDFMenuTarget alloc] init]);
     RetainPtr<NSMenu> nsMenu = adoptNS([[NSMenu alloc] init]);
@@ -557,7 +557,7 @@ void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu,
 #endif
         return completionHandler(tag);
     }
-    completionHandler(WTF::nullopt);
+    completionHandler(std::nullopt);
 }
 #endif
 

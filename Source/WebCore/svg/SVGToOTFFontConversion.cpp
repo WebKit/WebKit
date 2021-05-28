@@ -1292,7 +1292,7 @@ void SVGToOTFFontConverter::processGlyphElement(const SVGElement& glyphOrMissing
     if (glyphBoundingBox)
         m_minRightSideBearing = std::min(m_minRightSideBearing, horizontalAdvance - glyphBoundingBox.value().maxX());
 
-    m_glyphs.append(GlyphData(WTFMove(path), glyphElement, horizontalAdvance, verticalAdvance, glyphBoundingBox.valueOr(FloatRect()), codepoints));
+    m_glyphs.append(GlyphData(WTFMove(path), glyphElement, horizontalAdvance, verticalAdvance, glyphBoundingBox.value_or(FloatRect()), codepoints));
 }
 
 void SVGToOTFFontConverter::appendLigatureGlyphs()
@@ -1416,7 +1416,7 @@ SVGToOTFFontConverter::SVGToOTFFontConverter(const SVGFontElement& fontElement)
             processGlyphElement(glyphElement, &glyphElement, defaultHorizontalAdvance, defaultVerticalAdvance, unicodeAttribute, boundingBox);
     }
 
-    m_boundingBox = boundingBox.valueOr(FloatRect());
+    m_boundingBox = boundingBox.value_or(FloatRect());
 
     appendLigatureGlyphs();
 
@@ -1558,9 +1558,9 @@ Optional<Vector<char>> convertSVGToOTFFont(const SVGFontElement& element)
 {
     SVGToOTFFontConverter converter(element);
     if (converter.error())
-        return WTF::nullopt;
+        return std::nullopt;
     if (!converter.convertSVGToOTFFont())
-        return WTF::nullopt;
+        return std::nullopt;
     return converter.releaseResult();
 }
 

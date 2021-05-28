@@ -120,7 +120,7 @@ Optional<IntPoint> ICOImageDecoder::hotSpot() const
 Optional<IntPoint> ICOImageDecoder::hotSpotAtIndex(size_t index) const
 {
     if (index >= m_dirEntries.size() || m_fileType != CURSOR)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return m_dirEntries[index].m_hotSpot;
 }

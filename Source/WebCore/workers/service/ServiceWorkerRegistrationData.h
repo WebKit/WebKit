@@ -68,42 +68,42 @@ Optional<ServiceWorkerRegistrationData> ServiceWorkerRegistrationData::decode(De
     Optional<ServiceWorkerRegistrationKey> key;
     decoder >> key;
     if (!key)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<ServiceWorkerRegistrationIdentifier> identifier;
     decoder >> identifier;
     if (!identifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<URL> scopeURL;
     decoder >> scopeURL;
     if (!scopeURL)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<ServiceWorkerUpdateViaCache> updateViaCache;
     decoder >> updateViaCache;
     if (!updateViaCache)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<double> rawWallTime;
     decoder >> rawWallTime;
     if (!rawWallTime)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<ServiceWorkerData>> installingWorker;
     decoder >> installingWorker;
     if (!installingWorker)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<ServiceWorkerData>> waitingWorker;
     decoder >> waitingWorker;
     if (!waitingWorker)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<ServiceWorkerData>> activeWorker;
     decoder >> activeWorker;
     if (!activeWorker)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return { { WTFMove(*key), WTFMove(*identifier), WTFMove(*scopeURL), WTFMove(*updateViaCache), WallTime::fromRawSeconds(*rawWallTime), WTFMove(*installingWorker), WTFMove(*waitingWorker), WTFMove(*activeWorker) } };
 }

@@ -184,7 +184,7 @@ private:
 
     RetainPtr<IOSurfaceRef> m_surface;
 
-    static WTF::Optional<IntSize> s_maximumSize;
+    static std::optional<IntSize> s_maximumSize;
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const WebCore::IOSurface&);

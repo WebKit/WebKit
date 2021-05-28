@@ -83,7 +83,7 @@ bool RemoteLegacyCDMFactory::supportsKeySystem(const String& keySystem)
         return foundInCache->value;
 
     bool supported = false;
-    gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMFactoryProxy::SupportsKeySystem(keySystem, WTF::nullopt), Messages::RemoteLegacyCDMFactoryProxy::SupportsKeySystem::Reply(supported), { });
+    gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMFactoryProxy::SupportsKeySystem(keySystem, std::nullopt), Messages::RemoteLegacyCDMFactoryProxy::SupportsKeySystem::Reply(supported), { });
     m_supportsKeySystemCache.set(keySystem, supported);
     return supported;
 }

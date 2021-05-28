@@ -183,7 +183,7 @@ String TextCodecCJK::decodeCommon(const uint8_t* bytes, size_t length, bool flus
     StringBuilder result;
     result.reserveCapacity(length);
 
-    if (m_prependedByte && byteParser(*std::exchange(m_prependedByte, WTF::nullopt), result) == SawError::Yes) {
+    if (m_prependedByte && byteParser(*std::exchange(m_prependedByte, std::nullopt), result) == SawError::Yes) {
         sawError = true;
         result.append(replacementCharacter);
         if (stopOnError) {
@@ -200,7 +200,7 @@ String TextCodecCJK::decodeCommon(const uint8_t* bytes, size_t length, bool flus
                 return result.toString();
             }
         }
-        if (m_prependedByte && byteParser(*std::exchange(m_prependedByte, WTF::nullopt), result) == SawError::Yes) {
+        if (m_prependedByte && byteParser(*std::exchange(m_prependedByte, std::nullopt), result) == SawError::Yes) {
             sawError = true;
             result.append(replacementCharacter);
             if (stopOnError) {
@@ -427,7 +427,7 @@ String TextCodecCJK::iso2022JPDecode(const uint8_t* bytes, size_t length, bool f
     StringBuilder result;
     result.reserveCapacity(length);
 
-    if (m_prependedByte && byteParser(*std::exchange(m_prependedByte, WTF::nullopt), result) == SawError::Yes) {
+    if (m_prependedByte && byteParser(*std::exchange(m_prependedByte, std::nullopt), result) == SawError::Yes) {
         sawError = true;
         result.append(replacementCharacter);
         if (stopOnError) {
@@ -435,7 +435,7 @@ String TextCodecCJK::iso2022JPDecode(const uint8_t* bytes, size_t length, bool f
             return result.toString();
         }
     }
-    if (m_iso2022JPSecondPrependedByte && byteParser(*std::exchange(m_iso2022JPSecondPrependedByte, WTF::nullopt), result) == SawError::Yes && stopOnError) {
+    if (m_iso2022JPSecondPrependedByte && byteParser(*std::exchange(m_iso2022JPSecondPrependedByte, std::nullopt), result) == SawError::Yes && stopOnError) {
         sawError = true;
         result.append(replacementCharacter);
         if (stopOnError) {
@@ -452,7 +452,7 @@ String TextCodecCJK::iso2022JPDecode(const uint8_t* bytes, size_t length, bool f
                 return result.toString();
             }
         }
-        if (m_prependedByte && byteParser(*std::exchange(m_prependedByte, WTF::nullopt), result) == SawError::Yes) {
+        if (m_prependedByte && byteParser(*std::exchange(m_prependedByte, std::nullopt), result) == SawError::Yes) {
             sawError = true;
             result.append(replacementCharacter);
             if (stopOnError) {
@@ -460,7 +460,7 @@ String TextCodecCJK::iso2022JPDecode(const uint8_t* bytes, size_t length, bool f
                 return result.toString();
             }
         }
-        if (m_iso2022JPSecondPrependedByte && byteParser(*std::exchange(m_iso2022JPSecondPrependedByte, WTF::nullopt), result) == SawError::Yes && stopOnError) {
+        if (m_iso2022JPSecondPrependedByte && byteParser(*std::exchange(m_iso2022JPSecondPrependedByte, std::nullopt), result) == SawError::Yes && stopOnError) {
             sawError = true;
             result.append(replacementCharacter);
             if (stopOnError) {
@@ -854,7 +854,7 @@ static const std::array<std::pair<uint32_t, UChar32>, 207>& gb18030Ranges()
 static Optional<UChar32> gb18030RangesCodePoint(uint32_t pointer)
 {
     if ((pointer > 39419 && pointer < 189000) || pointer > 1237575)
-        return WTF::nullopt;
+        return std::nullopt;
     if (pointer == 7457)
         return 0xE7C7;
     auto upperBound = std::upper_bound(gb18030Ranges().begin(), gb18030Ranges().end(), makeFirstAdapter(pointer), CompareFirst { });

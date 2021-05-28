@@ -837,7 +837,7 @@ static Optional<uint32_t> keyCodeForDOMFunctionKey(NSString *key)
         if ([key isEqualToString:[NSString stringWithFormat:@"F%d", i]])
             return kHIDUsage_KeyboardF13 + i - 13;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static inline uint32_t hidUsageCodeForCharacter(NSString *key)

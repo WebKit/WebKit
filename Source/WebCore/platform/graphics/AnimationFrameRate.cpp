@@ -47,7 +47,7 @@ FramesPerSecond framesPerSecondNearestFullSpeed(FramesPerSecond nominalFramesPer
 Optional<FramesPerSecond> preferredFramesPerSecond(OptionSet<ThrottlingReason> reasons, Optional<FramesPerSecond> nominalFramesPerSecond, bool preferFrameRatesNear60FPS)
 {
     if (reasons.contains(ThrottlingReason::OutsideViewport))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!nominalFramesPerSecond || *nominalFramesPerSecond == FullSpeedFramesPerSecond) {
         // FIXME: handle ThrottlingReason::VisuallyIdle

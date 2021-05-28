@@ -1359,7 +1359,7 @@ Ref<TextResourceDecoder> InspectorNetworkAgent::createTextDecoder(const String& 
 Optional<String> InspectorNetworkAgent::textContentForCachedResource(CachedResource& cachedResource)
 {
     if (!InspectorNetworkAgent::shouldTreatAsText(cachedResource.mimeType()))
-        return WTF::nullopt;
+        return std::nullopt;
 
     String result;
     bool base64Encoded;
@@ -1368,7 +1368,7 @@ Optional<String> InspectorNetworkAgent::textContentForCachedResource(CachedResou
         return result;
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 bool InspectorNetworkAgent::cachedResourceContent(CachedResource& resource, String* result, bool* base64Encoded)
@@ -1429,7 +1429,7 @@ static Optional<String> textContentForResourceData(const NetworkResourcesData::R
     if (resourceData.cachedResource())
         return InspectorNetworkAgent::textContentForCachedResource(*resourceData.cachedResource());
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void InspectorNetworkAgent::searchOtherRequests(const JSC::Yarr::RegularExpression& regex, Ref<JSON::ArrayOf<Protocol::Page::SearchResult>>& result)

@@ -75,12 +75,12 @@ template<class Decoder> Optional<FloatLine> FloatLine::decode(Decoder& decoder)
     Optional<FloatPoint> start;
     decoder >> start;
     if (!start)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FloatPoint> end;
     decoder >> end;
     if (!end)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *start, *end }};
 }

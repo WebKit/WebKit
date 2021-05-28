@@ -252,7 +252,7 @@ void FetchBodyOwner::loadBlob(const Blob& blob, FetchBodyConsumer* consumer)
     m_blobLoader->loader->start(*scriptExecutionContext(), blob);
     if (!m_blobLoader->loader->isStarted()) {
         m_body->loadingFailed(Exception { TypeError, "Blob loading failed"_s});
-        m_blobLoader = WTF::nullopt;
+        m_blobLoader = std::nullopt;
         return;
     }
 }
@@ -261,7 +261,7 @@ void FetchBodyOwner::finishBlobLoading()
 {
     ASSERT(m_blobLoader);
 
-    m_blobLoader = WTF::nullopt;
+    m_blobLoader = std::nullopt;
 }
 
 void FetchBodyOwner::blobLoadingSucceeded()
@@ -382,7 +382,7 @@ Optional<Exception> FetchBodyOwner::loadingException() const
     }, [](const Exception& exception) {
         return Exception { exception };
     }, [](auto&&) -> Optional<Exception> {
-        return WTF::nullopt;
+        return std::nullopt;
     });
 }
 

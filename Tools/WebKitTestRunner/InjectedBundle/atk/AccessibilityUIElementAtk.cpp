@@ -1094,7 +1094,7 @@ double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
     if (atkAttributeName.startsWith("row") || atkAttributeName.startsWith("col")) {
         String attributeValue = getAttributeSetValueForId(ATK_OBJECT(m_element.get()), ObjectAttributeType, atkAttributeName);
         if (!attributeValue.isEmpty())
-            return parseIntegerAllowingTrailingJunk<int>(attributeValue).valueOr(0);
+            return parseIntegerAllowingTrailingJunk<int>(attributeValue).value_or(0);
     }
 
     return 0;
@@ -1587,7 +1587,7 @@ bool AccessibilityUIElement::isIndeterminate() const
 
 int AccessibilityUIElement::hierarchicalLevel() const
 {
-    return parseIntegerAllowingTrailingJunk<int>(getAttributeSetValueForId(ATK_OBJECT(m_element.get()), ObjectAttributeType, "level")).valueOr(0);
+    return parseIntegerAllowingTrailingJunk<int>(getAttributeSetValueForId(ATK_OBJECT(m_element.get()), ObjectAttributeType, "level")).value_or(0);
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::speakAs()

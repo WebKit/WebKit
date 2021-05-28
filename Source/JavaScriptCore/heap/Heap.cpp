@@ -2340,7 +2340,7 @@ void Heap::didFinishCollection()
 
     RELEASE_ASSERT(m_collectionScope);
     m_lastCollectionScope = m_collectionScope;
-    m_collectionScope = WTF::nullopt;
+    m_collectionScope = std::nullopt;
 
     for (auto* observer : m_observers)
         observer->didGarbageCollect(scope);
@@ -2933,7 +2933,7 @@ void Heap::notifyIsSafeToCollect()
                     {
                         Locker locker { *m_threadLock };
                         if (m_requests.isEmpty()) {
-                            m_requests.append(WTF::nullopt);
+                            m_requests.append(std::nullopt);
                             m_lastGrantedTicket++;
                             m_threadCondition->notifyOne(locker);
                         }

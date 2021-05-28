@@ -107,7 +107,7 @@ private:
             new (handleLocation + sizeof(uint64_t)) T(WTFMove(*item));
             return {{ handleLocation }};
         }
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     WebCore::DisplayList::ReplayResult submit(const WebCore::DisplayList::DisplayList&, WebCore::ImageBuffer& destination);

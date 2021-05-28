@@ -77,7 +77,7 @@ static Optional<uint64_t> getFileSizeFromByHandleFileInformationStructure(const 
     fileSize.LowPart = fileInformation.nFileSizeLow;
 
     if (fileSize.QuadPart > static_cast<ULONGLONG>(std::numeric_limits<long long>::max()))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return fileSize.QuadPart;
 }
@@ -107,7 +107,7 @@ Optional<uint64_t> fileSize(PlatformFileHandle fileHandle)
 {
     BY_HANDLE_FILE_INFORMATION fileInformation;
     if (!::GetFileInformationByHandle(fileHandle, &fileInformation))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return getFileSizeFromByHandleFileInformationStructure(fileInformation);
 }
@@ -116,7 +116,7 @@ Optional<WallTime> fileCreationTime(const String& path)
 {
     WIN32_FIND_DATAW findData;
     if (!getFindData(path, findData))
-        return WTF::nullopt;
+        return std::nullopt;
 
     time_t time = 0;
     fileCreationTimeFromFindData(findData, time);
@@ -343,12 +343,12 @@ Optional<int32_t> getFileDeviceId(const CString& fsFile)
 {
     auto handle = openFile(fsFile.data(), FileOpenMode::Read);
     if (!isHandleValid(handle))
-        return WTF::nullopt;
+        return std::nullopt;
 
     BY_HANDLE_FILE_INFORMATION fileInformation = { };
     if (!::GetFileInformationByHandle(handle, &fileInformation)) {
         closeFile(handle);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     closeFile(handle);

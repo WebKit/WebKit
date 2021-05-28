@@ -210,7 +210,7 @@ private:
     }
 
     void clearPathByteStream() { m_pathByteStream.clear(); }
-    void clearPath() { m_path = WTF::nullopt; }
+    void clearPath() { m_path = std::nullopt; }
 
     void pathByteStreamWillChange()
     {

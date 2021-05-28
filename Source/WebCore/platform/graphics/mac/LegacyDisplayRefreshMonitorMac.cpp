@@ -138,7 +138,7 @@ void LegacyDisplayRefreshMonitorMac::stopNotificationMechanism()
 Optional<FramesPerSecond> LegacyDisplayRefreshMonitorMac::displayNominalFramesPerSecond()
 {
     if (!ensureDisplayLink())
-        return WTF::nullopt;
+        return std::nullopt;
         
     return nominalFramesPerSecondFromDisplayLink(m_displayLink);
 }

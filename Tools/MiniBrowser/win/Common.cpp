@@ -229,7 +229,7 @@ Optional<Credential> askCredential(HWND hwnd, const std::wstring& realm)
 
     if (dialog.run(hInst, hwnd, IDD_AUTH))
         return dialog.credential;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 bool askServerTrustEvaluation(HWND hwnd, const std::wstring& text)

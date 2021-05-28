@@ -49,12 +49,12 @@ Optional<MediaEncodingConfiguration> MediaEncodingConfiguration::decode(Decoder&
 {
     auto mediaConfiguration = MediaConfiguration::decode(decoder);
     if (!mediaConfiguration)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<MediaEncodingType> type;
     decoder >> type;
     if (!type)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{
         *mediaConfiguration,

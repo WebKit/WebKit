@@ -40,7 +40,7 @@ int Theme::baselinePositionAdjustment(ControlPart) const
 
 Optional<FontCascadeDescription> Theme::controlFont(ControlPart, const FontCascade&, float) const
 {
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 LengthSize Theme::controlSize(ControlPart, const FontCascade&, const LengthSize& zoomedSize, float) const

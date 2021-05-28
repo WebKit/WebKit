@@ -1535,7 +1535,7 @@ void MediaPlayerPrivateAVFoundationObjC::setRateDouble(double rate)
     m_requestedRate = rate;
     if (m_requestedPlaying)
         setPlayerRate(rate);
-    m_wallClockAtCachedCurrentTime = WTF::nullopt;
+    m_wallClockAtCachedCurrentTime = std::nullopt;
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setPlayerRate(double rate)
@@ -1550,7 +1550,7 @@ void MediaPlayerPrivateAVFoundationObjC::setPlayerRate(double rate)
     setShouldObserveTimeControlStatus(true);
     setDelayCallbacks(false);
 
-    m_wallClockAtCachedCurrentTime = WTF::nullopt;
+    m_wallClockAtCachedCurrentTime = std::nullopt;
 }
 
 double MediaPlayerPrivateAVFoundationObjC::rate() const
@@ -2370,7 +2370,7 @@ Optional<bool> MediaPlayerPrivateAVFoundationObjC::wouldTaintOrigin(const Securi
     if ([session isKindOfClass:[WebCoreNSURLSession class]])
         return [session wouldTaintOrigin:origin];
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void MediaPlayerPrivateAVFoundationObjC::createVideoOutput()
@@ -3381,7 +3381,7 @@ void MediaPlayerPrivateAVFoundationObjC::timeControlStatusDidChange(int timeCont
 
     m_cachedTimeControlStatus = timeControlStatus;
     rateChanged();
-    m_wallClockAtCachedCurrentTime = WTF::nullopt;
+    m_wallClockAtCachedCurrentTime = std::nullopt;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     if (!isCurrentPlaybackTargetWireless())
@@ -3428,16 +3428,16 @@ void MediaPlayerPrivateAVFoundationObjC::setShouldDisableSleep(bool flag)
 Optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateAVFoundationObjC::videoPlaybackQualityMetrics()
 {
     if (![m_videoLayer respondsToSelector:@selector(videoPerformanceMetrics)])
-        return WTF::nullopt;
+        return std::nullopt;
 
 #if PLATFORM(WATCHOS)
-    return WTF::nullopt;
+    return std::nullopt;
 #else
     ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
 
     auto metrics = [m_videoLayer videoPerformanceMetrics];
     if (!metrics)
-        return WTF::nullopt;
+        return std::nullopt;
 
     uint32_t displayCompositedFrames = 0;
     if ([metrics respondsToSelector:@selector(numberOfDisplayCompositedVideoFrames)])

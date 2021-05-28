@@ -2393,7 +2393,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
 - (Optional<SimpleRange>)_convertToDOMRange:(NSRange)range
 {
     if (range.location == NSNotFound)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // our critical assumption is that we are only called by input methods that
     // concentrate on a given area containing the selection
@@ -2405,7 +2405,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     auto selectionRoot = document->frame()->selection().selection().rootEditableElement();
     auto scope = selectionRoot ? selectionRoot : document->documentElement();
     if (!scope)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return resolveCharacterRange(makeRangeSelectingNodeContents(*scope), range);
 }
@@ -2778,11 +2778,11 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
 {
     auto originalRange = [self rangeForTextMarkers:markers];
     if (!originalRange)
-        return WTF::nullopt;
+        return std::nullopt;
     
     AXObjectCache* cache = self.axBackingObject->axObjectCache();
     if (!cache)
-        return WTF::nullopt;
+        return std::nullopt;
     
     return cache->rangeMatchesTextNearRange(*originalRange, text);
 }
@@ -2851,17 +2851,17 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
 - (Optional<SimpleRange>)rangeForTextMarkers:(NSArray *)textMarkers
 {
     if ([textMarkers count] != 2)
-        return WTF::nullopt;
+        return std::nullopt;
     
     WebAccessibilityTextMarker *startMarker = [textMarkers objectAtIndex:0];
     WebAccessibilityTextMarker *endMarker = [textMarkers objectAtIndex:1];
     
     if (![startMarker isKindOfClass:[WebAccessibilityTextMarker class]] || ![endMarker isKindOfClass:[WebAccessibilityTextMarker class]])
-        return WTF::nullopt;
+        return std::nullopt;
     
     AXObjectCache* cache = self.axBackingObject->axObjectCache();
     if (!cache)
-        return WTF::nullopt;
+        return std::nullopt;
     
     CharacterOffset startCharacterOffset = [startMarker characterOffset];
     CharacterOffset endCharacterOffset = [endMarker characterOffset];

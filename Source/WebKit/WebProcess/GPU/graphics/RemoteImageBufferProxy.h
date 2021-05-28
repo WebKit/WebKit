@@ -164,7 +164,7 @@ protected:
         return m_remoteRenderingBackendProxy->getDataURLForImageBuffer(mimeType, quality, preserveResolution, m_renderingResourceIdentifier);
     }
 
-    Vector<uint8_t> toData(const String& mimeType, Optional<double> quality = WTF::nullopt) const override
+    Vector<uint8_t> toData(const String& mimeType, Optional<double> quality = std::nullopt) const override
     {
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
             return { };
@@ -198,17 +198,17 @@ protected:
     Optional<WebCore::PixelBuffer> getPixelBuffer(const WebCore::PixelBufferFormat& destinationFormat, const WebCore::IntRect& srcRect) const override
     {
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
-            return WTF::nullopt;
+            return std::nullopt;
 
         auto pixelBuffer = WebCore::PixelBuffer::tryCreate(destinationFormat, srcRect.size());
         if (!pixelBuffer)
-            return WTF::nullopt;
+            return std::nullopt;
         size_t dataSize = pixelBuffer->data().byteLength();
 
         IPC::Timeout timeout = 5_s;
         SharedMemory* sharedMemory = m_remoteRenderingBackendProxy->sharedMemoryForGetPixelBuffer(dataSize, timeout);
         if (!sharedMemory)
-            return WTF::nullopt;
+            return std::nullopt;
 
         auto& mutableThis = const_cast<RemoteImageBufferProxy&>(*this);
         mutableThis.m_drawingContext.recorder().getPixelBuffer(destinationFormat, srcRect);

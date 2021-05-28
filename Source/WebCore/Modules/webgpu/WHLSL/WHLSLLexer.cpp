@@ -1689,7 +1689,7 @@ static Optional<StringView> sourceFromNameSpace(AST::NameSpace nameSpace, const 
 {
     switch (nameSpace) {
     case AST::NameSpace::StandardLibrary:
-        return WTF::nullopt;
+        return std::nullopt;
     case AST::NameSpace::NameSpace1:
         return StringView(source1);
     case AST::NameSpace::NameSpace2:

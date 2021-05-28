@@ -56,23 +56,23 @@ struct GPUProcessSessionParameters {
         Optional<String> mediaCacheDirectory;
         decoder >> mediaCacheDirectory;
         if (!mediaCacheDirectory)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<SandboxExtension::Handle> mediaCacheDirectorySandboxExtensionHandle;
         decoder >> mediaCacheDirectorySandboxExtensionHandle;
         if (!mediaCacheDirectorySandboxExtensionHandle)
-            return WTF::nullopt;
+            return std::nullopt;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
         Optional<String> mediaKeysStorageDirectory;
         decoder >> mediaKeysStorageDirectory;
         if (!mediaKeysStorageDirectory)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<SandboxExtension::Handle> mediaKeysStorageDirectorySandboxExtensionHandle;
         decoder >> mediaKeysStorageDirectorySandboxExtensionHandle;
         if (!mediaKeysStorageDirectorySandboxExtensionHandle)
-            return WTF::nullopt;
+            return std::nullopt;
 #endif
 
         return GPUProcessSessionParameters {

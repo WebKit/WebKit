@@ -452,7 +452,7 @@ Optional<Protocol::Debugger::Reason> parseEnumValueFromString<Protocol::Debugger
         if (protocolString == enum_constant_values[constantValues[i]])
             return (Protocol::Debugger::Reason)constantValues[i];
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace TestHelpers
@@ -843,7 +843,7 @@ inline Optional<TestProtocolDebuggerReason> fromProtocolString(const String& val
         return TestProtocolDebuggerReasonFainted;
     if (value == "Hungry")
         return TestProtocolDebuggerReasonHungry;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 

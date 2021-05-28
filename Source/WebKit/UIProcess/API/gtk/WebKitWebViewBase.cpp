@@ -1223,7 +1223,7 @@ static void webkitWebViewBaseButtonPressed(WebKitWebViewBase* webViewBase, int c
     if (button == GDK_BUTTON_SECONDARY)
         priv->contextMenuEvent.reset(gdk_event_copy(event));
 
-    priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(event, { clampToInteger(x), clampToInteger(y) }, clickCount, WTF::nullopt));
+    priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(event, { clampToInteger(x), clampToInteger(y) }, clickCount, std::nullopt));
 }
 
 static void webkitWebViewBaseButtonReleased(WebKitWebViewBase* webViewBase, int clickCount, double x, double y, GtkGesture* gesture)
@@ -1239,7 +1239,7 @@ static void webkitWebViewBaseButtonReleased(WebKitWebViewBase* webViewBase, int 
     auto* sequence = gtk_gesture_single_get_current_sequence(GTK_GESTURE_SINGLE(gesture));
     gtk_gesture_set_sequence_state(gesture, sequence, GTK_EVENT_SEQUENCE_CLAIMED);
 
-    priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(gtk_gesture_get_last_event(gesture, sequence), { clampToInteger(x), clampToInteger(y) }, clickCount, WTF::nullopt));
+    priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(gtk_gesture_get_last_event(gesture, sequence), { clampToInteger(x), clampToInteger(y) }, clickCount, std::nullopt));
 }
 #endif
 
@@ -1259,7 +1259,7 @@ static bool shouldInvertDirectionForScrollEvent(WebHitTestResultData::IsScrollba
 }
 
 #if !USE(GTK4)
-static void webkitWebViewBaseHandleWheelEvent(WebKitWebViewBase* webViewBase, GdkEvent* event, Optional<WebWheelEvent::Phase> phase = WTF::nullopt, Optional<WebWheelEvent::Phase> momentum = WTF::nullopt)
+static void webkitWebViewBaseHandleWheelEvent(WebKitWebViewBase* webViewBase, GdkEvent* event, Optional<WebWheelEvent::Phase> phase = std::nullopt, Optional<WebWheelEvent::Phase> momentum = std::nullopt)
 {
     ViewGestureController* controller = webkitWebViewBaseViewGestureController(webViewBase);
     if (controller && controller->isSwipeGestureEnabled()) {
@@ -1275,7 +1275,7 @@ static void webkitWebViewBaseHandleWheelEvent(WebKitWebViewBase* webViewBase, Gd
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     ASSERT(!priv->dialog);
     if (phase)
-        priv->pageProxy->handleWheelEvent(NativeWebWheelEvent(event, phase.value(), momentum.valueOr(WebWheelEvent::Phase::PhaseNone)));
+        priv->pageProxy->handleWheelEvent(NativeWebWheelEvent(event, phase.value(), momentum.value_or(WebWheelEvent::Phase::PhaseNone)));
     else
         priv->pageProxy->handleWheelEvent(NativeWebWheelEvent(event));
 }

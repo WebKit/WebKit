@@ -339,7 +339,7 @@ void MediaPlayerPrivateGStreamer::load(const String& urlString)
     m_readyState = MediaPlayer::ReadyState::HaveNothing;
     m_player->readyStateChanged();
     m_areVolumeAndMuteInitialized = false;
-    m_hasTaintedOrigin = WTF::nullopt;
+    m_hasTaintedOrigin = std::nullopt;
 
     if (!m_isDelayingLoad)
         commitLoad();
@@ -3558,7 +3558,7 @@ void MediaPlayerPrivateGStreamer::setStreamVolumeElement(GstStreamVolume* volume
 Optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateGStreamer::videoPlaybackQualityMetrics()
 {
     if (!webkitGstCheckVersion(1, 18, 0) && !m_fpsSink)
-        return WTF::nullopt;
+        return std::nullopt;
 
     uint64_t totalVideoFrames = 0;
     uint64_t droppedVideoFrames = 0;
@@ -3567,10 +3567,10 @@ Optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateGStreamer::videoPlayback
         g_object_get(m_videoSink.get(), "stats", &stats.outPtr(), nullptr);
 
         if (!gst_structure_get_uint64(stats.get(), "rendered", &totalVideoFrames))
-            return WTF::nullopt;
+            return std::nullopt;
 
         if (!gst_structure_get_uint64(stats.get(), "dropped", &droppedVideoFrames))
-            return WTF::nullopt;
+            return std::nullopt;
     } else if (m_fpsSink) {
         unsigned renderedFrames, droppedFrames;
         g_object_get(m_fpsSink.get(), "frames-rendered", &renderedFrames, "frames-dropped", &droppedFrames, nullptr);

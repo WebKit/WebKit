@@ -3025,7 +3025,7 @@ Optional<PrivateNameEnvironment> BytecodeGenerator::getAvailablePrivateAccessNam
     }
 
     if (!result.size())
-        return WTF::nullopt;
+        return std::nullopt;
     return result;
 }
 
@@ -4460,7 +4460,7 @@ RegisterID* BytecodeGenerator::emitGetTemplateObject(RegisterID* dst, TaggedTemp
         ASSERT(string->raw());
         rawStrings.append(string->raw()->impl());
         if (!string->cooked())
-            cookedStrings.append(WTF::nullopt);
+            cookedStrings.append(std::nullopt);
         else
             cookedStrings.append(string->cooked()->impl());
     }

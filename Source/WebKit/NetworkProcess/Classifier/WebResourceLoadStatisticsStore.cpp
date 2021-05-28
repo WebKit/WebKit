@@ -532,7 +532,7 @@ void WebResourceLoadStatisticsStore::requestStorageAccessUnderOpenerEphemeral(Re
 
     if (m_networkSession) {
         if (auto* storageSession = m_networkSession->networkStorageSession())
-            storageSession->grantStorageAccess(WTFMove(domainInNeedOfStorageAccess), WTFMove(openerDomain), WTF::nullopt, openerPageID);
+            storageSession->grantStorageAccess(WTFMove(domainInNeedOfStorageAccess), WTFMove(openerDomain), std::nullopt, openerPageID);
     }
 }
 
@@ -577,7 +577,7 @@ StorageAccessWasGranted WebResourceLoadStatisticsStore::grantStorageAccessInStor
 
     if (m_networkSession) {
         if (auto* storageSession = m_networkSession->networkStorageSession()) {
-            storageSession->grantStorageAccess(resourceDomain, firstPartyDomain, (scope == StorageAccessScope::PerFrame ? frameID : WTF::nullopt), pageID);
+            storageSession->grantStorageAccess(resourceDomain, firstPartyDomain, (scope == StorageAccessScope::PerFrame ? frameID : std::nullopt), pageID);
             ASSERT(storageSession->hasStorageAccess(resourceDomain, firstPartyDomain, frameID, pageID));
             isStorageGranted = true;
         }
@@ -1544,7 +1544,7 @@ void WebResourceLoadStatisticsStore::attributePrivateClickMeasurement(const Priv
     postTask([this, sourceSite, destinationSite, attributionTriggerData = WTFMove(attributionTriggerData), completionHandler = WTFMove(completionHandler)]() mutable {
         if (!m_statisticsStore) {
             postTaskReply([completionHandler = WTFMove(completionHandler)]() mutable {
-                completionHandler(WTF::nullopt);
+                completionHandler(std::nullopt);
             });
             return;
         }
@@ -1591,7 +1591,7 @@ void WebResourceLoadStatisticsStore::clearPrivateClickMeasurement()
         if (!m_statisticsStore)
             return;
 
-        m_statisticsStore->clearPrivateClickMeasurement(WTF::nullopt);
+        m_statisticsStore->clearPrivateClickMeasurement(std::nullopt);
     });
 }
     
@@ -1698,17 +1698,17 @@ auto WebResourceLoadStatisticsStore::ThirdPartyDataForSpecificFirstParty::decode
     Optional<WebCore::RegistrableDomain> decodedDomain;
     decoder >> decodedDomain;
     if (!decodedDomain)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> decodedStorageAccess;
     decoder >> decodedStorageAccess;
     if (!decodedStorageAccess)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Seconds> decodedTimeLastUpdated;
     decoder >> decodedTimeLastUpdated;
     if (!decodedTimeLastUpdated)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ WTFMove(*decodedDomain), WTFMove(*decodedStorageAccess), WTFMove(*decodedTimeLastUpdated) }};
 }
@@ -1739,12 +1739,12 @@ auto WebResourceLoadStatisticsStore::ThirdPartyData::decode(IPC::Decoder& decode
     Optional<WebCore::RegistrableDomain> decodedDomain;
     decoder >> decodedDomain;
     if (!decodedDomain)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Vector<ThirdPartyDataForSpecificFirstParty>> decodedFirstParties;
     decoder >> decodedFirstParties;
     if (!decodedFirstParties)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ WTFMove(*decodedDomain), WTFMove(*decodedFirstParties) }};
 }

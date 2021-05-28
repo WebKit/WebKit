@@ -126,7 +126,7 @@ static UIBezierPath *pathWithRoundedRectInFrame(CGRect rect, CGFloat borderRadiu
     [self addSubview:_submitButtonBackgroundView.get()];
 
     _hasPendingFocusRequest = NO;
-    _initialScrollViewContentOffset = WTF::nullopt;
+    _initialScrollViewContentOffset = std::nullopt;
 
     return self;
 }

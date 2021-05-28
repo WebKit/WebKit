@@ -63,7 +63,7 @@ Optional<PixelBuffer> PixelBuffer::tryCreateForDecoding(const PixelBufferFormat&
 
     auto pixelArray = Uint8ClampedArray::tryCreateUninitialized(dataByteLength);
     if (!pixelArray)
-        return WTF::nullopt;
+        return std::nullopt;
     return { { format, size, pixelArray.releaseNonNull() } };
 }
 
@@ -73,10 +73,10 @@ Optional<PixelBuffer> PixelBuffer::tryCreate(const PixelBufferFormat& format, co
 
     auto bufferSize = computeBufferSize(format, size);
     if (bufferSize.hasOverflowed())
-        return WTF::nullopt;
+        return std::nullopt;
     auto pixelArray = Uint8ClampedArray::tryCreateUninitialized(bufferSize.unsafeGet());
     if (!pixelArray)
-        return WTF::nullopt;
+        return std::nullopt;
     return { { format, size, pixelArray.releaseNonNull() } };
 }
 
@@ -86,12 +86,12 @@ Optional<PixelBuffer> PixelBuffer::tryCreate(const PixelBufferFormat& format, co
 
     auto bufferSize = computeBufferSize(format, size);
     if (bufferSize.hasOverflowed())
-        return WTF::nullopt;
+        return std::nullopt;
     if (bufferSize.unsafeGet() != arrayBuffer->byteLength())
-        return WTF::nullopt;
+        return std::nullopt;
     auto pixelArray = Uint8ClampedArray::tryCreate(WTFMove(arrayBuffer), 0, bufferSize.unsafeGet());
     if (!pixelArray)
-        return WTF::nullopt;
+        return std::nullopt;
     return { { format, size, pixelArray.releaseNonNull() } };
 }
 

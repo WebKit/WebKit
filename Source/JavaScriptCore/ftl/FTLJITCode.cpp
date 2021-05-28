@@ -179,7 +179,7 @@ Optional<CodeOrigin> JITCode::findPC(CodeBlock* codeBlock, void* pc)
         }
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } } // namespace JSC::FTL

@@ -281,20 +281,20 @@ Optional<SimpleRange> AccessibilityObject::misspellingRange(const SimpleRange& s
 {
     auto node = this->node();
     if (!node)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Frame* frame = node->document().frame();
     if (!frame)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!unifiedTextCheckerEnabled(frame))
-        return WTF::nullopt;
+        return std::nullopt;
 
     Editor& editor = frame->editor();
 
     TextCheckerClient* textChecker = editor.textChecker();
     if (!textChecker)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Vector<TextCheckingResult> misspellings;
     checkTextOfParagraph(*textChecker, stringValue(), TextCheckingType::Spelling, misspellings, frame->selection().selection());
@@ -314,7 +314,7 @@ Optional<SimpleRange> AccessibilityObject::misspellingRange(const SimpleRange& s
         }
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 unsigned AccessibilityObject::blockquoteLevel() const
@@ -526,7 +526,7 @@ Optional<SimpleRange> AccessibilityObject::rangeOfStringClosestToRangeInDirectio
 {
     Frame* frame = this->frame();
     if (!frame)
-        return WTF::nullopt;
+        return std::nullopt;
     
     bool isBackwardSearch = searchDirection == AccessibilitySearchDirection::Previous;
     FindOptions findOptions { AtWordStarts, AtWordEnds, CaseInsensitive, StartInSelection };
@@ -557,7 +557,7 @@ Optional<SimpleRange> AccessibilityObject::selectionRange() const
 {
     auto frame = this->frame();
     if (!frame)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (auto range = frame->selection().selection().firstRange())
         return *range;
@@ -591,7 +591,7 @@ Optional<SimpleRange> AccessibilityObject::findTextRange(const Vector<String>& s
         if (element() && element()->isTextField()) {
             if (!found->startContainer().isDescendantOrShadowDescendantOf(element())
                 || !found->endContainer().isDescendantOrShadowDescendantOf(element()))
-                return WTF::nullopt;
+                return std::nullopt;
         }
     }
     return found;
@@ -1107,17 +1107,17 @@ Optional<SimpleRange> AccessibilityObject::rangeForPlainTextRange(const PlainTex
 {
     unsigned textLength = getLengthForTextRange();
     if (range.start + range.length > textLength)
-        return WTF::nullopt;
+        return std::nullopt;
     // Avoid setting selection to uneditable parent node in FrameSelection::setSelectedRange. See webkit.org/b/206093.
     if (range.isNull() && !textLength)
-        return WTF::nullopt;
+        return std::nullopt;
     
     if (AXObjectCache* cache = axObjectCache()) {
         CharacterOffset start = cache->characterOffsetForIndex(range.start, this);
         CharacterOffset end = cache->characterOffsetForIndex(range.start + range.length, this);
         return cache->rangeForUnorderedCharacterOffsets(start, end);
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 VisiblePositionRange AccessibilityObject::lineRangeForPosition(const VisiblePosition& visiblePosition) const

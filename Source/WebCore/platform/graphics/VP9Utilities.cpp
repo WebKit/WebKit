@@ -127,7 +127,7 @@ Optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecView
     auto codecSplit = codecView.split('.');
     auto nextElement = codecSplit.begin();
     if (nextElement == codecSplit.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     VPCodecConfigurationRecord configuration;
 
@@ -146,33 +146,33 @@ Optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecView
 
     // Codec identifier: legal values are 'vp08' or 'vp09'.
     if (configuration.codecName != "vp08" && configuration.codecName != "vp09")
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (nextElement == codecSplit.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     // First element: profile. Legal values are 0-3.
     auto profile = parseInteger<uint8_t>(*nextElement);
     if (!profile || *profile > 3)
-        return WTF::nullopt;
+        return std::nullopt;
     configuration.profile = *profile;
 
     if (++nextElement == codecSplit.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Second element: level. Legal values are enumerated in validVPLevels above.
     auto level = parseInteger<uint8_t>(*nextElement);
     if (!level || !isValidVPLevel(*level))
-        return WTF::nullopt;
+        return std::nullopt;
     configuration.level = *level;
 
     if (++nextElement == codecSplit.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Third element: bitDepth. Legal values are 8, 10, and 12.
     auto bitDepth = parseInteger<uint8_t>(*nextElement);
     if (!bitDepth || (*bitDepth != 8 && *bitDepth != 10 && *bitDepth != 12))
-        return WTF::nullopt;
+        return std::nullopt;
     configuration.bitDepth = *bitDepth;
 
     // "colorPrimaries, transferCharacteristics, matrixCoefficients, videoFullRangeFlag, and chromaSubsampling are OPTIONAL,
@@ -185,54 +185,54 @@ Optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecView
     // Fourth element: chromaSubsampling. Legal values are 0-3.
     auto chromaSubsampling = parseInteger<uint8_t>(*nextElement);
     if (!chromaSubsampling || *chromaSubsampling > VPConfigurationChromaSubsampling::Subsampling_444)
-        return WTF::nullopt;
+        return std::nullopt;
     configuration.chromaSubsampling = *chromaSubsampling;
 
     if (++nextElement == codecSplit.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Fifth element: colorPrimaries. Legal values are defined by ISO/IEC 23001-8:2016, superseded
     // by ISO/IEC 23091-2:2019.
     auto colorPrimaries = parseInteger<uint8_t>(*nextElement);
     if (!colorPrimaries || !isValidVPColorPrimaries(*colorPrimaries))
-        return WTF::nullopt;
+        return std::nullopt;
     configuration.colorPrimaries = *colorPrimaries;
 
     if (++nextElement == codecSplit.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Sixth element: transferCharacteristics. Legal values are defined by ISO/IEC 23001-8:2016, superseded
     // by ISO/IEC 23091-2:2019.
     auto transferCharacteristics = parseInteger<uint8_t>(*nextElement);
     if (!transferCharacteristics || !isValidVPTransferCharacteristics(*transferCharacteristics))
-        return WTF::nullopt;
+        return std::nullopt;
     configuration.transferCharacteristics = *transferCharacteristics;
 
     if (++nextElement == codecSplit.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Seventh element: matrixCoefficients. Legal values are defined by ISO/IEC 23001-8:2016, superseded
     // by ISO/IEC 23091-2:2019.
     auto matrixCoefficients = parseInteger<uint8_t>(*nextElement);
     if (!matrixCoefficients || !isValidVPMatrixCoefficients(*matrixCoefficients))
-        return WTF::nullopt;
+        return std::nullopt;
     configuration.matrixCoefficients = *matrixCoefficients;
 
     // "If matrixCoefficients is 0 (RGB), then chroma subsampling MUST be 3 (4:4:4)."
     if (!configuration.matrixCoefficients && configuration.chromaSubsampling != 3)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (++nextElement == codecSplit.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Eighth element: videoFullRangeFlag. Legal values are 0 and 1.
     auto videoFullRangeFlag = parseInteger<uint8_t>(*nextElement);
     if (!videoFullRangeFlag || *videoFullRangeFlag > 1)
-        return WTF::nullopt;
+        return std::nullopt;
     configuration.videoFullRangeFlag = *videoFullRangeFlag;
 
     if (++nextElement != codecSplit.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return configuration;
 }

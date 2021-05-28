@@ -289,7 +289,7 @@ ExceptionOr<void> CSSStyleSheet::deleteRule(unsigned index)
 ExceptionOr<int> CSSStyleSheet::addRule(const String& selector, const String& style, Optional<unsigned> index)
 {
     auto text = makeString(selector, " { ", style, !style.isEmpty() ? " " : "", '}');
-    auto insertRuleResult = insertRule(text, index.valueOr(length()));
+    auto insertRuleResult = insertRule(text, index.value_or(length()));
     if (insertRuleResult.hasException())
         return insertRuleResult.releaseException();
     // As per Microsoft documentation, always return -1.

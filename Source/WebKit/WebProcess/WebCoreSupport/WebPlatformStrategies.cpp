@@ -113,7 +113,7 @@ BlobRegistry* WebPlatformStrategies::createBlobRegistry()
 static Optional<PageIdentifier> pageIdentifier(const PasteboardContext* context)
 {
     if (!is<PagePasteboardContext>(context))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return downcast<PagePasteboardContext>(*context).pageID();
 }

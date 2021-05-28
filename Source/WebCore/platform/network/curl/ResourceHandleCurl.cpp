@@ -146,7 +146,7 @@ Ref<CurlRequest> ResourceHandle::createCurlRequest(ResourceRequest&& request, Re
         addCacheValidationHeaders(request);
 
         auto includeSecureCookies = request.url().protocolIs("https") ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
-        String cookieHeaderField = d->m_context->storageSession()->cookieRequestHeaderFieldValue(request.firstPartyForCookies(), SameSiteInfo::create(request), request.url(), WTF::nullopt, WTF::nullopt, includeSecureCookies, ShouldAskITP::Yes, ShouldRelaxThirdPartyCookieBlocking::No).first;
+        String cookieHeaderField = d->m_context->storageSession()->cookieRequestHeaderFieldValue(request.firstPartyForCookies(), SameSiteInfo::create(request), request.url(), std::nullopt, std::nullopt, includeSecureCookies, ShouldAskITP::Yes, ShouldRelaxThirdPartyCookieBlocking::No).first;
         if (!cookieHeaderField.isEmpty())
             request.addHTTPHeaderField(HTTPHeaderName::Cookie, cookieHeaderField);
     }
@@ -349,7 +349,7 @@ Optional<Credential> ResourceHandle::getCredential(const ResourceRequest& reques
     if (!d->m_initialCredential.isEmpty())
         return d->m_initialCredential;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void ResourceHandle::restartRequestWithCredential(const ProtectionSpace& protectionSpace, const Credential& credential)

@@ -523,7 +523,7 @@ void WebsiteDataStore::beginAppBoundDomainCheck(const String& host, const String
         // because test cases may have app bound domains but no key.
         bool hasAppBoundDomains = keyExists || !domains.isEmpty();
         if (!hasAppBoundDomains) {
-            listener->didReceiveAppBoundDomainResult(WTF::nullopt);
+            listener->didReceiveAppBoundDomainResult(std::nullopt);
             return;
         }
         listener->didReceiveAppBoundDomainResult(schemeOrDomainIsAppBound(host, protocol, domains, schemes));
@@ -552,7 +552,7 @@ Optional<HashSet<WebCore::RegistrableDomain>> WebsiteDataStore::appBoundDomainsI
 {
     ASSERT(RunLoop::isMain());
     if (!hasInitializedAppBoundDomains)
-        return WTF::nullopt;
+        return std::nullopt;
     return appBoundDomains();
 }
 

@@ -56,7 +56,7 @@ template<> Optional<TestStandaloneEnumeration> parseEnumeration<TestStandaloneEn
         return TestStandaloneEnumeration::EnumValue1;
     if (stringValue == "enumValue2")
         return TestStandaloneEnumeration::EnumValue2;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<> const char* expectedEnumerationValues<TestStandaloneEnumeration>()

@@ -68,7 +68,7 @@ Optional<OptionsStorage::Bool> parse(const char* string)
         return true;
     if (equalLettersIgnoringASCIICase(string, "false") || equalLettersIgnoringASCIICase(string, "no") || !strcmp(string, "0"))
         return false;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<>
@@ -77,7 +77,7 @@ Optional<OptionsStorage::Int32> parse(const char* string)
     int32_t value;
     if (sscanf(string, "%d", &value) == 1)
         return value;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<>
@@ -86,7 +86,7 @@ Optional<OptionsStorage::Unsigned> parse(const char* string)
     unsigned value;
     if (sscanf(string, "%u", &value) == 1)
         return value;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 #if CPU(ADDRESS64) || OS(DARWIN)
@@ -96,7 +96,7 @@ Optional<OptionsStorage::Size> parse(const char* string)
     size_t value;
     if (sscanf(string, "%zu", &value) == 1)
         return value;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 #endif // CPU(ADDRESS64) || OS(DARWIN)
 
@@ -106,7 +106,7 @@ Optional<OptionsStorage::Double> parse(const char* string)
     double value;
     if (sscanf(string, "%lf", &value) == 1)
         return value;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<>
@@ -115,7 +115,7 @@ Optional<OptionsStorage::OptionRange> parse(const char* string)
     OptionRange range;
     if (range.init(string))
         return range;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<>
@@ -143,7 +143,7 @@ Optional<OptionsStorage::GCLogLevel> parse(const char* string)
     if (equalLettersIgnoringASCIICase(string, "verbose") || !strcmp(string, "2"))
         return GCLogging::Verbose;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 bool Options::isAvailable(Options::ID id, Options::Availability availability)

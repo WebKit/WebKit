@@ -137,7 +137,7 @@ static Optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCredenti
     CFTypeRef attributesArrayRef = nullptr;
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query.get(), &attributesArrayRef);
     if (status && status != errSecItemNotFound)
-        return WTF::nullopt;
+        return std::nullopt;
     auto retainAttributesArray = adoptCF(attributesArrayRef);
     NSArray *sortedAttributesArray = [(NSArray *)attributesArrayRef sortedArrayUsingComparator:^(NSDictionary *a, NSDictionary *b) {
         return [b[(id)kSecAttrModificationDate] compare:a[(id)kSecAttrModificationDate]];
@@ -149,21 +149,21 @@ static Optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCredenti
         auto decodedResponse = cbor::CBORReader::read(vectorFromNSData(attributes[(id)kSecAttrApplicationTag]));
         if (!decodedResponse || !decodedResponse->isMap()) {
             ASSERT_NOT_REACHED();
-            return WTF::nullopt;
+            return std::nullopt;
         }
         auto& responseMap = decodedResponse->getMap();
 
         auto it = responseMap.find(CBOR(fido::kEntityIdMapKey));
         if (it == responseMap.end() || !it->second.isByteString()) {
             ASSERT_NOT_REACHED();
-            return WTF::nullopt;
+            return std::nullopt;
         }
         auto& userHandle = it->second.getByteString();
 
         it = responseMap.find(CBOR(fido::kEntityNameMapKey));
         if (it == responseMap.end() || !it->second.isString()) {
             ASSERT_NOT_REACHED();
-            return WTF::nullopt;
+            return std::nullopt;
         }
         auto& username = it->second.getString();
 

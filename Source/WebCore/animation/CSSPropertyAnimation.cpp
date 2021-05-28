@@ -2029,7 +2029,7 @@ template <typename T>
 class AutoPropertyWrapper final : public PropertyWrapper<T> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    AutoPropertyWrapper(CSSPropertyID property, T (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T), bool (RenderStyle::*autoGetter)() const, void (RenderStyle::*autoSetter)(), Optional<T> minValue = WTF::nullopt)
+    AutoPropertyWrapper(CSSPropertyID property, T (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T), bool (RenderStyle::*autoGetter)() const, void (RenderStyle::*autoSetter)(), Optional<T> minValue = std::nullopt)
         : PropertyWrapper<T>(property, getter, setter)
         , m_autoGetter(autoGetter)
         , m_autoSetter(autoSetter)

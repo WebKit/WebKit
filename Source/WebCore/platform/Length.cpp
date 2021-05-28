@@ -70,7 +70,7 @@ static Length parseLength(const UChar* data, unsigned length)
     }
     auto r = parseInteger<int>({ data, intLength });
     if (next == '*')
-        return Length(r.valueOr(1), LengthType::Relative);
+        return Length(r.value_or(1), LengthType::Relative);
     if (r)
         return Length(*r, LengthType::Fixed);
     return Length(0, LengthType::Relative);

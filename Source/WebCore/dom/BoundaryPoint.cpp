@@ -37,7 +37,7 @@ Optional<BoundaryPoint> makeBoundaryPointBeforeNode(Node& node)
 {
     auto parent = node.parentNode();
     if (!parent)
-        return WTF::nullopt;
+        return std::nullopt;
     return BoundaryPoint { *parent, node.computeNodeIndex() };
 }
 
@@ -45,7 +45,7 @@ Optional<BoundaryPoint> makeBoundaryPointAfterNode(Node& node)
 {
     auto parent = node.parentNode();
     if (!parent)
-        return WTF::nullopt;
+        return std::nullopt;
     return BoundaryPoint { *parent, node.computeNodeIndex() + 1 };
 }
 

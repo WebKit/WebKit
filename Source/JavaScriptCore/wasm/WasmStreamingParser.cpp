@@ -58,7 +58,7 @@ ALWAYS_INLINE Optional<uint8_t> parseUInt7(const uint8_t* data, size_t& offset, 
     uint8_t result = data[offset++];
     if (result < 0x80)
         return result;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template <typename ...Args>
@@ -209,7 +209,7 @@ auto StreamingParser::consume(const uint8_t* bytes, size_t bytesSize, size_t& of
     if (totalDataSize < requiredSize) {
         m_remaining.append(bytes + offsetInBytes, bytesRemainingSize);
         offsetInBytes = bytesSize;
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     size_t usedSize = requiredSize - m_remaining.size();

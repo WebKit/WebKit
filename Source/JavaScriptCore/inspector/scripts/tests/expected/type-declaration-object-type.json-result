@@ -1036,7 +1036,7 @@ Optional<Protocol::Database::MouseButton> parseEnumValueFromString<Protocol::Dat
         if (protocolString == enum_constant_values[constantValues[i]])
             return (Protocol::Database::MouseButton)constantValues[i];
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<>
@@ -1050,7 +1050,7 @@ Optional<Protocol::Database::OptionalParameterBundle::Directionality> parseEnumV
         if (protocolString == enum_constant_values[constantValues[i]])
             return (Protocol::Database::OptionalParameterBundle::Directionality)constantValues[i];
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<>
@@ -1064,7 +1064,7 @@ Optional<Protocol::Database::ParameterBundle::Directionality> parseEnumValueFrom
         if (protocolString == enum_constant_values[constantValues[i]])
             return (Protocol::Database::ParameterBundle::Directionality)constantValues[i];
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 // Enums in the 'Test' Domain
@@ -1080,7 +1080,7 @@ Optional<Protocol::Test::ParameterBundle::Directionality> parseEnumValueFromStri
         if (protocolString == enum_constant_values[constantValues[i]])
             return (Protocol::Test::ParameterBundle::Directionality)constantValues[i];
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace TestHelpers
@@ -1565,7 +1565,7 @@ inline Optional<TestProtocolDatabaseMouseButton> fromProtocolString(const String
         return TestProtocolDatabaseMouseButtonMiddle;
     if (value == "Right")
         return TestProtocolDatabaseMouseButtonRight;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 inline String toProtocolString(TestProtocolDatabaseOptionalParameterBundleDirectionality value)
@@ -1585,7 +1585,7 @@ inline Optional<TestProtocolDatabaseOptionalParameterBundleDirectionality> fromP
         return TestProtocolDatabaseOptionalParameterBundleDirectionalityLTR;
     if (value == "RTL")
         return TestProtocolDatabaseOptionalParameterBundleDirectionalityRTL;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 inline String toProtocolString(TestProtocolDatabaseParameterBundleDirectionality value)
@@ -1605,7 +1605,7 @@ inline Optional<TestProtocolDatabaseParameterBundleDirectionality> fromProtocolS
         return TestProtocolDatabaseParameterBundleDirectionalityLTR;
     if (value == "RTL")
         return TestProtocolDatabaseParameterBundleDirectionalityRTL;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 inline String toProtocolString(TestProtocolTestParameterBundleDirectionality value)
@@ -1625,7 +1625,7 @@ inline Optional<TestProtocolTestParameterBundleDirectionality> fromProtocolStrin
         return TestProtocolTestParameterBundleDirectionalityLTR;
     if (value == "RTL")
         return TestProtocolTestParameterBundleDirectionalityRTL;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace Inspector
@@ -1855,7 +1855,7 @@ using namespace Inspector;
 
     self.buttons = payload[@"buttons"];
 
-    Optional<TestProtocolDatabaseOptionalParameterBundleDirectionality> directionality = fromProtocolString<TestProtocolDatabaseOptionalParameterBundleDirectionality>(payload[@"directionality"]);
+    Optional<TestProtocolDatabaseOptionalParameterBundleDirectionality> directionality = fromProtocolString<TestProtocolDatabaseOptionalParameterBundleDirectionality>((__bridge CFStringRef)payload[@"directionality"]);
     if (directionality)
         self.directionality = directionality.value();
 
@@ -1908,7 +1908,7 @@ using namespace Inspector;
 
 - (TestProtocolDatabaseOptionalParameterBundleDirectionality)directionality
 {
-    return fromProtocolString<TestProtocolDatabaseOptionalParameterBundleDirectionality>([super stringForKey:@"directionality"]).value();
+    return fromProtocolString<TestProtocolDatabaseOptionalParameterBundleDirectionality>((__bridge CFStringRef)[super stringForKey:@"directionality"]).value();
 }
 
 - (void)setNotes:(NSString *)notes
@@ -1997,7 +1997,7 @@ using namespace Inspector;
     self.buttons = payload[@"buttons"];
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"directionality"], @"directionality");
-    Optional<TestProtocolDatabaseParameterBundleDirectionality> directionality = fromProtocolString<TestProtocolDatabaseParameterBundleDirectionality>(payload[@"directionality"]);
+    Optional<TestProtocolDatabaseParameterBundleDirectionality> directionality = fromProtocolString<TestProtocolDatabaseParameterBundleDirectionality>((__bridge CFStringRef)payload[@"directionality"]);
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(directionality, @"directionality");
     self.directionality = directionality.value();
 
@@ -2083,7 +2083,7 @@ using namespace Inspector;
 
 - (TestProtocolDatabaseParameterBundleDirectionality)directionality
 {
-    return fromProtocolString<TestProtocolDatabaseParameterBundleDirectionality>([super stringForKey:@"directionality"]).value();
+    return fromProtocolString<TestProtocolDatabaseParameterBundleDirectionality>((__bridge CFStringRef)[super stringForKey:@"directionality"]).value();
 }
 
 - (void)setNotes:(NSString *)notes
@@ -2289,7 +2289,7 @@ using namespace Inspector;
         return nil;
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"directionality"], @"directionality");
-    Optional<TestProtocolTestParameterBundleDirectionality> directionality = fromProtocolString<TestProtocolTestParameterBundleDirectionality>(payload[@"directionality"]);
+    Optional<TestProtocolTestParameterBundleDirectionality> directionality = fromProtocolString<TestProtocolTestParameterBundleDirectionality>((__bridge CFStringRef)payload[@"directionality"]);
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(directionality, @"directionality");
     self.directionality = directionality.value();
 
@@ -2355,7 +2355,7 @@ using namespace Inspector;
 
 - (TestProtocolTestParameterBundleDirectionality)directionality
 {
-    return fromProtocolString<TestProtocolTestParameterBundleDirectionality>([super stringForKey:@"directionality"]).value();
+    return fromProtocolString<TestProtocolTestParameterBundleDirectionality>((__bridge CFStringRef)[super stringForKey:@"directionality"]).value();
 }
 
 - (void)setButtons:(NSArray/*<NSString>*/ *)buttons

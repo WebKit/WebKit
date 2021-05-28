@@ -455,7 +455,7 @@ static Optional<KeyData> toKeyData(SubtleCrypto::KeyFormat format, SubtleCrypto:
         return WTF::switchOn(keyDataVariant,
             [&promise] (JsonWebKey&) -> Optional<KeyData> {
                 promise->reject(Exception { TypeError });
-                return WTF::nullopt;
+                return std::nullopt;
             },
             [] (auto& bufferSource) -> Optional<KeyData> {
                 return KeyData { Vector { static_cast<const uint8_t*>(bufferSource->data()), bufferSource->byteLength() } };
@@ -469,7 +469,7 @@ static Optional<KeyData> toKeyData(SubtleCrypto::KeyFormat format, SubtleCrypto:
             },
             [&promise] (auto&) -> Optional<KeyData> {
                 promise->reject(Exception { TypeError });
-                return WTF::nullopt;
+                return std::nullopt;
             }
         );
     }

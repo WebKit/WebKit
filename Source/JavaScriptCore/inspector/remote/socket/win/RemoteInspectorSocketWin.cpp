@@ -168,7 +168,7 @@ Optional<PlatformSocketType> connect(const char* serverAddress, uint16_t serverP
     auto socket = connectTo(address);
     if (!isValid(socket)) {
         LOG_ERROR("connecting to %s:%u failed (errno = %d)", serverAddress, serverPort, WSAGetLastError());
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     return socket;
@@ -187,7 +187,7 @@ Optional<PlatformSocketType> listen(const char* addressStr, uint16_t port)
 
     auto socket = bindAndListen(address);
     if (!isValid(socket))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return socket;
 }
@@ -202,7 +202,7 @@ Optional<PlatformSocketType> accept(PlatformSocketType socket)
         return fd;
 
     LOG_ERROR("failed (errno = %d)", WSAGetLastError());
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<std::array<PlatformSocketType, 2>> createPair()
@@ -214,11 +214,11 @@ Optional<std::array<PlatformSocketType, 2>> createPair()
 
     Socket server(bindAndListen(address));
     if (!server)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<uint16_t> serverPort = getPort(server);
     if (!serverPort)
-        return WTF::nullopt;
+        return std::nullopt;
 
     address.sin_port = htons(*serverPort);
 
@@ -226,7 +226,7 @@ Optional<std::array<PlatformSocketType, 2>> createPair()
     sockets[0] = connectTo(address);
     if (!isValid(sockets[0])) {
         LOG_ERROR("connecting failed (errno = %d)", WSAGetLastError());
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     if (auto socket = accept(server)) {
@@ -234,7 +234,7 @@ Optional<std::array<PlatformSocketType, 2>> createPair()
         return sockets;
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 bool setup(PlatformSocketType socket)
@@ -272,7 +272,7 @@ Optional<uint16_t> getPort(PlatformSocketType socket)
     int len = sizeof(address);
     if (getsockname(socket, reinterpret_cast<struct sockaddr*>(&address), &len)) {
         LOG_ERROR("getsockname() failed (errno = %d)", WSAGetLastError());
-        return WTF::nullopt;
+        return std::nullopt;
     }
     return ntohs(address.sin_port);
 }
@@ -286,7 +286,7 @@ Optional<size_t> read(PlatformSocketType socket, void* buffer, int bufferSize)
         return static_cast<size_t>(readSize);
 
     LOG_ERROR("recv() failed (errno = %d)", WSAGetLastError());
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<size_t> write(PlatformSocketType socket, const void* data, int size)
@@ -298,7 +298,7 @@ Optional<size_t> write(PlatformSocketType socket, const void* data, int size)
         return static_cast<size_t>(writeSize);
 
     LOG_ERROR("send() failed (errno = %d)", WSAGetLastError());
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void close(PlatformSocketType& socket)

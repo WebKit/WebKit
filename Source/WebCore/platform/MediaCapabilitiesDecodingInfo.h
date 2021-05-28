@@ -64,12 +64,12 @@ Optional<MediaCapabilitiesDecodingInfo> MediaCapabilitiesDecodingInfo::decode(De
 {
     auto info = MediaCapabilitiesInfo::decode(decoder);
     if (!info)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<MediaDecodingConfiguration> supportedConfiguration;
     decoder >> supportedConfiguration;
     if (!supportedConfiguration)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return MediaCapabilitiesDecodingInfo(
         WTFMove(*info),

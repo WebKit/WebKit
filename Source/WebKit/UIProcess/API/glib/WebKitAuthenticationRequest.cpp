@@ -177,7 +177,7 @@ AuthenticationChallengeProxy* webkitAuthenticationRequestGetAuthenticationChalle
 
 void webkitAuthenticationRequestDidAuthenticate(WebKitAuthenticationRequest* request)
 {
-    auto* credential = webkitCredentialCreate(request->priv->acceptedCredential.valueOr(WebCore::Credential()));
+    auto* credential = webkitCredentialCreate(request->priv->acceptedCredential.value_or(WebCore::Credential()));
     g_signal_emit(request, signals[AUTHENTICATED], 0, credential);
     webkit_credential_free(credential);
 }
@@ -286,7 +286,7 @@ void webkit_authentication_request_set_proposed_credential(WebKitAuthenticationR
     g_return_if_fail(WEBKIT_IS_AUTHENTICATION_REQUEST(request));
 
     if (!credential) {
-        request->priv->proposedCredential = WTF::nullopt;
+        request->priv->proposedCredential = std::nullopt;
         return;
     }
 
@@ -455,8 +455,8 @@ void webkit_authentication_request_authenticate(WebKitAuthenticationRequest* req
     if (credential)
         request->priv->acceptedCredential = webkitCredentialGetCredential(credential);
     else
-        request->priv->acceptedCredential = WTF::nullopt;
-    request->priv->authenticationChallenge->listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::UseCredential, request->priv->acceptedCredential.valueOr(WebCore::Credential()));
+        request->priv->acceptedCredential = std::nullopt;
+    request->priv->authenticationChallenge->listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::UseCredential, request->priv->acceptedCredential.value_or(WebCore::Credential()));
     request->priv->handledRequest = true;
 }
 
@@ -477,7 +477,7 @@ void webkit_authentication_request_cancel(WebKitAuthenticationRequest* request)
         return;
 
     request->priv->authenticationChallenge->listener().completeChallenge(WebKit::AuthenticationChallengeDisposition::Cancel);
-    request->priv->acceptedCredential = WTF::nullopt;
+    request->priv->acceptedCredential = std::nullopt;
     request->priv->handledRequest = true;
 
     g_signal_emit(request, signals[CANCELLED], 0);

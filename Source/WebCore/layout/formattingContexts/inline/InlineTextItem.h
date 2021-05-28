@@ -46,7 +46,7 @@ public:
     bool isWhitespace() const { return m_textItemType == TextItemType::Whitespace; }
     bool isWordSeparator() const { return m_isWordSeparator; }
     bool hasTrailingSoftHyphen() const { return m_hasTrailingSoftHyphen; }
-    Optional<InlineLayoutUnit> width() const { return m_hasWidth ? makeOptional(m_width) : Optional<InlineLayoutUnit> { }; }
+    Optional<InlineLayoutUnit> width() const { return m_hasWidth ? std::make_optional(m_width) : Optional<InlineLayoutUnit> { }; }
     bool isEmptyContent() const;
 
     const InlineTextBox& inlineTextBox() const { return downcast<InlineTextBox>(layoutBox()); }
@@ -91,7 +91,7 @@ inline InlineTextItem::InlineTextItem(const InlineTextBox& inlineTextBox, unsign
     m_hasWidth = !!width;
     m_hasTrailingSoftHyphen = hasTrailingSoftHyphen;
     m_isWordSeparator = isWordSeparator;
-    m_width = width.valueOr(0);
+    m_width = width.value_or(0);
     m_textItemType = textItemType;
 }
 
@@ -105,7 +105,7 @@ inline InlineTextItem InlineTextItem::left(unsigned length) const
     RELEASE_ASSERT(length <= this->length());
     ASSERT(m_textItemType != TextItemType::Undefined);
     ASSERT(length);
-    return { inlineTextBox(), start(), length, false, isWordSeparator(), WTF::nullopt, m_textItemType };
+    return { inlineTextBox(), start(), length, false, isWordSeparator(), std::nullopt, m_textItemType };
 }
 
 inline InlineTextItem InlineTextItem::right(unsigned length) const
@@ -113,7 +113,7 @@ inline InlineTextItem InlineTextItem::right(unsigned length) const
     RELEASE_ASSERT(length <= this->length());
     ASSERT(m_textItemType != TextItemType::Undefined);
     ASSERT(length);
-    return { inlineTextBox(), end() - length, length, hasTrailingSoftHyphen(), isWordSeparator(), WTF::nullopt, m_textItemType };
+    return { inlineTextBox(), end() - length, length, hasTrailingSoftHyphen(), isWordSeparator(), std::nullopt, m_textItemType };
 }
 
 }

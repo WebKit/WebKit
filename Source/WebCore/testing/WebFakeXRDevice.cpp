@@ -167,7 +167,7 @@ Optional<PlatformXR::LayerHandle> SimulatedXRDevice::createLayerProjection(uint3
 {
     using GL = GraphicsContextGL;
     if (!m_gl)
-        return WTF::nullopt;
+        return std::nullopt;
     PlatformXR::LayerHandle handle = ++m_layerIndex;
     auto texture = m_gl->createTexture();
     auto colorFormat = alpha ? GL::RGBA8 : GL::RGB8;

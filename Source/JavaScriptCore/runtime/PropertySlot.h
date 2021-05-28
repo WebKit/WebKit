@@ -192,7 +192,7 @@ public:
     {
         if (m_additionalDataType == AdditionalDataType::DOMAttribute)
             return m_additionalData.domAttribute;
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     struct ModuleNamespaceSlot {
@@ -204,7 +204,7 @@ public:
     {
         if (m_additionalDataType == AdditionalDataType::ModuleNamespace)
             return m_additionalData.moduleNamespaceSlot;
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     void setValue(JSObject* slotBase, unsigned attributes, JSValue value)

@@ -2600,7 +2600,7 @@ void WKPageSetPageStateClient(WKPageRef pageRef, WKPageStateClientBase* client)
 void WKPageRunJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, void* context, WKPageRunJavaScriptFunction callback)
 {
     CRASH_IF_SUSPENDED;
-    toImpl(pageRef)->runJavaScriptInMainFrame({ toImpl(scriptRef)->string(), URL { }, false, WTF::nullopt, true }, [context, callback] (auto&& result) {
+    toImpl(pageRef)->runJavaScriptInMainFrame({ toImpl(scriptRef)->string(), URL { }, false, std::nullopt, true }, [context, callback] (auto&& result) {
         if (result.has_value())
             callback(toAPI(result.value().get()), nullptr, context);
         else

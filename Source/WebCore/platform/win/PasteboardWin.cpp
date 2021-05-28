@@ -262,7 +262,7 @@ Optional<PasteboardCustomData> Pasteboard::readPasteboardCustomData()
         ::CloseClipboard();
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Vector<String> Pasteboard::typesSafeForBindings(const String& origin)

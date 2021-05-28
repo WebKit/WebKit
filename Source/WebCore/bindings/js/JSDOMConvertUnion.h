@@ -53,7 +53,7 @@ struct ConditionalReturner<ReturnType, false> {
     template<typename T>
     static Optional<ReturnType> get(T&&)
     {
-        return WTF::nullopt;
+        return std::nullopt;
     }
 };
 
@@ -72,7 +72,7 @@ template<typename ReturnType, typename T>
 struct ConditionalConverter<ReturnType, T, false> {
     static Optional<ReturnType> convert(JSC::JSGlobalObject&, JSC::JSValue)
     {
-        return WTF::nullopt;
+        return std::nullopt;
     }
 };
 
@@ -91,7 +91,7 @@ template<typename ReturnType, typename T>
 struct ConditionalSequenceConverter<ReturnType, T, false> {
     static Optional<ReturnType> convert(JSC::JSGlobalObject&, JSC::JSObject*, JSC::JSValue)
     {
-        return WTF::nullopt;
+        return std::nullopt;
     }
 };
 

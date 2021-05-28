@@ -144,7 +144,7 @@ void ProvisionalPageProxy::cancel()
         m_request,
         SecurityOriginData::fromURL(m_request.url()),
         m_mainFrame->frameID(),
-        WTF::nullopt,
+        std::nullopt,
     };
     didFailProvisionalLoadForFrame(m_mainFrame->frameID(), WTFMove(frameInfo), ResourceRequest { m_request }, m_navigationID, m_provisionalLoadURL.string(), error, WebCore::WillContinueLoading::No, UserData { }); // Will delete |this|.
 }
@@ -363,7 +363,7 @@ void ProvisionalPageProxy::decidePolicyForNavigationActionSync(FrameIdentifier f
     const UserData& userData, Messages::WebPageProxy::DecidePolicyForNavigationActionSync::DelayedReply&& reply)
 {
     if (!isMainFrame || (m_mainFrame && m_mainFrame->frameID() != frameID) || navigationID != m_navigationID) {
-        reply(PolicyDecision { identifier, WTF::nullopt, WebCore::PolicyAction::Ignore, navigationID, WTF::nullopt, WTF::nullopt });
+        reply(PolicyDecision { identifier, std::nullopt, WebCore::PolicyAction::Ignore, navigationID, std::nullopt, std::nullopt });
         return;
     }
 

@@ -60,12 +60,12 @@ Optional<SpeechRecognitionError> SpeechRecognitionError::decode(Decoder& decoder
     Optional<SpeechRecognitionErrorType> type;
     decoder >> type;
     if (!type)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<String> message;
     decoder >> message;
     if (!message)
-        return WTF::nullopt;
+        return std::nullopt;
     
     return SpeechRecognitionError { WTFMove(*type), WTFMove(*message) };
 }

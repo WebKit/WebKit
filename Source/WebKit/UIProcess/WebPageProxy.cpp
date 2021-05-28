@@ -1060,7 +1060,7 @@ RefPtr<API::Navigation> WebPageProxy::launchProcessForReload()
     }
 
     // We allow stale content when reloading a WebProcess that's been killed or crashed.
-    send(Messages::WebPage::GoToBackForwardItem(navigation->navigationID(), m_backForwardList->currentItem()->itemID(), FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No, WTF::nullopt));
+    send(Messages::WebPage::GoToBackForwardItem(navigation->navigationID(), m_backForwardList->currentItem()->itemID(), FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No, std::nullopt));
     m_process->startResponsivenessTimer();
 
     return navigation;
@@ -1444,7 +1444,7 @@ RefPtr<API::Navigation> WebPageProxy::loadData(const IPC::DataReference& data, c
     if (shouldForceForegroundPriorityForClientNavigation())
         navigation->setClientNavigationActivity(process().throttler().foregroundActivity("Client navigation"_s));
 
-    loadDataWithNavigationShared(m_process.copyRef(), m_webPageID, navigation, data, MIMEType, encoding, baseURL, userData, ShouldTreatAsContinuingLoad::No, isNavigatingToAppBoundDomain(), WTF::nullopt, shouldOpenExternalURLsPolicy);
+    loadDataWithNavigationShared(m_process.copyRef(), m_webPageID, navigation, data, MIMEType, encoding, baseURL, userData, ShouldTreatAsContinuingLoad::No, isNavigatingToAppBoundDomain(), std::nullopt, shouldOpenExternalURLsPolicy);
     return navigation;
 }
 
@@ -1741,7 +1741,7 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListItem
     auto transaction = m_pageLoadState.transaction();
     m_pageLoadState.setPendingAPIRequest(transaction, { navigation ? navigation->navigationID() : 0, item.url() });
 
-    send(Messages::WebPage::GoToBackForwardItem(navigation ? navigation->navigationID() : 0, item.itemID(), frameLoadType, ShouldTreatAsContinuingLoad::No, WTF::nullopt));
+    send(Messages::WebPage::GoToBackForwardItem(navigation ? navigation->navigationID() : 0, item.itemID(), frameLoadType, ShouldTreatAsContinuingLoad::No, std::nullopt));
     m_process->startResponsivenessTimer();
 
     return navigation;
@@ -2656,7 +2656,7 @@ void WebPageProxy::didEndDragging()
 
 void WebPageProxy::resetCurrentDragInformation()
 {
-    m_currentDragOperation = WTF::nullopt;
+    m_currentDragOperation = std::nullopt;
     m_currentDragHandlingMethod = DragHandlingMethod::None;
     m_currentDragIsOverFileInput = false;
     m_currentDragNumberOfFilesToBeAccepted = 0;
@@ -2752,7 +2752,7 @@ void WebPageProxy::processNextQueuedMouseEvent()
 #if PLATFORM(MAC)
     bool eventMayStartDrag = !m_currentDragOperation && eventType == WebEvent::MouseMove && event.button() != WebMouseEvent::Button::NoButton;
     if (eventMayStartDrag)
-        sandboxExtensions = SandboxExtension::createHandlesForMachLookup({ "com.apple.iconservices"_s, "com.apple.iconservices.store"_s }, WTF::nullopt);
+        sandboxExtensions = SandboxExtension::createHandlesForMachLookup({ "com.apple.iconservices"_s, "com.apple.iconservices.store"_s }, std::nullopt);
 #endif
     
     LOG(MouseHandling, "UIProcess: sent mouse event %s (queue size %zu)", webMouseEventTypeString(eventType), m_mouseEventQueue.size());
@@ -3290,7 +3290,7 @@ bool WebPageProxy::setIsNavigatingToAppBoundDomainAndCheckIfPermitted(bool isMai
     }
 
     if (!isNavigatingToAppBoundDomain) {
-        m_isNavigatingToAppBoundDomain = WTF::nullopt;
+        m_isNavigatingToAppBoundDomain = std::nullopt;
         return true;
     }
     if (m_ignoresAppBoundDomains)
@@ -3445,7 +3445,7 @@ void WebPageProxy::receivedNavigationPolicyDecision(PolicyAction policyAction, A
 void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* navigation, RefPtr<API::WebsitePolicies>&& websitePolicies, Variant<Ref<API::NavigationResponse>, Ref<API::NavigationAction>>&& navigationActionOrResponse, Ref<PolicyDecisionSender>&& sender, Optional<SandboxExtension::Handle> sandboxExtensionHandle, WillContinueLoadInNewProcess willContinueLoadInNewProcess)
 {
     if (!hasRunningProcess()) {
-        sender->send(PolicyDecision { sender->identifier(), isNavigatingToAppBoundDomain(), PolicyAction::Ignore, 0, WTF::nullopt, WTF::nullopt });
+        sender->send(PolicyDecision { sender->identifier(), isNavigatingToAppBoundDomain(), PolicyAction::Ignore, 0, std::nullopt, std::nullopt });
         return;
     }
 
@@ -3493,7 +3493,7 @@ void WebPageProxy::commitProvisionalPage(FrameIdentifier frameID, FrameInfoData&
     ASSERT(m_provisionalPage);
     RELEASE_LOG_IF_ALLOWED(Loading, "commitProvisionalPage: newPID=%i", m_provisionalPage->process().processIdentifier());
 
-    Optional<FrameIdentifier> mainFrameIDInPreviousProcess = m_mainFrame ? makeOptional(m_mainFrame->frameID()) : WTF::nullopt;
+    Optional<FrameIdentifier> mainFrameIDInPreviousProcess = m_mainFrame ? std::make_optional(m_mainFrame->frameID()) : std::nullopt;
 
     ASSERT(m_process.ptr() != &m_provisionalPage->process());
 
@@ -3898,7 +3898,7 @@ void WebPageProxy::windowScreenDidChange(PlatformDisplayID displayID, Optional<u
 
 float WebPageProxy::deviceScaleFactor() const
 {
-    return m_customDeviceScaleFactor.valueOr(m_intrinsicDeviceScaleFactor);
+    return m_customDeviceScaleFactor.value_or(m_intrinsicDeviceScaleFactor);
 }
 
 void WebPageProxy::setCustomDeviceScaleFactor(float customScaleFactor)
@@ -3912,7 +3912,7 @@ void WebPageProxy::setCustomDeviceScaleFactor(float customScaleFactor)
     if (customScaleFactor)
         m_customDeviceScaleFactor = customScaleFactor;
     else
-        m_customDeviceScaleFactor = WTF::nullopt;
+        m_customDeviceScaleFactor = std::nullopt;
 
     if (!hasRunningProcess())
         return;
@@ -4248,7 +4248,7 @@ void WebPageProxy::launchInitialProcessIfNecessary()
 
 void WebPageProxy::runJavaScriptInMainFrame(RunJavaScriptParameters&& parameters, CompletionHandler<void(Expected<RefPtr<API::SerializedScriptValue>, WebCore::ExceptionDetails>&&)>&& callbackFunction)
 {
-    runJavaScriptInFrameInScriptWorld(WTFMove(parameters), WTF::nullopt, API::ContentWorld::pageContentWorld(), WTFMove(callbackFunction));
+    runJavaScriptInFrameInScriptWorld(WTFMove(parameters), std::nullopt, API::ContentWorld::pageContentWorld(), WTFMove(callbackFunction));
 }
 
 void WebPageProxy::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& parameters, Optional<WebCore::FrameIdentifier> frameID, API::ContentWorld& world, CompletionHandler<void(Expected<RefPtr<API::SerializedScriptValue>, WebCore::ExceptionDetails>&&)>&& callbackFunction)
@@ -5215,7 +5215,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
 
     if (!checkURLReceivedFromCurrentOrPreviousWebProcess(process, request.url())) {
         RELEASE_LOG_ERROR_IF_ALLOWED(Process, "Ignoring request to load this main resource because it is outside the sandbox");
-        sender->send(PolicyDecision { sender->identifier(), isNavigatingToAppBoundDomain(), PolicyAction::Ignore, 0, WTF::nullopt, WTF::nullopt });
+        sender->send(PolicyDecision { sender->identifier(), isNavigatingToAppBoundDomain(), PolicyAction::Ignore, 0, std::nullopt, std::nullopt });
         return;
     }
 
@@ -5276,7 +5276,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
         && navigationActionData.navigationType != WebCore::NavigationType::BackForward;
 
     auto userInitiatedActivity = process->userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
-    auto navigationAction = API::NavigationAction::create(WTFMove(navigationActionData), sourceFrameInfo.get(), destinationFrameInfo.ptr(), WTF::nullopt, ResourceRequest(request), originalRequest.url(), shouldOpenAppLinks, WTFMove(userInitiatedActivity), mainFrameNavigation);
+    auto navigationAction = API::NavigationAction::create(WTFMove(navigationActionData), sourceFrameInfo.get(), destinationFrameInfo.ptr(), std::nullopt, ResourceRequest(request), originalRequest.url(), shouldOpenAppLinks, WTFMove(userInitiatedActivity), mainFrameNavigation);
 
 #if ENABLE(CONTENT_FILTERING)
     if (frame.didHandleContentFilterUnblockNavigation(request)) {
@@ -5473,7 +5473,7 @@ void WebPageProxy::decidePolicyForNavigationActionSyncShared(Ref<WebProcessProxy
     decidePolicyForNavigationAction(WTFMove(process), *frame, WTFMove(frameInfo), navigationID, WTFMove(navigationActionData), WTFMove(originatingFrameInfo), originatingPageID, originalRequest, WTFMove(request), WTFMove(requestBody), WTFMove(redirectResponse), userData, sender.copyRef());
 
     // If the client did not respond synchronously, proceed with the load.
-    sender->send(PolicyDecision { sender->identifier(), isNavigatingToAppBoundDomain(), PolicyAction::Use, navigationID, WTF::nullopt, WTF::nullopt });
+    sender->send(PolicyDecision { sender->identifier(), isNavigatingToAppBoundDomain(), PolicyAction::Use, navigationID, std::nullopt, std::nullopt });
 }
 
 void WebPageProxy::decidePolicyForNewWindowAction(FrameIdentifier frameID, FrameInfoData&& frameInfo, PolicyCheckIdentifier identifier, NavigationActionData&& navigationActionData, ResourceRequest&& request, const String& frameName, uint64_t listenerID, const UserData& userData)
@@ -5694,7 +5694,7 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, WebPa
     auto mainFrameURL = m_mainFrame ? m_mainFrame->url() : URL();
     auto completionHandler = [this, protectedThis = makeRef(*this), mainFrameURL, request, reply = WTFMove(reply), privateClickMeasurement = navigationActionData.privateClickMeasurement] (RefPtr<WebPageProxy> newPage) mutable {
         if (!newPage) {
-            reply(WTF::nullopt, WTF::nullopt);
+            reply(std::nullopt, std::nullopt);
             return;
         }
 
@@ -5722,7 +5722,7 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, WebPa
         userInitiatedActivity = m_process->userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
 
     bool shouldOpenAppLinks = originatingFrameInfo->request().url().host() != request.url().host();
-    auto navigationAction = API::NavigationAction::create(WTFMove(navigationActionData), originatingFrameInfo.ptr(), nullptr, WTF::nullopt, WTFMove(request), URL(), shouldOpenAppLinks, WTFMove(userInitiatedActivity));
+    auto navigationAction = API::NavigationAction::create(WTFMove(navigationActionData), originatingFrameInfo.ptr(), nullptr, std::nullopt, WTFMove(request), URL(), shouldOpenAppLinks, WTFMove(userInitiatedActivity));
 
     trySOAuthorization(WTFMove(navigationAction), *this, WTFMove(completionHandler), [this, protectedThis = makeRef(*this), windowFeatures = WTFMove(windowFeatures)] (Ref<API::NavigationAction>&& navigationAction, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler) mutable {
         m_uiClient->createNewPage(*this, WTFMove(windowFeatures), WTFMove(navigationAction), WTFMove(completionHandler));
@@ -6529,7 +6529,7 @@ void WebPageProxy::backForwardItemAtIndex(int32_t index, CompletionHandler<void(
     if (auto* item = m_backForwardList->itemAtIndex(index))
         completionHandler(item->itemID());
     else
-        completionHandler(WTF::nullopt);
+        completionHandler(std::nullopt);
 }
 
 void WebPageProxy::backForwardListCounts(Messages::WebPageProxy::BackForwardListCountsDelayedReply&& completionHandler)
@@ -6913,9 +6913,9 @@ void WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vect
 
     SandboxExtension::Handle frontboardServicesSandboxExtension, iconServicesSandboxExtension;
 #if HAVE(FRONTBOARD_SYSTEM_APP_SERVICES)
-    SandboxExtension::createHandleForMachLookup("com.apple.frontboard.systemappservices"_s, WTF::nullopt, frontboardServicesSandboxExtension);
+    SandboxExtension::createHandleForMachLookup("com.apple.frontboard.systemappservices"_s, std::nullopt, frontboardServicesSandboxExtension);
 #endif
-    SandboxExtension::createHandleForMachLookup("com.apple.iconservices"_s, WTF::nullopt, iconServicesSandboxExtension);
+    SandboxExtension::createHandleForMachLookup("com.apple.iconservices"_s, std::nullopt, iconServicesSandboxExtension);
 
     send(Messages::WebPage::DidChooseFilesForOpenPanelWithDisplayStringAndIcon(fileURLs, displayString, iconData ? iconData->dataReference() : IPC::DataReference(), frontboardServicesSandboxExtension, iconServicesSandboxExtension));
 
@@ -7761,7 +7761,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #endif
 
 #if ENABLE(WEB_AUTHN)
-    m_websiteDataStore->authenticatorManager().cancelRequest(m_webPageID, WTF::nullopt);
+    m_websiteDataStore->authenticatorManager().cancelRequest(m_webPageID, std::nullopt);
 #endif
 
     m_speechRecognitionPermissionManager = nullptr;
@@ -8014,7 +8014,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     if (m_scrollbarOverlayStyle)
         parameters.scrollbarOverlayStyle = m_scrollbarOverlayStyle.value();
     else
-        parameters.scrollbarOverlayStyle = WTF::nullopt;
+        parameters.scrollbarOverlayStyle = std::nullopt;
     parameters.backgroundExtendsBeyondPage = m_backgroundExtendsBeyondPage;
     parameters.layerHostingMode = m_layerHostingMode;
     parameters.controlledByAutomation = m_controlledByAutomation;
@@ -8056,8 +8056,8 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 
     if (needWebProcessExtensions) {
         // FIXME(207716): The following should be removed when the GPU process is complete.
-        parameters.mediaExtensionHandles = SandboxExtension::createHandlesForMachLookup(mediaRelatedMachServices(), WTF::nullopt);
-        parameters.mediaIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(mediaRelatedIOKitClasses(), WTF::nullopt);
+        parameters.mediaExtensionHandles = SandboxExtension::createHandlesForMachLookup(mediaRelatedMachServices(), std::nullopt);
+        parameters.mediaIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(mediaRelatedIOKitClasses(), std::nullopt);
     }
 
     if (!preferences().useGPUProcessForMediaEnabled()
@@ -8065,8 +8065,8 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
         || (!preferences().captureAudioInGPUProcessEnabled() && !preferences().captureAudioInUIProcessEnabled())
         || !preferences().useGPUProcessForCanvasRenderingEnabled()
         || !preferences().useGPUProcessForWebGLEnabled()) {
-        parameters.gpuIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(gpuIOKitClasses(), WTF::nullopt);
-        parameters.gpuMachExtensionHandles = SandboxExtension::createHandlesForMachLookup(gpuMachServices(), WTF::nullopt);
+        parameters.gpuIOKitExtensionHandles = SandboxExtension::createHandlesForIOKitClassExtensions(gpuIOKitClasses(), std::nullopt);
+        parameters.gpuMachExtensionHandles = SandboxExtension::createHandlesForMachLookup(gpuMachServices(), std::nullopt);
     }
 #endif
 #if HAVE(STATIC_FONT_REGISTRY)
@@ -8104,7 +8104,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
-    parameters.applicationManifest = m_configuration->applicationManifest() ? Optional<WebCore::ApplicationManifest>(m_configuration->applicationManifest()->applicationManifest()) : WTF::nullopt;
+    parameters.applicationManifest = m_configuration->applicationManifest() ? Optional<WebCore::ApplicationManifest>(m_configuration->applicationManifest()->applicationManifest()) : std::nullopt;
 #endif
 
     parameters.needsFontAttributes = m_needsFontAttributes;
@@ -8165,7 +8165,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 
 #if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(COCOA)
     if (m_preferences->attachmentElementEnabled() && !m_process->hasIssuedAttachmentElementRelatedSandboxExtensions()) {
-        parameters.attachmentElementExtensionHandles = SandboxExtension::createHandlesForMachLookup(attachmentElementServices(), WTF::nullopt);
+        parameters.attachmentElementExtensionHandles = SandboxExtension::createHandlesForMachLookup(attachmentElementServices(), std::nullopt);
         m_process->setHasIssuedAttachmentElementRelatedSandboxExtensions();
     }
 #endif
@@ -10144,7 +10144,7 @@ void WebPageProxy::reportPageLoadResult(const ResourceError& error)
         return;
 
     auto pageLoadTime = MonotonicTime::now() - *m_pageLoadStart;
-    m_pageLoadStart = WTF::nullopt;
+    m_pageLoadStart = std::nullopt;
 
     CompletionCondition condition { CompletionCondition::Success };
     if (error.isCancellation())

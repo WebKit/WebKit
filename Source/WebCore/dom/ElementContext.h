@@ -70,21 +70,21 @@ Optional<ElementContext> ElementContext::decode(Decoder& decoder)
     ElementContext context;
 
     if (!decoder.decode(context.boundingRect))
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto pageIdentifier = PageIdentifier::decode(decoder);
     if (!pageIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
     context.webPageIdentifier = *pageIdentifier;
 
     auto documentIdentifier = DocumentIdentifier::decode(decoder);
     if (!documentIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
     context.documentIdentifier = *documentIdentifier;
 
     auto elementIdentifier = ElementIdentifier::decode(decoder);
     if (!elementIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
     context.elementIdentifier = *elementIdentifier;
 
     return context;

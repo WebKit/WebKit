@@ -147,7 +147,7 @@ struct ScreenDataOverrides {
         Optional<type> name; \
         decoder >> name; \
         if (!name) \
-            return WTF::nullopt; \
+            return std::nullopt; \
 
         DECODE(width, double);
         DECODE(height, double);

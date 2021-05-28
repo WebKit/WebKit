@@ -355,9 +355,9 @@ LayoutUnit RenderTable::convertStyleLogicalHeightToComputedHeight(const Length& 
         }
         return LayoutUnit(styleLogicalHeight.value() - borders);
     } else if (styleLogicalHeight.isPercentOrCalculated())
-        return computePercentageLogicalHeight(styleLogicalHeight).valueOr(0);
+        return computePercentageLogicalHeight(styleLogicalHeight).value_or(0);
     else if (styleLogicalHeight.isIntrinsic())
-        return computeIntrinsicLogicalContentHeightUsing(styleLogicalHeight, logicalHeight() - borderAndPadding, borderAndPadding).valueOr(0);
+        return computeIntrinsicLogicalContentHeightUsing(styleLogicalHeight, logicalHeight() - borderAndPadding, borderAndPadding).value_or(0);
     else
         ASSERT_NOT_REACHED();
     return 0_lu;

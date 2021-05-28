@@ -108,7 +108,7 @@ private:
     struct FontSelectionKeyHashTraits : SimpleClassHashTraits<FontSelectionKey> {
         static const bool emptyValueIsZero = false;
         static FontSelectionKey emptyValue() { return FontSelectionRequest { }; }
-        static void constructDeletedValue(FontSelectionKey& slot) { slot = WTF::nullopt; }
+        static void constructDeletedValue(FontSelectionKey& slot) { slot = std::nullopt; }
         static bool isDeletedValue(const FontSelectionKey& value) { return !value; }
     };
     using FontSelectionHashMap = HashMap<FontSelectionKey, RefPtr<CSSSegmentedFontFace>, FontSelectionKeyHash, FontSelectionKeyHashTraits>;

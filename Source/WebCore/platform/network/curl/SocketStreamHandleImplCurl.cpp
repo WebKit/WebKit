@@ -63,7 +63,7 @@ SocketStreamHandleImpl::~SocketStreamHandleImpl()
 Optional<size_t> SocketStreamHandleImpl::platformSendInternal(const uint8_t* data, size_t length)
 {
     if (isStreamInvalidated())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (m_totalSendDataSize + length > maxBufferSize)
         return 0;

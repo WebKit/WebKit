@@ -68,7 +68,7 @@ using namespace Inspector;
 static Optional<double> protocolValueForSeconds(const Seconds& seconds)
 {
     if (seconds == Seconds::infinity() || seconds == Seconds::nan())
-        return WTF::nullopt;
+        return std::nullopt;
     return seconds.milliseconds();
 }
 
@@ -86,7 +86,7 @@ static Optional<Protocol::Animation::PlaybackDirection> protocolValueForPlayback
     }
 
     ASSERT_NOT_REACHED();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static Optional<Protocol::Animation::FillMode> protocolValueForFillMode(FillMode fillMode)
@@ -105,7 +105,7 @@ static Optional<Protocol::Animation::FillMode> protocolValueForFillMode(FillMode
     }
 
     ASSERT_NOT_REACHED();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static Ref<JSON::ArrayOf<Protocol::Animation::Keyframe>> buildObjectForKeyframes(KeyframeEffect& keyframeEffect)

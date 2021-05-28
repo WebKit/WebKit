@@ -76,7 +76,7 @@ Optional<PaymentSetupFeatures> PaymentSetupFeatures::decode(IPC::Decoder& decode
 
     auto platformFeatures = IPC::decode<NSArray<PKPaymentSetupFeature *>>(decoder, allowedClasses.get().get());
     if (!platformFeatures)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return PaymentSetupFeatures { WTFMove(*platformFeatures) };
 }

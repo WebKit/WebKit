@@ -214,7 +214,7 @@ void ScopeRuleSets::collectFeatures() const
     m_attributeInvalidationRuleSets.clear();
     m_pseudoClassInvalidationRuleSets.clear();
 
-    m_cachedHasComplexSelectorsForStyleAttribute = WTF::nullopt;
+    m_cachedHasComplexSelectorsForStyleAttribute = std::nullopt;
 
     m_features.shrinkToFit();
 }

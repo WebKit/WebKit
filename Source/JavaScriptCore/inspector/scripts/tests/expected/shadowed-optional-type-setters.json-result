@@ -492,7 +492,7 @@ Optional<Protocol::Runtime::KeyPath::Type> parseEnumValueFromString<Protocol::Ru
         if (protocolString == enum_constant_values[constantValues[i]])
             return (Protocol::Runtime::KeyPath::Type)constantValues[i];
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace TestHelpers
@@ -891,7 +891,7 @@ inline Optional<TestProtocolRuntimeKeyPathType> fromProtocolString(const String&
         return TestProtocolRuntimeKeyPathTypeString;
     if (value == "array")
         return TestProtocolRuntimeKeyPathTypeArray;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace Inspector
@@ -1002,7 +1002,7 @@ using namespace Inspector;
         return nil;
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"type"], @"type");
-    Optional<TestProtocolRuntimeKeyPathType> type = fromProtocolString<TestProtocolRuntimeKeyPathType>(payload[@"type"]);
+    Optional<TestProtocolRuntimeKeyPathType> type = fromProtocolString<TestProtocolRuntimeKeyPathType>((__bridge CFStringRef)payload[@"type"]);
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(type, @"type");
     self.type = type.value();
 
@@ -1037,7 +1037,7 @@ using namespace Inspector;
 
 - (TestProtocolRuntimeKeyPathType)type
 {
-    return fromProtocolString<TestProtocolRuntimeKeyPathType>([super stringForKey:@"type"]).value();
+    return fromProtocolString<TestProtocolRuntimeKeyPathType>((__bridge CFStringRef)[super stringForKey:@"type"]).value();
 }
 
 - (void)setString:(NSString *)string

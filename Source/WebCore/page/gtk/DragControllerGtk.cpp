@@ -56,7 +56,7 @@ Optional<DragOperation> DragController::dragOperation(const DragData& dragData)
     if (dragData.containsURL())
         return DragOperation::Copy;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 const IntSize& DragController::maxDragImageSize()

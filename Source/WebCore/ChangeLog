@@ -1,3 +1,22 @@
+2021-05-27  Darin Adler  <darin@apple.com>
+
+        Next step toward using std::optional directly instead of through WTF::Optional typedef
+        https://bugs.webkit.org/show_bug.cgi?id=226280
+
+        Reviewed by Chris Dumez.
+
+        * <many files>: Accept the renaming done by do-webcore-rename.
+
+        * Modules/webauthn/fido/DeviceRequestConverter.h: Since style checker complained
+        about the names of some arguments, fixed them, and also hand-updated Optional to
+        std::optional as long as we were touching it.
+
+        * loader/EmptyClients.cpp: Since style checker complained about the mix of
+        WEBCORE_EXPORT and inlined functions, moved them out of line, and
+        also hand-updated Optional to std::optional as long as we were touching it.
+        Also removed is<EmptyFrameLoaderClient>().
+        * loader/EmptyFrameLoaderClient.h: Ditto.
+
 2021-05-27  Brent Fulgham  <bfulgham@apple.com>
 
         [Hardening] Use a RELEASE_ASSERT for SharedBufferDataView constructor

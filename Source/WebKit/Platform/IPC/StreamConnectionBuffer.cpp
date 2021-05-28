@@ -82,19 +82,19 @@ Optional<StreamConnectionBuffer> StreamConnectionBuffer::decode(Decoder& decoder
     Optional<WebKit::SharedMemory::IPCHandle> ipcHandle;
     decoder >> ipcHandle;
     if (!ipcHandle)
-        return WTF::nullopt;
+        return std::nullopt;
     Optional<Semaphore> semaphore;
     decoder >> semaphore;
     if (!semaphore)
-        return WTF::nullopt;
+        return std::nullopt;
     size_t dataSize = static_cast<size_t>(ipcHandle->dataSize);
     if (dataSize < headerSize())
-        return WTF::nullopt;
+        return std::nullopt;
     if (dataSize > headerSize() + maximumSize())
-        return WTF::nullopt;
+        return std::nullopt;
     auto sharedMemory = WebKit::SharedMemory::map(ipcHandle->handle, WebKit::SharedMemory::Protection::ReadWrite);
     if (sharedMemory->size() < dataSize)
-        return WTF::nullopt;
+        return std::nullopt;
     return StreamConnectionBuffer { sharedMemory.releaseNonNull(), dataSize,  WTFMove(*semaphore) };
 }
 

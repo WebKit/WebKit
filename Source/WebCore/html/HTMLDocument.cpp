@@ -123,7 +123,7 @@ Ref<DocumentParser> HTMLDocument::createParser()
 Optional<Variant<RefPtr<WindowProxy>, RefPtr<Element>, RefPtr<HTMLCollection>>> HTMLDocument::namedItem(const AtomString& name)
 {
     if (name.isNull() || !hasDocumentNamedItem(*name.impl()))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (UNLIKELY(documentNamedItemContainsMultipleElements(*name.impl()))) {
         auto collection = documentNamedItems(name);

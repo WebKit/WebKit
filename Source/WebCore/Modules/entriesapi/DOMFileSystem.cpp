@@ -50,7 +50,7 @@ struct ListedChild {
 static Optional<FileSystem::FileType> fileTypeIgnoringHiddenFiles(const String& fullPath)
 {
     if (FileSystem::isHiddenFile(fullPath))
-        return WTF::nullopt;
+        return std::nullopt;
     return FileSystem::fileType(fullPath);
 }
 

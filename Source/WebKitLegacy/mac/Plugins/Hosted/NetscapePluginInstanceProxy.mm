@@ -883,7 +883,7 @@ bool NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& scri
 
     Strong<JSGlobalObject> globalObject(vm, frame->script().globalObject(pluginWorld()));
 
-    UserGestureIndicator gestureIndicator(allowPopups ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : WTF::nullopt);
+    UserGestureIndicator gestureIndicator(allowPopups ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : std::nullopt);
     
     JSValue result = JSC::evaluate(globalObject.get(), JSC::makeSource(script, { }));
     

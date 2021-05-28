@@ -169,10 +169,10 @@ private:
     {
         auto* webView = webkitWebContextGetWebViewForPage(m_session->priv->webContext, &page);
         if (!webView)
-            return WTF::nullopt;
+            return std::nullopt;
         auto dialogType = webkitWebViewGetCurrentScriptDialogType(webView);
         if (!dialogType)
-            return WTF::nullopt;
+            return std::nullopt;
         switch (dialogType.value()) {
         case WEBKIT_SCRIPT_DIALOG_ALERT:
             return API::AutomationSessionClient::JavaScriptDialogType::Alert;
@@ -185,7 +185,7 @@ private:
         }
 
         ASSERT_NOT_REACHED();
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     API::AutomationSessionClient::BrowsingContextPresentation currentPresentationOfPage(WebAutomationSession&, WebPageProxy& page) override

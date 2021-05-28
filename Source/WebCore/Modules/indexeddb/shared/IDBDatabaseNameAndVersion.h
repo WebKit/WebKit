@@ -51,10 +51,10 @@ Optional<IDBDatabaseNameAndVersion> IDBDatabaseNameAndVersion::decode(Decoder& d
     IDBDatabaseNameAndVersion info;
 
     if (!decoder.decode(info.name))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(info.version))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return info;
 }

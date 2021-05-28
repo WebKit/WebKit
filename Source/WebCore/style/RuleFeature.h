@@ -40,7 +40,7 @@ enum class MatchElement : uint8_t { Subject, Parent, Ancestor, DirectSibling, In
 constexpr unsigned matchElementCount = static_cast<unsigned>(MatchElement::Host) + 1;
 
 struct RuleFeature {
-    RuleFeature(const RuleData&, Optional<MatchElement> = WTF::nullopt);
+    RuleFeature(const RuleData&, Optional<MatchElement> = std::nullopt);
 
     RefPtr<const StyleRule> styleRule;
     uint16_t selectorIndex; // Keep in sync with RuleData's selectorIndex size.
@@ -50,7 +50,7 @@ struct RuleFeature {
 static_assert(sizeof(RuleFeature) <= 16, "RuleFeature is a frquently alocated object. Keep it small.");
 
 struct RuleFeatureWithInvalidationSelector : public RuleFeature {
-    RuleFeatureWithInvalidationSelector(const RuleData& data, Optional<MatchElement> matchElement = WTF::nullopt, const CSSSelector* invalidationSelector = nullptr)
+    RuleFeatureWithInvalidationSelector(const RuleData& data, Optional<MatchElement> matchElement = std::nullopt, const CSSSelector* invalidationSelector = nullptr)
         : RuleFeature(data, WTFMove(matchElement))
         , invalidationSelector(invalidationSelector)
     { }

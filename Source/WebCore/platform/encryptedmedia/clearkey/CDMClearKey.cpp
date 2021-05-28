@@ -53,12 +53,12 @@ static Optional<Vector<RefPtr<KeyHandle>>> parseLicenseFormat(const JSON::Object
     // according to the specified 'license' format.
     auto it = root.find("keys");
     if (it == root.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Retrieve the keys array.
     auto keysArray = it->value->asArray();
     if (!keysArray)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Vector<RefPtr<KeyHandle>> decodedKeys;
     bool validFormat = std::all_of(keysArray->begin(), keysArray->end(),
@@ -91,7 +91,7 @@ static Optional<Vector<RefPtr<KeyHandle>>> parseLicenseFormat(const JSON::Object
             return true;
         });
     if (!validFormat)
-        return WTF::nullopt;
+        return std::nullopt;
     return decodedKeys;
 }
 
@@ -418,7 +418,7 @@ Optional<String> CDMPrivateClearKey::sanitizeSessionId(const String& sessionId) 
 {
     // Validate the session ID string as an 32-bit integer.
     if (!parseInteger<uint32_t>(sessionId))
-        return WTF::nullopt;
+        return std::nullopt;
     return sessionId;
 }
 
@@ -489,14 +489,14 @@ void CDMInstanceSessionClearKey::updateLicense(const String& sessionId, LicenseT
                     if (!weakThis)
                         return;
 
-                    callback(sessionWasClosed, WTFMove(changedKeys), WTF::nullopt, WTF::nullopt, succeeded);
+                    callback(sessionWasClosed, WTFMove(changedKeys), std::nullopt, std::nullopt, succeeded);
                 });
         };
 
     RefPtr<JSON::Object> root = CDMUtilities::parseJSONObject(response);
     if (!root) {
         LOG(EME, "EME - ClearKey - session %s update payload was not valid JSON", sessionId.utf8().data());
-        dispatchCallback(false, WTF::nullopt, SuccessValue::Failed);
+        dispatchCallback(false, std::nullopt, SuccessValue::Failed);
         return;
     }
 
@@ -522,12 +522,12 @@ void CDMInstanceSessionClearKey::updateLicense(const String& sessionId, LicenseT
         LOG(EME, "EME - ClearKey - session %s release acknowledged, clearing all known keys", sessionId.utf8().data());
         parentInstance().removeAllKeysFrom(m_keyStore);
         m_keyStore.removeAllKeys();
-        dispatchCallback(true, WTF::nullopt, SuccessValue::Succeeded);
+        dispatchCallback(true, std::nullopt, SuccessValue::Succeeded);
         return;
     }
 
     LOG(EME, "EME - ClearKey - session %s update payload was an unrecognized format", sessionId.utf8().data());
-    dispatchCallback(false, WTF::nullopt, SuccessValue::Failed);
+    dispatchCallback(false, std::nullopt, SuccessValue::Failed);
 }
 
 void CDMInstanceSessionClearKey::loadSession(LicenseType, const String& sessionId, const String&, LoadSessionCallback&& callback)
@@ -542,7 +542,7 @@ void CDMInstanceSessionClearKey::loadSession(LicenseType, const String& sessionI
         if (!weakThis)
             return;
 
-        callback(WTFMove(keyStatusVector), WTF::nullopt, WTF::nullopt, Succeeded, SessionLoadFailure::None);
+        callback(WTFMove(keyStatusVector), std::nullopt, std::nullopt, Succeeded, SessionLoadFailure::None);
     });
 }
 

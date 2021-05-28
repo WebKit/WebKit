@@ -151,7 +151,7 @@ Optional<typename OrderedMap::iterator> MediaSampleCursor::locateIterator(Ordere
             else if (hasAllSamples || iterator != samples.end())
                 m_locator = std::prev(iterator);
             else
-                return WTF::nullopt;
+                return std::nullopt;
             return locateIterator(samples, hasAllSamples);
         },
         [&](const auto& otherIterator) {

@@ -192,7 +192,7 @@ ResourceResponse ResourceResponseBase::filter(const ResourceResponse& response, 
     ASSERT(response.tainting() == Tainting::Cors);
     filteredResponse.setType(Type::Cors);
 
-    auto accessControlExposeHeaderSet = parseAccessControlAllowList<ASCIICaseInsensitiveHash>(response.httpHeaderField(HTTPHeaderName::AccessControlExposeHeaders)).valueOr(HashSet<String, ASCIICaseInsensitiveHash> { });
+    auto accessControlExposeHeaderSet = parseAccessControlAllowList<ASCIICaseInsensitiveHash>(response.httpHeaderField(HTTPHeaderName::AccessControlExposeHeaders)).value_or(HashSet<String, ASCIICaseInsensitiveHash> { });
     if (performCheck == PerformExposeAllHeadersCheck::Yes && accessControlExposeHeaderSet.contains("*"))
         return filteredResponse;
 
@@ -454,7 +454,7 @@ void ResourceResponseBase::sanitizeHTTPHeaderFieldsAccordingToTainting()
     case ResourceResponse::Tainting::Basic:
         return;
     case ResourceResponse::Tainting::Cors: {
-        auto corsSafeHeaderSet = parseAccessControlAllowList<ASCIICaseInsensitiveHash>(httpHeaderField(HTTPHeaderName::AccessControlExposeHeaders)).valueOr(HashSet<String, ASCIICaseInsensitiveHash> { });
+        auto corsSafeHeaderSet = parseAccessControlAllowList<ASCIICaseInsensitiveHash>(httpHeaderField(HTTPHeaderName::AccessControlExposeHeaders)).value_or(HashSet<String, ASCIICaseInsensitiveHash> { });
         if (corsSafeHeaderSet.contains("*"))
             return;
 
@@ -697,7 +697,7 @@ static Optional<WallTime> parseDateValueInHeader(const HTTPHeaderMap& headers, H
 {
     String headerValue = headers.get(headerName);
     if (headerValue.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
     // This handles all date formats required by RFC2616:
     // Sun, 06 Nov 1994 08:49:37 GMT  ; RFC 822, updated by RFC 1123
     // Sunday, 06-Nov-94 08:49:37 GMT ; RFC 850, obsoleted by RFC 1036
@@ -753,7 +753,7 @@ Optional<WallTime> ResourceResponseBase::lastModified() const
         // an invalid value (rdar://problem/22352838).
         const WallTime epoch = WallTime::fromRawSeconds(0);
         if (m_lastModified && m_lastModified.value() == epoch)
-            m_lastModified = WTF::nullopt;
+            m_lastModified = std::nullopt;
 #endif
         m_haveParsedLastModifiedHeader = true;
     }

@@ -57,12 +57,12 @@ static ProtocolVersion convertStringToProtocolVersion(const String& version)
 Optional<cbor::CBORValue> decodeResponseMap(const Vector<uint8_t>& inBuffer)
 {
     if (inBuffer.size() <= kResponseCodeLength || getResponseCode(inBuffer) != CtapDeviceResponseCode::kSuccess)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Vector<uint8_t> buffer { inBuffer.data() + 1, inBuffer.size() - 1 };
     Optional<CBOR> decodedResponse = cbor::CBORReader::read(buffer);
     if (!decodedResponse || !decodedResponse->isMap())
-        return WTF::nullopt;
+        return std::nullopt;
     return decodedResponse;
 }
 
@@ -202,16 +202,16 @@ Optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector<uint
 {
     auto decodedMap = decodeResponseMap(inBuffer);
     if (!decodedMap)
-        return WTF::nullopt;
+        return std::nullopt;
     const auto& responseMap = decodedMap->getMap();
 
     auto it = responseMap.find(CBOR(1));
     if (it == responseMap.end() || !it->second.isArray())
-        return WTF::nullopt;
+        return std::nullopt;
     StdSet<ProtocolVersion> protocolVersions;
     for (const auto& version : it->second.getArray()) {
         if (!version.isString())
-            return WTF::nullopt;
+            return std::nullopt;
 
         auto protocol = convertStringToProtocolVersion(version.getString());
         if (protocol == ProtocolVersion::kUnknown) {
@@ -220,26 +220,26 @@ Optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector<uint
         }
 
         if (!protocolVersions.insert(protocol).second)
-            return WTF::nullopt;
+            return std::nullopt;
     }
     if (protocolVersions.empty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     it = responseMap.find(CBOR(3));
     if (it == responseMap.end() || !it->second.isByteString() || it->second.getByteString().size() != aaguidLength)
-        return WTF::nullopt;
+        return std::nullopt;
 
     AuthenticatorGetInfoResponse response(WTFMove(protocolVersions), Vector<uint8_t>(it->second.getByteString()));
 
     it = responseMap.find(CBOR(2));
     if (it != responseMap.end()) {
         if (!it->second.isArray())
-            return WTF::nullopt;
+            return std::nullopt;
 
         Vector<String> extensions;
         for (const auto& extension : it->second.getArray()) {
             if (!extension.isString())
-                return WTF::nullopt;
+                return std::nullopt;
 
             extensions.append(extension.getString());
         }
@@ -250,12 +250,12 @@ Optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector<uint
     it = responseMap.find(CBOR(4));
     if (it != responseMap.end()) {
         if (!it->second.isMap())
-            return WTF::nullopt;
+            return std::nullopt;
         const auto& optionMap = it->second.getMap();
         auto optionMapIt = optionMap.find(CBOR(kPlatformDeviceMapKey));
         if (optionMapIt != optionMap.end()) {
             if (!optionMapIt->second.isBool())
-                return WTF::nullopt;
+                return std::nullopt;
 
             options.setIsPlatformDevice(optionMapIt->second.getBool());
         }
@@ -263,7 +263,7 @@ Optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector<uint
         optionMapIt = optionMap.find(CBOR(kResidentKeyMapKey));
         if (optionMapIt != optionMap.end()) {
             if (!optionMapIt->second.isBool())
-                return WTF::nullopt;
+                return std::nullopt;
 
             options.setSupportsResidentKey(optionMapIt->second.getBool());
         }
@@ -271,7 +271,7 @@ Optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector<uint
         optionMapIt = optionMap.find(CBOR(kUserPresenceMapKey));
         if (optionMapIt != optionMap.end()) {
             if (!optionMapIt->second.isBool())
-                return WTF::nullopt;
+                return std::nullopt;
 
             options.setUserPresenceRequired(optionMapIt->second.getBool());
         }
@@ -279,7 +279,7 @@ Optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector<uint
         optionMapIt = optionMap.find(CBOR(kUserVerificationMapKey));
         if (optionMapIt != optionMap.end()) {
             if (!optionMapIt->second.isBool())
-                return WTF::nullopt;
+                return std::nullopt;
 
             if (optionMapIt->second.getBool())
                 options.setUserVerificationAvailability(AuthenticatorSupportedOptions::UserVerificationAvailability::kSupportedAndConfigured);
@@ -290,7 +290,7 @@ Optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector<uint
         optionMapIt = optionMap.find(CBOR(kClientPinMapKey));
         if (optionMapIt != optionMap.end()) {
             if (!optionMapIt->second.isBool())
-                return WTF::nullopt;
+                return std::nullopt;
 
             if (optionMapIt->second.getBool())
                 options.setClientPinAvailability(AuthenticatorSupportedOptions::ClientPinAvailability::kSupportedAndPinSet);
@@ -303,7 +303,7 @@ Optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector<uint
     it = responseMap.find(CBOR(5));
     if (it != responseMap.end()) {
         if (!it->second.isUnsigned())
-            return WTF::nullopt;
+            return std::nullopt;
 
         response.setMaxMsgSize(it->second.getUnsigned());
     }
@@ -311,12 +311,12 @@ Optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector<uint
     it = responseMap.find(CBOR(6));
     if (it != responseMap.end()) {
         if (!it->second.isArray())
-            return WTF::nullopt;
+            return std::nullopt;
 
         Vector<uint8_t> supportedPinProtocols;
         for (const auto& protocol : it->second.getArray()) {
             if (!protocol.isUnsigned())
-                return WTF::nullopt;
+                return std::nullopt;
 
             supportedPinProtocols.append(protocol.getUnsigned());
         }

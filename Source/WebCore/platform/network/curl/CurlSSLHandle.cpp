@@ -88,7 +88,7 @@ Optional<CurlSSLHandle::ClientCertificate> CurlSSLHandle::getSSLClientCertificat
 
     auto it = m_allowedClientHosts.find(hostName);
     if (it == m_allowedClientHosts.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return it->value;
 }

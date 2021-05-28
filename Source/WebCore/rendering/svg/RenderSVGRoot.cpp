@@ -382,7 +382,7 @@ Optional<FloatRect> RenderSVGRoot::computeFloatVisibleRectInContainer(const Floa
     if (shouldApplyViewportClip()) {
         if (context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection)) {
             if (!adjustedRect.edgeInclusiveIntersect(snappedIntRect(borderBoxRect())))
-                return WTF::nullopt;
+                return std::nullopt;
         } else
             adjustedRect.intersect(snappedIntRect(borderBoxRect()));
     }
@@ -396,7 +396,7 @@ Optional<FloatRect> RenderSVGRoot::computeFloatVisibleRectInContainer(const Floa
 
     if (Optional<LayoutRect> rectInContainer = RenderReplaced::computeVisibleRectInContainer(enclosingIntRect(adjustedRect), container, context))
         return FloatRect(*rectInContainer);
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 // This method expects local CSS box coordinates.
@@ -434,7 +434,7 @@ bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     // Test SVG content if the point is in our content box or it is inside the visualOverflowRect and the overflow is visible.
     // FIXME: This should be an intersection when rect-based hit tests are supported by nodeAtFloatPoint.
     if (contentBoxRect().contains(pointInBorderBox) || (!shouldApplyViewportClip() && visualOverflowRect().contains(pointInParent))) {
-        FloatPoint localPoint = localToParentTransform().inverse().valueOr(AffineTransform()).mapPoint(FloatPoint(pointInParent));
+        FloatPoint localPoint = localToParentTransform().inverse().value_or(AffineTransform()).mapPoint(FloatPoint(pointInParent));
 
         for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
             // FIXME: nodeAtFloatPoint() doesn't handle rect-based hit tests yet.

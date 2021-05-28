@@ -430,15 +430,15 @@ static Optional<MarkupAndArchive> extractMarkupAndArchive(SharedBuffer& buffer, 
 {
     auto archive = LegacyWebArchive::create(URL(), buffer);
     if (!archive)
-        return WTF::nullopt;
+        return std::nullopt;
 
     RefPtr<ArchiveResource> mainResource = archive->mainResource();
     if (!mainResource)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto type = mainResource->mimeType();
     if (!canShowMIMETypeAsHTML(type))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return MarkupAndArchive { String::fromUTF8(mainResource->data().data(), mainResource->data().size()), mainResource.releaseNonNull(), archive.releaseNonNull() };
 }
@@ -728,7 +728,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     Optional<uint64_t> fileSizeForDisplay;
     if (!isDirectory)
-        fileSizeForDisplay = FileSystem::fileSize(path).valueOr(0);
+        fileSizeForDisplay = FileSystem::fileSize(path).value_or(0);
 
     frame.editor().registerAttachmentIdentifier(attachment->ensureUniqueIdentifier(), contentType, path);
 

@@ -95,10 +95,10 @@ Optional<ServiceWorkerClientData> SWServer::serviceWorkerClientWithOriginByID(co
 {
     auto iterator = m_clientIdentifiersPerOrigin.find(clientOrigin);
     if (iterator == m_clientIdentifiersPerOrigin.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!iterator->value.identifiers.contains(clientIdentifier))
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto clientIterator = m_clientsById.find(clientIdentifier);
     ASSERT(clientIterator != m_clientsById.end());

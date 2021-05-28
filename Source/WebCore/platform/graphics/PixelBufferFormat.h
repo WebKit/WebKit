@@ -54,17 +54,17 @@ template<class Decoder> Optional<PixelBufferFormat> PixelBufferFormat::decode(De
     Optional<AlphaPremultiplication> alphaFormat;
     decoder >> alphaFormat;
     if (!alphaFormat)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<PixelFormat> pixelFormat;
     decoder >> pixelFormat;
     if (!pixelFormat)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<DestinationColorSpace> colorSpace;
     decoder >> colorSpace;
     if (!colorSpace)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return { { WTFMove(*alphaFormat), WTFMove(*pixelFormat), WTFMove(*colorSpace) } };
 }

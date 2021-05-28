@@ -308,7 +308,7 @@ void NetworkProcessProxy::networkProcessDidTerminate(TerminationReason reason)
 
     m_activityForHoldingLockedFiles = nullptr;
 
-    m_uploadActivity = WTF::nullopt;
+    m_uploadActivity = std::nullopt;
 
     if (defaultNetworkProcess() == this)
         defaultNetworkProcess() = nullptr;
@@ -1436,7 +1436,7 @@ void NetworkProcessProxy::setWebProcessHasUploads(WebCore::ProcessIdentifier pro
 
         if (m_uploadActivity->webProcessAssertions.isEmpty()) {
             RELEASE_LOG(ProcessSuspension, "NetworkProcessProxy::setWebProcessHasUploads: The number of uploads in progress is now zero. Releasing Networking and UI process assertions.");
-            m_uploadActivity = WTF::nullopt;
+            m_uploadActivity = std::nullopt;
         }
         return;
     }

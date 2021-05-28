@@ -62,21 +62,21 @@ static Optional<Vector<uint8_t>> calculateSignature(int algorithm, const Vector<
     PAL::GCrypt::Handle<gcry_mac_hd_t> hd;
     gcry_error_t err = gcry_mac_open(&hd, algorithm, 0, nullptr);
     if (err)
-        return WTF::nullopt;
+        return std::nullopt;
 
     err = gcry_mac_setkey(hd, keyData, key.size());
     if (err)
-        return WTF::nullopt;
+        return std::nullopt;
 
     err = gcry_mac_write(hd, data, dataLength);
     if (err)
-        return WTF::nullopt;
+        return std::nullopt;
 
     size_t digestLength = gcry_mac_get_algo_maclen(algorithm);
     Vector<uint8_t> signature(digestLength);
     err = gcry_mac_read(hd, signature.data(), &digestLength);
     if (err)
-        return WTF::nullopt;
+        return std::nullopt;
 
     signature.resize(digestLength);
     return signature;

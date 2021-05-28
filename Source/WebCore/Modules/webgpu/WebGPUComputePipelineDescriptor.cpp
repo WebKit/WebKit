@@ -40,7 +40,7 @@ Optional<GPUComputePipelineDescriptor> WebGPUComputePipelineDescriptor::tryCreat
     auto compute = computeStage.tryCreateGPUProgrammableStageDescriptor();
     if (!compute) {
         errorScopes.generateError("GPUDevice::createComputePipeline(): Invalid GPUProgrammableStageDescriptor!");
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     return GPUComputePipelineDescriptor { WTFMove(pipelineLayout), WTFMove(*compute) };

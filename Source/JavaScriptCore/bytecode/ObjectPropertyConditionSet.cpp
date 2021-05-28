@@ -527,21 +527,21 @@ static Optional<PrototypeChainCachingStatus> prepareChainForCaching(JSGlobalObje
     while (true) {
         if (structure->isDictionary()) {
             if (!current)
-                return WTF::nullopt;
+                return std::nullopt;
 
             ASSERT(structure->isObject());
             if (structure->hasBeenFlattenedBefore())
-                return WTF::nullopt;
+                return std::nullopt;
 
             structure->flattenDictionaryStructure(vm, asObject(current));
             flattenedDictionary = true;
         }
 
         if (!structure->propertyAccessesAreCacheable())
-            return WTF::nullopt;
+            return std::nullopt;
 
         if (structure->isProxy())
-            return WTF::nullopt;
+            return std::nullopt;
 
         if (current && current == target) {
             found = true;
@@ -555,7 +555,7 @@ static Optional<PrototypeChainCachingStatus> prepareChainForCaching(JSGlobalObje
         JSValue prototype;
         if (structure->hasPolyProto()) {
             if (!current)
-                return WTF::nullopt;
+                return std::nullopt;
             usesPolyProto = true;
             prototype = structure->prototypeForLookup(globalObject, current);
         } else
@@ -568,7 +568,7 @@ static Optional<PrototypeChainCachingStatus> prepareChainForCaching(JSGlobalObje
     }
 
     if (!found && !!target)
-        return WTF::nullopt;
+        return std::nullopt;
 
     PrototypeChainCachingStatus result;
     result.usesPolyProto = usesPolyProto;

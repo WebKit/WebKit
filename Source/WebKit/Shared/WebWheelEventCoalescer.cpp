@@ -115,7 +115,7 @@ bool WebWheelEventCoalescer::shouldDispatchEventNow(const WebWheelEvent& event) 
 Optional<WebWheelEvent> WebWheelEventCoalescer::nextEventToDispatch()
 {
     if (m_wheelEventQueue.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto coalescedEvent = m_wheelEventQueue.takeFirst();
 

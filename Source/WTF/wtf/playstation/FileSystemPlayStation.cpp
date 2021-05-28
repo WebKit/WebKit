@@ -49,12 +49,12 @@ static Optional<FileType> fileTypePotentiallyFollowingSymLinks(const String& pat
     CString fsRep = fileSystemRepresentation(path);
 
     if (!fsRep.data() || fsRep.data()[0] == '\0')
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto statFunc = shouldFollowSymbolicLinks == ShouldFollowSymbolicLinks::Yes ? stat : lstat;
     struct stat fileInfo;
     if (statFunc(fsRep.data(), &fileInfo))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (S_ISDIR(fileInfo.st_mode))
         return FileType::Directory;
@@ -122,12 +122,12 @@ Optional<uint64_t> fileSize(const String& path)
     CString fsRep = fileSystemRepresentation(path);
 
     if (!fsRep.data() || fsRep.data()[0] == '\0')
-        return WTF::nullopt;
+        return std::nullopt;
 
     struct stat fileInfo;
 
     if (stat(fsRep.data(), &fileInfo))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return fileInfo.st_size;
 }
@@ -166,7 +166,7 @@ Optional<uint64_t> volumeFreeSpace(const String& path)
     struct statvfs fileSystemStat;
     if (!statvfs(fileSystemRepresentation(path).data(), &fileSystemStat))
         return fileSystemStat.f_bavail * fileSystemStat.f_frsize;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath)
@@ -234,7 +234,7 @@ Optional<uint64_t> hardLinkCount(const String& path)
     auto linkPath = fileSystemRepresentation(path);
     struct stat stat;
     if (::stat(linkPath.data(), &stat) < 0)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Link count is 2 in the single client case (the blob file and a link).
     return stat.st_nlink - 1;
@@ -257,12 +257,12 @@ Optional<WallTime> fileModificationTime(const String& path)
     CString fsRep = fileSystemRepresentation(path);
 
     if (!fsRep.data() || fsRep.data()[0] == '\0')
-        return WTF::nullopt;
+        return std::nullopt;
 
     struct stat fileInfo;
 
     if (stat(fsRep.data(), &fileInfo))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return WallTime::fromRawSeconds(fileInfo.st_mtime);
 }

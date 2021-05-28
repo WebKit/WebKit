@@ -69,10 +69,10 @@ Optional<GeolocationPositionData> WebGeolocationClient::lastPosition()
 {
     COMPtr<IWebGeolocationProvider> provider;
     if (FAILED(m_webView->geolocationProvider(&provider)))
-        return WTF::nullopt;
+        return std::nullopt;
     COMPtr<IWebGeolocationPosition> position;
     if (FAILED(provider->lastPosition(&position)))
-        return WTF::nullopt;
+        return std::nullopt;
     return core(position.get());
 }
 

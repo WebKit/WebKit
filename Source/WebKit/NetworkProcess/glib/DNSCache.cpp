@@ -68,12 +68,12 @@ Optional<Vector<GRefPtr<GInetAddress>>> DNSCache::lookup(const CString& host, Ty
     auto& map = mapForType(type);
     auto it = map.find(host);
     if (it == map.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto& response = it->value;
     if (response.expirationTime <= MonotonicTime::now()) {
         map.remove(it);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     return response.addressList;

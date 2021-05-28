@@ -50,7 +50,7 @@ Optional<SharedBufferCopy> SharedBufferCopy::decode(Decoder& decoder)
 {
     IPC::DataReference data;
     if (!decoder.decode(data))
-        return WTF::nullopt;
+        return std::nullopt;
     RefPtr<SharedBuffer> buffer;
     if (data.size())
         buffer = SharedBuffer::create(data.data(), data.size());

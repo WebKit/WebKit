@@ -76,7 +76,7 @@ struct SecurityOriginData {
 
     bool isEmpty() const
     {
-        return protocol.isNull() && host.isNull() && port == WTF::nullopt;
+        return protocol.isNull() && host.isNull() && port == std::nullopt;
     }
     
     bool isHashTableDeletedValue() const
@@ -108,21 +108,21 @@ Optional<SecurityOriginData> SecurityOriginData::decode(Decoder& decoder)
     Optional<String> protocol;
     decoder >> protocol;
     if (!protocol)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<String> host;
     decoder >> host;
     if (!host)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<Optional<uint16_t>> port;
     decoder >> port;
     if (!port)
-        return WTF::nullopt;
+        return std::nullopt;
     
     SecurityOriginData data { WTFMove(*protocol), WTFMove(*host), WTFMove(*port) };
     if (data.isHashTableDeletedValue())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return data;
 }
@@ -139,7 +139,7 @@ struct SecurityOriginDataHash {
         unsigned hashCodes[3] = {
             data.protocol.impl() ? data.protocol.impl()->hash() : 0,
             data.host.impl() ? data.host.impl()->hash() : 0,
-            data.port.valueOr(0)
+            data.port.value_or(0)
         };
         return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
     }

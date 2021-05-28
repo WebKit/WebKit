@@ -72,7 +72,7 @@ Optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOverlayScrollba
     case _WKOverlayScrollbarStyleAutomatic:
         break;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 @interface WKWebView (WKImplementationMac) <NSTextInputClient

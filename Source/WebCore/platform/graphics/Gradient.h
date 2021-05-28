@@ -173,12 +173,12 @@ template<typename Decoder> Optional<Gradient::ColorStop> Gradient::ColorStop::de
     Optional<float> offset;
     decoder >> offset;
     if (!offset)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Color> color;
     decoder >> color;
     if (!color)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *offset, *color }};
 }
@@ -194,12 +194,12 @@ template<typename Decoder> Optional<Gradient::LinearData> Gradient::LinearData::
     Optional<FloatPoint> point0;
     decoder >> point0;
     if (!point0)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FloatPoint> point1;
     decoder >> point1;
     if (!point1)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *point0, *point1 }};
 }
@@ -218,27 +218,27 @@ template<typename Decoder> Optional<Gradient::RadialData> Gradient::RadialData::
     Optional<FloatPoint> point0;
     decoder >> point0;
     if (!point0)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FloatPoint> point1;
     decoder >> point1;
     if (!point1)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<float> startRadius;
     decoder >> startRadius;
     if (!startRadius)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<float> endRadius;
     decoder >> endRadius;
     if (!endRadius)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<float> aspectRatio;
     decoder >> aspectRatio;
     if (!aspectRatio)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *point0, *point1, *startRadius, *endRadius, *aspectRatio }};
 }
@@ -254,12 +254,12 @@ template<typename Decoder> Optional<Gradient::ConicData> Gradient::ConicData::de
     Optional<FloatPoint> point0;
     decoder >> point0;
     if (!point0)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<float> angleRadians;
     decoder >> angleRadians;
     if (!angleRadians)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *point0, *angleRadians }};
 }
@@ -277,17 +277,17 @@ template<typename Decoder> Optional<Ref<Gradient>> Gradient::decode(Decoder& dec
     Optional<Data> data;
     decoder >> data;
     if (!data)
-        return WTF::nullopt;
+        return std::nullopt;
     auto gradient = Gradient::create(WTFMove(*data));
 
     Optional<ColorStopVector> stops;
     decoder >> stops;
     if (!stops)
-        return WTF::nullopt;
+        return std::nullopt;
     Optional<bool> stopsSorted;
     decoder >> stopsSorted;
     if (!stopsSorted.hasValue())
-        return WTF::nullopt;
+        return std::nullopt;
     if (*stopsSorted)
         gradient->setSortedColorStops(WTFMove(*stops));
     else {
@@ -297,7 +297,7 @@ template<typename Decoder> Optional<Ref<Gradient>> Gradient::decode(Decoder& dec
 
     GradientSpreadMethod spreadMethod;
     if (!decoder.decode(spreadMethod))
-        return WTF::nullopt;
+        return std::nullopt;
     gradient->setSpreadMethod(spreadMethod);
 
     return gradient;

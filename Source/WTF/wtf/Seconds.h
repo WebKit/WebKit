@@ -234,7 +234,7 @@ public:
         Optional<double> seconds;
         decoder >> seconds;
         if (!seconds)
-            return WTF::nullopt;
+            return std::nullopt;
         return Seconds(*seconds);
     }
 

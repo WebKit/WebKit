@@ -50,7 +50,7 @@ Optional<GPURenderPassDescriptor> WebGPURenderPassDescriptor::tryCreateGPURender
     // FIXME: Improve error checking as WebGPURenderPassDescriptor is added to spec.
     if (colorAttachments.isEmpty()) {
         LOG(WebGPU, "GPURenderPassDescriptor: No color attachments specified for GPURenderPassDescriptor!");
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     Vector<GPURenderPassColorAttachmentDescriptor> gpuColorAttachments;
@@ -60,7 +60,7 @@ Optional<GPURenderPassDescriptor> WebGPURenderPassDescriptor::tryCreateGPURender
             || !colorAttachment.attachment->texture()
             || !colorAttachment.attachment->texture()->isOutputAttachment()) {
             LOG(WebGPU, "GPURenderPassDescriptor: Invalid attachment in GPURenderPassColorAttachmentDescriptor!");
-            return WTF::nullopt;
+            return std::nullopt;
         }
         gpuColorAttachments.append(GPURenderPassColorAttachmentDescriptor { makeRef(*colorAttachment.attachment->texture()), colorAttachment });
     }
@@ -72,7 +72,7 @@ Optional<GPURenderPassDescriptor> WebGPURenderPassDescriptor::tryCreateGPURender
             || !depthStencilAttachment->attachment->texture()
             || !depthStencilAttachment->attachment->texture()->isOutputAttachment()) {
             LOG(WebGPU, "GPURenderPassDescriptor: Invalid attachment in GPURenderPassDepthStencilAttachmentDescriptor!");
-            return WTF::nullopt;
+            return std::nullopt;
         }
         gpuDepthAttachment = GPURenderPassDepthStencilAttachmentDescriptor { makeRef(*depthStencilAttachment->attachment->texture()), *depthStencilAttachment };
     }

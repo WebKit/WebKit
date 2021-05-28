@@ -202,10 +202,10 @@ static PasteboardItemPresentationStyle pasteboardItemPresentationStyle(UIPreferr
 Optional<PasteboardItemInfo> PlatformPasteboard::informationForItemAtIndex(size_t index, int64_t changeCount)
 {
     if (index >= static_cast<NSUInteger>([m_pasteboard numberOfItems]))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (this->changeCount() != changeCount)
-        return WTF::nullopt;
+        return std::nullopt;
 
     PasteboardItemInfo info;
     NSItemProvider *itemProvider = [[m_pasteboard itemProviders] objectAtIndex:index];
@@ -283,7 +283,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 Optional<PasteboardItemInfo> PlatformPasteboard::informationForItemAtIndex(size_t, int64_t)
 {
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 #endif

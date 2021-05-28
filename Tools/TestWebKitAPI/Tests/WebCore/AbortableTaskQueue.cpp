@@ -117,7 +117,7 @@ TEST(AbortableTaskQueue, SyncTasks)
         EXPECT_TRUE(response);
         EXPECT_FALSE(destructedResponseFlag);
         EXPECT_EQ(100, response->fancyInt);
-        response = WTF::nullopt;
+        response = std::nullopt;
         EXPECT_TRUE(destructedResponseFlag);
         RunLoop::main().dispatch([&]() {
             testFinished = true;

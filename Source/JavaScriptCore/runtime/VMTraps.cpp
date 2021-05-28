@@ -61,7 +61,7 @@ public:
     {
         auto instructionPointer = MachineContext::instructionPointer(registers);
         if (!instructionPointer)
-            return WTF::nullopt;
+            return std::nullopt;
         return SignalContext(registers, *instructionPointer);
     }
 

@@ -83,7 +83,7 @@ Optional<GStreamerCaptureDevice> GStreamerCaptureDeviceManager::gstreamerDeviceW
         if (device.persistentId() == deviceID)
             return device;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 const Vector<CaptureDevice>& GStreamerCaptureDeviceManager::captureDevices()

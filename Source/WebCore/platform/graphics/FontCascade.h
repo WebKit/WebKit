@@ -116,9 +116,9 @@ public:
     WEBCORE_EXPORT void update(RefPtr<FontSelector>&& = nullptr) const;
 
     enum CustomFontNotReadyAction { DoNotPaintIfFontNotReady, UseFallbackIfFontNotReady };
-    WEBCORE_EXPORT FloatSize drawText(GraphicsContext&, const TextRun&, const FloatPoint&, unsigned from = 0, Optional<unsigned> to = WTF::nullopt, CustomFontNotReadyAction = DoNotPaintIfFontNotReady) const;
+    WEBCORE_EXPORT FloatSize drawText(GraphicsContext&, const TextRun&, const FloatPoint&, unsigned from = 0, Optional<unsigned> to = std::nullopt, CustomFontNotReadyAction = DoNotPaintIfFontNotReady) const;
     static void drawGlyphs(GraphicsContext&, const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned numGlyphs, const FloatPoint&, FontSmoothingMode);
-    void drawEmphasisMarks(GraphicsContext&, const TextRun&, const AtomString& mark, const FloatPoint&, unsigned from = 0, Optional<unsigned> to = WTF::nullopt) const;
+    void drawEmphasisMarks(GraphicsContext&, const TextRun&, const AtomString& mark, const FloatPoint&, unsigned from = 0, Optional<unsigned> to = std::nullopt) const;
 
     DashArray dashesForIntersectionsWithRect(const TextRun&, const FloatPoint& textOrigin, const FloatRect& lineExtents) const;
 
@@ -130,7 +130,7 @@ public:
     static float width(TextLayout&, unsigned from, unsigned len, HashSet<const Font*>* fallbackFonts = 0);
 
     int offsetForPosition(const TextRun&, float position, bool includePartialGlyphs) const;
-    void adjustSelectionRectForText(const TextRun&, LayoutRect& selectionRect, unsigned from = 0, Optional<unsigned> to = WTF::nullopt) const;
+    void adjustSelectionRectForText(const TextRun&, LayoutRect& selectionRect, unsigned from = 0, Optional<unsigned> to = std::nullopt) const;
 
     bool isSmallCaps() const { return m_fontDescription.variantCaps() == FontVariantCaps::Small; }
 
@@ -149,7 +149,7 @@ public:
     unsigned familyCount() const { return m_fontDescription.familyCount(); }
     const AtomString& familyAt(unsigned i) const { return m_fontDescription.familyAt(i); }
 
-    // A WTF::nullopt return value indicates "font-style: normal".
+    // A std::nullopt return value indicates "font-style: normal".
     Optional<FontSelectionValue> italic() const { return m_fontDescription.italic(); }
     FontSelectionValue weight() const { return m_fontDescription.weight(); }
     FontWidthVariant widthVariant() const { return m_fontDescription.widthVariant(); }
@@ -191,7 +191,7 @@ public:
     static bool isSubpixelAntialiasingAvailable();
 
     enum class CodePath : uint8_t { Auto, Simple, Complex, SimpleWithGlyphOverflow };
-    CodePath codePath(const TextRun&, Optional<unsigned> from = WTF::nullopt, Optional<unsigned> to = WTF::nullopt) const;
+    CodePath codePath(const TextRun&, Optional<unsigned> from = std::nullopt, Optional<unsigned> to = std::nullopt) const;
     static CodePath characterRangeCodePath(const LChar*, unsigned) { return CodePath::Simple; }
     static CodePath characterRangeCodePath(const UChar*, unsigned len);
 

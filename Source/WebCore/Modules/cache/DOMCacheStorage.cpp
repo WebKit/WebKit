@@ -49,7 +49,7 @@ Optional<ClientOrigin> DOMCacheStorage::origin() const
 {
     auto* origin = scriptExecutionContext() ? scriptExecutionContext()->securityOrigin() : nullptr;
     if (!origin)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return ClientOrigin { scriptExecutionContext()->topOrigin().data(), origin->data() };
 }
@@ -168,7 +168,7 @@ void DOMCacheStorage::retrieveCaches(CompletionHandler<void(Optional<Exception>&
                 return findCacheOrCreate(WTFMove(info));
             });
         }
-        callback(WTF::nullopt);
+        callback(std::nullopt);
     });
 }
 

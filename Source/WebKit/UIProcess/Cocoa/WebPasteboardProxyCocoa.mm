@@ -97,10 +97,10 @@ bool WebPasteboardProxy::canAccessPasteboardData(IPC::Connection& connection, co
 
 Optional<WebPasteboardProxy::PasteboardAccessType> WebPasteboardProxy::accessType(IPC::Connection& connection, const String& pasteboardName) const
 {
-    MESSAGE_CHECK_WITH_RETURN_VALUE(!pasteboardName.isEmpty(), WTF::nullopt);
+    MESSAGE_CHECK_WITH_RETURN_VALUE(!pasteboardName.isEmpty(), std::nullopt);
 
     auto* process = webProcessProxyForConnection(connection);
-    MESSAGE_CHECK_WITH_RETURN_VALUE(process, WTF::nullopt);
+    MESSAGE_CHECK_WITH_RETURN_VALUE(process, std::nullopt);
 
     for (auto* page : process->pages()) {
         auto& preferences = page->preferences();
@@ -118,11 +118,11 @@ Optional<WebPasteboardProxy::PasteboardAccessType> WebPasteboardProxy::accessTyp
 
     auto changeCountAndProcesses = m_pasteboardNameToAccessInformationMap.find(pasteboardName);
     if (changeCountAndProcesses == m_pasteboardNameToAccessInformationMap.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto& information = changeCountAndProcesses->value;
     if (information.changeCount != PlatformPasteboard(pasteboardName).changeCount())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return information.accessType(*process);
 }
@@ -486,10 +486,10 @@ void WebPasteboardProxy::allPasteboardItemInfo(IPC::Connection& connection, cons
 void WebPasteboardProxy::informationForItemAtIndex(IPC::Connection& connection, size_t index, const String& pasteboardName, int64_t changeCount, Optional<PageIdentifier> pageID, CompletionHandler<void(Optional<PasteboardItemInfo>&&)>&& completionHandler)
 {
     if (!canAccessPasteboardTypes(connection, pasteboardName))
-        return completionHandler(WTF::nullopt);
+        return completionHandler(std::nullopt);
 
     auto dataOwner = determineDataOwner(connection, pasteboardName, pageID, PasteboardAccessIntent::Read);
-    MESSAGE_CHECK_COMPLETION(dataOwner, completionHandler(WTF::nullopt));
+    MESSAGE_CHECK_COMPLETION(dataOwner, completionHandler(std::nullopt));
 
     PlatformPasteboard::performAsDataOwner(*dataOwner, [&] {
         completionHandler(PlatformPasteboard(pasteboardName).informationForItemAtIndex(index, changeCount));
@@ -656,10 +656,10 @@ void WebPasteboardProxy::updateSupportedTypeIdentifiers(const Vector<String>& id
 
 Optional<DataOwnerType> WebPasteboardProxy::determineDataOwner(IPC::Connection& connection, const String& pasteboardName, Optional<PageIdentifier> pageID, PasteboardAccessIntent intent) const
 {
-    MESSAGE_CHECK_WITH_RETURN_VALUE(!pasteboardName.isEmpty(), WTF::nullopt);
+    MESSAGE_CHECK_WITH_RETURN_VALUE(!pasteboardName.isEmpty(), std::nullopt);
 
     auto* process = webProcessProxyForConnection(connection);
-    MESSAGE_CHECK_WITH_RETURN_VALUE(process, WTF::nullopt);
+    MESSAGE_CHECK_WITH_RETURN_VALUE(process, std::nullopt);
 
     if (!pageID)
         return DataOwnerType::Undefined;
@@ -674,7 +674,7 @@ Optional<DataOwnerType> WebPasteboardProxy::determineDataOwner(IPC::Connection& 
     }
     // If this message check is hit, then the incoming web page ID doesn't correspond to any page
     // currently known to the UI process.
-    MESSAGE_CHECK_WITH_RETURN_VALUE(result.hasValue(), WTF::nullopt);
+    MESSAGE_CHECK_WITH_RETURN_VALUE(result.hasValue(), std::nullopt);
     return result;
 #else
     UNUSED_PARAM(intent);
@@ -715,7 +715,7 @@ Optional<WebPasteboardProxy::PasteboardAccessType> WebPasteboardProxy::Pasteboar
     });
 
     if (matchIndex == notFound)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return processes[matchIndex].second;
 }

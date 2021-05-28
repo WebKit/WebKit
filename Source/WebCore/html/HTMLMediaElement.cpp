@@ -6650,7 +6650,7 @@ void HTMLMediaElement::createMediaPlayer() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 
     m_player = MediaPlayer::create(*this);
     m_player->setBufferingPolicy(m_bufferingPolicy);
-    m_player->setPreferredDynamicRangeMode(m_overrideDynamicRangeMode.valueOr(preferredDynamicRangeMode(document().view())));
+    m_player->setPreferredDynamicRangeMode(m_overrideDynamicRangeMode.value_or(preferredDynamicRangeMode(document().view())));
     m_player->setMuted(effectiveMuted());
     schedulePlaybackControlsManagerUpdate();
 
@@ -7214,7 +7214,7 @@ RefPtr<VideoPlaybackQuality> HTMLMediaElement::getVideoPlaybackQuality()
     RefPtr<DOMWindow> domWindow = document().domWindow();
     double timestamp = domWindow ? domWindow->nowTimestamp().milliseconds() : 0;
 
-    auto metrics = m_player ? m_player->videoPlaybackQualityMetrics() : WTF::nullopt;
+    auto metrics = m_player ? m_player->videoPlaybackQualityMetrics() : std::nullopt;
     if (!metrics)
         return VideoPlaybackQuality::create(timestamp, { });
 

@@ -102,7 +102,7 @@ public:
     Optional<String> synchronize() override
     {
         if (m_state == SVGPropertyState::Clean)
-            return WTF::nullopt;
+            return std::nullopt;
         m_state = SVGPropertyState::Clean;
         return baseValAsString();
     }

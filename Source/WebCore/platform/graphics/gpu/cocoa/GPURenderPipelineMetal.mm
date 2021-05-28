@@ -108,13 +108,13 @@ static Optional<WHLSL::TextureFormat> convertTextureFormat(GPUTextureFormat form
     case GPUTextureFormat::Bgra8unorm:
         return WHLSL::TextureFormat::BGRA8Unorm;
     case GPUTextureFormat::Depth32floatStencil8:
-        return WTF::nullopt; // FIXME: Figure out what to do with this.
+        return std::nullopt; // FIXME: Figure out what to do with this.
     case GPUTextureFormat::Bgra8unormSRGB:
         return WHLSL::TextureFormat::BGRA8UnormSrgb;
     case GPUTextureFormat::Rgba16float:
         return WHLSL::TextureFormat::RGBA16Float;
     default:
-        return WTF::nullopt;
+        return std::nullopt;
     }
 }
 

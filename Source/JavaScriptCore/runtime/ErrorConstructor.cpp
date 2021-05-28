@@ -43,7 +43,7 @@ void ErrorConstructor::finishCreation(VM& vm, ErrorPrototype* errorPrototype)
     Base::finishCreation(vm, 1, vm.propertyNames->Error.string(), PropertyAdditionMode::WithoutStructureTransition);
     // ECMA 15.11.3.1 Error.prototype
     putDirectWithoutTransition(vm, vm.propertyNames->prototype, errorPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->stackTraceLimit, jsNumber(globalObject()->stackTraceLimit().valueOr(Options::defaultErrorStackTraceLimit())), static_cast<unsigned>(PropertyAttribute::None));
+    putDirectWithoutTransition(vm, vm.propertyNames->stackTraceLimit, jsNumber(globalObject()->stackTraceLimit().value_or(Options::defaultErrorStackTraceLimit())), static_cast<unsigned>(PropertyAttribute::None));
 }
 
 // ECMA 15.9.3
@@ -82,7 +82,7 @@ bool ErrorConstructor::put(JSCell* cell, JSGlobalObject* globalObject, PropertyN
             effectiveLimit = std::min(effectiveLimit, static_cast<double>(std::numeric_limits<unsigned>::max()));
             thisObject->globalObject()->setStackTraceLimit(static_cast<unsigned>(effectiveLimit));
         } else
-            thisObject->globalObject()->setStackTraceLimit(WTF::nullopt);
+            thisObject->globalObject()->setStackTraceLimit(std::nullopt);
     }
 
     return Base::put(thisObject, globalObject, propertyName, value, slot);
@@ -94,7 +94,7 @@ bool ErrorConstructor::deleteProperty(JSCell* cell, JSGlobalObject* globalObject
     ErrorConstructor* thisObject = jsCast<ErrorConstructor*>(cell);
 
     if (propertyName == vm.propertyNames->stackTraceLimit)
-        thisObject->globalObject()->setStackTraceLimit(WTF::nullopt);
+        thisObject->globalObject()->setStackTraceLimit(std::nullopt);
 
     return Base::deleteProperty(thisObject, globalObject, propertyName, slot);
 }

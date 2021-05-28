@@ -48,7 +48,7 @@ using MessageEventSource = Variant<RefPtr<WindowProxy>, RefPtr<MessagePort>>;
 class MessageEvent final : public Event {
     WTF_MAKE_ISO_ALLOCATED(MessageEvent);
 public:
-    static Ref<MessageEvent> create(Vector<RefPtr<MessagePort>>&&, Ref<SerializedScriptValue>&&, const String& origin = { }, const String& lastEventId = { }, Optional<MessageEventSource>&& source = WTF::nullopt);
+    static Ref<MessageEvent> create(Vector<RefPtr<MessagePort>>&&, Ref<SerializedScriptValue>&&, const String& origin = { }, const String& lastEventId = { }, Optional<MessageEventSource>&& source = std::nullopt);
     static Ref<MessageEvent> create(const AtomString& type, Ref<SerializedScriptValue>&&, const String& origin, const String& lastEventId);
     static Ref<MessageEvent> create(const String& data, const String& origin = { });
     static Ref<MessageEvent> create(Ref<Blob>&& data, const String& origin);
@@ -85,7 +85,7 @@ private:
     MessageEvent();
     MessageEvent(const AtomString& type, Init&&, IsTrusted);
     MessageEvent(const AtomString& type, Ref<SerializedScriptValue>&& data, const String& origin, const String& lastEventId);
-    MessageEvent(DataType&&, const String& origin, const String& lastEventId = { }, Optional<MessageEventSource>&& = WTF::nullopt, Vector<RefPtr<MessagePort>>&& = { });
+    MessageEvent(DataType&&, const String& origin, const String& lastEventId = { }, Optional<MessageEventSource>&& = std::nullopt, Vector<RefPtr<MessagePort>>&& = { });
 
     EventInterface eventInterface() const final;
 

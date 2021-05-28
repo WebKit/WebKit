@@ -772,7 +772,7 @@ bool SourceBufferPrivateAVFObjC::hasSelectedVideo() const
 
 void SourceBufferPrivateAVFObjC::trackDidChangeSelected(VideoTrackPrivate& track, bool selected)
 {
-    auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(track.id()).valueOr(0);
+    auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(track.id()).value_or(0);
 
     ALWAYS_LOG(LOGIDENTIFIER, "video trackID = ", trackID, ", selected = ", selected);
 
@@ -798,7 +798,7 @@ void SourceBufferPrivateAVFObjC::trackDidChangeSelected(VideoTrackPrivate& track
 
 void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivate& track, bool enabled)
 {
-    auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(track.id()).valueOr(0);
+    auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(track.id()).value_or(0);
 
     ALWAYS_LOG(LOGIDENTIFIER, "audio trackID = ", trackID, ", selected = ", enabled);
 
@@ -1048,7 +1048,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 void SourceBufferPrivateAVFObjC::flush(const AtomString& trackIDString)
 {
-    auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).valueOr(0);
+    auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).value_or(0);
     DEBUG_LOG(LOGIDENTIFIER, trackID);
 
     if (trackID == m_enabledVideoTrackID) {
@@ -1070,7 +1070,7 @@ void SourceBufferPrivateAVFObjC::flushVideo()
         });
     }
 
-    m_cachedSize = WTF::nullopt;
+    m_cachedSize = std::nullopt;
 
     if (auto player = this->player()) {
         player->setHasAvailableVideoFrame(false);
@@ -1090,7 +1090,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const AtomString& trackIDString)
 {
-    auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).valueOr(0);
+    auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).value_or(0);
     if (trackID != m_enabledVideoTrackID && !m_audioRenderers.contains(trackID))
         return;
 
@@ -1203,7 +1203,7 @@ void SourceBufferPrivateAVFObjC::bufferWasConsumed()
 
 bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples(const AtomString& trackIDString)
 {
-    auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).valueOr(0);
+    auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).value_or(0);
     if (trackID == m_enabledVideoTrackID) {
 #if PLATFORM(IOS_FAMILY)
         if (m_displayLayerWasInterrupted)
@@ -1251,7 +1251,7 @@ void SourceBufferPrivateAVFObjC::willSeek()
 
 FloatSize SourceBufferPrivateAVFObjC::naturalSize()
 {
-    return m_cachedSize.valueOr(FloatSize());
+    return m_cachedSize.value_or(FloatSize());
 }
 
 void SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples(uint64_t trackID)
@@ -1272,7 +1272,7 @@ void SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples(uint64_t trackID)
 
 void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(const AtomString& trackIDString)
 {
-    auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).valueOr(0);
+    auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).value_or(0);
     if (trackID == m_enabledVideoTrackID) {
         if (m_decompressionSession) {
             m_decompressionSession->requestMediaDataWhenReady([this, trackID] {
@@ -1297,7 +1297,7 @@ void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(const AtomS
 
 bool SourceBufferPrivateAVFObjC::canSetMinimumUpcomingPresentationTime(const AtomString& trackIDString) const
 {
-    return parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).valueOr(0) == m_enabledVideoTrackID
+    return parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).value_or(0) == m_enabledVideoTrackID
         && [getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(expectMinimumUpcomingSampleBufferPresentationTime:)];
 }
 

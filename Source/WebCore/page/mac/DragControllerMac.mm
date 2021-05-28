@@ -67,7 +67,7 @@ bool DragController::isCopyKeyDown(const DragData& dragData)
 Optional<DragOperation> DragController::dragOperation(const DragData& dragData)
 {
     if (dragData.flags().contains(DragApplicationFlags::IsModal))
-        return WTF::nullopt;
+        return std::nullopt;
 
     bool mayContainURL;
     if (canLoadDataFromDraggingPasteboard())
@@ -76,12 +76,12 @@ Optional<DragOperation> DragController::dragOperation(const DragData& dragData)
         mayContainURL = dragData.containsURLTypeIdentifier();
 
     if (!mayContainURL && !dragData.containsPromise())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!m_documentUnderMouse || (!(dragData.flags().containsAll({ DragApplicationFlags::HasAttachedSheet, DragApplicationFlags::IsSource }))))
         return DragOperation::Copy;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 const IntSize& DragController::maxDragImageSize()

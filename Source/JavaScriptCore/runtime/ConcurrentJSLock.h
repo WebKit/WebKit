@@ -115,7 +115,7 @@ public:
     ConcurrentJSLocker(NoLockingNecessaryTag)
         : ConcurrentJSLockerBase(NoLockingNecessary)
 #if !defined(NDEBUG)
-        , m_disallowGC(WTF::nullopt)
+        , m_disallowGC(std::nullopt)
 #endif
     {
     }

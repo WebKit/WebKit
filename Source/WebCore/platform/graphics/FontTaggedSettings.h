@@ -121,27 +121,27 @@ Optional<FontTaggedSetting<T>> FontTaggedSetting<T>::decode(Decoder& decoder)
     Optional<uint8_t> char0;
     decoder >> char0;
     if (!char0)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<uint8_t> char1;
     decoder >> char1;
     if (!char1)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<uint8_t> char2;
     decoder >> char2;
     if (!char2)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<uint8_t> char3;
     decoder >> char3;
     if (!char3)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<T> value;
     decoder >> value;
     if (!value)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return FontTaggedSetting<T>({{
         static_cast<char>(*char0),
@@ -208,7 +208,7 @@ Optional<FontTaggedSettings<T>> FontTaggedSettings<T>::decode(Decoder& decoder)
     Optional<Vector<FontTaggedSetting<T>>> list;
     decoder >> list;
     if (!list)
-        return WTF::nullopt;
+        return std::nullopt;
 
     FontTaggedSettings result;
     result.m_list = WTFMove(*list);

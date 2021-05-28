@@ -176,7 +176,7 @@ public:
     {
         if (overrideLineNumber == -1) {
             if (UNLIKELY(m_rareData))
-                m_rareData->m_overrideLineNumber = WTF::nullopt;
+                m_rareData->m_overrideLineNumber = std::nullopt;
             return;
         }
         ensureRareData().m_overrideLineNumber = overrideLineNumber;
@@ -186,7 +186,7 @@ public:
     {
         if (UNLIKELY(m_rareData))
             return m_rareData->m_overrideLineNumber;
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     int lineCount() const

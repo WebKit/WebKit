@@ -70,7 +70,7 @@ struct IDLType {
     using NullableInnerParameterType = Optional<ImplementationType>;
 
     using NullableType = Optional<ImplementationType>;
-    static NullableType nullValue() { return WTF::nullopt; }
+    static NullableType nullValue() { return std::nullopt; }
     static bool isNullValue(const NullableType& value) { return !value; }
     static ImplementationType extractValueFromNullable(const NullableType& value) { return value.value(); }
 };

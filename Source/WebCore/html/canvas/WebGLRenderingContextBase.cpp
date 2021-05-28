@@ -1239,7 +1239,7 @@ void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
 Optional<PixelBuffer> WebGLRenderingContextBase::paintRenderingResultsToPixelBuffer()
 {
     if (isContextLostOrPending())
-        return WTF::nullopt;
+        return std::nullopt;
     clearIfComposited(ClearCallerOther);
     return m_context->paintRenderingResultsToPixelBuffer();
 }
@@ -2869,7 +2869,7 @@ RefPtr<WebGLActiveInfo> WebGLRenderingContextBase::getActiveUniform(WebGLProgram
 Optional<Vector<RefPtr<WebGLShader>>> WebGLRenderingContextBase::getAttachedShaders(WebGLProgram& program)
 {
     if (!validateWebGLProgramOrShader("getAttachedShaders", &program))
-        return WTF::nullopt;
+        return std::nullopt;
 
     const GCGLenum shaderTypes[] = {
         GraphicsContextGL::VERTEX_SHADER,
@@ -2941,7 +2941,7 @@ WebGLAny WebGLRenderingContextBase::getBufferParameter(GCGLenum target, GCGLenum
 Optional<WebGLContextAttributes> WebGLRenderingContextBase::getContextAttributes()
 {
     if (isContextLostOrPending())
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Also, we need to enforce requested values of "false" for depth
     // and stencil, regardless of the properties of the underlying
@@ -5314,7 +5314,7 @@ bool WebGLRenderingContextBase::validateTexFuncData(const char* functionName, Te
 
     if (!validateSettableTexInternalFormat(functionName, format))
         return false;
-    if (!validateArrayBufferType(functionName, type, pixels ? Optional<JSC::TypedArrayType>(pixels->getType()) : WTF::nullopt))
+    if (!validateArrayBufferType(functionName, type, pixels ? Optional<JSC::TypedArrayType>(pixels->getType()) : std::nullopt))
         return false;
 
     unsigned totalBytesRequired, skipBytes;
@@ -7443,7 +7443,7 @@ Optional<bool> WebGLRenderingContextBase::simulateVertexAttrib0(GCGLuint numVert
             m_vertexAttrib0UsedBefore = false;
             m_vertexAttrib0BufferSize = 0;
             m_forceAttrib0BufferRefill = true;
-            return WTF::nullopt;
+            return std::nullopt;
         }
         m_vertexAttrib0BufferSize = bufferDataSize;
         m_forceAttrib0BufferRefill = true;

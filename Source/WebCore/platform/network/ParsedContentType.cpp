@@ -331,13 +331,13 @@ Optional<ParsedContentType> ParsedContentType::create(const String& contentType,
 {
     ParsedContentType parsedContentType(mode == Mode::Rfc2045 ? contentType : stripLeadingAndTrailingHTTPSpaces(contentType));
     if (!parsedContentType.parseContentType(mode))
-        return WTF::nullopt;
+        return std::nullopt;
     return { WTFMove(parsedContentType) };
 }
 
 bool isValidContentType(const String& contentType, Mode mode)
 {
-    return ParsedContentType::create(contentType, mode) != WTF::nullopt;
+    return ParsedContentType::create(contentType, mode) != std::nullopt;
 }
 
 ParsedContentType::ParsedContentType(const String& contentType)

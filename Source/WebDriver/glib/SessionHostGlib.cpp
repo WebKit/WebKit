@@ -197,7 +197,7 @@ void SessionHost::connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&& 
                     return;
                 }
                 data->sessionHost->setupConnection(SocketConnection::create(WTFMove(connection), messageHandlers(), data->sessionHost));
-                data->completionHandler(WTF::nullopt);
+                data->completionHandler(std::nullopt);
         }, data);
     });
 }
@@ -317,7 +317,7 @@ void SessionHost::didStartAutomationSession(GVariant* parameters)
         return;
 
     auto completionHandler = std::exchange(m_startSessionCompletionHandler, nullptr);
-    completionHandler(false, WTF::nullopt);
+    completionHandler(false, std::nullopt);
 }
 
 void SessionHost::setTargetList(uint64_t connectionID, Vector<Target>&& targetList)
@@ -353,7 +353,7 @@ void SessionHost::setTargetList(uint64_t connectionID, Vector<Target>&& targetLi
     m_socketConnection->sendMessage("Setup", g_variant_new("(tt)", m_connectionID, m_target.id));
 
     auto startSessionCompletionHandler = std::exchange(m_startSessionCompletionHandler, nullptr);
-    startSessionCompletionHandler(true, WTF::nullopt);
+    startSessionCompletionHandler(true, std::nullopt);
 }
 
 void SessionHost::sendMessageToFrontend(uint64_t connectionID, uint64_t targetID, const char* message)

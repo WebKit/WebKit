@@ -185,7 +185,7 @@ static Optional<InspectorFrontendClient::DockSide> dockSideFromString(const Stri
         return InspectorFrontendClient::DockSide::Left;
     if (dockSideString == "bottom")
         return InspectorFrontendClient::DockSide::Bottom;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 bool InspectorFrontendHost::supportsDockSide(const String& dockSideString)
@@ -278,7 +278,7 @@ void InspectorFrontendHost::setForcedAppearance(String appearance)
     }
 
     if (m_frontendPage)
-        m_frontendPage->setUseDarkAppearanceOverride(WTF::nullopt);
+        m_frontendPage->setUseDarkAppearanceOverride(std::nullopt);
     if (m_client)
         m_client->setForcedAppearance(InspectorFrontendClient::Appearance::System);
 }
@@ -415,7 +415,7 @@ String InspectorFrontendHost::port() const
 
 void InspectorFrontendHost::copyText(const String& text)
 {
-    auto pageID = m_frontendPage ? m_frontendPage->mainFrame().pageID() : WTF::nullopt;
+    auto pageID = m_frontendPage ? m_frontendPage->mainFrame().pageID() : std::nullopt;
     Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(WTFMove(pageID)))->writePlainText(text, Pasteboard::CannotSmartReplace);
 }
 
@@ -487,7 +487,7 @@ static void populateContextMenu(Vector<InspectorFrontendHost::ContextMenuItem>&&
         }
 
         auto type = item.type == "checkbox" ? CheckableActionType : ActionType;
-        auto action = static_cast<ContextMenuAction>(ContextMenuItemBaseCustomTag + item.id.valueOr(0));
+        auto action = static_cast<ContextMenuAction>(ContextMenuItemBaseCustomTag + item.id.value_or(0));
         ContextMenuItem menuItem = { type, action, item.label };
         if (item.enabled)
             menuItem.setEnabled(*item.enabled);
@@ -637,23 +637,23 @@ static Optional<DiagnosticLoggingClient::ValuePayload> valuePayloadFromJSONValue
     case JSON::Value::Type::Null:
     case JSON::Value::Type::Object:
         ASSERT_NOT_REACHED();
-        return WTF::nullopt;
+        return std::nullopt;
 
     case JSON::Value::Type::Boolean:
-        return DiagnosticLoggingClient::ValuePayload(value->asBoolean().valueOr(false));
+        return DiagnosticLoggingClient::ValuePayload(value->asBoolean().value_or(false));
 
     case JSON::Value::Type::Double:
-        return DiagnosticLoggingClient::ValuePayload(value->asDouble().valueOr(0));
+        return DiagnosticLoggingClient::ValuePayload(value->asDouble().value_or(0));
 
     case JSON::Value::Type::Integer:
-        return DiagnosticLoggingClient::ValuePayload(static_cast<long long>(value->asInteger().valueOr(0)));
+        return DiagnosticLoggingClient::ValuePayload(static_cast<long long>(value->asInteger().value_or(0)));
 
     case JSON::Value::Type::String:
         return DiagnosticLoggingClient::ValuePayload(value->asString());
     }
 
     ASSERT_NOT_REACHED();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void InspectorFrontendHost::logDiagnosticEvent(const String& eventName, const String& payloadString)

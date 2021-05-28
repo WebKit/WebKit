@@ -296,7 +296,7 @@ void GeoclueGeolocationProvider::locationUpdated(GRefPtr<GDBusProxy>&& proxy)
     guint64 timestamp;
     g_variant_get(property.get(), "(tt)", &timestamp, nullptr);
     position.timestamp = static_cast<double>(timestamp);
-    m_updateNotifyFunction(WTFMove(position), WTF::nullopt);
+    m_updateNotifyFunction(WTFMove(position), std::nullopt);
 }
 
 void GeoclueGeolocationProvider::didFail(CString errorMessage)

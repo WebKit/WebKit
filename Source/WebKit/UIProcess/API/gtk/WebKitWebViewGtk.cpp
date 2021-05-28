@@ -463,5 +463,5 @@ void webkit_web_view_get_background_color(WebKitWebView* webView, GdkRGBA* rgba)
     g_return_if_fail(rgba);
 
     auto& page = *webkitWebViewBaseGetPage(reinterpret_cast<WebKitWebViewBase*>(webView));
-    *rgba = page.backgroundColor().valueOr(WebCore::Color::white);
+    *rgba = page.backgroundColor().value_or(WebCore::Color::white);
 }

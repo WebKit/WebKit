@@ -233,7 +233,7 @@ Optional<CodeOrigin> JITCode::findPC(CodeBlock*, void* pc)
         }
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void JITCode::finalizeOSREntrypoints(Vector<OSREntryData>&& osrEntry)

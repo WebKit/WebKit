@@ -40,13 +40,13 @@ Optional<ServiceWorkerClientIdentifier> ServiceWorkerClientIdentifier::fromStrin
     for (auto item : string.split('-')) {
         auto identifier = parseInteger<uint64_t>(item);
         if (!identifier || !*identifier)
-            return WTF::nullopt;
+            return std::nullopt;
         if (!counter++)
             clientIdentifier.serverConnectionIdentifier = makeObjectIdentifier<SWServerConnectionIdentifierType>(identifier.value());
         else if (counter == 2)
             clientIdentifier.contextIdentifier = makeObjectIdentifier<DocumentIdentifierType>(identifier.value());
     }
-    return (counter == 2) ? makeOptional(WTFMove(clientIdentifier)) : WTF::nullopt;
+    return (counter == 2) ? std::make_optional(WTFMove(clientIdentifier)) : std::nullopt;
 }
 
 } // namespace WebCore

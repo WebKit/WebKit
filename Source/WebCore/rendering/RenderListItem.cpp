@@ -239,7 +239,7 @@ void RenderListItem::updateValueNow() const
 void RenderListItem::updateValue()
 {
     if (!m_valueWasSetExplicitly) {
-        m_value = WTF::nullopt;
+        m_value = std::nullopt;
         if (m_marker)
             m_marker->setNeedsLayoutAndPrefWidthsRecalc();
     }

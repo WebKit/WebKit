@@ -253,12 +253,12 @@ inline Optional<FetchOptions> FetchOptions::decode(Decoder& decoder)
 {
     FetchOptions options;
     if (!decodePersistent(decoder, options))
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<DocumentIdentifier>> clientIdentifier;
     decoder >> clientIdentifier;
     if (!clientIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
     options.clientIdentifier = WTFMove(clientIdentifier.value());
 
     return options;

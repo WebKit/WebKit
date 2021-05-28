@@ -584,7 +584,7 @@ Optional<String> mapHostName(const String& hostName, URLDecodeFunction decodeFun
     int32_t numCharactersConverted = (decodeFunction ? uidna_nameToASCII : uidna_nameToUnicode)(&URLParser::internationalDomainNameTranscoder(), sourceBuffer.data(), length, destinationBuffer, hostNameBufferLength, &processingDetails, &uerror);
     int allowedErrors = decodeFunction ? 0 : UIDNA_ERROR_EMPTY_LABEL | UIDNA_ERROR_LEADING_HYPHEN | UIDNA_ERROR_TRAILING_HYPHEN | UIDNA_ERROR_HYPHEN_3_4;
     if (length && (U_FAILURE(uerror) || processingDetails.errors & ~allowedErrors))
-        return nullopt;
+        return std::nullopt;
     
     if (numCharactersConverted == static_cast<int32_t>(length) && !memcmp(sourceBuffer.data(), destinationBuffer, length * sizeof(UChar)))
         return String();

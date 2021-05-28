@@ -112,27 +112,27 @@ struct MediaEngineSupportParameters {
         Optional<ContentType> type;
         decoder >> type;
         if (!type)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<URL> url;
         decoder >> url;
         if (!url)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> isMediaSource;
         decoder >> isMediaSource;
         if (!isMediaSource)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> isMediaStream;
         decoder >> isMediaStream;
         if (!isMediaStream)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<Vector<ContentType>> typesRequiringHardware;
         decoder >> typesRequiringHardware;
         if (!typesRequiringHardware)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{ WTFMove(*type), WTFMove(*url), *isMediaSource, *isMediaStream, *typesRequiringHardware }};
     }

@@ -35,6 +35,6 @@ uint16_t JSRemoteInspectorServerStart(const char* address, uint16_t port)
     if (!server.start(address, port))
         return 0;
 
-    return server.getPort().valueOr(0);
+    return server.getPort().value_or(0);
 }
 #endif // ENABLE(REMOTE_INSPECTOR)

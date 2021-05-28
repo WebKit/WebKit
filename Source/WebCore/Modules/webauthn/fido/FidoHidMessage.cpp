@@ -42,7 +42,7 @@ namespace fido {
 Optional<FidoHidMessage> FidoHidMessage::create(uint32_t channelId, FidoHidDeviceCommand type, const Vector<uint8_t>& data)
 {
     if (data.size() > kHidMaxMessageSize)
-        return WTF::nullopt;
+        return std::nullopt;
 
     switch (type) {
     case FidoHidDeviceCommand::kPing:
@@ -50,30 +50,30 @@ Optional<FidoHidMessage> FidoHidMessage::create(uint32_t channelId, FidoHidDevic
     case FidoHidDeviceCommand::kMsg:
     case FidoHidDeviceCommand::kCbor: {
         if (data.isEmpty())
-            return WTF::nullopt;
+            return std::nullopt;
         break;
     }
 
     case FidoHidDeviceCommand::kCancel:
     case FidoHidDeviceCommand::kWink: {
         if (!data.isEmpty())
-            return WTF::nullopt;
+            return std::nullopt;
         break;
     }
     case FidoHidDeviceCommand::kLock: {
         if (data.size() != 1 || data[0] > kHidMaxLockSeconds)
-            return WTF::nullopt;
+            return std::nullopt;
         break;
     }
     case FidoHidDeviceCommand::kInit: {
         if (data.size() != 8)
-            return WTF::nullopt;
+            return std::nullopt;
         break;
     }
     case FidoHidDeviceCommand::kKeepAlive:
     case FidoHidDeviceCommand::kError:
         if (data.size() != 1)
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     return FidoHidMessage(channelId, type, data);
@@ -84,12 +84,12 @@ Optional<FidoHidMessage> FidoHidMessage::createFromSerializedData(const Vector<u
 {
     size_t remainingSize = 0;
     if (serializedData.size() > kHidPacketSize || serializedData.size() < kHidInitPacketHeaderSize)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto initPacket = FidoHidInitPacket::createFromSerializedData(serializedData, &remainingSize);
 
     if (!initPacket)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return FidoHidMessage(WTFMove(initPacket), remainingSize);
 }

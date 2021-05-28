@@ -60,19 +60,19 @@ Optional<UserMessage> UserMessage::decode(IPC::Decoder& decoder)
 {
     UserMessage result;
     if (!decoder.decode(result.type))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (result.type == Type::Null)
         return result;
 
     if (!decoder.decode(result.name))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (result.type == Type::Error) {
         Optional<uint32_t> errorCode;
         decoder >> errorCode;
         if (!errorCode)
-            return WTF::nullopt;
+            return std::nullopt;
 
         result.errorCode = errorCode.value();
         return result;
@@ -81,18 +81,18 @@ Optional<UserMessage> UserMessage::decode(IPC::Decoder& decoder)
     Optional<GRefPtr<GVariant>> parameters;
     decoder >> parameters;
     if (!parameters)
-        return WTF::nullopt;
+        return std::nullopt;
     result.parameters = WTFMove(*parameters);
 
     Optional<Vector<IPC::Attachment>> attachments;
     decoder >> attachments;
     if (!attachments)
-        return WTF::nullopt;
+        return std::nullopt;
     if (!attachments->isEmpty()) {
         result.fileDescriptors = adoptGRef(g_unix_fd_list_new());
         for (auto& attachment : *attachments) {
             if (g_unix_fd_list_append(result.fileDescriptors.get(), attachment.releaseFileDescriptor(), nullptr) == -1)
-                return WTF::nullopt;
+                return std::nullopt;
         }
     }
 

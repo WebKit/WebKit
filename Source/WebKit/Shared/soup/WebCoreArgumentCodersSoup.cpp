@@ -200,7 +200,7 @@ void ArgumentCoder<FontAttributes>::encodePlatformData(Encoder&, const FontAttri
 Optional<FontAttributes> ArgumentCoder<FontAttributes>::decodePlatformData(Decoder&, FontAttributes&)
 {
     ASSERT_NOT_REACHED();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void ArgumentCoder<DictionaryPopupInfo>::encodePlatformData(Encoder&, const DictionaryPopupInfo&)
@@ -222,7 +222,7 @@ void ArgumentCoder<Ref<Font>>::encodePlatformData(Encoder&, const Ref<Font>&)
 Optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder&)
 {
     ASSERT_NOT_REACHED();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 #if ENABLE(VIDEO)
@@ -234,7 +234,7 @@ void ArgumentCoder<SerializedPlatformDataCueValue>::encodePlatformData(Encoder& 
 Optional<SerializedPlatformDataCueValue>  ArgumentCoder<SerializedPlatformDataCueValue>::decodePlatformData(Decoder& decoder, WebCore::SerializedPlatformDataCueValue::PlatformType platformType)
 {
     ASSERT_NOT_REACHED();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 #endif
 

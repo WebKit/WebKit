@@ -109,7 +109,7 @@ static bool parseFontSize(const CharacterType* characters, unsigned length, int&
         return false;
 
     // Step 8
-    int value = parseInteger<int>(digits).valueOr(0);
+    int value = parseInteger<int>(digits).value_or(0);
 
     // Step 9
     if (mode == RelativePlus)

@@ -674,15 +674,15 @@ void AudioNode::derefWithLock()
 
 ExceptionOr<void> AudioNode::handleAudioNodeOptions(const AudioNodeOptions& options, const DefaultAudioNodeOptions& defaults)
 {
-    auto result = setChannelCount(options.channelCount.valueOr(defaults.channelCount));
+    auto result = setChannelCount(options.channelCount.value_or(defaults.channelCount));
     if (result.hasException())
         return result.releaseException();
 
-    result = setChannelCountMode(options.channelCountMode.valueOr(defaults.channelCountMode));
+    result = setChannelCountMode(options.channelCountMode.value_or(defaults.channelCountMode));
     if (result.hasException())
         return result.releaseException();
 
-    result = setChannelInterpretation(options.channelInterpretation.valueOr(defaults.channelInterpretation));
+    result = setChannelInterpretation(options.channelInterpretation.value_or(defaults.channelInterpretation));
     if (result.hasException())
         return result.releaseException();
 

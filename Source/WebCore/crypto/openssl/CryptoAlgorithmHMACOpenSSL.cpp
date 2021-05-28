@@ -41,29 +41,29 @@ static Optional<Vector<uint8_t>> calculateSignature(const EVP_MD* algorithm, con
     // Create the Message Digest Context
     EvpDigestCtxPtr ctx;
     if (!(ctx = EvpDigestCtxPtr(EVP_MD_CTX_create())))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Initialize the DigestSign operation
     EvpPKeyPtr hkey;
     if (!(hkey = EvpPKeyPtr(EVP_PKEY_new_mac_key(EVP_PKEY_HMAC, nullptr, key.data(), key.size()))))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (1 != EVP_DigestSignInit(ctx.get(), nullptr, algorithm, nullptr, hkey.get()))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Call update with the message
     if (1 != EVP_DigestSignUpdate(ctx.get(), data, dataLength))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Finalize the DigestSign operation
     size_t len = 0;
     if (1 != EVP_DigestSignFinal(ctx.get(), nullptr, &len))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Obtain the signature
     Vector<uint8_t> cipherText(len);
     if (1 != EVP_DigestSignFinal(ctx.get(), cipherText.data(), &len))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return cipherText;
 }

@@ -71,7 +71,7 @@ Optional<WallTime> BlobDataFileReference::expectedModificationTime()
     // We do not currently track modifications for generated files, because we have a snapshot.
     // Unfortunately, this is inconsistent with regular file handling - File objects should be invalidated when underlying files change.
     if (m_replacementShouldBeGenerated || !m_replacementPath.isNull())
-        return WTF::nullopt;
+        return std::nullopt;
 #endif
     return m_expectedModificationTime;
 }

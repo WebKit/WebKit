@@ -1008,7 +1008,7 @@ public:
             , value(cookie.value)
             , domain(cookie.domain)
             , path(cookie.path)
-            , expires(cookie.expires.valueOr(0))
+            , expires(cookie.expires.value_or(0))
             , isHttpOnly(cookie.httpOnly)
             , isSecure(cookie.secure)
             , isSession(cookie.session)

@@ -198,7 +198,7 @@ template<CSSValueID head, CSSValueID... tail> inline bool identMatches(CSSValueI
 template<CSSValueID... names> Optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange& range)
 {
     if (range.peek().type() != IdentToken || !identMatches<names...>(range.peek().id()))
-        return WTF::nullopt;
+        return std::nullopt;
     return range.consumeIncludingWhitespace().id();
 }
 

@@ -60,42 +60,42 @@ struct RemoteAudioSessionConfiguration {
         Optional<String> routingContextUID;
         decoder >> routingContextUID;
         if (!routingContextUID)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<float> sampleRate;
         decoder >> sampleRate;
         if (!sampleRate)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<size_t> bufferSize;
         decoder >> bufferSize;
         if (!bufferSize)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<size_t> numberOfOutputChannels;
         decoder >> numberOfOutputChannels;
         if (!numberOfOutputChannels)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<size_t> maximumNumberOfOutputChannels;
         decoder >> maximumNumberOfOutputChannels;
         if (!maximumNumberOfOutputChannels)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<size_t> preferredBufferSize;
         decoder >> preferredBufferSize;
         if (!preferredBufferSize)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> isMuted;
         decoder >> isMuted;
         if (!isMuted)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> isActive;
         decoder >> isActive;
         if (!isActive)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{
             WTFMove(*routingContextUID),

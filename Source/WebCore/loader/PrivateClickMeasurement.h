@@ -198,7 +198,7 @@ public:
         Optional<Seconds> minSecondsUntilSend()
         {
             if (!sourceSeconds && !destinationSeconds)
-                return WTF::nullopt;
+                return std::nullopt;
 
             if (sourceSeconds && destinationSeconds)
                 return std::min(sourceSeconds, destinationSeconds);
@@ -218,12 +218,12 @@ public:
             Optional<Optional<Seconds>> sourceSeconds;
             decoder >> sourceSeconds;
             if (!sourceSeconds)
-                return WTF::nullopt;
+                return std::nullopt;
 
             Optional<Optional<Seconds>> destinationSeconds;
             decoder >> destinationSeconds;
             if (!destinationSeconds)
-                return WTF::nullopt;
+                return std::nullopt;
 
             return AttributionSecondsUntilSendData { WTFMove(*sourceSeconds), WTFMove(*destinationSeconds) };
         }
@@ -236,7 +236,7 @@ public:
         Optional<WallTime> earliestTimeToSend()
         {
             if (!sourceEarliestTimeToSend && !destinationEarliestTimeToSend)
-                return WTF::nullopt;
+                return std::nullopt;
 
             if (sourceEarliestTimeToSend && destinationEarliestTimeToSend)
                 return std::min(sourceEarliestTimeToSend, destinationEarliestTimeToSend);
@@ -247,7 +247,7 @@ public:
         Optional<WallTime> latestTimeToSend()
         {
             if (!sourceEarliestTimeToSend && !destinationEarliestTimeToSend)
-                return WTF::nullopt;
+                return std::nullopt;
 
             if (sourceEarliestTimeToSend && destinationEarliestTimeToSend)
                 return std::max(sourceEarliestTimeToSend, destinationEarliestTimeToSend);
@@ -270,7 +270,7 @@ public:
             if (destinationEarliestTimeToSend)
                 return AttributionReportEndpoint::Destination;
 
-            return WTF::nullopt;
+            return std::nullopt;
         }
 
         template<class Encoder>
@@ -285,12 +285,12 @@ public:
             Optional<Optional<WallTime>> sourceEarliestTimeToSend;
             decoder >> sourceEarliestTimeToSend;
             if (!sourceEarliestTimeToSend)
-                return WTF::nullopt;
+                return std::nullopt;
 
             Optional<Optional<WallTime>> destinationEarliestTimeToSend;
             decoder >> destinationEarliestTimeToSend;
             if (!destinationEarliestTimeToSend)
-                return WTF::nullopt;
+                return std::nullopt;
 
             return AttributionTimeToSendData { WTFMove(*sourceEarliestTimeToSend), WTFMove(*destinationEarliestTimeToSend) };
         }
@@ -413,47 +413,47 @@ Optional<PrivateClickMeasurement> PrivateClickMeasurement::decode(Decoder& decod
     Optional<uint32_t> sourceID;
     decoder >> sourceID;
     if (!sourceID)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<RegistrableDomain> sourceRegistrableDomain;
     decoder >> sourceRegistrableDomain;
     if (!sourceRegistrableDomain)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<RegistrableDomain> destinationRegistrableDomain;
     decoder >> destinationRegistrableDomain;
     if (!destinationRegistrableDomain)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<String> sourceDescription;
     decoder >> sourceDescription;
     if (!sourceDescription)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<String> purchaser;
     decoder >> purchaser;
     if (!purchaser)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<WallTime> timeOfAdClick;
     decoder >> timeOfAdClick;
     if (!timeOfAdClick)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<EphemeralSourceNonce>> ephemeralSourceNonce;
     decoder >> ephemeralSourceNonce;
     if (!ephemeralSourceNonce)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<AttributionTriggerData>> attributionTriggerData;
     decoder >> attributionTriggerData;
     if (!attributionTriggerData)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<AttributionTimeToSendData> timesToSend;
     decoder >> timesToSend;
     if (!timesToSend)
-        return WTF::nullopt;
+        return std::nullopt;
     
     PrivateClickMeasurement attribution {
         SourceID { WTFMove(*sourceID) },
@@ -482,7 +482,7 @@ Optional<PrivateClickMeasurement::EphemeralSourceNonce> PrivateClickMeasurement:
     Optional<String> nonce;
     decoder >> nonce;
     if (!nonce)
-        return WTF::nullopt;
+        return std::nullopt;
     
     return EphemeralSourceNonce { WTFMove(*nonce) };
 }
@@ -499,17 +499,17 @@ Optional<PrivateClickMeasurement::AttributionTriggerData> PrivateClickMeasuremen
     Optional<uint32_t> data;
     decoder >> data;
     if (!data)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<PriorityValue> priority;
     decoder >> priority;
     if (!priority)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<WasSent> wasSent;
     decoder >> wasSent;
     if (!wasSent)
-        return WTF::nullopt;
+        return std::nullopt;
     
     return AttributionTriggerData { WTFMove(*data), Priority { *priority }, *wasSent };
 }

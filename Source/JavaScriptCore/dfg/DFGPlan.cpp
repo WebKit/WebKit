@@ -678,7 +678,7 @@ void Plan::cleanMustHandleValuesIfNecessary()
 
     for (unsigned local = m_mustHandleValues.numberOfLocals(); local--;) {
         if (!liveness[local])
-            m_mustHandleValues.local(local) = WTF::nullopt;
+            m_mustHandleValues.local(local) = std::nullopt;
     }
 }
 

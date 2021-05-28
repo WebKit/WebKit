@@ -123,7 +123,7 @@ public:
     void setComposite(CompositeOperation compositeOperation) { m_compositeOperation = compositeOperation; }
 
     void getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle);
-    void apply(RenderStyle& targetStyle, const RenderStyle* parentElementStyle, Optional<Seconds> = WTF::nullopt) override;
+    void apply(RenderStyle& targetStyle, const RenderStyle* parentElementStyle, Optional<Seconds> = std::nullopt) override;
     void invalidate() override;
     void animationDidTick() final;
     void animationDidPlay() final;

@@ -37,7 +37,7 @@ using namespace WebCore;
 static Optional<String> base64EncodedPNGData(cairo_surface_t* surface)
 {
     if (!surface)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Vector<unsigned char> pngData;
     cairo_surface_write_to_png_stream(surface, [](void* userData, const unsigned char* data, unsigned length) -> cairo_status_t {
@@ -47,7 +47,7 @@ static Optional<String> base64EncodedPNGData(cairo_surface_t* surface)
     }, &pngData);
 
     if (pngData.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return base64EncodeToString(pngData);
 }
@@ -56,7 +56,7 @@ Optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const Sha
 {
     auto bitmap = ShareableBitmap::create(handle, SharedMemory::Protection::ReadOnly);
     if (!bitmap)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto surface = bitmap->createCairoSurface();
     return base64EncodedPNGData(surface.get());
@@ -67,7 +67,7 @@ Optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const Vie
 #if PLATFORM(GTK)
     return base64EncodedPNGData(snapshot.surface());
 #else
-    return WTF::nullopt;
+    return std::nullopt;
 #endif
 }
 

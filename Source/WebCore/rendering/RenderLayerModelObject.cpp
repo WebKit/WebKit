@@ -226,7 +226,7 @@ bool RenderLayerModelObject::shouldPlaceVerticalScrollbarOnLeft() const
 
 Optional<LayerRepaintRects> RenderLayerModelObject::layerRepaintRects() const
 {
-    return hasLayer() ? layer()->repaintRects() : WTF::nullopt;
+    return hasLayer() ? layer()->repaintRects() : std::nullopt;
 }
 
 bool RenderLayerModelObject::startAnimation(double timeOffset, const Animation& animation, const KeyframeList& keyframes)

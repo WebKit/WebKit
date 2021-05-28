@@ -368,14 +368,14 @@ static Optional<WebCore::AuthenticatorAttachment> authenticatorAttachment(_WKAut
 {
     switch (attachment) {
     case _WKAuthenticatorAttachmentAll:
-        return WTF::nullopt;
+        return std::nullopt;
     case _WKAuthenticatorAttachmentPlatform:
         return WebCore::AuthenticatorAttachment::Platform;
     case _WKAuthenticatorAttachmentCrossPlatform:
         return WebCore::AuthenticatorAttachment::CrossPlatform;
     default:
         ASSERT_NOT_REACHED();
-        return WTF::nullopt;
+        return std::nullopt;
     }
 }
 
@@ -471,7 +471,7 @@ static RetainPtr<_WKAuthenticatorAttestationResponse> wkAuthenticatorAttestation
             handler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]);
         });
     };
-    _panel->handleRequest({ WTFMove(hash), [_WKWebAuthenticationPanel convertToCoreCreationOptionsWithOptions:options], nullptr, WebKit::WebAuthenticationPanelResult::Unavailable, nullptr, WTF::nullopt, { }, true, String(), nullptr }, WTFMove(callback));
+    _panel->handleRequest({ WTFMove(hash), [_WKWebAuthenticationPanel convertToCoreCreationOptionsWithOptions:options], nullptr, WebKit::WebAuthenticationPanelResult::Unavailable, nullptr, std::nullopt, { }, true, String(), nullptr }, WTFMove(callback));
 #endif
 }
 
@@ -521,7 +521,7 @@ static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResp
             handler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]);
         });
     };
-    _panel->handleRequest({ WTFMove(hash), [_WKWebAuthenticationPanel convertToCoreRequestOptionsWithOptions:options], nullptr, WebKit::WebAuthenticationPanelResult::Unavailable, nullptr, WTF::nullopt, { }, true, String(), nullptr }, WTFMove(callback));
+    _panel->handleRequest({ WTFMove(hash), [_WKWebAuthenticationPanel convertToCoreRequestOptionsWithOptions:options], nullptr, WebKit::WebAuthenticationPanelResult::Unavailable, nullptr, std::nullopt, { }, true, String(), nullptr }, WTFMove(callback));
 #endif
 }
 

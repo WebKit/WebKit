@@ -195,7 +195,7 @@ void AudioWorkletGlobalScope::handlePostRenderTasks(size_t currentFrame)
         // explicitly allow the following allocation(s).
         DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
         // This takes care of processing the MicroTask queue after rendering.
-        m_lockDuringRendering = WTF::nullopt;
+        m_lockDuringRendering = std::nullopt;
     }
 }
 

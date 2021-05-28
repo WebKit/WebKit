@@ -59,7 +59,7 @@ using namespace WebCore;
 Optional<GeolocationPositionData> core(WebGeolocationPosition *position)
 {
     if (!position)
-        return WTF::nullopt;
+        return std::nullopt;
     return position->_internal->_position;
 }
 

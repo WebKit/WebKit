@@ -106,7 +106,7 @@ public:
         ASSERT(!m_empty);
         if (WTF::holds_alternative<LeftValue>(m_inner))
             return WTF::get<LeftValue>(m_inner).addressSpace;
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     bool isRightValue() const

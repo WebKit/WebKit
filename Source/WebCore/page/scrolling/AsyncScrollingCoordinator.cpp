@@ -660,7 +660,7 @@ void AsyncScrollingCoordinator::setFrameScrollingNodeState(ScrollingNodeID nodeI
     if (auto visualOverrideRect = frameView.visualViewportOverrideRect())
         frameScrollingNode.setOverrideVisualViewportSize(FloatSize(visualOverrideRect.value().size()));
     else
-        frameScrollingNode.setOverrideVisualViewportSize(WTF::nullopt);
+        frameScrollingNode.setOverrideVisualViewportSize(std::nullopt);
 
     frameScrollingNode.setFixedElementsLayoutRelativeToFrame(frameView.fixedElementsLayoutRelativeToFrame());
 

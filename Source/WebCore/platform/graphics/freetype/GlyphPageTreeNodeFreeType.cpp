@@ -54,7 +54,7 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
     if (!face)
         return false;
 
-    WTF::Optional<Glyph> zeroWidthSpaceGlyphValue;
+    std::optional<Glyph> zeroWidthSpaceGlyphValue;
     auto zeroWidthSpaceGlyph =
         [&] {
             if (!zeroWidthSpaceGlyphValue)

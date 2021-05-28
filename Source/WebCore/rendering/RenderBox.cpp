@@ -2043,7 +2043,7 @@ LayoutUnit RenderBox::shrinkLogicalWidthToAvoidFloats(LayoutUnit childMarginStar
 LayoutUnit RenderBox::containingBlockLogicalWidthForContent() const
 {
     if (hasOverridingContainingBlockContentLogicalWidth())
-        return overridingContainingBlockContentLogicalWidth().valueOr(0_lu);
+        return overridingContainingBlockContentLogicalWidth().value_or(0_lu);
 
     if (RenderBlock* cb = containingBlock())
         return cb->availableLogicalWidth();
@@ -2054,7 +2054,7 @@ LayoutUnit RenderBox::containingBlockLogicalHeightForContent(AvailableLogicalHei
 {
     if (hasOverridingContainingBlockContentLogicalHeight()) {
         // FIXME: Containing block for a grid item is the grid area it's located in. We need to return whatever
-        // height value we get from overridingContainingBlockContentLogicalHeight() here, including WTF::nullopt.
+        // height value we get from overridingContainingBlockContentLogicalHeight() here, including std::nullopt.
         if (auto height = overridingContainingBlockContentLogicalHeight())
             return height.value();
     }
@@ -2428,7 +2428,7 @@ Optional<LayoutRect> RenderBox::computeVisibleRectInContainer(const LayoutRect& 
         bool isEmpty = !containerBox.applyCachedClipAndScrollPosition(adjustedRect, container, context);
         if (isEmpty) {
             if (context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
-                return WTF::nullopt;
+                return std::nullopt;
             return adjustedRect;
         }
     }
@@ -2956,7 +2956,7 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
             } else {
                 if (intrinsicHeight)
                     *intrinsicHeight -= borderAndPaddingLogicalHeight();
-                heightResult = computeLogicalHeightUsing(MainOrPreferredSize, style().logicalHeight(), intrinsicHeight).valueOr(computedValues.m_extent);
+                heightResult = computeLogicalHeightUsing(MainOrPreferredSize, style().logicalHeight(), intrinsicHeight).value_or(computedValues.m_extent);
             }
             heightResult = constrainLogicalHeightByMinMax(heightResult, intrinsicHeight);
         } else {
@@ -3007,14 +3007,14 @@ Optional<LayoutUnit> RenderBox::computeLogicalHeightUsing(SizeType heightType, c
 {
     if (Optional<LayoutUnit> logicalHeight = computeContentAndScrollbarLogicalHeightUsing(heightType, height, intrinsicContentHeight))
         return adjustBorderBoxLogicalHeightForBoxSizing(logicalHeight.value());
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<LayoutUnit> RenderBox::computeContentLogicalHeight(SizeType heightType, const Length& height, Optional<LayoutUnit> intrinsicContentHeight) const
 {
     if (Optional<LayoutUnit> heightIncludingScrollbar = computeContentAndScrollbarLogicalHeightUsing(heightType, height, intrinsicContentHeight))
         return std::max<LayoutUnit>(0, adjustContentBoxLogicalHeightForBoxSizing(heightIncludingScrollbar) - scrollbarLogicalHeight());
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<LayoutUnit> RenderBox::computeIntrinsicLogicalContentHeightUsing(Length logicalHeightLength, Optional<LayoutUnit> intrinsicContentHeight, LayoutUnit borderAndPadding) const
@@ -3035,7 +3035,7 @@ Optional<LayoutUnit> RenderBox::computeIntrinsicLogicalContentHeightUsing(Length
 Optional<LayoutUnit> RenderBox::computeContentAndScrollbarLogicalHeightUsing(SizeType heightType, const Length& height, Optional<LayoutUnit> intrinsicContentHeight) const
 {
     if (height.isAuto())
-        return heightType == MinSize ? Optional<LayoutUnit>(0) : WTF::nullopt;
+        return heightType == MinSize ? Optional<LayoutUnit>(0) : std::nullopt;
     // FIXME: The CSS sizing spec is considering changing what min-content/max-content should resolve to.
     // If that happens, this code will have to change.
     if (height.isIntrinsic() || height.isMinIntrinsic())
@@ -3044,7 +3044,7 @@ Optional<LayoutUnit> RenderBox::computeContentAndScrollbarLogicalHeightUsing(Siz
         return LayoutUnit(height.value());
     if (height.isPercentOrCalculated())
         return computePercentageLogicalHeight(height);
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 bool RenderBox::skipContainingBlockForPercentHeightCalculation(const RenderBox& containingBlock, bool isPerpendicularWritingMode) const
@@ -3131,7 +3131,7 @@ Optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Length& hei
             // don't care if the cell specified a height or not. We just always make ourselves
             // be a percentage of the cell's current content height.
             if (!cb->hasOverridingLogicalHeight())
-                return tableCellShouldHaveZeroInitialSize(*cb, *this, scrollsOverflowY()) ? Optional<LayoutUnit>(0) : WTF::nullopt;
+                return tableCellShouldHaveZeroInitialSize(*cb, *this, scrollsOverflowY()) ? Optional<LayoutUnit>(0) : std::nullopt;
 
             availableHeight = cb->overridingLogicalHeight() - cb->computedCSSPaddingBefore() - cb->computedCSSPaddingAfter() - cb->borderBefore() - cb->borderAfter();
         }
@@ -3274,7 +3274,7 @@ bool RenderBox::replacedMinMaxLogicalHeightComputesAsNone(SizeType sizeType) con
         return true;
     
     if (logicalHeight.isPercentOrCalculated() && hasOverridingContainingBlockContentLogicalHeight())
-        return overridingContainingBlockContentLogicalHeight() == WTF::nullopt;
+        return overridingContainingBlockContentLogicalHeight() == std::nullopt;
 
     // Make sure % min-height and % max-height resolve to none if the containing block has auto height.
     // Note that the "height" case for replaced elements was handled by hasReplacedLogicalHeight, which is why
@@ -3379,7 +3379,7 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType heightType, Len
 
 LayoutUnit RenderBox::availableLogicalHeight(AvailableLogicalHeightType heightType) const
 {
-    return constrainContentBoxLogicalHeightByMinMax(availableLogicalHeightUsing(style().logicalHeight(), heightType), WTF::nullopt);
+    return constrainContentBoxLogicalHeightByMinMax(availableLogicalHeightUsing(style().logicalHeight(), heightType), std::nullopt);
 }
 
 LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h, AvailableLogicalHeightType heightType) const
@@ -3405,7 +3405,7 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h, AvailableLogi
         return adjustContentBoxLogicalHeightForBoxSizing(valueForLength(h, availableHeight));
     }
 
-    if (Optional<LayoutUnit> heightIncludingScrollbar = computeContentAndScrollbarLogicalHeightUsing(MainOrPreferredSize, h, WTF::nullopt))
+    if (Optional<LayoutUnit> heightIncludingScrollbar = computeContentAndScrollbarLogicalHeightUsing(MainOrPreferredSize, h, std::nullopt))
         return std::max<LayoutUnit>(0, adjustContentBoxLogicalHeightForBoxSizing(heightIncludingScrollbar) - scrollbarLogicalHeight());
 
     // FIXME: Check logicalTop/logicalBottom here to correctly handle vertical writing-mode.
@@ -4850,7 +4850,7 @@ bool RenderBox::percentageLogicalHeightIsResolvable() const
     // Do this to avoid duplicating all the logic that already exists when computing
     // an actual percentage height.
     Length fakeLength(100, LengthType::Percent);
-    return computePercentageLogicalHeight(fakeLength) != WTF::nullopt;
+    return computePercentageLogicalHeight(fakeLength) != std::nullopt;
 }
 
 bool RenderBox::hasUnsplittableScrollingOverflow() const
@@ -5181,8 +5181,8 @@ LayoutUnit RenderBox::computeLogicalWidthFromAspectRatio(RenderFragmentContainer
 std::pair<LayoutUnit, LayoutUnit> RenderBox::computeMinMaxLogicalWidthFromAspectRatio() const
 {
     auto ratio = LayoutUnit { style().logicalAspectRatio() };
-    LayoutUnit blockMinSize = constrainLogicalHeightByMinMax(LayoutUnit(), WTF::nullopt);
-    LayoutUnit blockMaxSize = constrainLogicalHeightByMinMax(LayoutUnit::max(), WTF::nullopt);
+    LayoutUnit blockMinSize = constrainLogicalHeightByMinMax(LayoutUnit(), std::nullopt);
+    LayoutUnit blockMaxSize = constrainLogicalHeightByMinMax(LayoutUnit::max(), std::nullopt);
     LayoutUnit transferredMinSize = LayoutUnit();
     LayoutUnit transferredMaxSize = LayoutUnit::max();
     if (blockMinSize > LayoutUnit())

@@ -69,22 +69,22 @@ template<class Decoder> Optional<AppHighlightRangeData::NodePathComponent> AppHi
     Optional<String> identifier;
     decoder >> identifier;
     if (!identifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<String> nodeName;
     decoder >> nodeName;
     if (!nodeName)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<String> textData;
     decoder >> textData;
     if (!textData)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<unsigned> pathIndex;
     decoder >> pathIndex;
     if (!pathIndex)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ WTFMove(*identifier), WTFMove(*nodeName), WTFMove(*textData), *pathIndex }};
 }
@@ -103,27 +103,27 @@ template<class Decoder> Optional<AppHighlightRangeData> AppHighlightRangeData::d
     Optional<String> text;
     decoder >> text;
     if (!text)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<NodePath> startContainer;
     decoder >> startContainer;
     if (!startContainer)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<unsigned> startOffset;
     decoder >> startOffset;
     if (!startOffset)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<NodePath> endContainer;
     decoder >> endContainer;
     if (!endContainer)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<unsigned> endOffset;
     decoder >> endOffset;
     if (!endOffset)
-        return WTF::nullopt;
+        return std::nullopt;
 
 
     return {{ WTFMove(*text), WTFMove(*startContainer), *startOffset, WTFMove(*endContainer), *endOffset }};

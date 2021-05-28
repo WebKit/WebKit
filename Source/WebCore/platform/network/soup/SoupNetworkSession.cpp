@@ -323,11 +323,11 @@ void SoupNetworkSession::setIgnoreTLSErrors(bool ignoreTLSErrors)
 Optional<ResourceError> SoupNetworkSession::checkTLSErrors(const URL& requestURL, GTlsCertificate* certificate, GTlsCertificateFlags tlsErrors)
 {
     if (m_ignoreTLSErrors || !tlsErrors)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto it = allowedCertificates().find(requestURL.host().toStringWithoutCopying());
     if (it != allowedCertificates().end() && it->value.contains(certificate))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return ResourceError::tlsError(requestURL, tlsErrors, certificate);
 }

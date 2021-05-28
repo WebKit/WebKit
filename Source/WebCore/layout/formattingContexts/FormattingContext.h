@@ -73,7 +73,7 @@ public:
         BodyStretchesToViewportQuirk,
         TableNeedsAccessToTableWrapper
     };
-    const BoxGeometry& geometryForBox(const Box&, Optional<EscapeReason> = WTF::nullopt) const;
+    const BoxGeometry& geometryForBox(const Box&, Optional<EscapeReason> = std::nullopt) const;
 
     bool isBlockFormattingContext() const { return root().establishesBlockFormattingContext(); }
     bool isInlineFormattingContext() const { return root().establishesInlineFormattingContext(); }

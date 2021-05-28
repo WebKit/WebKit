@@ -74,7 +74,7 @@ bool ThreadedScrollingTree::handleWheelEventAfterMainThread(const PlatformWheelE
 
     bool allowLatching = false;
     OptionSet<WheelEventProcessingSteps> processingSteps;
-    if (gestureState.valueOr(WheelScrollGestureState::Blocking) == WheelScrollGestureState::NonBlocking) {
+    if (gestureState.value_or(WheelScrollGestureState::Blocking) == WheelScrollGestureState::NonBlocking) {
         allowLatching = true;
         processingSteps = { WheelEventProcessingSteps::ScrollingThread, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch };
     }
@@ -296,7 +296,7 @@ void ThreadedScrollingTree::willStartRenderingUpdate()
 Seconds ThreadedScrollingTree::maxAllowableRenderingUpdateDurationForSynchronization()
 {
     constexpr double allowableFrameFraction = 0.5;
-    auto displayFPS = nominalFramesPerSecond().valueOr(60);
+    auto displayFPS = nominalFramesPerSecond().value_or(60);
     Seconds frameDuration = 1_s / (double)displayFPS;
     return allowableFrameFraction * frameDuration;
 }

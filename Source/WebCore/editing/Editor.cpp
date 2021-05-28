@@ -2633,34 +2633,34 @@ Optional<SimpleRange> Editor::markMisspellingsOrBadGrammar(const VisibleSelectio
     // This function is used only for as-you-type checking, so if that's off we do nothing. Note that
     // grammar checking can only be on if spell checking is also on.
     if (!isContinuousSpellCheckingEnabled())
-        return WTF::nullopt;
+        return std::nullopt;
     
     auto searchRange = selection.toNormalizedRange();
     if (!searchRange)
-        return WTF::nullopt;
+        return std::nullopt;
     
     // If we're not in an editable node, bail.
     Node& editableNode = searchRange->startContainer();
     if (!editableNode.hasEditableStyle())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!isSpellCheckingEnabledFor(&editableNode))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Get the spell checker if it is available
     if (!client())
-        return WTF::nullopt;
+        return std::nullopt;
     
     TextCheckingHelper checker(*client(), *searchRange);
     if (checkSpelling)
         return checker.markAllMisspelledWords();
     if (isGrammarCheckingEnabled())
         checker.markAllUngrammaticalPhrases();
-    return WTF::nullopt;
+    return std::nullopt;
 #else
     UNUSED_PARAM(selection);
     UNUSED_PARAM(checkSpelling);
-    return WTF::nullopt;
+    return std::nullopt;
 #endif
 }
 
@@ -3095,13 +3095,13 @@ Optional<SimpleRange> Editor::rangeForPoint(const IntPoint& windowPoint)
 {
     auto document = m_document.frame()->documentAtPoint(windowPoint);
     if (!document)
-        return WTF::nullopt;
+        return std::nullopt;
     auto frame = document->frame();
     if (!frame)
-        return WTF::nullopt;
+        return std::nullopt;
     auto frameView = frame->view();
     if (!frameView)
-        return WTF::nullopt;
+        return std::nullopt;
     return VisibleSelection { frame->visiblePositionForPoint(frameView->windowToContents(windowPoint)) }.toNormalizedRange();
 }
 
@@ -3132,12 +3132,12 @@ void Editor::setIgnoreSelectionChanges(bool ignore, RevealSelection shouldReveal
 Optional<SimpleRange> Editor::compositionRange() const
 {
     if (!m_compositionNode)
-        return WTF::nullopt;
+        return std::nullopt;
     unsigned length = m_compositionNode->length();
     unsigned start = std::min(m_compositionStart, length);
     unsigned end = std::clamp(m_compositionEnd, start, length);
     if (start >= end)
-        return WTF::nullopt;
+        return std::nullopt;
     return { { { *m_compositionNode, start }, { *m_compositionNode, end } } };
 }
 
@@ -3516,7 +3516,7 @@ static SimpleRange collapseIfRootsDiffer(SimpleRange&& range)
 Optional<SimpleRange> Editor::rangeOfString(const String& target, const Optional<SimpleRange>& referenceRange, FindOptions options)
 {
     if (target.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Start from an edge of the reference range, if there's a reference range that's not in shadow content. Which edge
     // is used depends on whether we're searching forward or backward, and whether startInSelection is set.
@@ -3559,7 +3559,7 @@ Optional<SimpleRange> Editor::rangeOfString(const String& target, const Optional
         // this should be a success case instead, so we'll just fall through in that case.
     }
 
-    return resultRange.collapsed() ? WTF::nullopt : makeOptional(resultRange);
+    return resultRange.collapsed() ? std::nullopt : std::make_optional(resultRange);
 }
 
 static bool isFrameInRange(Frame& frame, const SimpleRange& range)
@@ -3949,10 +3949,10 @@ Optional<SimpleRange> Editor::contextRangeForCandidateRequest() const
 Optional<SimpleRange> Editor::rangeForTextCheckingResult(const TextCheckingResult& result) const
 {
     if (!result.range.length)
-        return WTF::nullopt;
+        return std::nullopt;
     auto contextRange = contextRangeForCandidateRequest();
     if (!contextRange)
-        return WTF::nullopt;
+        return std::nullopt;
     return resolveCharacterRange(*contextRange, result.range);
 }
 

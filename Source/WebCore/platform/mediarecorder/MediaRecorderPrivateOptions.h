@@ -54,22 +54,22 @@ inline Optional<MediaRecorderPrivateOptions> MediaRecorderPrivateOptions::decode
 {
     String mimeType;
     if (!decoder.decode(mimeType))
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<unsigned>> audioBitsPerSecond;
     decoder >> audioBitsPerSecond;
     if (!audioBitsPerSecond)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<unsigned>> videoBitsPerSecond;
     decoder >> videoBitsPerSecond;
     if (!videoBitsPerSecond)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<unsigned>> bitsPerSecond;
     decoder >> bitsPerSecond;
     if (!bitsPerSecond)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return MediaRecorderPrivateOptions { WTFMove(mimeType), *audioBitsPerSecond, *videoBitsPerSecond, *bitsPerSecond };
 }

@@ -65,7 +65,7 @@ void WebGeolocationClient::setEnableHighAccuracy(bool enabled)
 
 Optional<GeolocationPositionData> WebGeolocationClient::lastPosition()
 {
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void WebGeolocationClient::requestPermission(Geolocation& geolocation)

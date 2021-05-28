@@ -38,7 +38,7 @@ template<typename CharacterType> static Optional<SVGZoomAndPanType> parseZoomAnd
     if (skipCharactersExactly(buffer, magnify<CharacterType>))
         return SVGZoomAndPanMagnify;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<SVGZoomAndPanType> SVGZoomAndPan::parseZoomAndPan(StringParsingBuffer<LChar>& buffer)

@@ -90,13 +90,13 @@ void RemoteRenderingBackendProxy::gpuProcessConnectionDidClose(GPUProcessConnect
 
     m_identifiersOfReusableHandles.clear();
     m_sharedDisplayListHandles.clear();
-    m_currentDestinationImageBufferIdentifier = WTF::nullopt;
-    m_deferredWakeupMessageArguments = WTF::nullopt;
+    m_currentDestinationImageBufferIdentifier = std::nullopt;
+    m_deferredWakeupMessageArguments = std::nullopt;
     m_remainingItemsToAppendBeforeSendingWakeup = 0;
 
     if (m_destroyGetPixelBufferSharedMemoryTimer.isActive())
         m_destroyGetPixelBufferSharedMemoryTimer.stop();
-    m_getPixelBufferSemaphore = WTF::nullopt;
+    m_getPixelBufferSemaphore = std::nullopt;
     m_getPixelBufferSharedMemoryLength = 0;
     m_getPixelBufferSharedMemory = nullptr;
 }
@@ -249,7 +249,7 @@ void RemoteRenderingBackendProxy::deleteAllFonts()
 void RemoteRenderingBackendProxy::releaseRemoteResource(RenderingResourceIdentifier renderingResourceIdentifier)
 {
     if (renderingResourceIdentifier == m_currentDestinationImageBufferIdentifier)
-        m_currentDestinationImageBufferIdentifier = WTF::nullopt;
+        m_currentDestinationImageBufferIdentifier = std::nullopt;
 
     send(Messages::RemoteRenderingBackend::ReleaseRemoteResource(renderingResourceIdentifier), renderingBackendIdentifier(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
@@ -307,7 +307,7 @@ void RemoteRenderingBackendProxy::sendWakeupMessage(const GPUProcessWakeupMessag
 
 void RemoteRenderingBackendProxy::sendDeferredWakeupMessageIfNeeded()
 {
-    auto arguments = std::exchange(m_deferredWakeupMessageArguments, WTF::nullopt);
+    auto arguments = std::exchange(m_deferredWakeupMessageArguments, std::nullopt);
     if (!arguments)
         return;
 
@@ -326,11 +326,11 @@ void RemoteRenderingBackendProxy::didAppendData(const DisplayList::ItemBufferHan
         if (m_deferredWakeupMessageArguments) {
             if (sharedHandle->tryToResume({ m_deferredWakeupMessageArguments->offset, m_deferredWakeupMessageArguments->destinationImageBufferIdentifier.toUInt64() })) {
                 m_parameters.resumeDisplayListSemaphore.signal();
-                m_deferredWakeupMessageArguments = WTF::nullopt;
+                m_deferredWakeupMessageArguments = std::nullopt;
                 m_remainingItemsToAppendBeforeSendingWakeup = 0;
             } else if (!--m_remainingItemsToAppendBeforeSendingWakeup) {
                 m_deferredWakeupMessageArguments->reason = GPUProcessWakeupReason::ItemCountHysteresisExceeded;
-                sendWakeupMessage(*std::exchange(m_deferredWakeupMessageArguments, WTF::nullopt));
+                sendWakeupMessage(*std::exchange(m_deferredWakeupMessageArguments, std::nullopt));
             }
         }
         return;

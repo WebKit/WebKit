@@ -41,12 +41,12 @@ Optional<WebPageGroupData> WebPageGroupData::decode(IPC::Decoder& decoder)
     Optional<String> identifier;
     decoder >> identifier;
     if (!identifier)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<uint64_t> pageGroupID;
     decoder >> pageGroupID;
     if (!pageGroupID)
-        return WTF::nullopt;
+        return std::nullopt;
         
     return {{ WTFMove(*identifier), *pageGroupID }};
 }

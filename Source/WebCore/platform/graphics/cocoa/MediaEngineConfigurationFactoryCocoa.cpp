@@ -65,17 +65,17 @@ static Optional<MediaCapabilitiesInfo> computeMediaCapabilitiesInfo(const MediaD
         parameters.type = ContentType(videoConfiguration.contentType);
         parameters.isMediaSource = configuration.type == MediaDecodingType::MediaSource;
         if (MediaPlayer::supportsType(parameters) != MediaPlayer::SupportsType::IsSupported)
-            return WTF::nullopt;
+            return std::nullopt;
 
         auto codecs = parameters.type.codecs();
         if (codecs.size() != 1)
-            return WTF::nullopt;
+            return std::nullopt;
 
         info.supported = true;
         auto& codec = codecs[0];
         auto videoCodecType = videoCodecTypeFromRFC4281Type(codec);
         if (!videoCodecType && !(codec.startsWith("dvh1") || codec.startsWith("dvhe")))
-            return WTF::nullopt;
+            return std::nullopt;
 
         bool hdrSupported = videoConfiguration.colorGamut || videoConfiguration.hdrMetadataType || videoConfiguration.transferFunction;
         bool alphaChannel = videoConfiguration.alphaChannel && videoConfiguration.alphaChannel.value();
@@ -83,34 +83,34 @@ static Optional<MediaCapabilitiesInfo> computeMediaCapabilitiesInfo(const MediaD
         if (videoCodecType == kCMVideoCodecType_HEVC) {
             auto parameters = parseHEVCCodecParameters(codec);
             if (!parameters)
-                return WTF::nullopt;
+                return std::nullopt;
             auto parsedInfo = validateHEVCParameters(*parameters, alphaChannel, hdrSupported);
             if (!parsedInfo)
-                return WTF::nullopt;
+                return std::nullopt;
             info = *parsedInfo;
         } else if (codec.startsWith("dvh1") || codec.startsWith("dvhe")) {
             auto parameters = parseDoViCodecParameters(codec);
             if (!parameters)
-                return WTF::nullopt;
+                return std::nullopt;
             auto parsedInfo = validateDoViParameters(*parameters, alphaChannel, hdrSupported);
             if (!parsedInfo)
-                return WTF::nullopt;
+                return std::nullopt;
             info = *parsedInfo;
 #if ENABLE(VP9)
         } else if (videoCodecType == kCMVideoCodecType_VP9) {
             if (!configuration.canExposeVP9)
-                return WTF::nullopt;
+                return std::nullopt;
             auto parameters = parseVPCodecParameters(codec);
             if (!parameters)
-                return WTF::nullopt;
+                return std::nullopt;
             auto parsedInfo = validateVPParameters(*parameters, videoConfiguration);
             if (!parsedInfo)
-                return WTF::nullopt;
+                return std::nullopt;
             info = *parsedInfo;
 #endif
         } else {
             if (alphaChannel || hdrSupported)
-                return WTF::nullopt;
+                return std::nullopt;
 
             if (canLoad_VideoToolbox_VTIsHardwareDecodeSupported()) {
                 info.powerEfficient = VTIsHardwareDecodeSupported(videoCodecType);
@@ -124,22 +124,22 @@ static Optional<MediaCapabilitiesInfo> computeMediaCapabilitiesInfo(const MediaD
         parameters.type = ContentType(configuration.audio.value().contentType);
         parameters.isMediaSource = configuration.type == MediaDecodingType::MediaSource;
         if (MediaPlayer::supportsType(parameters) != MediaPlayer::SupportsType::IsSupported)
-            return WTF::nullopt;
+            return std::nullopt;
 
-        if (configuration.audio->spatialRendering.valueOr(false)) {
+        if (configuration.audio->spatialRendering.value_or(false)) {
             auto context = PAL::OutputContext::sharedAudioPresentationOutputContext();
             if (!context)
-                return WTF::nullopt;
+                return std::nullopt;
 
             auto devices = context->outputDevices();
             if (devices.isEmpty() || !WTF::allOf(devices, [](auto& device) {
                 return device.supportsSpatialAudio();
             }))
-                return WTF::nullopt;
+                return std::nullopt;
 
             // Only multichannel audio can be spatially rendered.
             if (!configuration.audio->channels.isNull() && configuration.audio->channels.toDouble() <= 2)
-                return WTF::nullopt;
+                return std::nullopt;
         }
         info.supported = true;
     }

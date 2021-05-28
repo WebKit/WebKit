@@ -509,14 +509,14 @@ private:
             if (arg.isReg()) {
                 if (const RegConst* alias = getRegConst(arg.reg()))
                     return alias->constant;
-                return WTF::nullopt;
+                return std::nullopt;
             }
             if (arg.isStack()) {
                 if (const SlotConst* alias = getSlotConst(arg.stackSlot()))
                     return alias->constant;
-                return WTF::nullopt;
+                return std::nullopt;
             }
-            return WTF::nullopt;
+            return std::nullopt;
         }
 
         void clobber(const Arg& arg)

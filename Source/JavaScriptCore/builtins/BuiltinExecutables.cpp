@@ -251,7 +251,7 @@ UnlinkedFunctionExecutable* BuiltinExecutables::createExecutable(VM& vm, const S
         }
     }
 
-    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(vm, source, &metadata, kind, constructAbility, JSParserScriptMode::Classic, nullptr, WTF::nullopt, DerivedContextType::None, needsClassFieldInitializer, privateBrandRequirement, isBuiltinDefaultClassConstructor);
+    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(vm, source, &metadata, kind, constructAbility, JSParserScriptMode::Classic, nullptr, std::nullopt, DerivedContextType::None, needsClassFieldInitializer, privateBrandRequirement, isBuiltinDefaultClassConstructor);
     return functionExecutable;
 }
 

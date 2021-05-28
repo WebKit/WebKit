@@ -593,7 +593,7 @@ Optional<uint64_t> fileSize(const String& path)
     std::error_code ec;
     auto size = std::filesystem::file_size(toStdFileSystemPath(path), ec);
     if (ec)
-        return WTF::nullopt;
+        return std::nullopt;
     return size;
 }
 
@@ -609,7 +609,7 @@ Optional<uint64_t> volumeFreeSpace(const String& path)
     std::error_code ec;
     auto spaceInfo = std::filesystem::space(toStdFileSystemPath(path), ec);
     if (ec)
-        return WTF::nullopt;
+        return std::nullopt;
     return spaceInfo.available;
 }
 
@@ -645,7 +645,7 @@ Optional<uint64_t> hardLinkCount(const String& path)
 {
     std::error_code ec;
     uint64_t linkCount = std::filesystem::hard_link_count(toStdFileSystemPath(path), ec);
-    return ec ? WTF::nullopt : makeOptional(linkCount);
+    return ec ? std::nullopt : std::make_optional(linkCount);
 }
 
 bool deleteNonEmptyDirectory(const String& path)
@@ -660,7 +660,7 @@ Optional<WallTime> fileModificationTime(const String& path)
     std::error_code ec;
     auto modificationTime = std::filesystem::last_write_time(toStdFileSystemPath(path), ec);
     if (ec)
-        return WTF::nullopt;
+        return std::nullopt;
     return toWallTime(modificationTime);
 }
 
@@ -689,7 +689,7 @@ static Optional<FileType> fileTypePotentiallyFollowingSymLinks(const String& pat
     std::error_code ec;
     auto status = shouldFollowSymbolicLinks == ShouldFollowSymbolicLinks::Yes ? std::filesystem::status(toStdFileSystemPath(path), ec) : std::filesystem::symlink_status(toStdFileSystemPath(path), ec);
     if (ec)
-        return WTF::nullopt;
+        return std::nullopt;
     switch (status.type()) {
     case std::filesystem::file_type::directory:
         return FileType::Directory;

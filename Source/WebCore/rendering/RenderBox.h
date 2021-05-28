@@ -452,7 +452,7 @@ override;
     template<typename T> LayoutUnit computeReplacedLogicalHeightRespectingMinMaxHeight(T logicalHeight) const { return computeReplacedLogicalHeightRespectingMinMaxHeight(LayoutUnit(logicalHeight)); }
 
     virtual LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred  = ComputeActual) const;
-    virtual LayoutUnit computeReplacedLogicalHeight(Optional<LayoutUnit> estimatedUsedWidth = WTF::nullopt) const;
+    virtual LayoutUnit computeReplacedLogicalHeight(Optional<LayoutUnit> estimatedUsedWidth = std::nullopt) const;
 
     enum class UpdatePercentageHeightDescendants { Yes , No };
     Optional<LayoutUnit> computePercentageLogicalHeight(const Length& height, UpdatePercentageHeightDescendants = UpdatePercentageHeightDescendants::Yes) const;

@@ -83,10 +83,10 @@ Vector<uint8_t> encodeRawPublicKey(const Vector<uint8_t>& x, const Vector<uint8_
 Optional<CString> validateAndConvertToUTF8(const String& pin)
 {
     if (!hasAtLeastFourCodepoints(pin))
-        return WTF::nullopt;
+        return std::nullopt;
     auto result = pin.utf8();
     if (result.length() < kMinBytes || result.length() > kMaxBytes)
-        return WTF::nullopt;
+        return std::nullopt;
     return result;
 }
 
@@ -116,12 +116,12 @@ Optional<RetriesResponse> RetriesResponse::parse(const Vector<uint8_t>& inBuffer
 {
     auto decodedMap = decodeResponseMap(inBuffer);
     if (!decodedMap)
-        return WTF::nullopt;
+        return std::nullopt;
     const auto& responseMap = decodedMap->getMap();
 
     auto it = responseMap.find(CBORValue(static_cast<int64_t>(ResponseKey::kRetries)));
     if (it == responseMap.end() || !it->second.isUnsigned())
-        return WTF::nullopt;
+        return std::nullopt;
 
     RetriesResponse ret;
     ret.retries = static_cast<uint64_t>(it->second.getUnsigned());
@@ -137,13 +137,13 @@ Optional<KeyAgreementResponse> KeyAgreementResponse::parse(const Vector<uint8_t>
 {
     auto decodedMap = decodeResponseMap(inBuffer);
     if (!decodedMap)
-        return WTF::nullopt;
+        return std::nullopt;
     const auto& responseMap = decodedMap->getMap();
 
     // The ephemeral key is encoded as a COSE structure.
     auto it = responseMap.find(CBORValue(static_cast<int64_t>(ResponseKey::kKeyAgreement)));
     if (it == responseMap.end() || !it->second.isMap())
-        return WTF::nullopt;
+        return std::nullopt;
     const auto& coseKey = it->second.getMap();
 
     return parseFromCOSE(coseKey);
@@ -160,20 +160,20 @@ Optional<KeyAgreementResponse> KeyAgreementResponse::parseFromCOSE(const CBORVal
     })) {
         auto it = coseKey.find(CBORValue(pair.first));
         if (it == coseKey.end() || !it->second.isInteger() || it->second.getInteger() != pair.second)
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     // See https://tools.ietf.org/html/rfc8152#section-13.1.1
     const auto& xIt = coseKey.find(CBORValue(static_cast<int64_t>(COSE::x)));
     const auto& yIt = coseKey.find(CBORValue(static_cast<int64_t>(COSE::y)));
     if (xIt == coseKey.end() || yIt == coseKey.end() || !xIt->second.isByteString() || !yIt->second.isByteString())
-        return WTF::nullopt;
+        return std::nullopt;
 
     const auto& x = xIt->second.getByteString();
     const auto& y = yIt->second.getByteString();
     auto peerKey = CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier::ECDH, "P-256", encodeRawPublicKey(x, y), true, CryptoKeyUsageDeriveBits);
     if (!peerKey)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return KeyAgreementResponse(peerKey.releaseNonNull());
 }
@@ -203,17 +203,17 @@ Optional<TokenResponse> TokenResponse::parse(const WebCore::CryptoKeyAES& shared
 {
     auto decodedMap = decodeResponseMap(inBuffer);
     if (!decodedMap)
-        return WTF::nullopt;
+        return std::nullopt;
     const auto& responseMap = decodedMap->getMap();
 
     auto it = responseMap.find(CBORValue(static_cast<int64_t>(ResponseKey::kPinToken)));
     if (it == responseMap.end() || !it->second.isByteString())
-        return WTF::nullopt;
+        return std::nullopt;
     const auto& encryptedToken = it->second.getByteString();
 
     auto tokenResult = CryptoAlgorithmAES_CBC::platformDecrypt({ }, sharedKey, encryptedToken, CryptoAlgorithmAES_CBC::Padding::No);
     if (tokenResult.hasException())
-        return WTF::nullopt;
+        return std::nullopt;
     auto token = tokenResult.releaseReturnValue();
 
     auto tokenKey = CryptoKeyHMAC::importRaw(token.size() * 8, CryptoAlgorithmIdentifier::SHA_256, WTFMove(token), true, CryptoKeyUsageSign);
@@ -254,7 +254,7 @@ Optional<TokenRequest> TokenRequest::tryCreate(const CString& pin, const CryptoK
     // 2. Use ECDH and SHA-256 to compute the shared AES-CBC key.
     auto sharedKeyResult = CryptoAlgorithmECDH::platformDeriveBits(downcast<CryptoKeyEC>(*keyPair.privateKey), peerKey);
     if (!sharedKeyResult)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
     crypto->addBytes(sharedKeyResult->data(), sharedKeyResult->size());

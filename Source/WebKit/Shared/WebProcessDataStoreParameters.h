@@ -85,68 +85,68 @@ Optional<WebProcessDataStoreParameters> WebProcessDataStoreParameters::decode(De
     Optional<PAL::SessionID> sessionID;
     decoder >> sessionID;
     if (!sessionID)
-        return WTF::nullopt;
+        return std::nullopt;
 
     String applicationCacheDirectory;
     if (!decoder.decode(applicationCacheDirectory))
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<SandboxExtension::Handle> applicationCacheDirectoryExtensionHandle;
     decoder >> applicationCacheDirectoryExtensionHandle;
     if (!applicationCacheDirectoryExtensionHandle)
-        return WTF::nullopt;
+        return std::nullopt;
 
     String applicationCacheFlatFileSubdirectoryName;
     if (!decoder.decode(applicationCacheFlatFileSubdirectoryName))
-        return WTF::nullopt;
+        return std::nullopt;
 
     String mediaCacheDirectory;
     if (!decoder.decode(mediaCacheDirectory))
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<SandboxExtension::Handle> mediaCacheDirectoryExtensionHandle;
     decoder >> mediaCacheDirectoryExtensionHandle;
     if (!mediaCacheDirectoryExtensionHandle)
-        return WTF::nullopt;
+        return std::nullopt;
 
     String mediaKeyStorageDirectory;
     if (!decoder.decode(mediaKeyStorageDirectory))
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<SandboxExtension::Handle> mediaKeyStorageDirectoryExtensionHandle;
     decoder >> mediaKeyStorageDirectoryExtensionHandle;
     if (!mediaKeyStorageDirectoryExtensionHandle)
-        return WTF::nullopt;
+        return std::nullopt;
 
     String javaScriptConfigurationDirectory;
     if (!decoder.decode(javaScriptConfigurationDirectory))
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<SandboxExtension::Handle> javaScriptConfigurationDirectoryExtensionHandle;
     decoder >> javaScriptConfigurationDirectoryExtensionHandle;
     if (!javaScriptConfigurationDirectoryExtensionHandle)
-        return WTF::nullopt;
+        return std::nullopt;
         
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
     Optional<WebCore::ThirdPartyCookieBlockingMode> thirdPartyCookieBlockingMode;
     decoder >> thirdPartyCookieBlockingMode;
     if (!thirdPartyCookieBlockingMode)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<HashSet<WebCore::RegistrableDomain>> domainsWithUserInteraction;
     decoder >> domainsWithUserInteraction;
     if (!domainsWithUserInteraction)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<HashMap<TopFrameDomain, SubResourceDomain>> domainsWithStorageAccessQuirk;
     decoder >> domainsWithStorageAccessQuirk;
     if (!domainsWithStorageAccessQuirk)
-        return WTF::nullopt;
+        return std::nullopt;
 #endif
 
     bool resourceLoadStatisticsEnabled = false;
     if (!decoder.decode(resourceLoadStatisticsEnabled))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return WebProcessDataStoreParameters {
         WTFMove(*sessionID),

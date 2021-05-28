@@ -71,7 +71,7 @@ void CtapHidDriver::Worker::write(HidConnection::DataSent sent)
     if (m_state != State::Write)
         return;
     if (sent != HidConnection::DataSent::Yes) {
-        m_responseMessage = WTF::nullopt;
+        m_responseMessage = std::nullopt;
         returnMessage();
         return;
     }
@@ -110,7 +110,7 @@ void CtapHidDriver::Worker::read(const Vector<uint8_t>& data)
     } else {
         if (!m_responseMessage->addContinuationPacket(data)) {
             LOG_ERROR("Couldn't parse a hid continuation packet.");
-            m_responseMessage = WTF::nullopt;
+            m_responseMessage = std::nullopt;
             returnMessage();
             return;
         }
@@ -141,8 +141,8 @@ void CtapHidDriver::Worker::reset()
 {
     m_connection->unregisterDataReceivedCallback();
     m_callback = nullptr;
-    m_responseMessage = WTF::nullopt;
-    m_requestMessage = WTF::nullopt;
+    m_responseMessage = std::nullopt;
+    m_requestMessage = std::nullopt;
     m_state = State::Idle;
 }
 

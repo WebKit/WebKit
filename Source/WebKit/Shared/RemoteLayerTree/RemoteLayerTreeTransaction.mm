@@ -72,27 +72,27 @@ auto RemoteLayerTreeTransaction::LayerCreationProperties::decode(IPC::Decoder& d
 {
     LayerCreationProperties result;
     if (!decoder.decode(result.layerID))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.type))
-        return WTF::nullopt;
+        return std::nullopt;
     
     // PlatformCALayerRemoteCustom
     if (!decoder.decode(result.hostingContextID))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.hostingDeviceScaleFactor))
-        return WTF::nullopt;
+        return std::nullopt;
     
 #if ENABLE(MODEL_ELEMENT)
     // PlatformCALayerRemoteModelHosting
     bool hasModel;
     if (!decoder.decode(hasModel))
-        return WTF::nullopt;
+        return std::nullopt;
     if (hasModel) {
         auto model = WebCore::Model::decode(decoder);
         if (!model)
-            return WTF::nullopt;
+            return std::nullopt;
         result.model = model;
     }
 #endif

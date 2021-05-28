@@ -95,7 +95,7 @@ private:
 
     ServiceWorkerIdentifier m_serviceWorkerIdentifier;
     Optional<ServiceWorkerJobDataIdentifier> m_jobDataIdentifier;
-    Optional<ServiceWorkerContextData> m_data; // Becomes WTF::nullopt after the ServiceWorkerGlobalScope has been created.
+    Optional<ServiceWorkerContextData> m_data; // Becomes std::nullopt after the ServiceWorkerGlobalScope has been created.
     WorkerObjectProxy& m_workerObjectProxy;
     bool m_doesHandleFetch { false };
 

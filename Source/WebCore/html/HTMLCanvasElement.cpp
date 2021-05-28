@@ -245,23 +245,23 @@ ExceptionOr<Optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::JSGlo
 
         if (m_context->is2d()) {
             if (!is2dType(contextId))
-                return Optional<RenderingContext> { WTF::nullopt };
+                return Optional<RenderingContext> { std::nullopt };
             return Optional<RenderingContext> { RefPtr<CanvasRenderingContext2D> { &downcast<CanvasRenderingContext2D>(*m_context) } };
         }
 
         if (m_context->isBitmapRenderer()) {
             if (!isBitmapRendererType(contextId))
-                return Optional<RenderingContext> { WTF::nullopt };
+                return Optional<RenderingContext> { std::nullopt };
             return Optional<RenderingContext> { RefPtr<ImageBitmapRenderingContext> { &downcast<ImageBitmapRenderingContext>(*m_context) } };
         }
 
 #if ENABLE(WEBGL)
         if (m_context->isWebGL()) {
             if (!isWebGLType(contextId))
-                return Optional<RenderingContext> { WTF::nullopt };
+                return Optional<RenderingContext> { std::nullopt };
             auto version = toWebGLVersion(contextId);
             if ((version == WebGLVersion::WebGL1) != m_context->isWebGL1())
-                return Optional<RenderingContext> { WTF::nullopt };
+                return Optional<RenderingContext> { std::nullopt };
             if (is<WebGLRenderingContext>(*m_context))
                 return Optional<RenderingContext> { RefPtr<WebGLRenderingContext> { &downcast<WebGLRenderingContext>(*m_context) } };
 #if ENABLE(WEBGL2)
@@ -274,13 +274,13 @@ ExceptionOr<Optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::JSGlo
 #if ENABLE(WEBGPU)
         if (m_context->isWebGPU()) {
             if (!isWebGPUType(contextId))
-                return Optional<RenderingContext> { WTF::nullopt };
+                return Optional<RenderingContext> { std::nullopt };
             return Optional<RenderingContext> { RefPtr<GPUCanvasContext> { &downcast<GPUCanvasContext>(*m_context) } };
         }
 #endif
 
         ASSERT_NOT_REACHED();
-        return Optional<RenderingContext> { WTF::nullopt };
+        return Optional<RenderingContext> { std::nullopt };
     }
 
     if (is2dType(contextId)) {
@@ -290,7 +290,7 @@ ExceptionOr<Optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::JSGlo
 
         auto context = createContext2d(contextId, WTFMove(settings));
         if (!context)
-            return Optional<RenderingContext> { WTF::nullopt };
+            return Optional<RenderingContext> { std::nullopt };
         return Optional<RenderingContext> { RefPtr<CanvasRenderingContext2D> { context } };
     }
 
@@ -301,7 +301,7 @@ ExceptionOr<Optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::JSGlo
 
         auto context = createContextBitmapRenderer(contextId, WTFMove(settings));
         if (!context)
-            return Optional<RenderingContext> { WTF::nullopt };
+            return Optional<RenderingContext> { std::nullopt };
         return Optional<RenderingContext> { RefPtr<ImageBitmapRenderingContext> { context } };
     }
 
@@ -313,7 +313,7 @@ ExceptionOr<Optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::JSGlo
 
         auto context = createContextWebGL(toWebGLVersion(contextId), WTFMove(attributes));
         if (!context)
-            return Optional<RenderingContext> { WTF::nullopt };
+            return Optional<RenderingContext> { std::nullopt };
 
         if (is<WebGLRenderingContext>(*context))
             return Optional<RenderingContext> { RefPtr<WebGLRenderingContext> { &downcast<WebGLRenderingContext>(*context) } };
@@ -328,12 +328,12 @@ ExceptionOr<Optional<RenderingContext>> HTMLCanvasElement::getContext(JSC::JSGlo
     if (isWebGPUType(contextId)) {
         auto context = createContextWebGPU(contextId);
         if (!context)
-            return Optional<RenderingContext> { WTF::nullopt };
+            return Optional<RenderingContext> { std::nullopt };
         return Optional<RenderingContext> { RefPtr<GPUCanvasContext> { context } };
     }
 #endif
 
-    return Optional<RenderingContext> { WTF::nullopt };
+    return Optional<RenderingContext> { std::nullopt };
 }
 
 CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type)
@@ -570,7 +570,7 @@ void HTMLCanvasElement::didDraw(const Optional<FloatRect>& rect)
     clearCopiedImage();
     
     if (!rect) {
-        notifyObserversCanvasChanged(WTF::nullopt);
+        notifyObserversCanvasChanged(std::nullopt);
         return;
     }
 
@@ -709,11 +709,11 @@ static String toEncodingMimeType(const String& mimeType)
 static Optional<double> qualityFromJSValue(JSC::JSValue qualityValue)
 {
     if (!qualityValue.isNumber())
-        return WTF::nullopt;
+        return std::nullopt;
 
     double qualityNumber = qualityValue.asNumber();
     if (qualityNumber < 0 || qualityNumber > 1)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return qualityNumber;
 }
@@ -950,7 +950,7 @@ void HTMLCanvasElement::createImageBuffer() const
 
     auto renderingMode = shouldAccelerate(size()) ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
     // FIXME: Add a new setting for DisplayList drawing on canvas.
-    auto useDisplayList = m_usesDisplayListDrawing.valueOr(document().settings().displayListDrawingEnabled()) ? ShouldUseDisplayList::Yes : ShouldUseDisplayList::No;
+    auto useDisplayList = m_usesDisplayListDrawing.value_or(document().settings().displayListDrawingEnabled()) ? ShouldUseDisplayList::Yes : ShouldUseDisplayList::No;
 
     auto [colorSpace, pixelFormat] = [&] {
         if (m_context)

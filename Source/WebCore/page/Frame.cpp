@@ -851,7 +851,7 @@ Optional<SimpleRange> Frame::rangeForPoint(const IntPoint& framePoint)
 
     auto containerText = position.deepEquivalent().containerText();
     if (!containerText || !containerText->renderer() || containerText->renderer()->style().userSelect() == UserSelect::None)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (auto previousCharacterRange = makeSimpleRange(position.previous(), position)) {
         if (editor().firstRectForRange(*previousCharacterRange).contains(framePoint))
@@ -863,7 +863,7 @@ Optional<SimpleRange> Frame::rangeForPoint(const IntPoint& framePoint)
             return *nextCharacterRange;
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void Frame::createView(const IntSize& viewportSize, const Optional<Color>& backgroundColor,

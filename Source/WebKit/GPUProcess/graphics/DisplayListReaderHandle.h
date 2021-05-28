@@ -61,7 +61,7 @@ public:
         if (static_cast<SharedDisplayListHandle::WaitingStatus>(previousStatus) == SharedDisplayListHandle::WaitingStatus::Resuming)
             return { header.resumeReadingInfo };
 
-        return { WTF::nullopt };
+        return { std::nullopt };
     }
 
 private:

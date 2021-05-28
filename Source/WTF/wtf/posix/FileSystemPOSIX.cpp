@@ -159,7 +159,7 @@ Optional<uint64_t> fileSize(PlatformFileHandle handle)
 {
     struct stat fileInfo;
     if (fstat(handle, &fileInfo))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return fileInfo.st_size;
 }
@@ -170,17 +170,17 @@ Optional<WallTime> fileCreationTime(const String& path)
     CString fsRep = fileSystemRepresentation(path);
 
     if (!fsRep.data() || fsRep.data()[0] == '\0')
-        return WTF::nullopt;
+        return std::nullopt;
 
     struct stat fileInfo;
 
     if (stat(fsRep.data(), &fileInfo))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return WallTime::fromRawSeconds(fileInfo.st_birthtime);
 #else
     UNUSED_PARAM(path);
-    return WTF::nullopt;
+    return std::nullopt;
 #endif
 }
 
@@ -230,7 +230,7 @@ Optional<int32_t> getFileDeviceId(const CString& fsFile)
 {
     struct stat fileStat;
     if (stat(fsFile.data(), &fileStat) == -1)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return fileStat.st_dev;
 }

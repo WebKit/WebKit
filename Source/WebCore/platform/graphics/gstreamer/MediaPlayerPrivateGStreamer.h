@@ -556,7 +556,7 @@ private:
     mutable uint64_t m_readPositionAtLastDidLoadingProgress { 0 };
 
     HashSet<RefPtr<WebCore::SecurityOrigin>> m_origins;
-    Optional<bool> m_hasTaintedOrigin { WTF::nullopt };
+    Optional<bool> m_hasTaintedOrigin { std::nullopt };
 
     GRefPtr<GstElement> m_fpsSink { nullptr };
     uint64_t m_totalVideoFrames { 0 };

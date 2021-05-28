@@ -78,17 +78,17 @@ Optional<TextCheckingControllerProxy::RangeAndOffset> TextCheckingControllerProx
 
     auto root = frameSelection.rootEditableElementOrDocumentElement();
     if (!root)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto selectionLiveRange = selection.toNormalizedRange();
     if (!selectionLiveRange)
-        return WTF::nullopt;
+        return std::nullopt;
     auto selectionRange = SimpleRange { *selectionLiveRange };
 
     auto scope = makeRangeSelectingNodeContents(*root);
     int64_t adjustedStartLocation = characterCount({ scope.start, selectionRange.start }) + offset;
     if (adjustedStartLocation < 0)
-        return WTF::nullopt;
+        return std::nullopt;
     auto adjustedSelectionCharacterRange = CharacterRange { static_cast<uint64_t>(adjustedStartLocation), length };
 
     return { { resolveCharacterRange(scope, adjustedSelectionCharacterRange), adjustedSelectionCharacterRange.location } };

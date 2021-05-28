@@ -105,7 +105,7 @@ void SWServerToContextConnection::claim(ServiceWorkerIdentifier serviceWorkerIde
 {
     auto* worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier);
     auto* server = worker ? worker->server() : nullptr;
-    callback(server ? server->claim(*worker) : WTF::nullopt);
+    callback(server ? server->claim(*worker) : std::nullopt);
 }
 
 void SWServerToContextConnection::skipWaiting(ServiceWorkerIdentifier serviceWorkerIdentifier, CompletionHandler<void()>&& completionHandler)

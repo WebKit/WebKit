@@ -136,7 +136,7 @@ Optional<String> MixedContentChecker::checkForMixedContentInFrameTree(const Fram
         document = frame->document();
     }
     
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace WebCore

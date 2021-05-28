@@ -84,14 +84,14 @@ public:
     struct UnicodeRange;
     
     // Optional return values to represent default string for members of FontFace.h
-    const Optional<CSSValueList*> families() const { return m_status == Status::Failure ? WTF::nullopt : static_cast<Optional<CSSValueList*>>(m_families.get()); }
-    Optional<FontSelectionRange> weight() const { return m_status == Status::Failure ? WTF::nullopt : static_cast<Optional<FontSelectionRange>>(m_fontSelectionCapabilities.computeWeight()); }
-    Optional<FontSelectionRange> stretch() const { return m_status == Status::Failure ? WTF::nullopt : static_cast<Optional<FontSelectionRange>>(m_fontSelectionCapabilities.computeWidth()); }
-    Optional<FontSelectionRange> italic() const { return m_status == Status::Failure ? WTF::nullopt : static_cast<Optional<FontSelectionRange>>(m_fontSelectionCapabilities.computeSlope()); }
-    Optional<FontSelectionCapabilities> fontSelectionCapabilities() const { return m_status == Status::Failure ? WTF::nullopt : static_cast<Optional<FontSelectionCapabilities>>(m_fontSelectionCapabilities.computeFontSelectionCapabilities()); }
-    const Optional<Vector<UnicodeRange>> ranges() const { return m_status == Status::Failure ? WTF::nullopt : static_cast<Optional<Vector<UnicodeRange>>>(m_ranges); }
-    const Optional<FontFeatureSettings> featureSettings() const { return m_status == Status::Failure ? WTF::nullopt : static_cast<Optional<FontFeatureSettings>>(m_featureSettings); }
-    Optional<FontLoadingBehavior> loadingBehavior() const { return m_status == Status::Failure ? WTF::nullopt :  static_cast<Optional<FontLoadingBehavior>>(m_loadingBehavior); }
+    const Optional<CSSValueList*> families() const { return m_status == Status::Failure ? std::nullopt : static_cast<Optional<CSSValueList*>>(m_families.get()); }
+    Optional<FontSelectionRange> weight() const { return m_status == Status::Failure ? std::nullopt : static_cast<Optional<FontSelectionRange>>(m_fontSelectionCapabilities.computeWeight()); }
+    Optional<FontSelectionRange> stretch() const { return m_status == Status::Failure ? std::nullopt : static_cast<Optional<FontSelectionRange>>(m_fontSelectionCapabilities.computeWidth()); }
+    Optional<FontSelectionRange> italic() const { return m_status == Status::Failure ? std::nullopt : static_cast<Optional<FontSelectionRange>>(m_fontSelectionCapabilities.computeSlope()); }
+    Optional<FontSelectionCapabilities> fontSelectionCapabilities() const { return m_status == Status::Failure ? std::nullopt : static_cast<Optional<FontSelectionCapabilities>>(m_fontSelectionCapabilities.computeFontSelectionCapabilities()); }
+    const Optional<Vector<UnicodeRange>> ranges() const { return m_status == Status::Failure ? std::nullopt : static_cast<Optional<Vector<UnicodeRange>>>(m_ranges); }
+    const Optional<FontFeatureSettings> featureSettings() const { return m_status == Status::Failure ? std::nullopt : static_cast<Optional<FontFeatureSettings>>(m_featureSettings); }
+    Optional<FontLoadingBehavior> loadingBehavior() const { return m_status == Status::Failure ? std::nullopt :  static_cast<Optional<FontLoadingBehavior>>(m_loadingBehavior); }
     void setWeight(FontSelectionRange weight) { m_fontSelectionCapabilities.weight = weight; }
     void setStretch(FontSelectionRange stretch) { m_fontSelectionCapabilities.width = stretch; }
     void setStyle(FontSelectionRange italic) { m_fontSelectionCapabilities.slope = italic; }

@@ -340,7 +340,7 @@ public:
 
     // The position of the layer (the location of its top-left corner in its parent)
     const FloatPoint& position() const { return m_position; }
-    virtual void setPosition(const FloatPoint& p) { m_approximatePosition = WTF::nullopt; m_position = p; }
+    virtual void setPosition(const FloatPoint& p) { m_approximatePosition = std::nullopt; m_position = p; }
 
     // approximatePosition, if set, overrides position() and is used during coverage rect computation.
     FloatPoint approximatePosition() const { return m_approximatePosition ? m_approximatePosition.value() : m_position; }

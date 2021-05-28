@@ -73,59 +73,59 @@ struct RemoteMediaPlayerProxyConfiguration {
         Optional<String> referrer;
         decoder >> referrer;
         if (!referrer)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<String> userAgent;
         decoder >> userAgent;
         if (!userAgent)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<String> sourceApplicationIdentifier;
         decoder >> sourceApplicationIdentifier;
         if (!sourceApplicationIdentifier)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<String> networkInterfaceName;
         decoder >> networkInterfaceName;
         if (!networkInterfaceName)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<Vector<WebCore::ContentType>> mediaContentTypesRequiringHardwareSupport;
         decoder >> mediaContentTypesRequiringHardwareSupport;
         if (!mediaContentTypesRequiringHardwareSupport)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<Vector<String>> preferredAudioCharacteristics;
         decoder >> preferredAudioCharacteristics;
         if (!preferredAudioCharacteristics)
-            return WTF::nullopt;
+            return std::nullopt;
 
 #if ENABLE(AVF_CAPTIONS)
         Optional<Vector<WebCore::PlatformTextTrackData>> outOfBandTrackData;
         decoder >> outOfBandTrackData;
         if (!outOfBandTrackData)
-            return WTF::nullopt;
+            return std::nullopt;
 #endif
 
         Optional<WebCore::SecurityOriginData> documentSecurityOrigin;
         decoder >> documentSecurityOrigin;
         if (!documentSecurityOrigin)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<uint64_t> logIdentifier;
         decoder >> logIdentifier;
         if (!logIdentifier)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> shouldUsePersistentCache;
         decoder >> shouldUsePersistentCache;
         if (!shouldUsePersistentCache)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> isVideo;
         decoder >> isVideo;
         if (!isVideo)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{
             WTFMove(*referrer),

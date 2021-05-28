@@ -42,11 +42,11 @@ static Optional<Vector<uint8_t>> gcryptSign(gcry_sexp_t keySexp, const Vector<ui
     {
         auto digestAlgorithm = hashCryptoDigestAlgorithm(hashAlgorithmIdentifier);
         if (!digestAlgorithm)
-            return WTF::nullopt;
+            return std::nullopt;
 
         auto digest = PAL::CryptoDigest::create(*digestAlgorithm);
         if (!digest)
-            return WTF::nullopt;
+            return std::nullopt;
 
         digest->addBytes(data.data(), data.size());
         dataHash = digest->computeHash();
@@ -57,13 +57,13 @@ static Optional<Vector<uint8_t>> gcryptSign(gcry_sexp_t keySexp, const Vector<ui
     {
         auto shaAlgorithm = hashAlgorithmName(hashAlgorithmIdentifier);
         if (!shaAlgorithm)
-            return WTF::nullopt;
+            return std::nullopt;
 
         gcry_error_t error = gcry_sexp_build(&dataSexp, nullptr, "(data(flags pkcs1)(hash %s %b))",
             *shaAlgorithm, dataHash.size(), dataHash.data());
         if (error != GPG_ERR_NO_ERROR) {
             PAL::GCrypt::logError(error);
-            return WTF::nullopt;
+            return std::nullopt;
         }
     }
 
@@ -75,13 +75,13 @@ static Optional<Vector<uint8_t>> gcryptSign(gcry_sexp_t keySexp, const Vector<ui
     gcry_error_t error = gcry_pk_sign(&signatureSexp, dataSexp, keySexp);
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     // Return MPI data of the embedded s integer.
     PAL::GCrypt::Handle<gcry_sexp_t> sSexp(gcry_sexp_find_token(signatureSexp, "s", 0));
     if (!sSexp)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return mpiZeroPrefixedData(sSexp, keySizeInBytes);
 }
@@ -93,11 +93,11 @@ static Optional<bool> gcryptVerify(gcry_sexp_t keySexp, const Vector<uint8_t>& s
     {
         auto digestAlgorithm = hashCryptoDigestAlgorithm(hashAlgorithmIdentifier);
         if (!digestAlgorithm)
-            return WTF::nullopt;
+            return std::nullopt;
 
         auto digest = PAL::CryptoDigest::create(*digestAlgorithm);
         if (!digest)
-            return WTF::nullopt;
+            return std::nullopt;
 
         digest->addBytes(data.data(), data.size());
         dataHash = digest->computeHash();
@@ -109,7 +109,7 @@ static Optional<bool> gcryptVerify(gcry_sexp_t keySexp, const Vector<uint8_t>& s
         signature.size(), signature.data());
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     // Construct the data s-expression that contains PKCS#1-padded hashed data.
@@ -117,13 +117,13 @@ static Optional<bool> gcryptVerify(gcry_sexp_t keySexp, const Vector<uint8_t>& s
     {
         auto shaAlgorithm = hashAlgorithmName(hashAlgorithmIdentifier);
         if (!shaAlgorithm)
-            return WTF::nullopt;
+            return std::nullopt;
 
         error = gcry_sexp_build(&dataSexp, nullptr, "(data(flags pkcs1)(hash %s %b))",
             *shaAlgorithm, dataHash.size(), dataHash.data());
         if (error != GPG_ERR_NO_ERROR) {
             PAL::GCrypt::logError(error);
-            return WTF::nullopt;
+            return std::nullopt;
         }
     }
 

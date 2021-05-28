@@ -582,7 +582,7 @@ public:
         m_pattern.m_userCharacterClasses.append(WTFMove(newCharacterClass));
     }
 
-    void atomParenthesesSubpatternBegin(bool capture = true, Optional<String> optGroupName = WTF::nullopt)
+    void atomParenthesesSubpatternBegin(bool capture = true, Optional<String> optGroupName = std::nullopt)
     {
         unsigned subpatternId = m_pattern.m_numSubpatterns + 1;
         if (capture) {

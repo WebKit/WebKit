@@ -72,7 +72,7 @@ static bool isValidSimpleColor(StringView string)
 static Optional<SRGBA<uint8_t>> parseSimpleColorValue(StringView string)
 {
     if (!isValidSimpleColor(string))
-        return WTF::nullopt;
+        return std::nullopt;
     return { { toASCIIHexValue(string[1], string[2]), toASCIIHexValue(string[3], string[4]), toASCIIHexValue(string[5], string[6]) } };
 }
 

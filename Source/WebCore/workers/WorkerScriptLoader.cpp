@@ -67,14 +67,14 @@ Optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionContext
             m_script = scriptResource->script;
             m_responseURL = scriptResource->responseURL;
             m_responseMIMEType = scriptResource->mimeType;
-            return WTF::nullopt;
+            return std::nullopt;
         }
     }
 #endif
 
     std::unique_ptr<ResourceRequest> request(createResourceRequest(initiatorIdentifier));
     if (!request)
-        return WTF::nullopt;
+        return std::nullopt;
 
     ASSERT_WITH_SECURITY_IMPLICATION(is<WorkerGlobalScope>(scriptExecutionContext));
 
@@ -108,7 +108,7 @@ Optional<Exception> WorkerScriptLoader::loadSynchronously(ScriptExecutionContext
         downcast<ServiceWorkerGlobalScope>(workerGlobalScope).setScriptResource(url, ServiceWorkerContextData::ImportedScript { script(), m_responseURL, m_responseMIMEType });
     }
 #endif
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecutionContext, ResourceRequest&& scriptRequest, FetchOptions&& fetchOptions, ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement, ServiceWorkersMode serviceWorkerMode, WorkerScriptLoaderClient& client, String&& taskMode)

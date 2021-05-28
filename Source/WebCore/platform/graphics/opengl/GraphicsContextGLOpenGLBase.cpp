@@ -66,7 +66,7 @@ Optional<PixelBuffer> GraphicsContextGLOpenGL::readPixelsForPaintResults()
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
     auto pixelBuffer = PixelBuffer::tryCreate(format, getInternalFramebufferSize());
     if (!pixelBuffer)
-        return WTF::nullopt;
+        return std::nullopt;
 
     GLint packAlignment = 4;
     bool mustRestorePackAlignment = false;

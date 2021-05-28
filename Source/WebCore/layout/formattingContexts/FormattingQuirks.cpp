@@ -62,9 +62,9 @@ LayoutUnit FormattingQuirks::heightValueOfNearestContainingBlockWithFixedHeight(
             auto verticalMargin = formattingGeometry.computedVerticalMargin(*containingBlock, horizontalConstraints);
 
             auto& boxGeometry = formattingContext.geometryForBox(*containingBlock, FormattingContext::EscapeReason::FindFixedHeightAncestorQuirk);
-            auto verticalPadding = boxGeometry.paddingTop().valueOr(0) + boxGeometry.paddingBottom().valueOr(0);
+            auto verticalPadding = boxGeometry.paddingTop().value_or(0) + boxGeometry.paddingBottom().value_or(0);
             auto verticalBorder = boxGeometry.borderTop() + boxGeometry.borderBottom();
-            bodyAndDocumentVerticalMarginPaddingAndBorder += verticalMargin.before.valueOr(0) + verticalMargin.after.valueOr(0) + verticalPadding + verticalBorder;
+            bodyAndDocumentVerticalMarginPaddingAndBorder += verticalMargin.before.value_or(0) + verticalMargin.after.value_or(0) + verticalPadding + verticalBorder;
         }
 
         if (is<InitialContainingBlock>(*containingBlock))

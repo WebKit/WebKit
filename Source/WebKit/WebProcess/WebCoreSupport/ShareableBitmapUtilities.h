@@ -38,6 +38,6 @@ namespace WebKit {
 class ShareableBitmap;
 
 enum class AllowAnimatedImages : bool { No, Yes };
-RefPtr<ShareableBitmap> createShareableBitmap(WebCore::RenderImage&, Optional<WebCore::FloatSize> screenSizeInPixels = WTF::nullopt, AllowAnimatedImages = AllowAnimatedImages::Yes);
+RefPtr<ShareableBitmap> createShareableBitmap(WebCore::RenderImage&, Optional<WebCore::FloatSize> screenSizeInPixels = std::nullopt, AllowAnimatedImages = AllowAnimatedImages::Yes);
 
 };

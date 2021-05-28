@@ -3121,7 +3121,7 @@ public:
             return PositiveOrZero;
             break;
         default:
-            return WTF::nullopt;
+            return std::nullopt;
         }
     }
 

@@ -214,12 +214,12 @@ static Optional<uint64_t> convertToUint64(JSC::JSValue jsValue)
     if (jsValue.isNumber()) {
         double value = jsValue.asNumber();
         if (value < 0 || trunc(value) != value)
-            return WTF::nullopt;
+            return std::nullopt;
         return value;
     }
     if (jsValue.isBigInt())
         return JSC::JSBigInt::toBigUInt64(jsValue);
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 JSObjectRef JSIPCSemaphore::createJSWrapper(JSContextRef context)
@@ -748,10 +748,10 @@ Optional<ObjectIdentifier<ObjectIdentifierType>> getObjectIdentifierFromProperty
 {
     auto jsPropertyValue = jsObject->get(globalObject, JSC::Identifier::fromString(globalObject->vm(), propertyName));
     if (scope.exception())
-        return WTF::nullopt;
+        return std::nullopt;
     auto number = convertToUint64(jsPropertyValue);
     if (!number)
-        return WTF::nullopt;
+        return std::nullopt;
     return makeObjectIdentifier<ObjectIdentifierType>(*number);
 }
 

@@ -1563,7 +1563,7 @@ private:
         write(file.url().string());
         write(file.type());
         write(file.name());
-        write(static_cast<double>(file.lastModifiedOverride().valueOr(-1)));
+        write(static_cast<double>(file.lastModifiedOverride().value_or(-1)));
     }
 
     void write(PredefinedColorSpace colorSpace)
@@ -3037,13 +3037,13 @@ private:
     {
         DOMPointInit point;
         if (!read(point.x))
-            return WTF::nullopt;
+            return std::nullopt;
         if (!read(point.y))
-            return WTF::nullopt;
+            return std::nullopt;
         if (!read(point.z))
-            return WTF::nullopt;
+            return std::nullopt;
         if (!read(point.w))
-            return WTF::nullopt;
+            return std::nullopt;
 
         return point;
     }

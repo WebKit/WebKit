@@ -245,7 +245,7 @@ MediaSessionHelperiOS::MediaSessionHelperiOS()
     END_BLOCK_OBJC_EXCEPTIONS
 
 #if HAVE(CELESTIAL)
-    updateCarPlayIsConnected(WTF::nullopt);
+    updateCarPlayIsConnected(std::nullopt);
 #endif
 }
 
@@ -299,7 +299,7 @@ void MediaSessionHelperiOS::stopMonitoringWirelessRoutesInternal()
 #if HAVE(CELESTIAL)
 void MediaSessionHelperiOS::mediaServerConnectionDied()
 {
-    updateCarPlayIsConnected(WTF::nullopt);
+    updateCarPlayIsConnected(std::nullopt);
 
     // FIXME: Remove these once rdar://27662716 lands
     if (canLoadAVSystemController_CarPlayIsConnectedDidChangeNotification() && canLoadAVSystemController_SubscribeToNotificationsAttribute())

@@ -415,7 +415,7 @@ public:
 #endif
 
     void setReferrerPolicy(ReferrerPolicy);
-    ReferrerPolicy referrerPolicy() const final { return m_referrerPolicy.valueOr(ReferrerPolicy::NoReferrerWhenDowngrade); }
+    ReferrerPolicy referrerPolicy() const final { return m_referrerPolicy.value_or(ReferrerPolicy::NoReferrerWhenDowngrade); }
 
     bool isAlwaysOnLoggingAllowed() const;
 

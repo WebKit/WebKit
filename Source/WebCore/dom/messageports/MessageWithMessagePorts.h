@@ -59,10 +59,10 @@ Optional<MessageWithMessagePorts> MessageWithMessagePorts::decode(Decoder& decod
 
     result.message = SerializedScriptValue::decode(decoder);
     if (!result.message)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.transferredPorts))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return result;
 }

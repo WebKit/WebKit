@@ -123,17 +123,17 @@ Optional<IDBDatabaseIdentifier> IDBDatabaseIdentifier::decode(Decoder& decoder)
     Optional<String> databaseName;
     decoder >> databaseName;
     if (!databaseName)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<ClientOrigin> origin;
     decoder >> origin;
     if (!origin)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> isTransient;
     decoder >> isTransient;
     if (!isTransient)
-        return WTF::nullopt;
+        return std::nullopt;
 
     IDBDatabaseIdentifier identifier;
     identifier.m_databaseName = WTFMove(*databaseName); // FIXME: When decoding from IPC, databaseName can be null, and the non-empty constructor asserts that this is not the case.

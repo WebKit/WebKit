@@ -43,12 +43,12 @@ IntrinsicWidthConstraints FlexFormattingGeometry::intrinsicWidthConstraints(cons
 {
     auto fixedMarginBorderAndPadding = [&](auto& layoutBox) {
         auto& style = layoutBox.style();
-        return fixedValue(style.marginStart()).valueOr(0)
+        return fixedValue(style.marginStart()).value_or(0)
             + LayoutUnit { style.borderLeftWidth() }
-            + fixedValue(style.paddingLeft()).valueOr(0)
-            + fixedValue(style.paddingRight()).valueOr(0)
+            + fixedValue(style.paddingLeft()).value_or(0)
+            + fixedValue(style.paddingRight()).value_or(0)
             + LayoutUnit { style.borderRightWidth() }
-            + fixedValue(style.marginEnd()).valueOr(0);
+            + fixedValue(style.marginEnd()).value_or(0);
     };
 
     auto computedIntrinsicWidthConstraints = [&]() -> IntrinsicWidthConstraints {

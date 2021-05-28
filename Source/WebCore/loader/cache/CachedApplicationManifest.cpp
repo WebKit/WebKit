@@ -62,7 +62,7 @@ String CachedApplicationManifest::encoding() const
 Optional<ApplicationManifest> CachedApplicationManifest::process(const URL& manifestURL, const URL& documentURL, Document* document)
 {
     if (!m_text)
-        return WTF::nullopt;
+        return std::nullopt;
     if (document)
         return ApplicationManifestParser::parse(*document, *m_text, manifestURL, documentURL);
     return ApplicationManifestParser::parse(*m_text, manifestURL, documentURL);

@@ -213,7 +213,7 @@ void DisplayLink::notifyObserversDisplayWasRefreshed()
     auto maxFramesPerSecond = [](const Vector<ObserverInfo>& observers) {
         Optional<WebCore::FramesPerSecond> observersMaxFramesPerSecond;
         for (const auto& observer : observers)
-            observersMaxFramesPerSecond = std::max(observersMaxFramesPerSecond.valueOr(0), observer.preferredFramesPerSecond);
+            observersMaxFramesPerSecond = std::max(observersMaxFramesPerSecond.value_or(0), observer.preferredFramesPerSecond);
         return observersMaxFramesPerSecond;
     };
 
@@ -225,7 +225,7 @@ void DisplayLink::notifyObserversDisplayWasRefreshed()
         anyConnectionHadObservers = true;
 
         auto observersMaxFramesPerSecond = maxFramesPerSecond(connectionInfo.observers);
-        auto mainThreadWantsUpdate = m_currentUpdate.relevantForUpdateFrequency(observersMaxFramesPerSecond.valueOr(WebCore::FullSpeedFramesPerSecond));
+        auto mainThreadWantsUpdate = m_currentUpdate.relevantForUpdateFrequency(observersMaxFramesPerSecond.value_or(WebCore::FullSpeedFramesPerSecond));
 
         LOG_WITH_STREAM(DisplayLink, stream << "[UI ] DisplayLink " << this << " for display " << m_displayID << " (display fps " << m_displayNominalFramesPerSecond << ") update " << m_currentUpdate << " " << connectionInfo.observers.size()
             << " observers, on background queue " << shouldSendIPCOnBackgroundQueue << " maxFramesPerSecond " << observersMaxFramesPerSecond << " full speed clients " << connectionInfo.fullSpeedUpdatesClientCount << " relevant " << mainThreadWantsUpdate);

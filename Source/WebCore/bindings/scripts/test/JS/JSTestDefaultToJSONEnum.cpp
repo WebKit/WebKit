@@ -53,7 +53,7 @@ template<> Optional<TestDefaultToJSONEnum> parseEnumeration<TestDefaultToJSONEnu
         return TestDefaultToJSONEnum::EnumValue1;
     if (stringValue == "EnumValue2")
         return TestDefaultToJSONEnum::EnumValue2;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<> const char* expectedEnumerationValues<TestDefaultToJSONEnum>()

@@ -369,7 +369,7 @@ Optional<IDBGetResult> IDBCursor::iterateWithPrefetchedRecords(unsigned count, u
 {
     unsigned step = count > 0 ? count : 1;
     if (step > m_prefetchedRecords.size() || m_prefetchOperationID <= lastWriteOperationID)
-        return WTF::nullopt;
+        return std::nullopt;
 
     while (--step)
         m_prefetchedRecords.removeFirst();

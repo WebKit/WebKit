@@ -57,17 +57,17 @@ struct ServiceWorkerContextData {
             Optional<ScriptBuffer> script;
             decoder >> script;
             if (!script)
-                return WTF::nullopt;
+                return std::nullopt;
 
             Optional<URL> responseURL;
             decoder >> responseURL;
             if (!responseURL)
-                return WTF::nullopt;
+                return std::nullopt;
 
             Optional<String> mimeType;
             decoder >> mimeType;
             if (!mimeType)
-                return WTF::nullopt;
+                return std::nullopt;
 
             return {{
                 WTFMove(*script),
@@ -111,54 +111,54 @@ Optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder& dec
     Optional<Optional<ServiceWorkerJobDataIdentifier>> jobDataIdentifier;
     decoder >> jobDataIdentifier;
     if (!jobDataIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<ServiceWorkerRegistrationData> registration;
     decoder >> registration;
     if (!registration)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto serviceWorkerIdentifier = ServiceWorkerIdentifier::decode(decoder);
     if (!serviceWorkerIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<ScriptBuffer> script;
     decoder >> script;
     if (!script)
-        return WTF::nullopt;
+        return std::nullopt;
 
     ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
     if (!decoder.decode(contentSecurityPolicy))
-        return WTF::nullopt;
+        return std::nullopt;
 
     String referrerPolicy;
     if (!decoder.decode(referrerPolicy))
-        return WTF::nullopt;
+        return std::nullopt;
 
     URL scriptURL;
     if (!decoder.decode(scriptURL))
-        return WTF::nullopt;
+        return std::nullopt;
 
     WorkerType workerType;
     if (!decoder.decode(workerType))
-        return WTF::nullopt;
+        return std::nullopt;
 
     bool loadedFromDisk;
     if (!decoder.decode(loadedFromDisk))
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<LastNavigationWasAppBound> lastNavigationWasAppBound;
     if (!decoder.decode(lastNavigationWasAppBound))
-        return WTF::nullopt;
+        return std::nullopt;
 
     HashMap<URL, ImportedScript> scriptResourceMap;
     if (!decoder.decode(scriptResourceMap))
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<CertificateInfo> certificateInfo;
     decoder >> certificateInfo;
     if (!certificateInfo)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{
         WTFMove(*jobDataIdentifier),

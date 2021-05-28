@@ -714,7 +714,7 @@ Optional<ASCIILiteral> FontCache::platformAlternateFamilyName(const String& fami
             return "Microsoft Sans Serif"_s;
         break;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 }

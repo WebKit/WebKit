@@ -32,7 +32,7 @@ namespace WebCore {
 
 int SVGPropertyTraits<int>::fromString(const String& string)
 {
-    return parseInteger<int>(string).valueOr(0);
+    return parseInteger<int>(string).value_or(0);
 }
 
 }

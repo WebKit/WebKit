@@ -62,22 +62,22 @@ Optional<GPUProcessWakeupMessageArguments> GPUProcessWakeupMessageArguments::dec
     Optional<WebCore::DisplayList::ItemBufferIdentifier> itemBufferIdentifier;
     decoder >> itemBufferIdentifier;
     if (!itemBufferIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<uint64_t> offset;
     decoder >> offset;
     if (!offset)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<WebCore::RenderingResourceIdentifier> destinationImageBufferIdentifier;
     decoder >> destinationImageBufferIdentifier;
     if (!destinationImageBufferIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<GPUProcessWakeupReason> reason;
     decoder >> reason;
     if (!reason)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *itemBufferIdentifier, *offset, *destinationImageBufferIdentifier, *reason }};
 }

@@ -94,204 +94,204 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     Optional<PAL::SessionID> sessionID;
     decoder >> sessionID;
     if (!sessionID)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<String> boundInterfaceIdentifier;
     decoder >> boundInterfaceIdentifier;
     if (!boundInterfaceIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<AllowsCellularAccess> allowsCellularAccess;
     decoder >> allowsCellularAccess;
     if (!allowsCellularAccess)
-        return WTF::nullopt;
+        return std::nullopt;
     
 #if PLATFORM(COCOA)
     RetainPtr<CFDictionaryRef> proxyConfiguration;
     if (!decoder.decode(proxyConfiguration))
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<String> sourceApplicationBundleIdentifier;
     decoder >> sourceApplicationBundleIdentifier;
     if (!sourceApplicationBundleIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<String> sourceApplicationSecondaryIdentifier;
     decoder >> sourceApplicationSecondaryIdentifier;
     if (!sourceApplicationSecondaryIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<String> attributedBundleIdentifier;
     decoder >> attributedBundleIdentifier;
     if (!attributedBundleIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<bool> shouldLogCookieInformation;
     decoder >> shouldLogCookieInformation;
     if (!shouldLogCookieInformation)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<URL> httpProxy;
     decoder >> httpProxy;
     if (!httpProxy)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<URL> httpsProxy;
     decoder >> httpsProxy;
     if (!httpsProxy)
-        return WTF::nullopt;
+        return std::nullopt;
 #endif
 
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
     Optional<String> alternativeServiceDirectory;
     decoder >> alternativeServiceDirectory;
     if (!alternativeServiceDirectory)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<SandboxExtension::Handle> alternativeServiceDirectoryExtensionHandle;
     decoder >> alternativeServiceDirectoryExtensionHandle;
     if (!alternativeServiceDirectoryExtensionHandle)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<bool> http3Enabled;
     decoder >> http3Enabled;
     if (!http3Enabled)
-        return WTF::nullopt;
+        return std::nullopt;
 #endif
 
     Optional<String> hstsStorageDirectory;
     decoder >> hstsStorageDirectory;
     if (!hstsStorageDirectory)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<SandboxExtension::Handle> hstsStorageDirectoryExtensionHandle;
     decoder >> hstsStorageDirectoryExtensionHandle;
     if (!hstsStorageDirectoryExtensionHandle)
-        return WTF::nullopt;
+        return std::nullopt;
     
 #if USE(SOUP)
     Optional<String> cookiePersistentStoragePath;
     decoder >> cookiePersistentStoragePath;
     if (!cookiePersistentStoragePath)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<SoupCookiePersistentStorageType> cookiePersistentStorageType;
     decoder >> cookiePersistentStorageType;
     if (!cookiePersistentStorageType)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> persistentCredentialStorageEnabled;
     decoder >> persistentCredentialStorageEnabled;
     if (!persistentCredentialStorageEnabled)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> ignoreTLSErrors;
     decoder >> ignoreTLSErrors;
     if (!ignoreTLSErrors)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<WebCore::SoupNetworkProxySettings> proxySettings;
     decoder >> proxySettings;
     if (!proxySettings)
-        return WTF::nullopt;
+        return std::nullopt;
 #endif
 
 #if USE(CURL)
     Optional<String> cookiePersistentStorageFile;
     decoder >> cookiePersistentStorageFile;
     if (!cookiePersistentStorageFile)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<WebCore::CurlProxySettings> proxySettings;
     decoder >> proxySettings;
     if (!proxySettings)
-        return WTF::nullopt;
+        return std::nullopt;
 #endif
 
     Optional<String> networkCacheDirectory;
     decoder >> networkCacheDirectory;
     if (!networkCacheDirectory)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<SandboxExtension::Handle> networkCacheDirectoryExtensionHandle;
     decoder >> networkCacheDirectoryExtensionHandle;
     if (!networkCacheDirectoryExtensionHandle)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> deviceManagementRestrictionsEnabled;
     decoder >> deviceManagementRestrictionsEnabled;
     if (!deviceManagementRestrictionsEnabled)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> allLoadsBlockedByDeviceManagementRestrictionsForTesting;
     decoder >> allLoadsBlockedByDeviceManagementRestrictionsForTesting;
     if (!allLoadsBlockedByDeviceManagementRestrictionsForTesting)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<String> dataConnectionServiceType;
     decoder >> dataConnectionServiceType;
     if (!dataConnectionServiceType)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<bool> fastServerTrustEvaluationEnabled;
     decoder >> fastServerTrustEvaluationEnabled;
     if (!fastServerTrustEvaluationEnabled)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<bool> networkCacheSpeculativeValidationEnabled;
     decoder >> networkCacheSpeculativeValidationEnabled;
     if (!networkCacheSpeculativeValidationEnabled)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<bool> shouldUseTestingNetworkSession;
     decoder >> shouldUseTestingNetworkSession;
     if (!shouldUseTestingNetworkSession)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> staleWhileRevalidateEnabled;
     decoder >> staleWhileRevalidateEnabled;
     if (!staleWhileRevalidateEnabled)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<unsigned> testSpeedMultiplier;
     decoder >> testSpeedMultiplier;
     if (!testSpeedMultiplier)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<bool> suppressesConnectionTerminationOnSystemChange;
     decoder >> suppressesConnectionTerminationOnSystemChange;
     if (!suppressesConnectionTerminationOnSystemChange)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> allowsServerPreconnect;
     decoder >> allowsServerPreconnect;
     if (!allowsServerPreconnect)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> requiresSecureHTTPSProxyConnection;
     decoder >> requiresSecureHTTPSProxyConnection;
     if (!requiresSecureHTTPSProxyConnection)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<bool> preventsSystemHTTPProxyAuthentication;
     decoder >> preventsSystemHTTPProxyAuthentication;
     if (!preventsSystemHTTPProxyAuthentication)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<bool> appHasRequestedCrossWebsiteTrackingPermission;
     decoder >> appHasRequestedCrossWebsiteTrackingPermission;
     if (!appHasRequestedCrossWebsiteTrackingPermission)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> useNetworkLoader;
     decoder >> useNetworkLoader;
     if (!useNetworkLoader)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<ResourceLoadStatisticsParameters> resourceLoadStatisticsParameters;
     decoder >> resourceLoadStatisticsParameters;
     if (!resourceLoadStatisticsParameters)
-        return WTF::nullopt;
+        return std::nullopt;
     
     return {{
         *sessionID

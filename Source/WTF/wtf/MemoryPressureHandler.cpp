@@ -116,7 +116,7 @@ Optional<size_t> MemoryPressureHandler::thresholdForMemoryKill()
     case WebsamProcessState::Active:
         break;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static size_t thresholdForPolicy(MemoryUsagePolicy policy)

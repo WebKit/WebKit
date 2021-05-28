@@ -98,8 +98,8 @@ public:
 #endif
 #endif
 
-    void loadData(API::Navigation&, const IPC::DataReference&, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, Optional<NavigatingToAppBoundDomain>, Optional<WebsitePoliciesData>&& = WTF::nullopt);
-    void loadRequest(API::Navigation&, WebCore::ResourceRequest&&, API::Object* userData, Optional<NavigatingToAppBoundDomain>, Optional<WebsitePoliciesData>&& = WTF::nullopt);
+    void loadData(API::Navigation&, const IPC::DataReference&, const String& MIMEType, const String& encoding, const String& baseURL, API::Object* userData, Optional<NavigatingToAppBoundDomain>, Optional<WebsitePoliciesData>&& = std::nullopt);
+    void loadRequest(API::Navigation&, WebCore::ResourceRequest&&, API::Object* userData, Optional<NavigatingToAppBoundDomain>, Optional<WebsitePoliciesData>&& = std::nullopt);
     void goToBackForwardItem(API::Navigation&, WebBackForwardListItem&, RefPtr<API::WebsitePolicies>&&);
     void cancel();
 
@@ -153,7 +153,7 @@ private:
 #endif
 
     void initializeWebPage(RefPtr<API::WebsitePolicies>&&);
-    bool validateInput(WebCore::FrameIdentifier, const Optional<uint64_t>& navigationID = WTF::nullopt);
+    bool validateInput(WebCore::FrameIdentifier, const Optional<uint64_t>& navigationID = std::nullopt);
 
     WebPageProxy& m_page;
     WebCore::PageIdentifier m_webPageID;

@@ -1448,12 +1448,12 @@ Optional<Vector<char, 32>> canonicalizeLocaleIDWithoutNullTerminator(const char*
     // https://unicode-org.atlassian.net/browse/ICU-21506
     auto status = callBufferProducingFunction(ualoc_canonicalForm, localeID, buffer);
     if (U_FAILURE(status))
-        return WTF::nullopt;
+        return std::nullopt;
     return buffer;
 #else
     auto status = callBufferProducingFunction(uloc_canonicalize, localeID, buffer);
     if (U_FAILURE(status))
-        return WTF::nullopt;
+        return std::nullopt;
     return buffer;
 #endif
 }

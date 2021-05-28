@@ -318,7 +318,7 @@ Optional<WebXRSystem::ResolvedRequestedFeatures> WebXRSystem::resolveRequestedFe
     };
 
     if (!parseFeatures(requiredFeaturesWithDefaultFeatures, ParsingMode::Strict))
-        return WTF::nullopt;
+        return std::nullopt;
 
     parseFeatures(init.optionalFeatures, ParsingMode::Loose);
     return resolvedFeatures;
@@ -339,7 +339,7 @@ Optional<WebXRSystem::FeatureList> WebXRSystem::resolveFeaturePermissions(XRSess
     //  6.1. Set status's state to "denied".
     //  6.2. Abort these steps.
     if (!resolvedFeatures)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // 7. Let (consentRequired, consentOptional, granted) be the fields of result.
     // 8. The user agent MAY at this point ask the user's permission for the calling algorithm to use any of the features

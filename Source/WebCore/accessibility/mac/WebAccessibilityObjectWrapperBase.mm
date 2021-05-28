@@ -661,7 +661,7 @@ static AccessibilitySearchKey accessibilitySearchKeyForString(const String& valu
 static Optional<AccessibilitySearchKey> makeVectorElement(const AccessibilitySearchKey*, id arrayElement)
 {
     if (![arrayElement isKindOfClass:NSString.class])
-        return WTF::nullopt;
+        return std::nullopt;
     return { { accessibilitySearchKeyForString(arrayElement) } };
 }
 

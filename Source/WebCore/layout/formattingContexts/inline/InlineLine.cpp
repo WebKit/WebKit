@@ -285,7 +285,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, InlineLayoutU
     m_trimmableTrailingContent.reset();
     if (!formattingContext().layoutState().shouldIgnoreTrailingLetterSpacing() && !inlineTextItem.isWhitespace() && style.letterSpacing() > 0)
         m_trimmableTrailingContent.addPartiallyTrimmableContent(m_runs.size() - 1, style.letterSpacing());
-    m_trailingSoftHyphenWidth = inlineTextItem.hasTrailingSoftHyphen() ? makeOptional(style.fontCascade().width(TextRun { StringView { style.hyphenString() } })) : WTF::nullopt;
+    m_trailingSoftHyphenWidth = inlineTextItem.hasTrailingSoftHyphen() ? std::make_optional(style.fontCascade().width(TextRun { StringView { style.hyphenString() } })) : std::nullopt;
 }
 
 void Line::appendNonReplacedInlineLevelBox(const InlineItem& inlineItem, InlineLayoutUnit marginBoxLogicalWidth)
@@ -359,7 +359,7 @@ void Line::TrimmableTrailingContent::addFullyTrimmableContent(size_t runIndex, I
     m_fullyTrimmableWidth = trimmableWidth;
     // Note that just because the trimmable width is 0 (font-size: 0px), it does not mean we don't have a trimmable trailing content.
     m_hasFullyTrimmableContent = true;
-    m_firstTrimmableRunIndex = m_firstTrimmableRunIndex.valueOr(runIndex);
+    m_firstTrimmableRunIndex = m_firstTrimmableRunIndex.value_or(runIndex);
 }
 
 void Line::TrimmableTrailingContent::addPartiallyTrimmableContent(size_t runIndex, InlineLayoutUnit trimmableWidth)

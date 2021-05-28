@@ -1196,9 +1196,9 @@ void PlatformCALayer::drawLayerContents(GraphicsContext& graphicsContext, WebCor
 
     {
         GraphicsContextStateSaver saver(graphicsContext);
-        WTF::Optional<LocalCurrentGraphicsContext> platformContextSaver;
+        std::optional<LocalCurrentGraphicsContext> platformContextSaver;
 #if PLATFORM(IOS_FAMILY)
-        WTF::Optional<FontAntialiasingStateSaver> fontAntialiasingState;
+        std::optional<FontAntialiasingStateSaver> fontAntialiasingState;
 #endif
 
         // We never use CompositingCoordinatesOrientation::BottomUp on Mac.

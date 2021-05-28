@@ -127,8 +127,8 @@ static bool areFloatsHorizontallySorted(const FloatingState& floatingState)
     auto& floats = floatingState.floats();
     auto rightEdgeOfLeftFloats = LayoutUnit::min();
     auto leftEdgeOfRightFloats = LayoutUnit::max();
-    WTF::Optional<LayoutUnit> leftBottom;
-    WTF::Optional<LayoutUnit> rightBottom;
+    std::optional<LayoutUnit> leftBottom;
+    std::optional<LayoutUnit> rightBottom;
 
     for (auto& floatItem : floats) {
         if (floatItem.isLeftPositioned()) {
@@ -172,7 +172,7 @@ static FloatPair::LeftRightIndex findAvailablePosition(FloatAvoider& floatAvoide
     for (auto iterator = begin(floats, { floatAvoider.top() }); iterator != end; ++iterator) {
         ASSERT(!(*iterator).isEmpty());
         auto leftRightFloatPair = *iterator;
-        innerMostLeftAndRight = innerMostLeftAndRight.valueOr(*leftRightFloatPair);
+        innerMostLeftAndRight = innerMostLeftAndRight.value_or(*leftRightFloatPair);
 
         // Move the box horizontally so that it either
         // 1. aligns with the current floating pair
@@ -487,7 +487,7 @@ void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAv
             return nullptr;
         };
 
-        auto startIndex = std::max(innerMostLeftAndRight.left.valueOr(0), innerMostLeftAndRight.right.valueOr(0)) + 1;
+        auto startIndex = std::max(innerMostLeftAndRight.left.value_or(0), innerMostLeftAndRight.right.value_or(0)) + 1;
         auto* intersectedFloatBox = overlappingFloatBox(startIndex, floatAvoider);
         if (!intersectedFloatBox)
             return;
@@ -592,8 +592,8 @@ PositionInContextRoot FloatPair::bottom() const
     auto* right = this->right();
     ASSERT(left || right);
 
-    auto leftBottom = left ? Optional<PositionInContextRoot>(PositionInContextRoot { left->rectWithMargin().bottom() }) : WTF::nullopt;
-    auto rightBottom = right ? Optional<PositionInContextRoot>(PositionInContextRoot { right->rectWithMargin().bottom() }) : WTF::nullopt;
+    auto leftBottom = left ? Optional<PositionInContextRoot>(PositionInContextRoot { left->rectWithMargin().bottom() }) : std::nullopt;
+    auto rightBottom = right ? Optional<PositionInContextRoot>(PositionInContextRoot { right->rectWithMargin().bottom() }) : std::nullopt;
 
     if (leftBottom && rightBottom)
         return std::max(*leftBottom, *rightBottom);
@@ -662,8 +662,8 @@ Iterator& Iterator::operator++()
     // Ensure that the new floating's bottom edge is positioned lower than the current one -which essentially means skipping in-between floats that are positioned higher).
     // 3. Reset the vertical position and align it with the new left-right pair. These floats are now the inner-most boxes for the current vertical position.
     // As the result we have more horizontal space on the current vertical position.
-    auto leftBottom = m_current.left() ? Optional<PositionInContextRoot>(m_current.left()->bottom()) : WTF::nullopt;
-    auto rightBottom = m_current.right() ? Optional<PositionInContextRoot>(m_current.right()->bottom()) : WTF::nullopt;
+    auto leftBottom = m_current.left() ? Optional<PositionInContextRoot>(m_current.left()->bottom()) : std::nullopt;
+    auto rightBottom = m_current.right() ? Optional<PositionInContextRoot>(m_current.right()->bottom()) : std::nullopt;
 
     auto updateLeft = (leftBottom == rightBottom) || (!rightBottom || (leftBottom && *leftBottom < *rightBottom));
     auto updateRight = (leftBottom == rightBottom) || (!leftBottom || (rightBottom && *leftBottom > *rightBottom));
@@ -702,7 +702,7 @@ void Iterator::set(PositionInContextRoot verticalPosition)
 
         auto index = floatingType == Float::Left ? m_current.m_floatPair.left : m_current.m_floatPair.right;
         // Start from the end if we don't have current yet.
-        index = index.valueOr(m_floats.size());
+        index = index.value_or(m_floats.size());
         while (true) {
             index = previousFloatingIndex(floatingType, m_floats, *index);
             if (!index)

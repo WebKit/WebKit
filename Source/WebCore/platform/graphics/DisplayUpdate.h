@@ -64,12 +64,12 @@ Optional<DisplayUpdate> DisplayUpdate::decode(Decoder& decoder)
     Optional<unsigned> updateIndex;
     decoder >> updateIndex;
     if (!updateIndex)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FramesPerSecond> updatesPerSecond;
     decoder >> updatesPerSecond;
     if (!updatesPerSecond)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *updateIndex, *updatesPerSecond }};
 }

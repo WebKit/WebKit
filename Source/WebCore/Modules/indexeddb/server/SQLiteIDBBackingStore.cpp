@@ -492,7 +492,7 @@ Optional<IsSchemaUpgraded> SQLiteIDBBackingStore::ensureValidObjectStoreInfoTabl
 
     String tableStatement = m_sqliteDB->tableSQL("ObjectStoreInfo"_s);
     if (tableStatement.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
     
     if (tableStatement == v2ObjectStoreInfoSchema || tableStatement == createV2ObjectStoreInfoSchema(objectStoreInfoTableNameAlternate))
         return { IsSchemaUpgraded::No };
@@ -505,22 +505,22 @@ Optional<IsSchemaUpgraded> SQLiteIDBBackingStore::ensureValidObjectStoreInfoTabl
 
     if (!m_sqliteDB->executeCommandSlow(createV2ObjectStoreInfoSchema("_Temp_ObjectStoreInfo"_s))) {
         LOG_ERROR("Could not create temporary ObjectStoreInfo table in database (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     if (!m_sqliteDB->executeCommand("INSERT INTO _Temp_ObjectStoreInfo (id, name, keyPath, autoInc) SELECT id, name, keyPath, autoInc FROM ObjectStoreInfo"_s)) {
         LOG_ERROR("Could not migrate existing ObjectStoreInfo content (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     if (!m_sqliteDB->executeCommand("DROP TABLE ObjectStoreInfo"_s)) {
         LOG_ERROR("Could not drop existing ObjectStoreInfo table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     if (!m_sqliteDB->executeCommand("ALTER TABLE _Temp_ObjectStoreInfo RENAME TO ObjectStoreInfo"_s)) {
         LOG_ERROR("Could not rename temporary ObjectStoreInfo table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     transaction.commit();
@@ -942,17 +942,17 @@ Optional<IDBDatabaseNameAndVersion> SQLiteIDBBackingStore::databaseNameAndVersio
     SQLiteDatabase database;
     if (!database.open(databasePath)) {
         LOG_ERROR("Failed to open SQLite database at path '%s' when getting database name", databasePath.utf8().data());
-        return WTF::nullopt;
+        return std::nullopt;
     }
     if (!database.tableExists("IDBDatabaseInfo"_s)) {
         LOG_ERROR("Could not find IDBDatabaseInfo table and get database name(%i) - %s", database.lastError(), database.lastErrorMsg());
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     auto namesql = database.prepareStatement("SELECT value FROM IDBDatabaseInfo WHERE key = 'DatabaseName';"_s);
     if (!namesql) {
         LOG_ERROR("Could not prepare statement to get database name(%i) - %s", database.lastError(), database.lastErrorMsg());
-        return WTF::nullopt;
+        return std::nullopt;
     }
     auto databaseName = namesql->columnText(0);
 
@@ -961,7 +961,7 @@ Optional<IDBDatabaseNameAndVersion> SQLiteIDBBackingStore::databaseNameAndVersio
     auto databaseVersion = parseInteger<uint64_t>(stringVersion);
     if (!databaseVersion) {
         LOG_ERROR("Database version on disk ('%s') does not cleanly convert to an unsigned 64-bit integer version", stringVersion.utf8().data());
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     return IDBDatabaseNameAndVersion { databaseName, *databaseVersion };

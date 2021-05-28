@@ -294,14 +294,14 @@ Optional<int64_t> IconDatabase::iconIDForIconURL(const String& iconURL, bool& ex
         auto iconIDForIconURLStatement = m_db.prepareHeapStatement("SELECT IconInfo.iconID, IconInfo.stamp FROM IconInfo WHERE IconInfo.url = (?);"_s);
         if (!iconIDForIconURLStatement) {
             LOG_ERROR("Preparing statement iconIDForIconURL failed");
-            return WTF::nullopt;
+            return std::nullopt;
         }
         m_iconIDForIconURLStatement = iconIDForIconURLStatement.value().moveToUniquePtr();
     }
 
     if (m_iconIDForIconURLStatement->bindText(1, iconURL) != SQLITE_OK) {
         LOG_ERROR("FaviconDatabse::iconIDForIconURL failed: %s", m_db.lastErrorMsg());
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     Optional<int64_t> result;
@@ -376,7 +376,7 @@ Optional<int64_t> IconDatabase::addIcon(const String& iconURL, const Vector<char
         auto addIconStatement = m_db.prepareHeapStatement("INSERT INTO IconInfo (url, stamp) VALUES (?, 0);"_s);
         if (!addIconStatement) {
             LOG_ERROR("Preparing statement addIcon failed");
-            return WTF::nullopt;
+            return std::nullopt;
         }
         m_addIconStatement = addIconStatement.value().moveToUniquePtr();
     }
@@ -384,14 +384,14 @@ Optional<int64_t> IconDatabase::addIcon(const String& iconURL, const Vector<char
         auto addIconDataStatement = m_db.prepareHeapStatement("INSERT INTO IconData (iconID, data) VALUES (?, ?);"_s);
         if (!addIconDataStatement) {
             LOG_ERROR("Preparing statement addIconData failed");
-            return WTF::nullopt;
+            return std::nullopt;
         }
         m_addIconDataStatement = addIconDataStatement.value().moveToUniquePtr();
     }
 
     if (m_addIconStatement->bindText(1, iconURL) != SQLITE_OK) {
         LOG_ERROR("IconDatabase::addIcon failed: %s", m_db.lastErrorMsg());
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     m_addIconStatement->step();
@@ -400,7 +400,7 @@ Optional<int64_t> IconDatabase::addIcon(const String& iconURL, const Vector<char
     auto iconID = m_db.lastInsertRowID();
     if (m_addIconDataStatement->bindInt64(1, iconID) != SQLITE_OK || m_addIconDataStatement->bindBlob(2, iconData.data(), iconData.size()) != SQLITE_OK) {
         LOG_ERROR("IconDatabase::addIcon failed: %s", m_db.lastErrorMsg());
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     m_addIconDataStatement->step();

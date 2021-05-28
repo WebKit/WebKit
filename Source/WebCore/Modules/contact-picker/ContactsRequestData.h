@@ -56,17 +56,17 @@ Optional<ContactsRequestData> ContactsRequestData::decode(Decoder& decoder)
     Optional<Vector<ContactProperty>> properties;
     decoder >> properties;
     if (!properties)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> multiple;
     decoder >> multiple;
     if (!multiple)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<String> url;
     decoder >> url;
     if (!url)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *properties, *multiple, *url }};
 }

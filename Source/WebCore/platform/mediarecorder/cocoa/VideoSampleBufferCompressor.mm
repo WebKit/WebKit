@@ -218,7 +218,7 @@ RetainPtr<CMSampleBufferRef> VideoSampleBufferCompressor::takeOutputSampleBuffer
 
 unsigned VideoSampleBufferCompressor::bitRate() const
 {
-    return m_outputBitRate.valueOr(0);
+    return m_outputBitRate.value_or(0);
 }
 
 }

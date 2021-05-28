@@ -36,7 +36,7 @@ class AudioDestination;
 class DefaultAudioDestinationNode final : public AudioDestinationNode, public AudioIOCallback {
     WTF_MAKE_ISO_ALLOCATED(DefaultAudioDestinationNode);
 public:
-    explicit DefaultAudioDestinationNode(AudioContext&, Optional<float> sampleRate = WTF::nullopt);
+    explicit DefaultAudioDestinationNode(AudioContext&, Optional<float> sampleRate = std::nullopt);
     ~DefaultAudioDestinationNode();
 
     AudioContext& context();

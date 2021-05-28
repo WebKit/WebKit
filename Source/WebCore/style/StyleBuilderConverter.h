@@ -1144,7 +1144,7 @@ inline Optional<GridPosition> BuilderConverter::convertGridPosition(BuilderState
     GridPosition gridPosition;
     if (createGridPosition(value, gridPosition))
         return gridPosition;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 inline GridAutoFlow BuilderConverter::convertGridAutoFlow(BuilderState&, const CSSValue& value)
@@ -1233,14 +1233,14 @@ inline Optional<float> BuilderConverter::convertPerspective(BuilderState& builde
     else
         ASSERT_NOT_REACHED();
 
-    return perspective < 0 ? Optional<float>(WTF::nullopt) : Optional<float>(perspective);
+    return perspective < 0 ? Optional<float>(std::nullopt) : Optional<float>(perspective);
 }
 
 inline Optional<Length> BuilderConverter::convertMarqueeIncrement(BuilderState& builderState, const CSSValue& value)
 {
     Length length = downcast<CSSPrimitiveValue>(value).convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
     if (length.isUndefined())
-        return WTF::nullopt;
+        return std::nullopt;
     return length;
 }
 
@@ -1249,7 +1249,7 @@ inline Optional<FilterOperations> BuilderConverter::convertFilterOperations(Buil
     FilterOperations operations;
     if (builderState.createFilterOperations(value, operations))
         return operations;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 inline FontFeatureSettings BuilderConverter::convertFontFeatureSettings(BuilderState&, const CSSValue& value)
@@ -1305,7 +1305,7 @@ inline FontSelectionValue BuilderConverter::convertFontStretchFromValue(const CS
     return normalStretchValue();
 }
 
-// The input value needs to parsed and valid, this function returns WTF::nullopt if the input was "normal".
+// The input value needs to parsed and valid, this function returns std::nullopt if the input was "normal".
 inline Optional<FontSelectionValue> BuilderConverter::convertFontStyleFromValue(const CSSValue& value)
 {
     ASSERT(is<CSSFontStyleValue>(value));
@@ -1313,7 +1313,7 @@ inline Optional<FontSelectionValue> BuilderConverter::convertFontStyleFromValue(
 
     auto valueID = fontStyleValue.fontStyleValue->valueID();
     if (valueID == CSSValueNormal)
-        return WTF::nullopt;
+        return std::nullopt;
     if (valueID == CSSValueItalic)
         return italicValue();
     ASSERT(valueID == CSSValueOblique);
@@ -1558,7 +1558,7 @@ inline Optional<Length> BuilderConverter::convertLineHeight(BuilderState& builde
 
     // FIXME: The parser should only emit the above types, so this should never be reached. We should change the
     // type of this function to return just a Length (and not an Optional).
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 inline FontSynthesis BuilderConverter::convertFontSynthesis(BuilderState&, const CSSValue& value)

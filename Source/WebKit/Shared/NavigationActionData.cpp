@@ -61,95 +61,95 @@ Optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& decode
 {
     WebCore::NavigationType navigationType;
     if (!decoder.decode(navigationType))
-        return WTF::nullopt;
+        return std::nullopt;
     
     OptionSet<WebEvent::Modifier> modifiers;
     if (!decoder.decode(modifiers))
-        return WTF::nullopt;
+        return std::nullopt;
 
     WebMouseEvent::Button mouseButton;
     if (!decoder.decode(mouseButton))
-        return WTF::nullopt;
+        return std::nullopt;
     
     WebMouseEvent::SyntheticClickType syntheticClickType;
     if (!decoder.decode(syntheticClickType))
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<uint64_t> userGestureTokenIdentifier;
     decoder >> userGestureTokenIdentifier;
     if (!userGestureTokenIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<bool> canHandleRequest;
     decoder >> canHandleRequest;
     if (!canHandleRequest)
-        return WTF::nullopt;
+        return std::nullopt;
     
     WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy;
     if (!decoder.decode(shouldOpenExternalURLsPolicy))
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<String> downloadAttribute;
     decoder >> downloadAttribute;
     if (!downloadAttribute)
-        return WTF::nullopt;
+        return std::nullopt;
     
     WebCore::FloatPoint clickLocationInRootViewCoordinates;
     if (!decoder.decode(clickLocationInRootViewCoordinates))
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<bool> isRedirect;
     decoder >> isRedirect;
     if (!isRedirect)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> treatAsSameOriginNavigation;
     decoder >> treatAsSameOriginNavigation;
     if (!treatAsSameOriginNavigation)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> hasOpenedFrames;
     decoder >> hasOpenedFrames;
     if (!hasOpenedFrames)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> openedByDOMWithOpener;
     decoder >> openedByDOMWithOpener;
     if (!openedByDOMWithOpener)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<WebCore::SecurityOriginData> requesterOrigin;
     decoder >> requesterOrigin;
     if (!requesterOrigin)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<WebCore::BackForwardItemIdentifier>> targetBackForwardItemIdentifier;
     decoder >> targetBackForwardItemIdentifier;
     if (!targetBackForwardItemIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<WebCore::BackForwardItemIdentifier>> sourceBackForwardItemIdentifier;
     decoder >> sourceBackForwardItemIdentifier;
     if (!sourceBackForwardItemIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     WebCore::LockHistory lockHistory;
     if (!decoder.decode(lockHistory))
-        return WTF::nullopt;
+        return std::nullopt;
 
     WebCore::LockBackForwardList lockBackForwardList;
     if (!decoder.decode(lockBackForwardList))
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<String> clientRedirectSourceForHistory;
     decoder >> clientRedirectSourceForHistory;
     if (!clientRedirectSourceForHistory)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<WebCore::PrivateClickMeasurement>> privateClickMeasurement;
     decoder >> privateClickMeasurement;
     if (!privateClickMeasurement)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ WTFMove(navigationType), modifiers, WTFMove(mouseButton), WTFMove(syntheticClickType), WTFMove(*userGestureTokenIdentifier),
         WTFMove(*canHandleRequest), WTFMove(shouldOpenExternalURLsPolicy), WTFMove(*downloadAttribute), WTFMove(clickLocationInRootViewCoordinates),

@@ -301,7 +301,7 @@ private:
 };
 
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
-WEBCORE_EXPORT RetainPtr<CFURLStorageSessionRef> createPrivateStorageSession(CFStringRef identifier, Optional<HTTPCookieAcceptPolicy> = WTF::nullopt);
+WEBCORE_EXPORT RetainPtr<CFURLStorageSessionRef> createPrivateStorageSession(CFStringRef identifier, Optional<HTTPCookieAcceptPolicy> = std::nullopt);
 #endif
 
 }

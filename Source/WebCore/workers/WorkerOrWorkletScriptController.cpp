@@ -304,7 +304,7 @@ MessageQueueWaitResult WorkerOrWorkletScriptController::loadModuleSynchronously(
                     case ModuleFetchFailureKind::WasErrored:
                         protector->notifyLoadFailed(LoadableScript::Error {
                             LoadableScript::ErrorType::CachedScript,
-                            WTF::nullopt
+                            std::nullopt
                         });
                         break;
                     case ModuleFetchFailureKind::WasCanceled:
@@ -404,7 +404,7 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
         });
 
         auto& fulfillHandler = *JSNativeStdFunction::create(vm, &globalObject, 1, String(), [task, scriptFetcher](JSGlobalObject* globalObject, CallFrame* callFrame) -> JSC::EncodedJSValue {
-            // task->run(WTF::nullopt);
+            // task->run(std::nullopt);
             VM& vm = globalObject->vm();
             JSLockHolder lock { vm };
             auto scope = DECLARE_THROW_SCOPE(vm);
@@ -415,7 +415,7 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
 
             auto* context = downcast<WorkerOrWorkletGlobalScope>(jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext());
             if (!context || !context->script()) {
-                task->run(WTF::nullopt);
+                task->run(std::nullopt);
                 return JSValue::encode(jsUndefined());
             }
 
@@ -424,7 +424,7 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
             if ((returnedException && vm.isTerminationException(returnedException)) || context->script()->isTerminatingExecution()) {
                 if (context->script())
                     context->script()->forbidExecution();
-                task->run(WTF::nullopt);
+                task->run(std::nullopt);
                 return JSValue::encode(jsUndefined());
             }
 
@@ -439,7 +439,7 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
                 context->reportException(message, { }, { }, { }, { }, { });
             }
 
-            task->run(WTF::nullopt);
+            task->run(std::nullopt);
             return JSValue::encode(jsUndefined());
         });
 

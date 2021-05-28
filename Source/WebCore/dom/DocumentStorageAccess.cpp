@@ -97,7 +97,7 @@ Optional<bool> DocumentStorageAccess::hasStorageAccessQuickCheck()
     if (!page)
         return false;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void DocumentStorageAccess::hasStorageAccess(Ref<DeferredPromise>&& promise)
@@ -172,7 +172,7 @@ Optional<StorageAccessQuickResult> DocumentStorageAccess::requestStorageAccessQu
     if (!UserGestureIndicator::processingUserGesture())
         return StorageAccessQuickResult::Reject;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void DocumentStorageAccess::requestStorageAccess(Ref<DeferredPromise>&& promise)

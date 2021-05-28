@@ -41,7 +41,7 @@ struct DateTimeFieldsState {
     inline Optional<unsigned> hour23() const
     {
         if (!hour || !meridiem)
-            return WTF::nullopt;
+            return std::nullopt;
         return (*hour % 12) + (*meridiem == DateTimeFieldsState::Meridiem::PM ? 12 : 0);
     }
 

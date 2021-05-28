@@ -475,7 +475,7 @@ void HTMLElement::parseAttribute(const QualifiedName& name, const AtomString& va
         if (auto optionalTabIndex = parseHTMLInteger(value))
             setTabIndexExplicitly(optionalTabIndex.value());
         else
-            setTabIndexExplicitly(WTF::nullopt);
+            setTabIndexExplicitly(std::nullopt);
         return;
     }
     
@@ -630,10 +630,10 @@ void HTMLElement::applyAspectRatioFromWidthAndHeightAttributesToStyle(MutableSty
     if (!document().settings().aspectRatioOfImgFromWidthAndHeightEnabled())
         return;
 
-    double width = parseValidHTMLFloatingPointNumber(attributeWithoutSynchronization(widthAttr)).valueOr(-1);
+    double width = parseValidHTMLFloatingPointNumber(attributeWithoutSynchronization(widthAttr)).value_or(-1);
     if (width < 0)
         return;
-    double height = parseValidHTMLFloatingPointNumber(attributeWithoutSynchronization(heightAttr)).valueOr(-1);
+    double height = parseValidHTMLFloatingPointNumber(attributeWithoutSynchronization(heightAttr)).value_or(-1);
     if (height < 0)
         return;
 
@@ -1054,7 +1054,7 @@ static Optional<SRGBA<uint8_t>> parseLegacyColorValue(StringView string)
 {
     // An empty string doesn't apply a color.
     if (string.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     string = string.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>);
     if (string.isEmpty())
@@ -1062,7 +1062,7 @@ static Optional<SRGBA<uint8_t>> parseLegacyColorValue(StringView string)
 
     // "transparent" doesn't apply a color either.
     if (equalLettersIgnoringASCIICase(string, "transparent"))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (auto namedColor = CSSParser::parseNamedColor(string))
         return namedColor;

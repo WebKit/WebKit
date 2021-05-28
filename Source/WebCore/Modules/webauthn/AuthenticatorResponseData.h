@@ -121,51 +121,51 @@ Optional<AuthenticatorResponseData> AuthenticatorResponseData::decode(Decoder& d
     Optional<bool> isEmpty;
     decoder >> isEmpty;
     if (!isEmpty)
-        return WTF::nullopt;
+        return std::nullopt;
     if (isEmpty.value())
         return result;
 
     result.rawId = decodeArrayBuffer(decoder);
     if (!result.rawId)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> isAuthenticatorAttestationResponse;
     decoder >> isAuthenticatorAttestationResponse;
     if (!isAuthenticatorAttestationResponse)
-        return WTF::nullopt;
+        return std::nullopt;
     result.isAuthenticatorAttestationResponse = isAuthenticatorAttestationResponse.value();
 
     if (result.isAuthenticatorAttestationResponse) {
         result.attestationObject = decodeArrayBuffer(decoder);
         if (!result.attestationObject)
-            return WTF::nullopt;
+            return std::nullopt;
         return result;
     }
 
     result.authenticatorData = decodeArrayBuffer(decoder);
     if (!result.authenticatorData)
-        return WTF::nullopt;
+        return std::nullopt;
 
     result.signature = decodeArrayBuffer(decoder);
     if (!result.signature)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<bool>> appid;
     decoder >> appid;
     if (!appid)
-        return WTF::nullopt;
+        return std::nullopt;
     result.appid = WTFMove(*appid);
 
     Optional<bool> hasUserHandle;
     decoder >> hasUserHandle;
     if (!hasUserHandle)
-        return WTF::nullopt;
+        return std::nullopt;
     if (!*hasUserHandle)
         return result;
 
     result.userHandle = decodeArrayBuffer(decoder);
     if (!result.userHandle)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return result;
 }

@@ -644,7 +644,7 @@ public:
     FloatRect computeFloatRectForRepaint(const FloatRect&, const RenderLayerModelObject* repaintContainer) const;
 
     // Given a rect in the object's coordinate space, compute the location in container space where this rect is visible,
-    // when clipping and scrolling as specified by the context. When using edge-inclusive intersection, return WTF::nullopt
+    // when clipping and scrolling as specified by the context. When using edge-inclusive intersection, return std::nullopt
     // rather than an empty rect if the rect is completely clipped out in container space.
     virtual Optional<LayoutRect> computeVisibleRectInContainer(const LayoutRect&, const RenderLayerModelObject* repaintContainer, VisibleRectContext) const;
     virtual Optional<FloatRect> computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject* repaintContainer, VisibleRectContext) const;

@@ -54,7 +54,7 @@ Optional<RTCRtpTransceiverDirection> LibWebRTCRtpTransceiverBackend::currentDire
 {
     auto value = m_rtcTransceiver->current_direction();
     if (!value)
-        return WTF::nullopt;
+        return std::nullopt;
     return toRTCRtpTransceiverDirection(*value);
 }
 

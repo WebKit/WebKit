@@ -273,7 +273,7 @@ public:
     RenderMultiColumnFlow* multiColumnFlowSlowCase() const;
     void setMultiColumnFlow(RenderMultiColumnFlow&);
     void clearMultiColumnFlow();
-    bool willCreateColumns(Optional<unsigned> desiredColumnCount = WTF::nullopt) const;
+    bool willCreateColumns(Optional<unsigned> desiredColumnCount = std::nullopt) const;
     virtual bool requiresColumns(int) const;
 
     bool containsFloats() const override { return m_floatingObjects && !m_floatingObjects->set().isEmpty(); }

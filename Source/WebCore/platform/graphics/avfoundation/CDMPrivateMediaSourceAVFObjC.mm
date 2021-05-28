@@ -49,7 +49,7 @@ auto CDMPrivateMediaSourceAVFObjC::parseKeySystem(const String& keySystem) -> Op
     static NeverDestroyed<RegularExpression> keySystemRE("^com\\.apple\\.fps\\.[23]_\\d+(?:,\\d+)*$", JSC::Yarr::TextCaseInsensitive);
 
     if (keySystemRE.get().match(keySystem) < 0)
-        return WTF::nullopt;
+        return std::nullopt;
 
     StringView keySystemView { keySystem };
 

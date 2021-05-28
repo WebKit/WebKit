@@ -61,7 +61,7 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParam)
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
     PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, true, UserVerificationRequirement::Preferred };
 
-    PublicKeyCredentialCreationOptions options { rp, user, { }, params, WTF::nullopt, { }, selection, AttestationConveyancePreference::None, WTF::nullopt };
+    PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, AttestationConveyancePreference::None, std::nullopt };
     Vector<uint8_t> hash;
     hash.append(TestData::kClientDataHash, sizeof(TestData::kClientDataHash));
     auto serializedData = encodeMakeCredenitalRequestAsCBOR(hash, options, AuthenticatorSupportedOptions::UserVerificationAvailability::kSupportedAndConfigured);
@@ -84,7 +84,7 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParamNoUVNoRK)
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
     PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, false, UserVerificationRequirement::Discouraged };
 
-    PublicKeyCredentialCreationOptions options { rp, user, { }, params, WTF::nullopt, { }, selection, AttestationConveyancePreference::None, WTF::nullopt };
+    PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, AttestationConveyancePreference::None, std::nullopt };
     Vector<uint8_t> hash;
     hash.append(TestData::kClientDataHash, sizeof(TestData::kClientDataHash));
     auto serializedData = encodeMakeCredenitalRequestAsCBOR(hash, options, AuthenticatorSupportedOptions::UserVerificationAvailability::kSupportedAndConfigured);
@@ -107,7 +107,7 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParamUVRequiredButNotSup
     Vector<PublicKeyCredentialCreationOptions::Parameters> params { { PublicKeyCredentialType::PublicKey, 7 }, { PublicKeyCredentialType::PublicKey, 257 } };
     PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria selection { AuthenticatorAttachment::Platform, false, UserVerificationRequirement::Required };
 
-    PublicKeyCredentialCreationOptions options { rp, user, { }, params, WTF::nullopt, { }, selection, AttestationConveyancePreference::None, WTF::nullopt };
+    PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, AttestationConveyancePreference::None, std::nullopt };
     Vector<uint8_t> hash;
     hash.append(TestData::kClientDataHash, sizeof(TestData::kClientDataHash));
     auto serializedData = encodeMakeCredenitalRequestAsCBOR(hash, options, AuthenticatorSupportedOptions::UserVerificationAvailability::kNotSupported);
@@ -134,7 +134,7 @@ TEST(CTAPRequestTest, TestConstructMakeCredentialRequestParamWithPin)
     pin.protocol = pin::kProtocolVersion;
     pin.auth.append(TestData::kCtap2PinAuth, sizeof(TestData::kCtap2PinAuth));
 
-    PublicKeyCredentialCreationOptions options { rp, user, { }, params, WTF::nullopt, { }, selection, AttestationConveyancePreference::None, WTF::nullopt };
+    PublicKeyCredentialCreationOptions options { rp, user, { }, params, std::nullopt, { }, selection, AttestationConveyancePreference::None, std::nullopt };
     Vector<uint8_t> hash;
     hash.append(TestData::kClientDataHash, sizeof(TestData::kClientDataHash));
     auto serializedData = encodeMakeCredenitalRequestAsCBOR(hash, options, AuthenticatorSupportedOptions::UserVerificationAvailability::kSupportedAndConfigured, pin);

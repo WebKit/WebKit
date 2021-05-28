@@ -892,7 +892,7 @@ RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createMinOrMaxOrClamp(CalcOpe
     ASSERT(op == CalcOperator::Min || op == CalcOperator::Max || op == CalcOperator::Clamp);
     ASSERT_IMPLIES(op == CalcOperator::Clamp, values.size() == 3);
 
-    Optional<CalculationCategory> category = WTF::nullopt;
+    Optional<CalculationCategory> category = std::nullopt;
     for (auto& value : values) {
         auto valueCategory = resolvedTypeForMinOrMaxOrClamp(value->category(), destinationCategory);
 
@@ -1743,7 +1743,7 @@ bool CSSCalcExpressionNodeParser::parseCalcFunction(CSSParserTokenRange& tokens,
     switch (functionID) {
     case CSSValueMin:
     case CSSValueMax:
-        maxArgumentCount = WTF::nullopt;
+        maxArgumentCount = std::nullopt;
         break;
     case CSSValueClamp:
         minArgumentCount = 3;

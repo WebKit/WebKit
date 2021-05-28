@@ -128,7 +128,7 @@ Optional<uint64_t> Attachment::fileSizeForDisplay() const
 
     if (![fileWrapper isRegularFile]) {
         // FIXME: We should display a size estimate for directory-type file wrappers.
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     if (auto fileSize = [[fileWrapper fileAttributes][NSFileSize] unsignedLongLongValue])

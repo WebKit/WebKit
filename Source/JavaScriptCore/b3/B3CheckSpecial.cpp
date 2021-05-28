@@ -154,7 +154,7 @@ Optional<unsigned> CheckSpecial::shouldTryAliasingDef(Inst& inst)
 {
     if (Optional<unsigned> branchDef = hiddenBranch(inst).shouldTryAliasingDef())
         return *branchDef + 1;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 CCallHelpers::Jump CheckSpecial::generate(Inst& inst, CCallHelpers& jit, GenerationContext& context)

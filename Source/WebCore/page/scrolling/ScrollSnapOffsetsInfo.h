@@ -73,7 +73,7 @@ struct ScrollSnapOffsetsInfo {
 
     template<typename OutputType> OutputType convertUnits(float deviceScaleFactor = 0.0) const;
     template<typename SizeType>
-    WEBCORE_EXPORT std::pair<UnitType, unsigned> closestSnapOffset(ScrollEventAxis, const SizeType& viewportSize, UnitType scrollDestinationOffset, float velocity, Optional<UnitType> originalPositionForDirectionalSnapping = WTF::nullopt) const;
+    WEBCORE_EXPORT std::pair<UnitType, unsigned> closestSnapOffset(ScrollEventAxis, const SizeType& viewportSize, UnitType scrollDestinationOffset, float velocity, Optional<UnitType> originalPositionForDirectionalSnapping = std::nullopt) const;
 };
 
 using LayoutScrollSnapOffsetsInfo = ScrollSnapOffsetsInfo<LayoutUnit, LayoutRect>;

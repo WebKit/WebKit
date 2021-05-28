@@ -145,7 +145,7 @@ public:
         Optional<T> result;
         Decoder decoder(source, numberOfBytes, ConstructWithoutHeader);
         if (!decoder.isValid())
-            return WTF::nullopt;
+            return std::nullopt;
 
         decoder >> result;
         return result;

@@ -52,27 +52,27 @@ struct VideoPlaybackQualityMetrics {
         Optional<uint32_t> totalVideoFrames;
         decoder >> totalVideoFrames;
         if (!totalVideoFrames)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<uint32_t> droppedVideoFrames;
         decoder >> droppedVideoFrames;
         if (!droppedVideoFrames)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<uint32_t> corruptedVideoFrames;
         decoder >> corruptedVideoFrames;
         if (!corruptedVideoFrames)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<double> totalFrameDelay;
         decoder >> totalFrameDelay;
         if (!totalFrameDelay)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<uint32_t> displayCompositedVideoFrames;
         decoder >> displayCompositedVideoFrames;
         if (!displayCompositedVideoFrames)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{ *totalVideoFrames, *droppedVideoFrames, *corruptedVideoFrames, *totalFrameDelay, *displayCompositedVideoFrames }};
     }

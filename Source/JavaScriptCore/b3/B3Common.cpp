@@ -73,7 +73,7 @@ Optional<GPRReg> pinnedExtendedOffsetAddrRegister()
 #if CPU(ARM64)
     return MacroAssembler::dataTempRegister;
 #elif CPU(X86_64)
-    return WTF::nullopt;
+    return std::nullopt;
 #else
 #error Unhandled architecture.
 #endif

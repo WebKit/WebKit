@@ -47,7 +47,7 @@ Optional<WebCore::SimpleRange> EditingRange::toRange(WebCore::Frame& frame, cons
         // That fits with AppKit's idea of an input context.
         auto* element = frame.selection().rootEditableElementOrDocumentElement();
         if (!element)
-            return WTF::nullopt;
+            return std::nullopt;
         return resolveCharacterRange(makeRangeSelectingNodeContents(*element), range);
     }
 
@@ -55,7 +55,7 @@ Optional<WebCore::SimpleRange> EditingRange::toRange(WebCore::Frame& frame, cons
 
     auto paragraphStart = makeBoundaryPoint(startOfParagraph(frame.selection().selection().visibleStart()));
     if (!paragraphStart)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto scopeEnd = makeBoundaryPointAfterNodeContents(paragraphStart->container->treeScope().rootNode());
     return WebCore::resolveCharacterRange({ WTFMove(*paragraphStart), WTFMove(scopeEnd) }, range);
@@ -91,9 +91,9 @@ Optional<WebKit::EditingRange> ArgumentCoder<WebKit::EditingRange>::decode(Decod
     WebKit::EditingRange editingRange;
 
     if (!decoder.decode(editingRange.location))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(editingRange.length))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return editingRange;
 }

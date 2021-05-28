@@ -57,17 +57,17 @@ Optional<ServiceWorkerRegistrationOptions> ServiceWorkerRegistrationOptions::dec
     Optional<String> scope;
     decoder >> scope;
     if (!scope)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<WorkerType> type;
     decoder >> type;
     if (!type)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<ServiceWorkerUpdateViaCache> updateViaCache;
     decoder >> updateViaCache;
     if (!updateViaCache)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return ServiceWorkerRegistrationOptions { WTFMove(*scope), WTFMove(*type), WTFMove(*updateViaCache) };
 }

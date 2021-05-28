@@ -126,13 +126,13 @@ template<typename Function> static Optional<ResultPair<Function>> pullFromSource
     if (fromSource.hasMoreData()) {
         auto parsedFrom = std::invoke(function, fromSource);
         if (!parsedFrom)
-            return WTF::nullopt;
+            return std::nullopt;
         fromResult = WTFMove(*parsedFrom);
     }
 
     auto parsedTo = std::invoke(std::forward<Function>(function), toSource);
     if (!parsedTo)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return ResultPair<Function> { WTFMove(fromResult), WTFMove(*parsedTo) };
 }

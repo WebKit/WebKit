@@ -46,10 +46,10 @@ Optional<SpeechRecognitionAlternativeData> SpeechRecognitionAlternativeData::dec
 {
     SpeechRecognitionAlternativeData result;
     if (!decoder.decode(result.transcript))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.confidence))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return result;
 }
@@ -73,10 +73,10 @@ Optional<SpeechRecognitionResultData> SpeechRecognitionResultData::decode(Decode
 {
     SpeechRecognitionResultData result;
     if (!decoder.decode(result.alternatives))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.isFinal))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return result;
 }

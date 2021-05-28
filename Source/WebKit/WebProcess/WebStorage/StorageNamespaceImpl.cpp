@@ -59,12 +59,12 @@ Ref<StorageNamespaceImpl> StorageNamespaceImpl::createSessionStorageNamespace(Id
 
 Ref<StorageNamespaceImpl> StorageNamespaceImpl::createLocalStorageNamespace(Identifier identifier, unsigned quotaInBytes)
 {
-    return adoptRef(*new StorageNamespaceImpl(StorageType::Local, identifier, WTF::nullopt, nullptr, quotaInBytes));
+    return adoptRef(*new StorageNamespaceImpl(StorageType::Local, identifier, std::nullopt, nullptr, quotaInBytes));
 }
 
 Ref<StorageNamespaceImpl> StorageNamespaceImpl::createTransientLocalStorageNamespace(Identifier identifier, WebCore::SecurityOrigin& topLevelOrigin, uint64_t quotaInBytes)
 {
-    return adoptRef(*new StorageNamespaceImpl(StorageType::TransientLocal, identifier, WTF::nullopt, &topLevelOrigin, quotaInBytes));
+    return adoptRef(*new StorageNamespaceImpl(StorageType::TransientLocal, identifier, std::nullopt, &topLevelOrigin, quotaInBytes));
 }
 
 StorageNamespaceImpl::StorageNamespaceImpl(WebCore::StorageType storageType, Identifier storageNamespaceID, const Optional<PageIdentifier>& pageIdentifier, WebCore::SecurityOrigin* topLevelOrigin, unsigned quotaInBytes)

@@ -109,7 +109,7 @@ template<typename CharacterType> static unsigned countDigits(StringParsingBuffer
 template<typename CharacterType> static Optional<int> parseInt(StringParsingBuffer<CharacterType>& buffer, unsigned maximumNumberOfDigitsToParse)
 {
     if (maximumNumberOfDigitsToParse > buffer.lengthRemaining() || !maximumNumberOfDigitsToParse)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // We don't need to handle negative numbers for ISO 8601.
 
@@ -117,10 +117,10 @@ template<typename CharacterType> static Optional<int> parseInt(StringParsingBuff
     unsigned digitsRemaining = 0;
     while (digitsRemaining < maximumNumberOfDigitsToParse) {
         if (!isASCIIDigit(*buffer))
-            return WTF::nullopt;
+            return std::nullopt;
         int digit = *buffer - '0';
         if (value > (INT_MAX - digit) / 10) // Check for overflow.
-            return WTF::nullopt;
+            return std::nullopt;
         value = value * 10 + digit;
         ++digitsRemaining;
         ++buffer;
@@ -132,7 +132,7 @@ template<typename CharacterType> static Optional<int> parseIntWithinLimits(Strin
 {
     auto value = parseInt(buffer, maximumNumberOfDigitsToParse);
     if (!(value && *value >= minimumValue && *value <= maximumValue))
-        return WTF::nullopt;
+        return std::nullopt;
     return value;
 }
 
@@ -190,12 +190,12 @@ static bool withinHTMLDateLimits(int year, int month, int monthDay, int hour, in
 template<typename F> static Optional<DateComponents> createFromString(StringView source, F&& parseFunction)
 {
     if (source.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return readCharactersForParsing(source, [&](auto buffer) -> Optional<DateComponents> {
         DateComponents date;
         if (!parseFunction(buffer, date) || !buffer.atEnd())
-            return WTF::nullopt;
+            return std::nullopt;
         return date;
     });
 }
@@ -490,8 +490,8 @@ template<typename CharacterType> bool DateComponents::parseTime(StringParsingBuf
 
     m_hour = *hour;
     m_minute = *minute;
-    m_second = second.valueOr(0);
-    m_millisecond = millisecond.valueOr(0);
+    m_second = second.value_or(0);
+    m_millisecond = millisecond.value_or(0);
     m_type = DateComponentsType::Time;
     return true;
 }
@@ -524,7 +524,7 @@ template<typename F> static Optional<DateComponents> createFromTimeOffset(double
 {
     DateComponents result;
     if (!function(result, timeOffset))
-        return WTF::nullopt;
+        return std::nullopt;
     return result;
 }
 

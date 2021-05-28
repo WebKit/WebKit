@@ -67,37 +67,37 @@ struct CDMKeySystemConfiguration {
         Optional<String> label;
         decoder >> label;
         if (!label)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<Vector<String>> initDataTypes;
         decoder >> initDataTypes;
         if (!initDataTypes)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<Vector<CDMMediaCapability>> audioCapabilities;
         decoder >> audioCapabilities;
         if (!audioCapabilities)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<Vector<CDMMediaCapability>> videoCapabilities;
         decoder >> videoCapabilities;
         if (!videoCapabilities)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<CDMRequirement> distinctiveIdentifier;
         decoder >> distinctiveIdentifier;
         if (!distinctiveIdentifier)
-            return WTF::nullopt;
+            return std::nullopt;
         
         Optional<CDMRequirement> persistentState;
         decoder >> persistentState;
         if (!persistentState)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<Vector<CDMSessionType>> sessionTypes;
         decoder >> sessionTypes;
         if (!sessionTypes)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{
             WTFMove(*label),

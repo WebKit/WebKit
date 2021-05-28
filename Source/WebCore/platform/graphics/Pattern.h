@@ -108,17 +108,17 @@ Optional<Pattern::Parameters> Pattern::Parameters::decode(Decoder& decoder)
     Optional<AffineTransform> patternSpaceTransform;
     decoder >> patternSpaceTransform;
     if (!patternSpaceTransform)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> repeatX;
     decoder >> repeatX;
     if (!repeatX)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> repeatY;
     decoder >> repeatY;
     if (!repeatY)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *repeatX, *repeatY, *patternSpaceTransform }};
 }

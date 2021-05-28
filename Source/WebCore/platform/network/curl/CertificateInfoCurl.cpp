@@ -60,7 +60,7 @@ CertificateInfo::Certificate CertificateInfo::makeCertificate(const uint8_t* buf
 Optional<CertificateSummary> CertificateInfo::summary() const
 {
     if (!m_certificateChain.size())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return OpenSSL::createSummaryInfo(m_certificateChain.at(0));
 }

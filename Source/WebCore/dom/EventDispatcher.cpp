@@ -205,7 +205,7 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
         event.setTarget(finalTarget);
     }
 
-    if (shouldClearTargetsAfterDispatch.valueOr(false)) {
+    if (shouldClearTargetsAfterDispatch.value_or(false)) {
         event.setTarget(nullptr);
         event.setRelatedTarget(nullptr);
         // FIXME: We should also clear the event's touch target list.

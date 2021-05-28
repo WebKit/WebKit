@@ -192,7 +192,7 @@ public:
 
     // If the image has a cursor hot-spot, stores it in the argument
     // and returns true. Otherwise returns false.
-    Optional<IntPoint> hotSpot() const override { return WTF::nullopt; }
+    Optional<IntPoint> hotSpot() const override { return std::nullopt; }
 
 protected:
     RefPtr<SharedBuffer::DataSegment> m_data;

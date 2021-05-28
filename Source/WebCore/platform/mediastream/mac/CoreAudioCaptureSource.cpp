@@ -811,7 +811,7 @@ void CoreAudioCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSett
     if (shouldReconfigure)
         unit().reconfigure();
 
-    m_currentSettings = WTF::nullopt;
+    m_currentSettings = std::nullopt;
 }
 
 bool CoreAudioCaptureSource::interrupted() const

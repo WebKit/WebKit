@@ -458,7 +458,7 @@ Optional<Protocol::Runtime::FarmAnimals> parseEnumValueFromString<Protocol::Runt
         if (protocolString == enum_constant_values[constantValues[i]])
             return (Protocol::Runtime::FarmAnimals)constantValues[i];
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<>
@@ -474,7 +474,7 @@ Optional<Protocol::Runtime::TwoLeggedAnimals> parseEnumValueFromString<Protocol:
         if (protocolString == enum_constant_values[constantValues[i]])
             return (Protocol::Runtime::TwoLeggedAnimals)constantValues[i];
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace TestHelpers
@@ -877,7 +877,7 @@ inline Optional<TestProtocolRuntimeFarmAnimals> fromProtocolString(const String&
         return TestProtocolRuntimeFarmAnimalsCats;
     if (value == "Hens")
         return TestProtocolRuntimeFarmAnimalsHens;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 inline String toProtocolString(TestProtocolRuntimeTwoLeggedAnimals value)
@@ -905,7 +905,7 @@ inline Optional<TestProtocolRuntimeTwoLeggedAnimals> fromProtocolString(const St
         return TestProtocolRuntimeTwoLeggedAnimalsCrows;
     if (value == "Flamingos")
         return TestProtocolRuntimeTwoLeggedAnimalsFlamingos;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace Inspector

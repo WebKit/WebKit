@@ -469,7 +469,7 @@ ExceptionOr<void> HTMLSelectElement::setLength(unsigned newLength)
 
     if (diff < 0) { // Add dummy elements.
         do {
-            auto result = add(HTMLOptionElement::create(document()).ptr(), WTF::nullopt);
+            auto result = add(HTMLOptionElement::create(document()).ptr(), std::nullopt);
             if (result.hasException())
                 return result;
         } while (++diff);

@@ -46,13 +46,13 @@ Optional<ServiceWorkerInitializationData> ServiceWorkerInitializationData::decod
     Optional<UserContentControllerIdentifier> userContentControllerIdentifier;
     decoder >> userContentControllerIdentifier;
     if (!userContentControllerIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
     
 #if ENABLE(CONTENT_EXTENSIONS)
     Optional<Vector<std::pair<String, WebCompiledContentRuleListData>>> contentRuleLists;
     decoder >> contentRuleLists;
     if (!contentRuleLists)
-        return WTF::nullopt;
+        return std::nullopt;
 #endif
     
     return {{

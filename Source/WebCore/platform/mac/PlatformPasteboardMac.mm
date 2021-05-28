@@ -533,11 +533,11 @@ int64_t PlatformPasteboard::write(const Vector<PasteboardCustomData>& itemData)
 Optional<PasteboardItemInfo> PlatformPasteboard::informationForItemAtIndex(size_t index, int64_t changeCount)
 {
     if (changeCount != [m_pasteboard changeCount])
-        return WTF::nullopt;
+        return std::nullopt;
 
     NSPasteboardItem *item = itemAtIndex(index);
     if (!item)
-        return WTF::nullopt;
+        return std::nullopt;
 
     PasteboardItemInfo info;
     NSArray<NSPasteboardType> *platformTypes = [item types];

@@ -72,7 +72,7 @@ public:
     }
     SampleFlags flags() const final { return m_flags; }
     PlatformSample platformSample() final { return { PlatformSample::None, {nullptr}}; }
-    Optional<ByteRange> byteRange() const final { return WTF::nullopt; }
+    Optional<ByteRange> byteRange() const final { return std::nullopt; }
 
     void dump(PrintStream&) const final { }
 

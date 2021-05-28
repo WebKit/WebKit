@@ -68,7 +68,7 @@ Optional<Vector<PasteboardItemInfo>> Pasteboard::allPasteboardItemInfo() const
     if (auto* strategy = platformStrategies()->pasteboardStrategy())
         return strategy->allPasteboardItemInfo(name(), m_changeCount, context());
 #endif
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<PasteboardItemInfo> Pasteboard::pasteboardItemInfo(size_t index) const
@@ -79,7 +79,7 @@ Optional<PasteboardItemInfo> Pasteboard::pasteboardItemInfo(size_t index) const
 #else
     UNUSED_PARAM(index);
 #endif
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 String Pasteboard::readString(size_t index, const String& type)

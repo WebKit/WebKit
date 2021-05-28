@@ -230,7 +230,7 @@ Optional<WTF::KeyValuePair<String, String>> FetchHeaders::Iterator::next()
         if (!value.isNull())
             return WTF::KeyValuePair<String, String> { WTFMove(key), WTFMove(value) };
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 FetchHeaders::Iterator::Iterator(FetchHeaders& headers)

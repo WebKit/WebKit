@@ -129,7 +129,7 @@ Optional<CaptureDevice> AVAudioSessionCaptureDeviceManager::captureDeviceWithPer
         if (device.persistentId() == deviceID)
             return device;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::audioSessionDeviceWithUID(const String& deviceID)
@@ -141,7 +141,7 @@ Optional<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::audioS
         if (device.persistentId() == deviceID)
             return device;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void AVAudioSessionCaptureDeviceManager::scheduleUpdateCaptureDevices()

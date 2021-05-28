@@ -51,7 +51,7 @@ inline HTMLAllCollection::HTMLAllCollection(Document& document, CollectionType t
 Optional<Variant<RefPtr<HTMLCollection>, RefPtr<Element>>> HTMLAllCollection::namedOrIndexedItemOrItems(const AtomString& nameOrIndex) const
 {
     if (nameOrIndex.isNull())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (auto index = JSC::parseIndex(*nameOrIndex.impl()))
         return Variant<RefPtr<HTMLCollection>, RefPtr<Element>> { RefPtr<Element> { item(index.value()) } };
@@ -65,7 +65,7 @@ Optional<Variant<RefPtr<HTMLCollection>, RefPtr<Element>>> HTMLAllCollection::na
     auto namedItems = this->namedItems(name);
 
     if (namedItems.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
     if (namedItems.size() == 1)
         return Variant<RefPtr<HTMLCollection>, RefPtr<Element>> { RefPtr<Element> { WTFMove(namedItems[0]) } };
 

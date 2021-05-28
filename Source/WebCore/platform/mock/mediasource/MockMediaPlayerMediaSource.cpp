@@ -289,7 +289,7 @@ void MockMediaPlayerMediaSource::seekCompleted()
 
 Optional<VideoPlaybackQualityMetrics> MockMediaPlayerMediaSource::videoPlaybackQualityMetrics()
 {
-    return m_mediaSourcePrivate ? m_mediaSourcePrivate->videoPlaybackQualityMetrics() : WTF::nullopt;
+    return m_mediaSourcePrivate ? m_mediaSourcePrivate->videoPlaybackQualityMetrics() : std::nullopt;
 }
 
 }

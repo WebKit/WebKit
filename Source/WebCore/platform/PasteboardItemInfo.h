@@ -56,10 +56,10 @@ Optional<PresentationSize> PresentationSize::decode(Decoder& decoder)
 {
     PresentationSize result;
     if (!decoder.decode(result.width))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.height))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return result;
 }
@@ -135,31 +135,31 @@ Optional<PasteboardItemInfo> PasteboardItemInfo::decode(Decoder& decoder)
 {
     PasteboardItemInfo result;
     if (!decoder.decode(result.pathsForFileUpload))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.platformTypesForFileUpload))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.platformTypesByFidelity))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.suggestedFileName))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.preferredPresentationSize))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.isNonTextType))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.containsFileURLAndFileUploadContent))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.webSafeTypesByFidelity))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.preferredPresentationStyle))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return result;
 }

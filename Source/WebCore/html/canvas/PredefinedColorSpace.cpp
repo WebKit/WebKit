@@ -55,7 +55,7 @@ Optional<PredefinedColorSpace> toPredefinedColorSpace(const DestinationColorSpac
         return PredefinedColorSpace::DisplayP3;
 #endif
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 }

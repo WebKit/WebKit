@@ -154,7 +154,7 @@ public:
         Optional<double> time;
         decoder >> time;
         if (!time)
-            return WTF::nullopt;
+            return std::nullopt;
         return MonotonicTime::fromRawSeconds(*time);
     }
 

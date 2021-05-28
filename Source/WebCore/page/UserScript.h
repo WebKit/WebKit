@@ -91,37 +91,37 @@ Optional<UserScript> UserScript::decode(Decoder& decoder)
     Optional<String> source;
     decoder >> source;
     if (!source)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<URL> url;
     decoder >> url;
     if (!url)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<Vector<String>> allowlist;
     decoder >> allowlist;
     if (!allowlist)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<Vector<String>> blocklist;
     decoder >> blocklist;
     if (!blocklist)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<UserScriptInjectionTime> injectionTime;
     decoder >> injectionTime;
     if (!injectionTime)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<UserContentInjectedFrames> injectedFrames;
     decoder >> injectedFrames;
     if (!injectedFrames)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<WaitForNotificationBeforeInjecting> waitForNotification;
     decoder >> waitForNotification;
     if (!waitForNotification)
-        return WTF::nullopt;
+        return std::nullopt;
     
     return {{
         WTFMove(*source),

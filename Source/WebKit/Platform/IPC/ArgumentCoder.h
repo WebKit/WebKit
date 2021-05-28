@@ -57,7 +57,7 @@ template<typename T, typename = void> struct ArgumentCoder {
             T t;
             if (T::decode(decoder, t))
                 return WTFMove(t);
-            return WTF::nullopt;
+            return std::nullopt;
         }
     }
 
@@ -88,7 +88,7 @@ struct ArgumentCoder<T, typename std::enable_if_t<std::is_arithmetic_v<T>>> {
         T result;
         if (decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(&result), sizeof(T), alignof(T)))
             return result;
-        return WTF::nullopt;
+        return std::nullopt;
     }
 };
 
@@ -107,7 +107,7 @@ struct ArgumentCoder<T, typename std::enable_if_t<std::is_enum_v<T>>> {
         decoder >> value;
         if (value && WTF::isValidEnum<T>(*value))
             return static_cast<T>(*value);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 };
 

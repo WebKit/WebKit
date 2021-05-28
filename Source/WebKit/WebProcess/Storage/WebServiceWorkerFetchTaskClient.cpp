@@ -121,7 +121,7 @@ void WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinish(Ref<FormData>&
         m_blobLoader.emplace(*this);
         auto loader = serviceWorkerThreadProxy->createBlobLoader(*m_blobLoader, blobURL);
         if (!loader) {
-            m_blobLoader = WTF::nullopt;
+            m_blobLoader = std::nullopt;
             didFail(internalError(blobURL));
             return;
         }
@@ -142,7 +142,7 @@ void WebServiceWorkerFetchTaskClient::didFinishBlobLoading()
 {
     didFinish();
 
-    std::exchange(m_blobLoader, WTF::nullopt);
+    std::exchange(m_blobLoader, std::nullopt);
 }
 
 void WebServiceWorkerFetchTaskClient::didFail(const ResourceError& error)

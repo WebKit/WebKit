@@ -92,12 +92,12 @@ Optional<uint32_t> Table::grow(uint32_t delta, JSValue defaultValue)
     newLengthChecked += delta;
     uint32_t newLength;
     if (newLengthChecked.safeGet(newLength) == CheckedState::DidOverflow)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (maximum() && newLength > *maximum())
-        return WTF::nullopt;
+        return std::nullopt;
     if (!isValidLength(newLength))
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto checkedGrow = [&] (auto& container, auto initializer) {
         if (newLengthChecked.unsafeGet() > allocatedLength(m_length)) {
@@ -118,13 +118,13 @@ Optional<uint32_t> Table::grow(uint32_t delta, JSValue defaultValue)
 
     if (auto* funcRefTable = asFuncrefTable()) {
         if (!checkedGrow(funcRefTable->m_importableFunctions, [] (auto&) { }))
-            return WTF::nullopt;
+            return std::nullopt;
         if (!checkedGrow(funcRefTable->m_instances, [] (auto&) { }))
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     if (!checkedGrow(m_jsValues, [defaultValue] (WriteBarrier<Unknown>& slot) { slot.setStartingValue(defaultValue); }))
-        return WTF::nullopt;
+        return std::nullopt;
 
     setLength(newLength);
     return newLength;

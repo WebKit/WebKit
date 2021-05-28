@@ -58,7 +58,7 @@ static Optional<std::pair<ChangeListTypeCommand::Type, Ref<HTMLElement>>> listCo
     if (is<HTMLOListElement>(listToReplace))
         return {{ ChangeListTypeCommand::Type::ConvertToUnorderedList, listToReplace.releaseNonNull() }};
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<ChangeListTypeCommand::Type> ChangeListTypeCommand::listConversionType(Document& document)
@@ -67,7 +67,7 @@ Optional<ChangeListTypeCommand::Type> ChangeListTypeCommand::listConversionType(
         if (auto typeAndElement = listConversionTypeForSelection(frame->selection().selection()))
             return typeAndElement->first;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Ref<HTMLElement> ChangeListTypeCommand::createNewList(const HTMLElement& listToReplace)

@@ -228,7 +228,7 @@ static Optional<URelativeDateTimeUnit> relativeTimeUnitType(StringView unit)
     if (singular == "year")
         return UDAT_REL_UNIT_YEAR;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 String IntlRelativeTimeFormat::formatInternal(JSGlobalObject* globalObject, double value, StringView unit) const

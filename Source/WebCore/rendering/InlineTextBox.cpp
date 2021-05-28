@@ -396,7 +396,7 @@ Optional<bool> InlineTextBox::emphasisMarkExistsAndIsAbove(const RenderStyle& st
 {
     // This function returns true if there are text emphasis marks and they are suppressed by ruby text.
     if (style.textEmphasisMark() == TextEmphasisMark::None)
-        return WTF::nullopt;
+        return std::nullopt;
 
     const OptionSet<TextEmphasisPosition> horizontalMask { TextEmphasisPosition::Left, TextEmphasisPosition::Right };
 
@@ -428,7 +428,7 @@ Optional<bool> InlineTextBox::emphasisMarkExistsAndIsAbove(const RenderStyle& st
 
     // The emphasis marks over are suppressed only if there is a ruby text box and it not empty.
     if (rubyText && rubyText->hasLines())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return isAbove;
 }

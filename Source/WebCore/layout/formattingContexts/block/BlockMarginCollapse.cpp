@@ -539,7 +539,7 @@ UsedVerticalMargin::PositiveAndNegativePair::Values BlockMarginCollapse::positiv
 LayoutUnit BlockMarginCollapse::marginBeforeIgnoringCollapsingThrough(const Box& layoutBox, UsedVerticalMargin::NonCollapsedValues nonCollapsedValues)
 {
     ASSERT(layoutBox.isBlockLevelBox());
-    return marginValue(positiveNegativeMarginBefore(layoutBox, nonCollapsedValues)).valueOr(nonCollapsedValues.before);
+    return marginValue(positiveNegativeMarginBefore(layoutBox, nonCollapsedValues)).value_or(nonCollapsedValues.before);
 }
 
 UsedVerticalMargin BlockMarginCollapse::collapsedVerticalValues(const Box& layoutBox, UsedVerticalMargin::NonCollapsedValues nonCollapsedValues)

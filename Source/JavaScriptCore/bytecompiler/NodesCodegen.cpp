@@ -3026,7 +3026,7 @@ RegisterID* BinaryOpNode::emitBytecode(BytecodeGenerator& generator, RegisterID*
                 if (value.isInt32() && value.asInt32() >= 0)
                     return UInt32Result::Constant;
             }
-            return WTF::nullopt;
+            return std::nullopt;
         };
         auto leftResult = isUInt32(m_expr1);
         auto rightResult = isUInt32(m_expr2);

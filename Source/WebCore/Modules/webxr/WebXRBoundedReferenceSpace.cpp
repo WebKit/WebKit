@@ -99,7 +99,7 @@ void WebXRBoundedReferenceSpace::updateIfNeeded()
 
     if (frameData.stageParameters.bounds.size() >= MinimumBoundsVertices) {
         // Each point has to multiplied by the inverse of originOffset.
-        auto transform = originOffset().rawTransform().inverse().valueOr(TransformationMatrix());
+        auto transform = originOffset().rawTransform().inverse().value_or(TransformationMatrix());
         for (auto& point : frameData.stageParameters.bounds) {
             auto mappedPoint = transform.mapPoint(point);
             // The y value of each point MUST be 0.

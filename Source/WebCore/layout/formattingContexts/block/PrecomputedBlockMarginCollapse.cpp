@@ -48,7 +48,7 @@ UsedVerticalMargin::PositiveAndNegativePair::Values BlockMarginCollapse::precomp
 
     auto horizontalConstraints = formattingGeometry.constraintsForInFlowContent(layoutBox.containingBlock()).horizontal;
     auto computedVerticalMargin = formattingGeometry.computedVerticalMargin(layoutBox, horizontalConstraints);
-    auto nonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
+    auto nonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.value_or(0), computedVerticalMargin.after.value_or(0) };
     return precomputedPositiveNegativeMarginBefore(layoutBox, nonCollapsedMargin, formattingGeometry);
 }
 

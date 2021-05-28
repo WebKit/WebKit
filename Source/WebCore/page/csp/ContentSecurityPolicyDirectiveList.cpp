@@ -373,7 +373,7 @@ template<typename CharacterType> auto ContentSecurityPolicyDirectiveList::parseD
 
     // Empty directive (e.g. ";;;"). Exit early.
     if (buffer.atEnd())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto nameBegin = buffer.position();
     skipWhile<isDirectiveNameCharacter>(buffer);
@@ -382,7 +382,7 @@ template<typename CharacterType> auto ContentSecurityPolicyDirectiveList::parseD
     if (nameBegin == buffer.position()) {
         skipWhile<isNotASCIISpace>(buffer);
         m_policy.reportUnsupportedDirective(String(nameBegin, buffer.position() - nameBegin));
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     auto name = String(nameBegin, buffer.position() - nameBegin);
@@ -393,7 +393,7 @@ template<typename CharacterType> auto ContentSecurityPolicyDirectiveList::parseD
     if (!skipExactly<isASCIISpace>(buffer)) {
         skipWhile<isNotASCIISpace>(buffer);
         m_policy.reportUnsupportedDirective(String(nameBegin, buffer.position() - nameBegin));
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     skipWhile<isASCIISpace>(buffer);
@@ -403,7 +403,7 @@ template<typename CharacterType> auto ContentSecurityPolicyDirectiveList::parseD
 
     if (!buffer.atEnd()) {
         m_policy.reportInvalidDirectiveValueCharacter(name, String(valueBegin, buffer.end() - valueBegin));
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     // The directive-value may be empty.

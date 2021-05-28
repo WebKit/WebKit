@@ -971,7 +971,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     [_formInputSession invalidate];
     _formInputSession = nil;
     [_highlightView removeFromSuperview];
-    _lastOutstandingPositionInformationRequest = WTF::nullopt;
+    _lastOutstandingPositionInformationRequest = std::nullopt;
     _isWaitingOnPositionInformation = NO;
 
     _focusRequiresStrongPasswordAssistance = NO;
@@ -1000,7 +1000,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
         _interactionViewsContainerView = nil;
     }
 
-    _lastInsertedCharacterToOverrideCharacterBeforeSelection = WTF::nullopt;
+    _lastInsertedCharacterToOverrideCharacterBeforeSelection = std::nullopt;
 
     [_touchEventGestureRecognizer setDelegate:nil];
     [self removeGestureRecognizer:_touchEventGestureRecognizer.get()];
@@ -1544,7 +1544,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
     }
 }
 
-- (WTF::Optional<unsigned>)activeTouchIdentifierForGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+- (std::optional<unsigned>)activeTouchIdentifierForGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
 {
     NSMapTable<NSNumber *, UITouch *> *activeTouches = [_touchEventGestureRecognizer activeTouchesByIdentifier];
     for (NSNumber *touchIdentifier in activeTouches) {
@@ -1552,7 +1552,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
         if ([touch.gestureRecognizers containsObject:gestureRecognizer])
             return [touchIdentifier unsignedIntValue];
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 inline static UIKeyModifierFlags gestureRecognizerModifierFlags(UIGestureRecognizer *recognizer)
@@ -2527,7 +2527,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         if (![self _currentPositionInformationIsValidForRequest:requestAndHandler->first])
             continue;
 
-        _pendingPositionInformationHandlers[index] = WTF::nullopt;
+        _pendingPositionInformationHandlers[index] = std::nullopt;
 
         if (requestAndHandler->second)
             requestAndHandler->second(updatedPositionInformation);
@@ -2626,7 +2626,7 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
             if (![self ensurePositionInformationIsUpToDate:request])
                 return NO;
         }
-        return _positionInformation.nodeAtPositionHasDoubleClickHandler.valueOr(false);
+        return _positionInformation.nodeAtPositionHasDoubleClickHandler.value_or(false);
     }
 
     if (gestureRecognizer == _highlightLongPressGestureRecognizer
@@ -3138,7 +3138,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 - (void)_positionInformationDidChange:(const WebKit::InteractionInformationAtPosition&)info
 {
     if (_lastOutstandingPositionInformationRequest && info.request.isValidForRequest(*_lastOutstandingPositionInformationRequest))
-        _lastOutstandingPositionInformationRequest = WTF::nullopt;
+        _lastOutstandingPositionInformationRequest = std::nullopt;
 
     _isWaitingOnPositionInformation = NO;
 
@@ -4422,7 +4422,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (UTF32Char)_characterBeforeCaretSelection
 {
-    return _lastInsertedCharacterToOverrideCharacterBeforeSelection.valueOr(_page->editorState().postLayoutData().characterBeforeSelection);
+    return _lastInsertedCharacterToOverrideCharacterBeforeSelection.value_or(_page->editorState().postLayoutData().characterBeforeSelection);
 }
 
 - (UTF32Char)_characterInRelationToCaretSelection:(int)amount
@@ -6431,7 +6431,7 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
     if (!_isChangingFocus)
         _didAccessoryTabInitiateFocus = NO;
 
-    _lastInsertedCharacterToOverrideCharacterBeforeSelection = WTF::nullopt;
+    _lastInsertedCharacterToOverrideCharacterBeforeSelection = std::nullopt;
 }
 
 - (void)_updateInputContextAfterBlurringAndRefocusingElement
@@ -7031,7 +7031,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     [_webView _didChangeEditorState];
 
     if (!_page->editorState().isMissingPostLayoutData) {
-        _lastInsertedCharacterToOverrideCharacterBeforeSelection = WTF::nullopt;
+        _lastInsertedCharacterToOverrideCharacterBeforeSelection = std::nullopt;
         if (!_usingGestureForSelection && _focusedElementInformation.autocapitalizeType == WebCore::AutocapitalizeType::Words)
             [UIKeyboardImpl.sharedInstance clearShiftState];
     }
@@ -7243,7 +7243,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
         && [uiDelegate _webView:webView.get() fileUploadPanelContentIsManagedWithInitiatingFrame:wrapper(API::FrameInfo::create(WTFMove(_frameInfoForFileUploadPanel), _page.get()))];
 }
 
-- (void)_showShareSheet:(const WebCore::ShareDataWithParsedURL&)data inRect:(WTF::Optional<WebCore::FloatRect>)rect completionHandler:(CompletionHandler<void(bool)>&&)completionHandler
+- (void)_showShareSheet:(const WebCore::ShareDataWithParsedURL&)data inRect:(std::optional<WebCore::FloatRect>)rect completionHandler:(CompletionHandler<void(bool)>&&)completionHandler
 {
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     if (_shareSheet)
@@ -7292,7 +7292,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     [_contactPicker setDelegate:self];
     [_contactPicker presentWithRequestData:requestData completionHandler:WTFMove(completionHandler)];
 #else
-    completionHandler(WTF::nullopt);
+    completionHandler(std::nullopt);
 #endif
 }
 
@@ -7407,7 +7407,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     request.includeLinkIndicator = assistant.needsLinkIndicator;
     request.linkIndicatorShouldHaveLegacyMargins = !self._shouldUseContextMenus;
     if (![self ensurePositionInformationIsUpToDate:request])
-        return WTF::nullopt;
+        return std::nullopt;
 
     return _positionInformation;
 }
@@ -8032,7 +8032,7 @@ static Optional<WebCore::DragOperation> coreDragOperationForUIDropOperation(UIDr
 {
     switch (dropOperation) {
     case UIDropOperationCancel:
-        return WTF::nullopt;
+        return std::nullopt;
     case UIDropOperationForbidden:
         return WebCore::DragOperation::Private;
     case UIDropOperationCopy:
@@ -8041,7 +8041,7 @@ static Optional<WebCore::DragOperation> coreDragOperationForUIDropOperation(UIDr
         return WebCore::DragOperation::Move;
     }
     ASSERT_NOT_REACHED();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 - (WebCore::DragData)dragDataForDropSession:(id <UIDropSession>)session dragDestinationAction:(WKDragDestinationAction)dragDestinationAction
@@ -9416,7 +9416,7 @@ static BOOL applicationIsKnownToIgnoreMouseEvents(const char* &warningVersion)
         completion([self pointerRegionForPositionInformation:interactionInformation point:request.location]);
 
         if (_deferredPointerInteractionRequest) {
-            auto deferredRequest = std::exchange(_deferredPointerInteractionRequest, WTF::nullopt);
+            auto deferredRequest = std::exchange(_deferredPointerInteractionRequest, std::nullopt);
             [self doAfterPositionInformationUpdate:^(WebKit::InteractionInformationAtPosition interactionInformation) {
                 replyHandler(interactionInformation, deferredRequest->second.get());
             } forRequest:deferredRequest->first];
@@ -9653,8 +9653,8 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (void)_invokeAllActionsToPerformAfterPendingImageExtraction:(WebKit::ProceedWithImageExtraction)proceedWithImageExtraction
 {
-    _pendingImageExtractionRequestIdentifier = WTF::nullopt;
-    _elementPendingImageExtraction = WTF::nullopt;
+    _pendingImageExtractionRequestIdentifier = std::nullopt;
+    _elementPendingImageExtraction = std::nullopt;
     for (auto block : std::exchange(_actionsToPerformAfterPendingImageExtraction, { }))
         block(proceedWithImageExtraction);
 }

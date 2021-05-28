@@ -45,7 +45,7 @@ protected:
     static bool isPhrasingContent(const Node&);
     static bool isFlowContent(const Node&);
 
-    static Optional<bool> toOptionalBool(const BooleanValue& value) { return value == BooleanValue::Default ? WTF::nullopt : Optional<bool>(value == BooleanValue::True); }
+    static Optional<bool> toOptionalBool(const BooleanValue& value) { return value == BooleanValue::Default ? std::nullopt : Optional<bool>(value == BooleanValue::True); }
     const BooleanValue& cachedBooleanAttribute(const QualifiedName&, Optional<BooleanValue>&);
 
     static Length parseMathMLLength(const String&);

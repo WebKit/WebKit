@@ -67,7 +67,7 @@ void RemoteInspector::didClose(RemoteInspectorSocketEndpoint&, ConnectionID)
 {
     ASSERT(isConnected());
 
-    m_clientConnection = WTF::nullopt;
+    m_clientConnection = std::nullopt;
 
     RunLoop::current().dispatch([=] {
         Locker locker { m_mutex };

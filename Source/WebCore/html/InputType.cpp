@@ -868,7 +868,7 @@ void InputType::dataListMayHaveChanged()
 Optional<Decimal> InputType::findClosestTickMarkValue(const Decimal&)
 {
     ASSERT_NOT_REACHED();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 #endif
 

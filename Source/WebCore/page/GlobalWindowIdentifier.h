@@ -71,12 +71,12 @@ Optional<GlobalWindowIdentifier> GlobalWindowIdentifier::decode(Decoder& decoder
     Optional<ProcessIdentifier> processIdentifier;
     decoder >> processIdentifier;
     if (!processIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<WindowIdentifier> windowIdentifier;
     decoder >> windowIdentifier;
     if (!windowIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return { { WTFMove(*processIdentifier), WTFMove(*windowIdentifier) } };
 }

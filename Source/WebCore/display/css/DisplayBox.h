@@ -77,7 +77,7 @@ public:
     const Box* nextSibling() const { return m_nextSibling.get(); }
     void setNextSibling(std::unique_ptr<Box>&&);
 
-    void setNeedsDisplay(Optional<AbsoluteFloatRect> subrect = WTF::nullopt);
+    void setNeedsDisplay(Optional<AbsoluteFloatRect> subrect = std::nullopt);
 
     virtual String debugDescription() const;
 

@@ -213,9 +213,9 @@ public:
     virtual WEBCORE_EXPORT void clear();
     virtual WEBCORE_EXPORT void clear(const String& type);
 
-    virtual WEBCORE_EXPORT void read(PasteboardPlainText&, PlainTextURLReadingPolicy = PlainTextURLReadingPolicy::AllowURL, Optional<size_t> itemIndex = WTF::nullopt);
-    virtual WEBCORE_EXPORT void read(PasteboardWebContentReader&, WebContentReadingPolicy = WebContentReadingPolicy::AnyType, Optional<size_t> itemIndex = WTF::nullopt);
-    virtual WEBCORE_EXPORT void read(PasteboardFileReader&, Optional<size_t> itemIndex = WTF::nullopt);
+    virtual WEBCORE_EXPORT void read(PasteboardPlainText&, PlainTextURLReadingPolicy = PlainTextURLReadingPolicy::AllowURL, Optional<size_t> itemIndex = std::nullopt);
+    virtual WEBCORE_EXPORT void read(PasteboardWebContentReader&, WebContentReadingPolicy = WebContentReadingPolicy::AnyType, Optional<size_t> itemIndex = std::nullopt);
+    virtual WEBCORE_EXPORT void read(PasteboardFileReader&, Optional<size_t> itemIndex = std::nullopt);
 
     static bool canWriteTrustworthyWebURLsPboardType();
 

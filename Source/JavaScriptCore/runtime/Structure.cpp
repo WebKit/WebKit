@@ -1502,7 +1502,7 @@ auto Structure::findPropertyHashEntry(PropertyName propertyName) const -> Option
                 return PropertyHashEntry { propHashTable, entry };
         }
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Structure* Structure::setBrandTransitionFromExistingStructureImpl(Structure* structure, UniquedStringImpl* brandID)

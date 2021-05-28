@@ -237,7 +237,7 @@ public:
 
     Optional<float> calculateDistance(SVGElement*, const String& from, const String& to) const override
     {
-        return std::abs(parseNumber(to).valueOr(0) - parseNumber(from).valueOr(0));
+        return std::abs(parseNumber(to).value_or(0) - parseNumber(from).value_or(0));
     }
 
 private:

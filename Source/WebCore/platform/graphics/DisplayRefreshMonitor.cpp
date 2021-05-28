@@ -115,7 +115,7 @@ Optional<FramesPerSecond> DisplayRefreshMonitor::maximumClientPreferredFramesPer
 {
     Optional<FramesPerSecond> maxFramesPerSecond;
     for (auto* client : m_clients)
-        maxFramesPerSecond = std::max<FramesPerSecond>(maxFramesPerSecond.valueOr(0), client->preferredFramesPerSecond());
+        maxFramesPerSecond = std::max<FramesPerSecond>(maxFramesPerSecond.value_or(0), client->preferredFramesPerSecond());
 
     return maxFramesPerSecond;
 }

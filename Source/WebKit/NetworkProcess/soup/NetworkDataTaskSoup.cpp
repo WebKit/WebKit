@@ -222,7 +222,7 @@ void NetworkDataTaskSoup::clearRequest()
 
     stopTimeout();
     m_pendingResult = nullptr;
-    m_pendingDataURLResult = WTF::nullopt;
+    m_pendingDataURLResult = std::nullopt;
     m_file = nullptr;
     m_inputStream = nullptr;
     m_multipartInputStream = nullptr;

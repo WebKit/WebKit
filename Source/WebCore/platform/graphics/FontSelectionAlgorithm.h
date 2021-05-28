@@ -92,7 +92,7 @@ Optional<FontSelectionValue> FontSelectionValue::decode(Decoder& decoder)
     Optional<FontSelectionValue::BackingType> backing;
     decoder >> backing;
     if (!backing)
-        return WTF::nullopt;
+        return std::nullopt;
 
     FontSelectionValue result;
     result.m_backing = *backing;
@@ -362,12 +362,12 @@ Optional<FontSelectionRange> FontSelectionRange::decode(Decoder& decoder)
     Optional<FontSelectionRange::Value> minimum;
     decoder >> minimum;
     if (!minimum)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontSelectionRange::Value> maximum;
     decoder >> maximum;
     if (!maximum)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *minimum, *maximum }};
 }
@@ -405,7 +405,7 @@ inline TextStream& operator<<(TextStream& ts, const FontSelectionValue& fontSele
 
 inline TextStream& operator<<(TextStream& ts, const Optional<FontSelectionValue>& optionalFontSelectionValue)
 {
-    ts << optionalFontSelectionValue.valueOr(normalItalicValue());
+    ts << optionalFontSelectionValue.value_or(normalItalicValue());
     return ts;
 }
 
@@ -484,17 +484,17 @@ struct FontSelectionSpecifiedCapabilities {
 
     constexpr Range computeWeight() const
     {
-        return weight.valueOr(Range { normalWeightValue() });
+        return weight.value_or(Range { normalWeightValue() });
     }
 
     constexpr Range computeWidth() const
     {
-        return width.valueOr(Range { normalStretchValue() });
+        return width.value_or(Range { normalStretchValue() });
     }
 
     constexpr Range computeSlope() const
     {
-        return slope.valueOr(Range { normalItalicValue() });
+        return slope.value_or(Range { normalItalicValue() });
     }
 
     template<class Encoder>
@@ -522,17 +522,17 @@ Optional<FontSelectionSpecifiedCapabilities> FontSelectionSpecifiedCapabilities:
     Optional<OptionalRange> weight;
     decoder >> weight;
     if (!weight)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<OptionalRange> width;
     decoder >> width;
     if (!width)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<OptionalRange> slope;
     decoder >> slope;
     if (!slope)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *weight, *width, *slope }};
 }
@@ -552,7 +552,7 @@ public:
     using Capabilities = FontSelectionCapabilities;
 
     FontSelectionAlgorithm() = delete;
-    FontSelectionAlgorithm(FontSelectionRequest, const Vector<Capabilities>&, Optional<Capabilities> capabilitiesBounds = WTF::nullopt);
+    FontSelectionAlgorithm(FontSelectionRequest, const Vector<Capabilities>&, Optional<Capabilities> capabilitiesBounds = std::nullopt);
 
     struct DistanceResult {
         FontSelectionValue distance;

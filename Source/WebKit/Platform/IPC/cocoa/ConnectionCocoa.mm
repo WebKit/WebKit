@@ -598,7 +598,7 @@ IPC::Connection::Identifier Connection::identifier() const
 Optional<audit_token_t> Connection::getAuditToken()
 {
     if (!m_xpcConnection)
-        return WTF::nullopt;
+        return std::nullopt;
     
     audit_token_t auditToken;
     xpc_connection_get_audit_token(m_xpcConnection.get(), &auditToken);

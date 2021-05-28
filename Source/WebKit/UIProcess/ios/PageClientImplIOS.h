@@ -290,7 +290,7 @@ private:
 #endif
 
     void cancelPointersForGestureRecognizer(UIGestureRecognizer*) override;
-    WTF::Optional<unsigned> activeTouchIdentifierForGestureRecognizer(UIGestureRecognizer*) override;
+    std::optional<unsigned> activeTouchIdentifierForGestureRecognizer(UIGestureRecognizer*) override;
 
     void showDictationAlternativeUI(const WebCore::FloatRect&, WebCore::DictationContext) final;
 

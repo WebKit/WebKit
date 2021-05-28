@@ -2711,13 +2711,13 @@ template <typename BigIntImpl>
 Optional<JSBigInt::Digit> JSBigInt::toShiftAmount(BigIntImpl x)
 {
     if (x.length() > 1)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Digit value = x.digit(0);
     static_assert(maxLengthBits < std::numeric_limits<Digit>::max(), "maxLengthBits needs to be less than digit");
     
     if (value > maxLengthBits)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return value;
 }
@@ -3078,7 +3078,7 @@ Optional<unsigned> JSBigInt::concurrentHash()
 {
     // FIXME: Implement JSBigInt::concurrentHash by inserting right store barriers.
     // https://bugs.webkit.org/show_bug.cgi?id=216801
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 unsigned JSBigInt::hashSlow()

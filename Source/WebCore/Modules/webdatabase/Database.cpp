@@ -635,7 +635,7 @@ String Database::fileNameIsolatedCopy() const
 DatabaseDetails Database::details() const
 {
     // This code path is only used for database quota delegate calls, so file dates are irrelevant and left uninitialized.
-    return DatabaseDetails(stringIdentifierIsolatedCopy(), displayNameIsolatedCopy(), estimatedSize(), 0, WTF::nullopt, WTF::nullopt);
+    return DatabaseDetails(stringIdentifierIsolatedCopy(), displayNameIsolatedCopy(), estimatedSize(), 0, std::nullopt, std::nullopt);
 }
 
 void Database::disableAuthorizer()

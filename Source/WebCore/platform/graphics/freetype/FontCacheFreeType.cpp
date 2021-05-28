@@ -598,7 +598,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
 
 Optional<ASCIILiteral> FontCache::platformAlternateFamilyName(const String&)
 {
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 #if ENABLE(VARIATION_FONTS)

@@ -963,7 +963,7 @@ Optional<LayoutRect> RenderInline::computeVisibleRectInContainer(const LayoutRec
         bool isEmpty = !downcast<RenderBox>(*localContainer).applyCachedClipAndScrollPosition(adjustedRect, container, context);
         if (isEmpty) {
             if (context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
-                return WTF::nullopt;
+                return std::nullopt;
             return adjustedRect;
         }
     }

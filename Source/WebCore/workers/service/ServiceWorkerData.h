@@ -59,27 +59,27 @@ Optional<ServiceWorkerData> ServiceWorkerData::decode(Decoder& decoder)
     Optional<ServiceWorkerIdentifier> identifier;
     decoder >> identifier;
     if (!identifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<URL> scriptURL;
     decoder >> scriptURL;
     if (!scriptURL)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<ServiceWorkerState> state;
     decoder >> state;
     if (!state)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<WorkerType> type;
     decoder >> type;
     if (!type)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<ServiceWorkerRegistrationIdentifier> registrationIdentifier;
     decoder >> registrationIdentifier;
     if (!registrationIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return { { WTFMove(*identifier), WTFMove(*scriptURL), WTFMove(*state), WTFMove(*type), WTFMove(*registrationIdentifier) } };
 }

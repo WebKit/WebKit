@@ -221,7 +221,7 @@ ExceptionOr<Optional<OffscreenRenderingContext>> OffscreenCanvas::getContext(JSC
     if (contextType == RenderingContextType::_2d) {
         if (m_context) {
             if (!is<OffscreenCanvasRenderingContext2D>(*m_context))
-                return { { WTF::nullopt } };
+                return { { std::nullopt } };
             return { { RefPtr<OffscreenCanvasRenderingContext2D> { &downcast<OffscreenCanvasRenderingContext2D>(*m_context) } } };
         }
 
@@ -231,7 +231,7 @@ ExceptionOr<Optional<OffscreenRenderingContext>> OffscreenCanvas::getContext(JSC
 
         m_context = makeUnique<OffscreenCanvasRenderingContext2D>(*this, WTFMove(settings));
         if (!m_context)
-            return { { WTF::nullopt } };
+            return { { std::nullopt } };
 
         return { { RefPtr<OffscreenCanvasRenderingContext2D> { &downcast<OffscreenCanvasRenderingContext2D>(*m_context) } } };
     }
@@ -244,7 +244,7 @@ ExceptionOr<Optional<OffscreenRenderingContext>> OffscreenCanvas::getContext(JSC
             if (is<WebGL2RenderingContext>(*m_context))
                 return { { RefPtr<WebGL2RenderingContext> { &downcast<WebGL2RenderingContext>(*m_context) } } };
 #endif
-            return { { WTF::nullopt } };
+            return { { std::nullopt } };
         }
 
         auto scope = DECLARE_THROW_SCOPE(state.vm());
@@ -253,7 +253,7 @@ ExceptionOr<Optional<OffscreenRenderingContext>> OffscreenCanvas::getContext(JSC
 
         createContextWebGL(contextType, WTFMove(attributes));
         if (!m_context)
-            return { { WTF::nullopt } };
+            return { { std::nullopt } };
 
 #if ENABLE(WEBGL2)
         if (is<WebGL2RenderingContext>(*m_context))
@@ -332,7 +332,7 @@ static String toEncodingMimeType(const String& mimeType)
 static Optional<double> qualityFromDouble(double qualityNumber)
 {
     if (!(qualityNumber >= 0 && qualityNumber <= 1))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return qualityNumber;
 }

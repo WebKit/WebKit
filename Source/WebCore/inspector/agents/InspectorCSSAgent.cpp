@@ -939,7 +939,7 @@ Optional<Protocol::CSS::LayoutContextType> InspectorCSSAgent::layoutContextTypeF
 {
     if (is<RenderGrid>(renderer))
         return Protocol::CSS::LayoutContextType::Grid;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static void pushChildrenNodesToFrontendIfLayoutContextTypePresent(InspectorDOMAgent& domAgent, ContainerNode& node)

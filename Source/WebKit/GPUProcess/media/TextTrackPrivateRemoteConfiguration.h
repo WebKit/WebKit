@@ -76,72 +76,72 @@ struct TextTrackPrivateRemoteConfiguration {
         Optional<AtomString> trackId;
         decoder >> trackId;
         if (!trackId)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<AtomString> label;
         decoder >> label;
         if (!label)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<AtomString> language;
         decoder >> language;
         if (!language)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<AtomString> inBandMetadataTrackDispatchType;
         decoder >> inBandMetadataTrackDispatchType;
         if (!inBandMetadataTrackDispatchType)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<MediaTime> startTimeVariance;
         decoder >> startTimeVariance;
         if (!startTimeVariance)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<int> trackIndex;
         decoder >> trackIndex;
         if (!trackIndex)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<WebCore::InbandTextTrackPrivate::CueFormat> cueFormat;
         decoder >> cueFormat;
         if (!cueFormat)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<WebCore::InbandTextTrackPrivate::Kind> kind;
         decoder >> kind;
         if (!kind)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> isClosedCaptions;
         decoder >> isClosedCaptions;
         if (!isClosedCaptions)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> isSDH;
         decoder >> isSDH;
         if (!isSDH)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> containsOnlyForcedSubtitles;
         decoder >> containsOnlyForcedSubtitles;
         if (!containsOnlyForcedSubtitles)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> isMainProgramContent;
         decoder >> isMainProgramContent;
         if (!isMainProgramContent)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> isEasyToRead;
         decoder >> isEasyToRead;
         if (!isEasyToRead)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> isDefault;
         decoder >> isDefault;
         if (!isDefault)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{
             WTFMove(*trackId),

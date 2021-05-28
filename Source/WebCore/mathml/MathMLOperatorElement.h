@@ -42,7 +42,7 @@ public:
     };
     static OperatorChar parseOperatorChar(const String&);
     const OperatorChar& operatorChar();
-    void setOperatorFormDirty() { m_dictionaryProperty = WTF::nullopt; }
+    void setOperatorFormDirty() { m_dictionaryProperty = std::nullopt; }
     MathMLOperatorDictionary::Form form() { return dictionaryProperty().form; }
     bool hasProperty(MathMLOperatorDictionary::Flag);
     Length defaultLeadingSpace();

@@ -1606,7 +1606,7 @@ Optional<BoundaryPoint> makeBoundaryPoint(const Position& position)
 {
     auto container = makeRefPtr(position.containerNode());
     if (!container)
-        return WTF::nullopt;
+        return std::nullopt;
     return BoundaryPoint { container.releaseNonNull(), static_cast<unsigned>(position.computeOffsetInContainerNode()) };
 }
 

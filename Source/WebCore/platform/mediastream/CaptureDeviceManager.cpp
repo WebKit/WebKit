@@ -40,6 +40,16 @@ namespace WebCore {
 
 CaptureDeviceManager::~CaptureDeviceManager() = default;
 
+void CaptureDeviceManager::computeCaptureDevices(CompletionHandler<void()>&& callback)
+{
+    callback();
+}
+
+std::optional<CaptureDevice> CaptureDeviceManager::captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&)
+{
+    return std::nullopt;
+}
+
 CaptureDevice CaptureDeviceManager::captureDeviceFromPersistentID(const String& captureDeviceID)
 {
     for (auto& device : captureDevices()) {

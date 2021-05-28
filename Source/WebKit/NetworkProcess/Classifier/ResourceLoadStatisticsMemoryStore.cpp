@@ -337,7 +337,7 @@ void ResourceLoadStatisticsMemoryStore::requestStorageAccessUnderOpener(DomainIn
         debugBroadcastConsoleMessage(MessageSource::ITPDebug, MessageLevel::Info, makeString("[ITP] Storage access was granted for '"_s, domainInNeedOfStorageAccess.string(), "' under opener page from '"_s, openerDomain.string(), "', with user interaction in the opened window."_s));
     }
 
-    grantStorageAccessInternal(WTFMove(domainInNeedOfStorageAccess), WTFMove(openerDomain), WTF::nullopt, openerPageID, StorageAccessPromptWasShown::No, StorageAccessScope::PerPage, [](StorageAccessWasGranted) { });
+    grantStorageAccessInternal(WTFMove(domainInNeedOfStorageAccess), WTFMove(openerDomain), std::nullopt, openerPageID, StorageAccessPromptWasShown::No, StorageAccessScope::PerPage, [](StorageAccessWasGranted) { });
 }
 
 void ResourceLoadStatisticsMemoryStore::grantStorageAccess(SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, FrameIdentifier frameID, PageIdentifier pageID, StorageAccessPromptWasShown promptWasShown, StorageAccessScope scope, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler)
@@ -932,7 +932,7 @@ bool ResourceLoadStatisticsMemoryStore::shouldEnforceSameSiteStrictFor(ResourceL
 Optional<WallTime> ResourceLoadStatisticsMemoryStore::mostRecentUserInteractionTime(const ResourceLoadStatistics& statistic)
 {
     if (statistic.mostRecentUserInteractionTime.secondsSinceEpoch().value() <= 0)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return statistic.mostRecentUserInteractionTime;
 }

@@ -48,7 +48,7 @@ Optional<ApplePayShippingMethodUpdate> ApplePayShippingMethodUpdate::decode(Deco
     ApplePayShippingMethodUpdate result;
 
     if (!result.decodeBase(decoder))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return result;
 }

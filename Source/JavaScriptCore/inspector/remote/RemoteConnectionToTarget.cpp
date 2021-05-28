@@ -50,7 +50,7 @@ bool RemoteConnectionToTarget::setup(bool isAutomaticInspection, bool automatica
     if (!m_target)
         return false;
 
-    auto targetIdentifier = this->targetIdentifier().valueOr(0);
+    auto targetIdentifier = this->targetIdentifier().value_or(0);
 
     if (!m_target || !m_target->remoteControlAllowed()) {
         RemoteInspector::singleton().setupFailed(targetIdentifier);
@@ -111,7 +111,7 @@ void RemoteConnectionToTarget::targetClosed()
 
 Optional<TargetID> RemoteConnectionToTarget::targetIdentifier() const
 {
-    return m_target ? Optional<TargetID>(m_target->targetIdentifier()) : WTF::nullopt;
+    return m_target ? Optional<TargetID>(m_target->targetIdentifier()) : std::nullopt;
 }
 
 void RemoteConnectionToTarget::sendMessageToFrontend(const String& message)

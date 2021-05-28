@@ -116,11 +116,11 @@ template<typename CollectionType, typename KeyType> static auto findFirstInSorte
 {
     if constexpr (std::is_integral_v<KeyType>) {
         if (key != decltype(std::begin(collection)->first)(key))
-            return WTF::nullopt;
+            return std::nullopt;
     }
     auto iterator = std::lower_bound(std::begin(collection), std::end(collection), makeFirstAdapter(key), CompareFirst { });
     if (iterator == std::end(collection) || key < iterator->first)
-        return WTF::nullopt;
+        return std::nullopt;
     return iterator->second;
 }
 

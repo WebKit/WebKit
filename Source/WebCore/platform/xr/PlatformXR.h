@@ -298,13 +298,13 @@ Optional<Device::FrameData::FloatQuaternion> Device::FrameData::FloatQuaternion:
 {
     Device::FrameData::FloatQuaternion floatQuaternion;
     if (!decoder.decode(floatQuaternion.x))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(floatQuaternion.y))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(floatQuaternion.z))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(floatQuaternion.w))
-        return WTF::nullopt;
+        return std::nullopt;
     return floatQuaternion;
 }
 
@@ -319,9 +319,9 @@ Optional<Device::FrameData::Pose> Device::FrameData::Pose::decode(Decoder& decod
 {
     Device::FrameData::Pose pose;
     if (!decoder.decode(pose.position))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(pose.orientation))
-        return WTF::nullopt;
+        return std::nullopt;
     return pose;
 }
 
@@ -336,13 +336,13 @@ Optional<Device::FrameData::Fov> Device::FrameData::Fov::decode(Decoder& decoder
 {
     Device::FrameData::Fov fov;
     if (!decoder.decode(fov.up))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(fov.down))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(fov.left))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(fov.right))
-        return WTF::nullopt;
+        return std::nullopt;
     return fov;
 }
 
@@ -374,30 +374,30 @@ Optional<Device::FrameData::View> Device::FrameData::View::decode(Decoder& decod
 {
     PlatformXR::Device::FrameData::View view;
     if (!decoder.decode(view.offset))
-        return WTF::nullopt;
+        return std::nullopt;
 
     bool hasFov;
     if (!decoder.decode(hasFov))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (hasFov) {
         PlatformXR::Device::FrameData::Fov fov;
         if (!decoder.decode(fov))
-            return WTF::nullopt;
+            return std::nullopt;
         view.projection = { WTFMove(fov) };
         return view;
     }
 
     bool hasProjectionMatrix;
     if (!decoder.decode(hasProjectionMatrix))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (hasProjectionMatrix) {
         PlatformXR::Device::FrameData::ProjectionMatrix projectionMatrix;
         for (size_t i = 0; i < PlatformXR::Device::FrameData::projectionMatrixSize; ++i) {
             float f;
             if (!decoder.decode(f))
-                return WTF::nullopt;
+                return std::nullopt;
             projectionMatrix[i] = f;
         }
         view.projection = { WTFMove(projectionMatrix) };
@@ -420,9 +420,9 @@ Optional<Device::FrameData::StageParameters> Device::FrameData::StageParameters:
 {
     PlatformXR::Device::FrameData::StageParameters stageParameters;
     if (!decoder.decode(stageParameters.id))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(stageParameters.bounds))
-        return WTF::nullopt;
+        return std::nullopt;
     return stageParameters;
 }
 
@@ -441,11 +441,11 @@ Optional<Device::FrameData::LayerData> Device::FrameData::LayerData::decode(Deco
 {
     PlatformXR::Device::FrameData::LayerData layerData;
     if (!decoder.decode(layerData.opaqueTexture))
-        return WTF::nullopt;
+        return std::nullopt;
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
     WTF::MachSendRight surfaceSendRight;
     if (!decoder.decode(surfaceSendRight))
-        return WTF::nullopt;
+        return std::nullopt;
     layerData.surface = WebCore::IOSurface::createFromSendRight(WTFMove(surfaceSendRight), WebCore::DestinationColorSpace::SRGB());
 #endif
     return layerData;
@@ -471,25 +471,25 @@ Optional<Device::FrameData> Device::FrameData::decode(Decoder& decoder)
 {
     PlatformXR::Device::FrameData frameData;
     if (!decoder.decode(frameData.isTrackingValid))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(frameData.isPositionValid))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(frameData.isPositionEmulated))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(frameData.shouldRender))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(frameData.predictedDisplayTime))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(frameData.origin))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(frameData.floorTransform))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(frameData.stageParameters))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(frameData.views))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(frameData.layers))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return frameData;
 }

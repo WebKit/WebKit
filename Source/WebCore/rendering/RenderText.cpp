@@ -1186,7 +1186,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
         }
     }
 
-    glyphOverflow.left = firstGlyphLeftOverflow.valueOr(glyphOverflow.left);
+    glyphOverflow.left = firstGlyphLeftOverflow.value_or(glyphOverflow.left);
 
     if ((needsWordSpacing && length > 1) || (ignoringSpaces && !firstWord))
         currMaxWidth += wordSpacing;
@@ -1740,13 +1740,13 @@ int RenderText::previousOffset(int current) const
         return current - 1;
 
     CachedTextBreakIterator iterator(text(), TextBreakIterator::Mode::Caret, nullAtom());
-    return iterator.preceding(current).valueOr(current - 1);
+    return iterator.preceding(current).value_or(current - 1);
 }
 
 int RenderText::previousOffsetForBackwardDeletion(int current) const
 {
     CachedTextBreakIterator iterator(text(), TextBreakIterator::Mode::Delete, nullAtom());
-    return iterator.preceding(current).valueOr(0);
+    return iterator.preceding(current).value_or(0);
 }
 
 int RenderText::nextOffset(int current) const
@@ -1755,7 +1755,7 @@ int RenderText::nextOffset(int current) const
         return current + 1;
 
     CachedTextBreakIterator iterator(text(), TextBreakIterator::Mode::Caret, nullAtom());
-    return iterator.following(current).valueOr(current + 1);
+    return iterator.following(current).value_or(current + 1);
 }
 
 bool RenderText::computeCanUseSimpleFontCodePath() const
@@ -1777,7 +1777,7 @@ void RenderText::momentarilyRevealLastTypedCharacter(unsigned offsetAfterLastTyp
 
 StringView RenderText::stringView(unsigned start, Optional<unsigned> stop) const
 {
-    unsigned destination = stop.valueOr(text().length());
+    unsigned destination = stop.value_or(text().length());
     ASSERT(start <= length());
     ASSERT(destination <= length());
     ASSERT(start <= destination);

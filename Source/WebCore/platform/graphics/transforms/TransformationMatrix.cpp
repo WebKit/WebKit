@@ -1591,7 +1591,7 @@ Optional<TransformationMatrix> TransformationMatrix::inverse() const
         double f = m42();
         double determinant = a * d - b * c;
         if (fabs(determinant) < SMALL_NUMBER)
-            return WTF::nullopt;
+            return std::nullopt;
 
         double inverseDeterminant = 1 / determinant;
         return {{
@@ -1608,7 +1608,7 @@ Optional<TransformationMatrix> TransformationMatrix::inverse() const
     // FIXME: Use LU decomposition to apply the inverse instead of calculating the inverse explicitly.
     // Calculating the inverse of a 4x4 matrix using cofactors is numerically unstable and unnecessary to apply the inverse transformation to a point.
     if (!WebCore::inverse(m_matrix, invMat.m_matrix))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return invMat;
 }

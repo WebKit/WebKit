@@ -197,10 +197,10 @@ static TextStream& operator<<(TextStream& ts, TouchInteraction interaction)
 void WebAutomationSession::platformSimulateTouchInteraction(WebPageProxy& page, TouchInteraction interaction, const WebCore::IntPoint& locationInViewport, Optional<Seconds> duration, AutomationCompletionHandler&& completionHandler)
 {
     WebCore::IntPoint locationOnScreen = page.syncRootViewToScreen(IntRect(locationInViewport, IntSize())).location();
-    LOG_WITH_STREAM(AutomationInteractions, stream << "platformSimulateTouchInteraction: interaction=" << interaction << ", locationInViewport=" << locationInViewport << ", locationOnScreen=" << locationOnScreen << ", duration=" << duration.valueOr(0_s).seconds());
+    LOG_WITH_STREAM(AutomationInteractions, stream << "platformSimulateTouchInteraction: interaction=" << interaction << ", locationInViewport=" << locationInViewport << ", locationOnScreen=" << locationOnScreen << ", duration=" << duration.value_or(0_s).seconds());
 
     auto interactionFinished = makeBlockPtr([completionHandler = WTFMove(completionHandler)] () mutable {
-        completionHandler(WTF::nullopt);
+        completionHandler(std::nullopt);
     });
 
     _WKTouchEventGenerator *generator = [_WKTouchEventGenerator sharedTouchEventGenerator];
@@ -212,7 +212,7 @@ void WebAutomationSession::platformSimulateTouchInteraction(WebPageProxy& page, 
         [generator liftUp:locationOnScreen completionBlock:interactionFinished.get()];
         break;
     case TouchInteraction::MoveTo:
-        [generator moveToPoint:locationOnScreen duration:duration.valueOr(0_s).seconds() completionBlock:interactionFinished.get()];
+        [generator moveToPoint:locationOnScreen duration:duration.value_or(0_s).seconds() completionBlock:interactionFinished.get()];
         break;
     }
 }

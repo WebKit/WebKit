@@ -305,7 +305,7 @@ void GStreamerRegistryScanner::initializeDecoders(const GStreamerRegistryScanner
     }
 
     Vector<String> av1DecodersDisallowedList { "av1dec"_s };
-    if ((matroskaSupported || isContainerTypeSupported(Configuration::Decoding, "video/mp4")) && factories.hasElementForMediaType(ElementFactories::Type::VideoDecoder, "video/x-av1", ElementFactories::CheckHardwareClassifier::No, makeOptional(WTFMove(av1DecodersDisallowedList)))) {
+    if ((matroskaSupported || isContainerTypeSupported(Configuration::Decoding, "video/mp4")) && factories.hasElementForMediaType(ElementFactories::Type::VideoDecoder, "video/x-av1", ElementFactories::CheckHardwareClassifier::No, std::make_optional(WTFMove(av1DecodersDisallowedList)))) {
         m_decoderCodecMap.add(AtomString("av01*"), false);
         m_decoderCodecMap.add(AtomString("av1"), false);
         m_decoderCodecMap.add(AtomString("x-av1"), false);
@@ -418,7 +418,7 @@ void GStreamerRegistryScanner::initializeEncoders(const GStreamerRegistryScanner
     }
 
     Vector<String> av1EncodersDisallowedList { "av1enc"_s };
-    auto av1EncoderAvailable = factories.hasElementForMediaType(ElementFactories::Type::VideoEncoder, "video/x-av1", ElementFactories::CheckHardwareClassifier::Yes, makeOptional(WTFMove(av1EncodersDisallowedList)));
+    auto av1EncoderAvailable = factories.hasElementForMediaType(ElementFactories::Type::VideoEncoder, "video/x-av1", ElementFactories::CheckHardwareClassifier::Yes, std::make_optional(WTFMove(av1EncodersDisallowedList)));
     if (av1EncoderAvailable) {
         m_encoderCodecMap.add(AtomString("av01*"), false);
         m_encoderCodecMap.add(AtomString("av1"), false);
@@ -663,7 +663,7 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::isConfi
         auto& audioConfiguration = mediaConfiguration.audio.value();
         GST_DEBUG("Checking %s support for audio configuration: \"%s\" %s channels, bitrate: %" G_GUINT64_FORMAT " samplerate: %u", configLogString,
             audioConfiguration.contentType.utf8().data(), audioConfiguration.channels.utf8().data(),
-            audioConfiguration.bitrate.valueOr(0), audioConfiguration.samplerate.valueOr(0));
+            audioConfiguration.bitrate.value_or(0), audioConfiguration.samplerate.value_or(0));
         auto contentType = ContentType(audioConfiguration.contentType);
         isSupported = isContainerTypeSupported(configuration, contentType.containerType());
     }

@@ -97,11 +97,11 @@ MediaKeyStatusMap::Iterator::Iterator(MediaKeyStatusMap& map)
 Optional<WTF::KeyValuePair<BufferSource::VariantType, MediaKeyStatus>> MediaKeyStatusMap::Iterator::next()
 {
     if (!m_map->m_session)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto& statuses = m_map->m_session->statuses();
     if (m_index >= statuses.size())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto& pair = statuses[m_index++];
     auto buffer = ArrayBuffer::create(pair.first->data(), pair.first->size());

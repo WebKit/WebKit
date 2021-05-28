@@ -65,10 +65,10 @@ static inline void serializeFormControlStateTo(const FormControlState& formContr
 static inline Optional<FormControlState> deserializeFormControlState(const Vector<String>& stateVector, size_t& index)
 {
     if (index >= stateVector.size())
-        return WTF::nullopt;
-    auto size = parseIntegerAllowingTrailingJunk<size_t>(stateVector[index++]).valueOr(0);
+        return std::nullopt;
+    auto size = parseIntegerAllowingTrailingJunk<size_t>(stateVector[index++]).value_or(0);
     if (index + size > stateVector.size())
-        return WTF::nullopt;
+        return std::nullopt;
     Vector<String> subvector;
     subvector.reserveInitialCapacity(size);
     for (size_t i = 0; i < size; ++i)
@@ -197,7 +197,7 @@ std::unique_ptr<SavedFormState> SavedFormState::deserialize(const Vector<String>
 {
     if (index >= stateVector.size())
         return nullptr;
-    auto itemCount = parseIntegerAllowingTrailingJunk<size_t>(stateVector[index++]).valueOr(0);
+    auto itemCount = parseIntegerAllowingTrailingJunk<size_t>(stateVector[index++]).value_or(0);
     if (!itemCount)
         return nullptr;
     auto savedFormState = makeUnique<SavedFormState>();

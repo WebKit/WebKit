@@ -108,7 +108,7 @@ public:
                 return rule.type;
         }
 
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
 private:
@@ -165,7 +165,7 @@ public:
 
     void advance()
     {
-        m_text = WTF::nullopt;
+        m_text = std::nullopt;
         advanceNode();
 
         if (shouldAdvanceIteratorPastCurrentNode())
@@ -291,7 +291,7 @@ static bool areEqualIgnoringLeadingAndTrailingWhitespaces(const String& content,
 static Optional<TextManipulationController::ManipulationTokenInfo> tokenInfo(Node* node)
 {
     if (!node)
-        return WTF::nullopt;
+        return std::nullopt;
 
     TextManipulationController::ManipulationTokenInfo result;
     result.documentURL = node->document().url();
@@ -781,7 +781,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
             downcast<HTMLInputElement>(*element).setValue(newValue.toString());
         else
             element->setAttribute(item.attributeName, newValue.toString());
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     size_t currentTokenIndex = 0;
@@ -928,7 +928,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
             m_manipulatedNodes.add(insertion.child.get());
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void TextManipulationController::removeNode(Node& node)

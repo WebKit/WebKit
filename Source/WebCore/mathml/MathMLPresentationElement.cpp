@@ -364,17 +364,17 @@ MathMLElement::MathVariant MathMLPresentationElement::parseMathVariantAttribute(
 Optional<MathMLElement::MathVariant> MathMLPresentationElement::specifiedMathVariant()
 {
     if (!acceptsMathVariantAttribute())
-        return WTF::nullopt;
+        return std::nullopt;
     if (!m_mathVariant)
         m_mathVariant = parseMathVariantAttribute(attributeWithoutSynchronization(mathvariantAttr));
-    return m_mathVariant.value() == MathVariant::None ? WTF::nullopt : m_mathVariant;
+    return m_mathVariant.value() == MathVariant::None ? std::nullopt : m_mathVariant;
 }
 
 void MathMLPresentationElement::parseAttribute(const QualifiedName& name, const AtomString& value)
 {
     bool mathVariantAttribute = name == mathvariantAttr && acceptsMathVariantAttribute();
     if (mathVariantAttribute)
-        m_mathVariant = WTF::nullopt;
+        m_mathVariant = std::nullopt;
     if ((mathVariantAttribute) && renderer())
         MathMLStyle::resolveMathMLStyleTree(renderer());
 

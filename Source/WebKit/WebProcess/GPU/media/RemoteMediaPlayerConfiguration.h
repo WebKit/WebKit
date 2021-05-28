@@ -62,42 +62,42 @@ struct RemoteMediaPlayerConfiguration {
         Optional<String> engineDescription;
         decoder >> engineDescription;
         if (!engineDescription)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<double> maximumDurationToCacheMediaTime;
         decoder >> maximumDurationToCacheMediaTime;
         if (!maximumDurationToCacheMediaTime)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> supportsScanning;
         decoder >> supportsScanning;
         if (!supportsScanning)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> supportsFullscreen;
         decoder >> supportsFullscreen;
         if (!supportsFullscreen)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> supportsPictureInPicture;
         decoder >> supportsPictureInPicture;
         if (!supportsPictureInPicture)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> supportsAcceleratedRendering;
         decoder >> supportsAcceleratedRendering;
         if (!supportsAcceleratedRendering)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> canPlayToWirelessPlaybackTarget;
         decoder >> canPlayToWirelessPlaybackTarget;
         if (!canPlayToWirelessPlaybackTarget)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> shouldIgnoreIntrinsicSize;
         decoder >> shouldIgnoreIntrinsicSize;
         if (!shouldIgnoreIntrinsicSize)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{
             WTFMove(*engineDescription),

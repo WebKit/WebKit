@@ -141,12 +141,12 @@ template<class Decoder> inline Optional<SupportedPluginIdentifier> SupportedPlug
     Optional<String> matchingDomain;
     decoder >> matchingDomain;
     if (!matchingDomain)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<String> pluginIdentifier;
     decoder >> pluginIdentifier;
     if (!pluginIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return SupportedPluginIdentifier { WTFMove(matchingDomain.value()), WTFMove(pluginIdentifier.value()) };
 }

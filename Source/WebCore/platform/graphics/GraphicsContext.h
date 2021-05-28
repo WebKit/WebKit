@@ -153,12 +153,12 @@ Optional<DocumentMarkerLineStyle> DocumentMarkerLineStyle::decode(Decoder& decod
     Optional<Mode> mode;
     decoder >> mode;
     if (!mode)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> shouldUseDarkAppearance;
     decoder >> shouldUseDarkAppearance;
     if (!shouldUseDarkAppearance)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *mode, *shouldUseDarkAppearance }};
 }
@@ -468,9 +468,9 @@ public:
 
     // Text
 
-    WEBCORE_EXPORT virtual FloatSize drawText(const FontCascade&, const TextRun&, const FloatPoint&, unsigned from = 0, Optional<unsigned> to = WTF::nullopt);
+    WEBCORE_EXPORT virtual FloatSize drawText(const FontCascade&, const TextRun&, const FloatPoint&, unsigned from = 0, Optional<unsigned> to = std::nullopt);
     WEBCORE_EXPORT virtual void drawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned numGlyphs, const FloatPoint&, FontSmoothingMode);
-    WEBCORE_EXPORT virtual void drawEmphasisMarks(const FontCascade&, const TextRun&, const AtomString& mark, const FloatPoint&, unsigned from = 0, Optional<unsigned> to = WTF::nullopt);
+    WEBCORE_EXPORT virtual void drawEmphasisMarks(const FontCascade&, const TextRun&, const AtomString& mark, const FloatPoint&, unsigned from = 0, Optional<unsigned> to = std::nullopt);
     WEBCORE_EXPORT virtual void drawBidiText(const FontCascade&, const TextRun&, const FloatPoint&, FontCascade::CustomFontNotReadyAction = FontCascade::DoNotPaintIfFontNotReady);
 
     WEBCORE_EXPORT FloatRect computeUnderlineBoundsForText(const FloatRect&, bool printing);

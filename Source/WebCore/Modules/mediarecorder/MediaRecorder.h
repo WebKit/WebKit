@@ -75,8 +75,8 @@ public:
     ExceptionOr<void> pauseRecording();
     ExceptionOr<void> resumeRecording();
 
-    unsigned videoBitsPerSecond() const { return m_options.videoBitsPerSecond.valueOr(0); }
-    unsigned audioBitsPerSecond() const { return m_options.audioBitsPerSecond.valueOr(0); }
+    unsigned videoBitsPerSecond() const { return m_options.videoBitsPerSecond.value_or(0); }
+    unsigned audioBitsPerSecond() const { return m_options.audioBitsPerSecond.value_or(0); }
 
     MediaStream& stream() { return m_stream.get(); }
 

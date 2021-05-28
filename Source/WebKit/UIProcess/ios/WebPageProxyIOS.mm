@@ -887,7 +887,7 @@ void WebPageProxy::updateInputContextAfterBlurringAndRefocusingElement()
 
 void WebPageProxy::elementDidFocus(const FocusedElementInformation& information, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState::Flag> activityStateChanges, const UserData& userData)
 {
-    m_pendingInputModeChange = WTF::nullopt;
+    m_pendingInputModeChange = std::nullopt;
 
     API::Object* userDataObject = process().transformHandlesToObjects(userData.object()).get();
     pageClient().elementDidFocus(information, userIsInteracting, blurPreviousNode, activityStateChanges, userDataObject);
@@ -895,7 +895,7 @@ void WebPageProxy::elementDidFocus(const FocusedElementInformation& information,
 
 void WebPageProxy::elementDidBlur()
 {
-    m_pendingInputModeChange = WTF::nullopt;
+    m_pendingInputModeChange = std::nullopt;
     pageClient().elementDidBlur();
 }
 
@@ -917,7 +917,7 @@ void WebPageProxy::didReleaseAllTouchPoints()
         return;
 
     pageClient().focusedElementDidChangeInputMode(*m_pendingInputModeChange);
-    m_pendingInputModeChange = WTF::nullopt;
+    m_pendingInputModeChange = std::nullopt;
 }
 
 void WebPageProxy::autofillLoginCredentials(const String& username, const String& password)
@@ -1192,7 +1192,7 @@ void WebPageProxy::insertDroppedImagePlaceholders(const Vector<IntSize>& imageSi
     if (hasRunningProcess())
         sendWithAsyncReply(Messages::WebPage::InsertDroppedImagePlaceholders(imageSizes), WTFMove(completionHandler));
     else
-        completionHandler({ }, WTF::nullopt);
+        completionHandler({ }, std::nullopt);
 }
 
 void WebPageProxy::willReceiveEditDragSnapshot()

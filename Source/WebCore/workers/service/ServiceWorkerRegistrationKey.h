@@ -86,11 +86,11 @@ Optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::decode(Deco
     Optional<SecurityOriginData> topOrigin;
     decoder >> topOrigin;
     if (!topOrigin)
-        return WTF::nullopt;
+        return std::nullopt;
 
     URL scope;
     if (!decoder.decode(scope))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return ServiceWorkerRegistrationKey { WTFMove(*topOrigin), WTFMove(scope) };
 }

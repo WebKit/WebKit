@@ -343,7 +343,7 @@ Optional<MockMediaDevice> MockRealtimeMediaSourceCenter::mockDeviceWithPersisten
     auto& map = deviceMap();
     auto iterator = map.find(id);
     if (iterator == map.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return iterator->value;
 }
@@ -355,7 +355,7 @@ Optional<CaptureDevice> MockRealtimeMediaSourceCenter::captureDeviceWithPersiste
     auto& map = deviceMap();
     auto iterator = map.find(id);
     if (iterator == map.end() || iterator->value.type() != type)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return toCaptureDevice(iterator->value);
 }

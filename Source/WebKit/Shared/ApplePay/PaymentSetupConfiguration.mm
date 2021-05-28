@@ -95,7 +95,7 @@ Optional<PaymentSetupConfiguration> PaymentSetupConfiguration::decode(IPC::Decod
 
     auto configuration = IPC::decode<PKPaymentSetupConfiguration>(decoder, allowedClasses.get().get());
     if (!configuration)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return PaymentSetupConfiguration { WTFMove(*configuration) };
 }

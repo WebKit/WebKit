@@ -1049,7 +1049,7 @@ static NSArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr<NSArra
     [_interactionSheet setSheetDelegate:nil];
     _interactionSheet = nil;
     _elementInfo = nil;
-    _positionInformation = WTF::nullopt;
+    _positionInformation = std::nullopt;
     _needsLinkIndicator = NO;
     _isPresentingDDUserInterface = NO;
     _hasPendingActionSheet = NO;

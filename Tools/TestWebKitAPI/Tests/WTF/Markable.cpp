@@ -39,7 +39,7 @@ TEST(WTF_Markable, Disengaged)
     }
 
     {
-        Markable<int, IntegralMarkableTraits<int, 42>> optional { WTF::nullopt };
+        Markable<int, IntegralMarkableTraits<int, 42>> optional { std::nullopt };
 
         EXPECT_FALSE(static_cast<bool>(optional));
     }
@@ -57,7 +57,7 @@ TEST(WTF_Markable, Engaged)
         EXPECT_TRUE(static_cast<bool>(optional));
         EXPECT_EQ(41, optional.value());
 
-        optional = WTF::nullopt;
+        optional = std::nullopt;
         EXPECT_FALSE(static_cast<bool>(optional));
 
         optional = 42;

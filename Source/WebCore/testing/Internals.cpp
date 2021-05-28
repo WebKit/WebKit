@@ -570,7 +570,7 @@ void Internals::resetToConsistentState(Page& page)
 #endif
 
     page.setShowAllPlugins(false);
-    page.setLowPowerModeEnabledOverrideForTesting(WTF::nullopt);
+    page.setLowPowerModeEnabledOverrideForTesting(std::nullopt);
     page.setOutsideViewportThrottlingEnabledForTesting(false);
 
 #if USE(QUICK_LOOK)
@@ -601,7 +601,7 @@ void Internals::resetToConsistentState(Page& page)
 #endif
 
     HTMLCanvasElement::setMaxPixelMemoryForTesting(0); // This means use the default value.
-    DOMWindow::overrideTransientActivationDurationForTesting(WTF::nullopt);
+    DOMWindow::overrideTransientActivationDurationForTesting(std::nullopt);
 
 #if PLATFORM(IOS)
     RenderThemeIOS::setContentSizeCategory(kCTFontContentSizeCategoryL);
@@ -647,13 +647,13 @@ Internals::Internals(Document& document)
 #endif
 
 #if PLATFORM(COCOA)
-    SystemBatteryStatusTestingOverrides::singleton().setHasAC(WTF::nullopt);
-    SystemBatteryStatusTestingOverrides::singleton().setHasBattery(WTF::nullopt);
+    SystemBatteryStatusTestingOverrides::singleton().setHasAC(std::nullopt);
+    SystemBatteryStatusTestingOverrides::singleton().setHasBattery(std::nullopt);
 #endif
 
 #if ENABLE(VP9) && PLATFORM(COCOA)
-    VP9TestingOverrides::singleton().setHardwareDecoderDisabled(WTF::nullopt);
-    VP9TestingOverrides::singleton().setVP9ScreenSizeAndScale(WTF::nullopt);
+    VP9TestingOverrides::singleton().setHardwareDecoderDisabled(std::nullopt);
+    VP9TestingOverrides::singleton().setVP9ScreenSizeAndScale(std::nullopt);
 #endif
 }
 
@@ -1385,7 +1385,7 @@ void Internals::setEventThrottlingBehaviorOverride(Optional<EventThrottlingBehav
         return;
 
     if (!value) {
-        document->page()->setEventThrottlingBehaviorOverride(WTF::nullopt);
+        document->page()->setEventThrottlingBehaviorOverride(std::nullopt);
         return;
     }
 
@@ -1403,11 +1403,11 @@ Optional<Internals::EventThrottlingBehavior> Internals::eventThrottlingBehaviorO
 {
     Document* document = contextDocument();
     if (!document || !document->page())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto behavior = document->page()->eventThrottlingBehaviorOverride();
     if (!behavior)
-        return WTF::nullopt;
+        return std::nullopt;
 
     switch (behavior.value()) {
     case WebCore::EventThrottlingBehavior::Responsive:
@@ -1416,7 +1416,7 @@ Optional<Internals::EventThrottlingBehavior> Internals::eventThrottlingBehaviorO
         return Internals::EventThrottlingBehavior::Unresponsive;
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 String Internals::visiblePlaceholder(Element& element)
@@ -2605,7 +2605,7 @@ ExceptionOr<unsigned> Internals::countMatchesForText(const String& text, const V
         return parsedOptions.releaseException();
 
     bool mark = markMatches == "mark";
-    return document->editor().countMatchesForText(text, WTF::nullopt, parsedOptions.releaseReturnValue(), 1000, mark, nullptr);
+    return document->editor().countMatchesForText(text, std::nullopt, parsedOptions.releaseReturnValue(), 1000, mark, nullptr);
 }
 
 ExceptionOr<unsigned> Internals::countFindMatches(const String& text, const Vector<String>& findOptions)
@@ -2698,13 +2698,13 @@ uint64_t Internals::elementIdentifier(Element& element) const
 uint64_t Internals::frameIdentifier(const Document& document) const
 {
     if (auto* page = document.page())
-        return page->mainFrame().loader().frameID().valueOr(FrameIdentifier { }).toUInt64();
+        return page->mainFrame().loader().frameID().value_or(FrameIdentifier { }).toUInt64();
     return 0;
 }
 
 uint64_t Internals::pageIdentifier(const Document& document) const
 {
-    return document.pageID().valueOr(PageIdentifier { }).toUInt64();
+    return document.pageID().value_or(PageIdentifier { }).toUInt64();
 }
 
 bool Internals::isAnyWorkletGlobalScopeAlive() const
@@ -3593,7 +3593,7 @@ ExceptionOr<void> Internals::setCompositingPolicyOverride(Optional<CompositingPo
         return Exception { InvalidAccessError };
 
     if (!policyOverride) {
-        document->page()->setCompositingPolicyOverride(WTF::nullopt);
+        document->page()->setCompositingPolicyOverride(std::nullopt);
         return { };
     }
 
@@ -3617,7 +3617,7 @@ ExceptionOr<Optional<Internals::CompositingPolicy>> Internals::compositingPolicy
 
     auto policyOverride = document->page()->compositingPolicyOverride();
     if (!policyOverride)
-        return { WTF::nullopt };
+        return { std::nullopt };
 
     switch (policyOverride.value()) {
     case WebCore::CompositingPolicy::Normal:
@@ -5062,7 +5062,7 @@ static Optional<TaskSource> taskSourceFromString(const String& taskSourceName)
 {
     if (taskSourceName == "DOMManipulation")
         return TaskSource::DOMManipulation;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 ExceptionOr<void> Internals::queueTask(ScriptExecutionContext& context, const String& taskSourceName, RefPtr<VoidCallback>&& callback)
@@ -5757,7 +5757,7 @@ auto Internals::parseDoViCodecParameters(StringView string) -> Optional<DoViPara
 {
     auto parseResult = WebCore::parseDoViCodecParameters(string);
     if (!parseResult)
-        return WTF::nullopt;
+        return std::nullopt;
     DoViParameterSet convertedResult;
     switch (parseResult->codec) {
     case DoViParameters::Codec::AVC1:

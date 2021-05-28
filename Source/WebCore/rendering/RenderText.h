@@ -169,7 +169,7 @@ public:
 
     bool usesComplexLineLayoutPath() const;
 
-    StringView stringView(unsigned start = 0, Optional<unsigned> stop = WTF::nullopt) const;
+    StringView stringView(unsigned start = 0, Optional<unsigned> stop = std::nullopt) const;
     
     bool containsOnlyHTMLWhitespace(unsigned from, unsigned length) const;
     

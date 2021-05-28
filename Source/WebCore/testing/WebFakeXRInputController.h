@@ -47,7 +47,7 @@ public:
     void setTargetRayMode(XRTargetRayMode mode) { m_targetRayMode = mode; }
     void setProfiles(Vector<String>&& profiles) { m_profiles = WTFMove(profiles); }
     void setGripOrigin(FakeXRRigidTransformInit gripOrigin, bool emulatedPosition = false);
-    void clearGripOrigin() { m_gripOrigin = WTF::nullopt; }
+    void clearGripOrigin() { m_gripOrigin = std::nullopt; }
     void setPointerOrigin(FakeXRRigidTransformInit pointerOrigin, bool emulatedPosition = false);
     void disconnect();
     void reconnect();

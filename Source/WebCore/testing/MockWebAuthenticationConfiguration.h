@@ -130,37 +130,37 @@ Optional<MockWebAuthenticationConfiguration::LocalConfiguration> MockWebAuthenti
     Optional<UserVerification> userVerification;
     decoder >> userVerification;
     if (!userVerification)
-        return WTF::nullopt;
+        return std::nullopt;
     result.userVerification = *userVerification;
 
     Optional<bool> acceptAttestation;
     decoder >> acceptAttestation;
     if (!acceptAttestation)
-        return WTF::nullopt;
+        return std::nullopt;
     result.acceptAttestation = *acceptAttestation;
 
     Optional<String> privateKeyBase64;
     decoder >> privateKeyBase64;
     if (!privateKeyBase64)
-        return WTF::nullopt;
+        return std::nullopt;
     result.privateKeyBase64 = WTFMove(*privateKeyBase64);
 
     Optional<String> userCertificateBase64;
     decoder >> userCertificateBase64;
     if (!userCertificateBase64)
-        return WTF::nullopt;
+        return std::nullopt;
     result.userCertificateBase64 = WTFMove(*userCertificateBase64);
 
     Optional<String> intermediateCACertificateBase64;
     decoder >> intermediateCACertificateBase64;
     if (!intermediateCACertificateBase64)
-        return WTF::nullopt;
+        return std::nullopt;
     result.intermediateCACertificateBase64 = WTFMove(*intermediateCACertificateBase64);
 
     Optional<String> preferredCredentialIdBase64;
     decoder >> preferredCredentialIdBase64;
     if (!preferredCredentialIdBase64)
-        return WTF::nullopt;
+        return std::nullopt;
     result.preferredCredentialIdBase64 = WTFMove(*preferredCredentialIdBase64);
 
     return result;
@@ -177,27 +177,27 @@ Optional<MockWebAuthenticationConfiguration::HidConfiguration> MockWebAuthentica
 {
     MockWebAuthenticationConfiguration::HidConfiguration result;
     if (!decoder.decode(result.payloadBase64))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.stage))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.subStage))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.error))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.isU2f))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.keepAlive))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.fastDataArrival))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.continueAfterErrorData))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.canDowngrade))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.expectCancel))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.supportClientPin))
-        return WTF::nullopt;
+        return std::nullopt;
     return result;
 }
 
@@ -212,13 +212,13 @@ Optional<MockWebAuthenticationConfiguration::NfcConfiguration> MockWebAuthentica
 {
     MockWebAuthenticationConfiguration::NfcConfiguration result;
     if (!decoder.decode(result.error))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.payloadBase64))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.multipleTags))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.multiplePhysicalTags))
-        return WTF::nullopt;
+        return std::nullopt;
     return result;
 }
 
@@ -236,25 +236,25 @@ Optional<MockWebAuthenticationConfiguration> MockWebAuthenticationConfiguration:
     Optional<bool> silentFailure;
     decoder >> silentFailure;
     if (!silentFailure)
-        return WTF::nullopt;
+        return std::nullopt;
     result.silentFailure = *silentFailure;
 
     Optional<Optional<LocalConfiguration>> local;
     decoder >> local;
     if (!local)
-        return WTF::nullopt;
+        return std::nullopt;
     result.local = WTFMove(*local);
 
     Optional<Optional<HidConfiguration>> hid;
     decoder >> hid;
     if (!hid)
-        return WTF::nullopt;
+        return std::nullopt;
     result.hid = WTFMove(*hid);
 
     Optional<Optional<NfcConfiguration>> nfc;
     decoder >> nfc;
     if (!nfc)
-        return WTF::nullopt;
+        return std::nullopt;
     result.nfc = WTFMove(*nfc);
 
     return result;

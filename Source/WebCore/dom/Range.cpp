@@ -1076,7 +1076,7 @@ SimpleRange makeSimpleRange(const Ref<Range>& range)
 Optional<SimpleRange> makeSimpleRange(const Range* range)
 {
     if (!range)
-        return WTF::nullopt;
+        return std::nullopt;
     return makeSimpleRange(*range);
 }
 

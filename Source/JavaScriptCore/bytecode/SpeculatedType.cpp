@@ -718,7 +718,7 @@ Optional<SpeculatedType> speculationFromJSType(JSType type)
     case DataViewType:
         return SpecDataViewObject;
     default:
-        return WTF::nullopt;
+        return std::nullopt;
     }
 }
 

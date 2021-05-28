@@ -61,7 +61,7 @@ Optional<ApplePayShippingMethodData> ApplePayShippingMethodData::decode(Decoder&
 {
     ApplePayShippingMethodData result;
     if (!result.decodeData(decoder))
-        return WTF::nullopt;
+        return std::nullopt;
     return result;
 }
 

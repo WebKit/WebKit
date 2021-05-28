@@ -52,7 +52,7 @@ static Optional<MTLPixelFormat> tryGetSupportedPixelFormat(GPUTextureFormat form
         return mtlFormat;
     default: {
         LOG(WebGPU, "GPUSwapChain::tryCreate(): Unsupported MTLPixelFormat!");
-        return WTF::nullopt;
+        return std::nullopt;
     }
     }
 }

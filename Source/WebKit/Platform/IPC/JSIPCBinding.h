@@ -133,7 +133,7 @@ Optional<JSC::JSValue> putJSValueForDecodeArgumentInArray(JSC::JSGlobalObject* g
     Optional<T> value;
     decoder >> value;
     if (!value)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto jsValue = jsValueForDecodedArgumentValue(globalObject, WTFMove(*value));
     if (jsValue.isEmpty())

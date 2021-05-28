@@ -143,7 +143,7 @@ Optional<EventRegion> EventRegion::decode(Decoder& decoder)
     Optional<Region> region;
     decoder >> region;
     if (!region)
-        return WTF::nullopt;
+        return std::nullopt;
 
     EventRegion eventRegion;
     eventRegion.m_region = WTFMove(*region);
@@ -152,14 +152,14 @@ Optional<EventRegion> EventRegion::decode(Decoder& decoder)
     Optional<Region> wheelEventListenerRegion;
     decoder >> wheelEventListenerRegion;
     if (!wheelEventListenerRegion)
-        return WTF::nullopt;
+        return std::nullopt;
 
     eventRegion.m_wheelEventListenerRegion = WTFMove(*wheelEventListenerRegion);
 
     Optional<Region> nonPassiveWheelEventListenerRegion;
     decoder >> nonPassiveWheelEventListenerRegion;
     if (!nonPassiveWheelEventListenerRegion)
-        return WTF::nullopt;
+        return std::nullopt;
 
     eventRegion.m_nonPassiveWheelEventListenerRegion = WTFMove(*nonPassiveWheelEventListenerRegion);
 #endif
@@ -168,7 +168,7 @@ Optional<EventRegion> EventRegion::decode(Decoder& decoder)
     Optional<Vector<Region>> touchActionRegions;
     decoder >> touchActionRegions;
     if (!touchActionRegions)
-        return WTF::nullopt;
+        return std::nullopt;
 
     eventRegion.m_touchActionRegions = WTFMove(*touchActionRegions);
 #endif
@@ -177,7 +177,7 @@ Optional<EventRegion> EventRegion::decode(Decoder& decoder)
     Optional<Optional<Region>> editableRegion;
     decoder >> editableRegion;
     if (!editableRegion)
-        return WTF::nullopt;
+        return std::nullopt;
     eventRegion.m_editableRegion = WTFMove(*editableRegion);
 #endif
 

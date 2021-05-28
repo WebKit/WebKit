@@ -60,9 +60,9 @@ Optional<LoadableScript::Error> LoadableClassicScript::error() const
         return m_error;
 
     if (m_cachedScript->errorOccurred())
-        return Error { ErrorType::CachedScript, WTF::nullopt };
+        return Error { ErrorType::CachedScript, std::nullopt };
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 bool LoadableClassicScript::wasCanceled() const

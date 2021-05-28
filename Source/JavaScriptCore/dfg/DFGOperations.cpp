@@ -1822,7 +1822,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewInt8ArrayWithOneArgument, char*, (JSGlobalO
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSInt8Array>(globalObject, structure, encodedValue, 0, WTF::nullopt));
+    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSInt8Array>(globalObject, structure, encodedValue, 0, std::nullopt));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewInt16ArrayWithSize, char*, (JSGlobalObject* globalObject, Structure* structure, int32_t length, char* vector))
@@ -1838,7 +1838,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewInt16ArrayWithOneArgument, char*, (JSGlobal
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSInt16Array>(globalObject, structure, encodedValue, 0, WTF::nullopt));
+    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSInt16Array>(globalObject, structure, encodedValue, 0, std::nullopt));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewInt32ArrayWithSize, char*, (JSGlobalObject* globalObject, Structure* structure, int32_t length, char* vector))
@@ -1854,7 +1854,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewInt32ArrayWithOneArgument, char*, (JSGlobal
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSInt32Array>(globalObject, structure, encodedValue, 0, WTF::nullopt));
+    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSInt32Array>(globalObject, structure, encodedValue, 0, std::nullopt));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewUint8ArrayWithSize, char*, (JSGlobalObject* globalObject, Structure* structure, int32_t length, char* vector))
@@ -1870,7 +1870,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewUint8ArrayWithOneArgument, char*, (JSGlobal
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSUint8Array>(globalObject, structure, encodedValue, 0, WTF::nullopt));
+    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSUint8Array>(globalObject, structure, encodedValue, 0, std::nullopt));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewUint8ClampedArrayWithSize, char*, (JSGlobalObject* globalObject, Structure* structure, int32_t length, char* vector))
@@ -1886,7 +1886,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewUint8ClampedArrayWithOneArgument, char*, (J
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSUint8ClampedArray>(globalObject, structure, encodedValue, 0, WTF::nullopt));
+    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSUint8ClampedArray>(globalObject, structure, encodedValue, 0, std::nullopt));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewUint16ArrayWithSize, char*, (JSGlobalObject* globalObject, Structure* structure, int32_t length, char* vector))
@@ -1902,7 +1902,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewUint16ArrayWithOneArgument, char*, (JSGloba
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSUint16Array>(globalObject, structure, encodedValue, 0, WTF::nullopt));
+    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSUint16Array>(globalObject, structure, encodedValue, 0, std::nullopt));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewUint32ArrayWithSize, char*, (JSGlobalObject* globalObject, Structure* structure, int32_t length, char* vector))
@@ -1918,7 +1918,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewUint32ArrayWithOneArgument, char*, (JSGloba
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSUint32Array>(globalObject, structure, encodedValue, 0, WTF::nullopt));
+    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSUint32Array>(globalObject, structure, encodedValue, 0, std::nullopt));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewFloat32ArrayWithSize, char*, (JSGlobalObject* globalObject, Structure* structure, int32_t length, char* vector))
@@ -1934,7 +1934,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewFloat32ArrayWithOneArgument, char*, (JSGlob
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSFloat32Array>(globalObject, structure, encodedValue, 0, WTF::nullopt));
+    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSFloat32Array>(globalObject, structure, encodedValue, 0, std::nullopt));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewFloat64ArrayWithSize, char*, (JSGlobalObject* globalObject, Structure* structure, int32_t length, char* vector))
@@ -1950,7 +1950,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewFloat64ArrayWithOneArgument, char*, (JSGlob
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSFloat64Array>(globalObject, structure, encodedValue, 0, WTF::nullopt));
+    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSFloat64Array>(globalObject, structure, encodedValue, 0, std::nullopt));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewBigInt64ArrayWithSize, char*, (JSGlobalObject* globalObject, Structure* structure, int32_t length, char* vector))
@@ -1966,7 +1966,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewBigInt64ArrayWithOneArgument, char*, (JSGlo
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSBigInt64Array>(globalObject, structure, encodedValue, 0, WTF::nullopt));
+    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSBigInt64Array>(globalObject, structure, encodedValue, 0, std::nullopt));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewBigUint64ArrayWithSize, char*, (JSGlobalObject* globalObject, Structure* structure, int32_t length, char* vector))
@@ -1982,7 +1982,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewBigUint64ArrayWithOneArgument, char*, (JSGl
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSBigUint64Array>(globalObject, structure, encodedValue, 0, WTF::nullopt));
+    return reinterpret_cast<char*>(constructGenericTypedArrayViewWithArguments<JSBigUint64Array>(globalObject, structure, encodedValue, 0, std::nullopt));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewArrayIterator, JSCell*, (VM* vmPointer, Structure* structure))

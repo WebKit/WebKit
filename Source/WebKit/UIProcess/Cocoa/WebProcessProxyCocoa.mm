@@ -244,7 +244,7 @@ void WebProcessProxy::unblockAccessibilityServerIfNeeded()
 
     SandboxExtension::HandleArray handleArray;
 #if PLATFORM(IOS_FAMILY)
-    handleArray = SandboxExtension::createHandlesForMachLookup({ "com.apple.iphone.axserver-systemwide"_s, "com.apple.frontboard.systemappservices"_s }, connection() ? connection()->getAuditToken() : WTF::nullopt);
+    handleArray = SandboxExtension::createHandlesForMachLookup({ "com.apple.iphone.axserver-systemwide"_s, "com.apple.frontboard.systemappservices"_s }, connection() ? connection()->getAuditToken() : std::nullopt);
     ASSERT(handleArray.size() == 2);
 #endif
 
@@ -262,7 +262,7 @@ void WebProcessProxy::unblockPreferenceServiceIfNeeded()
     if (!canSendMessage())
         return;
 
-    auto handleArray = SandboxExtension::createHandlesForMachLookup({ "com.apple.cfprefsd.agent"_s, "com.apple.cfprefsd.daemon"_s }, connection() ? connection()->getAuditToken() : WTF::nullopt);
+    auto handleArray = SandboxExtension::createHandlesForMachLookup({ "com.apple.cfprefsd.agent"_s, "com.apple.cfprefsd.daemon"_s }, connection() ? connection()->getAuditToken() : std::nullopt);
     ASSERT(handleArray.size() == 2);
     
     send(Messages::WebProcess::UnblockPreferenceService(WTFMove(handleArray)), 0);

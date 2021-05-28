@@ -72,13 +72,13 @@ Optional<IDBValue> IDBValue::decode(Decoder& decoder)
 {
     IDBValue result;
     if (!decoder.decode(result.m_data))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.m_blobURLs))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.m_blobFilePaths))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return result;
 }

@@ -157,19 +157,19 @@ Optional<HeapSnapshotNode> InspectorHeapAgent::nodeForHeapObjectIdentifier(Proto
     HeapProfiler* heapProfiler = m_environment.vm().heapProfiler();
     if (!heapProfiler) {
         errorString = "No heap snapshot"_s;
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     HeapSnapshot* snapshot = heapProfiler->mostRecentSnapshot();
     if (!snapshot) {
         errorString = "No heap snapshot"_s;
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     const Optional<HeapSnapshotNode> optionalNode = snapshot->nodeForObjectIdentifier(heapObjectIdentifier);
     if (!optionalNode) {
         errorString = "No object for identifier, it may have been collected"_s;
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     return optionalNode;

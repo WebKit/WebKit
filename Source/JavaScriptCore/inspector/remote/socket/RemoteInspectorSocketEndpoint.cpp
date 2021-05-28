@@ -84,7 +84,7 @@ Optional<ConnectionID> RemoteInspectorSocketEndpoint::connectInet(const char* se
 {
     if (auto socket = Socket::connect(serverAddress, serverPort))
         return createClient(*socket, client);
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<ConnectionID> RemoteInspectorSocketEndpoint::listenInet(const char* address, uint16_t port, Listener& listener)
@@ -93,7 +93,7 @@ Optional<ConnectionID> RemoteInspectorSocketEndpoint::listenInet(const char* add
     auto id = generateConnectionID();
     auto connection = makeUnique<ListenerConnection>(id, listener, address, port);
     if (!connection->isListening())
-        return WTF::nullopt;
+        return std::nullopt;
 
     m_listeners.add(id, WTFMove(connection));
     wakeupWorkerThread();
@@ -207,7 +207,7 @@ Optional<ConnectionID> RemoteInspectorSocketEndpoint::createClient(PlatformSocke
     auto id = generateConnectionID();
     auto connection = makeUnique<ClientConnection>(id, socket, client);
     if (!Socket::isValid(connection->socket))
-        return WTF::nullopt;
+        return std::nullopt;
 
     m_clients.add(id, WTFMove(connection));
     wakeupWorkerThread();
@@ -271,7 +271,7 @@ Optional<uint16_t> RemoteInspectorSocketEndpoint::getPort(ConnectionID id) const
     if (const auto& connection = m_clients.get(id))
         return Socket::getPort(connection->socket);
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void RemoteInspectorSocketEndpoint::recvIfEnabled(ConnectionID id)

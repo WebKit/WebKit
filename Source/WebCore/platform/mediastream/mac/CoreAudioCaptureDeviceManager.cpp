@@ -62,7 +62,7 @@ Optional<CaptureDevice> CoreAudioCaptureDeviceManager::captureDeviceWithPersiste
         if (device.persistentId() == deviceID)
             return device;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static bool deviceHasStreams(AudioObjectID deviceID, const AudioObjectPropertyAddress& address)
@@ -254,7 +254,7 @@ Optional<CoreAudioCaptureDevice> CoreAudioCaptureDeviceManager::coreAudioDeviceW
         if (device.persistentId() == deviceID && device.enabled())
             return device;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static inline bool hasDevice(const Vector<CoreAudioCaptureDevice>& devices, uint32_t deviceID, CaptureDevice::DeviceType deviceType)

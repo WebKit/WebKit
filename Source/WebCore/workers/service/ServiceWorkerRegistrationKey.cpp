@@ -102,7 +102,7 @@ Optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::fromDatabas
     auto third = key.find(separatorCharacter, second + 1);
 
     if (first == second || second == third)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<uint16_t> shortPort;
 
@@ -110,12 +110,12 @@ Optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::fromDatabas
     if (third - second > 1) {
         shortPort = parseInteger<uint16_t>(StringView { key }.substring(second + 1, third - second - 1));
         if (!shortPort)
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     auto scope = URL { URL(), key.substring(third + 1) };
     if (!scope.isValid())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return ServiceWorkerRegistrationKey { { key.substring(0, first), key.substring(first + 1, second - first - 1), shortPort }, WTFMove(scope) };
 }

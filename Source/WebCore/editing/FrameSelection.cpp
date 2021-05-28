@@ -410,7 +410,7 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
 
     // Always clear the x position used for vertical arrow navigation.
     // It will be restored by the vertical arrow navigation code if necessary.
-    m_xPosForVerticalArrowNavigation = WTF::nullopt;
+    m_xPosForVerticalArrowNavigation = std::nullopt;
     selectFrameElementInParentIfFullySelected();
     m_document->editor().respondToChangedSelection(oldSelection, options);
     // https://www.w3.org/TR/selection-api/#selectionchange-event
@@ -2527,12 +2527,12 @@ Optional<SimpleRange> FrameSelection::elementRangeContainingCaretSelection() con
 {
     auto element = deprecatedEnclosingBlockFlowElement(m_selection.visibleStart().deepEquivalent().deprecatedNode());
     if (!element)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto start = VisiblePosition(makeContainerOffsetPosition(element, 0));
     auto end = VisiblePosition(makeContainerOffsetPosition(element, element->countChildNodes()));
     if (start.isNull() || end.isNull())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto selection = m_selection;
     selection.setBase(start);
@@ -2751,7 +2751,7 @@ bool FrameSelection::selectionAtSentenceStart() const
 Optional<SimpleRange> FrameSelection::rangeByAlteringCurrentSelection(EAlteration alteration, int amount) const
 {
     if (m_selection.isNone())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!amount)
         return m_selection.toNormalizedRange();

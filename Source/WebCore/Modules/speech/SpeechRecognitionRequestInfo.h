@@ -56,37 +56,37 @@ Optional<SpeechRecognitionRequestInfo> SpeechRecognitionRequestInfo::decode(Deco
     Optional<SpeechRecognitionConnectionClientIdentifier> clientIdentifier;
     decoder >> clientIdentifier;
     if (!clientIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<String> lang;
     decoder >> lang;
     if (!lang)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> continuous;
     decoder >> continuous;
     if (!continuous)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> interimResults;
     decoder >> interimResults;
     if (!interimResults)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<uint64_t> maxAlternatives;
     decoder >> maxAlternatives;
     if (!maxAlternatives)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<ClientOrigin> clientOrigin;
     decoder >> clientOrigin;
     if (!clientOrigin)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FrameIdentifier> frameIdentifier;
     decoder >> frameIdentifier;
     if (!frameIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{
         WTFMove(*clientIdentifier),

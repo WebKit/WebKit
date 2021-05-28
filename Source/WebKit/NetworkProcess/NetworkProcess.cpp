@@ -1608,7 +1608,7 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
 #endif
 
     if (auto* networkSession = this->networkSession(sessionID))
-        networkSession->removeNetworkWebsiteData(modifiedSince, WTF::nullopt, [clearTasksHandler] { });
+        networkSession->removeNetworkWebsiteData(modifiedSince, std::nullopt, [clearTasksHandler] { });
 
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral())
         clearDiskCache(modifiedSince, [clearTasksHandler = WTFMove(clearTasksHandler)] { });
@@ -1742,7 +1742,7 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
         for (auto& domain : registrableDomains)
             domainsToDeleteNetworkDataFor.add(domain);
 
-        networkSession->removeNetworkWebsiteData(WTF::nullopt, WTFMove(domainsToDeleteNetworkDataFor), [clearTasksHandler] { });
+        networkSession->removeNetworkWebsiteData(std::nullopt, WTFMove(domainsToDeleteNetworkDataFor), [clearTasksHandler] { });
     }
 }
 

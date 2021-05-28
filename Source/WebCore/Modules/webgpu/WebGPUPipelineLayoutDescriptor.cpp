@@ -41,7 +41,7 @@ Optional<GPUPipelineLayoutDescriptor> WebGPUPipelineLayoutDescriptor::tryCreateG
     for (const auto& layout : bindGroupLayouts) {
         if (!layout || !layout->bindGroupLayout()) {
             LOG(WebGPU, "GPUDevice::createPipelineLayout(): Invalid GPUBindGroupLayout!");
-            return WTF::nullopt;
+            return std::nullopt;
         }
         
         gpuLayouts.uncheckedAppend(makeRef(*layout->bindGroupLayout()));

@@ -49,7 +49,7 @@ NativeWebMouseEvent::NativeWebMouseEvent(const WebCore::IntPoint& position)
 }
 
 NativeWebMouseEvent::NativeWebMouseEvent(Type type, Button button, unsigned short buttons, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, int clickCount, OptionSet<Modifier> modifiers, Optional<WebCore::FloatSize> delta, WebCore::PointerID pointerId, const String& pointerType)
-    : WebMouseEvent(type, button, buttons, position, globalPosition, delta.valueOr(WebCore::FloatSize()).width(), delta.valueOr(WebCore::FloatSize()).height(), 0, clickCount, modifiers, WallTime::now(), 0, NoTap, pointerId, pointerType)
+    : WebMouseEvent(type, button, buttons, position, globalPosition, delta.value_or(WebCore::FloatSize()).width(), delta.value_or(WebCore::FloatSize()).height(), 0, clickCount, modifiers, WallTime::now(), 0, NoTap, pointerId, pointerType)
 {
 }
 

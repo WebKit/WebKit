@@ -267,7 +267,7 @@ Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeForSele
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     if (!canCreateRevealItems())
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Since we already have the range we want, we just need to grab the returned options.
     auto selectionStart = selection.visibleStart();
@@ -277,7 +277,7 @@ Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeForSele
     auto paragraphStart = startOfParagraph(selectionStart);
     auto paragraphEnd = endOfParagraph(selectionEnd);
     if (paragraphStart.isNull() || paragraphEnd.isNull())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto lengthToSelectionStart = characterCount(*makeSimpleRange(paragraphStart, selectionStart));
     auto selectionCharacterCount = characterCount(*makeSimpleRange(selectionStart, selectionEnd));
@@ -291,7 +291,7 @@ Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeForSele
 
     END_BLOCK_OBJC_EXCEPTIONS
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeAtHitTestResult(const HitTestResult& hitTestResult)
@@ -299,20 +299,20 @@ Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeAtHitTe
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     
     if (!canCreateRevealItems())
-        return WTF::nullopt;
+        return std::nullopt;
     
     auto* node = hitTestResult.innerNonSharedNode();
     if (!node || !node->renderer())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto* frame = node->document().frame();
     if (!frame)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Don't do anything if there is no character at the point.
     auto framePoint = hitTestResult.roundedPointInInnerNodeFrame();
     if (!frame->rangeForPoint(framePoint))
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto position = frame->visiblePositionForPoint(framePoint);
     if (position.isNull())
@@ -330,7 +330,7 @@ Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeAtHitTe
         // As context, we are going to use the surrounding paragraphs of text.
         fullCharacterRange = makeSimpleRange(startOfParagraph(selectionStart), endOfParagraph(selectionEnd));
         if (!fullCharacterRange)
-            return WTF::nullopt;
+            return std::nullopt;
 
         selectionRange = NSMakeRange(characterCount(*makeSimpleRange(fullCharacterRange->start, selectionStart)),
             characterCount(*makeSimpleRange(selectionStart, selectionEnd)));
@@ -343,7 +343,7 @@ Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeAtHitTe
         // As context, we are going to use 250 characters of text before and after the point.
         fullCharacterRange = rangeExpandedAroundPositionByCharacters(position, 250);
         if (!fullCharacterRange)
-            return WTF::nullopt;
+            return std::nullopt;
 
         selectionRange = NSMakeRange(NSNotFound, 0);
         hitIndex = characterCount(*makeSimpleRange(fullCharacterRange->start, position));
@@ -355,13 +355,13 @@ Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeAtHitTe
     auto highlightRange = adoptNS([PAL::allocRVItemInstance() initWithText:itemString selectedRange:selectedRange]).get().highlightRange;
 
     if (highlightRange.location == NSNotFound || !highlightRange.length)
-        return WTF::nullopt;
+        return std::nullopt;
     
     return { { resolveCharacterRange(*fullCharacterRange, highlightRange), nil } };
     
     END_BLOCK_OBJC_EXCEPTIONS
     
-    return WTF::nullopt;
+    return std::nullopt;
     
 }
 
@@ -523,12 +523,12 @@ WKRevealController DictionaryLookup::animationControllerForPopup(const Dictionar
 
 Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeForSelection(const VisibleSelection&)
 {
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeAtHitTestResult(const HitTestResult&)
 {
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 #endif

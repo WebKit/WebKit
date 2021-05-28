@@ -508,7 +508,7 @@ RetainPtr<CTFontRef> preparePlatformFont(CTFontRef originalFont, const FontDescr
     if (applyWeightWidthSlopeVariations && !fontIsSystemFont(originalFont)) {
         float weight = fontSelectionRequest.weight;
         float width = fontSelectionRequest.width;
-        float slope = fontSelectionRequest.slope.valueOr(normalItalicValue());
+        float slope = fontSelectionRequest.slope.value_or(normalItalicValue());
         if (auto weightValue = fontFaceCapabilities.weight)
             weight = std::max(std::min(weight, static_cast<float>(weightValue->maximum)), static_cast<float>(weightValue->minimum));
         if (auto widthValue = fontFaceCapabilities.width)
@@ -939,7 +939,7 @@ static Optional<MinMax> extractVariationBounds(CFDictionaryRef axis)
     CFNumberGetValue(maximumValue, kCFNumberFloatType, &rawMaximumValue);
     if (rawMinimumValue < rawMaximumValue)
         return {{ rawMinimumValue, rawMaximumValue }};
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static VariationCapabilities variationCapabilitiesForFontDescriptor(CTFontDescriptorRef fontDescriptor)
@@ -1462,7 +1462,7 @@ Optional<ASCIILiteral> FontCache::platformAlternateFamilyName(const String& fami
         break;
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void addAttributesForInstalledFonts(CFMutableDictionaryRef attributes, AllowUserInstalledFonts allowUserInstalledFonts)

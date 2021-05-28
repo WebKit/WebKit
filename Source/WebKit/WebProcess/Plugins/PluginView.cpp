@@ -1157,7 +1157,7 @@ void PluginView::performFrameLoadURLRequest(URLRequest* request)
         return;
     }
 
-    UserGestureIndicator gestureIndicator(request->allowPopups() ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : WTF::nullopt);
+    UserGestureIndicator gestureIndicator(request->allowPopups() ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : std::nullopt);
 
     // First, try to find a target frame.
     Frame* targetFrame = frame->loader().findFrameForNavigation(request->target());
@@ -1437,7 +1437,7 @@ bool PluginView::evaluate(NPObject* npObject, const String& scriptString, NPVari
     // protect the plug-in view from destruction.
     NPRuntimeObjectMap::PluginProtector pluginProtector(&m_npRuntimeObjectMap);
 
-    UserGestureIndicator gestureIndicator(allowPopups ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : WTF::nullopt);
+    UserGestureIndicator gestureIndicator(allowPopups ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : std::nullopt);
     return m_npRuntimeObjectMap.evaluate(npObject, scriptString, result);
 }
 

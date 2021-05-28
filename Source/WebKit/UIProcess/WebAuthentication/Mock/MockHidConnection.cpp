@@ -195,7 +195,7 @@ void MockHidConnection::parseRequest()
     }
 
     m_currentChannel = m_requestMessage->channelId();
-    m_requestMessage = WTF::nullopt;
+    m_requestMessage = std::nullopt;
     if (m_configuration.hid->fastDataArrival)
         feedReports();
 }

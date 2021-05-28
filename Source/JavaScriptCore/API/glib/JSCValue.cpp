@@ -1267,7 +1267,7 @@ JSCValue* jsc_value_new_function_variadic(JSCContext* context, const char* name,
     g_return_val_if_fail(JSC_IS_CONTEXT(context), nullptr);
     g_return_val_if_fail(callback, nullptr);
 
-    return jscValueFunctionCreate(context, name, callback, userData, destroyNotify, returnType, WTF::nullopt).leakRef();
+    return jscValueFunctionCreate(context, name, callback, userData, destroyNotify, returnType, std::nullopt).leakRef();
 }
 
 /**

@@ -52,7 +52,7 @@ CString Special::name() const
 
 Optional<unsigned> Special::shouldTryAliasingDef(Inst&)
 {
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 bool Special::isTerminal(Inst&)

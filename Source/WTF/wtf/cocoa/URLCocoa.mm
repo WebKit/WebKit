@@ -95,7 +95,7 @@ RetainPtr<id> makeNSArrayElement(const URL& vectorElement)
 Optional<URL> makeVectorElement(const URL*, id arrayElement)
 {
     if (![arrayElement isKindOfClass:NSURL.class])
-        return WTF::nullopt;
+        return std::nullopt;
     return { { arrayElement } };
 }
 

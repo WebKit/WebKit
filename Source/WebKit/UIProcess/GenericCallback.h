@@ -105,7 +105,7 @@ public:
         if (!m_callback)
             return;
 
-        auto callback = std::exchange(m_callback, WTF::nullopt);
+        auto callback = std::exchange(m_callback, std::nullopt);
         callback.value()(returnValue..., Error::None);
     }
 
@@ -121,7 +121,7 @@ public:
         if (!m_callback)
             return;
 
-        auto callback = std::exchange(m_callback, WTF::nullopt);
+        auto callback = std::exchange(m_callback, std::nullopt);
         callback.value()(typename std::remove_reference<T>::type()..., error);
     }
 

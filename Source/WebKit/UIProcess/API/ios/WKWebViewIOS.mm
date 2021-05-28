@@ -658,23 +658,23 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     _animatedResizeOriginalContentWidth = 0;
     _animatedResizeOldBounds = { };
     [_contentView setHidden:NO];
-    _scrollOffsetToRestore = WTF::nullopt;
-    _unobscuredCenterToRestore = WTF::nullopt;
+    _scrollOffsetToRestore = std::nullopt;
+    _unobscuredCenterToRestore = std::nullopt;
     _scrollViewBackgroundColor = WebCore::Color();
     _invokingUIScrollViewDelegateCallback = NO;
     _didDeferUpdateVisibleContentRectsForUIScrollViewDelegateCallback = NO;
     _didDeferUpdateVisibleContentRectsForAnyReason = NO;
     _didDeferUpdateVisibleContentRectsForUnstableScrollView = NO;
     _currentlyAdjustingScrollViewInsetsForKeyboard = NO;
-    _lastSentViewLayoutSize = WTF::nullopt;
-    _lastSentMaximumUnobscuredSize = WTF::nullopt;
-    _lastSentDeviceOrientation = WTF::nullopt;
+    _lastSentViewLayoutSize = std::nullopt;
+    _lastSentMaximumUnobscuredSize = std::nullopt;
+    _lastSentDeviceOrientation = std::nullopt;
 
-    _frozenVisibleContentRect = WTF::nullopt;
-    _frozenUnobscuredContentRect = WTF::nullopt;
+    _frozenVisibleContentRect = std::nullopt;
+    _frozenUnobscuredContentRect = std::nullopt;
 
     _firstPaintAfterCommitLoadTransactionID = { };
-    _firstTransactionIDAfterPageRestore = WTF::nullopt;
+    _firstTransactionIDAfterPageRestore = std::nullopt;
 
     _lastTransactionID = { };
 
@@ -794,7 +794,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
         auto timeSinceFirstRequestWithPendingCommit = MonotonicTime::now() - *_timeOfFirstVisibleContentRectUpdateWithPendingCommit;
         if (timeSinceFirstRequestWithPendingCommit > delayBeforeNoCommitsLogging)
             RELEASE_LOG_IF_ALLOWED("%p (pageProxyID=%llu) -[WKWebView _didCommitLayerTree:] - finally received commit %.2fs after visible content rect update request; transactionID %llu", self, _page->identifier().toUInt64(), timeSinceFirstRequestWithPendingCommit.value(), layerTreeTransaction.transactionID().toUInt64());
-        _timeOfFirstVisibleContentRectUpdateWithPendingCommit = WTF::nullopt;
+        _timeOfFirstVisibleContentRectUpdateWithPendingCommit = std::nullopt;
     }
 }
 
@@ -831,13 +831,13 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
     if (!_firstTransactionIDAfterPageRestore || layerTreeTransaction.transactionID() < _firstTransactionIDAfterPageRestore.value())
         return NO;
 
-    _firstTransactionIDAfterPageRestore = WTF::nullopt;
+    _firstTransactionIDAfterPageRestore = std::nullopt;
 
     BOOL needUpdateVisibleContentRects = NO;
 
     if (_scrollOffsetToRestore) {
         WebCore::FloatPoint scaledScrollOffset = _scrollOffsetToRestore.value();
-        _scrollOffsetToRestore = WTF::nullopt;
+        _scrollOffsetToRestore = std::nullopt;
 
         if (WTF::areEssentiallyEqual<float>(contentZoomScale(self), _scaleToRestore)) {
             scaledScrollOffset.scale(_scaleToRestore);
@@ -852,7 +852,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
 
     if (_unobscuredCenterToRestore) {
         WebCore::FloatPoint unobscuredCenterToRestore = _unobscuredCenterToRestore.value();
-        _unobscuredCenterToRestore = WTF::nullopt;
+        _unobscuredCenterToRestore = std::nullopt;
 
         if (WTF::areEssentiallyEqual<float>(contentZoomScale(self), _scaleToRestore)) {
             CGRect unobscuredRect = UIEdgeInsetsInsetRect(self.bounds, _obscuredInsets);
@@ -971,7 +971,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
     if (scrollPosition)
         _scrollOffsetToRestore = WebCore::ScrollableArea::scrollOffsetFromPosition(WebCore::FloatPoint(scrollPosition.value()), WebCore::toFloatSize(scrollOrigin));
     else
-        _scrollOffsetToRestore = WTF::nullopt;
+        _scrollOffsetToRestore = std::nullopt;
 
     _obscuredInsetsWhenSaved = obscuredInsets;
     _scaleToRestore = scale;
@@ -1646,7 +1646,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     }
 
     if (scrollEvent.phase == UIScrollPhaseBegan) {
-        _currentScrollGestureState = WTF::nullopt;
+        _currentScrollGestureState = std::nullopt;
         _wheelEventCountInCurrentScrollGesture = 0;
     }
 
@@ -2169,7 +2169,7 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
 
 static WebCore::FloatSize activeMaximumUnobscuredSize(WKWebView *webView, const CGRect& bounds)
 {
-    return WebCore::FloatSize(webView->_maximumUnobscuredSizeOverride.valueOr(bounds.size));
+    return WebCore::FloatSize(webView->_maximumUnobscuredSizeOverride.value_or(bounds.size));
 }
 
 static int32_t activeOrientation(WKWebView *webView)
@@ -2419,8 +2419,8 @@ static int32_t activeOrientation(WKWebView *webView)
 
 - (void)_navigationGestureDidEnd
 {
-    _frozenVisibleContentRect = WTF::nullopt;
-    _frozenUnobscuredContentRect = WTF::nullopt;
+    _frozenVisibleContentRect = std::nullopt;
+    _frozenUnobscuredContentRect = std::nullopt;
 
     if (_contentViewShouldBecomeFirstResponderAfterNavigationGesture) {
         if (self.window && ![_contentView isFirstResponder])
@@ -2543,7 +2543,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
         );
         _page->setPrivateClickMeasurement(WTFMove(measurement));
     } else
-        _page->setPrivateClickMeasurement(WTF::nullopt);
+        _page->setPrivateClickMeasurement(std::nullopt);
 #endif
 }
 
@@ -2571,7 +2571,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 - (CGSize)_minimumLayoutSizeOverride
 {
     ASSERT(_viewLayoutSizeOverride);
-    return _viewLayoutSizeOverride.valueOr(CGSizeZero);
+    return _viewLayoutSizeOverride.value_or(CGSizeZero);
 }
 
 - (void)_setViewLayoutSizeOverride:(CGSize)viewLayoutSizeOverride
@@ -2586,7 +2586,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 - (CGSize)_maximumUnobscuredSizeOverride
 {
     ASSERT(_maximumUnobscuredSizeOverride);
-    return _maximumUnobscuredSizeOverride.valueOr(CGSizeZero);
+    return _maximumUnobscuredSizeOverride.value_or(CGSizeZero);
 }
 
 - (void)_setMaximumUnobscuredSizeOverride:(CGSize)size
@@ -3138,14 +3138,14 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 - (void)_clearOverrideLayoutParameters
 {
-    _viewLayoutSizeOverride = WTF::nullopt;
-    _maximumUnobscuredSizeOverride = WTF::nullopt;
+    _viewLayoutSizeOverride = std::nullopt;
+    _maximumUnobscuredSizeOverride = std::nullopt;
 }
 
-static WTF::Optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary(NSDictionary<NSString *, NSString *> *viewportArgumentPairs, bool viewportFitEnabled)
+static std::optional<WebCore::ViewportArguments> viewportArgumentsFromDictionary(NSDictionary<NSString *, NSString *> *viewportArgumentPairs, bool viewportFitEnabled)
 {
     if (!viewportArgumentPairs)
-        return WTF::nullopt;
+        return std::nullopt;
 
     WebCore::ViewportArguments viewportArguments(WebCore::ViewportArguments::ViewportMeta);
 

@@ -85,7 +85,7 @@ class WebProcessPool;
 class AutomationCommandError {
 public:
     Inspector::Protocol::Automation::ErrorMessage type;
-    Optional<String> message { WTF::nullopt };
+    Optional<String> message { std::nullopt };
     
     AutomationCommandError(Inspector::Protocol::Automation::ErrorMessage type)
         : type(type) { }

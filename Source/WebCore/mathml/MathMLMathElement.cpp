@@ -60,7 +60,7 @@ void MathMLMathElement::parseAttribute(const QualifiedName& name, const AtomStri
 {
     bool mathVariantAttribute = name == mathvariantAttr;
     if (mathVariantAttribute)
-        m_mathVariant = WTF::nullopt;
+        m_mathVariant = std::nullopt;
     if ((mathVariantAttribute) && renderer())
         MathMLStyle::resolveMathMLStyleTree(renderer());
 

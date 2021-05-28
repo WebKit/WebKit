@@ -80,7 +80,7 @@ template<class Decoder> Optional<PlatformColorSpace> PlatformColorSpace::decode(
     Optional<PlatformColorSpace::Name> name;
     decoder >> name;
     if (!name)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return { { *name } };
 }

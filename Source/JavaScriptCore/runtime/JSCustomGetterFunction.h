@@ -51,7 +51,7 @@ public:
         return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
     }
 
-    JS_EXPORT_PRIVATE static JSCustomGetterFunction* create(VM&, JSGlobalObject*, const PropertyName&, CustomFunctionPointer, Optional<DOMAttributeAnnotation> = WTF::nullopt);
+    JS_EXPORT_PRIVATE static JSCustomGetterFunction* create(VM&, JSGlobalObject*, const PropertyName&, CustomFunctionPointer, Optional<DOMAttributeAnnotation> = std::nullopt);
 
     DECLARE_EXPORT_INFO;
 

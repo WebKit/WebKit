@@ -42,7 +42,7 @@ public:
     static WebKit::WebMouseEvent createWebMouseEvent(::WebEvent *);
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
-    static WebKit::WebWheelEvent createWebWheelEvent(UIScrollEvent *, UIView *contentView, Optional<WebKit::WebWheelEvent::Phase> overridePhase = WTF::nullopt);
+    static WebKit::WebWheelEvent createWebWheelEvent(UIScrollEvent *, UIView *contentView, Optional<WebKit::WebWheelEvent::Phase> overridePhase = std::nullopt);
 #endif
 
     static UIKeyModifierFlags toUIKeyModifierFlags(OptionSet<WebKit::WebEvent::Modifier>);

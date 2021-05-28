@@ -211,12 +211,12 @@ bool DataDetection::canPresentDataDetectorsUIForElement(Element& element)
 
     auto resultIndices = StringView { resultAttribute }.split('/');
     auto indexIterator = resultIndices.begin();
-    auto result = [results[parseIntegerAllowingTrailingJunk<int>(*indexIterator).valueOr(0)] coreResult];
+    auto result = [results[parseIntegerAllowingTrailingJunk<int>(*indexIterator).value_or(0)] coreResult];
 
     // Handle the case of a signature block, where we need to follow the path down one or more subresult levels.
     while (++indexIterator != resultIndices.end()) {
         results = (__bridge NSArray *)PAL::softLink_DataDetectorsCore_DDResultGetSubResults(result);
-        result = (__bridge DDResultRef)results[parseIntegerAllowingTrailingJunk<int>(*indexIterator).valueOr(0)];
+        result = (__bridge DDResultRef)results[parseIntegerAllowingTrailingJunk<int>(*indexIterator).value_or(0)];
     }
 
     return PAL::softLink_DataDetectorsCore_DDShouldImmediatelyShowActionSheetForResult(result);

@@ -58,7 +58,7 @@ RemoteCDM::RemoteCDM(WeakPtr<RemoteCDMFactory>&& factory, RemoteCDMIdentifier&& 
 void RemoteCDM::getSupportedConfiguration(CDMKeySystemConfiguration&& configuration, LocalStorageAccess access, SupportedConfigurationCallback&& callback)
 {
     if (!m_factory) {
-        callback(WTF::nullopt);
+        callback(std::nullopt);
         return;
     }
 

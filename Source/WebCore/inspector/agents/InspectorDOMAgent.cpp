@@ -135,13 +135,13 @@ static const UChar ellipsisUChar[] = { 0x2026, 0 };
 static Optional<Color> parseColor(RefPtr<JSON::Object>&& colorObject)
 {
     if (!colorObject)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto r = colorObject->getInteger(Protocol::DOM::RGBAColor::rKey);
     auto g = colorObject->getInteger(Protocol::DOM::RGBAColor::gKey);
     auto b = colorObject->getInteger(Protocol::DOM::RGBAColor::bKey);
     if (!r || !g || !b)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto a = colorObject->getDouble(Protocol::DOM::RGBAColor::aKey);
     if (!a)
@@ -151,7 +151,7 @@ static Optional<Color> parseColor(RefPtr<JSON::Object>&& colorObject)
 
 static Color parseConfigColor(const String& fieldName, JSON::Object& configObject)
 {
-    return parseColor(configObject.getObject(fieldName)).valueOr(Color::transparentBlack);
+    return parseColor(configObject.getObject(fieldName)).value_or(Color::transparentBlack);
 }
 
 static bool parseQuad(Ref<JSON::Array>&& quadArray, FloatQuad* quad)
@@ -1240,7 +1240,7 @@ std::unique_ptr<InspectorOverlay::Highlight::Config> InspectorDOMAgent::highligh
     }
 
     auto highlightConfig = makeUnique<InspectorOverlay::Highlight::Config>();
-    highlightConfig->showInfo = highlightInspectorObject->getBoolean(Protocol::DOM::HighlightConfig::showInfoKey).valueOr(false);
+    highlightConfig->showInfo = highlightInspectorObject->getBoolean(Protocol::DOM::HighlightConfig::showInfoKey).value_or(false);
     highlightConfig->content = parseConfigColor(Protocol::DOM::HighlightConfig::contentColorKey, *highlightInspectorObject);
     highlightConfig->padding = parseConfigColor(Protocol::DOM::HighlightConfig::paddingColorKey, *highlightInspectorObject);
     highlightConfig->border = parseConfigColor(Protocol::DOM::HighlightConfig::borderColorKey, *highlightInspectorObject);
@@ -1296,8 +1296,8 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightQuad(Ref<JSON::Array>&
 void InspectorDOMAgent::innerHighlightQuad(std::unique_ptr<FloatQuad> quad, RefPtr<JSON::Object>&& color, RefPtr<JSON::Object>&& outlineColor, Optional<bool>&& usePageCoordinates)
 {
     auto highlightConfig = makeUnique<InspectorOverlay::Highlight::Config>();
-    highlightConfig->content = parseColor(WTFMove(color)).valueOr(Color::transparentBlack);
-    highlightConfig->contentOutline = parseColor(WTFMove(outlineColor)).valueOr(Color::transparentBlack);
+    highlightConfig->content = parseColor(WTFMove(color)).value_or(Color::transparentBlack);
+    highlightConfig->contentOutline = parseColor(WTFMove(outlineColor)).value_or(Color::transparentBlack);
     highlightConfig->usePageCoordinates = usePageCoordinates ? *usePageCoordinates : false;
     m_overlay->highlightQuad(WTFMove(quad), *highlightConfig);
 }
@@ -1463,8 +1463,8 @@ Protocol::ErrorStringOr<void> InspectorDOMAgent::highlightFrame(const Protocol::
     if (frame->ownerElement()) {
         auto highlightConfig = makeUnique<InspectorOverlay::Highlight::Config>();
         highlightConfig->showInfo = true; // Always show tooltips for frames.
-        highlightConfig->content = parseColor(WTFMove(color)).valueOr(Color::transparentBlack);
-        highlightConfig->contentOutline = parseColor(WTFMove(outlineColor)).valueOr(Color::transparentBlack);
+        highlightConfig->content = parseColor(WTFMove(color)).value_or(Color::transparentBlack);
+        highlightConfig->contentOutline = parseColor(WTFMove(outlineColor)).value_or(Color::transparentBlack);
         m_overlay->highlightNode(frame->ownerElement(), *highlightConfig);
     }
 
@@ -1491,11 +1491,11 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMAgent::showGridOverlay(Insp
 
     InspectorOverlay::Grid::Config config;
     config.gridColor = *parsedColor;
-    config.showLineNames = showLineNames.valueOr(false);
-    config.showLineNumbers = showLineNumbers.valueOr(false);
-    config.showExtendedGridLines = showExtendedGridLines.valueOr(false);
-    config.showTrackSizes = showTrackSizes.valueOr(false);
-    config.showAreaNames = showAreaNames.valueOr(false);
+    config.showLineNames = showLineNames.value_or(false);
+    config.showLineNumbers = showLineNumbers.value_or(false);
+    config.showExtendedGridLines = showExtendedGridLines.value_or(false);
+    config.showTrackSizes = showTrackSizes.value_or(false);
+    config.showAreaNames = showAreaNames.value_or(false);
 
     m_overlay->setGridOverlayForNode(*node, config);
 

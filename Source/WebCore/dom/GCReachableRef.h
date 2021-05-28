@@ -125,7 +125,7 @@ template<typename P> struct HashTraits<WebCore::GCReachableRef<P>> : SimpleClass
     static PeekType peek(P* value) { return value; }
 
     typedef Optional<Ref<P>> TakeType;
-    static TakeType take(Ref<P>&& value) { return isEmptyValue(value) ? WTF::nullopt : Optional<Ref<P>>(WTFMove(value)); }
+    static TakeType take(Ref<P>&& value) { return isEmptyValue(value) ? std::nullopt : Optional<Ref<P>>(WTFMove(value)); }
 };
 
 template <typename T, typename U>

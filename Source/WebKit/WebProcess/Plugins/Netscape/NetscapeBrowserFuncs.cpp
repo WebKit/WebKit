@@ -245,7 +245,7 @@ static NPError parsePostBuffer(bool isFile, const char *buffer, uint32_t length,
                 String contentLength = headerFields.get(HTTPHeaderName::ContentLength);
 
                 if (!contentLength.isNull())
-                    dataLength = std::min(parseIntegerAllowingTrailingJunk<unsigned>(contentLength).valueOr(0), dataLength);
+                    dataLength = std::min(parseIntegerAllowingTrailingJunk<unsigned>(contentLength).value_or(0), dataLength);
                 headerFields.remove(HTTPHeaderName::ContentLength);
 
                 postBuffer += location;

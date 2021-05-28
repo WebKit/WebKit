@@ -65,7 +65,7 @@ Optional<PerformanceEntry::Type> PerformanceEntry::parseEntryTypeString(const St
             return Optional<Type>(Type::Paint);
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace WebCore

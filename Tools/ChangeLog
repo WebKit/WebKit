@@ -1,3 +1,16 @@
+2021-05-27  Darin Adler  <darin@apple.com>
+
+        Next step toward using std::optional directly instead of through WTF::Optional typedef
+        https://bugs.webkit.org/show_bug.cgi?id=226280
+
+        Reviewed by Chris Dumez.
+
+        * Scripts/do-webcore-rename: Use script to rename valueOr, WTF::nullopt, WTF::nullopt_t,
+        WTF::Optional, WTF::makeOptional, and makeOptional. Other renamings can't necessarily
+        be done by the script and so will be done in later passes.
+
+        * <many files>: Accept the renaming done by do-webcore-rename.
+
 2021-05-27  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitpy] Use existing signal handler when printing stacktrace

@@ -119,10 +119,10 @@ BytecodeIntrinsicRegistry::BytecodeIntrinsicRegistry(VM& vm)
 Optional<BytecodeIntrinsicRegistry::Entry> BytecodeIntrinsicRegistry::lookup(const Identifier& ident) const
 {
     if (!ident.isPrivateName())
-        return WTF::nullopt;
+        return std::nullopt;
     auto iterator = m_bytecodeIntrinsicMap.find(ident.impl());
     if (iterator == m_bytecodeIntrinsicMap.end())
-        return WTF::nullopt;
+        return std::nullopt;
     return iterator->value;
 }
 

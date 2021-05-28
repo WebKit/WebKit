@@ -51,7 +51,7 @@ DeviceMotionEvent::DeviceMotionEvent(const AtomString& eventType, DeviceMotionDa
 static Optional<DeviceMotionEvent::Acceleration> convert(const DeviceMotionData::Acceleration* acceleration)
 {
     if (!acceleration)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return DeviceMotionEvent::Acceleration { acceleration->x(), acceleration->y(), acceleration->z() };
 }
@@ -59,7 +59,7 @@ static Optional<DeviceMotionEvent::Acceleration> convert(const DeviceMotionData:
 static Optional<DeviceMotionEvent::RotationRate> convert(const DeviceMotionData::RotationRate* rotationRate)
 {
     if (!rotationRate)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return DeviceMotionEvent::RotationRate { rotationRate->alpha(), rotationRate->beta(), rotationRate->gamma() };
 }

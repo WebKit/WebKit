@@ -53,13 +53,13 @@ Optional<ConnectionID> HTTPServer::doAccept(RemoteInspectorSocketEndpoint& endpo
         return id;
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void HTTPServer::didChangeStatus(RemoteInspectorSocketEndpoint&, ConnectionID, RemoteInspectorSocketEndpoint::Listener::Status status)
 {
     if (status == Status::Closed)
-        m_server = WTF::nullopt;
+        m_server = std::nullopt;
 }
 
 void HTTPRequestHandler::connect(ConnectionID id)
@@ -135,7 +135,7 @@ String HTTPRequestHandler::packHTTPMessage(HTTPRequestHandler::Response&& respon
 
 void HTTPRequestHandler::didClose(RemoteInspectorSocketEndpoint&, ConnectionID)
 {
-    m_client = WTF::nullopt;
+    m_client = std::nullopt;
     reset();
 }
 

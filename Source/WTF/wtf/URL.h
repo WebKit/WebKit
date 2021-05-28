@@ -302,7 +302,7 @@ template<typename Decoder> Optional<URL> URL::decode(Decoder& decoder)
     Optional<String> string;
     decoder >> string;
     if (!string)
-        return WTF::nullopt;
+        return std::nullopt;
     return URL(URL(), WTFMove(*string));
 }
 

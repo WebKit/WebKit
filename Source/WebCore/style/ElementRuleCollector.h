@@ -40,7 +40,7 @@ class ScopeRuleSets;
 
 class PseudoElementRequest {
 public:
-    PseudoElementRequest(PseudoId pseudoId, Optional<StyleScrollbarState> scrollbarState = WTF::nullopt)
+    PseudoElementRequest(PseudoId pseudoId, Optional<StyleScrollbarState> scrollbarState = std::nullopt)
         : pseudoId(pseudoId)
         , scrollbarState(scrollbarState)
     {

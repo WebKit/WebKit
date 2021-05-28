@@ -107,7 +107,7 @@ auto AbstractModuleRecord::tryGetImportEntry(UniquedStringImpl* localName) -> Op
 {
     const auto iterator = m_importEntries.find(localName);
     if (iterator == m_importEntries.end())
-        return WTF::nullopt;
+        return std::nullopt;
     return Optional<ImportEntry>(iterator->value);
 }
 
@@ -115,7 +115,7 @@ auto AbstractModuleRecord::tryGetExportEntry(UniquedStringImpl* exportName) -> O
 {
     const auto iterator = m_exportEntries.find(exportName);
     if (iterator == m_exportEntries.end())
-        return WTF::nullopt;
+        return std::nullopt;
     return Optional<ExportEntry>(iterator->value);
 }
 
@@ -247,7 +247,7 @@ auto AbstractModuleRecord::tryGetCachedResolution(UniquedStringImpl* exportName)
 {
     const auto iterator = m_resolutionCache.find(exportName);
     if (iterator == m_resolutionCache.end())
-        return WTF::nullopt;
+        return std::nullopt;
     return Optional<Resolution>(iterator->value);
 }
 

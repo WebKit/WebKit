@@ -46,32 +46,32 @@ struct PDFContextMenuItem {
         Optional<String> title;
         decoder >> title;
         if (!title)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> enabled;
         decoder >> enabled;
         if (!enabled)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> separator;
         decoder >> separator;
         if (!separator)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<int> state;
         decoder >> state;
         if (!state)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> hasAction;
         decoder >> hasAction;
         if (!hasAction)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<int> tag;
         decoder >> tag;
         if (!tag)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return { { WTFMove(*title), WTFMove(*enabled), WTFMove(*separator), WTFMove(*state), WTFMove(*hasAction), WTFMove(*tag) } };
     }
@@ -92,17 +92,17 @@ struct PDFContextMenu {
         Optional<WebCore::IntPoint> point;
         decoder >> point;
         if (!point)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<Vector<PDFContextMenuItem>> items;
         decoder >> items;
         if (!items)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<Optional<int>> openInPreviewIndex;
         decoder >> openInPreviewIndex;
         if (!openInPreviewIndex)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{
             WTFMove(*point),

@@ -80,7 +80,7 @@ static Optional<unsigned> findFirstSnapStopOffsetBetweenOriginAndDestination(con
 {
     LayoutType difference = scrollDestinationOffset - scrollOriginOffset;
     if (!difference)
-        return WTF::nullopt;
+        return std::nullopt;
 
     unsigned searchStartOffset = 0;
     size_t iteration = 1;
@@ -103,7 +103,7 @@ static Optional<unsigned> findFirstSnapStopOffsetBetweenOriginAndDestination(con
             return i;
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template <typename InfoType, typename SizeType, typename LayoutType>

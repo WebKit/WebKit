@@ -58,7 +58,7 @@ public:
     RepetitionCount repetitionCount() const final;
     String uti() const final;
     String filenameExtension() const final { return MIMETypeRegistry::preferredExtensionForMIMEType(m_mimeType); }
-    Optional<IntPoint> hotSpot() const final { return WTF::nullopt; }
+    Optional<IntPoint> hotSpot() const final { return std::nullopt; }
 
     IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const final { return size(); }
     bool frameIsCompleteAtIndex(size_t index) const final { return sampleAtIndex(index); }

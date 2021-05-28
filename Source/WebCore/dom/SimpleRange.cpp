@@ -55,7 +55,7 @@ Optional<SimpleRange> makeRangeSelectingNode(Node& node)
 {
     auto parent = node.parentNode();
     if (!parent)
-        return WTF::nullopt;
+        return std::nullopt;
     unsigned offset = node.computeNodeIndex();
     return SimpleRange { { *parent, offset }, { *parent, offset + 1 } };
 }
@@ -250,7 +250,7 @@ Optional<SimpleRange> intersection(const Optional<SimpleRange>& a, const Optiona
 {
     // FIXME: Can this be done more efficiently, with fewer calls to treeOrder?
     if (!a || !b || !intersects<ComposedTree>(*a, *b))
-        return WTF::nullopt;
+        return std::nullopt;
     return { { std::max(a->start, b->start, compareByComposedTreeOrder), std::min(a->end, b->end, compareByComposedTreeOrder) } };
 }
 

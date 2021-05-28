@@ -57,7 +57,7 @@ public:
             return m_additionalDataVector;
 
         BufferSource additionalDataBuffer = WTFMove(*additionalData);
-        additionalData = WTF::nullopt;
+        additionalData = std::nullopt;
         if (!additionalDataBuffer.length())
             return m_additionalDataVector;
 

@@ -59,7 +59,7 @@ static Optional<SRGBA<uint8_t>> roundAndClampToSRGBALossy(CGColorRef color)
     // FIXME: ExtendedColor - needs to handle color spaces.
 
     if (!color)
-        return WTF::nullopt;
+        return std::nullopt;
 
     size_t numComponents = CGColorGetNumberOfComponents(color);
     const CGFloat* components = CGColorGetComponents(color);

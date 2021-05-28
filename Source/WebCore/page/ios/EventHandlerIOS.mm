@@ -111,7 +111,7 @@ bool EventHandler::wheelEvent(WebEvent *event)
     OptionSet<WheelEventProcessingSteps> processingSteps = { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForBlockingDOMEventDispatch };
 
     if (wheelEvent.isGestureStart())
-        m_wheelScrollGestureState = WTF::nullopt;
+        m_wheelScrollGestureState = std::nullopt;
     else if (wheelEvent.phase() == PlatformWheelEventPhase::Changed || wheelEvent.momentumPhase() == PlatformWheelEventPhase::Changed) {
         if (m_wheelScrollGestureState && *m_wheelScrollGestureState == WheelScrollGestureState::NonBlocking)
             processingSteps = { WheelEventProcessingSteps::MainThreadForScrolling, WheelEventProcessingSteps::MainThreadForNonBlockingDOMEventDispatch };
@@ -608,7 +608,7 @@ void EventHandler::startSelectionAutoscroll(RenderObject* renderer, const FloatP
 void EventHandler::cancelSelectionAutoscroll()
 {
     m_isAutoscrolling = false;
-    m_initialTargetAutoscrollPositionInUnscrolledRootViewCoordinates = WTF::nullopt;
+    m_initialTargetAutoscrollPositionInUnscrolledRootViewCoordinates = std::nullopt;
     m_autoscrollController->stopAutoscrollTimer();
 }
 

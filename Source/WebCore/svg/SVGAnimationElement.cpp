@@ -82,7 +82,7 @@ fail:
 static Optional<Vector<UnitBezier>> parseKeySplines(StringView string)
 {
     if (string.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return readCharactersForParsing(string, [&](auto buffer) -> Optional<Vector<UnitBezier>> {
         skipOptionalSVGSpaces(buffer);
@@ -94,19 +94,19 @@ static Optional<Vector<UnitBezier>> parseKeySplines(StringView string)
             delimParsed = false;
             auto posA = parseNumber(buffer);
             if (!posA)
-                return WTF::nullopt;
+                return std::nullopt;
 
             auto posB = parseNumber(buffer);
             if (!posB)
-                return WTF::nullopt;
+                return std::nullopt;
 
             auto posC = parseNumber(buffer);
             if (!posC)
-                return WTF::nullopt;
+                return std::nullopt;
 
             auto posD = parseNumber(buffer, SuffixSkippingPolicy::DontSkip);
             if (!posD)
-                return WTF::nullopt;
+                return std::nullopt;
 
             skipOptionalSVGSpaces(buffer);
 
@@ -119,7 +119,7 @@ static Optional<Vector<UnitBezier>> parseKeySplines(StringView string)
         }
 
         if (!(buffer.atEnd() && !delimParsed))
-            return WTF::nullopt;
+            return std::nullopt;
 
         return result;
     });

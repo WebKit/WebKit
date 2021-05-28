@@ -107,10 +107,10 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
                 ids.uncheckedAppend(videoExtensionPath);
 
             if (needsAppleCameraSandboxExtension) {
-                if (SandboxExtension::createHandleForMachLookup(appleCameraServicePath, WTF::nullopt, handles[--extensionCount]))
+                if (SandboxExtension::createHandleForMachLookup(appleCameraServicePath, std::nullopt, handles[--extensionCount]))
                     ids.uncheckedAppend(appleCameraServicePath);
 #if HAVE(ADDITIONAL_APPLE_CAMERA_SERVICE)
-                if (SandboxExtension::createHandleForMachLookup(additionalAppleCameraServicePath, WTF::nullopt, handles[--extensionCount]))
+                if (SandboxExtension::createHandleForMachLookup(additionalAppleCameraServicePath, std::nullopt, handles[--extensionCount]))
                     ids.uncheckedAppend(additionalAppleCameraServicePath);
 #endif
             }

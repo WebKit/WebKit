@@ -1549,7 +1549,7 @@ Optional<VisibleSelection> CompositeEditCommand::shouldBreakOutOfEmptyListItem()
 {
     auto emptyListItem = enclosingEmptyListItem(endingSelection().visibleStart());
     if (!emptyListItem)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto listNode = emptyListItem->parentNode();
     // FIXME: Can't we do something better when the immediate parent wasn't a list node?
@@ -1557,7 +1557,7 @@ Optional<VisibleSelection> CompositeEditCommand::shouldBreakOutOfEmptyListItem()
         || (!listNode->hasTagName(ulTag) && !listNode->hasTagName(olTag))
         || !listNode->hasEditableStyle()
         || listNode == emptyListItem->rootEditableElement())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return VisibleSelection(endingSelection().start().previous(BackwardDeletion), endingSelection().end());
 }

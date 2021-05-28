@@ -172,7 +172,7 @@ void AudioSessionMac::audioOutputDeviceChanged()
     if (!m_playingToBluetooth || *m_playingToBluetooth == defaultDeviceTransportIsBluetooth())
         return;
 
-    m_playingToBluetooth = WTF::nullopt;
+    m_playingToBluetooth = std::nullopt;
 #endif
 }
 

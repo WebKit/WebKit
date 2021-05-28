@@ -93,12 +93,12 @@ void WebPasteboardProxy::writeCustomData(IPC::Connection&, const Vector<WebCore:
 
 void WebPasteboardProxy::allPasteboardItemInfo(IPC::Connection&, const String&, int64_t, Optional<WebCore::PageIdentifier>, CompletionHandler<void(Optional<Vector<WebCore::PasteboardItemInfo>>&&)>&& completionHandler)
 {
-    completionHandler(WTF::nullopt);
+    completionHandler(std::nullopt);
 }
 
 void WebPasteboardProxy::informationForItemAtIndex(IPC::Connection&, size_t, const String&, int64_t, Optional<WebCore::PageIdentifier>, CompletionHandler<void(Optional<WebCore::PasteboardItemInfo>&&)>&& completionHandler)
 {
-    completionHandler(WTF::nullopt);
+    completionHandler(std::nullopt);
 }
 
 void WebPasteboardProxy::getPasteboardItemsCount(IPC::Connection&, const String&, Optional<WebCore::PageIdentifier>, CompletionHandler<void(uint64_t)>&& completionHandler)

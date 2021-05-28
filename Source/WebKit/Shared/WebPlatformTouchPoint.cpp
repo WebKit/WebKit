@@ -69,19 +69,19 @@ Optional<WebPlatformTouchPoint> WebPlatformTouchPoint::decode(IPC::Decoder& deco
 {
     WebPlatformTouchPoint result;
     if (!decoder.decode(result.m_id))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.m_state))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.m_screenPosition))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.m_position))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.m_radius))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.m_rotationAngle))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.m_force))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return result;
 }

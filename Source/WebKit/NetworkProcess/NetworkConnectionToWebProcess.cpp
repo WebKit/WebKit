@@ -693,7 +693,7 @@ void NetworkConnectionToWebProcess::cookiesForDOM(const URL& firstParty, const S
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     if (auto* session = networkSession()) {
         if (session->shouldLogCookieInformation())
-            NetworkResourceLoader::logCookieInformation(*this, "NetworkConnectionToWebProcess::cookiesForDOM", reinterpret_cast<const void*>(this), *networkStorageSession, firstParty, sameSiteInfo, url, emptyString(), frameID, pageID, WTF::nullopt);
+            NetworkResourceLoader::logCookieInformation(*this, "NetworkConnectionToWebProcess::cookiesForDOM", reinterpret_cast<const void*>(this), *networkStorageSession, firstParty, sameSiteInfo, url, emptyString(), frameID, pageID, std::nullopt);
     }
 #endif
     completionHandler(WTFMove(result.first), result.second);
@@ -708,7 +708,7 @@ void NetworkConnectionToWebProcess::setCookiesFromDOM(const URL& firstParty, con
 #if ENABLE(RESOURCE_LOAD_STATISTICS) && !RELEASE_LOG_DISABLED
     if (auto* session = networkSession()) {
         if (session->shouldLogCookieInformation())
-            NetworkResourceLoader::logCookieInformation(*this, "NetworkConnectionToWebProcess::setCookiesFromDOM", reinterpret_cast<const void*>(this), *networkStorageSession, firstParty, sameSiteInfo, url, emptyString(), frameID, pageID, WTF::nullopt);
+            NetworkResourceLoader::logCookieInformation(*this, "NetworkConnectionToWebProcess::setCookiesFromDOM", reinterpret_cast<const void*>(this), *networkStorageSession, firstParty, sameSiteInfo, url, emptyString(), frameID, pageID, std::nullopt);
     }
 #endif
 }
@@ -988,7 +988,7 @@ void NetworkConnectionToWebProcess::resetOriginAccessAllowLists()
 Optional<NetworkActivityTracker> NetworkConnectionToWebProcess::startTrackingResourceLoad(PageIdentifier pageID, ResourceLoadIdentifier resourceID, bool isTopResource)
 {
     if (m_sessionID.isEphemeral())
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Either get the existing root activity tracker for this page or create a
     // new one if this is the main resource.
@@ -1013,7 +1013,7 @@ Optional<NetworkActivityTracker> NetworkConnectionToWebProcess::startTrackingRes
         // This could happen if the Networking process crashes, taking its
         // previous state with it.
         if (rootActivityIndex == notFound)
-            return WTF::nullopt;
+            return std::nullopt;
 
 #if HAVE(NW_ACTIVITY)
         ASSERT(m_networkActivityTrackers[rootActivityIndex].networkActivity.getPlatformObject());

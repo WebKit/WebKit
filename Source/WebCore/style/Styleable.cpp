@@ -329,7 +329,7 @@ static void updateCSSTransitionsForStyleableAndProperty(const Styleable& styleab
             // If a transition has not yet started or started when animations were last updated, use the timeline time at its creation
             // as its start time to ensure that it will produce a style with progress > 0.
             bool shouldUseTimelineTimeAtCreation = is<CSSTransition>(animation) && (!animation->startTime() || *animation->startTime() == styleable.element.document().timeline().currentTime());
-            animation->resolve(animatedStyle, nullptr, shouldUseTimelineTimeAtCreation ? downcast<CSSTransition>(*animation).timelineTimeAtCreation() : WTF::nullopt);
+            animation->resolve(animatedStyle, nullptr, shouldUseTimelineTimeAtCreation ? downcast<CSSTransition>(*animation).timelineTimeAtCreation() : std::nullopt);
             return animatedStyle;
         }
 

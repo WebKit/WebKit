@@ -2519,7 +2519,7 @@ WebGLAny WebGL2RenderingContext::getIndexedParameter(GCGLenum target, GCGLuint i
 Optional<Vector<GCGLuint>> WebGL2RenderingContext::getUniformIndices(WebGLProgram& program, const Vector<String>& names)
 {
     if (!validateWebGLProgramOrShader("getUniformIndices", &program))
-        return WTF::nullopt;
+        return std::nullopt;
     return m_context->getUniformIndices(program.object(), names);
 }
 
@@ -2711,7 +2711,7 @@ WebGLExtension* WebGL2RenderingContext::getExtension(const String& name)
 Optional<Vector<String>> WebGL2RenderingContext::getSupportedExtensions()
 {
     if (isContextLost())
-        return WTF::nullopt;
+        return std::nullopt;
 
     Vector<String> result;
 

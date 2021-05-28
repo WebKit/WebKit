@@ -68,28 +68,28 @@ Optional<AppHighlight> AppHighlight::decode(Decoder& decoder)
     Optional<size_t> length;
     decoder >> length;
     if (!length)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.template bufferIsLargeEnoughToContain<uint8_t>(length.value()))
-        return WTF::nullopt;
+        return std::nullopt;
 
     Vector<uint8_t> highlight;
     highlight.grow(*length);
     if (!decoder.decodeFixedLengthData(highlight.data(), highlight.size(), 1))
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<String>> text;
     decoder >> text;
     if (!text)
-        return WTF::nullopt;
+        return std::nullopt;
 
     CreateNewGroupForHighlight isNewGroup;
     if (!decoder.decode(isNewGroup))
-        return WTF::nullopt;
+        return std::nullopt;
 
     HighlightRequestOriginatedInApp requestOriginatedInApp;
     if (!decoder.decode(requestOriginatedInApp))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ SharedBuffer::create(WTFMove(highlight)), WTFMove(*text), isNewGroup, requestOriginatedInApp }};
 }

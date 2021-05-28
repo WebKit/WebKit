@@ -51,17 +51,17 @@ struct CDMRestrictions {
         Optional<bool> distinctiveIdentifierDenied;
         decoder >> distinctiveIdentifierDenied;
         if (!distinctiveIdentifierDenied)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> persistentStateDenied;
         decoder >> persistentStateDenied;
         if (!persistentStateDenied)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<HashSet<CDMSessionType, WTF::IntHash<CDMSessionType>, WTF::StrongEnumHashTraits<CDMSessionType>>> deniedSessionTypes;
         decoder >> deniedSessionTypes;
         if (!deniedSessionTypes)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{
             *distinctiveIdentifierDenied,

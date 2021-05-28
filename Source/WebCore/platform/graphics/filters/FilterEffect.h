@@ -84,10 +84,10 @@ public:
     void clearResultsRecursive();
 
     ImageBuffer* imageBufferResult();
-    RefPtr<Uint8ClampedArray> unmultipliedResult(const IntRect&, Optional<DestinationColorSpace> = WTF::nullopt);
-    RefPtr<Uint8ClampedArray> premultipliedResult(const IntRect&, Optional<DestinationColorSpace> = WTF::nullopt);
-    void copyUnmultipliedResult(Uint8ClampedArray& destination, const IntRect&, Optional<DestinationColorSpace> = WTF::nullopt);
-    void copyPremultipliedResult(Uint8ClampedArray& destination, const IntRect&, Optional<DestinationColorSpace> = WTF::nullopt);
+    RefPtr<Uint8ClampedArray> unmultipliedResult(const IntRect&, Optional<DestinationColorSpace> = std::nullopt);
+    RefPtr<Uint8ClampedArray> premultipliedResult(const IntRect&, Optional<DestinationColorSpace> = std::nullopt);
+    void copyUnmultipliedResult(Uint8ClampedArray& destination, const IntRect&, Optional<DestinationColorSpace> = std::nullopt);
+    void copyPremultipliedResult(Uint8ClampedArray& destination, const IntRect&, Optional<DestinationColorSpace> = std::nullopt);
     FilterEffectVector& inputEffects() { return m_inputEffects; }
     FilterEffect* inputEffect(unsigned) const;
     unsigned numberOfEffectInputs() const { return m_inputEffects.size(); }

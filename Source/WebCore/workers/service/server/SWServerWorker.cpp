@@ -87,7 +87,7 @@ ServiceWorkerContextData SWServerWorker::contextData() const
 {
     ASSERT(m_registration);
 
-    return { WTF::nullopt, m_registration->data(), m_data.identifier, m_script, m_certificateInfo, m_contentSecurityPolicy, m_referrerPolicy, m_data.scriptURL, m_data.type, false, m_lastNavigationWasAppBound, m_scriptResourceMap };
+    return { std::nullopt, m_registration->data(), m_data.identifier, m_script, m_certificateInfo, m_contentSecurityPolicy, m_referrerPolicy, m_data.scriptURL, m_data.type, false, m_lastNavigationWasAppBound, m_scriptResourceMap };
 }
 
 void SWServerWorker::updateAppBoundValue(LastNavigationWasAppBound lastNavigationWasAppBound)

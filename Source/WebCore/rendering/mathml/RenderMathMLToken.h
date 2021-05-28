@@ -64,7 +64,7 @@ private:
         m_mathVariantGlyphDirty = true;
         setNeedsLayoutAndPrefWidthsRecalc();
     }
-    Optional<UChar32> m_mathVariantCodePoint { WTF::nullopt };
+    Optional<UChar32> m_mathVariantCodePoint { std::nullopt };
     bool m_mathVariantIsMirrored { false };
     bool m_mathVariantGlyphDirty { false };
 };

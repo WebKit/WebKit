@@ -109,7 +109,7 @@ inline unsigned nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, 
                     if (breakIterator) {
                         int candidate = ubrk_following(breakIterator, i - 1 + priorContextLength);
                         if (candidate == UBRK_DONE)
-                            nextBreak = WTF::nullopt;
+                            nextBreak = std::nullopt;
                         else {
                             unsigned result = candidate;
                             ASSERT(result >= priorContextLength);
@@ -195,7 +195,7 @@ inline unsigned nextBreakablePositionBreakCharacter(LazyLineBreakIterator& lazyB
     // https://bugs.webkit.org/show_bug.cgi?id=197876
     NonSharedCharacterBreakIterator iterator(stringView);
     Optional<unsigned> next = ubrk_following(iterator, startPosition);
-    return next.valueOr(stringView.length());
+    return next.value_or(stringView.length());
 }
 
 inline bool isBreakable(LazyLineBreakIterator& lazyBreakIterator, unsigned startPosition, Optional<unsigned>& nextBreakable, bool breakNBSP, bool canUseShortcut, bool keepAllWords, bool breakAnywhere)

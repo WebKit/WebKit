@@ -134,7 +134,7 @@ void MediaFormatReader::parseByteSource(RetainPtr<MTPluginByteSourceRef>&& byteS
 
     Locker locker { m_parseTracksLock };
     m_byteSource = WTFMove(byteSource);
-    m_parseTracksStatus = WTF::nullopt;
+    m_parseTracksStatus = std::nullopt;
     m_duration = MediaTime::invalidTime();
     m_trackReaders.clear();
 

@@ -346,7 +346,7 @@ Optional<ScrollDirection> ScrollController::directionFromEvent(const PlatformWhe
                 return ScrollRight;
         }
 
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     // Check Y first because vertical scrolling dominates.
@@ -362,7 +362,7 @@ Optional<ScrollDirection> ScrollController::directionFromEvent(const PlatformWhe
     if (wheelDelta.width() < 0)
         return ScrollRight;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 #if ENABLE(RUBBER_BANDING)

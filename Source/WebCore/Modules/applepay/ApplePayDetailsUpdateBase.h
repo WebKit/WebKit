@@ -56,7 +56,7 @@ Optional<ApplePayDetailsUpdateBase> ApplePayDetailsUpdateBase::decode(Decoder& d
 {
     ApplePayDetailsUpdateBase result;
     if (!result.decodeBase(decoder))
-        return WTF::nullopt;
+        return std::nullopt;
     return result;
 }
 

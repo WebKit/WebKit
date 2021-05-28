@@ -48,21 +48,21 @@ static Optional<GPUBufferBinding> tryGetResourceAsBufferBinding(const GPUBinding
 #endif
     if (!WTF::holds_alternative<GPUBufferBinding>(resource)) {
         LOG(WebGPU, "%s: Resource is not a buffer type!", functionName);
-        return WTF::nullopt;
+        return std::nullopt;
     }
     auto& bufferBinding = WTF::get<GPUBufferBinding>(resource);
     if (!bufferBinding.buffer->platformBuffer()) {
         LOG(WebGPU, "%s: Invalid MTLBuffer in GPUBufferBinding!", functionName);
-        return WTF::nullopt;
+        return std::nullopt;
     }
     if (!isInBounds<NSUInteger>(bufferBinding.size) || bufferBinding.size > bufferBinding.buffer->byteLength()) {
         LOG(WebGPU, "%s: GPUBufferBinding size is too large!", functionName);
-        return WTF::nullopt;
+        return std::nullopt;
     }
     // MTLBuffer size (NSUInteger) is 32 bits on some platforms.
     if (!isInBounds<NSUInteger>(bufferBinding.offset)) {
         LOG(WebGPU, "%s: Buffer offset is too large!", functionName);
-        return WTF::nullopt;
+        return std::nullopt;
     }
     return GPUBufferBinding { bufferBinding.buffer.copyRef(), bufferBinding.offset, bufferBinding.size };
 }

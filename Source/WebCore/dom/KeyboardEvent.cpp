@@ -165,12 +165,12 @@ void KeyboardEvent::initKeyboardEvent(const AtomString& type, bool canBubble, bo
 
     setModifierKeys(ctrlKey, altKey, shiftKey, metaKey, altGraphKey);
 
-    m_charCode = WTF::nullopt;
+    m_charCode = std::nullopt;
     m_isComposing = false;
-    m_keyCode = WTF::nullopt;
+    m_keyCode = std::nullopt;
     m_repeat = false;
     m_underlyingPlatformEvent = nullptr;
-    m_which = WTF::nullopt;
+    m_which = std::nullopt;
     m_code = { };
     m_key = { };
 

@@ -90,7 +90,7 @@ void XRDeviceProxy::requestFrame(PlatformXR::Device::RequestFrameCallback&& call
 
 Optional<PlatformXR::LayerHandle> XRDeviceProxy::createLayerProjection(uint32_t width, uint32_t height, bool alpha)
 {
-    return m_xrSystem ? m_xrSystem->createLayerProjection(width, height, alpha) : WTF::nullopt;
+    return m_xrSystem ? m_xrSystem->createLayerProjection(width, height, alpha) : std::nullopt;
 }
 
 void XRDeviceProxy::submitFrame(Vector<PlatformXR::Device::Layer>&&)

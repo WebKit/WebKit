@@ -91,7 +91,7 @@ static Optional<double> consumeNumberOrPercentDividedBy100Raw(CSSParserTokenRang
         return *percent / 100.0;
     if (auto number = consumeNumberRaw(range, valueRange))
         return *number;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 // FIXME: consider pulling in the parsing logic from CSSCalculationValue.cpp.
@@ -129,7 +129,7 @@ public:
     template<typename IntType> Optional<IntType> consumeIntegerTypeRaw(double minimumValue)
     {
         if (!m_calcValue)
-            return WTF::nullopt;
+            return std::nullopt;
         m_sourceRange = m_range;
         return clampTo<IntType>(std::round(std::max(m_calcValue->doubleValue(), minimumValue)));
     }
@@ -145,7 +145,7 @@ public:
     Optional<double> consumeNumberRaw()
     {
         if (!m_calcValue || m_calcValue->category() != CalculationCategory::Number)
-            return WTF::nullopt;
+            return std::nullopt;
         m_sourceRange = m_range;
         return m_calcValue->doubleValue();
     }
@@ -153,10 +153,10 @@ public:
     Optional<double> consumePercentRaw()
     {
         if (!m_calcValue)
-            return WTF::nullopt;
+            return std::nullopt;
         auto category = m_calcValue->category();
         if (category != CalculationCategory::Percent)
-            return WTF::nullopt;
+            return std::nullopt;
         m_sourceRange = m_range;
         return m_calcValue->doubleValue();
     }
@@ -164,7 +164,7 @@ public:
     Optional<AngleRaw> consumeAngleRaw()
     {
         if (!m_calcValue || m_calcValue->category() != CalculationCategory::Angle)
-            return WTF::nullopt;
+            return std::nullopt;
         m_sourceRange = m_range;
         return { { m_calcValue->primitiveType(), m_calcValue->doubleValue() } };
     }
@@ -172,7 +172,7 @@ public:
     Optional<LengthRaw> consumeLengthRaw()
     {
         if (!m_calcValue || m_calcValue->category() != CalculationCategory::Length)
-            return WTF::nullopt;
+            return std::nullopt;
         m_sourceRange = m_range;
         return { { m_calcValue->primitiveType(), m_calcValue->doubleValue() } };
     }
@@ -180,7 +180,7 @@ public:
     Optional<LengthOrPercentRaw> consumeLengthOrPercentRaw()
     {
         if (!m_calcValue)
-            return WTF::nullopt;
+            return std::nullopt;
 
         switch (m_calcValue->category()) {
         case CalculationCategory::Length:
@@ -192,7 +192,7 @@ public:
             m_sourceRange = m_range;
             return { { m_calcValue->doubleValue() } };
         default:
-            return WTF::nullopt;
+            return std::nullopt;
         }
     }
 
@@ -208,21 +208,21 @@ template<typename IntType> Optional<IntType> consumeIntegerTypeRaw(CSSParserToke
     const CSSParserToken& token = range.peek();
     if (token.type() == NumberToken) {
         if (token.numericValueType() == NumberValueType || token.numericValue() < minimumValue)
-            return WTF::nullopt;
+            return std::nullopt;
         return clampTo<IntType>(range.consumeIncludingWhitespace().numericValue());
     }
 
     if (token.type() != FunctionToken)
-        return WTF::nullopt;
+        return std::nullopt;
 
     CalcParser calcParser(range, CalculationCategory::Number);
     if (const CSSCalcValue* calculation = calcParser.value()) {
         if (calculation->category() != CalculationCategory::Number)
-            return WTF::nullopt;
+            return std::nullopt;
         return calcParser.consumeIntegerTypeRaw<IntType>(minimumValue);
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<int> consumeIntegerRaw(CSSParserTokenRange& range, double minimumValue)
@@ -254,12 +254,12 @@ Optional<double> consumeNumberRaw(CSSParserTokenRange& range, ValueRange valueRa
     const CSSParserToken& token = range.peek();
     if (token.type() == NumberToken) {
         if (valueRange == ValueRange::NonNegative && token.numericValue() < 0)
-            return WTF::nullopt;
+            return std::nullopt;
         return range.consumeIncludingWhitespace().numericValue();
     }
 
     if (token.type() != FunctionToken)
-        return WTF::nullopt;
+        return std::nullopt;
 
     CalcParser calcParser(range, CalculationCategory::Number, valueRange);
     return calcParser.consumeNumberRaw();
@@ -303,7 +303,7 @@ Optional<double> consumeFontWeightNumberRaw(CSSParserTokenRange& range)
         return consumeNumberRaw(range);
 
     if (token.type() != FunctionToken)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // "[For calc()], the used value resulting from an expression must be clamped to the range allowed in the target context."
     CalcParser calcParser(range, CalculationCategory::Number, ValueRange::All);
@@ -314,7 +314,7 @@ Optional<double> consumeFontWeightNumberRaw(CSSParserTokenRange& range)
     )
         return std::min(std::max(*result, std::nextafter(0., 1.)), std::nextafter(1000., 0.));
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 RefPtr<CSSPrimitiveValue> consumeFontWeightNumber(CSSParserTokenRange& range)
@@ -349,7 +349,7 @@ Optional<LengthRaw> consumeLengthRaw(CSSParserTokenRange& range, CSSParserMode c
         switch (token.unitType()) {
         case CSSUnitType::CSS_QUIRKY_EMS:
             if (cssParserMode != UASheetMode)
-                return WTF::nullopt;
+                return std::nullopt;
             FALLTHROUGH;
         case CSSUnitType::CSS_EMS:
         case CSSUnitType::CSS_REMS:
@@ -370,23 +370,23 @@ Optional<LengthRaw> consumeLengthRaw(CSSParserTokenRange& range, CSSParserMode c
         case CSSUnitType::CSS_Q:
             break;
         default:
-            return WTF::nullopt;
+            return std::nullopt;
         }
         if ((valueRange == ValueRange::NonNegative && token.numericValue() < 0) || std::isinf(token.numericValue()))
-            return WTF::nullopt;
+            return std::nullopt;
         return { { token.unitType(), range.consumeIncludingWhitespace().numericValue() } };
     }
     if (token.type() == NumberToken) {
         if (!shouldAcceptUnitlessValue(token.numericValue(), cssParserMode, unitless, UnitlessZeroQuirk::Allow)
             || (valueRange == ValueRange::NonNegative && token.numericValue() < 0))
-            return WTF::nullopt;
+            return std::nullopt;
         if (std::isinf(token.numericValue()))
-            return WTF::nullopt;
+            return std::nullopt;
         return { { CSSUnitType::CSS_PX, range.consumeIncludingWhitespace().numericValue() } };
     }
 
     if (token.type() != FunctionToken)
-        return WTF::nullopt;
+        return std::nullopt;
 
     CalcParser calcParser(range, CalculationCategory::Length, valueRange);
     return calcParser.consumeLengthRaw();
@@ -412,12 +412,12 @@ Optional<double> consumePercentRaw(CSSParserTokenRange& range, ValueRange valueR
     const CSSParserToken& token = range.peek();
     if (token.type() == PercentageToken) {
         if (std::isinf(token.numericValue()) || (valueRange == ValueRange::NonNegative && token.numericValue() < 0))
-            return WTF::nullopt;
+            return std::nullopt;
         return range.consumeIncludingWhitespace().numericValue();
     }
 
     if (token.type() != FunctionToken)
-        return WTF::nullopt;
+        return std::nullopt;
 
     CalcParser calcParser(range, CalculationCategory::Percent, valueRange);
     return calcParser.consumePercentRaw();
@@ -466,23 +466,23 @@ Optional<LengthOrPercentRaw> consumeLengthOrPercentRaw(CSSParserTokenRange& rang
     if (token.type() == DimensionToken || token.type() == NumberToken) {
         if (auto result = consumeLengthRaw(range, cssParserMode, valueRange, unitless))
             return { *result };
-        return WTF::nullopt;
+        return std::nullopt;
     }
     if (token.type() == PercentageToken) {
         if (auto result = consumePercentRaw(range, valueRange))
             return { *result };
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     if (token.type() != FunctionToken)
-        return WTF::nullopt;
+        return std::nullopt;
 
     CalcParser calcParser(range, CalculationCategory::Length, valueRange);
     if (const CSSCalcValue* calculation = calcParser.value()) {
         if (canConsumeCalcValue(calculation->category(), cssParserMode))
             return calcParser.consumeLengthOrPercentRaw();
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 RefPtr<CSSPrimitiveValue> consumeLengthOrPercent(CSSParserTokenRange& range, CSSParserMode cssParserMode, ValueRange valueRange, UnitlessQuirk unitless)
@@ -519,7 +519,7 @@ Optional<AngleRaw> consumeAngleRaw(CSSParserTokenRange& range, CSSParserMode css
         case CSSUnitType::CSS_TURN:
             return { { unitType, range.consumeIncludingWhitespace().numericValue() } };
         default:
-            return WTF::nullopt;
+            return std::nullopt;
         }
     }
 
@@ -527,7 +527,7 @@ Optional<AngleRaw> consumeAngleRaw(CSSParserTokenRange& range, CSSParserMode css
         return { { CSSUnitType::CSS_DEG, range.consumeIncludingWhitespace().numericValue() } };
 
     if (token.type() != FunctionToken)
-        return WTF::nullopt;
+        return std::nullopt;
 
     CalcParser calcParser(range, CalculationCategory::Angle, ValueRange::All);
     return calcParser.consumeAngleRaw();
@@ -637,7 +637,7 @@ RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange& range, AllowXRe
 Optional<CSSValueID> consumeIdentRaw(CSSParserTokenRange& range)
 {
     if (range.peek().type() != IdentToken)
-        return WTF::nullopt;
+        return std::nullopt;
     return range.consumeIncludingWhitespace().id();
 }
 
@@ -656,7 +656,7 @@ RefPtr<CSSPrimitiveValue> consumeIdentWorkerSafe(CSSParserTokenRange& range, CSS
 Optional<CSSValueID> consumeIdentRangeRaw(CSSParserTokenRange& range, CSSValueID lower, CSSValueID upper)
 {
     if (range.peek().id() < lower || range.peek().id() > upper)
-        return WTF::nullopt;
+        return std::nullopt;
     return consumeIdentRaw(range);
 }
 
@@ -744,7 +744,7 @@ static Optional<double> consumeOptionalAlpha(CSSParserTokenRange& range)
     if (auto alphaParameter = consumeNumberOrPercentDividedBy100Raw(range))
         return clampTo(*alphaParameter, 0.0, 1.0);
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<CSSValueID... allowedIdents> static Optional<Variant<double, CSSValueID>> consumeOptionalAlphaOrIdent(CSSParserTokenRange& range)
@@ -755,7 +755,7 @@ template<CSSValueID... allowedIdents> static Optional<Variant<double, CSSValueID
     if (auto ident = consumeIdentRaw<allowedIdents...>(range))
         return { *ident };
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static Optional<double> consumeHue(CSSParserTokenRange& range, const CSSParserContext& context)
@@ -774,7 +774,7 @@ template<CSSValueID... allowedIdents> static Optional<Variant<double, CSSValueID
     if (auto ident = consumeIdentRaw<allowedIdents...>(range))
         return { *ident };
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static double normalizeHue(double hue)
@@ -790,7 +790,7 @@ template<CSSValueID... allowedIdents> static Optional<Variant<double, CSSValueID
     if (auto ident = consumeIdentRaw<allowedIdents...>(range))
         return { *ident };
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<CSSValueID... allowedIdents> static Optional<Variant<double, CSSValueID>> consumePercentOrIdent(CSSParserTokenRange& range)
@@ -801,7 +801,7 @@ template<CSSValueID... allowedIdents> static Optional<Variant<double, CSSValueID
     if (auto ident = consumeIdentRaw<allowedIdents...>(range))
         return { *ident };
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<CSSValueID C1, CSSValueID C2, CSSValueID C3, CSSValueID AlphaChannel, typename ColorType> static auto extractChannelValue(CSSValueID channel, const ColorType& originColor) -> typename ColorType::ComponentType
@@ -887,8 +887,8 @@ template<CSSValueID C> static Optional<RelativeRGBComponent> consumeRelativeRGBC
         if (auto percent = consumePercentRaw(args))
             return RelativeRGBComponent { *percent, RGBComponentType::Percentage };
         if (auto channel = consumeIdentRaw<C>(args))
-            return RelativeRGBComponent { *channel, WTF::nullopt };
-        return WTF::nullopt;
+            return RelativeRGBComponent { *channel, std::nullopt };
+        return std::nullopt;
     }
 
     switch (*componentType) {
@@ -897,14 +897,14 @@ template<CSSValueID C> static Optional<RelativeRGBComponent> consumeRelativeRGBC
             return RelativeRGBComponent { *number, RGBComponentType::Number };
         if (auto channel = consumeIdentRaw<C>(args))
             return RelativeRGBComponent { *channel, RGBComponentType::Number };
-        return WTF::nullopt;
+        return std::nullopt;
     }
     case RGBComponentType::Percentage: {
         if (auto percent = consumePercentRaw(args))
             return RelativeRGBComponent { *percent, RGBComponentType::Percentage };
         if (auto channel = consumeIdentRaw<C>(args))
             return RelativeRGBComponent { *channel, RGBComponentType::Percentage };
-        return WTF::nullopt;
+        return std::nullopt;
     }
     }
 
@@ -953,7 +953,7 @@ static Color parseRelativeRGBParameters(CSSParserTokenRange& args, const CSSPars
     // support calculations on the origin's components.
     auto originColorAsSRGB = originColor.toSRGBALossy<uint8_t>();
 
-    auto resolvedComponentType = componentType.valueOr(RGBComponentType::Percentage);
+    auto resolvedComponentType = componentType.value_or(RGBComponentType::Percentage);
     auto channelResolver = [resolvedComponentType](auto value) {
         return clampRGBComponent(value, resolvedComponentType);
     };
@@ -990,7 +990,7 @@ template<RGBFunctionMode Mode> static Color parseRGBParameters(CSSParserTokenRan
             return { { *number, RGBComponentType::Number } };
         if (auto percent = consumePercentRaw(args))
             return { { *percent, RGBComponentType::Percentage } };
-        return WTF::nullopt;
+        return std::nullopt;
     };
 
     auto consumeComponent = [](auto& args, auto componentType) {
@@ -1633,7 +1633,7 @@ static Optional<ColorMixColorSpace> consumeColorMixColorSpaceAndComma(CSSParserT
     auto consumeIdentAndComma = [](CSSParserTokenRange& args, ColorMixColorSpace colorSpace) -> Optional<ColorMixColorSpace> {
         consumeIdentRaw(args);
         if (!consumeCommaIncludingWhitespace(args))
-            return WTF::nullopt;
+            return std::nullopt;
         return colorSpace;
     };
 
@@ -1651,7 +1651,7 @@ static Optional<ColorMixColorSpace> consumeColorMixColorSpaceAndComma(CSSParserT
     case CSSValueSRGB:
         return consumeIdentAndComma(args, ColorMixColorSpace::Srgb);
     default:
-        return WTF::nullopt;
+        return std::nullopt;
     }
 }
 
@@ -1669,7 +1669,7 @@ static Optional<ColorMixComponent> consumeColorMixComponent(CSSParserTokenRange&
 
     result.color = consumeOriginColor(args, context);
     if (!result.color.isValid())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!result.percentage) {
         if (auto percentage = consumePercentRaw(args))
@@ -1849,15 +1849,15 @@ static Optional<SRGBA<uint8_t>> parseHexColor(CSSParserTokenRange& range, bool a
         view = token.value();
     else {
         if (!acceptQuirkyColors)
-            return WTF::nullopt;
+            return std::nullopt;
         if (token.type() == IdentToken)
             string = token.value().toString(); // e.g. FF0000
         else if (token.type() == NumberToken || token.type() == DimensionToken) {
             if (token.numericValueType() != IntegerValueType)
-                return WTF::nullopt;
+                return std::nullopt;
             auto numericValue = token.numericValue();
             if (!(numericValue >= 0 && numericValue < 1000000))
-                return WTF::nullopt;
+                return std::nullopt;
             auto integerValue = static_cast<int>(token.numericValue());
             if (token.type() == NumberToken)
                 string = String::number(integerValue); // e.g. 112233
@@ -1867,12 +1867,12 @@ static Optional<SRGBA<uint8_t>> parseHexColor(CSSParserTokenRange& range, bool a
                 string = makeString(&"000000"[string.length()], string);
         }
         if (string.length() != 3 && string.length() != 6)
-            return WTF::nullopt;
+            return std::nullopt;
         view = string;
     }
     auto result = CSSParser::parseHexColor(view);
     if (!result)
-        return WTF::nullopt;
+        return std::nullopt;
     range.consumeIncludingWhitespace();
     return *result;
 }
@@ -1996,7 +1996,7 @@ static Optional<PositionCoordinates> positionFromTwoValues(CSSPrimitiveValue& va
     bool mustOrderAsXY = isHorizontalPositionKeywordOnly(value1) || isVerticalPositionKeywordOnly(value2) || !value1.isValueID() || !value2.isValueID();
     bool mustOrderAsYX = isVerticalPositionKeywordOnly(value1) || isHorizontalPositionKeywordOnly(value2);
     if (mustOrderAsXY && mustOrderAsYX)
-        return WTF::nullopt;
+        return std::nullopt;
     if (mustOrderAsYX)
         return PositionCoordinates { value2, value1 };
     return PositionCoordinates { value1, value2 };
@@ -2029,12 +2029,12 @@ static Optional<PositionCoordinates> backgroundPositionFromThreeValues(const std
     for (int i = 0; values[i]; i++) {
         CSSPrimitiveValue* currentValue = values[i];
         if (!currentValue->isValueID())
-            return WTF::nullopt;
+            return std::nullopt;
 
         CSSValueID id = currentValue->valueID();
         if (id == CSSValueCenter) {
             if (center)
-                return WTF::nullopt;
+                return std::nullopt;
             center = currentValue;
             continue;
         }
@@ -2047,12 +2047,12 @@ static Optional<PositionCoordinates> backgroundPositionFromThreeValues(const std
 
         if (id == CSSValueLeft || id == CSSValueRight) {
             if (resultX)
-                return WTF::nullopt;
+                return std::nullopt;
             resultX = result;
         } else {
             ASSERT(id == CSSValueTop || id == CSSValueBottom);
             if (resultY)
-                return WTF::nullopt;
+                return std::nullopt;
             resultY = result;
         }
     }
@@ -2060,7 +2060,7 @@ static Optional<PositionCoordinates> backgroundPositionFromThreeValues(const std
     if (center) {
         ASSERT(resultX || resultY);
         if (resultX && resultY)
-            return WTF::nullopt;
+            return std::nullopt;
         if (!resultX)
             resultX = center;
         else
@@ -2089,11 +2089,11 @@ static Optional<PositionCoordinates> positionFromFourValues(const std::array<CSS
     for (int i = 0; values[i]; i++) {
         CSSPrimitiveValue* currentValue = values[i];
         if (!currentValue->isValueID())
-            return WTF::nullopt;
+            return std::nullopt;
 
         CSSValueID id = currentValue->valueID();
         if (id == CSSValueCenter)
-            return WTF::nullopt;
+            return std::nullopt;
 
         RefPtr<CSSPrimitiveValue> result;
         if (values[i + 1] && !values[i + 1]->isValueID())
@@ -2103,12 +2103,12 @@ static Optional<PositionCoordinates> positionFromFourValues(const std::array<CSS
 
         if (id == CSSValueLeft || id == CSSValueRight) {
             if (resultX)
-                return WTF::nullopt;
+                return std::nullopt;
             resultX = result;
         } else {
             ASSERT(id == CSSValueTop || id == CSSValueBottom);
             if (resultY)
-                return WTF::nullopt;
+                return std::nullopt;
             resultY = result;
         }
     }
@@ -2123,7 +2123,7 @@ Optional<PositionCoordinates> consumePositionCoordinates(CSSParserTokenRange& ra
 {
     auto value1 = consumePositionComponent(range, cssParserMode, unitless);
     if (!value1)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto value2 = consumePositionComponent(range, cssParserMode, unitless);
     if (!value2)
@@ -2147,7 +2147,7 @@ Optional<PositionCoordinates> consumePositionCoordinates(CSSParserTokenRange& ra
         return positionFromFourValues(values);
     
     if (positionSyntax != PositionSyntax::BackgroundPosition)
-        return WTF::nullopt;
+        return std::nullopt;
     
     return backgroundPositionFromThreeValues(values);
 }
@@ -2163,7 +2163,7 @@ Optional<PositionCoordinates> consumeOneOrTwoValuedPositionCoordinates(CSSParser
 {
     auto value1 = consumePositionComponent(range, cssParserMode, unitless);
     if (!value1)
-        return WTF::nullopt;
+        return std::nullopt;
     auto value2 = consumePositionComponent(range, cssParserMode, unitless);
     if (!value2)
         return positionFromOneValue(*value1);
@@ -2986,7 +2986,7 @@ Optional<FontWeightRaw> consumeFontWeightRaw(CSSParserTokenRange& range)
         return { *result };
     if (auto result = consumeFontWeightNumberRaw(range))
         return { *result };
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<CSSValueID> consumeFontStretchKeywordValueRaw(CSSParserTokenRange& range)
@@ -3003,11 +3003,11 @@ Optional<FontStyleRaw> consumeFontStyleRaw(CSSParserTokenRange& range, CSSParser
 {
     auto result = consumeFontStyleKeywordValueRaw(range);
     if (!result)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto ident = *result;
     if (ident == CSSValueNormal || ident == CSSValueItalic)
-        return { { ident, WTF::nullopt } };
+        return { { ident, std::nullopt } };
     ASSERT(ident == CSSValueOblique);
 #if ENABLE(VARIATION_FONTS)
     if (!range.atEnd()) {
@@ -3015,13 +3015,13 @@ Optional<FontStyleRaw> consumeFontStyleRaw(CSSParserTokenRange& range, CSSParser
         if (auto angle = consumeAngleRaw(range, cssParserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow)) {
             if (isFontStyleAngleInRange(CSSPrimitiveValue::computeDegrees(angle->type, angle->value)))
                 return { { CSSValueOblique, WTFMove(angle) } };
-            return WTF::nullopt;
+            return std::nullopt;
         }
     }
 #else
     UNUSED_PARAM(cssParserMode);
 #endif
-    return { { CSSValueOblique, WTF::nullopt } };
+    return { { CSSValueOblique, std::nullopt } };
 }
 
 String concatenateFamilyName(CSSParserTokenRange& range)
@@ -3064,7 +3064,7 @@ Optional<WTF::Vector<FontFamilyRaw>> consumeFontFamilyRaw(CSSParserTokenRange& r
         else {
             auto familyName = consumeFamilyNameRaw(range);
             if (familyName.isNull())
-                return WTF::nullopt;
+                return std::nullopt;
             list.append({ familyName });
         }
     } while (consumeCommaIncludingWhitespace(range));
@@ -3076,13 +3076,13 @@ Optional<FontSizeRaw> consumeFontSizeRaw(CSSParserTokenRange& range, CSSParserMo
     if (range.peek().id() >= CSSValueXxSmall && range.peek().id() <= CSSValueLarger) {
         if (auto ident = consumeIdentRaw(range))
             return { *ident };
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     if (auto result = consumeLengthOrPercentRaw(range, cssParserMode, ValueRange::NonNegative, unitless))
         return { *result };
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<LineHeightRaw> consumeLineHeightRaw(CSSParserTokenRange& range, CSSParserMode cssParserMode)
@@ -3090,7 +3090,7 @@ Optional<LineHeightRaw> consumeLineHeightRaw(CSSParserTokenRange& range, CSSPars
     if (range.peek().id() == CSSValueNormal) {
         if (auto ident = consumeIdentRaw(range))
             return { *ident };
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     if (auto number = consumeNumberRaw(range, ValueRange::NonNegative))
@@ -3099,7 +3099,7 @@ Optional<LineHeightRaw> consumeLineHeightRaw(CSSParserTokenRange& range, CSSPars
     if (auto lengthOrPercent = consumeLengthOrPercentRaw(range, cssParserMode, ValueRange::NonNegative))
         return { *lengthOrPercent };
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<FontRaw> consumeFontRaw(CSSParserTokenRange& range, CSSParserMode cssParserMode)
@@ -3109,7 +3109,7 @@ Optional<FontRaw> consumeFontRaw(CSSParserTokenRange& range, CSSParserMode cssPa
     while (!rangeCopy.atEnd()) {
         CSSValueID id = rangeCopy.consumeIncludingWhitespace().id();
         if (id == CSSValueInherit || id == CSSValueInitial)
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     FontRaw result;
@@ -3138,30 +3138,30 @@ Optional<FontRaw> consumeFontRaw(CSSParserTokenRange& range, CSSParserMode cssPa
     }
 
     if (range.atEnd())
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Now a font size _must_ come.
     if (auto size = consumeFontSizeRaw(range, cssParserMode))
         result.size = *size;
     else
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (range.atEnd())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (consumeSlashIncludingWhitespace(range)) {
         if (!(result.lineHeight = consumeLineHeightRaw(range, cssParserMode)))
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     // Font family must come now.
     if (auto family = consumeFontFamilyRaw(range))
         result.family = *family;
     else
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!range.atEnd())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return result;
 }

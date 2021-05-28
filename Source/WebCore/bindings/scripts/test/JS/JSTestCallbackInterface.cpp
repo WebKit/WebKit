@@ -72,7 +72,7 @@ template<> Optional<TestCallbackInterface::Enum> parseEnumeration<TestCallbackIn
         return TestCallbackInterface::Enum::Value1;
     if (stringValue == "value2")
         return TestCallbackInterface::Enum::Value2;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<> const char* expectedEnumerationValues<TestCallbackInterface::Enum>()

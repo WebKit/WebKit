@@ -59,14 +59,14 @@ inline bool ElementIteratorAssertions::domTreeHasMutated() const
 
 inline void ElementIteratorAssertions::dropEventDispatchAssertion()
 {
-    m_eventDispatchAssertion = WTF::nullopt;
+    m_eventDispatchAssertion = std::nullopt;
 }
 
 inline void ElementIteratorAssertions::clear()
 {
     m_document = nullptr;
     m_initialDOMTreeVersion = 0;
-    m_eventDispatchAssertion = WTF::nullopt;
+    m_eventDispatchAssertion = std::nullopt;
 }
 
 } // namespace WebCore

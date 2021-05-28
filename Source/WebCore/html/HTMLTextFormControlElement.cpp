@@ -455,7 +455,7 @@ static void setContainerAndOffsetForRange(Node* node, unsigned offset, Node*& co
 Optional<SimpleRange> HTMLTextFormControlElement::selection() const
 {
     if (!renderer() || !isTextField() || !hasCachedSelection())
-        return WTF::nullopt;
+        return std::nullopt;
 
     unsigned start = m_cachedSelectionStart;
     unsigned end = m_cachedSelectionEnd;
@@ -463,7 +463,7 @@ Optional<SimpleRange> HTMLTextFormControlElement::selection() const
     ASSERT(start <= end);
     auto innerText = innerTextElement();
     if (!innerText)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!innerText->firstChild())
         return SimpleRange { { *innerText, 0 }, { *innerText, 0 } };
@@ -489,7 +489,7 @@ Optional<SimpleRange> HTMLTextFormControlElement::selection() const
     }
 
     if (!startNode || !endNode)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return SimpleRange { { *startNode, start }, { *endNode, end } };
 }

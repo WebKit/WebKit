@@ -213,7 +213,7 @@ protected:
         return String();
     }
 
-    Vector<uint8_t> toData(const String& mimeType, Optional<double> quality = WTF::nullopt) const override
+    Vector<uint8_t> toData(const String& mimeType, Optional<double> quality = std::nullopt) const override
     {
         if (auto* backend = ensureBackendCreated()) {
             const_cast<ConcreteImageBuffer&>(*this).flushContext();
@@ -228,7 +228,7 @@ protected:
             const_cast<ConcreteImageBuffer&>(*this).flushContext();
             return backend->getPixelBuffer(outputFormat, srcRect);
         }
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     void putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint = { }, AlphaPremultiplication destFormat = AlphaPremultiplication::Premultiplied) override

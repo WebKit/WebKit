@@ -454,12 +454,12 @@ inline Optional<MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>> instructionPoi
     void* value = instructionPointerImpl(const_cast<PlatformRegisters&>(regs));
 #endif
     if (!value)
-        return makeOptional(MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>(nullptr));
+        return std::make_optional(MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>(nullptr));
     if (!usesPointerTagging())
-        return makeOptional(MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>(value));
+        return std::make_optional(MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>(value));
     if (isTaggedWith<PlatformRegistersPCPtrTag>(value))
-        return makeOptional(MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>(value));
-    return WTF::nullopt;
+        return std::make_optional(MacroAssemblerCodePtr<PlatformRegistersPCPtrTag>(value));
+    return std::nullopt;
 }
 
 inline void setInstructionPointer(PlatformRegisters& regs, MacroAssemblerCodePtr<CFunctionPtrTag> value)

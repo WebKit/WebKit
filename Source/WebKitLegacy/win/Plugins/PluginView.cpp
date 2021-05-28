@@ -402,7 +402,7 @@ void PluginView::performRequest(PluginRequest* request)
     URL requestURL = request->frameLoadRequest().resourceRequest().url();
     String jsString = scriptStringIfJavaScriptURL(requestURL);
 
-    UserGestureIndicator gestureIndicator(request->shouldAllowPopups() ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : WTF::nullopt);
+    UserGestureIndicator gestureIndicator(request->shouldAllowPopups() ? Optional<ProcessingUserGestureState>(ProcessingUserGesture) : std::nullopt);
 
     if (jsString.isNull()) {
         // if this is not a targeted request, create a stream for it. otherwise,
@@ -1072,7 +1072,7 @@ NPError PluginView::handlePost(const char* url, const char* target, uint32_t len
                 String contentLength = headerFields.get(HTTPHeaderName::ContentLength);
 
                 if (!contentLength.isNull())
-                    dataLength = std::min(parseIntegerAllowingTrailingJunk<unsigned>(contentLength).valueOr(0), dataLength);
+                    dataLength = std::min(parseIntegerAllowingTrailingJunk<unsigned>(contentLength).value_or(0), dataLength);
                 headerFields.remove(HTTPHeaderName::ContentLength);
 
                 postData += location;

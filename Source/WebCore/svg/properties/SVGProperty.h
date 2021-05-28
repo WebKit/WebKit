@@ -82,7 +82,7 @@ public:
     Optional<String> synchronize()
     {
         if (m_state == SVGPropertyState::Clean)
-            return WTF::nullopt;
+            return std::nullopt;
         m_state = SVGPropertyState::Clean;
         return valueAsString();
     }

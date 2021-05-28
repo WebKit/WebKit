@@ -372,14 +372,14 @@ bool CookieJarDB::hasCookies(const URL& url)
 Optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, const URL& requestUrl, const Optional<bool>& httpOnly, const Optional<bool>& secure, const Optional<bool>& session)
 {
     if (!isEnabled() || !m_database.isOpen())
-        return WTF::nullopt;
+        return std::nullopt;
 
     String requestHost = requestUrl.host().convertToASCIILowercase();
     if (requestHost.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!checkCookieAcceptPolicy(firstParty, requestUrl))
-        return WTF::nullopt;
+        return std::nullopt;
 
     String requestPath = requestUrl.path().toString();
     if (requestPath.isEmpty())
@@ -395,7 +395,7 @@ Optional<Vector<Cookie>> CookieJarDB::searchCookies(const URL& firstParty, const
         "AND ((domain = ?) OR (domain GLOB ?)) "\
         "ORDER BY length(path) DESC, lastupdated"_s);
     if (!pstmt)
-        return WTF::nullopt;
+        return std::nullopt;
 
     pstmt->bindInt64(1, WallTime::now().secondsSinceEpoch().milliseconds());
     pstmt->bindInt(2, httpOnly ? *httpOnly : -1);
@@ -511,7 +511,7 @@ bool CookieJarDB::canAcceptCookie(const Cookie& cookie, const URL& firstParty, c
 
 bool CookieJarDB::setCookie(const Cookie& cookie)
 {
-    auto expires = cookie.expires.valueOr(0.0);
+    auto expires = cookie.expires.value_or(0.0);
     if (!cookie.session && MonotonicTime::fromRawSeconds(expires / WTF::msPerSecond) <= MonotonicTime::now())
         return deleteCookieInternal(cookie.name, cookie.domain, cookie.path);
 

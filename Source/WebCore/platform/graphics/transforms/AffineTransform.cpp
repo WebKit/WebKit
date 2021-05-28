@@ -109,7 +109,7 @@ Optional<AffineTransform> AffineTransform::inverse() const
 {
     double determinant = det(m_transform);
     if (!std::isfinite(determinant) || determinant == 0)
-        return WTF::nullopt;
+        return std::nullopt;
 
     AffineTransform result;
     if (isIdentityOrTranslation()) {

@@ -159,7 +159,7 @@ Optional<GRefPtr<GstContext>> requestGLContext(const char* contextType)
     auto* gstGLContext = sharedDisplay.gstGLContext();
 
     if (!(gstGLDisplay && gstGLContext))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!g_strcmp0(contextType, GST_GL_DISPLAY_CONTEXT_TYPE)) {
         GstContext* displayContext = gst_context_new(GST_GL_DISPLAY_CONTEXT_TYPE, TRUE);
@@ -174,7 +174,7 @@ Optional<GRefPtr<GstContext>> requestGLContext(const char* contextType)
         return adoptGRef(appContext);
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static bool setGLContext(GstElement* elementSink, const char* contextType)

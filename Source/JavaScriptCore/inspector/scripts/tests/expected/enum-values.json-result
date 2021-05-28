@@ -598,7 +598,7 @@ Optional<Protocol::TypeDomain::Enum> parseEnumValueFromString<Protocol::TypeDoma
         if (protocolString == enum_constant_values[constantValues[i]])
             return (Protocol::TypeDomain::Enum)constantValues[i];
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace TestHelpers
@@ -1111,7 +1111,7 @@ inline Optional<TestProtocolTypeDomainEnum> fromProtocolString(const String& val
         return TestProtocolTypeDomainEnum1;
     if (value == "2")
         return TestProtocolTypeDomainEnum2;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace Inspector

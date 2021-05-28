@@ -432,7 +432,7 @@ static inline Optional<CFStringRef> openTypeFeature(CFDictionaryRef feature)
     CFNumberRef value = static_cast<CFNumberRef>(CFDictionaryGetValue(feature, kCTFontOpenTypeFeatureValue));
     auto success = CFNumberGetValue(value, kCFNumberIntType, &rawValue);
     ASSERT_UNUSED(success, success);
-    return rawValue ? Optional<CFStringRef>(tag) : WTF::nullopt;
+    return rawValue ? Optional<CFStringRef>(tag) : std::nullopt;
 }
 
 static inline std::pair<int, int> trueTypeFeature(CFDictionaryRef feature)

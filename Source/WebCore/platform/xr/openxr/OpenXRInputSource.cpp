@@ -163,7 +163,7 @@ Optional<Device::FrameData::InputSource> OpenXRInputSource::getInputSource(XrSpa
 
     // Trigger is mandatory in xr-standard mapping.
     if (buttons.isEmpty() || !buttons.first().hasValue())
-        return WTF::nullopt;
+        return std::nullopt;
 
     for (size_t i = 0; i < buttons.size(); ++i) {
         if (buttons[i]) {
@@ -293,7 +293,7 @@ Optional<Device::FrameData::InputSourceButton> OpenXRInputSource::getButton(Open
 {
     auto it = m_buttonActions.find(buttonType);
     if (it == m_buttonActions.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     Device::FrameData::InputSourceButton result;
     bool hasValue = false;
@@ -310,18 +310,18 @@ Optional<Device::FrameData::InputSourceButton> OpenXRInputSource::getButton(Open
     queryActionState(actions.touch, result.touched, result.pressed);
     queryActionState(actions.value, result.pressedValue, result.pressed ? 1.0 : 0.0);
 
-    return hasValue ?  makeOptional(result) : WTF::nullopt;
+    return hasValue ?  std::make_optional(result) : std::nullopt;
 }
 
 Optional<XrVector2f> OpenXRInputSource::getAxis(OpenXRAxisType axisType) const
 {
     auto it = m_axisActions.find(axisType);
     if (it == m_axisActions.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     XrVector2f axis;
     if (XR_FAILED(getActionState(it->value, &axis)))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return axis;
 }

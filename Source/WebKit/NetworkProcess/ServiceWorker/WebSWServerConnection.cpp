@@ -346,7 +346,7 @@ void WebSWServerConnection::matchRegistration(uint64_t registrationMatchRequestI
         send(Messages::WebSWClientConnection::DidMatchRegistration { registrationMatchRequestIdentifier, registration->data() });
         return;
     }
-    send(Messages::WebSWClientConnection::DidMatchRegistration { registrationMatchRequestIdentifier, WTF::nullopt });
+    send(Messages::WebSWClientConnection::DidMatchRegistration { registrationMatchRequestIdentifier, std::nullopt });
 }
 
 void WebSWServerConnection::registrationReady(uint64_t registrationReadyRequestIdentifier, ServiceWorkerRegistrationData&& registrationData)

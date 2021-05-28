@@ -63,24 +63,24 @@ Optional<ApplePayLineItem> ApplePayLineItem::decode(Decoder& decoder)
     ApplePayLineItem result;
 
     if (!result.decodeData(decoder))
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Type> type;
     decoder >> type;
     if (!type)
-        return WTF::nullopt;
+        return std::nullopt;
     result.type = WTFMove(*type);
 
     Optional<String> label;
     decoder >> label;
     if (!label)
-        return WTF::nullopt;
+        return std::nullopt;
     result.label = WTFMove(*label);
 
     Optional<String> amount;
     decoder >> amount;
     if (!amount)
-        return WTF::nullopt;
+        return std::nullopt;
     result.amount = WTFMove(*amount);
 
     return result;

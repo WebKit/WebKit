@@ -61,12 +61,12 @@ Optional<HTTPHeaderField> HTTPHeaderField::decode(Decoder& decoder)
     Optional<String> name;
     decoder >> name;
     if (!name)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<String> value;
     decoder >> value;
     if (!value)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ WTFMove(*name), WTFMove(*value) }};
 }

@@ -252,7 +252,7 @@ Optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObject, Me
     default:
         break;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* globalObject, MessageName name, Decoder& decoder)
@@ -287,7 +287,7 @@ Optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* globalObjec
     default:
         break;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageName name)
@@ -589,7 +589,7 @@ Optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageName na
     default:
         break;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(MessageName name)
@@ -639,7 +639,7 @@ Optional<Vector<ArgumentDescription>> messageReplyArgumentDescriptions(MessageNa
     default:
         break;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace WebKit

@@ -254,7 +254,7 @@ inline void InlineRect::expand(Optional<InlineLayoutUnit> width, Optional<Inline
 {
     ASSERT(!width || m_hasValidWidth);
     ASSERT(!height || m_hasValidHeight);
-    m_rect.expand(width.valueOr(0), height.valueOr(0));
+    m_rect.expand(width.value_or(0), height.value_or(0));
 }
 
 inline void InlineRect::expandToContain(const InlineRect& other)

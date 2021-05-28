@@ -220,7 +220,7 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
 Optional<Vector<String>> WebGLRenderingContext::getSupportedExtensions()
 {
     if (isContextLost())
-        return WTF::nullopt;
+        return std::nullopt;
 
     Vector<String> result;
 

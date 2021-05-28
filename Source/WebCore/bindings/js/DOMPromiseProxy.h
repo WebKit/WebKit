@@ -142,7 +142,7 @@ inline JSC::JSValue DOMPromiseProxy<IDLType>::promise(JSC::JSGlobalObject& lexic
 template<typename IDLType>
 inline void DOMPromiseProxy<IDLType>::clear()
 {
-    m_valueOrException = WTF::nullopt;
+    m_valueOrException = std::nullopt;
     m_deferredPromises.clear();
 }
 
@@ -212,7 +212,7 @@ inline JSC::JSValue DOMPromiseProxy<IDLUndefined>::promise(JSC::JSGlobalObject& 
 
 inline void DOMPromiseProxy<IDLUndefined>::clear()
 {
-    m_valueOrException = WTF::nullopt;
+    m_valueOrException = std::nullopt;
     m_deferredPromises.clear();
 }
 
@@ -281,7 +281,7 @@ inline JSC::JSValue DOMPromiseProxyWithResolveCallback<IDLType>::promise(JSC::JS
 template<typename IDLType>
 inline void DOMPromiseProxyWithResolveCallback<IDLType>::clear()
 {
-    m_valueOrException = WTF::nullopt;
+    m_valueOrException = std::nullopt;
     m_deferredPromises.clear();
 }
 

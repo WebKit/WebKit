@@ -233,22 +233,22 @@ bool isVPCodecConfigurationRecordSupported(const VPCodecConfigurationRecord& cod
 Optional<MediaCapabilitiesInfo> validateVPParameters(const VPCodecConfigurationRecord& codecConfiguration, const VideoConfiguration& videoConfiguration)
 {
     if (!isVPCodecConfigurationRecordSupported(codecConfiguration))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // VideoConfiguration and VPCodecConfigurationRecord can have conflicting values for HDR properties. If so, reject.
     if (videoConfiguration.transferFunction) {
         // Note: Transfer Characteristics are defined by ISO/IEC 23091-2:2019.
         if (*videoConfiguration.transferFunction == TransferFunction::SRGB && codecConfiguration.transferCharacteristics > 15)
-            return WTF::nullopt;
+            return std::nullopt;
         if (*videoConfiguration.transferFunction == TransferFunction::PQ && codecConfiguration.transferCharacteristics != 16)
-            return WTF::nullopt;
+            return std::nullopt;
         if (*videoConfiguration.transferFunction == TransferFunction::HLG && codecConfiguration.transferCharacteristics != 18)
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     if (videoConfiguration.colorGamut) {
         if (*videoConfiguration.colorGamut == ColorGamut::Rec2020 && codecConfiguration.colorPrimaries != 9)
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     MediaCapabilitiesInfo info;
@@ -256,12 +256,12 @@ Optional<MediaCapabilitiesInfo> validateVPParameters(const VPCodecConfigurationR
     if (vp9HardwareDecoderAvailable()) {
         // HW VP9 Decoder does not support alpha channel:
         if (videoConfiguration.alphaChannel && *videoConfiguration.alphaChannel)
-            return WTF::nullopt;
+            return std::nullopt;
 
         // HW VP9 Decoder can support up to 4K @ 120 or 8K @ 30
         auto resolution = resolutionCategory({ (float)videoConfiguration.width, (float)videoConfiguration.height });
         if (resolution > ResolutionCategory::R_8K)
-            return WTF::nullopt;
+            return std::nullopt;
         if (resolution == ResolutionCategory::R_8K && videoConfiguration.framerate > 30)
             info.smooth = false;
         else if (resolution <= ResolutionCategory::R_4K && videoConfiguration.framerate > 120)
@@ -315,7 +315,7 @@ Optional<MediaCapabilitiesInfo> validateVPParameters(const VPCodecConfigurationR
     }
 
     if (!has4kScreen)
-        return WTF::nullopt;
+        return std::nullopt;
 
     info.supported = true;
     return info;
@@ -616,7 +616,7 @@ Optional<VP8FrameHeader> parseVP8FrameHeader(uint8_t* frameData, size_t frameSiz
 
     // Bail if the header is below a minimum size
     if (frameSize < 11)
-        return WTF::nullopt;
+        return std::nullopt;
 
     VP8FrameHeader header;
     size_t headerSize = 11;
@@ -626,7 +626,7 @@ Optional<VP8FrameHeader> parseVP8FrameHeader(uint8_t* frameData, size_t frameSiz
 
     auto uncompressedChunk = view->get<uint32_t>(0, true, &status);
     if (!status)
-        return WTF::nullopt;
+        return std::nullopt;
 
     header.keyframe = uncompressedChunk & 0x80000000;
     header.version = (uncompressedChunk >> 28) & 0x7;
@@ -638,33 +638,33 @@ Optional<VP8FrameHeader> parseVP8FrameHeader(uint8_t* frameData, size_t frameSiz
 
     auto startCode0 = view->get<uint8_t>(3, true, &status);
     if (!status || startCode0 != 0x9d)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto startCode1 = view->get<uint8_t>(4, true, &status);
     if (!status || startCode1 != 0x01)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto startCode2 = view->get<uint8_t>(5, true, &status);
     if (!status || startCode2 != 0x2a)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto horizontalAndWidthField = view->get<uint16_t>(6, true, &status);
     if (!status)
-        return WTF::nullopt;
+        return std::nullopt;
 
     header.horizontalScale = static_cast<uint8_t>(horizontalAndWidthField >> 14);
     header.width = static_cast<uint16_t>(horizontalAndWidthField & 0x3FFF);
 
     auto verticalAndHeightField = view->get<uint16_t>(8, true, &status);
     if (!status)
-        return WTF::nullopt;
+        return std::nullopt;
 
     header.verticalScale = static_cast<uint8_t>(verticalAndHeightField >> 14);
     header.height = static_cast<uint16_t>(verticalAndHeightField & 0x3FFF);
 
     auto colorSpaceAndClampingField = view->get<uint8_t>(10, true, &status);
     if (!status)
-        return WTF::nullopt;
+        return std::nullopt;
 
     header.colorSpace = colorSpaceAndClampingField & 0x80;
     header.needsClamping = colorSpaceAndClampingField & 0x40;

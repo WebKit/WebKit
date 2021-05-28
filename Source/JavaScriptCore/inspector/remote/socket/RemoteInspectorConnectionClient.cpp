@@ -88,23 +88,23 @@ void RemoteInspectorConnectionClient::didReceive(RemoteInspectorSocketEndpoint&,
 Optional<RemoteInspectorConnectionClient::Event> RemoteInspectorConnectionClient::extractEvent(ConnectionID clientID, Vector<uint8_t>&& data)
 {
     if (data.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     String jsonData = String::fromUTF8(data);
 
     auto messageValue = JSON::Value::parseJSON(jsonData);
     if (!messageValue)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto messageObject = messageValue->asObject();
     if (!messageObject)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Event event;
 
     event.methodName = messageObject->getString("event"_s);
     if (!event.methodName)
-        return WTF::nullopt;
+        return std::nullopt;
 
     event.clientID = clientID;
 
@@ -123,11 +123,11 @@ Optional<Vector<Ref<JSON::Object>>> RemoteInspectorConnectionClient::parseTarget
 {
     auto messageValue = JSON::Value::parseJSON(message);
     if (!messageValue)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto messageArray = messageValue->asArray();
     if (!messageArray)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Vector<Ref<JSON::Object>> targetList;
     for (auto& itemValue : *messageArray) {

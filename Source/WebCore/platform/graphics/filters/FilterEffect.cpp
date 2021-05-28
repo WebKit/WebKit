@@ -247,8 +247,8 @@ void FilterEffect::forceValidPreMultipliedPixels()
 void FilterEffect::clearResult()
 {
     m_imageBufferResult = nullptr;
-    m_unmultipliedImageResult = WTF::nullopt;
-    m_premultipliedImageResult = WTF::nullopt;
+    m_unmultipliedImageResult = std::nullopt;
+    m_premultipliedImageResult = std::nullopt;
 }
 
 void FilterEffect::clearResultsRecursive()
@@ -449,7 +449,7 @@ Optional<PixelBuffer> FilterEffect::convertPixelBufferToColorSpace(const Destina
     // Create an ImageBuffer to store incoming PixelBuffer
     auto buffer = ImageBuffer::create(clampedSize, m_filter.renderingMode(), m_filter.filterScale(), operatingColorSpace(), PixelFormat::BGRA8);
     if (!buffer)
-        return WTF::nullopt;
+        return std::nullopt;
     buffer->putPixelBuffer(pixelBuffer, destinationRect);
     return convertImageBufferToColorSpace(targetColorSpace, *buffer, destinationRect, pixelBuffer.format().alphaFormat);
 }
@@ -463,7 +463,7 @@ Optional<PixelBuffer> FilterEffect::convertImageBufferToColorSpace(const Destina
     // Create an ImageBuffer with the correct color space and utilize CG to handle color space conversion
     auto convertedBuffer = ImageBuffer::create(clampedSize, m_filter.renderingMode(), m_filter.filterScale(), targetColorSpace, PixelFormat::BGRA8);
     if (!convertedBuffer)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Color space conversion happens internally when drawing from one image buffer to another
     convertedBuffer->context().drawImageBuffer(inputBuffer, rect);
@@ -651,8 +651,8 @@ void FilterEffect::transformResultColorSpace(const DestinationColorSpace& destin
 
     m_resultColorSpace = destinationColorSpace;
 
-    m_unmultipliedImageResult = WTF::nullopt;
-    m_premultipliedImageResult = WTF::nullopt;
+    m_unmultipliedImageResult = std::nullopt;
+    m_premultipliedImageResult = std::nullopt;
 #endif
 }
 

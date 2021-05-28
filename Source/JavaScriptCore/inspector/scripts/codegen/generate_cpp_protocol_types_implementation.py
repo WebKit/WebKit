@@ -124,7 +124,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
                 '        if (protocolString == enum_constant_values[constantValues[i]])',
                 '            return (%s)constantValues[i];' % cpp_protocol_type,
                 '',
-                '    return WTF::nullopt;',
+                '    return std::nullopt;',
                 '}',
             ])
             return '\n'.join(body_lines)

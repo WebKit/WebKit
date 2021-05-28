@@ -584,19 +584,19 @@ Optional<uint16_t> URLParser::defaultPortForProtocol(StringView scheme)
     
     auto length = scheme.length();
     if (!length)
-        return WTF::nullopt;
+        return std::nullopt;
     switch (scheme[0]) {
     case 'w':
         switch (length) {
         case 2:
             if (scheme[1] == 's')
                 return wsPort;
-            return WTF::nullopt;
+            return std::nullopt;
         case 3:
             if (scheme[1] == 's'
                 && scheme[2] == 's')
                 return wssPort;
-            return WTF::nullopt;
+            return std::nullopt;
         default:
             return false;
         }
@@ -607,25 +607,25 @@ Optional<uint16_t> URLParser::defaultPortForProtocol(StringView scheme)
                 && scheme[2] == 't'
                 && scheme[3] == 'p')
                 return httpPort;
-            return WTF::nullopt;
+            return std::nullopt;
         case 5:
             if (scheme[1] == 't'
                 && scheme[2] == 't'
                 && scheme[3] == 'p'
                 && scheme[4] == 's')
                 return httpsPort;
-            return WTF::nullopt;
+            return std::nullopt;
         default:
-            return WTF::nullopt;
+            return std::nullopt;
         }
     case 'f':
         if (length == 3
             && scheme[1] == 't'
             && scheme[2] == 'p')
             return ftpPort;
-        return WTF::nullopt;
+        return std::nullopt;
     default:
-        return WTF::nullopt;
+        return std::nullopt;
     }
 }
 
@@ -701,15 +701,15 @@ ALWAYS_INLINE static Scheme scheme(StringView scheme)
 Optional<String> URLParser::maybeCanonicalizeScheme(const String& scheme)
 {
     if (scheme.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!isASCIIAlpha(scheme[0]))
-        return WTF::nullopt;
+        return std::nullopt;
 
     for (size_t i = 1; i < scheme.length(); ++i) {
         if (isASCIIAlphanumeric(scheme[i]) || scheme[i] == '+' || scheme[i] == '-' || scheme[i] == '.')
             continue;
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     return scheme.convertToASCIILowercase();
@@ -2295,24 +2295,24 @@ template<typename CharacterType>
 Optional<uint32_t> URLParser::parseIPv4PieceInsideIPv6(CodePointIterator<CharacterType>& iterator)
 {
     if (iterator.atEnd())
-        return WTF::nullopt;
+        return std::nullopt;
     uint32_t piece = 0;
     bool leadingZeros = false;
     size_t digitCount = 0;
     while (!iterator.atEnd()) {
         if (!isASCIIDigit(*iterator))
-            return WTF::nullopt;
+            return std::nullopt;
         ++digitCount;
         if (!piece && *iterator == '0') {
             if (leadingZeros)
-                return WTF::nullopt;
+                return std::nullopt;
             leadingZeros = true;
         }
         if (!piece && *iterator == '0')
             leadingZeros = true;
         piece = piece * 10 + *iterator - '0';
         if (piece > 255)
-            return WTF::nullopt;
+            return std::nullopt;
         advance<CharacterType, ReportSyntaxViolation::No>(iterator);
         if (iterator.atEnd())
             break;
@@ -2320,7 +2320,7 @@ Optional<uint32_t> URLParser::parseIPv4PieceInsideIPv6(CodePointIterator<Charact
             break;
     }
     if (piece && leadingZeros)
-        return WTF::nullopt;
+        return std::nullopt;
     return piece;
 }
 
@@ -2332,15 +2332,15 @@ Optional<URLParser::IPv4Address> URLParser::parseIPv4AddressInsideIPv6(CodePoint
         if (Optional<uint32_t> piece = parseIPv4PieceInsideIPv6(iterator))
             address = (address << 8) + piece.value();
         else
-            return WTF::nullopt;
+            return std::nullopt;
         if (i < 3) {
             if (iterator.atEnd())
-                return WTF::nullopt;
+                return std::nullopt;
             if (*iterator != '.')
-                return WTF::nullopt;
+                return std::nullopt;
             advance<CharacterType, ReportSyntaxViolation::No>(iterator);
         } else if (!iterator.atEnd())
-            return WTF::nullopt;
+            return std::nullopt;
     }
     ASSERT(iterator.atEnd());
     return address;
@@ -2353,7 +2353,7 @@ Optional<URLParser::IPv6Address> URLParser::parseIPv6Host(CodePointIterator<Char
     const auto hostBegin = c;
     advance(c, hostBegin);
     if (c.atEnd())
-        return WTF::nullopt;
+        return std::nullopt;
 
     IPv6Address address = {{0, 0, 0, 0, 0, 0, 0, 0}};
     size_t piecePointer = 0;
@@ -2364,9 +2364,9 @@ Optional<URLParser::IPv6Address> URLParser::parseIPv6Host(CodePointIterator<Char
     if (*c == ':') {
         advance(c, hostBegin);
         if (c.atEnd())
-            return WTF::nullopt;
+            return std::nullopt;
         if (*c != ':')
-            return WTF::nullopt;
+            return std::nullopt;
         advance(c, hostBegin);
         ++piecePointer;
         compressPointer = piecePointer;
@@ -2375,10 +2375,10 @@ Optional<URLParser::IPv6Address> URLParser::parseIPv6Host(CodePointIterator<Char
     
     while (!c.atEnd()) {
         if (piecePointer == 8)
-            return WTF::nullopt;
+            return std::nullopt;
         if (*c == ':') {
             if (compressPointer)
-                return WTF::nullopt;
+                return std::nullopt;
             advance(c, hostBegin);
             ++piecePointer;
             compressPointer = piecePointer;
@@ -2390,7 +2390,7 @@ Optional<URLParser::IPv6Address> URLParser::parseIPv6Host(CodePointIterator<Char
         if (piecePointer == 6 || (compressPointer && piecePointer < 6)) {
             if (Optional<IPv4Address> ipv4Address = parseIPv4AddressInsideIPv6(c)) {
                 if (compressPointer && piecePointer == 5)
-                    return WTF::nullopt;
+                    return std::nullopt;
                 syntaxViolation(hostBegin);
                 address[piecePointer++] = ipv4Address.value() >> 16;
                 address[piecePointer++] = ipv4Address.value() & 0xFFFF;
@@ -2422,7 +2422,7 @@ Optional<URLParser::IPv6Address> URLParser::parseIPv6Host(CodePointIterator<Char
         if (c.atEnd())
             break;
         if (piecePointer == 8 || *c != ':')
-            return WTF::nullopt;
+            return std::nullopt;
         advance(c, hostBegin);
         if (c.atEnd())
             syntaxViolation(hostBegin);
@@ -2431,7 +2431,7 @@ Optional<URLParser::IPv6Address> URLParser::parseIPv6Host(CodePointIterator<Char
     }
     
     if (!c.atEnd())
-        return WTF::nullopt;
+        return std::nullopt;
     
     if (compressPointer) {
         size_t swaps = piecePointer - compressPointer.value();
@@ -2439,7 +2439,7 @@ Optional<URLParser::IPv6Address> URLParser::parseIPv6Host(CodePointIterator<Char
         while (swaps)
             std::swap(address[piecePointer--], address[compressPointer.value() + swaps-- - 1]);
     } else if (piecePointer != 8)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<size_t> possibleCompressPointer = findLongestZeroSequence(address);
     if (possibleCompressPointer)
@@ -2559,7 +2559,7 @@ template<typename CharacterType> Optional<URLParser::LCharBuffer> URLParser::dom
             syntaxViolation(iteratorForSyntaxViolationPosition);
         return ascii;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 bool URLParser::hasForbiddenHostCodePoint(const URLParser::LCharBuffer& asciiDomain)
@@ -2791,7 +2791,7 @@ Optional<String> URLParser::formURLDecode(StringView input)
 {
     auto utf8 = input.utf8(StrictConversion);
     if (utf8.isNull())
-        return WTF::nullopt;
+        return std::nullopt;
     auto percentDecoded = percentDecode(reinterpret_cast<const LChar*>(utf8.data()), utf8.length());
     return String::fromUTF8ReplacingInvalidSequences(percentDecoded.data(), percentDecoded.size());
 }

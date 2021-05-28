@@ -67,7 +67,7 @@ Optional<Style::ElementStyle> DateTimeFieldElement::resolveCustomStyle(const Ren
 {
     auto elementStyle = resolveStyle(&parentStyle);
     if (!elementStyle.renderStyle)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto& style = *elementStyle.renderStyle;
     adjustMinWidth(style);

@@ -123,10 +123,10 @@ ALWAYS_INLINE Optional<uint32_t> concurrentJSMapHash(JSValue key)
     if (key.isString()) {
         JSString* string = asString(key);
         if (string->length() > 10 * 1024)
-            return WTF::nullopt;
+            return std::nullopt;
         const StringImpl* impl = string->tryGetValueImpl();
         if (!impl)
-            return WTF::nullopt;
+            return std::nullopt;
         return impl->concurrentHash();
     }
 

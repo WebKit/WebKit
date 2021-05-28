@@ -698,7 +698,7 @@ JSCValue* jsc_class_add_constructor_variadic(JSCClass* jscClass, const char* nam
     if (!name)
         name = priv->name.data();
 
-    return jscClassCreateConstructor(jscClass, name ? name : priv->name.data(), callback, userData, destroyNotify, returnType, WTF::nullopt).leakRef();
+    return jscClassCreateConstructor(jscClass, name ? name : priv->name.data(), callback, userData, destroyNotify, returnType, std::nullopt).leakRef();
 }
 
 static void jscClassAddMethod(JSCClass* jscClass, const char* name, GCallback callback, gpointer userData, GDestroyNotify destroyNotify, GType returnType, Optional<Vector<GType>>&& parameters)
@@ -823,7 +823,7 @@ void jsc_class_add_method_variadic(JSCClass* jscClass, const char* name, GCallba
     g_return_if_fail(callback);
     g_return_if_fail(jscClass->priv->context);
 
-    jscClassAddMethod(jscClass, name, callback, userData, destroyNotify, returnType, WTF::nullopt);
+    jscClassAddMethod(jscClass, name, callback, userData, destroyNotify, returnType, std::nullopt);
 }
 
 /**

@@ -490,8 +490,8 @@ int TextTrack::trackIndex()
 
 void TextTrack::invalidateTrackIndex()
 {
-    m_trackIndex = WTF::nullopt;
-    m_renderedTrackIndex = WTF::nullopt;
+    m_trackIndex = std::nullopt;
+    m_renderedTrackIndex = std::nullopt;
 }
 
 bool TextTrack::isRendered()

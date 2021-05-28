@@ -91,16 +91,16 @@ Optional<ContentSecurityPolicyResponseHeaders> ContentSecurityPolicyResponseHead
     Optional<uint64_t> headersSize;
     decoder >> headersSize;
     if (!headersSize)
-        return WTF::nullopt;
+        return std::nullopt;
     for (size_t i = 0; i < *headersSize; ++i) {
         Optional<String> header;
         decoder >> header;
         if (!header)
-            return WTF::nullopt;
+            return std::nullopt;
         Optional<ContentSecurityPolicyHeaderType> headerType;
         decoder >> headerType;
         if (!headerType)
-            return WTF::nullopt;
+            return std::nullopt;
         headers.m_headers.append(std::make_pair(WTFMove(*header), WTFMove(*headerType)));
     }
     headers.m_headers.shrinkToFit();
@@ -108,7 +108,7 @@ Optional<ContentSecurityPolicyResponseHeaders> ContentSecurityPolicyResponseHead
     Optional<int> httpStatusCode;
     decoder >> httpStatusCode;
     if (!httpStatusCode)
-        return WTF::nullopt;
+        return std::nullopt;
     headers.m_httpStatusCode = *httpStatusCode;
 
     return headers;

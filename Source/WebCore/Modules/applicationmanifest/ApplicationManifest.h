@@ -66,19 +66,19 @@ Optional<ApplicationManifest> ApplicationManifest::decode(Decoder& decoder)
     ApplicationManifest result;
 
     if (!decoder.decode(result.name))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.shortName))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.description))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.scope))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.display))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.startURL))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.themeColor))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return result;
 }

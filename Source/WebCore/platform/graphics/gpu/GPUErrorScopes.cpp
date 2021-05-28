@@ -45,18 +45,18 @@ GPUErrorScopes::GPUErrorScopes(UncapturedErrorCallback&& callback)
 
 void GPUErrorScopes::pushErrorScope(GPUErrorFilter filter)
 {
-    m_errorScopes.append(ErrorScope { filter, WTF::nullopt });
+    m_errorScopes.append(ErrorScope { filter, std::nullopt });
 }
 
 Optional<GPUError> GPUErrorScopes::popErrorScope(String& failMessage)
 {
     if (m_errorScopes.isEmpty()) {
         failMessage = "No error scope exists!";
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     auto scope = m_errorScopes.takeLast();
-    return scope.filter == GPUErrorFilter::None ? WTF::nullopt : scope.error;
+    return scope.filter == GPUErrorFilter::None ? std::nullopt : scope.error;
 }
 
 void GPUErrorScopes::generateError(const String& message, GPUErrorFilter filter)

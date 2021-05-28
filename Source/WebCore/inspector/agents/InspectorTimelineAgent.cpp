@@ -629,7 +629,7 @@ void InspectorTimelineAgent::toggleMemoryInstrument(InstrumentState state)
 void InspectorTimelineAgent::toggleTimelineInstrument(InstrumentState state)
 {
     if (state == InstrumentState::Start)
-        internalStart(WTF::nullopt);
+        internalStart(std::nullopt);
     else
         internalStop();
 }

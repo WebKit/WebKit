@@ -173,22 +173,22 @@ template<class Decoder> Optional<FloatQuad> FloatQuad::decode(Decoder& decoder)
     Optional<FloatPoint> p1;
     decoder >> p1;
     if (!p1)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FloatPoint> p2;
     decoder >> p2;
     if (!p2)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FloatPoint> p3;
     decoder >> p3;
     if (!p3)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FloatPoint> p4;
     decoder >> p4;
     if (!p4)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *p1, *p2, *p3, *p4 }};
 }

@@ -63,7 +63,7 @@ LayoutUnit TableFormattingQuirks::heightValueOfNearestContainingBlockWithFixedHe
     // e.g <div style="height: 100px"><table><tr><td style="height: 100%"></td></tr></table></div> is resolved to 0px.
     auto fixedLogicalHeight = [&](const auto& ancestorBox) {
         auto height = ancestorBox.style().logicalHeight();
-        return height.isFixed() ? makeOptional(LayoutUnit { height.value() }) : WTF::nullopt;
+        return height.isFixed() ? std::make_optional(LayoutUnit { height.value() }) : std::nullopt;
     };
 
     auto& tableBox = formattingContext().root();

@@ -63,12 +63,12 @@ template<class Decoder> Optional<ImageExtractionTextData> ImageExtractionTextDat
     Optional<String> text;
     decoder >> text;
     if (!text)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FloatQuad> normalizedQuad;
     decoder >> normalizedQuad;
     if (!normalizedQuad)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ WTFMove(*text), WTFMove(*normalizedQuad) }};
 }
@@ -114,12 +114,12 @@ template<class Decoder> Optional<ImageExtractionLineData> ImageExtractionLineDat
     Optional<FloatQuad> normalizedQuad;
     decoder >> normalizedQuad;
     if (!normalizedQuad)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Vector<ImageExtractionTextData>> children;
     decoder >> children;
     if (!children)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ WTFMove(*normalizedQuad), WTFMove(*children) }};
 }
@@ -161,13 +161,13 @@ template<class Decoder> Optional<ImageExtractionResult> ImageExtractionResult::d
     Optional<Vector<ImageExtractionLineData>> lines;
     decoder >> lines;
     if (!lines)
-        return WTF::nullopt;
+        return std::nullopt;
 
 #if ENABLE(DATA_DETECTION)
     Optional<Vector<ImageExtractionDataDetectorInfo>> dataDetectors;
     decoder >> dataDetectors;
     if (!dataDetectors)
-        return WTF::nullopt;
+        return std::nullopt;
 #endif
 
     return {{

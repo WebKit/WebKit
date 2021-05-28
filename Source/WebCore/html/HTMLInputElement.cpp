@@ -414,7 +414,7 @@ Optional<double> HTMLInputElement::listOptionValueAsDouble(const HTMLOptionEleme
 {
     auto optionValue = optionElement.value();
     if (!isValidValue(optionValue))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return parseToDoubleForNumberType(sanitizeValue(optionValue));
 }

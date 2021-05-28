@@ -1281,7 +1281,7 @@ void MediaPlayer::readyStateChanged()
 {
     client().mediaPlayerReadyStateChanged();
     if (m_pendingSeekRequest && m_private->readyState() == MediaPlayer::ReadyState::HaveMetadata)
-        seek(*std::exchange(m_pendingSeekRequest, WTF::nullopt));
+        seek(*std::exchange(m_pendingSeekRequest, std::nullopt));
 }
 
 void MediaPlayer::volumeChanged(double newVolume)
@@ -1562,7 +1562,7 @@ bool MediaPlayer::ended() const
 Optional<VideoPlaybackQualityMetrics> MediaPlayer::videoPlaybackQualityMetrics()
 {
     if (!m_private)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return m_private->videoPlaybackQualityMetrics();
 }

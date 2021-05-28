@@ -256,162 +256,162 @@ Optional<FontDescription> FontDescription::decode(Decoder& decoder)
     Optional<FontFeatureSettings> featureSettings;
     decoder >> featureSettings;
     if (!featureSettings)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariationSettings> variationSettings;
     decoder >> variationSettings;
     if (!variationSettings)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<AtomString> locale;
     decoder >> locale;
     if (!locale)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<FontSelectionValue>> italic;
     decoder >> italic;
     if (!italic)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontSelectionValue> stretch;
     decoder >> stretch;
     if (!stretch)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontSelectionValue> weight;
     decoder >> weight;
     if (!weight)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<float> computedSize;
     decoder >> computedSize;
     if (!computedSize)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontOrientation> orientation;
     decoder >> orientation;
     if (!orientation)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<NonCJKGlyphOrientation> nonCJKGlyphOrientation;
     decoder >> nonCJKGlyphOrientation;
     if (!nonCJKGlyphOrientation)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontWidthVariant> widthVariant;
     decoder >> widthVariant;
     if (!widthVariant)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontRenderingMode> renderingMode;
     decoder >> renderingMode;
     if (!renderingMode)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<TextRenderingMode> textRenderingMode;
     decoder >> textRenderingMode;
     if (!textRenderingMode)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontSynthesis> fontSynthesis;
     decoder >> fontSynthesis;
     if (!fontSynthesis)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantLigatures> variantCommonLigatures;
     decoder >> variantCommonLigatures;
     if (!variantCommonLigatures)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantLigatures> variantDiscretionaryLigatures;
     decoder >> variantDiscretionaryLigatures;
     if (!variantDiscretionaryLigatures)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantLigatures> variantHistoricalLigatures;
     decoder >> variantHistoricalLigatures;
     if (!variantHistoricalLigatures)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantLigatures> variantContextualAlternates;
     decoder >> variantContextualAlternates;
     if (!variantContextualAlternates)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantPosition> variantPosition;
     decoder >> variantPosition;
     if (!variantPosition)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantCaps> variantCaps;
     decoder >> variantCaps;
     if (!variantCaps)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantNumericFigure> variantNumericFigure;
     decoder >> variantNumericFigure;
     if (!variantNumericFigure)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantNumericSpacing> variantNumericSpacing;
     decoder >> variantNumericSpacing;
     if (!variantNumericSpacing)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantNumericFraction> variantNumericFraction;
     decoder >> variantNumericFraction;
     if (!variantNumericFraction)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantNumericOrdinal> variantNumericOrdinal;
     decoder >> variantNumericOrdinal;
     if (!variantNumericOrdinal)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantNumericSlashedZero> variantNumericSlashedZero;
     decoder >> variantNumericSlashedZero;
     if (!variantNumericSlashedZero)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantAlternates> variantAlternates;
     decoder >> variantAlternates;
     if (!variantAlternates)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantEastAsianVariant> variantEastAsianVariant;
     decoder >> variantEastAsianVariant;
     if (!variantEastAsianVariant)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantEastAsianWidth> variantEastAsianWidth;
     decoder >> variantEastAsianWidth;
     if (!variantEastAsianWidth)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantEastAsianRuby> variantEastAsianRuby;
     decoder >> variantEastAsianRuby;
     if (!variantEastAsianRuby)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontOpticalSizing> opticalSizing;
     decoder >> opticalSizing;
     if (!opticalSizing)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontStyleAxis> fontStyleAxis;
     decoder >> fontStyleAxis;
     if (!fontStyleAxis)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<AllowUserInstalledFonts> shouldAllowUserInstalledFonts;
     decoder >> shouldAllowUserInstalledFonts;
     if (!shouldAllowUserInstalledFonts)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> shouldDisableLigaturesForSpacing;
     decoder >> shouldDisableLigaturesForSpacing;
     if (!shouldDisableLigaturesForSpacing)
-        return WTF::nullopt;
+        return std::nullopt;
 
     fontDescription.setFeatureSettings(WTFMove(*featureSettings));
     fontDescription.setVariationSettings(WTFMove(*variationSettings));

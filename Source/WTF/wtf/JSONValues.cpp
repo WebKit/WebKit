@@ -569,21 +569,21 @@ String Value::toJSONString() const
 Optional<bool> Value::asBoolean() const
 {
     if (type() != Type::Boolean)
-        return WTF::nullopt;
+        return std::nullopt;
     return m_value.boolean;
 }
 
 Optional<double> Value::asDouble() const
 {
     if (type() != Type::Double && type() != Type::Integer)
-        return WTF::nullopt;
+        return std::nullopt;
     return m_value.number;
 }
 
 Optional<int> Value::asInteger() const
 {
     if (type() != Type::Double && type() != Type::Integer)
-        return WTF::nullopt;
+        return std::nullopt;
     return static_cast<int>(m_value.number);
 }
 
@@ -652,7 +652,7 @@ Optional<bool> ObjectBase::getBoolean(const String& name) const
 {
     auto value = getValue(name);
     if (!value)
-        return WTF::nullopt;
+        return std::nullopt;
     return value->asBoolean();
 }
 
@@ -660,7 +660,7 @@ Optional<double> ObjectBase::getDouble(const String& name) const
 {
     auto value = getValue(name);
     if (!value)
-        return WTF::nullopt;
+        return std::nullopt;
     return value->asDouble();
 }
 
@@ -668,7 +668,7 @@ Optional<int> ObjectBase::getInteger(const String& name) const
 {
     auto value = getValue(name);
     if (!value)
-        return WTF::nullopt;
+        return std::nullopt;
     return value->asInteger();
 }
 

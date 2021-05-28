@@ -95,7 +95,7 @@ Optional<Semaphore> Semaphore::decode(Decoder& decoder)
 {
     auto handle = WebKit::SharedMemory::Handle::decodeHandle(decoder);
     if (!handle)
-        return WTF::nullopt;
+        return std::nullopt;
     return Semaphore(*handle);
 }
 

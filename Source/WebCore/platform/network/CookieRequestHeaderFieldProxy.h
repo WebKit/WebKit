@@ -61,29 +61,29 @@ Optional<CookieRequestHeaderFieldProxy> CookieRequestHeaderFieldProxy::decode(De
 {
     URL firstParty;
     if (!decoder.decode(firstParty))
-        return WTF::nullopt;
+        return std::nullopt;
 
     SameSiteInfo sameSiteInfo;
     if (!decoder.decode(sameSiteInfo))
-        return WTF::nullopt;
+        return std::nullopt;
 
     URL url;
     if (!decoder.decode(url))
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<FrameIdentifier>> frameID;
     decoder >> frameID;
     if (!frameID)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<PageIdentifier>> pageID;
     decoder >> pageID;
     if (!pageID)
-        return WTF::nullopt;
+        return std::nullopt;
 
     IncludeSecureCookies includeSecureCookies;
     if (!decoder.decode(includeSecureCookies))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return CookieRequestHeaderFieldProxy { WTFMove(firstParty), WTFMove(sameSiteInfo), WTFMove(url), *frameID, *pageID, includeSecureCookies };
 }

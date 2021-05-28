@@ -254,16 +254,16 @@ StackVisitor::Frame::CodeType StackVisitor::Frame::codeType() const
 Optional<RegisterAtOffsetList> StackVisitor::Frame::calleeSaveRegistersForUnwinding()
 {
     if (!NUMBER_OF_CALLEE_SAVES_REGISTERS)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (isInlinedFrame())
-        return WTF::nullopt;
+        return std::nullopt;
 
 #if ENABLE(WEBASSEMBLY)
     if (isWasmFrame()) {
         if (callee().isCell()) {
             RELEASE_ASSERT(isWebAssemblyModule(callee().asCell()));
-            return WTF::nullopt;
+            return std::nullopt;
         }
         Wasm::Callee* wasmCallee = callee().asWasmCallee();
         return *wasmCallee->calleeSaveRegisters();
@@ -278,7 +278,7 @@ Optional<RegisterAtOffsetList> StackVisitor::Frame::calleeSaveRegistersForUnwind
     if (CodeBlock* codeBlock = this->codeBlock())
         return *codeBlock->calleeSaveRegisters();
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 #endif // ENABLE(ASSEMBLER)
 

@@ -91,7 +91,7 @@ ServiceWorkerThread::~ServiceWorkerThread() = default;
 Ref<WorkerGlobalScope> ServiceWorkerThread::createWorkerGlobalScope(const WorkerParameters& params, Ref<SecurityOrigin>&& origin, Ref<SecurityOrigin>&& topOrigin)
 {
     RELEASE_ASSERT(m_data);
-    return ServiceWorkerGlobalScope::create(*std::exchange(m_data, WTF::nullopt), params, WTFMove(origin), *this, WTFMove(topOrigin), idbConnectionProxy(), socketProvider());
+    return ServiceWorkerGlobalScope::create(*std::exchange(m_data, std::nullopt), params, WTFMove(origin), *this, WTFMove(topOrigin), idbConnectionProxy(), socketProvider());
 }
 
 void ServiceWorkerThread::runEventLoop()

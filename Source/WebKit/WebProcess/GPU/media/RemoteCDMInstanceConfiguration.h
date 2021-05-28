@@ -46,7 +46,7 @@ struct RemoteCDMInstanceConfiguration {
         Optional<String> keySystem;
         decoder >> keySystem;
         if (!keySystem)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{
             WTFMove(*keySystem),

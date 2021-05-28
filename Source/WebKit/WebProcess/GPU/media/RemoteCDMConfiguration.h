@@ -52,22 +52,22 @@ struct RemoteCDMConfiguration {
         Optional<Vector<AtomString>> supportedInitDataTypes;
         decoder >> supportedInitDataTypes;
         if (!supportedInitDataTypes)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<Vector<AtomString>> supportedRobustnesses;
         decoder >> supportedRobustnesses;
         if (!supportedRobustnesses)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> supportsServerCertificates;
         decoder >> supportsServerCertificates;
         if (!supportsServerCertificates)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> supportsSessions;
         decoder >> supportsSessions;
         if (!supportsSessions)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{
             WTFMove(*supportedInitDataTypes),

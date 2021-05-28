@@ -53,7 +53,7 @@ public:
         Optional<uint64_t> identifier;
         decoder >> identifier;
         if (!identifier)
-            return WTF::nullopt;
+            return std::nullopt;
         ASSERT(isValidIdentifier(*identifier));
         return MonotonicObjectIdentifier { *identifier };
     }

@@ -935,7 +935,7 @@ ExceptionOr<CSSStyleRule*> InspectorStyleSheet::addRule(const String& selector)
     if (text.hasException())
         return text.releaseException();
 
-    auto addRuleResult = m_pageStyleSheet->addRule(selector, emptyString(), WTF::nullopt);
+    auto addRuleResult = m_pageStyleSheet->addRule(selector, emptyString(), std::nullopt);
     if (addRuleResult.hasException())
         return addRuleResult.releaseException();
 

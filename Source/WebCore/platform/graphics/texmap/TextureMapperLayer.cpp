@@ -323,7 +323,7 @@ void TextureMapperLayer::paintSelfAndChildrenWithReplica(TextureMapperPaintOptio
 TransformationMatrix TextureMapperLayer::replicaTransform()
 {
     return TransformationMatrix(m_state.replicaLayer->m_layerTransforms.combined)
-        .multiply(m_layerTransforms.combined.inverse().valueOr(TransformationMatrix()));
+        .multiply(m_layerTransforms.combined.inverse().value_or(TransformationMatrix()));
 }
 
 static void resolveOverlaps(const IntRect& newRegion, Region& overlapRegion, Region& nonOverlapRegion)
@@ -747,15 +747,15 @@ bool TextureMapperLayer::syncAnimations(MonotonicTime time)
     Nicosia::Animation::ApplicationResult applicationResults;
     m_animations.apply(applicationResults, time);
 
-    m_layerTransforms.localTransform = applicationResults.transform.valueOr(m_state.transform);
-    m_currentOpacity = applicationResults.opacity.valueOr(m_state.opacity);
-    m_currentFilters = applicationResults.filters.valueOr(m_state.filters);
+    m_layerTransforms.localTransform = applicationResults.transform.value_or(m_state.transform);
+    m_currentOpacity = applicationResults.opacity.value_or(m_state.opacity);
+    m_currentFilters = applicationResults.filters.value_or(m_state.filters);
 
 #if USE(COORDINATED_GRAPHICS)
     // Calculate localTransform 50ms in the future.
     Nicosia::Animation::ApplicationResult futureApplicationResults;
     m_animations.applyKeepingInternalState(futureApplicationResults, time + 50_ms);
-    m_layerTransforms.futureLocalTransform = futureApplicationResults.transform.valueOr(m_layerTransforms.localTransform);
+    m_layerTransforms.futureLocalTransform = futureApplicationResults.transform.value_or(m_layerTransforms.localTransform);
 #endif
 
     return applicationResults.hasRunningAnimations;

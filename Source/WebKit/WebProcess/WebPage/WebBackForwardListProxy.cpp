@@ -152,7 +152,7 @@ const WebBackForwardListCounts& WebBackForwardListProxy::cacheListCountsIfNecess
 
 void WebBackForwardListProxy::clearCachedListCounts()
 {
-    m_cachedBackForwardListCounts = WTF::nullopt;
+    m_cachedBackForwardListCounts = std::nullopt;
 }
 
 void WebBackForwardListProxy::close()

@@ -119,7 +119,7 @@ public:
     FloatRect rect() const { return FloatRect(FloatPoint(), size()); }
     float width() const { return size().width(); }
     float height() const { return size().height(); }
-    virtual Optional<IntPoint> hotSpot() const { return WTF::nullopt; }
+    virtual Optional<IntPoint> hotSpot() const { return std::nullopt; }
     virtual ImageOrientation orientation() const { return ImageOrientation::FromImage; }
 
     WEBCORE_EXPORT EncodedDataStatus setData(RefPtr<SharedBuffer>&& data, bool allDataReceived);

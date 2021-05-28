@@ -57,15 +57,15 @@ template<class Decoder> Optional<WebAutocorrectionContext> WebAutocorrectionCont
 {
     WebAutocorrectionContext correction;
     if (!decoder.decode(correction.contextBefore))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(correction.markedText))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(correction.selectedText))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(correction.contextAfter))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(correction.markedTextRange))
-        return WTF::nullopt;
+        return std::nullopt;
     return correction;
 }
 

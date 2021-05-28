@@ -51,7 +51,7 @@ public:
         jit->m_outOfLineStreamIndex = m_streamIndex;
         jit->m_origin = m_origin;
         generateInternal(jit);
-        jit->m_outOfLineStreamIndex = WTF::nullopt;
+        jit->m_outOfLineStreamIndex = std::nullopt;
         if (ASSERT_ENABLED)
             jit->m_jit.abortWithReason(DFGSlowPathGeneratorFellThrough);
     }

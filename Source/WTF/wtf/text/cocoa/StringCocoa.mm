@@ -38,7 +38,7 @@ RetainPtr<id> makeNSArrayElement(const String& vectorElement)
 Optional<String> makeVectorElement(const String*, id arrayElement)
 {
     if (![arrayElement isKindOfClass:NSString.class])
-        return WTF::nullopt;
+        return std::nullopt;
     return { { arrayElement } };
 }
 

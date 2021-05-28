@@ -108,5 +108,5 @@ CString WebKitTestServer::getURIForPath(const char* path) const
 
 unsigned WebKitTestServer::port() const
 {
-    return m_baseURL.port().valueOr(0);
+    return m_baseURL.port().value_or(0);
 }

@@ -53,16 +53,16 @@ static Optional<String> readString(WTF::Persistence::Decoder& decoder)
     Optional<size_t> size;
     decoder >> size;
     if (!size)
-        return WTF::nullopt;
+        return std::nullopt;
     if (!size.value())
         return emptyString();
 
     Vector<uint8_t> buffer(size.value());
     if (!decoder.decodeFixedLengthData(buffer.data(), size.value()))
-        return WTF::nullopt;
+        return std::nullopt;
     auto result = String::fromUTF8(buffer.data(), size.value());
     if (result.isNull())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return result;
 }

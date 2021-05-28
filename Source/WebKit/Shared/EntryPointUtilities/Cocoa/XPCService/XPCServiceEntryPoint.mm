@@ -84,7 +84,7 @@ bool XPCServiceInitializerDelegate::getClientBundleIdentifier(String& clientBund
 bool XPCServiceInitializerDelegate::getClientSDKVersion(uint32_t& clientSDKVersion)
 {
     auto version = parseInteger<uint32_t>(xpc_dictionary_get_string(m_initializerMessage, "client-sdk-version"));
-    clientSDKVersion = version.valueOr(0);
+    clientSDKVersion = version.value_or(0);
     return version.hasValue();
 }
 

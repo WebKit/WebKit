@@ -104,7 +104,7 @@ auto StackTrace::demangle(void* pc) -> Optional<DemangleEntry>
 #else
     UNUSED_PARAM(pc);
 #endif
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void StackTrace::dump(PrintStream& out, const char* indentString) const

@@ -758,7 +758,7 @@ Optional<bool> UIScriptControllerIOS::stableStateOverride() const
     if (webView._stableStateOverride)
         return webView._stableStateOverride.boolValue;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void UIScriptControllerIOS::setStableStateOverride(Optional<bool> overrideValue)

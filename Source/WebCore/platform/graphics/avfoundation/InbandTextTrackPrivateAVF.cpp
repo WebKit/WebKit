@@ -67,13 +67,13 @@ InbandTextTrackPrivateAVF::~InbandTextTrackPrivateAVF()
 static Optional<SRGBA<uint8_t>> makeSimpleColorFromARGBCFArray(CFArrayRef colorArray)
 {
     if (CFArrayGetCount(colorArray) < 4)
-        return WTF::nullopt;
+        return std::nullopt;
 
     float componentArray[4];
     for (int i = 0; i < 4; i++) {
         CFNumberRef value = static_cast<CFNumberRef>(CFArrayGetValueAtIndex(colorArray, i));
         if (CFGetTypeID(value) != CFNumberGetTypeID())
-            return WTF::nullopt;
+            return std::nullopt;
 
         float component;
         CFNumberGetValue(value, kCFNumberFloatType, &component);

@@ -985,7 +985,7 @@ Optional<bool> MediaPlayerPrivateRemote::wouldTaintOrigin(const SecurityOrigin& 
 
     Optional<bool> wouldTaint;
     if (!connection().sendSync(Messages::RemoteMediaPlayerProxy::WouldTaintOrigin(origin.data()), Messages::RemoteMediaPlayerProxy::WouldTaintOrigin::Reply(wouldTaint), m_id))
-        return WTF::nullopt;
+        return std::nullopt;
 
     m_wouldTaintOriginCache.add(origin.data(), wouldTaint);
 
@@ -1064,7 +1064,7 @@ void MediaPlayerPrivateRemote::setCDM(LegacyCDM* cdm)
 void MediaPlayerPrivateRemote::setCDMSession(LegacyCDMSession* session)
 {
     if (!session || session->type() != CDMSessionTypeRemote) {
-        connection().send(Messages::RemoteMediaPlayerProxy::SetLegacyCDMSession(WTF::nullopt), m_id);
+        connection().send(Messages::RemoteMediaPlayerProxy::SetLegacyCDMSession(std::nullopt), m_id);
         return;
     }
 

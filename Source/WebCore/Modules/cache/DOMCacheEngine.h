@@ -128,12 +128,12 @@ template<class Decoder> inline Optional<CacheInfos> CacheInfos::decode(Decoder& 
     Optional<Vector<CacheInfo>> infos;
     decoder >> infos;
     if (!infos)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<uint64_t> updateCounter;
     decoder >> updateCounter;
     if (!updateCounter)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ WTFMove(*infos), WTFMove(*updateCounter) }};
 }
@@ -149,12 +149,12 @@ template<class Decoder> inline Optional<CacheIdentifierOperationResult> CacheIde
     Optional<uint64_t> identifier;
     decoder >> identifier;
     if (!identifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> hadStorageError;
     decoder >> hadStorageError;
     if (!hadStorageError)
-        return WTF::nullopt;
+        return std::nullopt;
     return {{ WTFMove(*identifier), WTFMove(*hadStorageError) }};
 }
 

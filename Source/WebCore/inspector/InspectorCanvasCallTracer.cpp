@@ -88,7 +88,7 @@ Optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvasCallTracer
 { \
     if (auto* canvasAgent = enabledCanvasAgent(canvasRenderingContext)) \
         return canvasAgent->processArgument(canvasRenderingContext, argument); \
-    return WTF::nullopt; \
+    return std::nullopt; \
 } \
 // end of PROCESS_ARGUMENT_DEFINITION
     FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_ARGUMENT(PROCESS_ARGUMENT_DEFINITION)

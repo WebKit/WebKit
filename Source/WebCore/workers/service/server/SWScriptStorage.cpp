@@ -44,7 +44,7 @@ static bool shouldUseFileMapping(uint64_t fileSize)
 
 SWScriptStorage::SWScriptStorage(const String& directory)
     : m_directory(directory)
-    , m_salt(FileSystem::readOrMakeSalt(saltPath()).valueOr(FileSystem::Salt()))
+    , m_salt(FileSystem::readOrMakeSalt(saltPath()).value_or(FileSystem::Salt()))
 {
     ASSERT(!isMainThread());
 }

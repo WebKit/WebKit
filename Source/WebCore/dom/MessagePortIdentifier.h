@@ -63,12 +63,12 @@ Optional<MessagePortIdentifier> MessagePortIdentifier::decode(Decoder& decoder)
     Optional<ProcessIdentifier> processIdentifier;
     decoder >> processIdentifier;
     if (!processIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<ObjectIdentifier<PortIdentifierType>> portIdentifier;
     decoder >> portIdentifier;
     if (!portIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return { { WTFMove(*processIdentifier), WTFMove(*portIdentifier) } };
 }

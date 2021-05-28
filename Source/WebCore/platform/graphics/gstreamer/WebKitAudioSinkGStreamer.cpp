@@ -90,20 +90,20 @@ struct AudioPacketHolder {
     {
         fd = memfd_create("wpe-audio-buffer", MFD_CLOEXEC);
         if (*fd == -1)
-            return WTF::nullopt;
+            return std::nullopt;
 
         if (ftruncate(*fd, buffer->size()) == -1)
-            return WTF::nullopt;
+            return std::nullopt;
 
         ssize_t bytesWritten = write(*fd, buffer->data(), buffer->size());
         if (bytesWritten < 0)
-            return WTF::nullopt;
+            return std::nullopt;
 
         if (static_cast<size_t>(bytesWritten) != buffer->size())
-            return WTF::nullopt;
+            return std::nullopt;
 
         if (lseek(*fd, 0, SEEK_SET) == -1)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return std::make_pair(static_cast<uint32_t>(*fd), buffer->size());
     }

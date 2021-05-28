@@ -640,7 +640,7 @@ uint64_t StorageTracker::diskUsageForOrigin(SecurityOrigin* origin)
     if (path.isEmpty())
         return 0;
 
-    return FileSystem::fileSize(path).valueOr(0);
+    return FileSystem::fileSize(path).value_or(0);
 }
 
 } // namespace WebCore

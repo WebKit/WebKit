@@ -144,7 +144,7 @@ public:
     {
         auto it = m_ptrToOffsetMap.find(ptr);
         if (it == m_ptrToOffsetMap.end())
-            return WTF::nullopt;
+            return std::nullopt;
         return { it->value };
     }
 
@@ -314,11 +314,11 @@ void Decoder::cacheOffset(ptrdiff_t offset, void* ptr)
     m_offsetToPtrMap.add(offset, ptr);
 }
 
-WTF::Optional<void*> Decoder::cachedPtrForOffset(ptrdiff_t offset)
+std::optional<void*> Decoder::cachedPtrForOffset(ptrdiff_t offset)
 {
     auto it = m_offsetToPtrMap.find(offset);
     if (it == m_offsetToPtrMap.end())
-        return WTF::nullopt;
+        return std::nullopt;
     return { it->value };
 }
 
@@ -836,7 +836,7 @@ public:
     Optional<SourceType<T>> decode(Decoder& decoder) const
     {
         if (this->isEmpty())
-            return WTF::nullopt;
+            return std::nullopt;
 
         return { this->template buffer<T>()->decode(decoder) };
     }
@@ -849,7 +849,7 @@ public:
     void encode(Encoder& encoder, const std::unique_ptr<SourceType<T>>& source)
     {
         if (!source)
-            encode(encoder, WTF::nullopt);
+            encode(encoder, std::nullopt);
         else
             encode(encoder, { *source });
     }

@@ -2342,11 +2342,11 @@ Optional<String> RenderLayerCompositor::platformLayerTreeAsText(Element& element
 
     updateCompositingForLayerTreeAsTextDump();
     if (!element.renderer() || !element.renderer()->hasLayer())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto& layerModelObject = downcast<RenderLayerModelObject>(*element.renderer());
     if (!layerModelObject.layer()->isComposited())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto* backing = layerModelObject.layer()->backing();
     return backing->graphicsLayer()->platformLayerTreeAsText(flags);
@@ -4442,7 +4442,7 @@ ScrollingNodeID RenderLayerCompositor::attachScrollingNode(RenderLayer& layer, S
     
     nodeID = registerScrollingNodeID(*scrollingCoordinator, nodeID, nodeType, treeState);
 
-    LOG_WITH_STREAM(ScrollingTree, stream << "RenderLayerCompositor " << this << " attachScrollingNode " << nodeID << " (layer " << backing->graphicsLayer()->primaryLayerID() << ") type " << nodeType << " parent " << treeState.parentNodeID.valueOr(0));
+    LOG_WITH_STREAM(ScrollingTree, stream << "RenderLayerCompositor " << this << " attachScrollingNode " << nodeID << " (layer " << backing->graphicsLayer()->primaryLayerID() << ") type " << nodeType << " parent " << treeState.parentNodeID.value_or(0));
 
     if (!nodeID)
         return 0;
@@ -4467,7 +4467,7 @@ ScrollingNodeID RenderLayerCompositor::registerScrollingNodeID(ScrollingCoordina
     if (nodeType == ScrollingNodeType::Subframe && !treeState.parentNodeID)
         nodeID = scrollingCoordinator.createNode(nodeType, nodeID);
     else {
-        auto newNodeID = scrollingCoordinator.insertNode(nodeType, nodeID, treeState.parentNodeID.valueOr(0), treeState.nextChildIndex);
+        auto newNodeID = scrollingCoordinator.insertNode(nodeType, nodeID, treeState.parentNodeID.value_or(0), treeState.nextChildIndex);
         if (newNodeID != nodeID) {
             // We'll get a new nodeID if the type changed (and not if the node is new).
             scrollingCoordinator.unparentChildrenAndDestroyNode(nodeID);
@@ -4588,7 +4588,7 @@ ScrollingNodeID RenderLayerCompositor::updateScrollCoordinationForLayer(RenderLa
         return 0;
     }
 
-    auto newNodeID = treeState.parentNodeID.valueOr(0);
+    auto newNodeID = treeState.parentNodeID.value_or(0);
 
     ScrollingTreeState childTreeState;
     ScrollingTreeState* currentTreeState = &treeState;
@@ -4644,10 +4644,10 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForViewportConstrained
     auto newNodeID = attachScrollingNode(layer, nodeType, treeState);
     if (!newNodeID) {
         ASSERT_NOT_REACHED();
-        return treeState.parentNodeID.valueOr(0);
+        return treeState.parentNodeID.value_or(0);
     }
 
-    LOG_WITH_STREAM(Compositing, stream << "Registering ViewportConstrained " << nodeType << " node " << newNodeID << " (layer " << layer.backing()->graphicsLayer()->primaryLayerID() << ") as child of " << treeState.parentNodeID.valueOr(0));
+    LOG_WITH_STREAM(Compositing, stream << "Registering ViewportConstrained " << nodeType << " node " << newNodeID << " (layer " << layer.backing()->graphicsLayer()->primaryLayerID() << ") as child of " << treeState.parentNodeID.value_or(0));
 
     if (changes & ScrollingNodeChangeFlags::Layer)
         scrollingCoordinator->setNodeLayers(newNodeID, { layer.backing()->graphicsLayer() });
@@ -4720,7 +4720,7 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForScrollingRole(Rende
 
         if (!newNodeID) {
             ASSERT_NOT_REACHED();
-            return treeState.parentNodeID.valueOr(0);
+            return treeState.parentNodeID.value_or(0);
         }
 
         if (changes & ScrollingNodeChangeFlags::Layer)
@@ -4734,7 +4734,7 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForScrollingRole(Rende
         newNodeID = attachScrollingNode(layer, ScrollingNodeType::Overflow, treeState);
         if (!newNodeID) {
             ASSERT_NOT_REACHED();
-            return treeState.parentNodeID.valueOr(0);
+            return treeState.parentNodeID.value_or(0);
         }
         
         if (changes & ScrollingNodeChangeFlags::Layer)
@@ -4755,7 +4755,7 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForScrollingProxyRole(
     auto* clippingStack = layer.backing()->ancestorClippingStack();
     if (!clippingStack) {
         ASSERT_NOT_REACHED();
-        return treeState.parentNodeID.valueOr(0);
+        return treeState.parentNodeID.value_or(0);
     }
 
     ScrollingNodeID nodeID = 0;
@@ -4766,7 +4766,7 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForScrollingProxyRole(
         nodeID = registerScrollingNodeID(*scrollingCoordinator, entry.overflowScrollProxyNodeID, ScrollingNodeType::OverflowProxy, treeState);
         if (!nodeID) {
             ASSERT_NOT_REACHED();
-            return treeState.parentNodeID.valueOr(0);
+            return treeState.parentNodeID.value_or(0);
         }
         entry.overflowScrollProxyNodeID = nodeID;
 #if ENABLE(SCROLLING_THREAD)
@@ -4795,7 +4795,7 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForScrollingProxyRole(
     // FIXME: also m_overflowControlsHostLayerAncestorClippingStack
 
     if (!nodeID)
-        return treeState.parentNodeID.valueOr(0);
+        return treeState.parentNodeID.value_or(0);
 
     return nodeID;
 }
@@ -4807,7 +4807,7 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForFrameHostingRole(Re
     auto newNodeID = attachScrollingNode(layer, ScrollingNodeType::FrameHosting, treeState);
     if (!newNodeID) {
         ASSERT_NOT_REACHED();
-        return treeState.parentNodeID.valueOr(0);
+        return treeState.parentNodeID.value_or(0);
     }
 
     if (changes & ScrollingNodeChangeFlags::Layer)
@@ -4823,7 +4823,7 @@ ScrollingNodeID RenderLayerCompositor::updateScrollingNodeForPositioningRole(Ren
     auto newNodeID = attachScrollingNode(layer, ScrollingNodeType::Positioned, treeState);
     if (!newNodeID) {
         ASSERT_NOT_REACHED();
-        return treeState.parentNodeID.valueOr(0);
+        return treeState.parentNodeID.value_or(0);
     }
 
     if (changes & ScrollingNodeChangeFlags::Layer) {

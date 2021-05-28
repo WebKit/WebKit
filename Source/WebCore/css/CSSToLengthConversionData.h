@@ -41,7 +41,7 @@ class RenderView;
 
 class CSSToLengthConversionData {
 public:
-    CSSToLengthConversionData(const RenderStyle* style, const RenderStyle* rootStyle, const RenderStyle* parentStyle, const RenderView* renderView, float zoom, Optional<CSSPropertyID> propertyToCompute = WTF::nullopt, RenderStyle* viewportDependencyDetectionStyle = nullptr)
+    CSSToLengthConversionData(const RenderStyle* style, const RenderStyle* rootStyle, const RenderStyle* parentStyle, const RenderView* renderView, float zoom, Optional<CSSPropertyID> propertyToCompute = std::nullopt, RenderStyle* viewportDependencyDetectionStyle = nullptr)
         : m_style(style)
         , m_rootStyle(rootStyle)
         , m_parentStyle(parentStyle)
@@ -53,7 +53,7 @@ public:
         ASSERT(zoom > 0);
     }
 
-    CSSToLengthConversionData(const RenderStyle* style, const RenderStyle* rootStyle, const RenderStyle* parentStyle, const RenderView* renderView, Optional<CSSPropertyID> propertyToCompute = WTF::nullopt)
+    CSSToLengthConversionData(const RenderStyle* style, const RenderStyle* rootStyle, const RenderStyle* parentStyle, const RenderView* renderView, Optional<CSSPropertyID> propertyToCompute = std::nullopt)
         : m_style(style)
         , m_rootStyle(rootStyle)
         , m_parentStyle(parentStyle)
@@ -71,7 +71,7 @@ public:
     float zoom() const;
     bool computingFontSize() const { return m_propertyToCompute == CSSPropertyFontSize; }
     bool computingLineHeight() const { return m_propertyToCompute == CSSPropertyLineHeight; }
-    CSSPropertyID propertyToCompute() const { return m_propertyToCompute.valueOr(CSSPropertyInvalid); }
+    CSSPropertyID propertyToCompute() const { return m_propertyToCompute.value_or(CSSPropertyInvalid); }
     const RenderView* renderView() const { return m_renderView; }
 
     double viewportWidthFactor() const;

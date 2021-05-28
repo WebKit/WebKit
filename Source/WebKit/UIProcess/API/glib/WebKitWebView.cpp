@@ -2564,7 +2564,7 @@ void webkitWebViewDismissCurrentScriptDialog(WebKitWebView* webView)
 Optional<WebKitScriptDialogType> webkitWebViewGetCurrentScriptDialogType(WebKitWebView* webView)
 {
     if (!webView->priv->currentScriptDialog)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return static_cast<WebKitScriptDialogType>(webView->priv->currentScriptDialog->type);
 }
@@ -2836,7 +2836,7 @@ void webkitWebViewSetComposition(WebKitWebView* webView, const String& text, con
 
 void webkitWebViewConfirmComposition(WebKitWebView* webView, const String& text)
 {
-    webkitWebViewSynthesizeCompositionKeyPress(webView, text, WTF::nullopt, WTF::nullopt);
+    webkitWebViewSynthesizeCompositionKeyPress(webView, text, std::nullopt, std::nullopt);
 }
 
 void webkitWebViewCancelComposition(WebKitWebView* webView, const String& text)
@@ -3815,7 +3815,7 @@ void webkitWebViewRunJavascriptWithoutForcedUserGestures(WebKitWebView* webView,
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(script);
 
-    RunJavaScriptParameters params = { String::fromUTF8(script), URL { }, false, WTF::nullopt, false };
+    RunJavaScriptParameters params = { String::fromUTF8(script), URL { }, false, std::nullopt, false };
     webkitWebViewRunJavaScriptWithParams(webView, script, WTFMove(params), cancellable, callback, userData);
 }
 
@@ -3838,7 +3838,7 @@ void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script,
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(script);
 
-    RunJavaScriptParameters params = { String::fromUTF8(script), URL { }, false, WTF::nullopt, true };
+    RunJavaScriptParameters params = { String::fromUTF8(script), URL { }, false, std::nullopt, true };
     webkitWebViewRunJavaScriptWithParams(webView, script, WTFMove(params), cancellable, callback, userData);
 }
 
@@ -3936,7 +3936,7 @@ void webkit_web_view_run_javascript_in_world(WebKitWebView* webView, const gchar
 
     GRefPtr<GTask> task = adoptGRef(g_task_new(webView, cancellable, callback, userData));
     auto world = API::ContentWorld::sharedWorldWithName(String::fromUTF8(worldName));
-    getPage(webView).runJavaScriptInFrameInScriptWorld({ String::fromUTF8(script), URL { }, false, WTF::nullopt, true }, WTF::nullopt, world.get(), [task = WTFMove(task)] (auto&& result) {
+    getPage(webView).runJavaScriptInFrameInScriptWorld({ String::fromUTF8(script), URL { }, false, std::nullopt, true }, std::nullopt, world.get(), [task = WTFMove(task)] (auto&& result) {
         RefPtr<API::SerializedScriptValue> serializedScriptValue;
         ExceptionDetails exceptionDetails;
         if (result.has_value())
@@ -3981,7 +3981,7 @@ static void resourcesStreamReadCallback(GObject* object, GAsyncResult* result, g
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(g_task_get_source_object(task.get()));
     gpointer outputStreamData = g_memory_output_stream_get_data(G_MEMORY_OUTPUT_STREAM(object));
-    getPage(webView).runJavaScriptInMainFrame({ String::fromUTF8(reinterpret_cast<const gchar*>(outputStreamData)), URL { }, false, WTF::nullopt, true },
+    getPage(webView).runJavaScriptInMainFrame({ String::fromUTF8(reinterpret_cast<const gchar*>(outputStreamData)), URL { }, false, std::nullopt, true },
         [task] (auto&& result) {
             RefPtr<API::SerializedScriptValue> serializedScriptValue;
             ExceptionDetails exceptionDetails;

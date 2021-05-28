@@ -1121,7 +1121,7 @@ private:
     Optional<String> tryConsumeGroupName()
     {
         if (atEndOfPattern())
-            return WTF::nullopt;
+            return std::nullopt;
 
         ParseState state = saveState();
         
@@ -1145,14 +1145,14 @@ private:
 
         restoreState(state);
 
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     Optional<BuiltInCharacterClassID> tryConsumeUnicodePropertyExpression()
     {
         if (atEndOfPattern() || !isUnicodePropertyValueExpressionChar(peek())) {
             m_errorCode = ErrorCode::InvalidUnicodePropertyExpression;
-            return WTF::nullopt;
+            return std::nullopt;
         }
 
         StringBuilder expressionBuilder;
@@ -1168,7 +1168,7 @@ private:
                 consume();
                 if (errors) {
                     m_errorCode = ErrorCode::InvalidUnicodePropertyExpression;
-                    return WTF::nullopt;
+                    return std::nullopt;
                 }
 
                 if (foundEquals) {
@@ -1199,7 +1199,7 @@ private:
         }
 
         m_errorCode = ErrorCode::InvalidUnicodePropertyExpression;
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     enum class ParenthesesType : uint8_t { Subpattern, Assertion };

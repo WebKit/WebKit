@@ -57,10 +57,10 @@ static String cookiesForSession(const NetworkStorageSession& session, const URL&
 {
     StringBuilder cookies;
 
-    auto searchHTTPOnly = forHTTPHeader ? WTF::nullopt : Optional<bool> { false };
-    auto secure = url.protocolIs("https") ? WTF::nullopt : Optional<bool> { false };
+    auto searchHTTPOnly = forHTTPHeader ? std::nullopt : Optional<bool> { false };
+    auto secure = url.protocolIs("https") ? std::nullopt : Optional<bool> { false };
 
-    if (auto result = session.cookieDatabase().searchCookies(firstParty, url, searchHTTPOnly, secure, WTF::nullopt)) {
+    if (auto result = session.cookieDatabase().searchCookies(firstParty, url, searchHTTPOnly, secure, std::nullopt)) {
         for (const auto& cookie : *result) {
             if (!cookies.isEmpty())
                 cookies.append("; ");
@@ -101,7 +101,7 @@ void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameS
     Optional<Seconds> cappedLifetime = clientSideCookieCap(RegistrableDomain { firstParty }, pageID);
 #else
     UNUSED_PARAM(pageID);
-    Optional<Seconds> cappedLifetime = WTF::nullopt;
+    Optional<Seconds> cappedLifetime = std::nullopt;
 #endif
     cookieDatabase().setCookie(firstParty, url, value, CookieJarDB::Source::Script, cappedLifetime);
 }
@@ -206,7 +206,7 @@ void NetworkStorageSession::hasCookies(const RegistrableDomain&, CompletionHandl
 
 bool NetworkStorageSession::getRawCookies(const URL& firstParty, const SameSiteInfo&, const URL& url, Optional<FrameIdentifier>, Optional<PageIdentifier>, ShouldAskITP, ShouldRelaxThirdPartyCookieBlocking, Vector<Cookie>& rawCookies) const
 {
-    auto cookies = cookieDatabase().searchCookies(firstParty, url, WTF::nullopt, WTF::nullopt, WTF::nullopt);
+    auto cookies = cookieDatabase().searchCookies(firstParty, url, std::nullopt, std::nullopt, std::nullopt);
     if (!cookies)
         return false;
 

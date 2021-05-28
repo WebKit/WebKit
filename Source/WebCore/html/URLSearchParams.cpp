@@ -155,7 +155,7 @@ Optional<WTF::KeyValuePair<String, String>> URLSearchParams::Iterator::next()
 {
     auto& pairs = m_target->pairs();
     if (m_index >= pairs.size())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto& pair = pairs[m_index++];
     return WTF::KeyValuePair<String, String> { pair.key, pair.value };

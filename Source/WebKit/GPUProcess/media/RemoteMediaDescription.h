@@ -73,22 +73,22 @@ struct MediaDescriptionInfo {
         Optional<String> codec;
         decoder >> codec;
         if (!codec)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> isVideo;
         decoder >> isVideo;
         if (!isVideo)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> isAudio;
         decoder >> isAudio;
         if (!isAudio)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> isText;
         decoder >> isText;
         if (!isText)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{
             WTFMove(*codec),

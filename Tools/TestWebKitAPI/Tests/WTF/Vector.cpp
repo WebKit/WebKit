@@ -898,10 +898,10 @@ TEST(WTF_Vector, MapFromHashMap)
 
 }
 
-WTF::Optional<int> evenMultipliedByFive(int input)
+std::optional<int> evenMultipliedByFive(int input)
 {
     if (input % 2)
-        return WTF::nullopt;
+        return std::nullopt;
     return input * 5;
 }
 
@@ -965,7 +965,7 @@ TEST(WTF_Vector, CompactMapStaticFunctionReturnRefPtr)
 Optional<Ref<RefCountedObject>> createRefCountedForEven(int input)
 {
     if (input % 2)
-        return WTF::nullopt;
+        return std::nullopt;
     return RefCountedObject::create(input);
 }
 
@@ -987,7 +987,7 @@ TEST(WTF_Vector, CompactMapStaticFunctionReturnOptionalRef)
 Optional<RefPtr<RefCountedObject>> createRefCountedWhenDivisibleByThree(int input)
 {
     if (input % 3)
-        return WTF::nullopt;
+        return std::nullopt;
     if (input % 2)
         return RefPtr<RefCountedObject>();
     return RefPtr<RefCountedObject>(RefCountedObject::create(input));
@@ -1015,7 +1015,7 @@ TEST(WTF_Vector, CompactMapLambdaReturnOptional)
 
     auto function = [](const String& value) -> Optional<String> {
         if (value.length() < 5)
-            return WTF::nullopt;
+            return std::nullopt;
         return value.convertToASCIIUppercase();
     };
     static_assert(std::is_same<decltype(WTF::compactMap(vector, function)), typename WTF::Vector<String>>::value,
@@ -1063,7 +1063,7 @@ TEST(WTF_Vector, CompactMapLambdaCopyVectorReturnOptionalCountedObject)
     auto function = [](const CountedObject& object) -> Optional<CountedObject> {
         if (object.value() % 2)
             return object;
-        return WTF::nullopt;
+        return std::nullopt;
     };
 
     static_assert(std::is_same<decltype(WTF::compactMap(vector, function)), typename WTF::Vector<CountedObject>>::value,
@@ -1086,7 +1086,7 @@ TEST(WTF_Vector, CompactMapLambdaMoveVectorReturnOptionalCountedObject)
     auto function = [](CountedObject&& object) -> Optional<CountedObject> {
         if (object.value() % 2)
             return WTFMove(object);
-        return WTF::nullopt;
+        return std::nullopt;
     };
 
     RefCountedObject::s_totalRefCount = 0;
@@ -1157,7 +1157,7 @@ TEST(WTF_Vector, CompactMapLambdaReturnOptionalRefPtr)
 
     auto function = [&](int value) -> Optional<RefPtr<RefCountedObject>> {
         if (!(value % 2))
-            return WTF::nullopt;
+            return std::nullopt;
         if (!(value % 3))
             return RefPtr<RefCountedObject>();
         return RefPtr<RefCountedObject>(RefCountedObject::create(value));

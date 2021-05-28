@@ -50,7 +50,7 @@ uint16_t parseMessageLength(const Vector<uint8_t>& message, size_t offset)
 Optional<ApduCommand> ApduCommand::createFromMessage(const Vector<uint8_t>& message)
 {
     if (message.size() < kApduMinHeader || message.size() > kApduMaxLength)
-        return WTF::nullopt;
+        return std::nullopt;
 
     uint8_t cla = message[0];
     uint8_t ins = message[1];
@@ -67,12 +67,12 @@ Optional<ApduCommand> ApduCommand::createFromMessage(const Vector<uint8_t>& mess
     // Invalid encoding sizes.
     case kApduMinHeader + 1:
     case kApduMinHeader + 2:
-        return WTF::nullopt;
+        return std::nullopt;
     // No data present; response expected.
     case kApduMinHeader + 3:
         // Fifth byte must be 0.
         if (message[4])
-            return WTF::nullopt;
+            return std::nullopt;
         responseLength = parseMessageLength(message, kApduCommandLengthOffset);
         // Special case where response length of 0x0000 corresponds to 65536
         // as defined in ISO7816-4.
@@ -82,7 +82,7 @@ Optional<ApduCommand> ApduCommand::createFromMessage(const Vector<uint8_t>& mess
     default:
         // Fifth byte must be 0.
         if (message[4])
-            return WTF::nullopt;
+            return std::nullopt;
         auto dataLength = parseMessageLength(message, kApduCommandLengthOffset);
 
         if (message.size() == dataLength + kApduCommandDataOffset) {
@@ -98,7 +98,7 @@ Optional<ApduCommand> ApduCommand::createFromMessage(const Vector<uint8_t>& mess
             if (!responseLength)
                 responseLength = kApduMaxResponseLength;
         } else
-            return WTF::nullopt;
+            return std::nullopt;
         break;
     }
 

@@ -470,7 +470,7 @@ inline Optional<SRGBA<uint8_t>> Color::tryGetAsSRGBABytes() const
 {
     if (isInline())
         return asInline();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 inline uint64_t Color::encodedFlags(OptionSet<FlagsIncludingPrivate> flags)
@@ -577,7 +577,7 @@ template<class Decoder> Optional<Color> Color::decode(Decoder& decoder)
 {
     bool isValid;
     if (!decoder.decode(isValid))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!isValid)
         return Color { };
@@ -586,44 +586,44 @@ template<class Decoder> Optional<Color> Color::decode(Decoder& decoder)
 
     bool isSemantic;
     if (!decoder.decode(isSemantic))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (isSemantic)
         flags.add(Flags::Semantic);
 
     bool usesColorFunctionSerialization;
     if (!decoder.decode(usesColorFunctionSerialization))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (usesColorFunctionSerialization)
         flags.add(Flags::UseColorFunctionSerialization);
 
     bool isOutOfLine;
     if (!decoder.decode(isOutOfLine))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (isOutOfLine) {
         ColorSpace colorSpace;
         if (!decoder.decode(colorSpace))
-            return WTF::nullopt;
+            return std::nullopt;
         float c1;
         if (!decoder.decode(c1))
-            return WTF::nullopt;
+            return std::nullopt;
         float c2;
         if (!decoder.decode(c2))
-            return WTF::nullopt;
+            return std::nullopt;
         float c3;
         if (!decoder.decode(c3))
-            return WTF::nullopt;
+            return std::nullopt;
         float alpha;
         if (!decoder.decode(alpha))
-            return WTF::nullopt;
+            return std::nullopt;
         return Color { OutOfLineComponents::create({ c1, c2, c3, alpha }), colorSpace, flags };
     }
 
     uint32_t value;
     if (!decoder.decode(value))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return Color { asSRGBA(PackedColor::RGBA { value }), flags };
 }

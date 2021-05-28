@@ -693,7 +693,7 @@ Optional<Protocol::Database::PrimaryColors> parseEnumValueFromString<Protocol::D
         if (protocolString == enum_constant_values[constantValues[i]])
             return (Protocol::Database::PrimaryColors)constantValues[i];
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace TestHelpers
@@ -1288,7 +1288,7 @@ inline Optional<TestProtocolDatabasePrimaryColors> fromProtocolString(const Stri
         return TestProtocolDatabasePrimaryColorsGreen;
     if (value == "blue")
         return TestProtocolDatabasePrimaryColorsBlue;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 inline String toProtocolString(TestProtocolDatabaseExecuteAllOptionalParametersPrintColor value)
@@ -1316,7 +1316,7 @@ inline Optional<TestProtocolDatabaseExecuteAllOptionalParametersPrintColor> from
         return TestProtocolDatabaseExecuteAllOptionalParametersPrintColorYellow;
     if (value == "black")
         return TestProtocolDatabaseExecuteAllOptionalParametersPrintColorBlack;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 
@@ -1346,7 +1346,7 @@ inline Optional<TestProtocolDatabaseExecuteAllOptionalParametersPrintColor> from
         return TestProtocolDatabaseExecuteAllOptionalParametersPrintColorYellow;
     if (value == "black")
         return TestProtocolDatabaseExecuteAllOptionalParametersPrintColorBlack;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 inline String toProtocolString(TestProtocolDatabaseExecuteNoOptionalParametersPrintColor value)
@@ -1374,7 +1374,7 @@ inline Optional<TestProtocolDatabaseExecuteNoOptionalParametersPrintColor> fromP
         return TestProtocolDatabaseExecuteNoOptionalParametersPrintColorYellow;
     if (value == "black")
         return TestProtocolDatabaseExecuteNoOptionalParametersPrintColorBlack;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 
@@ -1404,7 +1404,7 @@ inline Optional<TestProtocolDatabaseExecuteNoOptionalParametersPrintColor> fromP
         return TestProtocolDatabaseExecuteNoOptionalParametersPrintColorYellow;
     if (value == "black")
         return TestProtocolDatabaseExecuteNoOptionalParametersPrintColorBlack;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace Inspector

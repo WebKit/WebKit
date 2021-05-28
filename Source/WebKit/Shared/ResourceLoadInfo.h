@@ -79,42 +79,42 @@ struct ResourceLoadInfo {
         Optional<NetworkResourceLoadIdentifier> resourceLoadID;
         decoder >> resourceLoadID;
         if (!resourceLoadID)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<Optional<WebCore::FrameIdentifier>> frameID;
         decoder >> frameID;
         if (!frameID)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<Optional<WebCore::FrameIdentifier>> parentFrameID;
         decoder >> parentFrameID;
         if (!parentFrameID)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<URL> originalURL;
         decoder >> originalURL;
         if (!originalURL)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<String> originalHTTPMethod;
         decoder >> originalHTTPMethod;
         if (!originalHTTPMethod)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<WallTime> eventTimestamp;
         decoder >> eventTimestamp;
         if (!eventTimestamp)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<bool> loadedFromCache;
         decoder >> loadedFromCache;
         if (!loadedFromCache)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<Type> type;
         decoder >> type;
         if (!type)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{
             WTFMove(*resourceLoadID),

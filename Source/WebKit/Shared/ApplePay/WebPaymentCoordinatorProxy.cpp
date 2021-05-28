@@ -364,7 +364,7 @@ void WebPaymentCoordinatorProxy::didReachFinalState(WebCore::PaymentSessionError
     platformHidePaymentUI();
 
     m_authorizationPresenter = nullptr;
-    m_destinationID = WTF::nullopt;
+    m_destinationID = std::nullopt;
     m_merchantValidationState = MerchantValidationState::Idle;
     m_state = State::Idle;
 

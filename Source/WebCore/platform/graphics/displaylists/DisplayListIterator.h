@@ -63,7 +63,7 @@ public:
     Optional<Value> operator*() const
     {
         if (!m_isValid)
-            return WTF::nullopt;
+            return std::nullopt;
         return {{
             ItemHandle { m_currentBufferForItem },
             m_currentExtent,

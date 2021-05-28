@@ -119,7 +119,7 @@ private:
     // could be decoded.
     bool processDirectoryEntries();
 
-    // Returns the hot-spot for |index|, returns WTF::nullopt if there is none.
+    // Returns the hot-spot for |index|, returns std::nullopt if there is none.
     Optional<IntPoint> hotSpotAtIndex(size_t) const;
 
     // Reads and returns a directory entry from the current offset into

@@ -94,7 +94,7 @@ bool ScrollingTreeFrameScrollingNode::scrollPositionAndLayoutViewportMatch(const
 
 FloatRect ScrollingTreeFrameScrollingNode::layoutViewportForScrollPosition(const FloatPoint& visibleContentOrigin, float scale, ScrollBehaviorForFixedElements fixedBehavior) const
 {
-    FloatSize visualViewportSize = m_overrideVisualViewportSize.valueOr(scrollableAreaSize());
+    FloatSize visualViewportSize = m_overrideVisualViewportSize.value_or(scrollableAreaSize());
     FloatRect visibleContentRect(visibleContentOrigin, visualViewportSize);
     LayoutRect visualViewport(FrameView::visibleDocumentRect(visibleContentRect, headerHeight(), footerHeight(), totalContentsSize(), scale));
     LayoutRect layoutViewport(m_layoutViewport);

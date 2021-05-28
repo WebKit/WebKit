@@ -194,7 +194,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
         // Turn previous line's overflow content length into the next line's leading content partial length.
         // "sp[<-line break->]lit_content" -> overflow length: 11 -> leading partial content length: 11.
         auto partialLeadingContentLength = previousLine ? previousLine->overflowContentLength : 0;
-        auto leadingLogicalWidth = previousLine ? previousLine->overflowLogicalWidth : WTF::nullopt;
+        auto leadingLogicalWidth = previousLine ? previousLine->overflowLogicalWidth : std::nullopt;
         auto initialLineHeight = [&]() -> InlineLayoutUnit {
             if (layoutState().inStandardsMode())
                 return root().style().computedLineHeight();
@@ -350,7 +350,7 @@ void InlineFormattingContext::computeIntrinsicWidthForFormattingRoot(const Box& 
 void InlineFormattingContext::computeHorizontalMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints)
 {
     auto computedHorizontalMargin = formattingGeometry().computedHorizontalMargin(layoutBox, horizontalConstraints);
-    formattingState().boxGeometry(layoutBox).setHorizontalMargin({ computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) });
+    formattingState().boxGeometry(layoutBox).setHorizontalMargin({ computedHorizontalMargin.start.value_or(0), computedHorizontalMargin.end.value_or(0) });
 }
 
 void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints)
@@ -375,7 +375,7 @@ void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, const 
             contentWidthAndMargin = maxWidthAndMargin;
     }
 
-    auto minWidth = formattingGeometry().computedMinWidth(layoutBox, availableWidth).valueOr(0);
+    auto minWidth = formattingGeometry().computedMinWidth(layoutBox, availableWidth).value_or(0);
     auto minWidthAndMargin = compute(minWidth);
     if (contentWidthAndMargin.contentWidth < minWidthAndMargin.contentWidth)
         contentWidthAndMargin = minWidthAndMargin;
@@ -589,9 +589,9 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
             if (inlineBoxStartSet.contains(&layoutBox)) {
                 // This inline box showed up first on this line.
                 boxGeometry.setLogicalTopLeft(logicalRect.topLeft());
-                auto contentBoxHeight = logicalRect.height() - (boxGeometry.verticalBorder() + boxGeometry.verticalPadding().valueOr(0_lu));
+                auto contentBoxHeight = logicalRect.height() - (boxGeometry.verticalBorder() + boxGeometry.verticalPadding().value_or(0_lu));
                 boxGeometry.setContentBoxHeight(contentBoxHeight);
-                auto contentBoxWidth = logicalRect.width() - (boxGeometry.horizontalBorder() + boxGeometry.horizontalPadding().valueOr(0_lu));
+                auto contentBoxWidth = logicalRect.width() - (boxGeometry.horizontalBorder() + boxGeometry.horizontalPadding().value_or(0_lu));
                 boxGeometry.setContentBoxWidth(contentBoxWidth);
                 continue;
             }
@@ -600,8 +600,8 @@ InlineRect InlineFormattingContext::computeGeometryForLineContent(const LineBuil
             enclosingBorderBoxRect.expandToContain(logicalRect);
             boxGeometry.setLogicalLeft(enclosingBorderBoxRect.left());
 
-            boxGeometry.setContentBoxHeight(enclosingBorderBoxRect.height() - (boxGeometry.verticalBorder() + boxGeometry.verticalPadding().valueOr(0_lu)));
-            boxGeometry.setContentBoxWidth(enclosingBorderBoxRect.width() - (boxGeometry.horizontalBorder() + boxGeometry.horizontalPadding().valueOr(0_lu)));
+            boxGeometry.setContentBoxHeight(enclosingBorderBoxRect.height() - (boxGeometry.verticalBorder() + boxGeometry.verticalPadding().value_or(0_lu)));
+            boxGeometry.setContentBoxWidth(enclosingBorderBoxRect.width() - (boxGeometry.horizontalBorder() + boxGeometry.horizontalPadding().value_or(0_lu)));
         }
     };
     updateBoxGeometryForInlineBoxes();

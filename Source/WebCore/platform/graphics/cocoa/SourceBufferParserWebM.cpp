@@ -648,7 +648,7 @@ void SourceBufferParserWebM::appendData(Segment&& segment, CompletionHandler<voi
         }
 
         ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "received Ebml element while parsing Segment element. Rewound reader and reset parser, retrying");
-        m_rewindToPosition = WTF::nullopt;
+        m_rewindToPosition = std::nullopt;
         m_parser->DidSeek();
         m_state = State::None;
         continue;
@@ -955,7 +955,7 @@ webm::Status SourceBufferParserWebM::OnBlockBegin(const ElementMetadata& metadat
 
     *action = Action::kRead;
 
-    m_currentBlock = makeOptional<BlockVariant>(Block(block));
+    m_currentBlock = std::make_optional<BlockVariant>(Block(block));
 
     return Status(Status::kOkCompleted);
 }
@@ -966,7 +966,7 @@ webm::Status SourceBufferParserWebM::OnBlockEnd(const ElementMetadata& metadata,
     UNUSED_PARAM(block);
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
-    m_currentBlock = WTF::nullopt;
+    m_currentBlock = std::nullopt;
 
     return Status(Status::kOkCompleted);
 }
@@ -982,7 +982,7 @@ webm::Status SourceBufferParserWebM::OnSimpleBlockBegin(const ElementMetadata& m
 
     *action = Action::kRead;
 
-    m_currentBlock = makeOptional<BlockVariant>(SimpleBlock(block));
+    m_currentBlock = std::make_optional<BlockVariant>(SimpleBlock(block));
 
     return Status(Status::kOkCompleted);
 }
@@ -994,7 +994,7 @@ webm::Status SourceBufferParserWebM::OnSimpleBlockEnd(const ElementMetadata& met
 
     UNUSED_PARAM(block);
 
-    m_currentBlock = WTF::nullopt;
+    m_currentBlock = std::nullopt;
 
     return Status(Status::kOkCompleted);
 }
@@ -1306,8 +1306,8 @@ webm::Status SourceBufferParserWebM::AudioTrackData::consumeFrameData(webm::Read
 
 
     m_packetDescriptions.append({ static_cast<int64_t>(*m_currentPacketByteOffset), 0, static_cast<UInt32>(*m_currentPacketSize) });
-    m_currentPacketByteOffset = WTF::nullopt;
-    m_currentPacketSize = WTF::nullopt;
+    m_currentPacketByteOffset = std::nullopt;
+    m_currentPacketSize = std::nullopt;
 
     auto sampleDuration = CMTimeGetSeconds(CMTimeSubtract(presentationTime, m_samplePresentationTime)) + CMTimeGetSeconds(m_packetDuration) * sampleCount;
     if (sampleDuration >= m_minimumSampleDuration)

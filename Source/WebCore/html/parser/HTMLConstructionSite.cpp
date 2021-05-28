@@ -725,14 +725,14 @@ Ref<HTMLStackItem> HTMLConstructionSite::createElementFromSavedToken(HTMLStackIt
 Optional<unsigned> HTMLConstructionSite::indexOfFirstUnopenFormattingElement() const
 {
     if (m_activeFormattingElements.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
     unsigned index = m_activeFormattingElements.size();
     do {
         --index;
         const auto& entry = m_activeFormattingElements.at(index);
         if (entry.isMarker() || m_openElements.contains(entry.element())) {
             unsigned firstUnopenElementIndex = index + 1;
-            return firstUnopenElementIndex < m_activeFormattingElements.size() ? firstUnopenElementIndex : Optional<unsigned>(WTF::nullopt);
+            return firstUnopenElementIndex < m_activeFormattingElements.size() ? firstUnopenElementIndex : Optional<unsigned>(std::nullopt);
         }
     } while (index);
 

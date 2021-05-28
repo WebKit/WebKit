@@ -55,7 +55,7 @@ struct MediaStreamRequest {
         if (decoder.decode(request.type) && decoder.decode(request.audioConstraints) && decoder.decode(request.videoConstraints) && decoder.decode(request.isUserGesturePriviledged))
             return request;
 
-        return WTF::nullopt;
+        return std::nullopt;
     }
 };
 

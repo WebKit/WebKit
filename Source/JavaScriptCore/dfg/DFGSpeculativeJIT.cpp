@@ -418,7 +418,7 @@ void SpeculativeJIT::runSlowPathGenerators(PCToCodeOriginMapBuilder& pcToCodeOri
         m_outOfLineStreamIndex = slowPathLambda.streamIndex;
         pcToCodeOriginMapBuilder.appendItem(m_jit.labelIgnoringWatchpoints(), currentNode->origin.semantic);
         slowPathLambda.generator();
-        m_outOfLineStreamIndex = WTF::nullopt;
+        m_outOfLineStreamIndex = std::nullopt;
     }
 }
 
@@ -9126,7 +9126,7 @@ void SpeculativeJIT::compileArraySlice(Node* node)
         m_jit.load32(MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), lengthGPR);
 
         if (node->numChildren() == 4)
-            emitPopulateSliceIndex(m_jit.graph().varArgChild(node, 2), WTF::nullopt, lengthGPR, tempGPR);
+            emitPopulateSliceIndex(m_jit.graph().varArgChild(node, 2), std::nullopt, lengthGPR, tempGPR);
         else
             m_jit.move(lengthGPR, tempGPR);
 
@@ -9136,7 +9136,7 @@ void SpeculativeJIT::compileArraySlice(Node* node)
         } else {
             GPRTemporary tempStartIndex(this);
             GPRReg startGPR = tempStartIndex.gpr();
-            emitPopulateSliceIndex(m_jit.graph().varArgChild(node, 1), WTF::nullopt, lengthGPR, startGPR);
+            emitPopulateSliceIndex(m_jit.graph().varArgChild(node, 1), std::nullopt, lengthGPR, startGPR);
 
             auto tooBig = m_jit.branch32(MacroAssembler::Above, startGPR, tempGPR);
             m_jit.sub32(startGPR, tempGPR); // the size of the array we'll make.
@@ -9226,10 +9226,10 @@ void SpeculativeJIT::compileArraySlice(Node* node)
     } else {
         m_jit.load32(MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), tempValue);
         if (node->numChildren() == 4)
-            emitPopulateSliceIndex(m_jit.graph().varArgChild(node, 2), WTF::nullopt, tempValue, tempGPR);
+            emitPopulateSliceIndex(m_jit.graph().varArgChild(node, 2), std::nullopt, tempValue, tempGPR);
         else
             m_jit.move(tempValue, tempGPR);
-        emitPopulateSliceIndex(m_jit.graph().varArgChild(node, 1), WTF::nullopt, tempValue, loadIndex);
+        emitPopulateSliceIndex(m_jit.graph().varArgChild(node, 1), std::nullopt, tempValue, loadIndex);
     }
 
     GPRTemporary temp5(this);
@@ -9283,7 +9283,7 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
     m_jit.load32(MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), lengthGPR);
 
     if (node->numChildren() == 4)
-        emitPopulateSliceIndex(m_jit.graph().varArgChild(node, 2), WTF::nullopt, lengthGPR, indexGPR);
+        emitPopulateSliceIndex(m_jit.graph().varArgChild(node, 2), std::nullopt, lengthGPR, indexGPR);
     else
         m_jit.move(TrustedImm32(0), indexGPR);
 

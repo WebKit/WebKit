@@ -91,7 +91,7 @@ void MarkingConstraintSolver::drain(BitVector& unexecuted)
     auto pickNext = scopedLambda<Optional<unsigned>()>(
         [&] () -> Optional<unsigned> {
             if (iter == end)
-                return WTF::nullopt;
+                return std::nullopt;
             return *iter++;
         });
     execute(NextConstraintFirst, pickNext);
@@ -128,10 +128,10 @@ void MarkingConstraintSolver::converge(const Vector<MarkingConstraint*>& order)
     auto pickNext = scopedLambda<Optional<unsigned>()>(
         [&] () -> Optional<unsigned> {
             if (didVisitSomething())
-                return WTF::nullopt;
+                return std::nullopt;
             
             if (index >= order.size())
-                return WTF::nullopt;
+                return std::nullopt;
             
             MarkingConstraint& constraint = *order[index++];
             return constraint.index();

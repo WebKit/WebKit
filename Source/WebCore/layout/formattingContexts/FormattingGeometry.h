@@ -73,8 +73,8 @@ public:
     Optional<LayoutUnit> computedValue(const Length& geometryProperty, LayoutUnit containingBlockWidth) const;
     Optional<LayoutUnit> fixedValue(const Length& geometryProperty) const;
 
-    Optional<LayoutUnit> computedMinHeight(const Box&, Optional<LayoutUnit> containingBlockHeight = WTF::nullopt) const;
-    Optional<LayoutUnit> computedMaxHeight(const Box&, Optional<LayoutUnit> containingBlockHeight = WTF::nullopt) const;
+    Optional<LayoutUnit> computedMinHeight(const Box&, Optional<LayoutUnit> containingBlockHeight = std::nullopt) const;
+    Optional<LayoutUnit> computedMaxHeight(const Box&, Optional<LayoutUnit> containingBlockHeight = std::nullopt) const;
 
     Optional<LayoutUnit> computedMinWidth(const Box&, LayoutUnit containingBlockWidth) const;
     Optional<LayoutUnit> computedMaxWidth(const Box&, LayoutUnit containingBlockWidth) const;
@@ -84,9 +84,9 @@ public:
     LayoutUnit contentHeightForFormattingContextRoot(const ContainerBox&) const;
 
     ConstraintsForOutOfFlowContent constraintsForOutOfFlowContent(const ContainerBox&) const;
-    ConstraintsForInFlowContent constraintsForInFlowContent(const ContainerBox&, Optional<FormattingContext::EscapeReason> = WTF::nullopt) const;
+    ConstraintsForInFlowContent constraintsForInFlowContent(const ContainerBox&, Optional<FormattingContext::EscapeReason> = std::nullopt) const;
 
-    Optional<LayoutUnit> computedHeight(const Box&, Optional<LayoutUnit> containingBlockHeight = WTF::nullopt) const;
+    Optional<LayoutUnit> computedHeight(const Box&, Optional<LayoutUnit> containingBlockHeight = std::nullopt) const;
     Optional<LayoutUnit> computedWidth(const Box&, LayoutUnit containingBlockWidth) const;
 
     bool isBlockFormattingGeometry() const { return formattingContext().isBlockFormattingContext(); }

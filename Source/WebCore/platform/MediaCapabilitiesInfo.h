@@ -52,17 +52,17 @@ Optional<MediaCapabilitiesInfo> MediaCapabilitiesInfo::decode(Decoder& decoder)
     Optional<bool> supported;
     decoder >> supported;
     if (!supported)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> smooth;
     decoder >> smooth;
     if (!smooth)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> powerEfficient;
     decoder >> powerEfficient;
     if (!powerEfficient)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{
         *supported,

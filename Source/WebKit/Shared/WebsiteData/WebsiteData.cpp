@@ -49,14 +49,14 @@ auto WebsiteData::Entry::decode(IPC::Decoder& decoder) -> Optional<Entry>
     Optional<WebCore::SecurityOriginData> securityOriginData;
     decoder >> securityOriginData;
     if (!securityOriginData)
-        return WTF::nullopt;
+        return std::nullopt;
     result.origin = WTFMove(*securityOriginData);
 
     if (!decoder.decode(result.type))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.size))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return result;
 }

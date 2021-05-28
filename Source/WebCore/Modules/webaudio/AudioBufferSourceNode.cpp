@@ -460,7 +460,7 @@ ExceptionOr<void> AudioBufferSourceNode::startLater(double when, double grainOff
 ExceptionOr<void> AudioBufferSourceNode::startPlaying(double when, double grainOffset, Optional<double> grainDuration)
 {
     ASSERT(isMainThread());
-    ALWAYS_LOG(LOGIDENTIFIER, "when = ", when, ", offset = ", grainOffset, ", duration = ", grainDuration.valueOr(0));
+    ALWAYS_LOG(LOGIDENTIFIER, "when = ", when, ", offset = ", grainOffset, ", duration = ", grainDuration.value_or(0));
 
     if (m_playbackState != UNSCHEDULED_STATE)
         return Exception { InvalidStateError, "Cannot call start more than once."_s };
@@ -481,7 +481,7 @@ ExceptionOr<void> AudioBufferSourceNode::startPlaying(double when, double grainO
 
     m_isGrain = true;
     m_grainOffset = grainOffset;
-    m_grainDuration = grainDuration.valueOr(0);
+    m_grainDuration = grainDuration.value_or(0);
     m_wasGrainDurationGiven = !!grainDuration;
     m_startTime = when;
 

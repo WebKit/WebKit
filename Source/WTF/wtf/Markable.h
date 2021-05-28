@@ -89,7 +89,7 @@ public:
         : m_value(Traits::emptyValue())
     { }
 
-    constexpr Markable(WTF::nullopt_t)
+    constexpr Markable(std::nullopt_t)
         : Markable()
     { }
 
@@ -132,14 +132,14 @@ public:
     {
         if (bool(*this))
             return WTFMove(m_value);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     operator Optional<T>() const&
     {
         if (bool(*this))
             return m_value;
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     Optional<T> asOptional() const

@@ -62,7 +62,7 @@ private:
     class PreloadedEntry;
 
     static bool shouldRegisterLoad(const WebCore::ResourceRequest&);
-    void addPreloadedEntry(std::unique_ptr<Entry>, const GlobalFrameID&, Optional<WebCore::ResourceRequest>&& revalidationRequest = WTF::nullopt);
+    void addPreloadedEntry(std::unique_ptr<Entry>, const GlobalFrameID&, Optional<WebCore::ResourceRequest>&& revalidationRequest = std::nullopt);
     void preloadEntry(const Key&, const SubresourceInfo&, const GlobalFrameID&, Optional<NavigatingToAppBoundDomain>);
     void retrieveEntryFromStorage(const SubresourceInfo&, RetrieveCompletionHandler&&);
     void revalidateSubresource(const SubresourceInfo&, std::unique_ptr<Entry>, const GlobalFrameID&, Optional<NavigatingToAppBoundDomain>);

@@ -621,7 +621,7 @@ inline void AXObjectCache::selectedChildrenChanged(RenderObject*) { }
 inline void AXObjectCache::selectedChildrenChanged(Node*) { }
 inline void AXObjectCache::setIsSynchronizingSelection(bool) { }
 inline void AXObjectCache::setTextSelectionIntent(const AXTextStateChangeIntent&) { }
-inline Optional<SimpleRange> AXObjectCache::rangeForUnorderedCharacterOffsets(const CharacterOffset&, const CharacterOffset&) { return WTF::nullopt; }
+inline Optional<SimpleRange> AXObjectCache::rangeForUnorderedCharacterOffsets(const CharacterOffset&, const CharacterOffset&) { return std::nullopt; }
 inline IntRect AXObjectCache::absoluteCaretBoundsForCharacterOffset(const CharacterOffset&) { return IntRect(); }
 inline CharacterOffset AXObjectCache::characterOffsetForIndex(int, const AXCoreObject*) { return CharacterOffset(); }
 inline CharacterOffset AXObjectCache::startOrEndCharacterOffsetForRange(const SimpleRange&, bool, bool) { return CharacterOffset(); }

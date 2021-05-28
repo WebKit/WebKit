@@ -514,7 +514,7 @@ void NetworkStorageSession::deleteCookie(const URL& url, const String& cookieNam
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage = this->cookieStorage();
-    RetainPtr<NSArray> cookies = httpCookiesForURL(cookieStorage.get(), nil, WTF::nullopt, url);
+    RetainPtr<NSArray> cookies = httpCookiesForURL(cookieStorage.get(), nil, std::nullopt, url);
 
     NSString *cookieNameString = cookieName;
 

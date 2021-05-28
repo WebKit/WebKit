@@ -290,7 +290,7 @@ inline void Rect::expand(Optional<LayoutUnit> width, Optional<LayoutUnit> height
 {
     ASSERT(!width || m_hasValidWidth);
     ASSERT(!height || m_hasValidHeight);
-    m_rect.expand(width.valueOr(0), height.valueOr(0));
+    m_rect.expand(width.value_or(0), height.value_or(0));
 }
 
 inline void Rect::expandToContain(const Rect& rect)

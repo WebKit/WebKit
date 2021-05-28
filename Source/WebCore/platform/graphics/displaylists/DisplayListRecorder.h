@@ -193,7 +193,7 @@ private:
             else if (auto rect = item.globalBounds())
                 m_displayList.addDrawingItemExtent(*rect);
             else
-                m_displayList.addDrawingItemExtent(WTF::nullopt);
+                m_displayList.addDrawingItemExtent(std::nullopt);
         }
     }
 

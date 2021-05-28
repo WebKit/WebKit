@@ -77,7 +77,7 @@ static Ref<FetchResponse> createResponse(ScriptExecutionContext& context, const 
 {
     auto resourceResponse = record.response;
     resourceResponse.setSource(ResourceResponse::Source::DOMCache);
-    auto response = FetchResponse::create(context, WTF::nullopt, record.responseHeadersGuard, WTFMove(resourceResponse));
+    auto response = FetchResponse::create(context, std::nullopt, record.responseHeadersGuard, WTFMove(resourceResponse));
     response->setBodyData(copyResponseBody(record.responseBody), record.responseBodySize);
     return response;
 }
@@ -418,7 +418,7 @@ void DOMCache::remove(RequestInfo&& info, CacheQueryOptions&& options, DOMPromis
 static Ref<FetchRequest> createRequest(ScriptExecutionContext& context, const DOMCacheEngine::Record& record)
 {
     auto requestHeaders = FetchHeaders::create(record.requestHeadersGuard, HTTPHeaderMap { record.request.httpHeaderFields() });
-    return FetchRequest::create(context, WTF::nullopt, WTFMove(requestHeaders),  ResourceRequest { record.request }, FetchOptions { record.options }, String { record.referrer });
+    return FetchRequest::create(context, std::nullopt, WTFMove(requestHeaders),  ResourceRequest { record.request }, FetchOptions { record.options }, String { record.referrer });
 }
 
 void DOMCache::keys(Optional<RequestInfo>&& info, CacheQueryOptions&& options, KeysPromise&& promise)

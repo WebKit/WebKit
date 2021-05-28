@@ -90,31 +90,31 @@ template<class Decoder> Optional<PixelBuffer> PixelBuffer::decode(Decoder& decod
     Optional<PixelBufferFormat> format;
     decoder >> format;
     if (!format)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // FIXME: Support non-8 bit formats.
     if (!(format->pixelFormat == PixelFormat::RGBA8 || format->pixelFormat == PixelFormat::BGRA8))
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<IntSize> size;
     decoder >> size;
     if (!size)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto computedBufferSize = PixelBuffer::computeBufferSize(*format, *size);
     if (computedBufferSize.hasOverflowed())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto bufferSize = computedBufferSize.unsafeGet();
     if (!decoder.template bufferIsLargeEnoughToContain<uint8_t>(bufferSize))
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto result = PixelBuffer::tryCreateForDecoding(WTFMove(*format), *size, bufferSize);
     if (!result)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decodeFixedLengthData(result->m_data->data(), result->m_data->byteLength(), 1))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return result;
 }

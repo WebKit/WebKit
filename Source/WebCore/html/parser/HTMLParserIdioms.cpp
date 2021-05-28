@@ -225,12 +225,12 @@ static Optional<int> parseValidHTMLNonNegativeIntegerInternal(const CharacterTyp
     // A string is a valid non-negative integer if it consists of one or more ASCII digits.
     for (auto* c = position; c < end; ++c) {
         if (!isASCIIDigit(*c))
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     auto optionalSignedValue = parseHTMLIntegerInternal(position, end);
     if (!optionalSignedValue || optionalSignedValue.value() < 0)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return optionalSignedValue.value();
 }
@@ -239,7 +239,7 @@ static Optional<int> parseValidHTMLNonNegativeIntegerInternal(const CharacterTyp
 Optional<int> parseValidHTMLNonNegativeInteger(StringView input)
 {
     if (input.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (LIKELY(input.is8Bit())) {
         auto* start = input.characters8();
@@ -258,7 +258,7 @@ static Optional<double> parseValidHTMLFloatingPointNumberInternal(const Characte
     // parseDouble() allows the string to start with a '+' or to end with a '.' but those
     // are not valid floating point numbers as per HTML.
     if (*position == '+' || *(position + length - 1) == '.')
-        return WTF::nullopt;
+        return std::nullopt;
 
     size_t parsedLength = 0;
     double number = parseDouble(position, length, parsedLength);
@@ -269,7 +269,7 @@ static Optional<double> parseValidHTMLFloatingPointNumberInternal(const Characte
 Optional<double> parseValidHTMLFloatingPointNumber(StringView input)
 {
     if (input.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (LIKELY(input.is8Bit())) {
         auto* start = input.characters8();

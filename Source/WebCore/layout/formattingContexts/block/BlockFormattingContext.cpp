@@ -197,9 +197,9 @@ LayoutUnit BlockFormattingContext::usedContentHeight() const
 
     auto floatingContext = FloatingContext { *this, formattingState().floatingState() };
     if (auto floatTop = floatingContext.top()) {
-        top = std::min(*floatTop, top.valueOr(*floatTop));
+        top = std::min(*floatTop, top.value_or(*floatTop));
         auto floatBottom = *floatingContext.bottom();
-        bottom = std::max(floatBottom, bottom.valueOr(floatBottom));
+        bottom = std::max(floatBottom, bottom.value_or(floatBottom));
     }
     return *bottom - *top;
 }
@@ -296,7 +296,7 @@ void BlockFormattingContext::precomputeVerticalPositionForBoxAndAncestors(const 
         }();
 
         auto computedVerticalMargin = formattingGeometry.computedVerticalMargin(*ancestor, constraintsForAncestor.horizontal);
-        auto usedNonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
+        auto usedNonCollapsedMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.value_or(0), computedVerticalMargin.after.value_or(0) };
         auto precomputedMarginBefore = marginCollapse().precomputedMarginBefore(*ancestor, usedNonCollapsedMargin, formattingGeometry);
 
         auto& boxGeometry = formattingState().boxGeometry(*ancestor);

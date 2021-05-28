@@ -231,10 +231,10 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
         return boxGeometry.marginBoxWidth();
 
     if (inlineItem.isInlineBoxStart())
-        return boxGeometry.marginStart() + boxGeometry.borderLeft() + boxGeometry.paddingLeft().valueOr(0);
+        return boxGeometry.marginStart() + boxGeometry.borderLeft() + boxGeometry.paddingLeft().value_or(0);
 
     if (inlineItem.isInlineBoxEnd())
-        return boxGeometry.marginEnd() + boxGeometry.borderRight() + boxGeometry.paddingRight().valueOr(0);
+        return boxGeometry.marginEnd() + boxGeometry.borderRight() + boxGeometry.paddingRight().value_or(0);
 
     // Non-replaced inline box (e.g. inline-block)
     return boxGeometry.marginBoxWidth();
@@ -305,7 +305,7 @@ LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRa
         // 2. Apply floats and shrink the available horizontal space e.g. <span>intru_<div style="float: left"></div>sive_float</span>.
         // 3. Check if the content fits the line and commit the content accordingly (full, partial or not commit at all).
         // 4. Return if we are at the end of the line either by not being able to fit more content or because of an explicit line break.
-        candidateContentForLine(lineCandidate, currentItemIndex, needsLayoutRange, partialLeadingContentLength, std::exchange(leadingLogicalWidth, WTF::nullopt), m_line.contentLogicalRight());
+        candidateContentForLine(lineCandidate, currentItemIndex, needsLayoutRange, partialLeadingContentLength, std::exchange(leadingLogicalWidth, std::nullopt), m_line.contentLogicalRight());
         // Now check if we can put this content on the current line.
         auto result = Result { };
         if (lineCandidate.floatItem) {
@@ -474,7 +474,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
         // Handle leading partial content first (overflowing text from the previous line).
         // Construct a partial leading inline item.
         m_partialLeadingTextItem = downcast<InlineTextItem>(m_inlineItems[currentInlineItemIndex]).right(partialLeadingContentLength);
-        auto itemWidth = leadingLogicalWidth ? *std::exchange(leadingLogicalWidth, WTF::nullopt) : inlineItemWidth(*m_partialLeadingTextItem, currentLogicalRight);
+        auto itemWidth = leadingLogicalWidth ? *std::exchange(leadingLogicalWidth, std::nullopt) : inlineItemWidth(*m_partialLeadingTextItem, currentLogicalRight);
         lineCandidate.inlineContent.appendInlineItem(*m_partialLeadingTextItem, itemWidth);
         currentLogicalRight += itemWidth;
         ++currentInlineItemIndex;
@@ -490,7 +490,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
         }
         if (inlineItem.isText() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isBox()) {
             ASSERT(!leadingLogicalWidth || inlineItem.isText());
-            auto logicalWidth = leadingLogicalWidth ? *std::exchange(leadingLogicalWidth, WTF::nullopt) : inlineItemWidth(inlineItem, currentLogicalRight);
+            auto logicalWidth = leadingLogicalWidth ? *std::exchange(leadingLogicalWidth, std::nullopt) : inlineItemWidth(inlineItem, currentLogicalRight);
             lineCandidate.inlineContent.appendInlineItem(inlineItem, logicalWidth);
             currentLogicalRight += logicalWidth;
             continue;

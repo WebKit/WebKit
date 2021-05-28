@@ -460,7 +460,7 @@ DatabaseDetails DatabaseTracker::detailsForNameAndOrigin(const String& name, con
 
     String path = fullPathForDatabase(origin, name, false);
     if (path.isEmpty())
-        return DatabaseDetails(name, displayName, expectedUsage, 0, WTF::nullopt, WTF::nullopt);
+        return DatabaseDetails(name, displayName, expectedUsage, 0, std::nullopt, std::nullopt);
     return DatabaseDetails(name, displayName, expectedUsage, SQLiteFileSystem::databaseFileSize(path), SQLiteFileSystem::databaseCreationTime(path), SQLiteFileSystem::databaseModificationTime(path));
 }
 

@@ -133,7 +133,7 @@ static Optional<ObjCType> typeFromObject(id object)
         return ObjCType::WKTypeRefWrapper;
     ALLOW_DEPRECATED_DECLARATIONS_END
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void ObjCObjectGraph::encode(IPC::Encoder& encoder, id object)

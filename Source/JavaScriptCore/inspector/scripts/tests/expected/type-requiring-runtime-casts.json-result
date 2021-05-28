@@ -675,7 +675,7 @@ Optional<Protocol::Test::UncastedAnimals> parseEnumValueFromString<Protocol::Tes
         if (protocolString == enum_constant_values[constantValues[i]])
             return (Protocol::Test::UncastedAnimals)constantValues[i];
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<>
@@ -691,7 +691,7 @@ Optional<Protocol::Test::CastedAnimals> parseEnumValueFromString<Protocol::Test:
         if (protocolString == enum_constant_values[constantValues[i]])
             return (Protocol::Test::CastedAnimals)constantValues[i];
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace TestHelpers
@@ -1217,7 +1217,7 @@ inline Optional<TestProtocolTestUncastedAnimals> fromProtocolString(const String
         return TestProtocolTestUncastedAnimalsCats;
     if (value == "Hens")
         return TestProtocolTestUncastedAnimalsHens;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 inline String toProtocolString(TestProtocolTestCastedAnimals value)
@@ -1245,7 +1245,7 @@ inline Optional<TestProtocolTestCastedAnimals> fromProtocolString(const String& 
         return TestProtocolTestCastedAnimalsCrows;
     if (value == "Flamingos")
         return TestProtocolTestCastedAnimalsFlamingos;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace Inspector
@@ -1408,7 +1408,7 @@ using namespace Inspector;
     self.number = [payload[@"number"] integerValue];
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"animals"], @"animals");
-    Optional<TestProtocolTestCastedAnimals> animals = fromProtocolString<TestProtocolTestCastedAnimals>(payload[@"animals"]);
+    Optional<TestProtocolTestCastedAnimals> animals = fromProtocolString<TestProtocolTestCastedAnimals>((__bridge CFStringRef)payload[@"animals"]);
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(animals, @"animals");
     self.animals = animals.value();
 
@@ -1472,7 +1472,7 @@ using namespace Inspector;
 
 - (TestProtocolTestCastedAnimals)animals
 {
-    return fromProtocolString<TestProtocolTestCastedAnimals>([super stringForKey:@"animals"]).value();
+    return fromProtocolString<TestProtocolTestCastedAnimals>((__bridge CFStringRef)[super stringForKey:@"animals"]).value();
 }
 
 - (void)setIdentifier:(int)identifier

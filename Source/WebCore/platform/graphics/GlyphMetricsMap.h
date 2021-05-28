@@ -117,7 +117,7 @@ template<> inline FloatRect GlyphMetricsMap<FloatRect>::unknownMetrics()
 
 template<> inline Optional<Path> GlyphMetricsMap<Optional<Path>>::unknownMetrics()
 {
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<class T> typename GlyphMetricsMap<T>::GlyphMetricsPage& GlyphMetricsMap<T>::locatePageSlowCase(unsigned pageNumber)

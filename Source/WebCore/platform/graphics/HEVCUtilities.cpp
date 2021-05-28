@@ -39,23 +39,23 @@ Optional<HEVCParameters> parseHEVCCodecParameters(StringView codecString)
     auto codecSplit = codecView.split('.');
     auto nextElement = codecSplit.begin();
     if (nextElement == codecSplit.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     HEVCParameters parameters;
 
     // Codec identifier: legal values are specified in ISO/IEC 14496-15:2014, section 8:
     auto codecName = *nextElement;
     if (codecName != "hvc1" && codecName != "hev1")
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (++nextElement == codecSplit.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     // First element: Optional General Profile Space parameter ['A', 'B', 'C'], mapping to [1, 2, 3]
     // and [0] for absent, then General Profile IDC as a 5-bit decimal number.
     auto profileSpace = *nextElement;
     if (!profileSpace.length())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto firstCharacter = profileSpace[0];
     bool hasProfileSpace = firstCharacter >= 'A' && firstCharacter <= 'C';
@@ -66,32 +66,32 @@ Optional<HEVCParameters> parseHEVCCodecParameters(StringView codecString)
 
     auto profileIDC = parseInteger<uint8_t>(profileSpace);
     if (!profileIDC)
-        return WTF::nullopt;
+        return std::nullopt;
     parameters.generalProfileIDC = *profileIDC;
 
     if (++nextElement == codecSplit.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Second element: 32 bit of General Profile Compatibility Flags, in reverse bit order,
     // in hex with leading zeros omitted.
     auto compatibilityFlags = parseInteger<uint32_t>(*nextElement, 16);
     if (!compatibilityFlags)
-        return WTF::nullopt;
+        return std::nullopt;
     parameters.generalProfileCompatibilityFlags = *compatibilityFlags;
 
     if (++nextElement == codecSplit.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Third element: General Tier Flag ['L', 'H'], mapping to [false, true], followed by
     // General Level IDC as a 8-bit decimal number.
     auto generalTier = *nextElement;
     firstCharacter = generalTier[0];
     if (firstCharacter != 'L' && firstCharacter != 'H')
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto generalLevelIDC = parseInteger<uint8_t>(generalTier.substring(1));
     if (!generalLevelIDC)
-        return WTF::nullopt;
+        return std::nullopt;
     parameters.generalLevelIDC = *generalLevelIDC;
 
     // Optional fourth and remaining elements: a sequence of 6 1-byte constraint flags, each byte encoded
@@ -100,7 +100,7 @@ Optional<HEVCParameters> parseHEVCCodecParameters(StringView codecString)
         if (++nextElement == codecSplit.end())
             break;
         if (!parseInteger<uint8_t>(*nextElement, 16))
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     return parameters;
@@ -109,7 +109,7 @@ Optional<HEVCParameters> parseHEVCCodecParameters(StringView codecString)
 template<typename ValueType> inline Optional<ValueType> makeOptionalFromPointer(const ValueType* pointer)
 {
     if (!pointer)
-        return WTF::nullopt;
+        return std::nullopt;
     return *pointer;
 }
 
@@ -162,7 +162,7 @@ static Optional<uint16_t> maximumLevelIDForDoViProfileID(uint16_t profileID)
     case 7: return 9;
     case 8: return 13;
     case 9: return 5;
-    default: return WTF::nullopt;
+    default: return std::nullopt;
     }
 }
 
@@ -179,53 +179,53 @@ Optional<DoViParameters> parseDoViCodecParameters(StringView codecView)
     auto codecSplit = codecView.split('.');
     auto nextElement = codecSplit.begin();
     if (nextElement == codecSplit.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     DoViParameters parameters;
 
     auto codec = parseDoViCodecType(*nextElement);
     if (!codec)
-        return WTF::nullopt;
+        return std::nullopt;
     parameters.codec = *codec;
 
     if (++nextElement == codecSplit.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto profileID = *nextElement;
     if (!profileID.length())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto firstCharacter = profileID[0];
     // Profile definition can either be numeric or alpha:
     if (firstCharacter == '0') {
         auto bitstreamProfileID = parseInteger<uint8_t>(profileID);
         if (!bitstreamProfileID)
-            return WTF::nullopt;
+            return std::nullopt;
         parameters.bitstreamProfileID = *bitstreamProfileID;
     } else {
         auto bitstreamProfileID = profileIDForAlphabeticDoViProfile(codecView.left(5 + profileID.length()));
         if (!bitstreamProfileID)
-            return WTF::nullopt;
+            return std::nullopt;
         parameters.bitstreamProfileID = *bitstreamProfileID;
     }
 
     if (!isValidDoViProfileID(parameters.bitstreamProfileID))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!isValidProfileIDForCodec(parameters.bitstreamProfileID, parameters.codec))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (++nextElement == codecSplit.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto bitstreamLevelID = parseInteger<uint8_t>(*nextElement);
     if (!bitstreamLevelID)
-        return WTF::nullopt;
+        return std::nullopt;
     parameters.bitstreamLevelID = *bitstreamLevelID;
 
     auto maximumLevelID = maximumLevelIDForDoViProfileID(parameters.bitstreamProfileID);
     if (!maximumLevelID || parameters.bitstreamLevelID > *maximumLevelID)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return parameters;
 }

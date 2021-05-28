@@ -81,7 +81,7 @@ void SVGFETurbulenceElement::parseAttribute(const QualifiedName& name, const Ato
     }
 
     if (name == SVGNames::numOctavesAttr) {
-        m_numOctaves->setBaseValInternal(parseInteger<unsigned>(value).valueOr(0));
+        m_numOctaves->setBaseValInternal(parseInteger<unsigned>(value).value_or(0));
         return;
     }
 

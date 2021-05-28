@@ -789,7 +789,7 @@ private:
             uintptr_t end = this->end();
             if (islandBegin() <= island && island < end)
                 return ((end - island) / islandSizeInBytes) - 1;
-            return WTF::nullopt;
+            return std::nullopt;
         }
 
         void freeIsland(uintptr_t island)

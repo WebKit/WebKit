@@ -113,9 +113,9 @@ Optional<InputMethodState> InputMethodState::decode(IPC::Decoder& decoder)
 {
     InputMethodState state;
     if (!decoder.decode(state.purpose))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(state.hints))
-        return WTF::nullopt;
+        return std::nullopt;
     return state;
 }
 

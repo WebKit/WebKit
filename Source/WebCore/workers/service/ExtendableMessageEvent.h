@@ -63,7 +63,7 @@ public:
         return adoptRef(*new ExtendableMessageEvent(state, type, initializer, isTrusted));
     }
 
-    static Ref<ExtendableMessageEvent> create(Vector<RefPtr<MessagePort>>&&, RefPtr<SerializedScriptValue>&&, const String& origin = { }, const String& lastEventId = { }, Optional<ExtendableMessageEventSource>&& source = WTF::nullopt);
+    static Ref<ExtendableMessageEvent> create(Vector<RefPtr<MessagePort>>&&, RefPtr<SerializedScriptValue>&&, const String& origin = { }, const String& lastEventId = { }, Optional<ExtendableMessageEventSource>&& source = std::nullopt);
 
     ~ExtendableMessageEvent();
 

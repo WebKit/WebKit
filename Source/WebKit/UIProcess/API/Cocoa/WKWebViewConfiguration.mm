@@ -537,12 +537,12 @@ static NSString *defaultApplicationNameForUserAgent()
 
 - (NSString *)_applicationNameForDesktopUserAgent
 {
-    return _applicationNameForUserAgent.valueOr(nil).get();
+    return _applicationNameForUserAgent.value_or(nil).get();
 }
 
 - (NSString *)applicationNameForUserAgent
 {
-    return _applicationNameForUserAgent.valueOr(defaultApplicationNameForUserAgent()).get();
+    return _applicationNameForUserAgent.value_or(defaultApplicationNameForUserAgent()).get();
 }
 
 - (void)setApplicationNameForUserAgent:(NSString *)applicationNameForUserAgent
@@ -952,18 +952,18 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_setLoadsFromNetwork:(BOOL)loads
 {
-    _pageConfiguration->setAllowedNetworkHosts(loads ? WTF::nullopt : Optional<HashSet<String>> { HashSet<String> { } });
+    _pageConfiguration->setAllowedNetworkHosts(loads ? std::nullopt : Optional<HashSet<String>> { HashSet<String> { } });
 }
 
 - (BOOL)_loadsFromNetwork
 {
-    return _pageConfiguration->allowedNetworkHosts() == WTF::nullopt;
+    return _pageConfiguration->allowedNetworkHosts() == std::nullopt;
 }
 
 - (void)_setAllowedNetworkHosts:(NSSet<NSString *> *)hosts
 {
     if (!hosts)
-        return _pageConfiguration->setAllowedNetworkHosts(WTF::nullopt);
+        return _pageConfiguration->setAllowedNetworkHosts(std::nullopt);
     HashSet<String> set;
     for (NSString *host in hosts)
         set.add(host);
@@ -1156,7 +1156,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (double)_cpuLimit
 {
-    return _pageConfiguration->cpuLimit().valueOr(0);
+    return _pageConfiguration->cpuLimit().value_or(0);
 }
 
 #endif // PLATFORM(MAC)

@@ -146,7 +146,7 @@ Optional<ScriptElement::ScriptType> ScriptElement::determineScriptType(LegacyTyp
             return ScriptType::Classic;
         if (isLegacySupportedJavaScriptLanguage(language))
             return ScriptType::Classic;
-        return WTF::nullopt;
+        return std::nullopt;
     }
     if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(type.stripWhiteSpace()))
         return ScriptType::Classic;
@@ -158,13 +158,13 @@ Optional<ScriptElement::ScriptType> ScriptElement::determineScriptType(LegacyTyp
     // Once "defer" is implemented, we can reconsider enabling modules in XHTML.
     // https://bugs.webkit.org/show_bug.cgi?id=123387
     if (!m_element.document().isHTMLDocument())
-        return WTF::nullopt;
+        return std::nullopt;
 
     // https://html.spec.whatwg.org/multipage/scripting.html#attr-script-type
     // Setting the attribute to an ASCII case-insensitive match for the string "module" means that the script is a module script.
     if (equalLettersIgnoringASCIICase(type, "module"))
         return ScriptType::Module;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 // http://dev.w3.org/html5/spec/Overview.html#prepare-a-script

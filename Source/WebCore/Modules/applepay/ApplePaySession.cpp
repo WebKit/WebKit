@@ -197,7 +197,7 @@ static ExceptionOr<PaymentAuthorizationResult> convertAndValidate(ApplePayPaymen
 
     case ApplePaySession::STATUS_INVALID_BILLING_POSTAL_ADDRESS:
         convertedResult.status = PaymentAuthorizationStatus::Failure;
-        convertedResult.errors.append(ApplePayError::create(ApplePayErrorCode::BillingContactInvalid, WTF::nullopt, nullString()));
+        convertedResult.errors.append(ApplePayError::create(ApplePayErrorCode::BillingContactInvalid, std::nullopt, nullString()));
         break;
 
     case ApplePaySession::STATUS_INVALID_SHIPPING_POSTAL_ADDRESS:
@@ -207,7 +207,7 @@ static ExceptionOr<PaymentAuthorizationResult> convertAndValidate(ApplePayPaymen
 
     case ApplePaySession::STATUS_INVALID_SHIPPING_CONTACT:
         convertedResult.status = PaymentAuthorizationStatus::Failure;
-        convertedResult.errors.append(ApplePayError::create(ApplePayErrorCode::ShippingContactInvalid, WTF::nullopt, nullString()));
+        convertedResult.errors.append(ApplePayError::create(ApplePayErrorCode::ShippingContactInvalid, std::nullopt, nullString()));
         break;
 
     case ApplePaySession::STATUS_PIN_REQUIRED:

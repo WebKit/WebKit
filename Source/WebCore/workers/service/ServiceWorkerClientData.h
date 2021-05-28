@@ -66,27 +66,27 @@ Optional<ServiceWorkerClientData> ServiceWorkerClientData::decode(Decoder& decod
     Optional<ServiceWorkerClientIdentifier> identifier;
     decoder >> identifier;
     if (!identifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<ServiceWorkerClientType> type;
     decoder >> type;
     if (!type)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<ServiceWorkerClientFrameType> frameType;
     decoder >> frameType;
     if (!frameType)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<URL> url;
     decoder >> url;
     if (!url)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<LastNavigationWasAppBound> lastNavigationWasAppBound;
     decoder >> lastNavigationWasAppBound;
     if (!lastNavigationWasAppBound)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return { { WTFMove(*identifier), WTFMove(*type), WTFMove(*frameType), WTFMove(*url), WTFMove(*lastNavigationWasAppBound) } };
 }

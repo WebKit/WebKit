@@ -148,7 +148,7 @@ public:
     WebProcessPool& processPool() const;
 
     bool isMatchingRegistrableDomain(const WebCore::RegistrableDomain& domain) const { return m_registrableDomain ? *m_registrableDomain == domain : false; }
-    WebCore::RegistrableDomain registrableDomain() const { return m_registrableDomain.valueOr(WebCore::RegistrableDomain { }); }
+    WebCore::RegistrableDomain registrableDomain() const { return m_registrableDomain.value_or(WebCore::RegistrableDomain { }); }
     void setIsInProcessCache(bool);
     bool isInProcessCache() const { return m_isInProcessCache; }
 

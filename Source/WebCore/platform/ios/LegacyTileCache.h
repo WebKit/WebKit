@@ -132,7 +132,7 @@ public:
     unsigned tileCapacityForGrid(LegacyTileGrid*);
     Color colorForGridTileBorder(LegacyTileGrid*) const;
     bool setOverrideVisibleRect(const FloatRect&);
-    void clearOverrideVisibleRect() { m_overrideVisibleRect = WTF::nullopt; }
+    void clearOverrideVisibleRect() { m_overrideVisibleRect = std::nullopt; }
 
     void doPendingRepaints();
 

@@ -123,8 +123,8 @@
 #include "NetworkStorageSession.h"
 #endif
 
-#define PAGE_ID ((m_frame ? m_frame->pageID().valueOr(PageIdentifier()) : PageIdentifier()).toUInt64())
-#define FRAME_ID ((m_frame ? m_frame->frameID().valueOr(FrameIdentifier()) : FrameIdentifier()).toUInt64())
+#define PAGE_ID ((m_frame ? m_frame->pageID().value_or(PageIdentifier()) : PageIdentifier()).toUInt64())
+#define FRAME_ID ((m_frame ? m_frame->frameID().value_or(FrameIdentifier()) : FrameIdentifier()).toUInt64())
 #define IS_MAIN_FRAME (m_frame ? m_frame->isMainFrame() : false)
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", main=%d] DocumentLoader::" fmt, this, PAGE_ID, FRAME_ID, IS_MAIN_FRAME, ##__VA_ARGS__)
 
@@ -332,7 +332,7 @@ void DocumentLoader::stopLoading()
     
 #if ENABLE(APPLICATION_MANIFEST)
     for (auto callbackIdentifier : m_applicationManifestLoaders.values())
-        notifyFinishedLoadingApplicationManifest(callbackIdentifier, WTF::nullopt);
+        notifyFinishedLoadingApplicationManifest(callbackIdentifier, std::nullopt);
     m_applicationManifestLoaders.clear();
 #endif
 
@@ -556,13 +556,13 @@ void DocumentLoader::matchRegistration(const URL& url, SWClientConnection::Regis
 {
     auto shouldTryLoadingThroughServiceWorker = !frameLoader()->isReloadingFromOrigin() && m_frame->page() && RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && url.protocolIsInHTTPFamily();
     if (!shouldTryLoadingThroughServiceWorker) {
-        callback(WTF::nullopt);
+        callback(std::nullopt);
         return;
     }
 
     auto origin = (!m_frame->isMainFrame() && m_frame->document()) ? m_frame->document()->topOrigin().data() : SecurityOriginData::fromURL(url);
     if (!ServiceWorkerProvider::singleton().serviceWorkerConnection().mayHaveServiceWorkerRegisteredForOrigin(origin)) {
-        callback(WTF::nullopt);
+        callback(std::nullopt);
         return;
     }
 
@@ -2186,7 +2186,7 @@ void DocumentLoader::startIconLoading()
 
     auto findResult = m_linkIcons.findMatching([](auto& icon) { return icon.type == LinkIconType::Favicon; });
     if (findResult == notFound)
-        m_linkIcons.append({ document->completeURL("/favicon.ico"_s), LinkIconType::Favicon, String(), WTF::nullopt, { } });
+        m_linkIcons.append({ document->completeURL("/favicon.ico"_s), LinkIconType::Favicon, String(), std::nullopt, { } });
 
     if (!m_linkIcons.size())
         return;

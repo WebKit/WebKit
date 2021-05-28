@@ -190,8 +190,8 @@ public:
     bool shouldCollectHeuristic();
     
     // Queue up a collection. Returns immediately. This will not queue a collection if a collection
-    // of equal or greater strength exists. Full collections are stronger than WTF::nullopt collections
-    // and WTF::nullopt collections are stronger than Eden collections. WTF::nullopt means that the GC can
+    // of equal or greater strength exists. Full collections are stronger than std::nullopt collections
+    // and std::nullopt collections are stronger than Eden collections. std::nullopt means that the GC can
     // choose Eden or Full. This implies that if you request a GC while that GC is ongoing, nothing
     // will happen.
     JS_EXPORT_PRIVATE void collectAsync(GCRequest = GCRequest());

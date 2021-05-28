@@ -182,14 +182,14 @@ static WebCore::BoxSide boxSide(WebKit::ScrollingDirection direction)
     static const unsigned kWebSpaceKey = 0x20;
 
     if (![_scrollable isKeyboardScrollable])
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (event.keyboardFlags & WebEventKeyboardInputModifierFlagsChanged)
-        return WTF::nullopt;
+        return std::nullopt;
 
     NSString *charactersIgnoringModifiers = event.charactersIgnoringModifiers;
     if (!charactersIgnoringModifiers.length)
-        return WTF::nullopt;
+        return std::nullopt;
 
     enum class Key : uint8_t { Other, LeftArrow, RightArrow, UpArrow, DownArrow, PageUp, PageDown, Space };
     
@@ -216,7 +216,7 @@ static WebCore::BoxSide boxSide(WebKit::ScrollingDirection direction)
     }();
     
     if (key == Key::Other)
-        return WTF::nullopt;
+        return std::nullopt;
     
     BOOL shiftPressed = event.modifierFlags & WebEventFlagMaskShiftKey;
     BOOL altPressed = event.modifierFlags & WebEventFlagMaskOptionKey;
@@ -225,7 +225,7 @@ static WebCore::BoxSide boxSide(WebKit::ScrollingDirection direction)
     // No shortcuts include more than one modifier; we should not eat key events
     // that contain more than one modifier because they might be used for other shortcuts.
     if (shiftPressed + altPressed + cmdPressed > 1)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto allowedModifiers = ^ WebEventFlags {
         switch (key) {
@@ -248,7 +248,7 @@ static WebCore::BoxSide boxSide(WebKit::ScrollingDirection direction)
 
     auto relevantModifierFlags = WebEventFlagMaskOptionKey | WebEventFlagMaskCommandKey | WebEventFlagMaskShiftKey;
     if (event.modifierFlags & relevantModifierFlags & ~allowedModifiers)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto increment = ^{
         switch (key) {
@@ -397,7 +397,7 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
     // out to that point.
     _idealPosition = [_scrollable boundedContentOffset:farthestPointInDirection(_currentPosition + displacement, _idealPositionForMinimumTravel, _currentScroll->direction)];
 
-    _currentScroll = WTF::nullopt;
+    _currentScroll = std::nullopt;
 }
 
 - (BOOL)scrollTriggeringKeyIsPressed

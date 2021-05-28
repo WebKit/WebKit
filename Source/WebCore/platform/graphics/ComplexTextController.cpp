@@ -215,12 +215,12 @@ unsigned ComplexTextController::offsetForPosition(float h, bool includePartialGl
                 if (cursorPositionIterator.isBoundary(hitIndex))
                     clusterStart = hitIndex;
                 else
-                    clusterStart = cursorPositionIterator.preceding(hitIndex).valueOr(0);
+                    clusterStart = cursorPositionIterator.preceding(hitIndex).value_or(0);
 
                 if (!includePartialGlyphs)
                     return complexTextRun.stringLocation() + clusterStart;
 
-                unsigned clusterEnd = cursorPositionIterator.following(hitIndex).valueOr(stringLength);
+                unsigned clusterEnd = cursorPositionIterator.following(hitIndex).value_or(stringLength);
 
                 float clusterWidth;
                 // FIXME: The search stops at the boundaries of complexTextRun. In theory, it should go on into neighboring ComplexTextRuns
@@ -318,13 +318,13 @@ static bool advanceByCombiningCharacterSequence(const UChar*& iterator, const UC
 static inline Optional<UChar32> capitalized(UChar32 baseCharacter)
 {
     if (U_GET_GC_MASK(baseCharacter) & U_GC_M_MASK)
-        return WTF::nullopt;
+        return std::nullopt;
 
     UChar32 uppercaseCharacter = u_toupper(baseCharacter);
     ASSERT(uppercaseCharacter == baseCharacter || (U_IS_BMP(baseCharacter) == U_IS_BMP(uppercaseCharacter)));
     if (uppercaseCharacter != baseCharacter)
         return uppercaseCharacter;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static bool shouldSynthesize(bool dontSynthesizeSmallCaps, const Font* nextFont, UChar32 baseCharacter, Optional<UChar32> capitalizedBase, FontVariantCaps fontVariantCaps, bool engageAllSmallCapsProcessing)

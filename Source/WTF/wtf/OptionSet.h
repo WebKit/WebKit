@@ -208,7 +208,7 @@ public:
 
     constexpr Optional<E> toSingleValue() const
     {
-        return hasExactlyOneBitSet() ? Optional<E>(static_cast<E>(m_storage)) : WTF::nullopt;
+        return hasExactlyOneBitSet() ? Optional<E>(static_cast<E>(m_storage)) : std::nullopt;
     }
 
     constexpr friend bool operator==(OptionSet lhs, OptionSet rhs)

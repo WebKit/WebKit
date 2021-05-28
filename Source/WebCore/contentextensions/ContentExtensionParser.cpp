@@ -276,7 +276,7 @@ static Expected<Optional<Action>, std::error_code> loadAction(JSGlobalObject& le
         String selectorString = asString(selector)->value(&lexicalGlobalObject);
         if (!isValidCSSSelector(selectorString)) {
             // Skip rules with invalid selectors to be backwards-compatible.
-            return { WTF::nullopt };
+            return { std::nullopt };
         }
         return { Action(ActionType::CSSDisplayNoneSelector, selectorString) };
     }
@@ -304,7 +304,7 @@ static Expected<Optional<ContentExtensionRule>, std::error_code> loadRule(JSGlob
     if (action.value())
         return {{{ WTFMove(trigger.value()), WTFMove(action.value().value()) }}};
 
-    return { WTF::nullopt };
+    return { std::nullopt };
 }
 
 static Expected<Vector<ContentExtensionRule>, std::error_code> loadEncodedRules(JSGlobalObject& lexicalGlobalObject, const String& ruleJSON)

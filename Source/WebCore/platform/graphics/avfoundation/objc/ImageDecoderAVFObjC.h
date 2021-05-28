@@ -71,7 +71,7 @@ public:
     RepetitionCount repetitionCount() const final;
     String uti() const final;
     String filenameExtension() const final;
-    Optional<IntPoint> hotSpot() const final { return WTF::nullopt; }
+    Optional<IntPoint> hotSpot() const final { return std::nullopt; }
     String accessibilityDescription() const final { return String(); }
 
     IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const final;

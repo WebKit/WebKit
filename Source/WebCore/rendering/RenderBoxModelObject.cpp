@@ -279,7 +279,7 @@ bool RenderBoxModelObject::hasAutoHeightOrContainingBlockWithAutoHeight() const
         return false;
     
     if (thisBox && thisBox->isGridItem() && thisBox->hasOverridingContainingBlockContentLogicalHeight())
-        return thisBox->overridingContainingBlockContentLogicalHeight() == WTF::nullopt;
+        return thisBox->overridingContainingBlockContentLogicalHeight() == std::nullopt;
     
     if (logicalHeightLength.isAuto() && !isOutOfFlowPositionedWithImplicitHeight(*this))
         return true;
@@ -289,7 +289,7 @@ bool RenderBoxModelObject::hasAutoHeightOrContainingBlockWithAutoHeight() const
     if (!cb || (document().inQuirksMode() && !cb->isFlexibleBoxIncludingDeprecated()))
         return false;
     if (thisBox && thisBox->hasOverridingContainingBlockContentLogicalHeight())
-        return thisBox->overridingContainingBlockContentLogicalHeight() == WTF::nullopt;
+        return thisBox->overridingContainingBlockContentLogicalHeight() == std::nullopt;
     return !cb->hasDefiniteLogicalHeight();
 }
 
@@ -348,7 +348,7 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
     // https://drafts.csswg.org/css-grid/#grid-item-sizing
     if (!style().left().isAuto() || !style().right().isAuto()) {
         LayoutUnit availableWidth = hasOverridingContainingBlockContentWidth()
-            ? overridingContainingBlockContentWidth().valueOr(LayoutUnit()) : containingBlock()->availableWidth();
+            ? overridingContainingBlockContentWidth().value_or(LayoutUnit()) : containingBlock()->availableWidth();
         if (!style().left().isAuto()) {
             if (!style().right().isAuto() && !containingBlock()->style().isLeftToRightDirection())
                 offset.setWidth(-valueForLength(style().right(), !style().right().isFixed() ? availableWidth : 0_lu));
@@ -375,7 +375,7 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
         // We could refactor this and move it to some common code for both ifs, however moving it outside of the ifs
         // is not possible as it'd cause performance regressions.
         offset.expand(0_lu, valueForLength(style().top(), !style().top().isFixed()
-            ? (hasOverridingContainingBlockContentHeight() ? overridingContainingBlockContentHeight().valueOr(0_lu) : containingBlock()->availableHeight())
+            ? (hasOverridingContainingBlockContentHeight() ? overridingContainingBlockContentHeight().value_or(0_lu) : containingBlock()->availableHeight())
             : LayoutUnit()));
     } else if (!style().bottom().isAuto()
         && (!style().bottom().isPercentOrCalculated()
@@ -384,7 +384,7 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
             || hasOverridingContainingBlockContentHeight())) {
         // FIXME: Check comment above for "top", it applies here too.
         offset.expand(0_lu, -valueForLength(style().bottom(), !style().bottom().isFixed()
-            ? (hasOverridingContainingBlockContentHeight() ? overridingContainingBlockContentHeight().valueOr(0_lu) : containingBlock()->availableHeight())
+            ? (hasOverridingContainingBlockContentHeight() ? overridingContainingBlockContentHeight().value_or(0_lu) : containingBlock()->availableHeight())
             : LayoutUnit()));
     }
 

@@ -196,7 +196,7 @@ static Optional<IntSize> densityCorrectedSizeFromProperties(CFDictionaryRef imag
     auto tiffDictionary = (CFDictionaryRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyTIFFDictionary);
 
     if (!exifDictionary || !tiffDictionary)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto widthProperty = (CFNumberRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyPixelWidth);
     auto heightProperty = (CFNumberRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyPixelHeight);
@@ -207,7 +207,7 @@ static Optional<IntSize> densityCorrectedSizeFromProperties(CFDictionaryRef imag
     auto resolutionUnitProperty = (CFNumberRef)CFDictionaryGetValue(tiffDictionary, kCGImagePropertyTIFFResolutionUnit);
 
     if (!preferredWidthProperty || !preferredHeightProperty || !resolutionXProperty || !resolutionYProperty || !resolutionUnitProperty)
-        return WTF::nullopt;
+        return std::nullopt;
 
     int resolutionUnit;
     float sourceWidth, sourceHeight, preferredWidth, preferredHeight, resolutionWidth, resolutionHeight;
@@ -218,7 +218,7 @@ static Optional<IntSize> densityCorrectedSizeFromProperties(CFDictionaryRef imag
         || !CFNumberGetValue(resolutionXProperty, kCFNumberFloat32Type, &resolutionWidth)
         || !CFNumberGetValue(resolutionYProperty, kCFNumberFloat32Type, &resolutionHeight)
         || !CFNumberGetValue(resolutionUnitProperty, kCFNumberIntType, &resolutionUnit)) {
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     return ImageResolution::densityCorrectedSize(FloatSize(sourceWidth, sourceHeight), {
@@ -391,19 +391,19 @@ Optional<IntPoint> ImageDecoderCG::hotSpot() const
 {
     auto properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), 0, imageSourceOptions().get()));
     if (!properties)
-        return WTF::nullopt;
+        return std::nullopt;
     
     int x = -1, y = -1;
     CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(properties.get(), CFSTR("hotspotX"));
     if (!num || !CFNumberGetValue(num, kCFNumberIntType, &x))
-        return WTF::nullopt;
+        return std::nullopt;
     
     num = (CFNumberRef)CFDictionaryGetValue(properties.get(), CFSTR("hotspotY"));
     if (!num || !CFNumberGetValue(num, kCFNumberIntType, &y))
-        return WTF::nullopt;
+        return std::nullopt;
     
     if (x < 0 || y < 0)
-        return WTF::nullopt;
+        return std::nullopt;
     
     return IntPoint(x, y);
 }
@@ -448,11 +448,11 @@ ImageDecoder::FrameMetadata ImageDecoderCG::frameMetadataAtIndex(size_t index) c
     
     auto orientation = orientationFromProperties(properties.get());
     if (!mayHaveDensityCorrectedSize(properties.get()))
-        return { orientation, WTF::nullopt };
+        return { orientation, std::nullopt };
 
     auto propertiesWithMetadata = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, createImageSourceMetadataOptions().get()));
     if (!propertiesWithMetadata)
-        return { orientation, WTF::nullopt };
+        return { orientation, std::nullopt };
     
     return { orientation, densityCorrectedSizeFromProperties(propertiesWithMetadata.get()) };
 }

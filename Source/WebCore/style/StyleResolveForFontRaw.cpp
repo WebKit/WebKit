@@ -90,7 +90,7 @@ Optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascadeDescr
     }
 
     if (families.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
     fontDescription.setFamilies(families);
 
     if (useFixedDefaultSize(fontDescription) != oldFamilyUsedFixedDefaultSize) {

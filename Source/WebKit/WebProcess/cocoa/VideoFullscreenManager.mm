@@ -477,7 +477,7 @@ void VideoFullscreenManager::didEnterFullscreen(PlaybackSessionContextIdentifier
     if (!videoElement)
         return;
 
-    videoElement->didEnterFullscreenOrPictureInPicture(size.valueOr(WebCore::FloatSize()));
+    videoElement->didEnterFullscreenOrPictureInPicture(size.value_or(WebCore::FloatSize()));
 
     if (interface->targetIsFullscreen() || interface->fullscreenStandby())
         return;

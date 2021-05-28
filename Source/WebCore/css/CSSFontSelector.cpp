@@ -287,7 +287,7 @@ Optional<AtomString> CSSFontSelector::resolveGenericFamily(const FontDescription
         return platformResult;
 
     if (!m_context)
-        return WTF::nullopt;
+        return std::nullopt;
 
     const auto& settings = m_context->settingsValues();
 
@@ -298,7 +298,7 @@ Optional<AtomString> CSSFontSelector::resolveGenericFamily(const FontDescription
             return AtomString(*familyString);
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 FontRanges CSSFontSelector::fontRangesForFamily(const FontDescription& fontDescription, const AtomString& familyName)

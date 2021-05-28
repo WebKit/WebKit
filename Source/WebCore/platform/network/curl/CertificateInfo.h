@@ -87,19 +87,19 @@ template<> struct Coder<WebCore::CertificateInfo> {
         Optional<int> verificationError;
         decoder >> verificationError;
         if (!verificationError)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<size_t> numOfCerts;
         decoder >> numOfCerts;
         if (!numOfCerts)
-            return WTF::nullopt;
+            return std::nullopt;
 
         WebCore::CertificateInfo::CertificateChain certificateChain;
         for (size_t i = 0; i < numOfCerts.value(); i++) {
             Optional<WebCore::CertificateInfo::Certificate> certificate;
             decoder >> certificate;
             if (!certificate)
-                return WTF::nullopt;
+                return std::nullopt;
 
             certificateChain.append(WTFMove(certificate.value()));
         }

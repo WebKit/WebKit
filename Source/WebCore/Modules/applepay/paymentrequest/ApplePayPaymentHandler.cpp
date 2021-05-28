@@ -409,7 +409,7 @@ void ApplePayPaymentHandler::computeAddressErrors(String&& error, AddressErrors&
     if (!m_paymentRequest->paymentOptions().requestShipping)
         return;
 
-    appendShippingContactInvalidError(WTFMove(error), WTF::nullopt, errors);
+    appendShippingContactInvalidError(WTFMove(error), std::nullopt, errors);
     appendShippingContactInvalidError(WTFMove(addressErrors.addressLine), ApplePayErrorContactField::AddressLines, errors);
     appendShippingContactInvalidError(WTFMove(addressErrors.city), ApplePayErrorContactField::Locality, errors);
     appendShippingContactInvalidError(WTFMove(addressErrors.country), ApplePayErrorContactField::Country, errors);
@@ -461,7 +461,7 @@ ExceptionOr<Optional<std::tuple<PaymentDetailsModifier, ApplePayModifier>>> Appl
 {
     auto& details = m_paymentRequest->paymentDetails();
     if (!details.modifiers)
-        return { WTF::nullopt };
+        return { std::nullopt };
 
     auto& lexicalGlobalObject = *document().globalObject();
 
@@ -500,7 +500,7 @@ ExceptionOr<Optional<std::tuple<PaymentDetailsModifier, ApplePayModifier>>> Appl
         return { { { modifier, WTFMove(applePayModifier) } } };
     }
 
-    return { WTF::nullopt };
+    return { std::nullopt };
 }
 
 ExceptionOr<void> ApplePayPaymentHandler::detailsUpdated(PaymentRequest::UpdateReason reason, String&& error, AddressErrors&& addressErrors, PayerErrorFields&& payerErrors, JSC::JSObject* paymentMethodErrors)
@@ -647,8 +647,8 @@ ExceptionOr<void> ApplePayPaymentHandler::paymentMethodUpdated(Vector<RefPtr<App
 void ApplePayPaymentHandler::complete(Optional<PaymentComplete>&& result)
 {
     if (!result) {
-        ASSERT(isFinalStateResult(WTF::nullopt));
-        paymentCoordinator().completePaymentSession(WTF::nullopt);
+        ASSERT(isFinalStateResult(std::nullopt));
+        paymentCoordinator().completePaymentSession(std::nullopt);
         return;
     }
 
@@ -680,7 +680,7 @@ ExceptionOr<void> ApplePayPaymentHandler::retry(PaymentValidationErrors&& valida
 
     // Ensure there is always at least one error to avoid having a final result.
     if (errors.isEmpty())
-        errors.append(ApplePayError::create(ApplePayErrorCode::Unknown, WTF::nullopt, nullString()));
+        errors.append(ApplePayError::create(ApplePayErrorCode::Unknown, std::nullopt, nullString()));
 
     PaymentAuthorizationResult authorizationResult { PaymentAuthorizationStatus::Failure, WTFMove(errors) };
     ASSERT(!isFinalStateResult(authorizationResult));
@@ -701,7 +701,7 @@ void ApplePayPaymentHandler::validateMerchant(URL&& validationURL)
 
 static Ref<PaymentAddress> convert(const ApplePayPaymentContact& contact)
 {
-    return PaymentAddress::create(contact.countryCode, contact.addressLines.valueOr(Vector<String>()), contact.administrativeArea, contact.locality, contact.subLocality, contact.postalCode, String(), String(), contact.localizedName, contact.phoneNumber);
+    return PaymentAddress::create(contact.countryCode, contact.addressLines.value_or(Vector<String>()), contact.administrativeArea, contact.locality, contact.subLocality, contact.postalCode, String(), String(), contact.localizedName, contact.phoneNumber);
 }
 
 template<typename T>
@@ -716,7 +716,7 @@ void ApplePayPaymentHandler::didAuthorizePayment(const Payment& payment)
     ASSERT(m_updateState == UpdateState::None);
 
     auto applePayPayment = payment.toApplePayPayment(version());
-    auto shippingContact = applePayPayment.shippingContact.valueOr(ApplePayPaymentContact());
+    auto shippingContact = applePayPayment.shippingContact.value_or(ApplePayPaymentContact());
     auto detailsFunction = [applePayPayment = WTFMove(applePayPayment)](JSC::JSGlobalObject& lexicalGlobalObject) {
         return toJSDictionary(lexicalGlobalObject, applePayPayment);
     };

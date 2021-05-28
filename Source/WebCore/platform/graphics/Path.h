@@ -342,11 +342,11 @@ template<class Decoder> Optional<Path> Path::decode(Decoder& decoder)
 #if ENABLE(INLINE_PATH_DATA)
     bool hasInlineData;
     if (!decoder.decode(hasInlineData))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (hasInlineData) {
         if (!decoder.decode(path.m_inlineData))
-            return WTF::nullopt;
+            return std::nullopt;
 
         return path;
     }
@@ -354,38 +354,38 @@ template<class Decoder> Optional<Path> Path::decode(Decoder& decoder)
 
     uint64_t numPoints;
     if (!decoder.decode(numPoints))
-        return WTF::nullopt;
+        return std::nullopt;
 
     path.clear();
 
     for (uint64_t i = 0; i < numPoints; ++i) {
         PathElement::Type elementType;
         if (!decoder.decode(elementType))
-            return WTF::nullopt;
+            return std::nullopt;
 
         switch (elementType) {
         case PathElement::Type::MoveToPoint: {
             FloatPoint point;
             if (!decoder.decode(point))
-                return WTF::nullopt;
+                return std::nullopt;
             path.moveTo(point);
             break;
         }
         case PathElement::Type::AddLineToPoint: {
             FloatPoint point;
             if (!decoder.decode(point))
-                return WTF::nullopt;
+                return std::nullopt;
             path.addLineTo(point);
             break;
         }
         case PathElement::Type::AddQuadCurveToPoint: {
             FloatPoint controlPoint;
             if (!decoder.decode(controlPoint))
-                return WTF::nullopt;
+                return std::nullopt;
 
             FloatPoint endPoint;
             if (!decoder.decode(endPoint))
-                return WTF::nullopt;
+                return std::nullopt;
 
             path.addQuadCurveTo(controlPoint, endPoint);
             break;
@@ -393,15 +393,15 @@ template<class Decoder> Optional<Path> Path::decode(Decoder& decoder)
         case PathElement::Type::AddCurveToPoint: {
             FloatPoint controlPoint1;
             if (!decoder.decode(controlPoint1))
-                return WTF::nullopt;
+                return std::nullopt;
 
             FloatPoint controlPoint2;
             if (!decoder.decode(controlPoint2))
-                return WTF::nullopt;
+                return std::nullopt;
 
             FloatPoint endPoint;
             if (!decoder.decode(endPoint))
-                return WTF::nullopt;
+                return std::nullopt;
 
             path.addBezierCurveTo(controlPoint1, controlPoint2, endPoint);
             break;

@@ -111,7 +111,7 @@ Optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmIdentif
     CCECCryptorRef ccPublicKey = nullptr;
     CCECCryptorRef ccPrivateKey = nullptr;
     if (CCECCryptorGeneratePair(size, &ccPublicKey, &ccPrivateKey))
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto publicKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Public, PlatformECKeyContainer(ccPublicKey), true, usages);
     auto privateKey = CryptoKeyEC::create(identifier, curve, CryptoKeyType::Private, PlatformECKeyContainer(ccPrivateKey), extractable, usages);

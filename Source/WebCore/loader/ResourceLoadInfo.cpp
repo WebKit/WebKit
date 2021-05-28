@@ -113,7 +113,7 @@ Optional<OptionSet<ResourceType>> readResourceType(StringView name)
         return { ResourceType::Popup };
     if (name == "ping")
         return { ResourceType::Ping };
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<OptionSet<LoadType>> readLoadType(StringView name)
@@ -122,7 +122,7 @@ Optional<OptionSet<LoadType>> readLoadType(StringView name)
         return { LoadType::FirstParty };
     if (name == "third-party")
         return { LoadType::ThirdParty };
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<OptionSet<LoadContext>> readLoadContext(StringView name)
@@ -131,7 +131,7 @@ Optional<OptionSet<LoadContext>> readLoadContext(StringView name)
         return { LoadContext::TopFrame };
     if (name == "child-frame")
         return { LoadContext::ChildFrame };
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 bool ResourceLoadInfo::isThirdParty() const

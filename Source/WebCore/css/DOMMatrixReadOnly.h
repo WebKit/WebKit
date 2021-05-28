@@ -101,9 +101,9 @@ public:
     ExceptionOr<Ref<DOMMatrix>> multiply(DOMMatrixInit&& other) const;
     Ref<DOMMatrix> flipX();
     Ref<DOMMatrix> flipY();
-    Ref<DOMMatrix> scale(double scaleX = 1, Optional<double> scaleY = WTF::nullopt, double scaleZ = 1, double originX = 0, double originY = 0, double originZ = 0);
+    Ref<DOMMatrix> scale(double scaleX = 1, Optional<double> scaleY = std::nullopt, double scaleZ = 1, double originX = 0, double originY = 0, double originZ = 0);
     Ref<DOMMatrix> scale3d(double scale = 1, double originX = 0, double originY = 0, double originZ = 0);
-    Ref<DOMMatrix> rotate(double rotX = 0, Optional<double> rotY = WTF::nullopt, Optional<double> rotZ = WTF::nullopt); // Angles are in degrees.
+    Ref<DOMMatrix> rotate(double rotX = 0, Optional<double> rotY = std::nullopt, Optional<double> rotZ = std::nullopt); // Angles are in degrees.
     Ref<DOMMatrix> rotateFromVector(double x = 0, double y = 0);
     Ref<DOMMatrix> rotateAxisAngle(double x = 0, double y = 0, double z = 0, double angle = 0); // Angle is in degrees.
     Ref<DOMMatrix> skewX(double sx = 0); // Angle is in degrees.

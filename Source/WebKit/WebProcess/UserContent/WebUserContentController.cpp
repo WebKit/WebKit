@@ -432,7 +432,7 @@ void WebUserContentController::addUserScriptInternal(InjectedBundleScriptWorld& 
 
 void WebUserContentController::addUserScript(InjectedBundleScriptWorld& world, UserScript&& userScript)
 {
-    addUserScriptInternal(world, WTF::nullopt, WTFMove(userScript), InjectUserScriptImmediately::No);
+    addUserScriptInternal(world, std::nullopt, WTFMove(userScript), InjectUserScriptImmediately::No);
 }
 
 void WebUserContentController::removeUserScriptWithURL(InjectedBundleScriptWorld& world, const URL& url)
@@ -488,7 +488,7 @@ void WebUserContentController::addUserStyleSheetInternal(InjectedBundleScriptWor
 
 void WebUserContentController::addUserStyleSheet(InjectedBundleScriptWorld& world, UserStyleSheet&& userStyleSheet)
 {
-    addUserStyleSheetInternal(world, WTF::nullopt, WTFMove(userStyleSheet));
+    addUserStyleSheetInternal(world, std::nullopt, WTFMove(userStyleSheet));
     invalidateInjectedStyleSheetCacheInAllFramesInAllPages();
 }
 

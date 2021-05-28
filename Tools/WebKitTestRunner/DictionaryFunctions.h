@@ -87,7 +87,7 @@ inline double doubleValue(WKTypeRef value)
 
 inline Optional<double> optionalDoubleValue(WKTypeRef value)
 {
-    return value && WKGetTypeID(value) == WKDoubleGetTypeID() ? makeOptional(WKDoubleGetValue(static_cast<WKDoubleRef>(value))) : WTF::nullopt;
+    return value && WKGetTypeID(value) == WKDoubleGetTypeID() ? std::make_optional(WKDoubleGetValue(static_cast<WKDoubleRef>(value))) : std::nullopt;
 }
 
 inline WKStringRef stringValue(WKTypeRef value)

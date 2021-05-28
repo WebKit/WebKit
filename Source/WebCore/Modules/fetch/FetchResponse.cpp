@@ -187,7 +187,7 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::clone(ScriptExecutionContext& con
     if (m_internalResponse.type() == ResourceResponse::Type::Default)
         m_internalResponse.setHTTPHeaderFields(HTTPHeaderMap { headers().internalHeaders() });
 
-    auto clone = FetchResponse::create(context, WTF::nullopt, headers().guard(), ResourceResponse { m_internalResponse });
+    auto clone = FetchResponse::create(context, std::nullopt, headers().guard(), ResourceResponse { m_internalResponse });
     clone->cloneBody(*this);
     clone->m_opaqueLoadIdentifier = m_opaqueLoadIdentifier;
     clone->m_bodySizeWithPadding = m_bodySizeWithPadding;

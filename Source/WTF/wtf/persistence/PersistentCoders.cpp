@@ -42,7 +42,7 @@ Optional<AtomString> Coder<AtomString>::decode(Decoder& decoder)
     Optional<String> string;
     decoder >> string;
     if (!string)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ WTFMove(*string) }};
 }
@@ -65,7 +65,7 @@ Optional<CString> Coder<CString>::decode(Decoder& decoder)
     Optional<uint32_t> length;
     decoder >> length;
     if (!length)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (length == std::numeric_limits<uint32_t>::max()) {
         // This is the null string.
@@ -74,12 +74,12 @@ Optional<CString> Coder<CString>::decode(Decoder& decoder)
 
     // Before allocating the string, make sure that the decoder buffer is big enough.
     if (!decoder.bufferIsLargeEnoughToContain<char>(*length))
-        return WTF::nullopt;
+        return std::nullopt;
 
     char* buffer;
     CString string = CString::newUninitialized(*length, buffer);
     if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), *length))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return string;
 }
@@ -108,12 +108,12 @@ static inline Optional<String> decodeStringText(Decoder& decoder, uint32_t lengt
 {
     // Before allocating the string, make sure that the decoder buffer is big enough.
     if (!decoder.bufferIsLargeEnoughToContain<CharacterType>(length))
-        return WTF::nullopt;
+        return std::nullopt;
 
     CharacterType* buffer;
     String string = String::createUninitialized(length, buffer);
     if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length * sizeof(CharacterType)))
-        return WTF::nullopt;
+        return std::nullopt;
     
     return string;
 }
@@ -123,7 +123,7 @@ Optional<String> Coder<String>::decode(Decoder& decoder)
     Optional<uint32_t> length;
     decoder >> length;
     if (!length)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (*length == std::numeric_limits<uint32_t>::max()) {
         // This is the null string.
@@ -133,7 +133,7 @@ Optional<String> Coder<String>::decode(Decoder& decoder)
     Optional<bool> is8Bit;
     decoder >> is8Bit;
     if (!is8Bit)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (*is8Bit)
         return decodeStringText<LChar>(decoder, *length);
@@ -149,7 +149,7 @@ Optional<SHA1::Digest> Coder<SHA1::Digest>::decode(Decoder& decoder)
 {
     SHA1::Digest tmp;
     if (!decoder.decodeFixedLengthData(tmp.data(), sizeof(tmp)))
-        return WTF::nullopt;
+        return std::nullopt;
     return tmp;
 }
 

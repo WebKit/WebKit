@@ -463,7 +463,7 @@ void WebProcessProxy::shutDown()
     m_responsivenessTimer.invalidate();
     m_backgroundResponsivenessTimer.invalidate();
     m_activityForHoldingLockedFiles = nullptr;
-    m_audibleMediaActivity = WTF::nullopt;
+    m_audibleMediaActivity = std::nullopt;
 
     for (auto& frame : copyToVector(m_frameMap.values()))
         frame->webProcessWillShutDown();
@@ -1051,7 +1051,7 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 #endif
 
     if (m_shouldStartResponsivenessTimerWhenLaunched) {
-        auto useLazyStop = *std::exchange(m_shouldStartResponsivenessTimerWhenLaunched, WTF::nullopt);
+        auto useLazyStop = *std::exchange(m_shouldStartResponsivenessTimerWhenLaunched, std::nullopt);
         startResponsivenessTimer(useLazyStop);
     }
 }
@@ -1500,7 +1500,7 @@ void WebProcessProxy::updateAudibleMediaAssertions()
         };
     } else {
         RELEASE_LOG(ProcessSuspension, "%p - Releasing MediaPlayback assertion for WebProcess with PID %d", this, processIdentifier());
-        m_audibleMediaActivity = WTF::nullopt;
+        m_audibleMediaActivity = std::nullopt;
     }
 }
 

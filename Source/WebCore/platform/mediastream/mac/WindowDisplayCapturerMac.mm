@@ -139,7 +139,7 @@ Optional<CaptureDevice> WindowDisplayCapturerMac::windowCaptureDeviceWithPersist
     auto windowID = parseInteger<uint32_t>(idString);
     if (!windowID) {
         RELEASE_LOG(WebRTC, "WindowDisplayCapturerMac::windowCaptureDeviceWithPersistentID: window ID does not convert to 32-bit integer");
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     String windowTitle;
@@ -152,7 +152,7 @@ Optional<CaptureDevice> WindowDisplayCapturerMac::windowCaptureDeviceWithPersist
 
     })) {
         RELEASE_LOG(WebRTC, "WindowDisplayCapturerMac::windowCaptureDeviceWithPersistentID: window ID is not valid");
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     auto device = CaptureDevice(String::number(*windowID), CaptureDevice::DeviceType::Window, windowTitle);

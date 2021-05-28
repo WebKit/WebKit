@@ -57,11 +57,11 @@ Optional<PublicKeyCredentialDescriptor> PublicKeyCredentialDescriptor::decode(De
 {
     PublicKeyCredentialDescriptor result;
     if (!decoder.decode(result.type))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.idVector))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.transports))
-        return WTF::nullopt;
+        return std::nullopt;
     return result;
 }
 

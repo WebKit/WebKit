@@ -804,7 +804,7 @@ Optional<FontCascadeDescription> ThemeMac::controlFont(ControlPart part, const F
         return fontDescription;
     }
     default:
-        return WTF::nullopt;
+        return std::nullopt;
     }
 }
 

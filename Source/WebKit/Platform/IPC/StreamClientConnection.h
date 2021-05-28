@@ -159,7 +159,7 @@ template<typename T>
 Optional<StreamClientConnection::SendSyncResult> StreamClientConnection::trySendSyncStream(T& message, typename T::Reply& reply, Timeout timeout, Span& span)
 {
     // In this function, SendSyncResult { } means error happened and caller should stop processing.
-    // WTF::nullopt means we couldn't send through the stream, so try sending out of stream.
+    // std::nullopt means we couldn't send through the stream, so try sending out of stream.
     auto syncRequestID = m_connection.makeSyncRequestID();
     if (!m_connection.pushPendingSyncRequestID(syncRequestID))
         return SendSyncResult { };
@@ -167,7 +167,7 @@ Optional<StreamClientConnection::SendSyncResult> StreamClientConnection::trySend
     auto result = [&]() -> Optional<SendSyncResult> {
         StreamConnectionEncoder messageEncoder { T::name(), span.data, span.size };
         if (!(messageEncoder << syncRequestID << message.arguments()))
-            return WTF::nullopt;
+            return std::nullopt;
         auto wakeupResult = release(messageEncoder.size());
 
         if (wakeupResult == StreamClientConnection::WakeUpServer::Yes)
@@ -250,7 +250,7 @@ inline Optional<StreamClientConnection::Span> StreamClientConnection::tryAcquire
         // In the case where clientOffset < clientLimit we can arrive to a situation where
         // 0 < result.size < minimumMessageSize.
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 inline Optional<StreamClientConnection::Span> StreamClientConnection::tryAcquireAll(Timeout timeout)
@@ -273,7 +273,7 @@ inline Optional<StreamClientConnection::Span> StreamClientConnection::tryAcquire
 
         m_buffer.clientWaitSemaphore().waitFor(timeout);
         if (timeout.didTimeOut())
-            return WTF::nullopt;
+            return std::nullopt;
     }
     // In case the transaction was cancelled, undo the transaction marker.
     sharedClientLimit().store(static_cast<ClientLimit>(0), std::memory_order_release);

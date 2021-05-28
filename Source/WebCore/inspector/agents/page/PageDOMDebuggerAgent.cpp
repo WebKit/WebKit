@@ -168,7 +168,7 @@ static Optional<size_t> calculateDistance(Node& child, Node& ancestor)
 
         current = InspectorDOMAgent::innerParentNode(current);
         if (!current)
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     return distance;

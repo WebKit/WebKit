@@ -47,7 +47,7 @@ bool isRequestCrossOrigin(SecurityOrigin*, const URL& requestURL, const Resource
 
 class CachedResourceRequest {
 public:
-    CachedResourceRequest(ResourceRequest&&, const ResourceLoaderOptions&, Optional<ResourceLoadPriority> = WTF::nullopt, String&& charset = String());
+    CachedResourceRequest(ResourceRequest&&, const ResourceLoaderOptions&, Optional<ResourceLoadPriority> = std::nullopt, String&& charset = String());
 
     ResourceRequest&& releaseResourceRequest() { return WTFMove(m_resourceRequest); }
     const ResourceRequest& resourceRequest() const { return m_resourceRequest; }

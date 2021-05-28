@@ -41,7 +41,7 @@ WebPaymentCoordinatorClient::~WebPaymentCoordinatorClient()
 
 Optional<String> WebPaymentCoordinatorClient::validatedPaymentNetwork(const String&)
 {
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 bool WebPaymentCoordinatorClient::canMakePayments()

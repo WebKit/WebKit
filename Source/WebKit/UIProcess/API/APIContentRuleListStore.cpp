@@ -204,7 +204,7 @@ static Optional<ContentRuleListMetaData> decodeContentRuleListMetaData(const T& 
         return false;
     });
     if (!success)
-        return WTF::nullopt;
+        return std::nullopt;
     return metaData;
 }
 
@@ -218,10 +218,10 @@ static Optional<MappedData> openAndMapContentRuleList(const WTF::String& path)
     FileSystem::makeSafeToUseMemoryMapForPath(path);
     WebKit::NetworkCache::Data fileData = mapFile(fileSystemRepresentation(path).data());
     if (fileData.isNull())
-        return WTF::nullopt;
+        return std::nullopt;
     auto metaData = decodeContentRuleListMetaData(fileData);
     if (!metaData)
-        return WTF::nullopt;
+        return std::nullopt;
     return {{ WTFMove(*metaData), { WTFMove(fileData) }}};
 }
 

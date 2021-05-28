@@ -58,7 +58,7 @@ void UserMediaCaptureManager::validateUserMediaRequestConstraints(WebCore::Media
     };
 
     auto validHandler = [this](Vector<CaptureDevice>&& audioDevices, Vector<CaptureDevice>&& videoDevices, String&& deviceIdentifierHashSalt) mutable {
-        m_validateUserMediaRequestConstraintsCallback(WTF::nullopt, audioDevices, videoDevices, deviceIdentifierHashSalt);
+        m_validateUserMediaRequestConstraintsCallback(std::nullopt, audioDevices, videoDevices, deviceIdentifierHashSalt);
     };
 
     RealtimeMediaSourceCenter::singleton().validateRequestConstraints(WTFMove(validHandler), WTFMove(invalidHandler), request, WTFMove(hashSalt));

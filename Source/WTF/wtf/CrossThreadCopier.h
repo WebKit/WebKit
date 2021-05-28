@@ -159,7 +159,7 @@ template<typename T> struct CrossThreadCopierBase<false, false, Optional<T>> {
     template<typename U> static Optional<T> copy(U&& source)
     {
         if (!source)
-            return WTF::nullopt;
+            return std::nullopt;
         return CrossThreadCopier<T>::copy(std::forward<U>(source).value());
     }
 };

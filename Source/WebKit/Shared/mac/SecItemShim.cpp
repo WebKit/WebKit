@@ -69,7 +69,7 @@ static Optional<SecItemResponseData> sendSecItemRequest(SecItemRequestData::Type
 
     if (RunLoop::isMain()) {
         if (!globalNetworkProcess()->parentProcessConnection()->sendSync(Messages::SecItemShimProxy::SecItemRequestSync(SecItemRequestData(requestType, query, attributesToMatch)), Messages::SecItemShimProxy::SecItemRequestSync::Reply(response), 0))
-            return WTF::nullopt;
+            return std::nullopt;
         return response;
     }
 

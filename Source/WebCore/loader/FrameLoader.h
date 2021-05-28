@@ -121,7 +121,7 @@ public:
     void setupForReplace();
 
     // FIXME: These are all functions which start loads. We have too many.
-    WEBCORE_EXPORT void loadFrameRequest(FrameLoadRequest&&, Event*, RefPtr<FormState>&&, Optional<PrivateClickMeasurement>&& = WTF::nullopt); // Called by submitForm, calls loadPostRequest and loadURL.
+    WEBCORE_EXPORT void loadFrameRequest(FrameLoadRequest&&, Event*, RefPtr<FormState>&&, Optional<PrivateClickMeasurement>&& = std::nullopt); // Called by submitForm, calls loadPostRequest and loadURL.
 
     WEBCORE_EXPORT void load(FrameLoadRequest&&);
 
@@ -130,8 +130,8 @@ public:
 #endif
     unsigned long loadResourceSynchronously(const ResourceRequest&, ClientCredentialPolicy, const FetchOptions&, const HTTPHeaderMap&, ResourceError&, ResourceResponse&, RefPtr<SharedBuffer>& data);
 
-    WEBCORE_EXPORT void changeLocation(const URL&, const String& target, Event*, const ReferrerPolicy&, ShouldOpenExternalURLsPolicy, Optional<NewFrameOpenerPolicy> = WTF::nullopt, const AtomString& downloadAttribute = nullAtom(), const SystemPreviewInfo& = { }, Optional<PrivateClickMeasurement>&& = WTF::nullopt);
-    void changeLocation(FrameLoadRequest&&, Event* = nullptr, Optional<PrivateClickMeasurement>&& = WTF::nullopt);
+    WEBCORE_EXPORT void changeLocation(const URL&, const String& target, Event*, const ReferrerPolicy&, ShouldOpenExternalURLsPolicy, Optional<NewFrameOpenerPolicy> = std::nullopt, const AtomString& downloadAttribute = nullAtom(), const SystemPreviewInfo& = { }, Optional<PrivateClickMeasurement>&& = std::nullopt);
+    void changeLocation(FrameLoadRequest&&, Event* = nullptr, Optional<PrivateClickMeasurement>&& = std::nullopt);
     void submitForm(Ref<FormSubmission>&&);
 
     WEBCORE_EXPORT void reload(OptionSet<ReloadOption> = { });

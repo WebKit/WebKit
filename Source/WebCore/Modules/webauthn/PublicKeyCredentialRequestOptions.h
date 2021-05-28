@@ -66,24 +66,24 @@ Optional<PublicKeyCredentialRequestOptions> PublicKeyCredentialRequestOptions::d
     Optional<Optional<unsigned>> timeout;
     decoder >> timeout;
     if (!timeout)
-        return WTF::nullopt;
+        return std::nullopt;
     result.timeout = WTFMove(*timeout);
 
     if (!decoder.decode(result.rpId))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.allowCredentials))
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<UserVerificationRequirement> userVerification;
     decoder >> userVerification;
     if (!userVerification)
-        return WTF::nullopt;
+        return std::nullopt;
     result.userVerification = WTFMove(*userVerification);
 
     Optional<Optional<AuthenticationExtensionsClientInputs>> extensions;
     decoder >> extensions;
     if (!extensions)
-        return WTF::nullopt;
+        return std::nullopt;
     result.extensions = WTFMove(*extensions);
 
     return result;

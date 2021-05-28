@@ -61,7 +61,7 @@ public:
                 return value;
         }
 
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
 private:
@@ -676,7 +676,7 @@ Optional<String> CurlHandle::getProxyUrl()
 {
     auto& proxy = CurlContext::singleton().proxySettings();
     if (proxy.mode() == CurlProxySettings::Mode::Default)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return proxy.url();
 }
@@ -684,12 +684,12 @@ Optional<String> CurlHandle::getProxyUrl()
 Optional<long> CurlHandle::getResponseCode()
 {
     if (!m_handle)
-        return WTF::nullopt;
+        return std::nullopt;
 
     long responseCode;
     CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_RESPONSE_CODE, &responseCode);
     if (errorCode != CURLE_OK)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return responseCode;
 }
@@ -697,12 +697,12 @@ Optional<long> CurlHandle::getResponseCode()
 Optional<long> CurlHandle::getHttpConnectCode()
 {
     if (!m_handle)
-        return WTF::nullopt;
+        return std::nullopt;
 
     long httpConnectCode;
     CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_HTTP_CONNECTCODE, &httpConnectCode);
     if (errorCode != CURLE_OK)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return httpConnectCode;
 }
@@ -710,13 +710,13 @@ Optional<long> CurlHandle::getHttpConnectCode()
 Optional<long long> CurlHandle::getContentLength()
 {
     if (!m_handle)
-        return WTF::nullopt;
+        return std::nullopt;
 
     double contentLength;
 
     CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &contentLength);
     if (errorCode != CURLE_OK)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return static_cast<long long>(contentLength);
 }
@@ -724,12 +724,12 @@ Optional<long long> CurlHandle::getContentLength()
 Optional<long> CurlHandle::getHttpAuthAvail()
 {
     if (!m_handle)
-        return WTF::nullopt;
+        return std::nullopt;
 
     long httpAuthAvailable;
     CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_HTTPAUTH_AVAIL, &httpAuthAvailable);
     if (errorCode != CURLE_OK)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return httpAuthAvailable;
 }
@@ -737,12 +737,12 @@ Optional<long> CurlHandle::getHttpAuthAvail()
 Optional<long> CurlHandle::getProxyAuthAvail()
 {
     if (!m_handle)
-        return WTF::nullopt;
+        return std::nullopt;
 
     long proxyAuthAvailable;
     CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_PROXYAUTH_AVAIL, &proxyAuthAvailable);
     if (errorCode != CURLE_OK)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return proxyAuthAvailable;
 }
@@ -750,12 +750,12 @@ Optional<long> CurlHandle::getProxyAuthAvail()
 Optional<long> CurlHandle::getHttpVersion()
 {
     if (!m_handle)
-        return WTF::nullopt;
+        return std::nullopt;
 
     long version;
     CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_HTTP_VERSION, &version);
     if (errorCode != CURLE_OK)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return version;
 }
@@ -769,27 +769,27 @@ Optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics(const WTF::Second
     long version = 0;
 
     if (!m_handle)
-        return WTF::nullopt;
+        return std::nullopt;
 
     CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_NAMELOOKUP_TIME, &nameLookup);
     if (errorCode != CURLE_OK)
-        return WTF::nullopt;
+        return std::nullopt;
 
     errorCode = curl_easy_getinfo(m_handle, CURLINFO_CONNECT_TIME, &connect);
     if (errorCode != CURLE_OK)
-        return WTF::nullopt;
+        return std::nullopt;
 
     errorCode = curl_easy_getinfo(m_handle, CURLINFO_APPCONNECT_TIME, &appConnect);
     if (errorCode != CURLE_OK)
-        return WTF::nullopt;
+        return std::nullopt;
 
     errorCode = curl_easy_getinfo(m_handle, CURLINFO_STARTTRANSFER_TIME, &startTransfer);
     if (errorCode != CURLE_OK)
-        return WTF::nullopt;
+        return std::nullopt;
 
     errorCode = curl_easy_getinfo(m_handle, CURLINFO_HTTP_VERSION, &version);
     if (errorCode != CURLE_OK)
-        return WTF::nullopt;
+        return std::nullopt;
 
     NetworkLoadMetrics networkLoadMetrics;
 
@@ -865,7 +865,7 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
 Optional<CertificateInfo> CurlHandle::certificateInfo() const
 {
     if (!m_sslVerifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return m_sslVerifier->certificateInfo();
 }

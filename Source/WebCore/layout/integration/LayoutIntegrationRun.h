@@ -61,7 +61,7 @@ struct Run {
     };
 
     struct Expansion;
-    Run(size_t lineIndex, const Layout::Box&, const FloatRect&, const FloatRect& inkOverflow, Expansion, Optional<TextContent> = WTF::nullopt);
+    Run(size_t lineIndex, const Layout::Box&, const FloatRect&, const FloatRect& inkOverflow, Expansion, Optional<TextContent> = std::nullopt);
 
     const FloatRect& rect() const { return m_rect; }
     const FloatRect& inkOverflow() const { return m_inkOverflow; }

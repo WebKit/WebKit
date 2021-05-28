@@ -919,12 +919,12 @@ Optional<String> GraphicsContextGLOpenGL::mappedSymbolInShaderSourceMap(Platform
 {
     auto result = m_shaderSourceMap.find(shader);
     if (result == m_shaderSourceMap.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     const auto& symbolMap = result->value.symbolMap(symbolType);
     auto symbolEntry = symbolMap.find(name);
     if (symbolEntry == symbolMap.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto& mappedName = symbolEntry->value.get().mappedName;
     return String(mappedName.c_str(), mappedName.length());
@@ -977,14 +977,14 @@ Optional<String> GraphicsContextGLOpenGL::originalSymbolInShaderSourceMap(Platfo
 {
     auto result = m_shaderSourceMap.find(shader);
     if (result == m_shaderSourceMap.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     const auto& symbolMap = result->value.symbolMap(symbolType);
     for (const auto& symbolEntry : symbolMap) {
         if (name == symbolEntry.value.get().mappedName.c_str())
             return symbolEntry.key;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 String GraphicsContextGLOpenGL::originalSymbolName(PlatformGLObject program, ANGLEShaderSymbolType symbolType, const String& name)

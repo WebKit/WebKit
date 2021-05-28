@@ -1577,7 +1577,7 @@ void GraphicsLayerCA::setVisibleAndCoverageRects(const VisibleAndCoverageRects& 
     if (auto extent = animationExtent()) {
         // Adjust the animation extent to match the current animation position.
         auto animatingTransformWithAnchorPoint = transformByApplyingAnchorPoint(rects.animatingTransform);
-        bounds = animatingTransformWithAnchorPoint.inverse().valueOr(TransformationMatrix()).mapRect(*extent);
+        bounds = animatingTransformWithAnchorPoint.inverse().value_or(TransformationMatrix()).mapRect(*extent);
     }
 
     // FIXME: we need to take reflections into account when determining whether this layer intersects the coverage rect.

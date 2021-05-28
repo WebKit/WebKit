@@ -263,7 +263,7 @@ static Optional<size_t> codePointSupportIndex(UChar32 codePoint)
         result = 0x54;
         break;
     default:
-        result = WTF::nullopt;
+        result = std::nullopt;
     }
 
 #ifndef NDEBUG

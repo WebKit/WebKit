@@ -203,7 +203,7 @@ IntSize MockRealtimeVideoSource::captureSize() const
 
 void MockRealtimeVideoSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
 {
-    m_currentSettings = WTF::nullopt;
+    m_currentSettings = std::nullopt;
     if (settings.containsAny({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height })) {
         m_baseFontSize = captureSize().height() * .08;
         m_bipBopFontSize = m_baseFontSize * 2.5;

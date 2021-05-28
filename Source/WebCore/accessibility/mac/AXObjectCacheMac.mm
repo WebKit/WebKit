@@ -765,12 +765,12 @@ Optional<SimpleRange> rangeForTextMarkerRange(AXObjectCache* cache, AXTextMarker
 {
     ASSERT(isMainThread());
     if (!cache || !textMarkerRange)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto startTextMarker = AXTextMarkerRangeStart(textMarkerRange);
     auto endTextMarker = AXTextMarkerRangeEnd(textMarkerRange);
     if (!startTextMarker || !endTextMarker)
-        return WTF::nullopt;
+        return std::nullopt;
 
     CharacterOffset startCharacterOffset = characterOffsetForTextMarker(cache, startTextMarker.get());
     CharacterOffset endCharacterOffset = characterOffsetForTextMarker(cache, endTextMarker.get());

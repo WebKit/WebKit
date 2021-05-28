@@ -64,13 +64,13 @@ template<class Decoder> inline Optional<NetworkTransactionInformation> NetworkTr
     NetworkTransactionInformation information;
 
     if (!decoder.decode(information.type))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(information.request))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(information.response))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(information.metrics))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return information;
 }

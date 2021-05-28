@@ -3133,16 +3133,16 @@ void RenderBlockFlow::markLinesDirtyInBlockRange(LayoutUnit logicalTop, LayoutUn
 Optional<LayoutUnit> RenderBlockFlow::firstLineBaseline() const
 {
     if (isWritingModeRoot() && !isRubyRun() && !isGridItem())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (shouldApplyLayoutContainment(*this))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!childrenInline())
         return RenderBlock::firstLineBaseline();
 
     if (!hasLines())
-        return WTF::nullopt;
+        return std::nullopt;
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (modernLineLayout())
@@ -3158,7 +3158,7 @@ Optional<LayoutUnit> RenderBlockFlow::firstLineBaseline() const
 Optional<LayoutUnit> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDirection) const
 {
     if (isWritingModeRoot() && !isRubyRun())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (shouldApplyLayoutContainment(*this))
         return RenderBlock::inlineBlockBaseline(lineDirection);
@@ -3168,7 +3168,7 @@ Optional<LayoutUnit> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode line
         // property has a computed value other than 'visible'. see https://www.w3.org/TR/CSS22/visudet.html
         auto shouldSynthesizeBaseline = !style().isOverflowVisible() && !is<HTMLFormControlElement>(element());
         if (shouldSynthesizeBaseline)
-            return WTF::nullopt;
+            return std::nullopt;
     }
     // Note that here we only take the left and bottom into consideration. Our caller takes the right and top into consideration.
     float boxHeight = synthesizedBaselineFromBorderBox(*this, lineDirection) + (lineDirection == HorizontalLine ? m_marginBox.bottom() : m_marginBox.left());
@@ -3181,7 +3181,7 @@ Optional<LayoutUnit> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode line
     } else {
         if (!hasLines()) {
             if (!hasLineIfEmpty())
-                return WTF::nullopt;
+                return std::nullopt;
             const auto& fontMetrics = firstLineStyle().fontMetrics();
             return LayoutUnit { LayoutUnit(fontMetrics.ascent()
                 + (lineHeight(true, lineDirection, PositionOfInteriorLineBoxes) - fontMetrics.height()) / 2

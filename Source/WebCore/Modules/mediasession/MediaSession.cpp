@@ -298,7 +298,7 @@ ExceptionOr<void> MediaSession::setPositionState(Optional<MediaPositionState>&& 
         ALWAYS_LOG(LOGIDENTIFIER, "{ }");
 
     if (!state) {
-        m_positionState = WTF::nullopt;
+        m_positionState = std::nullopt;
         notifyPositionStateObservers();
         return { };
     }
@@ -321,7 +321,7 @@ ExceptionOr<void> MediaSession::setPositionState(Optional<MediaPositionState>&& 
 Optional<double> MediaSession::currentPosition() const
 {
     if (!m_positionState || !m_lastReportedPosition)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto actualPlaybackRate = m_playbackState == MediaSessionPlaybackState::Playing ? m_positionState->playbackRate : 0;
 

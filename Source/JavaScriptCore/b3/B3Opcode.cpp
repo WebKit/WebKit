@@ -46,19 +46,19 @@ Optional<Opcode> invertedCompare(Opcode opcode, Type type)
     case LessThan:
         if (type.isInt())
             return GreaterEqual;
-        return WTF::nullopt;
+        return std::nullopt;
     case GreaterThan:
         if (type.isInt())
             return LessEqual;
-        return WTF::nullopt;
+        return std::nullopt;
     case LessEqual:
         if (type.isInt())
             return GreaterThan;
-        return WTF::nullopt;
+        return std::nullopt;
     case GreaterEqual:
         if (type.isInt())
             return LessThan;
-        return WTF::nullopt;
+        return std::nullopt;
     case Above:
         return BelowEqual;
     case Below:
@@ -68,7 +68,7 @@ Optional<Opcode> invertedCompare(Opcode opcode, Type type)
     case BelowEqual:
         return Above;
     default:
-        return WTF::nullopt;
+        return std::nullopt;
     }
 }
 

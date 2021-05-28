@@ -92,7 +92,7 @@ void CDM::getSupportedConfiguration(MediaKeySystemConfiguration&& candidateConfi
 
     Document* document = downcast<Document>(m_scriptExecutionContext);
     if (!document || !m_private) {
-        callback(WTF::nullopt);
+        callback(std::nullopt);
         return;
     }
 
@@ -157,7 +157,7 @@ RefPtr<SharedBuffer> CDM::sanitizeResponse(const SharedBuffer& response)
 Optional<String> CDM::sanitizeSessionId(const String& sessionId)
 {
     if (!m_private)
-        return WTF::nullopt;
+        return std::nullopt;
     return m_private->sanitizeSessionId(sessionId);
 }
 

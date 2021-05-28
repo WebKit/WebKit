@@ -116,7 +116,7 @@ public:
     void decrementActiveSourceCount();
 
     // Asynchronous audio file data decoding.
-    void decodeAudioData(Ref<ArrayBuffer>&&, RefPtr<AudioBufferCallback>&&, RefPtr<AudioBufferCallback>&&, Optional<Ref<DeferredPromise>>&& = WTF::nullopt);
+    void decodeAudioData(Ref<ArrayBuffer>&&, RefPtr<AudioBufferCallback>&&, RefPtr<AudioBufferCallback>&&, Optional<Ref<DeferredPromise>>&& = std::nullopt);
 
     AudioListener& listener() { return m_listener; }
 

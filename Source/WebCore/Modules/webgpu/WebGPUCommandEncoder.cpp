@@ -45,7 +45,7 @@ Optional<GPUBufferCopyView> WebGPUBufferCopyView::tryCreateGPUBufferCopyView() c
 {
     if (!buffer || !buffer->buffer()) {
         LOG(WebGPU, "WebGPUCommandEncoder: Invalid buffer for copy!");
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     // FIXME: Add Web GPU validation.
@@ -57,7 +57,7 @@ Optional<GPUTextureCopyView> WebGPUTextureCopyView::tryCreateGPUTextureCopyView(
 {
     if (!texture || !texture->texture()) {
         LOG(WebGPU, "WebGPUCommandEncoder: Invalid texture for copy!");
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     // FIXME: Add Web GPU validation.

@@ -89,7 +89,7 @@
     return self;
 }
 
-- (void)presentWithParameters:(const WebCore::ShareDataWithParsedURL &)data inRect:(WTF::Optional<WebCore::FloatRect>)rect completionHandler:(WTF::CompletionHandler<void(bool)>&&)completionHandler
+- (void)presentWithParameters:(const WebCore::ShareDataWithParsedURL &)data inRect:(std::optional<WebCore::FloatRect>)rect completionHandler:(WTF::CompletionHandler<void(bool)>&&)completionHandler
 {
     auto shareDataArray = adoptNS([[NSMutableArray alloc] init]);
     
@@ -152,7 +152,7 @@
     [self presentWithShareDataArray:shareDataArray.get() inRect:rect];
 }
 
-- (void)presentWithShareDataArray:(NSArray *)sharingItems inRect:(WTF::Optional<WebCore::FloatRect>)rect
+- (void)presentWithShareDataArray:(NSArray *)sharingItems inRect:(std::optional<WebCore::FloatRect>)rect
 {
     WKWebView *webView = _webView.getAutoreleased();
 

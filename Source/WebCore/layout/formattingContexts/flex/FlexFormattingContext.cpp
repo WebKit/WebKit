@@ -93,10 +93,10 @@ void FlexFormattingContext::sizeAndPlaceFlexItems(const ConstraintsForInFlowCont
             flexItemGeometry.setPadding(formattingGeometry.computedPadding(flexItem, constraints.horizontal.logicalWidth));
 
             auto computedHorizontalMargin = formattingGeometry.computedHorizontalMargin(flexItem, constraints.horizontal);
-            flexItemGeometry.setHorizontalMargin({ computedHorizontalMargin.start.valueOr(0_lu), computedHorizontalMargin.end.valueOr(0_lu) });
+            flexItemGeometry.setHorizontalMargin({ computedHorizontalMargin.start.value_or(0_lu), computedHorizontalMargin.end.value_or(0_lu) });
 
             auto computedVerticalMargin = formattingGeometry.computedVerticalMargin(flexItem, constraints.horizontal);
-            flexItemGeometry.setVerticalMargin({ computedVerticalMargin.before.valueOr(0_lu), computedVerticalMargin.after.valueOr(0_lu) });
+            flexItemGeometry.setVerticalMargin({ computedVerticalMargin.before.value_or(0_lu), computedVerticalMargin.after.value_or(0_lu) });
 
             flexItemGeometry.setContentBoxHeight(formattingGeometry.contentHeightForFormattingContextRoot(flexItem));
             flexItemGeometry.setContentBoxWidth(flexItemLogicalWidth);

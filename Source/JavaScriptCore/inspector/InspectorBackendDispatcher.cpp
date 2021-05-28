@@ -113,7 +113,7 @@ void BackendDispatcher::dispatch(const String& message)
     {
         // In case this is a re-entrant call from a nested run loop, we don't want to lose
         // the outer request's id just because the inner request is bogus.
-        SetForScope<Optional<long>> scopedRequestId(m_currentRequestId, WTF::nullopt);
+        SetForScope<Optional<long>> scopedRequestId(m_currentRequestId, std::nullopt);
 
         auto parsedMessage = JSON::Value::parseJSON(message);
         if (!parsedMessage) {
@@ -268,7 +268,7 @@ void BackendDispatcher::sendPendingErrors()
     m_frontendRouter->sendResponse(message->toJSONString());
 
     m_protocolErrors.clear();
-    m_currentRequestId = WTF::nullopt;
+    m_currentRequestId = std::nullopt;
 }
     
 void BackendDispatcher::reportProtocolError(CommonErrorCode errorCode, const String& errorMessage)

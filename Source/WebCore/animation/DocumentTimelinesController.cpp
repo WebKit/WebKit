@@ -196,7 +196,7 @@ void DocumentTimelinesController::resumeAnimations()
     if (!m_isSuspended)
         return;
 
-    m_cachedCurrentTime = WTF::nullopt;
+    m_cachedCurrentTime = std::nullopt;
 
     m_isSuspended = false;
 
@@ -217,7 +217,7 @@ ReducedResolutionSeconds DocumentTimelinesController::liveCurrentTime() const
 Optional<Seconds> DocumentTimelinesController::currentTime()
 {
     if (!m_document.domWindow())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!m_cachedCurrentTime)
         cacheCurrentTime(liveCurrentTime());
@@ -249,7 +249,7 @@ void DocumentTimelinesController::maybeClearCachedCurrentTime()
     // we're guaranteed to have a consistent current time reported for all work happening in a given
     // JS frame or throughout updating animations in WebCore.
     if (!m_isSuspended && !m_waitingOnVMIdle && !m_currentTimeClearingTaskQueue.hasPendingTasks())
-        m_cachedCurrentTime = WTF::nullopt;
+        m_cachedCurrentTime = std::nullopt;
 }
 
 } // namespace WebCore

@@ -102,12 +102,12 @@ static constexpr int optionalValuesForType[] =  { 0, 0, 1, 1, 2, 0, 0 };
 template<typename CharacterType> static Optional<SVGTransformValue> parseTransformValueGeneric(SVGTransformValue::SVGTransformType type, StringParsingBuffer<CharacterType>& buffer)
 {
     if (type == SVGTransformValue::SVG_TRANSFORM_UNKNOWN)
-        return WTF::nullopt;
+        return std::nullopt;
 
     int valueCount = 0;
     float values[] = {0, 0, 0, 0, 0, 0};
     if ((valueCount = parseTransformParamList(buffer, values, requiredValuesForType[type], optionalValuesForType[type])) < 0)
-        return WTF::nullopt;
+        return std::nullopt;
 
     SVGTransformValue transform;
     switch (type) {
@@ -166,7 +166,7 @@ template<typename CharacterType> static constexpr CharacterType matrixDesc[] =  
 template<typename CharacterType> static Optional<SVGTransformValue::SVGTransformType> parseTransformTypeGeneric(StringParsingBuffer<CharacterType>& buffer)
 {
     if (buffer.atEnd())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (*buffer == 's') {
         if (skipCharactersExactly(buffer, skewXDesc<CharacterType>))
@@ -175,7 +175,7 @@ template<typename CharacterType> static Optional<SVGTransformValue::SVGTransform
             return SVGTransformValue::SVG_TRANSFORM_SKEWY;
         if (skipCharactersExactly(buffer, scaleDesc<CharacterType>))
             return SVGTransformValue::SVG_TRANSFORM_SCALE;
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     if (skipCharactersExactly(buffer, translateDesc<CharacterType>))
@@ -185,7 +185,7 @@ template<typename CharacterType> static Optional<SVGTransformValue::SVGTransform
     if (skipCharactersExactly(buffer, matrixDesc<CharacterType>))
         return SVGTransformValue::SVG_TRANSFORM_MATRIX;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<SVGTransformValue::SVGTransformType> SVGTransformable::parseTransformType(StringView string)

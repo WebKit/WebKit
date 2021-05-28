@@ -59,22 +59,22 @@ template<class Decoder> Optional<TranslationContextMenuInfo> TranslationContextM
     Optional<String> text;
     decoder >> text;
     if (!text)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<IntRect> selectionBoundsInRootView;
     decoder >> selectionBoundsInRootView;
     if (!selectionBoundsInRootView)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<IntPoint> locationInRootView;
     decoder >> locationInRootView;
     if (!locationInRootView)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<TranslationContextMenuMode> mode;
     decoder >> mode;
     if (!mode)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ WTFMove(*text), WTFMove(*selectionBoundsInRootView), WTFMove(*locationInRootView), *mode }};
 }

@@ -401,7 +401,7 @@ void SVGRenderSupport::clipContextToCSSClippingArea(GraphicsContext& context, co
         referenceBox = localToParentTransform.mapRect(referenceBox);
 
         auto path = clipPath.pathForReferenceRect(referenceBox);
-        path.transform(localToParentTransform.inverse().valueOr(AffineTransform()));
+        path.transform(localToParentTransform.inverse().value_or(AffineTransform()));
 
         context.clipPath(path, clipPath.windRule());
     }

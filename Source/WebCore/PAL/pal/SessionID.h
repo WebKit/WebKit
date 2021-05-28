@@ -99,7 +99,7 @@ Optional<SessionID> SessionID::decode(Decoder& decoder)
     Optional<uint64_t> sessionID;
     decoder >> sessionID;
     if (!sessionID || !isValidSessionIDValue(*sessionID))
-        return WTF::nullopt;
+        return std::nullopt;
     return SessionID { *sessionID };
 }
 

@@ -357,7 +357,7 @@ Optional<IterationKind> interationKindForIntrinsic(Intrinsic intrinsic)
     case TypedArrayEntriesIntrinsic:
         return IterationKind::Entries;
     default:
-        return WTF::nullopt;
+        return std::nullopt;
     }
 }
 

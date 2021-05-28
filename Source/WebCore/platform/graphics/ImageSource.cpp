@@ -574,7 +574,7 @@ Optional<IntSize> ImageSource::densityCorrectedSize(ImageOrientation orientation
 {
     auto size = firstFrameMetadataCacheIfNeeded(m_densityCorrectedSize, MetadataType::DensityCorrectedSize, &ImageFrame::densityCorrectedSize, ImageFrame::Caching::Metadata);
     if (!size)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (orientation == ImageOrientation::FromImage)
         orientation = this->orientation();

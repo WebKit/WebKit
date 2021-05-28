@@ -407,8 +407,8 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const String& url, 
 
 Optional<ExceptionOr<void>> XMLHttpRequest::prepareToSend()
 {
-    // A return value other than WTF::nullopt means we should not try to send, and we should return that value to the caller.
-    // WTF::nullopt means we are ready to send and should continue with the send algorithm.
+    // A return value other than std::nullopt means we should not try to send, and we should return that value to the caller.
+    // std::nullopt means we are ready to send and should continue with the send algorithm.
 
     if (!scriptExecutionContext())
         return ExceptionOr<void> { };
@@ -436,7 +436,7 @@ Optional<ExceptionOr<void>> XMLHttpRequest::prepareToSend()
     }
 
     m_error = false;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 ExceptionOr<void> XMLHttpRequest::send(Optional<SendTypes>&& sendType)
@@ -623,7 +623,7 @@ ExceptionOr<void> XMLHttpRequest::createRequest()
         }
     }
 
-    m_exceptionCode = WTF::nullopt;
+    m_exceptionCode = std::nullopt;
     m_error = false;
     m_uploadComplete = !request.httpBody();
     m_sendFlag = true;
@@ -699,8 +699,8 @@ bool XMLHttpRequest::internalAbort()
 
     // Cancelling m_loadingActivity may trigger a window.onload callback which can call open() on the same xhr.
     // This would create internalAbort reentrant call.
-    // m_loadingActivity is set to WTF::nullopt before being cancelled to exit early in any reentrant internalAbort() call.
-    auto loadingActivity = std::exchange(m_loadingActivity, WTF::nullopt);
+    // m_loadingActivity is set to std::nullopt before being cancelled to exit early in any reentrant internalAbort() call.
+    auto loadingActivity = std::exchange(m_loadingActivity, std::nullopt);
     loadingActivity->loader->cancel();
 
     // If window.onload callback calls open() and send() on the same xhr, m_loadingActivity is now set to a new value.
@@ -922,7 +922,7 @@ void XMLHttpRequest::didFinishLoading(unsigned long)
 
     m_responseBuilder.shrinkToFit();
 
-    m_loadingActivity = WTF::nullopt;
+    m_loadingActivity = std::nullopt;
 
     m_sendFlag = false;
     changeState(DONE);

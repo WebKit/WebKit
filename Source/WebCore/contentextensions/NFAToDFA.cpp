@@ -325,7 +325,7 @@ Optional<DFA> NFAToDFA::convert(NFA&& nfa)
 {
     auto serializedNFA = SerializedNFA::serialize(WTFMove(nfa));
     if (!serializedNFA)
-        return WTF::nullopt;
+        return std::nullopt;
 
     NFANodeClosures nfaNodeClosures = resolveEpsilonClosures(*serializedNFA);
     DFA dfa;

@@ -78,7 +78,7 @@ void Caches::retrieveOriginFromDirectory(const String& folderPath, WorkQueue& qu
     queue.dispatch([completionHandler = WTFMove(completionHandler), filename = cachesOriginFilename(folderPath)]() mutable {
         if (!FileSystem::fileExists(filename)) {
             RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
-                completionHandler(WTF::nullopt);
+                completionHandler(std::nullopt);
             });
             return;
         }
@@ -88,7 +88,7 @@ void Caches::retrieveOriginFromDirectory(const String& folderPath, WorkQueue& qu
             ASSERT(RunLoop::isMain());
             if (error) {
                 RELEASE_LOG_ERROR(CacheStorage, "Caches::retrieveOriginFromDirectory failed reading channel with error %d", error);
-                completionHandler(WTF::nullopt);
+                completionHandler(std::nullopt);
                 return;
             }
             completionHandler(readOrigin(data));
@@ -117,12 +117,12 @@ Optional<WebCore::ClientOrigin> Caches::readOrigin(const Data& data)
     Optional<WebCore::SecurityOriginData> topOrigin;
     decoder >> topOrigin;
     if (!topOrigin)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<WebCore::SecurityOriginData> clientOrigin;
     decoder >> clientOrigin;
     if (!clientOrigin)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{
         WTFMove(*topOrigin),
@@ -133,14 +133,14 @@ Optional<WebCore::ClientOrigin> Caches::readOrigin(const Data& data)
 void Caches::initialize(WebCore::DOMCacheEngine::CompletionCallback&& callback)
 {
     if (m_isInitialized) {
-        callback(WTF::nullopt);
+        callback(std::nullopt);
         return;
     }
 
     if (m_rootPath.isNull()) {
         makeDirty();
         m_isInitialized = true;
-        callback(WTF::nullopt);
+        callback(std::nullopt);
         return;
     }
 
@@ -225,7 +225,7 @@ void Caches::initializeSize()
                 m_isInitialized = true;
                 auto pendingCallbacks = WTFMove(m_pendingInitializationCallbacks);
                 for (auto& callback : pendingCallbacks)
-                    callback(WTF::nullopt);
+                    callback(std::nullopt);
             });
             return;
         }
@@ -480,7 +480,7 @@ void Caches::writeCachesToDisk(CompletionCallback&& callback)
     ASSERT(!m_isWritingCachesToDisk);
     ASSERT(m_isInitialized);
     if (!shouldPersist()) {
-        callback(WTF::nullopt);
+        callback(std::nullopt);
         return;
     }
 
@@ -488,7 +488,7 @@ void Caches::writeCachesToDisk(CompletionCallback&& callback)
 
     if (m_caches.isEmpty()) {
         m_engine->removeFile(cachesListFilename(m_rootPath));
-        callback(WTF::nullopt);
+        callback(std::nullopt);
         return;
     }
 
@@ -500,7 +500,7 @@ void Caches::writeCachesToDisk(CompletionCallback&& callback)
 
         callback(WTFMove(error));
         while (!m_pendingWritingCachesToDiskCallbacks.isEmpty() && !m_isWritingCachesToDisk)
-            m_pendingWritingCachesToDiskCallbacks.takeFirst()(WTF::nullopt);
+            m_pendingWritingCachesToDiskCallbacks.takeFirst()(std::nullopt);
     });
 }
 
@@ -545,7 +545,7 @@ void Caches::writeRecord(const Cache& cache, const RecordInformation& recordInfo
 
     if (!shouldPersist()) {
         m_volatileStorage.set(recordInformation.key, makeUnique<Record>(WTFMove(record)));
-        callback(WTF::nullopt);
+        callback(std::nullopt);
         return;
     }
 
@@ -556,7 +556,7 @@ void Caches::writeRecord(const Cache& cache, const RecordInformation& recordInfo
             return;
         }
         updateSizeFile([callback = WTFMove(callback)]() mutable {
-            callback(WTF::nullopt);
+            callback(std::nullopt);
         });
     });
 }

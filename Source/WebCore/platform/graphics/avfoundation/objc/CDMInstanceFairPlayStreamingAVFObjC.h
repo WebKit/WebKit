@@ -190,7 +190,7 @@ private:
     bool ensureSessionOrGroup();
     bool isLicenseTypeSupported(LicenseType) const;
 
-    KeyStatusVector keyStatuses(Optional<PlatformDisplayID> = WTF::nullopt) const;
+    KeyStatusVector keyStatuses(Optional<PlatformDisplayID> = std::nullopt) const;
     void nextRequest();
     AVContentKeyRequest* lastKeyRequest() const;
 

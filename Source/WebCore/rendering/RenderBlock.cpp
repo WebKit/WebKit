@@ -2579,7 +2579,7 @@ LayoutUnit RenderBlock::minLineHeightForReplacedRenderer(bool isFirstLine, Layou
 Optional<LayoutUnit> RenderBlock::firstLineBaseline() const
 {
     if (shouldApplyLayoutContainment(*this))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (isWritingModeRoot() && !isRubyRun())
         return Optional<LayoutUnit>();
@@ -2751,7 +2751,7 @@ bool RenderBlock::cachedEnclosingFragmentedFlowNeedsUpdate() const
 void RenderBlock::setCachedEnclosingFragmentedFlowNeedsUpdate()
 {
     RenderBlockRareData& rareData = ensureBlockRareData(*this);
-    rareData.m_enclosingFragmentedFlow = WTF::nullopt;
+    rareData.m_enclosingFragmentedFlow = std::nullopt;
 }
 
 RenderFragmentedFlow* RenderBlock::updateCachedEnclosingFragmentedFlow(RenderFragmentedFlow* fragmentedFlow) const
@@ -3244,7 +3244,7 @@ Optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComputation
         availableHeight = overridingContentLogicalHeight();
     else if (styleToUse.logicalHeight().isFixed()) {
         LayoutUnit contentBoxHeight = adjustContentBoxLogicalHeightForBoxSizing((LayoutUnit)styleToUse.logicalHeight().value());
-        availableHeight = std::max(0_lu, constrainContentBoxLogicalHeightByMinMax(contentBoxHeight - scrollbarLogicalHeight(), WTF::nullopt));
+        availableHeight = std::max(0_lu, constrainContentBoxLogicalHeightByMinMax(contentBoxHeight - scrollbarLogicalHeight(), std::nullopt));
     } else if (shouldComputeLogicalHeightFromAspectRatio()) {
         availableHeight = blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), LayoutUnit(style().logicalAspectRatio()), style().boxSizingForAspectRatio(), logicalWidth());
     } else if (isOutOfFlowPositionedWithSpecifiedHeight) {
@@ -3260,7 +3260,7 @@ Optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComputation
             // handle the min/max of the current block, its caller does. So the
             // return value from the recursive call will not have been adjusted
             // yet.
-            LayoutUnit contentBoxHeight = constrainContentBoxLogicalHeightByMinMax(contentBoxHeightWithScrollbar - scrollbarLogicalHeight(), WTF::nullopt);
+            LayoutUnit contentBoxHeight = constrainContentBoxLogicalHeightByMinMax(contentBoxHeightWithScrollbar - scrollbarLogicalHeight(), std::nullopt);
             availableHeight = std::max(0_lu, contentBoxHeight);
         }
     } else if (isRenderView())

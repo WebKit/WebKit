@@ -255,13 +255,13 @@ Optional<IDBKeyData> IDBKeyData::decode(Decoder& decoder)
 {
     IDBKeyData keyData;
     if (!decoder.decode(keyData.m_isNull))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (keyData.m_isNull)
         return keyData;
 
     if (!decoder.decode(keyData.m_type))
-        return WTF::nullopt;
+        return std::nullopt;
 
     switch (keyData.m_type) {
     case IndexedDB::KeyType::Invalid:
@@ -271,23 +271,23 @@ Optional<IDBKeyData> IDBKeyData::decode(Decoder& decoder)
     case IndexedDB::KeyType::Array:
         keyData.m_value = Vector<IDBKeyData>();
         if (!decoder.decode(WTF::get<Vector<IDBKeyData>>(keyData.m_value)))
-            return WTF::nullopt;
+            return std::nullopt;
         break;
     case IndexedDB::KeyType::Binary:
         keyData.m_value = ThreadSafeDataBuffer();
         if (!decoder.decode(WTF::get<ThreadSafeDataBuffer>(keyData.m_value)))
-            return WTF::nullopt;
+            return std::nullopt;
         break;
     case IndexedDB::KeyType::String:
         keyData.m_value = String();
         if (!decoder.decode(WTF::get<String>(keyData.m_value)))
-            return WTF::nullopt;
+            return std::nullopt;
         break;
     case IndexedDB::KeyType::Date:
     case IndexedDB::KeyType::Number:
         keyData.m_value = 0.0;
         if (!decoder.decode(WTF::get<double>(keyData.m_value)))
-            return WTF::nullopt;
+            return std::nullopt;
         break;
     }
 

@@ -152,7 +152,7 @@ Optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTextLeg
 
     auto document = makeRefPtr(m_webPage.mainFrame()->document());
     if (!document)
-        return WTF::nullopt;
+        return std::nullopt;
 
     document->updateLayoutIgnorePendingStylesheets();
 

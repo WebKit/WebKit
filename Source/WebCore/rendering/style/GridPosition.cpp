@@ -87,7 +87,7 @@ int GridPosition::spanPosition() const
 
 int GridPosition::max()
 {
-    return gMaxPositionForTesting.valueOr(kGridMaxPosition);
+    return gMaxPositionForTesting.value_or(kGridMaxPosition);
 }
 
 int GridPosition::min()

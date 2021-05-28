@@ -35,8 +35,8 @@ namespace WebCore {
 class WEBCORE_EXPORT CaptureDeviceManager {
 public:
     virtual const Vector<CaptureDevice>& captureDevices() = 0;
-    virtual void computeCaptureDevices(CompletionHandler<void()>&& callback) { callback(); }
-    virtual Optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&) { return WTF::nullopt; }
+    virtual void computeCaptureDevices(CompletionHandler<void()>&&);
+    virtual std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
 
 protected:
     virtual ~CaptureDeviceManager();

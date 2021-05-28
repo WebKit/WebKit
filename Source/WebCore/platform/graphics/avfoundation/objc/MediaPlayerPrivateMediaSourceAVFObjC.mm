@@ -738,7 +738,7 @@ Optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateMediaSourceAVFObjC::vide
 
     auto metrics = [m_sampleBufferDisplayLayer videoPerformanceMetrics];
     if (!metrics)
-        return WTF::nullopt;
+        return std::nullopt;
 
     uint32_t displayCompositedFrames = 0;
     ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN

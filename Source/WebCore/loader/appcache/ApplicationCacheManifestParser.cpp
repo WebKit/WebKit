@@ -90,10 +90,10 @@ Optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL& mani
         // Example: "CACHE MANIFEST #comment" is a valid signature.
         // Example: "CACHE MANIFEST;V2" is not.
         if (!skipCharactersExactly(buffer, cacheManifestIdentifier<CharacterType>))
-            return WTF::nullopt;
+            return std::nullopt;
     
         if (buffer.hasCharactersRemaining() && !isManifestWhitespaceOrNewline(*buffer))
-            return WTF::nullopt;
+            return std::nullopt;
 
         // Skip to the end of the line.
         skipUntil<isManifestNewline>(buffer);

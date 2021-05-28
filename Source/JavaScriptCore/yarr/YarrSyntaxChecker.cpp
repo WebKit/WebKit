@@ -28,31 +28,30 @@
 
 #include "YarrFlags.h"
 #include "YarrParser.h"
-#include <wtf/Optional.h>
 
 namespace JSC { namespace Yarr {
 
 class SyntaxChecker {
 public:
-    void assertionBOL() {}
-    void assertionEOL() {}
-    void assertionWordBoundary(bool) {}
-    void atomPatternCharacter(UChar32) {}
-    void atomBuiltInCharacterClass(BuiltInCharacterClassID, bool) {}
-    void atomCharacterClassBegin(bool = false) {}
-    void atomCharacterClassAtom(UChar) {}
-    void atomCharacterClassRange(UChar, UChar) {}
-    void atomCharacterClassBuiltIn(BuiltInCharacterClassID, bool) {}
-    void atomCharacterClassEnd() {}
-    void atomParenthesesSubpatternBegin(bool = true, Optional<String> = WTF::nullopt) {}
-    void atomParentheticalAssertionBegin(bool = false) {}
-    void atomParenthesesEnd() {}
-    void atomBackReference(unsigned) {}
-    void atomNamedBackReference(const String&) {}
-    void atomNamedForwardReference(const String&) {}
-    void quantifyAtom(unsigned, unsigned, bool) {}
-    void disjunction() {}
-    void resetForReparsing() {}
+    void assertionBOL() { }
+    void assertionEOL() { }
+    void assertionWordBoundary(bool) { }
+    void atomPatternCharacter(UChar32) { }
+    void atomBuiltInCharacterClass(BuiltInCharacterClassID, bool) { }
+    void atomCharacterClassBegin(bool = false) { }
+    void atomCharacterClassAtom(UChar) { }
+    void atomCharacterClassRange(UChar, UChar) { }
+    void atomCharacterClassBuiltIn(BuiltInCharacterClassID, bool) { }
+    void atomCharacterClassEnd() { }
+    void atomParenthesesSubpatternBegin(bool = true, std::optional<String> = std::nullopt) { }
+    void atomParentheticalAssertionBegin(bool = false) { }
+    void atomParenthesesEnd() { }
+    void atomBackReference(unsigned) { }
+    void atomNamedBackReference(const String&) { }
+    void atomNamedForwardReference(const String&) { }
+    void quantifyAtom(unsigned, unsigned, bool) { }
+    void disjunction() { }
+    void resetForReparsing() { }
 };
 
 ErrorCode checkSyntax(const String& pattern, const String& flags)

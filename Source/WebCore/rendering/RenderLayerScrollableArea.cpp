@@ -216,7 +216,7 @@ void RenderLayerScrollableArea::applyPostLayoutScrollPositionIfNeeded()
         return;
 
     scrollToOffset(scrollOffsetFromPosition(m_postLayoutScrollPosition.value()));
-    m_postLayoutScrollPosition = WTF::nullopt;
+    m_postLayoutScrollPosition = std::nullopt;
 }
 
 void RenderLayerScrollableArea::scrollToXPosition(int x, const ScrollPositionChangeOptions& options)
@@ -1755,7 +1755,7 @@ Optional<LayoutRect> RenderLayerScrollableArea::updateScrollPosition(const Scrol
         return LayoutRect(box->localToAbsoluteQuad(FloatQuad(FloatRect(localExposeRectScrolled)), UseTransforms).boundingBox());
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void RenderLayerScrollableArea::scrollByRecursively(const IntSize& delta, ScrollableArea** scrolledArea)

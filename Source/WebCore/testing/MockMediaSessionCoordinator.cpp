@@ -56,7 +56,7 @@ Optional<Exception> MockMediaSessionCoordinator::result() const
     if (m_failCommands)
         return Exception { InvalidStateError };
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void MockMediaSessionCoordinator::join(CompletionHandler<void(Optional<Exception>&&)>&& callback)

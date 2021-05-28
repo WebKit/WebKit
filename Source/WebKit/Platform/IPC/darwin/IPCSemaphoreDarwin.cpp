@@ -102,7 +102,7 @@ Optional<Semaphore> Semaphore::decode(Decoder& decoder)
 {
     MachSendRight sendRight;
     if (!decoder.decode(sendRight))
-        return WTF::nullopt;
+        return std::nullopt;
     return Optional<Semaphore> { std::in_place, WTFMove(sendRight) };
 }
 

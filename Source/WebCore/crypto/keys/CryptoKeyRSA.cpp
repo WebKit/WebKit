@@ -57,8 +57,8 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importJwk(CryptoAlgorithmIdentifier algorithm
     if (keyData.d.isNull()) {
         // import public key
         auto publicKeyComponents = CryptoKeyRSAComponents::createPublic(WTFMove(*modulus), WTFMove(*exponent));
-        // Notice: CryptoAlgorithmIdentifier::SHA_1 is just a placeholder. It should not have any effect if hash is WTF::nullopt.
-        return CryptoKeyRSA::create(algorithm, hash.valueOr(CryptoAlgorithmIdentifier::SHA_1), !!hash, *publicKeyComponents, extractable, usages);
+        // Notice: CryptoAlgorithmIdentifier::SHA_1 is just a placeholder. It should not have any effect if hash is std::nullopt.
+        return CryptoKeyRSA::create(algorithm, hash.value_or(CryptoAlgorithmIdentifier::SHA_1), !!hash, *publicKeyComponents, extractable, usages);
     }
 
     // import private key
@@ -67,8 +67,8 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importJwk(CryptoAlgorithmIdentifier algorithm
         return nullptr;
     if (keyData.p.isNull() && keyData.q.isNull() && keyData.dp.isNull() && keyData.dp.isNull() && keyData.qi.isNull()) {
         auto privateKeyComponents = CryptoKeyRSAComponents::createPrivate(WTFMove(*modulus), WTFMove(*exponent), WTFMove(*privateExponent));
-        // Notice: CryptoAlgorithmIdentifier::SHA_1 is just a placeholder. It should not have any effect if hash is WTF::nullopt.
-        return CryptoKeyRSA::create(algorithm, hash.valueOr(CryptoAlgorithmIdentifier::SHA_1), !!hash, *privateKeyComponents, extractable, usages);
+        // Notice: CryptoAlgorithmIdentifier::SHA_1 is just a placeholder. It should not have any effect if hash is std::nullopt.
+        return CryptoKeyRSA::create(algorithm, hash.value_or(CryptoAlgorithmIdentifier::SHA_1), !!hash, *privateKeyComponents, extractable, usages);
     }
 
     if (keyData.p.isNull() || keyData.q.isNull() || keyData.dp.isNull() || keyData.dq.isNull() || keyData.qi.isNull())
@@ -101,8 +101,8 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importJwk(CryptoAlgorithmIdentifier algorithm
 
     if (!keyData.oth) {
         auto privateKeyComponents = CryptoKeyRSAComponents::createPrivateWithAdditionalData(WTFMove(*modulus), WTFMove(*exponent), WTFMove(*privateExponent), WTFMove(firstPrimeInfo), WTFMove(secondPrimeInfo), { });
-        // Notice: CryptoAlgorithmIdentifier::SHA_1 is just a placeholder. It should not have any effect if hash is WTF::nullopt.
-        return CryptoKeyRSA::create(algorithm, hash.valueOr(CryptoAlgorithmIdentifier::SHA_1), !!hash, *privateKeyComponents, extractable, usages);
+        // Notice: CryptoAlgorithmIdentifier::SHA_1 is just a placeholder. It should not have any effect if hash is std::nullopt.
+        return CryptoKeyRSA::create(algorithm, hash.value_or(CryptoAlgorithmIdentifier::SHA_1), !!hash, *privateKeyComponents, extractable, usages);
     }
 
     Vector<CryptoKeyRSAComponents::PrimeInfo> otherPrimeInfos;
@@ -126,8 +126,8 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importJwk(CryptoAlgorithmIdentifier algorithm
     }
 
     auto privateKeyComponents = CryptoKeyRSAComponents::createPrivateWithAdditionalData(WTFMove(*modulus), WTFMove(*exponent), WTFMove(*privateExponent), WTFMove(firstPrimeInfo), WTFMove(secondPrimeInfo), WTFMove(otherPrimeInfos));
-    // Notice: CryptoAlgorithmIdentifier::SHA_1 is just a placeholder. It should not have any effect if hash is WTF::nullopt.
-    return CryptoKeyRSA::create(algorithm, hash.valueOr(CryptoAlgorithmIdentifier::SHA_1), !!hash, *privateKeyComponents, extractable, usages);
+    // Notice: CryptoAlgorithmIdentifier::SHA_1 is just a placeholder. It should not have any effect if hash is std::nullopt.
+    return CryptoKeyRSA::create(algorithm, hash.value_or(CryptoAlgorithmIdentifier::SHA_1), !!hash, *privateKeyComponents, extractable, usages);
 }
 
 JsonWebKey CryptoKeyRSA::exportJwk() const

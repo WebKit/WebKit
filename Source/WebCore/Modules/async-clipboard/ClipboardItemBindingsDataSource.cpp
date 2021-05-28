@@ -202,7 +202,7 @@ void ClipboardItemBindingsDataSource::invokeCompletionHandler()
 
     auto document = documentFromClipboard(clipboard.get());
     if (!document) {
-        completionHandler(WTF::nullopt);
+        completionHandler(std::nullopt);
         return;
     }
 
@@ -215,7 +215,7 @@ void ClipboardItemBindingsDataSource::invokeCompletionHandler()
         else if (WTF::holds_alternative<Ref<SharedBuffer>>(data))
             customData.writeData(type, WTF::get<Ref<SharedBuffer>>(data).copyRef());
         else {
-            completionHandler(WTF::nullopt);
+            completionHandler(std::nullopt);
             return;
         }
     }

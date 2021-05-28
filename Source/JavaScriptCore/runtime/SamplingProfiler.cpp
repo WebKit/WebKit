@@ -1156,7 +1156,7 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
         auto frameDescription = makeString(frame.displayName(m_vm), descriptionForLocation(frame.semanticLocation, frame.wasmCompilationMode));
         if (Optional<std::pair<StackFrame::CodeLocation, CodeBlock*>> machineLocation = frame.machineLocation) {
             frameDescription = makeString(frameDescription, " <-- ",
-                machineLocation->second->inferredName().data(), descriptionForLocation(machineLocation->first, WTF::nullopt));
+                machineLocation->second->inferredName().data(), descriptionForLocation(machineLocation->first, std::nullopt));
         }
         bytecodeCounts.add(frameDescription, 0).iterator->value++;
         

@@ -671,7 +671,7 @@ inline Optional<std::pair<MediaCanStartListener&, Document&>>  Page::takeAnyMedi
         if (MediaCanStartListener* listener = frame->document()->takeAnyMediaCanStartListener())
             return { { *listener, *frame->document() } };
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void Page::setCanStartMedia(bool canStartMedia)
@@ -776,16 +776,16 @@ auto Page::findTextMatches(const String& target, FindOptions options, unsigned l
 Optional<SimpleRange> Page::rangeOfString(const String& target, const Optional<SimpleRange>& referenceRange, FindOptions options)
 {
     if (target.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (referenceRange && referenceRange->start.document().page() != this)
-        return WTF::nullopt;
+        return std::nullopt;
 
     CanWrap canWrap = options.contains(WrapAround) ? CanWrap::Yes : CanWrap::No;
     Frame* frame = referenceRange ? referenceRange->start.document().frame() : &mainFrame();
     Frame* startFrame = frame;
     do {
-        if (auto resultRange = frame->editor().rangeOfString(target, frame == startFrame ? referenceRange : WTF::nullopt, options - WrapAround))
+        if (auto resultRange = frame->editor().rangeOfString(target, frame == startFrame ? referenceRange : std::nullopt, options - WrapAround))
             return resultRange;
         frame = incrementFrame(frame, !options.contains(Backwards), canWrap);
     } while (frame && frame != startFrame);
@@ -797,7 +797,7 @@ Optional<SimpleRange> Page::rangeOfString(const String& target, const Optional<S
             return resultRange;
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 unsigned Page::findMatchesForText(const String& target, FindOptions options, unsigned maxMatchCount, ShouldHighlightMatches shouldHighlightMatches, ShouldMarkMatches shouldMarkMatches)
@@ -811,7 +811,7 @@ unsigned Page::findMatchesForText(const String& target, FindOptions options, uns
     do {
         if (shouldMarkMatches == MarkMatches)
             frame->editor().setMarkedTextMatchesAreHighlighted(shouldHighlightMatches == HighlightMatches);
-        matchCount += frame->editor().countMatchesForText(target, WTF::nullopt, options, maxMatchCount ? (maxMatchCount - matchCount) : 0, shouldMarkMatches == MarkMatches, nullptr);
+        matchCount += frame->editor().countMatchesForText(target, std::nullopt, options, maxMatchCount ? (maxMatchCount - matchCount) : 0, shouldMarkMatches == MarkMatches, nullptr);
         frame = incrementFrame(frame, true, CanWrap::No);
     } while (frame);
 
@@ -1269,7 +1269,7 @@ void Page::didCommitLoad()
 #endif
 
 #if HAVE(OS_DARK_MODE_SUPPORT)
-    setUseDarkAppearanceOverride(WTF::nullopt);
+    setUseDarkAppearanceOverride(std::nullopt);
 #endif
 
     resetSeenPlugins();
@@ -1855,7 +1855,7 @@ void Page::userStyleSheetLocationChanged()
 
     m_didLoadUserStyleSheet = false;
     m_userStyleSheet = String();
-    m_userStyleSheetModificationTime = WTF::nullopt;
+    m_userStyleSheetModificationTime = std::nullopt;
 
     // Data URLs with base64-encoded UTF-8 style sheets are common. We can process them
     // synchronously and avoid using a loader. 
@@ -2393,7 +2393,7 @@ void Page::setIsVisibleInternal(bool isVisible)
 
         if (m_navigationToLogWhenVisible) {
             logNavigation(m_navigationToLogWhenVisible.value());
-            m_navigationToLogWhenVisible = WTF::nullopt;
+            m_navigationToLogWhenVisible = std::nullopt;
         }
     }
 
@@ -2576,7 +2576,7 @@ Color Page::pageExtendedBackgroundColor() const
 
 Color Page::sampledPageTopColor() const
 {
-    return m_sampledPageTopColor.valueOr(Color());
+    return m_sampledPageTopColor.value_or(Color());
 }
 
 void Page::setUnderPageBackgroundColorOverride(Color&& underPageBackgroundColorOverride)
@@ -2881,7 +2881,7 @@ void Page::mainFrameLoadStarted(const URL& destinationURL, FrameLoadType type)
         return;
     }
 
-    m_navigationToLogWhenVisible = WTF::nullopt;
+    m_navigationToLogWhenVisible = std::nullopt;
     logNavigation(navigation);
 }
 
@@ -3303,7 +3303,7 @@ void Page::didChangeMainDocument()
     m_pointerCaptureController->reset();
 
     if (m_sampledPageTopColor) {
-        m_sampledPageTopColor = WTF::nullopt;
+        m_sampledPageTopColor = std::nullopt;
         chrome().client().sampledPageTopColorChanged();
     }
 }

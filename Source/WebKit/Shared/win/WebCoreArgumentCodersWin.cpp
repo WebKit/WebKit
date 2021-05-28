@@ -45,7 +45,7 @@ void ArgumentCoder<FontAttributes>::encodePlatformData(Encoder&, const FontAttri
 Optional<FontAttributes> ArgumentCoder<FontAttributes>::decodePlatformData(Decoder&, FontAttributes&)
 {
     ASSERT_NOT_REACHED();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<> struct ArgumentCoder<LOGFONT> {
@@ -57,7 +57,7 @@ template<> struct ArgumentCoder<LOGFONT> {
     {
         LOGFONT logFont;
         if (!decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(&logFont), sizeof(logFont), 1))
-            return WTF::nullopt;
+            return std::nullopt;
         return logFont;
     }
 };
@@ -86,22 +86,22 @@ Optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder&
     Optional<float> size;
     decoder >> size;
     if (!size.hasValue())
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> syntheticBold;
     decoder >> syntheticBold;
     if (!syntheticBold.hasValue())
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> syntheticOblique;
     decoder >> syntheticOblique;
     if (!syntheticOblique.hasValue())
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> includesCreationData;
     decoder >> includesCreationData;
     if (!includesCreationData.hasValue())
-        return WTF::nullopt;
+        return std::nullopt;
 
     std::unique_ptr<FontCustomPlatformData> fontCustomPlatformData;
     FontPlatformData::CreationData* creationData = nullptr;
@@ -110,30 +110,30 @@ Optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder&
         Optional<Ref<SharedBuffer>> fontFaceData;
         decoder >> fontFaceData;
         if (!fontFaceData.hasValue())
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<String> itemInCollection;
         decoder >> itemInCollection;
         if (!itemInCollection.hasValue())
-            return WTF::nullopt;
+            return std::nullopt;
 
         fontCustomPlatformData = createFontCustomPlatformData(fontFaceData.value(), itemInCollection.value());
         if (!fontCustomPlatformData)
-            return WTF::nullopt;
+            return std::nullopt;
         creationData = &fontCustomPlatformData->creationData;
     }
 
     Optional<LOGFONT> logFont;
     decoder >> logFont;
     if (!logFont.hasValue())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (fontCustomPlatformData)
         wcscpy_s(logFont->lfFaceName, LF_FACESIZE, fontCustomPlatformData->name.wideCharacters().data());
     
     auto gdiFont = adoptGDIObject(CreateFontIndirect(&*logFont));
     if (!gdiFont)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return FontPlatformData(WTFMove(gdiFont), *size, *syntheticBold, *syntheticOblique, false, creationData);
 }

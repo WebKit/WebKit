@@ -111,7 +111,7 @@ Optional<LayoutUnit> FormattingGeometry::computedHeight(const Box& layoutBox, Op
         if (layoutBox.style().boxSizing() == BoxSizing::ContentBox)
             return height;
         auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-        return *height - (boxGeometry.verticalBorder() + boxGeometry.verticalPadding().valueOr(0));
+        return *height - (boxGeometry.verticalBorder() + boxGeometry.verticalPadding().value_or(0));
     }
     return { };
 }
@@ -174,7 +174,7 @@ Optional<LayoutUnit> FormattingGeometry::computedWidth(const Box& layoutBox, Lay
         if (style.boxSizing() == BoxSizing::ContentBox || style.width().isIntrinsicOrAuto())
             return computedWidth;
         auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
-        return *computedWidth - (boxGeometry.horizontalBorder() + boxGeometry.horizontalPadding().valueOr(0));
+        return *computedWidth - (boxGeometry.horizontalBorder() + boxGeometry.horizontalPadding().value_or(0));
     }
     return { };
 }
@@ -360,8 +360,8 @@ VerticalGeometry FormattingGeometry::outOfFlowNonReplacedVerticalGeometry(const 
     auto height = overriddenVerticalValues.height ? overriddenVerticalValues.height.value() : computedHeight(layoutBox, containingBlockHeight);
     auto computedVerticalMargin = FormattingGeometry::computedVerticalMargin(layoutBox, horizontalConstraints);
     UsedVerticalMargin::NonCollapsedValues usedVerticalMargin; 
-    auto paddingTop = boxGeometry.paddingTop().valueOr(0);
-    auto paddingBottom = boxGeometry.paddingBottom().valueOr(0);
+    auto paddingTop = boxGeometry.paddingTop().value_or(0);
+    auto paddingBottom = boxGeometry.paddingBottom().value_or(0);
     auto borderTop = boxGeometry.borderTop();
     auto borderBottom = boxGeometry.borderBottom();
 
@@ -389,39 +389,39 @@ VerticalGeometry FormattingGeometry::outOfFlowNonReplacedVerticalGeometry(const 
     if (!top && !height && bottom) {
         // #1
         height = contentHeightForFormattingContextRoot(layoutBox);
-        usedVerticalMargin = { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
+        usedVerticalMargin = { computedVerticalMargin.before.value_or(0), computedVerticalMargin.after.value_or(0) };
         top = containingBlockHeight - (usedVerticalMargin.before + borderTop + paddingTop + *height + paddingBottom + borderBottom + usedVerticalMargin.after + *bottom); 
     }
 
     if (!top && !bottom && height) {
         // #2
         top = staticVerticalPositionForOutOfFlowPositioned(layoutBox, verticalConstraints);
-        usedVerticalMargin = { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
+        usedVerticalMargin = { computedVerticalMargin.before.value_or(0), computedVerticalMargin.after.value_or(0) };
         bottom = containingBlockHeight - (*top + usedVerticalMargin.before + borderTop + paddingTop + *height + paddingBottom + borderBottom + usedVerticalMargin.after);
     }
 
     if (!height && !bottom && top) {
         // #3
         height = contentHeightForFormattingContextRoot(layoutBox);
-        usedVerticalMargin = { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
+        usedVerticalMargin = { computedVerticalMargin.before.value_or(0), computedVerticalMargin.after.value_or(0) };
         bottom = containingBlockHeight - (*top + usedVerticalMargin.before + borderTop + paddingTop + *height + paddingBottom + borderBottom + usedVerticalMargin.after);
     }
 
     if (!top && height && bottom) {
         // #4
-        usedVerticalMargin = { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
+        usedVerticalMargin = { computedVerticalMargin.before.value_or(0), computedVerticalMargin.after.value_or(0) };
         top = containingBlockHeight - (usedVerticalMargin.before + borderTop + paddingTop + *height + paddingBottom + borderBottom + usedVerticalMargin.after + *bottom);
     }
 
     if (!height && top && bottom) {
         // #5
-        usedVerticalMargin = { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
+        usedVerticalMargin = { computedVerticalMargin.before.value_or(0), computedVerticalMargin.after.value_or(0) };
         height = containingBlockHeight - (*top + usedVerticalMargin.before + borderTop + paddingTop + paddingBottom + borderBottom + usedVerticalMargin.after + *bottom);
     }
 
     if (!bottom && top && height) {
         // #6
-        usedVerticalMargin = { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
+        usedVerticalMargin = { computedVerticalMargin.before.value_or(0), computedVerticalMargin.after.value_or(0) };
         bottom = containingBlockHeight - (*top + usedVerticalMargin.before + borderTop + paddingTop + *height + paddingBottom + borderBottom + usedVerticalMargin.after);
     }
 
@@ -480,15 +480,15 @@ HorizontalGeometry FormattingGeometry::outOfFlowNonReplacedHorizontalGeometry(co
     auto width = overriddenHorizontalValues.width ? overriddenHorizontalValues.width : computedWidth(layoutBox, containingBlockWidth);
     auto computedHorizontalMargin = FormattingGeometry::computedHorizontalMargin(layoutBox, horizontalConstraints);
     UsedHorizontalMargin usedHorizontalMargin;
-    auto paddingLeft = boxGeometry.paddingLeft().valueOr(0);
-    auto paddingRight = boxGeometry.paddingRight().valueOr(0);
+    auto paddingLeft = boxGeometry.paddingLeft().value_or(0);
+    auto paddingRight = boxGeometry.paddingRight().value_or(0);
     auto borderLeft = boxGeometry.borderLeft();
     auto borderRight = boxGeometry.borderRight();
     if (!left && !width && !right) {
         // If all three of 'left', 'width', and 'right' are 'auto': First set any 'auto' values for 'margin-left' and 'margin-right' to 0.
         // Then, if the 'direction' property of the element establishing the static-position containing block is 'ltr' set 'left' to the static
         // position and apply rule number three below; otherwise, set 'right' to the static position and apply rule number one below.
-        usedHorizontalMargin = { computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) };
+        usedHorizontalMargin = { computedHorizontalMargin.start.value_or(0), computedHorizontalMargin.end.value_or(0) };
 
         auto staticHorizontalPosition = staticHorizontalPositionForOutOfFlowPositioned(layoutBox, horizontalConstraints);
         if (isLeftToRightDirection)
@@ -530,7 +530,7 @@ HorizontalGeometry FormattingGeometry::outOfFlowNonReplacedHorizontalGeometry(co
         }
     } else {
         // Otherwise, set 'auto' values for 'margin-left' and 'margin-right' to 0, and pick the one of the following six rules that applies.
-        usedHorizontalMargin = { computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) };
+        usedHorizontalMargin = { computedHorizontalMargin.start.value_or(0), computedHorizontalMargin.end.value_or(0) };
     }
 
     if (!left && !width && right) {
@@ -609,8 +609,8 @@ VerticalGeometry FormattingGeometry::outOfFlowReplacedVerticalGeometry(const Rep
     auto computedVerticalMargin = FormattingGeometry::computedVerticalMargin(replacedBox, horizontalConstraints);
     Optional<LayoutUnit> usedMarginBefore = computedVerticalMargin.before;
     Optional<LayoutUnit> usedMarginAfter = computedVerticalMargin.after;
-    auto paddingTop = boxGeometry.paddingTop().valueOr(0);
-    auto paddingBottom = boxGeometry.paddingBottom().valueOr(0);
+    auto paddingTop = boxGeometry.paddingTop().value_or(0);
+    auto paddingBottom = boxGeometry.paddingBottom().value_or(0);
     auto borderTop = boxGeometry.borderTop();
     auto borderBottom = boxGeometry.borderBottom();
 
@@ -621,7 +621,7 @@ VerticalGeometry FormattingGeometry::outOfFlowReplacedVerticalGeometry(const Rep
 
     if (!bottom) {
         // #2
-        usedMarginBefore = computedVerticalMargin.before.valueOr(0);
+        usedMarginBefore = computedVerticalMargin.before.value_or(0);
         usedMarginAfter = usedMarginBefore;
     }
 
@@ -694,8 +694,8 @@ HorizontalGeometry FormattingGeometry::outOfFlowReplacedHorizontalGeometry(const
     Optional<LayoutUnit> usedMarginStart = computedHorizontalMargin.start;
     Optional<LayoutUnit> usedMarginEnd = computedHorizontalMargin.end;
     auto width = inlineReplacedContentWidthAndMargin(replacedBox, horizontalConstraints, verticalConstraints, overriddenHorizontalValues).contentWidth;
-    auto paddingLeft = boxGeometry.paddingLeft().valueOr(0);
-    auto paddingRight = boxGeometry.paddingRight().valueOr(0);
+    auto paddingLeft = boxGeometry.paddingLeft().value_or(0);
+    auto paddingRight = boxGeometry.paddingRight().value_or(0);
     auto borderLeft = boxGeometry.borderLeft();
     auto borderRight = boxGeometry.borderRight();
 
@@ -710,8 +710,8 @@ HorizontalGeometry FormattingGeometry::outOfFlowReplacedHorizontalGeometry(const
 
     if (!left || !right) {
         // #2
-        usedMarginStart = computedHorizontalMargin.start.valueOr(0);
-        usedMarginEnd = computedHorizontalMargin.end.valueOr(0);
+        usedMarginStart = computedHorizontalMargin.start.value_or(0);
+        usedMarginEnd = computedHorizontalMargin.end.value_or(0);
     }
 
     if (!usedMarginStart && !usedMarginEnd) {
@@ -786,7 +786,7 @@ ContentHeightAndMargin FormattingGeometry::complicatedCases(const Box& layoutBox
     auto height = overriddenVerticalValues.height ? overriddenVerticalValues.height.value() : computedHeight(layoutBox);
     auto computedVerticalMargin = FormattingGeometry::computedVerticalMargin(layoutBox, horizontalConstraints);
     // #1
-    auto usedVerticalMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) }; 
+    auto usedVerticalMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.value_or(0), computedVerticalMargin.after.value_or(0) }; 
     // #2
     if (!height) {
         ASSERT(isHeightAuto(layoutBox));
@@ -831,7 +831,7 @@ ContentWidthAndMargin FormattingGeometry::floatingNonReplacedContentWidthAndMarg
     auto computedHorizontalMargin = FormattingGeometry::computedHorizontalMargin(layoutBox, horizontalConstraints);
 
     // #1
-    auto usedHorizontallMargin = UsedHorizontalMargin { computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) };
+    auto usedHorizontallMargin = UsedHorizontalMargin { computedHorizontalMargin.start.value_or(0), computedHorizontalMargin.end.value_or(0) };
     // #2
     auto width = overriddenHorizontalValues.width ? overriddenHorizontalValues.width : computedWidth(layoutBox, horizontalConstraints.logicalWidth);
     if (!width)
@@ -862,7 +862,7 @@ ContentWidthAndMargin FormattingGeometry::floatingReplacedContentWidthAndMargin(
     auto computedHorizontalMargin = FormattingGeometry::computedHorizontalMargin(replacedBox, horizontalConstraints);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Height][Margin] -> floating replaced -> redirected to inline replaced");
-    auto usedMargin = UsedHorizontalMargin { computedHorizontalMargin.start.valueOr(0), computedHorizontalMargin.end.valueOr(0) };
+    auto usedMargin = UsedHorizontalMargin { computedHorizontalMargin.start.value_or(0), computedHorizontalMargin.end.value_or(0) };
     return inlineReplacedContentWidthAndMargin(replacedBox, horizontalConstraints, { }, { overriddenHorizontalValues.width, usedMargin });
 }
 
@@ -917,10 +917,10 @@ ContentHeightAndMargin FormattingGeometry::inlineReplacedContentHeightAndMargin(
     // #1
     auto& formattingContext = this->formattingContext();
     auto computedVerticalMargin = FormattingGeometry::computedVerticalMargin(replacedBox, horizontalConstraints);
-    auto usedVerticalMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.valueOr(0), computedVerticalMargin.after.valueOr(0) };
+    auto usedVerticalMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.value_or(0), computedVerticalMargin.after.value_or(0) };
     auto& style = replacedBox.style();
 
-    auto height = overriddenVerticalValues.height ? overriddenVerticalValues.height.value() : computedHeight(replacedBox, verticalConstraints ? verticalConstraints->logicalHeight : WTF::nullopt);
+    auto height = overriddenVerticalValues.height ? overriddenVerticalValues.height.value() : computedHeight(replacedBox, verticalConstraints ? verticalConstraints->logicalHeight : std::nullopt);
     auto heightIsAuto = !overriddenVerticalValues.height && isHeightAuto(replacedBox);
     auto widthIsAuto = style.logicalWidth().isAuto();
 
@@ -971,18 +971,18 @@ ContentWidthAndMargin FormattingGeometry::inlineReplacedContentWidthAndMargin(co
     auto usedMarginStart = [&] {
         if (overriddenHorizontalValues.margin)
             return overriddenHorizontalValues.margin->start;
-        return computedHorizontalMargin.start.valueOr(0_lu);
+        return computedHorizontalMargin.start.value_or(0_lu);
     };
 
     auto usedMarginEnd = [&] {
         if (overriddenHorizontalValues.margin)
             return overriddenHorizontalValues.margin->end;
-        return computedHorizontalMargin.end.valueOr(0_lu);
+        return computedHorizontalMargin.end.value_or(0_lu);
     };
 
     auto width = overriddenHorizontalValues.width ? overriddenHorizontalValues.width : computedWidth(replacedBox, horizontalConstraints.logicalWidth);
     auto heightIsAuto = isHeightAuto(replacedBox);
-    auto height = computedHeight(replacedBox, verticalConstraints ? verticalConstraints->logicalHeight : WTF::nullopt);
+    auto height = computedHeight(replacedBox, verticalConstraints ? verticalConstraints->logicalHeight : std::nullopt);
 
     if (!width && heightIsAuto && replacedBox.hasIntrinsicWidth()) {
         // #1
@@ -990,7 +990,7 @@ ContentWidthAndMargin FormattingGeometry::inlineReplacedContentWidthAndMargin(co
     } else if ((!width && heightIsAuto && !replacedBox.hasIntrinsicWidth() && replacedBox.hasIntrinsicHeight() && replacedBox.hasIntrinsicRatio())
         || (!width && height && replacedBox.hasIntrinsicRatio())) {
         // #2
-        width = height.valueOr(replacedBox.hasIntrinsicHeight()) * replacedBox.intrinsicRatio();
+        width = height.value_or(replacedBox.hasIntrinsicHeight()) * replacedBox.intrinsicRatio();
     } else if (!width && heightIsAuto && replacedBox.hasIntrinsicRatio() && !replacedBox.hasIntrinsicWidth() && !replacedBox.hasIntrinsicHeight()) {
         // #3
         // FIXME: undefined but surely doable.
@@ -1039,7 +1039,7 @@ LayoutSize FormattingGeometry::inFlowPositionedPositionOffset(const Box& layoutB
         bottom = -*top;
     } else {
         // #4
-        bottom = WTF::nullopt;
+        bottom = std::nullopt;
     }
 
     // For relatively positioned elements, 'left' and 'right' move the box(es) horizontally, without changing their size.
@@ -1071,14 +1071,14 @@ LayoutSize FormattingGeometry::inFlowPositionedPositionOffset(const Box& layoutB
         if (isLeftToRightDirection)
             right = -*left;
         else
-            left = WTF::nullopt;
+            left = std::nullopt;
     }
 
     ASSERT(!bottom || *top == -*bottom);
     ASSERT(!left || *left == -*right);
 
     auto topPositionOffset = *top;
-    auto leftPositionOffset = left.valueOr(-*right);
+    auto leftPositionOffset = left.value_or(-*right);
 
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Position] -> positioned inflow -> top offset(" << topPositionOffset << "px) left offset(" << leftPositionOffset << "px) layoutBox(" << &layoutBox << ")");
     return { leftPositionOffset, topPositionOffset };
@@ -1105,7 +1105,7 @@ Edges FormattingGeometry::computedBorder(const Box& layoutBox) const
 Optional<Edges> FormattingGeometry::computedPadding(const Box& layoutBox, const LayoutUnit containingBlockWidth) const
 {
     if (!layoutBox.isPaddingApplicable())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto& style = layoutBox.style();
     LOG_WITH_STREAM(FormattingContextLayout, stream << "[Padding] -> layoutBox: " << &layoutBox);

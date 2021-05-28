@@ -263,7 +263,7 @@ static Optional<uint8_t> parseColorIntOrPercentage(const CharacterType*& string,
         current++;
     }
     if (current == end || !isASCIIDigit(*current))
-        return WTF::nullopt;
+        return std::nullopt;
     while (current != end && isASCIIDigit(*current)) {
         double newValue = localValue * 10 + *current++ - '0';
         if (newValue >= 255) {
@@ -277,10 +277,10 @@ static Optional<uint8_t> parseColorIntOrPercentage(const CharacterType*& string,
     }
 
     if (current == end)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (expect == CSSUnitType::CSS_NUMBER && (*current == '.' || *current == '%'))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (*current == '.') {
         // We already parsed the integral part, try to parse
@@ -288,15 +288,15 @@ static Optional<uint8_t> parseColorIntOrPercentage(const CharacterType*& string,
         double percentage = 0;
         int numCharactersParsed = parseDouble(current, end, '%', percentage);
         if (!numCharactersParsed)
-            return WTF::nullopt;
+            return std::nullopt;
         current += numCharactersParsed;
         if (*current != '%')
-            return WTF::nullopt;
+            return std::nullopt;
         localValue += percentage;
     }
 
     if (expect == CSSUnitType::CSS_PERCENTAGE && *current != '%')
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (*current == '%') {
         expect = CSSUnitType::CSS_PERCENTAGE;
@@ -311,7 +311,7 @@ static Optional<uint8_t> parseColorIntOrPercentage(const CharacterType*& string,
     while (current != end && isHTMLSpace<CharacterType>(*current))
         current++;
     if (current == end || *current++ != terminator)
-        return WTF::nullopt;
+        return std::nullopt;
     string = current;
 
     // Clamp negative values at zero.
@@ -348,17 +348,17 @@ static inline Optional<uint8_t> parseAlphaValue(const CharacterType*& string, co
 
     int length = end - string;
     if (length < 2)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (string[length - 1] != terminator || !isASCIIDigit(string[length - 2]))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (string[0] != '0' && string[0] != '1' && string[0] != '.') {
         if (checkForValidDouble(string, end, terminator)) {
             string = end;
             return negative ? 0 : 255;
         }
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     if (length == 2 && string[0] != '.') {
@@ -376,7 +376,7 @@ static inline Optional<uint8_t> parseAlphaValue(const CharacterType*& string, co
 
     double alpha = 0;
     if (!parseDouble(string, end, terminator, alpha))
-        return WTF::nullopt;
+        return std::nullopt;
 
     string = end;
     return negative ? 0 : convertFloatAlphaTo<uint8_t>(alpha);
@@ -433,18 +433,18 @@ static Optional<SRGBA<uint8_t>> finishParsingHexColor(uint32_t value, unsigned l
     case 8:
         return asSRGBA(PackedColor::RGBA { value });
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<typename CharacterType> static Optional<SRGBA<uint8_t>> parseHexColorInternal(const CharacterType* characters, unsigned length)
 {
     if (length != 3 && length != 4 && length != 6 && length != 8)
-        return WTF::nullopt;
+        return std::nullopt;
     uint32_t value = 0;
     for (unsigned i = 0; i < length; ++i) {
         auto digit = characters[i];
         if (!isASCIIHexDigit(digit))
-            return WTF::nullopt;
+            return std::nullopt;
         value <<= 4;
         value |= toASCIIHexValue(digit);
     }
@@ -471,18 +471,18 @@ template<typename CharacterType> static Optional<SRGBA<uint8_t>> parseNumericCol
         auto end = characters + length;
         auto red = parseColorIntOrPercentage(current, end, ',', expect);
         if (!red)
-            return WTF::nullopt;
+            return std::nullopt;
         auto green = parseColorIntOrPercentage(current, end, ',', expect);
         if (!green)
-            return WTF::nullopt;
+            return std::nullopt;
         auto blue = parseColorIntOrPercentage(current, end, ',', expect);
         if (!blue)
-            return WTF::nullopt;
+            return std::nullopt;
         auto alpha = parseAlphaValue(current, end, ')');
         if (!alpha)
-            return WTF::nullopt;
+            return std::nullopt;
         if (current != end)
-            return WTF::nullopt;
+            return std::nullopt;
         return SRGBA<uint8_t> { *red, *green, *blue, *alpha };
     }
 
@@ -492,19 +492,19 @@ template<typename CharacterType> static Optional<SRGBA<uint8_t>> parseNumericCol
         auto end = characters + length;
         auto red = parseColorIntOrPercentage(current, end, ',', expect);
         if (!red)
-            return WTF::nullopt;
+            return std::nullopt;
         auto green = parseColorIntOrPercentage(current, end, ',', expect);
         if (!green)
-            return WTF::nullopt;
+            return std::nullopt;
         auto blue = parseColorIntOrPercentage(current, end, ')', expect);
         if (!blue)
-            return WTF::nullopt;
+            return std::nullopt;
         if (current != end)
-            return WTF::nullopt;
+            return std::nullopt;
         return SRGBA<uint8_t> { *red, *green, *blue };
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static Optional<SRGBA<uint8_t>> parseNumericColor(StringView string, const CSSParserContext& context)
@@ -534,7 +534,7 @@ static Optional<SRGBA<uint8_t>> finishParsingNamedColor(char* buffer, unsigned l
     buffer[length] = '\0';
     auto namedColor = findColor(buffer, length);
     if (!namedColor)
-        return WTF::nullopt;
+        return std::nullopt;
     return asSRGBA(PackedColor::ARGB { namedColor->ARGBValue });
 }
 
@@ -542,11 +542,11 @@ template<typename CharacterType> static Optional<SRGBA<uint8_t>> parseNamedColor
 {
     char buffer[64]; // Easily big enough for the longest color name.
     if (length > sizeof(buffer) - 1)
-        return WTF::nullopt;
+        return std::nullopt;
     for (unsigned i = 0; i < length; ++i) {
         auto character = characters[i];
         if (!character || !isASCII(character))
-            return WTF::nullopt;
+            return std::nullopt;
         buffer[i] = toASCIILower(static_cast<char>(character));
     }
     return finishParsingNamedColor(buffer, length);

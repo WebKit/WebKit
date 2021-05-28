@@ -140,7 +140,7 @@ void ExecutableWithDatabase::start(IDBFactory* idbFactory, SecurityOrigin*, cons
         return;
     }
 
-    auto result = idbFactory->open(*context(), databaseName, WTF::nullopt);
+    auto result = idbFactory->open(*context(), databaseName, std::nullopt);
     if (result.hasException()) {
         requestCallback().sendFailure("Could not open database.");
         return;

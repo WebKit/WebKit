@@ -125,7 +125,7 @@ RepetitionCount ImageDecoderDirect2D::repetitionCount() const
 
 Optional<IntPoint> ImageDecoderDirect2D::hotSpot() const
 {
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 IntSize ImageDecoderDirect2D::frameSizeAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const
@@ -174,7 +174,7 @@ ImageDecoder::FrameMetadata ImageDecoderDirect2D::frameMetadataAtIndex(size_t) c
     PropVariantInit(&value);
     hr = metadata->GetMetadataByName(L"System.Photo.Orientation", &value);
     if (SUCCEEDED(hr))
-        return { ImageOrientation(static_cast<ImageOrientation::Orientation>(value.uiVal)), WTF::nullopt };
+        return { ImageOrientation(static_cast<ImageOrientation::Orientation>(value.uiVal)), std::nullopt };
 
     return { };
 }

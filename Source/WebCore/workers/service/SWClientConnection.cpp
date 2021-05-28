@@ -259,7 +259,7 @@ void SWClientConnection::clearPendingJobs()
 void SWClientConnection::registerServiceWorkerClients()
 {
     for (auto* document : Document::allDocuments()) {
-        auto controllingServiceWorkerRegistrationIdentifier = document->activeServiceWorker() ? makeOptional<ServiceWorkerRegistrationIdentifier>(document->activeServiceWorker()->registrationIdentifier()) : WTF::nullopt;
+        auto controllingServiceWorkerRegistrationIdentifier = document->activeServiceWorker() ? std::make_optional<ServiceWorkerRegistrationIdentifier>(document->activeServiceWorker()->registrationIdentifier()) : std::nullopt;
         registerServiceWorkerClient(document->topOrigin(), ServiceWorkerClientData::from(*document, *this), controllingServiceWorkerRegistrationIdentifier, document->userAgent(document->url()));
     }
 }

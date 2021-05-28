@@ -1997,7 +1997,7 @@ void WebViewImpl::updateViewExposedRect()
     if (m_useContentPreparationRectForVisibleRect)
         exposedRect = CGRectUnion(m_contentPreparationRect, exposedRect);
 
-    m_page->setViewExposedRect(m_clipsToVisibleRect ? Optional<WebCore::FloatRect>(exposedRect) : WTF::nullopt);
+    m_page->setViewExposedRect(m_clipsToVisibleRect ? Optional<WebCore::FloatRect>(exposedRect) : std::nullopt);
 }
 
 void WebViewImpl::setClipsToVisibleRect(bool clipsToVisibleRect)
@@ -3014,7 +3014,7 @@ void WebViewImpl::showShareSheet(const WebCore::ShareDataWithParsedURL& data, WT
     _shareSheet = adoptNS([[WKShareSheet alloc] initWithView:view]);
     [_shareSheet setDelegate:view];
 
-    [_shareSheet presentWithParameters:data inRect:WTF::nullopt completionHandler:WTFMove(completionHandler)];
+    [_shareSheet presentWithParameters:data inRect:std::nullopt completionHandler:WTFMove(completionHandler)];
 }
 
 void WebViewImpl::shareSheetDidDismiss(WKShareSheet *shareSheet)

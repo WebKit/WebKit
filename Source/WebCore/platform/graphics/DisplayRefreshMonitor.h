@@ -60,7 +60,7 @@ public:
     void clientPreferredFramesPerSecondChanged(DisplayRefreshMonitorClient&);
     Optional<FramesPerSecond> maxClientPreferredFramesPerSecond() const { return m_maxClientPreferredFramesPerSecond; }
 
-    virtual Optional<FramesPerSecond> displayNominalFramesPerSecond() { return WTF::nullopt; }
+    virtual Optional<FramesPerSecond> displayNominalFramesPerSecond() { return std::nullopt; }
 
     PlatformDisplayID displayID() const { return m_displayID; }
 

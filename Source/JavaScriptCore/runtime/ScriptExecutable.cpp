@@ -501,7 +501,7 @@ Optional<int> ScriptExecutable::overrideLineNumber(VM& vm) const
 {
     if (inherits<FunctionExecutable>(vm))
         return jsCast<const FunctionExecutable*>(this)->overrideLineNumber();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 unsigned ScriptExecutable::typeProfilingStartOffset(VM& vm) const

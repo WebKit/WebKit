@@ -1154,7 +1154,7 @@ def generate_js_value_conversion_function(result, receivers, function_name, argu
     result.append('    default:\n')
     result.append('        break;\n')
     result.append('    }\n')
-    result.append('    return WTF::nullopt;\n')
+    result.append('    return std::nullopt;\n')
     result.append('}\n')
 
 
@@ -1207,7 +1207,7 @@ def generate_js_argument_descriptions(receivers, function_name, arguments_from_m
     result.append('    default:\n')
     result.append('        break;\n')
     result.append('    }\n')
-    result.append('    return WTF::nullopt;\n')
+    result.append('    return std::nullopt;\n')
     result.append('}\n')
     return result
 

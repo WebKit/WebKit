@@ -992,7 +992,7 @@ public:
     ~Parser();
 
     template <class ParsedNode>
-    std::unique_ptr<ParsedNode> parse(ParserError&, const Identifier&, ParsingContext, Optional<int> functionConstructorParametersEndPosition = WTF::nullopt, const PrivateNameEnvironment* = nullptr, const FixedVector<JSTextPosition>* = nullptr);
+    std::unique_ptr<ParsedNode> parse(ParserError&, const Identifier&, ParsingContext, Optional<int> functionConstructorParametersEndPosition = std::nullopt, const PrivateNameEnvironment* = nullptr, const FixedVector<JSTextPosition>* = nullptr);
 
     JSTextPosition positionBeforeLastNewline() const { return m_lexer->positionBeforeLastNewline(); }
     JSTokenLocation locationBeforeLastToken() const { return m_lexer->lastTokenLocation(); }
@@ -1276,7 +1276,7 @@ private:
         if (m_scopeStack[i].isPrivateNameScope())
             return ScopeRef(&m_scopeStack, i);
 
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     ScopeRef privateNameScope()
@@ -1749,9 +1749,9 @@ private:
     enum class ExportType { Exported, NotExported };
     template <class TreeBuilder> TreeStatement parseClassDeclaration(TreeBuilder&, ExportType = ExportType::NotExported, DeclarationDefaultContext = DeclarationDefaultContext::Standard);
     enum class FunctionDeclarationType { Declaration, Statement };
-    template <class TreeBuilder> TreeStatement parseFunctionDeclaration(TreeBuilder&, FunctionDeclarationType = FunctionDeclarationType::Declaration, ExportType = ExportType::NotExported, DeclarationDefaultContext = DeclarationDefaultContext::Standard, Optional<int> functionConstructorParametersEndPosition = WTF::nullopt);
+    template <class TreeBuilder> TreeStatement parseFunctionDeclaration(TreeBuilder&, FunctionDeclarationType = FunctionDeclarationType::Declaration, ExportType = ExportType::NotExported, DeclarationDefaultContext = DeclarationDefaultContext::Standard, Optional<int> functionConstructorParametersEndPosition = std::nullopt);
     template <class TreeBuilder> TreeStatement parseFunctionDeclarationStatement(TreeBuilder&, bool parentAllowsFunctionDeclarationAsStatement);
-    template <class TreeBuilder> TreeStatement parseAsyncFunctionDeclaration(TreeBuilder&, ExportType = ExportType::NotExported, DeclarationDefaultContext = DeclarationDefaultContext::Standard, Optional<int> functionConstructorParametersEndPosition = WTF::nullopt);
+    template <class TreeBuilder> TreeStatement parseAsyncFunctionDeclaration(TreeBuilder&, ExportType = ExportType::NotExported, DeclarationDefaultContext = DeclarationDefaultContext::Standard, Optional<int> functionConstructorParametersEndPosition = std::nullopt);
     template <class TreeBuilder> TreeStatement parseVariableDeclaration(TreeBuilder&, DeclarationType, ExportType = ExportType::NotExported);
     template <class TreeBuilder> TreeStatement parseDoWhileStatement(TreeBuilder&);
     template <class TreeBuilder> TreeStatement parseWhileStatement(TreeBuilder&);
@@ -1821,7 +1821,7 @@ private:
     template <class TreeBuilder> ALWAYS_INLINE TreeExpression createResolveAndUseVariable(TreeBuilder&, const Identifier*, bool isEval, const JSTextPosition&, const JSTokenLocation&);
 
     enum class FunctionDefinitionType { Expression, Declaration, Method };
-    template <class TreeBuilder> NEVER_INLINE bool parseFunctionInfo(TreeBuilder&, FunctionNameRequirements, bool nameIsInContainingScope, ConstructorKind, SuperBinding, int functionKeywordStart, ParserFunctionInfo<TreeBuilder>&, FunctionDefinitionType, Optional<int> functionConstructorParametersEndPosition = WTF::nullopt);
+    template <class TreeBuilder> NEVER_INLINE bool parseFunctionInfo(TreeBuilder&, FunctionNameRequirements, bool nameIsInContainingScope, ConstructorKind, SuperBinding, int functionKeywordStart, ParserFunctionInfo<TreeBuilder>&, FunctionDefinitionType, Optional<int> functionConstructorParametersEndPosition = std::nullopt);
     
     template <class TreeBuilder> ALWAYS_INLINE bool isArrowFunctionParameters(TreeBuilder&);
     
@@ -2241,7 +2241,7 @@ std::unique_ptr<ParsedNode> parse(
     std::unique_ptr<ParsedNode> result;
     if (source.provider()->source().is8Bit()) {
         Parser<Lexer<LChar>> parser(vm, source, builtinMode, strictMode, scriptMode, parseMode, superBinding, defaultConstructorKindForTopLevelFunction, derivedContextType, isEvalNode<ParsedNode>(), evalContextType, debuggerParseData, isInsideOrdinaryFunction);
-        result = parser.parse<ParsedNode>(error, name, isEvalNode<ParsedNode>() ? ParsingContext::Eval : ParsingContext::Program, WTF::nullopt, parentScopePrivateNames, classFieldLocations);
+        result = parser.parse<ParsedNode>(error, name, isEvalNode<ParsedNode>() ? ParsingContext::Eval : ParsingContext::Program, std::nullopt, parentScopePrivateNames, classFieldLocations);
         if (positionBeforeLastNewline)
             *positionBeforeLastNewline = parser.positionBeforeLastNewline();
         if (builtinMode == JSParserBuiltinMode::Builtin) {
@@ -2254,7 +2254,7 @@ std::unique_ptr<ParsedNode> parse(
     } else {
         ASSERT_WITH_MESSAGE(defaultConstructorKindForTopLevelFunction == ConstructorKind::None, "BuiltinExecutables's special constructors should always use a 8-bit string");
         Parser<Lexer<UChar>> parser(vm, source, builtinMode, strictMode, scriptMode, parseMode, superBinding, defaultConstructorKindForTopLevelFunction, derivedContextType, isEvalNode<ParsedNode>(), evalContextType, debuggerParseData, isInsideOrdinaryFunction);
-        result = parser.parse<ParsedNode>(error, name, isEvalNode<ParsedNode>() ? ParsingContext::Eval : ParsingContext::Program, WTF::nullopt, parentScopePrivateNames, classFieldLocations);
+        result = parser.parse<ParsedNode>(error, name, isEvalNode<ParsedNode>() ? ParsingContext::Eval : ParsingContext::Program, std::nullopt, parentScopePrivateNames, classFieldLocations);
         if (positionBeforeLastNewline)
             *positionBeforeLastNewline = parser.positionBeforeLastNewline();
     }

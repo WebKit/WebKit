@@ -183,7 +183,7 @@ GlyphBuffer FontCascade::layoutText(CodePath codePathToUse, const TextRun& run, 
 
 FloatSize FontCascade::drawText(GraphicsContext& context, const TextRun& run, const FloatPoint& point, unsigned from, Optional<unsigned> to, CustomFontNotReadyAction customFontNotReadyAction) const
 {
-    unsigned destination = to.valueOr(run.length());
+    unsigned destination = to.value_or(run.length());
     auto glyphBuffer = layoutText(codePath(run, from, to), run, from, destination);
     glyphBuffer.flatten();
 
@@ -200,7 +200,7 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const TextRun& run
     if (isLoadingCustomFonts())
         return;
 
-    unsigned destination = to.valueOr(run.length());
+    unsigned destination = to.value_or(run.length());
 
     auto glyphBuffer = layoutText(codePath(run, from, to), run, from, destination, ForTextEmphasisOrNot::ForTextEmphasis);
     glyphBuffer.flatten();
@@ -215,7 +215,7 @@ void FontCascade::drawEmphasisMarks(GraphicsContext& context, const TextRun& run
 std::unique_ptr<DisplayList::InMemoryDisplayList> FontCascade::displayListForTextRun(GraphicsContext& context, const TextRun& run, unsigned from, Optional<unsigned> to, CustomFontNotReadyAction customFontNotReadyAction) const
 {
     ASSERT(!context.paintingDisabled());
-    unsigned destination = to.valueOr(run.length());
+    unsigned destination = to.value_or(run.length());
     
     // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
     CodePath codePathToUse = codePath(run);
@@ -433,7 +433,7 @@ bool FontCascade::fastAverageCharWidthIfAvailable(float& width) const
 
 void FontCascade::adjustSelectionRectForText(const TextRun& run, LayoutRect& selectionRect, unsigned from, Optional<unsigned> to) const
 {
-    unsigned destination = to.valueOr(run.length());
+    unsigned destination = to.value_or(run.length());
     if (codePath(run, from, to) != CodePath::Complex)
         return adjustSelectionRectForSimpleText(run, selectionRect, from, destination);
 
@@ -507,7 +507,7 @@ FontCascade::CodePath FontCascade::codePath(const TextRun& run, Optional<unsigne
 
 #if !USE(FREETYPE)
     // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
-    if ((enableKerning() || requiresShaping()) && (from.valueOr(0) || to.valueOr(run.length()) != run.length()))
+    if ((enableKerning() || requiresShaping()) && (from.value_or(0) || to.value_or(run.length()) != run.length()))
         return CodePath::Complex;
 #else
     UNUSED_PARAM(from);
@@ -1201,19 +1201,19 @@ static GlyphUnderlineType computeUnderlineType(const TextRun& textRun, const Gly
 Optional<GlyphData> FontCascade::getEmphasisMarkGlyphData(const AtomString& mark) const
 {
     if (mark.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     UChar32 character;
     if (!mark.is8Bit()) {
         SurrogatePairAwareTextIterator iterator(mark.characters16(), 0, mark.length(), mark.length());
         unsigned clusterLength;
         if (!iterator.consume(character, clusterLength))
-            return WTF::nullopt;
+            return std::nullopt;
     } else
         character = mark[0];
 
     Optional<GlyphData> glyphData(glyphDataForCharacter(character, false, EmphasisMarkVariant));
-    return glyphData.value().isValid() ? glyphData : WTF::nullopt;
+    return glyphData.value().isValid() ? glyphData : std::nullopt;
 }
 
 int FontCascade::emphasisMarkAscent(const AtomString& mark) const
@@ -1560,7 +1560,7 @@ static Optional<float> findIntersectionPoint(float y, FloatPoint p1, FloatPoint 
 {
     if ((p1.y() < y && p2.y() > y) || (p1.y() > y && p2.y() < y))
         return p1.x() + (y - p1.y()) * (p2.x() - p1.x()) / (p2.y() - p1.y());
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static void updateX(GlyphIterationState& state, float x)

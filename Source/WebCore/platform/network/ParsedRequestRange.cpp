@@ -34,29 +34,29 @@ Optional<ParsedRequestRange> ParsedRequestRange::parse(StringView input)
 {
     // https://tools.ietf.org/html/rfc7233#section-2.1 but assuming there will always be a begin and an end or parsing will fail
     if (!input.startsWith(StringView("bytes="_s)))
-        return WTF::nullopt;
+        return std::nullopt;
 
     size_t begin { 0 };
     size_t end { 0 };
     size_t rangeBeginPosition = 6;
     size_t dashPosition = input.find('-', rangeBeginPosition);
     if (dashPosition == notFound)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto beginString = input.substring(rangeBeginPosition, dashPosition - rangeBeginPosition);
     auto optionalBegin = parseInteger<uint64_t>(beginString);
     if (!optionalBegin)
-        return WTF::nullopt;
+        return std::nullopt;
     begin = *optionalBegin;
 
     auto endString = input.substring(dashPosition + 1);
     auto optionalEnd = parseInteger<uint64_t>(endString);
     if (!optionalEnd)
-        return WTF::nullopt;
+        return std::nullopt;
     end = *optionalEnd;
 
     if (begin > end)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ begin, end }};
 }

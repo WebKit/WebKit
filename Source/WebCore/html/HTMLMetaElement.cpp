@@ -111,7 +111,7 @@ void HTMLMetaElement::parseAttribute(const QualifiedName& name, const AtomString
     }
 
     if (name == contentAttr) {
-        m_contentColor = WTF::nullopt;
+        m_contentColor = std::nullopt;
         process();
         return;
     }

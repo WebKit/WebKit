@@ -40,7 +40,7 @@ Optional<JSTextPosition> DebuggerPausePositions::breakpointLocationForLineColumn
         return a.position.line < b.position.line;
     });
     if (it == m_positions.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (line == it->position.line && column == it->position.column()) {
         // Found an exact position match. Roll forward if this was a function Entry.
@@ -99,7 +99,7 @@ Optional<JSTextPosition> DebuggerPausePositions::breakpointLocationForLineColumn
     }
 
     // No pause positions found.
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void DebuggerPausePositions::sort()

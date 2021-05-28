@@ -106,7 +106,7 @@ void HTMLIFrameElement::parseAttribute(const QualifiedName& name, const AtomStri
         if (!invalidTokens.isNull())
             document().addConsoleMessage(MessageSource::Other, MessageLevel::Error, "Error while parsing the 'sandbox' attribute: " + invalidTokens);
     } else if (name == allowAttr || name == allowfullscreenAttr || name == webkitallowfullscreenAttr) {
-        m_featurePolicy = WTF::nullopt;
+        m_featurePolicy = std::nullopt;
     } else if (name == loadingAttr) {
         // Allow loading=eager to load the frame immediately if the lazy load was started, but
         // do not allow the reverse situation since the eager load is already started.
@@ -143,7 +143,7 @@ ReferrerPolicy HTMLIFrameElement::referrerPolicy() const
     if (m_lazyLoadFrameObserver)
         return m_lazyLoadFrameObserver->referrerPolicy();
     if (document().settings().referrerPolicyAttributeEnabled())
-        return parseReferrerPolicy(attributeWithoutSynchronization(referrerpolicyAttr), ReferrerPolicySource::ReferrerPolicyAttribute).valueOr(ReferrerPolicy::EmptyString);
+        return parseReferrerPolicy(attributeWithoutSynchronization(referrerpolicyAttr), ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString);
     return ReferrerPolicy::EmptyString;
 }
 

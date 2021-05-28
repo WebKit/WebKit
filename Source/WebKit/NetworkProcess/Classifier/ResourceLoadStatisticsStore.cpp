@@ -316,7 +316,7 @@ void ResourceLoadStatisticsStore::cancelPendingStatisticsProcessingRequest()
 {
     ASSERT(!RunLoop::isMain());
 
-    m_pendingStatisticsProcessingRequestIdentifier = WTF::nullopt;
+    m_pendingStatisticsProcessingRequestIdentifier = std::nullopt;
 }
 
 void ResourceLoadStatisticsStore::setTimeToLiveUserInteraction(Seconds seconds)

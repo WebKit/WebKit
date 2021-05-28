@@ -54,7 +54,7 @@ Optional<SerializedNFA> SerializedNFA::serialize(NFA&& nfa)
     auto file = FileSystem::invalidPlatformFileHandle;
     auto filename = FileSystem::openTemporaryFile("SerializedNFA", file);
     if (!FileSystem::isHandleValid(file))
-        return WTF::nullopt;
+        return std::nullopt;
 
     bool wroteSuccessfully = writeAllToFile(file, nfa.nodes)
         && writeAllToFile(file, nfa.transitions)
@@ -64,7 +64,7 @@ Optional<SerializedNFA> SerializedNFA::serialize(NFA&& nfa)
     if (!wroteSuccessfully) {
         FileSystem::closeFile(file);
         FileSystem::deleteFile(filename);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     bool mappedSuccessfully = false;
@@ -72,7 +72,7 @@ Optional<SerializedNFA> SerializedNFA::serialize(NFA&& nfa)
     FileSystem::closeFile(file);
     FileSystem::deleteFile(filename);
     if (!mappedSuccessfully)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Metadata metadata {
         nfa.nodes.size(),

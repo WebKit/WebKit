@@ -320,7 +320,7 @@ public:
 
     virtual void runOpenPanel(Frame&, FileChooser&) = 0;
     virtual void showShareSheet(ShareDataWithParsedURL&, WTF::CompletionHandler<void(bool)>&& callback) { callback(false); }
-    virtual void showContactPicker(const ContactsRequestData&, WTF::CompletionHandler<void(Optional<Vector<ContactInfo>>&&)>&& callback) { callback(WTF::nullopt); }
+    virtual void showContactPicker(const ContactsRequestData&, WTF::CompletionHandler<void(Optional<Vector<ContactInfo>>&&)>&& callback) { callback(std::nullopt); }
     
     // Asynchronous request to load an icon for specified filenames.
     virtual void loadIconForFiles(const Vector<String>&, FileIconLoader&) = 0;
@@ -462,7 +462,7 @@ public:
     virtual void notifyScrollerThumbIsVisibleInRect(const IntRect&) { }
     virtual void recommendedScrollbarStyleDidChange(ScrollbarStyle) { }
 
-    virtual Optional<ScrollbarOverlayStyle> preferredScrollbarOverlayStyle() { return WTF::nullopt; }
+    virtual Optional<ScrollbarOverlayStyle> preferredScrollbarOverlayStyle() { return std::nullopt; }
 
     virtual void wheelEventHandlersChanged(bool hasHandlers) = 0;
         

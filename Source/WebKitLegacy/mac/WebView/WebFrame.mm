@@ -812,7 +812,7 @@ static NSURL *createUniqueWebDataURL();
 - (Optional<WebCore::SimpleRange>)_convertToDOMRange:(NSRange)range rangeIsRelativeTo:(WebRangeIsRelativeTo)rangeIsRelativeTo
 {
     if (range.location == NSNotFound)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (rangeIsRelativeTo == WebRangeIsRelativeTo::EditableRoot) {
         // Our critical assumption is that this code path is only called by input methods that
@@ -823,7 +823,7 @@ static NSURL *createUniqueWebDataURL();
         // That fits with AppKit's idea of an input context.
         auto* element = _private->coreFrame->selection().rootEditableElementOrDocumentElement();
         if (!element)
-            return WTF::nullopt;
+            return std::nullopt;
         return resolveCharacterRange(makeRangeSelectingNodeContents(*element), range);
     }
 
@@ -831,7 +831,7 @@ static NSURL *createUniqueWebDataURL();
 
     auto paragraphStart = makeBoundaryPoint(startOfParagraph(_private->coreFrame->selection().selection().visibleStart()));
     if (!paragraphStart)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto scopeEnd = makeBoundaryPointAfterNodeContents(paragraphStart->container->treeScope().rootNode());
     return WebCore::resolveCharacterRange({ WTFMove(*paragraphStart), WTFMove(scopeEnd) }, range);

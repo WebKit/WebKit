@@ -304,7 +304,7 @@ Optional<FloatRect> SVGElement::getBoundingBox() const
         if (auto renderer = this->renderer())
             return renderer->objectBoundingBox();
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Vector<Ref<SVGElement>> SVGElement::referencingElements() const
@@ -375,7 +375,7 @@ void SVGElement::parseAttribute(const QualifiedName& name, const AtomString& val
 
     if (name == HTMLNames::tabindexAttr) {
         if (value.isEmpty())
-            setTabIndexExplicitly(WTF::nullopt);
+            setTabIndexExplicitly(std::nullopt);
         else if (auto optionalTabIndex = parseHTMLInteger(value))
             setTabIndexExplicitly(optionalTabIndex.value());
         return;

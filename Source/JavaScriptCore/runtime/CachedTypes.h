@@ -88,7 +88,7 @@ public:
 
     ptrdiff_t offsetOf(const void*);
     void cacheOffset(ptrdiff_t, void*);
-    WTF::Optional<void*> cachedPtrForOffset(ptrdiff_t);
+    std::optional<void*> cachedPtrForOffset(ptrdiff_t);
     const void* ptrForOffsetFromBase(ptrdiff_t);
     CompactTDZEnvironmentMap::Handle handleForTDZEnvironment(CompactTDZEnvironment*) const;
     void setHandleForTDZEnvironment(CompactTDZEnvironment*, const CompactTDZEnvironmentMap::Handle&);

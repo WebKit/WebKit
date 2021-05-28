@@ -72,7 +72,7 @@ Optional<String> CurlMultipartHandle::extractBoundary(const CurlResponse& respon
         return String("--" + *boundary);
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<String> CurlMultipartHandle::extractBoundaryFromContentType(const String& contentType)
@@ -81,7 +81,7 @@ Optional<String> CurlMultipartHandle::extractBoundaryFromContentType(const Strin
 
     auto boundaryStart = contentType.findIgnoringASCIICase("boundary=");
     if (boundaryStart == notFound)
-        return WTF::nullopt;
+        return std::nullopt;
 
     boundaryStart += length;
     size_t boundaryEnd = 0;
@@ -91,13 +91,13 @@ Optional<String> CurlMultipartHandle::extractBoundaryFromContentType(const Strin
         ++boundaryStart;
         boundaryEnd = contentType.find('"', boundaryStart);
         if (boundaryEnd == notFound)
-            return WTF::nullopt;
+            return std::nullopt;
     } else if (contentType[boundaryStart] == '\'') {
         // Boundary value starts with a ' quote. Search for the closing one.
         ++boundaryStart;
         boundaryEnd = contentType.find('\'', boundaryStart);
         if (boundaryEnd == notFound)
-            return WTF::nullopt;
+            return std::nullopt;
     } else {
         // Check for the end of the boundary. That can be a semicolon or a newline.
         boundaryEnd = contentType.find(';', boundaryStart);
@@ -107,7 +107,7 @@ Optional<String> CurlMultipartHandle::extractBoundaryFromContentType(const Strin
 
     // The boundary end should not be before the start
     if (boundaryEnd <= boundaryStart)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return contentType.substring(boundaryStart, boundaryEnd - boundaryStart);
 }

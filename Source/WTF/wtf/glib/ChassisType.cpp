@@ -39,7 +39,7 @@ static Optional<ChassisType> readMachineInfoChassisType()
     if (!g_file_get_contents("/etc/machine-info", &buffer.outPtr(), nullptr, &error.outPtr())) {
         if (!g_error_matches(error.get(), G_FILE_ERROR, G_FILE_ERROR_NOENT))
             g_warning("Could not open /etc/machine-info: %s", error->message);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     GUniquePtr<char*> split(g_strsplit(buffer.get(), "\n", -1));
@@ -58,7 +58,7 @@ static Optional<ChassisType> readMachineInfoChassisType()
         }
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static Optional<ChassisType> readDMIChassisType()
@@ -93,7 +93,7 @@ static Optional<ChassisType> readDMIChassisType()
     } else if (!g_error_matches(error.get(), G_FILE_ERROR, G_FILE_ERROR_NOENT))
         g_warning("Could not open /sys/class/dmi/id/chassis_type: %s", error->message);
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static Optional<ChassisType> readACPIChassisType()
@@ -121,7 +121,7 @@ static Optional<ChassisType> readACPIChassisType()
     } else if (!g_error_matches(error.get(), G_FILE_ERROR, G_FILE_ERROR_NOENT))
         g_warning("Could not open /sys/firmware/acpi/pm_profile: %s", error->message);
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 ChassisType chassisType()
@@ -134,7 +134,7 @@ ChassisType chassisType()
             optionalChassisType = readDMIChassisType();
         if (!optionalChassisType)
             optionalChassisType = readACPIChassisType();
-        chassisType = optionalChassisType.valueOr(ChassisType::Desktop);
+        chassisType = optionalChassisType.value_or(ChassisType::Desktop);
     });
 
     return chassisType;

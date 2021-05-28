@@ -89,7 +89,7 @@ static Optional<String> firstWindowHandleInResult(JSON::Value& result)
         if (!!handle)
             return handle;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void Session::closeAllToplevelBrowsingContexts(const String& toplevelBrowsingContext, Function<void (CommandResult&&)>&& completionHandler)
@@ -109,9 +109,9 @@ void Session::closeAllToplevelBrowsingContexts(const String& toplevelBrowsingCon
 
 void Session::close(Function<void (CommandResult&&)>&& completionHandler)
 {
-    m_toplevelBrowsingContext = WTF::nullopt;
-    m_currentBrowsingContext = WTF::nullopt;
-    m_currentParentBrowsingContext = WTF::nullopt;
+    m_toplevelBrowsingContext = std::nullopt;
+    m_currentBrowsingContext = std::nullopt;
+    m_currentParentBrowsingContext = std::nullopt;
     getWindowHandles([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
         if (result.isError()) {
             completionHandler(WTFMove(result));
@@ -177,7 +177,7 @@ void Session::switchToBrowsingContext(const String& browsingContext, Function<vo
 Optional<String> Session::pageLoadStrategyString() const
 {
     if (!capabilities().pageLoadStrategy)
-        return WTF::nullopt;
+        return std::nullopt;
 
     switch (capabilities().pageLoadStrategy.value()) {
     case PageLoadStrategy::None:
@@ -188,7 +188,7 @@ Optional<String> Session::pageLoadStrategyString() const
         return String("Eager");
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void Session::createTopLevelBrowsingContext(Function<void (CommandResult&&)>&& completionHandler)
@@ -238,7 +238,7 @@ void Session::handleUserPrompts(Function<void (CommandResult&&)>&& completionHan
 
 void Session::handleUnexpectedAlertOpen(Function<void (CommandResult&&)>&& completionHandler)
 {
-    switch (capabilities().unhandledPromptBehavior.valueOr(UnhandledPromptBehavior::DismissAndNotify)) {
+    switch (capabilities().unhandledPromptBehavior.value_or(UnhandledPromptBehavior::DismissAndNotify)) {
     case UnhandledPromptBehavior::Dismiss:
         dismissAlert(WTFMove(completionHandler));
         break;
@@ -558,9 +558,9 @@ void Session::closeWindow(Function<void (CommandResult&&)>&& completionHandler)
             completionHandler(WTFMove(result));
             return;
         }
-        auto toplevelBrowsingContext = std::exchange(m_toplevelBrowsingContext, WTF::nullopt);
-        m_currentBrowsingContext = WTF::nullopt;
-        m_currentParentBrowsingContext = WTF::nullopt;
+        auto toplevelBrowsingContext = std::exchange(m_toplevelBrowsingContext, std::nullopt);
+        m_currentBrowsingContext = std::nullopt;
+        m_currentParentBrowsingContext = std::nullopt;
         closeTopLevelBrowsingContext(toplevelBrowsingContext.value(), WTFMove(completionHandler));
     });
 }
@@ -1009,19 +1009,19 @@ void Session::computeElementLayout(const String& elementID, OptionSet<ElementLay
 
     auto parameters = JSON::Object::create();
     parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
-    parameters->setString("frameHandle"_s, m_currentBrowsingContext.valueOr(emptyString()));
+    parameters->setString("frameHandle"_s, m_currentBrowsingContext.value_or(emptyString()));
     parameters->setString("nodeHandle"_s, elementID);
     parameters->setBoolean("scrollIntoViewIfNeeded"_s, options.contains(ElementLayoutOption::ScrollIntoViewIfNeeded));
     parameters->setString("coordinateSystem"_s, options.contains(ElementLayoutOption::UseViewportCoordinates) ? "LayoutViewport"_s : "Page"_s);
     m_host->sendCommandToBackend("computeElementLayout"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
         if (response.isError || !response.responseObject) {
-            completionHandler(WTF::nullopt, WTF::nullopt, false, WTFMove(response.responseObject));
+            completionHandler(std::nullopt, std::nullopt, false, WTFMove(response.responseObject));
             return;
         }
 
         auto rectObject = response.responseObject->getObject("rect"_s);
         if (!rectObject) {
-            completionHandler(WTF::nullopt, WTF::nullopt, false, nullptr);
+            completionHandler(std::nullopt, std::nullopt, false, nullptr);
             return;
         }
 
@@ -1033,7 +1033,7 @@ void Session::computeElementLayout(const String& elementID, OptionSet<ElementLay
             elementY = elementPosition->getInteger("y"_s);
         }
         if (!elementX || !elementY) {
-            completionHandler(WTF::nullopt, WTF::nullopt, false, nullptr);
+            completionHandler(std::nullopt, std::nullopt, false, nullptr);
             return;
         }
 
@@ -1045,7 +1045,7 @@ void Session::computeElementLayout(const String& elementID, OptionSet<ElementLay
             elementHeight = elementSize->getInteger("height"_s);
         }
         if (!elementWidth || !elementHeight) {
-            completionHandler(WTF::nullopt, WTF::nullopt, false, nullptr);
+            completionHandler(std::nullopt, std::nullopt, false, nullptr);
             return;
         }
 
@@ -1053,20 +1053,20 @@ void Session::computeElementLayout(const String& elementID, OptionSet<ElementLay
 
         auto isObscured = response.responseObject->getBoolean("isObscured"_s);
         if (!isObscured) {
-            completionHandler(WTF::nullopt, WTF::nullopt, false, nullptr);
+            completionHandler(std::nullopt, std::nullopt, false, nullptr);
             return;
         }
 
         auto inViewCenterPointObject = response.responseObject->getObject("inViewCenterPoint"_s);
         if (!inViewCenterPointObject) {
-            completionHandler(rect, WTF::nullopt, *isObscured, nullptr);
+            completionHandler(rect, std::nullopt, *isObscured, nullptr);
             return;
         }
 
         auto inViewCenterPointX = inViewCenterPointObject->getInteger("x"_s);
         auto inViewCenterPointY = inViewCenterPointObject->getInteger("y"_s);
         if (!inViewCenterPointX || !inViewCenterPointY) {
-            completionHandler(WTF::nullopt, WTF::nullopt, *isObscured, nullptr);
+            completionHandler(std::nullopt, std::nullopt, *isObscured, nullptr);
             return;
         }
 
@@ -1615,13 +1615,13 @@ void Session::waitForNavigationToComplete(Function<void (CommandResult&&)>&& com
             switch (result.errorCode()) {
             case CommandResult::ErrorCode::NoSuchWindow:
                 // Window was closed, reset the top level browsing context and ignore the error.
-                m_toplevelBrowsingContext = WTF::nullopt;
-                m_currentBrowsingContext = WTF::nullopt;
-                m_currentParentBrowsingContext = WTF::nullopt;
+                m_toplevelBrowsingContext = std::nullopt;
+                m_currentBrowsingContext = std::nullopt;
+                m_currentParentBrowsingContext = std::nullopt;
                 break;
             case CommandResult::ErrorCode::NoSuchFrame:
                 // Navigation destroyed the current frame, reset the current browsing context and ignore the error.
-                m_currentBrowsingContext = WTF::nullopt;
+                m_currentBrowsingContext = std::nullopt;
                 break;
             default:
                 completionHandler(WTFMove(result));
@@ -1675,15 +1675,15 @@ void Session::elementIsFileUpload(const String& elementID, Function<void (Comman
 Optional<Session::FileUploadType> Session::parseElementIsFileUploadResult(const RefPtr<JSON::Value>& resultValue)
 {
     if (!resultValue)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto result = resultValue->asObject();
     if (!result)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto isFileUpload = result->getBoolean("fileUpload"_s);
     if (!isFileUpload || !*isFileUpload)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto multiple = result->getBoolean("multiple"_s);
     if (!multiple || !*multiple)
@@ -1696,7 +1696,7 @@ void Session::selectOptionElement(const String& elementID, Function<void (Comman
 {
     auto parameters = JSON::Object::create();
     parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
-    parameters->setString("frameHandle"_s, m_currentBrowsingContext.valueOr(emptyString()));
+    parameters->setString("frameHandle"_s, m_currentBrowsingContext.value_or(emptyString()));
     parameters->setString("nodeHandle"_s, elementID);
     m_host->sendCommandToBackend("selectOptionElement"_s, WTFMove(parameters), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) {
         if (response.isError) {
@@ -1900,7 +1900,7 @@ void Session::setInputFileUploadFiles(const String& elementID, const String& tex
 
     auto parameters = JSON::Object::create();
     parameters->setString("browsingContextHandle"_s, m_toplevelBrowsingContext.value());
-    parameters->setString("frameHandle"_s, m_currentBrowsingContext.valueOr(emptyString()));
+    parameters->setString("frameHandle"_s, m_currentBrowsingContext.value_or(emptyString()));
     parameters->setString("nodeHandle"_s, elementID);
     parameters->setArray("filenames"_s, WTFMove(filenames));
     m_host->sendCommandToBackend("setFilesForInputFileUpload"_s, WTFMove(parameters), [protectedThis = makeRef(*this), elementID, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
@@ -2088,7 +2088,7 @@ void Session::elementSendKeys(const String& elementID, const String& text, Funct
             }
 
             auto fileUploadType = parseElementIsFileUploadResult(result.result());
-            if (!fileUploadType || capabilities().strictFileInteractability.valueOr(false)) {
+            if (!fileUploadType || capabilities().strictFileInteractability.value_or(false)) {
                 // FIXME: move this to an atom.
                 static const char focusScript[] =
                     "function focus(element) {"
@@ -2153,13 +2153,13 @@ void Session::elementSendKeys(const String& elementID, const String& text, Funct
                     // Reset sticky modifiers if needed.
                     if (stickyModifiers) {
                         if (stickyModifiers & KeyModifier::Shift)
-                            interactions.append({ KeyboardInteractionType::KeyRelease, WTF::nullopt, Optional<String>("Shift"_s) });
+                            interactions.append({ KeyboardInteractionType::KeyRelease, std::nullopt, Optional<String>("Shift"_s) });
                         if (stickyModifiers & KeyModifier::Control)
-                            interactions.append({ KeyboardInteractionType::KeyRelease, WTF::nullopt, Optional<String>("Control"_s) });
+                            interactions.append({ KeyboardInteractionType::KeyRelease, std::nullopt, Optional<String>("Control"_s) });
                         if (stickyModifiers & KeyModifier::Alternate)
-                            interactions.append({ KeyboardInteractionType::KeyRelease, WTF::nullopt, Optional<String>("Alternate"_s) });
+                            interactions.append({ KeyboardInteractionType::KeyRelease, std::nullopt, Optional<String>("Alternate"_s) });
                         if (stickyModifiers & KeyModifier::Meta)
-                            interactions.append({ KeyboardInteractionType::KeyRelease, WTF::nullopt, Optional<String>("Meta"_s) });
+                            interactions.append({ KeyboardInteractionType::KeyRelease, std::nullopt, Optional<String>("Meta"_s) });
                     }
 
                     performKeyboardInteractions(WTFMove(interactions), WTFMove(completionHandler));
@@ -2386,11 +2386,11 @@ static Optional<Session::Cookie> parseAutomationCookie(const JSON::Object& cooki
 
     cookie.name = cookieObject.getString("name"_s);
     if (!cookie.name)
-        return WTF::nullopt;
+        return std::nullopt;
 
     cookie.value = cookieObject.getString("value"_s);
     if (!cookie.value)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto path = cookieObject.getString("path"_s);
     if (!!path)
@@ -2426,13 +2426,13 @@ static Ref<JSON::Object> builtAutomationCookie(const Session::Cookie& cookie)
     auto cookieObject = JSON::Object::create();
     cookieObject->setString("name"_s, cookie.name);
     cookieObject->setString("value"_s, cookie.value);
-    cookieObject->setString("path"_s, cookie.path.valueOr("/"));
-    cookieObject->setString("domain"_s, cookie.domain.valueOr(emptyString()));
-    cookieObject->setBoolean("secure"_s, cookie.secure.valueOr(false));
-    cookieObject->setBoolean("httpOnly"_s, cookie.httpOnly.valueOr(false));
+    cookieObject->setString("path"_s, cookie.path.value_or("/"));
+    cookieObject->setString("domain"_s, cookie.domain.value_or(emptyString()));
+    cookieObject->setBoolean("secure"_s, cookie.secure.value_or(false));
+    cookieObject->setBoolean("httpOnly"_s, cookie.httpOnly.value_or(false));
     cookieObject->setBoolean("session"_s, !cookie.expiry);
-    cookieObject->setDouble("expires"_s, cookie.expiry.valueOr(0));
-    cookieObject->setString("sameSite"_s, cookie.sameSite.valueOr("None"));
+    cookieObject->setDouble("expires"_s, cookie.expiry.value_or(0));
+    cookieObject->setString("sameSite"_s, cookie.sameSite.value_or("None"));
     return cookieObject;
 }
 
@@ -2617,7 +2617,7 @@ static const char* automationSourceType(const InputSource& inputSource)
     case InputSource::Type::None:
         return "Null";
     case InputSource::Type::Pointer:
-        switch (inputSource.pointerType.valueOr(PointerType::Mouse)) {
+        switch (inputSource.pointerType.value_or(PointerType::Mouse)) {
         case PointerType::Mouse:
             return "Mouse";
         case PointerType::Touch:
@@ -2691,7 +2691,7 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
                 case Action::Type::Pointer: {
                     switch (action.subtype) {
                     case Action::Subtype::PointerUp:
-                        currentState.pressedButton = WTF::nullopt;
+                        currentState.pressedButton = std::nullopt;
                         break;
                     case Action::Subtype::PointerDown:
                         currentState.pressedButton = action.button.value();
@@ -2711,7 +2711,7 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
                             state->setDouble("duration"_s, action.duration.value());
                         break;
                     case Action::Subtype::PointerCancel:
-                        currentState.pressedButton = WTF::nullopt;
+                        currentState.pressedButton = std::nullopt;
                         break;
                     case Action::Subtype::KeyUp:
                     case Action::Subtype::KeyDown:
@@ -2730,7 +2730,7 @@ void Session::performActions(Vector<Vector<Action>>&& actionsByTick, Function<vo
                         if (!virtualKey.isNull())
                             currentState.pressedVirtualKeys.remove(virtualKey);
                         else
-                            currentState.pressedKey = WTF::nullopt;
+                            currentState.pressedKey = std::nullopt;
                         break;
                     }
                     case Action::Subtype::KeyDown: {
@@ -2943,7 +2943,7 @@ void Session::takeScreenshot(Optional<String> elementID, Optional<bool> scrollIn
         if (elementID)
             parameters->setString("nodeHandle"_s, elementID.value());
         parameters->setBoolean("clipToViewport"_s, true);
-        if (scrollIntoView.valueOr(false))
+        if (scrollIntoView.value_or(false))
             parameters->setBoolean("scrollIntoViewIfNeeded"_s, true);
         m_host->sendCommandToBackend("takeScreenshot"_s, WTFMove(parameters), [protectedThis, completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
             if (response.isError || !response.responseObject) {

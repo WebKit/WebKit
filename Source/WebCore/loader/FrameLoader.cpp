@@ -151,8 +151,8 @@
 #include "RuntimeApplicationChecks.h"
 #endif
 
-#define PAGE_ID ((pageID().valueOr(PageIdentifier())).toUInt64())
-#define FRAME_ID ((frameID().valueOr(FrameIdentifier())).toUInt64())
+#define PAGE_ID ((pageID().value_or(PageIdentifier())).toUInt64())
+#define FRAME_ID ((frameID().value_or(FrameIdentifier())).toUInt64())
 #define FRAMELOADER_RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", main=%d] FrameLoader::" fmt, this, PAGE_ID, FRAME_ID, m_frame.isMainFrame(), ##__VA_ARGS__)
 #define FRAMELOADER_RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", main=%d] FrameLoader::" fmt, this, PAGE_ID, FRAME_ID, m_frame.isMainFrame(), ##__VA_ARGS__)
 
@@ -428,7 +428,7 @@ void FrameLoader::changeLocation(const URL& url, const String& passedTarget, Eve
     auto* frame = lexicalFrameFromCommonVM();
     auto initiatedByMainFrame = frame && frame->isMainFrame() ? InitiatedByMainFrame::Yes : InitiatedByMainFrame::Unknown;
 
-    NewFrameOpenerPolicy newFrameOpenerPolicy = openerPolicy.valueOr(referrerPolicy == ReferrerPolicy::NoReferrer ? NewFrameOpenerPolicy::Suppress : NewFrameOpenerPolicy::Allow);
+    NewFrameOpenerPolicy newFrameOpenerPolicy = openerPolicy.value_or(referrerPolicy == ReferrerPolicy::NoReferrer ? NewFrameOpenerPolicy::Suppress : NewFrameOpenerPolicy::Allow);
     FrameLoadRequest frameLoadRequest(*m_frame.document(), m_frame.document()->securityOrigin(), { url }, passedTarget, initiatedByMainFrame, downloadAttribute, systemPreviewInfo);
     frameLoadRequest.setNewFrameOpenerPolicy(newFrameOpenerPolicy);
     frameLoadRequest.setReferrerPolicy(referrerPolicy);
@@ -695,7 +695,7 @@ void FrameLoader::receivedFirstData()
 {
     auto protectedFrame = makeRef(m_frame);
     
-    dispatchDidCommitLoad(WTF::nullopt, WTF::nullopt);
+    dispatchDidCommitLoad(std::nullopt, std::nullopt);
     dispatchDidClearWindowObjectsInAllWorlds();
     dispatchGlobalObjectAvailableInAllWorlds();
 
@@ -973,7 +973,7 @@ void FrameLoader::loadURLIntoChildFrame(const URL& url, const String& referer, F
     FrameLoadRequest frameLoadRequest { *m_frame.document(), m_frame.document()->securityOrigin(), { url }, "_self"_s, initiatedByMainFrame };
     frameLoadRequest.setNewFrameOpenerPolicy(NewFrameOpenerPolicy::Suppress);
     frameLoadRequest.setLockBackForwardList(LockBackForwardList::Yes);
-    childFrame->loader().loadURL(WTFMove(frameLoadRequest), referer, FrameLoadType::RedirectWithLockedBackForwardList, nullptr, { }, WTF::nullopt, [] { });
+    childFrame->loader().loadURL(WTFMove(frameLoadRequest), referer, FrameLoadType::RedirectWithLockedBackForwardList, nullptr, { }, std::nullopt, [] { });
 }
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
@@ -2330,7 +2330,7 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     ASSERT(view);
     view->setWasScrolledByUser(false);
 
-    Optional<IntRect> previousViewFrameRect = m_frame.view() ?  m_frame.view()->frameRect() : Optional<IntRect>(WTF::nullopt);
+    Optional<IntRect> previousViewFrameRect = m_frame.view() ?  m_frame.view()->frameRect() : Optional<IntRect>(std::nullopt);
     m_frame.setView(view);
 
     // Use the previous ScrollView's frame rect.
@@ -4051,8 +4051,8 @@ void FrameLoader::completePageTransitionIfNeeded()
 
 void FrameLoader::clearTestingOverrides()
 {
-    m_overrideCachePolicyForTesting = WTF::nullopt;
-    m_overrideResourceLoadPriorityForTesting = WTF::nullopt;
+    m_overrideCachePolicyForTesting = std::nullopt;
+    m_overrideResourceLoadPriorityForTesting = std::nullopt;
     m_isStrictRawResourceValidationPolicyDisabledForTesting = false;
 }
 

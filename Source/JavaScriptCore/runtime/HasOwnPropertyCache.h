@@ -76,7 +76,7 @@ public:
         Entry& entry = bitwise_cast<Entry*>(this)[index];
         if (entry.structureID == id && entry.impl.get() == impl)
             return entry.result;
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     ALWAYS_INLINE void tryAdd(VM& vm, PropertySlot& slot, JSObject* object, PropertyName propName, bool result)

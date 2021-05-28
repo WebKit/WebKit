@@ -33,7 +33,7 @@ namespace WebCore {
 
 class IDBError {
 public:
-    WEBCORE_EXPORT explicit IDBError(Optional<ExceptionCode> = WTF::nullopt, const String& message = { });
+    WEBCORE_EXPORT explicit IDBError(Optional<ExceptionCode> = std::nullopt, const String& message = { });
 
     static IDBError userDeleteError()
     {
@@ -87,7 +87,7 @@ bool IDBError::decode(Decoder& decoder, IDBError& error)
             return false;
         error.m_code = ec;
     } else
-        error.m_code = WTF::nullopt;
+        error.m_code = std::nullopt;
 
     if (!decoder.decode(error.m_message))
         return false;

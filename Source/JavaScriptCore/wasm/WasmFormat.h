@@ -263,7 +263,7 @@ struct Element {
     { }
 
     Element(Element::Kind kind, TableElementType elemType)
-        : Element(kind, elemType, WTF::nullopt, WTF::nullopt)
+        : Element(kind, elemType, std::nullopt, std::nullopt)
     { }
 
     uint32_t length() const { return functionIndices.size(); }

@@ -207,12 +207,12 @@ WebFrameLoaderClient::WebFrameLoaderClient(WebFrame *webFrame)
 
 Optional<WebCore::PageIdentifier> WebFrameLoaderClient::pageID() const
 {
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<WebCore::FrameIdentifier> WebFrameLoaderClient::frameID() const
 {
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 WebFrameLoaderClient::~WebFrameLoaderClient()

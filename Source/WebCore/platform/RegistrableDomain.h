@@ -147,7 +147,7 @@ Optional<RegistrableDomain> RegistrableDomain::decode(Decoder& decoder)
     Optional<String> domain;
     decoder >> domain;
     if (!domain)
-        return WTF::nullopt;
+        return std::nullopt;
 
     RegistrableDomain registrableDomain;
     registrableDomain.m_registrableDomain = WTFMove(*domain);

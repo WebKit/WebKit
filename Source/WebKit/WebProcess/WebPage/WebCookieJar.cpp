@@ -238,8 +238,8 @@ bool WebCookieJar::getRawCookies(const WebCore::Document& document, const URL& u
         return { };
 #endif
 
-    Optional<FrameIdentifier> frameID = webFrame ? makeOptional(webFrame->frameID()) : WTF::nullopt;
-    Optional<PageIdentifier> pageID = webFrame && webFrame->page() ? makeOptional(webFrame->page()->identifier()) : WTF::nullopt;
+    Optional<FrameIdentifier> frameID = webFrame ? std::make_optional(webFrame->frameID()) : std::nullopt;
+    Optional<PageIdentifier> pageID = webFrame && webFrame->page() ? std::make_optional(webFrame->page()->identifier()) : std::nullopt;
     if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::GetRawCookies(document.firstPartyForCookies(), sameSiteInfo(document), url, frameID, pageID, shouldAskITPInNetworkProcess, shouldRelaxThirdPartyCookieBlocking(webFrame)), Messages::NetworkConnectionToWebProcess::GetRawCookies::Reply(rawCookies), 0))
         return false;
     return true;

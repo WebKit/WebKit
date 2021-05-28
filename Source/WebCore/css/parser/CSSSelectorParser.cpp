@@ -886,7 +886,7 @@ static bool consumeANPlusB(CSSParserTokenRange& range, std::pair<int, int>& resu
 
     if (nString.length() > 2) {
         auto parsedNumber = parseInteger<int>(StringView { nString }.substring(1));
-        result.second = parsedNumber.valueOr(0);
+        result.second = parsedNumber.value_or(0);
         return parsedNumber.hasValue();
     }
 

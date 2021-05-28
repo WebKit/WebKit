@@ -61,7 +61,7 @@ public:
         Optional<String> type;
         decoder >> type;
         if (!type)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return { ContentType(WTFMove(*type)) };
     }

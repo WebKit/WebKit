@@ -181,7 +181,7 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
     updateRenderingResourceRequest();
 
     if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(renderingResourceIdentifier))
-        wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, WTF::nullopt)->arguments);
+        wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments);
 }
 
 DisplayList::ReplayResult RemoteRenderingBackend::submit(const DisplayList::DisplayList& displayList, ImageBuffer& destination)
@@ -239,7 +239,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
             destination = makeRefPtr(m_remoteResourceCache.cachedImageBuffer(*result.nextDestinationImageBuffer));
             if (!destination) {
                 ASSERT(!m_pendingWakeupInfo);
-                m_pendingWakeupInfo = {{{ handle.identifier(), offset, *result.nextDestinationImageBuffer, reason }, WTF::nullopt }};
+                m_pendingWakeupInfo = {{{ handle.identifier(), offset, *result.nextDestinationImageBuffer, reason }, std::nullopt }};
             }
         }
 
@@ -280,7 +280,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
 
             if (!destination) {
                 ASSERT(!m_pendingWakeupInfo);
-                m_pendingWakeupInfo = {{{ handle.identifier(), offset, newDestinationIdentifier, reason }, WTF::nullopt }};
+                m_pendingWakeupInfo = {{{ handle.identifier(), offset, newDestinationIdentifier, reason }, std::nullopt }};
                 break;
             }
         }
@@ -316,7 +316,7 @@ void RemoteRenderingBackend::wakeUpAndApplyDisplayList(const GPUProcessWakeupMes
         }
 
         // Otherwise, continue reading the next display list item buffer from the start.
-        auto arguments = std::exchange(m_pendingWakeupInfo, WTF::nullopt)->arguments;
+        auto arguments = std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments;
         destinationImageBuffer = nextDestinationImageBufferAfterApplyingDisplayLists(*destinationImageBuffer, arguments.offset, *nextHandle, arguments.reason);
         if (!destinationImageBuffer)
             break;
@@ -325,16 +325,16 @@ void RemoteRenderingBackend::wakeUpAndApplyDisplayList(const GPUProcessWakeupMes
 
 void RemoteRenderingBackend::setNextItemBufferToRead(DisplayList::ItemBufferIdentifier identifier, WebCore::RenderingResourceIdentifier destinationIdentifier)
 {
-    m_pendingWakeupInfo = {{{ identifier, SharedDisplayListHandle::headerSize(), destinationIdentifier, GPUProcessWakeupReason::Unspecified }, WTF::nullopt }};
+    m_pendingWakeupInfo = {{{ identifier, SharedDisplayListHandle::headerSize(), destinationIdentifier, GPUProcessWakeupReason::Unspecified }, std::nullopt }};
 }
 
 Optional<SharedMemory::IPCHandle> RemoteRenderingBackend::updateSharedMemoryForGetPixelBufferHelper(size_t byteCount)
 {
-    MESSAGE_CHECK_WITH_RETURN_VALUE(!m_getPixelBufferSharedMemory || byteCount > m_getPixelBufferSharedMemory->size(), WTF::nullopt, "The existing Shmem for getPixelBuffer() is already big enough to handle the request");
+    MESSAGE_CHECK_WITH_RETURN_VALUE(!m_getPixelBufferSharedMemory || byteCount > m_getPixelBufferSharedMemory->size(), std::nullopt, "The existing Shmem for getPixelBuffer() is already big enough to handle the request");
 
     if (byteCount > 64 * MB) {
         // Just a sanity check. A 4K image is 36MB.
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     destroyGetPixelBufferSharedMemory();
@@ -450,7 +450,7 @@ void RemoteRenderingBackend::cacheNativeImage(const ShareableBitmap::Handle& han
     m_remoteResourceCache.cacheNativeImage(makeRef(*image));
 
     if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(renderingResourceIdentifier))
-        wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, WTF::nullopt)->arguments);
+        wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments);
 }
 
 void RemoteRenderingBackend::cacheFont(Ref<Font>&& font)
@@ -460,7 +460,7 @@ void RemoteRenderingBackend::cacheFont(Ref<Font>&& font)
     auto identifier = font->renderingResourceIdentifier();
     m_remoteResourceCache.cacheFont(WTFMove(font));
     if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(identifier))
-        wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, WTF::nullopt)->arguments);
+        wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments);
 }
 
 void RemoteRenderingBackend::deleteAllFonts()
@@ -488,7 +488,7 @@ void RemoteRenderingBackend::didCreateSharedDisplayListHandle(DisplayList::ItemB
     }
 
     if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(identifier))
-        wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, WTF::nullopt)->arguments);
+        wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments);
 }
 
 Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::decodeItem(const uint8_t* data, size_t length, DisplayList::ItemType type, uint8_t* handleLocation)
@@ -588,10 +588,10 @@ Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::dec
     case DisplayList::ItemType::StrokeLine:
     case DisplayList::ItemType::Translate:
         ASSERT_NOT_REACHED();
-        return WTF::nullopt;
+        return std::nullopt;
     }
     ASSERT_NOT_REACHED();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void RemoteRenderingBackend::updateRenderingResourceRequest()

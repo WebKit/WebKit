@@ -53,7 +53,7 @@ Optional<SharedBufferDataView> CachedRawResource::calculateIncrementalDataChunk(
 {
     size_t previousDataLength = encodedSize();
     if (!data || data->size() <= previousDataLength)
-        return WTF::nullopt;
+        return std::nullopt;
     return data->getSomeData(previousDataLength);
 }
 
@@ -85,7 +85,7 @@ void CachedRawResource::updateBuffer(SharedBuffer& data)
         CachedResource::updateBuffer(data);
 
     if (m_delayedFinishLoading) {
-        auto delayedFinishLoading = std::exchange(m_delayedFinishLoading, WTF::nullopt);
+        auto delayedFinishLoading = std::exchange(m_delayedFinishLoading, std::nullopt);
         finishLoading(delayedFinishLoading->buffer.get(), { });
     }
 }
@@ -102,7 +102,7 @@ void CachedRawResource::finishLoading(SharedBuffer* data, const NetworkLoadMetri
     if (m_inIncrementalDataNotify) {
         // We may get here synchronously from updateBuffer() if the callback there ends up spinning a runloop.
         // In that case delay the call.
-        m_delayedFinishLoading = makeOptional(DelayedFinishLoading { data });
+        m_delayedFinishLoading = std::make_optional(DelayedFinishLoading { data });
         return;
     };
     CachedResourceHandle<CachedRawResource> protectedThis(this);

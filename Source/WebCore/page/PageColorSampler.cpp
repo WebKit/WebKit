@@ -97,16 +97,16 @@ static Optional<Lab<float>> sampleColor(Document& document, IntPoint&& location)
     // FIXME: <https://webkit.org/b/225167> (Sampled Page Top Color: hook into painting logic instead of taking snapshots)
 
     if (!isValidSampleLocation(document, location))
-        return WTF::nullopt;
+        return std::nullopt;
 
     ASSERT(document.view());
     auto snapshot = snapshotFrameRect(document.view()->frame(), IntRect(location, IntSize(1, 1)), SnapshotOptionsExcludeSelectionHighlighting | SnapshotOptionsPaintEverythingExcludingSelection);
     if (!snapshot)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto pixelBuffer = snapshot->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, DestinationColorSpace::SRGB() }, { { }, snapshot->logicalSize() });
     if (!pixelBuffer)
-        return WTF::nullopt;
+        return std::nullopt;
 
     ASSERT(pixelBuffer->data().length() >= 4);
 
@@ -139,7 +139,7 @@ static Lab<float> averageColor(Lab<float> colors[], size_t count)
 
 Optional<Color> PageColorSampler::sampleTop(Page& page)
 {
-    // If `WTF::nullopt` is returned then that means that no samples were taken (i.e. the `Page` is not ready yet).
+    // If `std::nullopt` is returned then that means that no samples were taken (i.e. the `Page` is not ready yet).
     // If an invalid `Color` is returned then that means that samples Were taken but they were too different.
 
     auto maxDifference = page.settings().sampledPageTopColorMaxDifference();
@@ -150,19 +150,19 @@ Optional<Color> PageColorSampler::sampleTop(Page& page)
 
     auto mainDocument = makeRefPtr(page.mainFrame().document());
     if (!mainDocument)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto frameView = makeRefPtr(page.mainFrame().view());
     if (!frameView)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Don't take samples if the layer tree is still frozen.
     if (frameView->needsLayout())
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Don't attempt to hit test or sample if we don't have any content yet.
     if (!frameView->isVisuallyNonEmpty() || !frameView->hasContentfulDescendants() || !ContentfulPaintChecker::qualifiesForContentfulPaint(*frameView))
-        return WTF::nullopt;
+        return std::nullopt;
 
     // Decrease the width by one pixel so that the last sample is within bounds and not off-by-one.
     auto frameWidth = frameView->contentsWidth() - 1;

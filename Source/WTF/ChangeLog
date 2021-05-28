@@ -1,3 +1,17 @@
+2021-05-27  Darin Adler  <darin@apple.com>
+
+        Next step toward using std::optional directly instead of through WTF::Optional typedef
+        https://bugs.webkit.org/show_bug.cgi?id=226280
+
+        Reviewed by Chris Dumez.
+
+        * <many files>: Accept the renaming done by do-webcore-rename.
+
+        * wtf/Optional.h: Remove WTF::nullopt_t and WTF::makeOptional.
+
+        * wtf/URLHelpers.cpp:
+        (WTF::URLHelpers::mapHostName): Convert from nullopt to std::nullopt.
+
 2021-05-27  Sihui Liu  <sihui_liu@apple.com>
 
         Abandon pending tasks on background thread when WebIDBServer is closed

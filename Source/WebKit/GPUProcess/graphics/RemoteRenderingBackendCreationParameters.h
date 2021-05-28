@@ -50,22 +50,22 @@ struct RemoteRenderingBackendCreationParameters {
         Optional<RenderingBackendIdentifier> identifier;
         decoder >> identifier;
         if (!identifier)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<IPC::Semaphore> resumeDisplayListSemaphore;
         decoder >> resumeDisplayListSemaphore;
         if (!resumeDisplayListSemaphore)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<WebPageProxyIdentifier> pageProxyID;
         decoder >> pageProxyID;
         if (!pageProxyID)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<WebCore::PageIdentifier> pageID;
         decoder >> pageID;
         if (!pageID)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{ *identifier, WTFMove(*resumeDisplayListSemaphore), *pageProxyID, *pageID }};
     }

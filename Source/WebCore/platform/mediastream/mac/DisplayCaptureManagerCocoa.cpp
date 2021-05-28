@@ -78,7 +78,7 @@ Optional<CaptureDevice> DisplayCaptureManagerCocoa::screenCaptureDeviceWithPersi
     return ScreenDisplayCapturerMac::screenCaptureDeviceWithPersistentID(deviceID);
 #else
     UNUSED_PARAM(deviceID);
-    return WTF::nullopt;
+    return std::nullopt;
 #endif
 }
 
@@ -88,7 +88,7 @@ Optional<CaptureDevice> DisplayCaptureManagerCocoa::windowCaptureDeviceWithPersi
     return WindowDisplayCapturerMac::windowCaptureDeviceWithPersistentID(deviceID);
 #else
     UNUSED_PARAM(deviceID);
-    return WTF::nullopt;
+    return std::nullopt;
 #endif
 }
 
@@ -111,7 +111,7 @@ Optional<CaptureDevice> DisplayCaptureManagerCocoa::captureDeviceWithPersistentI
         break;
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace WebCore

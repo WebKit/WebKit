@@ -78,7 +78,7 @@ Optional<double> AnimationTimeline::bindingsCurrentTime()
 {
     auto time = currentTime();
     if (!time)
-        return WTF::nullopt;
+        return std::nullopt;
     return secondsToWebAnimationsAPITime(*time);
 }
 

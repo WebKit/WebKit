@@ -73,12 +73,12 @@ public:
             Optional<bool> hasAlpha;
             decoder >> hasAlpha;
             if (!hasAlpha)
-                return WTF::nullopt;
+                return std::nullopt;
 
             Optional<Seconds> duration;
             decoder >> duration;
             if (!duration)
-                return WTF::nullopt;
+                return std::nullopt;
 
             return {{
                 *hasAlpha,

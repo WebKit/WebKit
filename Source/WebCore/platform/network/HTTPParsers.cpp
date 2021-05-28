@@ -323,7 +323,7 @@ Optional<WallTime> parseHTTPDate(const String& value)
 {
     double dateInMillisecondsSinceEpoch = parseDateFromNullTerminatedCharacters(value.utf8().data());
     if (!std::isfinite(dateInMillisecondsSinceEpoch))
-        return WTF::nullopt;
+        return std::nullopt;
     // This assumes system_clock epoch equals Unix epoch which is true for all implementations but unspecified.
     // FIXME: The parsing function should be switched to WallTime too.
     return WallTime::fromRawSeconds(dateInMillisecondsSinceEpoch / 1000.0);

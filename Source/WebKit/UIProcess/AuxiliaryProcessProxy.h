@@ -117,7 +117,7 @@ public:
     ProcessID processIdentifier() const { return m_processLauncher ? m_processLauncher->processIdentifier() : 0; }
 
     bool canSendMessage() const { return state() != State::Terminated;}
-    bool sendMessage(UniqueRef<IPC::Encoder>&&, OptionSet<IPC::SendOption>, Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&& asyncReplyInfo = WTF::nullopt, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
+    bool sendMessage(UniqueRef<IPC::Encoder>&&, OptionSet<IPC::SendOption>, Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&& asyncReplyInfo = std::nullopt, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
 
     void replyToPendingMessages();
 

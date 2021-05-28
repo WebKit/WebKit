@@ -44,27 +44,27 @@ Optional<FrameInfoData> FrameInfoData::decode(IPC::Decoder& decoder)
     Optional<bool> isMainFrame;
     decoder >> isMainFrame;
     if (!isMainFrame)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<WebCore::ResourceRequest> request;
     decoder >> request;
     if (!request)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<WebCore::SecurityOriginData> securityOrigin;
     decoder >> securityOrigin;
     if (!securityOrigin)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<WebCore::FrameIdentifier>> frameID;
     decoder >> frameID;
     if (!frameID)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<WebCore::FrameIdentifier>> parentFrameID;
     decoder >> parentFrameID;
     if (!parentFrameID)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{
         WTFMove(*isMainFrame),

@@ -45,18 +45,18 @@ Optional<WebCore::HTTPHeaderMap> Coder<WebCore::HTTPHeaderMap>::decode(Decoder& 
     Optional<uint64_t> headersSize;
     decoder >> headersSize;
     if (!headersSize)
-        return WTF::nullopt;
+        return std::nullopt;
 
     WebCore::HTTPHeaderMap headers;
     for (uint64_t i = 0; i < *headersSize; ++i) {
         Optional<String> name;
         decoder >> name;
         if (!name)
-            return WTF::nullopt;
+            return std::nullopt;
         Optional<String> value;
         decoder >> value;
         if (!value)
-            return WTF::nullopt;
+            return std::nullopt;
         headers.append(WTFMove(*name), WTFMove(*value));
     }
     return headers;

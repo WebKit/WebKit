@@ -82,7 +82,7 @@ BasicEffectTiming AnimationEffect::getBasicTiming(Optional<Seconds> startTime) c
         // Otherwise, the local time is unresolved.
         if (m_animation)
             return m_animation->currentTime(startTime);
-        return WTF::nullopt;
+        return std::nullopt;
     }();
 
     auto phase = [this, localTime]() -> AnimationEffectPhase {
@@ -135,7 +135,7 @@ BasicEffectTiming AnimationEffect::getBasicTiming(Optional<Seconds> startTime) c
             if (m_fill == FillMode::Backwards || m_fill == FillMode::Both)
                 return std::max(*localTime - m_delay, 0_s);
             // Otherwise, return an unresolved time value.
-            return WTF::nullopt;
+            return std::nullopt;
         }
 
         // If the animation effect is in the active phase, return the result of evaluating local time - start delay.
@@ -150,11 +150,11 @@ BasicEffectTiming AnimationEffect::getBasicTiming(Optional<Seconds> startTime) c
             if (m_fill == FillMode::Forwards || m_fill == FillMode::Both)
                 return std::max(std::min(*localTime - m_delay, m_activeDuration), 0_s);
             // Otherwise, return an unresolved time value.
-            return WTF::nullopt;
+            return std::nullopt;
         }
 
         // Otherwise (the local time is unresolved), return an unresolved time value.
-        return WTF::nullopt;
+        return std::nullopt;
     }();
 
     return { localTime, activeTime, m_endTime, m_activeDuration, phase };
@@ -185,7 +185,7 @@ ComputedEffectTiming AnimationEffect::getComputedTiming(Optional<Seconds> startT
 
         // 1. If the active time is unresolved, return unresolved.
         if (!activeTime)
-            return WTF::nullopt;
+            return std::nullopt;
 
         // 2. Calculate an initial value for overall progress based on the first matching condition from below,
         double overallProgress;
@@ -214,7 +214,7 @@ ComputedEffectTiming AnimationEffect::getComputedTiming(Optional<Seconds> startT
 
         // 1. If the overall progress is unresolved, return unresolved.
         if (!overallProgress)
-            return WTF::nullopt;
+            return std::nullopt;
 
         // 2. If overall progress is infinity, let the simple iteration progress be iteration start % 1.0,
         // otherwise, let the simple iteration progress be overall progress % 1.0.
@@ -241,7 +241,7 @@ ComputedEffectTiming AnimationEffect::getComputedTiming(Optional<Seconds> startT
 
         // 1. If the active time is unresolved, return unresolved.
         if (!activeTime)
-            return WTF::nullopt;
+            return std::nullopt;
 
         // 2. If the animation effect is in the after phase and the iteration count is infinity, return infinity.
         if (phase == AnimationEffectPhase::After && std::isinf(m_iterations))
@@ -290,7 +290,7 @@ ComputedEffectTiming AnimationEffect::getComputedTiming(Optional<Seconds> startT
 
         // 1. If the simple iteration progress is unresolved, return unresolved.
         if (!simpleIterationProgress)
-            return WTF::nullopt;
+            return std::nullopt;
 
         // 2. Calculate the current direction (we implement this as a separate method).
 
@@ -310,7 +310,7 @@ ComputedEffectTiming AnimationEffect::getComputedTiming(Optional<Seconds> startT
         //
         // 1. If the directed progress is unresolved, return unresolved.
         if (!directedProgress)
-            return WTF::nullopt;
+            return std::nullopt;
 
         if (auto iterationDuration = m_iterationDuration.seconds()) {
             bool before = false;
@@ -544,7 +544,7 @@ void AnimationEffect::setTimingFunction(const RefPtr<TimingFunction>& timingFunc
 Optional<double> AnimationEffect::progressUntilNextStep(double iterationProgress) const
 {
     if (!is<StepsTimingFunction>(m_timingFunction))
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto numberOfSteps = downcast<StepsTimingFunction>(*m_timingFunction).numberOfSteps();
     auto nextStepProgress = ceil(iterationProgress * numberOfSteps) / numberOfSteps;

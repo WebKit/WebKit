@@ -94,9 +94,9 @@ public:
         No
     };
     WEBCORE_EXPORT static Ref<Font> create(const FontPlatformData&, Origin = Origin::Local, Interstitial = Interstitial::No,
-        Visibility = Visibility::Visible, OrientationFallback = OrientationFallback::No, Optional<RenderingResourceIdentifier> = WTF::nullopt);
+        Visibility = Visibility::Visible, OrientationFallback = OrientationFallback::No, Optional<RenderingResourceIdentifier> = std::nullopt);
     static Ref<Font> create(const FontPlatformData&, Origin, FontCache* fontCacheForVerticalData, Interstitial = Interstitial::No,
-        Visibility = Visibility::Visible, OrientationFallback = OrientationFallback::No, Optional<RenderingResourceIdentifier> = WTF::nullopt);
+        Visibility = Visibility::Visible, OrientationFallback = OrientationFallback::No, Optional<RenderingResourceIdentifier> = std::nullopt);
     WEBCORE_EXPORT static Ref<Font> create(Ref<SharedBuffer>&& fontFaceData, Font::Origin, float fontSize, bool syntheticBold, bool syntheticItalic, FontCache* = nullptr);
 
     WEBCORE_EXPORT ~Font();
@@ -187,7 +187,7 @@ public:
     GlyphData glyphDataForCharacter(UChar32) const;
     Glyph glyphForCharacter(UChar32) const;
     bool supportsCodePoint(UChar32) const;
-    bool platformSupportsCodePoint(UChar32, Optional<UChar32> variation = WTF::nullopt) const;
+    bool platformSupportsCodePoint(UChar32, Optional<UChar32> variation = std::nullopt) const;
 
     RefPtr<Font> systemFallbackFontForCharacter(UChar32, const FontDescription&, IsForPlatformFont, FontCache&) const;
 

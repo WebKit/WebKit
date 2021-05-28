@@ -206,7 +206,7 @@ public:
 
 #if ENABLE(JIT)
     virtual RegisterSet liveRegistersToPreserveAtExceptionHandlingCallSite(CodeBlock*, CallSiteIndex);
-    virtual Optional<CodeOrigin> findPC(CodeBlock*, void* pc) { UNUSED_PARAM(pc); return WTF::nullopt; }
+    virtual Optional<CodeOrigin> findPC(CodeBlock*, void* pc) { UNUSED_PARAM(pc); return std::nullopt; }
 #endif
 
     Intrinsic intrinsic() { return m_intrinsic; }

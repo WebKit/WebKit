@@ -192,7 +192,7 @@ Protocol::ErrorStringOr<void> InspectorCanvasAgent::disable()
 
     reset();
 
-    m_recordingAutoCaptureFrameCount = WTF::nullopt;
+    m_recordingAutoCaptureFrameCount = std::nullopt;
 
     return { };
 }
@@ -284,7 +284,7 @@ Protocol::ErrorStringOr<void> InspectorCanvasAgent::setRecordingAutoCaptureFrame
     if (count > 0)
         m_recordingAutoCaptureFrameCount = count;
     else
-        m_recordingAutoCaptureFrameCount = WTF::nullopt;
+        m_recordingAutoCaptureFrameCount = std::nullopt;
     return { };
 }
 

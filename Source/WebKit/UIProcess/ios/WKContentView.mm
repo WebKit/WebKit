@@ -180,7 +180,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     // FIXME: While using the high end of the range of DisplayIDs makes a collision with real, non-RemoteLayerTreeDrawingArea
     // DisplayIDs less likely, it is not entirely safe to have a RemoteLayerTreeDrawingArea and TiledCoreAnimationDrawingArea
     // coeexist in the same process.
-    _page->windowScreenDidChange(std::numeric_limits<uint32_t>::max() - _page->webPageID().toUInt64(), WTF::nullopt);
+    _page->windowScreenDidChange(std::numeric_limits<uint32_t>::max() - _page->webPageID().toUInt64(), std::nullopt);
 
 #if ENABLE(FULLSCREEN_API)
     _page->setFullscreenClient(makeUnique<WebKit::FullscreenClient>(self.webView));

@@ -499,7 +499,7 @@ Optional<FloatRect> Path::boundingRectFromInlineData() const
         return result;
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 #endif

@@ -40,7 +40,7 @@ struct VariadicConverter {
         auto scope = DECLARE_THROW_SCOPE(vm);
 
         auto result = Converter<IDLType>::convert(lexicalGlobalObject, value);
-        RETURN_IF_EXCEPTION(scope, WTF::nullopt);
+        RETURN_IF_EXCEPTION(scope, std::nullopt);
 
         return result;
     }

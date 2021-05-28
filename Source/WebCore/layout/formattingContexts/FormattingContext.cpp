@@ -295,8 +295,8 @@ void FormattingContext::validateGeometryConstraintsAfterLayout() const
         if (layoutBox.isOutOfFlowPositioned() && !layoutBox.isReplacedBox()) {
             // top + margin-top + border-top-width + padding-top + height + padding-bottom + border-bottom-width + margin-bottom + bottom = height of containing block
             auto containingBlockHeight = containingBlockGeometry.contentBoxHeight();
-            ASSERT(BoxGeometry::borderBoxTop(boxGeometry) + boxGeometry.marginBefore() + boxGeometry.borderTop() + boxGeometry.paddingTop().valueOr(0) + boxGeometry.contentBoxHeight()
-                + boxGeometry.paddingBottom().valueOr(0) + boxGeometry.borderBottom() + boxGeometry.marginAfter() == containingBlockHeight);
+            ASSERT(BoxGeometry::borderBoxTop(boxGeometry) + boxGeometry.marginBefore() + boxGeometry.borderTop() + boxGeometry.paddingTop().value_or(0) + boxGeometry.contentBoxHeight()
+                + boxGeometry.paddingBottom().value_or(0) + boxGeometry.borderBottom() + boxGeometry.marginAfter() == containingBlockHeight);
         }
     }
 }

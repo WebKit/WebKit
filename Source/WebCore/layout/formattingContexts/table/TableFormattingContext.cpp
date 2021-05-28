@@ -109,8 +109,8 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
 
             // FIXME: Find out if it is ok to use the regular padding here to align the content box inside a tall cell or we need to
             // use some kind of intrinsic padding similar to RenderTableCell.
-            auto paddingTop = cellBoxGeometry.paddingTop().valueOr(LayoutUnit { });
-            auto paddingBottom = cellBoxGeometry.paddingBottom().valueOr(LayoutUnit { });
+            auto paddingTop = cellBoxGeometry.paddingTop().value_or(LayoutUnit { });
+            auto paddingBottom = cellBoxGeometry.paddingBottom().value_or(LayoutUnit { });
             auto intrinsicPaddingTop = LayoutUnit { };
             auto intrinsicPaddingBottom = LayoutUnit { };
 
@@ -255,8 +255,8 @@ void TableFormattingContext::setUsedGeometryForSections(const ConstraintsForInFl
         // Section borders are either collapsed or ignored.
         sectionBoxGeometry.setBorder({ });
         // Use fake vertical padding to space out the sections.
-        sectionBoxGeometry.setPadding(Edges { { }, { paddingBefore.valueOr(0_lu), paddingAfter } });
-        paddingBefore = WTF::nullopt;
+        sectionBoxGeometry.setPadding(Edges { { }, { paddingBefore.value_or(0_lu), paddingAfter } });
+        paddingBefore = std::nullopt;
         // Internal table elements do not have margins.
         sectionBoxGeometry.setHorizontalMargin({ });
         sectionBoxGeometry.setVerticalMargin({ });

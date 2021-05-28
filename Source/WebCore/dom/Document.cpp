@@ -344,8 +344,8 @@
 #include "HTMLVideoElement.h"
 #endif
 
-#define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", main=%d] Document::" fmt, this, pageID().valueOr(PageIdentifier { }).toUInt64(), frameID().valueOr(FrameIdentifier { }).toUInt64(), this == &topDocument(), ##__VA_ARGS__)
-#define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", main=%d] Document::" fmt, this, pageID().valueOr(PageIdentifier { }).toUInt64(), frameID().valueOr(FrameIdentifier { }).toUInt64(), this == &topDocument(), ##__VA_ARGS__)
+#define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", main=%d] Document::" fmt, this, pageID().value_or(PageIdentifier { }).toUInt64(), frameID().value_or(FrameIdentifier { }).toUInt64(), this == &topDocument(), ##__VA_ARGS__)
+#define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", main=%d] Document::" fmt, this, pageID().value_or(PageIdentifier { }).toUInt64(), frameID().value_or(FrameIdentifier { }).toUInt64(), this == &topDocument(), ##__VA_ARGS__)
 
 namespace WebCore {
 
@@ -1598,19 +1598,19 @@ RefPtr<Range> Document::caretRangeFromPoint(int x, int y)
 Optional<BoundaryPoint> Document::caretPositionFromPoint(const LayoutPoint& clientPoint)
 {
     if (!hasLivingRenderTree())
-        return WTF::nullopt;
+        return std::nullopt;
 
     LayoutPoint localPoint;
     auto node = nodeFromPoint(clientPoint, &localPoint);
     if (!node)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto* renderer = node->renderer();
     if (!renderer)
-        return WTF::nullopt;
+        return std::nullopt;
     auto rangeCompliantPosition = renderer->positionForPoint(localPoint).parentAnchoredEquivalent();
     if (rangeCompliantPosition.isNull())
-        return WTF::nullopt;
+        return std::nullopt;
 
     unsigned offset = rangeCompliantPosition.offsetInContainerNode();
     node = retargetToScope(*rangeCompliantPosition.containerNode());
@@ -2120,7 +2120,7 @@ void Document::updateTextRenderer(Text& text, unsigned offsetOfReplacedText, uns
     if (!m_pendingRenderTreeTextUpdate)
         m_pendingRenderTreeTextUpdate = makeUnique<Style::Update>(*this);
 
-    m_pendingRenderTreeTextUpdate->addText(text, { offsetOfReplacedText, lengthOfReplacedText, WTF::nullopt });
+    m_pendingRenderTreeTextUpdate->addText(text, { offsetOfReplacedText, lengthOfReplacedText, std::nullopt });
 
     scheduleRenderingUpdate({ });
 }
@@ -3841,7 +3841,7 @@ ViewportArguments Document::viewportArguments() const
     auto* page = this->page();
     if (!page)
         return m_viewportArguments;
-    return page->overrideViewportArguments().valueOr(m_viewportArguments);
+    return page->overrideViewportArguments().value_or(m_viewportArguments);
 }
 
 void Document::updateViewportArguments()
@@ -3863,7 +3863,7 @@ void Document::metaElementThemeColorChanged(HTMLMetaElement& metaElement)
         return;
 
     auto oldThemeColor = std::exchange(m_cachedThemeColor, Color());
-    m_metaThemeColorElements = WTF::nullopt;
+    m_metaThemeColorElements = std::nullopt;
     m_activeThemeColorMetaElement = nullptr;
     if (themeColor() == oldThemeColor)
         return;
@@ -6361,11 +6361,11 @@ Optional<RenderingContext> Document::getCSSCanvasContext(const String& type, con
 {
     HTMLCanvasElement* element = getCSSCanvasElement(name);
     if (!element)
-        return WTF::nullopt;
+        return std::nullopt;
     element->setSize({ width, height });
     auto context = element->getContext(type);
     if (!context)
-        return WTF::nullopt;
+        return std::nullopt;
 
 #if ENABLE(WEBGL)
     if (is<WebGLRenderingContext>(*context))
@@ -6691,7 +6691,7 @@ DeviceOrientationController& Document::deviceOrientationController() const
 
 void Document::simulateDeviceOrientationChange(double alpha, double beta, double gamma)
 {
-    auto orientation = DeviceOrientationData::create(alpha, beta, gamma, WTF::nullopt, WTF::nullopt);
+    auto orientation = DeviceOrientationData::create(alpha, beta, gamma, std::nullopt, std::nullopt);
     deviceOrientationController().didChangeDeviceOrientation(orientation.ptr());
 }
 
@@ -7786,12 +7786,12 @@ static Optional<LayoutRect> computeClippedRectInRootContentsSpace(const LayoutRe
 
     bool intersects = rectInFrameAbsoluteSpace->edgeInclusiveIntersect(renderer->view().frameView().layoutViewportRect());
     if (!intersects)
-        return WTF::nullopt;
+        return std::nullopt;
 
     LayoutRect rectInFrameViewSpace(renderer->view().frameView().contentsToView(snappedIntRect(*rectInFrameAbsoluteSpace)));
     auto* ownerRenderer = renderer->frame().ownerRenderer();
     if (!ownerRenderer)
-        return WTF::nullopt;
+        return std::nullopt;
 
     rectInFrameViewSpace.moveBy(ownerRenderer->contentBoxLocation());
     return computeClippedRectInRootContentsSpace(rectInFrameViewSpace, ownerRenderer);
@@ -7808,20 +7808,20 @@ static Optional<IntersectionObservationState> computeIntersectionState(FrameView
 {
     auto* targetRenderer = target.renderer();
     if (!targetRenderer)
-        return WTF::nullopt;
+        return std::nullopt;
 
     FloatRect localRootBounds;
     RenderBlock* rootRenderer;
     if (observer.root()) {
         if (observer.trackingDocument() != &target.document())
-            return WTF::nullopt;
+            return std::nullopt;
 
         if (!observer.root()->renderer() || !is<RenderBlock>(observer.root()->renderer()))
-            return WTF::nullopt;
+            return std::nullopt;
 
         rootRenderer = downcast<RenderBlock>(observer.root()->renderer());
         if (!rootRenderer->isContainingBlockAncestorFor(*targetRenderer))
-            return WTF::nullopt;
+            return std::nullopt;
 
         if (observer.root() == &target.document())
             localRootBounds = frameView.layoutViewportRect();
@@ -7833,7 +7833,7 @@ static Optional<IntersectionObservationState> computeIntersectionState(FrameView
         ASSERT(frameView.frame().isMainFrame());
         // FIXME: Handle the case of an implicit-root observer that has a target in a different frame tree.
         if (&targetRenderer->frame().mainFrame() != &frameView.frame())
-            return WTF::nullopt;
+            return std::nullopt;
         rootRenderer = frameView.renderView();
         localRootBounds = frameView.layoutViewportRect();
     }
@@ -8536,7 +8536,7 @@ void Document::setServiceWorkerConnection(SWClientConnection* serviceWorkerConne
     if (!m_serviceWorkerConnection)
         return;
 
-    auto controllingServiceWorkerRegistrationIdentifier = activeServiceWorker() ? makeOptional<ServiceWorkerRegistrationIdentifier>(activeServiceWorker()->registrationIdentifier()) : WTF::nullopt;
+    auto controllingServiceWorkerRegistrationIdentifier = activeServiceWorker() ? std::make_optional<ServiceWorkerRegistrationIdentifier>(activeServiceWorker()->registrationIdentifier()) : std::nullopt;
     m_serviceWorkerConnection->registerServiceWorkerClient(topOrigin(), ServiceWorkerClientData::from(*this, *serviceWorkerConnection), controllingServiceWorkerRegistrationIdentifier, userAgent(url()));
 }
 #endif

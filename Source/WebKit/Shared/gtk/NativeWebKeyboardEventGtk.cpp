@@ -34,7 +34,7 @@
 namespace WebKit {
 
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(GdkEvent* event, const String& text, Vector<String>&& commands)
-    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, false, WTF::nullopt, WTF::nullopt, WTFMove(commands)))
+    : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, false, std::nullopt, std::nullopt, WTFMove(commands)))
     , m_nativeEvent(gdk_event_copy(event))
 {
 }
@@ -45,7 +45,7 @@ NativeWebKeyboardEvent::NativeWebKeyboardEvent(const String& text, Optional<Vect
 }
 
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(Type type, const String& text, const String& key, const String& code, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, Vector<String>&& commands, bool isKeypad, OptionSet<Modifier> modifiers)
-    : WebKeyboardEvent(type, text, key, code, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, false, WTF::nullopt, WTF::nullopt, WTFMove(commands), isKeypad, modifiers, WallTime::now())
+    : WebKeyboardEvent(type, text, key, code, keyIdentifier, windowsVirtualKeyCode, nativeVirtualKeyCode, false, std::nullopt, std::nullopt, WTFMove(commands), isKeypad, modifiers, WallTime::now())
 {
 }
 

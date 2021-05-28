@@ -51,14 +51,14 @@ CryptoAlgorithmRegistry::CryptoAlgorithmRegistry()
 Optional<CryptoAlgorithmIdentifier> CryptoAlgorithmRegistry::identifier(const String& name)
 {
     if (name.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     Locker locker { m_lock };
 
     // FIXME: How is it helpful to call isolatedCopy on the argument to find?
     auto identifier = m_identifiers.find(name.isolatedCopy());
     if (identifier == m_identifiers.end())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return identifier->value;
 }

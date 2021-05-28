@@ -60,12 +60,12 @@ Optional<DataListSuggestion> DataListSuggestion::decode(Decoder& decoder)
     Optional<String> value;
     decoder >> value;
     if (!value)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<String> label;
     decoder >> label;
     if (!label)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *value, *label }};
 }
@@ -92,17 +92,17 @@ Optional<DataListSuggestionInformation> DataListSuggestionInformation::decode(De
 {
     DataListSuggestionActivationType activationType;
     if (!decoder.decode(activationType))
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Vector<DataListSuggestion>> suggestions;
     decoder >> suggestions;
     if (!suggestions)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<IntRect> elementRect;
     decoder >> elementRect;
     if (!elementRect)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ activationType, *suggestions, *elementRect }};
 }

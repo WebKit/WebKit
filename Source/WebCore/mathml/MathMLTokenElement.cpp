@@ -86,10 +86,10 @@ Optional<UChar32> MathMLTokenElement::convertToSingleCodePoint(StringView string
     auto codePoints = stripLeadingAndTrailingHTTPSpaces(string).codePoints();
     auto iterator = codePoints.begin();
     if (iterator == codePoints.end())
-        return WTF::nullopt;
+        return std::nullopt;
     Optional<UChar32> character = *iterator;
     ++iterator;
-    return iterator == codePoints.end() ? character : WTF::nullopt;
+    return iterator == codePoints.end() ? character : std::nullopt;
 }
 
 }

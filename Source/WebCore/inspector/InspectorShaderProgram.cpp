@@ -249,14 +249,14 @@ Ref<Inspector::Protocol::Canvas::ShaderProgram> InspectorShaderProgram::buildObj
                     sharesVertexFragmentShader = true;
                 return Inspector::Protocol::Canvas::ProgramType::Render;
             }
-            return WTF::nullopt;
+            return std::nullopt;
         },
 #endif
         [&] (Monostate) -> ProgramTypeType {
 #if ENABLE(WEBGL) || ENABLE(WEBGPU)
             ASSERT_NOT_REACHED();
 #endif
-            return WTF::nullopt;
+            return std::nullopt;
         }
     );
     if (!programType) {

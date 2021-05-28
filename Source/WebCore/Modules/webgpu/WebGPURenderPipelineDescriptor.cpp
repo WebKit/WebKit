@@ -44,7 +44,7 @@ Optional<GPURenderPipelineDescriptor> WebGPURenderPipelineDescriptor::tryCreateG
 
     if (!vertex || (fragmentStage && !fragment)) {
         errorScopes.generatePrefixedError("Invalid GPUProgrammableStageDescriptor!");
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     // FIXME: Web GPU validation, e.g. fail if colorStates is larger than (max number of supported color states).

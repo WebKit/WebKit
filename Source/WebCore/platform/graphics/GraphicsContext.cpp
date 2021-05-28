@@ -519,7 +519,7 @@ void GraphicsContext::drawBidiText(const FontCascade& font, const TextRun& run, 
         subrun.setDirection(isRTL ? TextDirection::RTL : TextDirection::LTR);
         subrun.setDirectionalOverride(bidiRun->dirOverride(false));
 
-        auto advance = font.drawText(*this, subrun, currPoint, 0, WTF::nullopt, customFontNotReadyAction);
+        auto advance = font.drawText(*this, subrun, currPoint, 0, std::nullopt, customFontNotReadyAction);
         currPoint.move(advance);
 
         bidiRun = bidiRun->next();

@@ -960,7 +960,7 @@ Optional<std::tuple<WebCore::SimpleRange, NSDictionary *>> WebPage::lookupTextAt
 {
     auto& mainFrame = corePage()->mainFrame();
     if (!mainFrame.view() || !mainFrame.view()->renderView())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return DictionaryLookup::rangeAtHitTestResult(mainFrame.eventHandler().hitTestResultAtPoint(m_page->mainFrame().view()->windowToContents(roundedIntPoint(locationInViewCoordinates)), {
         HitTestRequest::Type::ReadOnly,

@@ -503,7 +503,7 @@ void PrivateClickMeasurementManager::setTokenSignatureURLForTesting(URL&& testUR
 void PrivateClickMeasurementManager::setAttributionReportURLsForTesting(URL&& sourceURL, URL&& destinationURL)
 {
     if (sourceURL.isEmpty() || destinationURL.isEmpty())
-        m_attributionReportTestConfig = WTF::nullopt;
+        m_attributionReportTestConfig = std::nullopt;
     else
         m_attributionReportTestConfig = AttributionReportTestConfig { WTFMove(sourceURL), WTFMove(destinationURL) };
 }

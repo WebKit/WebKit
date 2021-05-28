@@ -97,7 +97,7 @@ Optional<LayoutRect> RenderSVGText::computeVisibleRectInContainer(const LayoutRe
     Optional<FloatRect> adjustedRect = computeFloatVisibleRectInContainer(rect, container, context);
     if (adjustedRect)
         return enclosingLayoutRect(*adjustedRect);
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<FloatRect> RenderSVGText::computeFloatVisibleRectInContainer(const FloatRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
@@ -435,7 +435,7 @@ bool RenderSVGText::nodeAtFloatPoint(const HitTestRequest& request, HitTestResul
     if (isVisible || !hitRules.requireVisible) {
         if ((hitRules.canHitStroke && (style().svgStyle().hasStroke() || !hitRules.requireStroke))
             || (hitRules.canHitFill && (style().svgStyle().hasFill() || !hitRules.requireFill))) {
-            FloatPoint localPoint = localToParentTransform().inverse().valueOr(AffineTransform()).mapPoint(pointInParent);
+            FloatPoint localPoint = localToParentTransform().inverse().value_or(AffineTransform()).mapPoint(pointInParent);
 
             if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))
                 return false;       

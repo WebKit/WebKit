@@ -65,7 +65,7 @@ static Vector<uint8_t> constructU2fRegisterCommand(const Vector<uint8_t>& applic
 static Optional<Vector<uint8_t>> constructU2fSignCommand(const Vector<uint8_t>& applicationParameter, const Vector<uint8_t>& challengeParameter, const Vector<uint8_t>& keyHandle, bool checkOnly)
 {
     if (keyHandle.size() > kMaxKeyHandleLength)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Vector<uint8_t> data;
     data.reserveInitialCapacity(kU2fChallengeParamLength + kU2fApplicationParamLength + 1 + keyHandle.size());
@@ -101,7 +101,7 @@ bool isConvertibleToU2fSignCommand(const PublicKeyCredentialRequestOptions& requ
 Optional<Vector<uint8_t>> convertToU2fRegisterCommand(const Vector<uint8_t>& clientDataHash, const PublicKeyCredentialCreationOptions& request)
 {
     if (!isConvertibleToU2fRegisterCommand(request))
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto appId = processGoogleLegacyAppIdSupportExtension(request.extensions);
     return constructU2fRegisterCommand(produceRpIdHash(!appId ? request.rp.id : appId), clientDataHash);
@@ -110,7 +110,7 @@ Optional<Vector<uint8_t>> convertToU2fRegisterCommand(const Vector<uint8_t>& cli
 Optional<Vector<uint8_t>> convertToU2fCheckOnlySignCommand(const Vector<uint8_t>& clientDataHash, const PublicKeyCredentialCreationOptions& request, const PublicKeyCredentialDescriptor& keyHandle)
 {
     if (keyHandle.type != PublicKeyCredentialType::PublicKey)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return constructU2fSignCommand(produceRpIdHash(request.rp.id), clientDataHash, keyHandle.idVector, true /* checkOnly */);
 }
@@ -118,7 +118,7 @@ Optional<Vector<uint8_t>> convertToU2fCheckOnlySignCommand(const Vector<uint8_t>
 Optional<Vector<uint8_t>> convertToU2fSignCommand(const Vector<uint8_t>& clientDataHash, const PublicKeyCredentialRequestOptions& request, const Vector<uint8_t>& keyHandle, bool isAppId)
 {
     if (!isConvertibleToU2fSignCommand(request))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!isAppId)
         return constructU2fSignCommand(produceRpIdHash(request.rpId), clientDataHash, keyHandle, false);

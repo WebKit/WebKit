@@ -2070,7 +2070,7 @@ static WebCore::TextManipulationController::TokenIdentifier coreTextManipulation
 
     Vector<WebCore::TextManipulationController::ManipulationToken> tokens;
     for (_WKTextManipulationToken *wkToken in item.tokens)
-        tokens.append(WebCore::TextManipulationController::ManipulationToken { coreTextManipulationTokenIdentifierFromString(wkToken.identifier), wkToken.content, WTF::nullopt });
+        tokens.append(WebCore::TextManipulationController::ManipulationToken { coreTextManipulationTokenIdentifierFromString(wkToken.identifier), wkToken.content, std::nullopt });
 
     Vector<WebCore::TextManipulationController::ManipulationItem> coreItems;
     coreItems.reserveInitialCapacity(1);
@@ -2130,7 +2130,7 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
         Vector<WebCore::TextManipulationController::ManipulationToken> coreTokens;
         coreTokens.reserveInitialCapacity(wkItem.tokens.count);
         for (_WKTextManipulationToken *wkToken in wkItem.tokens)
-            coreTokens.uncheckedAppend(WebCore::TextManipulationController::ManipulationToken { coreTextManipulationTokenIdentifierFromString(wkToken.identifier), wkToken.content, WTF::nullopt });
+            coreTokens.uncheckedAppend(WebCore::TextManipulationController::ManipulationToken { coreTextManipulationTokenIdentifierFromString(wkToken.identifier), wkToken.content, std::nullopt });
         coreItems.uncheckedAppend(WebCore::TextManipulationController::ManipulationItem { coreTextManipulationItemIdentifierFromString(wkItem.identifier), WTFMove(coreTokens) });
     }
 
@@ -2288,7 +2288,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
     for (NSData *highlight in highlights)
         convertAndAddHighlight(buffers, highlight);
     
-    _page->restoreAppHighlightsAndScrollToIndex(buffers, WTF::nullopt);
+    _page->restoreAppHighlightsAndScrollToIndex(buffers, std::nullopt);
 #else
     UNUSED_PARAM(highlights);
 #endif

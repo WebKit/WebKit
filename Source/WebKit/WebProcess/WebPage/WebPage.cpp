@@ -1036,7 +1036,7 @@ WebPage::~WebPage()
 #if ENABLE(APPLICATION_MANIFEST)
     for (auto& completionHandler : m_applicationManifestFetchCallbackMap.values()) {
         if (completionHandler)
-            completionHandler(WTF::nullopt);
+            completionHandler(std::nullopt);
     }
 #endif
 }
@@ -3718,7 +3718,7 @@ void WebPage::runJavaScript(WebFrame* frame, RunJavaScriptParameters&& parameter
 
 void WebPage::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& parameters, Optional<WebCore::FrameIdentifier> frameID, const std::pair<ContentWorldIdentifier, String>& worldData, CompletionHandler<void(const IPC::DataReference&, const Optional<WebCore::ExceptionDetails>&)>&& completionHandler)
 {
-    RELEASE_LOG_IF_ALLOWED(Process, "runJavaScriptInFrameInScriptWorld: frameID=%" PRIu64, frameID.valueOr(WebCore::FrameIdentifier { }).toUInt64());
+    RELEASE_LOG_IF_ALLOWED(Process, "runJavaScriptInFrameInScriptWorld: frameID=%" PRIu64, frameID.value_or(WebCore::FrameIdentifier { }).toUInt64());
     auto webFrame = makeRefPtr(frameID ? WebProcess::singleton().webFrame(*frameID) : &mainWebFrame());
 
     if (auto* newWorld = m_userContentController->addContentWorld(worldData)) {
@@ -4097,7 +4097,7 @@ void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction)
     layerTransaction.setAllowsUserScaling(allowsUserScaling());
     if (m_pendingDynamicViewportSizeUpdateID) {
         layerTransaction.setDynamicViewportSizeUpdateID(*m_pendingDynamicViewportSizeUpdateID);
-        m_pendingDynamicViewportSizeUpdateID = WTF::nullopt;
+        m_pendingDynamicViewportSizeUpdateID = std::nullopt;
     }
     if (m_lastTransactionPageScaleFactor != layerTransaction.pageScaleFactor()) {
         m_lastTransactionPageScaleFactor = layerTransaction.pageScaleFactor();
@@ -4283,7 +4283,7 @@ NotificationPermissionRequestManager* WebPage::notificationPermissionRequestMana
 void WebPage::performDragControllerAction(DragControllerAction action, const IntPoint& clientPosition, const IntPoint& globalPosition, OptionSet<DragOperation> draggingSourceOperationMask, SelectionData&& selectionData, OptionSet<DragApplicationFlags> flags)
 {
     if (!m_page) {
-        send(Messages::WebPageProxy::DidPerformDragControllerAction(WTF::nullopt, DragHandlingMethod::None, false, 0, { }, { }));
+        send(Messages::WebPageProxy::DidPerformDragControllerAction(std::nullopt, DragHandlingMethod::None, false, 0, { }, { }));
         return;
     }
 
@@ -4314,7 +4314,7 @@ void WebPage::performDragControllerAction(DragControllerAction action, const Int
 void WebPage::performDragControllerAction(DragControllerAction action, const WebCore::DragData& dragData, SandboxExtension::Handle&& sandboxExtensionHandle, SandboxExtension::HandleArray&& sandboxExtensionsHandleArray)
 {
     if (!m_page) {
-        send(Messages::WebPageProxy::DidPerformDragControllerAction(WTF::nullopt, DragHandlingMethod::None, false, 0, { }, { }));
+        send(Messages::WebPageProxy::DidPerformDragControllerAction(std::nullopt, DragHandlingMethod::None, false, 0, { }, { }));
         return;
     }
 
@@ -4331,7 +4331,7 @@ void WebPage::performDragControllerAction(DragControllerAction action, const Web
     }
     case DragControllerAction::Exited:
         m_page->dragController().dragExited(dragData);
-        send(Messages::WebPageProxy::DidPerformDragControllerAction(WTF::nullopt, DragHandlingMethod::None, false, 0, { }, { }));
+        send(Messages::WebPageProxy::DidPerformDragControllerAction(std::nullopt, DragHandlingMethod::None, false, 0, { }, { }));
         return;
         
     case DragControllerAction::PerformDragOperation: {
@@ -5528,18 +5528,18 @@ void WebPage::handleAlternativeTextUIResult(const String& result)
 void WebPage::simulateMouseDown(int button, WebCore::IntPoint position, int clickCount, WKEventModifiers modifiers, WallTime time)
 {
     static_assert(sizeof(WKEventModifiers) >= sizeof(WebEvent::Modifier), "WKEventModifiers must be greater than or equal to the size of WebEvent::Modifier");
-    mouseEvent(WebMouseEvent(WebMouseEvent::MouseDown, static_cast<WebMouseEvent::Button>(button), 0, position, position, 0, 0, 0, clickCount, OptionSet<WebEvent::Modifier>::fromRaw(modifiers), time, WebCore::ForceAtClick, WebMouseEvent::NoTap), WTF::nullopt);
+    mouseEvent(WebMouseEvent(WebMouseEvent::MouseDown, static_cast<WebMouseEvent::Button>(button), 0, position, position, 0, 0, 0, clickCount, OptionSet<WebEvent::Modifier>::fromRaw(modifiers), time, WebCore::ForceAtClick, WebMouseEvent::NoTap), std::nullopt);
 }
 
 void WebPage::simulateMouseUp(int button, WebCore::IntPoint position, int clickCount, WKEventModifiers modifiers, WallTime time)
 {
     static_assert(sizeof(WKEventModifiers) >= sizeof(WebEvent::Modifier), "WKEventModifiers must be greater than or equal to the size of WebEvent::Modifier");
-    mouseEvent(WebMouseEvent(WebMouseEvent::MouseUp, static_cast<WebMouseEvent::Button>(button), 0, position, position, 0, 0, 0, clickCount, OptionSet<WebEvent::Modifier>::fromRaw(modifiers), time, WebCore::ForceAtClick, WebMouseEvent::NoTap), WTF::nullopt);
+    mouseEvent(WebMouseEvent(WebMouseEvent::MouseUp, static_cast<WebMouseEvent::Button>(button), 0, position, position, 0, 0, 0, clickCount, OptionSet<WebEvent::Modifier>::fromRaw(modifiers), time, WebCore::ForceAtClick, WebMouseEvent::NoTap), std::nullopt);
 }
 
 void WebPage::simulateMouseMotion(WebCore::IntPoint position, WallTime time)
 {
-    mouseEvent(WebMouseEvent(WebMouseEvent::MouseMove, WebMouseEvent::NoButton, 0, position, position, 0, 0, 0, 0, OptionSet<WebEvent::Modifier> { }, time, 0, WebMouseEvent::NoTap), WTF::nullopt);
+    mouseEvent(WebMouseEvent(WebMouseEvent::MouseMove, WebMouseEvent::NoButton, 0, position, position, 0, 0, 0, 0, OptionSet<WebEvent::Modifier> { }, time, 0, WebMouseEvent::NoTap), std::nullopt);
 }
 
 void WebPage::setCompositionForTesting(const String& compositionString, uint64_t from, uint64_t length, bool suppressUnderline, const Vector<CompositionHighlight>& highlights)
@@ -6310,7 +6310,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
     m_userHasChangedPageScaleFactor = false;
     m_estimatedLatency = Seconds(1.0 / 60);
     m_shouldRevealCurrentSelectionAfterInsertion = true;
-    m_lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage = WTF::nullopt;
+    m_lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage = std::nullopt;
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     EventDispatcher::TouchEventQueue queuedEvents;
@@ -6424,7 +6424,7 @@ Optional<SimpleRange> WebPage::currentSelectionAsRange()
 {
     auto* frame = frameWithSelection(m_page.get());
     if (!frame)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return frame->selection().selection().toNormalizedRange();
 }
@@ -6605,7 +6605,7 @@ Ref<DocumentLoader> WebPage::createDocumentLoader(Frame& frame, const ResourceRe
         if (m_pendingWebsitePolicies) {
             m_allowsContentJavaScriptFromMostRecentNavigation = m_pendingWebsitePolicies->allowsContentJavaScript;
             WebsitePoliciesData::applyToDocumentLoader(WTFMove(*m_pendingWebsitePolicies), documentLoader);
-            m_pendingWebsitePolicies = WTF::nullopt;
+            m_pendingWebsitePolicies = std::nullopt;
         }
     }
 
@@ -6722,7 +6722,7 @@ void WebPage::removeAllUserContent()
 
 void WebPage::updateIntrinsicContentSizeIfNeeded(const WebCore::IntSize& size)
 {
-    m_pendingIntrinsicContentSize = WTF::nullopt;
+    m_pendingIntrinsicContentSize = std::nullopt;
     if (!minimumSizeForAutoLayout().width() && !sizeToContentAutoSizeMaximumSize().width() && !sizeToContentAutoSizeMaximumSize().height())
         return;
     ASSERT(mainFrameView());
@@ -6736,7 +6736,7 @@ void WebPage::updateIntrinsicContentSizeIfNeeded(const WebCore::IntSize& size)
 
 void WebPage::flushPendingIntrinsicContentSizeUpdate()
 {
-    if (auto pendingSize = std::exchange(m_pendingIntrinsicContentSize, WTF::nullopt))
+    if (auto pendingSize = std::exchange(m_pendingIntrinsicContentSize, std::nullopt))
         updateIntrinsicContentSizeIfNeeded(*pendingSize);
 }
 
@@ -7141,11 +7141,11 @@ void WebPage::getApplicationManifest(CompletionHandler<void(const Optional<WebCo
     Document* mainFrameDocument = m_mainFrame->coreFrame()->document();
     DocumentLoader* loader = mainFrameDocument ? mainFrameDocument->loader() : nullptr;
     if (!loader)
-        return completionHandler(WTF::nullopt);
+        return completionHandler(std::nullopt);
 
     auto coreCallbackID = loader->loadApplicationManifest();
     if (!coreCallbackID)
-        return completionHandler(WTF::nullopt);
+        return completionHandler(std::nullopt);
 
     m_applicationManifestFetchCallbackMap.add(coreCallbackID, WTFMove(completionHandler));
 }
@@ -7201,11 +7201,11 @@ Optional<WebCore::ElementContext> WebPage::contextForElement(WebCore::Element& e
 {
     auto& document = element.document();
     if (!m_page || document.page() != m_page.get())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto frame = document.frame();
     if (!frame)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return WebCore::ElementContext { element.clientRect(), m_identifier, document.identifier(), document.identifierForElement(element) };
 }
@@ -7399,7 +7399,7 @@ void WebPage::requestImageExtraction(WebCore::Element& element, CompletionHandle
     }
 
     auto& renderImage = downcast<RenderImage>(*renderer);
-    auto bitmap = createShareableBitmap(renderImage, WTF::nullopt, AllowAnimatedImages::No);
+    auto bitmap = createShareableBitmap(renderImage, std::nullopt, AllowAnimatedImages::No);
     if (!bitmap) {
         if (completion)
             completion({ });

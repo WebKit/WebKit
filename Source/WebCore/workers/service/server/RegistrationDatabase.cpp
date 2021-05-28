@@ -115,12 +115,12 @@ struct ImportedScriptAttributes {
         Optional<URL> responseURL;
         decoder >> responseURL;
         if (!responseURL)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<String> mimeType;
         decoder >> mimeType;
         if (!mimeType)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{
             WTFMove(*responseURL),
@@ -329,7 +329,7 @@ static Optional<ServiceWorkerUpdateViaCache> stringToUpdateViaCache(const String
     if (update == "None")
         return ServiceWorkerUpdateViaCache::None;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static String workerTypeToString(WorkerType workerType)
@@ -351,7 +351,7 @@ static Optional<WorkerType> stringToWorkerType(const String& type)
     if (type == "Module")
         return WorkerType::Module;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void RegistrationDatabase::pushChanges(const HashMap<ServiceWorkerRegistrationKey, Optional<ServiceWorkerContextData>>& changedRegistrations, CompletionHandler<void()>&& completionHandler)
@@ -568,8 +568,8 @@ String RegistrationDatabase::importRecords()
         auto workerIdentifier = ServiceWorkerIdentifier::generate();
         auto registrationIdentifier = ServiceWorkerRegistrationIdentifier::generate();
         auto serviceWorkerData = ServiceWorkerData { workerIdentifier, scriptURL, ServiceWorkerState::Activated, *workerType, registrationIdentifier };
-        auto registration = ServiceWorkerRegistrationData { WTFMove(*key), registrationIdentifier, WTFMove(scopeURL), *updateViaCache, lastUpdateCheckTime, WTF::nullopt, WTF::nullopt, WTFMove(serviceWorkerData) };
-        auto contextData = ServiceWorkerContextData { WTF::nullopt, WTFMove(registration), workerIdentifier, WTFMove(script), WTFMove(*certificateInfo), WTFMove(*contentSecurityPolicy), WTFMove(referrerPolicy), WTFMove(scriptURL), *workerType, true, LastNavigationWasAppBound::No, WTFMove(scriptResourceMap) };
+        auto registration = ServiceWorkerRegistrationData { WTFMove(*key), registrationIdentifier, WTFMove(scopeURL), *updateViaCache, lastUpdateCheckTime, std::nullopt, std::nullopt, WTFMove(serviceWorkerData) };
+        auto contextData = ServiceWorkerContextData { std::nullopt, WTFMove(registration), workerIdentifier, WTFMove(script), WTFMove(*certificateInfo), WTFMove(*contentSecurityPolicy), WTFMove(referrerPolicy), WTFMove(scriptURL), *workerType, true, LastNavigationWasAppBound::No, WTFMove(scriptResourceMap) };
 
         callOnMainThread([protectedThis = makeRef(*this), contextData = contextData.isolatedCopy()]() mutable {
             protectedThis->addRegistrationToStore(WTFMove(contextData));

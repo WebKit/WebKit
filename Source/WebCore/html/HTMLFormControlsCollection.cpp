@@ -59,7 +59,7 @@ Optional<Variant<RefPtr<RadioNodeList>, RefPtr<Element>>> HTMLFormControlsCollec
     auto namedItems = this->namedItems(name);
 
     if (namedItems.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
     if (namedItems.size() == 1)
         return Variant<RefPtr<RadioNodeList>, RefPtr<Element>> { RefPtr<Element> { WTFMove(namedItems[0]) } };
 

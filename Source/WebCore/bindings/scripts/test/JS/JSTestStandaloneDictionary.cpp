@@ -100,7 +100,7 @@ template<> DictionaryImplName convertDictionary<DictionaryImplName>(JSGlobalObje
         result.nullableUnionWithNullDefaultValue = convert<IDLNullable<IDLUnion<IDLDOMString, IDLBoolean>>>(lexicalGlobalObject, nullableUnionWithNullDefaultValueValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
-        result.nullableUnionWithNullDefaultValue = WTF::nullopt;
+        result.nullableUnionWithNullDefaultValue = std::nullopt;
 #if ENABLE(Conditional13) || ENABLE(Conditional14)
     JSValue partialBooleanMemberValue;
     if (isNullOrUndefined)
@@ -354,7 +354,7 @@ template<> Optional<TestStandaloneDictionary::EnumInStandaloneDictionaryFile> pa
         return TestStandaloneDictionary::EnumInStandaloneDictionaryFile::EnumValue1;
     if (stringValue == "enumValue2")
         return TestStandaloneDictionary::EnumInStandaloneDictionaryFile::EnumValue2;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 template<> const char* expectedEnumerationValues<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>()

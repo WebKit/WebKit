@@ -257,7 +257,7 @@ public:
         if (PAL::CMSampleBufferGetDataBuffer(m_sample.get())
             || PAL::CMSampleBufferGetImageBuffer(m_sample.get())
             || !PAL::CMSampleBufferDataIsReady(m_sample.get()))
-            return WTF::nullopt;
+            return std::nullopt;
 
         return byteRangeForAttachment(PAL::kCMSampleBufferAttachmentKey_SampleReferenceByteOffset);
     }

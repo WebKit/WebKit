@@ -217,7 +217,7 @@ Optional<unsigned> Code::entrypointIndex(BasicBlock* block) const
         if (m_entrypoints[i].block() == block)
             return i;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void Code::setCalleeSaveRegisterAtOffsetList(RegisterAtOffsetList&& registerAtOffsetList, StackSlot* slot)

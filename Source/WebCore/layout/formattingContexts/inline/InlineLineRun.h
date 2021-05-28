@@ -60,7 +60,7 @@ struct LineRun {
     };
 
     struct Expansion;
-    LineRun(size_t lineIndex, const Box&, const InlineRect&, Expansion, Optional<Text> = WTF::nullopt);
+    LineRun(size_t lineIndex, const Box&, const InlineRect&, Expansion, Optional<Text> = std::nullopt);
 
     const InlineRect& logicalRect() const { return m_logicalRect; }
 

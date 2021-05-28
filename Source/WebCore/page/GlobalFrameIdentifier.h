@@ -52,12 +52,12 @@ Optional<GlobalFrameIdentifier> GlobalFrameIdentifier::decode(Decoder& decoder)
     Optional<PageIdentifier> pageID;
     decoder >> pageID;
     if (!pageID)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FrameIdentifier> frameID;
     decoder >> frameID;
     if (!frameID)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return { { WTFMove(*pageID), WTFMove(*frameID) } };
 }

@@ -66,7 +66,7 @@ template<class Decoder> Optional<DestinationColorSpace> DestinationColorSpace::d
     Optional<PlatformColorSpace> platformColorSpace;
     decoder >> platformColorSpace;
     if (!platformColorSpace)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return DestinationColorSpace { WTFMove(*platformColorSpace) };
 }

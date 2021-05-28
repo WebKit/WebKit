@@ -853,7 +853,7 @@ sub GenerateNamedGetterLambda
 {
     my ($outputArray, $interface, $className, $namedGetterOperation, $namedGetterFunctionName, $IDLType) = @_;
     
-    my @arguments = GenerateCallWithUsingReferences($namedGetterOperation->extendedAttributes->{CallWith}, $outputArray, "WTF::nullopt", "thisObject", "        ");
+    my @arguments = GenerateCallWithUsingReferences($namedGetterOperation->extendedAttributes->{CallWith}, $outputArray, "std::nullopt", "thisObject", "        ");
     push(@arguments, "propertyNameToAtomString(propertyName)");
 
     push(@$outputArray, "    auto getterFunctor = visibleNamedPropertyItemAccessorFunctor<${IDLType}, ${className}>([] (${className}& thisObject, PropertyName propertyName) -> decltype(auto) {\n");
@@ -2376,7 +2376,7 @@ sub GenerateEnumerationImplementationContent
         }
         $result .= "        return ${className}::${enumerationValueName};\n";
     }
-    $result .= "    return WTF::nullopt;\n";
+    $result .= "    return std::nullopt;\n";
     $result .= "}\n\n";
 
     $result .= "template<> const char* expectedEnumerationValues<$className>()\n";
@@ -2462,7 +2462,7 @@ sub GenerateDefaultValue
 
     if ($defaultValue eq "null") {
         if ($type->isUnion) {
-            return "WTF::nullopt" if $type->isNullable;
+            return "std::nullopt" if $type->isNullable;
 
             my $IDLType = GetIDLType($typeScope, $type);
             return "convert<${IDLType}>(lexicalGlobalObject, jsNull());";
@@ -2474,7 +2474,7 @@ sub GenerateDefaultValue
             my $useAtomString = $type->extendedAttributes->{AtomString};
             return $useAtomString ? "nullAtom()" : "String()";
         }
-        return "WTF::nullopt";
+        return "std::nullopt";
     }
 
     if ($defaultValue eq "[]") {

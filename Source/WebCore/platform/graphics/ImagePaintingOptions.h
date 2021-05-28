@@ -95,27 +95,27 @@ Optional<ImagePaintingOptions> ImagePaintingOptions::decode(Decoder& decoder)
     Optional<CompositeOperator> compositeOperator;
     decoder >> compositeOperator;
     if (!compositeOperator)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<BlendMode> blendMode;
     decoder >> blendMode;
     if (!blendMode)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<DecodingMode> decodingMode;
     decoder >> decodingMode;
     if (!decodingMode)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<ImageOrientation::Orientation> orientation;
     decoder >> orientation;
     if (!orientation)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<InterpolationQuality> interpolationQuality;
     decoder >> interpolationQuality;
     if (!interpolationQuality)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return ImagePaintingOptions { *compositeOperator, *blendMode, *decodingMode, *orientation, *interpolationQuality };
 }

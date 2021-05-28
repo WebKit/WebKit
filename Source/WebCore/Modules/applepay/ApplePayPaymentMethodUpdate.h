@@ -57,13 +57,13 @@ Optional<ApplePayPaymentMethodUpdate> ApplePayPaymentMethodUpdate::decode(Decode
     ApplePayPaymentMethodUpdate result;
 
     if (!result.decodeBase(decoder))
-        return WTF::nullopt;
+        return std::nullopt;
 
 #define DECODE(name, type) \
     Optional<type> name; \
     decoder >> name; \
     if (!name) \
-        return WTF::nullopt; \
+        return std::nullopt; \
     result.name = WTFMove(*name); \
 
 #if ENABLE(APPLE_PAY_INSTALLMENTS)

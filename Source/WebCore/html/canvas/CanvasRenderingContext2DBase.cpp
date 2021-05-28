@@ -1062,7 +1062,7 @@ void CanvasRenderingContext2DBase::fillInternal(const Path& path, CanvasFillRule
         c->fillPath(path);
     
     if (isEntireBackingStoreDirty())
-        didDraw(WTF::nullopt);
+        didDraw(std::nullopt);
     else if (repaintEntireCanvas)
         didDrawEntireCanvas();
     else
@@ -1101,7 +1101,7 @@ void CanvasRenderingContext2DBase::strokeInternal(const Path& path)
         c->strokePath(path);
 
     if (isEntireBackingStoreDirty())
-        didDraw(WTF::nullopt);
+        didDraw(std::nullopt);
     else if (repaintEntireCanvas)
         didDrawEntireCanvas();
     else {
@@ -1165,7 +1165,7 @@ bool CanvasRenderingContext2DBase::isPointInPathInternal(const Path& path, float
     if (!state.hasInvertibleTransform)
         return false;
 
-    auto transformedPoint = state.transform.inverse().valueOr(AffineTransform()).mapPoint(FloatPoint(x, y));
+    auto transformedPoint = state.transform.inverse().value_or(AffineTransform()).mapPoint(FloatPoint(x, y));
     if (!std::isfinite(transformedPoint.x()) || !std::isfinite(transformedPoint.y()))
         return false;
 
@@ -1180,7 +1180,7 @@ bool CanvasRenderingContext2DBase::isPointInStrokeInternal(const Path& path, flo
     if (!state.hasInvertibleTransform)
         return false;
 
-    auto transformedPoint = state.transform.inverse().valueOr(AffineTransform()).mapPoint(FloatPoint(x, y));
+    auto transformedPoint = state.transform.inverse().value_or(AffineTransform()).mapPoint(FloatPoint(x, y));
     if (!std::isfinite(transformedPoint.x()) || !std::isfinite(transformedPoint.y()))
         return false;
 
@@ -1271,7 +1271,7 @@ void CanvasRenderingContext2DBase::fillRect(float x, float y, float width, float
         c->fillRect(rect);
 
     if (isEntireBackingStoreDirty())
-        didDraw(WTF::nullopt);
+        didDraw(std::nullopt);
     else if (repaintEntireCanvas)
         didDrawEntireCanvas();
     else
@@ -1311,7 +1311,7 @@ void CanvasRenderingContext2DBase::strokeRect(float x, float y, float width, flo
         c->strokeRect(rect, state().lineWidth);
 
     if (isEntireBackingStoreDirty())
-        didDraw(WTF::nullopt);
+        didDraw(std::nullopt);
     else if (repaintEntireCanvas)
         didDrawEntireCanvas();
     else {
@@ -1591,7 +1591,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
         c->drawImage(*image, normalizedDstRect, normalizedSrcRect, options);
 
     if (isEntireBackingStoreDirty())
-        didDraw(WTF::nullopt);
+        didDraw(std::nullopt);
     else if (repaintEntireCanvas)
         didDrawEntireCanvas();
     else
@@ -1653,7 +1653,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanv
         c->drawImageBuffer(*buffer, dstRect, srcRect, { state().globalComposite, state().globalBlend });
 
     if (isEntireBackingStoreDirty())
-        didDraw(WTF::nullopt);
+        didDraw(std::nullopt);
     else if (repaintEntireCanvas)
         didDrawEntireCanvas();
     else
@@ -1689,7 +1689,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLVideoElement& vide
         c->drawNativeImage(*image, FloatSize(video.videoWidth(), video.videoHeight()), dstRect, srcRect);
 
         if (isEntireBackingStoreDirty())
-            didDraw(WTF::nullopt);
+            didDraw(std::nullopt);
         else if (rectContainsCanvas(dstRect))
             didDrawEntireCanvas();
         else
@@ -1708,7 +1708,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(HTMLVideoElement& vide
     stateSaver.restore();
 
     if (isEntireBackingStoreDirty())
-        didDraw(WTF::nullopt);
+        didDraw(std::nullopt);
     else
         didDraw(dstRect);
 
@@ -1759,7 +1759,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(ImageBitmap& imageBitm
         c->drawImageBuffer(*buffer, dstRect, srcRect, { state().globalComposite, state().globalBlend });
 
     if (isEntireBackingStoreDirty())
-        didDraw(WTF::nullopt);
+        didDraw(std::nullopt);
     else if (repaintEntireCanvas)
         didDrawEntireCanvas();
     else
@@ -2067,7 +2067,7 @@ void CanvasRenderingContext2DBase::didDraw(Optional<FloatRect> rect, OptionSet<D
         return;
 
     if (!rect) {
-        canvasBase().didDraw(WTF::nullopt);
+        canvasBase().didDraw(std::nullopt);
         return;
     }
 
@@ -2092,7 +2092,7 @@ void CanvasRenderingContext2DBase::didDraw(Optional<FloatRect> rect, OptionSet<D
     // FIXME: This does not apply the clip because we have no way of reading the clip out of the GraphicsContext.
 
     if (m_dirtyRect.contains(dirtyRect))
-        canvasBase().didDraw(WTF::nullopt);
+        canvasBase().didDraw(std::nullopt);
     else {
         m_dirtyRect.unite(dirtyRect);
         canvasBase().didDraw(m_dirtyRect);
@@ -2540,7 +2540,7 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, flo
         fontProxy.drawBidiText(*c, textRun, location, FontCascade::UseFallbackIfFontNotReady);
 
     if (isEntireBackingStoreDirty())
-        didDraw(WTF::nullopt);
+        didDraw(std::nullopt);
     else if (repaintEntireCanvas)
         didDrawEntireCanvas();
     else

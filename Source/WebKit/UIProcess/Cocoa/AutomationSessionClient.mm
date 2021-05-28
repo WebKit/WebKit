@@ -151,7 +151,7 @@ static Optional<API::AutomationSessionClient::JavaScriptDialogType> toImpl(_WKAu
 {
     switch (type) {
     case _WKAutomationSessionJavaScriptDialogTypeNone:
-        return WTF::nullopt;
+        return std::nullopt;
     case _WKAutomationSessionJavaScriptDialogTypePrompt:
         return API::AutomationSessionClient::JavaScriptDialogType::Prompt;
     case _WKAutomationSessionJavaScriptDialogTypeConfirm:

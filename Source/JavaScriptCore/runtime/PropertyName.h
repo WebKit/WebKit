@@ -126,9 +126,9 @@ ALWAYS_INLINE Optional<uint32_t> parseIndex(PropertyName propertyName)
 {
     auto uid = propertyName.uid();
     if (!uid)
-        return WTF::nullopt;
+        return std::nullopt;
     if (uid->isSymbol())
-        return WTF::nullopt;
+        return std::nullopt;
     return parseIndex(*uid);
 }
 

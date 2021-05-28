@@ -68,7 +68,7 @@ Optional<String> MockPaymentCoordinator::validatedPaymentNetwork(const String& p
 {
     auto result = m_availablePaymentNetworks.find(paymentNetwork);
     if (result == m_availablePaymentNetworks.end())
-        return WTF::nullopt;
+        return std::nullopt;
     return *result;
 }
 

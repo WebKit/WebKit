@@ -180,7 +180,7 @@ inline SimpleRange makeSimpleRangeHelper(BoundaryPoint&& start, BoundaryPoint&& 
 inline Optional<SimpleRange> makeSimpleRangeHelper(Optional<BoundaryPoint>&& start, Optional<BoundaryPoint>&& end)
 {
     if (!start || !end)
-        return WTF::nullopt;
+        return std::nullopt;
     return makeSimpleRangeHelper(WTFMove(*start), WTFMove(*end));
 }
 
@@ -193,7 +193,7 @@ inline SimpleRange makeSimpleRangeHelper(BoundaryPoint&& point)
 inline Optional<SimpleRange> makeSimpleRangeHelper(Optional<BoundaryPoint>&& point)
 {
     if (!point)
-        return WTF::nullopt;
+        return std::nullopt;
     return makeSimpleRangeHelper(WTFMove(*point));
 }
 

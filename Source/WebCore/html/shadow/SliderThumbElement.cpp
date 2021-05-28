@@ -593,7 +593,7 @@ Optional<Style::ElementStyle> SliderThumbElement::resolveCustomStyle(const Rende
     static MainThreadNeverDestroyed<const AtomString> mediaSliderThumbShadowPseudoId("-webkit-media-slider-thumb", AtomString::ConstructFromLiteral);
 
     if (!hostStyle)
-        return WTF::nullopt;
+        return std::nullopt;
 
     switch (hostStyle->appearance()) {
     case MediaSliderPart:
@@ -608,7 +608,7 @@ Optional<Style::ElementStyle> SliderThumbElement::resolveCustomStyle(const Rende
         m_shadowPseudoId = sliderThumbShadowPseudoId;
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 const AtomString& SliderThumbElement::shadowPseudoId() const
@@ -647,7 +647,7 @@ Optional<Style::ElementStyle> SliderContainerElement::resolveCustomStyle(const R
     static MainThreadNeverDestroyed<const AtomString> sliderContainer("-webkit-slider-container", AtomString::ConstructFromLiteral);
 
     if (!hostStyle)
-        return WTF::nullopt;
+        return std::nullopt;
 
     switch (hostStyle->appearance()) {
     case MediaSliderPart:
@@ -662,7 +662,7 @@ Optional<Style::ElementStyle> SliderContainerElement::resolveCustomStyle(const R
         m_shadowPseudoId = sliderContainer;
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 const AtomString& SliderContainerElement::shadowPseudoId() const

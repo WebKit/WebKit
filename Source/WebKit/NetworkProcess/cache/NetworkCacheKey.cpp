@@ -180,37 +180,37 @@ Optional<Key> Key::decode(WTF::Persistence::Decoder& decoder)
     Optional<String> partition;
     decoder >> partition;
     if (!partition)
-        return WTF::nullopt;
+        return std::nullopt;
     key.m_partition = WTFMove(*partition);
 
     Optional<String> type;
     decoder >> type;
     if (!type)
-        return WTF::nullopt;
+        return std::nullopt;
     key.m_type = WTFMove(*type);
 
     Optional<String> identifier;
     decoder >> identifier;
     if (!identifier)
-        return WTF::nullopt;
+        return std::nullopt;
     key.m_identifier = WTFMove(*identifier);
 
     Optional<String> range;
     decoder >> range;
     if (!range)
-        return WTF::nullopt;
+        return std::nullopt;
     key.m_range = WTFMove(*range);
 
     Optional<HashType> hash;
     decoder >> hash;
     if (!hash)
-        return WTF::nullopt;
+        return std::nullopt;
     key.m_hash = WTFMove(*hash);
 
     Optional<HashType> partitionHash;
     decoder >> partitionHash;
     if (!partitionHash)
-        return WTF::nullopt;
+        return std::nullopt;
     key.m_partitionHash = WTFMove(*partitionHash);
 
     return { WTFMove(key) };

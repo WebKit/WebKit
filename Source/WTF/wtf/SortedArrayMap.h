@@ -162,7 +162,7 @@ template<typename ArrayType> template<typename KeyArgument> inline auto SortedAr
         if constexpr (HasParseMember<KeyType>)
             return KeyType::parse(key);
         else
-            return makeOptional(key);
+            return std::make_optional(key);
     }();
     if (!parsedKey)
         return nullptr;
@@ -202,7 +202,7 @@ template<typename ArrayType> template<typename KeyArgument> inline bool SortedAr
         if constexpr (HasParseMember<KeyType>)
             return KeyType::parse(key);
         else
-            return makeOptional(key);
+            return std::make_optional(key);
     }();
     if (!parsedKey)
         return false;
@@ -344,12 +344,12 @@ template<typename StorageInteger> template<unsigned size> constexpr StorageInteg
 template<typename StorageInteger> auto PackedASCIILowerCodes<StorageInteger>::parse(StringView string) -> Optional<PackedASCIILowerCodes>
 {
     if (string.length() > sizeof(StorageInteger))
-        return WTF::nullopt;
+        return std::nullopt;
     StorageInteger result = 0;
     for (unsigned index = 0; index < string.length(); ++index) {
         UChar code = string[index];
         if (!isASCII(code))
-            return WTF::nullopt;
+            return std::nullopt;
         result |= static_cast<StorageInteger>(toASCIILower(code)) << ((sizeof(StorageInteger) - index - 1) * 8);
     }
     return PackedASCIILowerCodes(result);

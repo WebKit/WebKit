@@ -66,7 +66,7 @@ private:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
 
     CachedResourceHandle<CachedScript> m_cachedScript { };
-    Optional<Error> m_error { WTF::nullopt };
+    Optional<Error> m_error { std::nullopt };
     String m_integrity;
     bool m_isAsync { false };
 };

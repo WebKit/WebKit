@@ -200,7 +200,7 @@ RefPtr<SharedMemory> SharedMemory::map(const Handle& handle, Protection protecti
         return nullptr;
 
     RefPtr<SharedMemory> instance = wrapMap(data, handle.m_attachment.size(), -1);
-    instance->m_fileDescriptor = WTF::nullopt;
+    instance->m_fileDescriptor = std::nullopt;
     instance->m_isWrappingMap = false;
     return instance;
 }

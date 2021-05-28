@@ -54,17 +54,17 @@ struct CDMMediaCapability {
         Optional<String> contentType;
         decoder >> contentType;
         if (!contentType)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<String> robustness;
         decoder >> robustness;
         if (!robustness)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<Optional<CDMEncryptionScheme>> encryptionScheme;
         decoder >> encryptionScheme;
         if (!encryptionScheme)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{
             WTFMove(*contentType),

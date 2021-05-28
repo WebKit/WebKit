@@ -83,8 +83,8 @@
 
 - (void)evaluateScript:(NSString *)scriptSource frameURL:(NSURL *)frameURL contextSecurityOrigin:(NSURL *)contextSecurityOrigin useContentScriptContext:(BOOL)useContentScriptContext completionHandler:(void(^)(NSError *, NSDictionary *))completionHandler
 {
-    Optional<URL> optionalFrameURL = frameURL ? makeOptional(URL(frameURL)) : WTF::nullopt;
-    Optional<URL> optionalContextSecurityOrigin = contextSecurityOrigin ? makeOptional(URL(contextSecurityOrigin)) : WTF::nullopt;
+    Optional<URL> optionalFrameURL = frameURL ? std::make_optional(URL(frameURL)) : std::nullopt;
+    Optional<URL> optionalContextSecurityOrigin = contextSecurityOrigin ? std::make_optional(URL(contextSecurityOrigin)) : std::nullopt;
     _extension->evaluateScript(scriptSource, optionalFrameURL, optionalContextSecurityOrigin, useContentScriptContext, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTFMove(completionHandler))] (Inspector::ExtensionEvaluationResult&& result) mutable {
         if (!result) {
             capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error())}], nil);
@@ -104,8 +104,8 @@
 
 - (void)reloadIgnoringCache:(BOOL)ignoreCache userAgent:(NSString *)userAgent injectedScript:(NSString *)injectedScript completionHandler:(void(^)(NSError *))completionHandler
 {
-    Optional<String> optionalUserAgent = userAgent ? makeOptional(String(userAgent)) : WTF::nullopt;
-    Optional<String> optionalInjectedScript = injectedScript ? makeOptional(String(injectedScript)) : WTF::nullopt;
+    Optional<String> optionalUserAgent = userAgent ? std::make_optional(String(userAgent)) : std::nullopt;
+    Optional<String> optionalInjectedScript = injectedScript ? std::make_optional(String(injectedScript)) : std::nullopt;
     _extension->reloadIgnoringCache(ignoreCache, optionalUserAgent, optionalInjectedScript, [protectedSelf = retainPtr(self), capturedBlock = makeBlockPtr(WTFMove(completionHandler))] (Inspector::ExtensionEvaluationResult&& result) mutable {
         if (!result) {
             capturedBlock([NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSLocalizedFailureReasonErrorKey: Inspector::extensionErrorToString(result.error()) }]);

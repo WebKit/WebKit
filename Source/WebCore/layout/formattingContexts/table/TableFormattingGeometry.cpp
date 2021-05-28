@@ -140,9 +140,9 @@ IntrinsicWidthConstraints TableFormattingGeometry::intrinsicWidthConstraintsForC
     // Expand with border
     intrinsicWidthConstraints.expand(computedCellBorder(cell).width());
     // padding
-    intrinsicWidthConstraints.expand(fixedValue(style.paddingLeft()).valueOr(0) + fixedValue(style.paddingRight()).valueOr(0));
+    intrinsicWidthConstraints.expand(fixedValue(style.paddingLeft()).value_or(0) + fixedValue(style.paddingRight()).value_or(0));
     // and margin
-    intrinsicWidthConstraints.expand(fixedValue(style.marginStart()).valueOr(0) + fixedValue(style.marginEnd()).valueOr(0));
+    intrinsicWidthConstraints.expand(fixedValue(style.marginStart()).value_or(0) + fixedValue(style.marginEnd()).value_or(0));
     return intrinsicWidthConstraints;
 }
 

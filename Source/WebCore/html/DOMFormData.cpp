@@ -91,7 +91,7 @@ auto DOMFormData::get(const String& name) -> Optional<FormDataEntryValue>
             return item.data;
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 auto DOMFormData::getAll(const String& name) -> Vector<FormDataEntryValue>
@@ -159,7 +159,7 @@ Optional<KeyValuePair<String, DOMFormData::FormDataEntryValue>> DOMFormData::Ite
 {
     auto& items = m_target->items();
     if (m_index >= items.size())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto& item = items[m_index++];
     return makeKeyValuePair(item.name, item.data);

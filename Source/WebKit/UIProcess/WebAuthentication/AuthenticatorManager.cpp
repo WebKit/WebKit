@@ -431,7 +431,7 @@ void AuthenticatorManager::initTimeOutTimer()
         timeOutInMs = options.timeout;
     });
 
-    unsigned timeOutInMsValue = std::min(maxTimeOutValue, timeOutInMs.valueOr(maxTimeOutValue));
+    unsigned timeOutInMsValue = std::min(maxTimeOutValue, timeOutInMs.value_or(maxTimeOutValue));
     m_requestTimeOutTimer.startOneShot(Seconds::fromMilliseconds(timeOutInMsValue));
 }
 

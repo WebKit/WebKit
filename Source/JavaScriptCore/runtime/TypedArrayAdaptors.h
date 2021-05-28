@@ -81,14 +81,14 @@ struct IntegralTypedArrayAdaptor {
     static Optional<Type> toNativeFromInt32WithoutCoercion(int32_t value)
     {
         if ((value >= 0 && static_cast<uint32_t>(value) > static_cast<uint32_t>(maxValue)) || value < static_cast<int32_t>(minValue))
-            return WTF::nullopt;
+            return std::nullopt;
         return static_cast<Type>(value);
     }
 
     static Optional<Type> toNativeFromUint32WithoutCoercion(uint32_t value)
     {
         if (value > static_cast<uint32_t>(maxValue))
-            return WTF::nullopt;
+            return std::nullopt;
 
         return static_cast<Type>(value);
     }
@@ -97,7 +97,7 @@ struct IntegralTypedArrayAdaptor {
     {
         Type integer = static_cast<Type>(value);
         if (static_cast<double>(integer) != value)
-            return WTF::nullopt;
+            return std::nullopt;
 
         if (value < 0)
             return toNativeFromInt32WithoutCoercion(static_cast<int32_t>(value));
@@ -158,10 +158,10 @@ struct FloatTypedArrayAdaptor {
         Type valueResult = static_cast<Type>(value);
 
         if (static_cast<double>(valueResult) != value)
-            return WTF::nullopt;
+            return std::nullopt;
 
         if (value < minValue || value > maxValue)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return valueResult;
     }
@@ -300,7 +300,7 @@ struct Uint8ClampedAdaptor {
     static Optional<Type> toNativeFromInt32WithoutCoercion(int32_t value)
     {
         if (value > maxValue || value < minValue)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return static_cast<Type>(value);
     }
@@ -309,7 +309,7 @@ struct Uint8ClampedAdaptor {
     {
         uint8_t integer = static_cast<uint8_t>(value);
         if (static_cast<double>(integer) != value)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return integer;
     }

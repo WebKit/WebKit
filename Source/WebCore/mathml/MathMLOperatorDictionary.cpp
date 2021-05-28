@@ -1129,14 +1129,14 @@ static const UChar32 horizontalOperators[] = {
 Optional<Property> MathMLOperatorDictionary::search(UChar32 character, Form form, bool explicitForm)
 {
     if (!character)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // We try and find the default values from the operator dictionary.
     if (auto* entry = tryBinarySearch<const Entry, Key>(dictionary, dictionarySize, Key(character, form), ExtractKey))
         return ExtractProperty(*entry);
 
     if (explicitForm)
-        return WTF::nullopt;
+        return std::nullopt;
 
     // If we did not find the desired operator form and if it was not set explicitly, we use the first one in the following order: Infix, Prefix, Postfix.
     // This is to handle bad MathML markup without explicit <mrow> delimiters like "<mo>(</mo><mi>a</mi><mo>)</mo><mo>(</mo><mi>b</mi><mo>)</mo>" where innerfences should not be considered infix.
@@ -1149,7 +1149,7 @@ Optional<Property> MathMLOperatorDictionary::search(UChar32 character, Form form
         return ExtractProperty(*entry);
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 bool MathMLOperatorDictionary::isVertical(UChar32 textContent)

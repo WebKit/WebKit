@@ -442,7 +442,7 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
     else if (WTF::holds_alternative<double>(propertyIndexedKeyframe.baseProperties.offset))
         offsets.append(WTF::get<double>(propertyIndexedKeyframe.baseProperties.offset));
     else if (WTF::holds_alternative<std::nullptr_t>(propertyIndexedKeyframe.baseProperties.offset))
-        offsets.append(WTF::nullopt);
+        offsets.append(std::nullopt);
 
     // 6. Assign each value in offsets to the keyframe offset of the keyframe with corresponding position in property keyframes until the end of either sequence is reached.
     for (size_t i = 0; i < offsets.size() && i < parsedKeyframes.size(); ++i)
@@ -1152,7 +1152,7 @@ const Optional<const Styleable> KeyframeEffect::targetStyleable() const
 {
     if (m_target)
         return Styleable(*m_target, m_pseudoId);
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 bool KeyframeEffect::targetsPseudoElement() const
@@ -1469,7 +1469,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
         //    offset of 0, a property value set to the neutral value for composition, and a composite operation of add, and prepend it to the beginning of
         //    property-specific keyframes.
         if (!numberOfKeyframesWithZeroOffset) {
-            propertySpecificKeyframes.insert(0, WTF::nullopt);
+            propertySpecificKeyframes.insert(0, std::nullopt);
             numberOfKeyframesWithZeroOffset = 1;
         }
 
@@ -1477,7 +1477,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
         //    keyframe offset of 1, a property value set to the neutral value for composition, and a composite operation of add, and append it to the end of
         //    property-specific keyframes.
         if (!numberOfKeyframesWithOneOffset) {
-            propertySpecificKeyframes.append(WTF::nullopt);
+            propertySpecificKeyframes.append(std::nullopt);
             numberOfKeyframesWithOneOffset = 1;
         }
 
@@ -1731,7 +1731,7 @@ OptionSet<AcceleratedActionApplicationResult> KeyframeEffect::applyPendingAccele
     m_pendingAcceleratedActions.clear();
 
     // To simplify the code we use a default of 0s for an unresolved current time since for a Stop action that is acceptable.
-    auto timeOffset = animation()->currentTime().valueOr(0_s).seconds() - delay().seconds();
+    auto timeOffset = animation()->currentTime().value_or(0_s).seconds() - delay().seconds();
 
     auto startAnimation = [&]() -> RunningAccelerated {
         if (m_runningAccelerated == RunningAccelerated::Yes)
@@ -2005,14 +2005,14 @@ Optional<double> KeyframeEffect::progressUntilNextStep(double iterationProgress)
         return progress;
 
     if (!is<LinearTimingFunction>(timingFunction()) || !m_someKeyframesUseStepsTimingFunction)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (m_blendingKeyframes.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto progressUntilNextStepInInterval = [iterationProgress](double intervalStartProgress, double intervalEndProgress, TimingFunction* timingFunction) -> Optional<double> {
         if (!is<StepsTimingFunction>(timingFunction))
-            return WTF::nullopt;
+            return std::nullopt;
 
         auto numberOfSteps = downcast<StepsTimingFunction>(*timingFunction).numberOfSteps();
         auto intervalProgress = intervalEndProgress - intervalStartProgress;
@@ -2033,7 +2033,7 @@ Optional<double> KeyframeEffect::progressUntilNextStep(double iterationProgress)
         if (!i) {
             if (is<CSSAnimation>(animation()))
                 return progressUntilNextStepInInterval(0, intervalEndProgress, downcast<DeclarativeAnimation>(*animation()).backingAnimation().timingFunction());
-            return WTF::nullopt;
+            return std::nullopt;
         }
 
         return progressUntilNextStepInInterval(m_blendingKeyframes[i - 1].key(), intervalEndProgress, timingFunctionForKeyframeAtIndex(i - 1));
@@ -2047,7 +2047,7 @@ Optional<double> KeyframeEffect::progressUntilNextStep(double iterationProgress)
         return progressUntilNextStepInInterval(lastExplicitKeyframe.key(), 1, downcast<DeclarativeAnimation>(*animation()).backingAnimation().timingFunction());
 
     // In any other case, we are not dealing with an interval with a steps() timing function.
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Seconds KeyframeEffect::timeToNextTick() const

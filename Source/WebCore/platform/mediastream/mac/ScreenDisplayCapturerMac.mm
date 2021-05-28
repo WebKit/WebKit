@@ -55,19 +55,19 @@ static Optional<CGDirectDisplayID> updateDisplayID(CGDirectDisplayID displayID)
     auto err = CGGetActiveDisplayList(0, nullptr, &displayCount);
     if (err) {
         RELEASE_LOG(WebRTC, "CGGetActiveDisplayList() returned error %d when trying to get display count", static_cast<int>(err));
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     if (!displayCount) {
         RELEASE_LOG(WebRTC, "CGGetActiveDisplayList() returned a display count of 0");
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     Vector<CGDirectDisplayID> activeDisplays(displayCount);
     err = CGGetActiveDisplayList(displayCount, activeDisplays.data(), &displayCount);
     if (err) {
         RELEASE_LOG(WebRTC, "CGGetActiveDisplayList() returned error %d when trying to get the active display list", static_cast<int>(err));
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     auto displayMask = CGDisplayIDToOpenGLDisplayMask(displayID);
@@ -76,7 +76,7 @@ static Optional<CGDirectDisplayID> updateDisplayID(CGDirectDisplayID displayID)
             return display;
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Expected<UniqueRef<DisplayCaptureSourceCocoa::Capturer>, String> ScreenDisplayCapturerMac::create(const String& deviceID)
@@ -268,12 +268,12 @@ Optional<CaptureDevice> ScreenDisplayCapturerMac::screenCaptureDeviceWithPersist
     auto displayID = parseInteger<uint32_t>(deviceID);
     if (!displayID) {
         RELEASE_LOG(WebRTC, "ScreenDisplayCapturerMac::screenCaptureDeviceWithPersistentID: display ID does not convert to 32-bit integer");
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     auto actualDisplayID = updateDisplayID(*displayID);
     if (!actualDisplayID)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto device = CaptureDevice(String::number(*actualDisplayID), CaptureDevice::DeviceType::Screen, "ScreenCaptureDevice"_s);
     device.setEnabled(true);

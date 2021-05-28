@@ -93,13 +93,13 @@ Optional<LocalStorageDatabaseTracker::OriginDetails> LocalStorageDatabaseTracker
 {
     LocalStorageDatabaseTracker::OriginDetails result;
     if (!decoder.decode(result.originIdentifier))
-        return WTF::nullopt;
+        return std::nullopt;
     
     if (!decoder.decode(result.creationTime))
-        return WTF::nullopt;
+        return std::nullopt;
     
     if (!decoder.decode(result.modificationTime))
-        return WTF::nullopt;
+        return std::nullopt;
     
     return result;
 }

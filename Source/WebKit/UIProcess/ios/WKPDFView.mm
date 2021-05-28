@@ -258,7 +258,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions findOptions)
     _findString = nil;
     _findStringCount = 0;
     _findStringMaxCount = 0;
-    _focusedSearchResultIndex = WTF::nullopt;
+    _focusedSearchResultIndex = std::nullopt;
     _focusedSearchResultPendingOffset = 0;
 }
 

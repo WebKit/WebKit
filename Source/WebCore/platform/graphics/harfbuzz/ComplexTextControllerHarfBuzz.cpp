@@ -406,7 +406,7 @@ static Optional<UScriptCode> characterScript(UChar32 character)
     UErrorCode errorCode = U_ZERO_ERROR;
     UScriptCode script = uscript_getScript(character, &errorCode);
     if (U_FAILURE(errorCode))
-        return WTF::nullopt;
+        return std::nullopt;
     return script;
 }
 
@@ -422,11 +422,11 @@ static Optional<HBRun> findNextRun(const UChar* characters, unsigned length, uns
     UChar32 character;
     unsigned clusterLength = 0;
     if (!textIterator.consume(character, clusterLength))
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto currentScript = characterScript(character);
     if (!currentScript)
-        return WTF::nullopt;
+        return std::nullopt;
 
     unsigned startIndex = offset;
     for (textIterator.advance(clusterLength); textIterator.consume(character, clusterLength); textIterator.advance(clusterLength)) {
@@ -435,7 +435,7 @@ static Optional<HBRun> findNextRun(const UChar* characters, unsigned length, uns
 
         auto nextScript = characterScript(character);
         if (!nextScript)
-            return WTF::nullopt;
+            return std::nullopt;
 
         // §5.1 Handling Characters with the Common Script Property.
         // Programs must resolve any of the special Script property values, such as Common,

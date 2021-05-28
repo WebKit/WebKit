@@ -724,7 +724,7 @@ Optional<size_t> SocketStreamHandleImpl::platformSendInternal(const uint8_t* dat
 
     CFIndex result = CFWriteStreamWrite(m_writeStream.get(), reinterpret_cast<const UInt8*>(data), length);
     if (result == -1)
-        return WTF::nullopt;
+        return std::nullopt;
 
     ASSERT(result >= 0);
     return static_cast<size_t>(result);

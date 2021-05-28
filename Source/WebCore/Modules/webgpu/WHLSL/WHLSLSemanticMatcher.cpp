@@ -91,7 +91,7 @@ static Optional<HashMap<Binding*, size_t>> matchResources(Vector<EntryPointItem>
         if (!WTF::holds_alternative<AST::ResourceSemantic>(semantic))
             continue;
         if (!itemIndices.contains(i))
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     return result;
@@ -151,7 +151,7 @@ static Optional<HashMap<VertexAttribute*, size_t>> matchVertexAttributes(Vector<
             if (stageInOutSemantic.index() != vertexAttribute.shaderLocation)
                 continue;
             if (!isAcceptableFormat(vertexAttribute.vertexFormat, *item.unnamedType, intrinsics))
-                return WTF::nullopt;
+                return std::nullopt;
             result.add(&vertexAttribute, i);
             itemIndices.add(i);
         }
@@ -163,7 +163,7 @@ static Optional<HashMap<VertexAttribute*, size_t>> matchVertexAttributes(Vector<
         if (!WTF::holds_alternative<AST::StageInOutSemantic>(semantic))
             continue;
         if (!itemIndices.contains(i))
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     return result;
@@ -237,7 +237,7 @@ static Optional<HashMap<AttachmentDescriptor*, size_t>> matchColorAttachments(Ve
             if (stageInOutSemantic.index() != attachmentDescriptor.name)
                 continue;
             if (!isAcceptableFormat(attachmentDescriptor.textureFormat, *item.unnamedType, intrinsics, true))
-                return WTF::nullopt;
+                return std::nullopt;
             result.add(&attachmentDescriptor, i);
             itemIndices.add(i);
         }
@@ -249,7 +249,7 @@ static Optional<HashMap<AttachmentDescriptor*, size_t>> matchColorAttachments(Ve
         if (!WTF::holds_alternative<AST::StageInOutSemantic>(semantic))
             continue;
         if (!itemIndices.contains(i))
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     return result;
@@ -278,38 +278,38 @@ Optional<MatchedRenderSemantics> matchSemantics(Program& program, RenderPipeline
 {
     auto vertexFunctions = program.nameContext().getFunctions(renderPipelineDescriptor.vertexEntryPointName, AST::NameSpace::NameSpace1);
     if (vertexFunctions.size() != 1 || !vertexFunctions[0].get().entryPointType() || !is<AST::FunctionDefinition>(vertexFunctions[0].get()))
-        return WTF::nullopt;
+        return std::nullopt;
     auto& vertexShaderEntryPoint = downcast<AST::FunctionDefinition>(vertexFunctions[0].get());
     auto vertexShaderEntryPointItems = gatherEntryPointItems(program.intrinsics(), vertexShaderEntryPoint);
     if (!vertexShaderEntryPointItems)
-        return WTF::nullopt;
+        return std::nullopt;
     auto vertexShaderResourceMap = matchResources(vertexShaderEntryPointItems->inputs, renderPipelineDescriptor.layout, ShaderStage::Vertex);
     if (!vertexShaderResourceMap)
-        return WTF::nullopt;
+        return std::nullopt;
     auto matchedVertexAttributes = matchVertexAttributes(vertexShaderEntryPointItems->inputs, renderPipelineDescriptor.vertexAttributes, program.intrinsics());
     if (!matchedVertexAttributes)
-        return WTF::nullopt;
+        return std::nullopt;
     if (!fragmentShaderExists)
         return {{ &vertexShaderEntryPoint, nullptr, *vertexShaderEntryPointItems, EntryPointItems(), *vertexShaderResourceMap, HashMap<Binding*, size_t>(), *matchedVertexAttributes, HashMap<AttachmentDescriptor*, size_t>() }};
 
     auto fragmentNameSpace = distinctFragmentShader ? AST::NameSpace::NameSpace2 : AST::NameSpace::NameSpace1;
     auto fragmentFunctions = program.nameContext().getFunctions(renderPipelineDescriptor.fragmentEntryPointName, fragmentNameSpace);
     if (fragmentFunctions.size() != 1 || !fragmentFunctions[0].get().entryPointType() || !is<AST::FunctionDefinition>(fragmentFunctions[0].get()))
-        return WTF::nullopt;
+        return std::nullopt;
     auto& fragmentShaderEntryPoint = downcast<AST::FunctionDefinition>(fragmentFunctions[0].get());
     auto fragmentShaderEntryPointItems = gatherEntryPointItems(program.intrinsics(), fragmentShaderEntryPoint);
     if (!fragmentShaderEntryPointItems)
-        return WTF::nullopt;
+        return std::nullopt;
     auto fragmentShaderResourceMap = matchResources(fragmentShaderEntryPointItems->inputs, renderPipelineDescriptor.layout, ShaderStage::Fragment);
     if (!fragmentShaderResourceMap)
-        return WTF::nullopt;
+        return std::nullopt;
     if (!matchInputsOutputs(vertexShaderEntryPointItems->outputs, fragmentShaderEntryPointItems->inputs))
-        return WTF::nullopt;
+        return std::nullopt;
     auto matchedColorAttachments = matchColorAttachments(fragmentShaderEntryPointItems->outputs, renderPipelineDescriptor.attachmentsStateDescriptor.attachmentDescriptors, program.intrinsics());
     if (!matchedColorAttachments)
-        return WTF::nullopt;
+        return std::nullopt;
     if (!matchDepthAttachment(fragmentShaderEntryPointItems->outputs, renderPipelineDescriptor.attachmentsStateDescriptor.depthStencilAttachmentDescriptor, program.intrinsics()))
-        return WTF::nullopt;
+        return std::nullopt;
     return {{ &vertexShaderEntryPoint, &fragmentShaderEntryPoint, *vertexShaderEntryPointItems, *fragmentShaderEntryPointItems, *vertexShaderResourceMap, *fragmentShaderResourceMap, *matchedVertexAttributes, *matchedColorAttachments }};
 }
 
@@ -317,15 +317,15 @@ Optional<MatchedComputeSemantics> matchSemantics(Program& program, ComputePipeli
 {
     auto functions = program.nameContext().getFunctions(computePipelineDescriptor.entryPointName, AST::NameSpace::NameSpace1);
     if (functions.size() != 1 || !functions[0].get().entryPointType() || !is<AST::FunctionDefinition>(functions[0].get()))
-        return WTF::nullopt;
+        return std::nullopt;
     auto& entryPoint = downcast<AST::FunctionDefinition>(functions[0].get());
     auto entryPointItems = gatherEntryPointItems(program.intrinsics(), entryPoint);
     if (!entryPointItems)
-        return WTF::nullopt;
+        return std::nullopt;
     ASSERT(entryPointItems->outputs.isEmpty());
     auto resourceMap = matchResources(entryPointItems->inputs, computePipelineDescriptor.layout, ShaderStage::Compute);
     if (!resourceMap)
-        return WTF::nullopt;
+        return std::nullopt;
     return {{ &entryPoint, *entryPointItems, *resourceMap }};
 }
 

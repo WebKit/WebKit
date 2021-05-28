@@ -68,7 +68,7 @@ static inline Optional<size_t> safeRoundPage(size_t size)
 {
     size_t roundedSize;
     if (__builtin_add_overflow(size, static_cast<size_t>(PAGE_MASK), &roundedSize))
-        return WTF::nullopt;
+        return std::nullopt;
     roundedSize &= ~static_cast<size_t>(PAGE_MASK);
     return roundedSize;
 }

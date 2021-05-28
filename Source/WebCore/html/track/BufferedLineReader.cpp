@@ -98,7 +98,7 @@ Optional<String> BufferedLineReader::nextLine()
     }
 
     ASSERT(m_buffer.isEmpty());
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace WebCore

@@ -103,7 +103,7 @@ Optional<PlatformPopupMenuData> PlatformPopupMenuData::decode(IPC::Decoder& deco
 {
     PlatformPopupMenuData data;
     if (!decode(decoder, data))
-        return WTF::nullopt;
+        return std::nullopt;
     return data;
 }
 

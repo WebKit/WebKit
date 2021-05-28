@@ -314,77 +314,77 @@ Optional<FontVariantSettings> FontVariantSettings::decode(Decoder& decoder)
     Optional<FontVariantLigatures> commonLigatures;
     decoder >> commonLigatures;
     if (!commonLigatures)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantLigatures> discretionaryLigatures;
     decoder >> discretionaryLigatures;
     if (!discretionaryLigatures)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantLigatures> historicalLigatures;
     decoder >> historicalLigatures;
     if (!historicalLigatures)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantLigatures> contextualAlternates;
     decoder >> contextualAlternates;
     if (!contextualAlternates)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantPosition> position;
     decoder >> position;
     if (!position)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantCaps> caps;
     decoder >> caps;
     if (!caps)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantNumericFigure> numericFigure;
     decoder >> numericFigure;
     if (!numericFigure)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantNumericSpacing> numericSpacing;
     decoder >> numericSpacing;
     if (!numericSpacing)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantNumericFraction> numericFraction;
     decoder >> numericFraction;
     if (!numericFraction)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantNumericOrdinal> numericOrdinal;
     decoder >> numericOrdinal;
     if (!numericOrdinal)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantNumericSlashedZero> numericSlashedZero;
     decoder >> numericSlashedZero;
     if (!numericSlashedZero)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantAlternates> alternates;
     decoder >> alternates;
     if (!alternates)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantEastAsianVariant> eastAsianVariant;
     decoder >> eastAsianVariant;
     if (!eastAsianVariant)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantEastAsianWidth> eastAsianWidth;
     decoder >> eastAsianWidth;
     if (!eastAsianWidth)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantEastAsianRuby> eastAsianRuby;
     decoder >> eastAsianRuby;
     if (!eastAsianRuby)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{
         *commonLigatures,
@@ -442,22 +442,22 @@ Optional<FontVariantLigaturesValues> FontVariantLigaturesValues::decode(Decoder&
     Optional<FontVariantLigatures> commonLigatures;
     decoder >> commonLigatures;
     if (!commonLigatures)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantLigatures> discretionaryLigatures;
     decoder >> discretionaryLigatures;
     if (!discretionaryLigatures)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantLigatures> historicalLigatures;
     decoder >> historicalLigatures;
     if (!historicalLigatures)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantLigatures> contextualAlternates;
     decoder >> contextualAlternates;
     if (!contextualAlternates)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *commonLigatures, *discretionaryLigatures, *historicalLigatures, *contextualAlternates }};
 }
@@ -503,27 +503,27 @@ Optional<FontVariantNumericValues> FontVariantNumericValues::decode(Decoder& dec
     Optional<FontVariantNumericFigure> figure;
     decoder >> figure;
     if (!figure)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantNumericSpacing> spacing;
     decoder >> spacing;
     if (!spacing)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantNumericFraction> fraction;
     decoder >> fraction;
     if (!fraction)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantNumericOrdinal> ordinal;
     decoder >> ordinal;
     if (!ordinal)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantNumericSlashedZero> slashedZero;
     decoder >> slashedZero;
     if (!slashedZero)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *figure, *spacing, *fraction, *ordinal, *slashedZero }};
 }
@@ -561,17 +561,17 @@ Optional<FontVariantEastAsianValues> FontVariantEastAsianValues::decode(Decoder&
     Optional<FontVariantEastAsianVariant> variant;
     decoder >> variant;
     if (!variant)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantEastAsianWidth> width;
     decoder >> width;
     if (!width)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontVariantEastAsianRuby> ruby;
     decoder >> ruby;
     if (!ruby)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *variant, *width, *ruby }};
 }

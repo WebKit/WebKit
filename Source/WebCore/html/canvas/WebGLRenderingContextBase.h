@@ -1144,7 +1144,7 @@ inline Optional<T> WebGLRenderingContextBase::checkedAddAndMultiply(T value, T a
     checkedResult += Checked<T>(add);
     checkedResult *= Checked<T>(multiply);
     if (checkedResult.hasOverflowed())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return checkedResult.unsafeGet();
 }

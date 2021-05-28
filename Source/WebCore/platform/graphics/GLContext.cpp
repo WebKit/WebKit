@@ -186,8 +186,8 @@ unsigned GLContext::version()
             versionDigits = versionStringComponents[0].split('.');
         }
 
-        m_version = parseIntegerAllowingTrailingJunk<unsigned>(versionDigits[0]).valueOr(0) * 100
-            + parseIntegerAllowingTrailingJunk<unsigned>(versionDigits[1]).valueOr(0) * 10;
+        m_version = parseIntegerAllowingTrailingJunk<unsigned>(versionDigits[0]).value_or(0) * 100
+            + parseIntegerAllowingTrailingJunk<unsigned>(versionDigits[1]).value_or(0) * 10;
     }
     return m_version;
 }

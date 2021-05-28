@@ -62,53 +62,53 @@ Optional<WebCompiledContentRuleListData> WebCompiledContentRuleListData::decode(
 {
     SharedMemory::IPCHandle ipcHandle;
     if (!decoder.decode(ipcHandle))
-        return WTF::nullopt;
+        return std::nullopt;
     RefPtr<SharedMemory> data = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
 
     Optional<unsigned> conditionsApplyOnlyToDomainOffset;
     decoder >> conditionsApplyOnlyToDomainOffset;
     if (!conditionsApplyOnlyToDomainOffset)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<unsigned> actionsOffset;
     decoder >> actionsOffset;
     if (!actionsOffset)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<unsigned> actionsSize;
     decoder >> actionsSize;
     if (!actionsSize)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<unsigned> filtersWithoutConditionsBytecodeOffset;
     decoder >> filtersWithoutConditionsBytecodeOffset;
     if (!filtersWithoutConditionsBytecodeOffset)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<unsigned> filtersWithoutConditionsBytecodeSize;
     decoder >> filtersWithoutConditionsBytecodeSize;
     if (!filtersWithoutConditionsBytecodeSize)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<unsigned> filtersWithConditionsBytecodeOffset;
     decoder >> filtersWithConditionsBytecodeOffset;
     if (!filtersWithConditionsBytecodeOffset)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<unsigned> filtersWithConditionsBytecodeSize;
     decoder >> filtersWithConditionsBytecodeSize;
     if (!filtersWithConditionsBytecodeSize)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<unsigned> topURLFiltersBytecodeOffset;
     decoder >> topURLFiltersBytecodeOffset;
     if (!topURLFiltersBytecodeOffset)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<unsigned> topURLFiltersBytecodeSize;
     decoder >> topURLFiltersBytecodeSize;
     if (!topURLFiltersBytecodeSize)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{
         WTFMove(data),

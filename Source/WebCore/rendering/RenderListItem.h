@@ -40,7 +40,7 @@ public:
     int value() const;
     void updateValue();
 
-    Optional<int> explicitValue() const { return m_valueWasSetExplicitly ? m_value : WTF::nullopt; }
+    Optional<int> explicitValue() const { return m_valueWasSetExplicitly ? m_value : std::nullopt; }
     void setExplicitValue(Optional<int>);
 
     void setNotInList(bool notInList) { m_notInList = notInList; }

@@ -82,7 +82,7 @@ protected:
 
     static LayoutUnit ascentForChild(const RenderBox& child)
     {
-        return child.firstLineBaseline().valueOr(child.logicalHeight().toInt());
+        return child.firstLineBaseline().value_or(child.logicalHeight().toInt());
     }
 
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;

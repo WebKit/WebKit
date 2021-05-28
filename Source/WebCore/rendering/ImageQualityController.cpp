@@ -111,7 +111,7 @@ Optional<InterpolationQuality> ImageQualityController::interpolationQualityFromS
     case ImageRendering::Auto:
         break;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 InterpolationQuality ImageQualityController::chooseInterpolationQuality(GraphicsContext& context, RenderBoxModelObject* object, Image& image, const void* layer, const LayoutSize& size)

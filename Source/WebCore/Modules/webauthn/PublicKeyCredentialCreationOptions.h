@@ -101,9 +101,9 @@ Optional<PublicKeyCredentialCreationOptions::Parameters> PublicKeyCredentialCrea
 {
     PublicKeyCredentialCreationOptions::Parameters result;
     if (!decoder.decode(result.type))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.alg))
-        return WTF::nullopt;
+        return std::nullopt;
     return result;
 }
 
@@ -121,17 +121,17 @@ Optional<PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria> Pub
     Optional<Optional<AuthenticatorAttachment>> authenticatorAttachment;
     decoder >> authenticatorAttachment;
     if (!authenticatorAttachment)
-        return WTF::nullopt;
+        return std::nullopt;
     result.authenticatorAttachment = WTFMove(*authenticatorAttachment);
 
     Optional<bool> requireResidentKey;
     decoder >> requireResidentKey;
     if (!requireResidentKey)
-        return WTF::nullopt;
+        return std::nullopt;
     result.requireResidentKey = *requireResidentKey;
 
     if (!decoder.decode(result.userVerification))
-        return WTF::nullopt;
+        return std::nullopt;
     return result;
 }
 
@@ -150,47 +150,47 @@ Optional<PublicKeyCredentialCreationOptions> PublicKeyCredentialCreationOptions:
 {
     PublicKeyCredentialCreationOptions result;
     if (!decoder.decode(result.rp.id))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.rp.name))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.rp.icon))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.user.idVector))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.user.displayName))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.user.name))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.user.icon))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.pubKeyCredParams))
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<unsigned>> timeout;
     decoder >> timeout;
     if (!timeout)
-        return WTF::nullopt;
+        return std::nullopt;
     result.timeout = WTFMove(*timeout);
 
     if (!decoder.decode(result.excludeCredentials))
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<AuthenticatorSelectionCriteria>> authenticatorSelection;
     decoder >> authenticatorSelection;
     if (!authenticatorSelection)
-        return WTF::nullopt;
+        return std::nullopt;
     result.authenticatorSelection = WTFMove(*authenticatorSelection);
 
     Optional<AttestationConveyancePreference> attestation;
     decoder >> attestation;
     if (!attestation)
-        return WTF::nullopt;
+        return std::nullopt;
     result.attestation = WTFMove(*attestation);
 
     Optional<Optional<AuthenticationExtensionsClientInputs>> extensions;
     decoder >> extensions;
     if (!extensions)
-        return WTF::nullopt;
+        return std::nullopt;
     result.extensions = WTFMove(*extensions);
 
     return result;

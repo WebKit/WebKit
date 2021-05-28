@@ -148,7 +148,7 @@ public:
     ResourceData const* data(const String& requestId);
     ResourceData const* dataForURL(const String& url);
     Vector<String> removeCachedResource(CachedResource*);
-    void clear(Optional<String> preservedLoaderId = WTF::nullopt);
+    void clear(Optional<String> preservedLoaderId = std::nullopt);
     Vector<ResourceData*> resources();
 
 private:

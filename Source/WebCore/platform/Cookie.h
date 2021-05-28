@@ -134,31 +134,31 @@ Optional<Cookie> Cookie::decode(Decoder& decoder)
 {
     Cookie cookie;
     if (!decoder.decode(cookie.name))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(cookie.value))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(cookie.domain))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(cookie.path))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(cookie.created))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(cookie.expires))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(cookie.httpOnly))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(cookie.secure))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(cookie.session))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(cookie.comment))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(cookie.commentURL))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(cookie.ports))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(cookie.sameSite))
-        return WTF::nullopt;
+        return std::nullopt;
     return cookie;
 }
 

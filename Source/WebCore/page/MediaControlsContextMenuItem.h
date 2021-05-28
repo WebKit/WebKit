@@ -64,7 +64,7 @@ Optional<MediaControlsContextMenuItem> MediaControlsContextMenuItem::decode(Deco
     Optional<type> name; \
     decoder >> name; \
     if (!name) \
-        return WTF::nullopt; \
+        return std::nullopt; \
 
     DECODE(id, ID);
     DECODE(title, String);

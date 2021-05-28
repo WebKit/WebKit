@@ -110,12 +110,12 @@ Optional<size_t> StyleRuleKeyframes::findKeyframeIndex(const String& key) const
     parseDeferredRulesIfNeeded();
     auto keys = CSSParser::parseKeyframeKeyList(key);
     if (keys.isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
     for (auto i = m_keyframes.size(); i--; ) {
         if (m_keyframes[i]->keys() == keys)
             return i;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void StyleRuleKeyframes::shrinkToFit()

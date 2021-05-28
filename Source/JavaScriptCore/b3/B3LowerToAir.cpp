@@ -501,12 +501,12 @@ private:
     }
 
     template<typename Int, typename = Value::IsLegalOffset<Int>>
-    Optional<unsigned> scaleForShl(Value* shl, Int offset, Optional<Width> width = WTF::nullopt)
+    Optional<unsigned> scaleForShl(Value* shl, Int offset, Optional<Width> width = std::nullopt)
     {
         if (shl->opcode() != Shl)
-            return WTF::nullopt;
+            return std::nullopt;
         if (!shl->child(1)->hasInt32())
-            return WTF::nullopt;
+            return std::nullopt;
         unsigned logScale = shl->child(1)->asInt32();
         if (shl->type() == Int32)
             logScale &= 31;
@@ -516,10 +516,10 @@ private:
         // to signed since that's what all of our APIs want.
         int64_t bigScale = static_cast<uint64_t>(1) << static_cast<uint64_t>(logScale);
         if (!isRepresentableAs<int32_t>(bigScale))
-            return WTF::nullopt;
+            return std::nullopt;
         unsigned scale = static_cast<int32_t>(bigScale);
         if (!Arg::isValidIndexForm(scale, offset, width))
-            return WTF::nullopt;
+            return std::nullopt;
         return scale;
     }
     

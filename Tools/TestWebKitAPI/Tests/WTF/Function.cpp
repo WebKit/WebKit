@@ -209,8 +209,8 @@ TEST(WTF_Function, AssignBeforeDestroy)
     EXPECT_TRUE(static_cast<bool>(FunctionDestructionChecker::functionResult));
     EXPECT_TRUE(FunctionDestructionChecker::functionAsBool.value());
     EXPECT_EQ(1U, FunctionDestructionChecker::functionResult.value());
-    FunctionDestructionChecker::functionAsBool = WTF::nullopt;
-    FunctionDestructionChecker::functionResult = WTF::nullopt;
+    FunctionDestructionChecker::functionAsBool = std::nullopt;
+    FunctionDestructionChecker::functionResult = std::nullopt;
 
     a = FunctionDestructionChecker(a);
     a = MoveOnly { 2 };
@@ -218,8 +218,8 @@ TEST(WTF_Function, AssignBeforeDestroy)
     EXPECT_TRUE(static_cast<bool>(FunctionDestructionChecker::functionResult));
     EXPECT_TRUE(FunctionDestructionChecker::functionAsBool.value());
     EXPECT_EQ(2U, FunctionDestructionChecker::functionResult.value());
-    FunctionDestructionChecker::functionAsBool = WTF::nullopt;
-    FunctionDestructionChecker::functionResult = WTF::nullopt;
+    FunctionDestructionChecker::functionAsBool = std::nullopt;
+    FunctionDestructionChecker::functionResult = std::nullopt;
 }
 
 static int returnThree()

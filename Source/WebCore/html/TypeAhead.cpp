@@ -102,7 +102,7 @@ int TypeAhead::handleEvent(KeyboardEvent* event, MatchModeFlags matchMode)
     }
 
     if (matchMode & MatchIndex) {
-        int index = parseIntegerAllowingTrailingJunk<int>(m_buffer).valueOr(0);
+        int index = parseIntegerAllowingTrailingJunk<int>(m_buffer).value_or(0);
         if (index > 0 && index <= optionCount)
             return index - 1;
     }

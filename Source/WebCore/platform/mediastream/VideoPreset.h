@@ -56,12 +56,12 @@ Optional<FrameRateRange> FrameRateRange::decode(Decoder& decoder)
     Optional<double> minimum;
     decoder >> minimum;
     if (!minimum)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<double> maximum;
     decoder >> maximum;
     if (!maximum)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return FrameRateRange { *minimum, *maximum };
 }
@@ -87,12 +87,12 @@ Optional<VideoPresetData> VideoPresetData::decode(Decoder& decoder)
     Optional<IntSize> size;
     decoder >> size;
     if (!size)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Vector<FrameRateRange>> frameRateRanges;
     decoder >> frameRateRanges;
     if (!frameRateRanges)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return VideoPresetData { *size, *frameRateRanges };
 }

@@ -312,7 +312,7 @@ void View::handleKeyboardEvent(struct wpe_input_keyboard_event* event)
     if (filterResult.handled)
         return;
 
-    page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, event->pressed ? filterResult.keyText : String(), NativeWebKeyboardEvent::HandledByInputMethod::No, WTF::nullopt, WTF::nullopt));
+    page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, event->pressed ? filterResult.keyText : String(), NativeWebKeyboardEvent::HandledByInputMethod::No, std::nullopt, std::nullopt));
 }
 
 void View::synthesizeCompositionKeyPress(const String& text, Optional<Vector<WebCore::CompositionUnderline>>&& underlines, Optional<EditingRange>&& selectionRange)

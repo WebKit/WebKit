@@ -59,18 +59,18 @@ Optional<ApplePayPaymentMethodModeUpdate> ApplePayPaymentMethodModeUpdate::decod
     ApplePayPaymentMethodModeUpdate result;
 
     if (!result.decodeBase(decoder))
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Vector<RefPtr<ApplePayError>>> errors;
     decoder >> errors;
     if (!errors)
-        return WTF::nullopt;
+        return std::nullopt;
     result.errors = WTFMove(*errors);
 
     Optional<Vector<ApplePayShippingMethod>> newShippingMethods;
     decoder >> newShippingMethods;
     if (!newShippingMethods)
-        return WTF::nullopt;
+        return std::nullopt;
     result.newShippingMethods = WTFMove(*newShippingMethods);
 
     return result;

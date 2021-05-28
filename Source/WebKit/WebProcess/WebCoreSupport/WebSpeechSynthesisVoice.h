@@ -56,27 +56,27 @@ Optional<WebSpeechSynthesisVoice> WebSpeechSynthesisVoice::decode(Decoder& decod
     Optional<String> voiceURI;
     decoder >> voiceURI;
     if (!voiceURI)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<String> name;
     decoder >> name;
     if (!name)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<String> lang;
     decoder >> lang;
     if (!lang)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> localService;
     decoder >> localService;
     if (!localService)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> defaultLang;
     decoder >> defaultLang;
     if (!defaultLang)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ WTFMove(*voiceURI), WTFMove(*name), WTFMove(*lang), WTFMove(*localService), WTFMove(*defaultLang) }};}
 

@@ -246,12 +246,12 @@ Optional<Region::Shape> Region::Shape::decode(Decoder& decoder)
     Optional<Vector<int>> segments;
     decoder >> segments;
     if (!segments)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Vector<Region::Span>> spans;
     decoder >> spans;
     if (!spans)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Shape shape;
     shape.m_segments = WTFMove(*segments);
@@ -276,12 +276,12 @@ Optional<Region> Region::decode(Decoder& decoder)
     Optional<IntRect> bounds;
     decoder >> bounds;
     if (!bounds)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> hasShape;
     decoder >> hasShape;
     if (!hasShape)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Region region = { *bounds };
 
@@ -289,7 +289,7 @@ Optional<Region> Region::decode(Decoder& decoder)
         Optional<Shape> shape;
         decoder >> shape;
         if (!shape)
-            return WTF::nullopt;
+            return std::nullopt;
         region.m_shape = makeUnique<Shape>(WTFMove(*shape));
     }
 

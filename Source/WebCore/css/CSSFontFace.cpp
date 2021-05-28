@@ -221,7 +221,7 @@ static FontSelectionRange calculateItalicRange(CSSValue& value)
 {
     if (value.isFontStyleValue()) {
         auto result = Style::BuilderConverter::convertFontStyleFromValue(value);
-        return { result.valueOr(normalItalicValue()), result.valueOr(normalItalicValue()) };
+        return { result.value_or(normalItalicValue()), result.value_or(normalItalicValue()) };
     }
 
     ASSERT(value.isFontStyleRangeValue());

@@ -779,7 +779,7 @@ public:
 #if ENABLE(TEXT_AUTOSIZING)
     TextSizeAdjustment textSizeAdjust() const { return m_rareInheritedData->textSizeAdjust; }
     AutosizeStatus autosizeStatus() const;
-    bool isIdempotentTextAutosizingCandidate(Optional<AutosizeStatus> overrideStatus = WTF::nullopt) const;
+    bool isIdempotentTextAutosizingCandidate(Optional<AutosizeStatus> overrideStatus = std::nullopt) const;
 #endif
 
     TextSecurity textSecurity() const { return static_cast<TextSecurity>(m_rareInheritedData->textSecurity); }

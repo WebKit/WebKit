@@ -204,7 +204,7 @@ Optional<Seconds> JSRunLoopTimer::Manager::timeUntilFire(JSRunLoopTimer& timer)
         }
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void JSRunLoopTimer::timerDidFire()

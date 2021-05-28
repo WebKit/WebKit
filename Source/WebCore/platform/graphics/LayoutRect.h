@@ -70,12 +70,12 @@ public:
         Optional<LayoutPoint> layoutPoint;
         decoder >> layoutPoint;
         if (!layoutPoint)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<LayoutSize> layoutSize;
         decoder >> layoutSize;
         if (!layoutSize)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{ *layoutPoint, *layoutSize }};
     }

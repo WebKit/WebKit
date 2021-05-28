@@ -297,7 +297,7 @@ template<class Decoder> inline Optional<PlatformMediaSession::RemoteCommandArgum
     Optional<Optional<type>> name; \
     decoder >> name; \
     if (!name) \
-        return WTF::nullopt; \
+        return std::nullopt; \
 
     DECODE(time, double);
     DECODE(fastSeek, bool);

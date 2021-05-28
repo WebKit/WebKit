@@ -61,7 +61,7 @@ struct Styleable {
     {
         if (auto* element = renderer.element())
             return fromElement(*element);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     bool operator==(const Styleable& other) const

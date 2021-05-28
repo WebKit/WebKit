@@ -138,7 +138,7 @@ Optional<LayoutUnit> RenderGrid::availableSpaceForGutters(GridTrackSizingDirecti
     bool isRowAxis = direction == ForColumns;
     const GapLength& gapLength = isRowAxis ? style().columnGap() : style().rowGap();
     if (gapLength.isNormal() || !gapLength.length().isPercentOrCalculated())
-        return WTF::nullopt;
+        return std::nullopt;
 
     return isRowAxis ? availableLogicalWidth() : contentLogicalHeight();
 }
@@ -197,7 +197,7 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
         // FIXME: We should use RenderBlock::hasDefiniteLogicalHeight() only but it does not work for positioned stuff.
         // FIXME: Consider caching the hasDefiniteLogicalHeight value throughout the layout.
         // FIXME: We might need to cache the hasDefiniteLogicalHeight if the call of RenderBlock::hasDefiniteLogicalHeight() causes a relevant performance regression.
-        bool hasDefiniteLogicalHeight = RenderBlock::hasDefiniteLogicalHeight() || hasOverridingLogicalHeight() || computeContentLogicalHeight(MainOrPreferredSize, style().logicalHeight(), WTF::nullopt);
+        bool hasDefiniteLogicalHeight = RenderBlock::hasDefiniteLogicalHeight() || hasOverridingLogicalHeight() || computeContentLogicalHeight(MainOrPreferredSize, style().logicalHeight(), std::nullopt);
         m_hasAnyOrthogonalItem = false;
         for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
             if (child->isOutOfFlowPositioned())
@@ -324,7 +324,7 @@ LayoutUnit RenderGrid::gridGap(GridTrackSizingDirection direction, Optional<Layo
     if (gapLength.isNormal())
         return 0_lu;
 
-    return valueForLength(gapLength.length(), availableSize.valueOr(0));
+    return valueForLength(gapLength.length(), availableSize.value_or(0));
 }
 
 LayoutUnit RenderGrid::gridGap(GridTrackSizingDirection direction) const
@@ -413,7 +413,7 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
 
     Grid grid(const_cast<RenderGrid&>(*this));
     GridTrackSizingAlgorithm algorithm(this, grid);
-    placeItemsOnGrid(algorithm, WTF::nullopt);
+    placeItemsOnGrid(algorithm, std::nullopt);
 
     performGridItemsPreLayout(algorithm);
 
@@ -443,11 +443,11 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
 void RenderGrid::computeTrackSizesForIndefiniteSize(GridTrackSizingAlgorithm& algorithm, GridTrackSizingDirection direction, LayoutUnit* minIntrinsicSize, LayoutUnit* maxIntrinsicSize) const
 {
     const Grid& grid = algorithm.grid();
-    algorithm.setup(direction, numTracks(direction, grid), IntrinsicSizeComputation, WTF::nullopt);
+    algorithm.setup(direction, numTracks(direction, grid), IntrinsicSizeComputation, std::nullopt);
     algorithm.run();
 
     size_t numberOfTracks = algorithm.tracks(direction).size();
-    LayoutUnit totalGuttersSize = guttersSize(grid, direction, 0, numberOfTracks, WTF::nullopt);
+    LayoutUnit totalGuttersSize = guttersSize(grid, direction, 0, numberOfTracks, std::nullopt);
 
     if (minIntrinsicSize)
         *minIntrinsicSize = algorithm.minContentSize() + totalGuttersSize;
@@ -475,7 +475,7 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direc
         if (maxSize.isSpecified()) {
             if (maxSize.isPercentOrCalculated())
                 containingBlockAvailableSize = isRowAxis ? containingBlockLogicalWidthForContent() : containingBlockLogicalHeightForContent(ExcludeMarginBorderPadding);
-            LayoutUnit maxSizeValue = valueForLength(maxSize, containingBlockAvailableSize.valueOr(LayoutUnit()));
+            LayoutUnit maxSizeValue = valueForLength(maxSize, containingBlockAvailableSize.value_or(LayoutUnit()));
             availableMaxSize = isRowAxis ? adjustContentBoxLogicalWidthForBoxSizing(maxSizeValue, maxSize.type()) : adjustContentBoxLogicalHeightForBoxSizing(maxSizeValue);
         }
 
@@ -487,13 +487,13 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direc
         if (minSize.isSpecified()) {
             if (!containingBlockAvailableSize && minSize.isPercentOrCalculated())
                 containingBlockAvailableSize = isRowAxis ? containingBlockLogicalWidthForContent() : containingBlockLogicalHeightForContent(ExcludeMarginBorderPadding);
-            LayoutUnit minSizeValue = valueForLength(minSize, containingBlockAvailableSize.valueOr(LayoutUnit()));
+            LayoutUnit minSizeValue = valueForLength(minSize, containingBlockAvailableSize.value_or(LayoutUnit()));
             availableMinSize = isRowAxis ? adjustContentBoxLogicalWidthForBoxSizing(minSizeValue, minSize.type()) : adjustContentBoxLogicalHeightForBoxSizing(minSizeValue);
             if (!maxSize.isSpecified())
                 needsToFulfillMinimumSize = true;
         }
 
-        availableSize = std::max(availableMinSize.valueOr(LayoutUnit()), availableMaxSize.valueOr(LayoutUnit()));
+        availableSize = std::max(availableMinSize.value_or(LayoutUnit()), availableMaxSize.value_or(LayoutUnit()));
     }
 
     LayoutUnit autoRepeatTracksSize;
@@ -623,7 +623,7 @@ void RenderGrid::placeItemsOnGrid(GridTrackSizingAlgorithm& algorithm, Optional<
         if (!child->hasOverridingContainingBlockContentLogicalWidth())
             child->setOverridingContainingBlockContentLogicalWidth(LayoutUnit());
         if (!child->hasOverridingContainingBlockContentLogicalHeight())
-            child->setOverridingContainingBlockContentLogicalHeight(WTF::nullopt);
+            child->setOverridingContainingBlockContentLogicalHeight(std::nullopt);
 
         GridArea area = grid.gridItemArea(*child);
         if (!area.rows.isIndefinite())
@@ -1146,7 +1146,7 @@ void RenderGrid::applyStretchAlignmentToChildIfNeeded(RenderBox& child)
     bool allowedToStretchChildBlockSize = blockFlowIsColumnAxis ? allowedToStretchChildAlongColumnAxis(child) : allowedToStretchChildAlongRowAxis(child);
     if (allowedToStretchChildBlockSize) {
         LayoutUnit stretchedLogicalHeight = availableAlignmentSpaceForChildBeforeStretching(GridLayoutFunctions::overridingContainingBlockContentSizeForChild(child, childBlockDirection).value(), child);
-        LayoutUnit desiredLogicalHeight = child.constrainLogicalHeightByMinMax(stretchedLogicalHeight, WTF::nullopt);
+        LayoutUnit desiredLogicalHeight = child.constrainLogicalHeightByMinMax(stretchedLogicalHeight, std::nullopt);
         child.setOverridingLogicalHeight(desiredLogicalHeight);
 
         // Checking the logical-height of a child isn't enough. Setting an override logical-height
@@ -1267,7 +1267,7 @@ LayoutUnit RenderGrid::baselinePosition(FontBaseline, bool, LineDirectionMode di
 Optional<LayoutUnit> RenderGrid::firstLineBaseline() const
 {
     if (isWritingModeRoot() || !m_grid.hasGridItems() || shouldApplyLayoutContainment(*this))
-        return WTF::nullopt;
+        return std::nullopt;
 
     const RenderBox* baselineChild = nullptr;
     // Finding the first grid item in grid order.
@@ -1287,9 +1287,9 @@ Optional<LayoutUnit> RenderGrid::firstLineBaseline() const
     }
 
     if (!baselineChild)
-        return WTF::nullopt;
+        return std::nullopt;
 
-    auto baseline = GridLayoutFunctions::isOrthogonalChild(*this, *baselineChild) ? WTF::nullopt : baselineChild->firstLineBaseline();
+    auto baseline = GridLayoutFunctions::isOrthogonalChild(*this, *baselineChild) ? std::nullopt : baselineChild->firstLineBaseline();
     // We take border-box's bottom if no valid baseline.
     if (!baseline) {
         // FIXME: We should pass |direction| into firstLineBaseline and stop bailing out if we're a writing

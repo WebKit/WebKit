@@ -102,7 +102,7 @@ Optional<PixelBuffer> ImageBufferBackend::getPixelBuffer(const PixelBufferFormat
 
     auto pixelBuffer = PixelBuffer::tryCreate(destinationFormat, sourceRectScaled.size());
     if (!pixelBuffer)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto sourceRectClipped = intersection(backendRect(), sourceRectScaled);
     IntRect destinationRect { IntPoint::zero(), sourceRectClipped.size() };

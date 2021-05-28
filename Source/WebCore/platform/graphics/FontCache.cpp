@@ -203,7 +203,7 @@ Optional<ASCIILiteral> FontCache::alternateFamilyName(const String& familyName)
         break;
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 FontPlatformData* FontCache::cachedFontPlatformData(const FontDescription& fontDescription, const String& passedFamilyName,

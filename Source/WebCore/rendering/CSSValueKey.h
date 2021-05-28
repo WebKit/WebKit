@@ -60,15 +60,15 @@ Optional<CSSValueKey> CSSValueKey::decode(Decoder& decoder)
     Optional<unsigned> cssValueID;
     decoder >> cssValueID;
     if (!cssValueID)
-        return WTF::nullopt;
+        return std::nullopt;
     Optional<bool> useDarkAppearance;
     decoder >> useDarkAppearance;
     if (!useDarkAppearance)
-        return WTF::nullopt;
+        return std::nullopt;
     Optional<bool> useElevatedUserInterfaceLevel;
     decoder >> useElevatedUserInterfaceLevel;
     if (!useElevatedUserInterfaceLevel)
-        return WTF::nullopt;
+        return std::nullopt;
     return { { WTFMove(*cssValueID), WTFMove(*useDarkAppearance), WTFMove(*useElevatedUserInterfaceLevel) } };
 }
 

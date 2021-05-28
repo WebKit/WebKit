@@ -7082,7 +7082,7 @@ const std::array<std::pair<uint16_t, UChar>, 17048>& eucKR()
             UErrorCode error = U_ZERO_ERROR;
             ucnv_toUnicode(icuConverter.get(), &output, output + 2, &input, input + sizeof(icuInput), nullptr, true, &error);
             if (icuOutput[0] == 0xFFFD)
-                return WTF::nullopt;
+                return std::nullopt;
             return {{ pointer, icuOutput[0] }};
         };
         size_t arrayIndex = 0;

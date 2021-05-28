@@ -172,12 +172,12 @@ static Optional<Optional<uint16_t>> parsePort(StringView string, StringView prot
 {
     auto digitsOnly = string.left(countASCIIDigits(string));
     if (digitsOnly.isEmpty())
-        return Optional<uint16_t> { WTF::nullopt };
+        return Optional<uint16_t> { std::nullopt };
     auto port = parseInteger<uint16_t>(digitsOnly);
     if (!port)
-        return WTF::nullopt;
+        return std::nullopt;
     if (WTF::isDefaultPortForProtocol(*port, protocol))
-        return Optional<uint16_t> { WTF::nullopt };
+        return Optional<uint16_t> { std::nullopt };
     return { { *port } };
 }
 

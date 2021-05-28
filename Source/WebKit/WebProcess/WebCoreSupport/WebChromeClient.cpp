@@ -256,7 +256,7 @@ void WebChromeClient::focusedFrameChanged(Frame* frame)
 {
     WebFrame* webFrame = frame ? WebFrame::fromCoreFrame(*frame) : nullptr;
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::FocusedFrameChanged(webFrame ? makeOptional(webFrame->frameID()) : WTF::nullopt), m_page.identifier());
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebPageProxy::FocusedFrameChanged(webFrame ? std::make_optional(webFrame->frameID()) : std::nullopt), m_page.identifier());
 }
 
 Page* WebChromeClient::createWindow(Frame& frame, const WindowFeatures& windowFeatures, const NavigationAction& navigationAction)

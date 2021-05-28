@@ -245,7 +245,7 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
     auto columnWidthBalancingBase = availableHorizontalSpace >= m_grid.widthConstraints()->maximum ? ColumnWidthBalancingBase::MaximumWidth : ColumnWidthBalancingBase::MinimumWidth;
     return distributeAvailableSpace<ColumnSpan>(m_grid, availableHorizontalSpace, [&] (const TableGrid::Slot& slot, size_t columnIndex) {
         auto& column = m_grid.columns().list()[columnIndex];
-        auto columnBoxFixedWidth = column.box() ? column.box()->columnWidth().valueOr(0_lu) : 0_lu;
+        auto columnBoxFixedWidth = column.box() ? column.box()->columnWidth().value_or(0_lu) : 0_lu;
         auto minimumWidth = std::max<float>(slot.widthConstraints().minimum, columnBoxFixedWidth);
         auto maximumWidth = std::max<float>(slot.widthConstraints().maximum, columnBoxFixedWidth);
 
@@ -272,7 +272,7 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
         auto maximumColumnAscent = InlineLayoutUnit { };
         auto maximumColumnDescent = InlineLayoutUnit { };
         // Initial minimum height is the computed height if available <tr style="height: 100px"><td></td></tr>
-        rowHeight[rowIndex] = formattingContext().formattingGeometry().computedHeight(rows.list()[rowIndex].box(), availableVerticalSpace).valueOr(0_lu);
+        rowHeight[rowIndex] = formattingContext().formattingGeometry().computedHeight(rows.list()[rowIndex].box(), availableVerticalSpace).value_or(0_lu);
         for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
             auto& slot = *m_grid.slot({ columnIndex, rowIndex });
             if (slot.isRowSpanned())
@@ -296,14 +296,14 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
     // FIXME: Collect spanning row maximum heights.
 
     tableUsedHeight += (rows.size() + 1) * m_grid.verticalSpacing();
-    auto availableSpace = std::max(availableVerticalSpace.valueOr(0_lu), tableUsedHeight);
+    auto availableSpace = std::max(availableVerticalSpace.value_or(0_lu), tableUsedHeight);
     // Distribute extra space if the table is supposed to be taller than the sum of the row heights.
     return distributeAvailableSpace<RowSpan>(m_grid, availableSpace, [&] (const TableGrid::Slot& slot, size_t rowIndex) {
         if (slot.hasRowSpan())
             return GridSpace { formattingContext().geometryForBox(slot.cell().box()).borderBoxHeight(), formattingContext().geometryForBox(slot.cell().box()).borderBoxHeight() };
         auto& rows = m_grid.rows();
         auto computedRowHeight = formattingContext().formattingGeometry().computedHeight(rows.list()[rowIndex].box(), { });
-        auto height = std::max<float>(rowHeight[rowIndex], computedRowHeight.valueOr(0_lu));
+        auto height = std::max<float>(rowHeight[rowIndex], computedRowHeight.value_or(0_lu));
         return GridSpace { height, height };
     });
 }

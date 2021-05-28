@@ -1344,9 +1344,9 @@ inline void BuilderCustom::applyValueCounter(BuilderState& builderState, CSSValu
     CounterDirectiveMap& map = builderState.style().accessCounterDirectives();
     for (auto& keyValue : map) {
         if (counterBehavior == Reset)
-            keyValue.value.resetValue = WTF::nullopt;
+            keyValue.value.resetValue = std::nullopt;
         else
-            keyValue.value.incrementValue = WTF::nullopt;
+            keyValue.value.incrementValue = std::nullopt;
     }
 
     if (setCounterIncrementToNone)
@@ -1360,7 +1360,7 @@ inline void BuilderCustom::applyValueCounter(BuilderState& builderState, CSSValu
         if (counterBehavior == Reset)
             directives.resetValue = value;
         else
-            directives.incrementValue = saturatedSum<int>(directives.incrementValue.valueOr(0), value);
+            directives.incrementValue = saturatedSum<int>(directives.incrementValue.value_or(0), value);
     }
 }
 

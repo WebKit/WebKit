@@ -81,12 +81,12 @@ Optional<ScreenProperties> ScreenProperties::decode(Decoder& decoder)
     Optional<PlatformDisplayID> primaryDisplayID;
     decoder >> primaryDisplayID;
     if (!primaryDisplayID)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<ScreenDataMap> screenDataMap;
     decoder >> screenDataMap;
     if (!screenDataMap)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return { { *primaryDisplayID, WTFMove(*screenDataMap) } };
 }
@@ -111,70 +111,70 @@ Optional<ScreenData> ScreenData::decode(Decoder& decoder)
     Optional<FloatRect> screenAvailableRect;
     decoder >> screenAvailableRect;
     if (!screenAvailableRect)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FloatRect> screenRect;
     decoder >> screenRect;
     if (!screenRect)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<DestinationColorSpace> screenColorSpace;
     decoder >> screenColorSpace;
     if (!screenColorSpace)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<int> screenDepth;
     decoder >> screenDepth;
     if (!screenDepth)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<int> screenDepthPerComponent;
     decoder >> screenDepthPerComponent;
     if (!screenDepthPerComponent)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> screenSupportsExtendedColor;
     decoder >> screenSupportsExtendedColor;
     if (!screenSupportsExtendedColor)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> screenHasInvertedColors;
     decoder >> screenHasInvertedColors;
     if (!screenHasInvertedColors)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> screenSupportsHighDynamicRange;
     decoder >> screenSupportsHighDynamicRange;
     if (!screenSupportsHighDynamicRange)
-        return WTF::nullopt;
+        return std::nullopt;
 
 #if PLATFORM(MAC)
     Optional<bool> screenIsMonochrome;
     decoder >> screenIsMonochrome;
     if (!screenIsMonochrome)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<uint32_t> displayMask;
     decoder >> displayMask;
     if (!displayMask)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<IORegistryGPUID> gpuID;
     decoder >> gpuID;
     if (!gpuID)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<DynamicRangeMode> preferredDynamicRangeMode;
     decoder >> preferredDynamicRangeMode;
     if (!preferredDynamicRangeMode)
-        return WTF::nullopt;
+        return std::nullopt;
 #endif
 
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
     Optional<float> scaleFactor;
     decoder >> scaleFactor;
     if (!scaleFactor)
-        return WTF::nullopt;
+        return std::nullopt;
 #endif
 
     return { {

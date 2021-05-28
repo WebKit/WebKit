@@ -135,8 +135,8 @@
 #include "LayoutContext.h"
 #endif
 
-#define PAGE_ID frame().pageID().valueOr(PageIdentifier()).toUInt64()
-#define FRAME_ID frame().frameID().valueOr(FrameIdentifier()).toUInt64()
+#define PAGE_ID frame().pageID().value_or(PageIdentifier()).toUInt64()
+#define FRAME_ID frame().frameID().value_or(FrameIdentifier()).toUInt64()
 #define FRAMEVIEW_RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(frame().page() && frame().page()->isAlwaysOnLoggingAllowed(), channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", main=%d] FrameView::" fmt, this, PAGE_ID, FRAME_ID, frame().isMainFrame(), ##__VA_ARGS__)
 
 namespace WebCore {
@@ -1700,7 +1700,7 @@ void FrameView::setLayoutViewportOverrideRect(Optional<LayoutRect> rect, Trigger
     if (oldRect.height() != layoutViewportRect().height())
         layoutTriggering = TriggerLayoutOrNot::Yes;
 
-    LOG_WITH_STREAM(Scrolling, stream << "\nFrameView " << this << " setLayoutViewportOverrideRect() - changing override layout viewport from " << oldRect << " to " << m_layoutViewportOverrideRect.valueOr(LayoutRect()) << " layoutTriggering " << (layoutTriggering == TriggerLayoutOrNot::Yes ? "yes" : "no"));
+    LOG_WITH_STREAM(Scrolling, stream << "\nFrameView " << this << " setLayoutViewportOverrideRect() - changing override layout viewport from " << oldRect << " to " << m_layoutViewportOverrideRect.value_or(LayoutRect()) << " layoutTriggering " << (layoutTriggering == TriggerLayoutOrNot::Yes ? "yes" : "no"));
 
     if (oldRect != layoutViewportRect() && layoutTriggering == TriggerLayoutOrNot::Yes)
         setViewportConstrainedObjectsNeedLayout();
@@ -3035,9 +3035,9 @@ void FrameView::setBaseBackgroundColor(const Color& backgroundColor)
 void FrameView::updateBackgroundRecursively(const Optional<Color>& backgroundColor)
 {
 #if HAVE(OS_DARK_MODE_SUPPORT)
-    Color baseBackgroundColor = backgroundColor.valueOr(RenderTheme::singleton().systemColor(CSSValueAppleSystemControlBackground, styleColorOptions()));
+    Color baseBackgroundColor = backgroundColor.value_or(RenderTheme::singleton().systemColor(CSSValueAppleSystemControlBackground, styleColorOptions()));
 #else
-    Color baseBackgroundColor = backgroundColor.valueOr(Color::white);
+    Color baseBackgroundColor = backgroundColor.value_or(Color::white);
 #endif
 
     for (auto* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
@@ -4933,7 +4933,7 @@ IntPoint FrameView::convertFromContainingView(const IntPoint& parentPoint) const
 float FrameView::documentToAbsoluteScaleFactor(Optional<float> effectiveZoom) const
 {
     // If effectiveZoom is passed, it already factors in pageZoomFactor(). 
-    return effectiveZoom.valueOr(frame().pageZoomFactor()) * frame().frameScaleFactor();
+    return effectiveZoom.value_or(frame().pageZoomFactor()) * frame().frameScaleFactor();
 }
 
 float FrameView::absoluteToDocumentScaleFactor(Optional<float> effectiveZoom) const
@@ -5494,7 +5494,7 @@ void FrameView::clearViewportSizeOverrideForCSSViewportUnits()
     if (!m_overrideViewportSize)
         return;
 
-    m_overrideViewportSize = WTF::nullopt;
+    m_overrideViewportSize = std::nullopt;
     if (auto* document = frame().document())
         document->styleScope().didChangeStyleSheetEnvironment();
 }
@@ -5506,12 +5506,12 @@ void FrameView::setViewportSizeForCSSViewportUnits(IntSize size)
 
 void FrameView::overrideViewportWidthForCSSViewportUnits(int width)
 {
-    overrideViewportSizeForCSSViewportUnits({ width, m_overrideViewportSize ? m_overrideViewportSize->height : WTF::nullopt });
+    overrideViewportSizeForCSSViewportUnits({ width, m_overrideViewportSize ? m_overrideViewportSize->height : std::nullopt });
 }
 
 void FrameView::resetOverriddenViewportWidthForCSSViewportUnits()
 {
-    overrideViewportSizeForCSSViewportUnits({ { }, m_overrideViewportSize ? m_overrideViewportSize->height : WTF::nullopt });
+    overrideViewportSizeForCSSViewportUnits({ { }, m_overrideViewportSize ? m_overrideViewportSize->height : std::nullopt });
 }
 
 void FrameView::overrideViewportSizeForCSSViewportUnits(OverrideViewportSize size)
@@ -5538,16 +5538,16 @@ IntSize FrameView::viewportSizeForCSSViewportUnits() const
 
     if (useFixedLayout()) {
         auto fixedLayoutSize = this->fixedLayoutSize();
-        viewportSize.width = viewportSize.width.valueOr(fixedLayoutSize.width());
-        viewportSize.height = viewportSize.height.valueOr(fixedLayoutSize.height());
+        viewportSize.width = viewportSize.width.value_or(fixedLayoutSize.width());
+        viewportSize.height = viewportSize.height.value_or(fixedLayoutSize.height());
         return { *viewportSize.width, *viewportSize.height };
     }
     
     // FIXME: the value returned should take into account the value of the overflow
     // property on the root element.
     auto visibleContentSizeIncludingScrollbars = visibleContentRectIncludingScrollbars().size();
-    viewportSize.width = viewportSize.width.valueOr(visibleContentSizeIncludingScrollbars.width());
-    viewportSize.height = viewportSize.height.valueOr(visibleContentSizeIncludingScrollbars.height());
+    viewportSize.width = viewportSize.width.value_or(visibleContentSizeIncludingScrollbars.width());
+    viewportSize.height = viewportSize.height.value_or(visibleContentSizeIncludingScrollbars.height());
     return { *viewportSize.width, *viewportSize.height };
 }
 

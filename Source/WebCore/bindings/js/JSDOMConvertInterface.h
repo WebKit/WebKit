@@ -95,7 +95,7 @@ template<typename T> struct VariadicConverter<IDLInterface<T>> {
     {
         auto* result = Converter<IDLInterface<T>>::convert(lexicalGlobalObject, value);
         if (!result)
-            return WTF::nullopt;
+            return std::nullopt;
         return Optional<Item> { *result };
     }
 };

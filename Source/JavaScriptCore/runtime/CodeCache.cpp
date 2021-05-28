@@ -160,7 +160,7 @@ UnlinkedCodeBlockType* CodeCache::getUnlinkedGlobalCodeBlock(VM& vm, ExecutableT
     SourceCodeKey key(
         source, String(), CacheTypes<UnlinkedCodeBlockType>::codeType, strictMode, scriptMode, 
         derivedContextType, evalContextType, isArrowFunctionContext, codeGenerationMode,
-        WTF::nullopt);
+        std::nullopt);
     UnlinkedCodeBlockType* unlinkedCodeBlock = m_sourceCode.findCacheAndUpdateAge<UnlinkedCodeBlockType>(vm, key);
     if (unlinkedCodeBlock && Options::useCodeCache()) {
         unsigned lineCount = unlinkedCodeBlock->lineCount();
@@ -250,7 +250,7 @@ UnlinkedFunctionExecutable* CodeCache::getUnlinkedGlobalFunctionExecutable(VM& v
     // The Function constructor only has access to global variables, so no variables will be under TDZ unless they're
     // in the global lexical environment, which we always TDZ check accesses from.
     ConstructAbility constructAbility = constructAbilityForParseMode(metadata->parseMode());
-    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(vm, source, metadata, UnlinkedNormalFunction, constructAbility, JSParserScriptMode::Classic, nullptr, WTF::nullopt, DerivedContextType::None, NeedsClassFieldInitializer::No, PrivateBrandRequirement::None);
+    UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(vm, source, metadata, UnlinkedNormalFunction, constructAbility, JSParserScriptMode::Classic, nullptr, std::nullopt, DerivedContextType::None, NeedsClassFieldInitializer::No, PrivateBrandRequirement::None);
 
     if (!source.provider()->sourceURLDirective().isNull())
         functionExecutable->setSourceURLDirective(source.provider()->sourceURLDirective());
@@ -287,7 +287,7 @@ static SourceCodeKey sourceCodeKeyForSerializedBytecode(VM&, const SourceCode& s
     return SourceCodeKey(
         sourceCode, String(), codeType, strictMode, scriptMode,
         DerivedContextType::None, EvalContextType::None, false, codeGenerationMode,
-        WTF::nullopt);
+        std::nullopt);
 }
 
 SourceCodeKey sourceCodeKeyForSerializedProgram(VM& vm, const SourceCode& sourceCode)

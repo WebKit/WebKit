@@ -154,14 +154,14 @@ static bool canUpdatePreviewForActiveDragSource(const DragSourceState& source)
 Optional<DragSourceState> DragDropInteractionState::activeDragSourceForItem(UIDragItem *item) const
 {
     if (![item.privateLocalContext isKindOfClass:[NSNumber class]])
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto identifier = [(NSNumber *)item.privateLocalContext integerValue];
     for (auto& source : m_activeDragSources) {
         if (source.itemIdentifier == identifier)
             return source;
     }
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 bool DragDropInteractionState::anyActiveDragSourceIs(WebCore::DragSourceAction action) const
@@ -364,7 +364,7 @@ void DragDropInteractionState::clearStagedDragSource(DidBecomeActive didBecomeAc
 {
     if (didBecomeActive == DidBecomeActive::Yes)
         m_activeDragSources.append(stagedDragSource());
-    m_stagedDragSource = WTF::nullopt;
+    m_stagedDragSource = std::nullopt;
 }
 
 void DragDropInteractionState::dragAndDropSessionsDidEnd()

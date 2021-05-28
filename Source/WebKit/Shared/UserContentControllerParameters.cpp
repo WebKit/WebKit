@@ -49,33 +49,33 @@ Optional<UserContentControllerParameters> UserContentControllerParameters::decod
     Optional<UserContentControllerIdentifier> identifier;
     decoder >> identifier;
     if (!identifier)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<Vector<std::pair<ContentWorldIdentifier, String>>> userContentWorlds;
     decoder >> userContentWorlds;
     if (!userContentWorlds)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Vector<WebUserScriptData>> userScripts;
     decoder >> userScripts;
     if (!userScripts)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<Vector<WebUserStyleSheetData>> userStyleSheets;
     decoder >> userStyleSheets;
     if (!userStyleSheets)
-        return WTF::nullopt;
+        return std::nullopt;
     
     Optional<Vector<WebScriptMessageHandlerData>> messageHandlers;
     decoder >> messageHandlers;
     if (!messageHandlers)
-        return WTF::nullopt;
+        return std::nullopt;
     
 #if ENABLE(CONTENT_EXTENSIONS)
     Optional<Vector<std::pair<String, WebCompiledContentRuleListData>>> contentRuleLists;
     decoder >> contentRuleLists;
     if (!contentRuleLists)
-        return WTF::nullopt;
+        return std::nullopt;
 #endif
 
     return {{

@@ -2056,7 +2056,7 @@ void WebProcessPool::updateAudibleMediaAssertions()
 {
     if (!m_webProcessWithAudibleMediaCounter.value()) {
         WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "updateAudibleMediaAssertions: The number of processes playing audible media now zero. Releasing UI process assertion.");
-        m_audibleMediaActivity = WTF::nullopt;
+        m_audibleMediaActivity = std::nullopt;
         return;
     }
 

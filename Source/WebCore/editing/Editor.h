@@ -126,7 +126,7 @@ enum class TemporarySelectionOption : uint8_t {
 
 class TemporarySelectionChange {
 public:
-    WEBCORE_EXPORT TemporarySelectionChange(Document&, Optional<VisibleSelection> = WTF::nullopt, OptionSet<TemporarySelectionOption> = { });
+    WEBCORE_EXPORT TemporarySelectionChange(Document&, Optional<VisibleSelection> = std::nullopt, OptionSet<TemporarySelectionOption> = { });
     WEBCORE_EXPORT ~TemporarySelectionChange();
 
 private:
@@ -144,7 +144,7 @@ private:
 class IgnoreSelectionChangeForScope {
 public:
     IgnoreSelectionChangeForScope(Frame& frame)
-        : m_selectionChange(*frame.document(), WTF::nullopt, TemporarySelectionOption::IgnoreSelectionChanges)
+        : m_selectionChange(*frame.document(), std::nullopt, TemporarySelectionOption::IgnoreSelectionChanges)
     {
     }
 

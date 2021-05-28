@@ -36,7 +36,7 @@ namespace WebCore {
 Optional<Vector<uint8_t>> defaultWebCryptoMasterKey()
 {
     notImplemented();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 // Initially these helper functions were intended to perform KEK wrapping and unwrapping,

@@ -453,8 +453,8 @@ static RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range)
     }
 
     // Set defaults when one of the two values are unspecified
-    CSSValueID displayOutside = parsedDisplayOutside.valueOr(CSSValueBlock);
-    CSSValueID displayInside = parsedDisplayInside.valueOr(CSSValueFlow);
+    CSSValueID displayOutside = parsedDisplayOutside.value_or(CSSValueBlock);
+    CSSValueID displayInside = parsedDisplayInside.value_or(CSSValueFlow);
 
     auto selectShortValue = [&]() -> CSSValueID {
         if (displayOutside == CSSValueBlock) {
@@ -1258,7 +1258,7 @@ static RefPtr<CSSValue> consumeColumnWidth(CSSParserTokenRange& range)
     // Always parse lengths in strict mode here, since it would be ambiguous otherwise when used in
     // the 'columns' shorthand property.
     RefPtr<CSSPrimitiveValue> columnWidth = consumeLength(range, HTMLStandardMode, ValueRange::NonNegative);
-    if (!columnWidth || columnWidth->isZero().valueOr(false))
+    if (!columnWidth || columnWidth->isZero().value_or(false))
         return nullptr;
 
     return columnWidth;
@@ -2393,7 +2393,7 @@ static RefPtr<CSSPrimitiveValue> consumePerspective(CSSParserTokenRange& range, 
         return consumeIdent(range);
 
     if (auto parsedValue = consumeLength(range, cssParserMode, ValueRange::All)) {
-        if (!parsedValue->isNegative().valueOr(false))
+        if (!parsedValue->isNegative().value_or(false))
             return parsedValue;
         return nullptr;
     }

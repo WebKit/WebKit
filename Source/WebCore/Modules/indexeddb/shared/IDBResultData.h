@@ -165,67 +165,67 @@ template<class Decoder> Optional<IDBResultData> IDBResultData::decode(Decoder& d
 {
     IDBResultData result;
     if (!decoder.decode(result.m_requestIdentifier))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.m_error))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.m_databaseConnectionIdentifier))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.m_resultInteger))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.m_type))
-        return WTF::nullopt;
+        return std::nullopt;
 
     bool hasObject;
 
     if (!decoder.decode(hasObject))
-        return WTF::nullopt;
+        return std::nullopt;
     if (hasObject) {
         auto object = makeUnique<IDBDatabaseInfo>();
         if (!decoder.decode(*object))
-            return WTF::nullopt;
+            return std::nullopt;
         result.m_databaseInfo = WTFMove(object);
     }
 
     if (!decoder.decode(hasObject))
-        return WTF::nullopt;
+        return std::nullopt;
     if (hasObject) {
         auto object = makeUnique<IDBTransactionInfo>();
         if (!decoder.decode(*object))
-            return WTF::nullopt;
+            return std::nullopt;
         result.m_transactionInfo = WTFMove(object);
     }
 
     if (!decoder.decode(hasObject))
-        return WTF::nullopt;
+        return std::nullopt;
     if (hasObject) {
         auto object = makeUnique<IDBKeyData>();
         Optional<IDBKeyData> optional;
         decoder >> optional;
         if (!optional)
-            return WTF::nullopt;
+            return std::nullopt;
         *object = WTFMove(*optional);
         result.m_resultKey = WTFMove(object);
     }
 
     if (!decoder.decode(hasObject))
-        return WTF::nullopt;
+        return std::nullopt;
     if (hasObject) {
         auto object = makeUnique<IDBGetResult>();
         if (!decoder.decode(*object))
-            return WTF::nullopt;
+            return std::nullopt;
         result.m_getResult = WTFMove(object);
     }
 
     if (!decoder.decode(hasObject))
-        return WTF::nullopt;
+        return std::nullopt;
     if (hasObject) {
         auto object = makeUnique<IDBGetAllResult>();
         if (!decoder.decode(*object))
-            return WTF::nullopt;
+            return std::nullopt;
         result.m_getAllResult = WTFMove(object);
     }
 

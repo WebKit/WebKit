@@ -83,16 +83,16 @@ Optional<BackForwardItemIdentifier> BackForwardItemIdentifier::decode(Decoder& d
     Optional<ProcessIdentifier> processIdentifier;
     decoder >> processIdentifier;
     if (!processIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<ObjectIdentifier<ItemIdentifierType>> itemIdentifier;
     decoder >> itemIdentifier;
     if (!itemIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     BackForwardItemIdentifier result = { WTFMove(*processIdentifier), WTFMove(*itemIdentifier) };
     if (!result.isValid())
-        return WTF::nullopt;
+        return std::nullopt;
     return result;
 }
 

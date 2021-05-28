@@ -404,7 +404,7 @@
 
         _page->setPrivateClickMeasurement(WTFMove(measurement));
     } else
-        _page->setPrivateClickMeasurement(WTF::nullopt);
+        _page->setPrivateClickMeasurement(std::nullopt);
 #endif
 }
 #endif

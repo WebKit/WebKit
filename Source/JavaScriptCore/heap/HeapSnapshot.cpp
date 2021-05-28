@@ -154,7 +154,7 @@ Optional<HeapSnapshotNode> HeapSnapshot::nodeForCell(JSCell* cell)
     if (m_previous)
         return m_previous->nodeForCell(cell);
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<HeapSnapshotNode> HeapSnapshot::nodeForObjectIdentifier(unsigned objectIdentifier)
@@ -162,16 +162,16 @@ Optional<HeapSnapshotNode> HeapSnapshot::nodeForObjectIdentifier(unsigned object
     if (isEmpty()) {
         if (m_previous)
             return m_previous->nodeForObjectIdentifier(objectIdentifier);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     if (objectIdentifier > m_lastObjectIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (objectIdentifier < m_firstObjectIdentifier) {
         if (m_previous)
             return m_previous->nodeForObjectIdentifier(objectIdentifier);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     for (auto& node : m_nodes) {
@@ -179,7 +179,7 @@ Optional<HeapSnapshotNode> HeapSnapshot::nodeForObjectIdentifier(unsigned object
             return Optional<HeapSnapshotNode>(node);
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 } // namespace JSC

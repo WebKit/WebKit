@@ -99,7 +99,7 @@ public:
 
     virtual Optional<std::size_t> requiredSizeForItem(const DisplayListItem&) const
     {
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     virtual RefPtr<SharedBuffer> encodeItemOutOfLine(const DisplayListItem&) const

@@ -63,7 +63,7 @@ private:
         bool dirty1 = property1(owner)->isDirty();
         bool dirty2 = property2(owner)->isDirty();
         if (!(dirty1 || dirty2))
-            return WTF::nullopt;
+            return std::nullopt;
 
         auto type = property2(owner)->baseVal();
 
@@ -100,7 +100,7 @@ private:
         bool dirty1 = property1(owner)->isDirty();
         bool dirty2 = property2(owner)->isDirty();
         if (!(dirty1 || dirty2))
-            return WTF::nullopt;
+            return std::nullopt;
 
         String string1 = dirty1 ? *property1(owner)->synchronize() : property1(owner)->baseValAsString();
         String string2 = dirty2 ? *property2(owner)->synchronize() : property2(owner)->baseValAsString();
@@ -135,7 +135,7 @@ private:
         bool dirty1 = property1(owner)->isDirty();
         bool dirty2 = property2(owner)->isDirty();
         if (!(dirty1 || dirty2))
-            return WTF::nullopt;
+            return std::nullopt;
 
         String string1 = dirty1 ? *property1(owner)->synchronize() : property1(owner)->baseValAsString();
         String string2 = dirty2 ? *property2(owner)->synchronize() : property2(owner)->baseValAsString();

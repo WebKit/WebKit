@@ -82,8 +82,8 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
         _currentTouch = nil;
         _touching = NO;
         _lastEvent = nil;
-        _lastLocation = WTF::nullopt;
-        _pressedButtonMask = WTF::nullopt;
+        _lastLocation = std::nullopt;
+        _pressedButtonMask = std::nullopt;
     }
 }
 
@@ -92,7 +92,7 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
     return _lastEvent.get();
 }
 
-- (WTF::Optional<CGPoint>)lastMouseLocation
+- (std::optional<CGPoint>)lastMouseLocation
 {
     return _lastLocation;
 }
@@ -163,7 +163,7 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
     _lastLocation = [self locationInView:self.view];
 
     _touching = NO;
-    _pressedButtonMask = WTF::nullopt;
+    _pressedButtonMask = std::nullopt;
 
     self.state = UIGestureRecognizerStateChanged;
 }
@@ -174,7 +174,7 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
     _lastLocation = [self locationInView:self.view];
 
     _touching = NO;
-    _pressedButtonMask = WTF::nullopt;
+    _pressedButtonMask = std::nullopt;
 
     self.state = UIGestureRecognizerStateChanged;
 }

@@ -107,7 +107,7 @@ Optional<FramesPerSecond> DisplayRefreshMonitorManager::nominalFramesPerSecondFo
     if (monitor)
         monitor->displayNominalFramesPerSecond();
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void DisplayRefreshMonitorManager::displayWasUpdated(PlatformDisplayID displayID, const DisplayUpdate& displayUpdate)

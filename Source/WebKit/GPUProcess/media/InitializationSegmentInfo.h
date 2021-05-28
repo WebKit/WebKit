@@ -57,12 +57,12 @@ struct InitializationSegmentInfo {
             Optional<MediaDescriptionInfo> mediaDescription;
             decoder >> mediaDescription;
             if (!mediaDescription)
-                return WTF::nullopt;
+                return std::nullopt;
 
             Optional<TrackPrivateRemoteIdentifier> identifier;
             decoder >> identifier;
             if (!identifier)
-                return WTF::nullopt;
+                return std::nullopt;
 
             return {{
                 WTFMove(*mediaDescription),
@@ -90,22 +90,22 @@ struct InitializationSegmentInfo {
         Optional<MediaTime> duration;
         decoder >> duration;
         if (!duration)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<Vector<TrackInformation>> audioTracks;
         decoder >> audioTracks;
         if (!audioTracks)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<Vector<TrackInformation>> videoTracks;
         decoder >> videoTracks;
         if (!videoTracks)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<Vector<TrackInformation>> textTracks;
         decoder >> textTracks;
         if (!textTracks)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{
             WTFMove(*duration),

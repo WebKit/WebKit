@@ -41,16 +41,16 @@ Optional<XRDeviceInfo> XRDeviceInfo::decode(IPC::Decoder& decoder)
 {
     XRDeviceInfo deviceFeatures;
     if (!decoder.decode(deviceFeatures.identifier))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(deviceFeatures.supportsOrientationTracking))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(deviceFeatures.supportsStereoRendering))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(deviceFeatures.features))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return deviceFeatures;
 }

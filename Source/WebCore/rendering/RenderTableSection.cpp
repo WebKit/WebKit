@@ -884,7 +884,7 @@ Optional<LayoutUnit> RenderTableSection::firstLineBaseline() const
         // Only cells with content have a baseline
         if (cell && cell->contentLogicalHeight()) {
             LayoutUnit candidate = cell->logicalTop() + cell->borderAndPaddingBefore() + cell->contentLogicalHeight();
-            result = std::max(result.valueOr(candidate), candidate);
+            result = std::max(result.value_or(candidate), candidate);
         }
     }
 

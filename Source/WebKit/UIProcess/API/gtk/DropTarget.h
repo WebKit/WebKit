@@ -59,7 +59,7 @@ public:
     void didPerformAction();
 
 private:
-    void accept(PlatformDropContext*, Optional<WebCore::IntPoint> = WTF::nullopt, unsigned = 0);
+    void accept(PlatformDropContext*, Optional<WebCore::IntPoint> = std::nullopt, unsigned = 0);
     void enter(WebCore::IntPoint&&, unsigned = 0);
     void update(WebCore::IntPoint&&, unsigned = 0);
     void leave();

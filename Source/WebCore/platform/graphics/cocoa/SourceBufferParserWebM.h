@@ -207,7 +207,7 @@ public:
         }
 
         webm::Status consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const CMTime&, int) final;
-        void createSampleBuffer(Optional<size_t> latestByteRangeOffset = WTF::nullopt);
+        void createSampleBuffer(Optional<size_t> latestByteRangeOffset = std::nullopt);
 
     private:
         const char* logClassName() const { return "AudioTrackData"; }

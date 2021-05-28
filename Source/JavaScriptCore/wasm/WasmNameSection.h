@@ -39,7 +39,7 @@ struct NameSection : public ThreadSafeRefCounted<NameSection> {
 public:
     NameSection()
     {
-        setHash(WTF::nullopt);
+        setHash(std::nullopt);
     }
 
     static Ref<NameSection> create()

@@ -58,7 +58,7 @@ ALWAYS_INLINE Optional<JSValue> arrayBufferSpeciesConstructor(JSGlobalObject* gl
     bool isValid = speciesWatchpointIsValid(vm, thisObject, mode);
     scope.assertNoException();
     if (LIKELY(isValid))
-        return WTF::nullopt;
+        return std::nullopt;
 
     RELEASE_AND_RETURN(scope, arrayBufferSpeciesConstructorSlow(globalObject, thisObject, mode));
 }

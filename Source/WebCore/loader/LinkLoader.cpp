@@ -134,7 +134,7 @@ Optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(const Str
         return CachedResource::Type::FontResource;
     if (equalLettersIgnoringASCIICase(as, "track"))
         return CachedResource::Type::TextTrackResource;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static std::unique_ptr<LinkPreloadResourceClient> createLinkPreloadResourceClient(CachedResource& resource, LinkLoader& loader, Document& document)

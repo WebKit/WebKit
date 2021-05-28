@@ -168,6 +168,6 @@ class ObjCProtocolTypeConversionsHeaderGenerator(ObjCGenerator):
         for enum_value in enum_values:
             lines.append('    if (value == "%s")' % enum_value)
             lines.append('        return %s%s;' % (objc_enum_name, Generator.stylized_name_for_enum_value(enum_value)))
-        lines.append('    return WTF::nullopt;')
+        lines.append('    return std::nullopt;')
         lines.append('}')
         return '\n'.join(lines)

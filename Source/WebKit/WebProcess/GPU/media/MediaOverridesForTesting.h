@@ -53,22 +53,22 @@ struct MediaOverridesForTesting {
         Optional<Optional<bool>> systemHasAC;
         decoder >> systemHasAC;
         if (!systemHasAC)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<Optional<bool>> systemHasBattery;
         decoder >> systemHasBattery;
         if (!systemHasBattery)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<Optional<bool>> vp9HardwareDecoderDisabled;
         decoder >> vp9HardwareDecoderDisabled;
         if (!vp9HardwareDecoderDisabled)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<Optional<WebCore::ScreenDataOverrides>> vp9ScreenSizeAndScale;
         decoder >> vp9ScreenSizeAndScale;
         if (!vp9ScreenSizeAndScale)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return {{
             *systemHasAC,

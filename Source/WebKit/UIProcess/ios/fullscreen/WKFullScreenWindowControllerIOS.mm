@@ -818,7 +818,7 @@ private:
 
     _viewState.applyTo(webView.get());
     if (auto page = [webView _page])
-        page->setOverrideViewportArguments(WTF::nullopt);
+        page->setOverrideViewportArguments(std::nullopt);
 
     [webView setNeedsLayout];
     [webView layoutIfNeeded];

@@ -127,7 +127,7 @@ static Optional<SampleType> sampleType(const String& functionName)
         return SampleType::SampleBias;
     if (functionName == "SampleGrad")
         return SampleType::SampleGrad;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void inlineNativeFunction(StringBuilder& stringBuilder, AST::NativeFunctionDeclaration& nativeFunctionDeclaration, const Vector<MangledVariableName>& args, MangledVariableName resultName, TypeNamer& typeNamer)

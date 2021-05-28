@@ -41,7 +41,7 @@ static Optional<Vector<uint8_t>> gcryptEncrypt(gcry_sexp_t keySexp, const Vector
         plainText.size(), plainText.data());
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     // Encrypt data with the provided key. The returned s-expression is of this form:
@@ -52,13 +52,13 @@ static Optional<Vector<uint8_t>> gcryptEncrypt(gcry_sexp_t keySexp, const Vector
     error = gcry_pk_encrypt(&cipherSexp, dataSexp, keySexp);
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     // Return MPI data of the embedded `a` integer.
     PAL::GCrypt::Handle<gcry_sexp_t> aSexp(gcry_sexp_find_token(cipherSexp, "a", 0));
     if (!aSexp)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return mpiZeroPrefixedData(aSexp, keySizeInBytes);
 }
@@ -71,7 +71,7 @@ static Optional<Vector<uint8_t>> gcryptDecrypt(gcry_sexp_t keySexp, const Vector
         cipherText.size(), cipherText.data());
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     // Decrypt data with the provided key. The returned s-expression is of this form:
@@ -82,13 +82,13 @@ static Optional<Vector<uint8_t>> gcryptDecrypt(gcry_sexp_t keySexp, const Vector
     error = gcry_pk_decrypt(&plainSexp, encValSexp, keySexp);
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     // Return MPI data of the embedded `value` integer.
     PAL::GCrypt::Handle<gcry_sexp_t> valueSexp(gcry_sexp_find_token(plainSexp, "value", 0));
     if (!valueSexp)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return mpiData(valueSexp);
 }

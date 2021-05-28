@@ -93,16 +93,16 @@ DeviceIdHashSaltStorage::~DeviceIdHashSaltStorage()
         completionHandler();
 }
 
-static WTF::Optional<SecurityOriginData> getSecurityOriginData(const char* name, KeyedDecoder* decoder)
+static std::optional<SecurityOriginData> getSecurityOriginData(const char* name, KeyedDecoder* decoder)
 {
     String origin;
 
     if (!decoder->decodeString(name, origin))
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto securityOriginData = SecurityOriginData::fromDatabaseIdentifier(origin);
     if (!securityOriginData)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return securityOriginData;
 }

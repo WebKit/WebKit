@@ -172,11 +172,11 @@ void WebPageProxy::addPlatformLoadParameters(WebProcessProxy& process, LoadParam
 #if PLATFORM(IOS)
     if (!process.hasManagedSessionSandboxAccess() && [getWebFilterEvaluatorClass() isManagedSession]) {
         SandboxExtension::Handle handle;
-        SandboxExtension::createHandleForMachLookup("com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI"_s, WTF::nullopt, handle);
+        SandboxExtension::createHandleForMachLookup("com.apple.uikit.viewservice.com.apple.WebContentFilter.remoteUI"_s, std::nullopt, handle);
         loadParameters.contentFilterExtensionHandle = WTFMove(handle);
 
         SandboxExtension::Handle frontboardServiceExtensionHandle;
-        if (SandboxExtension::createHandleForMachLookup("com.apple.frontboard.systemappservices"_s, WTF::nullopt, frontboardServiceExtensionHandle))
+        if (SandboxExtension::createHandleForMachLookup("com.apple.frontboard.systemappservices"_s, std::nullopt, frontboardServiceExtensionHandle))
             loadParameters.frontboardServiceExtensionHandle = WTFMove(frontboardServiceExtensionHandle);
 
         process.markHasManagedSessionSandboxAccess();
@@ -601,7 +601,7 @@ SandboxExtension::HandleArray WebPageProxy::createNetworkExtensionsSandboxExtens
 #else
         constexpr ASCIILiteral neSessionManagerService { "com.apple.nesessionmanager.content-filter"_s };
 #endif
-        return SandboxExtension::createHandlesForMachLookup({ neHelperService, neSessionManagerService }, WTF::nullopt);
+        return SandboxExtension::createHandlesForMachLookup({ neHelperService, neSessionManagerService }, std::nullopt);
     }
 #endif
     return SandboxExtension::HandleArray();
@@ -655,7 +655,7 @@ void WebPageProxy::lastNavigationWasAppBound(CompletionHandler<void(bool)>&& com
 void WebPageProxy::grantAccessToAssetServices()
 {
     SandboxExtension::Handle mobileAssetHandleV2;
-    SandboxExtension::createHandleForMachLookup("com.apple.mobileassetd.v2"_s, WTF::nullopt, mobileAssetHandleV2);
+    SandboxExtension::createHandleForMachLookup("com.apple.mobileassetd.v2"_s, std::nullopt, mobileAssetHandleV2);
     process().send(Messages::WebProcess::GrantAccessToAssetServices(mobileAssetHandleV2), 0);
 }
 
@@ -672,7 +672,7 @@ void WebPageProxy::switchFromStaticFontRegistryToUserFontRegistry()
 SandboxExtension::Handle WebPageProxy::fontdMachExtensionHandle()
 {
     SandboxExtension::Handle fontMachExtensionHandle;
-    SandboxExtension::createHandleForMachLookup("com.apple.fonts"_s, WTF::nullopt, fontMachExtensionHandle);
+    SandboxExtension::createHandleForMachLookup("com.apple.fonts"_s, std::nullopt, fontMachExtensionHandle);
     return fontMachExtensionHandle;
 }
 

@@ -700,34 +700,34 @@ public:
     {
         MediaTrackConstraintSetMap map;
         if (!decoder.decode(map.m_width))
-            return WTF::nullopt;
+            return std::nullopt;
         if (!decoder.decode(map.m_height))
-            return WTF::nullopt;
+            return std::nullopt;
         if (!decoder.decode(map.m_sampleRate))
-            return WTF::nullopt;
+            return std::nullopt;
         if (!decoder.decode(map.m_sampleSize))
-            return WTF::nullopt;
+            return std::nullopt;
 
         if (!decoder.decode(map.m_aspectRatio))
-            return WTF::nullopt;
+            return std::nullopt;
         if (!decoder.decode(map.m_frameRate))
-            return WTF::nullopt;
+            return std::nullopt;
         if (!decoder.decode(map.m_volume))
-            return WTF::nullopt;
+            return std::nullopt;
 
         if (!decoder.decode(map.m_echoCancellation))
-            return WTF::nullopt;
+            return std::nullopt;
         if (!decoder.decode(map.m_displaySurface))
-            return WTF::nullopt;
+            return std::nullopt;
         if (!decoder.decode(map.m_logicalSurface))
-            return WTF::nullopt;
+            return std::nullopt;
 
         if (!decoder.decode(map.m_facingMode))
-            return WTF::nullopt;
+            return std::nullopt;
         if (!decoder.decode(map.m_deviceId))
-            return WTF::nullopt;
+            return std::nullopt;
         if (!decoder.decode(map.m_groupId))
-            return WTF::nullopt;
+            return std::nullopt;
 
         return map;
     }

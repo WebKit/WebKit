@@ -174,7 +174,7 @@ static Optional<uint32_t> exponentVectorToUInt32(const Vector<uint8_t>& exponent
 {
     if (exponent.size() > 4) {
         if (std::any_of(exponent.begin(), exponent.end() - 4, [](uint8_t element) { return !!element; }))
-            return WTF::nullopt;
+            return std::nullopt;
     }
 
     uint32_t result = 0;
@@ -306,7 +306,7 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importSpki(CryptoAlgorithmIdentifier identifi
         }
     }
 
-    return adoptRef(new CryptoKeyRSA(identifier, hash.valueOr(CryptoAlgorithmIdentifier::SHA_1), !!hash, CryptoKeyType::Public, PlatformRSAKeyContainer(platformKey.release()), extractable, usages));
+    return adoptRef(new CryptoKeyRSA(identifier, hash.value_or(CryptoAlgorithmIdentifier::SHA_1), !!hash, CryptoKeyType::Public, PlatformRSAKeyContainer(platformKey.release()), extractable, usages));
 }
 
 RefPtr<CryptoKeyRSA> CryptoKeyRSA::importPkcs8(CryptoAlgorithmIdentifier identifier, Optional<CryptoAlgorithmIdentifier> hash, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
@@ -401,7 +401,7 @@ RefPtr<CryptoKeyRSA> CryptoKeyRSA::importPkcs8(CryptoAlgorithmIdentifier identif
         }
     }
 
-    return adoptRef(new CryptoKeyRSA(identifier, hash.valueOr(CryptoAlgorithmIdentifier::SHA_1), !!hash, CryptoKeyType::Private, PlatformRSAKeyContainer(platformKey.release()), extractable, usages));
+    return adoptRef(new CryptoKeyRSA(identifier, hash.value_or(CryptoAlgorithmIdentifier::SHA_1), !!hash, CryptoKeyType::Private, PlatformRSAKeyContainer(platformKey.release()), extractable, usages));
 }
 
 ExceptionOr<Vector<uint8_t>> CryptoKeyRSA::exportSpki() const

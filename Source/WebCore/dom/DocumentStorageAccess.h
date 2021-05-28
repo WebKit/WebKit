@@ -124,27 +124,27 @@ Optional<RequestStorageAccessResult> RequestStorageAccessResult::decode(Decoder&
     Optional<StorageAccessWasGranted> wasGranted;
     decoder >> wasGranted;
     if (!wasGranted)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<StorageAccessPromptWasShown> promptWasShown;
     decoder >> promptWasShown;
     if (!promptWasShown)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<StorageAccessScope> scope;
     decoder >> scope;
     if (!scope)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<RegistrableDomain> topFrameDomain;
     decoder >> topFrameDomain;
     if (!topFrameDomain)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<RegistrableDomain> subFrameDomain;
     decoder >> subFrameDomain;
     if (!subFrameDomain)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return { { WTFMove(*wasGranted), WTFMove(*promptWasShown), WTFMove(*scope), WTFMove(*topFrameDomain), WTFMove(*subFrameDomain) } };
 }

@@ -67,17 +67,17 @@ Optional<CompositionHighlight> CompositionHighlight::decode(Decoder& decoder)
     Optional<unsigned> startOffset;
     decoder >> startOffset;
     if (!startOffset)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<unsigned> endOffset;
     decoder >> endOffset;
     if (!endOffset)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Color> color;
     decoder >> color;
     if (!color)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *startOffset, *endOffset, *color }};
 }

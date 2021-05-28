@@ -66,7 +66,7 @@ static Optional<size_t> stackSize(ThreadType threadType)
     return 1 * MB;
 #else
     // Use the platform's default stack size
-    return WTF::nullopt;
+    return std::nullopt;
 #endif
 }
 

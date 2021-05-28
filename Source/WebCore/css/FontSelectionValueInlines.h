@@ -54,7 +54,7 @@ inline Optional<CSSValueID> fontWeightKeyword(FontSelectionValue weight)
         return CSSValueNormal;
     if (weight == boldWeightValue())
         return CSSValueBold;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 inline Optional<FontSelectionValue> fontWeightValue(CSSValueID value)
@@ -68,7 +68,7 @@ inline Optional<FontSelectionValue> fontWeightValue(CSSValueID value)
     case CSSValueLighter:
         return lightWeightValue();
     default:
-        return WTF::nullopt;
+        return std::nullopt;
     }
 }
 
@@ -92,7 +92,7 @@ inline Optional<CSSValueID> fontStretchKeyword(FontSelectionValue stretch)
         return CSSValueExtraExpanded;
     if (stretch == ultraExpandedStretchValue())
         return CSSValueUltraExpanded;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 inline Optional<FontSelectionValue> fontStretchValue(CSSValueID value)
@@ -117,7 +117,7 @@ inline Optional<FontSelectionValue> fontStretchValue(CSSValueID value)
     case CSSValueUltraExpanded:
         return ultraExpandedStretchValue();
     default:
-        return WTF::nullopt;
+        return std::nullopt;
     }
 }
 
@@ -127,7 +127,7 @@ inline Optional<CSSValueID> fontStyleKeyword(Optional<FontSelectionValue> style,
         return CSSValueNormal;
     if (style.value() == italicValue())
         return axis == FontStyleAxis::ital ? CSSValueItalic : CSSValueOblique;
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 }

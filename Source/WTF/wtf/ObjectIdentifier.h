@@ -76,7 +76,7 @@ public:
         Optional<uint64_t> identifier;
         decoder >> identifier;
         if (!identifier || !isValidIdentifier(*identifier))
-            return WTF::nullopt;
+            return std::nullopt;
         return ObjectIdentifier { *identifier };
     }
 

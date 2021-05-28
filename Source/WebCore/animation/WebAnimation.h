@@ -72,7 +72,7 @@ public:
     AnimationTimeline* timeline() const { return m_timeline.get(); }
     virtual void setTimeline(RefPtr<AnimationTimeline>&&);
 
-    Optional<Seconds> currentTime(Optional<Seconds> = WTF::nullopt) const;
+    Optional<Seconds> currentTime(Optional<Seconds> = std::nullopt) const;
     ExceptionOr<void> setCurrentTime(Optional<Seconds>);
 
     double playbackRate() const { return m_playbackRate + 0; }
@@ -120,7 +120,7 @@ public:
     bool needsTick() const;
     virtual void tick();
     WEBCORE_EXPORT Seconds timeToNextTick() const;
-    virtual void resolve(RenderStyle& targetStyle, const RenderStyle* parentElementStyle, Optional<Seconds> = WTF::nullopt);
+    virtual void resolve(RenderStyle& targetStyle, const RenderStyle* parentElementStyle, Optional<Seconds> = std::nullopt);
     void effectTargetDidChange(const Optional<const Styleable>& previousTarget, const Optional<const Styleable>& newTarget);
     void acceleratedStateDidChange();
     void willChangeRenderer();
@@ -167,7 +167,7 @@ private:
     Seconds effectEndTime() const;
     WebAnimation& readyPromiseResolve();
     WebAnimation& finishedPromiseResolve();
-    Optional<Seconds> currentTime(RespectHoldTime, Optional<Seconds> = WTF::nullopt) const;
+    Optional<Seconds> currentTime(RespectHoldTime, Optional<Seconds> = std::nullopt) const;
     ExceptionOr<void> silentlySetCurrentTime(Optional<Seconds>);
     void finishNotificationSteps();
     bool hasPendingPauseTask() const { return m_timeToRunPendingPauseTask != TimeToRunPendingTask::NotScheduled; }

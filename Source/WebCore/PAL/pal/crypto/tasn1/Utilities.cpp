@@ -126,18 +126,18 @@ Optional<Vector<uint8_t>> elementData(asn1_node root, const char* elementName)
     unsigned type = 0;
     int ret = asn1_read_value_type(root, elementName, nullptr, &length, &type);
     if (ret != ASN1_MEM_ERROR)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (type == ASN1_ETYPE_BIT_STRING) {
         if (length % 8)
-            return WTF::nullopt;
+            return std::nullopt;
         length /= 8;
     }
 
     Vector<uint8_t> data(length);
     ret = asn1_read_value(root, elementName, data.data(), &length);
     if (ret != ASN1_SUCCESS)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return data;
 }
@@ -147,12 +147,12 @@ Optional<Vector<uint8_t>> encodedData(asn1_node root, const char* elementName)
     int length = 0;
     int ret = asn1_der_coding(root, elementName, nullptr, &length, nullptr);
     if (ret != ASN1_MEM_ERROR)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Vector<uint8_t> data(length);
     ret = asn1_der_coding(root, elementName, data.data(), &length, nullptr);
     if (ret != ASN1_SUCCESS)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return data;
 }

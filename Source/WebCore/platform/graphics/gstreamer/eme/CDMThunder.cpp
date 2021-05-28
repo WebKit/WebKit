@@ -352,7 +352,7 @@ public:
 
         if (requestType.length() == 1) {
             // FIXME: There are simpler ways to convert a single digit to a number than calling parseInteger.
-            m_type = makeOptional(static_cast<WebCore::MediaKeyMessageType>(parseInteger<int>(requestType).valueOr(0)));
+            m_type = std::make_optional(static_cast<WebCore::MediaKeyMessageType>(parseInteger<int>(requestType).value_or(0)));
         }
 
         m_payload = SharedBuffer::create(payload.characters8() + offset, payload.length() - offset);
@@ -564,7 +564,7 @@ void CDMInstanceSessionThunder::updateLicense(const String& sessionID, LicenseTy
         ASSERT(isMainThread());
         if (success) {
             if (!responseMessage)
-                callback(false, m_keyStore.convertToJSKeyStatusVector(), WTF::nullopt, WTF::nullopt, SuccessValue::Succeeded);
+                callback(false, m_keyStore.convertToJSKeyStatusVector(), std::nullopt, std::nullopt, SuccessValue::Succeeded);
             else {
                 // FIXME: Using JSON reponse messages is much cleaner than using string prefixes, I believe there
                 // will even be other parts of the spec where not having structured data will be bad.
@@ -574,17 +574,17 @@ void CDMInstanceSessionThunder::updateLicense(const String& sessionID, LicenseTy
                     Ref<SharedBuffer> message = WTFMove(parsedResponseMessage.payload());
                     GST_DEBUG("got message of size %zu", message->size());
                     GST_MEMDUMP("message", message->dataAsUInt8Ptr(), message->size());
-                    callback(false, WTF::nullopt, WTF::nullopt,
+                    callback(false, std::nullopt, std::nullopt,
                         std::make_pair(parsedResponseMessage.typeOr(MediaKeyMessageType::LicenseRequest),
                             WTFMove(message)), SuccessValue::Succeeded);
                 } else {
                     GST_ERROR("message of size %zu incorrectly formatted", responseMessage ? responseMessage->size() : 0);
-                    callback(false, WTF::nullopt, WTF::nullopt, WTF::nullopt, SuccessValue::Failed);
+                    callback(false, std::nullopt, std::nullopt, std::nullopt, SuccessValue::Failed);
                 }
             }
         } else {
             GST_ERROR("update license reported error state");
-            callback(false, WTF::nullopt, WTF::nullopt, WTF::nullopt, SuccessValue::Failed);
+            callback(false, std::nullopt, std::nullopt, std::nullopt, SuccessValue::Failed);
         }
     });
     if (!m_session || m_sessionID.isEmpty() || opencdm_session_update(m_session.get(), response->dataAsUInt8Ptr(), response->size()))
@@ -599,7 +599,7 @@ void CDMInstanceSessionThunder::loadSession(LicenseType, const String& sessionID
         ASSERT(isMainThread());
         if (success) {
             if (!responseMessage)
-                callback(m_keyStore.convertToJSKeyStatusVector(), WTF::nullopt, WTF::nullopt, SuccessValue::Succeeded, SessionLoadFailure::None);
+                callback(m_keyStore.convertToJSKeyStatusVector(), std::nullopt, std::nullopt, SuccessValue::Succeeded, SessionLoadFailure::None);
             else {
                 // FIXME: Using JSON reponse messages is much cleaner than using string prefixes, I believe there
                 // will even be other parts of the spec where not having structured data will be bad.
@@ -609,11 +609,11 @@ void CDMInstanceSessionThunder::loadSession(LicenseType, const String& sessionID
                     Ref<SharedBuffer> message = WTFMove(parsedResponseMessage.payload());
                     GST_DEBUG("got message of size %zu", message->size());
                     GST_MEMDUMP("message", message->dataAsUInt8Ptr(), message->size());
-                    callback(WTF::nullopt, WTF::nullopt, std::make_pair(parsedResponseMessage.typeOr(MediaKeyMessageType::LicenseRequest),
+                    callback(std::nullopt, std::nullopt, std::make_pair(parsedResponseMessage.typeOr(MediaKeyMessageType::LicenseRequest),
                         WTFMove(message)), SuccessValue::Succeeded, SessionLoadFailure::None);
                 } else {
                     GST_ERROR("message of size %zu incorrectly formatted", responseMessage ? responseMessage->size() : 0);
-                    callback(WTF::nullopt, WTF::nullopt, WTF::nullopt, SuccessValue::Failed, SessionLoadFailure::Other);
+                    callback(std::nullopt, std::nullopt, std::nullopt, SuccessValue::Failed, SessionLoadFailure::Other);
                 }
             }
         } else {
@@ -621,7 +621,7 @@ void CDMInstanceSessionThunder::loadSession(LicenseType, const String& sessionID
             auto responseMessageSize = responseMessage ? responseMessage->size() : 0;
             StringView response(reinterpret_cast<const LChar*>(responseMessageData), responseMessageSize);
             GST_ERROR("session %s not loaded, reason %s", m_sessionID.utf8().data(), response.utf8().data());
-            callback(WTF::nullopt, WTF::nullopt, WTF::nullopt, SuccessValue::Failed, sessionLoadFailureFromThunder(response));
+            callback(std::nullopt, std::nullopt, std::nullopt, SuccessValue::Failed, sessionLoadFailureFromThunder(response));
         }
     });
     if (!m_session || m_sessionID.isEmpty() || opencdm_session_load(m_session.get()))
@@ -646,7 +646,7 @@ void CDMInstanceSessionThunder::removeSessionData(const String& sessionID, Licen
         ASSERT(isMainThread());
         if (success) {
             if (!buffer)
-                callback(m_keyStore.allKeysAs(MediaKeyStatus::Released), WTF::nullopt, SuccessValue::Succeeded);
+                callback(m_keyStore.allKeysAs(MediaKeyStatus::Released), std::nullopt, SuccessValue::Succeeded);
             else {
                 ParsedResponseMessage parsedResponseMessage(buffer);
                 ASSERT(parsedResponseMessage);
@@ -657,12 +657,12 @@ void CDMInstanceSessionThunder::removeSessionData(const String& sessionID, Licen
                 } else {
                     GST_WARNING("message of size %zu incorrectly formatted as session %s removal answer", buffer ? buffer->size() : 0,
                         m_sessionID.utf8().data());
-                    callback(m_keyStore.allKeysAs(MediaKeyStatus::InternalError), WTF::nullopt, SuccessValue::Failed);
+                    callback(m_keyStore.allKeysAs(MediaKeyStatus::InternalError), std::nullopt, SuccessValue::Failed);
                 }
             }
         } else {
             GST_WARNING("could not remove session %s", m_sessionID.utf8().data());
-            callback(m_keyStore.allKeysAs(MediaKeyStatus::InternalError), WTF::nullopt, SuccessValue::Failed);
+            callback(m_keyStore.allKeysAs(MediaKeyStatus::InternalError), std::nullopt, SuccessValue::Failed);
         }
     });
     if (!m_session || m_sessionID.isEmpty() || opencdm_session_remove(m_session.get()))
@@ -678,7 +678,7 @@ Optional<CDMInstanceThunder&> CDMInstanceSessionThunder::cdmInstanceThunder() co
 {
     auto instance = cdmInstanceProxy();
     if (!instance)
-        return WTF::nullopt;
+        return std::nullopt;
     return static_cast<CDMInstanceThunder&>(*instance);
 }
 

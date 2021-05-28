@@ -79,7 +79,7 @@ TEST(DisplayListTests, ReplayWithMissingResource)
         auto result = replayer.replay();
         EXPECT_EQ(result.numberOfBytesRead, list.sizeInBytes());
         EXPECT_EQ(result.reasonForStopping, StopReplayReason::ReplayedAllItems);
-        EXPECT_EQ(result.missingCachedResourceIdentifier, WTF::nullopt);
+        EXPECT_EQ(result.missingCachedResourceIdentifier, std::nullopt);
     }
 }
 
@@ -90,7 +90,7 @@ private:
     Optional<ItemHandle> WARN_UNUSED_RETURN decodeItem(const uint8_t*, size_t, ItemType type, uint8_t*) final
     {
         EXPECT_EQ(type, ItemType::FillPath);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 };
 
@@ -134,8 +134,8 @@ TEST(DisplayListTests, OutOfLineItemDecodingFailure)
     Replayer replayer { context, shallowCopy };
     auto result = replayer.replay();
     EXPECT_GT(result.numberOfBytesRead, 0U);
-    EXPECT_EQ(result.nextDestinationImageBuffer, WTF::nullopt);
-    EXPECT_EQ(result.missingCachedResourceIdentifier, WTF::nullopt);
+    EXPECT_EQ(result.nextDestinationImageBuffer, std::nullopt);
+    EXPECT_EQ(result.missingCachedResourceIdentifier, std::nullopt);
     EXPECT_EQ(result.reasonForStopping, StopReplayReason::InvalidItemOrExtent);
 }
 
@@ -158,8 +158,8 @@ TEST(DisplayListTests, InlineItemValidationFailure)
         Replayer replayer { context, list };
         auto result = replayer.replay();
         EXPECT_EQ(result.numberOfBytesRead, 0U);
-        EXPECT_EQ(result.nextDestinationImageBuffer, WTF::nullopt);
-        EXPECT_EQ(result.missingCachedResourceIdentifier, WTF::nullopt);
+        EXPECT_EQ(result.nextDestinationImageBuffer, std::nullopt);
+        EXPECT_EQ(result.missingCachedResourceIdentifier, std::nullopt);
         EXPECT_EQ(result.reasonForStopping, StopReplayReason::InvalidItemOrExtent);
     };
 

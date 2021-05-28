@@ -295,7 +295,7 @@ public:
     void didFinishParsingLocals() { }
     void didPopValueFromStack() { }
 
-    Value* constant(B3::Type, uint64_t bits, Optional<Origin> = WTF::nullopt);
+    Value* constant(B3::Type, uint64_t bits, Optional<Origin> = std::nullopt);
     Value* framePointer();
     void insertConstants();
 

@@ -530,7 +530,7 @@ RetainPtr<CMSampleBufferRef> AudioSampleBufferCompressor::takeOutputSampleBuffer
 
 unsigned AudioSampleBufferCompressor::bitRate() const
 {
-    return m_outputBitRate.valueOr(0);
+    return m_outputBitRate.value_or(0);
 }
 
 }

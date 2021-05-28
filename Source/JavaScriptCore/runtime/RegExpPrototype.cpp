@@ -145,7 +145,7 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncCompile, (JSGlobalObject* globalObject, 
         String pattern = arg0.isUndefined() ? emptyString() : arg0.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-        auto flags = arg1.isUndefined() ? makeOptional(OptionSet<Yarr::Flags> { }) : Yarr::parseFlags(arg1.toWTFString(globalObject));
+        auto flags = arg1.isUndefined() ? std::make_optional(OptionSet<Yarr::Flags> { }) : Yarr::parseFlags(arg1.toWTFString(globalObject));
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (!flags)
             return throwVMError(globalObject, scope, createSyntaxError(globalObject, "Invalid flags supplied to RegExp constructor."_s));

@@ -54,17 +54,17 @@ Optional<ContactInfo> ContactInfo::decode(Decoder& decoder)
     Optional<Vector<String>> name;
     decoder >> name;
     if (!name)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Vector<String>> email;
     decoder >> email;
     if (!email)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Vector<String>> tel;
     decoder >> tel;
     if (!tel)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *name, *email, *tel }};
 }

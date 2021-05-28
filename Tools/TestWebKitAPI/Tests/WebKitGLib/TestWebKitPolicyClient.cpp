@@ -115,14 +115,14 @@ public:
 
     bool loadURIAndWaitForAutoPlayed(const char* uri, WebKitAutoplayPolicy policy)
     {
-        m_autoplayed = WTF::nullopt;
+        m_autoplayed = std::nullopt;
         m_websitePolicies = adoptGRef(webkit_website_policies_new_with_policies("autoplay", policy, nullptr));
         m_policyDecisionResponse = PolicyClientTest::UseWithPolicy;
 
         loadURI(uri);
         // Run until the user content messages come back from the test HTML.
         g_main_loop_run(m_mainLoop);
-        return m_autoplayed.valueOr(false);
+        return m_autoplayed.value_or(false);
     }
 
     bool runJSAndWaitForAutoPlayed(const char* script)

@@ -60,7 +60,7 @@ struct UsedVerticalMargin {
     // inflow child's cached margin values.
     struct PositiveAndNegativePair {
         struct Values {
-            bool isNonZero() const { return positive.valueOr(0) || negative.valueOr(0); }
+            bool isNonZero() const { return positive.value_or(0) || negative.value_or(0); }
 
             Optional<LayoutUnit> positive;
             Optional<LayoutUnit> negative;
@@ -74,14 +74,14 @@ struct UsedVerticalMargin {
 
 static inline LayoutUnit marginBefore(const UsedVerticalMargin& usedVerticalMargin)
 {
-    return usedVerticalMargin.collapsedValues.before.valueOr(usedVerticalMargin.nonCollapsedValues.before);
+    return usedVerticalMargin.collapsedValues.before.value_or(usedVerticalMargin.nonCollapsedValues.before);
 }
 
 static inline LayoutUnit marginAfter(const UsedVerticalMargin& usedVerticalMargin)
 {
     if (usedVerticalMargin.collapsedValues.isCollapsedThrough)
         return 0_lu;
-    return usedVerticalMargin.collapsedValues.after.valueOr(usedVerticalMargin.nonCollapsedValues.after);
+    return usedVerticalMargin.collapsedValues.after.value_or(usedVerticalMargin.nonCollapsedValues.after);
 }
 
 struct ComputedHorizontalMargin {
@@ -95,7 +95,7 @@ struct UsedHorizontalMargin {
 };
 
 struct PrecomputedMarginBefore {
-    LayoutUnit usedValue() const { return collapsedValue.valueOr(nonCollapsedValue); }
+    LayoutUnit usedValue() const { return collapsedValue.value_or(nonCollapsedValue); }
     LayoutUnit nonCollapsedValue;
     Optional<LayoutUnit> collapsedValue;
     UsedVerticalMargin::PositiveAndNegativePair::Values positiveAndNegativeMarginBefore;

@@ -97,12 +97,12 @@ private:
             Optional<MediaTime> start;
             decoder >> start;
             if (!start)
-                return WTF::nullopt;
+                return std::nullopt;
 
             Optional<MediaTime> end;
             decoder >> end;
             if (!end)
-                return WTF::nullopt;
+                return std::nullopt;
 
             return {{ WTFMove(*start), WTFMove(*end) }};
         }
@@ -155,7 +155,7 @@ Optional<PlatformTimeRanges> PlatformTimeRanges::decode(Decoder& decoder)
     Optional<Vector<Range>> buffered;
     decoder >> buffered;
     if (!buffered)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ WTFMove(*buffered) }};
 }

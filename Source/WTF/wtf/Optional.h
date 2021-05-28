@@ -25,23 +25,6 @@
 namespace WTF {
 
 template<typename T> using Optional = std::optional<T>;
-constexpr auto nullopt = std::nullopt;
-using nullopt_t = std::nullopt_t;
-
-template<typename T, typename... ArgumentTypes> constexpr std::optional<std::decay_t<T>> makeOptional(T&& value)
-{
-    return std::make_optional<std::decay_t<T>>(std::forward<T>(value));
-}
-
-template<typename T, typename... ArgumentTypes> constexpr std::optional<T> makeOptional(ArgumentTypes&&... arguments)
-{
-    return std::make_optional<T>(std::forward<ArgumentTypes>(arguments)...);
-}
-
-template<typename T, typename U, typename... ArgumentTypes> constexpr std::optional<T> makeOptional(std::initializer_list<U> list, ArgumentTypes&&... arguments)
-{
-    return std::make_optional<T>(list, std::forward<ArgumentTypes>(arguments)...);
-}
 
 // FIXME: We probably don't need this; it's only used in 5 places.
 template<typename OptionalType, class Callback> auto valueOrCompute(OptionalType optional, Callback callback) -> typename OptionalType::value_type
@@ -52,9 +35,7 @@ template<typename OptionalType, class Callback> auto valueOrCompute(OptionalType
 } // namespace WTF
 
 using WTF::Optional;
-using WTF::makeOptional;
 using WTF::valueOrCompute;
 
-// FIXME: These macros are a workaround to allow us to use std::optional without a global replace; they can be removed after said global replace.
+// FIXME: This macro is a workaround to allow us to use std::optional without a global replace; it can be removed after the global replace.
 #define hasValue has_value
-#define valueOr value_or

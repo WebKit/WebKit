@@ -166,7 +166,7 @@ void WebSWClientConnection::matchRegistration(SecurityOriginData&& topOrigin, co
     ASSERT(isMainRunLoop());
 
     if (!mayHaveServiceWorkerRegisteredForOrigin(topOrigin)) {
-        callback(WTF::nullopt);
+        callback(std::nullopt);
         return;
     }
 
@@ -232,7 +232,7 @@ void WebSWClientConnection::clear()
 {
     auto registrationTasks = WTFMove(m_ongoingMatchRegistrationTasks);
     for (auto& callback : registrationTasks.values())
-        callback(WTF::nullopt);
+        callback(std::nullopt);
 
     auto getRegistrationTasks = WTFMove(m_ongoingGetRegistrationsTasks);
     for (auto& callback : getRegistrationTasks.values())

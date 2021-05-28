@@ -179,7 +179,7 @@ Box* TreeBuilder::createLayoutBox(const ContainerBox& parentContainer, const Ren
                 return Box::ElementAttributes { Box::ElementType::IFrame };
             return Box::ElementAttributes { Box::ElementType::GenericElement };
         }
-        return WTF::nullopt;
+        return std::nullopt;
     };
 
     Box* childLayoutBox = nullptr;
@@ -428,7 +428,7 @@ void showInlineTreeAndRuns(TextStream& stream, const LayoutState& layoutState, c
                 << " size (" << logicalRect.width() << "x" << logicalRect.height() << ")"
                 << " baseline (" << logicalRect.top() + inlineLevelBox.baseline() << ")"
                 << " ascent (" << inlineLevelBox.baseline() << "/" << inlineLevelBox.layoutBounds().ascent << ")"
-                << " descent (" << inlineLevelBox.descent().valueOr(0.0f) << "/" << inlineLevelBox.layoutBounds().descent << ")";
+                << " descent (" << inlineLevelBox.descent().value_or(0.0f) << "/" << inlineLevelBox.layoutBounds().descent << ")";
             stream.nextLine();
         };
         outputInlineLevelBox(lineBox.rootInlineBox());

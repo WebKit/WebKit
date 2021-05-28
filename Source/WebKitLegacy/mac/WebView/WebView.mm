@@ -5682,7 +5682,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 - (void)doWindowDidChangeScreen
 {
     if (_private && _private->page)
-        _private->page->chrome().windowScreenDidChange(WebCore::displayID(self.window.screen), WTF::nullopt);
+        _private->page->chrome().windowScreenDidChange(WebCore::displayID(self.window.screen), std::nullopt);
 }
 
 - (void)_windowChangedKeyState

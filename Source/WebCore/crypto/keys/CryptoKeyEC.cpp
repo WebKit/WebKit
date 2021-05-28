@@ -47,7 +47,7 @@ static Optional<CryptoKeyEC::NamedCurve> toNamedCurve(const String& curve)
     if (curve == P521)
         return CryptoKeyEC::NamedCurve::P521;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 CryptoKeyEC::CryptoKeyEC(CryptoAlgorithmIdentifier identifier, NamedCurve curve, CryptoKeyType type, PlatformECKeyContainer&& platformKey, bool extractable, CryptoKeyUsageBitmap usages)

@@ -55,14 +55,14 @@ Optional<PlatformSocketType> connect(const char* serverAddress, uint16_t serverP
     int fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (fd < 0) {
         LOG_ERROR("Failed to create socket for %s:%d, errno = %d", serverAddress, serverPort, errno);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     int error = ::connect(fd, (struct sockaddr*)&address, sizeof(address));
     if (error < 0) {
         LOG_ERROR("Failed to connect to %s:%u, errno = %d", serverAddress, serverPort, errno);
         ::close(fd);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     return fd;
@@ -75,7 +75,7 @@ Optional<PlatformSocketType> listen(const char* addressStr, uint16_t port)
     int fdListen = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (fdListen < 0) {
         LOG_ERROR("socket() failed, errno = %d", errno);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     const int enabled = 1;
@@ -83,21 +83,21 @@ Optional<PlatformSocketType> listen(const char* addressStr, uint16_t port)
     if (error < 0) {
         LOG_ERROR("setsockopt() SO_REUSEADDR, errno = %d", errno);
         ::close(fdListen);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     error = setsockopt(fdListen, SOL_SOCKET, SO_REUSEPORT, &enabled, sizeof(enabled));
     if (error < 0) {
         LOG_ERROR("setsockopt() SO_REUSEPORT, errno = %d", errno);
         ::close(fdListen);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
 #if PLATFORM(PLAYSTATION)
     if (setsockopt(fdListen, SOL_SOCKET, SO_USE_DEVLAN, &enabled, sizeof(enabled)) < 0) {
         LOG_ERROR("setsocketopt() SO_USE_DEVLAN, errno = %d", errno);
         ::close(fdListen);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 #endif
 
@@ -112,14 +112,14 @@ Optional<PlatformSocketType> listen(const char* addressStr, uint16_t port)
     if (error < 0) {
         LOG_ERROR("bind() failed, errno = %d", errno);
         ::close(fdListen);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     error = ::listen(fdListen, 1);
     if (error < 0) {
         LOG_ERROR("listen() failed, errno = %d", errno);
         ::close(fdListen);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     return fdListen;
@@ -135,7 +135,7 @@ Optional<PlatformSocketType> accept(PlatformSocketType socket)
         return fd;
 
     LOG_ERROR("accept(inet) error (errno = %d)", errno);
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<std::array<PlatformSocketType, 2>> createPair()
@@ -143,7 +143,7 @@ Optional<std::array<PlatformSocketType, 2>> createPair()
     std::array<PlatformSocketType, 2> sockets;
 
     if (socketpair(AF_UNIX, SOCK_STREAM, 0, &sockets[0]))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return sockets;
 }
@@ -197,7 +197,7 @@ Optional<uint16_t> getPort(PlatformSocketType socket)
     socklen_t len = sizeof(address);
     if (getsockname(socket, reinterpret_cast<struct sockaddr*>(&address), &len)) {
         LOG_ERROR("getsockname() error (errno = %d)", errno);
-        return WTF::nullopt;
+        return std::nullopt;
     }
     return address.sin_port;
 }
@@ -211,7 +211,7 @@ Optional<size_t> read(PlatformSocketType socket, void* buffer, int bufferSize)
         return static_cast<size_t>(readSize);
 
     LOG_ERROR("read error (errno = %d)", errno);
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 Optional<size_t> write(PlatformSocketType socket, const void* data, int size)
@@ -223,7 +223,7 @@ Optional<size_t> write(PlatformSocketType socket, const void* data, int size)
         return static_cast<size_t>(writeSize);
 
     LOG_ERROR("write error (errno = %d)", errno);
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void close(PlatformSocketType& socket)

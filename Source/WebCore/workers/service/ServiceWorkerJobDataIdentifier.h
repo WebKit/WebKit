@@ -61,12 +61,12 @@ Optional<ServiceWorkerJobDataIdentifier> ServiceWorkerJobDataIdentifier::decode(
     Optional<SWServerConnectionIdentifier> connectionIdentifier;
     decoder >> connectionIdentifier;
     if (!connectionIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<ServiceWorkerJobIdentifier> jobIdentifier;
     decoder >> jobIdentifier;
     if (!jobIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return { { WTFMove(*connectionIdentifier), WTFMove(*jobIdentifier) } };
 }

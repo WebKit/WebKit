@@ -35,7 +35,7 @@ Optional<size_t> DisplayListReaderHandle::advance(size_t amount)
 {
     auto previousUnreadBytes = header().unreadBytes.exchangeSub(amount);
     if (UNLIKELY(previousUnreadBytes < amount))
-        return WTF::nullopt;
+        return std::nullopt;
     return previousUnreadBytes - amount;
 }
 

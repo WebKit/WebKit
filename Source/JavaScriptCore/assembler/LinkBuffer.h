@@ -340,7 +340,7 @@ public:
     void didAlreadyDisassemble() { m_alreadyDisassembled = true; }
 
     JS_EXPORT_PRIVATE static void clearProfileStatistics();
-    JS_EXPORT_PRIVATE static void dumpProfileStatistics(Optional<PrintStream*> = WTF::nullopt);
+    JS_EXPORT_PRIVATE static void dumpProfileStatistics(Optional<PrintStream*> = std::nullopt);
 
     template<typename Functor>
     void addMainThreadFinalizationTask(const Functor& functor)

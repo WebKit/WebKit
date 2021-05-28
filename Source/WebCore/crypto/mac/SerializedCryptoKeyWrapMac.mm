@@ -102,7 +102,7 @@ static Optional<Vector<uint8_t>> createAndStoreMasterKey()
     status = SecAccessCreate((__bridge CFStringRef)localizedItemName, nullptr, &accessRef);
     if (status) {
         WTFLogAlways("Cannot create a security access object for storing WebCrypto master key, error %d", (int)status);
-        return WTF::nullopt;
+        return std::nullopt;
     }
     RetainPtr<SecAccessRef> access = adoptCF(accessRef);
 
@@ -115,14 +115,14 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
     if (status) {
         WTFLogAlways("Cannot create a trusted application object for storing WebCrypto master key, error %d", (int)status);
-        return WTF::nullopt;
+        return std::nullopt;
     }
     RetainPtr<SecTrustedApplicationRef> trustedApp = adoptCF(trustedAppRef);
 
     status = SecACLSetContents(acl, (__bridge CFArrayRef)@[ (__bridge id)trustedApp.get() ], (__bridge CFStringRef)localizedItemName, kSecKeychainPromptRequirePassphase);
     if (status) {
         WTFLogAlways("Cannot set ACL for WebCrypto master key, error %d", (int)status);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 #endif
 
@@ -144,7 +144,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     status = SecItemAdd((CFDictionaryRef)attributes, nullptr);
     if (status) {
         WTFLogAlways("Cannot store WebCrypto master key, error %d", (int)status);
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     return masterKeyData;
@@ -165,7 +165,7 @@ static Optional<Vector<uint8_t>> findMasterKey()
     if (status) {
         if (status != errSecItemNotFound && status != errSecUserCanceled)
             WTFLogAlways("Could not find WebCrypto master key in Keychain, error %d", (int)status);
-        return WTF::nullopt;
+        return std::nullopt;
     }
     RetainPtr<CFDataRef> keyData = adoptCF(keyDataRef);
     return base64Decode(reinterpret_cast<const char*>(CFDataGetBytePtr(keyData.get())), CFDataGetLength(keyData.get()));
@@ -183,7 +183,7 @@ Optional<Vector<uint8_t>> defaultWebCryptoMasterKey()
         return masterKey;
     }
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 bool deleteDefaultWebCryptoMasterKey()

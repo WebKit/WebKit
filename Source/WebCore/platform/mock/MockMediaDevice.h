@@ -48,7 +48,7 @@ struct MockMicrophoneProperties {
         Optional<int32_t> defaultSampleRate;
         decoder >> defaultSampleRate;
         if (!defaultSampleRate)
-            return WTF::nullopt;
+            return std::nullopt;
         return MockMicrophoneProperties { *defaultSampleRate };
     }
 
@@ -68,12 +68,12 @@ struct MockSpeakerProperties {
         Optional<int32_t> defaultSampleRate;
         decoder >> defaultSampleRate;
         if (!defaultSampleRate)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<String> relatedMicrophoneId;
         decoder >> relatedMicrophoneId;
         if (!relatedMicrophoneId)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return MockSpeakerProperties { WTFMove(*relatedMicrophoneId), *defaultSampleRate };
     }
@@ -99,22 +99,22 @@ struct MockCameraProperties {
         Optional<double> defaultFrameRate;
         decoder >> defaultFrameRate;
         if (!defaultFrameRate)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<RealtimeMediaSourceSettings::VideoFacingMode> facingMode;
         decoder >> facingMode;
         if (!facingMode)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<Vector<VideoPresetData>> presets;
         decoder >> presets;
         if (!presets)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<Color> fillColor;
         decoder >> fillColor;
         if (!fillColor)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return MockCameraProperties { *defaultFrameRate, *facingMode, WTFMove(*presets), *fillColor };
     }
@@ -139,17 +139,17 @@ struct MockDisplayProperties {
     {
         Optional<CaptureDevice::DeviceType> type;
         decoder >> type;
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<Color> fillColor;
         decoder >> fillColor;
         if (!fillColor)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<IntSize> defaultSize;
         decoder >> defaultSize;
         if (!defaultSize)
-            return WTF::nullopt;
+            return std::nullopt;
 
         return MockDisplayProperties { *type, *fillColor, *defaultSize };
     }
@@ -222,7 +222,7 @@ struct MockMediaDevice {
         Optional<Properties> properties;
         decoder >> properties;
         if (!properties)
-            return WTF::nullopt;
+            return std::nullopt;
         return MockMediaDevice { WTFMove(persistentId), WTFMove(label), WTFMove(*properties) };
     }
 
@@ -232,17 +232,17 @@ struct MockMediaDevice {
         Optional<String> persistentId;
         decoder >> persistentId;
         if (!persistentId)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<String> label;
         decoder >> label;
         if (!label)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<uint8_t> index;
         decoder >> index;
         if (!index)
-            return WTF::nullopt;
+            return std::nullopt;
 
         switch (*index) {
         case 1:
@@ -254,7 +254,7 @@ struct MockMediaDevice {
         case 4:
             return decodeMockMediaDevice<MockDisplayProperties>(decoder, WTFMove(*persistentId), WTFMove(*label));
         }
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     String persistentId;

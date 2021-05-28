@@ -102,7 +102,7 @@ LayoutUnit RenderMathMLBlock::baselinePosition(FontBaseline baselineType, bool f
     if (linePositionMode == PositionOfInteriorLineBoxes)
         return 0;
 
-    return firstLineBaseline().valueOr(RenderBlock::baselinePosition(baselineType, firstLine, direction, linePositionMode));
+    return firstLineBaseline().value_or(RenderBlock::baselinePosition(baselineType, firstLine, direction, linePositionMode));
 }
 
 #if ENABLE(DEBUG_MATH_LAYOUT)

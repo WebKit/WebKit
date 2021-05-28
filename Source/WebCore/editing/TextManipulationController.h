@@ -213,16 +213,16 @@ Optional<TextManipulationController::ManipulationTokenInfo> TextManipulationCont
 {
     ManipulationTokenInfo result;
     if (!decoder.decode(result.tagName))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.roleAttribute))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.documentURL))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!decoder.decode(result.isVisible))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return result;
 }
@@ -238,13 +238,13 @@ Optional<TextManipulationController::ManipulationToken> TextManipulationControll
 {
     ManipulationToken result;
     if (!decoder.decode(result.identifier))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.content))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.info))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.isExcluded))
-        return WTF::nullopt;
+        return std::nullopt;
     return result;
 }
 
@@ -259,9 +259,9 @@ Optional<TextManipulationController::ManipulationItem> TextManipulationControlle
 {
     ManipulationItem result;
     if (!decoder.decode(result.identifier))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.tokens))
-        return WTF::nullopt;
+        return std::nullopt;
     return result;
 }
 
@@ -276,9 +276,9 @@ Optional<TextManipulationController::ExclusionRule> TextManipulationController::
 {
     ExclusionRule result;
     if (!decoder.decode(result.type))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.rule))
-        return WTF::nullopt;
+        return std::nullopt;
     return result;
 }
 
@@ -293,7 +293,7 @@ Optional<TextManipulationController::ExclusionRule::ElementRule> TextManipulatio
 {
     ElementRule result;
     if (!decoder.decode(result.localName))
-        return WTF::nullopt;
+        return std::nullopt;
     return result;
 }
 
@@ -308,9 +308,9 @@ Optional<TextManipulationController::ExclusionRule::AttributeRule> TextManipulat
 {
     AttributeRule result;
     if (!decoder.decode(result.name))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.value))
-        return WTF::nullopt;
+        return std::nullopt;
     return result;
 }
 
@@ -325,7 +325,7 @@ Optional<TextManipulationController::ExclusionRule::ClassRule> TextManipulationC
 {
     ClassRule result;
     if (!decoder.decode(result.className))
-        return WTF::nullopt;
+        return std::nullopt;
     return result;
 }
 
@@ -340,11 +340,11 @@ Optional<TextManipulationController::ManipulationFailure> TextManipulationContro
 {
     ManipulationFailure result;
     if (!decoder.decode(result.identifier))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.index))
-        return WTF::nullopt;
+        return std::nullopt;
     if (!decoder.decode(result.type))
-        return WTF::nullopt;
+        return std::nullopt;
     return result;
 }
 

@@ -49,11 +49,11 @@ Optional<WebAutocorrectionData> WebAutocorrectionData::decode(IPC::Decoder& deco
     Optional<Vector<FloatRect>> textRects;
     decoder >> textRects;
     if (!textRects)
-        return WTF::nullopt;
+        return std::nullopt;
 
     RetainPtr<UIFont> font;
     if (!IPC::decode(decoder, font, @[ UIFont.class ]))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *textRects, font }};
 }

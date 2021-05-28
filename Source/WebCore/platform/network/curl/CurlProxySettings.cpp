@@ -103,20 +103,20 @@ static Optional<uint16_t> getProxyPort(const URL& url)
     if (protocolIsInSocksFamily(url))
         return SocksProxyPort;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static Optional<String> createProxyUrl(const URL &url)
 {
     if (url.isEmpty() || url.host().isEmpty())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!url.protocolIsInHTTPFamily() && !protocolIsInSocksFamily(url))
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto port = getProxyPort(url);
     if (!port)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto userpass = url.hasCredentials() ? makeString(url.user(), ":", url.password(), "@") : String();
     return makeString(url.protocol(), "://", userpass, url.host(), ":", *port);

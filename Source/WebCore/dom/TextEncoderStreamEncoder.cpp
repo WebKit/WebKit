@@ -46,7 +46,7 @@ RefPtr<Uint8Array> TextEncoderStreamEncoder::encode(const String& input)
         auto token = view[cptr];
         if (m_pendingHighSurrogate) {
             auto highSurrogate = *m_pendingHighSurrogate;
-            m_pendingHighSurrogate = WTF::nullopt;
+            m_pendingHighSurrogate = std::nullopt;
             if (token >= 0xDC00 && token <= 0xDFFF) {
                 auto codePoint = 0x10000 + ((highSurrogate - 0xD800) << 10) + (token - 0xDC00);
                 U8_APPEND_UNSAFE(bytes.data(), bytesWritten, codePoint);

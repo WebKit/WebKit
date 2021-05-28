@@ -48,17 +48,17 @@ Optional<GRefPtr<GVariant>> ArgumentCoder<GRefPtr<GVariant>>::decode(Decoder& de
 {
     CString variantTypeString;
     if (!decoder.decode(variantTypeString))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (variantTypeString.isNull())
         return GRefPtr<GVariant>();
 
     if (!g_variant_type_string_is_valid(variantTypeString.data()))
-        return WTF::nullopt;
+        return std::nullopt;
 
     DataReference data;
     if (!decoder.decode(data))
-        return WTF::nullopt;
+        return std::nullopt;
 
     GUniquePtr<GVariantType> variantType(g_variant_type_new(variantTypeString.data()));
     GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(data.data(), data.size()));
@@ -100,7 +100,7 @@ Optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>::deco
 {
     uint32_t chainLength;
     if (!decoder.decode(chainLength))
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!chainLength)
         return GRefPtr<GTlsCertificate>();
@@ -111,7 +111,7 @@ Optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>::deco
     for (uint32_t i = 0; i < chainLength; i++) {
         IPC::DataReference certificateDataReference;
         if (!decoder.decode(certificateDataReference))
-            return WTF::nullopt;
+            return std::nullopt;
 
         GRefPtr<GByteArray> certificateData = adoptGRef(g_byte_array_sized_new(certificateDataReference.size()));
         g_byte_array_append(certificateData.get(), certificateDataReference.data(), certificateDataReference.size());

@@ -122,7 +122,7 @@ private:
 
     // For synchronously handled requests, avoid plumbing requestId through every
     // call that could potentially fail with a protocol error.
-    Optional<long> m_currentRequestId { WTF::nullopt };
+    Optional<long> m_currentRequestId { std::nullopt };
 };
 
 } // namespace Inspector

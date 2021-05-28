@@ -47,7 +47,7 @@ public:
     enum class Protocol : uint8_t {
         HTTPS, HTTPSProxy, HTTPSWithClientCertificateRequest
     };
-    TCPServer(Protocol, Function<void(SSL*)>&&, Optional<uint16_t> maxTLSVersion = WTF::nullopt, size_t connections = 1);
+    TCPServer(Protocol, Function<void(SSL*)>&&, Optional<uint16_t> maxTLSVersion = std::nullopt, size_t connections = 1);
 #endif // HAVE(SSL)
     ~TCPServer();
     
@@ -55,7 +55,7 @@ public:
     
 #if HAVE(SSL)
     static void respondWithOK(SSL*);
-    static void startSecureConnection(Socket, Function<void(SSL*)>&& secureConnectionHandler, bool requestClientCertificate = false, Optional<uint16_t> maxTLSVersion = WTF::nullopt);
+    static void startSecureConnection(Socket, Function<void(SSL*)>&& secureConnectionHandler, bool requestClientCertificate = false, Optional<uint16_t> maxTLSVersion = std::nullopt);
 #endif
     static void respondWithChallengeThenOK(Socket);
 

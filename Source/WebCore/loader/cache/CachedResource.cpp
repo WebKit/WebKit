@@ -65,8 +65,8 @@
 
 #undef RELEASE_LOG_IF_ALLOWED
 #undef RELEASE_LOG_ALWAYS
-#define PAGE_ID(frame) (frame.pageID().valueOr(PageIdentifier()).toUInt64())
-#define FRAME_ID(frame) (frame.frameID().valueOr(FrameIdentifier()).toUInt64())
+#define PAGE_ID(frame) (frame.pageID().value_or(PageIdentifier()).toUInt64())
+#define FRAME_ID(frame) (frame.frameID().value_or(FrameIdentifier()).toUInt64())
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(cachedResourceLoader.isAlwaysOnLoggingAllowed(), Network, "%p - CachedResource::" fmt, this, ##__VA_ARGS__)
 #define RELEASE_LOG_IF_ALLOWED_WITH_FRAME(fmt, frame, ...) RELEASE_LOG_IF(cachedResourceLoader.isAlwaysOnLoggingAllowed(), Network, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 "] CachedResource::" fmt, this, PAGE_ID(frame), FRAME_ID(frame), ##__VA_ARGS__)
 #define RELEASE_LOG_ALWAYS(fmt, ...) RELEASE_LOG(Network, "%p - CachedResource::" fmt, this, ##__VA_ARGS__)

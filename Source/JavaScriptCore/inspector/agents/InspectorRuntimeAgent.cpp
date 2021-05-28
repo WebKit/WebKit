@@ -135,13 +135,13 @@ Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, Optiona
 
     JSC::Debugger::TemporarilyDisableExceptionBreakpoints temporarilyDisableExceptionBreakpoints(m_debugger);
 
-    bool pauseAndMute = doNotPauseOnExceptionsAndMuteConsole.valueOr(false);
+    bool pauseAndMute = doNotPauseOnExceptionsAndMuteConsole.value_or(false);
     if (pauseAndMute) {
         temporarilyDisableExceptionBreakpoints.replace();
         muteConsole();
     }
 
-    injectedScript.evaluate(errorString, expression, objectGroup, includeCommandLineAPI.valueOr(false), returnByValue.valueOr(false), generatePreview.valueOr(false), saveResult.valueOr(false), result, wasThrown, savedResultIndex);
+    injectedScript.evaluate(errorString, expression, objectGroup, includeCommandLineAPI.value_or(false), returnByValue.value_or(false), generatePreview.value_or(false), saveResult.value_or(false), result, wasThrown, savedResultIndex);
 
     if (pauseAndMute)
         unmuteConsole();
@@ -160,7 +160,7 @@ void InspectorRuntimeAgent::awaitPromise(const Protocol::Runtime::RemoteObjectId
         return;
     }
 
-    injectedScript.awaitPromise(promiseObjectId, returnByValue.valueOr(false), generatePreview.valueOr(false), saveResult.valueOr(false), [callback = WTFMove(callback)] (Protocol::ErrorString& errorString, RefPtr<Protocol::Runtime::RemoteObject>&& result, Optional<bool>&& wasThrown, Optional<int>&& savedResultIndex) {
+    injectedScript.awaitPromise(promiseObjectId, returnByValue.value_or(false), generatePreview.value_or(false), saveResult.value_or(false), [callback = WTFMove(callback)] (Protocol::ErrorString& errorString, RefPtr<Protocol::Runtime::RemoteObject>&& result, Optional<bool>&& wasThrown, Optional<int>&& savedResultIndex) {
         if (!result)
             callback->sendFailure(errorString);
         else
@@ -181,13 +181,13 @@ Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, Optiona
 
     JSC::Debugger::TemporarilyDisableExceptionBreakpoints temporarilyDisableExceptionBreakpoints(m_debugger);
 
-    bool pauseAndMute = doNotPauseOnExceptionsAndMuteConsole.valueOr(false);
+    bool pauseAndMute = doNotPauseOnExceptionsAndMuteConsole.value_or(false);
     if (pauseAndMute) {
         temporarilyDisableExceptionBreakpoints.replace();
         muteConsole();
     }
 
-    injectedScript.callFunctionOn(errorString, objectId, functionDeclaration, arguments ? arguments->toJSONString() : nullString(), returnByValue.valueOr(false), generatePreview.valueOr(false), result, wasThrown);
+    injectedScript.callFunctionOn(errorString, objectId, functionDeclaration, arguments ? arguments->toJSONString() : nullString(), returnByValue.value_or(false), generatePreview.value_or(false), result, wasThrown);
 
     if (pauseAndMute)
         unmuteConsole();
@@ -231,11 +231,11 @@ Protocol::ErrorStringOr<std::tuple<Ref<JSON::ArrayOf<Protocol::Runtime::Property
     if (injectedScript.hasNoValue())
         return makeUnexpected("Missing injected script for given objectId"_s);
 
-    int start = fetchStart.valueOr(0);
+    int start = fetchStart.value_or(0);
     if (start < 0)
         return makeUnexpected("fetchStart cannot be negative"_s);
 
-    int count = fetchCount.valueOr(0);
+    int count = fetchCount.value_or(0);
     if (count < 0)
         return makeUnexpected("fetchCount cannot be negative"_s);
 
@@ -247,11 +247,11 @@ Protocol::ErrorStringOr<std::tuple<Ref<JSON::ArrayOf<Protocol::Runtime::Property
 
     muteConsole();
 
-    injectedScript.getProperties(errorString, objectId, ownProperties.valueOr(false), start, count, generatePreview.valueOr(false), properties);
+    injectedScript.getProperties(errorString, objectId, ownProperties.value_or(false), start, count, generatePreview.value_or(false), properties);
 
     // Only include internal properties for the first fetch.
     if (!start)
-        injectedScript.getInternalProperties(errorString, objectId, generatePreview.valueOr(false), internalProperties);
+        injectedScript.getInternalProperties(errorString, objectId, generatePreview.value_or(false), internalProperties);
 
     unmuteConsole();
 
@@ -269,11 +269,11 @@ Protocol::ErrorStringOr<std::tuple<Ref<JSON::ArrayOf<Protocol::Runtime::Property
     if (injectedScript.hasNoValue())
         return makeUnexpected("Missing injected script for given objectId"_s);
 
-    int start = fetchStart.valueOr(0);
+    int start = fetchStart.value_or(0);
     if (start < 0)
         return makeUnexpected("fetchStart cannot be negative"_s);
 
-    int count = fetchCount.valueOr(0);
+    int count = fetchCount.value_or(0);
     if (count < 0)
         return makeUnexpected("fetchCount cannot be negative"_s);
 
@@ -285,11 +285,11 @@ Protocol::ErrorStringOr<std::tuple<Ref<JSON::ArrayOf<Protocol::Runtime::Property
 
     muteConsole();
 
-    injectedScript.getDisplayableProperties(errorString, objectId, start, count, generatePreview.valueOr(false), properties);
+    injectedScript.getDisplayableProperties(errorString, objectId, start, count, generatePreview.value_or(false), properties);
 
     // Only include internal properties for the first fetch.
     if (!start)
-        injectedScript.getInternalProperties(errorString, objectId, generatePreview.valueOr(false), internalProperties);
+        injectedScript.getInternalProperties(errorString, objectId, generatePreview.value_or(false), internalProperties);
 
     unmuteConsole();
 
@@ -307,11 +307,11 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Runtime::CollectionEntry>>> 
     if (injectedScript.hasNoValue())
         return makeUnexpected("Missing injected script for given objectId"_s);
 
-    int start = fetchStart.valueOr(0);
+    int start = fetchStart.value_or(0);
     if (start < 0)
         return makeUnexpected("fetchStart cannot be negative"_s);
 
-    int count = fetchCount.valueOr(0);
+    int count = fetchCount.value_or(0);
     if (count < 0)
         return makeUnexpected("fetchCount cannot be negative"_s);
 
@@ -392,9 +392,9 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Runtime::TypeDescription>>> 
         if (!location)
             return makeUnexpected("Unexpected non-object item in locations"_s);
 
-        auto descriptor = location->getInteger(Protocol::Runtime::TypeLocation::typeInformationDescriptorKey).valueOr(TypeProfilerSearchDescriptorNormal);
+        auto descriptor = location->getInteger(Protocol::Runtime::TypeLocation::typeInformationDescriptorKey).value_or(TypeProfilerSearchDescriptorNormal);
         auto sourceIDString = location->getString(Protocol::Runtime::TypeLocation::sourceIDKey);
-        auto divot = location->getInteger(Protocol::Runtime::TypeLocation::divotKey).valueOr(0);
+        auto divot = location->getInteger(Protocol::Runtime::TypeLocation::divotKey).value_or(0);
 
         auto typeLocation = m_vm.typeProfiler()->findLocation(divot, parseInteger<uintptr_t>(sourceIDString).value(), static_cast<TypeProfilerSearchDescriptor>(descriptor), m_vm);
 
@@ -503,7 +503,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Runtime::BasicBlock>>> Inspe
         return makeUnexpected("VM has no control flow information"_s);
 
     auto basicBlocks = JSON::ArrayOf<Protocol::Runtime::BasicBlock>::create();
-    for (const auto& block : m_vm.controlFlowProfiler()->getBasicBlocksForSourceID(parseIntegerAllowingTrailingJunk<uintptr_t>(sourceID).valueOr(0), m_vm)) {
+    for (const auto& block : m_vm.controlFlowProfiler()->getBasicBlocksForSourceID(parseIntegerAllowingTrailingJunk<uintptr_t>(sourceID).value_or(0), m_vm)) {
         auto location = Protocol::Runtime::BasicBlock::create()
             .setStartOffset(block.m_startOffset)
             .setEndOffset(block.m_endOffset)

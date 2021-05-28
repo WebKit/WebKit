@@ -163,7 +163,7 @@ bool Pasteboard::canSmartReplace()
 
 void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy allowURL, Optional<size_t> itemIndex)
 {
-    auto itemIndexToQuery = itemIndex.valueOr(0);
+    auto itemIndexToQuery = itemIndex.value_or(0);
 
     PasteboardStrategy& strategy = *platformStrategies()->pasteboardStrategy();
 

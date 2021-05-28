@@ -57,27 +57,27 @@ Optional<AudioConfiguration> AudioConfiguration::decode(Decoder& decoder)
     Optional<String> contentType;
     decoder >> contentType;
     if (!contentType)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<String> channels;
     decoder >> channels;
     if (!channels)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<uint64_t>> bitrate;
     decoder >> bitrate;
     if (!bitrate)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<uint32_t>> sampleRate;
     decoder >> sampleRate;
     if (!sampleRate)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Optional<bool>> spatialRendering;
     decoder >> spatialRendering;
     if (!spatialRendering)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{
         *contentType,

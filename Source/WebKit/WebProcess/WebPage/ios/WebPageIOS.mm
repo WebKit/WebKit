@@ -1012,13 +1012,13 @@ void WebPage::insertDroppedImagePlaceholders(const Vector<IntSize>& imageSizes, 
     auto imagePlaceholderRange = m_page->dragController().droppedImagePlaceholderRange();
     if (placeholderRects.size() != imageSizes.size()) {
         RELEASE_LOG(DragAndDrop, "Failed to insert dropped image placeholders: placeholder rect count (%tu) does not match image size count (%tu).", placeholderRects.size(), imageSizes.size());
-        reply({ }, WTF::nullopt);
+        reply({ }, std::nullopt);
         return;
     }
 
     if (!imagePlaceholderRange) {
         RELEASE_LOG(DragAndDrop, "Failed to insert dropped image placeholders: no image placeholder range.");
-        reply({ }, WTF::nullopt);
+        reply({ }, std::nullopt);
         return;
     }
 
@@ -1038,7 +1038,7 @@ void WebPage::insertDroppedImagePlaceholders(const Vector<IntSize>& imageSizes, 
 
 void WebPage::didConcludeDrop()
 {
-    m_rangeForDropSnapshot = WTF::nullopt;
+    m_rangeForDropSnapshot = std::nullopt;
     m_pendingImageElementsForDropSnapshot.clear();
 }
 
@@ -1086,7 +1086,7 @@ void WebPage::computeAndSendEditDragSnapshot()
         TextIndicatorOption::UseSelectionRectForSizing,
         TextIndicatorOption::IncludeSnapshotWithSelectionHighlight
     };
-    if (auto range = std::exchange(m_rangeForDropSnapshot, WTF::nullopt)) {
+    if (auto range = std::exchange(m_rangeForDropSnapshot, std::nullopt)) {
         if (auto textIndicator = TextIndicator::createWithRange(*range, defaultTextIndicatorOptionsForEditDrag, TextIndicatorPresentationTransition::None, { }))
             textIndicatorData = textIndicator->data();
     }
@@ -1482,7 +1482,7 @@ void WebPage::selectWithGesture(const IntPoint& point, GestureType gestureType, 
                 break;
             case GestureRecognizerState::Ended:
             case GestureRecognizerState::Cancelled:
-                m_startingGestureRange = WTF::nullopt;
+                m_startingGestureRange = std::nullopt;
                 break;
             case GestureRecognizerState::Failed:
             case GestureRecognizerState::Possible:
@@ -1500,7 +1500,7 @@ void WebPage::selectWithGesture(const IntPoint& point, GestureType gestureType, 
             if (range)
                 m_currentWordRange = { { *range } };
             else
-                m_currentWordRange = WTF::nullopt;
+                m_currentWordRange = std::nullopt;
             break;
         case GestureRecognizerState::Changed:
             if (!m_currentWordRange)
@@ -1513,7 +1513,7 @@ void WebPage::selectWithGesture(const IntPoint& point, GestureType gestureType, 
             break;
         case GestureRecognizerState::Ended:
         case GestureRecognizerState::Cancelled:
-            m_currentWordRange = WTF::nullopt;
+            m_currentWordRange = std::nullopt;
             break;
         case GestureRecognizerState::Failed:
         case GestureRecognizerState::Possible:
@@ -1593,7 +1593,7 @@ static Optional<SimpleRange> rangeForPointInRootViewCoordinates(Frame& frame, co
 
     auto targetNode = makeRefPtr(hitTest.targetNode());
     if (targetNode && !HTMLElement::shouldExtendSelectionToTargetNode(*targetNode, existingSelection))
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<SimpleRange> range;
     VisiblePosition result;
@@ -1635,7 +1635,7 @@ static Optional<SimpleRange> rangeAtWordBoundaryForPosition(Frame* frame, const 
 
     if (atBoundaryOfGranularity(extent, TextGranularity::WordGranularity, sameDirection)) {
         // This is a word boundary. Leave selection where it is.
-        return WTF::nullopt;
+        return std::nullopt;
     }
 
     if (atBoundaryOfGranularity(extent, TextGranularity::WordGranularity, oppositeDirection)) {
@@ -1672,7 +1672,7 @@ static Optional<SimpleRange> rangeAtWordBoundaryForPosition(Frame* frame, const 
     if (extent.isNull() || extent == base)
         extent = wordBoundary;
     if (extent.isNull())
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (!(base < extent))
         std::swap(base, extent);
@@ -1746,7 +1746,7 @@ IntRect WebPage::rootViewInteractionBoundsForElement(const Element& element)
 
 void WebPage::clearSelection()
 {
-    m_startingGestureRange = WTF::nullopt;
+    m_startingGestureRange = std::nullopt;
     m_page->focusController().focusedOrMainFrame().selection().clear();
 }
 
@@ -2075,11 +2075,11 @@ static Optional<SimpleRange> rangeNearPositionMatchesText(const VisiblePosition&
 {
     auto liveRange = selection.firstRange();
     if (!liveRange)
-        return WTF::nullopt;
+        return std::nullopt;
     SimpleRange range { *liveRange };
     auto boundaryPoint = makeBoundaryPoint(position);
     if (!boundaryPoint)
-        return WTF::nullopt;
+        return std::nullopt;
     return findClosestPlainText(range, matchText, { }, characterCount({ range.start, *boundaryPoint }, TextIteratorEmitsCharactersBetweenAllVisiblePositions));
 }
 
@@ -2169,25 +2169,25 @@ Optional<SimpleRange> WebPage::rangeForGranularityAtPoint(Frame& frame, const We
     case TextGranularity::DocumentGranularity:
         // FIXME: Makes no sense that this mutates the current selection and returns null.
         frame.selection().selectAll();
-        return WTF::nullopt;
+        return std::nullopt;
     case TextGranularity::LineGranularity:
         ASSERT_NOT_REACHED();
-        return WTF::nullopt;
+        return std::nullopt;
     case TextGranularity::LineBoundary:
         ASSERT_NOT_REACHED();
-        return WTF::nullopt;
+        return std::nullopt;
     case TextGranularity::SentenceBoundary:
         ASSERT_NOT_REACHED();
-        return WTF::nullopt;
+        return std::nullopt;
     case TextGranularity::ParagraphBoundary:
         ASSERT_NOT_REACHED();
-        return WTF::nullopt;
+        return std::nullopt;
     case TextGranularity::DocumentBoundary:
         ASSERT_NOT_REACHED();
-        return WTF::nullopt;
+        return std::nullopt;
     }
     ASSERT_NOT_REACHED();
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 static inline bool rectIsTooBigForSelection(const IntRect& blockRect, const Frame& frame)
@@ -2495,7 +2495,7 @@ bool WebPage::applyAutocorrectionInternal(const String& correction, const String
             while (textForRange.length() && textForRange.length() > originalText.length() && loopCount < maxPositionsAttempts) {
                 position = position.next();
                 if (position.isNotNull() && position >= frame.selection().selection().start())
-                    range = WTF::nullopt;
+                    range = std::nullopt;
                 else
                     range = makeSimpleRange(position, frame.selection().selection().start());
                 textForRange = plainTextForContext(range);
@@ -2767,15 +2767,15 @@ static void dataDetectorLinkPositionInformation(Element& element, InteractionInf
 static Optional<std::pair<RenderImage&, Image&>> imageRendererAndImage(Element& element)
 {
     if (!is<RenderImage>(element.renderer()))
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto& renderImage = downcast<RenderImage>(*element.renderer());
     if (!renderImage.cachedImage() || renderImage.cachedImage()->errorOccurred())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto* image = renderImage.cachedImage()->imageForRenderer(&renderImage);
     if (!image || image->width() <= 1 || image->height() <= 1)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ renderImage, *image }};
 }
@@ -3182,7 +3182,7 @@ Optional<FocusedElementInformation> WebPage::focusedElementInformation()
 {
     RefPtr<Document> document = m_page->focusController().focusedOrMainFrame().document();
     if (!document || !document->view())
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto focusedElement = m_focusedElement.copyRef();
     bool willLayout = document->view()->needsLayout();
@@ -3190,7 +3190,7 @@ Optional<FocusedElementInformation> WebPage::focusedElementInformation()
 
     // Layout may have detached the document or caused a change of focus.
     if (!document->view() || focusedElement != m_focusedElement)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (willLayout)
         sendEditorStateUpdate();
@@ -3408,7 +3408,7 @@ void WebPage::setViewportConfigurationViewLayoutSize(const FloatSize& size, doub
     LOG_WITH_STREAM(VisibleRects, stream << "WebPage " << m_identifier << " setViewportConfigurationViewLayoutSize " << size << " scaleFactor " << scaleFactor << " minimumEffectiveDeviceWidth " << minimumEffectiveDeviceWidth);
 
     auto previousLayoutSizeScaleFactor = m_viewportConfiguration.layoutSizeScaleFactor();
-    auto clampedMinimumEffectiveDevice = m_viewportConfiguration.isKnownToLayOutWiderThanViewport() ? WTF::nullopt : Optional<double>(minimumEffectiveDeviceWidth);
+    auto clampedMinimumEffectiveDevice = m_viewportConfiguration.isKnownToLayOutWiderThanViewport() ? std::nullopt : Optional<double>(minimumEffectiveDeviceWidth);
     if (!m_viewportConfiguration.setViewLayoutSize(size, scaleFactor, WTFMove(clampedMinimumEffectiveDevice)))
         return;
 
@@ -3481,7 +3481,7 @@ void WebPage::dynamicViewportSizeUpdate(const FloatSize& viewLayoutSize, const W
 
     LOG_WITH_STREAM(VisibleRects, stream << "WebPage::dynamicViewportSizeUpdate setting view layout size to " << viewLayoutSize);
     bool viewportChanged = m_viewportConfiguration.setIsKnownToLayOutWiderThanViewport(false);
-    viewportChanged |= m_viewportConfiguration.setViewLayoutSize(viewLayoutSize, WTF::nullopt, minimumEffectiveDeviceWidth);
+    viewportChanged |= m_viewportConfiguration.setViewLayoutSize(viewLayoutSize, std::nullopt, minimumEffectiveDeviceWidth);
     if (viewportChanged)
         viewportConfigurationChanged();
 
@@ -3931,7 +3931,7 @@ Optional<float> WebPage::scaleFromUIProcess(const VisibleContentRectUpdateInfo& 
 {
     auto transactionIDForLastScaleFromUIProcess = visibleContentRectUpdateInfo.lastLayerTreeTransactionID();
     if (m_lastTransactionIDWithScaleChange > transactionIDForLastScaleFromUIProcess)
-        return WTF::nullopt;
+        return std::nullopt;
 
     float scaleFromUIProcess = visibleContentRectUpdateInfo.scale();
     float currentScale = m_page->pageScaleFactor();
@@ -3945,7 +3945,7 @@ Optional<float> WebPage::scaleFromUIProcess(const VisibleContentRectUpdateInfo& 
     
     scaleFromUIProcess = std::min<float>(m_viewportConfiguration.maximumScale(), std::max<float>(m_viewportConfiguration.minimumScale(), scaleFromUIProcess));
     if (areEssentiallyEqualAsFloat(currentScale, scaleFromUIProcess))
-        return WTF::nullopt;
+        return std::nullopt;
 
     return scaleFromUIProcess;
 }
@@ -3994,7 +3994,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
             m_oldestNonStableUpdateVisibleContentRectsTimestamp = oldestTimestamp;
     }
 
-    float scaleToUse = scaleFromUIProcess.valueOr(m_page->pageScaleFactor());
+    float scaleToUse = scaleFromUIProcess.value_or(m_page->pageScaleFactor());
     FloatRect exposedContentRect = visibleContentRectUpdateInfo.exposedContentRect();
     FloatRect adjustedExposedContentRect = adjustExposedRectForNewScale(exposedContentRect, visibleContentRectUpdateInfo.scale(), scaleToUse);
     m_drawingArea->setExposedContentRect(adjustedExposedContentRect);
@@ -4082,7 +4082,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
         if (visibleContentRectUpdateInfo.unobscuredContentRect() != visibleContentRectUpdateInfo.unobscuredContentRectRespectingInputViewBounds())
             frameView.setVisualViewportOverrideRect(LayoutRect(visibleContentRectUpdateInfo.unobscuredContentRectRespectingInputViewBounds()));
         else
-            frameView.setVisualViewportOverrideRect(WTF::nullopt);
+            frameView.setVisualViewportOverrideRect(std::nullopt);
 
         LOG_WITH_STREAM(VisibleRects, stream << "WebPage::updateVisibleContentRects - setLayoutViewportOverrideRect " << visibleContentRectUpdateInfo.layoutViewportRect());
         frameView.setLayoutViewportOverrideRect(LayoutRect(visibleContentRectUpdateInfo.layoutViewportRect()));
@@ -4281,7 +4281,7 @@ void WebPage::insertTextPlaceholder(const IntSize& size, CompletionHandler<void(
     // Inserting the placeholder may run JavaScript, which can do anything, including frame destruction.
     Ref<Frame> frame = corePage()->focusController().focusedOrMainFrame();
     auto placeholder = frame->editor().insertTextPlaceholder(size);
-    completionHandler(placeholder ? contextForElement(*placeholder) : WTF::nullopt);
+    completionHandler(placeholder ? contextForElement(*placeholder) : std::nullopt);
 }
 
 void WebPage::removeTextPlaceholder(const ElementContext& placeholder, CompletionHandler<void()>&& completionHandler)

@@ -36,7 +36,7 @@ Optional<GPUSwapChainDescriptor> WebGPUSwapChainDescriptor::asGPUSwapChainDescri
 {
     if (!device) {
         LOG(WebGPU, "GPUCanvasContext::configureSwapChain(): Invalid GPUDevice!");
-        return WTF::nullopt;
+        return std::nullopt;
     }
     
     return GPUSwapChainDescriptor { makeRef(device->device()), *this };

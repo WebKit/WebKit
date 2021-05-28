@@ -872,7 +872,7 @@ void Storage::dispatchWriteOperation(std::unique_ptr<WriteOperation> writeOperat
         ++writeOperation.activeCount;
 
         bool shouldStoreAsBlob = shouldStoreBodyAsBlob(writeOperation.record.body);
-        auto blob = shouldStoreAsBlob ? storeBodyAsBlob(writeOperation) : WTF::nullopt;
+        auto blob = shouldStoreAsBlob ? storeBodyAsBlob(writeOperation) : std::nullopt;
 
         auto recordData = encodeRecord(writeOperation.record, blob);
 

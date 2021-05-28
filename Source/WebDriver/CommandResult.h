@@ -71,7 +71,7 @@ public:
         return CommandResult(WTFMove(result), CommandResult::ErrorCode::UnknownError);
     }
 
-    static CommandResult fail(ErrorCode errorCode, Optional<String> errorMessage = WTF::nullopt)
+    static CommandResult fail(ErrorCode errorCode, Optional<String> errorMessage = std::nullopt)
     {
         return CommandResult(errorCode, errorMessage);
     }
@@ -86,8 +86,8 @@ public:
     const RefPtr<JSON::Object>& additionalErrorData() const { return m_errorAdditionalData; }
 
 private:
-    explicit CommandResult(RefPtr<JSON::Value>&&, Optional<ErrorCode> = WTF::nullopt);
-    explicit CommandResult(ErrorCode, Optional<String> = WTF::nullopt);
+    explicit CommandResult(RefPtr<JSON::Value>&&, Optional<ErrorCode> = std::nullopt);
+    explicit CommandResult(ErrorCode, Optional<String> = std::nullopt);
 
     RefPtr<JSON::Value> m_result;
     Optional<ErrorCode> m_errorCode;

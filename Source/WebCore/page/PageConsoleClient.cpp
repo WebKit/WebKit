@@ -303,7 +303,7 @@ static Optional<String> snapshotCanvas(HTMLCanvasElement& canvasElement, CanvasR
     if (!result.hasException())
         return result.releaseReturnValue().string;
 
-    return WTF::nullopt;
+    return std::nullopt;
 }
 
 void PageConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Ref<ScriptArguments>&& arguments)
@@ -361,7 +361,7 @@ void PageConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Ref
                         snapshot = WebCore::snapshotNode(m_page.mainFrame(), *node);
 
                     if (snapshot)
-                        dataURL = snapshot->toDataURL("image/png"_s, WTF::nullopt, PreserveResolution::Yes);
+                        dataURL = snapshot->toDataURL("image/png"_s, std::nullopt, PreserveResolution::Yes);
                 }
             }
         } else if (auto* imageData = JSImageData::toWrapped(vm, possibleTarget)) {
@@ -371,14 +371,14 @@ void PageConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Ref
                 if (auto imageBuffer = ImageBuffer::create(sourceSize, RenderingMode::Unaccelerated, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8)) {
                     IntRect sourceRect(IntPoint(), sourceSize);
                     imageBuffer->putPixelBuffer(imageData->pixelBuffer(), sourceRect);
-                    dataURL = imageBuffer->toDataURL("image/png"_s, WTF::nullopt, PreserveResolution::Yes);
+                    dataURL = imageBuffer->toDataURL("image/png"_s, std::nullopt, PreserveResolution::Yes);
                 }
             }
         } else if (auto* imageBitmap = JSImageBitmap::toWrapped(vm, possibleTarget)) {
             target = possibleTarget;
             if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
                 if (auto* imageBuffer = imageBitmap->buffer())
-                    dataURL = imageBuffer->toDataURL("image/png"_s, WTF::nullopt, PreserveResolution::Yes);
+                    dataURL = imageBuffer->toDataURL("image/png"_s, std::nullopt, PreserveResolution::Yes);
             }
         } else if (auto* context = canvasRenderingContext(vm, possibleTarget)) {
             auto& canvas = context->canvasBase();
@@ -405,7 +405,7 @@ void PageConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Ref
             // If no target is provided, capture an image of the viewport.
             IntRect imageRect(IntPoint::zero(), m_page.mainFrame().view()->sizeForVisibleContent());
             if (auto snapshot = WebCore::snapshotFrameRect(m_page.mainFrame(), imageRect, SnapshotOptionsInViewCoordinates))
-                dataURL = snapshot->toDataURL("image/png"_s, WTF::nullopt, PreserveResolution::Yes);
+                dataURL = snapshot->toDataURL("image/png"_s, std::nullopt, PreserveResolution::Yes);
         }
 
         if (dataURL.isEmpty()) {

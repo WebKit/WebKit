@@ -970,7 +970,7 @@ Optional<SimpleRange> AXIsolatedObject::rangeForPlainTextRange(const PlainTextRa
 {
     ASSERT(isMainThread());
     auto* axObject = associatedAXObject();
-    return axObject ? axObject->rangeForPlainTextRange(axRange) : WTF::nullopt;
+    return axObject ? axObject->rangeForPlainTextRange(axRange) : std::nullopt;
 }
 
 String AXIsolatedObject::stringForRange(const SimpleRange& range) const
@@ -1146,7 +1146,7 @@ Optional<SimpleRange> AXIsolatedObject::misspellingRange(const SimpleRange& rang
 {
     ASSERT(isMainThread());
     auto* axObject = associatedAXObject();
-    return axObject ? axObject->misspellingRange(range, direction) : WTF::nullopt;
+    return axObject ? axObject->misspellingRange(range, direction) : std::nullopt;
 }
 
 FloatRect AXIsolatedObject::relativeFrame() const
@@ -1442,7 +1442,7 @@ Optional<SimpleRange> AXIsolatedObject::elementRange() const
 {
     ASSERT(isMainThread());
     auto* axObject = associatedAXObject();
-    return axObject ? axObject->elementRange() : WTF::nullopt;
+    return axObject ? axObject->elementRange() : std::nullopt;
 }
 
 String AXIsolatedObject::selectedText() const

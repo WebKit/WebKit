@@ -52,12 +52,12 @@ Optional<ServiceWorkerClientQueryOptions> ServiceWorkerClientQueryOptions::decod
     Optional<bool> includeUncontrolled;
     decoder >> includeUncontrolled;
     if (!includeUncontrolled)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<ServiceWorkerClientType> type;
     decoder >> type;
     if (!type)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return { { *includeUncontrolled, *type } };
 }

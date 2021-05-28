@@ -383,7 +383,7 @@ Optional<SetState> SetState::decode(Decoder& decoder)
     Optional<GraphicsContextState::StateChangeFlags> changeFlags;
     decoder >> changeFlags;
     if (!changeFlags)
-        return WTF::nullopt;
+        return std::nullopt;
 
     GraphicsContextStateChange stateChange;
     stateChange.m_changeFlags = *changeFlags;
@@ -394,7 +394,7 @@ Optional<SetState> SetState::decode(Decoder& decoder)
     if (stateChange.m_changeFlags.contains(GraphicsContextState::StrokeGradientChange)) {
         auto strokeGradient = Gradient::decode(decoder);
         if (!strokeGradient)
-            return WTF::nullopt;
+            return std::nullopt;
 
         stateChange.m_state.strokeGradient = WTFMove(*strokeGradient);
     }
@@ -403,12 +403,12 @@ Optional<SetState> SetState::decode(Decoder& decoder)
         Optional<RenderingResourceIdentifier> renderingResourceIdentifier;
         decoder >> renderingResourceIdentifier;
         if (!renderingResourceIdentifier)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<Pattern::Parameters> parameters;
         decoder >> parameters;
         if (!parameters)
-            return WTF::nullopt;
+            return std::nullopt;
 
         strokePattern = { *renderingResourceIdentifier, *parameters };
     }
@@ -416,7 +416,7 @@ Optional<SetState> SetState::decode(Decoder& decoder)
     if (stateChange.m_changeFlags.contains(GraphicsContextState::FillGradientChange)) {
         auto fillGradient = Gradient::decode(decoder);
         if (!fillGradient)
-            return WTF::nullopt;
+            return std::nullopt;
 
         stateChange.m_state.fillGradient = WTFMove(*fillGradient);
     }
@@ -425,12 +425,12 @@ Optional<SetState> SetState::decode(Decoder& decoder)
         Optional<RenderingResourceIdentifier> renderingResourceIdentifier;
         decoder >> renderingResourceIdentifier;
         if (!renderingResourceIdentifier)
-            return WTF::nullopt;
+            return std::nullopt;
 
         Optional<Pattern::Parameters> parameters;
         decoder >> parameters;
         if (!parameters)
-            return WTF::nullopt;
+            return std::nullopt;
 
         fillPattern = { *renderingResourceIdentifier, *parameters };
     }
@@ -439,28 +439,28 @@ Optional<SetState> SetState::decode(Decoder& decoder)
         Optional<FloatSize> shadowOffset;
         decoder >> shadowOffset;
         if (!shadowOffset)
-            return WTF::nullopt;
+            return std::nullopt;
 
         stateChange.m_state.shadowOffset = *shadowOffset;
 
         Optional<float> shadowBlur;
         decoder >> shadowBlur;
         if (!shadowBlur)
-            return WTF::nullopt;
+            return std::nullopt;
 
         stateChange.m_state.shadowBlur = *shadowBlur;
 
         Optional<Color> shadowColor;
         decoder >> shadowColor;
         if (!shadowColor)
-            return WTF::nullopt;
+            return std::nullopt;
 
         stateChange.m_state.shadowColor = *shadowColor;
 
         Optional<ShadowRadiusMode> shadowRadiusMode;
         decoder >> shadowRadiusMode;
         if (!shadowRadiusMode)
-            return WTF::nullopt;
+            return std::nullopt;
 
         stateChange.m_state.shadowRadiusMode = WTFMove(*shadowRadiusMode);
     }
@@ -469,7 +469,7 @@ Optional<SetState> SetState::decode(Decoder& decoder)
         Optional<float> strokeThickness;
         decoder >> strokeThickness;
         if (!strokeThickness)
-            return WTF::nullopt;
+            return std::nullopt;
 
         stateChange.m_state.strokeThickness = *strokeThickness;
     }
@@ -478,7 +478,7 @@ Optional<SetState> SetState::decode(Decoder& decoder)
         Optional<TextDrawingModeFlags> textDrawingMode;
         decoder >> textDrawingMode;
         if (!textDrawingMode)
-            return WTF::nullopt;
+            return std::nullopt;
 
         stateChange.m_state.textDrawingMode = WTFMove(*textDrawingMode);
     }
@@ -487,7 +487,7 @@ Optional<SetState> SetState::decode(Decoder& decoder)
         Optional<Color> strokeColor;
         decoder >> strokeColor;
         if (!strokeColor)
-            return WTF::nullopt;
+            return std::nullopt;
 
         stateChange.m_state.strokeColor = *strokeColor;
     }
@@ -496,7 +496,7 @@ Optional<SetState> SetState::decode(Decoder& decoder)
         Optional<Color> fillColor;
         decoder >> fillColor;
         if (!fillColor)
-            return WTF::nullopt;
+            return std::nullopt;
 
         stateChange.m_state.fillColor = *fillColor;
     }
@@ -504,7 +504,7 @@ Optional<SetState> SetState::decode(Decoder& decoder)
     if (stateChange.m_changeFlags.contains(GraphicsContextState::StrokeStyleChange)) {
         StrokeStyle strokeStyle;
         if (!decoder.decode(strokeStyle))
-            return WTF::nullopt;
+            return std::nullopt;
 
         stateChange.m_state.strokeStyle = strokeStyle;
     }
@@ -513,7 +513,7 @@ Optional<SetState> SetState::decode(Decoder& decoder)
         Optional<WindRule> fillRule;
         decoder >> fillRule;
         if (!fillRule)
-            return WTF::nullopt;
+            return std::nullopt;
 
         stateChange.m_state.fillRule = *fillRule;
     }
@@ -522,7 +522,7 @@ Optional<SetState> SetState::decode(Decoder& decoder)
         Optional<CompositeOperator> compositeOperator;
         decoder >> compositeOperator;
         if (!compositeOperator)
-            return WTF::nullopt;
+            return std::nullopt;
 
         stateChange.m_state.compositeOperator = *compositeOperator;
     }
@@ -531,7 +531,7 @@ Optional<SetState> SetState::decode(Decoder& decoder)
         Optional<BlendMode> blendMode;
         decoder >> blendMode;
         if (!blendMode)
-            return WTF::nullopt;
+            return std::nullopt;
 
         stateChange.m_state.blendMode = *blendMode;
     }
@@ -540,7 +540,7 @@ Optional<SetState> SetState::decode(Decoder& decoder)
         Optional<InterpolationQuality> imageInterpolationQuality;
         decoder >> imageInterpolationQuality;
         if (!imageInterpolationQuality)
-            return WTF::nullopt;
+            return std::nullopt;
 
         stateChange.m_state.imageInterpolationQuality = *imageInterpolationQuality;
     }
@@ -549,7 +549,7 @@ Optional<SetState> SetState::decode(Decoder& decoder)
         Optional<float> alpha;
         decoder >> alpha;
         if (!alpha)
-            return WTF::nullopt;
+            return std::nullopt;
 
         stateChange.m_state.alpha = *alpha;
     }
@@ -558,7 +558,7 @@ Optional<SetState> SetState::decode(Decoder& decoder)
         Optional<bool> shouldAntialias;
         decoder >> shouldAntialias;
         if (!shouldAntialias)
-            return WTF::nullopt;
+            return std::nullopt;
 
         stateChange.m_state.shouldAntialias = *shouldAntialias;
     }
@@ -567,7 +567,7 @@ Optional<SetState> SetState::decode(Decoder& decoder)
         Optional<bool> shouldSmoothFonts;
         decoder >> shouldSmoothFonts;
         if (!shouldSmoothFonts)
-            return WTF::nullopt;
+            return std::nullopt;
 
         stateChange.m_state.shouldSmoothFonts = *shouldSmoothFonts;
     }
@@ -576,7 +576,7 @@ Optional<SetState> SetState::decode(Decoder& decoder)
         Optional<bool> shouldSubpixelQuantizeFonts;
         decoder >> shouldSubpixelQuantizeFonts;
         if (!shouldSubpixelQuantizeFonts)
-            return WTF::nullopt;
+            return std::nullopt;
 
         stateChange.m_state.shouldSubpixelQuantizeFonts = *shouldSubpixelQuantizeFonts;
     }
@@ -585,7 +585,7 @@ Optional<SetState> SetState::decode(Decoder& decoder)
         Optional<bool> shadowsIgnoreTransforms;
         decoder >> shadowsIgnoreTransforms;
         if (!shadowsIgnoreTransforms)
-            return WTF::nullopt;
+            return std::nullopt;
 
         stateChange.m_state.shadowsIgnoreTransforms = *shadowsIgnoreTransforms;
     }
@@ -650,12 +650,12 @@ Optional<SetLineDash> SetLineDash::decode(Decoder& decoder)
     Optional<DashArray> dashArray;
     decoder >> dashArray;
     if (!dashArray)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<float> dashOffset;
     decoder >> dashOffset;
     if (!dashOffset)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *dashArray, *dashOffset }};
 }
@@ -810,7 +810,7 @@ Optional<ClipOutToPath> ClipOutToPath::decode(Decoder& decoder)
     Optional<Path> path;
     decoder >> path;
     if (!path)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ WTFMove(*path) }};
 }
@@ -859,12 +859,12 @@ Optional<ClipPath> ClipPath::decode(Decoder& decoder)
     Optional<Path> path;
     decoder >> path;
     if (!path)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<WindRule> windRule;
     decoder >> windRule;
     if (!windRule)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ WTFMove(*path), *windRule }};
 }
@@ -910,12 +910,12 @@ Optional<BeginClipToDrawingCommands> BeginClipToDrawingCommands::decode(Decoder&
     Optional<FloatRect> destination;
     decoder >> destination;
     if (!destination)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<DestinationColorSpace> colorSpace;
     decoder >> colorSpace;
     if (!colorSpace)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *destination, WTFMove(*colorSpace) }};
 }
@@ -956,7 +956,7 @@ public:
 
     void apply(GraphicsContext&, const Font&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return m_bounds; }
 
 private:
@@ -987,35 +987,35 @@ Optional<DrawGlyphs> DrawGlyphs::decode(Decoder& decoder)
     Optional<RenderingResourceIdentifier> fontIdentifier;
     decoder >> fontIdentifier;
     if (!fontIdentifier)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Vector<GlyphBufferGlyph, 128>> glyphs;
     decoder >> glyphs;
     if (!glyphs)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Vector<GlyphBufferAdvance, 128>> advances;
     decoder >> advances;
     if (!advances)
-        return WTF::nullopt;
+        return std::nullopt;
 
     if (glyphs->size() != advances->size())
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FloatRect> bounds;
     decoder >> bounds;
     if (!bounds)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FloatPoint> localAnchor;
     decoder >> localAnchor;
     if (!localAnchor)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FontSmoothingMode> smoothingMode;
     decoder >> smoothingMode;
     if (!smoothingMode)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *fontIdentifier, WTFMove(*glyphs), WTFMove(*advances), *bounds, *localAnchor, *smoothingMode }};
 }
@@ -1045,7 +1045,7 @@ public:
 
     NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return m_destinationRect; }
 
 private:
@@ -1079,7 +1079,7 @@ public:
     NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
     void apply(GraphicsContext&, NativeImage&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return m_destinationRect; }
 
 private:
@@ -1111,7 +1111,7 @@ public:
     NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
     void apply(GraphicsContext&, NativeImage&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return m_destination; }
 
 private:
@@ -1140,8 +1140,8 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> localBounds(const GraphicsContext&) const { return std::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
 
 private:
     float m_opacity;
@@ -1155,8 +1155,8 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> localBounds(const GraphicsContext&) const { return std::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
 };
 
 class DrawRect {
@@ -1176,7 +1176,7 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return m_rect; }
 
 private:
@@ -1201,7 +1201,7 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const;
 
 private:
@@ -1228,7 +1228,7 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const;
 
     template<class Encoder> void encode(Encoder&) const;
@@ -1260,32 +1260,32 @@ Optional<DrawLinesForText> DrawLinesForText::decode(Decoder& decoder)
     Optional<FloatPoint> blockLocation;
     decoder >> blockLocation;
     if (!blockLocation)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FloatSize> localAnchor;
     decoder >> localAnchor;
     if (!localAnchor)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<DashArray> widths;
     decoder >> widths;
     if (!widths)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<float> thickness;
     decoder >> thickness;
     if (!thickness)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> printing;
     decoder >> printing;
     if (!printing)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<bool> doubleLines;
     decoder >> doubleLines;
     if (!doubleLines)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *blockLocation, *localAnchor, *thickness, *widths, *printing, *doubleLines }};
 }
@@ -1318,7 +1318,7 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const;
 
 private:
@@ -1342,7 +1342,7 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return m_rect; }
 
 private:
@@ -1372,7 +1372,7 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return m_path.fastBoundingRect(); }
 
 private:
@@ -1391,7 +1391,7 @@ Optional<DrawPath> DrawPath::decode(Decoder& decoder)
     Optional<Path> path;
     decoder >> path;
     if (!path)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ WTFMove(*path) }};
 }
@@ -1428,7 +1428,7 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const;
 
 private:
@@ -1453,22 +1453,22 @@ Optional<DrawFocusRingPath> DrawFocusRingPath::decode(Decoder& decoder)
     Optional<Path> path;
     decoder >> path;
     if (!path)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<float> width;
     decoder >> width;
     if (!width)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<float> offset;
     decoder >> offset;
     if (!offset)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Color> color;
     decoder >> color;
     if (!color)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ WTFMove(*path), *width, *offset, *color }};
 }
@@ -1488,7 +1488,7 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const;
 
     template<class Encoder> void encode(Encoder&) const;
@@ -1516,22 +1516,22 @@ Optional<DrawFocusRingRects> DrawFocusRingRects::decode(Decoder& decoder)
     Optional<Vector<FloatRect>> rects;
     decoder >> rects;
     if (!rects)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<float> width;
     decoder >> width;
     if (!width)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<float> offset;
     decoder >> offset;
     if (!offset)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Color> color;
     decoder >> color;
     if (!color)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *rects, *width, *offset, *color }};
 }
@@ -1551,7 +1551,7 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return m_rect; }
 
 private:
@@ -1575,7 +1575,7 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return m_rect; }
 
     template<class Encoder> void encode(Encoder&) const;
@@ -1599,12 +1599,12 @@ Optional<FillRectWithColor> FillRectWithColor::decode(Decoder& decoder)
     Optional<FloatRect> rect;
     decoder >> rect;
     if (!rect)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Color> color;
     decoder >> color;
     if (!color)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *rect, *color }};
 }
@@ -1622,7 +1622,7 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return m_rect; }
 
     template<class Encoder> void encode(Encoder&) const;
@@ -1646,11 +1646,11 @@ Optional<FillRectWithGradient> FillRectWithGradient::decode(Decoder& decoder)
     Optional<FloatRect> rect;
     decoder >> rect;
     if (!rect)
-        return WTF::nullopt;
+        return std::nullopt;
 
     auto gradient = Gradient::decode(decoder);
     if (!gradient)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *rect, gradient->get() }};
 }
@@ -1676,7 +1676,7 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return m_rect; }
 
     template<class Encoder> void encode(Encoder&) const;
@@ -1704,22 +1704,22 @@ Optional<FillCompositedRect> FillCompositedRect::decode(Decoder& decoder)
     Optional<FloatRect> rect;
     decoder >> rect;
     if (!rect)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Color> color;
     decoder >> color;
     if (!color)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<CompositeOperator> op;
     decoder >> op;
     if (!op)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<BlendMode> blendMode;
     decoder >> blendMode;
     if (!blendMode)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *rect, *color, *op, *blendMode }};
 }
@@ -1746,7 +1746,7 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return m_rect.rect(); }
 
 private:
@@ -1769,17 +1769,17 @@ Optional<FillRoundedRect> FillRoundedRect::decode(Decoder& decoder)
     Optional<FloatRoundedRect> rect;
     decoder >> rect;
     if (!rect)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Color> color;
     decoder >> color;
     if (!color)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<BlendMode> blendMode;
     decoder >> blendMode;
     if (!blendMode)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *rect, *color, *blendMode }};
 }
@@ -1806,7 +1806,7 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return m_rect; }
 
 private:
@@ -1829,17 +1829,17 @@ Optional<FillRectWithRoundedHole> FillRectWithRoundedHole::decode(Decoder& decod
     Optional<FloatRect> rect;
     decoder >> rect;
     if (!rect)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<FloatRoundedRect> roundedHoleRect;
     decoder >> roundedHoleRect;
     if (!roundedHoleRect)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<Color> color;
     decoder >> color;
     if (!color)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ *rect, *roundedHoleRect, *color }};
 }
@@ -1883,7 +1883,7 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return path().fastBoundingRect(); }
 };
 
@@ -1912,7 +1912,7 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return m_path.fastBoundingRect(); }
 
 private:
@@ -1931,7 +1931,7 @@ Optional<FillPath> FillPath::decode(Decoder& decoder)
     Optional<Path> path;
     decoder >> path;
     if (!path)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ WTFMove(*path) }};
 }
@@ -1951,7 +1951,7 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return m_rect; }
 
 private:
@@ -1999,12 +1999,12 @@ Optional<GetPixelBuffer> GetPixelBuffer::decode(Decoder& decoder)
     Optional<IntRect> srcRect;
     decoder >> srcRect;
     if (!srcRect)
-        return WTF::nullopt;
+        return std::nullopt;
 
     Optional<PixelBufferFormat> outputFormat;
     decoder >> outputFormat;
     if (!outputFormat)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ WTFMove(*outputFormat), *srcRect }};
 }
@@ -2030,7 +2030,7 @@ public:
     IntPoint destPoint() const { return m_destPoint; }
     AlphaPremultiplication destFormat() const { return m_destFormat; }
 
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
+    Optional<FloatRect> localBounds(const GraphicsContext&) const { return std::nullopt; }
     Optional<FloatRect> globalBounds() const { return {{ m_destPoint, m_srcRect.size() }}; }
 
     template<class Encoder> void encode(Encoder&) const;
@@ -2062,19 +2062,19 @@ Optional<PutPixelBuffer> PutPixelBuffer::decode(Decoder& decoder)
 
     decoder >> pixelBuffer;
     if (!pixelBuffer)
-        return WTF::nullopt;
+        return std::nullopt;
 
     decoder >> srcRect;
     if (!srcRect)
-        return WTF::nullopt;
+        return std::nullopt;
 
     decoder >> destPoint;
     if (!destPoint)
-        return WTF::nullopt;
+        return std::nullopt;
 
     decoder >> destFormat;
     if (!destFormat)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ WTFMove(*pixelBuffer), *srcRect, *destPoint, *destFormat }};
 }
@@ -2095,7 +2095,7 @@ public:
 
     NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> localBounds(const GraphicsContext&) const { return WTF::nullopt; }
+    Optional<FloatRect> localBounds(const GraphicsContext&) const { return std::nullopt; }
     Optional<FloatRect> globalBounds() const { return { m_destination }; }
 
 private:
@@ -2121,7 +2121,7 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const;
 
 private:
@@ -2146,7 +2146,7 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const;
 
 private:
@@ -2174,7 +2174,7 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const;
 };
 
@@ -2203,7 +2203,7 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const;
 
 private:
@@ -2222,7 +2222,7 @@ Optional<StrokePath> StrokePath::decode(Decoder& decoder)
     Optional<Path> path;
     decoder >> path;
     if (!path)
-        return WTF::nullopt;
+        return std::nullopt;
 
     return {{ WTFMove(*path) }};
 }
@@ -2242,7 +2242,7 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const;
 
 private:
@@ -2264,7 +2264,7 @@ public:
 
     void apply(GraphicsContext&) const;
 
-    Optional<FloatRect> globalBounds() const { return WTF::nullopt; }
+    Optional<FloatRect> globalBounds() const { return std::nullopt; }
     Optional<FloatRect> localBounds(const GraphicsContext&) const { return m_rect; }
 
 private:

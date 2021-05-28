@@ -58,7 +58,7 @@ public:
         SVGroupThreadID
     };
 
-    BuiltInSemantic(CodeLocation location, Variable variable, Optional<unsigned>&& targetIndex = WTF::nullopt)
+    BuiltInSemantic(CodeLocation location, Variable variable, Optional<unsigned>&& targetIndex = std::nullopt)
         : BaseSemantic(location)
         , m_variable(variable)
         , m_targetIndex(WTFMove(targetIndex))

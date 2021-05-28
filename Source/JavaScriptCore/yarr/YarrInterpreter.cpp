@@ -2176,7 +2176,7 @@ public:
                 }
             }
         }
-        return WTF::nullopt;
+        return std::nullopt;
     }
 #ifndef NDEBUG
     void dumpDisjunction(ByteDisjunction* disjunction, unsigned nesting = 0)
