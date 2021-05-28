@@ -35,7 +35,7 @@ namespace Layout {
 class LayoutContainingBlockChainIterator {
 public:
     LayoutContainingBlockChainIterator() = default;
-    LayoutContainingBlockChainIterator(const ContainerBox&);
+    LayoutContainingBlockChainIterator(const ContainerBox*);
     const ContainerBox& operator*() const { return *m_current; }
     const ContainerBox* operator->() const { return m_current; }
 
@@ -49,18 +49,21 @@ private:
 
 class LayoutContainingBlockChainIteratorAdapter {
 public:
-    LayoutContainingBlockChainIteratorAdapter(const ContainerBox&);
-    auto begin() { return LayoutContainingBlockChainIterator(m_containingBlock); }
-    auto end() { return LayoutContainingBlockChainIterator(); }
+    LayoutContainingBlockChainIteratorAdapter(const ContainerBox&, const ContainerBox* stayWithin = nullptr);
+    auto begin() { return LayoutContainingBlockChainIterator(&m_containingBlock); }
+    auto end() { return LayoutContainingBlockChainIterator(m_stayWithin); }
 
 private:
     const ContainerBox& m_containingBlock;
+    const ContainerBox* m_stayWithin { nullptr };
 };
 
 LayoutContainingBlockChainIteratorAdapter containingBlockChain(const Box&);
+LayoutContainingBlockChainIteratorAdapter containingBlockChain(const Box&, const ContainerBox& stayWithin);
+LayoutContainingBlockChainIteratorAdapter containingBlockChainWithinFormattingContext(const Box&);
 
-inline LayoutContainingBlockChainIterator::LayoutContainingBlockChainIterator(const ContainerBox& current)
-    : m_current(&current)
+inline LayoutContainingBlockChainIterator::LayoutContainingBlockChainIterator(const ContainerBox* current)
+    : m_current(current)
 {
 }
 
@@ -71,14 +74,26 @@ inline LayoutContainingBlockChainIterator& LayoutContainingBlockChainIterator::o
     return *this;
 }
 
-inline LayoutContainingBlockChainIteratorAdapter::LayoutContainingBlockChainIteratorAdapter(const ContainerBox& containingBlock)
+inline LayoutContainingBlockChainIteratorAdapter::LayoutContainingBlockChainIteratorAdapter(const ContainerBox& containingBlock, const ContainerBox* stayWithin)
     : m_containingBlock(containingBlock)
+    , m_stayWithin(stayWithin)
 {
 }
 
 inline LayoutContainingBlockChainIteratorAdapter containingBlockChain(const Box& layoutBox)
 {
     return LayoutContainingBlockChainIteratorAdapter(layoutBox.containingBlock());
+}
+
+inline LayoutContainingBlockChainIteratorAdapter containingBlockChain(const Box& layoutBox, const ContainerBox& stayWithin)
+{
+    ASSERT(layoutBox.isDescendantOf(stayWithin));
+    return LayoutContainingBlockChainIteratorAdapter(layoutBox.containingBlock(), &stayWithin);
+}
+
+inline LayoutContainingBlockChainIteratorAdapter containingBlockChainWithinFormattingContext(const Box& layoutBox)
+{
+    return LayoutContainingBlockChainIteratorAdapter(layoutBox.containingBlock(), &layoutBox.formattingContextRoot());
 }
 
 }

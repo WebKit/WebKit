@@ -66,14 +66,10 @@ LayoutUnit TableFormattingQuirks::heightValueOfNearestContainingBlockWithFixedHe
         return height.isFixed() ? std::make_optional(LayoutUnit { height.value() }) : std::nullopt;
     };
 
-    auto& tableBox = formattingContext().root();
-    for (auto& ancestor : containingBlockChain(layoutBox)) {
+    for (auto& ancestor : containingBlockChain(layoutBox, formattingContext().root().containingBlock())) {
         if (auto fixedHeight = fixedLogicalHeight(ancestor))
             return *fixedHeight;
-        if (&ancestor == &tableBox)
-            return { };
     }
-    ASSERT_NOT_REACHED();
     return { };
 }
 
