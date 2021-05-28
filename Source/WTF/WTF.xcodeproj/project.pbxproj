@@ -371,6 +371,7 @@
 		313EDEC9778E49C9BEA91CFC /* StackTrace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackTrace.cpp; sourceTree = "<group>"; };
 		337B2D6826546EAA00DDFD3D /* LikelyDenseUnsignedIntegerSet.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LikelyDenseUnsignedIntegerSet.cpp; sourceTree = "<group>"; };
 		337B2D6926546EAA00DDFD3D /* LikelyDenseUnsignedIntegerSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LikelyDenseUnsignedIntegerSet.h; sourceTree = "<group>"; };
+		33FD4811265CB38000ABE4F4 /* InterferenceGraph.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InterferenceGraph.h; sourceTree = "<group>"; };
 		37C7CC291EA40A73007BD956 /* WeakLinking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakLinking.h; sourceTree = "<group>"; };
 		382029E246C84B0099FD6764 /* ASCIILiteral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASCIILiteral.h; sourceTree = "<group>"; };
 		391BD6BA4D164FD294F9A93D /* StdMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdMap.h; sourceTree = "<group>"; };
@@ -1079,6 +1080,7 @@
 				3137E1D7DBD84AC38FAE4D34 /* IndexSet.h */,
 				2684D4351C000D400081D663 /* IndexSparseSet.h */,
 				A8A472BC151A825A004123FF /* InlineASM.h */,
+				33FD4811265CB38000ABE4F4 /* InterferenceGraph.h */,
 				A70DA0821799F04D00529A9B /* Insertion.h */,
 				5182C22C1F2BC7E60059BA7C /* InstanceCounted.h */,
 				0F7EB85B1FA8FF4100F1ABCB /* IsoMalloc.h */,

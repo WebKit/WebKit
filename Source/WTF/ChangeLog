@@ -1,3 +1,112 @@
+2021-05-27  Robin Morisset  <rmorisset@apple.com>
+
+        AirAllocateStackByGraphColoring should use the optimized interference graphs from AirAllocateRegistersByGraphColoring
+        https://bugs.webkit.org/show_bug.cgi?id=226258
+
+        Reviewed by Phil Pizlo.
+
+        I moved the interference graphs datastructures from AirAllocateRegistersByGraphColoring to their own wtf/InterferenceGraph.h file.
+        There are three of them:
+        - SmallInterferenceGraph, best for n < 400
+        - LargeInterferenceGraph, for n < 2**16
+        - HugeInterferenceGraph, for n up to 2**32
+        I also added "Iterable" versions of them, that have an operator[] method whose result you can iterate on to get all the indices which interfere with a given index.
+        SmallIterableInterferenceGraph is the same as the non-iterable version, but the Large and Huge versions are a bit slower than their counterparts and use 2x memory.
+
+        All of these were tested by running JetStream2 with the TEST_OPTIMIZED_INTERFERENCE_GRAPH set to 1.
+        This flag makes the optimized datastructures run in parallel with a reference implementation, and their results are checked for equality on every method call.
+        There is one small difference allowed: iteration is not guaranteed to go through elements in the same order.
+
+        I also added a clear() method to LikelyDenseUnsignedIntegerSet, and added the NotNull flag to its various uses of placement new.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/HashSet.h:
+        (WTF::W>::memoryUse const):
+        * wtf/InterferenceGraph.h: Added.
+        (WTF::InterferenceBitVector::contains):
+        (WTF::InterferenceBitVector::addAndReturnIsNewEntry):
+        (WTF::InterferenceBitVector::add):
+        (WTF::InterferenceBitVector::clear):
+        (WTF::InterferenceBitVector::mayClear):
+        (WTF::InterferenceBitVector::setMaxIndex):
+        (WTF::InterferenceBitVector::forEach):
+        (WTF::InterferenceBitVector::size const):
+        (WTF::InterferenceBitVector::memoryUse const):
+        (WTF::InterferenceBitVector::dumpMemoryUseInKB const):
+        (WTF::InterferenceBitVector::Iterable::iterator::operator++):
+        (WTF::InterferenceBitVector::Iterable::iterator::operator* const):
+        (WTF::InterferenceBitVector::Iterable::iterator::operator== const):
+        (WTF::InterferenceBitVector::Iterable::iterator::operator!= const):
+        (WTF::InterferenceBitVector::Iterable::begin const):
+        (WTF::InterferenceBitVector::Iterable::end const):
+        (WTF::InterferenceBitVector::operator[] const):
+        (WTF::InterferenceBitVector::index const):
+        (WTF::InterferenceVector::contains):
+        (WTF::InterferenceVector::addAndReturnIsNewEntry):
+        (WTF::InterferenceVector::add):
+        (WTF::InterferenceVector::clear):
+        (WTF::InterferenceVector::mayClear):
+        (WTF::InterferenceVector::setMaxIndex):
+        (WTF::InterferenceVector::forEach):
+        (WTF::InterferenceVector::size const):
+        (WTF::InterferenceVector::memoryUse const):
+        (WTF::InterferenceVector::dumpMemoryUseInKB const):
+        (WTF::InterferenceVector::Iterable::begin const):
+        (WTF::InterferenceVector::Iterable::end const):
+        (WTF::InterferenceVector::operator[] const):
+        (WTF::UndirectedEdgesDuplicatingAdapter::contains):
+        (WTF::UndirectedEdgesDuplicatingAdapter::addAndReturnIsNewEntry):
+        (WTF::UndirectedEdgesDuplicatingAdapter::add):
+        (WTF::UndirectedEdgesDuplicatingAdapter::clear):
+        (WTF::UndirectedEdgesDuplicatingAdapter::mayClear):
+        (WTF::UndirectedEdgesDuplicatingAdapter::setMaxIndex):
+        (WTF::UndirectedEdgesDuplicatingAdapter::forEach):
+        (WTF::UndirectedEdgesDuplicatingAdapter::size const):
+        (WTF::UndirectedEdgesDuplicatingAdapter::memoryUse const):
+        (WTF::UndirectedEdgesDuplicatingAdapter::dumpMemoryUseInKB const):
+        (WTF::UndirectedEdgesDuplicatingAdapter::operator[] const):
+        (WTF::UndirectedEdgesDedupAdapter::contains):
+        (WTF::UndirectedEdgesDedupAdapter::addAndReturnIsNewEntry):
+        (WTF::UndirectedEdgesDedupAdapter::add):
+        (WTF::UndirectedEdgesDedupAdapter::clear):
+        (WTF::UndirectedEdgesDedupAdapter::mayClear):
+        (WTF::UndirectedEdgesDedupAdapter::setMaxIndex):
+        (WTF::UndirectedEdgesDedupAdapter::forEach):
+        (WTF::UndirectedEdgesDedupAdapter::size const):
+        (WTF::UndirectedEdgesDedupAdapter::memoryUse const):
+        (WTF::UndirectedEdgesDedupAdapter::dumpMemoryUseInKB const):
+        (WTF::InterferenceHashSet::contains):
+        (WTF::InterferenceHashSet::addAndReturnIsNewEntry):
+        (WTF::InterferenceHashSet::add):
+        (WTF::InterferenceHashSet::clear):
+        (WTF::InterferenceHashSet::setMaxIndex):
+        (WTF::InterferenceHashSet::forEach):
+        (WTF::InterferenceHashSet::size const):
+        (WTF::InterferenceHashSet::memoryUse const):
+        (WTF::InterferenceHashSet::dumpMemoryUseInKB const):
+        (WTF::InstrumentedInterferenceGraph::contains):
+        (WTF::InstrumentedInterferenceGraph::addAndReturnIsNewEntry):
+        (WTF::InstrumentedInterferenceGraph::add):
+        (WTF::InstrumentedInterferenceGraph::clear):
+        (WTF::InstrumentedInterferenceGraph::mayClear):
+        (WTF::InstrumentedInterferenceGraph::setMaxIndex):
+        (WTF::InstrumentedInterferenceGraph::forEach):
+        (WTF::InstrumentedInterferenceGraph::size const):
+        (WTF::InstrumentedInterferenceGraph::memoryUse const):
+        (WTF::InstrumentedInterferenceGraph::dumpMemoryUseInKB const):
+        (WTF::InstrumentedIterableInterferenceGraph::Iterable::Iterable):
+        (WTF::InstrumentedIterableInterferenceGraph::Iterable::begin const):
+        (WTF::InstrumentedIterableInterferenceGraph::Iterable::end const):
+        (WTF::InstrumentedIterableInterferenceGraph::operator[] const):
+        * wtf/LikelyDenseUnsignedIntegerSet.h:
+        (WTF::LikelyDenseUnsignedIntegerSet::LikelyDenseUnsignedIntegerSet):
+        (WTF::LikelyDenseUnsignedIntegerSet::clear):
+        (WTF::LikelyDenseUnsignedIntegerSet::add):
+        (WTF::LikelyDenseUnsignedIntegerSet::estimateHashSetSize):
+        (WTF::LikelyDenseUnsignedIntegerSet::transitionToHashSet):
+        (WTF::LikelyDenseUnsignedIntegerSet::transitionToBitVector):
+
 2021-05-27  Darin Adler  <darin@apple.com>
 
         Next step toward using std::optional directly instead of through WTF::Optional typedef

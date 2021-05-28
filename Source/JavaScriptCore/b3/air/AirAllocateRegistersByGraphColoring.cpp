@@ -39,7 +39,7 @@
 #include "AirUseCounts.h"
 #include <wtf/HashSet.h>
 #include <wtf/HashTraits.h>
-#include <wtf/LikelyDenseUnsignedIntegerSet.h>
+#include <wtf/InterferenceGraph.h>
 #include <wtf/SmallSet.h>
 #include <wtf/Vector.h>
 
@@ -51,238 +51,6 @@ static constexpr bool debug = false;
 static constexpr bool traceDebug = false;
 static constexpr bool reportStats = false;
 static constexpr bool reportInterferenceGraphMemoryUse = false;
-
-template <typename IndexType>
-class InterferenceHashSet {
-    // Interference edges are not directed. An edge between any two Tmps is represented
-    // by the concatenated values (through TmpMapper) of the smallest Tmp followed by the bigger Tmp.
-    using InterferenceEdge = std::pair<IndexType, IndexType>;
-public:
-    bool contains(IndexType u, IndexType v)
-    {
-        if (v < u)
-            std::swap(u, v);
-        return m_set.contains({ u, v });
-    }
-
-    bool addAndReturnIsNewEntry(IndexType u, IndexType v)
-    {
-        if (v < u)
-            std::swap(u, v);
-        return m_set.add({ u, v }).isNewEntry;
-    }
-
-    void clear()
-    {
-        m_set.clear();
-    }
-
-    void setMaxTmpIndex(unsigned n)
-    {
-        ASSERT_UNUSED(n, n < std::numeric_limits<IndexType>::max());
-    }
-
-    template <typename Functor>
-    void forEach(const Functor& functor)
-    {
-        for (auto edge : m_set)
-            functor(edge);
-    }
-
-    unsigned size() const { return m_set.size(); }
-
-    unsigned memoryUse() const { return m_set.capacity() * sizeof(InterferenceEdge); }
-
-    void dumpMemoryUseInKB() const { dataLog(memoryUse()/1024); }
-
-private:
-    HashSet<InterferenceEdge> m_set;
-};
-
-template <typename T, typename IndexType>
-class InterferenceVector {
-public:
-    bool contains(IndexType u, IndexType v)
-    {
-        if (v < u)
-            std::swap(u, v);
-        return m_vector[u].contains(v);
-    }
-
-    bool addAndReturnIsNewEntry(IndexType u, IndexType v)
-    {
-        if (v < u)
-            std::swap(u, v);
-        bool isNewEntry = m_vector[u].add(v).isNewEntry;
-        m_size += isNewEntry;
-        return isNewEntry;
-    }
-
-    void clear()
-    {
-        m_vector.clear();
-        m_size = 0;
-    }
-
-    void setMaxTmpIndex(unsigned n)
-    {
-        ASSERT(n < std::numeric_limits<IndexType>::max());
-        m_vector.resize(n);
-    }
-
-    template <typename Functor>
-    void forEach(const Functor& functor)
-    {
-        for (unsigned i = 0; i < m_vector.size() ; ++i) {
-            for (IndexType j : m_vector[i])
-                functor({ i, j });
-        }
-    }
-
-    unsigned size() const { return m_size; }
-
-    unsigned memoryUse() const
-    {
-        unsigned memory = 0;
-        for (const T& set : m_vector)
-            memory += set.memoryUse();
-        return memory;
-    }
-
-    void dumpMemoryUseInKB() const { dataLog(memoryUse()/1024); }
-
-private:
-    Vector<T> m_vector;
-    unsigned m_size {0};
-};
-
-template <typename IndexType>
-class InterferenceBitVector {
-public:
-    bool contains(IndexType u, IndexType v)
-    {
-        return m_bitVector.quickGet(index(u, v));
-    }
-
-    bool addAndReturnIsNewEntry(IndexType u, IndexType v)
-    {
-        // Note: we could do only one quickSet, at the cost of one extra branch in every contains/addAndReturnIsNewEntry (to enforce u < v)
-        bool alreadyIn = m_bitVector.quickSet(index(u, v));
-        bool alreadyIn2 = m_bitVector.quickSet(index(v, u));
-        ASSERT_UNUSED(alreadyIn2, alreadyIn == alreadyIn2);
-        m_size += !alreadyIn;
-        return !alreadyIn;
-    }
-
-    void clear()
-    {
-        m_bitVector.clearAll();
-        m_size = 0;
-    }
-
-    void setMaxTmpIndex(unsigned n)
-    {
-        ASSERT(n < std::numeric_limits<IndexType>::max());
-        m_numTmps = n;
-        m_bitVector.ensureSize(n*n);
-    }
-
-    template <typename Functor>
-    void forEach(const Functor& functor)
-    {
-        for (IndexType i = 0; i < m_numTmps; ++i) {
-            for (IndexType j = i + 1; j < m_numTmps; ++j) {
-                if (m_bitVector.quickGet(index(i, j)))
-                    functor({ i, j });
-            }
-        }
-    }
-
-    unsigned size() const { return m_size; }
-
-    unsigned memoryUse() const { return (m_bitVector.size() + 7) >> 3; }
-
-    void dumpMemoryUseInKB() const { dataLog(memoryUse()/1024); }
-
-private:
-    unsigned index(IndexType i, IndexType j)
-    {
-        return i * m_numTmps + j;
-    }
-
-    BitVector m_bitVector;
-    unsigned m_size {0};
-    IndexType m_numTmps;
-};
-
-#define TEST_OPTIMIZED_INTERFERENCE_GRAPH 0
-#if TEST_OPTIMIZED_INTERFERENCE_GRAPH
-template <typename T, typename U, typename IndexType>
-class InstrumentedInterferenceGraph {
-public:
-    bool contains(IndexType u, IndexType v)
-    {
-        bool containsInA = m_setA.contains(u, v);
-        bool containsInB = m_setB.contains(u, v);
-        RELEASE_ASSERT(containsInA == containsInB);
-        return containsInA;
-    }
-
-    bool addAndReturnIsNewEntry(IndexType u, IndexType v)
-    {
-        bool isNewEntryA = m_setA.addAndReturnIsNewEntry(u, v);
-        bool isNewEntryB = m_setB.addAndReturnIsNewEntry(u, v);
-        RELEASE_ASSERT(isNewEntryA == isNewEntryB);
-        return isNewEntryA;
-    }
-
-    void clear()
-    {
-        m_setA.clear();
-        m_setB.clear();
-    }
-
-    void setMaxTmpIndex(unsigned n)
-    {
-        m_setA.setMaxTmpIndex(n);
-        m_setB.setMaxTmpIndex(n);
-    }
-
-    template <typename Functor>
-    void forEach(const Functor& functor)
-    {
-        m_setA.forEach(functor);
-    }
-
-    unsigned size() const
-    {
-        unsigned sizeA = m_setA.size();
-        unsigned sizeB = m_setB.size();
-        RELEASE_ASSERT(sizeA == sizeB);
-        return sizeA;
-    }
-
-    void dumpMemoryUseInKB() const
-    {
-        dataLog(m_setA.memoryUse()/1024, " -> ", m_setB.memoryUse()/1024);
-    }
-
-private:
-    T m_setA;
-    U m_setB;
-};
-
-using SmallInterferenceGraph = InterferenceBitVector<uint16_t>;
-using LargeInterferenceGraph = InstrumentedInterferenceGraph<InterferenceHashSet<uint16_t>, InterferenceVector<LikelyDenseUnsignedIntegerSet<uint16_t>, uint16_t>, uint16_t>;
-using HugeInterferenceGraph = InstrumentedInterferenceGraph<InterferenceHashSet<uint32_t>, InterferenceVector<LikelyDenseUnsignedIntegerSet<uint32_t>, uint32_t>, uint16_t>;
-
-#else // TEST_OPTIMIZED_INTERFERENCE_GRAPH
-
-using SmallInterferenceGraph = InterferenceBitVector<uint16_t>;
-using LargeInterferenceGraph = InterferenceVector<LikelyDenseUnsignedIntegerSet<uint16_t>, uint16_t>;
-using HugeInterferenceGraph = InterferenceVector<LikelyDenseUnsignedIntegerSet<uint32_t>, uint32_t>;
-
-#endif
 
 // The AbstractColoringAllocator defines all the code that is independant
 // from the bank or register and can be shared when allocating registers.
@@ -1589,7 +1357,7 @@ public:
             }
         }
 
-        m_interferenceEdges.setMaxTmpIndex(AbsoluteTmpMapper<bank>::absoluteIndex(m_code.numTmps(bank)));
+        m_interferenceEdges.setMaxIndex(AbsoluteTmpMapper<bank>::absoluteIndex(m_code.numTmps(bank)));
 
         initializePrecoloredTmp();
         build();
@@ -2042,9 +1810,7 @@ private:
                 return false;
             };
 
-            // The bit vector approach uses n*n bits, or 20kB for n = 400.
-            constexpr unsigned maxSizeForSmallInterferenceGraph = 400;
-            if (m_code.numTmps(bank) < maxSizeForSmallInterferenceGraph) {
+            if (m_code.numTmps(bank) < WTF::maxSizeForSmallInterferenceGraph) {
                 if (useIRC()) {
                     ColoringAllocator<uint16_t, bank, IRC, SmallInterferenceGraph> allocator(m_code, m_tmpWidth, m_useCounts, unspillableTmps);
                     done = doAllocation(allocator);

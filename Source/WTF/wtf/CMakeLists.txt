@@ -100,6 +100,7 @@ set(WTF_PUBLIC_HEADERS
     InlineASM.h
     Insertion.h
     InstanceCounted.h
+    InterferenceGraph.h
     IsoMalloc.h
     IsoMallocInlines.h
     IteratorAdaptors.h

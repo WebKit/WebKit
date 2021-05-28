@@ -1,3 +1,44 @@
+2021-05-27  Robin Morisset  <rmorisset@apple.com>
+
+        AirAllocateStackByGraphColoring should use the optimized interference graphs from AirAllocateRegistersByGraphColoring
+        https://bugs.webkit.org/show_bug.cgi?id=226258
+
+        Reviewed by Phil Pizlo.
+
+        The main change in this patch is that AirAllocateStackByGraphColoring is now using the optimized datastructures in wtf/InterferenceGraph.h.
+        This required templating most of it over the interference graph used (Small/Large/Huge), but I tried keeping some common parts out of the templated class to minimize the impact on compile times and binary size.
+
+        A consequence of that change is that coalescableMoves and remappedStackSlots now store indices instead of direct pointers to StackSlots, resulting in a memory reduction of about 3x as well.
+
+        Another consequence is that I had to slightly alter the way that coalescing works: instead of carefully removing the interference edges of the killed slot, we simply use mayClear() which is not guaranteed to remove anything.
+        I believe that this is sound, because every subsequent access to m_interference checks whether a slot has been coalesced first, so dropping these edges is purely a memory saving, but has no logical effect.
+
+        The new code was tested in a few ways:
+        - running on JetStream2 with asan
+        - running on JetStream2 with TEST_OPTIMIZED_INTERFERENCE_GRAPH
+        - running on JetStream2 and logging the frame sizes at the end of this phase, and comparing to the results of doing the same on ToT (same average frame size)
+
+        The two functions where this code had the largest memory footprint in JetStream2 were both in tsf-wasm.
+        One has 751 stack slots, and had an interference graph of 2.1MB and a coalescableMoves vector of 440kB
+        The other has 673 stack slots, and had an interference graph of 1.9MB and a coalescableMoves vector of 421kB.
+        With this patch, they respectively use 79kB+146kB and 67kB+140kB
+        The effect on the rest of JetStream2 is less likely to matter as few functions used more than a few dozens of kB in this phase, but in percentages are just as huge.
+
+        More importantly (and the reason I wrote this patch in the first place), I checked mruby-wasm.aotoki.dev which with a few other pages forced us to lower Options::maximumTmpsForGraphColoring because of jetsams.
+        It has two massive functions that reach this phase if I increase Options::maximumTmpsForGraphColoring:
+        - about 6k stack slots -> 215MB + 6MB (interference graph + coalescableMoves)
+        - about 9k stack slots -> 395MB + 4MB
+        After this patch, they respectively use 4.5MB+2MB and 9MB+1.5MB, or roughly a 40x improvement.
+        Combined with the recent improvements to the register allocator, I hope to be able to increase Options::maximumTmpsForGraphColoring soon (in a different patch for easier bisection if either cause a perf regression).
+        This would be helpful, since its lowering cratered our performance on some other wasm application by 8x.
+
+        In terms of compile times, this patch lowered the time spent in AllocateStackByGraphColoring over the course of a run of JetStream2 from roughly 350ms to roughly 270ms.
+        This is almost certainly negligible, but at least it guarantees that it did not regress.
+
+        * b3/air/AirAllocateRegistersByGraphColoring.cpp:
+        * b3/air/AirAllocateStackByGraphColoring.cpp:
+        (JSC::B3::Air::allocateStackByGraphColoring):
+
 2021-05-27  Darin Adler  <darin@apple.com>
 
         Next step toward using std::optional directly instead of through WTF::Optional typedef
