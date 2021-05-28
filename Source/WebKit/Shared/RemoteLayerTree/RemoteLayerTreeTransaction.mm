@@ -129,6 +129,10 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties()
     , userInteractionEnabled(true)
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     , isSeparated(false)
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    , isSeparatedPortal(false)
+    , isDescendentOfSeparatedPortal(false)
+#endif
 #endif
 {
 }
@@ -171,6 +175,10 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
     , eventRegion(other.eventRegion)
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     , isSeparated(other.isSeparated)
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    , isSeparatedPortal(other.isSeparatedPortal)
+    , isDescendentOfSeparatedPortal(other.isDescendentOfSeparatedPortal)
+#endif
 #endif
 {
     // FIXME: LayerProperties should reference backing store by ID, so that two layers can have the same backing store (for clones).
@@ -313,6 +321,14 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::Encoder& encoder) 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     if (changedProperties & SeparatedChanged)
         encoder << isSeparated;
+
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    if (changedProperties & SeparatedPortalChanged)
+        encoder << isSeparatedPortal;
+
+    if (changedProperties & DescendentOfSeparatedPortalChanged)
+        encoder << isDescendentOfSeparatedPortal;
+#endif
 #endif
 }
 
@@ -550,18 +566,25 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
         if (!decoder.decode(result.isSeparated))
             return false;
     }
+
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    if (result.changedProperties & SeparatedPortalChanged) {
+        if (!decoder.decode(result.isSeparatedPortal))
+            return false;
+    }
+
+    if (result.changedProperties & DescendentOfSeparatedPortalChanged) {
+        if (!decoder.decode(result.isDescendentOfSeparatedPortal))
+            return false;
+    }
+#endif
 #endif
 
     return true;
 }
 
-RemoteLayerTreeTransaction::RemoteLayerTreeTransaction()
-{
-}
-
-RemoteLayerTreeTransaction::~RemoteLayerTreeTransaction()
-{
-}
+RemoteLayerTreeTransaction::RemoteLayerTreeTransaction() = default;
+RemoteLayerTreeTransaction::~RemoteLayerTreeTransaction() = default;
 
 void RemoteLayerTreeTransaction::encode(IPC::Encoder& encoder) const
 {
@@ -952,6 +975,14 @@ static void dumpChangedLayers(TextStream& ts, const RemoteLayerTreeTransaction::
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
         if (layerProperties.changedProperties & RemoteLayerTreeTransaction::SeparatedChanged)
             ts.dumpProperty("isSeparated", layerProperties.isSeparated);
+
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::SeparatedPortalChanged)
+            ts.dumpProperty("isSeparatedPortal", layerProperties.isSeparatedPortal);
+
+        if (layerProperties.changedProperties & RemoteLayerTreeTransaction::DescendentOfSeparatedPortalChanged)
+            ts.dumpProperty("isDescendentOfSeparatedPortal", layerProperties.isDescendentOfSeparatedPortal);
+#endif
 #endif
     }
 }

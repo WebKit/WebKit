@@ -782,14 +782,35 @@ void GraphicsLayerCA::setUsesDisplayListDrawing(bool usesDisplayListDrawing)
 }
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-void GraphicsLayerCA::setSeparated(bool separated)
+void GraphicsLayerCA::setIsSeparated(bool isSeparated)
 {
-    if (separated == m_separated)
+    if (isSeparated == m_isSeparated)
         return;
 
-    GraphicsLayer::setSeparated(separated);
+    GraphicsLayer::setIsSeparated(isSeparated);
     noteLayerPropertyChanged(SeparatedChanged);
 }
+
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+void GraphicsLayerCA::setIsSeparatedPortal(bool isSeparatedPortal)
+{
+    if (isSeparatedPortal == m_isSeparatedPortal)
+        return;
+
+    GraphicsLayer::setIsSeparatedPortal(isSeparatedPortal);
+    noteLayerPropertyChanged(SeparatedPortalChanged);
+
+}
+
+void GraphicsLayerCA::setIsDescendentOfSeparatedPortal(bool isDescendentOfSeparatedPortal)
+{
+    if (isDescendentOfSeparatedPortal == m_isDescendentOfSeparatedPortal)
+        return;
+
+    GraphicsLayer::setIsDescendentOfSeparatedPortal(isDescendentOfSeparatedPortal);
+    noteLayerPropertyChanged(DescendentOfSeparatedPortalChanged);
+}
+#endif
 #endif
 
 void GraphicsLayerCA::setBackgroundColor(const Color& color)
@@ -1985,7 +2006,15 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     if (m_uncommittedChanges & SeparatedChanged)
-        updateSeparated();
+        updateIsSeparated();
+
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    if (m_uncommittedChanges & SeparatedPortalChanged)
+        updateIsSeparatedPortal();
+
+    if (m_uncommittedChanges & DescendentOfSeparatedPortalChanged)
+        updateIsDescendentOfSeparatedPortal();
+#endif
 #endif
 
     if (m_uncommittedChanges & ChildrenChanged) {
@@ -2432,10 +2461,22 @@ void GraphicsLayerCA::updateWindRule()
 }
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-void GraphicsLayerCA::updateSeparated()
+void GraphicsLayerCA::updateIsSeparated()
 {
-    m_layer->setSeparated(m_separated);
+    m_layer->setIsSeparated(m_isSeparated);
 }
+
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+void GraphicsLayerCA::updateIsSeparatedPortal()
+{
+    m_layer->setIsSeparatedPortal(m_isSeparatedPortal);
+}
+
+void GraphicsLayerCA::updateIsDescendentOfSeparatedPortal()
+{
+    m_layer->setIsDescendentOfSeparatedPortal(m_isDescendentOfSeparatedPortal);
+}
+#endif
 #endif
 
 bool GraphicsLayerCA::updateStructuralLayer()

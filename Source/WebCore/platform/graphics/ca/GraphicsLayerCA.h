@@ -96,7 +96,10 @@ public:
     WEBCORE_EXPORT void setUsesDisplayListDrawing(bool) override;
     WEBCORE_EXPORT void setUserInteractionEnabled(bool) override;
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-    WEBCORE_EXPORT void setSeparated(bool) override;
+    WEBCORE_EXPORT void setIsSeparated(bool) override;
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    WEBCORE_EXPORT void setIsSeparatedPortal(bool) override;
+#endif
 #endif
 
     WEBCORE_EXPORT void setBackgroundColor(const Color&) override;
@@ -228,6 +231,10 @@ private:
 
     WEBCORE_EXPORT void setIsTrackingDisplayListReplay(bool) override;
     WEBCORE_EXPORT String replayDisplayListAsText(DisplayList::AsTextFlags) const override;
+
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS) && HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    WEBCORE_EXPORT void setIsDescendentOfSeparatedPortal(bool) override;
+#endif
 
     WEBCORE_EXPORT double backingStoreMemoryEstimate() const override;
 
@@ -450,7 +457,11 @@ private:
     void updateWindRule();
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-    void updateSeparated();
+    void updateIsSeparated();
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    void updateIsSeparatedPortal();
+    void updateIsDescendentOfSeparatedPortal();
+#endif
 #endif
 
     enum StructuralLayerPurpose {
@@ -563,6 +574,10 @@ private:
 #endif
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
         SeparatedChanged                        = 1LLU << 42,
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+        SeparatedPortalChanged                  = 1LLU << 43,
+        DescendentOfSeparatedPortalChanged      = 1LLU << 44,
+#endif
 #endif
     };
     typedef uint64_t LayerChangeFlags;

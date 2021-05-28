@@ -1,3 +1,35 @@
+2021-05-28  Sam Weinig  <weinig@apple.com>
+
+        Add stub implementation of CA separated portal bits for GraphicsLayer
+        https://bugs.webkit.org/show_bug.cgi?id=226343
+
+        Reviewed by Simon Fraser.
+
+        Plumbs isSeparatedPortal and isDescendentOfSeparatedPortal bits through GraphicsLayer.
+        Renames setSeparated to setIsSeparated for consistency.
+
+        Currently unused, but getting the bits in is big enough that its helpful
+        to land on its own.
+
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm:
+        (WebKit::RemoteLayerTreePropertyApplier::applyPropertiesToLayer):
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.h:
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::LayerProperties):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::encode const):
+        (WebKit::RemoteLayerTreeTransaction::LayerProperties::decode):
+        (WebKit::dumpChangedLayers):
+        (WebKit::RemoteLayerTreeTransaction::RemoteLayerTreeTransaction): Deleted.
+        (WebKit::RemoteLayerTreeTransaction::~RemoteLayerTreeTransaction): Deleted.
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::setIsSeparated):
+        (WebKit::PlatformCALayerRemote::isSeparatedPortal const):
+        (WebKit::PlatformCALayerRemote::setIsSeparatedPortal):
+        (WebKit::PlatformCALayerRemote::isDescendentOfSeparatedPortal const):
+        (WebKit::PlatformCALayerRemote::setIsDescendentOfSeparatedPortal):
+        (WebKit::PlatformCALayerRemote::setSeparated): Deleted.
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.h:
+
 2021-05-28  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] HDR variants in HLS playlists not selected when screen is HDR

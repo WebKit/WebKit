@@ -1,3 +1,50 @@
+2021-05-28  Sam Weinig  <weinig@apple.com>
+
+        Add stub implementation of CA separated portal bits for GraphicsLayer
+        https://bugs.webkit.org/show_bug.cgi?id=226343
+
+        Reviewed by Simon Fraser.
+
+        Plumbs isSeparatedPortal and isDescendentOfSeparatedPortal bits through GraphicsLayer.
+        Renames setSeparated to setIsSeparated for consistency.
+
+        Currently unused, but getting the bits in is big enough that its helpful
+        to land on its own.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::GraphicsLayer):
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::isIsSeparated const):
+        (WebCore::GraphicsLayer::setIsSeparated):
+        (WebCore::GraphicsLayer::isSeparatedPortal const):
+        (WebCore::GraphicsLayer::setIsSeparatedPortal):
+        (WebCore::GraphicsLayer::isDescendentOfSeparatedPortal const):
+        (WebCore::GraphicsLayer::setIsDescendentOfSeparatedPortal):
+        (WebCore::GraphicsLayer::isSeparated const): Deleted.
+        (WebCore::GraphicsLayer::setSeparated): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setIsSeparated):
+        (WebCore::GraphicsLayerCA::setIsSeparatedPortal):
+        (WebCore::GraphicsLayerCA::setIsDescendentOfSeparatedPortal):
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::updateIsSeparated):
+        (WebCore::GraphicsLayerCA::updateIsSeparatedPortal):
+        (WebCore::GraphicsLayerCA::updateIsDescendentOfSeparatedPortal):
+        (WebCore::GraphicsLayerCA::setSeparated): Deleted.
+        (WebCore::GraphicsLayerCA::updateSeparated): Deleted.
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * platform/graphics/ca/PlatformCALayer.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.h:
+        * platform/graphics/ca/cocoa/PlatformCALayerCocoa.mm:
+        (WebCore::PlatformCALayerCocoa::setIsSeparated):
+        (WebCore::PlatformCALayerCocoa::isSeparatedPortal const):
+        (WebCore::PlatformCALayerCocoa::setIsSeparatedPortal):
+        (WebCore::PlatformCALayerCocoa::isDescendentOfSeparatedPortal const):
+        (WebCore::PlatformCALayerCocoa::setIsDescendentOfSeparatedPortal):
+        (WebCore::PlatformCALayerCocoa::setSeparated): Deleted.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry):
+
 2021-05-28  Brent Fulgham  <bfulgham@apple.com>
 
         Buffer computations should use correct type

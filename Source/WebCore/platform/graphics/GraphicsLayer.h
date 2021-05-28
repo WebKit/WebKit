@@ -395,8 +395,13 @@ public:
     virtual void setUsesDisplayListDrawing(bool b) { m_usesDisplayListDrawing = b; }
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-    bool isSeparated() const { return m_separated; }
-    virtual void setSeparated(bool b) { m_separated = b; }
+    bool isIsSeparated() const { return m_isSeparated; }
+    virtual void setIsSeparated(bool b) { m_isSeparated = b; }
+
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    bool isSeparatedPortal() const { return m_isSeparatedPortal; }
+    virtual void setIsSeparatedPortal(bool b) { m_isSeparatedPortal = b; }
+#endif
 #endif
 
     bool needsBackdrop() const { return !m_backdropFilters.isEmpty(); }
@@ -665,6 +670,14 @@ protected:
     GraphicsLayer* replicatedLayer() const { return m_replicatedLayer; }
     virtual void setReplicatedLayer(GraphicsLayer* layer) { m_replicatedLayer = layer; }
 
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    bool isDescendentOfSeparatedPortal() const { return m_isDescendentOfSeparatedPortal; }
+    virtual void setIsDescendentOfSeparatedPortal(bool b) { m_isDescendentOfSeparatedPortal = b; }
+#endif
+#endif
+
+
     void dumpProperties(WTF::TextStream&, LayerTreeAsTextBehavior) const;
     virtual void dumpAdditionalProperties(WTF::TextStream&, LayerTreeAsTextBehavior) const { }
 
@@ -731,7 +744,11 @@ protected:
     bool m_userInteractionEnabled : 1;
     bool m_canDetachBackingStore : 1;
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-    bool m_separated : 1;
+    bool m_isSeparated : 1;
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+    bool m_isSeparatedPortal : 1;
+    bool m_isDescendentOfSeparatedPortal : 1;
+#endif
 #endif
 
     int m_repaintCount { 0 };

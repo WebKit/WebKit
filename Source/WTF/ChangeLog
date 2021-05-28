@@ -1,3 +1,12 @@
+2021-05-28  Sam Weinig  <weinig@apple.com>
+
+        Add stub implementation of CA separated portal bits for GraphicsLayer
+        https://bugs.webkit.org/show_bug.cgi?id=226343
+
+        Reviewed by Simon Fraser.
+
+        * wtf/PlatformHave.h: Add HAVE_CORE_ANIMATION_SEPARATED_PORTALS.
+
 2021-05-28  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed build fix after r277881.

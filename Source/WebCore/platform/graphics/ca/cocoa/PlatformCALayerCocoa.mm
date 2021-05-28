@@ -1072,12 +1072,36 @@ bool PlatformCALayerCocoa::isSeparated() const
     return m_layer.get().isSeparated;
 }
 
-void PlatformCALayerCocoa::setSeparated(bool value)
+void PlatformCALayerCocoa::setIsSeparated(bool value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setSeparated:value];
     END_BLOCK_OBJC_EXCEPTIONS
 }
+
+#if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
+bool PlatformCALayerCocoa::isSeparatedPortal() const
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+void PlatformCALayerCocoa::setIsSeparatedPortal(bool)
+{
+    ASSERT_NOT_REACHED();
+}
+
+bool PlatformCALayerCocoa::isDescendentOfSeparatedPortal() const
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+void PlatformCALayerCocoa::setIsDescendentOfSeparatedPortal(bool)
+{
+    ASSERT_NOT_REACHED();
+}
+#endif
 #endif
 
 static NSString *layerContentsFormat(bool acceleratesDrawing, bool wantsDeepColor, bool supportsSubpixelAntialiasedFonts)
