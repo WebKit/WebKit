@@ -1,3 +1,37 @@
+2021-05-28  Matt Gilligan  <matthew_gilligan@apple.com>
+
+        Prevent resetting scroll position in unnecessary cases during page load
+        https://bugs.webkit.org/show_bug.cgi?id=226338
+        rdar://75334651
+
+        Reviewed by Simon Fraser.
+
+        When WKWebView's scroll view has a refresh control and is rubber banding along the top
+        edge, don't cancel scrolling animations or reset contentOffset within valid range due to
+        the page load. This can cause flickering during dragging and can prevent the bounce
+        animation from finishing.
+
+        Test: ScrollViewInsetTests.PreserveContentOffsetForRefreshControl
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _didCommitLoadForMainFrame]):
+        Avoid calling -_stopScrollingAndZoomingAnimations when rubber banding for a refresh control
+        to prevent cancelling a bounce animation.
+
+        (-[WKWebView _restoreScrollAndZoomStateForTransaction:]):
+        (-[WKWebView _didCommitLayerTree:]):
+        Don't adjust content offset to be within valid range when rubber banding for a refresh
+        control, or the scroll position will be reset while dragging or bouncing.
+
+        (-[WKWebView _scrollViewIsRubberBandingForRefreshControl]):
+        Return whether _scrollView has a refresh control and is rubber banding along the top edge.
+
+        * UIProcess/ios/WKScrollView.mm:
+        (-[WKScrollView _setContentSizePreservingContentOffsetDuringRubberband:]):
+        When the refresh control is dismissing, the scroll view will be rubber banding but not
+        dragging or bouncing. Treat a non-nil refreshControl as a hint that the scroll view might
+        be rubber banding.
+
 2021-05-28  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Hang in WebM format reader when loading content from https://powerrangers.fandom.com/

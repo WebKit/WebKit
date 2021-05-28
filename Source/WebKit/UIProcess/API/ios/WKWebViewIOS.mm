@@ -718,7 +718,8 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     _hasCommittedLoadForMainFrame = YES;
     _needsResetViewStateAfterCommitLoadForMainFrame = YES;
 
-    [_scrollView _stopScrollingAndZoomingAnimations];
+    if (![self _scrollViewIsRubberBandingForRefreshControl])
+        [_scrollView _stopScrollingAndZoomingAnimations];
 }
 
 static CGPoint contentOffsetBoundedInValidRange(UIScrollView *scrollView, CGPoint contentOffset)
@@ -835,7 +836,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
 
     BOOL needUpdateVisibleContentRects = NO;
 
-    if (_scrollOffsetToRestore) {
+    if (_scrollOffsetToRestore && ![self _scrollViewIsRubberBandingForRefreshControl]) {
         WebCore::FloatPoint scaledScrollOffset = _scrollOffsetToRestore.value();
         _scrollOffsetToRestore = std::nullopt;
 
@@ -850,7 +851,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
         needUpdateVisibleContentRects = YES;
     }
 
-    if (_unobscuredCenterToRestore) {
+    if (_unobscuredCenterToRestore && ![self _scrollViewIsRubberBandingForRefreshControl]) {
         WebCore::FloatPoint unobscuredCenterToRestore = _unobscuredCenterToRestore.value();
         _unobscuredCenterToRestore = std::nullopt;
 
@@ -921,7 +922,9 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
 
     if (_needsResetViewStateAfterCommitLoadForMainFrame && layerTreeTransaction.transactionID() >= _firstPaintAfterCommitLoadTransactionID) {
         _needsResetViewStateAfterCommitLoadForMainFrame = NO;
-        [_scrollView setContentOffset:[self _initialContentOffsetForScrollView]];
+        if (![self _scrollViewIsRubberBandingForRefreshControl])
+            [_scrollView setContentOffset:[self _initialContentOffsetForScrollView]];
+
         if (_observedRenderingProgressEvents & _WKRenderingProgressEventFirstPaint)
             _navigationState->didFirstPaint();
 
@@ -1894,6 +1897,16 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     CGPoint contentOffset = [scrollView contentOffset];
     CGPoint boundedOffset = contentOffsetBoundedInValidRange(scrollView, contentOffset);
     return !pointsEqualInDevicePixels(contentOffset, boundedOffset, deviceScaleFactor);
+}
+
+- (BOOL)_scrollViewIsRubberBandingForRefreshControl
+{
+    if (![_scrollView refreshControl])
+        return NO;
+
+    CGPoint contentOffset = [_scrollView contentOffset];
+    UIEdgeInsets contentInsets = [_scrollView adjustedContentInset];
+    return contentOffset.y < -contentInsets.top && [self _scrollViewIsRubberBanding:_scrollView.get()];
 }
 
 // FIXME: Likely we can remove this special case for watchOS and tvOS.

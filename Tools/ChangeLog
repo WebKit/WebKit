@@ -1,3 +1,14 @@
+2021-05-28  Matt Gilligan  <matthew_gilligan@apple.com>
+
+        Prevent resetting scroll position in unnecessary cases during page load
+        https://bugs.webkit.org/show_bug.cgi?id=226338
+        rdar://75334651
+
+        Reviewed by Simon Fraser.
+
+        * TestWebKitAPI/Tests/ios/ScrollViewInsetTests.mm:
+        (TestWebKitAPI::TEST):
+
 2021-05-28  Zhifei Fang  <zhifei_fang@apple.com>
 
         [JSC] Fix run-jsc-stress-tests missing escape $
