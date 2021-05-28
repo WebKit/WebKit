@@ -33,7 +33,6 @@
 #include "Identifier.h"
 #include "InstructionStream.h"
 #include "JSCast.h"
-#include "LockDuringMarking.h"
 #include "Opcode.h"
 #include "ParserModes.h"
 #include "RegExp.h"

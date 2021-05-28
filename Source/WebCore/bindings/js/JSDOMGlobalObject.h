@@ -30,7 +30,6 @@
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSObjectInlines.h>
-#include <JavaScriptCore/LockDuringMarking.h>
 #include <JavaScriptCore/WeakGCMap.h>
 
 namespace WebCore {
@@ -58,12 +57,21 @@ public:
     static void destroy(JSC::JSCell*);
 
 public:
-    UncheckedLock& gcLock() { return m_gcLock; }
+    Lock& gcLock() WTF_RETURNS_LOCK(m_gcLock) { return m_gcLock; }
 
-    JSDOMStructureMap& structures(const AbstractLocker&) { return m_structures; }
-    JSDOMConstructorMap& constructors(const AbstractLocker&) { return m_constructors; }
+    JSDOMStructureMap& structures() WTF_REQUIRES_LOCK(m_gcLock) { return m_structures; }
+    JSDOMConstructorMap& constructors() WTF_REQUIRES_LOCK(m_gcLock) { return m_constructors; }
+    DOMGuardedObjectSet& guardedObjects() WTF_REQUIRES_LOCK(m_gcLock) { return m_guardedObjects; }
 
-    DOMGuardedObjectSet& guardedObjects(const AbstractLocker&) { return m_guardedObjects; }
+    // No locking is necessary for call sites that do not mutate the containers and are not on the GC thread.
+    const JSDOMStructureMap& structures() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(!Thread::mayBeGCThread()); return m_structures; }
+    const JSDOMConstructorMap& constructors() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(!Thread::mayBeGCThread()); return m_constructors; }
+    const DOMGuardedObjectSet& guardedObjects() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(!Thread::mayBeGCThread()); return m_guardedObjects; }
+
+    // The following don't require grabbing the gcLock first and should only be called when the Heap says that mutators don't have to be fenced.
+    JSDOMStructureMap& structures(NoLockingNecessaryTag) WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(!vm().heap.mutatorShouldBeFenced()); return m_structures; }
+    JSDOMConstructorMap& constructors(NoLockingNecessaryTag) WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(!vm().heap.mutatorShouldBeFenced()); return m_constructors; }
+    DOMGuardedObjectSet& guardedObjects(NoLockingNecessaryTag) WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(!vm().heap.mutatorShouldBeFenced()); return m_guardedObjects; }
 
     ScriptExecutionContext* scriptExecutionContext() const;
 
@@ -80,7 +88,7 @@ public:
 
     static void reportUncaughtExceptionAtEventLoop(JSGlobalObject*, JSC::Exception*);
 
-    void clearDOMGuardedObjects();
+    void clearDOMGuardedObjects() const;
 
     JSC::JSProxy& proxy() const { ASSERT(m_proxy); return *m_proxy.get(); }
 
@@ -115,13 +123,13 @@ protected:
     static JSC::JSInternalPromise* moduleLoaderImportModule(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSString*, JSC::JSValue, const JSC::SourceOrigin&);
     static JSC::JSObject* moduleLoaderCreateImportMetaProperties(JSC::JSGlobalObject*, JSC::JSModuleLoader*, JSC::JSValue, JSC::JSModuleRecord*, JSC::JSValue);
 
-    JSDOMStructureMap m_structures;
-    JSDOMConstructorMap m_constructors;
-    DOMGuardedObjectSet m_guardedObjects;
+    JSDOMStructureMap m_structures WTF_GUARDED_BY_LOCK(m_gcLock);
+    JSDOMConstructorMap m_constructors WTF_GUARDED_BY_LOCK(m_gcLock);
+    DOMGuardedObjectSet m_guardedObjects WTF_GUARDED_BY_LOCK(m_gcLock);
 
     Ref<DOMWrapperWorld> m_world;
     uint8_t m_worldIsNormal;
-    UncheckedLock m_gcLock;
+    Lock m_gcLock;
     JSC::WriteBarrier<JSC::JSProxy> m_proxy;
 
 private:
@@ -138,14 +146,19 @@ private:
 template<class ConstructorClass>
 inline JSC::JSObject* getDOMConstructor(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
 {
-    if (JSC::JSObject* constructor = const_cast<JSDOMGlobalObject&>(globalObject).constructors(NoLockingNecessary).get(ConstructorClass::info()).get())
+    // No locking is necessary unless we need to add a new constructor to JSDOMGlobalObject::constructors().
+    if (JSC::JSObject* constructor = globalObject.constructors().get(ConstructorClass::info()).get())
         return constructor;
     JSC::JSObject* constructor = ConstructorClass::create(vm, ConstructorClass::createStructure(vm, const_cast<JSDOMGlobalObject&>(globalObject), ConstructorClass::prototypeForStructure(vm, globalObject)), const_cast<JSDOMGlobalObject&>(globalObject));
-    ASSERT(!const_cast<JSDOMGlobalObject&>(globalObject).constructors(NoLockingNecessary).contains(ConstructorClass::info()));
+    ASSERT(!globalObject.constructors().contains(ConstructorClass::info()));
     JSC::WriteBarrier<JSC::JSObject> temp;
     JSDOMGlobalObject& mutableGlobalObject = const_cast<JSDOMGlobalObject&>(globalObject);
-    auto locker = JSC::lockDuringMarking(vm.heap, mutableGlobalObject.gcLock());
-    mutableGlobalObject.constructors(locker).add(ConstructorClass::info(), temp).iterator->value.set(vm, &globalObject, constructor);
+    if (vm.heap.mutatorShouldBeFenced()) {
+        Locker locker { mutableGlobalObject.gcLock() };
+        mutableGlobalObject.constructors().add(ConstructorClass::info(), temp).iterator->value.set(vm, &globalObject, constructor);
+        return constructor;
+    }
+    mutableGlobalObject.constructors(NoLockingNecessary).add(ConstructorClass::info(), temp).iterator->value.set(vm, &globalObject, constructor);
     return constructor;
 }
 

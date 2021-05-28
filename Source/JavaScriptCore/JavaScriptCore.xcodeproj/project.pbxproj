@@ -170,7 +170,6 @@
 		0F2017821DCADD4200EA5950 /* DFGFlowMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2017811DCADD4000EA5950 /* DFGFlowMap.h */; };
 		0F2017851DCAE14900EA5950 /* DFGNodeFlowProjection.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2017841DCAE14700EA5950 /* DFGNodeFlowProjection.h */; };
 		0F2017891DCB942400EA5950 /* DFGNodeAbstractValuePair.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F2017881DCB942200EA5950 /* DFGNodeAbstractValuePair.h */; };
-		0F208AD71DF0925D007D3269 /* LockDuringMarking.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F208AD61DF0925A007D3269 /* LockDuringMarking.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F21C27D14BE727A00ADC64B /* CodeSpecializationKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F21C27914BE727300ADC64B /* CodeSpecializationKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F21C27F14BEAA8200ADC64B /* BytecodeConventions.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F21C27E14BEAA8000ADC64B /* BytecodeConventions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F235BD417178E1C00690C7F /* FTLExitArgument.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F235BBE17178E1C00690C7F /* FTLExitArgument.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2372,7 +2371,6 @@
 		0F2017841DCAE14700EA5950 /* DFGNodeFlowProjection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGNodeFlowProjection.h; path = dfg/DFGNodeFlowProjection.h; sourceTree = "<group>"; };
 		0F2017871DCB942200EA5950 /* DFGNodeAbstractValuePair.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGNodeAbstractValuePair.cpp; path = dfg/DFGNodeAbstractValuePair.cpp; sourceTree = "<group>"; };
 		0F2017881DCB942200EA5950 /* DFGNodeAbstractValuePair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGNodeAbstractValuePair.h; path = dfg/DFGNodeAbstractValuePair.h; sourceTree = "<group>"; };
-		0F208AD61DF0925A007D3269 /* LockDuringMarking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LockDuringMarking.h; sourceTree = "<group>"; };
 		0F20C2581A8013AB00DA3229 /* VirtualRegister.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VirtualRegister.cpp; sourceTree = "<group>"; };
 		0F21C27914BE727300ADC64B /* CodeSpecializationKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeSpecializationKind.h; sourceTree = "<group>"; };
 		0F21C27E14BEAA8000ADC64B /* BytecodeConventions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BytecodeConventions.h; sourceTree = "<group>"; };
@@ -6470,7 +6468,6 @@
 				0F75A059200D25F00038E2CF /* LocalAllocator.cpp */,
 				0F75A057200D25F00038E2CF /* LocalAllocator.h */,
 				0F75A05A200D25F00038E2CF /* LocalAllocatorInlines.h */,
-				0F208AD61DF0925A007D3269 /* LockDuringMarking.h */,
 				14B7233F12D7D0DA003BD5ED /* MachineStackMarker.cpp */,
 				14B7234012D7D0DA003BD5ED /* MachineStackMarker.h */,
 				142D6F0613539A2800B02E86 /* MarkedBlock.cpp */,
@@ -10310,7 +10307,6 @@
 				0F0B839D14BCF46600885B4F /* LLIntThunks.h in Headers */,
 				0F75A061200D26180038E2CF /* LocalAllocator.h in Headers */,
 				0F75A060200D260B0038E2CF /* LocalAllocatorInlines.h in Headers */,
-				0F208AD71DF0925D007D3269 /* LockDuringMarking.h in Headers */,
 				BC18C4370E16F5CD00B34460 /* Lookup.h in Headers */,
 				0F4680CD14BBB17D00BFE272 /* LowLevelInterpreter.h in Headers */,
 				981ED82328234D91BAECCADE /* MachineContext.h in Headers */,

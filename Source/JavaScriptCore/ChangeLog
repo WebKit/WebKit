@@ -1,3 +1,18 @@
+2021-05-28  Chris Dumez  <cdumez@apple.com>
+
+        Stop using UncheckedLock in JSDOMGlobalObject
+        https://bugs.webkit.org/show_bug.cgi?id=226281
+
+        Reviewed by Darin Adler.
+
+        Drop JSC::lockDuringMarking() and its now empty header given that it does conditional
+        locking and it is not compatible with Clang thread safety analysis.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/UnlinkedCodeBlock.h:
+        * heap/LockDuringMarking.h: Removed.
+
 2021-05-28  Saam Barati  <sbarati@apple.com>
 
         Add the ability to dump statistics about cumulative counts and code sizes of Baseline JIT opcodes and DFG nodes

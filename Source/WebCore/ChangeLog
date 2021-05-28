@@ -1,3 +1,27 @@
+2021-05-28  Chris Dumez  <cdumez@apple.com>
+
+        Stop using UncheckedLock in JSDOMGlobalObject
+        https://bugs.webkit.org/show_bug.cgi?id=226281
+
+        Reviewed by Darin Adler.
+
+        Stop using UncheckedLock in JSDOMGlobalObject and use Lock instead of benefit from Clang thread
+        safety analysis. This is a step towards phasing out UncheckedLock and improving the thread
+        safety of our code.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::visitChildrenImpl):
+        (WebCore::JSDOMGlobalObject::clearDOMGuardedObjects):
+        * bindings/js/JSDOMGlobalObject.h:
+        (WebCore::getDOMConstructor):
+        * bindings/js/JSDOMGuardedObject.cpp:
+        (WebCore::DOMGuardedObject::DOMGuardedObject):
+        (WebCore::DOMGuardedObject::clear):
+        (WebCore::DOMGuardedObject::removeFromGlobalObject):
+        * bindings/js/JSDOMGuardedObject.h:
+        * bindings/js/JSDOMWrapperCache.cpp:
+        (WebCore::cacheDOMStructure):
+
 2021-05-28  Jean-Yves Avenard  <jya@apple.com>
 
         Add MediaSession.callActionHandler

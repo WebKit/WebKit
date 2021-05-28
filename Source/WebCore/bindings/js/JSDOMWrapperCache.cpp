@@ -27,18 +27,22 @@
 namespace WebCore {
 using namespace JSC;
 
-Structure* getCachedDOMStructure(JSDOMGlobalObject& globalObject, const ClassInfo* classInfo)
+Structure* getCachedDOMStructure(const JSDOMGlobalObject& globalObject, const ClassInfo* classInfo)
 {
-    JSDOMStructureMap& structures = globalObject.structures(NoLockingNecessary);
-    return structures.get(classInfo).get();
+    return globalObject.structures().get(classInfo).get();
 }
 
 Structure* cacheDOMStructure(JSDOMGlobalObject& globalObject, Structure* structure, const ClassInfo* classInfo)
 {
-    auto locker = lockDuringMarking(globalObject.vm().heap, globalObject.gcLock());
-    JSDOMStructureMap& structures = globalObject.structures(locker);
-    ASSERT(!structures.contains(classInfo));
-    return structures.set(classInfo, WriteBarrier<Structure>(globalObject.vm(), &globalObject, structure)).iterator->value.get();
+    auto addToStructures = [](JSDOMStructureMap& structures, JSDOMGlobalObject& globalObject, Structure* structure, const ClassInfo* classInfo) {
+        ASSERT(!structures.contains(classInfo));
+        return structures.set(classInfo, WriteBarrier<Structure>(globalObject.vm(), &globalObject, structure)).iterator->value.get();
+    };
+    if (globalObject.vm().heap.mutatorShouldBeFenced()) {
+        Locker locker { globalObject.gcLock() };
+        return addToStructures(globalObject.structures(), globalObject, structure, classInfo);
+    }
+    return addToStructures(globalObject.structures(NoLockingNecessary), globalObject, structure, classInfo);
 }
 
 } // namespace WebCore

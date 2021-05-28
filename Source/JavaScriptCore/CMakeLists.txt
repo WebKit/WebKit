@@ -674,7 +674,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     heap/JITStubRoutineSet.h
     heap/LocalAllocator.h
     heap/LocalAllocatorInlines.h
-    heap/LockDuringMarking.h
     heap/MachineStackMarker.h
     heap/MarkStack.h
     heap/MarkedBlock.h
