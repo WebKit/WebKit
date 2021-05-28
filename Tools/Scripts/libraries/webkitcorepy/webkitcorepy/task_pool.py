@@ -27,6 +27,11 @@ import multiprocessing
 import signal
 import sys
 
+if sys.version_info < (3, 0):
+    import Queue
+else:
+    import queue as Queue
+
 from webkitcorepy import OutputCapture, Timeout, log
 
 
@@ -146,6 +151,13 @@ class _BiDirectionalQueue(object):
                 return self.incoming.get(timeout=difference)
             return self.incoming.get()
 
+    def close(self):
+        with OutputCapture():
+            self.outgoing.close()
+            self.incoming.close()
+            self.outgoing.join_thread()
+            self.incoming.join_thread()
+
 
 class _Process(object):
     name = None
@@ -228,7 +240,7 @@ class _Process(object):
 
     @classmethod
     def handler(cls, value, _):
-        if value == getattr(signal, 'SIGTERM'):
+        if value in (getattr(signal, 'SIGTERM'), getattr(signal, 'SIGINT')):
             cls.working = False
 
     @classmethod
@@ -246,6 +258,8 @@ class _Process(object):
 
         if getattr(signal, 'SIGTERM'):
             signal.signal(signal.SIGTERM, cls.handler)
+        if getattr(signal, 'SIGINT'):
+            signal.signal(signal.SIGINT, cls.handler)
 
         logger = logging.getLogger()
         for handler in logger.handlers:
@@ -280,6 +294,7 @@ class _Process(object):
                 sys.stdout.flush()
                 sys.stderr.flush()
                 queue.send(_State(_State.STOPPING))
+                cls.queue.close()
                 cls.queue = None
 
 
@@ -309,21 +324,18 @@ class TaskPool(object):
         name = name or 'worker'
         if name == self.Process.name:
             raise ValueError("Parent process is already named {}".format(name))
+        self.name = name
 
         if workers < 1:
             raise ValueError('TaskPool requires positive number of workers')
 
-        self.queue = self.BiDirectionalQueue()
+        self.queue = None
+        self.workers = []
 
-        self.workers = [multiprocessing.Process(
-            target=self.Process.main,
-            args=(
-                '{}/{}'.format(name, count), logging.getLogger().getEffectiveLevel(),
-                setup, setupargs, setupkwargs,
-                self.BiDirectionalQueue(outgoing=self.queue.incoming, incoming=self.queue.outgoing),
-                teardown, teardownargs, teardownkwargs,
-            ),
-        ) for count in range(workers)]
+        self._setup_args = (setup, setupargs, setupkwargs)
+        self._teardown_args = (teardown, teardownargs, teardownkwargs)
+        self._num_workers = int(workers)
+
         self._started = 0
 
         self.callbacks = {}
@@ -333,6 +345,17 @@ class TaskPool(object):
 
     def __enter__(self):
         from mock import patch
+
+        self.queue = self.BiDirectionalQueue()
+        self.workers = [multiprocessing.Process(
+            target=self.Process.main,
+            args=(
+                '{}/{}'.format(self.name, count), logging.getLogger().getEffectiveLevel(),
+                self._setup_args[0], self._setup_args[1], self._setup_args[2],
+                self.BiDirectionalQueue(outgoing=self.queue.incoming, incoming=self.queue.outgoing),
+                self._teardown_args[0], self._teardown_args[1], self._teardown_args[2],
+            ),
+        ) for count in range(self._num_workers)]
 
         with Timeout(seconds=10, patch=False, handler=self.Exception('Failed to start all workers')):
             for worker in self.workers:
@@ -353,7 +376,7 @@ class TaskPool(object):
             while True:
                 try:
                     self.queue.receive(blocking=False)(self)
-                except Exception:
+                except Queue.Empty:
                     break
 
     def wait(self):
@@ -393,3 +416,7 @@ class TaskPool(object):
                     os.kill(worker.pid, signal.SIGKILL)
                 else:
                     worker.terminate()
+
+            self.queue.close()
+            self.queue = None
+            self.workers = []

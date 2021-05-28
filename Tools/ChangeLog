@@ -1,3 +1,23 @@
+2021-05-27  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorey] Gracefully handle CNTRL-C in TaskPool
+        https://bugs.webkit.org/show_bug.cgi?id=226238
+        <rdar://problem/78472148>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/task_pool.py:
+        (_BiDirectionalQueue.close): Tear-down queue objects while suppressing any logging.
+        (_Process.handler): Both SIGTERM and SIGINT signals should stop worker processes.
+        (_Process.main): Add SIGINT handler, explicitly close queue.
+        (TaskPool.__init__): Defer worker and queue construction to context manager so that we
+        do not have an instantiated but invalid queue if pipes are broken by children processes.
+        (TaskPool.__enter__): Construct worker processes.
+        (TaskPool.do): Only catch Queue.Empty exception.
+        (TaskPool.__exit__): Explicitly close queue, reset workers and queue.
+
 2021-05-27  Darin Adler  <darin@apple.com>
 
         Next step toward using std::optional directly instead of through WTF::Optional typedef
