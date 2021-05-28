@@ -93,19 +93,19 @@ static Optional<Vector<UnitBezier>> parseKeySplines(StringView string)
         while (buffer.hasCharactersRemaining()) {
             delimParsed = false;
             auto posA = parseNumber(buffer);
-            if (!posA)
+            if (!posA || !isInRange<float>(*posA, 0, 1))
                 return std::nullopt;
 
             auto posB = parseNumber(buffer);
-            if (!posB)
+            if (!posB || !isInRange<float>(*posB, 0, 1))
                 return std::nullopt;
 
             auto posC = parseNumber(buffer);
-            if (!posC)
+            if (!posC || !isInRange<float>(*posC, 0, 1))
                 return std::nullopt;
 
             auto posD = parseNumber(buffer, SuffixSkippingPolicy::DontSkip);
-            if (!posD)
+            if (!posD || !isInRange<float>(*posD, 0, 1))
                 return std::nullopt;
 
             skipOptionalSVGSpaces(buffer);

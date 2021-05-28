@@ -1,3 +1,21 @@
+2021-05-27  Said Abou-Hallawa  <said@apple.com>
+
+        Values of keySplines control points must all be in the range 0 to 1
+        https://bugs.webkit.org/show_bug.cgi?id=226336
+
+        Reviewed by Sam Weinig.
+
+        W3C specs:
+                https://svgwg.org/specs/animations/#KeySplinesAttribute
+
+        MDN documenation:
+                https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/keySplines
+
+        Test: imported/w3c/web-platform-tests/svg/animations/keysplines-y-limits.html
+
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::parseKeySplines):
+
 2021-05-27  Darin Adler  <darin@apple.com>
 
         Next step toward using std::optional directly instead of through WTF::Optional typedef

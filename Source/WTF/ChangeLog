@@ -1,3 +1,15 @@
+2021-05-27  Said Abou-Hallawa  <said@apple.com>
+
+        Values of keySplines control points must all be in the range 0 to 1
+        https://bugs.webkit.org/show_bug.cgi?id=226336
+
+        Reviewed by Sam Weinig.
+
+        * wtf/MathExtras.h:
+        (isInRange):
+        There are a least couple of implementations of this function in WebCore.
+        The next step is to remove the redundant code in WebCore and use this one.
+
 2021-05-27  Robin Morisset  <rmorisset@apple.com>
 
         AirAllocateStackByGraphColoring should use the optimized interference graphs from AirAllocateRegistersByGraphColoring
