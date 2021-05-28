@@ -82,20 +82,6 @@ namespace WebCore {
 
 RenderTreeBuilder* RenderTreeBuilder::s_current;
 
-static void markBoxForRelayoutAfterSplit(RenderBox& box)
-{
-    // FIXME: The table code should handle that automatically. If not,
-    // we should fix it and remove the table part checks.
-    if (is<RenderTable>(box)) {
-        // Because we may have added some sections with already computed column structures, we need to
-        // sync the table structure with them now. This avoids crashes when adding new cells to the table.
-        downcast<RenderTable>(box).forceSectionsRecalc();
-    } else if (is<RenderTableSection>(box))
-        downcast<RenderTableSection>(box).setNeedsCellRecalc();
-
-    box.setNeedsLayoutAndPrefWidthsRecalc();
-}
-
 static void getInlineRun(RenderObject* start, RenderObject* boundary, RenderObject*& inlineRunStart, RenderObject*& inlineRunEnd)
 {
     // Beginning at |start| we find the largest contiguous run of inlines that
@@ -1035,6 +1021,20 @@ void RenderTreeBuilder::reportVisuallyNonEmptyContent(const RenderElement& paren
             m_view.frameView().incrementVisuallyNonEmptyPixelCount(candidateSize);
         return;
     }
+}
+
+void RenderTreeBuilder::markBoxForRelayoutAfterSplit(RenderBox& box)
+{
+    // FIXME: The table code should handle that automatically. If not,
+    // we should fix it and remove the table part checks.
+    if (is<RenderTable>(box)) {
+        // Because we may have added some sections with already computed column structures, we need to
+        // sync the table structure with them now. This avoids crashes when adding new cells to the table.
+        downcast<RenderTable>(box).forceSectionsRecalc();
+    } else if (is<RenderTableSection>(box))
+        downcast<RenderTableSection>(box).setNeedsCellRecalc();
+
+    box.setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 }

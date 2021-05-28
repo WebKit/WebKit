@@ -1,3 +1,27 @@
+2021-05-28  Alan Bujtas  <zalan@apple.com>
+
+        CrashOnOverflow in WebCore::RenderTable::cellBefore(WebCore::RenderTableCell const*)
+        https://bugs.webkit.org/show_bug.cgi?id=225949
+
+        Reviewed by Antti Koivisto.
+
+        The table section maintains a grid of rows and columns. This grid is used to jump to cells directly during layout (as opposed to tree walking).
+        It needs to be re-populated on tree mutations e.g when a new row is added to the table.
+        RenderTableSection::willInsertTableRow assumes that rows and cells are inserted subsequently, after each other and
+        it's ok to ignore the grid invalidation on appends as the subsequent ::addCell() call takes care of the grid. 
+        However in some continuation split cases, we re-parent complete rows under table sections which means no subsequent ::addCell() calls.
+
+        This patch addresses this case by using the same pattern we have for block continuation invalidation in RenderTreeBuilder::splitAnonymousBoxesAroundChild().
+
+        Test: fast/table/table-split-on-insert-with-section-crash.html
+
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::markBoxForRelayoutAfterSplit):
+        (WebCore::markBoxForRelayoutAfterSplit): Deleted.
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeBuilderInline.cpp:
+        (WebCore::RenderTreeBuilder::Inline::splitInlines):
+
 2021-05-28  Sam Weinig  <weinig@apple.com>
 
         Add stub implementation of CA separated portal bits for GraphicsLayer

@@ -1,3 +1,13 @@
+2021-05-28  Alan Bujtas  <zalan@apple.com>
+
+        CrashOnOverflow in WebCore::RenderTable::cellBefore(WebCore::RenderTableCell const*)
+        https://bugs.webkit.org/show_bug.cgi?id=225949
+
+        Reviewed by Antti Koivisto.
+
+        * fast/table/table-split-on-insert-with-section-crash-expected.txt: Added.
+        * fast/table/table-split-on-insert-with-section-crash.html: Added.
+
 2021-05-28  Amir Mark Jr  <amir_mark@apple.com>
 
         [BigSur Wk1] imported/w3c/web-platform-tests/css/css-contain/contain-paint-ignored-cases-ruby-stacking-and-clipping-001.html is a flaky failure

@@ -311,6 +311,9 @@ void RenderTreeBuilder::Inline::splitInlines(RenderInline& parent, RenderBlock* 
         }
         auto childToMove = m_builder.detachFromRenderElement(*rendererToMove->parent(), *rendererToMove, WillBeDestroyed::No);
         m_builder.attachIgnoringContinuation(*cloneInline, WTFMove(childToMove));
+        auto* newParent = rendererToMove->parent();
+        if (is<RenderBox>(newParent))
+            markBoxForRelayoutAfterSplit(downcast<RenderBox>(*newParent));
         rendererToMove->setNeedsLayoutAndPrefWidthsRecalc();
         rendererToMove = nextSibling;
     }
