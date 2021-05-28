@@ -1,3 +1,17 @@
+2021-05-28  Saam Barati  <sbarati@apple.com>
+
+        Don't sink arguments past the context of the inline call frame they were created in
+        https://bugs.webkit.org/show_bug.cgi?id=226363
+        <rdar://78392801>
+
+        Reviewed by Filip Pizlo.
+
+        * stress/dont-sink-arguments-past-inline-call-frame.js: Added.
+        (foo):
+        (fooWrap):
+        (empty):
+        (bar):
+
 2021-05-22  Ross Kirsling  <ross.kirsling@sony.com>
 
         Support Ergonomic Brand Checks proposal (`#x in obj`)

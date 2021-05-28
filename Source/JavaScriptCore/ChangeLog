@@ -1,3 +1,24 @@
+2021-05-28  Saam Barati  <sbarati@apple.com>
+
+        Don't sink arguments past the context of the inline call frame they were created in
+        https://bugs.webkit.org/show_bug.cgi?id=226363
+        <rdar://78392801>
+
+        Reviewed by Filip Pizlo.
+
+        DFG OSR exit isn't set up to allow materializing phantom arguments objects
+        when the inline call frame is no longer present in the exit metadata. There
+        may be multiple reasons for this, but there's at least one I discovered:
+        We don't analyze any locals when reconstructing the variable event stream
+        if that local is past the extent of the inline call frame.
+        
+        This patch makes it so we treat it as an escape if between the definition and
+        the last use of a sink candidate (either via an IR use or bytecode liveness)
+        there is an exit to a place in the graph where the inline call frame of the
+        definition is no longer present.
+
+        * dfg/DFGVarargsForwardingPhase.cpp:
+
 2021-05-28  Stephan Szabo  <stephan.szabo@sony.com>
 
         Regenerate builtins generator expectations after optional changes
