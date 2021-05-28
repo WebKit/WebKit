@@ -29,9 +29,12 @@
 #if PLATFORM(MAC)
 
 #import "DataDetection.h"
+#import "DataDetectionResultsStorage.h"
+#import "DataDetectorElementInfo.h"
 #import "FrameView.h"
 #import "HTMLElement.h"
 #import "HTMLNames.h"
+#import "ImageOverlayDataDetectionResultIdentifier.h"
 #import "IntRect.h"
 #import "Page.h"
 #import "PlatformMouseEvent.h"
@@ -147,8 +150,27 @@ bool ImageOverlayController::handleDataDetectorAction(const HTMLElement& element
     if (!frameView)
         return false;
 
-    // FIXME: Call out to the client layer to handle the click.
-    UNUSED_PARAM(locationInContents);
+    auto identifierValue = parseInteger<uint64_t>(element.attributeWithoutSynchronization(HTMLNames::x_apple_data_detectors_resultAttr));
+    if (!identifierValue)
+        return false;
+
+    auto identifier = makeObjectIdentifier<ImageOverlayDataDetectionResultIdentifierType>(*identifierValue);
+    if (!identifier.isValid())
+        return false;
+
+    auto* dataDetectionResults = frame->dataDetectionResultsIfExists();
+    if (!dataDetectionResults)
+        return false;
+
+    auto dataDetectionResult = retainPtr(dataDetectionResults->imageOverlayDataDetectionResult(identifier));
+    if (!dataDetectionResult)
+        return false;
+
+    auto* renderer = element.renderer();
+    if (!renderer)
+        return false;
+
+    m_page->chrome().client().handleClickForDataDetectionResult({ WTFMove(dataDetectionResult), frameView->contentsToWindow(renderer->absoluteBoundingBoxRect()) }, frameView->contentsToWindow(locationInContents));
     return true;
 }
 

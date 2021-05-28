@@ -287,6 +287,10 @@ private:
     void handleContextMenuTranslation(const WebCore::TranslationContextMenuInfo&) override;
 #endif
 
+#if ENABLE(DATA_DETECTION)
+    void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&) final;
+#endif
+
     NSView *m_view;
     WeakPtr<WebViewImpl> m_impl;
 #if USE(AUTOCORRECTION_PANEL)

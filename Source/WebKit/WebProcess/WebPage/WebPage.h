@@ -233,6 +233,7 @@ struct CompositionHighlight;
 struct CompositionUnderline;
 struct ContactInfo;
 struct ContactsRequestData;
+struct DataDetectorElementInfo;
 struct DictationAlternative;
 struct ElementContext;
 struct GlobalFrameIdentifier;
@@ -1173,6 +1174,10 @@ public:
 #if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
     void handleTelephoneNumberClick(const String& number, const WebCore::IntPoint&);
     void handleSelectionServiceClick(WebCore::FrameSelection&, const Vector<String>& telephoneNumbers, const WebCore::IntPoint&);
+#endif
+
+#if ENABLE(DATA_DETECTION)
+    void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&);
 #endif
 
     void didChangeScrollOffsetForFrame(WebCore::Frame*);

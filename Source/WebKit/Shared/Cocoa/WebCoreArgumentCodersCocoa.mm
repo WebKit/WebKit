@@ -30,6 +30,7 @@
 #import "ArgumentCodersCocoa.h"
 #import <CoreText/CoreText.h>
 #import <WebCore/AttributedString.h>
+#import <WebCore/DataDetectorElementInfo.h>
 #import <WebCore/DictionaryPopupInfo.h>
 #import <WebCore/Font.h>
 #import <WebCore/FontAttributes.h>
@@ -613,6 +614,30 @@ bool ArgumentCoder<WebCore::ResourceRequest>::decodePlatformData(Decoder& decode
 
     return true;
 }
+
+#if ENABLE(DATA_DETECTION)
+
+void ArgumentCoder<DataDetectorElementInfo>::encode(Encoder& encoder, const DataDetectorElementInfo& info)
+{
+    encoder << info.result.get();
+    encoder << info.elementBounds;
+}
+
+Optional<DataDetectorElementInfo> ArgumentCoder<DataDetectorElementInfo>::decode(Decoder& decoder)
+{
+    auto result = IPC::decode<DDScannerResult>(decoder, PAL::getDDScannerResultClass());
+    if (!result)
+        return std::nullopt;
+
+    Optional<IntRect> elementBounds;
+    decoder >> elementBounds;
+    if (!elementBounds)
+        return std::nullopt;
+
+    return std::make_optional<DataDetectorElementInfo>({ WTFMove(*result), WTFMove(*elementBounds) });
+}
+
+#endif // ENABLE(DATA_DETECTION)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 void ArgumentCoder<WebCore::MediaPlaybackTargetContext>::encodePlatformData(Encoder& encoder, const MediaPlaybackTargetContext& target)

@@ -449,6 +449,15 @@ PlatformXRSystemProxy& WebPage::xrSystemProxy()
 }
 #endif
 
+#if ENABLE(DATA_DETECTION)
+
+void WebPage::handleClickForDataDetectionResult(const DataDetectorElementInfo& info, const IntPoint& clickLocation)
+{
+    send(Messages::WebPageProxy::HandleClickForDataDetectionResult(info, clickLocation));
+}
+
+#endif
+
 } // namespace WebKit
 
 #endif // PLATFORM(COCOA)

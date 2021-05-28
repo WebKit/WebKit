@@ -2029,6 +2029,7 @@
 		F48570A32644BEC500C05F71 /* Timeout.h in Headers */ = {isa = PBXBuildFile; fileRef = F48570A22644BEC400C05F71 /* Timeout.h */; };
 		F48D2A8521583A7E00C6752B /* AppKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = F48D2A8421583A0200C6752B /* AppKitSPI.h */; };
 		F496A4311F58A272004C1757 /* DragDropInteractionState.h in Headers */ = {isa = PBXBuildFile; fileRef = F496A42F1F58A272004C1757 /* DragDropInteractionState.h */; };
+		F4974E76265ECBBC00B49B8C /* WKRevealItemPresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = F446EDEF265EB2B00031DA8F /* WKRevealItemPresenter.h */; };
 		F4975CF22624B80A003C626E /* WKImageExtractionPreviewController.h in Headers */ = {isa = PBXBuildFile; fileRef = F4975CF12624B80A003C626E /* WKImageExtractionPreviewController.h */; };
 		F4A6D6BC254CA3E900B65FAA /* SharedDisplayListHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = F4A6D6BB254CA3E900B65FAA /* SharedDisplayListHandle.h */; };
 		F4BA33F225757E89000A3CE8 /* WKImageExtractionGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F4BA33F025757E89000A3CE8 /* WKImageExtractionGestureRecognizer.h */; };
@@ -5970,6 +5971,8 @@
 		F44291911FA59107002CC93E /* _WKAttachment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKAttachment.h; sourceTree = "<group>"; };
 		F44291931FA59311002CC93E /* _WKAttachment.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKAttachment.mm; sourceTree = "<group>"; };
 		F44291951FA5942A002CC93E /* _WKAttachmentInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKAttachmentInternal.h; sourceTree = "<group>"; };
+		F446EDEF265EB2B00031DA8F /* WKRevealItemPresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKRevealItemPresenter.h; sourceTree = "<group>"; };
+		F446EDF1265EB3B60031DA8F /* WKRevealItemPresenter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKRevealItemPresenter.mm; sourceTree = "<group>"; };
 		F44815622387820000982657 /* WKDeferringGestureRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKDeferringGestureRecognizer.h; path = ios/WKDeferringGestureRecognizer.h; sourceTree = "<group>"; };
 		F44815632387820000982657 /* WKDeferringGestureRecognizer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKDeferringGestureRecognizer.mm; path = ios/WKDeferringGestureRecognizer.mm; sourceTree = "<group>"; };
 		F44DFEB01E9E752F0038D196 /* WebIconUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebIconUtilities.h; path = ios/WebIconUtilities.h; sourceTree = "<group>"; };
@@ -10850,6 +10853,8 @@
 				9321D5871A38EE74008052BE /* WKImmediateActionController.mm */,
 				0FCB4E5C18BBE3D9000FCFC9 /* WKPrintingView.h */,
 				0FCB4E5D18BBE3D9000FCFC9 /* WKPrintingView.mm */,
+				F446EDEF265EB2B00031DA8F /* WKRevealItemPresenter.h */,
+				F446EDF1265EB3B60031DA8F /* WKRevealItemPresenter.mm */,
 				513E462B1AD837560016234A /* WKSharingServicePickerDelegate.h */,
 				513E462C1AD837560016234A /* WKSharingServicePickerDelegate.mm */,
 				2DD67A331BD861060053B251 /* WKTextFinderClient.h */,
@@ -12902,6 +12907,7 @@
 				4990002424D24C2900049CB4 /* WKRenderObject.h in Headers */,
 				3336763B130C99DC006C9DE2 /* WKResourceCacheManager.h in Headers */,
 				BC8A501511765F5600757573 /* WKRetainPtr.h in Headers */,
+				F4974E76265ECBBC00B49B8C /* WKRevealItemPresenter.h in Headers */,
 				5CA26D81217ABD5B00F97A35 /* WKSafeBrowsingWarning.h in Headers */,
 				1A7E377918E4A4FE003D0FFF /* WKScriptMessage.h in Headers */,
 				1A7E377518E4A33A003D0FFF /* WKScriptMessageHandler.h in Headers */,

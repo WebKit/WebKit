@@ -95,10 +95,17 @@ namespace WebKit {
 using namespace WebCore;
 
 #if ENABLE(DATA_DETECTION)
+
 void WebPageProxy::setDataDetectionResult(const DataDetectionResult& dataDetectionResult)
 {
     m_dataDetectionResults = dataDetectionResult.results;
 }
+
+void WebPageProxy::handleClickForDataDetectionResult(const DataDetectorElementInfo& info, const IntPoint& clickLocation)
+{
+    pageClient().handleClickForDataDetectionResult(info, clickLocation);
+}
+
 #endif
 
 void WebPageProxy::saveRecentSearches(const String& name, const Vector<WebCore::RecentSearch>& searchItems)

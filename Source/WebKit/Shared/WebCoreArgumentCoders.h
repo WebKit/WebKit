@@ -143,6 +143,7 @@ struct AttributedString;
 struct CacheQueryOptions;
 struct CharacterRange;
 struct CompositionUnderline;
+struct DataDetectorElementInfo;
 struct DictationAlternative;
 struct DictionaryPopupInfo;
 struct EventTrackingRegions;
@@ -803,6 +804,15 @@ template<> struct ArgumentCoder<WebCore::ScriptBuffer> {
     static void encode(Encoder&, const WebCore::ScriptBuffer&);
     static Optional<WebCore::ScriptBuffer> decode(Decoder&);
 };
+
+#if ENABLE(DATA_DETECTION)
+
+template<> struct ArgumentCoder<WebCore::DataDetectorElementInfo> {
+    static void encode(Encoder&, const WebCore::DataDetectorElementInfo&);
+    static Optional<WebCore::DataDetectorElementInfo> decode(Decoder&);
+};
+
+#endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
 template<> struct ArgumentCoder<WebCore::CDMInstanceSession::Message> {

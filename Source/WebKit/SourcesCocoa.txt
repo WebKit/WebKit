@@ -525,6 +525,7 @@ UIProcess/mac/WKFullScreenWindowController.mm
 UIProcess/mac/WKImageExtractionPreviewController.mm
 UIProcess/mac/WKImmediateActionController.mm
 UIProcess/mac/WKPrintingView.mm
+UIProcess/mac/WKRevealItemPresenter.mm
 UIProcess/mac/WKSharingServicePickerDelegate.mm
 UIProcess/mac/WKTextFinderClient.mm
 UIProcess/mac/WKTextInputWindowController.mm

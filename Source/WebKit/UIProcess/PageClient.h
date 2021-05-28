@@ -112,6 +112,7 @@ enum class TextIndicatorDismissalAnimation : uint8_t;
 enum class DOMPasteAccessResponse : uint8_t;
 
 struct AppHighlight;
+struct DataDetectorElementInfo;
 struct DictionaryPopupInfo;
 struct TextIndicatorData;
 struct ViewportAttributes;
@@ -625,6 +626,10 @@ public:
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
     virtual bool canHandleContextMenuTranslation() const = 0;
     virtual void handleContextMenuTranslation(const WebCore::TranslationContextMenuInfo&) = 0;
+#endif
+
+#if ENABLE(DATA_DETECTION)
+    virtual void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&) { }
 #endif
 };
 

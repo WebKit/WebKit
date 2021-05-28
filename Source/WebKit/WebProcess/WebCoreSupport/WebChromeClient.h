@@ -366,6 +366,10 @@ private:
     void handleTelephoneNumberClick(const String& number, const WebCore::IntPoint&) final;
 #endif
 
+#if ENABLE(DATA_DETECTION)
+    void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&) final;
+#endif
+
 #if ENABLE(SERVICE_CONTROLS)
     void handleSelectionServiceClick(WebCore::FrameSelection&, const Vector<String>& telephoneNumbers, const WebCore::IntPoint&) final;
     bool hasRelevantSelectionServices(bool isTextOnly) const final;

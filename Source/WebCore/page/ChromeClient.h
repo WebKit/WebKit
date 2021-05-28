@@ -121,6 +121,7 @@ class MediaPlayerRequestInstallMissingPluginsCallback;
 struct AppHighlight;
 struct ContactsRequestData;
 struct ContentRuleListResults;
+struct DataDetectorElementInfo;
 struct DateTimeChooserParameters;
 struct GraphicsDeviceAdapter;
 struct MockWebAuthenticationConfiguration;
@@ -500,6 +501,10 @@ public:
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
     virtual void handleTelephoneNumberClick(const String&, const IntPoint&) { }
+#endif
+
+#if ENABLE(DATA_DETECTION)
+    virtual void handleClickForDataDetectionResult(const DataDetectorElementInfo&, const IntPoint&) { }
 #endif
 
 #if ENABLE(SERVICE_CONTROLS)

@@ -1294,6 +1294,15 @@ void WebChromeClient::handleTelephoneNumberClick(const String& number, const Int
 
 #endif
 
+#if ENABLE(DATA_DETECTION)
+
+void WebChromeClient::handleClickForDataDetectionResult(const DataDetectorElementInfo& info, const IntPoint& clickLocation)
+{
+    m_page.handleClickForDataDetectionResult(info, clickLocation);
+}
+
+#endif
+
 #if ENABLE(SERVICE_CONTROLS)
 
 void WebChromeClient::handleSelectionServiceClick(FrameSelection& selection, const Vector<String>& telephoneNumbers, const IntPoint& point)

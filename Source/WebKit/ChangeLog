@@ -1,3 +1,73 @@
+2021-05-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Show context menu when clicking on data detection results in image overlays
+        https://bugs.webkit.org/show_bug.cgi?id=226274
+        rdar://75504956
+
+        Reviewed by Tim Horton and Aditya Keerthi.
+
+        Implement a WebKit2 client hook to handle a click over a data detection result by using the Reveal framework to
+        collect and present a context menu. See below for more details.
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<DataDetectorElementInfo>::encode):
+        (IPC::ArgumentCoder<DataDetectorElementInfo>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+
+        Add encoding and decoding support for DataDetectorElementInfo.
+
+        * SourcesCocoa.txt:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::handleClickForDataDetectionResult):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        (WebKit::WebViewImpl::view const):
+
+        Add a helper method to grab the view (either a WKView or WKWebView) from a WebViewImpl.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::handleClickForDataDetectionResult):
+
+        Create and present a new WKRevealItemPresenter using the DDScannerResult.
+
+        (WebKit::WebViewImpl::didFinishPresentation):
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::handleClickForDataDetectionResult):
+
+        Add more plumbing through the UI process to handle clicking on a data detection result.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::handleClickForDataDetectionResult):
+        * UIProcess/mac/WKRevealItemPresenter.h: Added.
+        * UIProcess/mac/WKRevealItemPresenter.mm: Added.
+
+        Add a helper class that takes an RVItem and is capable of presenting a context menu for the item, on behalf of
+        WebViewImpl. For the time being, this is only used on macOS (and thus, directly holds a WeakPtr to a
+        WebViewImpl). However, we may want to use this in the future for Mac Catalyst as well, in which case we should
+        make this work via a generic WKRevealItemPresenterDelegate protocol instead.
+
+        (-[WKRevealItemPresenter initWithWebViewImpl:item:frame:menuLocation:]):
+        (-[WKRevealItemPresenter showContextMenu]):
+        (-[WKRevealItemPresenter _callDidFinishPresentationIfNeeded]):
+
+        Call out to the WebViewImpl to reset its current reveal item presenter after we've finished presentation. This
+        happens either after we've dismissed the context menu (if no item is highlighted), or after we've finished
+        highlighting the item.
+
+        (-[WKRevealItemPresenter revealContext:rectsForItem:]):
+        (-[WKRevealItemPresenter revealContext:shouldUseDefaultHighlightForItem:]):
+        (-[WKRevealItemPresenter revealContext:startHighlightingItem:]):
+        (-[WKRevealItemPresenter revealContext:stopHighlightingItem:]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::handleClickForDataDetectionResult):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::handleClickForDataDetectionResult):
+        * WebProcess/WebPage/WebPage.h:
+
 2021-05-27  Darin Adler  <darin@apple.com>
 
         Next step toward using std::optional directly instead of through WTF::Optional typedef

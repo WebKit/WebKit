@@ -278,6 +278,7 @@ struct CompositionHighlight;
 struct ContactInfo;
 struct ContactsRequestData;
 struct ContentRuleListResults;
+struct DataDetectorElementInfo;
 struct DataListSuggestionInformation;
 struct DateTimeChooserParameters;
 struct DictionaryPopupInfo;
@@ -875,6 +876,7 @@ public:
 #endif // PLATFORM(IOS_FAMILY)
 #if ENABLE(DATA_DETECTION)
     void setDataDetectionResult(const DataDetectionResult&);
+    void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&);
 #endif
     void didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction&);
     void layerTreeCommitComplete();

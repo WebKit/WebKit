@@ -1031,6 +1031,15 @@ void PageClientImpl::handleContextMenuTranslation(const TranslationContextMenuIn
 
 #endif // HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
 
+#if ENABLE(DATA_DETECTION)
+
+void PageClientImpl::handleClickForDataDetectionResult(const DataDetectorElementInfo& info, const IntPoint& clickLocation)
+{
+    m_impl->handleClickForDataDetectionResult(info, clickLocation);
+}
+
+#endif
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

@@ -61,6 +61,7 @@ OBJC_CLASS WKDOMPasteMenuDelegate;
 OBJC_CLASS WKEditorUndoTarget;
 OBJC_CLASS WKFullScreenWindowController;
 OBJC_CLASS WKImmediateActionController;
+OBJC_CLASS WKRevealItemPresenter;
 OBJC_CLASS WKSafeBrowsingWarning;
 OBJC_CLASS WKShareSheet;
 OBJC_CLASS WKViewLayoutStrategy;
@@ -96,6 +97,7 @@ class PageConfiguration;
 namespace WebCore {
 class DestinationColorSpace;
 class IntPoint;
+struct DataDetectorElementInfo;
 struct ShareDataWithParsedURL;
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
@@ -189,6 +191,7 @@ public:
     NSWindow *window();
 
     WebPageProxy& page() { return m_page.get(); }
+    NSView *view() const { return m_view.getAutoreleased(); }
 
     void processWillSwap();
     void processDidExit();
@@ -669,6 +672,14 @@ public:
     void setMediaSessionCoordinatorForTesting(MediaSessionCoordinatorProxyPrivate*);
 #endif
 
+#if ENABLE(DATA_DETECTION)
+    void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&);
+#endif
+
+#if ENABLE(REVEAL)
+    void didFinishPresentation(WKRevealItemPresenter *);
+#endif
+
 private:
 #if HAVE(TOUCH_BAR)
     void setUpTextTouchBar(NSTouchBar *);
@@ -883,6 +894,10 @@ private:
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     RefPtr<MediaSessionCoordinatorProxyPrivate> m_coordinatorForTesting;
+#endif
+
+#if ENABLE(REVEAL)
+    RetainPtr<WKRevealItemPresenter> m_revealItemPresenter;
 #endif
 
 #if USE(APPLE_INTERNAL_SDK)

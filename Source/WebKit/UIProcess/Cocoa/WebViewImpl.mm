@@ -65,6 +65,7 @@
 #import "WKNSURLExtras.h"
 #import "WKPDFHUDView.h"
 #import "WKPrintingView.h"
+#import "WKRevealItemPresenter.h"
 #import "WKSafeBrowsingWarning.h"
 #import <WebKit/WKShareSheet.h>
 #import "WKTextInputWindowController.h"
@@ -89,6 +90,7 @@
 #import <WebCore/ColorMac.h>
 #import <WebCore/ColorSerialization.h>
 #import <WebCore/CompositionHighlight.h>
+#import <WebCore/DataDetectorElementInfo.h>
 #import <WebCore/DestinationColorSpace.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DragData.h>
@@ -154,6 +156,8 @@
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(TranslationUIServices)
 SOFT_LINK_CLASS_OPTIONAL(TranslationUIServices, LTUITranslationViewController)
 #endif
+
+#import <pal/cocoa/RevealSoftLink.h>
 
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 SOFT_LINK_FRAMEWORK(AVKit)
@@ -5750,6 +5754,32 @@ void WebViewImpl::endPreviewPanelControl(QLPreviewPanel *panel)
     UNUSED_PARAM(panel);
 #endif
 }
+
+#if ENABLE(DATA_DETECTION)
+
+void WebViewImpl::handleClickForDataDetectionResult(const DataDetectorElementInfo& info, const IntPoint& clickLocation)
+{
+#if ENABLE(REVEAL)
+    m_revealItemPresenter = adoptNS([[WKRevealItemPresenter alloc] initWithWebViewImpl:*this item:adoptNS([PAL::allocRVItemInstance() initWithDDResult:info.result.get()]).get() frame:info.elementBounds menuLocation:clickLocation]);
+    [m_revealItemPresenter setShouldUseDefaultHighlight:NO];
+    [m_revealItemPresenter showContextMenu];
+#else
+    UNUSED_PARAM(info);
+    UNUSED_PARAM(clickLocation);
+#endif
+}
+
+#endif // ENABLE(DATA_DETECTION)
+
+#if ENABLE(REVEAL)
+
+void WebViewImpl::didFinishPresentation(WKRevealItemPresenter *presenter)
+{
+    if (presenter == m_revealItemPresenter)
+        m_revealItemPresenter = nil;
+}
+
+#endif // ENABLE(REVEAL)
 
 } // namespace WebKit
 
