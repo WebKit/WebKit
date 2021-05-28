@@ -2198,8 +2198,8 @@ def copyBundleToRemote(remoteHost)
 end
 
 def exportBaseEnvironmentVariables
-    dyldFrameworkPath = "\$(cd #{$testingFrameworkPath.dirname}; pwd)"
-    ldLibraryPath = "\$(cd #{$testingFrameworkPath.dirname}/..; pwd)/#{$jscPath.dirname}"
+    dyldFrameworkPath = "\\$(cd #{$testingFrameworkPath.dirname}; pwd)"
+    ldLibraryPath = "\\$(cd #{$testingFrameworkPath.dirname}/..; pwd)/#{$jscPath.dirname}"
     [
         "export DYLD_FRAMEWORK_PATH=#{dyldFrameworkPath} && ",
         "export LD_LIBRARY_PATH=#{ldLibraryPath} &&",
