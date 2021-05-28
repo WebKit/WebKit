@@ -186,7 +186,7 @@ const char* const s_unguardedBuiltinIsReadableStreamLockedCode =
 JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \
 {\
     JSVMClientData* clientData = static_cast<JSVMClientData*>(vm.clientData); \
-    return clientData->builtinFunctions().unguardedBuiltinBuiltins().codeName##Executable()->link(vm, nullptr, clientData->builtinFunctions().unguardedBuiltinBuiltins().codeName##Source(), WTF::nullopt, s_##codeName##Intrinsic); \
+    return clientData->builtinFunctions().unguardedBuiltinBuiltins().codeName##Executable()->link(vm, nullptr, clientData->builtinFunctions().unguardedBuiltinBuiltins().codeName##Source(), std::nullopt, s_##codeName##Intrinsic); \
 }
 WEBCORE_FOREACH_UNGUARDEDBUILTIN_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 #undef DEFINE_BUILTIN_GENERATOR
