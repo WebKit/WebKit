@@ -1,3 +1,11 @@
+2021-05-28  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix after r277881.
+
+        Add missing header include.
+
+        * wtf/cocoa/FileSystemCocoa.mm:
+
 2021-05-27  Said Abou-Hallawa  <said@apple.com>
 
         Values of keySplines control points must all be in the range 0 to 1
