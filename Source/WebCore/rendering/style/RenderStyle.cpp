@@ -952,6 +952,11 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
             return true;
     }
 
+#if ENABLE(CSS_SCROLL_SNAP)
+    if (scrollPadding() != other.scrollPadding() || scrollSnapType() != other.scrollSnapType())
+        return true;
+#endif
+
     return false;
 }
 

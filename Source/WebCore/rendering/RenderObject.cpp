@@ -469,7 +469,7 @@ RenderBoxModelObject& RenderObject::enclosingBoxModelObject() const
     return *lineageOfType<RenderBoxModelObject>(const_cast<RenderObject&>(*this)).first();
 }
 
-const RenderBox* RenderObject::enclosingScrollableContainerForSnapping() const
+RenderBox* RenderObject::enclosingScrollableContainerForSnapping() const
 {
     // Walk up the container chain to find the scrollable container that contains
     // this RenderObject. The important thing here is that `container()` respects

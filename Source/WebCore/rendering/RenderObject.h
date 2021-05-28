@@ -155,7 +155,7 @@ public:
 
     WEBCORE_EXPORT RenderBox& enclosingBox() const;
     RenderBoxModelObject& enclosingBoxModelObject() const;
-    const RenderBox* enclosingScrollableContainerForSnapping() const;
+    RenderBox* enclosingScrollableContainerForSnapping() const;
 
     // Return our enclosing flow thread if we are contained inside one. Follows the containing block chain.
     RenderFragmentedFlow* enclosingFragmentedFlow() const;

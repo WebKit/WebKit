@@ -107,13 +107,6 @@ void RenderLayerModelObject::styleWillChange(StyleDifference diff, const RenderS
     RenderElement::styleWillChange(diff, newStyle);
 }
 
-#if ENABLE(CSS_SCROLL_SNAP)
-static bool scrollSnapContainerRequiresUpdateForStyleUpdate(const RenderStyle& oldStyle, const RenderStyle& newStyle)
-{
-    return oldStyle.scrollPadding() != newStyle.scrollPadding() || oldStyle.scrollSnapType() != newStyle.scrollSnapType();
-}
-#endif
-
 void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderElement::styleDidChange(diff, oldStyle);
@@ -171,38 +164,12 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
     }
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    if (oldStyle && scrollSnapContainerRequiresUpdateForStyleUpdate(*oldStyle, newStyle)) {
-        if (RenderLayer* renderLayer = layer()) {
-            if (auto* scrollableArea = renderLayer->scrollableArea()) {
-                scrollableArea->updateSnapOffsets();
-                scrollableArea->updateScrollSnapState();
-            }
-        } else if (isBody() || isDocumentElementRenderer()) {
-            FrameView& frameView = view().frameView();
-            frameView.updateSnapOffsets();
-            frameView.updateScrollSnapState();
-            frameView.updateScrollingCoordinatorScrollSnapProperties();
-        }
-    }
-
     bool scrollMarginChanged = oldStyle && oldStyle->scrollMargin() != newStyle.scrollMargin();
     bool scrollAlignChanged = oldStyle && oldStyle->scrollSnapAlign() != newStyle.scrollSnapAlign();
     bool scrollSnapStopChanged = oldStyle && oldStyle->scrollSnapStop() != newStyle.scrollSnapStop();
     if (scrollMarginChanged || scrollAlignChanged || scrollSnapStopChanged) {
-        auto* scrollSnapBox = enclosingScrollableContainerForSnapping();
-        if (scrollSnapBox && scrollSnapBox->layer()) {
-            const RenderStyle& style = scrollSnapBox->style();
-            if (style.scrollSnapType().strictness != ScrollSnapStrictness::None) {
-                if (auto* scrollableArea = scrollSnapBox->layer()->scrollableArea()) {
-                    scrollableArea->updateSnapOffsets();
-                    scrollableArea->updateScrollSnapState();
-                }
-                if (scrollSnapBox->isBody() || scrollSnapBox->isDocumentElementRenderer())
-                    scrollSnapBox->view().frameView().updateSnapOffsets();
-                    scrollSnapBox->view().frameView().updateScrollSnapState();
-                    scrollSnapBox->view().frameView().updateScrollingCoordinatorScrollSnapProperties();
-            }
-        }
+        if (auto* scrollSnapBox = enclosingScrollableContainerForSnapping())
+            scrollSnapBox->setNeedsLayout();
     }
 #endif
 }

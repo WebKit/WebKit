@@ -1,3 +1,13 @@
+2021-05-28  Martin Robinson  <mrobinson@webkit.org>
+
+        More readily layout when scroll-snap properties change
+        https://bugs.webkit.org/show_bug.cgi?id=225950
+
+        Reviewed by Simon Fraser.
+
+        * css3/scroll-snap/scroll-snap-style-change-crash-expected.txt: Added.
+        * css3/scroll-snap/scroll-snap-style-change-crash.html: Added.
+
 2021-05-27  Amir Mark Jr  <amir_mark@apple.com>
 
         [MacOS Wk1] imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/inferred-mrow-stretchy.html is a flaky failure
