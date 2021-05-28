@@ -2045,8 +2045,11 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForContent() const
     if (hasOverridingContainingBlockContentLogicalWidth())
         return overridingContainingBlockContentLogicalWidth().value_or(0_lu);
 
-    if (RenderBlock* cb = containingBlock())
+    if (RenderBlock* cb = containingBlock()) {
+        if (isOutOfFlowPositioned())
+            return cb->clientLogicalWidth();
         return cb->availableLogicalWidth();
+    }
     return 0_lu;
 }
 
