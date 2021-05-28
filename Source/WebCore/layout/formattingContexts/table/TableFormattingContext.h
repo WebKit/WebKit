@@ -54,8 +54,6 @@ public:
 
     static UniqueRef<TableGrid> ensureTableGrid(const ContainerBox& tableBox);
 
-    const TableFormattingState& formattingState() const { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
-
 private:
     class TableLayout {
     public:
@@ -83,6 +81,7 @@ private:
     IntrinsicWidthConstraints computedPreferredWidthForColumns();
     void computeAndDistributeExtraSpace(LayoutUnit availableHorizontalSpace, Optional<LayoutUnit> availableVerticalSpace);
 
+    const TableFormattingState& formattingState() const { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
     TableFormattingState& formattingState() { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
 
     const TableFormattingGeometry m_tableFormattingGeometry;
