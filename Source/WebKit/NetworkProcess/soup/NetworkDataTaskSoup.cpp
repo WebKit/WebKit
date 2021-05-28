@@ -103,6 +103,33 @@ String NetworkDataTaskSoup::suggestedFilename() const
     return decodeURLEscapeSequences(m_response.url().lastPathComponent());
 }
 
+void NetworkDataTaskSoup::setPriority(ResourceLoadPriority priority)
+{
+    if (!m_soupMessage)
+        return;
+
+    SoupMessagePriority soupPriority = SOUP_MESSAGE_PRIORITY_NORMAL;
+    switch (priority) {
+    case ResourceLoadPriority::VeryLow:
+        soupPriority = SOUP_MESSAGE_PRIORITY_VERY_LOW;
+        break;
+    case ResourceLoadPriority::Low:
+        soupPriority = SOUP_MESSAGE_PRIORITY_LOW;
+        break;
+    case ResourceLoadPriority::Medium:
+        soupPriority = SOUP_MESSAGE_PRIORITY_NORMAL;
+        break;
+    case ResourceLoadPriority::High:
+        soupPriority = SOUP_MESSAGE_PRIORITY_HIGH;
+        break;
+    case ResourceLoadPriority::VeryHigh:
+        soupPriority = SOUP_MESSAGE_PRIORITY_VERY_HIGH;
+        break;
+    }
+
+    soup_message_set_priority(m_soupMessage.get(), soupPriority);
+}
+
 void NetworkDataTaskSoup::setPendingDownloadLocation(const String& filename, SandboxExtension::Handle&& sandboxExtensionHandle, bool allowOverwrite)
 {
     NetworkDataTask::setPendingDownloadLocation(filename, WTFMove(sandboxExtensionHandle), allowOverwrite);

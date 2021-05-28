@@ -1,3 +1,17 @@
+2021-05-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Implement NetworkDataTask::setPriority
+        https://bugs.webkit.org/show_bug.cgi?id=226371
+
+        Reviewed by Adrian Perez de Castro.
+
+        To update the soup message priority. In HTTP/2 soup can send a priority frame to prioritize the associated
+        stream.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::setPriority):
+        * NetworkProcess/soup/NetworkDataTaskSoup.h:
+
 2021-05-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [GPU Process] Add debug logging around some shared display list codepaths

@@ -59,6 +59,8 @@ private:
     void setPendingDownloadLocation(const String&, SandboxExtension::Handle&&, bool /*allowOverwrite*/) override;
     String suggestedFilename() const override;
 
+    void setPriority(WebCore::ResourceLoadPriority) override;
+
     void timeoutFired();
     void startTimeout();
     void stopTimeout();
