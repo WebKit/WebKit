@@ -2408,7 +2408,7 @@ void MediaPlayerPrivateAVFoundationObjC::destroyVideoOutput()
 
 bool MediaPlayerPrivateAVFoundationObjC::updateLastPixelBuffer()
 {
-    if (!m_avPlayerItem)
+    if (!m_avPlayerItem || readyState() < MediaPlayer::ReadyState::HaveCurrentData)
         return false;
 
     if (!m_videoOutput)
@@ -2431,7 +2431,7 @@ bool MediaPlayerPrivateAVFoundationObjC::updateLastPixelBuffer()
 
 bool MediaPlayerPrivateAVFoundationObjC::videoOutputHasAvailableFrame()
 {
-    if (!m_avPlayerItem)
+    if (!m_avPlayerItem || readyState() < MediaPlayer::ReadyState::HaveCurrentData)
         return false;
 
     if (m_lastImage)
@@ -2445,7 +2445,7 @@ bool MediaPlayerPrivateAVFoundationObjC::videoOutputHasAvailableFrame()
 
 void MediaPlayerPrivateAVFoundationObjC::updateLastImage(UpdateType type)
 {
-    if (!m_avPlayerItem)
+    if (!m_avPlayerItem || readyState() < MediaPlayer::ReadyState::HaveCurrentData)
         return;
 
     if (type == UpdateType::UpdateSynchronously && !m_lastImage && !videoOutputHasAvailableFrame())
