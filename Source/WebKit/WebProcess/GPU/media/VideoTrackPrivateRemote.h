@@ -56,6 +56,7 @@ public:
     AtomString label() const final { return m_label; }
     AtomString language() const final { return m_language; }
     int trackIndex() const final { return m_trackIndex; }
+    MediaTime startTimeVariance() const final { return m_startTimeVariance; }
 
 private:
     VideoTrackPrivateRemote(GPUProcessConnection&, WebCore::MediaPlayerIdentifier, TrackPrivateRemoteIdentifier, TrackPrivateRemoteConfiguration&&);

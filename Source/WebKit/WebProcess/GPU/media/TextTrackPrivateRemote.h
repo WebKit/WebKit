@@ -92,6 +92,7 @@ public:
     bool isMainProgramContent() const final { return m_isMainProgramContent; }
     bool isEasyToRead() const final { return m_isEasyToRead; }
     bool isDefault() const final { return m_isDefault; }
+    MediaTime startTimeVariance() const final { return m_startTimeVariance; }
 
 private:
     TextTrackPrivateRemote(GPUProcessConnection&, WebCore::MediaPlayerIdentifier, TrackPrivateRemoteIdentifier, TextTrackPrivateRemoteConfiguration&&);

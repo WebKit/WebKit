@@ -1,3 +1,17 @@
+2021-05-28  Eric Carlson  <eric.carlson@apple.com>
+
+        [GPUP] [Video/Audio/Text]TrackPrivateRemote.h should use startTimeVariance
+        https://bugs.webkit.org/show_bug.cgi?id=226355
+        rdar://77326202
+
+        Reviewed by Jer Noble.
+
+        Test: http/tests/media/hls/hls-webvtt-seek-backwards.html
+
+        * WebProcess/GPU/media/AudioTrackPrivateRemote.h: Use configuration.startTimeVariance.
+        * WebProcess/GPU/media/TextTrackPrivateRemote.h: Ditto.
+        * WebProcess/GPU/media/VideoTrackPrivateRemote.h: Ditto.
+
 2021-05-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] Implement NetworkDataTask::setPriority

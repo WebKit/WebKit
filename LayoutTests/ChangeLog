@@ -1,3 +1,14 @@
+2021-05-28  Eric Carlson  <eric.carlson@apple.com>
+
+        [GPUP] [Video/Audio/Text]TrackPrivateRemote.h should use startTimeVariance
+        https://bugs.webkit.org/show_bug.cgi?id=226355
+        rdar://77326202
+
+        Reviewed by Jer Noble.
+
+        * http/tests/media/hls/hls-webvtt-seek-backwards-expected.txt: Added.
+        * http/tests/media/hls/hls-webvtt-seek-backwards.html: Added.
+
 2021-05-28  Martin Robinson  <mrobinson@webkit.org>
 
         More readily layout when scroll-snap properties change
