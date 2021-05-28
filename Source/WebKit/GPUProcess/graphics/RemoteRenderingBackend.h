@@ -42,7 +42,6 @@
 #include <WebCore/DisplayListReplayer.h>
 #include <wtf/WeakPtr.h>
 
-
 namespace WebCore {
 
 namespace DisplayList {

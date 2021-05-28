@@ -220,7 +220,11 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
         auto displayList = handle.displayListForReading(offset, sizeToRead, *this);
         MESSAGE_CHECK_WITH_RETURN_VALUE(displayList, nullptr, "Failed to map display list from shared memory");
 
+#if !LOG_DISABLED
+        auto startTime = MonotonicTime::now();
+#endif
         auto result = submit(*displayList, *destination);
+        LOG_WITH_STREAM(SharedDisplayLists, stream << "Read [" << offset << ", " << offset + result.numberOfBytesRead << "]; Items[" << handle.identifier() << "] => Image(" << destination->renderingResourceIdentifier() << ") in " << MonotonicTime::now() - startTime);
         MESSAGE_CHECK_WITH_RETURN_VALUE(result.reasonForStopping != DisplayList::StopReplayReason::InvalidItemOrExtent, nullptr, "Detected invalid display list item or extent");
         MESSAGE_CHECK_WITH_RETURN_VALUE(result.reasonForStopping != DisplayList::StopReplayReason::OutOfMemory, nullptr, "Cound not allocate memory");
 
@@ -300,11 +304,10 @@ void RemoteRenderingBackend::wakeUpAndApplyDisplayList(const GPUProcessWakeupMes
     auto initialHandle = m_sharedDisplayListHandles.get(arguments.itemBufferIdentifier);
     MESSAGE_CHECK(initialHandle, "Missing initial shared display list handle");
 
+    LOG_WITH_STREAM(SharedDisplayLists, stream << "Waking up to Items[" << arguments.itemBufferIdentifier << "] => Image(" << arguments.destinationImageBufferIdentifier << ") at " << arguments.offset);
     destinationImageBuffer = nextDestinationImageBufferAfterApplyingDisplayLists(*destinationImageBuffer, arguments.offset, *initialHandle, arguments.reason);
-    if (!destinationImageBuffer)
-        return;
 
-    while (m_pendingWakeupInfo) {
+    while (destinationImageBuffer && m_pendingWakeupInfo) {
         if (m_pendingWakeupInfo->missingCachedResourceIdentifier)
             break;
 
@@ -318,9 +321,8 @@ void RemoteRenderingBackend::wakeUpAndApplyDisplayList(const GPUProcessWakeupMes
         // Otherwise, continue reading the next display list item buffer from the start.
         auto arguments = std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments;
         destinationImageBuffer = nextDestinationImageBufferAfterApplyingDisplayLists(*destinationImageBuffer, arguments.offset, *nextHandle, arguments.reason);
-        if (!destinationImageBuffer)
-            break;
     }
+    LOG_WITH_STREAM(SharedDisplayLists, stream << "Going back to sleep.");
 }
 
 void RemoteRenderingBackend::setNextItemBufferToRead(DisplayList::ItemBufferIdentifier identifier, WebCore::RenderingResourceIdentifier destinationIdentifier)

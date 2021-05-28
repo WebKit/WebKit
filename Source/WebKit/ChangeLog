@@ -1,5 +1,37 @@
 2021-05-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [GPU Process] Add debug logging around some shared display list codepaths
+        https://bugs.webkit.org/show_bug.cgi?id=226356
+
+        Reviewed by Simon Fraser.
+
+        Add logging around the shared display list processing logic between the web and GPU processes. This is the basic
+        set of log messages I've used in the past to triage crashes and hangs while optimizing MotionMark performance,
+        and should be sufficient for some basic debugging around display list code around RemoteRenderingBackend(Proxy).
+
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::nextDestinationImageBufferAfterApplyingDisplayLists):
+        (WebKit::RemoteRenderingBackend::wakeUpAndApplyDisplayList):
+
+        Log when wakeup messages are sent by the web process and received by the GPU process.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+        * Platform/Logging.h:
+        * WebProcess/GPU/graphics/RemoteImageBufferProxy.h:
+        (WebKit::RemoteImageBufferProxy::waitForDidFlushWithTimeout):
+
+        Log when synchronous flushes are performed, as well as whether they time out.
+
+        * WebProcess/GPU/graphics/RemoteRenderingBackendProxy.cpp:
+        (WebKit::RemoteRenderingBackendProxy::sendWakeupMessage):
+        (WebKit::RemoteRenderingBackendProxy::createItemBuffer):
+
+        Log whenever new display list shared memory is created, and also when display lists are reused (additionally
+        logging the remaining capacity on reused display lists).
+
+2021-05-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [macOS] Show context menu when clicking on data detection results in image overlays
         https://bugs.webkit.org/show_bug.cgi?id=226274
         rdar://75504956

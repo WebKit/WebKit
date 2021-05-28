@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "Encoder.h"
+#include "Logging.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "SharedMemory.h"
 #include <WebCore/DisplayList.h>
@@ -135,10 +136,15 @@ protected:
         // Wait for our DisplayList to be flushed but do not hang.
         static constexpr unsigned maximumNumberOfTimeouts = 3;
         unsigned numberOfTimeouts = 0;
+#if !LOG_DISABLED
+        auto startTime = MonotonicTime::now();
+#endif
+        LOG_WITH_STREAM(SharedDisplayLists, stream << "Waiting for Flush{" << m_sentFlushIdentifier << "} in Image(" << m_renderingResourceIdentifier << ")");
         while (numberOfTimeouts < maximumNumberOfTimeouts && hasPendingFlush()) {
             if (!m_remoteRenderingBackendProxy->waitForDidFlush())
                 ++numberOfTimeouts;
         }
+        LOG_WITH_STREAM(SharedDisplayLists, stream << "Done waiting: " << MonotonicTime::now() - startTime << "; " << numberOfTimeouts << " timeout(s)");
     }
 
     WebCore::ImageBufferBackend* ensureBackendCreated() const override

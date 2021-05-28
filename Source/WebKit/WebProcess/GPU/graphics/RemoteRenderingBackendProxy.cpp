@@ -30,6 +30,7 @@
 
 #include "DisplayListWriterHandle.h"
 #include "GPUConnectionToWebProcess.h"
+#include "Logging.h"
 #include "PlatformRemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
@@ -302,6 +303,7 @@ void RemoteRenderingBackendProxy::willAppendItem(RenderingResourceIdentifier new
 
 void RemoteRenderingBackendProxy::sendWakeupMessage(const GPUProcessWakeupMessageArguments& arguments)
 {
+    LOG_WITH_STREAM(SharedDisplayLists, stream << "Sending wakeup: Items[" << arguments.itemBufferIdentifier << "] => Image(" << arguments.destinationImageBufferIdentifier << ") at " << arguments.offset);
     send(Messages::RemoteRenderingBackend::WakeUpAndApplyDisplayList(arguments), renderingBackendIdentifier(), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
@@ -385,8 +387,10 @@ RefPtr<DisplayListWriterHandle> RemoteRenderingBackendProxy::findReusableDisplay
 
 DisplayList::ItemBufferHandle RemoteRenderingBackendProxy::createItemBuffer(size_t capacity, RenderingResourceIdentifier destinationBufferIdentifier)
 {
-    if (auto handle = findReusableDisplayListHandle(capacity))
+    if (auto handle = findReusableDisplayListHandle(capacity)) {
+        LOG_WITH_STREAM(SharedDisplayLists, stream << "Reusing Items[" << handle->identifier() << "] => Image(" << destinationBufferIdentifier << ") (remaining capacity: " << handle->availableCapacity() << ")");
         return handle->createHandle();
+    }
 
     static constexpr size_t defaultSharedItemBufferSize = 1 << 16;
     static_assert(defaultSharedItemBufferSize > SharedDisplayListHandle::headerSize());
@@ -408,6 +412,7 @@ DisplayList::ItemBufferHandle RemoteRenderingBackendProxy::createItemBuffer(size
     m_identifiersOfReusableHandles.prepend(identifier);
     m_sharedDisplayListHandles.set(identifier, WTFMove(newHandle));
 
+    LOG_WITH_STREAM(SharedDisplayLists, stream << "Allocated Items[" << identifier << "] => Image(" << destinationBufferIdentifier << ")");
     return displayListHandle;
 }
 
