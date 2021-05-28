@@ -3786,8 +3786,8 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     }
 
 #if ENABLE(IMAGE_EXTRACTION)
-    if (action == WebKit::imageExtractionAction())
-        return editorState.isContentEditable;
+    if (WebKit::isImageExtractionAction(action) && !editorState.isContentEditable)
+        return NO;
 #endif
 
     return [super canPerformAction:action withSender:sender];

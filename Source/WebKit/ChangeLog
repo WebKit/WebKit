@@ -1,3 +1,20 @@
+2021-05-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Adjust logic when determining whether to enable image extraction actions in the callout bar
+        https://bugs.webkit.org/show_bug.cgi?id=226387
+        rdar://76781788
+
+        Reviewed by Tim Horton and Devin Rousso.
+
+        Call into the superclass (which contains additional restrictions beyond our `isContentEditable` check on the
+        editor state), and additionally refactor this helper function to take a selector and return whether or not it is
+        one of the image extraction action selectors (as opposed to returning the selector itself).
+
+        See Radar for more details.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+
 2021-05-28  Sam Weinig  <weinig@apple.com>
 
         Add stub implementation of CA separated portal bits for GraphicsLayer
