@@ -16,44 +16,44 @@
 /* visible name of the plug-in host process. The first argument is the plug-in name and the second argument is the application name. */
 "%@ (%@ Internet plug-in)" = "%@ (%@ Internet plug-in)";
 
-/* Text track display name format that includes the language of the subtitle, in the form of 'Title (Language)' */
-"%@ (%@)" = "%@ (%@)";
+/* Audio/Text track display name format that includes the label and language of the track, in the form of 'Language (Label)'. */
+"%@ (%@) (audio/text track)" = "%@ (%@)";
 
-/* Text track display name format that includes the country and language of the subtitle, in the form of 'Title (Language-Country)' */
-"%@ (%@-%@)" = "%@ (%@-%@)";
-
-/* Text track contains Audio Descriptions */
-"%@ AD" = "%@ AD";
-
-/* Text track contains closed captions */
-"%@ CC" = "%@ CC";
+/* Closed captions text track display name format that includes the language and/or locale (e.g. 'English CC'). */
+"%@ CC (text track)" = "%@ CC";
 
 /* Captions text track display name format that includes the language and/or locale (e.g. 'English Captions'). */
-"%@ Captions" = "%@ Captions";
+"%@ Captions (text track)" = "%@ Captions";
 
 /* Chapters text track display name format that includes the language and/or locale (e.g. 'English Chapters'). */
-"%@ Chapters" = "%@ Chapters";
+"%@ Chapters (text track)" = "%@ Chapters";
+
+/* Commentary audio track display name format that includes the language and/or locale (e.g. 'English Commentary'). */
+"%@ Commentary (audio track)" = "%@ Commentary";
+
+/* Descriptions audio track display name format that includes the language and/or locale (e.g. 'English Descriptions'). */
+"%@ Descriptions (audio track)" = "%@ Descriptions";
 
 /* Descriptions text track display name format that includes the language and/or locale (e.g. 'English Descriptions'). */
-"%@ Descriptions" = "%@ Descriptions";
+"%@ Descriptions (text track)" = "%@ Descriptions";
 
-/* Text track contains simplified (3rd grade level) subtitles */
-"%@ Easy Reader" = "%@ Easy Reader";
+/* Easy Reader (i.e. 3rd-grade level) text track display name format that includes the language and/or locale (e.g. 'English Easy Reader'). */
+"%@ Easy Reader (text track)" = "%@ Easy Reader";
 
-/* Text track contains forced subtitles */
-"%@ Forced" = "%@ Forced";
+/* Forced text track display name format that includes the language and/or locale (e.g. 'English Forced'). */
+"%@ Forced (text track)" = "%@ Forced";
 
 /* visible name of the GPU process. The argument is the application name. */
 "%@ Graphics and Media" = "%@ Graphics and Media";
 
-/* Metadata text track display name format that includes the language and/or locale (e.g. 'English Metadats'). */
-"%@ Metadata" = "%@ Metadata";
+/* Metadata text track display name format that includes the language and/or locale (e.g. 'English Metadata'). */
+"%@ Metadata (text track)" = "%@ Metadata";
 
 /* visible name of the network process. The argument is the application name. */
 "%@ Networking" = "%@ Networking";
 
-/* Text track contains subtitles for the deaf and hard of hearing */
-"%@ SDH" = "%@ SDH";
+/* SDH (i.e. deaf and/or hard of hearing) text track display name format that includes the language and/or locale (e.g. 'English SDH').  */
+"%@ SDH (text track)" = "%@ SDH";
 
 /* Visible name of Service Worker process. The argument is the application name. */
 "%@ Service Worker (%@)" = "%@ Service Worker (%@)";
@@ -181,8 +181,8 @@
 /* WKErrorAttributedStringContentFailedToLoad description */
 "Attributed string content failed to load" = "Attributed string content failed to load";
 
-/* Menu item label for automatic track selection behavior */
-"Auto (Recommended)" = "Auto (Recommended)";
+/* Menu item label for automatic track selection behavior. */
+"Auto (Recommended) (text track)" = "Auto (Recommended)";
 
 /* Back context menu item */
 "Back" = "Back";
@@ -208,8 +208,8 @@
 /* Label for the buy with Apple Pay button. */
 "Buy with Apple Pay" = "Buy with Apple Pay";
 
-/* Display name for closed captions text tracks that is used to see if the HTML 'label' already contains 'CC'. */
-"CC" = "CC";
+/* Display name for closed captions text tracks. */
+"CC (text track)" = "CC";
 
 /* Cancel */
 "Cancel" = "Cancel";
@@ -223,8 +223,8 @@
 /* Capitalize context menu item */
 "Capitalize" = "Capitalize";
 
-/* Display name for text track kind 'captions' that is used to see if the HTML 'label' already contains 'Captions'. */
-"Captions" = "Captions";
+/* Display name for text track kind 'captions'. */
+"Captions (text track)" = "Captions";
 
 /* Undo action name */
 "Center (Undo action name)" = "Center";
@@ -232,8 +232,8 @@
 /* Undo action name */
 "Change Attributes (Undo action name)" = "Change Attributes";
 
-/* Display name for text track kind 'chapters' that is used to see if the HTML 'label' already contains 'Chapters'. */
-"Chapters" = "Chapters";
+/* Display name for text track kind 'chapters'. */
+"Chapters (text track)" = "Chapters";
 
 /* Check spelling context menu item */
 "Check Document Now" = "Check Document Now";
@@ -267,6 +267,9 @@
 
 /* Subtitle of the label to show on a snapshotted plug-in */
 "Click to restart" = "Click to restart";
+
+/* Display name for audio track kind 'commentary'. */
+"Commentary (audio track)" = "%@ Commentary";
 
 /* WKErrorContentRuleListStoreCompileFailed description */
 "Compiling a WKContentRuleList failed" = "Compiling a WKContentRuleList failed";
@@ -334,8 +337,11 @@
 /* Undo action name */
 "Delete (Undo action name)" = "Delete";
 
-/* Display name for text track kind 'descriptions' that is used to see if the HTML 'label' already contains 'Descriptions'. */
-"Descriptions" = "Descriptions";
+/* Display name for audio track kind 'descriptions'. */
+"Descriptions (audio track)" = "Descriptions";
+
+/* Display name for text track kind 'descriptions'. */
+"Descriptions (text track)" = "Descriptions";
 
 /* text to display in <details> tag when it has no <summary> child */
 "Details" = "Details";
@@ -382,8 +388,8 @@
 /* Undo action name */
 "Drag (Undo action name)" = "Drag";
 
-/* Display name for easy reader text tracks that is used to see if the HTML 'label' already contains 'Easy Reader'. */
-"Easy Reader" = "Easy Reader";
+/* Display name for easy reader (i.e. 3rd-grade level) text tracks. */
+"Easy Reader (text track)" = "Easy Reader";
 
 /* Video Enter Full Screen context menu item */
 "Enter Full Screen" = "Enter Full Screen";
@@ -430,8 +436,8 @@
 /* Font context sub-menu item */
 "Font" = "Font";
 
-/* Display name for text track kind 'forced' that is used to see if the HTML 'label' already contains 'Forced'. */
-"Forced" = "Forced";
+/* Display name for text track kind 'forced'. */
+"Forced (text track)" = "Forced";
 
 /* Undo action name */
 "Format Block (Undo action name)" = "Formatting";
@@ -592,8 +598,8 @@
 /* Malware confirmation dialog */
 "Merely visiting a site is sufficient for malware to install itself and harm your computer." = "Merely visiting a site is sufficient for malware to install itself and harm your computer.";
 
-/* Display name for text track kind 'metadata' that is used to see if the HTML 'label' already contains 'Metadata'. */
-"Metadata" = "Metadata";
+/* Display name for text track kind 'metadata'. */
+"Metadata (text track)" = "Metadata";
 
 /* Label text to be used when a plugin is missing */
 "Missing Plug-in" = "Missing Plug-in";
@@ -625,8 +631,8 @@
 /* OK button label in document password failure alert */
 "OK (document password failure alert)" = "OK";
 
-/* Menu item label for the track that represents disabling closed captions */
-"Off" = "Off";
+/* Menu item label for the track that represents disabling closed captions. */
+"Off (text track)" = "Off";
 
 /* Title for Open Link action button */
 "Open" = "Open";
@@ -745,8 +751,8 @@
 /* Right to Left context menu item */
 "Right to Left" = "Right to Left";
 
-/* Display name for deaf and hard of hearing subtitle text tracks that is used to see if the HTML 'label' already contains 'SDH'. */
-"SDH" = "SDH";
+/* Display name for SDH (i.e. deaf and/or hard of hearing) text tracks. */
+"SDH (text track)" = "SDH";
 
 /* Title of the Search button for zoomed form controls. */
 "Search" = "Search";
@@ -1033,14 +1039,11 @@
 /* Undo action name */
 "Underline (Undo action name)" = "Underline";
 
-/* Menu item label for an audio track that has no other name */
-"Unknown (audio track)" = "Unknown";
-
 /* Unknown filesize FTP directory listing item */
 "Unknown (filesize)" = "Unknown";
 
-/* Menu item label for a text track that has no other name */
-"Unknown (text track)" = "Unknown";
+/* Menu item label for a audio/text track that has no other name. */
+"Unknown (audio/text track)" = "Unknown";
 
 /* Undo action name */
 "Unlink (Undo action name)" = "Unlink";

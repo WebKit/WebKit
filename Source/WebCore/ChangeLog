@@ -1,3 +1,97 @@
+2021-05-28  Devin Rousso  <drousso@apple.com>
+
+        [Modern Media Controls] put the localized information for tracks first if the track is not in the user's preferred language
+        https://bugs.webkit.org/show_bug.cgi?id=226361
+        <rdar://problem/78497853>
+
+        Reviewed by Eric Carlson.
+
+        Test: media/modern-media-controls/tracks-support/sorted-by-user-preferred-languages.html
+
+        This makes it clearer/easier for the user to understand what's going on when the track label
+        is not in the user's preferred language. For example, if a `<video>` has an "English" audio
+        track, it's not very helpful to show "English (英语)" for Chinese users instead of something
+        like "英语 (English)".
+
+        If the track has a `label` and either matches the user's preferred language or its `label`
+        already contains the localized language name, combine the track's `label` with a localized
+        description of the track if that description isn't already in the `label`. Otherwise, add
+        the localized language name first, then the description of the track, and finally the `label`.
+
+        Here are some examples if the user's preferred language is English:
+         - `<track kind="subtitles" srclang="en">`                  would show "English"
+         - `<track kind="subtitles" srclang="en" label="Foo">`      would show "Foo"
+         - `<track kind="captions"  srclang="en">`                  would show "English Captions"
+         - `<track kind="captions"  srclang="en" label="Foo">`      would show "Foo Captions"
+         - `<track kind="captions"  srclang="en" label="Captions">` would show "Captions"
+         - `<track kind="subtitles" srclang="fr">`                  would show "French"
+         - `<track kind="subtitles" srclang="fr" label="Foo">`      would show "French (Foo)"
+         - `<track kind="captions"  srclang="fr">`                  would show "French Captions"
+         - `<track kind="captions"  srclang="fr" label="Foo">`      would show "French Captions (Foo)"
+         - `<track kind="captions"  srclang="fr" label="Captions">` would show "French Captions"
+
+        * page/CaptionUserPreferences.cpp:
+        (WebCore::trackDisplayName):
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        (WebCore::addTextTrackKindDisplayNameIfNeeded): Added.
+        (WebCore::addAudioTrackKindDisplayNameIfNeeded): Added.
+        (WebCore::addTrackKindDisplayNameIfNeeded): Added.
+        (WebCore::trackDisplayName):
+        (WebCore::CaptionUserPreferencesMediaAF::displayNameForTrack const):
+        (WebCore::textTrackCompare):
+        (WebCore::CaptionUserPreferencesMediaAF::sortedTrackListForMenu):
+        (WebCore::buildDisplayStringForTrackBase): Deleted.
+
+        * platform/LocalizedStrings.h:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::trackNoLabelText): Added.
+        (WebCore::textTrackOffMenuItemText): Added.
+        (WebCore::textTrackAutomaticMenuItemText): Added.
+        (WebCore::addTrackLabelAsSuffix): Added.
+        (WebCore::textTrackKindClosedCaptionsDisplayName): Added.
+        (WebCore::addTextTrackKindClosedCaptionsSuffix): Added.
+        (WebCore::textTrackKindCaptionsDisplayName): Added.
+        (WebCore::addTextTrackKindCaptionsSuffix): Added.
+        (WebCore::textTrackKindDescriptionsDisplayName): Added.
+        (WebCore::addTextTrackKindDescriptionsSuffix): Added.
+        (WebCore::textTrackKindChaptersDisplayName): Added.
+        (WebCore::addTextTrackKindChaptersSuffix): Added.
+        (WebCore::textTrackKindMetadataDisplayName): Added.
+        (WebCore::addTextTrackKindMetadataSuffix): Added.
+        (WebCore::textTrackKindSDHDisplayName): Added.
+        (WebCore::addTextTrackKindSDHSuffix): Added.
+        (WebCore::textTrackKindEasyReaderDisplayName): Added.
+        (WebCore::addTextTrackKindEasyReaderSuffix): Added.
+        (WebCore::textTrackKindForcedDisplayName): Added.
+        (WebCore::addTextTrackKindForcedSuffix): Added.
+        (WebCore::audioTrackKindDescriptionsDisplayName): Added.
+        (WebCore::addAudioTrackKindDescriptionsSuffix): Added.
+        (WebCore::audioTrackKindCommentaryDisplayName): Added.
+        (WebCore::addAudioTrackKindCommentarySuffix): Added.
+        (WebCore::textTrackNoLabelText): Deleted.
+        (WebCore::audioTrackNoLabelText): Deleted.
+        (WebCore::captionsTextTrackKindDisplayName): Deleted.
+        (WebCore::captionsTextTrackWithoutLabelMenuItemText): Deleted.
+        (WebCore::descriptionsTextTrackKindDisplayName): Deleted.
+        (WebCore::descriptionsTextTrackWithoutLabelMenuItemText): Deleted.
+        (WebCore::chaptersTextTrackKindDisplayName): Deleted.
+        (WebCore::chaptersTextTrackWithoutLabelMenuItemText): Deleted.
+        (WebCore::metadataTextTrackKindDisplayName): Deleted.
+        (WebCore::metadataTextTrackWithoutLabelMenuItemText): Deleted.
+        (WebCore::textTrackCountryAndLanguageMenuItemText): Deleted.
+        (WebCore::textTrackLanguageMenuItemText): Deleted.
+        (WebCore::closedCaptionKindTrackDisplayName): Deleted.
+        (WebCore::closedCaptionTrackMenuItemText): Deleted.
+        (WebCore::sdhTrackKindDisplayName): Deleted.
+        (WebCore::sdhTrackMenuItemText): Deleted.
+        (WebCore::easyReaderKindDisplayName): Deleted.
+        (WebCore::easyReaderTrackMenuItemText): Deleted.
+        (WebCore::forcedTrackKindDisplayName): Deleted.
+        (WebCore::forcedTrackMenuItemText): Deleted.
+        (WebCore::audioDescriptionTrackSuffixText): Deleted.
+        * en.lproj/Localizable.strings:
+        Clean up localized string functions related to media controls.
+
 2021-05-28  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r278196.

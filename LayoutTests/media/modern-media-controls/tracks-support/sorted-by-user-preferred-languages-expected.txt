@@ -13,15 +13,15 @@ Subtitles: [
   "Descriptions",
   "label-en",
   "Spanish Captions",
-  "Descriptions (Spanish)",
   "Spanish",
+  "Spanish Descriptions",
   "Chinese (China mainland)",
-  "label-fr (French) Captions",
-  "Descriptions (French)",
-  "label-fr (French)",
+  "French Captions (label-fr)",
+  "French (label-fr)",
+  "French Descriptions",
   "German Captions",
-  "Descriptions (German)",
-  "German"
+  "German",
+  "German Descriptions"
 ]
 PASS successfullyParsed is true
 

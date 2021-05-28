@@ -1088,124 +1088,153 @@ String clickToExitFullScreenText()
     return WEB_UI_STRING("Click to Exit Full Screen", "Message to display in browser window when in webkit full screen mode.");
 }
 
+#if ENABLE(VIDEO)
+
+String trackNoLabelText()
+{
+    return WEB_UI_STRING_KEY("Unknown", "Unknown (audio/text track)", "Menu item label for a audio/text track that has no other name.");
+}
+
 String textTrackOffMenuItemText()
 {
-    return WEB_UI_STRING("Off", "Menu item label for the track that represents disabling closed captions");
+    return WEB_UI_STRING_KEY("Off", "Off (text track)", "Menu item label for the track that represents disabling closed captions.");
 }
 
 String textTrackAutomaticMenuItemText()
 {
-    return formatLocalizedString(WEB_UI_STRING("Auto (Recommended)", "Menu item label for automatic track selection behavior"));
-}
-
-String textTrackNoLabelText()
-{
-    return WEB_UI_STRING_KEY("Unknown", "Unknown (text track)", "Menu item label for a text track that has no other name");
-}
-
-String audioTrackNoLabelText()
-{
-    return WEB_UI_STRING_KEY("Unknown", "Unknown (audio track)", "Menu item label for an audio track that has no other name");
+    return WEB_UI_STRING_KEY("Auto (Recommended)", "Auto (Recommended) (text track)", "Menu item label for automatic track selection behavior.");
 }
 
 #if USE(CF)
 
-String captionsTextTrackKindDisplayName()
+String addTrackLabelAsSuffix(const String& text, const String& label)
 {
-    return formatLocalizedString(WEB_UI_CFSTRING("Captions", "Display name for text track kind 'captions' that is used to see if the HTML 'label' already contains 'Captions'."));
+    return formatLocalizedString(WEB_UI_CFSTRING_KEY("%@ (%@)", "%@ (%@) (audio/text track)", "Audio/Text track display name format that includes the label and language of the track, in the form of 'Language (Label)'."), text.createCFString().get(), label.createCFString().get());
 }
 
-String captionsTextTrackWithoutLabelMenuItemText(const String& title)
+String textTrackKindClosedCaptionsDisplayName()
 {
-    return formatLocalizedString(WEB_UI_CFSTRING("%@ Captions", "Captions text track display name format that includes the language and/or locale (e.g. 'English Captions')."), title.createCFString().get());
+    return WEB_UI_CFSTRING_KEY("CC", "CC (text track)", "Display name for closed captions text tracks.");
 }
 
-String descriptionsTextTrackKindDisplayName()
+String addTextTrackKindClosedCaptionsSuffix(const String& text)
 {
-    return formatLocalizedString(WEB_UI_CFSTRING("Descriptions", "Display name for text track kind 'descriptions' that is used to see if the HTML 'label' already contains 'Descriptions'."));
+    if (text.isEmpty())
+        return textTrackKindClosedCaptionsDisplayName();
+    return formatLocalizedString(WEB_UI_CFSTRING_KEY("%@ CC", "%@ CC (text track)", "Closed captions text track display name format that includes the language and/or locale (e.g. 'English CC')."), text.createCFString().get());
 }
 
-String descriptionsTextTrackWithoutLabelMenuItemText(const String& title)
+String textTrackKindCaptionsDisplayName()
 {
-    return formatLocalizedString(WEB_UI_CFSTRING("%@ Descriptions", "Descriptions text track display name format that includes the language and/or locale (e.g. 'English Descriptions')."), title.createCFString().get());
+    return WEB_UI_CFSTRING_KEY("Captions", "Captions (text track)", "Display name for text track kind 'captions'.");
 }
 
-String chaptersTextTrackKindDisplayName()
+String addTextTrackKindCaptionsSuffix(const String& text)
 {
-    return formatLocalizedString(WEB_UI_CFSTRING("Chapters", "Display name for text track kind 'chapters' that is used to see if the HTML 'label' already contains 'Chapters'."));
+    if (text.isEmpty())
+        return textTrackKindCaptionsDisplayName();
+    return formatLocalizedString(WEB_UI_CFSTRING_KEY("%@ Captions", "%@ Captions (text track)", "Captions text track display name format that includes the language and/or locale (e.g. 'English Captions')."), text.createCFString().get());
 }
 
-String chaptersTextTrackWithoutLabelMenuItemText(const String& title)
+String textTrackKindDescriptionsDisplayName()
 {
-    return formatLocalizedString(WEB_UI_CFSTRING("%@ Chapters", "Chapters text track display name format that includes the language and/or locale (e.g. 'English Chapters')."), title.createCFString().get());
+    return WEB_UI_CFSTRING_KEY("Descriptions", "Descriptions (text track)", "Display name for text track kind 'descriptions'.");
 }
 
-String metadataTextTrackKindDisplayName()
+String addTextTrackKindDescriptionsSuffix(const String& text)
 {
-    return formatLocalizedString(WEB_UI_CFSTRING("Metadata", "Display name for text track kind 'metadata' that is used to see if the HTML 'label' already contains 'Metadata'."));
+    if (text.isEmpty())
+        return textTrackKindDescriptionsDisplayName();
+    return formatLocalizedString(WEB_UI_CFSTRING_KEY("%@ Descriptions", "%@ Descriptions (text track)", "Descriptions text track display name format that includes the language and/or locale (e.g. 'English Descriptions')."), text.createCFString().get());
 }
 
-String metadataTextTrackWithoutLabelMenuItemText(const String& title)
+String textTrackKindChaptersDisplayName()
 {
-    return formatLocalizedString(WEB_UI_CFSTRING("%@ Metadata", "Metadata text track display name format that includes the language and/or locale (e.g. 'English Metadats')."), title.createCFString().get());
+    return WEB_UI_CFSTRING_KEY("Chapters", "Chapters (text track)", "Display name for text track kind 'chapters'.");
 }
 
-String textTrackCountryAndLanguageMenuItemText(const String& title, const String& country, const String& language)
+String addTextTrackKindChaptersSuffix(const String& text)
 {
-    return formatLocalizedString(WEB_UI_CFSTRING("%@ (%@-%@)", "Text track display name format that includes the country and language of the subtitle, in the form of 'Title (Language-Country)'"), title.createCFString().get(), language.createCFString().get(), country.createCFString().get());
+    if (text.isEmpty())
+        return textTrackKindChaptersDisplayName();
+    return formatLocalizedString(WEB_UI_CFSTRING_KEY("%@ Chapters", "%@ Chapters (text track)", "Chapters text track display name format that includes the language and/or locale (e.g. 'English Chapters')."), text.createCFString().get());
 }
 
-String textTrackLanguageMenuItemText(const String& title, const String& language)
+String textTrackKindMetadataDisplayName()
 {
-    return formatLocalizedString(WEB_UI_CFSTRING("%@ (%@)", "Text track display name format that includes the language of the subtitle, in the form of 'Title (Language)'"), title.createCFString().get(), language.createCFString().get());
+    return WEB_UI_CFSTRING_KEY("Metadata", "Metadata (text track)", "Display name for text track kind 'metadata'.");
 }
 
-String closedCaptionKindTrackDisplayName()
+String addTextTrackKindMetadataSuffix(const String& text)
 {
-    return formatLocalizedString(WEB_UI_CFSTRING("CC", "Display name for closed captions text tracks that is used to see if the HTML 'label' already contains 'CC'."));
+    if (text.isEmpty())
+        return textTrackKindMetadataDisplayName();
+    return formatLocalizedString(WEB_UI_CFSTRING_KEY("%@ Metadata", "%@ Metadata (text track)", "Metadata text track display name format that includes the language and/or locale (e.g. 'English Metadata')."), text.createCFString().get());
 }
 
-String closedCaptionTrackMenuItemText(const String& title)
+String textTrackKindSDHDisplayName()
 {
-    return formatLocalizedString(WEB_UI_CFSTRING("%@ CC", "Text track contains closed captions"), title.createCFString().get());
+    return WEB_UI_CFSTRING_KEY("SDH", "SDH (text track)", "Display name for SDH (i.e. deaf and/or hard of hearing) text tracks.");
 }
 
-String sdhTrackKindDisplayName()
+String addTextTrackKindSDHSuffix(const String& text)
 {
-    return formatLocalizedString(WEB_UI_CFSTRING("SDH", "Display name for deaf and hard of hearing subtitle text tracks that is used to see if the HTML 'label' already contains 'SDH'."));
+    if (text.isEmpty())
+        return textTrackKindSDHDisplayName();
+    return formatLocalizedString(WEB_UI_CFSTRING_KEY("%@ SDH", "%@ SDH (text track)", "SDH (i.e. deaf and/or hard of hearing) text track display name format that includes the language and/or locale (e.g. 'English SDH')."), text.createCFString().get());
 }
 
-String sdhTrackMenuItemText(const String& title)
+String textTrackKindEasyReaderDisplayName()
 {
-    return formatLocalizedString(WEB_UI_CFSTRING("%@ SDH", "Text track contains subtitles for the deaf and hard of hearing"), title.createCFString().get());
+    return WEB_UI_CFSTRING_KEY("Easy Reader", "Easy Reader (text track)", "Display name for easy reader (i.e. 3rd-grade level) text tracks.");
 }
 
-String easyReaderKindDisplayName()
+String addTextTrackKindEasyReaderSuffix(const String& text)
 {
-    return formatLocalizedString(WEB_UI_CFSTRING("Easy Reader", "Display name for easy reader text tracks that is used to see if the HTML 'label' already contains 'Easy Reader'."));
+    if (text.isEmpty())
+        return textTrackKindEasyReaderDisplayName();
+    return formatLocalizedString(WEB_UI_CFSTRING_KEY("%@ Easy Reader", "%@ Easy (text track)", "Easy Reader (i.e. 3rd-grade level) text track display name format that includes the language and/or locale (e.g. 'English Easy Reader')."), text.createCFString().get());
 }
 
-String easyReaderTrackMenuItemText(const String& title)
+String textTrackKindForcedDisplayName()
 {
-    return formatLocalizedString(WEB_UI_CFSTRING("%@ Easy Reader", "Text track contains simplified (3rd grade level) subtitles"), title.createCFString().get());
+    return WEB_UI_CFSTRING_KEY("Forced", "Forced (text track)", "Display name for text track kind 'forced'.");
 }
 
-String forcedTrackKindDisplayName()
+String addTextTrackKindForcedSuffix(const String& text)
 {
-    return formatLocalizedString(WEB_UI_CFSTRING("Forced", "Display name for text track kind 'forced' that is used to see if the HTML 'label' already contains 'Forced'."));
+    if (text.isEmpty())
+        return textTrackKindForcedDisplayName();
+    return formatLocalizedString(WEB_UI_CFSTRING_KEY("%@ Forced", "%@ Forced (text track)", "Forced text track display name format that includes the language and/or locale (e.g. 'English Forced')."), text.createCFString().get());
 }
 
-String forcedTrackMenuItemText(const String& title)
+String audioTrackKindDescriptionsDisplayName()
 {
-    return formatLocalizedString(WEB_UI_CFSTRING("%@ Forced", "Text track contains forced subtitles"), title.createCFString().get());
+    return WEB_UI_CFSTRING_KEY("Descriptions", "Descriptions (audio track)", "Display name for audio track kind 'descriptions'.");
 }
 
-String audioDescriptionTrackSuffixText(const String& title)
+String addAudioTrackKindDescriptionsSuffix(const String& text)
 {
-    return formatLocalizedString(WEB_UI_CFSTRING("%@ AD", "Text track contains Audio Descriptions"), title.createCFString().get());
+    if (text.isEmpty())
+        return audioTrackKindDescriptionsDisplayName();
+    return formatLocalizedString(WEB_UI_CFSTRING_KEY("%@ Descriptions", "%@ Descriptions (audio track)", "Descriptions audio track display name format that includes the language and/or locale (e.g. 'English Descriptions')."), text.createCFString().get());
 }
 
-#endif
+String audioTrackKindCommentaryDisplayName()
+{
+    return WEB_UI_CFSTRING_KEY("Commentary", "Commentary (audio track)", "Display name for audio track kind 'commentary'.");
+}
+
+String addAudioTrackKindCommentarySuffix(const String& text)
+{
+    if (text.isEmpty())
+        return audioTrackKindCommentaryDisplayName();
+    return formatLocalizedString(WEB_UI_CFSTRING_KEY("%@ Commentary", "%@ Commentary (audio track)", "Commentary audio track display name format that includes the language and/or locale (e.g. 'English Commentary')."), text.createCFString().get());
+}
+
+#endif // USE(CF)
+
+#endif // ENABLE(VIDEO)
 
 String snapshottedPlugInLabelTitle()
 {
