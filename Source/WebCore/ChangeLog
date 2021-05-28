@@ -1,3 +1,17 @@
+2021-05-28  Brent Fulgham  <bfulgham@apple.com>
+
+        Buffer computations should use correct type
+        https://bugs.webkit.org/show_bug.cgi?id=226352
+        <rdar://problem/78116213>
+
+        Reviewed by Ryosuke Niwa.
+
+        The implementation of utf8Buffer holds the buffer size in an 'int', even though our buffer
+        APIs take size_t arguments. Let's make this consistent.
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::utf8Buffer):
+
 2021-05-28  Eric Carlson  <eric.carlson@apple.com>
 
         [Cocoa] Return immediately when asked to paint an AVPlayer that hasn't reached HaveCurrentData
