@@ -1,3 +1,23 @@
+2021-05-28  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r278208. rdar://problem/78595584
+
+    Unreviewed build fix after r277881.
+    
+    Add missing header include.
+    
+    * wtf/cocoa/FileSystemCocoa.mm:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@278208 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-05-28  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed build fix after r277881.
+
+            Add missing header include.
+
+            * wtf/cocoa/FileSystemCocoa.mm:
+
 2021-05-25  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r277881. rdar://problem/78467211

@@ -30,6 +30,7 @@
 #import <wtf/FileSystem.h>
 
 #import <wtf/SoftLinking.h>
+#import <sys/resource.h>
 
 typedef struct _BOMCopier* BOMCopier;
 
