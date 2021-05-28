@@ -2074,6 +2074,8 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
 
 - (void)_didScroll
 {
+    [self _updateFrameOfContainerForContextMenuHintPreviewsIfNeeded];
+
     [self _cancelLongPressGestureRecognizer];
     [self _cancelInteraction];
 }
@@ -7729,6 +7731,37 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
         return;
 
     [std::exchange(_contextMenuHintContainerView, nil) removeFromSuperview];
+
+    _scrollViewForTargetedPreview = nil;
+    _scrollViewForTargetedPreviewInitialOffset = CGPointZero;
+}
+
+- (void)_updateFrameOfContainerForContextMenuHintPreviewsIfNeeded
+{
+    if (!_contextMenuHintContainerView)
+        return;
+
+    CGPoint newOffset = [_scrollViewForTargetedPreview convertPoint:CGPointZero toView:[_contextMenuHintContainerView superview]];
+
+    CGRect frame = [_contextMenuHintContainerView frame];
+    frame.origin.x = newOffset.x - _scrollViewForTargetedPreviewInitialOffset.x;
+    frame.origin.y = newOffset.y - _scrollViewForTargetedPreviewInitialOffset.y;
+    [_contextMenuHintContainerView setFrame:frame];
+}
+
+- (void)_updateTargetedPreviewScrollViewUsingContainerScrollingNodeID:(WebCore::ScrollingNodeID)scrollingNodeID
+{
+    if (scrollingNodeID) {
+        if (auto* scrollingCoordinator = _page->scrollingCoordinatorProxy()) {
+            if (UIScrollView *scrollViewForScrollingNode = scrollingCoordinator->scrollViewForScrollingNodeID(scrollingNodeID))
+                _scrollViewForTargetedPreview = scrollViewForScrollingNode;
+        }
+    }
+
+    if (!_scrollViewForTargetedPreview)
+        _scrollViewForTargetedPreview = self.webView.scrollView;
+
+    _scrollViewForTargetedPreviewInitialOffset = [_scrollViewForTargetedPreview convertPoint:CGPointZero toView:[_contextMenuHintContainerView superview]];
 }
 
 #pragma mark - WKDeferringGestureRecognizerDelegate
@@ -8406,19 +8439,6 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     return adoptNS([[UITargetedPreview alloc] initWithView:snapshotView parameters:parameters.get() target:target.get()]);
 }
 
-- (void)overridePositionTrackingViewForTargetedPreviewIfNecessary:(UITargetedPreview *)targetedPreview containerScrollingNodeID:(WebCore::ScrollingNodeID)scrollingNodeID
-{
-    if (!scrollingNodeID)
-        return;
-
-    UIScrollView *positionTrackingView = self.webView.scrollView;
-    if (auto* scrollingCoordinator = _page->scrollingCoordinatorProxy())
-        positionTrackingView = scrollingCoordinator->scrollViewForScrollingNodeID(scrollingNodeID);
-
-    if ([targetedPreview respondsToSelector:@selector(_setOverridePositionTrackingView:)])
-        [targetedPreview _setOverridePositionTrackingView:positionTrackingView];
-}
-
 - (UITargetedPreview *)_createTargetedContextMenuHintPreviewForFocusedElement
 {
     auto backgroundColor = [&]() -> UIColor * {
@@ -8435,7 +8455,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
 
     auto targetedPreview = createFallbackTargetedPreview(self, self.containerForContextMenuHintPreviews, _focusedElementInformation.interactionRect, backgroundColor);
 
-    [self overridePositionTrackingViewForTargetedPreviewIfNecessary:targetedPreview.get() containerScrollingNodeID:_focusedElementInformation.containerScrollingNodeID];
+    [self _updateTargetedPreviewScrollViewUsingContainerScrollingNodeID:_focusedElementInformation.containerScrollingNodeID];
 
     _contextMenuInteractionTargetedPreview = WTFMove(targetedPreview);
     return _contextMenuInteractionTargetedPreview.get();
@@ -8458,7 +8478,7 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     if (!targetedPreview)
         targetedPreview = createFallbackTargetedPreview(self, self.containerForContextMenuHintPreviews, _positionInformation.bounds, nil);
 
-    [self overridePositionTrackingViewForTargetedPreviewIfNecessary:targetedPreview.get() containerScrollingNodeID:_positionInformation.containerScrollingNodeID];
+    [self _updateTargetedPreviewScrollViewUsingContainerScrollingNodeID:_positionInformation.containerScrollingNodeID];
 
     _contextMenuInteractionTargetedPreview = WTFMove(targetedPreview);
     return _contextMenuInteractionTargetedPreview.get();

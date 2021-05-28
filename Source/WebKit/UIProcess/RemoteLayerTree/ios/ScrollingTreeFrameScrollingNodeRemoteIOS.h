@@ -38,6 +38,8 @@ public:
     static Ref<ScrollingTreeFrameScrollingNodeRemoteIOS> create(WebCore::ScrollingTree&, WebCore::ScrollingNodeType, WebCore::ScrollingNodeID);
     virtual ~ScrollingTreeFrameScrollingNodeRemoteIOS();
 
+    UIScrollView *scrollView() const;
+
 private:
     ScrollingTreeFrameScrollingNodeRemoteIOS(WebCore::ScrollingTree&, WebCore::ScrollingNodeType, WebCore::ScrollingNodeID);
 

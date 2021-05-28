@@ -309,6 +309,8 @@ using ImageExtractionRequestIdentifier = ObjectIdentifier<ImageExtractionRequest
     RetainPtr<_UIHighlightView> _highlightView;
     RetainPtr<UIView> _interactionViewsContainerView;
     RetainPtr<UIView> _contextMenuHintContainerView;
+    WeakObjCPtr<UIScrollView> _scrollViewForTargetedPreview;
+    CGPoint _scrollViewForTargetedPreviewInitialOffset;
     RetainPtr<UIView> _dragPreviewContainerView;
     RetainPtr<UIView> _dropPreviewContainerView;
     RetainPtr<NSString> _markedText;
