@@ -1,3 +1,36 @@
+2021-05-27  Devin Rousso  <drousso@apple.com>
+
+        Sampled Page Top Color: allow snapshotting of elements with CSS animations/transitions if they're paused
+        https://bugs.webkit.org/show_bug.cgi?id=226313
+        <rdar://problem/78534076>
+
+        Reviewed by Tim Horton.
+
+        The primary concern of sampling elements with CSS animations/transitions is that it
+        introduces some indeterminism in when the sampling happens vs how far progressed the CSS
+        animation/transition is. As an example, sampling from a page with an inline `<style>` that
+        applies a CSS animation to fade in the CSS `background-color` from `white` to `black` is
+        more likely to get a color closer to `black` than if that same CSS was in an external
+        uncached resource. This wouldn't make for a great experience, so r277044 made it so that any
+        CSS animations/transitions caused the sampling logic to bail, regardless of the state of the
+        CSS animation/transition. This is only really an issue for CSS animations/transitions that
+        are actively running, however, not ones that have yet to run or have already finished. It's
+        still possible that two loads of the same page could result in different colors (or bails)
+        depending on how quickly the CSS animation/transition runs or (if the CSS is in an external
+        resource) how long the containing resource takes to load, but with this patch it's now a
+        binary state (sample or bail) instead of an indeterminate range of possible sampled colors.
+
+        Tests: SampledPageTopColor.HitTestBeforeCSSTransition
+               SampledPageTopColor.HitTestDuringCSSTransition
+               SampledPageTopColor.HitTestAfterCSSTransition
+               SampledPageTopColor.HitTestBeforeCSSAnimation
+               SampledPageTopColor.HitTestDuringCSSAnimation
+               SampledPageTopColor.HitTestAfterCSSAnimation
+
+        * page/PageColorSampler.cpp:
+        (WebCore::isValidSampleLocation):
+        Use `Styleable` instead of `RenderStyle` to get more information about active CSS animations/transitions.
+
 2021-05-27  Said Abou-Hallawa  <said@apple.com>
 
         Values of keySplines control points must all be in the range 0 to 1

@@ -1,3 +1,22 @@
+2021-05-27  Devin Rousso  <drousso@apple.com>
+
+        Sampled Page Top Color: allow snapshotting of elements with CSS animations/transitions if they're paused
+        https://bugs.webkit.org/show_bug.cgi?id=226313
+        <rdar://problem/78534076>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/SampledPageTopColor.mm:
+        (waitForSampledPageTopColorToChange): Added.
+        (waitForSampledPageTopColorToChangeForHTML):
+        (TEST.SampledPageTopColor.HitTestBeforeCSSTransition): Added.
+        (TEST.SampledPageTopColor.HitTestDuringCSSTransition): Added.
+        (TEST.SampledPageTopColor.HitTestAfterCSSTransition): Added.
+        (TEST.SampledPageTopColor.HitTestBeforeCSSAnimation): Added.
+        (TEST.SampledPageTopColor.HitTestDuringCSSAnimation): Added.
+        (TEST.SampledPageTopColor.HitTestAfterCSSAnimation): Added.
+        (TEST.SampledPageTopColor.HitTestCSSAnimation): Deleted.
+
 2021-05-27  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorey] Gracefully handle CNTRL-C in TaskPool

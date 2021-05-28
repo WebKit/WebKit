@@ -28,6 +28,7 @@
 
 #include "ContentfulPaintChecker.h"
 #include "Document.h"
+#include "Element.h"
 #include "Frame.h"
 #include "FrameSnapshotting.h"
 #include "FrameView.h"
@@ -39,6 +40,7 @@
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "IntSize.h"
+#include "Logging.h"
 #include "Node.h"
 #include "Page.h"
 #include "PixelBuffer.h"
@@ -47,6 +49,8 @@
 #include "RenderObject.h"
 #include "RenderStyle.h"
 #include "Settings.h"
+#include "Styleable.h"
+#include "WebAnimation.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Optional.h>
@@ -75,17 +79,31 @@ static bool isValidSampleLocation(Document& document, const IntPoint& location)
         if (is<RenderImage>(renderer) || renderer->style().hasBackgroundImage())
             return false;
 
+        if (!is<Element>(node))
+            continue;
+
+        auto& element = downcast<Element>(node);
+        auto styleable = Styleable::fromElement(element);
+
         // Skip nodes with animations as the sample may get an odd color if the animation is in-progress.
-        if (renderer->style().hasTransitions() || renderer->style().hasAnimations())
+        if (styleable.hasRunningTransitions())
             return false;
+        if (auto* animations = styleable.animations()) {
+            for (auto& animation : *animations) {
+                if (!animation)
+                    continue;
+                if (animation->playState() == WebAnimation::PlayState::Running)
+                    return false;
+            }
+        }
 
         // Skip `<canvas>` but only if they've been drawn into. Guess this by seeing if there's already
         // a `CanvasRenderingContext`, which is only created by JavaScript.
-        if (is<HTMLCanvasElement>(node) && downcast<HTMLCanvasElement>(node).renderingContext())
+        if (is<HTMLCanvasElement>(element) && downcast<HTMLCanvasElement>(element).renderingContext())
             return false;
 
         // Skip 3rd-party `<iframe>` as the content likely won't match the rest of the page.
-        if (is<HTMLIFrameElement>(node) && !areRegistrableDomainsEqual(downcast<HTMLIFrameElement>(node).location(), document.url()))
+        if (is<HTMLIFrameElement>(element) && !areRegistrableDomainsEqual(downcast<HTMLIFrameElement>(element).location(), document.url()))
             return false;
     }
 
