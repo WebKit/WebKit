@@ -36,6 +36,7 @@
 #include "FrameTracers.h"
 #include "FunctionCodeBlock.h"
 #include "GetterSetter.h"
+#include "JITSizeStatistics.h"
 #include "JSArray.h"
 #include "JSCInlines.h"
 #include "JSONObject.h"
@@ -1991,6 +1992,11 @@ static JSC_DECLARE_HOST_FUNCTION(functionUseJIT);
 static JSC_DECLARE_HOST_FUNCTION(functionIsGigacageEnabled);
 static JSC_DECLARE_HOST_FUNCTION(functionToUncacheableDictionary);
 static JSC_DECLARE_HOST_FUNCTION(functionIsPrivateSymbol);
+#if ENABLE(JIT)
+static JSC_DECLARE_HOST_FUNCTION(functionJITSizeStatistics);
+static JSC_DECLARE_HOST_FUNCTION(functionDumpJITSizeStatistics);
+static JSC_DECLARE_HOST_FUNCTION(functionResetJITSizeStatistics);
+#endif
 
 const ClassInfo JSDollarVM::s_info = { "DollarVM", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDollarVM) };
 
@@ -3591,6 +3597,48 @@ JSC_DEFINE_HOST_FUNCTION(functionIsPrivateSymbol, (JSGlobalObject*, CallFrame* c
     return JSValue::encode(jsBoolean(asSymbol(callFrame->argument(0))->uid().isPrivate()));
 }
 
+#if ENABLE(JIT)
+JSC_DEFINE_HOST_FUNCTION(functionJITSizeStatistics, (JSGlobalObject* globalObject, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+
+    VM& vm = globalObject->vm();
+
+    if (!vm.jitSizeStatistics)
+        return JSValue::encode(jsUndefined());
+
+    WTF::StringPrintStream stream;
+    stream.print(*vm.jitSizeStatistics);
+    return JSValue::encode(jsString(vm, stream.toString()));
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionDumpJITSizeStatistics, (JSGlobalObject* globalObject, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+
+    VM& vm = globalObject->vm();
+
+    if (!vm.jitSizeStatistics)
+        return JSValue::encode(jsUndefined());
+
+    dataLogLn(*vm.jitSizeStatistics);
+    return JSValue::encode(jsUndefined());
+}
+
+JSC_DEFINE_HOST_FUNCTION(functionResetJITSizeStatistics, (JSGlobalObject* globalObject, CallFrame*))
+{
+    DollarVMAssertScope assertScope;
+
+    VM& vm = globalObject->vm();
+
+    if (!vm.jitSizeStatistics)
+        return JSValue::encode(jsUndefined());
+
+    vm.jitSizeStatistics->reset();
+    return JSValue::encode(jsUndefined());
+}
+#endif
+
 constexpr unsigned jsDollarVMPropertyAttributes = PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete;
 
 void JSDollarVM::finishCreation(VM& vm)
@@ -3747,6 +3795,12 @@ void JSDollarVM::finishCreation(VM& vm)
     addFunction(vm, "toUncacheableDictionary", functionToUncacheableDictionary, 1);
 
     addFunction(vm, "isPrivateSymbol", functionIsPrivateSymbol, 1);
+
+#if ENABLE(JIT)
+    addFunction(vm, "jitSizeStatistics", functionJITSizeStatistics, 0);
+    addFunction(vm, "dumpJITSizeStatistics", functionDumpJITSizeStatistics, 0);
+    addFunction(vm, "resetJITSizeStatistics", functionResetJITSizeStatistics, 0);
+#endif
 
     m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructure.set(vm, this, ObjectDoingSideEffectPutWithoutCorrectSlotStatus::createStructure(vm, globalObject, jsNull()));
 }

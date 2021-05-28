@@ -894,6 +894,7 @@
 		52847ADC21FFB8690061A9DB /* WasmAirIRGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 52847ADA21FFB8630061A9DB /* WasmAirIRGenerator.h */; };
 		52B310FB1974AE610080857C /* FunctionHasExecutedCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B310FA1974AE610080857C /* FunctionHasExecutedCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52B311011975B4670080857C /* TypeLocationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B311001975B4670080857C /* TypeLocationCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		52B5100D265EFCDB008970E7 /* JITSizeStatistics.h in Headers */ = {isa = PBXBuildFile; fileRef = 52B5100B265EFCD4008970E7 /* JITSizeStatistics.h */; };
 		52C0611F1AA51E1C00B4ADBA /* RuntimeType.h in Headers */ = {isa = PBXBuildFile; fileRef = 52C0611D1AA51E1B00B4ADBA /* RuntimeType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		52C55566224C2AEA0099F5CC /* DFGValueRepReductionPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 52C55565224C2AE70099F5CC /* DFGValueRepReductionPhase.h */; };
 		52C952B719A289850069B386 /* TypeProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 52C952B619A289850069B386 /* TypeProfiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3634,6 +3635,8 @@
 		52B310FC1974AE870080857C /* FunctionHasExecutedCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionHasExecutedCache.cpp; sourceTree = "<group>"; };
 		52B310FE1975B4240080857C /* TypeLocationCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TypeLocationCache.cpp; sourceTree = "<group>"; };
 		52B311001975B4670080857C /* TypeLocationCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypeLocationCache.h; sourceTree = "<group>"; };
+		52B5100B265EFCD4008970E7 /* JITSizeStatistics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JITSizeStatistics.h; sourceTree = "<group>"; };
+		52B5100C265EFCD4008970E7 /* JITSizeStatistics.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JITSizeStatistics.cpp; sourceTree = "<group>"; };
 		52B717B41A0597E1007AF4F3 /* ControlFlowProfiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ControlFlowProfiler.cpp; sourceTree = "<group>"; };
 		52C0611D1AA51E1B00B4ADBA /* RuntimeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RuntimeType.h; sourceTree = "<group>"; };
 		52C55564224C2AE70099F5CC /* DFGValueRepReductionPhase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DFGValueRepReductionPhase.cpp; path = dfg/DFGValueRepReductionPhase.cpp; sourceTree = "<group>"; };
@@ -6286,6 +6289,8 @@
 				FE3A06B91C1103D900390FDD /* JITRightShiftGenerator.h */,
 				72131BF326587EF2007114CF /* JITSafepoint.cpp */,
 				72131BF526587EF2007114CF /* JITSafepoint.h */,
+				52B5100C265EFCD4008970E7 /* JITSizeStatistics.cpp */,
+				52B5100B265EFCD4008970E7 /* JITSizeStatistics.h */,
 				72131BF426587EF2007114CF /* JITScannable.h */,
 				0F766D2615A8CC1B008F363E /* JITStubRoutine.cpp */,
 				0F766D1C15A5028D008F363E /* JITStubRoutine.h */,
@@ -9621,6 +9626,7 @@
 				0F2BDC21151E803B00CD8910 /* DFGInsertionSet.h in Headers */,
 				0F300B7C18AB1B1400A6D72E /* DFGIntegerCheckCombiningPhase.h in Headers */,
 				0F898F321B27689F0083A33C /* DFGIntegerRangeOptimizationPhase.h in Headers */,
+				52B5100D265EFCDB008970E7 /* JITSizeStatistics.h in Headers */,
 				0FC97F3E18202119002C9B26 /* DFGInvalidationPointInjectionPhase.h in Headers */,
 				0FEA0A34170D40BF00BB722C /* DFGJITCode.h in Headers */,
 				86EC9DCC1328DF82002B2AD7 /* DFGJITCompiler.h in Headers */,

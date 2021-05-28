@@ -48,6 +48,7 @@
 #include "JITDivGenerator.h"
 #include "JITLeftShiftGenerator.h"
 #include "JITRightShiftGenerator.h"
+#include "JITSizeStatistics.h"
 #include "JSArrayIterator.h"
 #include "JSAsyncFunction.h"
 #include "JSAsyncGeneratorFunction.h"
@@ -408,17 +409,35 @@ void SpeculativeJIT::addSlowPathGeneratorLambda(Function<void()>&& lambda)
 
 void SpeculativeJIT::runSlowPathGenerators(PCToCodeOriginMapBuilder& pcToCodeOriginMapBuilder)
 {
+    auto markSlowPathIfNeeded = [&] (Node* node) {
+        Optional<JITSizeStatistics::Marker> sizeMarker;
+        if (UNLIKELY(Options::dumpDFGJITSizeStatistics())) {
+            String id = makeString("DFG_slow_", m_graph.opName(node->op()));
+            sizeMarker = vm().jitSizeStatistics->markStart(id, m_jit);
+        }
+        return sizeMarker;
+    };
+
     for (auto& slowPathGenerator : m_slowPathGenerators) {
         pcToCodeOriginMapBuilder.appendItem(m_jit.labelIgnoringWatchpoints(), slowPathGenerator->origin().semantic);
+        auto sizeMarker = markSlowPathIfNeeded(slowPathGenerator->currentNode());
+
         slowPathGenerator->generate(this);
+
+        if (UNLIKELY(sizeMarker))
+            vm().jitSizeStatistics->markEnd(WTFMove(*sizeMarker), m_jit);
     }
     for (auto& slowPathLambda : m_slowPathLambdas) {
         Node* currentNode = slowPathLambda.currentNode;
         m_currentNode = currentNode;
         m_outOfLineStreamIndex = slowPathLambda.streamIndex;
         pcToCodeOriginMapBuilder.appendItem(m_jit.labelIgnoringWatchpoints(), currentNode->origin.semantic);
+        auto sizeMarker = markSlowPathIfNeeded(currentNode);
+
         slowPathLambda.generator();
         m_outOfLineStreamIndex = std::nullopt;
+        if (UNLIKELY(sizeMarker))
+            vm().jitSizeStatistics->markEnd(WTFMove(*sizeMarker), m_jit);
     }
 }
 
@@ -2088,7 +2107,16 @@ void SpeculativeJIT::compileCurrentBlock()
                 m_jit.store8(TrustedImm32(0), &vm().didEnterVM);
         }
 
+        Optional<JITSizeStatistics::Marker> sizeMarker;
+        if (UNLIKELY(Options::dumpDFGJITSizeStatistics())) {
+            String id = makeString("DFG_fast_", m_graph.opName(m_currentNode->op()));
+            sizeMarker = vm().jitSizeStatistics->markStart(id, m_jit);
+        }
+
         compile(m_currentNode);
+
+        if (UNLIKELY(sizeMarker))
+            vm().jitSizeStatistics->markEnd(WTFMove(*sizeMarker), m_jit);
 
         if (belongsInMinifiedGraph(m_currentNode->op()))
             m_minifiedGraph->append(MinifiedNode::fromNode(m_currentNode));

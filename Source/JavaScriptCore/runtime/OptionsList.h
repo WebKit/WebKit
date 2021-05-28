@@ -515,6 +515,8 @@ JS_EXPORT_PRIVATE bool canUseJITCage();
     v(Double, allowHoistingLICMProbability, 0.5, Normal, nullptr) \
     v(Bool, exposeCustomSettersOnGlobalObjectForTesting, false, Normal, nullptr) \
     v(Bool, useJITCage, canUseJITCage(), Normal, nullptr) \
+    v(Bool, dumpBaselineJITSizeStatistics, false, Normal, nullptr) \
+    v(Bool, dumpDFGJITSizeStatistics, false, Normal, nullptr) \
     \
     /* Feature Flags */\
     \

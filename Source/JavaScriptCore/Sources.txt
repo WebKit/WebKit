@@ -662,6 +662,7 @@ jit/JITPropertyAccess.cpp
 jit/JITPropertyAccess32_64.cpp
 jit/JITRightShiftGenerator.cpp
 jit/JITSafepoint.cpp
+jit/JITSizeStatistics.cpp
 jit/JITStubRoutine.cpp
 jit/JITSubGenerator.cpp
 jit/JITThunks.cpp

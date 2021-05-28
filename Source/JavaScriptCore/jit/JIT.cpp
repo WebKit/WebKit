@@ -35,6 +35,7 @@
 #include "DFGCapabilities.h"
 #include "JITInlines.h"
 #include "JITOperations.h"
+#include "JITSizeStatistics.h"
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "ModuleProgramCodeBlock.h"
@@ -259,6 +260,12 @@ void JIT::privateCompileMainPass()
 
         OpcodeID opcodeID = currentInstruction->opcodeID();
 
+        Optional<JITSizeStatistics::Marker> sizeMarker;
+        if (UNLIKELY(m_bytecodeIndex >= startBytecodeIndex && Options::dumpBaselineJITSizeStatistics())) {
+            String id = makeString("Baseline_fast_", opcodeNames[opcodeID]);
+            sizeMarker = m_vm->jitSizeStatistics->markStart(id, *this);
+        }
+
         if (UNLIKELY(m_compilation)) {
             add64(
                 TrustedImm32(1),
@@ -481,6 +488,9 @@ void JIT::privateCompileMainPass()
             RELEASE_ASSERT_NOT_REACHED();
         }
 
+        if (UNLIKELY(sizeMarker))
+            m_vm->jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this);
+
         if (JITInternal::verbose)
             dataLog("At ", bytecodeOffset, ": ", m_slowCases.size(), "\n");
     }
@@ -531,8 +541,15 @@ void JIT::privateCompileSlowCases()
         if (m_disassembler)
             m_disassembler->setForBytecodeSlowPath(m_bytecodeIndex.offset(), label());
 
+        OpcodeID opcodeID = currentInstruction->opcodeID();
+
+        Optional<JITSizeStatistics::Marker> sizeMarker;
+        if (UNLIKELY(Options::dumpBaselineJITSizeStatistics())) {
+            String id = makeString("Baseline_slow_", opcodeNames[opcodeID]);
+            sizeMarker = m_vm->jitSizeStatistics->markStart(id, *this);
+        }
+
         if (UNLIKELY(Options::traceBaselineJITExecution())) {
-            OpcodeID opcodeID = currentInstruction->opcodeID();
             unsigned bytecodeOffset = m_bytecodeIndex.offset();
             CodeBlock* codeBlock = m_codeBlock;
             probeDebug([=] (Probe::Context& ctx) {
@@ -643,6 +660,9 @@ void JIT::privateCompileSlowCases()
         
         emitJumpSlowToHot(jump(), 0);
         ++bytecodeCountHavingSlowCase;
+
+        if (UNLIKELY(sizeMarker))
+            m_vm->jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this);
     }
 
     RELEASE_ASSERT(bytecodeCountHavingSlowCase == m_bytecodeCountHavingSlowCase);
@@ -713,6 +733,12 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
     
     m_pcToCodeOriginMapBuilder.appendItem(label(), CodeOrigin(BytecodeIndex(0)));
 
+    Optional<JITSizeStatistics::Marker> sizeMarker;
+    if (UNLIKELY(Options::dumpBaselineJITSizeStatistics())) {
+        String id = makeString("Baseline_prologue");
+        sizeMarker = m_vm->jitSizeStatistics->markStart(id, *this);
+    }
+
     Label entryLabel(this);
     if (m_disassembler)
         m_disassembler->setStartOfCode(entryLabel);
@@ -763,6 +789,9 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
     }
     
     RELEASE_ASSERT(!JITCode::isJIT(m_codeBlock->jitType()));
+
+    if (UNLIKELY(sizeMarker))
+        m_vm->jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this);
 
     privateCompileMainPass();
     privateCompileLinkPass();

@@ -41,6 +41,7 @@
 #include "Interpreter.h"
 #include "JIT.h"
 #include "JITOperationList.h"
+#include "JITSizeStatistics.h"
 #include "JSArray.h"
 #include "JSArrayBuffer.h"
 #include "JSBigInt.h"
@@ -3528,6 +3529,11 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
         dataLog("Sampling profiler is not enabled on this platform\n");
 #endif
     }
+
+#if ENABLE(JIT)
+    if (vm.jitSizeStatistics)
+        dataLogLn(*vm.jitSizeStatistics);
+#endif
 
     vm.codeCache()->write(vm);
 

@@ -80,6 +80,7 @@
 #include "IsoInlinedHeapCellType.h"
 #include "JITCode.h"
 #include "JITOperationList.h"
+#include "JITSizeStatistics.h"
 #include "JITThunks.h"
 #include "JITWorklist.h"
 #include "JSAPIGlobalObject.h"
@@ -571,6 +572,11 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
 
     if (Options::forceDebuggerBytecodeGeneration() || Options::alwaysUseShadowChicken())
         ensureShadowChicken();
+
+#if ENABLE(JIT)
+    if (Options::dumpBaselineJITSizeStatistics() || Options::dumpDFGJITSizeStatistics())
+        jitSizeStatistics = makeUnique<JITSizeStatistics>();
+#endif
 
     VMInspector::instance().add(this);
 

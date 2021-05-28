@@ -161,6 +161,7 @@ class JSWebAssemblyInstance;
 class JSWebAssemblyMemory;
 class JSWebAssemblyModule;
 class JSWebAssemblyTable;
+class JITSizeStatistics;
 class JITThunks;
 class LLIntOffsetsExtractor;
 class NativeExecutable;
@@ -434,6 +435,10 @@ public:
     std::unique_ptr<IsoHeapCellType> webAssemblyModuleHeapCellType;
     std::unique_ptr<IsoHeapCellType> webAssemblyModuleRecordHeapCellType;
     std::unique_ptr<IsoHeapCellType> webAssemblyTableHeapCellType;
+#endif
+
+#if ENABLE(JIT)
+    std::unique_ptr<JITSizeStatistics> jitSizeStatistics;
 #endif
     
     CompleteSubspace primitiveGigacageAuxiliarySpace; // Typed arrays, strings, bitvectors, etc go here.

@@ -63,6 +63,7 @@ public:
     }
 
     const NodeOrigin& origin() const  { return m_origin; }
+    Node* currentNode() const { return m_currentNode; }
 
 protected:
     virtual void generateInternal(SpeculativeJIT*) = 0;

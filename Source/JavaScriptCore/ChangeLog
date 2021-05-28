@@ -1,5 +1,39 @@
 2021-05-28  Saam Barati  <sbarati@apple.com>
 
+        Add the ability to dump statistics about cumulative counts and code sizes of Baseline JIT opcodes and DFG nodes
+        https://bugs.webkit.org/show_bug.cgi?id=226200
+
+        Reviewed by Robin Morisset.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * dfg/DFGSlowPathGenerator.h:
+        (JSC::DFG::SlowPathGenerator::currentNode const):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::runSlowPathGenerators):
+        (JSC::DFG::SpeculativeJIT::compileCurrentBlock):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::compileAndLinkWithoutFinalizing):
+        * jit/JITSizeStatistics.cpp: Added.
+        (JSC::JITSizeStatistics::markStart):
+        (JSC::JITSizeStatistics::markEnd):
+        (JSC::JITSizeStatistics::dump const):
+        * jit/JITSizeStatistics.h: Added.
+        (JSC::JITSizeStatistics::reset):
+        * jsc.cpp:
+        (runJSC):
+        * runtime/OptionsList.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * tools/JSDollarVM.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        (JSC::JSDollarVM::finishCreation):
+
+2021-05-28  Saam Barati  <sbarati@apple.com>
+
         Don't sink arguments past the context of the inline call frame they were created in
         https://bugs.webkit.org/show_bug.cgi?id=226363
         <rdar://78392801>
