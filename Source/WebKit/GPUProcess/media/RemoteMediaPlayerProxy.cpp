@@ -1036,6 +1036,12 @@ void RemoteMediaPlayerProxy::updateCachedVideoMetrics()
     m_cachedState.videoMetrics = m_player->videoPlaybackQualityMetrics();
 }
 
+void RemoteMediaPlayerProxy::setPreferredDynamicRangeMode(DynamicRangeMode mode)
+{
+    if (m_player)
+        m_player->setPreferredDynamicRangeMode(mode);
+}
+
 void RemoteMediaPlayerProxy::createAudioSourceProvider()
 {
 #if ENABLE(WEB_AUDIO) && PLATFORM(COCOA)

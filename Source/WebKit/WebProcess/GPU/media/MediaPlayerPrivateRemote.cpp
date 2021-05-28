@@ -134,8 +134,9 @@ MediaPlayerPrivateRemote::~MediaPlayerPrivateRemote()
 void MediaPlayerPrivateRemote::prepareForPlayback(bool privateMode, MediaPlayer::Preload preload, bool preservesPitch, bool prepare)
 {
     auto scale = m_player->playerContentsScale();
+    auto preferredDynamicRangeMode = m_player->preferredDynamicRangeMode();
 
-    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::PrepareForPlayback(privateMode, preload, preservesPitch, prepare, scale), [weakThis = makeWeakPtr(*this), this](auto inlineLayerHostingContextId) mutable {
+    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::PrepareForPlayback(privateMode, preload, preservesPitch, prepare, scale, preferredDynamicRangeMode), [weakThis = makeWeakPtr(*this), this](auto inlineLayerHostingContextId) mutable {
         if (!weakThis)
             return;
 
@@ -1231,6 +1232,11 @@ void MediaPlayerPrivateRemote::applicationWillResignActive()
 void MediaPlayerPrivateRemote::applicationDidBecomeActive()
 {
     connection().send(Messages::RemoteMediaPlayerProxy::ApplicationDidBecomeActive(), m_id);
+}
+
+void MediaPlayerPrivateRemote::setPreferredDynamicRangeMode(DynamicRangeMode mode)
+{
+    connection().send(Messages::RemoteMediaPlayerProxy::SetPreferredDynamicRangeMode(mode), m_id);
 }
 
 bool MediaPlayerPrivateRemote::performTaskAtMediaTime(WTF::Function<void()>&& completionHandler, const MediaTime& mediaTime)

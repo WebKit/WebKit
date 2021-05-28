@@ -784,6 +784,7 @@ def headers_for_type(type):
         'struct WebKit::WebScriptMessageHandlerData': ['"WebUserContentControllerDataTypes.h"'],
         'webrtc::WebKitEncodedFrameInfo': ['<webrtc/sdk/WebKit/WebKitEncoder.h>', '<WebCore/LibWebRTCEnumTraits.h>'],
         'PlatformXR::Device::FrameData': ['<WebCore/PlatformXR.h>'],
+        'WebCore::DynamicRangeMode': ['<WebCore/PlatformScreen.h>'],
     }
 
     headers = []

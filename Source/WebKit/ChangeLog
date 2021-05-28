@@ -1,3 +1,29 @@
+2021-05-28  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] HDR variants in HLS playlists not selected when screen is HDR
+        https://bugs.webkit.org/show_bug.cgi?id=226349
+        <rdar://76963977>
+
+        Reviewed by Eric Carlson.
+
+        An existing test, http/tests/media/hls/hls-hdr-switch.html, should have caught this regression,
+        but is not currently functional as it depends on PHP, which has been removed.
+
+        The preferredDynamicRangeMode needs to be piped over from WebContent -> GPU process.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::setPreferredDynamicRangeMode):
+        * GPUProcess/media/RemoteMediaPlayerProxy.h:
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in:
+        * GPUProcess/media/cocoa/RemoteMediaPlayerProxyCocoa.mm:
+        (WebKit::RemoteMediaPlayerProxy::prepareForPlayback):
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::prepareForPlayback):
+        (WebKit::MediaPlayerPrivateRemote::setPreferredDynamicRangeMode):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+
 2021-05-28  Zan Dobersek  <zdobersek@igalia.com>
 
         [WPE] Correctly compute wheel event phase for 2D axis events
