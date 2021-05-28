@@ -57,6 +57,7 @@ public:
     const MediaTime& duration() const { return m_duration; }
 
     const Logger& logger() const { ASSERT(m_logger); return *m_logger.get(); }
+    const Logger* loggerPtr() const { return m_logger.get(); }
     const void* nextTrackReaderLogIdentifier(uint64_t) const;
 
 private:

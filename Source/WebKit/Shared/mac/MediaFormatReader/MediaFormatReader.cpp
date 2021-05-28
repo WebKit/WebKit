@@ -110,7 +110,7 @@ void MediaFormatReader::parseByteSource(RetainPtr<MTPluginByteSourceRef>&& byteS
         m_logIdentifier = nextLogIdentifier();
     }
 
-    ALWAYS_LOG(LOGIDENTIFIER);
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     parser->setLogger(*m_logger, m_logIdentifier);
 
     // Set a minimum audio sample duration of 0 so the parser creates indivisible samples with byte source ranges.
@@ -155,9 +155,9 @@ void MediaFormatReader::didParseTracks(SourceBufferPrivateClient::Initialization
     ASSERT(m_duration.isInvalid());
     ASSERT(m_trackReaders.isEmpty());
 
-    ALWAYS_LOG(LOGIDENTIFIER);
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (errorCode)
-        ERROR_LOG(LOGIDENTIFIER, errorCode);
+        ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, errorCode);
 
     m_parseTracksStatus = errorCode ? kMTPluginFormatReaderError_ParsingFailure : noErr;
     m_duration = WTFMove(segment.duration);
@@ -205,7 +205,7 @@ void MediaFormatReader::didProvideMediaData(Ref<MediaSample>&& mediaSample, uint
 void MediaFormatReader::finishParsing(Ref<SourceBufferParser>&& parser)
 {
     ASSERT(!isMainRunLoop());
-    ALWAYS_LOG(LOGIDENTIFIER);
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
     Locker locker { m_parseTracksLock };
     ASSERT(m_parseTracksStatus.hasValue());
@@ -231,23 +231,26 @@ void MediaFormatReader::finishParsing(Ref<SourceBufferParser>&& parser)
 
 OSStatus MediaFormatReader::copyProperty(CFStringRef key, CFAllocatorRef allocator, void* valueCopy)
 {
+    if (!CFEqual(key, PAL::get_MediaToolbox_kMTPluginFormatReaderProperty_Duration())) {
+        ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "asked for unsupported property ", String(key));
+        return kCMBaseObjectError_ValueNotAvailable;
+    }
+
     Locker locker { m_parseTracksLock };
     m_parseTracksCondition.wait(m_parseTracksLock, [&] {
         assertIsHeld(m_parseTracksLock);
         return m_parseTracksStatus.hasValue();
     });
 
-    if (CFEqual(key, PAL::get_MediaToolbox_kMTPluginFormatReaderProperty_Duration())) {
-        if (m_duration.isIndefinite())
-            return kCMBaseObjectError_ValueNotAvailable;
+    if (m_duration.isIndefinite())
+        return kCMBaseObjectError_ValueNotAvailable;
 
-        if (auto leakedDuration = adoptCF(CMTimeCopyAsDictionary(PAL::toCMTime(m_duration), allocator)).leakRef()) {
-            *reinterpret_cast<CFDictionaryRef*>(valueCopy) = leakedDuration;
-            return noErr;
-        }
+    if (auto leakedDuration = adoptCF(CMTimeCopyAsDictionary(PAL::toCMTime(m_duration), allocator)).leakRef()) {
+        *reinterpret_cast<CFDictionaryRef*>(valueCopy) = leakedDuration;
+        return noErr;
     }
 
-    ERROR_LOG(LOGIDENTIFIER, "asked for unsupported property ", String(key));
+    ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Could not retrieve value for property ", String(key));
     return kCMBaseObjectError_ValueNotAvailable;
 }
 

@@ -1,3 +1,19 @@
+2021-05-28  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Hang in WebM format reader when loading content from https://powerrangers.fandom.com/
+        https://bugs.webkit.org/show_bug.cgi?id=226128
+        <rdar://77645877>
+
+        Reviewed by Eric Carlson.
+
+        When creating a format reader, MediaToolbox will query for various properties including ones about
+        MetadataFormat and MetadataKeySpace. We don't support those properties, but we still block until
+        tracks are loaded before answering that we don't support them. Instead, just return early unless
+        the query is for the one property which we do support, Duration.
+
+        * Shared/mac/MediaFormatReader/MediaFormatReader.cpp:
+        (WebKit::MediaFormatReader::copyProperty):
+
 2021-05-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Adjust logic when determining whether to enable image extraction actions in the callout bar
