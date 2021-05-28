@@ -160,6 +160,9 @@ class TranslatorMetalDirect : public TCompiler
                    ShCompileOptions compileOptions,
                    PerformanceDiagnostics *perfDiagnostics) override;
 
+    // Need to collect variables so that RemoveInactiveInterfaceVariables works.
+    bool shouldCollectVariables(ShCompileOptions compileOptions) override { return true; }
+
     ANGLE_NO_DISCARD bool translateImpl(TIntermBlock &root, ShCompileOptions compileOptions);
 
     ANGLE_NO_DISCARD bool shouldFlattenPragmaStdglInvariantAll() override;

@@ -1,3 +1,18 @@
+2021-05-28  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE Metal translator should always collect variables
+        https://bugs.webkit.org/show_bug.cgi?id=226261
+
+        Reviewed by Dean Jackson.
+
+        Always collect the variables when translating GLSL to Metal.
+        This way tests that invoke translation without SH_VARIABLES still
+        work.
+
+        * src/compiler/translator/TranslatorMetalDirect.cpp:
+        (sh::TranslatorMetalDirect::translateImpl):
+        * src/compiler/translator/TranslatorMetalDirect.h:
+
 2021-05-27  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         ANGLE could be compiled with "aggressive uninitialised variable" setting
