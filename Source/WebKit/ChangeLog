@@ -1,3 +1,21 @@
+2021-05-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WPE] Correctly compute wheel event phase for 2D axis events
+        https://bugs.webkit.org/show_bug.cgi?id=226370
+
+        Reviewed by Adrian Perez de Castro.
+
+        2D-capable wpe_input_axis_event objects don't have usable axis and delta
+        values set on the base struct, but keep all that information on the more
+        detailed wpe_input_axis_2d_event struct.
+
+        For such events, the correct phase then has to be special-cased,
+        otherwise the default determination marks both axes as inactive and only
+        PhaseEnded events are dispatched into the engine.
+
+        * UIProcess/API/wpe/WPEView.cpp:
+        (WKWPE::m_backend):
+
 2021-05-28  Eric Carlson  <eric.carlson@apple.com>
 
         [GPUP] [Video/Audio/Text]TrackPrivateRemote.h should use startTimeVariance

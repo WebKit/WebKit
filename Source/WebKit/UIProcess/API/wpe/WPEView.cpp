@@ -167,6 +167,27 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
                 Horizontal
             };
 
+            // We treat an axis motion event with a value of zero to be equivalent
+            // to a 'stop' event. Motion events with zero motion don't exist naturally,
+            // so this allows a backend to express 'stop' events without changing API.
+            // The wheel event phase is adjusted accordingly.
+            WebWheelEvent::Phase phase = WebWheelEvent::Phase::PhaseChanged;
+            WebWheelEvent::Phase momentumPhase = WebWheelEvent::Phase::PhaseNone;
+
+#if WPE_CHECK_VERSION(1, 5, 0)
+            if (event->type & wpe_input_axis_event_type_mask_2d) {
+                auto* event2D = reinterpret_cast<struct wpe_input_axis_2d_event*>(event);
+                view.m_horizontalScrollActive = !!event2D->x_axis;
+                view.m_verticalScrollActive = !!event2D->y_axis;
+                if (!view.m_horizontalScrollActive && !view.m_verticalScrollActive)
+                    phase = WebWheelEvent::Phase::PhaseEnded;
+
+                auto& page = view.page();
+                page.handleWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(), phase, momentumPhase));
+                return;
+            }
+#endif
+
             switch (event->axis) {
             case Vertical:
                 view.m_horizontalScrollActive = !!event->value;
@@ -176,14 +197,16 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
                 break;
             }
 
-            // We treat an axis motion event with a value of zero to be equivalent
-            // to a 'stop' event. Motion events with zero motion don't exist naturally,
-            // so this allows a backend to express 'stop' events without changing API.
-            auto& page = view.page();
-            if (event->value)
-                page.handleWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(), WebWheelEvent::Phase::PhaseChanged, WebWheelEvent::Phase::PhaseNone));
-            else if (!view.m_horizontalScrollActive && !view.m_verticalScrollActive)
-                page.handleWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(), WebWheelEvent::Phase::PhaseEnded, WebWheelEvent::Phase::PhaseNone));
+            bool shouldDispatch = !!event->value;
+            if (!view.m_horizontalScrollActive && !view.m_verticalScrollActive) {
+                shouldDispatch = true;
+                phase = WebWheelEvent::Phase::PhaseEnded;
+            }
+
+            if (shouldDispatch) {
+                auto& page = view.page();
+                page.handleWheelEvent(WebKit::NativeWebWheelEvent(event, page.deviceScaleFactor(), phase, momentumPhase));
+            }
         },
         // handle_touch_event
         [](void* data, struct wpe_input_touch_event* event)
