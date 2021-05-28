@@ -419,8 +419,10 @@ void WebIDBServer::close()
         ASSERT(!RunLoop::isMain());
 
         m_connectionMap.clear();
-        Locker locker { m_serverLock };
-        m_server = nullptr;
+        {
+            Locker locker { m_serverLock };
+            m_server = nullptr;
+        }
 
         callOnMainRunLoop([protectedThis = WTFMove(protectedThis)] { });
     });
