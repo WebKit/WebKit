@@ -77,15 +77,14 @@ public:
 
     void clear()
     {
+        if (isBitVector())
+            m_inline.bitVector.~BitVector();
+        else
+            m_inline.hashSet.~HashSet();
+        new (NotNull, &m_inline.bitVector) BitVector;
         m_size = 0;
         m_min = 0;
         m_max = 0;
-        if (isBitVector())
-            m_inline.bitVector.clearAll();
-        else {
-            m_inline.hashSet.~HashSet();
-            new (NotNull, &m_inline.bitVector) BitVector;
-        }
     }
 
     bool contains(IndexType value) const

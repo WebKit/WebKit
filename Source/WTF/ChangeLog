@@ -1,3 +1,19 @@
+2021-05-28  Robin Morisset  <rmorisset@apple.com>
+
+        Fix LikelyDenseUnsignedIntegerSet::clear()
+        https://bugs.webkit.org/show_bug.cgi?id=226388
+
+        Reviewed by Mark Lam.
+
+        There are two problems with it:
+        1) It calls BitVector::clearAll(), which does not free any memory.
+        Instead, it should call BitVector::~BitVector(), then do a placement new of a fresh BitVector (to get it back to its inline condition)
+        2) More problematically, it changes m_size before calling isBitVector() which relies crucially on the value of m_size.
+        So it is going to believe that it is in BitVector mode even when it is actually in HashSet mode.
+
+        * wtf/LikelyDenseUnsignedIntegerSet.h:
+        (WTF::LikelyDenseUnsignedIntegerSet::clear):
+
 2021-05-28  Sam Weinig  <weinig@apple.com>
 
         Add stub implementation of CA separated portal bits for GraphicsLayer

@@ -1,3 +1,14 @@
+2021-05-28  Robin Morisset  <rmorisset@apple.com>
+
+        Fix LikelyDenseUnsignedIntegerSet::clear()
+        https://bugs.webkit.org/show_bug.cgi?id=226388
+        rdar://78607433
+
+        Reviewed by Mark Lam.
+
+        * stress/stack-allocation-regression.js: Added.
+        (foo):
+
 2021-05-28  Saam Barati  <sbarati@apple.com>
 
         Don't sink arguments past the context of the inline call frame they were created in
