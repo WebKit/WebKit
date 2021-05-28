@@ -1,3 +1,19 @@
+2021-05-27  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitpy] Use existing signal handler when printing stacktrace
+        https://bugs.webkit.org/show_bug.cgi?id=226236
+        <rdar://problem/78471882>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/webkitpy/common/interrupt_debugging.py:
+        (log_stack_trace_on_signal): Use the same implementation for SIGTERM and SIGINT signals, call existing
+        handler after logging stack trace.
+        (log_stack_trace_on_term): Deleted.
+        (log_stack_trace_on_ctrl_c): Deleted.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (main): Use the new log_stack_trace_on_signal function.
+
 2021-05-27  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [run-webkit-tests][Win] Strip PHP support from webserver

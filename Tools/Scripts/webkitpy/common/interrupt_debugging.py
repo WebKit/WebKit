@@ -63,23 +63,25 @@ class StackTraceFileContext(object):
         self.file = sys.stderr
 
 
-def log_stack_trace_on_term(output_file=None):
-    def handler(signum, frame):
+def log_stack_trace_on_signal(sigattr, output_file=None):
+    signum = getattr(signal, sigattr)
+    if not signum:
+        return None
+
+    previous = signal.getsignal(signum)
+
+    def handler(signum_, frame):
         with StackTraceFileContext(output_file=output_file) as file:
-            file.write('SIGTERM signal received')
+            file.write('{} signal received'.format(sigattr))
             log_stack_trace(frame, file)
 
-        exit(-1)
+        if previous in (None, getattr(signal, 'SIG_IGN')):
+            return
+        if previous == getattr(signal, 'SIG_DFL'):
+            if sigattr == 'SIGTERM':
+                sys.exit(-1)
+            if sigattr == 'SIGINT':
+                raise KeyboardInterrupt
+        return previous(signum_, frame)
 
-    signal.signal(signal.SIGTERM, handler)
-
-
-def log_stack_trace_on_ctrl_c(output_file=None):
-    def handler(signum, frame):
-        with StackTraceFileContext(output_file=output_file) as file:
-            file.write('CTRL+C received\n')
-            log_stack_trace(frame, file)
-
-        raise KeyboardInterrupt
-
-    signal.signal(signal.SIGINT, handler)
+    return signal.signal(signum, handler)
