@@ -37,7 +37,6 @@
 #include "LayoutBox.h"
 #include "LayoutChildIterator.h"
 #include "LayoutContainerBox.h"
-#include "LayoutContainingBlockChainIterator.h"
 #include "LayoutContext.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutState.h"
@@ -223,8 +222,8 @@ Optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoider(c
 
     auto logicalTopInFormattingContextRootCoordinate = [&] (auto& floatAvoider) {
         auto top = BoxGeometry::borderBoxTop(geometryForBox(floatAvoider));
-        for (auto& ancestor : containingBlockChain(floatAvoider))
-            top += BoxGeometry::borderBoxTop(geometryForBox(ancestor));
+        for (auto* ancestor = &floatAvoider.containingBlock(); ancestor != &root(); ancestor = &ancestor->containingBlock())
+            top += BoxGeometry::borderBoxTop(geometryForBox(*ancestor));
         return top;
     };
 
@@ -232,8 +231,8 @@ Optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoider(c
         if (!floatConstraints.left && !floatConstraints.right)
             return FloatingContext::Constraints { };
         auto offset = LayoutSize { };
-        for (auto& ancestor : containingBlockChain(layoutBox))
-            offset += toLayoutSize(BoxGeometry::borderBoxTopLeft(geometryForBox(ancestor)));
+        for (auto* ancestor = &layoutBox.containingBlock(); ancestor != &root(); ancestor = &ancestor->containingBlock())
+            offset += toLayoutSize(BoxGeometry::borderBoxTopLeft(geometryForBox(*ancestor)));
         if (floatConstraints.left)
             floatConstraints.left = PointInContextRoot { *floatConstraints.left - offset };
         if (floatConstraints.right)

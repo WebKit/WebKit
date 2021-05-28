@@ -146,7 +146,6 @@ public:
     const Box* previousSibling() const { return m_previousSibling; }
     const Box* previousInFlowSibling() const;
     const Box* previousInFlowOrFloatingSibling() const;
-    bool isDescendantOf(const ContainerBox&) const;
 
     // FIXME: This is currently needed for style updates.
     Box* nextSibling() { return m_nextSibling; }
