@@ -41,7 +41,7 @@ public:
     static void initialize();
     static CalleeRegistry& singleton();
 
-    UncheckedLock& getLock() { return m_lock; }
+    Lock& getLock() WTF_RETURNS_LOCK(m_lock) { return m_lock; }
 
     void registerCallee(Callee* callee)
     {
@@ -55,12 +55,12 @@ public:
         m_calleeSet.remove(callee);
     }
 
-    const HashSet<Callee*>& allCallees(const AbstractLocker&)
+    const HashSet<Callee*>& allCallees() WTF_REQUIRES_LOCK(m_lock)
     {
         return m_calleeSet;
     }
 
-    bool isValidCallee(const AbstractLocker&, Callee* callee)
+    bool isValidCallee(Callee* callee)  WTF_REQUIRES_LOCK(m_lock)
     {
         if (!HashSet<Callee*>::isValidValue(callee))
             return false;
@@ -70,8 +70,8 @@ public:
     CalleeRegistry() = default;
 
 private:
-    UncheckedLock m_lock;
-    HashSet<Callee*> m_calleeSet;
+    Lock m_lock;
+    HashSet<Callee*> m_calleeSet WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 } } // namespace JSC::Wasm

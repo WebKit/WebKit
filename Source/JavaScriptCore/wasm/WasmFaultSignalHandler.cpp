@@ -84,7 +84,7 @@ static SignalAction trapHandler(Signal signal, SigInfo& sigInfo, PlatformRegiste
                     return true;
                 auto& calleeRegistry = CalleeRegistry::singleton();
                 Locker locker { calleeRegistry.getLock() };
-                for (auto* callee : calleeRegistry.allCallees(locker)) {
+                for (auto* callee : calleeRegistry.allCallees()) {
                     auto [start, end] = callee->range();
                     dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "function start: ", RawPointer(start), " end: ", RawPointer(end));
                     if (start <= faultingInstruction && faultingInstruction < end) {

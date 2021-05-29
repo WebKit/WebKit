@@ -75,13 +75,12 @@ ALWAYS_INLINE static void reportStats()
 
 class FrameWalker {
 public:
-    FrameWalker(VM& vm, CallFrame* callFrame, const AbstractLocker& codeBlockSetLocker, const AbstractLocker& machineThreadsLocker, const Optional<UncheckedLockHolder>& wasmCalleeLocker)
+    FrameWalker(VM& vm, CallFrame* callFrame, const AbstractLocker& codeBlockSetLocker, const AbstractLocker& machineThreadsLocker)
         : m_vm(vm)
         , m_callFrame(callFrame)
         , m_entryFrame(vm.topEntryFrame)
         , m_codeBlockSetLocker(codeBlockSetLocker)
         , m_machineThreadsLocker(machineThreadsLocker)
-        , m_wasmCalleeLocker(wasmCalleeLocker)
     {
     }
 
@@ -124,8 +123,9 @@ protected:
         stackTrace[m_depth] = UnprocessedStackFrame(codeBlock, unsafeCallee, callSiteIndex);
 #if ENABLE(WEBASSEMBLY)
         if (Wasm::isSupported() && unsafeCallee.isWasm()) {
+            assertIsHeld(Wasm::CalleeRegistry::singleton().getLock());
             auto* wasmCallee = unsafeCallee.asWasmCallee();
-            if (Wasm::CalleeRegistry::singleton().isValidCallee(*m_wasmCalleeLocker, wasmCallee)) {
+            if (Wasm::CalleeRegistry::singleton().isValidCallee(wasmCallee)) {
                 // At this point, Wasm::Callee would be dying (ref count is 0), but its fields are still live.
                 // And we can safely copy Wasm::IndexOrName even when any lock is held by suspended threads.
                 stackTrace[m_depth].wasmIndexOrName = wasmCallee->indexOrName();
@@ -201,7 +201,6 @@ protected:
     EntryFrame* m_entryFrame;
     const AbstractLocker& m_codeBlockSetLocker;
     const AbstractLocker& m_machineThreadsLocker;
-    const Optional<UncheckedLockHolder>& m_wasmCalleeLocker;
     bool m_bailingOut { false };
     size_t m_depth { 0 };
 };
@@ -210,8 +209,8 @@ class CFrameWalker : public FrameWalker {
 public:
     typedef FrameWalker Base;
 
-    CFrameWalker(VM& vm, void* machineFrame, CallFrame* callFrame, const AbstractLocker& codeBlockSetLocker, const AbstractLocker& machineThreadsLocker, const Optional<UncheckedLockHolder>& wasmCalleeLocker)
-        : Base(vm, callFrame, codeBlockSetLocker, machineThreadsLocker, wasmCalleeLocker)
+    CFrameWalker(VM& vm, void* machineFrame, CallFrame* callFrame, const AbstractLocker& codeBlockSetLocker, const AbstractLocker& machineThreadsLocker)
+        : Base(vm, callFrame, codeBlockSetLocker, machineThreadsLocker)
         , m_machineFrame(machineFrame)
     {
     }
@@ -353,10 +352,10 @@ void SamplingProfiler::takeSample(const AbstractLocker&, Seconds& stackTraceProc
         Locker machineThreadsLocker { m_vm.heap.machineThreads().getLock() };
         Locker codeBlockSetLocker { m_vm.heap.codeBlockSet().getLock() };
         Locker executableAllocatorLocker { ExecutableAllocator::singleton().getLock() };
-        Optional<UncheckedLockHolder> wasmCalleesLocker;
+        Optional<LockHolder> wasmCalleesLocker;
 #if ENABLE(WEBASSEMBLY)
         if (Wasm::isSupported())
-            wasmCalleesLocker = Locker { Wasm::CalleeRegistry::singleton().getLock() };
+            wasmCalleesLocker.emplace(Wasm::CalleeRegistry::singleton().getLock());
 #endif
 
         auto didSuspend = m_jscExecutionThread->suspend();
@@ -407,11 +406,11 @@ void SamplingProfiler::takeSample(const AbstractLocker&, Seconds& stackTraceProc
             bool wasValidWalk;
             bool didRunOutOfVectorSpace;
             if (Options::sampleCCode()) {
-                CFrameWalker walker(m_vm, machineFrame, callFrame, codeBlockSetLocker, machineThreadsLocker, wasmCalleesLocker);
+                CFrameWalker walker(m_vm, machineFrame, callFrame, codeBlockSetLocker, machineThreadsLocker);
                 walkSize = walker.walk(m_currentFrames, didRunOutOfVectorSpace);
                 wasValidWalk = walker.wasValidWalk();
             } else {
-                FrameWalker walker(m_vm, callFrame, codeBlockSetLocker, machineThreadsLocker, wasmCalleesLocker);
+                FrameWalker walker(m_vm, callFrame, codeBlockSetLocker, machineThreadsLocker);
                 walkSize = walker.walk(m_currentFrames, didRunOutOfVectorSpace);
                 wasValidWalk = walker.wasValidWalk();
             }
