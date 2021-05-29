@@ -34,6 +34,7 @@
 #include "FloatingState.h"
 #include "FormattingQuirks.h"
 #include "InlineFormattingState.h"
+#include "LayoutContainingBlockChainIterator.h"
 #include "LayoutContext.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutReplacedBox.h"
@@ -84,16 +85,16 @@ Optional<LayoutUnit> FormattingGeometry::computedHeightValue(const Box& layoutBo
         if (layoutState().inQuirksMode())
             containingBlockHeight = formattingContext().formattingQuirks().heightValueOfNearestContainingBlockWithFixedHeight(layoutBox);
         else {
-            auto nonAnonymousContainingBlockLogicalHeight = [&] {
+            auto nonAnonymousContainingBlockLogicalHeight = [&]() -> Length {
                 // When the block level box is a direct child of an inline level box (<span><div></div></span>) and we wrap it into a continuation,
                 // the containing block (anonymous wrapper) is not the box we need to check for fixed height.
-                auto& initialContainingBlock = layoutBox.initialContainingBlock();
-                for (auto* containingBlock = &layoutBox.containingBlock(); containingBlock != &initialContainingBlock; containingBlock = &containingBlock->containingBlock()) {
-                    if (containingBlock->isAnonymous())
+                for (auto& containingBlock : containingBlockChain(layoutBox)) {
+                    if (containingBlock.isAnonymous())
                         continue;
-                    return containingBlock->style().logicalHeight();
+                    return containingBlock.style().logicalHeight();
                 }
-                return initialContainingBlock.style().logicalHeight();
+                ASSERT_NOT_REACHED();
+                return { };
             };
             containingBlockHeight = fixedValue(nonAnonymousContainingBlockLogicalHeight());
         }

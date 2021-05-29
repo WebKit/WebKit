@@ -30,6 +30,7 @@
 
 #include "LayoutBoxGeometry.h"
 #include "LayoutContainerBox.h"
+#include "LayoutContainingBlockChainIterator.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutPhase.h"
 #include "LayoutState.h"
@@ -422,6 +423,17 @@ const Box* Box::previousInFlowOrFloatingSibling() const
     while (previousSibling && !(previousSibling->isInFlow() || previousSibling->isFloatingPositioned()))
         previousSibling = previousSibling->previousSibling();
     return previousSibling;
+}
+
+bool Box::isDescendantOf(const ContainerBox& ancestor) const
+{
+    if (ancestor.isInitialContainingBlock())
+        return true;
+    for (auto& containingBlock : containingBlockChain(*this)) {
+        if (&containingBlock == &ancestor)
+            return true;
+    }
+    return false;
 }
 
 bool Box::isOverflowVisible() const

@@ -33,6 +33,7 @@
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutContainerBox.h"
+#include "LayoutContainingBlockChainIterator.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -512,8 +513,8 @@ LayoutPoint FloatingContext::mapTopLeftToFloatingStateRoot(const Box& floatBox) 
 {
     auto& floatingStateRoot = floatingState().root();
     auto topLeft = BoxGeometry::borderBoxTopLeft(formattingContext().geometryForBox(floatBox, FormattingContext::EscapeReason::FloatBoxIsAlwaysRelativeToFloatStateRoot));
-    for (auto* containingBlock = &floatBox.containingBlock(); containingBlock != &floatingStateRoot; containingBlock = &containingBlock->containingBlock())
-        topLeft.moveBy(BoxGeometry::borderBoxTopLeft(formattingContext().geometryForBox(*containingBlock, FormattingContext::EscapeReason::FloatBoxIsAlwaysRelativeToFloatStateRoot)));
+    for (auto& containingBlock : containingBlockChain(floatBox, floatingStateRoot))
+        topLeft.moveBy(BoxGeometry::borderBoxTopLeft(formattingContext().geometryForBox(containingBlock, FormattingContext::EscapeReason::FloatBoxIsAlwaysRelativeToFloatStateRoot)));
     return topLeft;
 }
 
