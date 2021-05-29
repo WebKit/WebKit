@@ -1,3 +1,14 @@
+2021-05-29  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, late-ish May 2021 edition redux
+        https://bugs.webkit.org/show_bug.cgi?id=226401
+
+        Unreviewed non-unified build fixes.
+
+        * jit/JITSizeStatistics.cpp: Add missing LinkBuffer.h header.
+        * jit/JITSizeStatistics.h: Add missing CCallHelpers.h and wtf/text/WTFString.h headers;
+        remove unneeded CCallHelpers forward declaration.
+
 2021-05-28  Chris Dumez  <cdumez@apple.com>
 
         Stop using UncheckedLock in WTF::MetaAllocator

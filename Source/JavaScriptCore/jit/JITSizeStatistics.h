@@ -28,12 +28,12 @@
 
 #if ENABLE(JIT)
 
+#include "CCallHelpers.h"
 #include <wtf/HashMap.h>
 #include <wtf/PrintStream.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC {
-
-class CCallHelpers;
 
 class JITSizeStatistics {
     WTF_MAKE_FAST_ALLOCATED;

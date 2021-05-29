@@ -29,6 +29,7 @@
 #if ENABLE(JIT)
 
 #include "CCallHelpers.h"
+#include "LinkBuffer.h"
 #include <wtf/BubbleSort.h>
 
 namespace JSC {
