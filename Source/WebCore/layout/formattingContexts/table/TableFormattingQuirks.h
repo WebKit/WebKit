@@ -40,6 +40,10 @@ public:
 
     static bool shouldIgnoreChildContentVerticalMargin(const ContainerBox&);
     LayoutUnit heightValueOfNearestContainingBlockWithFixedHeight(const Box&) const final;
+
+private:
+    const TableFormattingContext& formattingContext() const { return downcast<TableFormattingContext>(FormattingQuirks::formattingContext()); }
+
 };
 
 }

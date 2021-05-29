@@ -39,9 +39,8 @@
 namespace WebCore {
 namespace Layout {
 
-TableFormattingGeometry::TableFormattingGeometry(const TableFormattingContext& tableFormattingContext, const TableGrid& grid)
+TableFormattingGeometry::TableFormattingGeometry(const TableFormattingContext& tableFormattingContext)
     : FormattingGeometry(tableFormattingContext)
-    , m_grid(grid)
 {
 }
 
@@ -65,9 +64,10 @@ LayoutUnit TableFormattingGeometry::cellBoxContentHeight(const ContainerBox& cel
 
 Edges TableFormattingGeometry::computedCellBorder(const TableGrid::Cell& cell) const
 {
+    auto& grid = formattingContext().formattingState().tableGrid();
     auto& cellBox = cell.box();
     auto border = computedBorder(cellBox);
-    auto collapsedBorder = m_grid.collapsedBorder();
+    auto collapsedBorder = grid.collapsedBorder();
     if (!collapsedBorder)
         return border;
 
@@ -77,31 +77,31 @@ Edges TableFormattingGeometry::computedCellBorder(const TableGrid::Cell& cell) c
     if (!cellPosition.column)
         border.horizontal.left = collapsedBorder->horizontal.left / 2;
     else {
-        auto adjacentBorderRight = computedBorder(m_grid.slot({ cellPosition.column - 1, cellPosition.row })->cell().box()).horizontal.right;
+        auto adjacentBorderRight = computedBorder(grid.slot({ cellPosition.column - 1, cellPosition.row })->cell().box()).horizontal.right;
         border.horizontal.left = std::max(border.horizontal.left, adjacentBorderRight) / 2;
     }
     // Collapsed border right from table and adjacent cells.
-    if (cellPosition.column == m_grid.columns().size() - 1)
+    if (cellPosition.column == grid.columns().size() - 1)
         border.horizontal.right = collapsedBorder->horizontal.right / 2;
     else {
-        auto adjacentBorderLeft = computedBorder(m_grid.slot({ cellPosition.column + 1, cellPosition.row })->cell().box()).horizontal.left;
+        auto adjacentBorderLeft = computedBorder(grid.slot({ cellPosition.column + 1, cellPosition.row })->cell().box()).horizontal.left;
         border.horizontal.right = std::max(border.horizontal.right, adjacentBorderLeft) / 2;
     }
     // Collapsed border top from table, row and adjacent cells.
-    auto& rows = m_grid.rows().list();
+    auto& rows = grid.rows().list();
     if (!cellPosition.row)
         border.vertical.top = collapsedBorder->vertical.top / 2;
     else {
-        auto adjacentBorderBottom = computedBorder(m_grid.slot({ cellPosition.column, cellPosition.row - 1 })->cell().box()).vertical.bottom;
+        auto adjacentBorderBottom = computedBorder(grid.slot({ cellPosition.column, cellPosition.row - 1 })->cell().box()).vertical.bottom;
         auto adjacentRowBottom = computedBorder(rows[cellPosition.row - 1].box()).vertical.bottom;
         auto adjacentCollapsedBorder = std::max(adjacentBorderBottom, adjacentRowBottom);
         border.vertical.top = std::max(border.vertical.top, adjacentCollapsedBorder) / 2;
     }
     // Collapsed border bottom from table, row and adjacent cells.
-    if (cellPosition.row == m_grid.rows().size() - 1)
+    if (cellPosition.row == grid.rows().size() - 1)
         border.vertical.bottom = collapsedBorder->vertical.bottom / 2;
     else {
-        auto adjacentBorderTop = computedBorder(m_grid.slot({ cellPosition.column, cellPosition.row + 1 })->cell().box()).vertical.top;
+        auto adjacentBorderTop = computedBorder(grid.slot({ cellPosition.column, cellPosition.row + 1 })->cell().box()).vertical.top;
         auto adjacentRowTop = computedBorder(rows[cellPosition.row + 1].box()).vertical.top;
         auto adjacentCollapsedBorder = std::max(adjacentBorderTop, adjacentRowTop);
         border.vertical.bottom = std::max(border.vertical.bottom, adjacentCollapsedBorder) / 2;

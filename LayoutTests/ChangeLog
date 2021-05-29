@@ -1,3 +1,14 @@
+2021-05-29  Zalan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Do not include vertical spacing when resolving percent height for table content
+        https://bugs.webkit.org/show_bug.cgi?id=226365
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations: WebKit table layout don't resolve the height percent properly when border spacing is present.
+        * fast/layoutformattingcontext/table-with-percent-columns-and-spacing-expected.html: Added.
+        * fast/layoutformattingcontext/table-with-percent-columns-and-spacing.html: Added.
+
 2021-05-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Web process terminates when attempting to log in on bankid.no

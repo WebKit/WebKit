@@ -1,5 +1,30 @@
 2021-05-29  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Do not include vertical spacing when resolving percent height for table content
+        https://bugs.webkit.org/show_bug.cgi?id=226365
+
+        Reviewed by Antti Koivisto.
+
+        <table style="height: 100px; border-spacing: 10px;"><tr><td style="height: 100%"></td></tr></table>
+        The <td>'s 100% height is resolved against 100px - (2 * 10px) -> 80px;
+
+        Test: fast/layoutformattingcontext/table-with-percent-columns-and-spacing.html
+
+        * layout/formattingContexts/table/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::TableFormattingContext):
+        * layout/formattingContexts/table/TableFormattingContext.h:
+        * layout/formattingContexts/table/TableFormattingGeometry.cpp:
+        (WebCore::Layout::TableFormattingGeometry::TableFormattingGeometry):
+        (WebCore::Layout::TableFormattingGeometry::computedCellBorder const):
+        * layout/formattingContexts/table/TableFormattingGeometry.h:
+        (WebCore::Layout::TableFormattingGeometry::formattingContext const):
+        * layout/formattingContexts/table/TableFormattingQuirks.cpp:
+        (WebCore::Layout::TableFormattingQuirks::heightValueOfNearestContainingBlockWithFixedHeight const):
+        * layout/formattingContexts/table/TableFormattingQuirks.h:
+        (WebCore::Layout::TableFormattingQuirks::formattingContext const):
+
+2021-05-29  Alan Bujtas  <zalan@apple.com>
+
         [LFC] Transition containing block for loops to range loops
         https://bugs.webkit.org/show_bug.cgi?id=226315
 

@@ -48,7 +48,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(TableFormattingContext);
 // https://www.w3.org/TR/css-tables-3/#table-layout-algorithm
 TableFormattingContext::TableFormattingContext(const ContainerBox& formattingContextRoot, TableFormattingState& formattingState)
     : FormattingContext(formattingContextRoot, formattingState)
-    , m_tableFormattingGeometry(*this, formattingState.tableGrid())
+    , m_tableFormattingGeometry(*this)
     , m_tableFormattingQuirks(*this)
 {
 }
