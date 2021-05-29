@@ -1,3 +1,20 @@
+2021-05-29  Cameron McCormack  <heycam@apple.com>
+
+        Rename Internals.mainThreadScrollingReasons to synchronousScrollingReasons
+        https://bugs.webkit.org/show_bug.cgi?id=226415
+
+        Reviewed by Simon Fraser.
+
+        * compositing/layer-creation/fixed-position-in-view-dynamic.html:
+        * compositing/layer-creation/fixed-position-no-content-scroll-reason-expected.txt:
+        * compositing/layer-creation/fixed-position-no-content-scroll-reason.html:
+        * compositing/layer-creation/fixed-position-out-of-view-dynamic.html:
+        * compositing/layer-creation/fixed-position-out-of-view-scroll-reason.html:
+        * compositing/layer-creation/no-compositing-for-fixed-position-under-transform.html:
+        * tiled-drawing/scrolling/slow-scrolling-background-toggle.html:
+        * tiled-drawing/scrolling/slow-scrolling-hidden-background-toggle.html:
+        * tiled-drawing/scrolling/slow-scrolling.html:
+
 2021-05-29  Zalan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Do not include vertical spacing when resolving percent height for table content

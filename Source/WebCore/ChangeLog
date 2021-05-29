@@ -1,3 +1,17 @@
+2021-05-29  Cameron McCormack  <heycam@apple.com>
+
+        Rename Internals.mainThreadScrollingReasons to synchronousScrollingReasons
+        https://bugs.webkit.org/show_bug.cgi?id=226415
+
+        Reviewed by Simon Fraser.
+
+        Brings the name into accordance with the term the C++ code uses.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::synchronousScrollingReasons const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2021-05-28  Darin Adler  <darin@apple.com>
 
         Clients of optional should use has_value instead of relying on hasValue macro

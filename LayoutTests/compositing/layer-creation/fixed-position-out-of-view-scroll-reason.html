@@ -20,7 +20,7 @@
     testRunner.dumpAsText();
 
     window.addEventListener("load", function() {
-      document.getElementById("mainThreadScrollingReasons").innerText = window.internals.mainThreadScrollingReasons();
+      document.getElementById("synchronousScrollingReasons").innerText = window.internals.synchronousScrollingReasons();
     }, false);
   }
 </script>
@@ -29,7 +29,7 @@
 <body>
 <div style="height: 1000px">
   Main thread scrolling reasons should be blank:
-  <pre id="mainThreadScrollingReasons"></pre>
+  <pre id="synchronousScrollingReasons"></pre>
 </div>
 
 <!-- out of view fixed position elements should not trigger main thread scrolling. -->

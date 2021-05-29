@@ -3009,7 +3009,7 @@ ExceptionOr<String> Internals::scrollingTreeAsText() const
     return scrollingCoordinator->scrollingTreeAsText();
 }
 
-ExceptionOr<String> Internals::mainThreadScrollingReasons() const
+ExceptionOr<String> Internals::synchronousScrollingReasons() const
 {
     Document* document = contextDocument();
     if (!document || !document->frame())

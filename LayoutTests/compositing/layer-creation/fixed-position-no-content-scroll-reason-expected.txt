@@ -1,2 +1,2 @@
-Main thread scrolling reasons should be blank:
+Synchronous scrolling reasons should be blank:
 
