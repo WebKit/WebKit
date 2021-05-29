@@ -43,8 +43,6 @@ public:
         TimedOut
     };
 
-    typedef WTF::Locker<UncheckedLock> Locker;
-
     static VMInspector& instance();
 
     void add(VM*);
@@ -58,14 +56,14 @@ public:
     };
 
     template <typename Functor>
-    void iterate(const Locker&, const Functor& functor) { iterate(functor); }
+    void iterate(const UncheckedLockHolder&, const Functor& functor) { iterate(functor); }
 
     JS_EXPORT_PRIVATE static void forEachVM(Function<FunctorStatus(VM&)>&&);
 
-    Expected<Locker, Error> lock(Seconds timeout = Seconds::infinity());
+    Expected<UncheckedLockHolder, Error> lock(Seconds timeout = Seconds::infinity());
 
-    Expected<bool, Error> isValidExecutableMemory(const Locker&, void*);
-    Expected<CodeBlock*, Error> codeBlockForMachinePC(const Locker&, void*);
+    Expected<bool, Error> isValidExecutableMemory(const UncheckedLockHolder&, void*);
+    Expected<CodeBlock*, Error> codeBlockForMachinePC(const UncheckedLockHolder&, void*);
 
     JS_EXPORT_PRIVATE static bool currentThreadOwnsJSLock(VM*);
     JS_EXPORT_PRIVATE static void gc(VM*);

@@ -129,7 +129,7 @@ public:
         }
         
     private:
-        UncheckedLock m_lock;
+        Lock m_lock;
         MetaAllocatorTest* m_parent;
     };
 

@@ -64,7 +64,7 @@ void VMInspector::remove(VM* vm)
     m_vmList.remove(vm);
 }
 
-auto VMInspector::lock(Seconds timeout) -> Expected<Locker, Error>
+auto VMInspector::lock(Seconds timeout) -> Expected<UncheckedLockHolder, Error>
 {
     // This function may be called from a signal handler (e.g. via visit()). Hence,
     // it should only use APIs that are safe to call from signal handlers. This is
@@ -73,14 +73,14 @@ auto VMInspector::lock(Seconds timeout) -> Expected<Locker, Error>
     // We'll be doing sleep(1) between tries below. Hence, sleepPerRetry is 1.
     unsigned maxRetries = (timeout < Seconds::infinity()) ? timeout.value() : UINT_MAX;
 
-    Expected<Locker, Error> locker = Locker::tryLock(m_lock);
+    Expected<UncheckedLockHolder, Error> locker = UncheckedLockHolder::tryLock(m_lock);
     unsigned tryCount = 0;
     while (!locker && tryCount < maxRetries) {
         // We want the version of sleep from unistd.h. Cast to disambiguate.
 #if !OS(WINDOWS)
         (static_cast<unsigned (*)(unsigned)>(sleep))(1);
 #endif
-        locker = Locker::tryLock(m_lock);
+        locker = UncheckedLockHolder::tryLock(m_lock);
     }
 
     if (!locker)
@@ -109,11 +109,11 @@ static bool ensureIsSafeToLock(LockType& lock)
 void VMInspector::forEachVM(Function<FunctorStatus(VM&)>&& func)
 {
     VMInspector& inspector = instance();
-    Locker lock(inspector.getLock());
+    Locker lock { inspector.getLock() };
     inspector.iterate(func);
 }
 
-auto VMInspector::isValidExecutableMemory(const VMInspector::Locker&, void* machinePC) -> Expected<bool, Error>
+auto VMInspector::isValidExecutableMemory(const UncheckedLockHolder&, void* machinePC) -> Expected<bool, Error>
 {
 #if ENABLE(JIT)
     bool found = false;
@@ -145,7 +145,7 @@ auto VMInspector::isValidExecutableMemory(const VMInspector::Locker&, void* mach
 #endif
 }
 
-auto VMInspector::codeBlockForMachinePC(const VMInspector::Locker&, void* machinePC) -> Expected<CodeBlock*, Error>
+auto VMInspector::codeBlockForMachinePC(const UncheckedLockHolder&, void* machinePC) -> Expected<CodeBlock*, Error>
 {
 #if ENABLE(JIT)
     CodeBlock* codeBlock = nullptr;
@@ -172,7 +172,7 @@ auto VMInspector::codeBlockForMachinePC(const VMInspector::Locker&, void* machin
             return FunctorStatus::Continue; // Skip this VM.
         }
 
-        WTF::Locker locker { codeBlockSetLock };
+        Locker locker { codeBlockSetLock };
         vm.heap.forEachCodeBlockIgnoringJITPlans(locker, [&] (CodeBlock* cb) {
             JITCode* jitCode = cb->jitCode().get();
             if (!jitCode) {

@@ -1,3 +1,20 @@
+2021-05-28  Chris Dumez  <cdumez@apple.com>
+
+        Stop using UncheckedLock in WTF::MetaAllocator
+        https://bugs.webkit.org/show_bug.cgi?id=226396
+
+        Reviewed by Darin Adler.
+
+        Stop using UncheckedLock in WTF::MetaAllocator, as it is being phased out in favor on Lock,
+        which supports Clang thread safety analysis.
+
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::release):
+        (WTF::MetaAllocator::MetaAllocator):
+        (WTF::MetaAllocator::allocate):
+        (WTF::MetaAllocator::currentStatistics):
+        * wtf/MetaAllocator.h:
+
 2021-05-28  Robin Morisset  <rmorisset@apple.com>
 
         Fix LikelyDenseUnsignedIntegerSet::clear()

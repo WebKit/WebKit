@@ -1,5 +1,22 @@
 2021-05-28  Chris Dumez  <cdumez@apple.com>
 
+        Stop using UncheckedLock in WTF::MetaAllocator
+        https://bugs.webkit.org/show_bug.cgi?id=226396
+
+        Reviewed by Darin Adler.
+
+        Stop using UncheckedLock in WTF::MetaAllocator, as it is being phased out in favor on Lock,
+        which supports Clang thread safety analysis.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::ExecutableAllocator::getLock const):
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutableAllocatorBase::WTF_RETURNS_LOCK):
+        * tools/VMInspector.cpp:
+        (JSC::VMInspector::isValidExecutableMemory):
+
+2021-05-28  Chris Dumez  <cdumez@apple.com>
+
         Stop using UncheckedLock in JSDOMGlobalObject
         https://bugs.webkit.org/show_bug.cgi?id=226281
 
