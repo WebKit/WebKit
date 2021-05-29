@@ -191,6 +191,11 @@ public:
     bool isFinishedSourceNode() const { return m_isFinishedSourceNode; }
     void setIsFinishedSourceNode() { m_isFinishedSourceNode = true; }
 
+    // Flag indicating the node is in the context's m_tailProcessingNodes or m_finishTailProcessingNodes.
+    // We rely on this flag to avoid unnecessary linear searches in those vectors.
+    bool isTailProcessing() const { return m_isTailProcessing; }
+    void setIsTailProcessing(bool isTailProcessing) { m_isTailProcessing = isTailProcessing; }
+
 protected:
     // Inputs and outputs must be created before the AudioNode is initialized.
     void addInput();
@@ -253,6 +258,7 @@ private:
     bool m_isMarkedForDeletion { false };
     bool m_isDisabled { false };
     bool m_isFinishedSourceNode { false };
+    bool m_isTailProcessing { false };
 
 #if DEBUG_AUDIONODE_REFERENCES
     static bool s_isNodeCountInitialized;

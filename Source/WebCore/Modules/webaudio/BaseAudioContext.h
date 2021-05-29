@@ -160,6 +160,9 @@ public:
     void markForDeletion(AudioNode&);
     void deleteMarkedNodes();
 
+    void addTailProcessingNode(AudioNode&);
+    void removeTailProcessingNode(AudioNode&);
+
     // AudioContext can pull node(s) at the end of each render quantum even when they are not connected to any downstream nodes.
     // These two methods are called by the nodes who want to add/remove themselves into/from the automatic pull lists.
     void addAutomaticPullNode(AudioNode&);
@@ -285,6 +288,9 @@ private:
     void handleDirtyAudioNodeOutputs();
 
     void updateAutomaticPullNodes();
+    void updateTailProcessingNodes();
+    void finishTailProcessing();
+    void disableOutputsForFinishedTailProcessingNodes();
 
 #if !RELEASE_LOG_DISABLED
     Ref<Logger> m_logger;
@@ -305,6 +311,37 @@ private:
     // state which will have no references to any of the nodes in m_nodesToDelete once the context lock is released
     // (when handlePostRenderTasks() has completed).
     Vector<AudioNode*> m_nodesMarkedForDeletion;
+
+    class TailProcessingNode {
+    public:
+        TailProcessingNode(AudioNode& node)
+            : m_node(&node)
+        {
+            ASSERT(!node.isTailProcessing());
+            node.setIsTailProcessing(true);
+        }
+        TailProcessingNode(TailProcessingNode&& other)
+            : m_node(std::exchange(other.m_node, nullptr))
+        { }
+        ~TailProcessingNode()
+        {
+            if (m_node)
+                m_node->setIsTailProcessing(false);
+        }
+        TailProcessingNode& operator=(const TailProcessingNode&) = delete;
+        TailProcessingNode& operator=(TailProcessingNode&&) = delete;
+        AudioNode* operator->() const { return m_node.get(); }
+        bool operator==(const TailProcessingNode& other) const { return m_node == other.m_node; }
+        bool operator==(const AudioNode& node) const { return m_node == &node; }
+    private:
+        RefPtr<AudioNode> m_node;
+    };
+
+    // Nodes that are currently processing their tail.
+    Vector<TailProcessingNode> m_tailProcessingNodes;
+
+    // Nodes that have finished processing their tail and waiting for their outputs to get disabled on the main thread.
+    Vector<TailProcessingNode> m_finishedTailProcessingNodes;
 
     // They will be scheduled for deletion (on the main thread) at the end of a render cycle (in realtime thread).
     Vector<AudioNode*> m_nodesToDelete;
@@ -348,6 +385,7 @@ private:
     unsigned m_connectionCount { 0 };
     State m_state { State::Suspended };
     bool m_isDeletionScheduled { false };
+    bool m_disableOutputsForTailProcessingScheduled { false };
     bool m_isStopScheduled { false };
     bool m_isInitialized { false };
     bool m_isAudioThreadFinished { false };

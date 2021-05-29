@@ -198,6 +198,8 @@ void BaseAudioContext::uninitialize()
     // Don't allow the context to initialize a second time after it's already been explicitly uninitialized.
     m_isAudioThreadFinished = true;
 
+    finishTailProcessing();
+
     {
         Locker locker { graphLock() };
         // This should have been called from handlePostRenderTasks() at the end of rendering.
@@ -603,6 +605,7 @@ void BaseAudioContext::handlePostRenderTasks()
     handleDirtyAudioNodeOutputs();
 
     updateAutomaticPullNodes();
+    updateTailProcessingNodes();
 }
 
 void BaseAudioContext::handleDeferredDecrementConnectionCounts()
@@ -612,6 +615,92 @@ void BaseAudioContext::handleDeferredDecrementConnectionCounts()
         node->decrementConnectionCountWithLock();
     
     m_deferredBreakConnectionList.clear();
+}
+
+void BaseAudioContext::addTailProcessingNode(AudioNode& node)
+{
+    ASSERT(isGraphOwner());
+    if (node.isTailProcessing()) {
+        ASSERT(m_tailProcessingNodes.contains(node));
+        return;
+    }
+
+    // Ideally we'd find a way to avoid this vector append since we try to avoid potential heap allocations
+    // on the audio thread for performance reasons.
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+    ASSERT(!m_tailProcessingNodes.contains(node));
+    m_tailProcessingNodes.append(node);
+}
+
+void BaseAudioContext::removeTailProcessingNode(AudioNode& node)
+{
+    ASSERT(isGraphOwner());
+    ASSERT(node.isTailProcessing());
+
+    if (m_tailProcessingNodes.removeFirst(node))
+        return;
+
+    // Remove the node from finished tail processing nodes so we don't end up disabling its outputs later on the main thread.
+    ASSERT(m_finishedTailProcessingNodes.contains(node));
+    m_finishedTailProcessingNodes.removeFirst(node);
+}
+
+void BaseAudioContext::updateTailProcessingNodes()
+{
+    ASSERT(isAudioThread());
+    ASSERT(isGraphOwner());
+    // Go backwards as the current node may be removed from m_tailProcessingNodes as we iterate.
+    // We are on the audio thread so we want to avoid allocations as much as possible.
+    for (auto i = m_tailProcessingNodes.size(); i > 0; --i) {
+        auto& node = m_tailProcessingNodes[i - 1];
+        if (!node->propagatesSilence())
+            continue; // Node is not done processing its tail.
+
+        // Ideally we'd find a way to avoid this vector append since we try to avoid potential heap allocations
+        // on the audio thread for performance reasons.
+        DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+
+        // Disabling of outputs should happen on the main thread we add the node to m_finishedTailProcessingNodes
+        // for disableOutputsForFinishedTailProcessingNodes() to process later on the main thread.
+        ASSERT(!m_finishedTailProcessingNodes.contains(node));
+        m_finishedTailProcessingNodes.append(WTFMove(node));
+        m_tailProcessingNodes.remove(i - 1);
+    }
+
+    if (m_finishedTailProcessingNodes.isEmpty() || m_disableOutputsForTailProcessingScheduled)
+        return;
+
+    m_disableOutputsForTailProcessingScheduled = true;
+
+    // We try to avoid heap allocations on the audio thread but there is no way to do a main thread dispatch
+    // without one.
+    DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
+    callOnMainThread([this, protectedThis = makeRef(*this)]() mutable {
+        Locker locker { graphLock() };
+        disableOutputsForFinishedTailProcessingNodes();
+        m_disableOutputsForTailProcessingScheduled = false;
+    });
+}
+
+void BaseAudioContext::disableOutputsForFinishedTailProcessingNodes()
+{
+    ASSERT(isMainThread());
+    ASSERT(isGraphOwner());
+    for (auto& finishedTailProcessingNode : std::exchange(m_finishedTailProcessingNodes, { }))
+        finishedTailProcessingNode->disableOutputs();
+}
+
+void BaseAudioContext::finishTailProcessing()
+{
+    ASSERT(isMainThread());
+    Locker locker { graphLock() };
+
+    // disableOutputs() can cause new nodes to start tail processing so we need to loop until both vectors are empty.
+    while (!m_tailProcessingNodes.isEmpty() || !m_finishedTailProcessingNodes.isEmpty()) {
+        for (auto& tailProcessingNode : std::exchange(m_tailProcessingNodes, { }))
+            tailProcessingNode->disableOutputs();
+        disableOutputsForFinishedTailProcessingNodes();
+    }
 }
 
 void BaseAudioContext::markForDeletion(AudioNode& node)

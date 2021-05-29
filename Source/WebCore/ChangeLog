@@ -1,5 +1,66 @@
 2021-05-28  Chris Dumez  <cdumez@apple.com>
 
+        Regression: Raw AudioBufferSourceNode playback causes repeated crackling sound
+        https://bugs.webkit.org/show_bug.cgi?id=222098
+        <rdar://problem/74546471>
+
+        Reviewed by Darin Adler.
+
+        The issue was due to certain audio nodes (such as AudioBufferSourceNode) staying in the audio
+        graph after they were no longer needed. As a result, the audio graph was becoming larger and
+        larger and the audio performance should degrade due to us traversing this increasingly large
+        graph.
+
+        The audio nodes that had trouble getting removed from the graphs were tail processing nodes.
+        Those are nodes that may still produce output for a while after they no longer have any
+        inputs. PannerNode and DelayNode are example of such nodes.
+
+        When a Node is no longer useful (the node no longer has any connections, m_connectionRefCount
+        is 0), we call disableOutputsIfNecessary() on it to disable its outputs and avoid doing any
+        processing of these outputs since they no longer have an input. disableOutputsIfNecessary()
+        would normally call disableOutputs() (if not already disabled) but there was an exception
+        in the case where the node requires tail processing. For such nodes, you wouldn't want to
+        disable them until they've finished processing their tail.
+
+        The issue was that once those nodes had finished processing their tail, we wouldn't come
+        back to them and disable their outputs later on. As a result, we would process more and
+        more (silent) nodes and the audio performance would seriously deteriorate.
+
+        To address this, we now add the node to the context's list of tail processing nodes in
+        disableOutputsIfNecessary() if the node requires tail processing. After each rendering
+        quantum, we go through those tail processing nodes and check if they have finished
+        processing their tail. If they have, we go ahead and disable their outputs at this point
+        and remove them from the list.
+
+        This is modeled after what Blink is doing for tail processing nodes in:
+        - https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/modules/webaudio/deferred_task_handler.cc
+
+        I have verified that on the following demo, the performance no longer deteriorates after
+        a while:
+        - https://jsfiddle.net/KrisJohnson/s5vL24o1/123/
+
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::enableOutputsIfNecessary):
+        (WebCore::AudioNode::disableOutputsIfNecessary):
+        * Modules/webaudio/AudioNode.h:
+        (WebCore::AudioNode::isTailProcessing const):
+        (WebCore::AudioNode::setIsTailProcessing):
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::uninitialize):
+        (WebCore::BaseAudioContext::handlePostRenderTasks):
+        (WebCore::BaseAudioContext::addTailProcessingNode):
+        (WebCore::BaseAudioContext::removeTailProcessingNode):
+        (WebCore::BaseAudioContext::updateTailProcessingNodes):
+        (WebCore::BaseAudioContext::disableOutputsForFinishedTailProcessingNodes):
+        (WebCore::BaseAudioContext::finishTailProcessing):
+        * Modules/webaudio/BaseAudioContext.h:
+        (WebCore::BaseAudioContext::TailProcessingNode::TailProcessingNode):
+        (WebCore::BaseAudioContext::TailProcessingNode::~TailProcessingNode):
+        (WebCore::BaseAudioContext::TailProcessingNode::operator-> const):
+        (WebCore::BaseAudioContext::TailProcessingNode::operator== const):
+
+2021-05-28  Chris Dumez  <cdumez@apple.com>
+
         DelayDSPKernel::process() is slow
         https://bugs.webkit.org/show_bug.cgi?id=226358
 

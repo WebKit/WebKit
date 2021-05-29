@@ -521,9 +521,12 @@ void AudioNode::silenceOutputs()
 
 void AudioNode::enableOutputsIfNecessary()
 {
+    Locker locker { context().graphLock() };
+    if (isTailProcessing())
+        context().removeTailProcessingNode(*this);
+
     if (m_isDisabled && m_connectionRefCount > 0) {
         ASSERT(isMainThread());
-        Locker locker { context().graphLock() };
 
         m_isDisabled = false;
         for (auto& output : m_outputs)
@@ -545,10 +548,11 @@ void AudioNode::disableOutputsIfNecessary()
         // But internally our outputs should be disabled from the inputs they're connected to.
         // disable() can recursively deref connections (and call disable()) down a whole chain of connected nodes.
 
-        // If a node requires tail processing, we defer the disabling of
-        // the outputs so that the tail for the node can be output.
+        // If a node requires tail processing, we defer the disabling of the outputs so that the tail for the node can be output.
         // Otherwise, we can disable the outputs right away.
-        if (!requiresTailProcessing())
+        if (requiresTailProcessing())
+            context().addTailProcessingNode(*this);
+        else
             disableOutputs();
     }
 }
