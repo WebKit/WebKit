@@ -1,3 +1,19 @@
+2021-05-28  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Prevent GPU Process from attempt to connect to the AppSSO service (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=226393
+        <rdar://problem/78614833>
+
+        Reviewed by Eric Carlson.
+
+        In Bug 224834 I modified WebKit to use avoid invoking AppSSO in CFNetwork calls, since we make those
+        decisions prior to beginning our network interactions. I missed a media call where this was being done.
+
+        This patch corrects that mistake.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::canonicalURL):
+
 2021-05-28  Chris Dumez  <cdumez@apple.com>
 
         Stop using UncheckedLock in JSDOMGlobalObject
