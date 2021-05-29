@@ -2197,9 +2197,14 @@ def copyBundleToRemote(remoteHost)
     mysys(["scp", "-o", "NoHostAuthenticationForLocalhost=yes", "-P", remoteHost.port.to_s, ($outputDir.dirname + $tarFileName).to_s, "#{remoteHost.user}@#{remoteHost.host}:#{remoteHost.remoteDirectory}"])
 end
 
-def exportBaseEnvironmentVariables
-    dyldFrameworkPath = "\\$(cd #{$testingFrameworkPath.dirname}; pwd)"
-    ldLibraryPath = "\\$(cd #{$testingFrameworkPath.dirname}/..; pwd)/#{$jscPath.dirname}"
+def exportBaseEnvironmentVariables(escape)
+    if escape
+        dyldFrameworkPath = "\\$(cd #{$testingFrameworkPath.dirname}; pwd)"
+        ldLibraryPath = "\\$(cd #{$testingFrameworkPath.dirname}/..; pwd)/#{$jscPath.dirname}"
+    else
+        dyldFrameworkPath = "\$(cd #{$testingFrameworkPath.dirname}; pwd)"
+        ldLibraryPath = "\$(cd #{$testingFrameworkPath.dirname}/..; pwd)/#{$jscPath.dirname}"
+    end
     [
         "export DYLD_FRAMEWORK_PATH=#{dyldFrameworkPath} && ",
         "export LD_LIBRARY_PATH=#{ldLibraryPath} &&",
@@ -2220,7 +2225,7 @@ def runTestRunner(remoteIndex=0)
         remoteScript += "rm -rf #{$outputDir.basename} && "
         remoteScript += "tar xzf #{$tarFileName} && "
         remoteScript += "cd #{$outputDir.basename}/.runner && "
-        remoteScript += exportBaseEnvironmentVariables
+        remoteScript += exportBaseEnvironmentVariables(true)
         $envVars.each { |var| remoteScript += "export " << var << "\n" }
         remoteScript += "#{testRunnerCommand(remoteIndex)}\""
         runAndMonitorTestRunnerCommand(["ssh", "-o", "NoHostAuthenticationForLocalhost=yes", "-p", remoteHost.port.to_s, "#{remoteHost.user}@#{remoteHost.host}", remoteScript])
@@ -2632,7 +2637,7 @@ def runGnuParallelRunner(remoteHosts, inputs, options={})
             "--timeout", timeout.to_s,
             "-a", inputs,
             "if test -e #{$outputDir.basename}/.runner; then cd #{$outputDir.basename}/.runner; else echo #{PARALLEL_REMOTE_STATE_LOST_MARKER}; false; fi && " +
-            exportBaseEnvironmentVariables +
+            exportBaseEnvironmentVariables(false) +
             $envVars.collect { |var | "export #{var} &&"}.join("") +
             "sh "
         ]

@@ -1,3 +1,12 @@
+2021-05-28  Zhifei Fang  <zhifei_fang@apple.com>
+
+        [JSC] Escape $ only when run with SSH
+        https://bugs.webkit.org/show_bug.cgi?id=226385
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/run-jsc-stress-tests:
+
 2021-05-28  Matt Gilligan  <matthew_gilligan@apple.com>
 
         Prevent resetting scroll position in unnecessary cases during page load
