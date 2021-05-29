@@ -1,3 +1,60 @@
+2021-05-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Web process terminates when attempting to log in on bankid.no
+        https://bugs.webkit.org/show_bug.cgi?id=226411
+        rdar://77419432
+
+        Reviewed by Chris Dumez.
+
+        On bankid.no, we hit an erroneous MESSAGE_CHECK after decoding and applying an `EndClipToDrawingCommands` while
+        the display list replayer's `m_maskImageBuffer` is null. This may occur as a result of the following sequence of
+        events:
+
+        1.  We call into `clipToDrawingCommands` inside `CanvasRenderingContext2DBase`, while drawing text with either
+            a gradient or pattern fill style.
+
+        2.  A `BeginClipToDrawingCommands` item is decoded and handled in the GPU process; we create and store a new
+            mask image buffer on the display list replayer in the GPU process.
+
+        3.  When we decode the `DrawGlyphs` item while drawing into the mask buffer, we see that the resource identifier
+            corresponding to the font is missing from the resource cache in the GPU process, and subsequently go to
+            sleep while we wait for the resource to arrive.
+
+        4.  The web font data arrives in the GPU process, and we add it to the cache; this allows us to continue
+            processing the display list from where we paused replay in step (3).
+
+        5.  Eventually, we handle the `EndClipToDrawingCommands` item; however, since this is now happening underneath
+            a different GPU process wakeup message than in (2), our mask image buffer from (1) is missing. This not only
+            causes all of the prior drawing commands to target the canvas' image buffer rather than the mask image
+            buffer, but also causes us to hit a `MESSAGE_CHECK` and terminate the web process.
+
+        To fix this, we add some DisplayList::Replayer::Delegate method hooks to call out into the replayer client when
+        a mask image buffer has been created or cleared out; in the GPU process, we then use these client hooks to keep
+        track of the current mask image buffer that is the target of display list replayer.
+
+        If we go to sleep and then resume display list processing later for any reason, we then pass this mask image
+        buffer back to the display list replayer upon construction, and simply let the display list replayer paint into
+        the maks image buffer's context.
+
+        Test: fast/canvas/fill-gradient-text-with-web-font.html
+
+        * platform/graphics/displaylists/DisplayListReplayer.cpp:
+        (WebCore::DisplayList::Replayer::Replayer):
+        (WebCore::DisplayList::Replayer::applyItem):
+
+        Call into the client hooks below.
+
+        * platform/graphics/displaylists/DisplayListReplayer.h:
+        (WebCore::DisplayList::Replayer::Replayer):
+
+        When initializing a DisplayList::Replayer, make it possible to take in an initial mask image buffer as well.
+
+        (WebCore::DisplayList::Replayer::Delegate::didCreateMaskImageBuffer):
+        (WebCore::DisplayList::Replayer::Delegate::didResetMaskImageBuffer):
+
+        Add new replayer delegate hooks to inform the clients layer when the replayer's mask image buffer has been
+        created or cleared out. See WebKit ChangeLog for more information.
+
 2021-05-28  Chris Dumez  <cdumez@apple.com>
 
         Regression: Raw AudioBufferSourceNode playback causes repeated crackling sound

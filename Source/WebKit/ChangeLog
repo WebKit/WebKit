@@ -1,3 +1,27 @@
+2021-05-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Web process terminates when attempting to log in on bankid.no
+        https://bugs.webkit.org/show_bug.cgi?id=226411
+        rdar://77419432
+
+        Reviewed by Chris Dumez.
+
+        See WebCore ChangeLog for more details.
+
+        * GPUProcess/graphics/RemoteImageBuffer.h:
+
+        Implement the new display list replayer delegate hooks and plumb the calls over to the RemoteRenderingBackend.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::submit):
+
+        Keep track of `m_currentMaskImageBuffer` by implementing the methods below, and use this when initializing our
+        DisplayList::Replayer if needed.
+
+        (WebKit::RemoteRenderingBackend::didCreateMaskImageBuffer):
+        (WebKit::RemoteRenderingBackend::didResetMaskImageBuffer):
+        * GPUProcess/graphics/RemoteRenderingBackend.h:
+
 2021-05-28  Don Olmstead  <don.olmstead@sony.com>
 
         [Cocoa] HDR variants in HLS playlists not selected when screen is HDR

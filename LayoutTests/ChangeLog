@@ -1,3 +1,17 @@
+2021-05-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Web process terminates when attempting to log in on bankid.no
+        https://bugs.webkit.org/show_bug.cgi?id=226411
+        rdar://77419432
+
+        Reviewed by Chris Dumez.
+
+        Add a layout test that exercises the crash by first serializing a large number of display list items, and then
+        calling `fillText` with a web font and a gradient `fillStyle`.
+
+        * fast/canvas/fill-gradient-text-with-web-font-expected.html: Added.
+        * fast/canvas/fill-gradient-text-with-web-font.html: Added.
+
 2021-05-28  Jean-Yves Avenard  <jya@apple.com>
 
         Add MediaSession.callActionHandler

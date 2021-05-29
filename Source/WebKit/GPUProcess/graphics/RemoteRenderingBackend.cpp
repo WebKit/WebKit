@@ -201,6 +201,7 @@ DisplayList::ReplayResult RemoteRenderingBackend::submit(const DisplayList::Disp
         &remoteResourceCache().imageBuffers(),
         &remoteResourceCache().nativeImages(),
         &remoteResourceCache().fonts(),
+        m_currentMaskImageBuffer.get(),
         replayerDelegate
     }.replay();
 }
@@ -491,6 +492,20 @@ void RemoteRenderingBackend::didCreateSharedDisplayListHandle(DisplayList::ItemB
 
     if (m_pendingWakeupInfo && m_pendingWakeupInfo->shouldPerformWakeup(identifier))
         wakeUpAndApplyDisplayList(std::exchange(m_pendingWakeupInfo, std::nullopt)->arguments);
+}
+
+void RemoteRenderingBackend::didCreateMaskImageBuffer(ImageBuffer& imageBuffer)
+{
+    ASSERT(!RunLoop::isMain());
+    MESSAGE_CHECK(!m_currentMaskImageBuffer, "Current mask image buffer is already set.");
+    m_currentMaskImageBuffer = &imageBuffer;
+}
+
+void RemoteRenderingBackend::didResetMaskImageBuffer()
+{
+    ASSERT(!RunLoop::isMain());
+    MESSAGE_CHECK(m_currentMaskImageBuffer, "Current mask image buffer was not already set.");
+    m_currentMaskImageBuffer = nullptr;
 }
 
 Optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend::decodeItem(const uint8_t* data, size_t length, DisplayList::ItemType type, uint8_t* handleLocation)

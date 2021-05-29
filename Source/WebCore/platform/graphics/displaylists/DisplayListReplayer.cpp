@@ -36,8 +36,9 @@
 namespace WebCore {
 namespace DisplayList {
 
-Replayer::Replayer(GraphicsContext& context, const DisplayList& displayList, const ImageBufferHashMap* imageBuffers, const NativeImageHashMap* nativeImages, const FontRenderingResourceMap* fonts, Delegate* delegate)
+Replayer::Replayer(GraphicsContext& context, const DisplayList& displayList, const ImageBufferHashMap* imageBuffers, const NativeImageHashMap* nativeImages, const FontRenderingResourceMap* fonts, ImageBuffer* maskImageBuffer, Delegate* delegate)
     : m_context(context)
+    , m_maskImageBuffer(maskImageBuffer)
     , m_displayList(displayList)
     , m_imageBuffers(imageBuffers ? *imageBuffers : m_displayList.imageBuffers())
     , m_nativeImages(nativeImages ? *nativeImages : m_displayList.nativeImages())
@@ -160,6 +161,8 @@ std::pair<Optional<StopReplayReason>, Optional<RenderingResourceIdentifier>> Rep
         m_maskImageBuffer = ImageBuffer::createCompatibleBuffer(clipItem.destination().size(), clipItem.colorSpace(), m_context);
         if (!m_maskImageBuffer)
             return { StopReplayReason::OutOfMemory, std::nullopt };
+        if (m_delegate)
+            m_delegate->didCreateMaskImageBuffer(*m_maskImageBuffer);
         return { std::nullopt, std::nullopt };
     }
 
@@ -169,6 +172,8 @@ std::pair<Optional<StopReplayReason>, Optional<RenderingResourceIdentifier>> Rep
         auto& clipItem = item.get<EndClipToDrawingCommands>();
         m_context.clipToImageBuffer(*m_maskImageBuffer, clipItem.destination());
         m_maskImageBuffer = nullptr;
+        if (m_delegate)
+            m_delegate->didResetMaskImageBuffer();
         return { std::nullopt, std::nullopt };
     }
 

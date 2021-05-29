@@ -84,6 +84,9 @@ public:
 
     void setNextItemBufferToRead(WebCore::DisplayList::ItemBufferIdentifier, WebCore::RenderingResourceIdentifier destination);
 
+    void didCreateMaskImageBuffer(WebCore::ImageBuffer&);
+    void didResetMaskImageBuffer();
+
     void populateGetPixelBufferSharedMemory(Optional<WebCore::PixelBuffer>&&);
 
     bool allowsExitUnderMemoryPressure() const;
@@ -139,7 +142,6 @@ private:
     void releaseRemoteResource(WebCore::RenderingResourceIdentifier);
     void didCreateSharedDisplayListHandle(WebCore::DisplayList::ItemBufferIdentifier, const SharedMemory::IPCHandle&, WebCore::RenderingResourceIdentifier destinationBufferIdentifier);
 
-
     struct PendingWakeupInformation {
         GPUProcessWakeupMessageArguments arguments;
         Optional<WebCore::RenderingResourceIdentifier> missingCachedResourceIdentifier;
@@ -166,6 +168,7 @@ private:
     IPC::Semaphore m_getPixelBufferSemaphore;
     RefPtr<SharedMemory> m_getPixelBufferSharedMemory;
     ScopedRenderingResourcesRequest m_renderingResourcesRequest;
+    RefPtr<WebCore::ImageBuffer> m_currentMaskImageBuffer;
 };
 
 } // namespace WebKit

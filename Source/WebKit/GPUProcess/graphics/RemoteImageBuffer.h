@@ -108,6 +108,16 @@ private:
         return m_remoteRenderingBackend.applyMediaItem(item, context);
     }
 
+    void didCreateMaskImageBuffer(WebCore::ImageBuffer& imageBuffer) final
+    {
+        m_remoteRenderingBackend.didCreateMaskImageBuffer(imageBuffer);
+    }
+
+    void didResetMaskImageBuffer() final
+    {
+        m_remoteRenderingBackend.didResetMaskImageBuffer();
+    }
+
     RemoteRenderingBackend& m_remoteRenderingBackend;
     WebCore::RenderingResourceIdentifier m_renderingResourceIdentifier;
 };
