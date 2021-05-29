@@ -62,6 +62,11 @@ void add(const float* inputVector1, const float* inputVector2, float* outputVect
     vDSP_vadd(inputVector1, 1, inputVector2, 1, outputVector, 1, numberOfElementsToProcess);
 }
 
+void substract(const float* inputVector1, const float* inputVector2, float* outputVector, size_t numberOfElementsToProcess)
+{
+    vDSP_vsub(inputVector1, 1, inputVector2, 1, outputVector, 1, numberOfElementsToProcess);
+}
+
 void addScalar(const float* inputVector, float scalar, float* outputVector, size_t numberOfElementsToProcess)
 {
     vDSP_vsadd(inputVector, 1, &scalar, outputVector, 1, numberOfElementsToProcess);
@@ -70,6 +75,11 @@ void addScalar(const float* inputVector, float scalar, float* outputVector, size
 void multiply(const float* inputVector1, const float* inputVector2, float* outputVector, size_t numberOfElementsToProcess)
 {
     vDSP_vmul(inputVector1, 1, inputVector2, 1, outputVector, 1, numberOfElementsToProcess);
+}
+
+void interpolate(const float* inputVector1, float* inputVector2, float interpolationFactor, float* outputVector, size_t numberOfElementsToProcess)
+{
+    vDSP_vintb(inputVector1, 1, inputVector2, 1, &interpolationFactor, outputVector, 1, numberOfElementsToProcess);
 }
 
 void multiplyComplex(const float* realVector1, const float* imagVector1, const float* realVector2, const float* imag2P, float* realOutputVector, float* imagDestP, size_t numberOfElementsToProcess)
@@ -428,6 +438,115 @@ void add(const float* inputVector1, const float* inputVector2, float* outputVect
         ++inputVector2;
         ++outputVector;
     }
+}
+
+void substract(const float* inputVector1, const float* inputVector2, float* outputVector, size_t numberOfElementsToProcess)
+{
+    size_t n = numberOfElementsToProcess;
+
+#if CPU(X86_SSE2)
+    // If the inputVector address is not 16-byte aligned, the first several frames (at most three) should be processed separately.
+    while (!is16ByteAligned(inputVector1) && n) {
+        *outputVector = *inputVector1 - *inputVector2;
+        inputVector1++;
+        inputVector2++;
+        outputVector++;
+        n--;
+    }
+
+    // Now the inputVector1 address is aligned and start to apply SSE.
+    size_t group = n / 4;
+    __m128* pSource1;
+    __m128* pSource2;
+    __m128* pDest;
+    __m128 source2;
+    __m128 dest;
+
+    bool source2Aligned = is16ByteAligned(inputVector2);
+    bool destAligned = is16ByteAligned(outputVector);
+
+    if (source2Aligned && destAligned) { // all aligned
+        while (group--) {
+            pSource1 = reinterpret_cast<__m128*>(const_cast<float*>(inputVector1));
+            pSource2 = reinterpret_cast<__m128*>(const_cast<float*>(inputVector2));
+            pDest = reinterpret_cast<__m128*>(outputVector);
+            *pDest = _mm_sub_ps(*pSource1, *pSource2);
+
+            inputVector1 += 4;
+            inputVector2 += 4;
+            outputVector += 4;
+        }
+    } else if (source2Aligned && !destAligned) { // source2 aligned but dest not aligned
+        while (group--) {
+            pSource1 = reinterpret_cast<__m128*>(const_cast<float*>(inputVector1));
+            pSource2 = reinterpret_cast<__m128*>(const_cast<float*>(inputVector2));
+            dest = _mm_sub_ps(*pSource1, *pSource2);
+            _mm_storeu_ps(outputVector, dest);
+
+            inputVector1 += 4;
+            inputVector2 += 4;
+            outputVector += 4;
+        }
+    } else if (!source2Aligned && destAligned) { // source2 not aligned but dest aligned
+        while (group--) {
+            pSource1 = reinterpret_cast<__m128*>(const_cast<float*>(inputVector1));
+            source2 = _mm_loadu_ps(inputVector2);
+            pDest = reinterpret_cast<__m128*>(outputVector);
+            *pDest = _mm_sub_ps(*pSource1, source2);
+
+            inputVector1 += 4;
+            inputVector2 += 4;
+            outputVector += 4;
+        }
+    } else if (!source2Aligned && !destAligned) { // both source2 and dest not aligned
+        while (group--) {
+            pSource1 = reinterpret_cast<__m128*>(const_cast<float*>(inputVector1));
+            source2 = _mm_loadu_ps(inputVector2);
+            dest = _mm_sub_ps(*pSource1, source2);
+            _mm_storeu_ps(outputVector, dest);
+
+            inputVector1 += 4;
+            inputVector2 += 4;
+            outputVector += 4;
+        }
+    }
+
+    // Non-SSE handling for remaining frames which is less than 4.
+    n %= 4;
+#elif HAVE(ARM_NEON_INTRINSICS)
+    size_t tailFrames = n % 4;
+    const float* endP = outputVector + n - tailFrames;
+
+    while (outputVector < endP) {
+        float32x4_t source1 = vld1q_f32(inputVector1);
+        float32x4_t source2 = vld1q_f32(inputVector2);
+        vst1q_f32(outputVector, vsubq_f32(source1, source2));
+
+        inputVector1 += 4;
+        inputVector2 += 4;
+        outputVector += 4;
+    }
+    n = tailFrames;
+#endif
+    while (n--) {
+        *outputVector = *inputVector1 - *inputVector2;
+        ++inputVector1;
+        ++inputVector2;
+        ++outputVector;
+    }
+}
+
+void interpolate(const float* inputVector1, float* inputVector2, float interpolationFactor, float* outputVector, size_t numberOfElementsToProcess)
+{
+    if (inputVector1 != outputVector)
+        memcpy(outputVector, inputVector1, numberOfElementsToProcess * sizeof(float));
+
+    // inputVector2[k] = inputVector2[k] - inputVector1[k]
+    substract(inputVector2, inputVector1, inputVector2, numberOfElementsToProcess);
+
+    // outputVector[k] = outputVector[k] + interpolationFactor * inputVector2[k]
+    //                 = inputVector1[k] + interpolationFactor * (inputVector2[k] - inputVector1[k]);
+    multiplyByScalarThenAddToOutput(inputVector2, interpolationFactor, outputVector, numberOfElementsToProcess);
 }
 
 void multiply(const float* inputVector1, const float* inputVector2, float* outputVector, size_t numberOfElementsToProcess)

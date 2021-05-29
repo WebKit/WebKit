@@ -1,3 +1,43 @@
+2021-05-28  Chris Dumez  <cdumez@apple.com>
+
+        DelayDSPKernel::process() is slow
+        https://bugs.webkit.org/show_bug.cgi?id=226358
+
+        Reviewed by Darin Adler.
+
+        When I profiled the demo at https://jsfiddle.net/KrisJohnson/s5vL24o1/123/ (in the context of Bug 222098),
+        I noticed that 20% of the CPU time was spent under DelayDSPKernel::process().
+
+        To improve this, we now vectorize DelayDSPKernel::process() in the common case where there is no automation
+        and the delay time is constant.
+
+        The implementation is very similar to the one in Blink:
+        - https://github.com/chromium/chromium/blob/master/third_party/blink/renderer/platform/audio/audio_delay_dsp_kernel.cc
+
+        Some differences compared to the Blink implementation:
+        - I did not vectorize the A-rate case for simplicity. It is not as common and it is more complicated.
+          We may consider doing this in the future if really needed.
+        - On Cocoa, we leveage Accelerate's vDSP_vintb() to do the interpolation instead of doing 2 separate
+          operations.
+
+        This doesn't fix Bug 222098 but it does improve the situation quite a bit. I also see that the CPU time
+        spent under DelayDSPKernel::process() went from ~20% to 1.2% on this demo.
+
+        No new tests, no Web-facing behavior change, just a performance optimization.
+
+        * Modules/webaudio/DelayDSPKernel.cpp:
+        (WebCore::copyToCircularBuffer):
+        (WebCore::DelayDSPKernel::DelayDSPKernel):
+        (WebCore::DelayDSPKernel::bufferLengthForDelay const):
+        (WebCore::DelayDSPKernel::process):
+        (WebCore::DelayDSPKernel::processARate):
+        (WebCore::DelayDSPKernel::processKRate):
+        * Modules/webaudio/DelayDSPKernel.h:
+        * platform/audio/VectorMath.cpp:
+        (WebCore::VectorMath::substract):
+        (WebCore::VectorMath::interpolate):
+        * platform/audio/VectorMath.h:
+
 2021-05-28  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Prevent GPU Process from attempt to connect to the AppSSO service (Part 2)

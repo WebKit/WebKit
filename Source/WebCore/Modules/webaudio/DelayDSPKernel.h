@@ -50,15 +50,19 @@ public:
     bool requiresTailProcessing() const final;
 
 private:
+    void processARate(const float* source, float* destination, size_t framesToProcess);
+    void processKRate(const float* source, float* destination, size_t framesToProcess);
+
     AudioFloatArray m_buffer;
     double m_maxDelayTime;
-    int m_writeIndex { 0 };
+    size_t m_writeIndex { 0 };
     double m_desiredDelayFrames;
 
     AudioFloatArray m_delayTimes;
+    // Temporary buffer used to hold the second sample for interpolation if needed.
+    AudioFloatArray m_tempBuffer;
 
     DelayProcessor* delayProcessor() { return static_cast<DelayProcessor*>(processor()); }
-    size_t bufferLengthForDelay(double delayTime, double sampleRate) const;
 };
 
 } // namespace WebCore
