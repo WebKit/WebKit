@@ -270,7 +270,7 @@ String FontFace::family() const
     m_backing->updateStyleIfNeeded();
 
     const auto& families = m_backing->families();
-    if (!families.hasValue())
+    if (!families)
         return "normal"_s;
     auto familiesUnrwapped = families.value();
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=196381 This is only here because CSSFontFace erroneously uses a list of values instead of a single value.
@@ -295,7 +295,7 @@ String FontFace::style() const
     m_backing->updateStyleIfNeeded();
     const auto& styleWrapped = m_backing->italic();
     
-    if (!styleWrapped.hasValue())
+    if (!styleWrapped)
         return "normal"_s;
     auto style = styleWrapped.value();
     auto minimum = ComputedStyleExtractor::fontStyleFromStyleValue(style.minimum, FontStyleAxis::ital);
@@ -328,7 +328,7 @@ String FontFace::weight() const
 {
     m_backing->updateStyleIfNeeded();
     const auto& weightWrapped = m_backing->weight();
-    if (!weightWrapped.hasValue())
+    if (!weightWrapped)
         return "normal"_s;
     auto weight = weightWrapped.value();
     auto minimum = ComputedStyleExtractor::fontWeightFromStyleValue(weight.minimum);
@@ -351,7 +351,7 @@ String FontFace::stretch() const
 {
     m_backing->updateStyleIfNeeded();
     const auto& stretchWrapped = m_backing->stretch();
-    if (!stretchWrapped.hasValue())
+    if (!stretchWrapped)
         return "normal"_s;
     auto stretch = stretchWrapped.value();
     auto minimum = ComputedStyleExtractor::fontStretchFromStyleValue(stretch.minimum);
@@ -374,7 +374,7 @@ String FontFace::unicodeRange() const
 {
     m_backing->updateStyleIfNeeded();
     const auto& rangesWrapped = m_backing->ranges();
-    if (!rangesWrapped.hasValue())
+    if (!rangesWrapped)
         return "U+0-10FFFF";
     auto ranges = rangesWrapped.value();
     if (!ranges.size())
@@ -389,7 +389,7 @@ String FontFace::featureSettings() const
 {
     m_backing->updateStyleIfNeeded();
     const auto& featureSettingsWrapped = m_backing->featureSettings();
-    if (!featureSettingsWrapped.hasValue())
+    if (!featureSettingsWrapped)
         return "normal"_s;
     auto featureSettings = featureSettingsWrapped.value();
     if (!featureSettings.size())
@@ -404,7 +404,7 @@ String FontFace::display(ScriptExecutionContext& context) const
 {
     m_backing->updateStyleIfNeeded();
     const auto& loadingBehaviorWrapped = m_backing->loadingBehavior();
-    if (!loadingBehaviorWrapped.hasValue())
+    if (!loadingBehaviorWrapped)
         return "auto"_s;
     return context.cssValuePool().createValue(loadingBehaviorWrapped.value())->cssText();
 }

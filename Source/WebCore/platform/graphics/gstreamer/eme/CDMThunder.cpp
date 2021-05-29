@@ -250,7 +250,7 @@ RefPtr<SharedBuffer> CDMPrivateThunder::sanitizeResponse(const SharedBuffer& res
     return response.copy();
 }
 
-Optional<String> CDMPrivateThunder::sanitizeSessionId(const String& sessionId) const
+std::optional<String> CDMPrivateThunder::sanitizeSessionId(const String& sessionId) const
 {
     return sessionId;
 }
@@ -364,7 +364,7 @@ public:
     bool hasPayload() const { return static_cast<bool>(m_payload); }
     const Ref<SharedBuffer>& payload() const& { ASSERT(m_payload); return m_payload.value(); }
     Ref<SharedBuffer>& payload() & { ASSERT(m_payload); return m_payload.value(); }
-    bool hasType() const { return m_type.hasValue(); }
+    bool hasType() const { return m_type.has_value(); }
     WebCore::MediaKeyMessageType type() const { ASSERT(m_type); return m_type.value(); }
     WebCore::MediaKeyMessageType typeOr(WebCore::MediaKeyMessageType alternate) const { return m_type ? m_type.value() : alternate; }
     explicit operator bool() const { return m_isValid; }
@@ -372,8 +372,8 @@ public:
 
 private:
     bool m_isValid { false };
-    Optional<Ref<SharedBuffer>> m_payload;
-    Optional<WebCore::MediaKeyMessageType> m_type;
+    std::optional<Ref<SharedBuffer>> m_payload;
+    std::optional<WebCore::MediaKeyMessageType> m_type;
 };
 
 void CDMInstanceSessionThunder::challengeGeneratedCallback(RefPtr<SharedBuffer>&& buffer)
@@ -469,8 +469,7 @@ void CDMInstanceSessionThunder::keysUpdateDoneCallback()
     GST_DEBUG("update done");
     if (m_doesKeyStoreNeedMerging) {
         m_doesKeyStoreNeedMerging = false;
-        auto instance = cdmInstanceThunder();
-        if (instance)
+        if (auto instance = cdmInstanceThunder())
             instance->mergeKeysFrom(m_keyStore);
     }
 
@@ -674,12 +673,9 @@ void CDMInstanceSessionThunder::storeRecordOfKeyUsage(const String&)
     notImplemented();
 }
 
-Optional<CDMInstanceThunder&> CDMInstanceSessionThunder::cdmInstanceThunder() const
+CDMInstanceThunder* CDMInstanceSessionThunder::cdmInstanceThunder() const
 {
-    auto instance = cdmInstanceProxy();
-    if (!instance)
-        return std::nullopt;
-    return static_cast<CDMInstanceThunder&>(*instance);
+    return static_cast<CDMInstanceThunder*>(cdmInstanceProxy());
 }
 
 } // namespace WebCore

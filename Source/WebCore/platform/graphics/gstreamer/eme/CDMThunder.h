@@ -98,7 +98,7 @@ public:
     bool supportsInitData(const AtomString&, const SharedBuffer&) const final;
     RefPtr<SharedBuffer> sanitizeInitData(const AtomString& initDataType, const SharedBuffer& initData) const final;
     RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const final;
-    Optional<String> sanitizeSessionId(const String&) const final;
+    std::optional<String> sanitizeSessionId(const String&) const final;
 
 private:
     String m_keySystem;
@@ -142,7 +142,7 @@ public:
     void clearClient() final { m_client.clear(); }
 
 private:
-    Optional<CDMInstanceThunder&> cdmInstanceThunder() const;
+    CDMInstanceThunder* cdmInstanceThunder() const;
 
     using Notification = void (CDMInstanceSessionThunder::*)(RefPtr<WebCore::SharedBuffer>&&);
     using ChallengeGeneratedCallback = Function<void()>;

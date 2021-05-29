@@ -6583,7 +6583,7 @@ void HTMLMediaElement::captionPreferencesChanged()
 
 CaptionUserPreferences::CaptionDisplayMode HTMLMediaElement::captionDisplayMode()
 {
-    if (!m_captionDisplayMode.hasValue()) {
+    if (!m_captionDisplayMode) {
         if (document().page())
             m_captionDisplayMode = document().page()->group().captionPreferences().captionDisplayMode();
         else

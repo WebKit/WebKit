@@ -44,7 +44,7 @@ bool systemHasBattery()
     if (auto overrideForTesting = SystemBatteryStatusTestingOverrides::singleton().hasBattery())
         return *overrideForTesting;
 
-    if (!hasBattery.hasValue()) {
+    if (!hasBattery.has_value()) {
         hasBattery = [] {
 #if PLATFORM(IOS) || PLATFORM(WATCHOS)
             // Devices running iOS / WatchOS always have a battery.
@@ -87,7 +87,7 @@ bool systemHasAC()
     if (auto overrideForTesting = SystemBatteryStatusTestingOverrides::singleton().hasAC())
         return *overrideForTesting;
 
-    if (!hasAC.hasValue()) {
+    if (!hasAC.has_value()) {
         hasAC = [] {
 #if PLATFORM(APPLETV)
             return true;

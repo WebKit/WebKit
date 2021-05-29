@@ -428,7 +428,7 @@ Optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakingText
     ASSERT(overflowingRun.inlineItem.isText());
     auto& inlineTextItem = downcast<InlineTextItem>(overflowingRun.inlineItem);
     auto& style = inlineTextItem.style();
-    auto availableSpaceIsInfinite = !availableWidth.hasValue();
+    auto availableSpaceIsInfinite = !availableWidth.has_value();
 
     auto breakRules = wordBreakBehavior(style, hasWrapOpportunityAtPreviousPosition);
     if (breakRules.isEmpty())

@@ -26,7 +26,6 @@ namespace WTF {
 
 template<typename T> using Optional = std::optional<T>;
 
-// FIXME: We probably don't need this; it's only used in 5 places.
 template<typename OptionalType, class Callback> auto valueOrCompute(OptionalType optional, Callback callback) -> typename OptionalType::value_type
 {
     return optional ? *optional : callback();
@@ -36,6 +35,3 @@ template<typename OptionalType, class Callback> auto valueOrCompute(OptionalType
 
 using WTF::Optional;
 using WTF::valueOrCompute;
-
-// FIXME: This macro is a workaround to allow us to use std::optional without a global replace; it can be removed after the global replace.
-#define hasValue has_value

@@ -1437,7 +1437,7 @@ public:
     void handleStart(uint32_t id, int32_t channels, const char* layout, int32_t sampleRate)
     {
         g_assert(m_state == RenderingState::Unknown);
-        g_assert_false(m_streamId.hasValue());
+        g_assert_false(m_streamId.has_value());
         g_assert_cmpuint(id, ==, 0);
         m_streamId = id;
         m_state = RenderingState::Started;
@@ -1513,7 +1513,7 @@ public:
 private:
     static const struct wpe_audio_receiver m_audioReceiver;
     RenderingState m_state { RenderingState::Unknown };
-    Optional<uint32_t> m_streamId;
+    std::optional<uint32_t> m_streamId;
 };
 
 const struct wpe_audio_receiver AudioRenderingWebViewTest::m_audioReceiver = {

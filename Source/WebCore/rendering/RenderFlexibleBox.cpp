@@ -862,7 +862,7 @@ bool RenderFlexibleBox::canComputePercentageFlexBasis(const RenderBox& child, co
         return true;
     if (m_hasDefiniteHeight == SizeDefiniteness::Indefinite)
         return false;
-    bool definite = child.computePercentageLogicalHeight(flexBasis, updateDescendants).hasValue();
+    bool definite = child.computePercentageLogicalHeight(flexBasis, updateDescendants).has_value();
     if (m_inLayout && (isHorizontalWritingMode() == child.isHorizontalWritingMode())) {
         // We can reach this code even while we're not laying ourselves out, such
         // as from mainSizeForPercentageResolution.

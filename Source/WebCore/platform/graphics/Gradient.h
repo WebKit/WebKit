@@ -68,7 +68,7 @@ public:
         Color color;
 
         template<typename Encoder> void encode(Encoder&) const;
-        template<typename Decoder> static Optional<ColorStop> decode(Decoder&);
+        template<typename Decoder> static std::optional<ColorStop> decode(Decoder&);
     };
 
     using ColorStopVector = Vector<ColorStop, 2>;
@@ -78,7 +78,7 @@ public:
         FloatPoint point1;
 
         template<typename Encoder> void encode(Encoder&) const;
-        template<typename Decoder> static Optional<LinearData> decode(Decoder&);
+        template<typename Decoder> static std::optional<LinearData> decode(Decoder&);
     };
 
     struct RadialData {
@@ -89,7 +89,7 @@ public:
         float aspectRatio; // For elliptical gradient, width / height.
 
         template<typename Encoder> void encode(Encoder&) const;
-        template<typename Decoder> static Optional<RadialData> decode(Decoder&);
+        template<typename Decoder> static std::optional<RadialData> decode(Decoder&);
     };
 
     struct ConicData {
@@ -97,7 +97,7 @@ public:
         float angleRadians;
 
         template<typename Encoder> void encode(Encoder&) const;
-        template<typename Decoder> static Optional<ConicData> decode(Decoder&);
+        template<typename Decoder> static std::optional<ConicData> decode(Decoder&);
     };
 
     using Data = Variant<LinearData, RadialData, ConicData>;
@@ -135,7 +135,7 @@ public:
 #endif
 
     template<typename Encoder> void encode(Encoder&) const;
-    template<typename Decoder> static Optional<Ref<Gradient>> decode(Decoder&);
+    template<typename Decoder> static std::optional<Ref<Gradient>> decode(Decoder&);
 
 private:
     explicit Gradient(Data&&);
@@ -168,14 +168,14 @@ template<typename Encoder> void Gradient::ColorStop::encode(Encoder& encoder) co
     encoder << color;
 }
 
-template<typename Decoder> Optional<Gradient::ColorStop> Gradient::ColorStop::decode(Decoder& decoder)
+template<typename Decoder> std::optional<Gradient::ColorStop> Gradient::ColorStop::decode(Decoder& decoder)
 {
-    Optional<float> offset;
+    std::optional<float> offset;
     decoder >> offset;
     if (!offset)
         return std::nullopt;
 
-    Optional<Color> color;
+    std::optional<Color> color;
     decoder >> color;
     if (!color)
         return std::nullopt;
@@ -189,14 +189,14 @@ template<typename Encoder> void Gradient::LinearData::encode(Encoder& encoder) c
     encoder << point1;
 }
 
-template<typename Decoder> Optional<Gradient::LinearData> Gradient::LinearData::decode(Decoder& decoder)
+template<typename Decoder> std::optional<Gradient::LinearData> Gradient::LinearData::decode(Decoder& decoder)
 {
-    Optional<FloatPoint> point0;
+    std::optional<FloatPoint> point0;
     decoder >> point0;
     if (!point0)
         return std::nullopt;
 
-    Optional<FloatPoint> point1;
+    std::optional<FloatPoint> point1;
     decoder >> point1;
     if (!point1)
         return std::nullopt;
@@ -213,29 +213,29 @@ template<typename Encoder> void Gradient::RadialData::encode(Encoder& encoder) c
     encoder << aspectRatio;
 }
 
-template<typename Decoder> Optional<Gradient::RadialData> Gradient::RadialData::decode(Decoder& decoder)
+template<typename Decoder> std::optional<Gradient::RadialData> Gradient::RadialData::decode(Decoder& decoder)
 {
-    Optional<FloatPoint> point0;
+    std::optional<FloatPoint> point0;
     decoder >> point0;
     if (!point0)
         return std::nullopt;
 
-    Optional<FloatPoint> point1;
+    std::optional<FloatPoint> point1;
     decoder >> point1;
     if (!point1)
         return std::nullopt;
 
-    Optional<float> startRadius;
+    std::optional<float> startRadius;
     decoder >> startRadius;
     if (!startRadius)
         return std::nullopt;
 
-    Optional<float> endRadius;
+    std::optional<float> endRadius;
     decoder >> endRadius;
     if (!endRadius)
         return std::nullopt;
 
-    Optional<float> aspectRatio;
+    std::optional<float> aspectRatio;
     decoder >> aspectRatio;
     if (!aspectRatio)
         return std::nullopt;
@@ -249,14 +249,14 @@ template<typename Encoder> void Gradient::ConicData::encode(Encoder& encoder) co
     encoder << angleRadians;
 }
 
-template<typename Decoder> Optional<Gradient::ConicData> Gradient::ConicData::decode(Decoder& decoder)
+template<typename Decoder> std::optional<Gradient::ConicData> Gradient::ConicData::decode(Decoder& decoder)
 {
-    Optional<FloatPoint> point0;
+    std::optional<FloatPoint> point0;
     decoder >> point0;
     if (!point0)
         return std::nullopt;
 
-    Optional<float> angleRadians;
+    std::optional<float> angleRadians;
     decoder >> angleRadians;
     if (!angleRadians)
         return std::nullopt;
@@ -272,21 +272,21 @@ template<typename Encoder> void Gradient::encode(Encoder& encoder) const
     encoder << m_spreadMethod;
 }
 
-template<typename Decoder> Optional<Ref<Gradient>> Gradient::decode(Decoder& decoder)
+template<typename Decoder> std::optional<Ref<Gradient>> Gradient::decode(Decoder& decoder)
 {
-    Optional<Data> data;
+    std::optional<Data> data;
     decoder >> data;
     if (!data)
         return std::nullopt;
     auto gradient = Gradient::create(WTFMove(*data));
 
-    Optional<ColorStopVector> stops;
+    std::optional<ColorStopVector> stops;
     decoder >> stops;
     if (!stops)
         return std::nullopt;
-    Optional<bool> stopsSorted;
+    std::optional<bool> stopsSorted;
     decoder >> stopsSorted;
-    if (!stopsSorted.hasValue())
+    if (!stopsSorted.has_value())
         return std::nullopt;
     if (*stopsSorted)
         gradient->setSortedColorStops(WTFMove(*stops));

@@ -80,7 +80,7 @@ void SessionHost::connectToBrowser(Function<void (Optional<String> error)>&& com
 
 bool SessionHost::isConnected() const
 {
-    return m_clientID.hasValue();
+    return m_clientID.has_value();
 }
 
 void SessionHost::didClose(Inspector::RemoteInspectorSocketEndpoint&, Inspector::ConnectionID)

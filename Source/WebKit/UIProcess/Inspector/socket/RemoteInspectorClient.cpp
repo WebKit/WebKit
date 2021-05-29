@@ -122,7 +122,7 @@ RemoteInspectorClient::~RemoteInspectorClient()
 void RemoteInspectorClient::sendWebInspectorEvent(const String& event)
 {
     ASSERT(isMainRunLoop());
-    ASSERT(m_connectionID.hasValue());
+    ASSERT(m_connectionID);
     auto message = event.utf8();
     send(m_connectionID.value(), reinterpret_cast<const uint8_t*>(message.data()), message.length());
 }

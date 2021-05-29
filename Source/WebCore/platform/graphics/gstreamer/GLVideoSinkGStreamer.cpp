@@ -182,7 +182,7 @@ static bool setGLContext(GstElement* elementSink, const char* contextType)
     GRefPtr<GstContext> oldContext = gst_element_get_context(elementSink, contextType);
     if (!oldContext) {
         auto newContext = requestGLContext(contextType);
-        if (!newContext.hasValue())
+        if (!newContext)
             return false;
         gst_element_set_context(elementSink, newContext->get());
     }

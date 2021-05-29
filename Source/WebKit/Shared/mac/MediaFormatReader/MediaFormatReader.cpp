@@ -208,7 +208,7 @@ void MediaFormatReader::finishParsing(Ref<SourceBufferParser>&& parser)
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
 
     Locker locker { m_parseTracksLock };
-    ASSERT(m_parseTracksStatus.hasValue());
+    ASSERT(m_parseTracksStatus.has_value());
 
     for (auto& trackReader : m_trackReaders)
         trackReader->finishParsing();
@@ -239,7 +239,7 @@ OSStatus MediaFormatReader::copyProperty(CFStringRef key, CFAllocatorRef allocat
     Locker locker { m_parseTracksLock };
     m_parseTracksCondition.wait(m_parseTracksLock, [&] {
         assertIsHeld(m_parseTracksLock);
-        return m_parseTracksStatus.hasValue();
+        return m_parseTracksStatus.has_value();
     });
 
     if (m_duration.isIndefinite())
@@ -259,7 +259,7 @@ OSStatus MediaFormatReader::copyTrackArray(CFArrayRef* trackArrayCopy)
     Locker locker { m_parseTracksLock };
     m_parseTracksCondition.wait(m_parseTracksLock, [&] {
         assertIsHeld(m_parseTracksLock);
-        return m_parseTracksStatus.hasValue();
+        return m_parseTracksStatus.has_value();
     });
 
     if (*m_parseTracksStatus != noErr)

@@ -107,15 +107,14 @@ static Optional<unsigned> findFirstSnapStopOffsetBetweenOriginAndDestination(con
 }
 
 template <typename InfoType, typename SizeType, typename LayoutType>
-static std::pair<LayoutType, unsigned> closestSnapOffsetWithInfoAndAxis(const InfoType& info, ScrollEventAxis axis, const SizeType& viewportSize, LayoutType scrollDestinationOffset, float velocity, Optional<LayoutType> originalOffsetForDirectionalSnapping)
+static std::pair<LayoutType, unsigned> closestSnapOffsetWithInfoAndAxis(const InfoType& info, ScrollEventAxis axis, const SizeType& viewportSize, LayoutType scrollDestinationOffset, float velocity, std::optional<LayoutType> originalOffsetForDirectionalSnapping)
 {
     const auto& snapOffsets = info.offsetsForAxis(axis);
     if (snapOffsets.isEmpty())
         return std::make_pair(scrollDestinationOffset, invalidSnapOffsetIndex);
 
-    if (originalOffsetForDirectionalSnapping.hasValue()) {
-        auto firstSnapStopOffsetIndex = findFirstSnapStopOffsetBetweenOriginAndDestination(snapOffsets, *originalOffsetForDirectionalSnapping, scrollDestinationOffset);
-        if (firstSnapStopOffsetIndex.hasValue())
+    if (originalOffsetForDirectionalSnapping) {
+        if (auto firstSnapStopOffsetIndex = findFirstSnapStopOffsetBetweenOriginAndDestination(snapOffsets, *originalOffsetForDirectionalSnapping, scrollDestinationOffset))
             return std::make_pair(snapOffsets[*firstSnapStopOffsetIndex].offset, *firstSnapStopOffsetIndex);
     }
 
@@ -356,13 +355,13 @@ FloatScrollSnapOffsetsInfo LayoutScrollSnapOffsetsInfo::convertUnits(float devic
 }
 
 template <> template <>
-std::pair<LayoutUnit, unsigned> LayoutScrollSnapOffsetsInfo::closestSnapOffset(ScrollEventAxis axis, const LayoutSize& viewportSize, LayoutUnit scrollDestinationOffset, float velocity, Optional<LayoutUnit> originalPositionForDirectionalSnapping) const
+std::pair<LayoutUnit, unsigned> LayoutScrollSnapOffsetsInfo::closestSnapOffset(ScrollEventAxis axis, const LayoutSize& viewportSize, LayoutUnit scrollDestinationOffset, float velocity, std::optional<LayoutUnit> originalPositionForDirectionalSnapping) const
 {
     return closestSnapOffsetWithInfoAndAxis(*this, axis, viewportSize, scrollDestinationOffset, velocity, originalPositionForDirectionalSnapping);
 }
 
 template <> template<>
-std::pair<float, unsigned> FloatScrollSnapOffsetsInfo::closestSnapOffset(ScrollEventAxis axis, const FloatSize& viewportSize, float scrollDestinationOffset, float velocity, Optional<float> originalPositionForDirectionalSnapping) const
+std::pair<float, unsigned> FloatScrollSnapOffsetsInfo::closestSnapOffset(ScrollEventAxis axis, const FloatSize& viewportSize, float scrollDestinationOffset, float velocity, std::optional<float> originalPositionForDirectionalSnapping) const
 {
     return closestSnapOffsetWithInfoAndAxis(*this, axis, viewportSize, scrollDestinationOffset, velocity, originalPositionForDirectionalSnapping);
 }

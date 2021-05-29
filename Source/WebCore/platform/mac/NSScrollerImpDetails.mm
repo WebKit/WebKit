@@ -38,9 +38,8 @@ Optional<bool> ScrollerStyle::m_useOverlayScrollbars;
 
 NSScrollerStyle ScrollerStyle::recommendedScrollerStyle()
 {
-    if (m_useOverlayScrollbars.hasValue())
+    if (m_useOverlayScrollbars.has_value())
         return *m_useOverlayScrollbars ? NSScrollerStyleOverlay : NSScrollerStyleLegacy;
-    
     if (DeprecatedGlobalSettings::usesOverlayScrollbars())
         return NSScrollerStyleOverlay;
     return [NSScroller preferredScrollerStyle];

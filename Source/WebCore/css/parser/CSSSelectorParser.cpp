@@ -887,7 +887,7 @@ static bool consumeANPlusB(CSSParserTokenRange& range, std::pair<int, int>& resu
     if (nString.length() > 2) {
         auto parsedNumber = parseInteger<int>(StringView { nString }.substring(1));
         result.second = parsedNumber.value_or(0);
-        return parsedNumber.hasValue();
+        return parsedNumber.has_value();
     }
 
     NumericSign sign = nString.length() == 1 ? NoSign : MinusSign;

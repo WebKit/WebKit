@@ -1237,7 +1237,7 @@ static Optional<Color>& cachedFocusRingColor()
 
 Color RenderThemeIOS::systemFocusRingColor()
 {
-    if (!cachedFocusRingColor().hasValue()) {
+    if (!cachedFocusRingColor().has_value()) {
         // FIXME: Should be using -keyboardFocusIndicatorColor. For now, work around <rdar://problem/50838886>.
         cachedFocusRingColor() = colorFromUIColor([PAL::getUIColorClass() systemBlueColor]);
     }

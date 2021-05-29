@@ -602,9 +602,10 @@ void ResourceRequestBase::setHTTPHeaderFields(HTTPHeaderMap headerFields)
 }
 
 #if USE(SYSTEM_PREVIEW)
+
 bool ResourceRequestBase::isSystemPreview() const
 {
-    return m_systemPreviewInfo.hasValue();
+    return m_systemPreviewInfo.has_value();
 }
 
 SystemPreviewInfo ResourceRequestBase::systemPreviewInfo() const
@@ -616,6 +617,7 @@ void ResourceRequestBase::setSystemPreviewInfo(const SystemPreviewInfo& info)
 {
     m_systemPreviewInfo = info;
 }
+
 #endif
 
 bool equalIgnoringHeaderFields(const ResourceRequestBase& a, const ResourceRequestBase& b)

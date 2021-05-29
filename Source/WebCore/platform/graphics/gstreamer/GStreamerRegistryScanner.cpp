@@ -147,7 +147,7 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::Element
     bool isSupported = candidates;
     bool isUsingHardware = false;
 
-    if (disallowedList.hasValue() && !disallowedList->isEmpty()) {
+    if (disallowedList && !disallowedList->isEmpty()) {
         bool hasValidCandidate = false;
         for (GList* factories = candidates; factories; factories = g_list_next(factories)) {
             String name = String::fromUTF8(gst_plugin_feature_get_name(GST_PLUGIN_FEATURE_CAST(factories->data)));

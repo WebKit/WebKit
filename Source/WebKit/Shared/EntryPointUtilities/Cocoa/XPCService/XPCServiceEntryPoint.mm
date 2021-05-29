@@ -85,7 +85,7 @@ bool XPCServiceInitializerDelegate::getClientSDKVersion(uint32_t& clientSDKVersi
 {
     auto version = parseInteger<uint32_t>(xpc_dictionary_get_string(m_initializerMessage, "client-sdk-version"));
     clientSDKVersion = version.value_or(0);
-    return version.hasValue();
+    return version.has_value();
 }
 
 bool XPCServiceInitializerDelegate::getProcessIdentifier(ProcessIdentifier& identifier)

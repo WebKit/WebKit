@@ -69,9 +69,9 @@ RefPtr<Image> CSSGradientValue::image(RenderElement& renderer, const FloatSize& 
 
 struct GradientStop {
     Color color;
-    Optional<float> offset;
+    std::optional<float> offset;
 
-    bool isSpecified() const { return offset.hasValue(); }
+    bool isSpecified() const { return offset.has_value(); }
     bool isMidpoint() const { return !color.isValid(); }
 };
 
@@ -241,7 +241,7 @@ public:
         size_t numStops = stops.size();
         size_t lastStopIndex = numStops - 1;
 
-        Optional<size_t> firstZeroOrGreaterIndex;
+        std::optional<size_t> firstZeroOrGreaterIndex;
         for (size_t i = 0; i < numStops; ++i) {
             if (*stops[i].offset >= 0) {
                 firstZeroOrGreaterIndex = i;
@@ -271,7 +271,7 @@ public:
                 stop.offset = 0;
         }
 
-        Optional<size_t> lastOneOrLessIndex;
+        std::optional<size_t> lastOneOrLessIndex;
         for (int i = lastStopIndex; i >= 0; --i) {
             if (*stops[i].offset <= 1) {
                 lastOneOrLessIndex = i;

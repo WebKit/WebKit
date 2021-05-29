@@ -103,7 +103,7 @@ public:
     bool forciblyPremultiplyAlpha() const { return m_backingStore && m_backingStore->forciblyPremultiplyAlpha(); }
 
     Optional<ImageBitmapBacking> takeImageBitmapBacking();
-    bool isDetached() const { return !m_backingStore.hasValue(); }
+    bool isDetached() const { return !m_backingStore; }
     void close() { takeImageBitmapBacking(); }
 
     static Vector<Optional<ImageBitmapBacking>> detachBitmaps(Vector<RefPtr<ImageBitmap>>&&);

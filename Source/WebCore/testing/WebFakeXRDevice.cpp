@@ -213,7 +213,7 @@ void WebFakeXRDevice::setViews(const Vector<FakeXRViewInit>& views)
             auto fakeView = parsedView.releaseReturnValue();
             PlatformXR::Device::FrameData::View view;
             view.offset = fakeView->offset();
-            if (fakeView->fieldOfView().hasValue())
+            if (fakeView->fieldOfView())
                 view.projection = { *fakeView->fieldOfView() };
             else
                 view.projection = { fakeView->projection() };

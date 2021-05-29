@@ -1343,7 +1343,7 @@ MediaTime MediaPlayerPrivateGStreamer::playbackPosition() const
     if (m_isEndReached)
         return m_playbackRate > 0 ? durationMediaTime() : MediaTime::zeroTime();
 
-    if (m_cachedPosition.hasValue()) {
+    if (m_cachedPosition) {
         GST_TRACE_OBJECT(pipeline(), "Returning cached position: %s", m_cachedPosition.value().toString().utf8().data());
         return m_cachedPosition.value();
     }
@@ -2871,7 +2871,7 @@ bool MediaPlayerPrivateGStreamer::performTaskAtMediaTime(Function<void()>&& task
 
     // Dispatch the task if the time is already reached. Dispatching instead of directly running the
     // task prevents infinite recursion in case the task calls performTaskAtMediaTime() internally.
-    if (taskToSchedule.hasValue())
+    if (taskToSchedule)
         RunLoop::main().dispatch(WTFMove(taskToSchedule.value()));
 
     return true;
@@ -3124,8 +3124,7 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GstSample* sample)
     if (buffer && GST_BUFFER_PTS_IS_VALID(buffer)) {
         // Heuristic to avoid asking for playbackPosition() from a non-main thread.
         MediaTime currentTime = MediaTime(gst_segment_to_stream_time(gst_sample_get_segment(sample), GST_FORMAT_TIME, GST_BUFFER_PTS(buffer)), GST_SECOND);
-        auto task = holdLock(m_TaskAtMediaTimeSchedulerDataMutex)->checkTaskForScheduling(currentTime);
-        if (task.hasValue())
+        if (auto task = holdLock(m_TaskAtMediaTimeSchedulerDataMutex)->checkTaskForScheduling(currentTime))
             RunLoop::main().dispatch(WTFMove(task.value()));
     }
 

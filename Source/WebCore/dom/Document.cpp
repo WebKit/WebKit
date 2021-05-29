@@ -2863,9 +2863,9 @@ void Document::updateHighlightPositions()
             VisibleSelection visibleSelection(rangeData->range);
             Position startPosition;
             Position endPosition;
-            if (!rangeData->startPosition.hasValue())
+            if (!rangeData->startPosition.has_value())
                 startPosition = visibleSelection.visibleStart().deepEquivalent();
-            if (!rangeData->endPosition.hasValue())
+            if (!rangeData->endPosition.has_value())
                 endPosition = visibleSelection.visibleEnd().deepEquivalent();
             if (!weakRangeData.get())
                 continue;

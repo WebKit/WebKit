@@ -1644,7 +1644,7 @@ void WebCore::setSupportsPictureInPicture(bool isSupported)
 bool WebCore::supportsPictureInPicture()
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE) && !PLATFORM(WATCHOS)
-    if (isPictureInPictureSupported.hasValue())
+    if (isPictureInPictureSupported.has_value())
         return *isPictureInPictureSupported;
     return [getAVPictureInPictureControllerClass() isPictureInPictureSupported];
 #else

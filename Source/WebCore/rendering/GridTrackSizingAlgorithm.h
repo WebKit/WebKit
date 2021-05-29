@@ -73,11 +73,7 @@ public:
     void setGrowthLimitCap(Optional<LayoutUnit>);
     Optional<LayoutUnit> growthLimitCap() const { return m_growthLimitCap; }
 
-    const GridTrackSize& cachedTrackSize() const
-    {
-        ASSERT(m_cachedTrackSize.hasValue());
-        return m_cachedTrackSize.value();
-    }
+    const GridTrackSize& cachedTrackSize() const { return *m_cachedTrackSize; }
     void setCachedTrackSize(const GridTrackSize&);
 
 private:

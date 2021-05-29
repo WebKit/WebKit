@@ -313,18 +313,18 @@ Ref<SVGTransform> SVGSVGElement::createSVGTransform()
 Ref<SVGTransform> SVGSVGElement::createSVGTransformFromMatrix(DOMMatrix2DInit&& matrixInit)
 {
     AffineTransform transform;
-    if (matrixInit.a.hasValue())
-        transform.setA(matrixInit.a.value());
-    if (matrixInit.b.hasValue())
-        transform.setB(matrixInit.b.value());
-    if (matrixInit.c.hasValue())
-        transform.setC(matrixInit.c.value());
-    if (matrixInit.d.hasValue())
-        transform.setD(matrixInit.d.value());
-    if (matrixInit.e.hasValue())
-        transform.setE(matrixInit.e.value());
-    if (matrixInit.f.hasValue())
-        transform.setF(matrixInit.f.value());
+    if (matrixInit.a)
+        transform.setA(*matrixInit.a);
+    if (matrixInit.b)
+        transform.setB(*matrixInit.b);
+    if (matrixInit.c)
+        transform.setC(*matrixInit.c);
+    if (matrixInit.d)
+        transform.setD(*matrixInit.d);
+    if (matrixInit.e)
+        transform.setE(*matrixInit.e);
+    if (matrixInit.f)
+        transform.setF(*matrixInit.f);
     return SVGTransform::create(transform);
 }
 

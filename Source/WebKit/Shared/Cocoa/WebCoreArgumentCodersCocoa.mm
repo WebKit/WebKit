@@ -70,14 +70,13 @@
 #endif
 
 namespace IPC {
-using namespace WebCore;
 
 void ArgumentCoder<WebCore::AttributedString>::encode(Encoder& encoder, const WebCore::AttributedString& attributedString)
 {
     encoder << attributedString.string << attributedString.documentAttributes;
 }
 
-Optional<WebCore::AttributedString> ArgumentCoder<WebCore::AttributedString>::decode(Decoder& decoder)
+std::optional<WebCore::AttributedString> ArgumentCoder<WebCore::AttributedString>::decode(Decoder& decoder)
 {
     RetainPtr<NSAttributedString> attributedString;
     if (!IPC::decode(decoder, attributedString))
@@ -97,7 +96,7 @@ void ArgumentCoder<WebCore::PaymentInstallmentConfiguration>::encode(Encoder& en
     encoder << configuration.platformConfiguration();
 }
 
-Optional<WebCore::PaymentInstallmentConfiguration> ArgumentCoder<WebCore::PaymentInstallmentConfiguration>::decode(Decoder& decoder)
+std::optional<WebCore::PaymentInstallmentConfiguration> ArgumentCoder<WebCore::PaymentInstallmentConfiguration>::decode(Decoder& decoder)
 {
     auto configuration = IPC::decode<PKPaymentInstallmentConfiguration>(decoder, PAL::getPKPaymentInstallmentConfigurationClass());
     if (!configuration)
@@ -113,13 +112,13 @@ void ArgumentCoder<WebCore::Payment>::encode(Encoder& encoder, const WebCore::Pa
     encoder << payment.pkPayment();
 }
 
-Optional<WebCore::Payment> ArgumentCoder<WebCore::Payment>::decode(Decoder& decoder)
+std::optional<WebCore::Payment> ArgumentCoder<WebCore::Payment>::decode(Decoder& decoder)
 {
     auto payment = IPC::decode<PKPayment>(decoder, PAL::getPKPaymentClass());
     if (!payment)
         return std::nullopt;
 
-    return Payment { WTFMove(*payment) };
+    return WebCore::Payment { WTFMove(*payment) };
 }
 
 void ArgumentCoder<WebCore::PaymentAuthorizationResult>::encode(Encoder& encoder, const WebCore::PaymentAuthorizationResult& result)
@@ -128,14 +127,14 @@ void ArgumentCoder<WebCore::PaymentAuthorizationResult>::encode(Encoder& encoder
     encoder << result.errors;
 }
 
-Optional<WebCore::PaymentAuthorizationResult> ArgumentCoder<WebCore::PaymentAuthorizationResult>::decode(Decoder& decoder)
+std::optional<WebCore::PaymentAuthorizationResult> ArgumentCoder<WebCore::PaymentAuthorizationResult>::decode(Decoder& decoder)
 {
-    Optional<PaymentAuthorizationStatus> status;
+    std::optional<WebCore::PaymentAuthorizationStatus> status;
     decoder >> status;
     if (!status)
         return std::nullopt;
 
-    Optional<Vector<RefPtr<ApplePayError>>> errors;
+    std::optional<Vector<RefPtr<WebCore::ApplePayError>>> errors;
     decoder >> errors;
     if (!errors)
         return std::nullopt;
@@ -148,7 +147,7 @@ void ArgumentCoder<WebCore::PaymentContact>::encode(Encoder& encoder, const WebC
     encoder << paymentContact.pkContact();
 }
 
-Optional<WebCore::PaymentContact> ArgumentCoder<WebCore::PaymentContact>::decode(Decoder& decoder)
+std::optional<WebCore::PaymentContact> ArgumentCoder<WebCore::PaymentContact>::decode(Decoder& decoder)
 {
     auto contact = IPC::decode<PKContact>(decoder, PAL::getPKContactClass());
     if (!contact)
@@ -162,7 +161,7 @@ void ArgumentCoder<WebCore::PaymentMerchantSession>::encode(Encoder& encoder, co
     encoder << paymentMerchantSession.pkPaymentMerchantSession();
 }
 
-Optional<WebCore::PaymentMerchantSession> ArgumentCoder<WebCore::PaymentMerchantSession>::decode(Decoder& decoder)
+std::optional<WebCore::PaymentMerchantSession> ArgumentCoder<WebCore::PaymentMerchantSession>::decode(Decoder& decoder)
 {
     auto paymentMerchantSession = IPC::decode<PKPaymentMerchantSession>(decoder, PAL::getPKPaymentMerchantSessionClass());
     if (!paymentMerchantSession)
@@ -176,16 +175,16 @@ void ArgumentCoder<WebCore::PaymentMethod>::encode(Encoder& encoder, const WebCo
     encoder << paymentMethod.pkPaymentMethod();
 }
 
-Optional<WebCore::PaymentMethod> ArgumentCoder<WebCore::PaymentMethod>::decode(Decoder& decoder)
+std::optional<WebCore::PaymentMethod> ArgumentCoder<WebCore::PaymentMethod>::decode(Decoder& decoder)
 {
     auto paymentMethod = IPC::decode<PKPaymentMethod>(decoder, PAL::getPKPaymentMethodClass());
     if (!paymentMethod)
         return std::nullopt;
 
-    return PaymentMethod { WTFMove(*paymentMethod) };
+    return WebCore::PaymentMethod { WTFMove(*paymentMethod) };
 }
 
-void ArgumentCoder<ApplePaySessionPaymentRequest>::encode(Encoder& encoder, const ApplePaySessionPaymentRequest& request)
+void ArgumentCoder<WebCore::ApplePaySessionPaymentRequest>::encode(Encoder& encoder, const WebCore::ApplePaySessionPaymentRequest& request)
 {
     encoder << request.countryCode();
     encoder << request.currencyCode();
@@ -210,7 +209,7 @@ void ArgumentCoder<ApplePaySessionPaymentRequest>::encode(Encoder& encoder, cons
 #endif
 }
 
-bool ArgumentCoder<ApplePaySessionPaymentRequest>::decode(Decoder& decoder, ApplePaySessionPaymentRequest& request)
+bool ArgumentCoder<WebCore::ApplePaySessionPaymentRequest>::decode(Decoder& decoder, WebCore::ApplePaySessionPaymentRequest& request)
 {
     String countryCode;
     if (!decoder.decode(countryCode))
@@ -222,29 +221,29 @@ bool ArgumentCoder<ApplePaySessionPaymentRequest>::decode(Decoder& decoder, Appl
         return false;
     request.setCurrencyCode(currencyCode);
 
-    ApplePaySessionPaymentRequest::ContactFields requiredBillingContactFields;
+    WebCore::ApplePaySessionPaymentRequest::ContactFields requiredBillingContactFields;
     if (!decoder.decode((requiredBillingContactFields)))
         return false;
     request.setRequiredBillingContactFields(requiredBillingContactFields);
 
-    Optional<PaymentContact> billingContact;
+    std::optional<WebCore::PaymentContact> billingContact;
     decoder >> billingContact;
     if (!billingContact)
         return false;
     request.setBillingContact(*billingContact);
 
-    ApplePaySessionPaymentRequest::ContactFields requiredShippingContactFields;
+    WebCore::ApplePaySessionPaymentRequest::ContactFields requiredShippingContactFields;
     if (!decoder.decode((requiredShippingContactFields)))
         return false;
     request.setRequiredShippingContactFields(requiredShippingContactFields);
 
-    Optional<PaymentContact> shippingContact;
+    std::optional<WebCore::PaymentContact> shippingContact;
     decoder >> shippingContact;
     if (!shippingContact)
         return false;
     request.setShippingContact(*shippingContact);
 
-    ApplePaySessionPaymentRequest::MerchantCapabilities merchantCapabilities;
+    WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities merchantCapabilities;
     if (!decoder.decode(merchantCapabilities))
         return false;
     request.setMerchantCapabilities(merchantCapabilities);
@@ -254,22 +253,22 @@ bool ArgumentCoder<ApplePaySessionPaymentRequest>::decode(Decoder& decoder, Appl
         return false;
     request.setSupportedNetworks(supportedNetworks);
 
-    ApplePaySessionPaymentRequest::ShippingType shippingType;
+    WebCore::ApplePaySessionPaymentRequest::ShippingType shippingType;
     if (!decoder.decode(shippingType))
         return false;
     request.setShippingType(shippingType);
 
-    Vector<ApplePayShippingMethod> shippingMethods;
+    Vector<WebCore::ApplePayShippingMethod> shippingMethods;
     if (!decoder.decode(shippingMethods))
         return false;
     request.setShippingMethods(shippingMethods);
 
-    Vector<ApplePayLineItem> lineItems;
+    Vector<WebCore::ApplePayLineItem> lineItems;
     if (!decoder.decode(lineItems))
         return false;
     request.setLineItems(lineItems);
 
-    Optional<ApplePayLineItem> total;
+    std::optional<WebCore::ApplePayLineItem> total;
     decoder >> total;
     if (!total)
         return false;
@@ -285,13 +284,13 @@ bool ArgumentCoder<ApplePaySessionPaymentRequest>::decode(Decoder& decoder, Appl
         return false;
     request.setSupportedCountries(WTFMove(supportedCountries));
 
-    ApplePaySessionPaymentRequest::Requester requester;
+    WebCore::ApplePaySessionPaymentRequest::Requester requester;
     if (!decoder.decode(requester))
         return false;
     request.setRequester(requester);
     
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
-    Optional<WebCore::PaymentInstallmentConfiguration> installmentConfiguration;
+    std::optional<WebCore::PaymentInstallmentConfiguration> installmentConfiguration;
     decoder >> installmentConfiguration;
     if (!installmentConfiguration)
         return false;
@@ -306,7 +305,7 @@ bool ArgumentCoder<ApplePaySessionPaymentRequest>::decode(Decoder& decoder, Appl
     return true;
 }
 
-void ArgumentCoder<ApplePaySessionPaymentRequest::ContactFields>::encode(Encoder& encoder, const ApplePaySessionPaymentRequest::ContactFields& contactFields)
+void ArgumentCoder<WebCore::ApplePaySessionPaymentRequest::ContactFields>::encode(Encoder& encoder, const WebCore::ApplePaySessionPaymentRequest::ContactFields& contactFields)
 {
     encoder << contactFields.postalAddress;
     encoder << contactFields.phone;
@@ -315,7 +314,7 @@ void ArgumentCoder<ApplePaySessionPaymentRequest::ContactFields>::encode(Encoder
     encoder << contactFields.phoneticName;
 }
 
-bool ArgumentCoder<ApplePaySessionPaymentRequest::ContactFields>::decode(Decoder& decoder, ApplePaySessionPaymentRequest::ContactFields& contactFields)
+bool ArgumentCoder<WebCore::ApplePaySessionPaymentRequest::ContactFields>::decode(Decoder& decoder, WebCore::ApplePaySessionPaymentRequest::ContactFields& contactFields)
 {
     if (!decoder.decode(contactFields.postalAddress))
         return false;
@@ -331,7 +330,7 @@ bool ArgumentCoder<ApplePaySessionPaymentRequest::ContactFields>::decode(Decoder
     return true;
 }
 
-void ArgumentCoder<ApplePaySessionPaymentRequest::MerchantCapabilities>::encode(Encoder& encoder, const ApplePaySessionPaymentRequest::MerchantCapabilities& merchantCapabilities)
+void ArgumentCoder<WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities>::encode(Encoder& encoder, const WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities& merchantCapabilities)
 {
     encoder << merchantCapabilities.supports3DS;
     encoder << merchantCapabilities.supportsEMV;
@@ -339,7 +338,7 @@ void ArgumentCoder<ApplePaySessionPaymentRequest::MerchantCapabilities>::encode(
     encoder << merchantCapabilities.supportsDebit;
 }
 
-bool ArgumentCoder<ApplePaySessionPaymentRequest::MerchantCapabilities>::decode(Decoder& decoder, ApplePaySessionPaymentRequest::MerchantCapabilities& merchantCapabilities)
+bool ArgumentCoder<WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities>::decode(Decoder& decoder, WebCore::ApplePaySessionPaymentRequest::MerchantCapabilities& merchantCapabilities)
 {
     if (!decoder.decode(merchantCapabilities.supports3DS))
         return false;
@@ -353,25 +352,25 @@ bool ArgumentCoder<ApplePaySessionPaymentRequest::MerchantCapabilities>::decode(
     return true;
 }
 
-void ArgumentCoder<RefPtr<ApplePayError>>::encode(Encoder& encoder, const RefPtr<ApplePayError>& error)
+void ArgumentCoder<RefPtr<WebCore::ApplePayError>>::encode(Encoder& encoder, const RefPtr<WebCore::ApplePayError>& error)
 {
     encoder << !!error;
     if (error)
         encoder << *error;
 }
 
-Optional<RefPtr<ApplePayError>> ArgumentCoder<RefPtr<ApplePayError>>::decode(Decoder& decoder)
+std::optional<RefPtr<WebCore::ApplePayError>> ArgumentCoder<RefPtr<WebCore::ApplePayError>>::decode(Decoder& decoder)
 {
-    Optional<bool> isValid;
+    std::optional<bool> isValid;
     decoder >> isValid;
     if (!isValid)
         return std::nullopt;
 
-    RefPtr<ApplePayError> error;
+    RefPtr<WebCore::ApplePayError> error;
     if (!*isValid)
         return { nullptr };
 
-    error = ApplePayError::decode(decoder);
+    error = WebCore::ApplePayError::decode(decoder);
     if (!error)
         return std::nullopt;
     return error;
@@ -382,7 +381,7 @@ void ArgumentCoder<WebCore::PaymentSessionError>::encode(Encoder& encoder, const
     encoder << error.platformError();
 }
 
-Optional<WebCore::PaymentSessionError> ArgumentCoder<WebCore::PaymentSessionError>::decode(Decoder& decoder)
+std::optional<WebCore::PaymentSessionError> ArgumentCoder<WebCore::PaymentSessionError>::decode(Decoder& decoder)
 {
     auto platformError = IPC::decode<NSError>(decoder);
     if (!platformError)
@@ -412,14 +411,14 @@ void ArgumentCoder<WebCore::FontAttributes>::encodePlatformData(Encoder& encoder
     encoder << attributes.font;
 }
 
-Optional<FontAttributes> ArgumentCoder<WebCore::FontAttributes>::decodePlatformData(Decoder& decoder, WebCore::FontAttributes& attributes)
+std::optional<WebCore::FontAttributes> ArgumentCoder<WebCore::FontAttributes>::decodePlatformData(Decoder& decoder, WebCore::FontAttributes& attributes)
 {
     if (!IPC::decode(decoder, attributes.font))
         return std::nullopt;
     return attributes;
 }
 
-void ArgumentCoder<Ref<Font>>::encodePlatformData(Encoder& encoder, const Ref<WebCore::Font>& font)
+void ArgumentCoder<Ref<WebCore::Font>>::encodePlatformData(Encoder& encoder, const Ref<WebCore::Font>& font)
 {
     const auto& platformData = font->platformData();
     encoder << platformData.orientation();
@@ -468,89 +467,89 @@ static RetainPtr<CTFontDescriptorRef> findFontDescriptor(const String& reference
     return nullptr;
 }
 
-Optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder& decoder)
+std::optional<WebCore::FontPlatformData> ArgumentCoder<Ref<WebCore::Font>>::decodePlatformData(Decoder& decoder)
 {
-    Optional<FontOrientation> orientation;
+    std::optional<WebCore::FontOrientation> orientation;
     decoder >> orientation;
-    if (!orientation.hasValue())
+    if (!orientation)
         return std::nullopt;
 
-    Optional<FontWidthVariant> widthVariant;
+    std::optional<WebCore::FontWidthVariant> widthVariant;
     decoder >> widthVariant;
-    if (!widthVariant.hasValue())
+    if (!widthVariant)
         return std::nullopt;
 
-    Optional<TextRenderingMode> textRenderingMode;
+    std::optional<WebCore::TextRenderingMode> textRenderingMode;
     decoder >> textRenderingMode;
-    if (!textRenderingMode.hasValue())
+    if (!textRenderingMode)
         return std::nullopt;
 
-    Optional<float> size;
+    std::optional<float> size;
     decoder >> size;
-    if (!size.hasValue())
+    if (!size)
         return std::nullopt;
 
-    Optional<bool> syntheticBold;
+    std::optional<bool> syntheticBold;
     decoder >> syntheticBold;
-    if (!syntheticBold.hasValue())
+    if (!syntheticBold)
         return std::nullopt;
 
-    Optional<bool> syntheticOblique;
+    std::optional<bool> syntheticOblique;
     decoder >> syntheticOblique;
-    if (!syntheticOblique.hasValue())
+    if (!syntheticOblique)
         return std::nullopt;
 
-    Optional<RetainPtr<CFDictionaryRef>> attributes;
+    std::optional<RetainPtr<CFDictionaryRef>> attributes;
     decoder >> attributes;
     if (!attributes)
         return std::nullopt;
 
-    Optional<bool> includesCreationData;
+    std::optional<bool> includesCreationData;
     decoder >> includesCreationData;
-    if (!includesCreationData.hasValue())
+    if (!includesCreationData)
         return std::nullopt;
 
-    if (includesCreationData.value()) {
-        Optional<Ref<SharedBuffer>> fontFaceData;
+    if (*includesCreationData) {
+        std::optional<Ref<WebCore::SharedBuffer>> fontFaceData;
         decoder >> fontFaceData;
-        if (!fontFaceData.hasValue())
+        if (!fontFaceData)
             return std::nullopt;
 
-        Optional<String> itemInCollection;
+        std::optional<String> itemInCollection;
         decoder >> itemInCollection;
-        if (!itemInCollection.hasValue())
+        if (!itemInCollection)
             return std::nullopt;
 
-        auto fontCustomPlatformData = createFontCustomPlatformData(fontFaceData.value(), itemInCollection.value());
+        auto fontCustomPlatformData = createFontCustomPlatformData(*fontFaceData, *itemInCollection);
         if (!fontCustomPlatformData)
             return std::nullopt;
         auto baseFontDescriptor = fontCustomPlatformData->fontDescriptor.get();
         if (!baseFontDescriptor)
             return std::nullopt;
         auto fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(baseFontDescriptor, attributes->get()));
-        auto ctFont = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size.value(), nullptr));
+        auto ctFont = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), *size, nullptr));
 
-        auto creationData = FontPlatformData::CreationData { fontFaceData.value(), itemInCollection.value() };
-        return FontPlatformData(ctFont.get(), size.value(), syntheticBold.value(), syntheticOblique.value(), orientation.value(), widthVariant.value(), textRenderingMode.value(), &creationData);
+        auto creationData = WebCore::FontPlatformData::CreationData { *fontFaceData, *itemInCollection };
+        return WebCore::FontPlatformData(ctFont.get(), *size, *syntheticBold, *syntheticOblique, *orientation, *widthVariant, *textRenderingMode, &creationData);
     }
 
-    Optional<String> referenceURL;
+    std::optional<String> referenceURL;
     decoder >> referenceURL;
-    if (!referenceURL.hasValue())
+    if (!referenceURL)
         return std::nullopt;
 
-    Optional<String> postScriptName;
+    std::optional<String> postScriptName;
     decoder >> postScriptName;
-    if (!postScriptName.hasValue())
+    if (!postScriptName)
         return std::nullopt;
 
-    RetainPtr<CTFontDescriptorRef> fontDescriptor = findFontDescriptor(referenceURL.value(), postScriptName.value());
+    auto fontDescriptor = findFontDescriptor(*referenceURL, *postScriptName);
     if (!fontDescriptor)
         return std::nullopt;
     fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor.get(), attributes->get()));
-    auto ctFont = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), size.value(), nullptr));
+    auto ctFont = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), *size, nullptr));
 
-    return FontPlatformData(ctFont.get(), size.value(), syntheticBold.value(), syntheticOblique.value(), orientation.value(), widthVariant.value(), textRenderingMode.value());
+    return WebCore::FontPlatformData(ctFont.get(), *size, *syntheticBold, *syntheticOblique, *orientation, *widthVariant, *textRenderingMode);
 }
 
 void ArgumentCoder<WebCore::ResourceRequest>::encodePlatformData(Encoder& encoder, const WebCore::ResourceRequest& resourceRequest)
@@ -617,46 +616,46 @@ bool ArgumentCoder<WebCore::ResourceRequest>::decodePlatformData(Decoder& decode
 
 #if ENABLE(DATA_DETECTION)
 
-void ArgumentCoder<DataDetectorElementInfo>::encode(Encoder& encoder, const DataDetectorElementInfo& info)
+void ArgumentCoder<WebCore::DataDetectorElementInfo>::encode(Encoder& encoder, const WebCore::DataDetectorElementInfo& info)
 {
     encoder << info.result.get();
     encoder << info.elementBounds;
 }
 
-Optional<DataDetectorElementInfo> ArgumentCoder<DataDetectorElementInfo>::decode(Decoder& decoder)
+std::optional<WebCore::DataDetectorElementInfo> ArgumentCoder<WebCore::DataDetectorElementInfo>::decode(Decoder& decoder)
 {
     auto result = IPC::decode<DDScannerResult>(decoder, PAL::getDDScannerResultClass());
     if (!result)
         return std::nullopt;
 
-    Optional<IntRect> elementBounds;
+    std::optional<WebCore::IntRect> elementBounds;
     decoder >> elementBounds;
     if (!elementBounds)
         return std::nullopt;
 
-    return std::make_optional<DataDetectorElementInfo>({ WTFMove(*result), WTFMove(*elementBounds) });
+    return std::make_optional<WebCore::DataDetectorElementInfo>({ WTFMove(*result), WTFMove(*elementBounds) });
 }
 
 #endif // ENABLE(DATA_DETECTION)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-void ArgumentCoder<WebCore::MediaPlaybackTargetContext>::encodePlatformData(Encoder& encoder, const MediaPlaybackTargetContext& target)
+void ArgumentCoder<WebCore::MediaPlaybackTargetContext>::encodePlatformData(Encoder& encoder, const WebCore::MediaPlaybackTargetContext& target)
 {
-    if (target.type() == MediaPlaybackTargetContext::Type::AVOutputContext) {
+    if (target.type() == WebCore::MediaPlaybackTargetContext::Type::AVOutputContext) {
         if ([PAL::getAVOutputContextClass() conformsToProtocol:@protocol(NSSecureCoding)])
             encoder << target.outputContext();
-    } else if (target.type() == MediaPlaybackTargetContext::Type::SerializedAVOutputContext) {
+    } else if (target.type() == WebCore::MediaPlaybackTargetContext::Type::SerializedAVOutputContext) {
         encoder << target.serializedOutputContext();
         encoder << target.hasActiveRoute();
     } else
         ASSERT_NOT_REACHED();
 }
 
-bool ArgumentCoder<WebCore::MediaPlaybackTargetContext>::decodePlatformData(Decoder& decoder, MediaPlaybackTargetContext::Type contextType, MediaPlaybackTargetContext& target)
+bool ArgumentCoder<WebCore::MediaPlaybackTargetContext>::decodePlatformData(Decoder& decoder, WebCore::MediaPlaybackTargetContext::Type contextType, WebCore::MediaPlaybackTargetContext& target)
 {
-    ASSERT(contextType != MediaPlaybackTargetContext::Type::Mock);
+    ASSERT(contextType != WebCore::MediaPlaybackTargetContext::Type::Mock);
 
-    if (contextType == MediaPlaybackTargetContext::Type::AVOutputContext) {
+    if (contextType == WebCore::MediaPlaybackTargetContext::Type::AVOutputContext) {
         if (![PAL::getAVOutputContextClass() conformsToProtocol:@protocol(NSSecureCoding)])
             return false;
 
@@ -668,7 +667,7 @@ bool ArgumentCoder<WebCore::MediaPlaybackTargetContext>::decodePlatformData(Deco
         return true;
     }
 
-    if (contextType == MediaPlaybackTargetContext::Type::SerializedAVOutputContext) {
+    if (contextType == WebCore::MediaPlaybackTargetContext::Type::SerializedAVOutputContext) {
         RetainPtr<NSData> serializedOutputContext;
         if (!IPC::decode(decoder, serializedOutputContext) || !serializedOutputContext)
             return false;
@@ -687,12 +686,12 @@ bool ArgumentCoder<WebCore::MediaPlaybackTargetContext>::decodePlatformData(Deco
 
 #if ENABLE(IMAGE_EXTRACTION) && ENABLE(DATA_DETECTION)
 
-void ArgumentCoder<ImageExtractionDataDetectorInfo>::encodePlatformData(Encoder& encoder, const ImageExtractionDataDetectorInfo& info)
+void ArgumentCoder<WebCore::ImageExtractionDataDetectorInfo>::encodePlatformData(Encoder& encoder, const WebCore::ImageExtractionDataDetectorInfo& info)
 {
     encoder << info.result.get();
 }
 
-bool ArgumentCoder<ImageExtractionDataDetectorInfo>::decodePlatformData(Decoder& decoder, ImageExtractionDataDetectorInfo& result)
+bool ArgumentCoder<WebCore::ImageExtractionDataDetectorInfo>::decodePlatformData(Decoder& decoder, WebCore::ImageExtractionDataDetectorInfo& result)
 {
     auto scannerResult = IPC::decode<DDScannerResult>(decoder, @[ PAL::getDDScannerResultClass() ]);
     if (!scannerResult)

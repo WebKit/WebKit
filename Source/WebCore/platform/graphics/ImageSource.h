@@ -79,7 +79,7 @@ public:
     // Asynchronous image decoding
     bool canUseAsyncDecoding();
     void startAsyncDecodingQueue();
-    void requestFrameAsyncDecodingAtIndex(size_t, SubsamplingLevel, const Optional<IntSize>& = { });
+    void requestFrameAsyncDecodingAtIndex(size_t, SubsamplingLevel, const std::optional<IntSize>& = { });
     void stopAsyncDecodingQueue();
     bool hasAsyncDecodingQueue() const { return m_decodingQueue; }
     bool isAsyncDecodingQueueIdle() const;
@@ -95,9 +95,9 @@ public:
     String uti();
     String filenameExtension();
     String accessibilityDescription();
-    Optional<IntPoint> hotSpot();
-    Optional<IntSize> densityCorrectedSize(ImageOrientation = ImageOrientation::FromImage);
-    bool hasDensityCorrectedSize() { return densityCorrectedSize().hasValue(); }
+    std::optional<IntPoint> hotSpot();
+    std::optional<IntSize> densityCorrectedSize(ImageOrientation = ImageOrientation::FromImage);
+    bool hasDensityCorrectedSize() { return densityCorrectedSize().has_value(); }
 
     ImageOrientation orientation();
 
@@ -113,8 +113,8 @@ public:
     DecodingStatus frameDecodingStatusAtIndex(size_t);
     bool frameHasAlphaAtIndex(size_t);
     bool frameHasImageAtIndex(size_t);
-    bool frameHasFullSizeNativeImageAtIndex(size_t, const Optional<SubsamplingLevel>&);
-    bool frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(size_t, const Optional<SubsamplingLevel>&, const DecodingOptions&);
+    bool frameHasFullSizeNativeImageAtIndex(size_t, const std::optional<SubsamplingLevel>&);
+    bool frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(size_t, const std::optional<SubsamplingLevel>&, const DecodingOptions&);
     SubsamplingLevel frameSubsamplingLevelAtIndex(size_t);
 
     // ImageFrame metadata which forces caching or re-caching the ImageFrame.
@@ -153,7 +153,7 @@ private:
     T metadataCacheIfNeeded(T& cachedValue, const T& defaultValue, MetadataType, T (ImageDecoder::*functor)() const);
 
     template<typename T>
-    T firstFrameMetadataCacheIfNeeded(T& cachedValue, MetadataType, T (ImageFrame::*functor)() const, ImageFrame::Caching, const Optional<SubsamplingLevel>& = { });
+    T firstFrameMetadataCacheIfNeeded(T& cachedValue, MetadataType, T (ImageFrame::*functor)() const, ImageFrame::Caching, const std::optional<SubsamplingLevel>& = { });
 
     bool ensureDecoderAvailable(SharedBuffer* data);
     bool isDecoderAvailable() const { return m_decoder; }
@@ -176,7 +176,7 @@ private:
     SynchronizedFixedQueue<ImageFrameRequest, BufferSize>& frameRequestQueue();
 
     const ImageFrame& frameAtIndex(size_t index) { return index < m_frames.size() ? m_frames[index] : ImageFrame::defaultFrame(); }
-    const ImageFrame& frameAtIndexCacheIfNeeded(size_t, ImageFrame::Caching, const Optional<SubsamplingLevel>& = { });
+    const ImageFrame& frameAtIndexCacheIfNeeded(size_t, ImageFrame::Caching, const std::optional<SubsamplingLevel>& = { });
 
     void dump(TextStream&);
 
@@ -214,11 +214,11 @@ private:
     String m_uti;
     String m_filenameExtension;
     String m_accessibilityDescription;
-    Optional<IntPoint> m_hotSpot;
+    std::optional<IntPoint> m_hotSpot;
 
     // Image metadata which is calculated from the first ImageFrame.
     IntSize m_size;
-    Optional<IntSize> m_densityCorrectedSize;
+    std::optional<IntSize> m_densityCorrectedSize;
     ImageOrientation m_orientation;
     Color m_singlePixelSolidColor;
     SubsamplingLevel m_maximumSubsamplingLevel { SubsamplingLevel::Default };

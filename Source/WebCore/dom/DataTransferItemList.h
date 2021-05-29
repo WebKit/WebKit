@@ -67,7 +67,7 @@ public:
 
     void didClearStringData(const String& type);
     void didSetStringData(const String& type);
-    bool hasItems() const { return m_items.hasValue(); }
+    bool hasItems() const { return m_items.has_value(); }
     const Vector<Ref<DataTransferItem>>& items() const
     {
         ASSERT(m_items);

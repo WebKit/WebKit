@@ -62,10 +62,9 @@ using namespace WebCore;
 String AutomationCommandError::toProtocolString()
 {
     String protocolErrorName = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(type);
-    if (!message.hasValue())
+    if (!message)
         return protocolErrorName;
-
-    return makeString(protocolErrorName, errorNameAndDetailsSeparator, message.value());
+    return makeString(protocolErrorName, errorNameAndDetailsSeparator, *message);
 }
     
 // §8. Sessions

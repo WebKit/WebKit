@@ -146,7 +146,7 @@ void AlternativeTextController::applyPendingCorrection(const VisibleSelection& s
 
 bool AlternativeTextController::hasPendingCorrection() const
 {
-    return m_rangeWithAlternative.hasValue();
+    return m_rangeWithAlternative.has_value();
 }
 
 bool AlternativeTextController::isSpellingMarkerAllowed(const SimpleRange& misspellingRange) const

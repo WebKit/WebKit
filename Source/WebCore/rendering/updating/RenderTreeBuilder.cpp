@@ -791,7 +791,7 @@ void RenderTreeBuilder::removeAnonymousWrappersForInlineChildrenIfNeeded(RenderE
         if (!firstChild)
             continue;
         auto isInlineLevelBox = firstChild->isInline();
-        if (!shouldAllChildrenBeInline.hasValue()) {
+        if (!shouldAllChildrenBeInline.has_value()) {
             shouldAllChildrenBeInline = isInlineLevelBox;
             continue;
         }

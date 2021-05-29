@@ -1,3 +1,156 @@
+2021-05-28  Darin Adler  <darin@apple.com>
+
+        Clients of optional should use has_value instead of relying on hasValue macro
+        https://bugs.webkit.org/show_bug.cgi?id=226395
+
+        Reviewed by Chris Dumez.
+
+        In some files we are touching, moved from Optional to std::optional, but doing
+        that consistently in files we are not otherwise modifying is out of scope here.
+
+        In some places, use has_value instead of hasValue. In others, improved further
+        by not using has_value explicitly when it's clearer to do so. Wasn't 100%
+        consistent about that, but did aim to cover 100% of the hasValue call sites.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::create): Don't use hasValue.
+        * Modules/webxr/WebXRFrame.cpp:
+        (WebCore::WebXRFrame::getViewerPose): Ditto.
+        (WebCore::WebXRFrame::getPose): Ditto.
+        * Modules/webxr/WebXRGamepad.cpp:
+        (WebCore::WebXRGamepad::WebXRGamepad): Ditto.
+
+        * Modules/webxr/WebXRInputSource.cpp:
+        (WebCore::WebXRInputSource::requiresInputSourceChange): Use has_value.
+        * bindings/js/DOMPromiseProxy.h:
+        (WebCore::DOMPromiseProxy<IDLType>::isFulfilled const): Ditto.
+        (WebCore::DOMPromiseProxy<IDLUndefined>::isFulfilled const): Ditto.
+        (WebCore::DOMPromiseProxyWithResolveCallback<IDLType>::isFulfilled const): Ditto.
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::readTerminal): Ditto.
+
+        * css/CSSFontFaceSet.cpp:
+        (WebCore::CSSFontFaceSet::addToFacesLookupTable): Removed unneeded double check
+        of optional value. !x and !x.has_value() check the same thing.
+        (WebCore::CSSFontFaceSet::remove): Ditto.
+        (WebCore::CSSFontFaceSet::fontFace): Simplified code with extra local variables
+        to use an idiom that does not use hasValue. Since using *, ->, or value() on an
+        optional already asserts, there is no need to explicitly assert in the caller.
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::GradientStop::isSpecified const): Use has_value.
+
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::CSSSegmentedFontFace::fontRanges): Removed unneeded calls to hasValue.
+
+        * css/FontFace.cpp:
+        (WebCore::FontFace::family const): Use has_value.
+        (WebCore::FontFace::style const): Ditto.
+        (WebCore::FontFace::weight const): Ditto.
+        (WebCore::FontFace::stretch const): Ditto.
+        (WebCore::FontFace::unicodeRange const): Ditto.
+        (WebCore::FontFace::featureSettings const): Ditto.
+        (WebCore::FontFace::display const): Ditto.
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::consumeANPlusB): Ditto.
+        * display/css/DisplayStyle.h: Ditto.
+        * dom/DataTransferItemList.h: Ditto.
+        * dom/Document.cpp:
+        (WebCore::Document::updateHighlightPositions): Ditto.
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::addEventListener): Ditto.
+        * editing/AlternativeTextController.cpp:
+        (WebCore::AlternativeTextController::hasPendingCorrection const): Ditto.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyInlineStyle): Don't call hasValue.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::captionDisplayMode): Ditto.
+        * html/ImageBitmap.h: Ditto.
+
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::setScreenSizeOverride): Use has_value.
+        * layout/LayoutPhase.cpp:
+        (WebCore::Layout::PhaseScope::PhaseScope): Ditto.
+        * layout/formattingContexts/inline/InlineContentBreaker.cpp:
+        (WebCore::Layout::InlineContentBreaker::tryBreakingTextRun const): Ditto.
+        * layout/formattingContexts/inline/InlineLine.h: Ditto.
+        * loader/CrossOriginPreflightResultCache.cpp:
+        (WebCore::parseAccessControlMaxAge): Ditto.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::defaultWheelEventHandler): Ditto.
+        * page/ios/ContentChangeObserver.cpp:
+        (WebCore::ContentChangeObserver::StyleChangeScope::~StyleChangeScope): Ditto.
+        * page/scrolling/ScrollSnapOffsetsInfo.cpp:
+        (WebCore::closestSnapOffsetWithInfoAndAxis): Ditto.
+
+        * platform/ScrollController.cpp:
+        (WebCore::ScrollController::adjustScrollDestination): Don't use hasValue.
+
+        * platform/cocoa/SystemBattery.mm:
+        (WebCore::systemHasBattery): Use has_value.
+        (WebCore::systemHasAC): Use has_value.
+        * platform/graphics/Gradient.h: Ditto.
+        * platform/graphics/ImageSource.h: Ditto.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::wouldTaintOrigin const): Changed idiom to not use hasValue.
+
+        * platform/graphics/gstreamer/GLVideoSinkGStreamer.cpp:
+        (setGLContext): Do not use hasValue.
+        * platform/graphics/gstreamer/GStreamerRegistryScanner.cpp:
+        (WebCore::GStreamerRegistryScanner::ElementFactories::hasElementForMediaType const): Ditto.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::playbackPosition const): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::performTaskAtMediaTime): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::triggerRepaint): Ditto.
+
+        * platform/graphics/gstreamer/eme/CDMProxyThunder.cpp:
+        (WebCore::CDMProxyThunder::getDecryptionSession const): Use has_value.
+        * platform/graphics/gstreamer/eme/CDMThunder.cpp:
+        (WebCore::ParsedResponseMessage::hasType const): Use has_value.
+        (WebCore::CDMInstanceSessionThunder::cdmInstanceThunder const): Use
+        a pointer for the erturn value instead of Optional<&>. This hasn't
+        compiled since we switched to std::optional so I suspect this code is
+        not compiled by EWS or the buildbot.
+        * platform/graphics/gstreamer/eme/CDMThunder.h: Updated to match above.
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::parseDemuxerSrcPadCaps): Use value_or.
+        (WebCore::AppendPipeline::appsinkCapsChanged): Do not use has_value.
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::trackDetected): Ditto.
+
+        * platform/graphics/transforms/TransformState.h: Use has_value.
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (WebCore::supportsPictureInPicture): Ditto.
+        * platform/mac/NSScrollerImpDetails.mm:
+        (WebCore::ScrollerStyle::recommendedScrollerStyle): Ditto.
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::isSystemPreview const): Ditto.
+        * platform/xr/openxr/OpenXRInputSource.cpp:
+        (PlatformXR::OpenXRInputSource::getInputSource const): Ditto.
+        * rendering/EventRegion.h: Ditto.
+
+        * rendering/GridTrackSizingAlgorithm.h: Remove unnecessary assertion, since
+        the * operator already does the assertion.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::canComputePercentageFlexBasis): Use has_value.
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::setExplicitValue): Ditto.
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderThemeIOS::systemFocusRingColor): Ditto.
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::removeAnonymousWrappersForInlineChildrenIfNeeded): Ditto.
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::createSVGTransformFromMatrix): Changed idiom to not
+        call hasValue.
+        * svg/SVGTransform.h: Ditto.
+        * testing/WebFakeXRDevice.cpp:
+        (WebCore::WebFakeXRDevice::setViews): Ditto.
+
 2021-05-29  Alan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Do not include vertical spacing when resolving percent height for table content

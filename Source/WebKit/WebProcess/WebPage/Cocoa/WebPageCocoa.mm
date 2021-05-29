@@ -87,7 +87,7 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 #if PLATFORM(IOS)
     if (parameters.contentFilterExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.contentFilterExtensionHandle);
-    ParentalControlsContentFilter::setHasConsumedSandboxExtension(parameters.contentFilterExtensionHandle.hasValue());
+    ParentalControlsContentFilter::setHasConsumedSandboxExtension(parameters.contentFilterExtensionHandle.has_value());
 
     if (parameters.frontboardServiceExtensionHandle)
         SandboxExtension::consumePermanently(*parameters.frontboardServiceExtensionHandle);

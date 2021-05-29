@@ -3096,7 +3096,7 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent& wheelEv
         return;
 
     auto platformEvent = wheelEvent.underlyingPlatformEvent();
-    bool isUserEvent = platformEvent.hasValue();
+    bool isUserEvent = platformEvent.has_value();
 
     if (isUserEvent && !m_currentWheelEventAllowsScrolling)
         return;

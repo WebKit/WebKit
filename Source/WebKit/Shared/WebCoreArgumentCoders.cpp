@@ -1066,7 +1066,7 @@ static WARN_UNUSED_RETURN bool decodeImage(Decoder& decoder, RefPtr<Image>& imag
 {
     Optional<bool> didCreateGraphicsContext;
     decoder >> didCreateGraphicsContext;
-    if (!didCreateGraphicsContext.hasValue() || !didCreateGraphicsContext.value())
+    if (!didCreateGraphicsContext || !*didCreateGraphicsContext)
         return false;
 
     ShareableBitmap::Handle handle;
@@ -1121,31 +1121,31 @@ Optional<Ref<Font>> ArgumentCoder<Ref<Font>>::decode(Decoder& decoder)
 {
     Optional<Font::Origin> origin;
     decoder >> origin;
-    if (!origin.hasValue())
+    if (!origin)
         return std::nullopt;
 
     Optional<Font::Interstitial> isInterstitial;
     decoder >> isInterstitial;
-    if (!isInterstitial.hasValue())
+    if (!isInterstitial)
         return std::nullopt;
 
     Optional<Font::Visibility> visibility;
     decoder >> visibility;
-    if (!visibility.hasValue())
+    if (!visibility)
         return std::nullopt;
 
     Optional<Font::OrientationFallback> isTextOrientationFallback;
     decoder >> isTextOrientationFallback;
-    if (!isTextOrientationFallback.hasValue())
+    if (!isTextOrientationFallback)
         return std::nullopt;
 
     Optional<RenderingResourceIdentifier> renderingRersouceIdentifier;
     decoder >> renderingRersouceIdentifier;
-    if (!renderingRersouceIdentifier.hasValue())
+    if (!renderingRersouceIdentifier)
         return std::nullopt;
 
     auto platformData = decodePlatformData(decoder);
-    if (!platformData.hasValue())
+    if (!platformData)
         return std::nullopt;
 
     return Font::create(platformData.value(), origin.value(), isInterstitial.value(), visibility.value(), isTextOrientationFallback.value(), renderingRersouceIdentifier);

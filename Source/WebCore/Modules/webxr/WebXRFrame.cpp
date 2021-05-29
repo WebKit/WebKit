@@ -96,7 +96,7 @@ struct WebXRFrame::PopulatedPose {
 };
 
 // https://immersive-web.github.io/webxr/#populate-the-pose
-ExceptionOr<Optional<WebXRFrame::PopulatedPose>> WebXRFrame::populatePose(const Document& document, const WebXRSpace& space, const WebXRSpace& baseSpace)
+ExceptionOr<std::optional<WebXRFrame::PopulatedPose>> WebXRFrame::populatePose(const Document& document, const WebXRSpace& space, const WebXRSpace& baseSpace)
 {
     // 1. If frame’s active boolean is false, throw an InvalidStateError and abort these steps.
     if (!m_active)
@@ -159,7 +159,7 @@ ExceptionOr<RefPtr<WebXRViewerPose>> WebXRFrame::getViewerPose(const Document& d
 
     // 6. If pose is null return null.
     auto populateValue = populatePoseResult.releaseReturnValue();
-    if (!populateValue.hasValue())
+    if (!populateValue)
         return nullptr;
 
     RefPtr<WebXRViewerPose> pose = WebXRViewerPose::create(WebXRRigidTransform::create(populateValue->transform), populateValue->emulatedPosition);
@@ -227,7 +227,7 @@ ExceptionOr<RefPtr<WebXRPose>> WebXRFrame::getPose(const Document& document, con
         return populatePoseResult.releaseException();
 
     auto populateValue = populatePoseResult.releaseReturnValue();
-    if (!populateValue.hasValue())
+    if (!populateValue)
         return nullptr;
 
     // 4. Return pose.

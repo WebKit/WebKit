@@ -53,7 +53,7 @@ public:
     InlineLayoutUnit trimmableTrailingWidth() const { return m_trimmableTrailingContent.width(); }
     bool isTrailingRunFullyTrimmable() const { return m_trimmableTrailingContent.isTrailingRunFullyTrimmable(); }
 
-    Optional<InlineLayoutUnit> trailingSoftHyphenWidth() const { return m_trailingSoftHyphenWidth; }
+    std::optional<InlineLayoutUnit> trailingSoftHyphenWidth() const { return m_trailingSoftHyphenWidth; }
     void addTrailingHyphen(InlineLayoutUnit hyphenLogicalWidth);
 
     void removeCollapsibleContent(InlineLayoutUnit extraHorizontalSpace);
@@ -71,7 +71,7 @@ public:
 
         const Box& layoutBox() const { return *m_layoutBox; }
         const RenderStyle& style() const { return m_layoutBox->style(); }
-        const Optional<LineRun::Text>& textContent() const { return m_textContent; }
+        const std::optional<LineRun::Text>& textContent() const { return m_textContent; }
 
         InlineLayoutUnit logicalWidth() const { return m_logicalWidth; }
         InlineLayoutUnit logicalLeft() const { return m_logicalLeft; }
@@ -122,7 +122,7 @@ public:
         bool m_whitespaceIsExpansionOpportunity { false };
         TrailingWhitespace m_trailingWhitespaceType { TrailingWhitespace::None };
         InlineLayoutUnit m_trailingWhitespaceWidth { 0 };
-        Optional<LineRun::Text> m_textContent;
+        std::optional<LineRun::Text> m_textContent;
         LineRun::Expansion m_expansion;
         unsigned m_expansionOpportunityCount { 0 };
     };
@@ -153,7 +153,7 @@ private:
         InlineLayoutUnit removePartiallyTrimmableContent();
 
         InlineLayoutUnit width() const { return m_fullyTrimmableWidth + m_partiallyTrimmableWidth; }
-        bool isEmpty() const { return !m_firstTrimmableRunIndex.hasValue(); }
+        bool isEmpty() const { return !m_firstTrimmableRunIndex.has_value(); }
         bool isTrailingRunFullyTrimmable() const { return m_hasFullyTrimmableContent; }
         bool isTrailingRunPartiallyTrimmable() const { return m_partiallyTrimmableWidth; }
 
@@ -161,7 +161,7 @@ private:
 
     private:
         RunList& m_runs;
-        Optional<size_t> m_firstTrimmableRunIndex;
+        std::optional<size_t> m_firstTrimmableRunIndex;
         bool m_hasFullyTrimmableContent { false };
         InlineLayoutUnit m_fullyTrimmableWidth { 0 };
         InlineLayoutUnit m_partiallyTrimmableWidth { 0 };
@@ -172,7 +172,7 @@ private:
     TrimmableTrailingContent m_trimmableTrailingContent;
     InlineLayoutUnit m_contentLogicalWidth { 0 };
     size_t m_nonSpanningInlineLevelBoxCount { 0 };
-    Optional<InlineLayoutUnit> m_trailingSoftHyphenWidth { 0 };
+    std::optional<InlineLayoutUnit> m_trailingSoftHyphenWidth { 0 };
 };
 
 inline void Line::TrimmableTrailingContent::reset()

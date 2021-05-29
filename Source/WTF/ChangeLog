@@ -1,3 +1,16 @@
+2021-05-28  Darin Adler  <darin@apple.com>
+
+        Clients of optional should use has_value instead of relying on hasValue macro
+        https://bugs.webkit.org/show_bug.cgi?id=226395
+
+        Reviewed by Chris Dumez.
+
+        * wtf/Hasher.h: Use has_value.
+
+        * wtf/Optional.h: Remove hasValue macro. Not needed any more, but also a bit
+        dangerous because of how widespread the use of hasValue is for things other
+        than WTF::Optional.
+
 2021-05-28  Alex Christensen  <achristensen@webkit.org>
 
         Punycode encode U+0BE6 when not in context of other Tamil characters

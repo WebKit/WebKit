@@ -1,3 +1,13 @@
+2021-05-28  Darin Adler  <darin@apple.com>
+
+        Clients of optional should use has_value instead of relying on hasValue macro
+        https://bugs.webkit.org/show_bug.cgi?id=226395
+
+        Reviewed by Chris Dumez.
+
+        * socket/SessionHostSocket.cpp:
+        (WebDriver::SessionHost::isConnected const): Use has_value.
+
 2021-05-27  Darin Adler  <darin@apple.com>
 
         Next step toward using std::optional directly instead of through WTF::Optional typedef

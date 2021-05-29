@@ -1109,7 +1109,7 @@ Protocol::ErrorStringOr<String> InspectorPageAgent::archive()
 #if !PLATFORM(COCOA)
 Protocol::ErrorStringOr<void> InspectorPageAgent::setScreenSizeOverride(Optional<int>&& width, Optional<int>&& height)
 {
-    if (width.hasValue() != height.hasValue())
+    if (width.has_value() != height.has_value())
         return makeUnexpected("Screen width and height override should be both specified or omitted"_s);
 
     if (width && *width <= 0)

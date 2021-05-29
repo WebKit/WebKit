@@ -302,7 +302,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 
     [coder encodeBool:self.suppressesIncrementalRendering forKey:@"suppressesIncrementalRendering"];
 
-    if (_applicationNameForUserAgent.hasValue())
+    if (_applicationNameForUserAgent)
         [coder encodeObject:self.applicationNameForUserAgent forKey:@"applicationNameForUserAgent"];
 
     [coder encodeBool:self.allowsAirPlayForMediaPlayback forKey:@"allowsAirPlayForMediaPlayback"];

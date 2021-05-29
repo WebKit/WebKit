@@ -131,7 +131,7 @@ public:
 
         // Spin until autoplay status is reported, the run JS API can
         // complete its main loop before the promises in autoplay-check fire.
-        while (!m_autoplayed.hasValue())
+        while (!m_autoplayed.has_value())
             g_main_loop_run(m_mainLoop);
 
         return *m_autoplayed;
@@ -141,7 +141,7 @@ public:
     int m_policyDecisionTypeFilter { 0 };
     bool m_respondToPolicyDecisionAsynchronously { false };
     bool m_haltMainLoopAfterMakingDecision { false };
-    Optional<bool> m_autoplayed;
+    std::optional<bool> m_autoplayed;
     GRefPtr<WebKitPolicyDecision> m_previousPolicyDecision;
     GRefPtr<WebKitWebsitePolicies> m_websitePolicies;
 };

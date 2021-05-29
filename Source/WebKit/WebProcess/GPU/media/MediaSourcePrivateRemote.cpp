@@ -98,11 +98,11 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateRemote::addSourceBuffer(const Co
     if (!m_gpuProcessConnection)
         return status;
 
-    Optional<RemoteSourceBufferIdentifier> remoteSourceBufferIdentifier;
+    std::optional<RemoteSourceBufferIdentifier> remoteSourceBufferIdentifier;
     m_gpuProcessConnection->connection().sendSync(Messages::RemoteMediaSourceProxy::AddSourceBuffer(contentType), Messages::RemoteMediaSourceProxy::AddSourceBuffer::Reply(status, remoteSourceBufferIdentifier), m_identifier);
 
     if (status == AddStatus::Ok) {
-        ASSERT(remoteSourceBufferIdentifier.hasValue());
+        ASSERT(remoteSourceBufferIdentifier.has_value());
         auto newSourceBuffer = SourceBufferPrivateRemote::create(*m_gpuProcessConnection, *remoteSourceBufferIdentifier, *this, *m_mediaPlayerPrivate);
         outPrivate = newSourceBuffer.copyRef();
         m_sourceBuffers.append(WTFMove(newSourceBuffer));

@@ -1,3 +1,20 @@
+2021-05-28  Darin Adler  <darin@apple.com>
+
+        Clients of optional should use has_value instead of relying on hasValue macro
+        https://bugs.webkit.org/show_bug.cgi?id=226395
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebCore/CBORReaderTest.cpp: Use has_value.
+        * TestWebKitAPI/Tests/WebCore/CBORWriterTest.cpp: Ditto.
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitPolicyClient.cpp: Ditto.
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebView.cpp:
+        (AudioRenderingWebViewTest::handleStart): Ditto.
+        * WebKitTestRunner/GeolocationProviderMock.cpp:
+        (WTR::GeolocationProviderMock::setPosition): Ditto.
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView canPerformAction:withSender:]): Ditto.
+
 2021-05-28  Alex Christensen  <achristensen@webkit.org>
 
         Punycode encode U+0BE6 when not in context of other Tamil characters

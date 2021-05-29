@@ -162,7 +162,7 @@ Optional<Device::FrameData::InputSource> OpenXRInputSource::getInputSource(XrSpa
         buttons.append(getButton(type));
 
     // Trigger is mandatory in xr-standard mapping.
-    if (buttons.isEmpty() || !buttons.first().hasValue())
+    if (buttons.isEmpty() || !buttons.first().has_value())
         return std::nullopt;
 
     for (size_t i = 0; i < buttons.size(); ++i) {

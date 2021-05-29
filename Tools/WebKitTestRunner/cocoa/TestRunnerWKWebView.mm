@@ -68,7 +68,7 @@ struct CustomMenuActionInfo {
     RetainPtr<NSNumber> m_stableStateOverride;
     BOOL _isInteractingWithFormControl;
     BOOL _scrollingUpdatesDisabled;
-    Optional<CustomMenuActionInfo> _customMenuActionInfo;
+    std::optional<CustomMenuActionInfo> _customMenuActionInfo;
     RetainPtr<NSArray<NSString *>> _allowedMenuActions;
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<UITapGestureRecognizer> _windowTapGestureRecognizer;
@@ -315,7 +315,7 @@ IGNORE_WARNINGS_END
     BOOL isCustomAction = action == @selector(performCustomAction:);
     BOOL canPerformActionByDefault = [super canPerformAction:action withSender:sender];
     if (isCustomAction)
-        canPerformActionByDefault = _customMenuActionInfo.hasValue();
+        canPerformActionByDefault = _customMenuActionInfo.has_value();
 
     if (canPerformActionByDefault && _allowedMenuActions && sender == UIMenuController.sharedMenuController) {
         BOOL isAllowed = NO;

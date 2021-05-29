@@ -1142,7 +1142,7 @@ static void setPreferenceValue(const String& domain, const String& key, id value
 
 void WebProcess::notifyPreferencesChanged(const String& domain, const String& key, const Optional<String>& encodedValue)
 {
-    if (!encodedValue.hasValue()) {
+    if (!encodedValue) {
         setPreferenceValue(domain, key, nil);
         dispatchSimulatedNotificationsForPreferenceChange(key);
         return;

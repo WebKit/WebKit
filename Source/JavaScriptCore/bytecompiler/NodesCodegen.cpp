@@ -158,7 +158,7 @@ RegisterID* RegExpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
         return nullptr;
 
     auto flags = Yarr::parseFlags(m_flags.string());
-    ASSERT(flags.hasValue());
+    ASSERT(flags);
     RegExp* regExp = RegExp::create(generator.vm(), m_pattern.string(), flags.value());
     if (regExp->isValid())
         return generator.emitNewRegExp(generator.finalDestination(dst), regExp);

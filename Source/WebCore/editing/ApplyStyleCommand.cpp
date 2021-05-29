@@ -600,7 +600,7 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle& style)
     auto textDirection = style.textDirection();
     RefPtr<EditingStyle> styleWithoutEmbedding;
     RefPtr<EditingStyle> embeddingStyle;
-    if (textDirection.hasValue()) {
+    if (textDirection) {
         // Leave alone an ancestor that provides the desired single level embedding, if there is one.
         auto startUnsplitAncestor = splitAncestorsWithUnicodeBidi(start.deprecatedNode(), true, *textDirection);
         auto endUnsplitAncestor = splitAncestorsWithUnicodeBidi(end.deprecatedNode(), false, *textDirection);
@@ -651,7 +651,7 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle& style)
     document().updateLayoutIgnorePendingStylesheets();
 
     RefPtr<EditingStyle> styleToApply = &style;
-    if (textDirection.hasValue()) {
+    if (textDirection) {
         // Avoid applying the unicode-bidi and direction properties beneath ancestors that already have them.
         auto embeddingStartNode = highestEmbeddingAncestor(start.deprecatedNode(), enclosingBlock(start.deprecatedNode()));
         auto embeddingEndNode = highestEmbeddingAncestor(end.deprecatedNode(), enclosingBlock(end.deprecatedNode()));

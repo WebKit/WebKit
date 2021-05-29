@@ -1,3 +1,56 @@
+2021-05-28  Darin Adler  <darin@apple.com>
+
+        Clients of optional should use has_value instead of relying on hasValue macro
+        https://bugs.webkit.org/show_bug.cgi?id=226395
+
+        Reviewed by Chris Dumez.
+
+        * Platform/IPC/ArgumentCoders.h: Use std::optional; there was no hasValue
+        in here and I edited it by mistake, but we want to do this eventually.
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm: Removed using namespace WebCore.
+        (IPC::ArgumentCoder<Ref<WebCore::Font>>::decodePlatformData): Use has_value.
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::getClientSDKVersion): Ditto.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::decodeImage): Changed idiom to not call hasValue.
+        (IPC::ArgumentCoder<Ref<Font>>::decode): Ditto.
+
+        * Shared/mac/MediaFormatReader/MediaFormatReader.cpp:
+        (WebKit::MediaFormatReader::finishParsing): Use has_value.
+        (WebKit::MediaFormatReader::copyProperty): Ditto.
+        (WebKit::MediaFormatReader::copyTrackArray): Ditto.
+
+        * Shared/win/WebCoreArgumentCodersWin.cpp:
+        (IPC::ArgumentCoder<Ref<Font>>::decodePlatformData): Do not call hasValue.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration encodeWithCoder:]): Changed idiom to not use hasValue.
+
+        * UIProcess/API/glib/InputMethodFilter.cpp:
+        (WebKit::InputMethodFilter::setState): Use has_value.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::AutomationCommandError::toProtocolString): Changed idiom to not use hasValue.
+
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::determineDataOwner const): Use has_value.
+
+        * UIProcess/Inspector/socket/RemoteInspectorClient.cpp:
+        (WebKit::RemoteInspectorClient::sendWebInspectorEvent): Changed idiom to not use hasValue.
+        * UIProcess/glib/UserMediaPermissionRequestManagerProxyGLib.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::platformValidateUserMediaRequestConstraints): Ditto.
+
+        * WebProcess/GPU/media/MediaSourcePrivateRemote.cpp:
+        (WebKit::MediaSourcePrivateRemote::addSourceBuffer): Use has_value.
+        * WebProcess/WebPage/Cocoa/WebPageCocoa.mm:
+        (WebKit::WebPage::platformDidReceiveLoadParameters): Ditto.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::notifyPreferencesChanged): Changed idiom to not
+        call hasValue.
+
 2021-05-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Web process terminates when attempting to log in on bankid.no

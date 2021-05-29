@@ -93,7 +93,7 @@ bool WebXRInputSource::requiresInputSourceChange(const InputSource& source)
     return m_source.handeness != source.handeness
         || m_source.targetRayMode != source.targetRayMode
         || m_source.profiles != source.profiles
-        || static_cast<bool>(m_gripSpace) != source.gripOrigin.hasValue();
+        || static_cast<bool>(m_gripSpace) != source.gripOrigin.has_value();
 }
 
 void WebXRInputSource::disconnect()

@@ -88,7 +88,7 @@ public:
 
 #if ENABLE(EDITABLE_REGION)
     void ensureEditableRegion();
-    bool hasEditableRegion() const { return m_editableRegion.hasValue(); }
+    bool hasEditableRegion() const { return m_editableRegion.has_value(); }
     WEBCORE_EXPORT bool containsEditableElementsInRect(const IntRect&) const;
     Vector<IntRect, 1> rectsForEditableElements() const { return m_editableRegion ? m_editableRegion->rects() : Vector<IntRect, 1> { }; }
 #endif
