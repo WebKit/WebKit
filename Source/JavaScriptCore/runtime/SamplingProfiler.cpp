@@ -305,7 +305,7 @@ SamplingProfiler::~SamplingProfiler()
 {
 }
 
-void SamplingProfiler::createThreadIfNecessary(const AbstractLocker&)
+void SamplingProfiler::createThreadIfNecessary()
 {
     ASSERT(m_lock.isLocked());
 
@@ -328,7 +328,7 @@ void SamplingProfiler::timerLoop()
                 return;
 
             if (!m_isPaused && m_jscExecutionThread)
-                takeSample(locker, stackTraceProcessingTime);
+                takeSample(stackTraceProcessingTime);
 
             m_lastTime = m_stopwatch->elapsedTime();
         }
@@ -343,7 +343,7 @@ void SamplingProfiler::timerLoop()
     }
 }
 
-void SamplingProfiler::takeSample(const AbstractLocker&, Seconds& stackTraceProcessingTime)
+void SamplingProfiler::takeSample(Seconds& stackTraceProcessingTime)
 {
     ASSERT(m_lock.isLocked());
     if (m_vm.entryScope) {
@@ -458,7 +458,7 @@ static ALWAYS_INLINE BytecodeIndex tryGetBytecodeIndex(unsigned llintPC, CodeBlo
     return BytecodeIndex();
 }
 
-void SamplingProfiler::processUnverifiedStackTraces(const AbstractLocker&)
+void SamplingProfiler::processUnverifiedStackTraces()
 {
     // This function needs to be called from the JSC execution thread.
     RELEASE_ASSERT(m_lock.isLocked());
@@ -485,6 +485,7 @@ void SamplingProfiler::processUnverifiedStackTraces(const AbstractLocker&)
         };
 
         auto appendCodeBlock = [&] (CodeBlock* codeBlock, JITType jitType, BytecodeIndex bytecodeIndex) {
+            assertIsHeld(m_lock);
             stackTrace.frames.append(StackFrame(codeBlock->ownerExecutable()));
             m_liveCellPointers.add(codeBlock->ownerExecutable());
             populateCodeLocation(codeBlock, jitType, bytecodeIndex, stackTrace.frames.last().semanticLocation);
@@ -495,6 +496,7 @@ void SamplingProfiler::processUnverifiedStackTraces(const AbstractLocker&)
         };
 
         auto storeCalleeIntoLastFrame = [&] (UnprocessedStackFrame& unprocessedStackFrame) {
+            assertIsHeld(m_lock);
             // Set the callee if it's a valid GC object.
             CalleeBits calleeBits = unprocessedStackFrame.unverifiedCallee;
             StackFrame& stackFrame = stackTrace.frames.last();
@@ -527,6 +529,7 @@ void SamplingProfiler::processUnverifiedStackTraces(const AbstractLocker&)
             };
 
             auto addCallee = [&] (JSObject* callee) {
+                assertIsHeld(m_lock);
                 stackFrame.callee = callee;
                 m_liveCellPointers.add(callee);
             };
@@ -559,6 +562,7 @@ void SamplingProfiler::processUnverifiedStackTraces(const AbstractLocker&)
         };
 
         auto appendCodeOrigin = [&] (CodeBlock* machineCodeBlock, CodeOrigin origin) {
+            assertIsHeld(m_lock);
             size_t startIndex = stackTrace.frames.size(); // We want to change stack traces that we're about to append.
 
             CodeOrigin machineOrigin;
@@ -677,24 +681,24 @@ void SamplingProfiler::shutdown()
 void SamplingProfiler::start()
 {
     Locker locker { m_lock };
-    start(locker);
+    startWithLock();
 }
 
-void SamplingProfiler::start(const AbstractLocker& locker)
+void SamplingProfiler::startWithLock()
 {
     ASSERT(m_lock.isLocked());
     m_isPaused = false;
-    createThreadIfNecessary(locker);
+    createThreadIfNecessary();
 }
 
-void SamplingProfiler::pause(const AbstractLocker&)
+void SamplingProfiler::pause()
 {
     ASSERT(m_lock.isLocked());
     m_isPaused = true;
     reportStats();
 }
 
-void SamplingProfiler::noticeCurrentThreadAsJSCExecutionThread(const AbstractLocker&)
+void SamplingProfiler::noticeCurrentThreadAsJSCExecutionThreadWithLock()
 {
     ASSERT(m_lock.isLocked());
     m_jscExecutionThread = &Thread::current();
@@ -703,25 +707,25 @@ void SamplingProfiler::noticeCurrentThreadAsJSCExecutionThread(const AbstractLoc
 void SamplingProfiler::noticeCurrentThreadAsJSCExecutionThread()
 {
     Locker locker { m_lock };
-    noticeCurrentThreadAsJSCExecutionThread(locker);
+    noticeCurrentThreadAsJSCExecutionThreadWithLock();
 }
 
 void SamplingProfiler::noticeJSLockAcquisition()
 {
     Locker locker { m_lock };
-    noticeCurrentThreadAsJSCExecutionThread(locker);
+    noticeCurrentThreadAsJSCExecutionThreadWithLock();
 }
 
 void SamplingProfiler::noticeVMEntry()
 {
     Locker locker { m_lock };
     ASSERT(m_vm.entryScope);
-    noticeCurrentThreadAsJSCExecutionThread(locker);
+    noticeCurrentThreadAsJSCExecutionThreadWithLock();
     m_lastTime = m_stopwatch->elapsedTime();
-    createThreadIfNecessary(locker);
+    createThreadIfNecessary();
 }
 
-void SamplingProfiler::clearData(const AbstractLocker&)
+void SamplingProfiler::clearData()
 {
     ASSERT(m_lock.isLocked());
     m_stackTraces.clear();
@@ -934,16 +938,16 @@ String SamplingProfiler::StackFrame::url()
     return String();
 }
 
-Vector<SamplingProfiler::StackTrace> SamplingProfiler::releaseStackTraces(const AbstractLocker& locker)
+Vector<SamplingProfiler::StackTrace> SamplingProfiler::releaseStackTraces()
 {
     ASSERT(m_lock.isLocked());
     {
         HeapIterationScope heapIterationScope(m_vm.heap);
-        processUnverifiedStackTraces(locker);
+        processUnverifiedStackTraces();
     }
 
     Vector<StackTrace> result(WTFMove(m_stackTraces));
-    clearData(locker);
+    clearData();
     return result;
 }
 
@@ -954,7 +958,7 @@ String SamplingProfiler::stackTracesAsJSON()
 
     {
         HeapIterationScope heapIterationScope(m_vm.heap);
-        processUnverifiedStackTraces(locker);
+        processUnverifiedStackTraces();
     }
 
     StringBuilder json;
@@ -980,7 +984,7 @@ String SamplingProfiler::stackTracesAsJSON()
 
     json.append(']');
 
-    clearData(locker);
+    clearData();
 
     return json.toString();
 }
@@ -1031,7 +1035,7 @@ void SamplingProfiler::reportTopFunctions(PrintStream& out)
 
     {
         HeapIterationScope heapIterationScope(m_vm.heap);
-        processUnverifiedStackTraces(locker);
+        processUnverifiedStackTraces();
     }
 
     size_t totalSamples = 0;
@@ -1092,7 +1096,7 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
 
     {
         HeapIterationScope heapIterationScope(m_vm.heap);
-        processUnverifiedStackTraces(locker);
+        processUnverifiedStackTraces();
     }
 
     size_t totalSamples = 0;

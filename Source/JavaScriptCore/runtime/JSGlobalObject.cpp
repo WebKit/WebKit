@@ -384,7 +384,7 @@ JSC_DEFINE_HOST_FUNCTION(disableSamplingProfiler, (JSGlobalObject* globalObject,
 
     {
         Locker locker { profiler->getLock() };
-        profiler->pause(locker);
+        profiler->pause();
     }
 
     return JSValue::encode(jsUndefined());

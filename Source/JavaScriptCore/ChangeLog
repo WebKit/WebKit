@@ -1,5 +1,44 @@
 2021-05-29  Chris Dumez  <cdumez@apple.com>
 
+        Stop using UncheckedLock in JSC::SamplingProfiler
+        https://bugs.webkit.org/show_bug.cgi?id=226414
+
+        Reviewed by Darin Adler.
+
+        Stop using UncheckedLock in JSC::SamplingProfiler as it is being phased out in favor of Lock,
+        which supports clang thread safety analysis.
+
+        * heap/Heap.cpp:
+        (JSC::visitSamplingProfiler):
+        * inspector/agents/InspectorScriptProfilerAgent.cpp:
+        (Inspector::InspectorScriptProfilerAgent::startTracking):
+        (Inspector::InspectorScriptProfilerAgent::trackingComplete):
+        (Inspector::InspectorScriptProfilerAgent::stopSamplingWhenDisconnecting):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::createThreadIfNecessary):
+        (JSC::SamplingProfiler::timerLoop):
+        (JSC::SamplingProfiler::takeSample):
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+        (JSC::SamplingProfiler::start):
+        (JSC::SamplingProfiler::startWithLock):
+        (JSC::SamplingProfiler::pause):
+        (JSC::SamplingProfiler::noticeCurrentThreadAsJSCExecutionThreadWithLock):
+        (JSC::SamplingProfiler::noticeCurrentThreadAsJSCExecutionThread):
+        (JSC::SamplingProfiler::noticeJSLockAcquisition):
+        (JSC::SamplingProfiler::noticeVMEntry):
+        (JSC::SamplingProfiler::clearData):
+        (JSC::SamplingProfiler::releaseStackTraces):
+        (JSC::SamplingProfiler::stackTracesAsJSON):
+        (JSC::SamplingProfiler::reportTopFunctions):
+        (JSC::SamplingProfiler::reportTopBytecodes):
+        * runtime/SamplingProfiler.h:
+        (JSC::SamplingProfiler::WTF_RETURNS_LOCK):
+        (JSC::SamplingProfiler::WTF_REQUIRES_LOCK):
+
+2021-05-29  Chris Dumez  <cdumez@apple.com>
+
         Stop using UncheckedLock in JSC::dumpJITMemory()
         https://bugs.webkit.org/show_bug.cgi?id=226413
 

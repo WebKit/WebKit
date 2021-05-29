@@ -2693,7 +2693,7 @@ static ALWAYS_INLINE void visitSamplingProfiler(VM& vm, Visitor& visitor)
     SamplingProfiler* samplingProfiler = vm.samplingProfiler();
     if (UNLIKELY(samplingProfiler)) {
         Locker locker { samplingProfiler->getLock() };
-        samplingProfiler->processUnverifiedStackTraces(locker);
+        samplingProfiler->processUnverifiedStackTraces();
         samplingProfiler->visit(visitor);
         if (Options::logGC() == GCLogging::Verbose)
             dataLog("Sampling Profiler data:\n", visitor);
