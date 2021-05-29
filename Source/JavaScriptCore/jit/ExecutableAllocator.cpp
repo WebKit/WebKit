@@ -1034,67 +1034,72 @@ void dumpJITMemory(const void* dst, const void* src, size_t size)
     RELEASE_ASSERT(Options::dumpJITMemoryPath());
 
 #if OS(DARWIN)
-    static int fd = -1;
+    static Lock dumpJITMemoryLock;
+    static int fd WTF_GUARDED_BY_LOCK(dumpJITMemoryLock) = -1;
     static uint8_t* buffer;
     static constexpr size_t bufferSize = fixedExecutableMemoryPoolSize;
-    static size_t offset = 0;
-    static UncheckedLock dumpJITMemoryLock;
-    static bool needsToFlush = false;
-    static auto flush = [](const AbstractLocker&) {
-        if (fd == -1) {
-            String path = Options::dumpJITMemoryPath();
-            path = path.replace("%pid", String::number(getCurrentProcessID()));
-            fd = open(FileSystem::fileSystemRepresentation(path).data(), O_CREAT | O_TRUNC | O_APPEND | O_WRONLY | O_EXLOCK | O_NONBLOCK, 0666);
-            RELEASE_ASSERT(fd != -1);
+    static size_t offset WTF_GUARDED_BY_LOCK(dumpJITMemoryLock) = 0;
+    static bool needsToFlush WTF_GUARDED_BY_LOCK(dumpJITMemoryLock) = false;
+    static LazyNeverDestroyed<Ref<WorkQueue>> flushQueue;
+    struct DumpJIT {
+        static void flush() WTF_REQUIRES_LOCK(dumpJITMemoryLock)
+        {
+            if (fd == -1) {
+                String path = Options::dumpJITMemoryPath();
+                path = path.replace("%pid", String::number(getCurrentProcessID()));
+                fd = open(FileSystem::fileSystemRepresentation(path).data(), O_CREAT | O_TRUNC | O_APPEND | O_WRONLY | O_EXLOCK | O_NONBLOCK, 0666);
+                RELEASE_ASSERT(fd != -1);
+            }
+            ::write(fd, buffer, offset);
+            offset = 0;
+            needsToFlush = false;
         }
-        write(fd, buffer, offset);
-        offset = 0;
-        needsToFlush = false;
+
+        static void enqueueFlush() WTF_REQUIRES_LOCK(dumpJITMemoryLock)
+        {
+            if (needsToFlush)
+                return;
+
+            needsToFlush = true;
+            flushQueue.get()->dispatchAfter(Seconds(Options::dumpJITMemoryFlushInterval()), [] {
+                Locker locker { dumpJITMemoryLock };
+                if (!needsToFlush)
+                    return;
+                flush();
+            });
+        }
+
+        static void write(const void* src, size_t size) WTF_REQUIRES_LOCK(dumpJITMemoryLock)
+        {
+            if (UNLIKELY(offset + size > bufferSize))
+                flush();
+            memcpy(buffer + offset, src, size);
+            offset += size;
+            enqueueFlush();
+        }
     };
 
     static std::once_flag once;
-    static LazyNeverDestroyed<Ref<WorkQueue>> flushQueue;
     std::call_once(once, [] {
         buffer = bitwise_cast<uint8_t*>(malloc(bufferSize));
         flushQueue.construct(WorkQueue::create("jsc.dumpJITMemory.queue", WorkQueue::Type::Serial, WorkQueue::QOS::Background));
         std::atexit([] {
             Locker locker { dumpJITMemoryLock };
-            flush(locker);
+            DumpJIT::flush();
             close(fd);
             fd = -1;
         });
     });
-
-    static auto enqueueFlush = [](const AbstractLocker&) {
-        if (needsToFlush)
-            return;
-
-        needsToFlush = true;
-        flushQueue.get()->dispatchAfter(Seconds(Options::dumpJITMemoryFlushInterval()), [] {
-            Locker locker { dumpJITMemoryLock };
-            if (!needsToFlush)
-                return;
-            flush(locker);
-        });
-    };
-
-    static auto write = [](const AbstractLocker& locker, const void* src, size_t size) {
-        if (UNLIKELY(offset + size > bufferSize))
-            flush(locker);
-        memcpy(buffer + offset, src, size);
-        offset += size;
-        enqueueFlush(locker);
-    };
 
     Locker locker { dumpJITMemoryLock };
     uint64_t time = mach_absolute_time();
     uint64_t dst64 = bitwise_cast<uintptr_t>(dst);
     uint64_t size64 = size;
     TraceScope(DumpJITMemoryStart, DumpJITMemoryStop, time, dst64, size64);
-    write(locker, &time, sizeof(time));
-    write(locker, &dst64, sizeof(dst64));
-    write(locker, &size64, sizeof(size64));
-    write(locker, src, size);
+    DumpJIT::write(&time, sizeof(time));
+    DumpJIT::write(&dst64, sizeof(dst64));
+    DumpJIT::write(&size64, sizeof(size64));
+    DumpJIT::write(src, size);
 #else
     UNUSED_PARAM(dst);
     UNUSED_PARAM(src);

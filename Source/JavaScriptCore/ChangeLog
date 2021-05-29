@@ -1,5 +1,18 @@
 2021-05-29  Chris Dumez  <cdumez@apple.com>
 
+        Stop using UncheckedLock in JSC::dumpJITMemory()
+        https://bugs.webkit.org/show_bug.cgi?id=226413
+
+        Reviewed by Darin Adler.
+
+        Stop using UncheckedLock in JSC::dumpJITMemory() as it is being phased out in favor of Lock,
+        which supports Clang thread safety analysis.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::dumpJITMemory):
+
+2021-05-29  Chris Dumez  <cdumez@apple.com>
+
         Stop using UncheckedLock in JSC::WasmCalleeRegistry
         https://bugs.webkit.org/show_bug.cgi?id=226412
 
