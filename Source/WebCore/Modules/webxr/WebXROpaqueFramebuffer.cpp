@@ -104,12 +104,12 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
         gl.bindFramebuffer(GL::FRAMEBUFFER, boundFBO);
     });
 
-    gl.bindFramebuffer(GL::FRAMEBUFFER, m_framebuffer->object());
+    gl.bindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_framebuffer->object());
     // https://immersive-web.github.io/webxr/#opaque-framebuffer
-    // The buffers attached to an opaque framebuffer MUST be cleared to the values in the table below when first created,
+    // The buffers attached to an opaque framebuffer MUST be cleared to the values in the provided table when first created,
     // or prior to the processing of each XR animation frame.
-    std::array<const GCGLenum, 3> attachments = { GL::COLOR_ATTACHMENT0, GL::STENCIL_ATTACHMENT, GL::DEPTH_ATTACHMENT };
-    gl.invalidateFramebuffer(GL::FRAMEBUFFER, makeGCGLSpan(attachments.data(), attachments.size()));
+    // FIXME: Actually do the clearing (not using invalidateFramebuffer). This will have to be done after we've attached
+    // the textures/renderbuffers.
 
 #if USE(OPENGL_ES)
     auto& extensions = reinterpret_cast<ExtensionsGLOpenGLES&>(gl.getExtensions());

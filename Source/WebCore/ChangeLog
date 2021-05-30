@@ -1,5 +1,27 @@
 2021-05-30  Dean Jackson  <dino@apple.com>
 
+        [WebXR] invalidateFramebuffer is not the same as clearing contents
+        https://bugs.webkit.org/show_bug.cgi?id=226422
+        <rdar://problem/78652351>
+
+        Reviewed by Sam Weinig.
+
+        The WebXR specification says that buffer contents must be cleared
+        before each frame. The code currently does glInvalidateFramebuffer
+        to wipe the attachments, which isn't the same thing (and produces
+        an error since it tries to invalidate attachments that don't exist).
+
+        Remove the call to invalidateFramebuffer for the moment since it
+        causes a glError. Add a FIXME to replace it with explicit calls
+        to glClear. I expect most content does this already, so it is unlikely
+        anything will break.
+
+        * Modules/webxr/WebXROpaqueFramebuffer.cpp:
+        (WebCore::WebXROpaqueFramebuffer::startFrame): Remove the call to
+        invalidateFramebuffer.
+
+2021-05-30  Dean Jackson  <dino@apple.com>
+
         [WebXR] Recommended framebuffer width incorrectly scaled
         https://bugs.webkit.org/show_bug.cgi?id=226408
         <rdar://problem/78638309>
