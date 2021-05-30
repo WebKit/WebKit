@@ -2863,7 +2863,7 @@ bool MediaPlayerPrivateGStreamer::performTaskAtMediaTime(Function<void()>&& task
 
     Optional<Function<void()>> taskToSchedule;
     {
-        auto taskAtMediaTimeScheduler = holdLock(m_TaskAtMediaTimeSchedulerDataMutex);
+        DataMutexLocker taskAtMediaTimeScheduler { m_TaskAtMediaTimeSchedulerDataMutex };
         taskAtMediaTimeScheduler->setTask(WTFMove(task), time,
             m_playbackRate >= 0 ? TaskAtMediaTimeScheduler::Forward : TaskAtMediaTimeScheduler::Backward);
         taskToSchedule = taskAtMediaTimeScheduler->checkTaskForScheduling(currentTime);
@@ -3124,7 +3124,8 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GstSample* sample)
     if (buffer && GST_BUFFER_PTS_IS_VALID(buffer)) {
         // Heuristic to avoid asking for playbackPosition() from a non-main thread.
         MediaTime currentTime = MediaTime(gst_segment_to_stream_time(gst_sample_get_segment(sample), GST_FORMAT_TIME, GST_BUFFER_PTS(buffer)), GST_SECOND);
-        if (auto task = holdLock(m_TaskAtMediaTimeSchedulerDataMutex)->checkTaskForScheduling(currentTime))
+        DataMutexLocker taskAtMediaTimeScheduler { m_TaskAtMediaTimeSchedulerDataMutex };
+        if (auto task = taskAtMediaTimeScheduler->checkTaskForScheduling(currentTime))
             RunLoop::main().dispatch(WTFMove(task.value()));
     }
 

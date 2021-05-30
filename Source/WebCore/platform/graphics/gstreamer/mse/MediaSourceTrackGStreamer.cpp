@@ -37,8 +37,6 @@
 GST_DEBUG_CATEGORY_EXTERN(webkit_mse_debug);
 #define GST_CAT_DEFAULT webkit_mse_debug
 
-using WTF::DataMutex;
-
 namespace WebCore {
 
 MediaSourceTrackGStreamer::MediaSourceTrackGStreamer(TrackPrivateBaseGStreamer::TrackType type, AtomString trackId, GRefPtr<GstCaps>&& initialCaps)
@@ -61,28 +59,28 @@ Ref<MediaSourceTrackGStreamer> MediaSourceTrackGStreamer::create(TrackPrivateBas
 bool MediaSourceTrackGStreamer::isReadyForMoreSamples()
 {
     ASSERT(isMainThread());
-    auto queue = holdLock(m_queueDataMutex);
+    DataMutexLocker queue { m_queueDataMutex };
     return !queue->isFull();
 }
 
 void MediaSourceTrackGStreamer::notifyWhenReadyForMoreSamples(TrackQueue::LowLevelHandler&& handler)
 {
     ASSERT(isMainThread());
-    auto queue = holdLock(m_queueDataMutex);
+    DataMutexLocker queue { m_queueDataMutex };
     queue->notifyWhenLowLevel(WTFMove(handler));
 }
 
 void MediaSourceTrackGStreamer::enqueueObject(GRefPtr<GstMiniObject>&& object)
 {
     ASSERT(isMainThread());
-    auto queue = holdLock(m_queueDataMutex);
+    DataMutexLocker queue { m_queueDataMutex };
     queue->enqueueObject(WTFMove(object));
 }
 
 void MediaSourceTrackGStreamer::clearQueue()
 {
     ASSERT(isMainThread());
-    auto queue = holdLock(m_queueDataMutex);
+    DataMutexLocker queue { m_queueDataMutex };
     queue->clear();
 }
 

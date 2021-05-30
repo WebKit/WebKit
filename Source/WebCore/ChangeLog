@@ -1,3 +1,49 @@
+2021-05-29  Chris Dumez  <cdumez@apple.com>
+
+        Adopt clang thread safety annotations in WTF::DataMutex
+        https://bugs.webkit.org/show_bug.cgi?id=226431
+
+        Reviewed by Darin Adler.
+
+        Update code base due to DataMutex API changes.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::performTaskAtMediaTime):
+        (WebCore::MediaPlayerPrivateGStreamer::triggerRepaint):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcConstructed):
+        (webKitWebSrcGetProperty):
+        (webKitWebSrcSetContext):
+        (webKitWebSrcCreate):
+        (webKitWebSrcMakeRequest):
+        (webKitWebSrcStop):
+        (webKitWebSrcGetSize):
+        (webKitWebSrcIsSeekable):
+        (webKitWebSrcDoSeek):
+        (webKitWebSrcQuery):
+        (webKitWebSrcUnLock):
+        (webKitWebSrcUnLockStop):
+        (webKitWebSrcSetMediaPlayer):
+        (webKitSrcPassedCORSAccessCheck):
+        (CachedResourceStreamingClient::responseReceived):
+        (CachedResourceStreamingClient::dataReceived):
+        (CachedResourceStreamingClient::accessControlCheckFailed):
+        (CachedResourceStreamingClient::loadFailed):
+        (CachedResourceStreamingClient::loadFinished):
+        (webKitSrcWouldTaintOrigin):
+        * platform/graphics/gstreamer/mse/MediaSourceTrackGStreamer.cpp:
+        (WebCore::MediaSourceTrackGStreamer::isReadyForMoreSamples):
+        (WebCore::MediaSourceTrackGStreamer::notifyWhenReadyForMoreSamples):
+        (WebCore::MediaSourceTrackGStreamer::enqueueObject):
+        (WebCore::MediaSourceTrackGStreamer::clearQueue):
+        * platform/graphics/gstreamer/mse/MediaSourceTrackGStreamer.h:
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp:
+        (webKitMediaSrcActivateMode):
+        (webKitMediaSrcPadLinked):
+        (webKitMediaSrcLoop):
+        (webKitMediaSrcStreamFlush):
+
 2021-05-29  Sam Weinig  <weinig@apple.com>
 
         Split calc() related files into 1-class per file structure

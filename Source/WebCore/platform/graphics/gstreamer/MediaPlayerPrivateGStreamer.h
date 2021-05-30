@@ -565,7 +565,7 @@ private:
     // This is set to true if no videoflip element has been added to the pipeline.
     bool m_shouldHandleOrientationTags { false };
 
-    WTF::DataMutex<TaskAtMediaTimeScheduler> m_TaskAtMediaTimeSchedulerDataMutex;
+    DataMutex<TaskAtMediaTimeScheduler> m_TaskAtMediaTimeSchedulerDataMutex;
 
 private:
 #if USE(WPE_VIDEO_PLANE_DISPLAY_DMABUF)

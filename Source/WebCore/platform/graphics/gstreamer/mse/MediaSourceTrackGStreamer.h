@@ -47,7 +47,7 @@ public:
     TrackPrivateBaseGStreamer::TrackType type() const { return m_type; }
     AtomString trackId() const { return m_trackId; }
     GRefPtr<GstCaps>& initialCaps() { return m_initialCaps; }
-    WTF::DataMutex<TrackQueue>& queueDataMutex() { return m_queueDataMutex; }
+    DataMutex<TrackQueue>& queueDataMutex() { return m_queueDataMutex; }
 
     bool isReadyForMoreSamples();
 
@@ -69,7 +69,7 @@ private:
     TrackPrivateBaseGStreamer::TrackType m_type;
     AtomString m_trackId;
     GRefPtr<GstCaps> m_initialCaps;
-    WTF::DataMutex<TrackQueue> m_queueDataMutex;
+    DataMutex<TrackQueue> m_queueDataMutex;
 
     bool m_isRemoved { false };
 };

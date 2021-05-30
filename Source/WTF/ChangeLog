@@ -1,3 +1,16 @@
+2021-05-29  Chris Dumez  <cdumez@apple.com>
+
+        Adopt clang thread safety annotations in WTF::DataMutex
+        https://bugs.webkit.org/show_bug.cgi?id=226431
+
+        Reviewed by Darin Adler.
+
+        Adopt clang thread safety annotations in WTF::DataMutex. This allows us to
+        stop using UncheckedCondition in a few places.
+
+        * wtf/DataMutex.h:
+        (WTF::DataMutex::DataMutex):
+
 2021-05-28  Darin Adler  <darin@apple.com>
 
         Clients of optional should use has_value instead of relying on hasValue macro

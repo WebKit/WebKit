@@ -40,55 +40,9 @@ namespace WTF {
 #define DATA_MUTEX_CHECK(expr)
 #endif
 
-template<typename LockType>
-class OwnerAwareLockAdapter {
-public:
-    void lock()
-    {
-        DATA_MUTEX_CHECK(m_owner != &Thread::current()); // Thread attempted recursive lock (unsupported).
-        m_lock.lock();
-#if ENABLE_DATA_MUTEX_CHECKS
-        ASSERT(!m_owner);
-        m_owner = &Thread::current();
-#endif
-    }
+template <typename T> class DataMutexLocker;
 
-    void unlock()
-    {
-#if ENABLE_DATA_MUTEX_CHECKS
-        m_owner = nullptr;
-#endif
-        m_lock.unlock();
-    }
-
-    bool tryLock()
-    {
-        DATA_MUTEX_CHECK(m_owner != &Thread::current()); // Thread attempted recursive lock (unsupported).
-        if (!m_lock.tryLock())
-            return false;
-
-#if ENABLE_DATA_MUTEX_CHECKS
-        ASSERT(!m_owner);
-        m_owner = &Thread::current();
-#endif
-        return true;
-    }
-
-    bool isLocked() const
-    {
-        return m_lock.isLocked();
-    }
-
-private:
-#if ENABLE_DATA_MUTEX_CHECKS
-    Thread* m_owner { nullptr }; // Use Thread* instead of RefPtr<Thread> since m_owner thread is always alive while m_owner is set.
-#endif
-    LockType m_lock;
-};
-
-using OwnerAwareLock = OwnerAwareLockAdapter<Lock>;
-
-template<typename T, typename LockType = OwnerAwareLock>
+template<typename T>
 class DataMutex {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(DataMutex);
@@ -98,61 +52,74 @@ public:
         : m_data(std::forward<Args>(args)...)
     { }
 
-    class LockedWrapper {
-    public:
-        explicit LockedWrapper(DataMutex& dataMutex)
-            : m_mutex(dataMutex.m_mutex)
-            , m_lockHolder(dataMutex.m_mutex)
-            , m_data(dataMutex.m_data)
-        { }
-
-        T* operator->()
-        {
-            DATA_MUTEX_CHECK(m_mutex.isLocked());
-            return &m_data;
-        }
-
-        T& operator*()
-        {
-            DATA_MUTEX_CHECK(m_mutex.isLocked());
-            return m_data;
-        }
-
-        LockType& mutex()
-        {
-            return m_mutex;
-        }
-
-        Locker<LockType>& lockHolder()
-        {
-            return m_lockHolder;
-        }
-
-        // Used to avoid excessive brace scoping when only small parts of the code need to be run unlocked.
-        // Please be mindful that accessing the wrapped data from the callback is unsafe and will fail on assertions.
-        // It's helpful to use a minimal lambda capture to be conscious of what data you're having access to in these sections.
-        void runUnlocked(WTF::Function<void()> callback)
-        {
-            m_mutex.unlock();
-            callback();
-            m_mutex.lock();
-        }
-
-    private:
-        LockType& m_mutex;
-        Locker<LockType> m_lockHolder;
-        T& m_data;
-    };
-
 private:
-    LockType m_mutex;
-    T m_data;
+    friend class DataMutexLocker<T>;
+
+    Lock m_mutex;
+    T m_data WTF_GUARDED_BY_LOCK(m_mutex);
 };
 
-template<typename T>
-typename DataMutex<T>::LockedWrapper holdLock(DataMutex<T>& dataMutex)
-{
-    return typename DataMutex<T>::LockedWrapper(dataMutex);
-}
+template <typename T>
+class WTF_CAPABILITY_SCOPED_LOCK DataMutexLocker {
+public:
+    explicit DataMutexLocker(DataMutex<T>& dataMutex) WTF_ACQUIRES_LOCK(m_dataMutex.m_mutex)
+        : m_dataMutex(dataMutex)
+    {
+        DATA_MUTEX_CHECK(!mutex().isHeld());
+        mutex().lock();
+        m_isLocked = true;
+    }
+
+    ~DataMutexLocker() WTF_RELEASES_LOCK(m_dataMutex.m_mutex)
+    {
+        if (m_isLocked)
+            mutex().unlock();
+    }
+
+    T* operator->()
+    {
+        DATA_MUTEX_CHECK(mutex().isHeld());
+        assertIsHeld(m_dataMutex.m_mutex);
+        return &m_dataMutex.m_data;
+    }
+
+    T& operator*()
+    {
+        DATA_MUTEX_CHECK(mutex().isHeld());
+        assertIsHeld(m_dataMutex.m_mutex);
+        return m_dataMutex.m_data;
+    }
+
+    Lock& mutex() WTF_RETURNS_LOCK(m_dataMutex.m_mutex)
+    {
+        return m_dataMutex.m_mutex;
+    }
+
+    void unlockEarly() WTF_RELEASES_LOCK(m_dataMutex.m_mutex)
+    {
+        DATA_MUTEX_CHECK(mutex().isHeld());
+        m_isLocked = false;
+        mutex().unlock();
+    }
+
+    // Used to avoid excessive brace scoping when only small parts of the code need to be run unlocked.
+    // Please be mindful that accessing the wrapped data from the callback is unsafe and will fail on assertions.
+    // It's helpful to use a minimal lambda capture to be conscious of what data you're having access to in these sections.
+    void runUnlocked(const Function<void()>& callback)
+    {
+        DATA_MUTEX_CHECK(mutex().isHeld());
+        assertIsHeld(m_dataMutex.m_mutex);
+        mutex().unlock();
+        callback();
+        mutex().lock();
+    }
+
+private:
+    DataMutex<T>& m_dataMutex;
+    bool m_isLocked { false };
+};
 
 } // namespace WTF
+
+using WTF::DataMutex;
+using WTF::DataMutexLocker;
