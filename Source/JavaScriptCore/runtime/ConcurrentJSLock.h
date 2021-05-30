@@ -32,8 +32,8 @@
 
 namespace JSC {
 
-using ConcurrentJSLock = UncheckedLock;
-using ConcurrentJSLockerImpl = UncheckedLockHolder;
+using ConcurrentJSLock = Lock;
+using ConcurrentJSLockerImpl = LockHolder;
 
 static_assert(sizeof(ConcurrentJSLock) == 1, "Regardless of status of concurrent JS flag, size of ConurrentJSLock is always one byte.");
 
@@ -41,16 +41,16 @@ class ConcurrentJSLockerBase : public AbstractLocker {
     WTF_MAKE_NONCOPYABLE(ConcurrentJSLockerBase);
 public:
     explicit ConcurrentJSLockerBase(ConcurrentJSLock& lockable)
-        : m_locker(&lockable)
     {
+        m_locker.emplace(lockable);
     }
     explicit ConcurrentJSLockerBase(ConcurrentJSLock* lockable)
-        : m_locker(lockable)
     {
+        if (lockable)
+            m_locker.emplace(*lockable);
     }
 
     explicit ConcurrentJSLockerBase(NoLockingNecessaryTag)
-        : m_locker(NoLockingNecessary)
     {
     }
 
@@ -58,13 +58,14 @@ public:
     {
     }
     
-    void unlockEarly()
+    void unlockEarly() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     {
-        m_locker.unlockEarly();
+        if (m_locker)
+            m_locker->unlockEarly();
     }
 
 private:
-    ConcurrentJSLockerImpl m_locker;
+    Optional<ConcurrentJSLockerImpl> m_locker;
 };
 
 class GCSafeConcurrentJSLocker : public ConcurrentJSLockerBase {

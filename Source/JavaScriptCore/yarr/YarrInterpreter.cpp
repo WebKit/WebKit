@@ -1643,7 +1643,8 @@ public:
         return result;
     }
 
-    unsigned interpret()
+    // WTF_IGNORES_THREAD_SAFETY_ANALYSIS because this function does conditional locking.
+    unsigned interpret() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     {
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=195970
         // [Yarr Interpreter] The interpreter doesn't have checks for stack overflow due to deep recursion

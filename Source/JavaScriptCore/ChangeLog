@@ -1,3 +1,23 @@
+2021-05-29  Chris Dumez  <cdumez@apple.com>
+
+        Stop using UncheckedLock in JSC::ConcurrentJSLock
+        https://bugs.webkit.org/show_bug.cgi?id=226428
+
+        Reviewed by Darin Adler.
+
+        Stop using UncheckedLock in JSC::ConcurrentJSLock as it is being phased out in
+        favor of Lock, which supports Clang thread safety analysis.
+
+        * runtime/ConcurrentJSLock.h:
+        (JSC::ConcurrentJSLockerBase::ConcurrentJSLockerBase):
+        * runtime/Structure.cpp:
+        (JSC::Structure::findStructuresAndMapForMaterialization):
+        (JSC::Structure::materializePropertyTable):
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::forEachPropertyConcurrently):
+        * yarr/YarrInterpreter.cpp:
+
 2021-05-28  Darin Adler  <darin@apple.com>
 
         Clients of optional should use has_value instead of relying on hasValue macro
