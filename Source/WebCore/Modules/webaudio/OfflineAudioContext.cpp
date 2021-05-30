@@ -107,7 +107,7 @@ void OfflineAudioContext::startRendering(Ref<DeferredPromise>&& promise)
 
     lazyInitialize();
 
-    destination().startRendering([this, promise = WTFMove(promise), pendingActivity = makePendingActivity(*this)](Optional<Exception>&& exception) mutable {
+    destination().startRendering([this, promise = WTFMove(promise), pendingActivity = makePendingActivity(*this)](std::optional<Exception>&& exception) mutable {
         if (exception) {
             promise->reject(WTFMove(*exception));
             return;
@@ -169,7 +169,7 @@ void OfflineAudioContext::resumeRendering(Ref<DeferredPromise>&& promise)
     }
     ASSERT(state() == AudioContextState::Suspended);
 
-    destination().startRendering([this, promise = WTFMove(promise), pendingActivity = makePendingActivity(*this)](Optional<Exception>&& exception) mutable {
+    destination().startRendering([this, promise = WTFMove(promise), pendingActivity = makePendingActivity(*this)](std::optional<Exception>&& exception) mutable {
         if (exception) {
             promise->reject(WTFMove(*exception));
             return;

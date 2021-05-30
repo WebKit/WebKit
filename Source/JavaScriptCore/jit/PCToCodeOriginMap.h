@@ -82,7 +82,7 @@ public:
     PCToCodeOriginMap(PCToCodeOriginMapBuilder&&, LinkBuffer&);
     ~PCToCodeOriginMap();
 
-    Optional<CodeOrigin> findPC(void* pc) const;
+    std::optional<CodeOrigin> findPC(void* pc) const;
 
     double memorySize();
 

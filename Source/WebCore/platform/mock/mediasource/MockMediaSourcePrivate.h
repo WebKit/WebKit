@@ -59,7 +59,7 @@ public:
     MediaTime seekToTime(const MediaTime&, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
     MediaTime currentMediaTime() const;
 
-    Optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics();
+    std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics();
 
     void incrementTotalVideoFrames() { ++m_totalVideoFrames; }
     void incrementDroppedFrames() { ++m_droppedVideoFrames; }

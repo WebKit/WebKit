@@ -391,7 +391,7 @@ IntSize ShadowBlur::blurredEdgeSize() const
     return edgeSize;
 }
 
-Optional<ShadowBlur::LayerImageProperties> ShadowBlur::calculateLayerBoundingRect(const AffineTransform& transform, const FloatRect& shadowedRect, const IntRect& clipRect)
+std::optional<ShadowBlur::LayerImageProperties> ShadowBlur::calculateLayerBoundingRect(const AffineTransform& transform, const FloatRect& shadowedRect, const IntRect& clipRect)
 {
     LayerImageProperties calculatedLayerImageProperties;
 

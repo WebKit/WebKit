@@ -137,7 +137,7 @@ struct DocumentMarkerLineStyle {
     bool shouldUseDarkAppearance { false };
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<DocumentMarkerLineStyle> decode(Decoder&);
+    template<class Decoder> static std::optional<DocumentMarkerLineStyle> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -148,14 +148,14 @@ void DocumentMarkerLineStyle::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<DocumentMarkerLineStyle> DocumentMarkerLineStyle::decode(Decoder& decoder)
+std::optional<DocumentMarkerLineStyle> DocumentMarkerLineStyle::decode(Decoder& decoder)
 {
-    Optional<Mode> mode;
+    std::optional<Mode> mode;
     decoder >> mode;
     if (!mode)
         return std::nullopt;
 
-    Optional<bool> shouldUseDarkAppearance;
+    std::optional<bool> shouldUseDarkAppearance;
     decoder >> shouldUseDarkAppearance;
     if (!shouldUseDarkAppearance)
         return std::nullopt;
@@ -468,9 +468,9 @@ public:
 
     // Text
 
-    WEBCORE_EXPORT virtual FloatSize drawText(const FontCascade&, const TextRun&, const FloatPoint&, unsigned from = 0, Optional<unsigned> to = std::nullopt);
+    WEBCORE_EXPORT virtual FloatSize drawText(const FontCascade&, const TextRun&, const FloatPoint&, unsigned from = 0, std::optional<unsigned> to = std::nullopt);
     WEBCORE_EXPORT virtual void drawGlyphs(const Font&, const GlyphBufferGlyph*, const GlyphBufferAdvance*, unsigned numGlyphs, const FloatPoint&, FontSmoothingMode);
-    WEBCORE_EXPORT virtual void drawEmphasisMarks(const FontCascade&, const TextRun&, const AtomString& mark, const FloatPoint&, unsigned from = 0, Optional<unsigned> to = std::nullopt);
+    WEBCORE_EXPORT virtual void drawEmphasisMarks(const FontCascade&, const TextRun&, const AtomString& mark, const FloatPoint&, unsigned from = 0, std::optional<unsigned> to = std::nullopt);
     WEBCORE_EXPORT virtual void drawBidiText(const FontCascade&, const TextRun&, const FloatPoint&, FontCascade::CustomFontNotReadyAction = FontCascade::DoNotPaintIfFontNotReady);
 
     WEBCORE_EXPORT FloatRect computeUnderlineBoundsForText(const FloatRect&, bool printing);
@@ -694,7 +694,7 @@ public:
             m_graphicsContext.setImageInterpolationQuality(interpolationQualityToUse);
     }
 
-    explicit InterpolationQualityMaintainer(GraphicsContext& graphicsContext, Optional<InterpolationQuality> interpolationQuality)
+    explicit InterpolationQualityMaintainer(GraphicsContext& graphicsContext, std::optional<InterpolationQuality> interpolationQuality)
         : InterpolationQualityMaintainer(graphicsContext, interpolationQuality ? interpolationQuality.value() : graphicsContext.imageInterpolationQuality())
     {
     }

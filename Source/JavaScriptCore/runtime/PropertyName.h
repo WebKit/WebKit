@@ -122,7 +122,7 @@ inline bool operator!=(PropertyName a, PropertyName b)
     return a.uid() != b.uid();
 }
 
-ALWAYS_INLINE Optional<uint32_t> parseIndex(PropertyName propertyName)
+ALWAYS_INLINE std::optional<uint32_t> parseIndex(PropertyName propertyName)
 {
     auto uid = propertyName.uid();
     if (!uid)

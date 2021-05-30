@@ -151,9 +151,9 @@ using namespace Inspector;
 
 static const Seconds defaultTransientActivationDuration { 2_s };
 
-static Optional<Seconds>& transientActivationDurationOverrideForTesting()
+static std::optional<Seconds>& transientActivationDurationOverrideForTesting()
 {
-    static NeverDestroyed<Optional<Seconds>> overrideForTesting;
+    static NeverDestroyed<std::optional<Seconds>> overrideForTesting;
     return overrideForTesting;
 }
 
@@ -1519,7 +1519,7 @@ Document* DOMWindow::document() const
     return downcast<Document>(ContextDestructionObserver::scriptExecutionContext());
 }
 
-void DOMWindow::overrideTransientActivationDurationForTesting(Optional<Seconds>&& override)
+void DOMWindow::overrideTransientActivationDurationForTesting(std::optional<Seconds>&& override)
 {
     transientActivationDurationOverrideForTesting() = WTFMove(override);
 }

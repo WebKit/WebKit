@@ -260,7 +260,7 @@ dispatch_qos_class_t Thread::dispatchQOSClass(QOS qos)
 }
 #endif
 
-bool Thread::establishHandle(NewThreadContext* context, Optional<size_t> stackSize, QOS qos)
+bool Thread::establishHandle(NewThreadContext* context, std::optional<size_t> stackSize, QOS qos)
 {
     pthread_t threadHandle;
     pthread_attr_t attr;

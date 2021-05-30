@@ -81,7 +81,7 @@ bool Session::isConnected() const
     return m_host->isConnected();
 }
 
-static Optional<String> firstWindowHandleInResult(JSON::Value& result)
+static std::optional<String> firstWindowHandleInResult(JSON::Value& result)
 {
     auto handles = result.asArray();
     if (handles && handles->length()) {
@@ -174,7 +174,7 @@ void Session::switchToBrowsingContext(const String& browsingContext, Function<vo
     });
 }
 
-Optional<String> Session::pageLoadStrategyString() const
+std::optional<String> Session::pageLoadStrategyString() const
 {
     if (!capabilities().pageLoadStrategy)
         return std::nullopt;
@@ -286,7 +286,7 @@ void Session::acceptAndNotifyAlert(Function<void (CommandResult&&)>&& completion
 void Session::reportUnexpectedAlertOpen(Function<void (CommandResult&&)>&& completionHandler)
 {
     getAlertText([completionHandler = WTFMove(completionHandler)](CommandResult&& result) {
-        Optional<String> alertText;
+        std::optional<String> alertText;
         if (!result.isError()) {
             auto valueString = result.result()->asString();
             if (!!valueString)
@@ -625,7 +625,7 @@ void Session::getWindowHandles(Function<void (CommandResult&&)>&& completionHand
     });
 }
 
-void Session::newWindow(Optional<String> typeHint, Function<void (CommandResult&&)>&& completionHandler)
+void Session::newWindow(std::optional<String> typeHint, Function<void (CommandResult&&)>&& completionHandler)
 {
     if (!m_toplevelBrowsingContext) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
@@ -831,7 +831,7 @@ void Session::getWindowRect(Function<void (CommandResult&&)>&& completionHandler
     });
 }
 
-void Session::setWindowRect(Optional<double> x, Optional<double> y, Optional<double> width, Optional<double> height, Function<void (CommandResult&&)>&& completionHandler)
+void Session::setWindowRect(std::optional<double> x, std::optional<double> y, std::optional<double> width, std::optional<double> height, Function<void (CommandResult&&)>&& completionHandler)
 {
     if (!m_toplevelBrowsingContext) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));
@@ -1003,7 +1003,7 @@ String Session::extractElementID(JSON::Value& value)
     return elementID;
 }
 
-void Session::computeElementLayout(const String& elementID, OptionSet<ElementLayoutOption> options, Function<void (Optional<Rect>&&, Optional<Point>&&, bool, RefPtr<JSON::Object>&&)>&& completionHandler)
+void Session::computeElementLayout(const String& elementID, OptionSet<ElementLayoutOption> options, Function<void (std::optional<Rect>&&, std::optional<Point>&&, bool, RefPtr<JSON::Object>&&)>&& completionHandler)
 {
     ASSERT(m_toplevelBrowsingContext.value());
 
@@ -1025,8 +1025,8 @@ void Session::computeElementLayout(const String& elementID, OptionSet<ElementLay
             return;
         }
 
-        Optional<int> elementX;
-        Optional<int> elementY;
+        std::optional<int> elementX;
+        std::optional<int> elementY;
         auto elementPosition = rectObject->getObject("origin"_s);
         if (elementPosition) {
             elementX = elementPosition->getInteger("x"_s);
@@ -1037,8 +1037,8 @@ void Session::computeElementLayout(const String& elementID, OptionSet<ElementLay
             return;
         }
 
-        Optional<int> elementWidth;
-        Optional<int> elementHeight;
+        std::optional<int> elementWidth;
+        std::optional<int> elementHeight;
         auto elementSize = rectObject->getObject("size"_s);
         if (elementSize) {
             elementWidth = elementSize->getInteger("width"_s);
@@ -1359,7 +1359,7 @@ void Session::getElementRect(const String& elementID, Function<void (CommandResu
             completionHandler(WTFMove(result));
             return;
         }
-        computeElementLayout(elementID, { }, [protectedThis, completionHandler = WTFMove(completionHandler)](Optional<Rect>&& rect, Optional<Point>&&, bool, RefPtr<JSON::Object>&& error) {
+        computeElementLayout(elementID, { }, [protectedThis, completionHandler = WTFMove(completionHandler)](std::optional<Rect>&& rect, std::optional<Point>&&, bool, RefPtr<JSON::Object>&& error) {
             if (!rect || error) {
                 completionHandler(CommandResult::fail(WTFMove(error)));
                 return;
@@ -1672,7 +1672,7 @@ void Session::elementIsFileUpload(const String& elementID, Function<void (Comman
     });
 }
 
-Optional<Session::FileUploadType> Session::parseElementIsFileUploadResult(const RefPtr<JSON::Value>& resultValue)
+std::optional<Session::FileUploadType> Session::parseElementIsFileUploadResult(const RefPtr<JSON::Value>& resultValue)
 {
     if (!resultValue)
         return std::nullopt;
@@ -1730,7 +1730,7 @@ void Session::elementClick(const String& elementID, Function<void (CommandResult
                 return;
             }
             OptionSet<ElementLayoutOption> options = { ElementLayoutOption::ScrollIntoViewIfNeeded, ElementLayoutOption::UseViewportCoordinates };
-            computeElementLayout(elementID, options, [this, protectedThis, elementID, completionHandler = WTFMove(completionHandler)](Optional<Rect>&& rect, Optional<Point>&& inViewCenter, bool isObscured, RefPtr<JSON::Object>&& error) mutable {
+            computeElementLayout(elementID, options, [this, protectedThis, elementID, completionHandler = WTFMove(completionHandler)](std::optional<Rect>&& rect, std::optional<Point>&& inViewCenter, bool isObscured, RefPtr<JSON::Object>&& error) mutable {
                 if (!rect || error) {
                     completionHandler(CommandResult::fail(WTFMove(error)));
                     return;
@@ -1846,7 +1846,7 @@ void Session::elementClear(const String& elementID, Function<void (CommandResult
             }
 
             OptionSet<ElementLayoutOption> options = { ElementLayoutOption::ScrollIntoViewIfNeeded };
-            computeElementLayout(elementID, options, [this, protectedThis, elementID, completionHandler = WTFMove(completionHandler)](Optional<Rect>&& rect, Optional<Point>&& inViewCenter, bool, RefPtr<JSON::Object>&& error) mutable {
+            computeElementLayout(elementID, options, [this, protectedThis, elementID, completionHandler = WTFMove(completionHandler)](std::optional<Rect>&& rect, std::optional<Point>&& inViewCenter, bool, RefPtr<JSON::Object>&& error) mutable {
                 if (!rect || error) {
                     completionHandler(CommandResult::fail(WTFMove(error)));
                     return;
@@ -2153,13 +2153,13 @@ void Session::elementSendKeys(const String& elementID, const String& text, Funct
                     // Reset sticky modifiers if needed.
                     if (stickyModifiers) {
                         if (stickyModifiers & KeyModifier::Shift)
-                            interactions.append({ KeyboardInteractionType::KeyRelease, std::nullopt, Optional<String>("Shift"_s) });
+                            interactions.append({ KeyboardInteractionType::KeyRelease, std::nullopt, std::optional<String>("Shift"_s) });
                         if (stickyModifiers & KeyModifier::Control)
-                            interactions.append({ KeyboardInteractionType::KeyRelease, std::nullopt, Optional<String>("Control"_s) });
+                            interactions.append({ KeyboardInteractionType::KeyRelease, std::nullopt, std::optional<String>("Control"_s) });
                         if (stickyModifiers & KeyModifier::Alternate)
-                            interactions.append({ KeyboardInteractionType::KeyRelease, std::nullopt, Optional<String>("Alternate"_s) });
+                            interactions.append({ KeyboardInteractionType::KeyRelease, std::nullopt, std::optional<String>("Alternate"_s) });
                         if (stickyModifiers & KeyModifier::Meta)
-                            interactions.append({ KeyboardInteractionType::KeyRelease, std::nullopt, Optional<String>("Meta"_s) });
+                            interactions.append({ KeyboardInteractionType::KeyRelease, std::nullopt, std::optional<String>("Meta"_s) });
                     }
 
                     performKeyboardInteractions(WTFMove(interactions), WTFMove(completionHandler));
@@ -2380,7 +2380,7 @@ void Session::performKeyboardInteractions(Vector<KeyboardInteraction>&& interact
     });
 }
 
-static Optional<Session::Cookie> parseAutomationCookie(const JSON::Object& cookieObject)
+static std::optional<Session::Cookie> parseAutomationCookie(const JSON::Object& cookieObject)
 {
     Session::Cookie cookie;
 
@@ -2598,7 +2598,7 @@ void Session::deleteAllCookies(Function<void (CommandResult&&)>&& completionHand
     });
 }
 
-InputSource& Session::getOrCreateInputSource(const String& id, InputSource::Type type, Optional<PointerType> pointerType)
+InputSource& Session::getOrCreateInputSource(const String& id, InputSource::Type type, std::optional<PointerType> pointerType)
 {
     auto addResult = m_activeInputSources.add(id, InputSource());
     if (addResult.isNewEntry)
@@ -2924,7 +2924,7 @@ void Session::sendAlertText(const String& text, Function<void (CommandResult&&)>
     });
 }
 
-void Session::takeScreenshot(Optional<String> elementID, Optional<bool> scrollIntoView, Function<void (CommandResult&&)>&& completionHandler)
+void Session::takeScreenshot(std::optional<String> elementID, std::optional<bool> scrollIntoView, Function<void (CommandResult&&)>&& completionHandler)
 {
     if ((elementID && !m_currentBrowsingContext) || (!elementID && !m_toplevelBrowsingContext)) {
         completionHandler(CommandResult::fail(CommandResult::ErrorCode::NoSuchWindow));

@@ -91,7 +91,7 @@ private:
     Function<void()> m_loadedCallback;
 };
 
-static Optional<Inspector::DebuggableType> parseDebuggableTypeFromString(const String& debuggableTypeString)
+static std::optional<Inspector::DebuggableType> parseDebuggableTypeFromString(const String& debuggableTypeString)
 {
     if (debuggableTypeString == "itml"_s)
         return Inspector::DebuggableType::ITML;

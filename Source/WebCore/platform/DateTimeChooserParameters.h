@@ -54,7 +54,7 @@ struct DateTimeChooserParameters {
     bool hasMillisecondField { false };
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<DateTimeChooserParameters> decode(Decoder&);
+    template<class Decoder> static std::optional<DateTimeChooserParameters> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -79,7 +79,7 @@ void DateTimeChooserParameters::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<DateTimeChooserParameters> DateTimeChooserParameters::decode(Decoder& decoder)
+std::optional<DateTimeChooserParameters> DateTimeChooserParameters::decode(Decoder& decoder)
 {
     AtomString type;
     if (!decoder.decode(type))

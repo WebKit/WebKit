@@ -81,7 +81,7 @@ public:
     void dispose();
     void clearMemoryRepresentation();
 
-    static Optional<WebCore::DOMCacheEngine::Record> decode(const NetworkCache::Storage::Record&);
+    static std::optional<WebCore::DOMCacheEngine::Record> decode(const NetworkCache::Storage::Record&);
     static NetworkCache::Storage::Record encode(const RecordInformation&, const WebCore::DOMCacheEngine::Record&);
 
     struct DecodedRecord {
@@ -95,7 +95,7 @@ public:
         uint64_t size { 0 };
         WebCore::DOMCacheEngine::Record record;
     };
-    static Optional<DecodedRecord> decodeRecordHeader(const NetworkCache::Storage::Record&);
+    static std::optional<DecodedRecord> decodeRecordHeader(const NetworkCache::Storage::Record&);
 
     bool hasPendingOpeningCallbacks() const { return !m_pendingOpeningCallbacks.isEmpty(); }
 
@@ -108,7 +108,7 @@ private:
 
     RecordInformation toRecordInformation(const WebCore::DOMCacheEngine::Record&);
 
-    void finishOpening(WebCore::DOMCacheEngine::CompletionCallback&&, Optional<WebCore::DOMCacheEngine::Error>&&);
+    void finishOpening(WebCore::DOMCacheEngine::CompletionCallback&&, std::optional<WebCore::DOMCacheEngine::Error>&&);
     void retrieveRecord(const RecordInformation&, Ref<ReadRecordTaskCounter>&&);
 
     void readRecordsList(WebCore::DOMCacheEngine::CompletionCallback&&);

@@ -65,7 +65,7 @@ bool GenericArguments<Type>::getOwnPropertySlot(JSObject* object, JSGlobalObject
         }
     }
     
-    if (Optional<uint32_t> index = parseIndex(ident))
+    if (std::optional<uint32_t> index = parseIndex(ident))
         return GenericArguments<Type>::getOwnPropertySlotByIndex(thisObject, globalObject, *index, slot);
 
     return Base::getOwnPropertySlot(thisObject, globalObject, ident, slot);
@@ -137,7 +137,7 @@ bool GenericArguments<Type>::put(JSCell* cell, JSGlobalObject* globalObject, Pro
     if (UNLIKELY(isThisValueAltered(slot, thisObject)))
         RELEASE_AND_RETURN(scope, ordinarySetSlow(globalObject, thisObject, ident, value, slot.thisValue(), slot.isStrictMode()));
     
-    Optional<uint32_t> index = parseIndex(ident);
+    std::optional<uint32_t> index = parseIndex(ident);
     if (index && thisObject->isMappedArgument(index.value())) {
         thisObject->setIndexQuickly(vm, index.value(), value);
         return true;
@@ -177,7 +177,7 @@ bool GenericArguments<Type>::deleteProperty(JSCell* cell, JSGlobalObject* global
         RETURN_IF_EXCEPTION(scope, false);
     }
 
-    if (Optional<uint32_t> index = parseIndex(ident))
+    if (std::optional<uint32_t> index = parseIndex(ident))
         RELEASE_AND_RETURN(scope, GenericArguments<Type>::deletePropertyByIndex(thisObject, globalObject, *index));
 
     RELEASE_AND_RETURN(scope, Base::deleteProperty(thisObject, globalObject, ident, slot));
@@ -225,7 +225,7 @@ bool GenericArguments<Type>::defineOwnProperty(JSObject* object, JSGlobalObject*
         || ident == vm.propertyNames->iteratorSymbol) {
         thisObject->overrideThingsIfNecessary(globalObject);
         RETURN_IF_EXCEPTION(scope, false);
-    } else if (Optional<uint32_t> optionalIndex = parseIndex(ident)) {
+    } else if (std::optional<uint32_t> optionalIndex = parseIndex(ident)) {
         uint32_t index = optionalIndex.value();
         bool isMapped = thisObject->isMappedArgument(index);
         PropertyDescriptor newDescriptor = descriptor;

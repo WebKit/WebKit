@@ -64,7 +64,7 @@ private:
     RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const final;
 
     // Messages
-    void sendMessage(Optional<IPC::SharedBufferCopy>&& message, const String& destinationURL);
+    void sendMessage(std::optional<IPC::SharedBufferCopy>&& message, const String& destinationURL);
     void sendError(WebCore::LegacyCDMSessionClient::MediaKeyErrorCode, uint32_t systemCode);
 
     WeakPtr<RemoteLegacyCDMFactory> m_factory;

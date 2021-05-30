@@ -1111,8 +1111,8 @@ TEST(URLSchemeHandler, LoadsFromNetwork)
         connection.webSocketHandshake();
     });
 
-    Optional<bool> loadSuccess;
-    Optional<bool> webSocketSuccess;
+    std::optional<bool> loadSuccess;
+    std::optional<bool> webSocketSuccess;
     bool done = false;
 
     auto handler = adoptNS([TestURLSchemeHandler new]);
@@ -1202,7 +1202,7 @@ TEST(URLSchemeHandler, AllowedNetworkHostsRedirect)
         }}},
     });
 
-    Optional<bool> loadSuccess;
+    std::optional<bool> loadSuccess;
     bool done = false;
 
     auto handler = adoptNS([TestURLSchemeHandler new]);

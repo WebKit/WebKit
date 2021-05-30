@@ -273,7 +273,7 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
     return { WTFMove(update), descendantsToResolve, WTFMove(pseudoUpdates) };
 }
 
-Optional<ElementUpdate> TreeResolver::resolvePseudoStyle(Element& element, const ElementUpdate& elementUpdate, PseudoId pseudoId)
+std::optional<ElementUpdate> TreeResolver::resolvePseudoStyle(Element& element, const ElementUpdate& elementUpdate, PseudoId pseudoId)
 {
     if (pseudoId == PseudoId::Marker && elementUpdate.style->display() != DisplayType::ListItem)
         return { };

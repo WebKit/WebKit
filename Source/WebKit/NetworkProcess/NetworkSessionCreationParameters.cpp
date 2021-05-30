@@ -89,19 +89,19 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << resourceLoadStatisticsParameters;
 }
 
-Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::decode(IPC::Decoder& decoder)
+std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::decode(IPC::Decoder& decoder)
 {
-    Optional<PAL::SessionID> sessionID;
+    std::optional<PAL::SessionID> sessionID;
     decoder >> sessionID;
     if (!sessionID)
         return std::nullopt;
     
-    Optional<String> boundInterfaceIdentifier;
+    std::optional<String> boundInterfaceIdentifier;
     decoder >> boundInterfaceIdentifier;
     if (!boundInterfaceIdentifier)
         return std::nullopt;
     
-    Optional<AllowsCellularAccess> allowsCellularAccess;
+    std::optional<AllowsCellularAccess> allowsCellularAccess;
     decoder >> allowsCellularAccess;
     if (!allowsCellularAccess)
         return std::nullopt;
@@ -111,184 +111,184 @@ Optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters::dec
     if (!decoder.decode(proxyConfiguration))
         return std::nullopt;
     
-    Optional<String> sourceApplicationBundleIdentifier;
+    std::optional<String> sourceApplicationBundleIdentifier;
     decoder >> sourceApplicationBundleIdentifier;
     if (!sourceApplicationBundleIdentifier)
         return std::nullopt;
     
-    Optional<String> sourceApplicationSecondaryIdentifier;
+    std::optional<String> sourceApplicationSecondaryIdentifier;
     decoder >> sourceApplicationSecondaryIdentifier;
     if (!sourceApplicationSecondaryIdentifier)
         return std::nullopt;
 
-    Optional<String> attributedBundleIdentifier;
+    std::optional<String> attributedBundleIdentifier;
     decoder >> attributedBundleIdentifier;
     if (!attributedBundleIdentifier)
         return std::nullopt;
     
-    Optional<bool> shouldLogCookieInformation;
+    std::optional<bool> shouldLogCookieInformation;
     decoder >> shouldLogCookieInformation;
     if (!shouldLogCookieInformation)
         return std::nullopt;
 
-    Optional<URL> httpProxy;
+    std::optional<URL> httpProxy;
     decoder >> httpProxy;
     if (!httpProxy)
         return std::nullopt;
 
-    Optional<URL> httpsProxy;
+    std::optional<URL> httpsProxy;
     decoder >> httpsProxy;
     if (!httpsProxy)
         return std::nullopt;
 #endif
 
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
-    Optional<String> alternativeServiceDirectory;
+    std::optional<String> alternativeServiceDirectory;
     decoder >> alternativeServiceDirectory;
     if (!alternativeServiceDirectory)
         return std::nullopt;
 
-    Optional<SandboxExtension::Handle> alternativeServiceDirectoryExtensionHandle;
+    std::optional<SandboxExtension::Handle> alternativeServiceDirectoryExtensionHandle;
     decoder >> alternativeServiceDirectoryExtensionHandle;
     if (!alternativeServiceDirectoryExtensionHandle)
         return std::nullopt;
     
-    Optional<bool> http3Enabled;
+    std::optional<bool> http3Enabled;
     decoder >> http3Enabled;
     if (!http3Enabled)
         return std::nullopt;
 #endif
 
-    Optional<String> hstsStorageDirectory;
+    std::optional<String> hstsStorageDirectory;
     decoder >> hstsStorageDirectory;
     if (!hstsStorageDirectory)
         return std::nullopt;
 
-    Optional<SandboxExtension::Handle> hstsStorageDirectoryExtensionHandle;
+    std::optional<SandboxExtension::Handle> hstsStorageDirectoryExtensionHandle;
     decoder >> hstsStorageDirectoryExtensionHandle;
     if (!hstsStorageDirectoryExtensionHandle)
         return std::nullopt;
     
 #if USE(SOUP)
-    Optional<String> cookiePersistentStoragePath;
+    std::optional<String> cookiePersistentStoragePath;
     decoder >> cookiePersistentStoragePath;
     if (!cookiePersistentStoragePath)
         return std::nullopt;
 
-    Optional<SoupCookiePersistentStorageType> cookiePersistentStorageType;
+    std::optional<SoupCookiePersistentStorageType> cookiePersistentStorageType;
     decoder >> cookiePersistentStorageType;
     if (!cookiePersistentStorageType)
         return std::nullopt;
 
-    Optional<bool> persistentCredentialStorageEnabled;
+    std::optional<bool> persistentCredentialStorageEnabled;
     decoder >> persistentCredentialStorageEnabled;
     if (!persistentCredentialStorageEnabled)
         return std::nullopt;
 
-    Optional<bool> ignoreTLSErrors;
+    std::optional<bool> ignoreTLSErrors;
     decoder >> ignoreTLSErrors;
     if (!ignoreTLSErrors)
         return std::nullopt;
 
-    Optional<WebCore::SoupNetworkProxySettings> proxySettings;
+    std::optional<WebCore::SoupNetworkProxySettings> proxySettings;
     decoder >> proxySettings;
     if (!proxySettings)
         return std::nullopt;
 #endif
 
 #if USE(CURL)
-    Optional<String> cookiePersistentStorageFile;
+    std::optional<String> cookiePersistentStorageFile;
     decoder >> cookiePersistentStorageFile;
     if (!cookiePersistentStorageFile)
         return std::nullopt;
 
-    Optional<WebCore::CurlProxySettings> proxySettings;
+    std::optional<WebCore::CurlProxySettings> proxySettings;
     decoder >> proxySettings;
     if (!proxySettings)
         return std::nullopt;
 #endif
 
-    Optional<String> networkCacheDirectory;
+    std::optional<String> networkCacheDirectory;
     decoder >> networkCacheDirectory;
     if (!networkCacheDirectory)
         return std::nullopt;
     
-    Optional<SandboxExtension::Handle> networkCacheDirectoryExtensionHandle;
+    std::optional<SandboxExtension::Handle> networkCacheDirectoryExtensionHandle;
     decoder >> networkCacheDirectoryExtensionHandle;
     if (!networkCacheDirectoryExtensionHandle)
         return std::nullopt;
 
-    Optional<bool> deviceManagementRestrictionsEnabled;
+    std::optional<bool> deviceManagementRestrictionsEnabled;
     decoder >> deviceManagementRestrictionsEnabled;
     if (!deviceManagementRestrictionsEnabled)
         return std::nullopt;
 
-    Optional<bool> allLoadsBlockedByDeviceManagementRestrictionsForTesting;
+    std::optional<bool> allLoadsBlockedByDeviceManagementRestrictionsForTesting;
     decoder >> allLoadsBlockedByDeviceManagementRestrictionsForTesting;
     if (!allLoadsBlockedByDeviceManagementRestrictionsForTesting)
         return std::nullopt;
 
-    Optional<String> dataConnectionServiceType;
+    std::optional<String> dataConnectionServiceType;
     decoder >> dataConnectionServiceType;
     if (!dataConnectionServiceType)
         return std::nullopt;
     
-    Optional<bool> fastServerTrustEvaluationEnabled;
+    std::optional<bool> fastServerTrustEvaluationEnabled;
     decoder >> fastServerTrustEvaluationEnabled;
     if (!fastServerTrustEvaluationEnabled)
         return std::nullopt;
     
-    Optional<bool> networkCacheSpeculativeValidationEnabled;
+    std::optional<bool> networkCacheSpeculativeValidationEnabled;
     decoder >> networkCacheSpeculativeValidationEnabled;
     if (!networkCacheSpeculativeValidationEnabled)
         return std::nullopt;
     
-    Optional<bool> shouldUseTestingNetworkSession;
+    std::optional<bool> shouldUseTestingNetworkSession;
     decoder >> shouldUseTestingNetworkSession;
     if (!shouldUseTestingNetworkSession)
         return std::nullopt;
 
-    Optional<bool> staleWhileRevalidateEnabled;
+    std::optional<bool> staleWhileRevalidateEnabled;
     decoder >> staleWhileRevalidateEnabled;
     if (!staleWhileRevalidateEnabled)
         return std::nullopt;
 
-    Optional<unsigned> testSpeedMultiplier;
+    std::optional<unsigned> testSpeedMultiplier;
     decoder >> testSpeedMultiplier;
     if (!testSpeedMultiplier)
         return std::nullopt;
     
-    Optional<bool> suppressesConnectionTerminationOnSystemChange;
+    std::optional<bool> suppressesConnectionTerminationOnSystemChange;
     decoder >> suppressesConnectionTerminationOnSystemChange;
     if (!suppressesConnectionTerminationOnSystemChange)
         return std::nullopt;
 
-    Optional<bool> allowsServerPreconnect;
+    std::optional<bool> allowsServerPreconnect;
     decoder >> allowsServerPreconnect;
     if (!allowsServerPreconnect)
         return std::nullopt;
 
-    Optional<bool> requiresSecureHTTPSProxyConnection;
+    std::optional<bool> requiresSecureHTTPSProxyConnection;
     decoder >> requiresSecureHTTPSProxyConnection;
     if (!requiresSecureHTTPSProxyConnection)
         return std::nullopt;
     
-    Optional<bool> preventsSystemHTTPProxyAuthentication;
+    std::optional<bool> preventsSystemHTTPProxyAuthentication;
     decoder >> preventsSystemHTTPProxyAuthentication;
     if (!preventsSystemHTTPProxyAuthentication)
         return std::nullopt;
     
-    Optional<bool> appHasRequestedCrossWebsiteTrackingPermission;
+    std::optional<bool> appHasRequestedCrossWebsiteTrackingPermission;
     decoder >> appHasRequestedCrossWebsiteTrackingPermission;
     if (!appHasRequestedCrossWebsiteTrackingPermission)
         return std::nullopt;
 
-    Optional<bool> useNetworkLoader;
+    std::optional<bool> useNetworkLoader;
     decoder >> useNetworkLoader;
     if (!useNetworkLoader)
         return std::nullopt;
 
-    Optional<ResourceLoadStatisticsParameters> resourceLoadStatisticsParameters;
+    std::optional<ResourceLoadStatisticsParameters> resourceLoadStatisticsParameters;
     decoder >> resourceLoadStatisticsParameters;
     if (!resourceLoadStatisticsParameters)
         return std::nullopt;

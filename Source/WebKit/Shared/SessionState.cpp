@@ -55,7 +55,7 @@ static bool isValidEnum(HTTPBody::Element::Type type)
     return false;
 }
 
-auto HTTPBody::Element::decode(IPC::Decoder& decoder) -> Optional<Element>
+auto HTTPBody::Element::decode(IPC::Decoder& decoder) -> std::optional<Element>
 {
     Element result;
     if (!decoder.decode(result.type) || !isValidEnum(result.type))
@@ -123,7 +123,7 @@ void FrameState::encode(IPC::Encoder& encoder) const
     encoder << children;
 }
 
-Optional<FrameState> FrameState::decode(IPC::Decoder& decoder)
+std::optional<FrameState> FrameState::decode(IPC::Decoder& decoder)
 {
     FrameState result;
     if (!decoder.decode(result.urlString))
@@ -192,7 +192,7 @@ bool PageState::decode(IPC::Decoder& decoder, PageState& result)
 {
     if (!decoder.decode(result.title))
         return false;
-    Optional<FrameState> mainFrameState;
+    std::optional<FrameState> mainFrameState;
     decoder >> mainFrameState;
     if (!mainFrameState)
         return false;
@@ -210,7 +210,7 @@ bool PageState::decode(IPC::Decoder& decoder, PageState& result)
         result.sessionStateObject = SerializedScriptValue::createFromWireBytes(WTFMove(wireBytes));
     }
 
-    Optional<ShouldOpenExternalURLsPolicy> shouldOpenExternalURLsPolicy;
+    std::optional<ShouldOpenExternalURLsPolicy> shouldOpenExternalURLsPolicy;
     decoder >> shouldOpenExternalURLsPolicy;
     if (!shouldOpenExternalURLsPolicy)
         return false;
@@ -226,7 +226,7 @@ void BackForwardListItemState::encode(IPC::Encoder& encoder) const
     encoder << hasCachedPage;
 }
 
-Optional<BackForwardListItemState> BackForwardListItemState::decode(IPC::Decoder& decoder)
+std::optional<BackForwardListItemState> BackForwardListItemState::decode(IPC::Decoder& decoder)
 {
     BackForwardListItemState result;
 
@@ -250,14 +250,14 @@ void BackForwardListState::encode(IPC::Encoder& encoder) const
     encoder << currentIndex;
 }
 
-Optional<BackForwardListState> BackForwardListState::decode(IPC::Decoder& decoder)
+std::optional<BackForwardListState> BackForwardListState::decode(IPC::Decoder& decoder)
 {
-    Optional<Vector<BackForwardListItemState>> items;
+    std::optional<Vector<BackForwardListItemState>> items;
     decoder >> items;
     if (!items)
         return std::nullopt;
 
-    Optional<uint32_t> currentIndex;
+    std::optional<uint32_t> currentIndex;
     if (!decoder.decode(currentIndex))
         return std::nullopt;
 

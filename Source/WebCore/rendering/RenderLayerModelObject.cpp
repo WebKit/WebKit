@@ -191,7 +191,7 @@ bool RenderLayerModelObject::shouldPlaceVerticalScrollbarOnLeft() const
 #endif
 }
 
-Optional<LayerRepaintRects> RenderLayerModelObject::layerRepaintRects() const
+std::optional<LayerRepaintRects> RenderLayerModelObject::layerRepaintRects() const
 {
     return hasLayer() ? layer()->repaintRects() : std::nullopt;
 }

@@ -49,20 +49,20 @@ bool LoadParameters::platformDecode(IPC::Decoder& decoder, LoadParameters& param
     if (!IPC::decode(decoder, parameters.dataDetectionContext))
         return false;
 
-    Optional<SandboxExtension::HandleArray> networkExtensionSandboxExtensionHandles;
+    std::optional<SandboxExtension::HandleArray> networkExtensionSandboxExtensionHandles;
     decoder >> networkExtensionSandboxExtensionHandles;
     if (!networkExtensionSandboxExtensionHandles)
         return false;
     parameters.networkExtensionSandboxExtensionHandles = WTFMove(*networkExtensionSandboxExtensionHandles);
     
 #if PLATFORM(IOS)
-    Optional<Optional<SandboxExtension::Handle>> contentFilterExtensionHandle;
+    std::optional<std::optional<SandboxExtension::Handle>> contentFilterExtensionHandle;
     decoder >> contentFilterExtensionHandle;
     if (!contentFilterExtensionHandle)
         return false;
     parameters.contentFilterExtensionHandle = WTFMove(*contentFilterExtensionHandle);
 
-    Optional<Optional<SandboxExtension::Handle>> frontboardServiceExtensionHandle;
+    std::optional<std::optional<SandboxExtension::Handle>> frontboardServiceExtensionHandle;
     decoder >> frontboardServiceExtensionHandle;
     if (!frontboardServiceExtensionHandle)
         return false;

@@ -58,7 +58,7 @@ protected:
         int version;
         Vector<int> protocols;
     };
-    static Optional<KeySystemParameters> parseKeySystem(const String& keySystem);
+    static std::optional<KeySystemParameters> parseKeySystem(const String& keySystem);
     
     LegacyCDM* m_cdm;
     Vector<CDMSessionMediaSourceAVFObjC*> m_sessions;

@@ -66,7 +66,7 @@ public:
         const CSSCanvasValue& ownerValue() const { return m_ownerValue; }
 
     private:
-        void canvasChanged(CanvasBase& canvasBase, const Optional<FloatRect>& changedRect) final
+        void canvasChanged(CanvasBase& canvasBase, const std::optional<FloatRect>& changedRect) final
         {
             ASSERT(is<HTMLCanvasElement>(canvasBase));
             m_ownerValue.canvasChanged(downcast<HTMLCanvasElement>(canvasBase), changedRect);
@@ -93,7 +93,7 @@ private:
     {
     }
 
-    void canvasChanged(HTMLCanvasElement&, const Optional<FloatRect>& changedRect);
+    void canvasChanged(HTMLCanvasElement&, const std::optional<FloatRect>& changedRect);
     void canvasResized(HTMLCanvasElement&);
     void canvasDestroyed(HTMLCanvasElement&);
 

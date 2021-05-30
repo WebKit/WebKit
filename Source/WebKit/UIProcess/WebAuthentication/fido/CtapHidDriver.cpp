@@ -182,7 +182,7 @@ void CtapHidDriver::transact(Vector<uint8_t>&& data, ResponseCallback&& callback
 
     auto initCommand = FidoHidMessage::create(m_channelId, FidoHidDeviceCommand::kInit, m_nonce);
     ASSERT(initCommand);
-    m_worker->transact(WTFMove(*initCommand), [weakThis = makeWeakPtr(*this)](Optional<FidoHidMessage>&& response) mutable {
+    m_worker->transact(WTFMove(*initCommand), [weakThis = makeWeakPtr(*this)](std::optional<FidoHidMessage>&& response) mutable {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
             return;
@@ -190,7 +190,7 @@ void CtapHidDriver::transact(Vector<uint8_t>&& data, ResponseCallback&& callback
     });
 }
 
-void CtapHidDriver::continueAfterChannelAllocated(Optional<FidoHidMessage>&& message)
+void CtapHidDriver::continueAfterChannelAllocated(std::optional<FidoHidMessage>&& message)
 {
     if (m_state != State::AllocateChannel)
         return;
@@ -222,7 +222,7 @@ void CtapHidDriver::continueAfterChannelAllocated(Optional<FidoHidMessage>&& mes
     // FIXME(191534): Check the rest of the payload.
     auto cmd = FidoHidMessage::create(m_channelId, protocol() == ProtocolVersion::kCtap ? FidoHidDeviceCommand::kCbor : FidoHidDeviceCommand::kMsg, m_requestData);
     ASSERT(cmd);
-    m_worker->transact(WTFMove(*cmd), [weakThis = makeWeakPtr(*this)](Optional<FidoHidMessage>&& response) mutable {
+    m_worker->transact(WTFMove(*cmd), [weakThis = makeWeakPtr(*this)](std::optional<FidoHidMessage>&& response) mutable {
         ASSERT(RunLoop::isMain());
         if (!weakThis)
             return;
@@ -230,7 +230,7 @@ void CtapHidDriver::continueAfterChannelAllocated(Optional<FidoHidMessage>&& mes
     });
 }
 
-void CtapHidDriver::continueAfterResponseReceived(Optional<fido::FidoHidMessage>&& message)
+void CtapHidDriver::continueAfterResponseReceived(std::optional<fido::FidoHidMessage>&& message)
 {
     if (m_state != State::Ready)
         return;

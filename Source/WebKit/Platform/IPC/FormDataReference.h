@@ -67,9 +67,9 @@ public:
         encoder << sandboxExtensionHandles;
     }
 
-    static Optional<FormDataReference> decode(Decoder& decoder)
+    static std::optional<FormDataReference> decode(Decoder& decoder)
     {
-        Optional<bool> hasFormData;
+        std::optional<bool> hasFormData;
         decoder >> hasFormData;
         if (!hasFormData)
             return std::nullopt;
@@ -80,7 +80,7 @@ public:
         if (!formData)
             return std::nullopt;
 
-        Optional<WebKit::SandboxExtension::HandleArray> sandboxExtensionHandles;
+        std::optional<WebKit::SandboxExtension::HandleArray> sandboxExtensionHandles;
         decoder >> sandboxExtensionHandles;
         if (!sandboxExtensionHandles)
             return std::nullopt;

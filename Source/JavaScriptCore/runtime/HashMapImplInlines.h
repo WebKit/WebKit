@@ -117,7 +117,7 @@ ALWAYS_INLINE uint32_t jsMapHashForAlreadyHashedValue(JSGlobalObject* globalObje
     return jsMapHashImpl<ExceptionExpectation::ShouldNotThrow>(globalObject, vm, value);
 }
 
-ALWAYS_INLINE Optional<uint32_t> concurrentJSMapHash(JSValue key)
+ALWAYS_INLINE std::optional<uint32_t> concurrentJSMapHash(JSValue key)
 {
     key = normalizeMapKey(key);
     if (key.isString()) {

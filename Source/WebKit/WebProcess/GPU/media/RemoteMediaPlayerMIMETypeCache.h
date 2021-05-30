@@ -57,8 +57,8 @@ private:
     WebCore::MediaPlayerEnums::MediaEngineIdentifier m_engineIdentifier;
 
     using SupportedTypesAndCodecsKey = std::tuple<String, bool, bool>;
-    Optional<HashMap<SupportedTypesAndCodecsKey, WebCore::MediaPlayerEnums::SupportsType>> m_supportsTypeAndCodecsCache;
-    Optional<HashSet<String, ASCIICaseInsensitiveHash>> m_supportedTypesCache;
+    std::optional<HashMap<SupportedTypesAndCodecsKey, WebCore::MediaPlayerEnums::SupportsType>> m_supportsTypeAndCodecsCache;
+    std::optional<HashSet<String, ASCIICaseInsensitiveHash>> m_supportedTypesCache;
 };
 
 } // namespace WebKit

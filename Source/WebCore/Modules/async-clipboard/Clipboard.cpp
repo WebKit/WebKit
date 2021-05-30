@@ -336,7 +336,7 @@ void Clipboard::ItemWriter::invalidate()
         reject();
 }
 
-void Clipboard::ItemWriter::setData(Optional<PasteboardCustomData>&& data, size_t index)
+void Clipboard::ItemWriter::setData(std::optional<PasteboardCustomData>&& data, size_t index)
 {
     if (index >= m_dataToWrite.size()) {
         ASSERT_NOT_REACHED();

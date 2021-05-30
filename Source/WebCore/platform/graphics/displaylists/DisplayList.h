@@ -105,7 +105,7 @@ private:
     ItemBuffer* itemBufferIfExists() const { return m_items.get(); }
     WEBCORE_EXPORT ItemBuffer& itemBuffer();
 
-    void addDrawingItemExtent(Optional<FloatRect>&& extent)
+    void addDrawingItemExtent(std::optional<FloatRect>&& extent)
     {
         ASSERT(m_tracksDrawingItemExtents);
         m_drawingItemExtents.append(WTFMove(extent));
@@ -138,7 +138,7 @@ private:
     NativeImageHashMap m_nativeImages;
     FontRenderingResourceMap m_fonts;
     std::unique_ptr<ItemBuffer> m_items;
-    Vector<Optional<FloatRect>> m_drawingItemExtents;
+    Vector<std::optional<FloatRect>> m_drawingItemExtents;
     bool m_tracksDrawingItemExtents { true };
 };
 

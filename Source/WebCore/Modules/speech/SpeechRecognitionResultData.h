@@ -32,7 +32,7 @@ struct SpeechRecognitionAlternativeData {
     double confidence { 0.0 };
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<SpeechRecognitionAlternativeData> decode(Decoder&);
+    template<class Decoder> static std::optional<SpeechRecognitionAlternativeData> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -42,7 +42,7 @@ void SpeechRecognitionAlternativeData::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<SpeechRecognitionAlternativeData> SpeechRecognitionAlternativeData::decode(Decoder& decoder)
+std::optional<SpeechRecognitionAlternativeData> SpeechRecognitionAlternativeData::decode(Decoder& decoder)
 {
     SpeechRecognitionAlternativeData result;
     if (!decoder.decode(result.transcript))
@@ -59,7 +59,7 @@ struct SpeechRecognitionResultData {
     bool isFinal { false };
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<SpeechRecognitionResultData> decode(Decoder&);
+    template<class Decoder> static std::optional<SpeechRecognitionResultData> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -69,7 +69,7 @@ void SpeechRecognitionResultData::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<SpeechRecognitionResultData> SpeechRecognitionResultData::decode(Decoder& decoder)
+std::optional<SpeechRecognitionResultData> SpeechRecognitionResultData::decode(Decoder& decoder)
 {
     SpeechRecognitionResultData result;
     if (!decoder.decode(result.alternatives))

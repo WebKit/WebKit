@@ -146,7 +146,7 @@ template<> void getData(const WebCore::SharedBuffer& data, const Function<bool(c
 }
 
 template<typename T>
-static Optional<ContentRuleListMetaData> decodeContentRuleListMetaData(const T& fileData)
+static std::optional<ContentRuleListMetaData> decodeContentRuleListMetaData(const T& fileData)
 {
     bool success = false;
     ContentRuleListMetaData metaData;
@@ -158,43 +158,43 @@ static Optional<ContentRuleListMetaData> decodeContentRuleListMetaData(const T& 
 
         WTF::Persistence::Decoder decoder(data, size);
         
-        Optional<uint32_t> version;
+        std::optional<uint32_t> version;
         decoder >> version;
         if (!version)
             return false;
         metaData.version = WTFMove(*version);
 
-        Optional<uint64_t> sourceSize;
+        std::optional<uint64_t> sourceSize;
         decoder >> sourceSize;
         if (!sourceSize)
             return false;
         metaData.sourceSize = WTFMove(*sourceSize);
 
-        Optional<uint64_t> actionsSize;
+        std::optional<uint64_t> actionsSize;
         decoder >> actionsSize;
         if (!actionsSize)
             return false;
         metaData.actionsSize = WTFMove(*actionsSize);
 
-        Optional<uint64_t> filtersWithoutConditionsBytecodeSize;
+        std::optional<uint64_t> filtersWithoutConditionsBytecodeSize;
         decoder >> filtersWithoutConditionsBytecodeSize;
         if (!filtersWithoutConditionsBytecodeSize)
             return false;
         metaData.filtersWithoutConditionsBytecodeSize = WTFMove(*filtersWithoutConditionsBytecodeSize);
 
-        Optional<uint64_t> filtersWithConditionsBytecodeSize;
+        std::optional<uint64_t> filtersWithConditionsBytecodeSize;
         decoder >> filtersWithConditionsBytecodeSize;
         if (!filtersWithConditionsBytecodeSize)
             return false;
         metaData.filtersWithConditionsBytecodeSize = WTFMove(*filtersWithConditionsBytecodeSize);
 
-        Optional<uint64_t> conditionedFiltersBytecodeSize;
+        std::optional<uint64_t> conditionedFiltersBytecodeSize;
         decoder >> conditionedFiltersBytecodeSize;
         if (!conditionedFiltersBytecodeSize)
             return false;
         metaData.conditionedFiltersBytecodeSize = WTFMove(*conditionedFiltersBytecodeSize);
 
-        Optional<uint32_t> conditionsApplyOnlyToDomain;
+        std::optional<uint32_t> conditionsApplyOnlyToDomain;
         decoder >> conditionsApplyOnlyToDomain;
         if (!conditionsApplyOnlyToDomain)
             return false;
@@ -213,7 +213,7 @@ struct MappedData {
     WebKit::NetworkCache::Data data;
 };
 
-static Optional<MappedData> openAndMapContentRuleList(const WTF::String& path)
+static std::optional<MappedData> openAndMapContentRuleList(const WTF::String& path)
 {
     FileSystem::makeSafeToUseMemoryMapForPath(path);
     WebKit::NetworkCache::Data fileData = mapFile(fileSystemRepresentation(path).data());

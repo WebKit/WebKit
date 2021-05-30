@@ -86,8 +86,8 @@ public:
     StepRange createStepRange(AnyStepHandling) const;
 
 #if ENABLE(DATALIST_ELEMENT)
-    Optional<Decimal> findClosestTickMarkValue(const Decimal&);
-    Optional<double> listOptionValueAsDouble(const HTMLOptionElement&);
+    std::optional<Decimal> findClosestTickMarkValue(const Decimal&);
+    std::optional<double> listOptionValueAsDouble(const HTMLOptionElement&);
 #endif
 
     WEBCORE_EXPORT ExceptionOr<void> stepUp(int = 1);

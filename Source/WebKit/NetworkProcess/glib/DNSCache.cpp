@@ -62,7 +62,7 @@ DNSCache::DNSCacheMap& DNSCache::mapForType(Type type)
     return m_dnsMap;
 }
 
-Optional<Vector<GRefPtr<GInetAddress>>> DNSCache::lookup(const CString& host, Type type)
+std::optional<Vector<GRefPtr<GInetAddress>>> DNSCache::lookup(const CString& host, Type type)
 {
     Locker locker { m_lock };
     auto& map = mapForType(type);

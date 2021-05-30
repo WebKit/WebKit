@@ -204,7 +204,7 @@ void Cache::open(CompletionCallback&& callback)
     });
 }
 
-void Cache::finishOpening(CompletionCallback&& callback, Optional<Error>&& error)
+void Cache::finishOpening(CompletionCallback&& callback, std::optional<Error>&& error)
 {
     Vector<std::reference_wrapper<RecordInformation>> records;
     for (auto& value : m_records.values()) {
@@ -385,7 +385,7 @@ private:
     {
     }
 
-    Optional<Error> m_error;
+    std::optional<Error> m_error;
     RecordIdentifiersCallback m_callback;
     Vector<uint64_t> m_recordIdentifiers;
 };
@@ -441,7 +441,7 @@ void Cache::put(Vector<Record>&& records, RecordIdentifiersCallback&& callback)
         return;
     }
 
-    m_caches.requestSpace(spaceRequired.unsafeGet(), [caches = makeRef(m_caches), identifier = m_identifier, records = WTFMove(records), callback = WTFMove(callback)](Optional<DOMCacheEngine::Error>&& error) mutable {
+    m_caches.requestSpace(spaceRequired.unsafeGet(), [caches = makeRef(m_caches), identifier = m_identifier, records = WTFMove(records), callback = WTFMove(callback)](std::optional<DOMCacheEngine::Error>&& error) mutable {
         if (error) {
             callback(makeUnexpected(error.value()));
             return;
@@ -499,7 +499,7 @@ void Cache::removeFromRecordList(const Vector<uint64_t>& recordIdentifiers)
 
 void Cache::writeRecordToDisk(const RecordInformation& recordInformation, Record&& record, Ref<AsynchronousPutTaskCounter>&& taskCounter, uint64_t previousRecordSize)
 {
-    m_caches.writeRecord(*this, recordInformation, WTFMove(record), previousRecordSize, [taskCounter = WTFMove(taskCounter)](Optional<Error>&& error) {
+    m_caches.writeRecord(*this, recordInformation, WTFMove(record), previousRecordSize, [taskCounter = WTFMove(taskCounter)](std::optional<Error>&& error) {
         if (error)
             taskCounter->setError(error.value());
     });
@@ -577,9 +577,9 @@ Storage::Record Cache::encode(const RecordInformation& recordInformation, const 
     return { recordInformation.key, { }, header, body, { } };
 }
 
-static Optional<WebCore::DOMCacheEngine::Record> decodeDOMCacheRecord(WTF::Persistence::Decoder& decoder)
+static std::optional<WebCore::DOMCacheEngine::Record> decodeDOMCacheRecord(WTF::Persistence::Decoder& decoder)
 {
-    Optional<FetchHeaders::Guard> requestHeadersGuard;
+    std::optional<FetchHeaders::Guard> requestHeadersGuard;
     decoder >> requestHeadersGuard;
     if (!requestHeadersGuard)
         return std::nullopt;
@@ -592,12 +592,12 @@ static Optional<WebCore::DOMCacheEngine::Record> decodeDOMCacheRecord(WTF::Persi
     if (!FetchOptions::decodePersistent(decoder, options))
         return std::nullopt;
     
-    Optional<String> referrer;
+    std::optional<String> referrer;
     decoder >> referrer;
     if (!referrer)
         return std::nullopt;
     
-    Optional<FetchHeaders::Guard> responseHeadersGuard;
+    std::optional<FetchHeaders::Guard> responseHeadersGuard;
     decoder >> responseHeadersGuard;
     if (!responseHeadersGuard)
         return std::nullopt;
@@ -606,7 +606,7 @@ static Optional<WebCore::DOMCacheEngine::Record> decodeDOMCacheRecord(WTF::Persi
     if (!ResourceResponse::decode(decoder, response))
         return std::nullopt;
     
-    Optional<uint64_t> responseBodySize;
+    std::optional<uint64_t> responseBodySize;
     decoder >> responseBodySize;
     if (!responseBodySize)
         return std::nullopt;
@@ -628,21 +628,21 @@ static Optional<WebCore::DOMCacheEngine::Record> decodeDOMCacheRecord(WTF::Persi
     }};
 }
 
-Optional<Cache::DecodedRecord> Cache::decodeRecordHeader(const Storage::Record& storage)
+std::optional<Cache::DecodedRecord> Cache::decodeRecordHeader(const Storage::Record& storage)
 {
     WTF::Persistence::Decoder decoder(storage.header.data(), storage.header.size());
 
-    Optional<double> insertionTime;
+    std::optional<double> insertionTime;
     decoder >> insertionTime;
     if (!insertionTime)
         return std::nullopt;
 
-    Optional<uint64_t> size;
+    std::optional<uint64_t> size;
     decoder >> size;
     if (!size)
         return std::nullopt;
 
-    Optional<WebCore::DOMCacheEngine::Record> record = decodeDOMCacheRecord(decoder);
+    std::optional<WebCore::DOMCacheEngine::Record> record = decodeDOMCacheRecord(decoder);
     if (!record)
         return std::nullopt;
 
@@ -653,7 +653,7 @@ Optional<Cache::DecodedRecord> Cache::decodeRecordHeader(const Storage::Record& 
     }};
 }
 
-Optional<Record> Cache::decode(const Storage::Record& storage)
+std::optional<Record> Cache::decode(const Storage::Record& storage)
 {
     auto result = decodeRecordHeader(storage);
 

@@ -306,9 +306,9 @@ Vector<Device::ViewData> OpenXRDevice::views(SessionMode mode) const
     return views;
 }
 
-Optional<LayerHandle> OpenXRDevice::createLayerProjection(uint32_t width, uint32_t height, bool alpha)
+std::optional<LayerHandle> OpenXRDevice::createLayerProjection(uint32_t width, uint32_t height, bool alpha)
 {
-    Optional<LayerHandle> handle;
+    std::optional<LayerHandle> handle;
 
     BinarySemaphore semaphore;
     m_queue.dispatch([this, width, height, alpha, &handle, &semaphore]() mutable {

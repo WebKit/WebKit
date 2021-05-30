@@ -41,7 +41,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSA_PSS::platformSign(const CryptoAl
     if (!md)
         return Exception { NotSupportedError };
 
-    Optional<Vector<uint8_t>> digest = calculateDigest(md, data);
+    std::optional<Vector<uint8_t>> digest = calculateDigest(md, data);
     if (!digest)
         return Exception { OperationError };
 
@@ -86,7 +86,7 @@ ExceptionOr<bool> CryptoAlgorithmRSA_PSS::platformVerify(const CryptoAlgorithmRs
     if (!md)
         return Exception { NotSupportedError };
 
-    Optional<Vector<uint8_t>> digest = calculateDigest(md, data);
+    std::optional<Vector<uint8_t>> digest = calculateDigest(md, data);
     if (!digest)
         return Exception { OperationError };
 

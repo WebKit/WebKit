@@ -46,15 +46,15 @@ public:
 
     bool isDeclarativeAnimation() const final { return true; }
 
-    const Optional<const Styleable> owningElement() const;
+    const std::optional<const Styleable> owningElement() const;
     const Animation& backingAnimation() const { return m_backingAnimation; }
     void setBackingAnimation(const Animation&);
     void cancelFromStyle();
 
-    Optional<double> bindingsStartTime() const final;
-    void setBindingsStartTime(Optional<double>) override;
-    Optional<double> bindingsCurrentTime() const final;
-    ExceptionOr<void> setBindingsCurrentTime(Optional<double>) final;
+    std::optional<double> bindingsStartTime() const final;
+    void setBindingsStartTime(std::optional<double>) override;
+    std::optional<double> bindingsCurrentTime() const final;
+    ExceptionOr<void> setBindingsCurrentTime(std::optional<double>) final;
     WebAnimation::PlayState bindingsPlayState() const final;
     WebAnimation::ReplaceState bindingsReplaceState() const final;
     bool bindingsPending() const final;
@@ -79,7 +79,7 @@ protected:
     virtual void syncPropertiesWithBackingAnimation();
     // elapsedTime is the animation's current time at the time the event is added and is exposed through the DOM API, timelineTime is the animations'
     // timeline current time and is not exposed through the DOM API but used by the DocumentTimeline for sorting events before dispatch. 
-    virtual Ref<AnimationEventBase> createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId, Optional<Seconds> timelineTime) = 0;
+    virtual Ref<AnimationEventBase> createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId, std::optional<Seconds> timelineTime) = 0;
     void invalidateDOMEvents(Seconds elapsedTime = 0_s);
 
 private:

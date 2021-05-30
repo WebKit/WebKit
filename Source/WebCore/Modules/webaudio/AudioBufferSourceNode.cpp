@@ -452,12 +452,12 @@ unsigned AudioBufferSourceNode::numberOfChannels()
     return output(0)->numberOfChannels();
 }
 
-ExceptionOr<void> AudioBufferSourceNode::startLater(double when, double grainOffset, Optional<double> grainDuration)
+ExceptionOr<void> AudioBufferSourceNode::startLater(double when, double grainOffset, std::optional<double> grainDuration)
 {
     return startPlaying(when, grainOffset, grainDuration);
 }
 
-ExceptionOr<void> AudioBufferSourceNode::startPlaying(double when, double grainOffset, Optional<double> grainDuration)
+ExceptionOr<void> AudioBufferSourceNode::startPlaying(double when, double grainOffset, std::optional<double> grainDuration)
 {
     ASSERT(isMainThread());
     ALWAYS_LOG(LOGIDENTIFIER, "when = ", when, ", offset = ", grainOffset, ", duration = ", grainDuration.value_or(0));

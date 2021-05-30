@@ -43,8 +43,8 @@ class PixelBuffer {
 public:
     static bool supportedPixelFormat(PixelFormat);
 
-    WEBCORE_EXPORT static Optional<PixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&);
-    WEBCORE_EXPORT static Optional<PixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&, Ref<JSC::ArrayBuffer>&&);
+    WEBCORE_EXPORT static std::optional<PixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&);
+    WEBCORE_EXPORT static std::optional<PixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&, Ref<JSC::ArrayBuffer>&&);
 
     PixelBuffer(const PixelBufferFormat&, const IntSize&, Ref<JSC::Uint8ClampedArray>&&);
     PixelBuffer(const PixelBufferFormat&, const IntSize&, JSC::Uint8ClampedArray&);
@@ -62,10 +62,10 @@ public:
     PixelBuffer deepClone() const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<PixelBuffer> decode(Decoder&);
+    template<class Decoder> static std::optional<PixelBuffer> decode(Decoder&);
 
 private:
-    WEBCORE_EXPORT static Optional<PixelBuffer> tryCreateForDecoding(const PixelBufferFormat&, const IntSize&, unsigned dataByteLength);
+    WEBCORE_EXPORT static std::optional<PixelBuffer> tryCreateForDecoding(const PixelBufferFormat&, const IntSize&, unsigned dataByteLength);
 
     WEBCORE_EXPORT static Checked<unsigned, RecordOverflow> computeBufferSize(const PixelBufferFormat&, const IntSize&);
 
@@ -85,9 +85,9 @@ template<class Encoder> void PixelBuffer::encode(Encoder& encoder) const
     encoder.encodeFixedLengthData(m_data->data(), m_data->byteLength(), 1);
 }
 
-template<class Decoder> Optional<PixelBuffer> PixelBuffer::decode(Decoder& decoder)
+template<class Decoder> std::optional<PixelBuffer> PixelBuffer::decode(Decoder& decoder)
 {
-    Optional<PixelBufferFormat> format;
+    std::optional<PixelBufferFormat> format;
     decoder >> format;
     if (!format)
         return std::nullopt;
@@ -96,7 +96,7 @@ template<class Decoder> Optional<PixelBuffer> PixelBuffer::decode(Decoder& decod
     if (!(format->pixelFormat == PixelFormat::RGBA8 || format->pixelFormat == PixelFormat::BGRA8))
         return std::nullopt;
 
-    Optional<IntSize> size;
+    std::optional<IntSize> size;
     decoder >> size;
     if (!size)
         return std::nullopt;

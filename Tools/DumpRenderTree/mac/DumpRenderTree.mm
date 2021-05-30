@@ -198,7 +198,7 @@ volatile bool done;
 RetainPtr<NavigationController> gNavigationController;
 RefPtr<TestRunner> gTestRunner;
 
-Optional<WTR::TestOptions> mainFrameTestOptions;
+std::optional<WTR::TestOptions> mainFrameTestOptions;
 WebFrame *mainFrame = nil;
 // This is the topmost frame that is loading, during a given load, or nil when no load is 
 // in progress.  Usually this is the same as the main frame, but not always.  In the case

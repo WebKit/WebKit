@@ -34,8 +34,8 @@ namespace WebCore {
 namespace Layout {
 
 struct ComputedVerticalMargin {
-    Optional<LayoutUnit> before;
-    Optional<LayoutUnit> after;
+    std::optional<LayoutUnit> before;
+    std::optional<LayoutUnit> after;
 };
 
 struct UsedVerticalMargin {
@@ -46,8 +46,8 @@ struct UsedVerticalMargin {
     NonCollapsedValues nonCollapsedValues;
 
     struct CollapsedValues {
-        Optional<LayoutUnit> before;
-        Optional<LayoutUnit> after;
+        std::optional<LayoutUnit> before;
+        std::optional<LayoutUnit> after;
         bool isCollapsedThrough { false };
     };
     CollapsedValues collapsedValues;
@@ -62,8 +62,8 @@ struct UsedVerticalMargin {
         struct Values {
             bool isNonZero() const { return positive.value_or(0) || negative.value_or(0); }
 
-            Optional<LayoutUnit> positive;
-            Optional<LayoutUnit> negative;
+            std::optional<LayoutUnit> positive;
+            std::optional<LayoutUnit> negative;
             bool isQuirk { false };
         };
         Values before;
@@ -85,8 +85,8 @@ static inline LayoutUnit marginAfter(const UsedVerticalMargin& usedVerticalMargi
 }
 
 struct ComputedHorizontalMargin {
-    Optional<LayoutUnit> start;
-    Optional<LayoutUnit> end;
+    std::optional<LayoutUnit> start;
+    std::optional<LayoutUnit> end;
 };
 
 struct UsedHorizontalMargin {
@@ -97,7 +97,7 @@ struct UsedHorizontalMargin {
 struct PrecomputedMarginBefore {
     LayoutUnit usedValue() const { return collapsedValue.value_or(nonCollapsedValue); }
     LayoutUnit nonCollapsedValue;
-    Optional<LayoutUnit> collapsedValue;
+    std::optional<LayoutUnit> collapsedValue;
     UsedVerticalMargin::PositiveAndNegativePair::Values positiveAndNegativeMarginBefore;
 };
 

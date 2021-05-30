@@ -174,7 +174,7 @@ public:
     void setInitiatorIdentifier(const String& identifier) { m_initiatorIdentifier = identifier; }
 
     // Additional information for the Inspector to be able to identify the node that initiated this request.
-    const Optional<int>& inspectorInitiatorNodeIdentifier() const { return m_inspectorInitiatorNodeIdentifier; }
+    const std::optional<int>& inspectorInitiatorNodeIdentifier() const { return m_inspectorInitiatorNodeIdentifier; }
     void setInspectorInitiatorNodeIdentifier(int inspectorInitiatorNodeIdentifier) { m_inspectorInitiatorNodeIdentifier = inspectorInitiatorNodeIdentifier; }
 
 #if USE(SYSTEM_PREVIEW)
@@ -250,7 +250,7 @@ protected:
     SameSiteDisposition m_sameSiteDisposition { SameSiteDisposition::Unspecified };
     ResourceLoadPriority m_priority { ResourceLoadPriority::Low };
     Requester m_requester { Requester::Unspecified };
-    Optional<int> m_inspectorInitiatorNodeIdentifier;
+    std::optional<int> m_inspectorInitiatorNodeIdentifier;
     bool m_allowCookies : 1;
     mutable bool m_resourceRequestUpdated : 1;
     mutable bool m_platformRequestUpdated : 1;
@@ -260,7 +260,7 @@ protected:
     bool m_isTopSite : 1;
     bool m_isAppBound : 1;
 #if USE(SYSTEM_PREVIEW)
-    Optional<SystemPreviewInfo> m_systemPreviewInfo;
+    std::optional<SystemPreviewInfo> m_systemPreviewInfo;
 #endif
 
 private:
@@ -300,79 +300,79 @@ ALWAYS_INLINE void ResourceRequestBase::encodeBase(Encoder& encoder) const
 template<class Decoder>
 ALWAYS_INLINE bool ResourceRequestBase::decodeBase(Decoder& decoder)
 {
-    Optional<URL> url;
+    std::optional<URL> url;
     decoder >> url;
     if (!url)
         return false;
     m_url = WTFMove(*url);
 
-    Optional<double> timeoutInterval;
+    std::optional<double> timeoutInterval;
     decoder >> timeoutInterval;
     if (!timeoutInterval)
         return false;
     m_timeoutInterval = WTFMove(*timeoutInterval);
 
-    Optional<String> firstPartyForCookies;
+    std::optional<String> firstPartyForCookies;
     decoder >> firstPartyForCookies;
     if (!firstPartyForCookies)
         return false;
     m_firstPartyForCookies = URL({ }, *firstPartyForCookies);
 
-    Optional<String> httpMethod;
+    std::optional<String> httpMethod;
     decoder >> httpMethod;
     if (!httpMethod)
         return false;
     m_httpMethod = WTFMove(*httpMethod);
 
-    Optional<HTTPHeaderMap> fields;
+    std::optional<HTTPHeaderMap> fields;
     decoder >> fields;
     if (!fields)
         return false;
     m_httpHeaderFields = WTFMove(*fields);
 
-    Optional<Vector<String>> array;
+    std::optional<Vector<String>> array;
     decoder >> array;
     if (!array)
         return false;
     m_responseContentDispositionEncodingFallbackArray = WTFMove(*array);
 
-    Optional<ResourceRequestCachePolicy> cachePolicy;
+    std::optional<ResourceRequestCachePolicy> cachePolicy;
     decoder >> cachePolicy;
     if (!cachePolicy)
         return false;
     m_cachePolicy = *cachePolicy;
 
-    Optional<bool> allowCookies;
+    std::optional<bool> allowCookies;
     decoder >> allowCookies;
     if (!allowCookies)
         return false;
     m_allowCookies = *allowCookies;
 
-    Optional<SameSiteDisposition> sameSiteDisposition;
+    std::optional<SameSiteDisposition> sameSiteDisposition;
     decoder >> sameSiteDisposition;
     if (!sameSiteDisposition)
         return false;
     m_sameSiteDisposition = *sameSiteDisposition;
 
-    Optional<bool> isTopSite;
+    std::optional<bool> isTopSite;
     decoder >> isTopSite;
     if (!isTopSite)
         return false;
     m_isTopSite = *isTopSite;
 
-    Optional<ResourceLoadPriority> priority;
+    std::optional<ResourceLoadPriority> priority;
     decoder >> priority;
     if (!priority)
         return false;
     m_priority = *priority;
 
-    Optional<Requester> requester;
+    std::optional<Requester> requester;
     decoder >> requester;
     if (!requester)
         return false;
     m_requester = *requester;
 
-    Optional<bool> isAppBound;
+    std::optional<bool> isAppBound;
     decoder >> isAppBound;
     if (!isAppBound)
         return false;

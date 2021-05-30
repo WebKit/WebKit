@@ -42,7 +42,7 @@ public:
 
         CommonHeader isolatedCopy() const { return { key , value.isolatedCopy() }; }
         template <class Encoder> void encode(Encoder&) const;
-        template <class Decoder> static Optional<CommonHeader> decode(Decoder&);
+        template <class Decoder> static std::optional<CommonHeader> decode(Decoder&);
 
         bool operator==(const CommonHeader& other) const { return key == other.key && value == other.value; }
     };
@@ -53,7 +53,7 @@ public:
 
         UncommonHeader isolatedCopy() const { return { key.isolatedCopy() , value.isolatedCopy() }; }
         template <class Encoder> void encode(Encoder&) const;
-        template <class Decoder> static Optional<UncommonHeader> decode(Decoder&);
+        template <class Decoder> static std::optional<UncommonHeader> decode(Decoder&);
 
         bool operator==(const UncommonHeader& other) const { return key == other.key && value == other.value; }
     };
@@ -74,7 +74,7 @@ public:
 
         struct KeyValue {
             String key;
-            Optional<HTTPHeaderName> keyAsHTTPHeaderName;
+            std::optional<HTTPHeaderName> keyAsHTTPHeaderName;
             String value;
         };
 
@@ -225,7 +225,7 @@ void HTTPHeaderMap::CommonHeader::encode(Encoder& encoder) const
 }
 
 template <class Decoder>
-auto HTTPHeaderMap::CommonHeader::decode(Decoder& decoder) -> Optional<CommonHeader>
+auto HTTPHeaderMap::CommonHeader::decode(Decoder& decoder) -> std::optional<CommonHeader>
 {
     HTTPHeaderName name;
     if (!decoder.decode(name))
@@ -245,7 +245,7 @@ void HTTPHeaderMap::UncommonHeader::encode(Encoder& encoder) const
 }
 
 template <class Decoder>
-auto HTTPHeaderMap::UncommonHeader::decode(Decoder& decoder) -> Optional<UncommonHeader>
+auto HTTPHeaderMap::UncommonHeader::decode(Decoder& decoder) -> std::optional<UncommonHeader>
 {
     String name;
     if (!decoder.decode(name))

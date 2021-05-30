@@ -198,7 +198,7 @@ template<typename CharacterType> void ContentSecurityPolicySourceList::parse(Str
 //                   / ( [ scheme "://" ] host [ port ] [ path ] )
 //                   / "'self'"
 //
-template<typename CharacterType> Optional<ContentSecurityPolicySourceList::Source> ContentSecurityPolicySourceList::parseSource(StringParsingBuffer<CharacterType> buffer)
+template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::Source> ContentSecurityPolicySourceList::parseSource(StringParsingBuffer<CharacterType> buffer)
 {
     if (buffer.atEnd())
         return std::nullopt;
@@ -336,7 +336,7 @@ template<typename CharacterType> Optional<ContentSecurityPolicySourceList::Sourc
 //                     ; <scheme> production from RFC 3986
 // scheme      = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
 //
-template<typename CharacterType> Optional<String> ContentSecurityPolicySourceList::parseScheme(StringParsingBuffer<CharacterType> buffer)
+template<typename CharacterType> std::optional<String> ContentSecurityPolicySourceList::parseScheme(StringParsingBuffer<CharacterType> buffer)
 {
     ASSERT(buffer.position() <= buffer.end());
 
@@ -360,7 +360,7 @@ template<typename CharacterType> Optional<String> ContentSecurityPolicySourceLis
 //                   / "*"
 // host-char         = ALPHA / DIGIT / "-"
 //
-template<typename CharacterType> Optional<ContentSecurityPolicySourceList::Host> ContentSecurityPolicySourceList::parseHost(StringParsingBuffer<CharacterType> buffer)
+template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::Host> ContentSecurityPolicySourceList::parseHost(StringParsingBuffer<CharacterType> buffer)
 {
     ASSERT(buffer.position() <= buffer.end());
 
@@ -396,7 +396,7 @@ template<typename CharacterType> Optional<ContentSecurityPolicySourceList::Host>
     return host;
 }
 
-template<typename CharacterType> Optional<String> ContentSecurityPolicySourceList::parsePath(StringParsingBuffer<CharacterType> buffer)
+template<typename CharacterType> std::optional<String> ContentSecurityPolicySourceList::parsePath(StringParsingBuffer<CharacterType> buffer)
 {
     ASSERT(buffer.position() <= buffer.end());
     
@@ -415,7 +415,7 @@ template<typename CharacterType> Optional<String> ContentSecurityPolicySourceLis
 
 // port              = ":" ( 1*DIGIT / "*" )
 //
-template<typename CharacterType> Optional<ContentSecurityPolicySourceList::Port> ContentSecurityPolicySourceList::parsePort(StringParsingBuffer<CharacterType> buffer)
+template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::Port> ContentSecurityPolicySourceList::parsePort(StringParsingBuffer<CharacterType> buffer)
 {
     ASSERT(buffer.position() <= buffer.end());
     

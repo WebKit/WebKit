@@ -1000,7 +1000,7 @@ void BorderPainter::paintBorders(PaintingContext& paintingContext) const
     bool haveAllDoubleEdges = true;
     int numEdgesVisible = 4;
     bool allEdgesShareColor = true;
-    Optional<BoxSide> firstVisibleSide;
+    std::optional<BoxSide> firstVisibleSide;
     BoxSideSet edgesToDraw;
 
     for (auto side : allBoxSides) {

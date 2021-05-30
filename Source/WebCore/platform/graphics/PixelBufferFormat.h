@@ -39,7 +39,7 @@ struct PixelBufferFormat {
     DestinationColorSpace colorSpace;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<PixelBufferFormat> decode(Decoder&);
+    template<class Decoder> static std::optional<PixelBufferFormat> decode(Decoder&);
 };
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, const PixelBufferFormat&);
@@ -49,19 +49,19 @@ template<class Encoder> void PixelBufferFormat::encode(Encoder& encoder) const
     encoder << alphaFormat << pixelFormat << colorSpace;
 }
 
-template<class Decoder> Optional<PixelBufferFormat> PixelBufferFormat::decode(Decoder& decoder)
+template<class Decoder> std::optional<PixelBufferFormat> PixelBufferFormat::decode(Decoder& decoder)
 {
-    Optional<AlphaPremultiplication> alphaFormat;
+    std::optional<AlphaPremultiplication> alphaFormat;
     decoder >> alphaFormat;
     if (!alphaFormat)
         return std::nullopt;
 
-    Optional<PixelFormat> pixelFormat;
+    std::optional<PixelFormat> pixelFormat;
     decoder >> pixelFormat;
     if (!pixelFormat)
         return std::nullopt;
 
-    Optional<DestinationColorSpace> colorSpace;
+    std::optional<DestinationColorSpace> colorSpace;
     decoder >> colorSpace;
     if (!colorSpace)
         return std::nullopt;

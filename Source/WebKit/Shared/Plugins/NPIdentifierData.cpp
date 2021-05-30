@@ -75,7 +75,7 @@ void NPIdentifierData::encode(IPC::Encoder& encoder) const
         encoder << m_number;
 }
 
-Optional<NPIdentifierData> NPIdentifierData::decode(IPC::Decoder& decoder)
+std::optional<NPIdentifierData> NPIdentifierData::decode(IPC::Decoder& decoder)
 {
     NPIdentifierData result;
     if (!decoder.decode(result.m_isString))

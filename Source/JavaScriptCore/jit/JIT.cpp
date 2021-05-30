@@ -260,7 +260,7 @@ void JIT::privateCompileMainPass()
 
         OpcodeID opcodeID = currentInstruction->opcodeID();
 
-        Optional<JITSizeStatistics::Marker> sizeMarker;
+        std::optional<JITSizeStatistics::Marker> sizeMarker;
         if (UNLIKELY(m_bytecodeIndex >= startBytecodeIndex && Options::dumpBaselineJITSizeStatistics())) {
             String id = makeString("Baseline_fast_", opcodeNames[opcodeID]);
             sizeMarker = m_vm->jitSizeStatistics->markStart(id, *this);
@@ -543,7 +543,7 @@ void JIT::privateCompileSlowCases()
 
         OpcodeID opcodeID = currentInstruction->opcodeID();
 
-        Optional<JITSizeStatistics::Marker> sizeMarker;
+        std::optional<JITSizeStatistics::Marker> sizeMarker;
         if (UNLIKELY(Options::dumpBaselineJITSizeStatistics())) {
             String id = makeString("Baseline_slow_", opcodeNames[opcodeID]);
             sizeMarker = m_vm->jitSizeStatistics->markStart(id, *this);
@@ -733,7 +733,7 @@ void JIT::compileAndLinkWithoutFinalizing(JITCompilationEffort effort)
     
     m_pcToCodeOriginMapBuilder.appendItem(label(), CodeOrigin(BytecodeIndex(0)));
 
-    Optional<JITSizeStatistics::Marker> sizeMarker;
+    std::optional<JITSizeStatistics::Marker> sizeMarker;
     if (UNLIKELY(Options::dumpBaselineJITSizeStatistics())) {
         String id = makeString("Baseline_prologue");
         sizeMarker = m_vm->jitSizeStatistics->markStart(id, *this);

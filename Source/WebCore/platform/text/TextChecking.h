@@ -88,7 +88,7 @@ class TextCheckingRequestData {
     friend class SpellCheckRequest; // For access to m_identifier.
 public:
     TextCheckingRequestData() = default;
-    TextCheckingRequestData(Optional<TextCheckingRequestIdentifier> identifier, const String& text, OptionSet<TextCheckingType> checkingTypes, TextCheckingProcessType processType)
+    TextCheckingRequestData(std::optional<TextCheckingRequestIdentifier> identifier, const String& text, OptionSet<TextCheckingType> checkingTypes, TextCheckingProcessType processType)
         : m_text { text }
         , m_identifier { identifier }
         , m_processType { processType }
@@ -96,14 +96,14 @@ public:
     {
     }
 
-    Optional<TextCheckingRequestIdentifier> identifier() const { return m_identifier; }
+    std::optional<TextCheckingRequestIdentifier> identifier() const { return m_identifier; }
     const String& text() const { return m_text; }
     OptionSet<TextCheckingType> checkingTypes() const { return m_checkingTypes; }
     TextCheckingProcessType processType() const { return m_processType; }
 
 private:
     String m_text;
-    Optional<TextCheckingRequestIdentifier> m_identifier;
+    std::optional<TextCheckingRequestIdentifier> m_identifier;
     TextCheckingProcessType m_processType { TextCheckingProcessIncremental };
     OptionSet<TextCheckingType> m_checkingTypes;
 };

@@ -87,8 +87,8 @@ private:
         OptionSet<DateTimeFormatValidationResults> m_results;
     };
 
-    virtual Optional<DateComponents> parseToDateComponents(const StringView&) const = 0;
-    virtual Optional<DateComponents> setMillisecondToDateComponents(double) const = 0;
+    virtual std::optional<DateComponents> parseToDateComponents(const StringView&) const = 0;
+    virtual std::optional<DateComponents> setMillisecondToDateComponents(double) const = 0;
     virtual void setupLayoutParameters(DateTimeEditElement::LayoutParameters&, const DateComponents&) const = 0;
     virtual bool isValidFormat(OptionSet<DateTimeFormatValidationResults>) const = 0;
     virtual String serializeWithMilliseconds(double) const;

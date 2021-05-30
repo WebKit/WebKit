@@ -154,7 +154,7 @@ public:
         }
     }
 
-    constexpr OptionSet(Optional<E> optional)
+    constexpr OptionSet(std::optional<E> optional)
         : m_storage(optional ? static_cast<StorageType>(*optional) : 0)
     {
     }
@@ -206,9 +206,9 @@ public:
         return m_storage && !(m_storage & (m_storage - 1));
     }
 
-    constexpr Optional<E> toSingleValue() const
+    constexpr std::optional<E> toSingleValue() const
     {
-        return hasExactlyOneBitSet() ? Optional<E>(static_cast<E>(m_storage)) : std::nullopt;
+        return hasExactlyOneBitSet() ? std::optional<E>(static_cast<E>(m_storage)) : std::nullopt;
     }
 
     constexpr friend bool operator==(OptionSet lhs, OptionSet rhs)

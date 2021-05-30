@@ -67,8 +67,8 @@ public:
     struct LeftRightIndex {
         bool isEmpty() const { return !left && !right;}
 
-        Optional<unsigned> left;
-        Optional<unsigned> right;
+        std::optional<unsigned> left;
+        std::optional<unsigned> right;
     };
 
     bool isEmpty() const { return m_floatPair.isEmpty(); }
@@ -78,8 +78,8 @@ public:
     PositionInContextRoot verticalConstraint() const { return m_verticalPosition; }
 
     struct HorizontalConstraints {
-        Optional<PositionInContextRoot> left;
-        Optional<PositionInContextRoot> right;
+        std::optional<PositionInContextRoot> left;
+        std::optional<PositionInContextRoot> right;
     };
     HorizontalConstraints horizontalConstraints() const;
     PositionInContextRoot bottom() const;
@@ -97,7 +97,7 @@ private:
 
 class Iterator {
 public:
-    Iterator(const FloatingState::FloatList&, Optional<PositionInContextRoot> verticalPosition);
+    Iterator(const FloatingState::FloatList&, std::optional<PositionInContextRoot> verticalPosition);
 
     const FloatPair& operator*() const { return m_current; }
     Iterator& operator++();
@@ -167,8 +167,8 @@ static ComputedHorizontalMargin computedHorizontalMargin(const Box& layoutBox, L
 
 static FloatPair::LeftRightIndex findAvailablePosition(FloatAvoider& floatAvoider, const FloatingState::FloatList& floats)
 {
-    Optional<PositionInContextRoot> bottomMost;
-    Optional<FloatPair::LeftRightIndex> innerMostLeftAndRight;
+    std::optional<PositionInContextRoot> bottomMost;
+    std::optional<FloatPair::LeftRightIndex> innerMostLeftAndRight;
     auto end = Layout::end(floats);
     for (auto iterator = begin(floats, { floatAvoider.top() }); iterator != end; ++iterator) {
         ASSERT(!(*iterator).isEmpty());
@@ -245,7 +245,7 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const Horizo
     auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
     if (layoutBox.hasFloatClear()) {
         // The vertical position candidate needs to clear the existing floats in this context.
-        auto floatBottom = [&]() -> Optional<LayoutUnit> {
+        auto floatBottom = [&]() -> std::optional<LayoutUnit> {
             switch (layoutBox.style().clear()) {
             case Clear::Left:
                 return leftBottom();
@@ -299,7 +299,7 @@ LayoutPoint FloatingContext::positionForNonFloatingFloatAvoider(const Box& layou
     return { floatAvoider.left() - containingBlockTopLeft.x(), floatAvoider.top() - containingBlockTopLeft.y() };
 }
 
-Optional<FloatingContext::PositionWithClearance> FloatingContext::verticalPositionWithClearance(const Box& layoutBox) const
+std::optional<FloatingContext::PositionWithClearance> FloatingContext::verticalPositionWithClearance(const Box& layoutBox) const
 {
     ASSERT(layoutBox.hasFloatClear());
     ASSERT(areFloatsHorizontallySorted(m_floatingState));
@@ -307,7 +307,7 @@ Optional<FloatingContext::PositionWithClearance> FloatingContext::verticalPositi
     if (isEmpty())
         return { };
 
-    auto bottom = [&](auto floatBottom) -> Optional<PositionWithClearance> {
+    auto bottom = [&](auto floatBottom) -> std::optional<PositionWithClearance> {
         if (!floatBottom)
             return { };
         // 9.5.2 Controlling flow next to floats: the 'clear' property
@@ -364,11 +364,11 @@ Optional<FloatingContext::PositionWithClearance> FloatingContext::verticalPositi
     return { };
 }
 
-Optional<LayoutUnit> FloatingContext::bottom(Clear type) const
+std::optional<LayoutUnit> FloatingContext::bottom(Clear type) const
 {
     // TODO: Currently this is only called once for each formatting context root with floats per layout.
     // Cache the value if we end up calling it more frequently (and update it at append/remove).
-    auto bottom = Optional<LayoutUnit> { };
+    auto bottom = std::optional<LayoutUnit> { };
     for (auto& floatItem : floatingState().floats()) {
         if ((type == Clear::Left && !floatItem.isLeftPositioned())
             || (type == Clear::Right && floatItem.isLeftPositioned()))
@@ -378,9 +378,9 @@ Optional<LayoutUnit> FloatingContext::bottom(Clear type) const
     return bottom;
 }
 
-Optional<LayoutUnit> FloatingContext::top() const
+std::optional<LayoutUnit> FloatingContext::top() const
 {
-    auto top = Optional<LayoutUnit> { };
+    auto top = std::optional<LayoutUnit> { };
     for (auto& floatItem : floatingState().floats())
         top = !top ? floatItem.rectWithMargin().top() : std::min(*top, floatItem.rectWithMargin().top());
     return top;
@@ -575,8 +575,8 @@ bool FloatPair::operator ==(const FloatPair& other) const
 
 FloatPair::HorizontalConstraints FloatPair::horizontalConstraints() const
 {
-    Optional<PositionInContextRoot> leftEdge;
-    Optional<PositionInContextRoot> rightEdge;
+    std::optional<PositionInContextRoot> leftEdge;
+    std::optional<PositionInContextRoot> rightEdge;
 
     if (left())
         leftEdge = PositionInContextRoot { left()->rectWithMargin().right() };
@@ -593,8 +593,8 @@ PositionInContextRoot FloatPair::bottom() const
     auto* right = this->right();
     ASSERT(left || right);
 
-    auto leftBottom = left ? Optional<PositionInContextRoot>(PositionInContextRoot { left->rectWithMargin().bottom() }) : std::nullopt;
-    auto rightBottom = right ? Optional<PositionInContextRoot>(PositionInContextRoot { right->rectWithMargin().bottom() }) : std::nullopt;
+    auto leftBottom = left ? std::optional<PositionInContextRoot>(PositionInContextRoot { left->rectWithMargin().bottom() }) : std::nullopt;
+    auto rightBottom = right ? std::optional<PositionInContextRoot>(PositionInContextRoot { right->rectWithMargin().bottom() }) : std::nullopt;
 
     if (leftBottom && rightBottom)
         return std::max(*leftBottom, *rightBottom);
@@ -605,7 +605,7 @@ PositionInContextRoot FloatPair::bottom() const
     return *rightBottom;
 }
 
-Iterator::Iterator(const FloatingState::FloatList& floats, Optional<PositionInContextRoot> verticalPosition)
+Iterator::Iterator(const FloatingState::FloatList& floats, std::optional<PositionInContextRoot> verticalPosition)
     : m_floats(floats)
     , m_current(floats)
 {
@@ -613,7 +613,7 @@ Iterator::Iterator(const FloatingState::FloatList& floats, Optional<PositionInCo
         set(*verticalPosition);
 }
 
-inline static Optional<unsigned> previousFloatingIndex(Float floatingType, const FloatingState::FloatList& floats, unsigned currentIndex)
+inline static std::optional<unsigned> previousFloatingIndex(Float floatingType, const FloatingState::FloatList& floats, unsigned currentIndex)
 {
     RELEASE_ASSERT(currentIndex <= floats.size());
 
@@ -633,7 +633,7 @@ Iterator& Iterator::operator++()
         return *this;
     }
 
-    auto findPreviousFloatingWithLowerBottom = [&](Float floatingType, unsigned currentIndex) -> Optional<unsigned> {
+    auto findPreviousFloatingWithLowerBottom = [&](Float floatingType, unsigned currentIndex) -> std::optional<unsigned> {
 
         RELEASE_ASSERT(currentIndex < m_floats.size());
 
@@ -643,7 +643,7 @@ Iterator& Iterator::operator++()
 
         auto currentBottom = m_floats[currentIndex].rectWithMargin().bottom();
 
-        Optional<unsigned> index = currentIndex;
+        std::optional<unsigned> index = currentIndex;
         while (true) {
             index = previousFloatingIndex(floatingType, m_floats, *index);
             if (!index)
@@ -663,8 +663,8 @@ Iterator& Iterator::operator++()
     // Ensure that the new floating's bottom edge is positioned lower than the current one -which essentially means skipping in-between floats that are positioned higher).
     // 3. Reset the vertical position and align it with the new left-right pair. These floats are now the inner-most boxes for the current vertical position.
     // As the result we have more horizontal space on the current vertical position.
-    auto leftBottom = m_current.left() ? Optional<PositionInContextRoot>(m_current.left()->bottom()) : std::nullopt;
-    auto rightBottom = m_current.right() ? Optional<PositionInContextRoot>(m_current.right()->bottom()) : std::nullopt;
+    auto leftBottom = m_current.left() ? std::optional<PositionInContextRoot>(m_current.left()->bottom()) : std::nullopt;
+    auto rightBottom = m_current.right() ? std::optional<PositionInContextRoot>(m_current.right()->bottom()) : std::nullopt;
 
     auto updateLeft = (leftBottom == rightBottom) || (!rightBottom || (leftBottom && *leftBottom < *rightBottom));
     auto updateRight = (leftBottom == rightBottom) || (!leftBottom || (rightBottom && *leftBottom > *rightBottom));
@@ -697,7 +697,7 @@ void Iterator::set(PositionInContextRoot verticalPosition)
         return;
     }
 
-    auto findFloatingBelow = [&](Float floatingType) -> Optional<unsigned> {
+    auto findFloatingBelow = [&](Float floatingType) -> std::optional<unsigned> {
 
         ASSERT(!m_floats.isEmpty());
 

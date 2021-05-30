@@ -463,11 +463,11 @@ public:
     void dispatchContextChangedNotification();
 
     void paintRenderingResultsToCanvas(ImageBuffer&) final;
-    Optional<PixelBuffer> paintRenderingResultsToPixelBuffer() final;
+    std::optional<PixelBuffer> paintRenderingResultsToPixelBuffer() final;
     void paintCompositedResultsToCanvas(ImageBuffer&) final;
 
-    Optional<PixelBuffer> readRenderingResultsForPainting();
-    Optional<PixelBuffer> readCompositedResultsForPainting();
+    std::optional<PixelBuffer> readRenderingResultsForPainting();
+    std::optional<PixelBuffer> readCompositedResultsForPainting();
 
 #if ENABLE(VIDEO)
     bool copyTextureFromMedia(MediaPlayer&, PlatformGLObject texture, GCGLenum target, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY) final;
@@ -553,9 +553,9 @@ private:
     void checkGPUStatus();
 
 
-    Optional<PixelBuffer> readRenderingResults();
-    Optional<PixelBuffer> readCompositedResults();
-    Optional<PixelBuffer> readPixelsForPaintResults();
+    std::optional<PixelBuffer> readRenderingResults();
+    std::optional<PixelBuffer> readCompositedResults();
+    std::optional<PixelBuffer> readPixelsForPaintResults();
 
     bool reshapeFBOs(const IntSize&);
     void prepareTextureImpl();
@@ -644,8 +644,8 @@ private:
     String mappedSymbolName(PlatformGLObject program, ANGLEShaderSymbolType, const String& name);
     String mappedSymbolName(PlatformGLObject shaders[2], size_t count, const String& name);
     String originalSymbolName(PlatformGLObject program, ANGLEShaderSymbolType, const String& name);
-    Optional<String> mappedSymbolInShaderSourceMap(PlatformGLObject shader, ANGLEShaderSymbolType, const String& name);
-    Optional<String> originalSymbolInShaderSourceMap(PlatformGLObject shader, ANGLEShaderSymbolType, const String& name);
+    std::optional<String> mappedSymbolInShaderSourceMap(PlatformGLObject shader, ANGLEShaderSymbolType, const String& name);
+    std::optional<String> originalSymbolInShaderSourceMap(PlatformGLObject shader, ANGLEShaderSymbolType, const String& name);
 
     std::unique_ptr<ShaderNameHash> nameHashMapForShaders;
 #endif // !USE(ANGLE)

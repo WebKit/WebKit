@@ -171,7 +171,7 @@ void SpeechRecognitionPermissionManager::continueProcessingRequest()
     completeCurrentRequest();
 }
 
-void SpeechRecognitionPermissionManager::completeCurrentRequest(Optional<WebCore::SpeechRecognitionError>&& error)
+void SpeechRecognitionPermissionManager::completeCurrentRequest(std::optional<WebCore::SpeechRecognitionError>&& error)
 {
     ASSERT(!m_requests.isEmpty());
     auto currentRequest = m_requests.takeFirst();

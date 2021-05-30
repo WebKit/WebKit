@@ -44,7 +44,7 @@ FramesPerSecond framesPerSecondNearestFullSpeed(FramesPerSecond nominalFramesPer
     return fullSpeedRatio - std::floor(fullSpeedRatio) <= 0.5 ? floorSpeed : ceilSpeed;
 }
 
-Optional<FramesPerSecond> preferredFramesPerSecond(OptionSet<ThrottlingReason> reasons, Optional<FramesPerSecond> nominalFramesPerSecond, bool preferFrameRatesNear60FPS)
+std::optional<FramesPerSecond> preferredFramesPerSecond(OptionSet<ThrottlingReason> reasons, std::optional<FramesPerSecond> nominalFramesPerSecond, bool preferFrameRatesNear60FPS)
 {
     if (reasons.contains(ThrottlingReason::OutsideViewport))
         return std::nullopt;
@@ -64,7 +64,7 @@ Optional<FramesPerSecond> preferredFramesPerSecond(OptionSet<ThrottlingReason> r
     return framesPerSecond;
 }
 
-Seconds preferredFrameInterval(OptionSet<ThrottlingReason> reasons, Optional<FramesPerSecond> nominalFramesPerSecond, bool preferFrameRatesNear60FPS)
+Seconds preferredFrameInterval(OptionSet<ThrottlingReason> reasons, std::optional<FramesPerSecond> nominalFramesPerSecond, bool preferFrameRatesNear60FPS)
 {
     if (reasons.contains(ThrottlingReason::OutsideViewport))
         return AggressiveThrottlingAnimationInterval;

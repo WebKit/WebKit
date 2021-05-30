@@ -50,7 +50,7 @@ public:
     const Vector<String>& blobFilePaths() const { return m_blobFilePaths; }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<IDBValue> decode(Decoder&);
+    template<class Decoder> static std::optional<IDBValue> decode(Decoder&);
 
     size_t size() const;
 private:
@@ -68,7 +68,7 @@ void IDBValue::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<IDBValue> IDBValue::decode(Decoder& decoder)
+std::optional<IDBValue> IDBValue::decode(Decoder& decoder)
 {
     IDBValue result;
     if (!decoder.decode(result.m_data))

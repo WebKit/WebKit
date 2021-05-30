@@ -79,7 +79,7 @@ public:
     Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>>> requestClientNodes(const Inspector::Protocol::Canvas::CanvasId&);
     Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Runtime::RemoteObject>> resolveContext(const Inspector::Protocol::Canvas::CanvasId&, const String& objectGroup);
     Inspector::Protocol::ErrorStringOr<void> setRecordingAutoCaptureFrameCount(int);
-    Inspector::Protocol::ErrorStringOr<void> startRecording(const Inspector::Protocol::Canvas::CanvasId&, Optional<int>&& frameCount, Optional<int>&& memoryLimit);
+    Inspector::Protocol::ErrorStringOr<void> startRecording(const Inspector::Protocol::Canvas::CanvasId&, std::optional<int>&& frameCount, std::optional<int>&& memoryLimit);
     Inspector::Protocol::ErrorStringOr<void> stopRecording(const Inspector::Protocol::Canvas::CanvasId&);
 #if ENABLE(WEBGL) || ENABLE(WEBGPU)
     Inspector::Protocol::ErrorStringOr<String> requestShaderSource(const Inspector::Protocol::Canvas::ProgramId&, Inspector::Protocol::Canvas::ShaderType);
@@ -91,7 +91,7 @@ public:
 #endif // ENABLE(WEBGL) || ENABLE(WEBGPU)
 
     // CanvasObserver
-    void canvasChanged(CanvasBase&, const Optional<FloatRect>&) final;
+    void canvasChanged(CanvasBase&, const std::optional<FloatRect>&) final;
     void canvasResized(CanvasBase&) final { }
     void canvasDestroyed(CanvasBase&) final;
 
@@ -120,7 +120,7 @@ public:
 
     // InspectorCanvasCallTracer
 #define PROCESS_ARGUMENT_DECLARATION(ArgumentType) \
-    Optional<InspectorCanvasCallTracer::ProcessedArgument> processArgument(CanvasRenderingContext&, ArgumentType); \
+    std::optional<InspectorCanvasCallTracer::ProcessedArgument> processArgument(CanvasRenderingContext&, ArgumentType); \
 // end of PROCESS_ARGUMENT_DECLARATION
     FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_ARGUMENT(PROCESS_ARGUMENT_DECLARATION)
 #undef PROCESS_ARGUMENT_DECLARATION
@@ -128,9 +128,9 @@ public:
 
 private:
     struct RecordingOptions {
-        Optional<long> frameCount;
-        Optional<long> memoryLimit;
-        Optional<String> name;
+        std::optional<long> frameCount;
+        std::optional<long> memoryLimit;
+        std::optional<String> name;
     };
     void startRecording(InspectorCanvas&, Inspector::Protocol::Recording::Initiator, RecordingOptions&& = { });
 
@@ -180,7 +180,7 @@ private:
 
     HashSet<String> m_recordingCanvasIdentifiers;
 
-    Optional<size_t> m_recordingAutoCaptureFrameCount;
+    std::optional<size_t> m_recordingAutoCaptureFrameCount;
 };
 
 } // namespace WebCore

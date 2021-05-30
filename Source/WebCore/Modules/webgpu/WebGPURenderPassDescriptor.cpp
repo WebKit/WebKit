@@ -45,7 +45,7 @@ GPURenderPassDepthStencilAttachmentDescriptor::GPURenderPassDepthStencilAttachme
 {
 }
 
-Optional<GPURenderPassDescriptor> WebGPURenderPassDescriptor::tryCreateGPURenderPassDescriptor() const
+std::optional<GPURenderPassDescriptor> WebGPURenderPassDescriptor::tryCreateGPURenderPassDescriptor() const
 {
     // FIXME: Improve error checking as WebGPURenderPassDescriptor is added to spec.
     if (colorAttachments.isEmpty()) {
@@ -65,7 +65,7 @@ Optional<GPURenderPassDescriptor> WebGPURenderPassDescriptor::tryCreateGPURender
         gpuColorAttachments.append(GPURenderPassColorAttachmentDescriptor { makeRef(*colorAttachment.attachment->texture()), colorAttachment });
     }
 
-    Optional<GPURenderPassDepthStencilAttachmentDescriptor> gpuDepthAttachment;
+    std::optional<GPURenderPassDepthStencilAttachmentDescriptor> gpuDepthAttachment;
 
     if (depthStencilAttachment) {
         if (!depthStencilAttachment->attachment

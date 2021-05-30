@@ -83,7 +83,7 @@ private:
     Condition m_parseTracksCondition;
     Lock m_parseTracksLock;
     MediaTime m_duration WTF_GUARDED_BY_LOCK(m_parseTracksLock);
-    Optional<OSStatus> m_parseTracksStatus WTF_GUARDED_BY_LOCK(m_parseTracksLock);
+    std::optional<OSStatus> m_parseTracksStatus WTF_GUARDED_BY_LOCK(m_parseTracksLock);
     Vector<Ref<MediaTrackReader>> m_trackReaders WTF_GUARDED_BY_LOCK(m_parseTracksLock);
     RefPtr<const Logger> m_logger;
     const void* m_logIdentifier;

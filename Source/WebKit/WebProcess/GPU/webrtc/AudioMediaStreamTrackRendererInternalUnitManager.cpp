@@ -74,7 +74,7 @@ private:
     String m_deviceId;
     bool m_isPlaying { false };
 
-    Optional<WebCore::CAAudioStreamDescription> m_description;
+    std::optional<WebCore::CAAudioStreamDescription> m_description;
     std::unique_ptr<WebCore::WebAudioBufferList> m_buffer;
     std::unique_ptr<WebCore::CARingBuffer> m_ringBuffer;
     int64_t m_writeOffset { 0 };

@@ -56,7 +56,7 @@ void InspectorAuditAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
 }
 
-Protocol::ErrorStringOr<void> InspectorAuditAgent::setup(Optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
+Protocol::ErrorStringOr<void> InspectorAuditAgent::setup(std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
     Protocol::ErrorString errorString;
 
@@ -84,7 +84,7 @@ Protocol::ErrorStringOr<void> InspectorAuditAgent::setup(Optional<Protocol::Runt
     return { };
 }
 
-Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, Optional<bool> /* wasThrown */>> InspectorAuditAgent::run(const String& test, Optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
+Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, std::optional<bool> /* wasThrown */>> InspectorAuditAgent::run(const String& test, std::optional<Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
     Protocol::ErrorString errorString;
 
@@ -100,8 +100,8 @@ Protocol::ErrorStringOr<std::tuple<Ref<Protocol::Runtime::RemoteObject>, Optiona
         options.args = { m_injectedWebInspectorAuditValue.get() };
 
     RefPtr<Protocol::Runtime::RemoteObject> result;
-    Optional<bool> wasThrown;
-    Optional<int> savedResultIndex;
+    std::optional<bool> wasThrown;
+    std::optional<int> savedResultIndex;
 
     JSC::Debugger::TemporarilyDisableExceptionBreakpoints temporarilyDisableExceptionBreakpoints(m_debugger);
     temporarilyDisableExceptionBreakpoints.replace();

@@ -115,7 +115,7 @@ private:
     void closeGCryptHandle();
 
     // FIXME: It would be nice to use something in WebCore for crypto...
-    Optional<gcry_cipher_hd_t> m_gCryptHandle { std::nullopt };
+    std::optional<gcry_cipher_hd_t> m_gCryptHandle { std::nullopt };
 };
 
 } // namespace WebCore

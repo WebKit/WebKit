@@ -63,7 +63,7 @@ protected:
 
 private:
     std::unique_ptr<DOMPromiseDeferred<void>> m_promise;
-    Optional<ReadableStreamDefaultController> m_controller;
+    std::optional<ReadableStreamDefaultController> m_controller;
 };
 
 class SimpleReadableStreamSource

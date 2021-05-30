@@ -867,16 +867,16 @@ void RenderTableSection::recalcOuterBorder()
     m_outerBorderEnd = calcOuterBorderEnd();
 }
 
-Optional<LayoutUnit> RenderTableSection::firstLineBaseline() const
+std::optional<LayoutUnit> RenderTableSection::firstLineBaseline() const
 {
     if (!m_grid.size())
-        return Optional<LayoutUnit>();
+        return std::optional<LayoutUnit>();
 
     LayoutUnit firstLineBaseline = m_grid[0].baseline;
     if (firstLineBaseline)
         return firstLineBaseline + m_rowPos[0];
 
-    Optional<LayoutUnit> result;
+    std::optional<LayoutUnit> result;
     const Row& firstRow = m_grid[0].row;
     for (size_t i = 0; i < firstRow.size(); ++i) {
         const CellStruct& cs = firstRow.at(i);

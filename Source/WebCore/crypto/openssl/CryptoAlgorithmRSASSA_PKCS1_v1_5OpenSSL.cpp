@@ -39,7 +39,7 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign(cons
     if (!md)
         return Exception { NotSupportedError };
 
-    Optional<Vector<uint8_t>> digest = calculateDigest(md, data);
+    std::optional<Vector<uint8_t>> digest = calculateDigest(md, data);
     if (!digest)
         return Exception { OperationError };
 
@@ -74,7 +74,7 @@ ExceptionOr<bool> CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify(const CryptoK
     if (!md)
         return Exception { NotSupportedError };
 
-    Optional<Vector<uint8_t>> digest = calculateDigest(md, data);
+    std::optional<Vector<uint8_t>> digest = calculateDigest(md, data);
     if (!digest)
         return Exception { OperationError };
 

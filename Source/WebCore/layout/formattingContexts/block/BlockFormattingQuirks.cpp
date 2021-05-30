@@ -59,7 +59,7 @@ static bool needsStretching(const Box& layoutBox)
     return layoutBox.style().logicalHeight().isAuto();
 }
 
-Optional<LayoutUnit> BlockFormattingQuirks::stretchedInFlowHeightIfApplicable(const Box& layoutBox, ContentHeightAndMargin contentHeightAndMargin) const
+std::optional<LayoutUnit> BlockFormattingQuirks::stretchedInFlowHeightIfApplicable(const Box& layoutBox, ContentHeightAndMargin contentHeightAndMargin) const
 {
     ASSERT(layoutState().inQuirksMode());
     if (!needsStretching(layoutBox))

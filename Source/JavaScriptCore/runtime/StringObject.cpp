@@ -73,7 +73,7 @@ bool StringObject::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName 
 
     if (propertyName == vm.propertyNames->length)
         return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
-    if (Optional<uint32_t> index = parseIndex(propertyName)) 
+    if (std::optional<uint32_t> index = parseIndex(propertyName)) 
         RELEASE_AND_RETURN(scope, putByIndex(cell, globalObject, index.value(), value, slot.isStrictMode()));
     RELEASE_AND_RETURN(scope, JSObject::put(cell, globalObject, propertyName, value, slot));
 }
@@ -94,7 +94,7 @@ static bool isStringOwnProperty(JSGlobalObject* globalObject, StringObject* obje
     VM& vm = globalObject->vm();
     if (propertyName == vm.propertyNames->length)
         return true;
-    if (Optional<uint32_t> index = parseIndex(propertyName)) {
+    if (std::optional<uint32_t> index = parseIndex(propertyName)) {
         if (object->internalValue()->canGetIndex(index.value()))
             return true;
     }
@@ -131,7 +131,7 @@ bool StringObject::deleteProperty(JSCell* cell, JSGlobalObject* globalObject, Pr
     StringObject* thisObject = jsCast<StringObject*>(cell);
     if (propertyName == vm.propertyNames->length)
         return false;
-    Optional<uint32_t> index = parseIndex(propertyName);
+    std::optional<uint32_t> index = parseIndex(propertyName);
     if (index && thisObject->internalValue()->canGetIndex(index.value()))
         return false;
     return JSObject::deleteProperty(thisObject, globalObject, propertyName, slot);

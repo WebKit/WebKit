@@ -147,7 +147,7 @@ void NPVariantData::encode(IPC::Encoder& encoder) const
     }
 }
 
-Optional<NPVariantData> NPVariantData::decode(IPC::Decoder& decoder)
+std::optional<NPVariantData> NPVariantData::decode(IPC::Decoder& decoder)
 {
     NPVariantData result;
     uint32_t type;

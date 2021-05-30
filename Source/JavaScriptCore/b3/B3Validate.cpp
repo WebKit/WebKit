@@ -71,7 +71,7 @@ public:
         HashMap<Value*, unsigned> valueInBlock;
         HashMap<Value*, BasicBlock*> valueOwner;
         HashMap<Value*, unsigned> valueIndex;
-        HashMap<Value*, Vector<Optional<Type>>> extractions;
+        HashMap<Value*, Vector<std::optional<Type>>> extractions;
 
         for (unsigned tuple = 0; tuple < m_procedure.tuples().size(); ++tuple) {
             VALIDATE(m_procedure.tuples()[tuple].size(), ("In tuple ", tuple));

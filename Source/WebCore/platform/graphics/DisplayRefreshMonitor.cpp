@@ -111,9 +111,9 @@ bool DisplayRefreshMonitor::removeClient(DisplayRefreshMonitorClient& client)
     return removed;
 }
 
-Optional<FramesPerSecond> DisplayRefreshMonitor::maximumClientPreferredFramesPerSecond() const
+std::optional<FramesPerSecond> DisplayRefreshMonitor::maximumClientPreferredFramesPerSecond() const
 {
-    Optional<FramesPerSecond> maxFramesPerSecond;
+    std::optional<FramesPerSecond> maxFramesPerSecond;
     for (auto* client : m_clients)
         maxFramesPerSecond = std::max<FramesPerSecond>(maxFramesPerSecond.value_or(0), client->preferredFramesPerSecond());
 

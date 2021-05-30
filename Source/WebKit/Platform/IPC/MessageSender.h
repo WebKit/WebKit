@@ -104,7 +104,7 @@ public:
         return listenerID;
     }
 
-    virtual bool sendMessage(UniqueRef<Encoder>&&, OptionSet<SendOption>, Optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&& = std::nullopt);
+    virtual bool sendMessage(UniqueRef<Encoder>&&, OptionSet<SendOption>, std::optional<std::pair<CompletionHandler<void(IPC::Decoder*)>, uint64_t>>&& = std::nullopt);
 
 private:
     virtual Connection* messageSenderConnection() const = 0;

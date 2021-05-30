@@ -42,7 +42,7 @@ const int DragController::DragIconBottomInset = 3;
 
 const float DragController::DragImageAlpha = 0.75f;
 
-Optional<DragOperation> DragController::dragOperation(const DragData& dragData)
+std::optional<DragOperation> DragController::dragOperation(const DragData& dragData)
 {
     // FIXME: To match the macOS behaviour we should return std::nullopt.
     // If we are a modal window, we are the drag source, or the window is an attached sheet.

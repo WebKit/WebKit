@@ -42,7 +42,7 @@
 // CTAP protocol, null optional is returned.
 namespace fido {
 
-Optional<cbor::CBORValue> decodeResponseMap(const Vector<uint8_t>&);
+std::optional<cbor::CBORValue> decodeResponseMap(const Vector<uint8_t>&);
 
 // Parses response code from response received from the authenticator. If
 // unknown response code value is received, then CTAP2_ERR_OTHER is returned.
@@ -61,7 +61,7 @@ WEBCORE_EXPORT RefPtr<WebCore::AuthenticatorAssertionResponse> readCTAPGetAssert
 
 // De-serializes CBOR encoded response to AuthenticatorGetInfo request to
 // AuthenticatorGetInfoResponse object.
-WEBCORE_EXPORT Optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector<uint8_t>&);
+WEBCORE_EXPORT std::optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector<uint8_t>&);
 
 } // namespace fido
 

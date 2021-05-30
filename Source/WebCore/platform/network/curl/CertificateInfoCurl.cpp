@@ -57,7 +57,7 @@ CertificateInfo::Certificate CertificateInfo::makeCertificate(const uint8_t* buf
     return certificate;
 }
 
-Optional<CertificateSummary> CertificateInfo::summary() const
+std::optional<CertificateSummary> CertificateInfo::summary() const
 {
     if (!m_certificateChain.size())
         return std::nullopt;

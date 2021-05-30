@@ -41,9 +41,9 @@
 
 namespace WebCore {
 
-static Optional<UniqueRef<AudioSession>>& sharedAudioSession()
+static std::optional<UniqueRef<AudioSession>>& sharedAudioSession()
 {
-    static NeverDestroyed<Optional<UniqueRef<AudioSession>>> session;
+    static NeverDestroyed<std::optional<UniqueRef<AudioSession>>> session;
     return session.get();
 }
 
@@ -180,7 +180,7 @@ void AudioSession::audioOutputDeviceChanged()
     notImplemented();
 }
 
-void AudioSession::setIsPlayingToBluetoothOverride(Optional<bool>)
+void AudioSession::setIsPlayingToBluetoothOverride(std::optional<bool>)
 {
     notImplemented();
 }

@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-Optional<GPUProgrammableStageDescriptor> WebGPUProgrammableStageDescriptor::tryCreateGPUProgrammableStageDescriptor() const
+std::optional<GPUProgrammableStageDescriptor> WebGPUProgrammableStageDescriptor::tryCreateGPUProgrammableStageDescriptor() const
 {
     if (!module || !module->module() || entryPoint.isEmpty())
         return std::nullopt;

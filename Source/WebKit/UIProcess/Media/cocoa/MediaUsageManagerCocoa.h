@@ -58,7 +58,7 @@ private:
         WebCore::MediaSessionIdentifier identifier;
         String bundleIdentifier;
         URL pageURL;
-        Optional<WebCore::MediaUsageInfo> mediaUsageInfo;
+        std::optional<WebCore::MediaUsageInfo> mediaUsageInfo;
         RetainPtr<USVideoUsage> usageTracker;
     };
 

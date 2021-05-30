@@ -153,7 +153,7 @@ private:
     RunLoop::Timer<ProcessThrottler> m_prepareToSuspendTimeoutTimer;
     HashSet<ForegroundActivity*> m_foregroundActivities;
     HashSet<BackgroundActivity*> m_backgroundActivities;
-    Optional<uint64_t> m_pendingRequestToSuspendID;
+    std::optional<uint64_t> m_pendingRequestToSuspendID;
     bool m_shouldTakeUIBackgroundAssertion;
 };
 

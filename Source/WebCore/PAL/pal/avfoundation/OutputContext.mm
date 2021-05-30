@@ -43,9 +43,9 @@ OutputContext::OutputContext(RetainPtr<AVOutputContext>&& context)
 {
 }
 
-Optional<OutputContext>& OutputContext::sharedAudioPresentationOutputContext()
+std::optional<OutputContext>& OutputContext::sharedAudioPresentationOutputContext()
 {
-    static NeverDestroyed<Optional<OutputContext>> sharedAudioPresentationOutputContext = [] () -> Optional<OutputContext> {
+    static NeverDestroyed<std::optional<OutputContext>> sharedAudioPresentationOutputContext = [] () -> std::optional<OutputContext> {
         if (![PAL::getAVOutputContextClass() respondsToSelector:@selector(sharedAudioPresentationOutputContext)])
             return std::nullopt;
 

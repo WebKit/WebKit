@@ -54,7 +54,7 @@ struct DetectedItem {
 class DataDetection {
 public:
 #if PLATFORM(MAC)
-    WEBCORE_EXPORT static Optional<DetectedItem> detectItemAroundHitTestResult(const HitTestResult&);
+    WEBCORE_EXPORT static std::optional<DetectedItem> detectItemAroundHitTestResult(const HitTestResult&);
 #endif
     WEBCORE_EXPORT static NSArray *detectContentInRange(const SimpleRange&, OptionSet<DataDetectorType>, NSDictionary *context);
     WEBCORE_EXPORT static void removeDataDetectedLinksInDocument(Document&);

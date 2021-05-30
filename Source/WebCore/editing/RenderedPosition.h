@@ -85,8 +85,8 @@ private:
     LayoutIntegration::RunIterator m_run;
     unsigned m_offset { 0 };
 
-    mutable Optional<LayoutIntegration::RunIterator> m_previousLeafOnLine;
-    mutable Optional<LayoutIntegration::RunIterator> m_nextLeafOnLine;
+    mutable std::optional<LayoutIntegration::RunIterator> m_previousLeafOnLine;
+    mutable std::optional<LayoutIntegration::RunIterator> m_nextLeafOnLine;
 };
 
 bool renderObjectContainsPosition(const RenderObject*, const Position&);

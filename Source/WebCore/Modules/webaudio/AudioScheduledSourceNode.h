@@ -90,7 +90,7 @@ protected:
     // m_endTime is the time to stop playing based on the context's timeline (0 or a time less than the context's current time means "now").
     // If it hasn't been set explicitly, then the sound will not stop playing (if looping) or will stop when the end of the AudioBuffer
     // has been reached.
-    Optional<double> m_endTime; // in seconds
+    std::optional<double> m_endTime; // in seconds
     bool m_hasEndedEventListener { false };
 };
 

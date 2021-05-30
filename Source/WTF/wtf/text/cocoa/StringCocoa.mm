@@ -35,7 +35,7 @@ RetainPtr<id> makeNSArrayElement(const String& vectorElement)
     return adoptNS((__bridge_transfer id)vectorElement.createCFString().leakRef());
 }
 
-Optional<String> makeVectorElement(const String*, id arrayElement)
+std::optional<String> makeVectorElement(const String*, id arrayElement)
 {
     if (![arrayElement isKindOfClass:NSString.class])
         return std::nullopt;

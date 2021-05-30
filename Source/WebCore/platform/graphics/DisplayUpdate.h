@@ -48,7 +48,7 @@ struct DisplayUpdate {
     WEBCORE_EXPORT bool relevantForUpdateFrequency(FramesPerSecond) const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<DisplayUpdate> decode(Decoder&);
+    template<class Decoder> static std::optional<DisplayUpdate> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -59,14 +59,14 @@ void DisplayUpdate::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<DisplayUpdate> DisplayUpdate::decode(Decoder& decoder)
+std::optional<DisplayUpdate> DisplayUpdate::decode(Decoder& decoder)
 {
-    Optional<unsigned> updateIndex;
+    std::optional<unsigned> updateIndex;
     decoder >> updateIndex;
     if (!updateIndex)
         return std::nullopt;
 
-    Optional<FramesPerSecond> updatesPerSecond;
+    std::optional<FramesPerSecond> updatesPerSecond;
     decoder >> updatesPerSecond;
     if (!updatesPerSecond)
         return std::nullopt;

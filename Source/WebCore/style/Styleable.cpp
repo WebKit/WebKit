@@ -485,7 +485,7 @@ void Styleable::updateCSSTransitions(const RenderStyle& currentStyle, const Rend
     if (transitionPropertiesContainAll) {
         auto numberOfProperties = CSSPropertyAnimation::getNumProperties();
         for (int propertyIndex = 0; propertyIndex < numberOfProperties; ++propertyIndex) {
-            Optional<bool> isShorthand;
+            std::optional<bool> isShorthand;
             auto property = CSSPropertyAnimation::getPropertyAtIndex(propertyIndex, isShorthand);
             if (isShorthand && *isShorthand)
                 continue;

@@ -57,7 +57,7 @@ PerformanceNavigationTiming::PerformanceNavigationTiming(MonotonicTime timeOrigi
 
 PerformanceNavigationTiming::~PerformanceNavigationTiming() = default;
 
-double PerformanceNavigationTiming::millisecondsSinceOrigin(MonotonicTime time, Optional<MonotonicTime> timeOrigin) const
+double PerformanceNavigationTiming::millisecondsSinceOrigin(MonotonicTime time, std::optional<MonotonicTime> timeOrigin) const
 {
     if (!time)
         return 0;

@@ -1099,7 +1099,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
     THROW_IF_SUSPENDED;
     auto handler = adoptNS([completionHandler copy]);
 
-    Optional<WebCore::ArgumentWireBytesMap> argumentsMap;
+    std::optional<WebCore::ArgumentWireBytesMap> argumentsMap;
     if (asAsyncFunction)
         argumentsMap = WebCore::ArgumentWireBytesMap { };
     NSString *errorMessage = nil;
@@ -1130,7 +1130,7 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
         return;
     }
     
-    Optional<WebCore::FrameIdentifier> frameID;
+    std::optional<WebCore::FrameIdentifier> frameID;
     if (frame) {
         if (uint64_t identifier = frame._handle.frameID)
             frameID = makeObjectIdentifier<WebCore::FrameIdentifierType>(identifier);
@@ -1581,7 +1581,7 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
     return handler ? handler->apiHandler() : nil;
 }
 
-- (Optional<BOOL>)_resolutionForShareSheetImmediateCompletionForTesting
+- (std::optional<BOOL>)_resolutionForShareSheetImmediateCompletionForTesting
 {
     return _resolutionForShareSheetImmediateCompletionForTesting;
 }
@@ -1597,7 +1597,7 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
         return;
     }
 
-    Optional<WebCore::FloatRect> floatRect;
+    std::optional<WebCore::FloatRect> floatRect;
     if (pdfConfiguration && !CGRectIsNull(pdfConfiguration.rect))
         floatRect = WebCore::FloatRect(pdfConfiguration.rect);
 
@@ -1976,7 +1976,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     _textManipulationDelegate = delegate;
 }
 
-static RetainPtr<NSDictionary<NSString *, id>> createUserInfo(const Optional<WebCore::TextManipulationController::ManipulationTokenInfo>& info)
+static RetainPtr<NSDictionary<NSString *, id>> createUserInfo(const std::optional<WebCore::TextManipulationController::ManipulationTokenInfo>& info)
 {
     if (!info)
         return { };
@@ -2950,7 +2950,7 @@ static inline OptionSet<WebCore::LayoutMilestone> layoutMilestones(_WKRenderingP
 {
     THROW_IF_SUSPENDED;
 #if ENABLE(APPLICATION_MANIFEST)
-    _page->getApplicationManifest([completionHandler = makeBlockPtr(completionHandler)](const Optional<WebCore::ApplicationManifest>& manifest) {
+    _page->getApplicationManifest([completionHandler = makeBlockPtr(completionHandler)](const std::optional<WebCore::ApplicationManifest>& manifest) {
         if (completionHandler) {
             if (manifest) {
                 auto apiManifest = API::ApplicationManifest::create(*manifest);

@@ -225,7 +225,7 @@ private:
     }
 
     SVGPathByteStream m_pathByteStream;
-    mutable Optional<Path> m_path;
+    mutable std::optional<Path> m_path;
 };
 
 }

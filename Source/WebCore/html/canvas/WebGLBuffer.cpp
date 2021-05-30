@@ -236,7 +236,7 @@ GCGLsizeiptr WebGLBuffer::byteLength() const
     return m_byteLength;
 }
 
-Optional<unsigned> WebGLBuffer::getCachedMaxIndex(GCGLenum type)
+std::optional<unsigned> WebGLBuffer::getCachedMaxIndex(GCGLenum type)
 {
     for (auto& cache : m_maxIndexCache) {
         if (cache.type == type)

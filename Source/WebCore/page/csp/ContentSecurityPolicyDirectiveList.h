@@ -93,7 +93,7 @@ private:
         String name;
         String value;
     };
-    template<typename CharacterType> Optional<ParsedDirective> parseDirective(StringParsingBuffer<CharacterType>);
+    template<typename CharacterType> std::optional<ParsedDirective> parseDirective(StringParsingBuffer<CharacterType>);
     void parseReportURI(ParsedDirective&&);
     void addDirective(ParsedDirective&&);
     void applySandboxPolicy(ParsedDirective&&);

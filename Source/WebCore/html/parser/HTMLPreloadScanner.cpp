@@ -332,7 +332,7 @@ private:
         return m_charset;
     }
 
-    Optional<CachedResource::Type> resourceType() const
+    std::optional<CachedResource::Type> resourceType() const
     {
         switch (m_tagId) {
         case TagId::Script:

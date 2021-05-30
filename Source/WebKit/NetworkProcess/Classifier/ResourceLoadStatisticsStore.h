@@ -172,7 +172,7 @@ public:
     void setAppBoundDomains(HashSet<RegistrableDomain>&&);
 #endif
     virtual bool areAllThirdPartyCookiesBlockedUnder(const TopFrameDomain&) = 0;
-    virtual void hasStorageAccess(const SubFrameDomain&, const TopFrameDomain&, Optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&) = 0;
+    virtual void hasStorageAccess(const SubFrameDomain&, const TopFrameDomain&, std::optional<WebCore::FrameIdentifier>, WebCore::PageIdentifier, CompletionHandler<void(bool)>&&) = 0;
     virtual void requestStorageAccess(SubFrameDomain&&, TopFrameDomain&&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::StorageAccessScope, CompletionHandler<void(StorageAccessStatus)>&&) = 0;
     virtual void grantStorageAccess(SubFrameDomain&&, TopFrameDomain&&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::StorageAccessPromptWasShown, WebCore::StorageAccessScope, CompletionHandler<void(WebCore::StorageAccessWasGranted)>&&) = 0;
 
@@ -206,9 +206,9 @@ public:
     // Private Click Measurement.
     virtual void insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType) = 0;
     virtual void markAllUnattributedPrivateClickMeasurementAsExpiredForTesting() = 0;
-    virtual Optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData> attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributionDestinationSite&, WebCore::PrivateClickMeasurement::AttributionTriggerData&&) = 0;
+    virtual std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData> attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributionDestinationSite&, WebCore::PrivateClickMeasurement::AttributionTriggerData&&) = 0;
     virtual Vector<WebCore::PrivateClickMeasurement> allAttributedPrivateClickMeasurement() = 0;
-    virtual void clearPrivateClickMeasurement(Optional<RegistrableDomain>) = 0;
+    virtual void clearPrivateClickMeasurement(std::optional<RegistrableDomain>) = 0;
     virtual void clearExpiredPrivateClickMeasurement() = 0;
     virtual String privateClickMeasurementToString() = 0;
     virtual void clearSentAttribution(WebCore::PrivateClickMeasurement&&, WebCore::PrivateClickMeasurement::AttributionReportEndpoint) = 0;
@@ -238,7 +238,7 @@ protected:
     struct Parameters {
         size_t pruneEntriesDownTo { 800 };
         size_t maxStatisticsEntries { 1000 };
-        Optional<Seconds> timeToLiveUserInteraction;
+        std::optional<Seconds> timeToLiveUserInteraction;
         Seconds minimumTimeBetweenDataRecordsRemoval { 1_h };
         Seconds grandfatheringTime { 24_h * 7 };
         Seconds cacheMaxAgeCapTime { 24_h * 7 };
@@ -292,7 +292,7 @@ private:
     RegistrableDomain m_debugManualPrevalentResource;
     MonotonicTime m_lastTimeDataRecordsWereRemoved;
     uint64_t m_lastStatisticsProcessingRequestIdentifier { 0 };
-    Optional<uint64_t> m_pendingStatisticsProcessingRequestIdentifier;
+    std::optional<uint64_t> m_pendingStatisticsProcessingRequestIdentifier;
     const RegistrableDomain m_debugStaticPrevalentResource { URL { URL(), "https://3rdpartytestwebkit.org"_s } };
     bool m_debugLoggingEnabled { false };
     bool m_debugModeEnabled { false };

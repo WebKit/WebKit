@@ -37,7 +37,7 @@ void XRDeviceInfo::encode(IPC::Encoder& encoder) const
     encoder << identifier << supportsOrientationTracking << supportsStereoRendering << features;
 }
 
-Optional<XRDeviceInfo> XRDeviceInfo::decode(IPC::Decoder& decoder)
+std::optional<XRDeviceInfo> XRDeviceInfo::decode(IPC::Decoder& decoder)
 {
     XRDeviceInfo deviceFeatures;
     if (!decoder.decode(deviceFeatures.identifier))

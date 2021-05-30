@@ -100,9 +100,9 @@ Ref<JSON::Value> InjectedScriptBase::makeCall(Deprecated::ScriptFunctionCall& fu
     return resultJSONValue.releaseNonNull();
 }
 
-void InjectedScriptBase::makeEvalCall(Protocol::ErrorString& errorString, Deprecated::ScriptFunctionCall& function, RefPtr<Protocol::Runtime::RemoteObject>& out_resultObject, Optional<bool>& out_wasThrown, Optional<int>& out_savedResultIndex)
+void InjectedScriptBase::makeEvalCall(Protocol::ErrorString& errorString, Deprecated::ScriptFunctionCall& function, RefPtr<Protocol::Runtime::RemoteObject>& resultObject, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex)
 {
-    checkCallResult(errorString, makeCall(function), out_resultObject, out_wasThrown, out_savedResultIndex);
+    checkCallResult(errorString, makeCall(function), resultObject, wasThrown, savedResultIndex);
 }
 
 void InjectedScriptBase::makeAsyncCall(Deprecated::ScriptFunctionCall& function, AsyncCallCallback&& callback)
@@ -143,7 +143,7 @@ void InjectedScriptBase::makeAsyncCall(Deprecated::ScriptFunctionCall& function,
     }
 }
 
-void InjectedScriptBase::checkCallResult(Protocol::ErrorString& errorString, RefPtr<JSON::Value> result, RefPtr<Protocol::Runtime::RemoteObject>& out_resultObject, Optional<bool>& out_wasThrown, Optional<int>& out_savedResultIndex)
+void InjectedScriptBase::checkCallResult(Protocol::ErrorString& errorString, RefPtr<JSON::Value> result, RefPtr<Protocol::Runtime::RemoteObject>& resultObject, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex)
 {
     if (!result) {
         errorString = "Internal error: result value is empty"_s;
@@ -161,28 +161,29 @@ void InjectedScriptBase::checkCallResult(Protocol::ErrorString& errorString, Ref
         return;
     }
 
-    auto resultObject = resultTuple->getObject("result"_s);
-    if (!resultObject) {
+    auto typelessResultObject = resultTuple->getObject("result"_s);
+    if (!typelessResultObject) {
+        // FIXME: Why do we bother checking for null here, but not checking that the type is Protocol::Runtime::RemoteObject? Surely the two possible errors go hand in hand.
         errorString = "Internal error: result is not a pair of value and wasThrown flag"_s;
         return;
     }
 
-    out_wasThrown = resultTuple->getBoolean("wasThrown"_s);
-    if (!out_wasThrown) {
+    wasThrown = resultTuple->getBoolean("wasThrown"_s);
+    if (!wasThrown) {
         errorString = "Internal error: result is not a pair of value and wasThrown flag"_s;
         return;
     }
 
-    out_resultObject = Protocol::BindingTraits<Protocol::Runtime::RemoteObject>::runtimeCast(resultObject.releaseNonNull());
-    out_savedResultIndex = resultTuple->getInteger("savedResultIndex"_s);
+    resultObject = Protocol::BindingTraits<Protocol::Runtime::RemoteObject>::runtimeCast(typelessResultObject.releaseNonNull());
+    savedResultIndex = resultTuple->getInteger("savedResultIndex"_s);
 }
 
 void InjectedScriptBase::checkAsyncCallResult(RefPtr<JSON::Value> result, const AsyncCallCallback& callback)
 {
     Protocol::ErrorString errorString;
     RefPtr<Protocol::Runtime::RemoteObject> resultObject;
-    Optional<bool> wasThrown;
-    Optional<int> savedResultIndex;
+    std::optional<bool> wasThrown;
+    std::optional<int> savedResultIndex;
 
     checkCallResult(errorString, result, resultObject, wasThrown, savedResultIndex);
 

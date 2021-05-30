@@ -161,7 +161,7 @@ protected:
         return m_backend.get();
     }
 
-    String toDataURL(const String& mimeType, Optional<double> quality, WebCore::PreserveResolution preserveResolution) const override
+    String toDataURL(const String& mimeType, std::optional<double> quality, WebCore::PreserveResolution preserveResolution) const override
     {
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
             return { };
@@ -170,7 +170,7 @@ protected:
         return m_remoteRenderingBackendProxy->getDataURLForImageBuffer(mimeType, quality, preserveResolution, m_renderingResourceIdentifier);
     }
 
-    Vector<uint8_t> toData(const String& mimeType, Optional<double> quality = std::nullopt) const override
+    Vector<uint8_t> toData(const String& mimeType, std::optional<double> quality = std::nullopt) const override
     {
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
             return { };
@@ -201,7 +201,7 @@ protected:
         return bitmap->createImage();
     }
 
-    Optional<WebCore::PixelBuffer> getPixelBuffer(const WebCore::PixelBufferFormat& destinationFormat, const WebCore::IntRect& srcRect) const override
+    std::optional<WebCore::PixelBuffer> getPixelBuffer(const WebCore::PixelBufferFormat& destinationFormat, const WebCore::IntRect& srcRect) const override
     {
         if (UNLIKELY(!m_remoteRenderingBackendProxy))
             return std::nullopt;

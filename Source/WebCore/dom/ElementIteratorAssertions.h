@@ -39,7 +39,7 @@ public:
 private:
     const Document* m_document;
     uint64_t m_initialDOMTreeVersion;
-    Optional<ScriptDisallowedScope> m_eventDispatchAssertion;
+    std::optional<ScriptDisallowedScope> m_eventDispatchAssertion;
 };
 
 // FIXME: No real point in doing these as inlines; they are for debugging and we usually turn off inlining in debug builds.

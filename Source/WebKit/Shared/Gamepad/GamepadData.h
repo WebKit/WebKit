@@ -49,7 +49,7 @@ public:
     GamepadData(unsigned index, const String& id, const String& mapping, const Vector<WebCore::SharedGamepadValue>& axisValues, const Vector<WebCore::SharedGamepadValue>& buttonValues, MonotonicTime lastUpdateTime);
 
     void encode(IPC::Encoder&) const;
-    static Optional<GamepadData> decode(IPC::Decoder&);
+    static std::optional<GamepadData> decode(IPC::Decoder&);
 
     bool isNull() const { return m_isNull; }
 

@@ -60,7 +60,7 @@ static bool validateBufferBindingType(const GPUBuffer* buffer, const GPUBindGrou
     }
 }
 
-Optional<GPUBindGroupDescriptor> WebGPUBindGroupDescriptor::tryCreateGPUBindGroupDescriptor() const
+std::optional<GPUBindGroupDescriptor> WebGPUBindGroupDescriptor::tryCreateGPUBindGroupDescriptor() const
 {
     const char* const functionName = "GPUDevice::createBindGroup()";
 
@@ -88,7 +88,7 @@ Optional<GPUBindGroupDescriptor> WebGPUBindGroupDescriptor::tryCreateGPUBindGrou
 
         const auto layoutBinding = iterator->value;
 
-        auto bindingResourceVisitor = WTF::makeVisitor([](const RefPtr<WebGPUSampler>& sampler) -> Optional<GPUBindingResource> {
+        auto bindingResourceVisitor = WTF::makeVisitor([](const RefPtr<WebGPUSampler>& sampler) -> std::optional<GPUBindingResource> {
             if (!sampler)
                 return std::nullopt;
             auto gpuSampler = sampler->sampler();
@@ -96,7 +96,7 @@ Optional<GPUBindGroupDescriptor> WebGPUBindGroupDescriptor::tryCreateGPUBindGrou
                 return std::nullopt;
 
             return static_cast<GPUBindingResource>(makeRef(*gpuSampler));
-        }, [](const RefPtr<WebGPUTextureView>& view) -> Optional<GPUBindingResource> {
+        }, [](const RefPtr<WebGPUTextureView>& view) -> std::optional<GPUBindingResource> {
             if (!view)
                 return std::nullopt;
             auto texture = view->texture();
@@ -104,7 +104,7 @@ Optional<GPUBindGroupDescriptor> WebGPUBindGroupDescriptor::tryCreateGPUBindGrou
                 return std::nullopt;
 
             return static_cast<GPUBindingResource>(makeRef(*texture));
-        }, [&layoutBinding, functionName] (WebGPUBufferBinding bufferBinding) -> Optional<GPUBindingResource> {
+        }, [&layoutBinding, functionName] (WebGPUBufferBinding bufferBinding) -> std::optional<GPUBindingResource> {
             if (!bufferBinding.buffer)
                 return std::nullopt;
             auto buffer = bufferBinding.buffer->buffer();

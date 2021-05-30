@@ -65,7 +65,7 @@ unsigned long long BlobDataFileReference::size()
     return m_size;
 }
 
-Optional<WallTime> BlobDataFileReference::expectedModificationTime()
+std::optional<WallTime> BlobDataFileReference::expectedModificationTime()
 {
 #if ENABLE(FILE_REPLACEMENT)
     // We do not currently track modifications for generated files, because we have a snapshot.

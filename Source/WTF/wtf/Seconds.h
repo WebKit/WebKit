@@ -229,9 +229,9 @@ public:
     }
 
     template<class Decoder>
-    static Optional<Seconds> decode(Decoder& decoder)
+    static std::optional<Seconds> decode(Decoder& decoder)
     {
-        Optional<double> seconds;
+        std::optional<double> seconds;
         decoder >> seconds;
         if (!seconds)
             return std::nullopt;

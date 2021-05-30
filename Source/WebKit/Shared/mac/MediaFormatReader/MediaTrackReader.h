@@ -57,7 +57,7 @@ public:
     static CoreMediaWrapped<MediaTrackReader>* unwrap(CMBaseObjectRef);
     static WTF::WorkQueue& storageQueue();
 
-    static RefPtr<MediaTrackReader> create(Allocator&&, const MediaFormatReader&, CMMediaType, uint64_t, Optional<bool>);
+    static RefPtr<MediaTrackReader> create(Allocator&&, const MediaFormatReader&, CMMediaType, uint64_t, std::optional<bool>);
 
     uint64_t trackID() const { return m_trackID; }
     CMMediaType mediaType() const { return m_mediaType; }
@@ -75,7 +75,7 @@ public:
 private:
     using CoreMediaWrapped<MediaTrackReader>::unwrap;
 
-    MediaTrackReader(Allocator&&, const MediaFormatReader&, CMMediaType, uint64_t, Optional<bool>);
+    MediaTrackReader(Allocator&&, const MediaFormatReader&, CMMediaType, uint64_t, std::optional<bool>);
 
     // CMBaseClass
     String debugDescription() const final { return "WebKit::MediaTrackReader"_s; }

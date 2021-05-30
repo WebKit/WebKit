@@ -182,7 +182,7 @@ private:
 
     String m_preferredStylesheetSetName;
 
-    Optional<UpdateType> m_pendingUpdate;
+    std::optional<UpdateType> m_pendingUpdate;
 
     bool m_hasDescendantWithPendingUpdate { false };
     bool m_usesStyleBasedEditability { false };

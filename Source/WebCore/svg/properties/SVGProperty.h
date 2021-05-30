@@ -79,7 +79,7 @@ public:
     // Synchronizing the SVG attribute and its reflection here.
     bool isDirty() const { return m_state == SVGPropertyState::Dirty; }
     void setDirty() { m_state = SVGPropertyState::Dirty; }
-    Optional<String> synchronize()
+    std::optional<String> synchronize()
     {
         if (m_state == SVGPropertyState::Clean)
             return std::nullopt;

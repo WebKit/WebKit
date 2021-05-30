@@ -40,7 +40,7 @@ class ScriptExecutionContext;
 
 class PerformanceMark final : public PerformanceEntry {
 public:
-    static ExceptionOr<Ref<PerformanceMark>> create(JSC::JSGlobalObject&, ScriptExecutionContext&, const String& name, Optional<PerformanceMarkOptions>&&);
+    static ExceptionOr<Ref<PerformanceMark>> create(JSC::JSGlobalObject&, ScriptExecutionContext&, const String& name, std::optional<PerformanceMarkOptions>&&);
 
     JSC::JSValue detail(JSC::JSGlobalObject&);
 

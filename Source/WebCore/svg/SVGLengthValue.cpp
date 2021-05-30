@@ -181,7 +181,7 @@ SVGLengthValue::SVGLengthValue(const SVGLengthContext& context, float value, SVG
     setValue(context, value);
 }
 
-Optional<SVGLengthValue> SVGLengthValue::construct(SVGLengthMode lengthMode, StringView valueAsString)
+std::optional<SVGLengthValue> SVGLengthValue::construct(SVGLengthMode lengthMode, StringView valueAsString)
 {
     SVGLengthValue length { lengthMode };
     if (length.setValueAsString(valueAsString).hasException())

@@ -38,14 +38,14 @@ namespace WTF {
 // a const& to a collection element and can return either a RetainPtr<id> or an id
 // if the value is autoreleased. The makeVectorElement function takes an ignored
 // pointer to the vector element type, making argument-dependent lookup work, and an
-// id for the array element, and returns an Optional<T> of the the vector element,
+// id for the array element, and returns an std::optional<T> of the the vector element,
 // allowing us to filter out array elements that are not of the expected type.
 //
 //    RetainPtr<id> makeNSArrayElement(const CollectionElementType& collectionElement);
 //        -or-
 //    id makeNSArrayElement(const VectorElementType& vectorElement);
 //
-//    Optional<VectorElementType> makeVectorElement(const VectorElementType*, id arrayElement);
+//    std::optional<VectorElementType> makeVectorElement(const VectorElementType*, id arrayElement);
 
 template<typename CollectionType> RetainPtr<NSArray> createNSArray(CollectionType&&);
 template<typename VectorElementType> Vector<VectorElementType> makeVector(NSArray *);

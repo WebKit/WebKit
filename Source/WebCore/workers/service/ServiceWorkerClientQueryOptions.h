@@ -37,7 +37,7 @@ struct ServiceWorkerClientQueryOptions {
     ServiceWorkerClientType type { ServiceWorkerClientType::Window };
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ServiceWorkerClientQueryOptions> decode(Decoder&);
+    template<class Decoder> static std::optional<ServiceWorkerClientQueryOptions> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -47,14 +47,14 @@ void ServiceWorkerClientQueryOptions::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ServiceWorkerClientQueryOptions> ServiceWorkerClientQueryOptions::decode(Decoder& decoder)
+std::optional<ServiceWorkerClientQueryOptions> ServiceWorkerClientQueryOptions::decode(Decoder& decoder)
 {
-    Optional<bool> includeUncontrolled;
+    std::optional<bool> includeUncontrolled;
     decoder >> includeUncontrolled;
     if (!includeUncontrolled)
         return std::nullopt;
 
-    Optional<ServiceWorkerClientType> type;
+    std::optional<ServiceWorkerClientType> type;
     decoder >> type;
     if (!type)
         return std::nullopt;

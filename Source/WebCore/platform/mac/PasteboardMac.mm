@@ -323,21 +323,21 @@ static String joinPathnames(const Vector<String>& pathnames)
     return builder.toString();
 }
 
-static String readStringAtPreferredItemIndex(const String& type, Optional<size_t> itemIndex, PasteboardStrategy& strategy, const String& pasteboardName, const PasteboardContext* context)
+static String readStringAtPreferredItemIndex(const String& type, std::optional<size_t> itemIndex, PasteboardStrategy& strategy, const String& pasteboardName, const PasteboardContext* context)
 {
     if (itemIndex)
         return strategy.readStringFromPasteboard(*itemIndex, type, pasteboardName, context);
     return strategy.stringForType(type, pasteboardName, context);
 }
 
-static RefPtr<SharedBuffer> readBufferAtPreferredItemIndex(const String& type, Optional<size_t> itemIndex, PasteboardStrategy& strategy, const String& pasteboardName, const PasteboardContext* context)
+static RefPtr<SharedBuffer> readBufferAtPreferredItemIndex(const String& type, std::optional<size_t> itemIndex, PasteboardStrategy& strategy, const String& pasteboardName, const PasteboardContext* context)
 {
     if (itemIndex)
         return strategy.readBufferFromPasteboard(*itemIndex, type, pasteboardName, context);
     return strategy.bufferForType(type, pasteboardName, context);
 }
 
-void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy allowURL, Optional<size_t> itemIndex)
+void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy allowURL, std::optional<size_t> itemIndex)
 {
     auto& strategy = *platformStrategies()->pasteboardStrategy();
 
@@ -421,7 +421,7 @@ void Pasteboard::read(PasteboardPlainText& text, PlainTextURLReadingPolicy allow
     }
 }
 
-void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolicy policy, Optional<size_t> itemIndex)
+void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolicy policy, std::optional<size_t> itemIndex)
 {
     auto& strategy = *platformStrategies()->pasteboardStrategy();
 

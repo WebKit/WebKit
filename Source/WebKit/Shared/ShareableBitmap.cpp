@@ -87,12 +87,12 @@ void ShareableBitmap::Configuration::encode(IPC::Encoder& encoder) const
 
 bool ShareableBitmap::Configuration::decode(IPC::Decoder& decoder, Configuration& result)
 {
-    Optional<Optional<WebCore::DestinationColorSpace>> colorSpace;
+    std::optional<std::optional<WebCore::DestinationColorSpace>> colorSpace;
     decoder >> colorSpace;
     if (!colorSpace)
         return false;
 
-    Optional<bool> isOpaque;
+    std::optional<bool> isOpaque;
     decoder >> isOpaque;
     if (!isOpaque)
         return false;

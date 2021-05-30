@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-Optional<bool> ScrollerStyle::m_useOverlayScrollbars;
+std::optional<bool> ScrollerStyle::m_useOverlayScrollbars;
 
 NSScrollerStyle ScrollerStyle::recommendedScrollerStyle()
 {

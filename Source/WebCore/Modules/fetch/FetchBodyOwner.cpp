@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-FetchBodyOwner::FetchBodyOwner(ScriptExecutionContext& context, Optional<FetchBody>&& body, Ref<FetchHeaders>&& headers)
+FetchBodyOwner::FetchBodyOwner(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers)
     : ActiveDOMObject(&context)
     , m_body(WTFMove(body))
     , m_headers(WTFMove(headers))
@@ -375,13 +375,13 @@ ResourceError FetchBodyOwner::loadingError() const
     });
 }
 
-Optional<Exception> FetchBodyOwner::loadingException() const
+std::optional<Exception> FetchBodyOwner::loadingException() const
 {
     return WTF::switchOn(m_loadingError, [](const ResourceError& error) {
         return Exception { TypeError, error.localizedDescription().isEmpty() ? "Loading failed"_s : error.localizedDescription() };
     }, [](const Exception& exception) {
         return Exception { exception };
-    }, [](auto&&) -> Optional<Exception> {
+    }, [](auto&&) -> std::optional<Exception> {
         return std::nullopt;
     });
 }

@@ -96,7 +96,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
-static bool encode(CGImageRef image, CFStringRef destinationUTI, Optional<double> quality, const ScopedLambda<PutBytesCallback>& function)
+static bool encode(CGImageRef image, CFStringRef destinationUTI, std::optional<double> quality, const ScopedLambda<PutBytesCallback>& function)
 {
     if (!image || !destinationUTI)
         return false;
@@ -131,7 +131,7 @@ static bool encode(CGImageRef image, CFStringRef destinationUTI, Optional<double
     return CGImageDestinationFinalize(destination.get());
 }
 
-static bool encode(const PixelBuffer& source, const String& mimeType, Optional<double> quality, const ScopedLambda<PutBytesCallback>& function)
+static bool encode(const PixelBuffer& source, const String& mimeType, std::optional<double> quality, const ScopedLambda<PutBytesCallback>& function)
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
 
@@ -182,7 +182,7 @@ static bool encode(const PixelBuffer& source, const String& mimeType, Optional<d
     return encode(image.get(), destinationUTI.get(), quality, function);
 }
 
-template<typename Source, typename SourceDescription> static Vector<uint8_t> encodeToVector(Source&& source, SourceDescription&& sourceDescription, Optional<double> quality)
+template<typename Source, typename SourceDescription> static Vector<uint8_t> encodeToVector(Source&& source, SourceDescription&& sourceDescription, std::optional<double> quality)
 {
     Vector<uint8_t> result;
 
@@ -196,7 +196,7 @@ template<typename Source, typename SourceDescription> static Vector<uint8_t> enc
     return result;
 }
 
-template<typename Source, typename SourceDescription> static String encodeToDataURL(Source&& source, SourceDescription&& sourceDescription, const String& mimeType, Optional<double> quality)
+template<typename Source, typename SourceDescription> static String encodeToDataURL(Source&& source, SourceDescription&& sourceDescription, const String& mimeType, std::optional<double> quality)
 {
     // FIXME: This could be done more efficiently with a streaming base64 encoder.
 
@@ -207,22 +207,22 @@ template<typename Source, typename SourceDescription> static String encodeToData
     return makeString("data:", mimeType, ";base64,", base64Encoded(encodedData));
 }
 
-Vector<uint8_t> data(CGImageRef image, CFStringRef destinationUTI, Optional<double> quality)
+Vector<uint8_t> data(CGImageRef image, CFStringRef destinationUTI, std::optional<double> quality)
 {
     return encodeToVector(image, destinationUTI, quality);
 }
 
-Vector<uint8_t> data(const PixelBuffer& pixelBuffer, const String& mimeType, Optional<double> quality)
+Vector<uint8_t> data(const PixelBuffer& pixelBuffer, const String& mimeType, std::optional<double> quality)
 {
     return encodeToVector(pixelBuffer, mimeType, quality);
 }
 
-String dataURL(CGImageRef image, CFStringRef destinationUTI, const String& mimeType, Optional<double> quality)
+String dataURL(CGImageRef image, CFStringRef destinationUTI, const String& mimeType, std::optional<double> quality)
 {
     return encodeToDataURL(image, destinationUTI, mimeType, quality);
 }
 
-String dataURL(const PixelBuffer& pixelBuffer, const String& mimeType, Optional<double> quality)
+String dataURL(const PixelBuffer& pixelBuffer, const String& mimeType, std::optional<double> quality)
 {
     return encodeToDataURL(pixelBuffer, mimeType, mimeType, quality);
 }

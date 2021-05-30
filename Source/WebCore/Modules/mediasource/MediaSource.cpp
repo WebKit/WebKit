@@ -531,7 +531,7 @@ void MediaSource::setReadyState(ReadyState state)
     onReadyStateChange(oldState, state);
 }
 
-ExceptionOr<void> MediaSource::endOfStream(Optional<EndOfStreamError> error)
+ExceptionOr<void> MediaSource::endOfStream(std::optional<EndOfStreamError> error)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
@@ -552,7 +552,7 @@ ExceptionOr<void> MediaSource::endOfStream(Optional<EndOfStreamError> error)
     return { };
 }
 
-void MediaSource::streamEndedWithError(Optional<EndOfStreamError> error)
+void MediaSource::streamEndedWithError(std::optional<EndOfStreamError> error)
 {
 #if !RELEASE_LOG_DISABLED
     if (error)

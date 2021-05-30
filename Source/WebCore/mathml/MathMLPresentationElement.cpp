@@ -186,7 +186,7 @@ bool MathMLPresentationElement::isFlowContent(const Node& node)
         || htmlElement.hasTagName(HTMLNames::ulTag);
 }
 
-const MathMLElement::BooleanValue& MathMLPresentationElement::cachedBooleanAttribute(const QualifiedName& name, Optional<BooleanValue>& attribute)
+const MathMLElement::BooleanValue& MathMLPresentationElement::cachedBooleanAttribute(const QualifiedName& name, std::optional<BooleanValue>& attribute)
 {
     if (attribute)
         return attribute.value();
@@ -311,7 +311,7 @@ MathMLElement::Length MathMLPresentationElement::parseMathMLLength(const String&
     return parseNamedSpace(strippedLength);
 }
 
-const MathMLElement::Length& MathMLPresentationElement::cachedMathMLLength(const QualifiedName& name, Optional<Length>& length)
+const MathMLElement::Length& MathMLPresentationElement::cachedMathMLLength(const QualifiedName& name, std::optional<Length>& length)
 {
     if (length)
         return length.value();
@@ -361,7 +361,7 @@ MathMLElement::MathVariant MathMLPresentationElement::parseMathVariantAttribute(
     return MathVariant::None;
 }
 
-Optional<MathMLElement::MathVariant> MathMLPresentationElement::specifiedMathVariant()
+std::optional<MathMLElement::MathVariant> MathMLPresentationElement::specifiedMathVariant()
 {
     if (!acceptsMathVariantAttribute())
         return std::nullopt;

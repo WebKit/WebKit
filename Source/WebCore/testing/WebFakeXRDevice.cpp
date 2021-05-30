@@ -73,7 +73,7 @@ void SimulatedXRDevice::setNativeBoundsGeometry(const Vector<FakeXRBoundsPoint>&
         m_frameData.stageParameters.bounds.append({ static_cast<float>(point.x), static_cast<float>(point.z) });
 }
 
-void SimulatedXRDevice::setViewerOrigin(const Optional<FrameData::Pose>& origin)
+void SimulatedXRDevice::setViewerOrigin(const std::optional<FrameData::Pose>& origin)
 {
     if (origin) {
         m_frameData.origin = *origin;
@@ -163,7 +163,7 @@ void SimulatedXRDevice::requestFrame(RequestFrameCallback&& callback)
         m_frameTimer.startOneShot(FakeXRFrameTime);
 }
 
-Optional<PlatformXR::LayerHandle> SimulatedXRDevice::createLayerProjection(uint32_t width, uint32_t height, bool alpha)
+std::optional<PlatformXR::LayerHandle> SimulatedXRDevice::createLayerProjection(uint32_t width, uint32_t height, bool alpha)
 {
     using GL = GraphicsContextGL;
     if (!m_gl)

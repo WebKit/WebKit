@@ -62,7 +62,7 @@ public:
         Input,
         Output
     };
-    virtual bool isAcceptableForShaderItemDirection(ShaderItemDirection, const Optional<EntryPointType>&) const = 0;
+    virtual bool isAcceptableForShaderItemDirection(ShaderItemDirection, const std::optional<EntryPointType>&) const = 0;
 
 private:
     CodeLocation m_codeLocation;

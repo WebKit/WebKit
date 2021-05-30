@@ -123,7 +123,7 @@ RepetitionCount ImageDecoderDirect2D::repetitionCount() const
     return RepetitionCountNone;
 }
 
-Optional<IntPoint> ImageDecoderDirect2D::hotSpot() const
+std::optional<IntPoint> ImageDecoderDirect2D::hotSpot() const
 {
     return std::nullopt;
 }

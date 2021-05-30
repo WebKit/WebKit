@@ -53,7 +53,7 @@ void SessionHost::sendWebInspectorEvent(const String& event)
     send(m_clientID.value(), reinterpret_cast<const uint8_t*>(message.data()), message.length());
 }
 
-void SessionHost::connectToBrowser(Function<void (Optional<String> error)>&& completionHandler)
+void SessionHost::connectToBrowser(Function<void (std::optional<String> error)>&& completionHandler)
 {
     String targetIp;
     uint16_t targetPort = 0;
@@ -90,7 +90,7 @@ void SessionHost::didClose(Inspector::RemoteInspectorSocketEndpoint&, Inspector:
     m_clientID = std::nullopt;
 }
 
-Optional<Vector<SessionHost::Target>> SessionHost::parseTargetList(const struct Event& event)
+std::optional<Vector<SessionHost::Target>> SessionHost::parseTargetList(const struct Event& event)
 {
     auto result = parseTargetListJSON(*event.message);
     if (!result)
@@ -146,7 +146,7 @@ void SessionHost::receivedStartAutomationSessionReturn(const struct Event&)
     m_capabilities.browserVersion = String::fromUTF8("TODO/browserVersion");
 }
 
-void SessionHost::startAutomationSession(Function<void (bool, Optional<String>)>&& completionHandler)
+void SessionHost::startAutomationSession(Function<void (bool, std::optional<String>)>&& completionHandler)
 {
     ASSERT(!m_startSessionCompletionHandler);
     m_startSessionCompletionHandler = WTFMove(completionHandler);

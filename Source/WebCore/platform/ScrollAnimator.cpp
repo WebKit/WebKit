@@ -421,7 +421,7 @@ float ScrollAnimator::adjustScrollOffsetForSnappingIfNeeded(ScrollEventAxis axis
     if (!m_scrollController.usesScrollSnap())
         return newOffset;
 
-    Optional<float> originalOffset;
+    std::optional<float> originalOffset;
     float velocity = 0.;
     if (method == ScrollSnapPointSelectionMethod::Directional) {
         FloatSize scrollOrigin = toFloatSize(m_scrollableArea.scrollOrigin());

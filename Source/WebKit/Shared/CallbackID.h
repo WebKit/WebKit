@@ -81,9 +81,9 @@ public:
         encoder << m_id;
     }
 
-    template<class Decoder> static Optional<CallbackID> decode(Decoder& decoder)
+    template<class Decoder> static std::optional<CallbackID> decode(Decoder& decoder)
     {
-        Optional<uint64_t> identifier;
+        std::optional<uint64_t> identifier;
         decoder >> identifier;
         if (!identifier)
             return std::nullopt;

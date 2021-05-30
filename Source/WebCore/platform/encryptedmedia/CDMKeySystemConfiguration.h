@@ -62,39 +62,39 @@ struct CDMKeySystemConfiguration {
     }
 
     template <class Decoder>
-    static Optional<CDMKeySystemConfiguration> decode(Decoder& decoder)
+    static std::optional<CDMKeySystemConfiguration> decode(Decoder& decoder)
     {
-        Optional<String> label;
+        std::optional<String> label;
         decoder >> label;
         if (!label)
             return std::nullopt;
 
-        Optional<Vector<String>> initDataTypes;
+        std::optional<Vector<String>> initDataTypes;
         decoder >> initDataTypes;
         if (!initDataTypes)
             return std::nullopt;
 
-        Optional<Vector<CDMMediaCapability>> audioCapabilities;
+        std::optional<Vector<CDMMediaCapability>> audioCapabilities;
         decoder >> audioCapabilities;
         if (!audioCapabilities)
             return std::nullopt;
 
-        Optional<Vector<CDMMediaCapability>> videoCapabilities;
+        std::optional<Vector<CDMMediaCapability>> videoCapabilities;
         decoder >> videoCapabilities;
         if (!videoCapabilities)
             return std::nullopt;
 
-        Optional<CDMRequirement> distinctiveIdentifier;
+        std::optional<CDMRequirement> distinctiveIdentifier;
         decoder >> distinctiveIdentifier;
         if (!distinctiveIdentifier)
             return std::nullopt;
         
-        Optional<CDMRequirement> persistentState;
+        std::optional<CDMRequirement> persistentState;
         decoder >> persistentState;
         if (!persistentState)
             return std::nullopt;
 
-        Optional<Vector<CDMSessionType>> sessionTypes;
+        std::optional<Vector<CDMSessionType>> sessionTypes;
         decoder >> sessionTypes;
         if (!sessionTypes)
             return std::nullopt;

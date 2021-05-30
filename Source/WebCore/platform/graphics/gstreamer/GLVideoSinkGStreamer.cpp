@@ -152,7 +152,7 @@ void webKitGLVideoSinkFinalize(GObject* object)
     GST_CALL_PARENT(G_OBJECT_CLASS, finalize, (object));
 }
 
-Optional<GRefPtr<GstContext>> requestGLContext(const char* contextType)
+std::optional<GRefPtr<GstContext>> requestGLContext(const char* contextType)
 {
     auto& sharedDisplay = PlatformDisplay::sharedDisplayForCompositing();
     auto* gstGLDisplay = sharedDisplay.gstGLDisplay();

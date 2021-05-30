@@ -68,61 +68,61 @@ struct RemoteMediaPlayerProxyConfiguration {
     }
 
     template <class Decoder>
-    static Optional<RemoteMediaPlayerProxyConfiguration> decode(Decoder& decoder)
+    static std::optional<RemoteMediaPlayerProxyConfiguration> decode(Decoder& decoder)
     {
-        Optional<String> referrer;
+        std::optional<String> referrer;
         decoder >> referrer;
         if (!referrer)
             return std::nullopt;
 
-        Optional<String> userAgent;
+        std::optional<String> userAgent;
         decoder >> userAgent;
         if (!userAgent)
             return std::nullopt;
 
-        Optional<String> sourceApplicationIdentifier;
+        std::optional<String> sourceApplicationIdentifier;
         decoder >> sourceApplicationIdentifier;
         if (!sourceApplicationIdentifier)
             return std::nullopt;
 
-        Optional<String> networkInterfaceName;
+        std::optional<String> networkInterfaceName;
         decoder >> networkInterfaceName;
         if (!networkInterfaceName)
             return std::nullopt;
 
-        Optional<Vector<WebCore::ContentType>> mediaContentTypesRequiringHardwareSupport;
+        std::optional<Vector<WebCore::ContentType>> mediaContentTypesRequiringHardwareSupport;
         decoder >> mediaContentTypesRequiringHardwareSupport;
         if (!mediaContentTypesRequiringHardwareSupport)
             return std::nullopt;
 
-        Optional<Vector<String>> preferredAudioCharacteristics;
+        std::optional<Vector<String>> preferredAudioCharacteristics;
         decoder >> preferredAudioCharacteristics;
         if (!preferredAudioCharacteristics)
             return std::nullopt;
 
 #if ENABLE(AVF_CAPTIONS)
-        Optional<Vector<WebCore::PlatformTextTrackData>> outOfBandTrackData;
+        std::optional<Vector<WebCore::PlatformTextTrackData>> outOfBandTrackData;
         decoder >> outOfBandTrackData;
         if (!outOfBandTrackData)
             return std::nullopt;
 #endif
 
-        Optional<WebCore::SecurityOriginData> documentSecurityOrigin;
+        std::optional<WebCore::SecurityOriginData> documentSecurityOrigin;
         decoder >> documentSecurityOrigin;
         if (!documentSecurityOrigin)
             return std::nullopt;
 
-        Optional<uint64_t> logIdentifier;
+        std::optional<uint64_t> logIdentifier;
         decoder >> logIdentifier;
         if (!logIdentifier)
             return std::nullopt;
 
-        Optional<bool> shouldUsePersistentCache;
+        std::optional<bool> shouldUsePersistentCache;
         decoder >> shouldUsePersistentCache;
         if (!shouldUsePersistentCache)
             return std::nullopt;
 
-        Optional<bool> isVideo;
+        std::optional<bool> isVideo;
         decoder >> isVideo;
         if (!isVideo)
             return std::nullopt;

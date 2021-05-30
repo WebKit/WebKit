@@ -1073,14 +1073,14 @@ SimpleRange makeSimpleRange(const Ref<Range>& range)
     return makeSimpleRange(range.get());
 }
 
-Optional<SimpleRange> makeSimpleRange(const Range* range)
+std::optional<SimpleRange> makeSimpleRange(const Range* range)
 {
     if (!range)
         return std::nullopt;
     return makeSimpleRange(*range);
 }
 
-Optional<SimpleRange> makeSimpleRange(const RefPtr<Range>& range)
+std::optional<SimpleRange> makeSimpleRange(const RefPtr<Range>& range)
 {
     return makeSimpleRange(range.get());
 }
@@ -1092,7 +1092,7 @@ Ref<Range> createLiveRange(const SimpleRange& range)
     return result;
 }
 
-RefPtr<Range> createLiveRange(const Optional<SimpleRange>& range)
+RefPtr<Range> createLiveRange(const std::optional<SimpleRange>& range)
 {
     if (!range)
         return nullptr;

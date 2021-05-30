@@ -44,7 +44,7 @@
 
 using namespace WebCore;
 
-static bool scheduledWithCustomRunLoopMode(const Optional<SchedulePairHashSet>& pairs)
+static bool scheduledWithCustomRunLoopMode(const std::optional<SchedulePairHashSet>& pairs)
 {
     if (!pairs)
         return false;

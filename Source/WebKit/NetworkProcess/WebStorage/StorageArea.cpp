@@ -190,7 +190,7 @@ void StorageArea::dispatchEvents(IPC::Connection::UniqueID sourceConnection, Sto
     ASSERT(!RunLoop::isMain());
     ASSERT(storageAreaImplID);
     for (auto it = m_eventListeners.begin(), end = m_eventListeners.end(); it != end; ++it) {
-        Optional<StorageAreaImplIdentifier> optionalStorageAreaImplID = *it == sourceConnection ? std::make_optional(storageAreaImplID) : std::nullopt;
+        std::optional<StorageAreaImplIdentifier> optionalStorageAreaImplID = *it == sourceConnection ? std::make_optional(storageAreaImplID) : std::nullopt;
 
         RunLoop::main().dispatch([connectionID = *it, destinationStorageAreaID = m_identifier, key = key.isolatedCopy(), oldValue = oldValue.isolatedCopy(), newValue = newValue.isolatedCopy(), urlString = urlString.isolatedCopy(), optionalStorageAreaImplID = WTFMove(optionalStorageAreaImplID)] {
             if (auto* connection = IPC::Connection::connection(connectionID))

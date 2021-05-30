@@ -72,7 +72,7 @@ static bool selectionContainsPosition(const VisiblePosition& position, const Vis
     return selectedRange && contains<ComposedTree>(*selectedRange, makeBoundaryPoint(position));
 }
 
-Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeForSelection(const VisibleSelection& selection)
+std::optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeForSelection(const VisibleSelection& selection)
 {
     auto selectedRange = selection.toNormalizedRange();
     if (!selectedRange)
@@ -95,7 +95,7 @@ Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeForSele
     return { { *selectedRange, options } };
 }
 
-Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeAtHitTestResult(const HitTestResult& hitTestResult)
+std::optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeAtHitTestResult(const HitTestResult& hitTestResult)
 {
     auto* node = hitTestResult.innerNonSharedNode();
     if (!node || !node->renderer())

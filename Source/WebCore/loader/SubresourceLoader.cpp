@@ -743,7 +743,7 @@ void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMe
         // complete load metrics in didFinishLoad. In those cases, fall back to the possibility
         // that they populated partial load timing information on the ResourceResponse.
         const auto* timing = m_resource->response().deprecatedNetworkLoadMetricsOrNull();
-        Optional<NetworkLoadMetrics> empty;
+        std::optional<NetworkLoadMetrics> empty;
         if (!timing) {
             empty.emplace();
             timing = &empty.value();

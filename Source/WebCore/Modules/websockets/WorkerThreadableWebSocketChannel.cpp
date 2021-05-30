@@ -411,7 +411,7 @@ void WorkerThreadableWebSocketChannel::Bridge::connect(const URL& url, const Str
         
         // FIXME: make this mixed content check equivalent to the document mixed content check currently in WebSocket::connect()
         if (auto* frame = document.frame()) {
-            Optional<String> errorString = MixedContentChecker::checkForMixedContentInFrameTree(*frame, url);
+            std::optional<String> errorString = MixedContentChecker::checkForMixedContentInFrameTree(*frame, url);
             if (errorString) {
                 peer->fail(errorString.value());
                 return;

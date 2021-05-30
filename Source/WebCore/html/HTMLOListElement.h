@@ -52,8 +52,8 @@ private:
     bool isPresentationAttribute(const QualifiedName&) const final;
     void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
 
-    Optional<int> m_start;
-    mutable Optional<unsigned> m_itemCount;
+    std::optional<int> m_start;
+    mutable std::optional<unsigned> m_itemCount;
     bool m_isReversed { false };
 };
 

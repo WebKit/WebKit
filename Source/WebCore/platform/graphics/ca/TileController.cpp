@@ -211,7 +211,7 @@ void TileController::setVisibleRect(const FloatRect& rect)
     updateTileCoverageMap();
 }
 
-void TileController::setLayoutViewportRect(Optional<FloatRect> rect)
+void TileController::setLayoutViewportRect(std::optional<FloatRect> rect)
 {
     if (rect == m_layoutViewportRect)
         return;

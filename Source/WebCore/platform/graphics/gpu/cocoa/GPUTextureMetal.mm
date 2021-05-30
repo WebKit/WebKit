@@ -53,7 +53,7 @@ static MTLTextureType mtlTextureTypeForGPUTextureDescriptor(const GPUTextureDesc
     }
 }
 
-static Optional<MTLTextureUsage> mtlTextureUsageForGPUTextureUsageFlags(OptionSet<GPUTextureUsage::Flags> flags, const char* const functionName)
+static std::optional<MTLTextureUsage> mtlTextureUsageForGPUTextureUsageFlags(OptionSet<GPUTextureUsage::Flags> flags, const char* const functionName)
 {
 #if LOG_DISABLED
     UNUSED_PARAM(functionName);

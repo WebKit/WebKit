@@ -34,8 +34,8 @@
 namespace WebCore {
 
 struct PeriodicWaveOptions : PeriodicWaveConstraints {
-    Optional<Vector<float>> real;
-    Optional<Vector<float>> imag;
+    std::optional<Vector<float>> real;
+    std::optional<Vector<float>> imag;
 };
 
 } // namespace WebCore

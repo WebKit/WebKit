@@ -33,7 +33,7 @@ template PartialOrdering treeOrder<Tree>(const BoundaryPoint&, const BoundaryPoi
 template PartialOrdering treeOrder< ShadowIncludingTree >(const BoundaryPoint&, const BoundaryPoint&);
 template PartialOrdering treeOrder<ComposedTree>(const BoundaryPoint&, const BoundaryPoint&);
 
-Optional<BoundaryPoint> makeBoundaryPointBeforeNode(Node& node)
+std::optional<BoundaryPoint> makeBoundaryPointBeforeNode(Node& node)
 {
     auto parent = node.parentNode();
     if (!parent)
@@ -41,7 +41,7 @@ Optional<BoundaryPoint> makeBoundaryPointBeforeNode(Node& node)
     return BoundaryPoint { *parent, node.computeNodeIndex() };
 }
 
-Optional<BoundaryPoint> makeBoundaryPointAfterNode(Node& node)
+std::optional<BoundaryPoint> makeBoundaryPointAfterNode(Node& node)
 {
     auto parent = node.parentNode();
     if (!parent)

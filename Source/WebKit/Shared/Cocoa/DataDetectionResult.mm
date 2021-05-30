@@ -43,7 +43,7 @@ void DataDetectionResult::encode(IPC::Encoder& encoder) const
     encoder << results;
 }
 
-Optional<DataDetectionResult> DataDetectionResult::decode(IPC::Decoder& decoder)
+std::optional<DataDetectionResult> DataDetectionResult::decode(IPC::Decoder& decoder)
 {
     auto results = IPC::decode<NSArray>(decoder, @[ [NSArray class], getDDScannerResultClass() ]);
     if (!results)

@@ -1596,7 +1596,7 @@ void NetworkDataTaskSoup::didReadFile(GRefPtr<GInputStream>&& inputStream)
     dispatchDidReceiveResponse();
 }
 
-void NetworkDataTaskSoup::didReadDataURL(Optional<DataURLDecoder::Result>&& result)
+void NetworkDataTaskSoup::didReadDataURL(std::optional<DataURLDecoder::Result>&& result)
 {
     if (g_cancellable_is_cancelled(m_cancellable.get())) {
         didFail(cancelledError(m_currentRequest));

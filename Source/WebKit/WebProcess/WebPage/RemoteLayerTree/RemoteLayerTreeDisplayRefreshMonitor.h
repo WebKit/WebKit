@@ -50,7 +50,7 @@ private:
 
     bool startNotificationMechanism() final { return true; }
     void stopNotificationMechanism() final { }
-    Optional<WebCore::FramesPerSecond> displayNominalFramesPerSecond() final;
+    std::optional<WebCore::FramesPerSecond> displayNominalFramesPerSecond() final;
 
     void adjustPreferredFramesPerSecond(WebCore::FramesPerSecond) final;
 

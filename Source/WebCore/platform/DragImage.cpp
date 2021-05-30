@@ -149,7 +149,7 @@ struct ScopedFrameSelectionState {
     }
 
     const Frame& frame;
-    Optional<RenderRange> selection;
+    std::optional<RenderRange> selection;
 };
 
 #if !PLATFORM(IOS_FAMILY)

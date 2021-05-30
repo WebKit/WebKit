@@ -51,7 +51,7 @@ bool SVGPathStringSource::moveToNextToken()
     return skipOptionalSVGSpaces(m_buffer16);
 }
 
-template <typename CharacterType> static Optional<SVGPathSegType> nextCommandHelper(StringParsingBuffer<CharacterType>& buffer, SVGPathSegType previousCommand)
+template <typename CharacterType> static std::optional<SVGPathSegType> nextCommandHelper(StringParsingBuffer<CharacterType>& buffer, SVGPathSegType previousCommand)
 {
     // Check for remaining coordinates in the current command.
     if ((*buffer == '+' || *buffer == '-' || *buffer == '.' || isASCIIDigit(*buffer))
@@ -86,7 +86,7 @@ template<typename F> decltype(auto) SVGPathStringSource::parse(F&& functor)
     return functor(m_buffer16);
 }
 
-Optional<SVGPathSegType> SVGPathStringSource::parseSVGSegmentType()
+std::optional<SVGPathSegType> SVGPathStringSource::parseSVGSegmentType()
 {
     return parse([](auto& buffer) -> SVGPathSegType {
         auto character = *buffer;
@@ -137,9 +137,9 @@ Optional<SVGPathSegType> SVGPathStringSource::parseSVGSegmentType()
     });
 }
 
-Optional<SVGPathSource::MoveToSegment> SVGPathStringSource::parseMoveToSegment()
+std::optional<SVGPathSource::MoveToSegment> SVGPathStringSource::parseMoveToSegment()
 {
-    return parse([](auto& buffer) -> Optional<MoveToSegment> {
+    return parse([](auto& buffer) -> std::optional<MoveToSegment> {
         auto targetPoint = parseFloatPoint(buffer);
         if (!targetPoint)
             return std::nullopt;
@@ -150,9 +150,9 @@ Optional<SVGPathSource::MoveToSegment> SVGPathStringSource::parseMoveToSegment()
     });
 }
 
-Optional<SVGPathSource::LineToSegment> SVGPathStringSource::parseLineToSegment()
+std::optional<SVGPathSource::LineToSegment> SVGPathStringSource::parseLineToSegment()
 {
-    return parse([](auto& buffer) -> Optional<LineToSegment> {
+    return parse([](auto& buffer) -> std::optional<LineToSegment> {
         auto targetPoint = parseFloatPoint(buffer);
         if (!targetPoint)
             return std::nullopt;
@@ -163,9 +163,9 @@ Optional<SVGPathSource::LineToSegment> SVGPathStringSource::parseLineToSegment()
     });
 }
 
-Optional<SVGPathSource::LineToHorizontalSegment> SVGPathStringSource::parseLineToHorizontalSegment()
+std::optional<SVGPathSource::LineToHorizontalSegment> SVGPathStringSource::parseLineToHorizontalSegment()
 {
-    return parse([](auto& buffer) -> Optional<LineToHorizontalSegment> {
+    return parse([](auto& buffer) -> std::optional<LineToHorizontalSegment> {
         auto x = parseNumber(buffer);
         if (!x)
             return std::nullopt;
@@ -176,9 +176,9 @@ Optional<SVGPathSource::LineToHorizontalSegment> SVGPathStringSource::parseLineT
     });
 }
 
-Optional<SVGPathSource::LineToVerticalSegment> SVGPathStringSource::parseLineToVerticalSegment()
+std::optional<SVGPathSource::LineToVerticalSegment> SVGPathStringSource::parseLineToVerticalSegment()
 {
-    return parse([](auto& buffer) -> Optional<LineToVerticalSegment> {
+    return parse([](auto& buffer) -> std::optional<LineToVerticalSegment> {
         auto y = parseNumber(buffer);
         if (!y)
             return std::nullopt;
@@ -189,9 +189,9 @@ Optional<SVGPathSource::LineToVerticalSegment> SVGPathStringSource::parseLineToV
     });
 }
 
-Optional<SVGPathSource::CurveToCubicSegment> SVGPathStringSource::parseCurveToCubicSegment()
+std::optional<SVGPathSource::CurveToCubicSegment> SVGPathStringSource::parseCurveToCubicSegment()
 {
-    return parse([](auto& buffer) -> Optional<CurveToCubicSegment> {
+    return parse([](auto& buffer) -> std::optional<CurveToCubicSegment> {
         auto point1 = parseFloatPoint(buffer);
         if (!point1)
             return std::nullopt;
@@ -212,9 +212,9 @@ Optional<SVGPathSource::CurveToCubicSegment> SVGPathStringSource::parseCurveToCu
     });
 }
 
-Optional<SVGPathSource::CurveToCubicSmoothSegment> SVGPathStringSource::parseCurveToCubicSmoothSegment()
+std::optional<SVGPathSource::CurveToCubicSmoothSegment> SVGPathStringSource::parseCurveToCubicSmoothSegment()
 {
-    return parse([](auto& buffer) -> Optional<CurveToCubicSmoothSegment> {
+    return parse([](auto& buffer) -> std::optional<CurveToCubicSmoothSegment> {
         auto point2 = parseFloatPoint(buffer);
         if (!point2)
             return std::nullopt;
@@ -230,9 +230,9 @@ Optional<SVGPathSource::CurveToCubicSmoothSegment> SVGPathStringSource::parseCur
     });
 }
 
-Optional<SVGPathSource::CurveToQuadraticSegment> SVGPathStringSource::parseCurveToQuadraticSegment()
+std::optional<SVGPathSource::CurveToQuadraticSegment> SVGPathStringSource::parseCurveToQuadraticSegment()
 {
-    return parse([](auto& buffer) -> Optional<CurveToQuadraticSegment> {
+    return parse([](auto& buffer) -> std::optional<CurveToQuadraticSegment> {
         auto point1 = parseFloatPoint(buffer);
         if (!point1)
             return std::nullopt;
@@ -248,9 +248,9 @@ Optional<SVGPathSource::CurveToQuadraticSegment> SVGPathStringSource::parseCurve
     });
 }
 
-Optional<SVGPathSource::CurveToQuadraticSmoothSegment> SVGPathStringSource::parseCurveToQuadraticSmoothSegment()
+std::optional<SVGPathSource::CurveToQuadraticSmoothSegment> SVGPathStringSource::parseCurveToQuadraticSmoothSegment()
 {
-    return parse([](auto& buffer) -> Optional<CurveToQuadraticSmoothSegment> {
+    return parse([](auto& buffer) -> std::optional<CurveToQuadraticSmoothSegment> {
         auto targetPoint = parseFloatPoint(buffer);
         if (!targetPoint)
             return std::nullopt;
@@ -261,9 +261,9 @@ Optional<SVGPathSource::CurveToQuadraticSmoothSegment> SVGPathStringSource::pars
     });
 }
 
-Optional<SVGPathSource::ArcToSegment> SVGPathStringSource::parseArcToSegment()
+std::optional<SVGPathSource::ArcToSegment> SVGPathStringSource::parseArcToSegment()
 {
-    return parse([](auto& buffer) -> Optional<ArcToSegment> {
+    return parse([](auto& buffer) -> std::optional<ArcToSegment> {
         auto rx = parseNumber(buffer);
         if (!rx)
             return std::nullopt;

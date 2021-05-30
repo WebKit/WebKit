@@ -37,7 +37,7 @@ ApplePaySessionPaymentRequest::ApplePaySessionPaymentRequest() = default;
 
 ApplePaySessionPaymentRequest::~ApplePaySessionPaymentRequest() = default;
 
-bool isFinalStateResult(const Optional<PaymentAuthorizationResult>& result)
+bool isFinalStateResult(const std::optional<PaymentAuthorizationResult>& result)
 {
     if (!result)
         return true;

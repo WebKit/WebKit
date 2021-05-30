@@ -43,8 +43,8 @@ bool operator!=(const BoundaryPoint&, const BoundaryPoint&);
 
 template<TreeType = Tree> PartialOrdering treeOrder(const BoundaryPoint&, const BoundaryPoint&);
 
-WEBCORE_EXPORT Optional<BoundaryPoint> makeBoundaryPointBeforeNode(Node&);
-WEBCORE_EXPORT Optional<BoundaryPoint> makeBoundaryPointAfterNode(Node&);
+WEBCORE_EXPORT std::optional<BoundaryPoint> makeBoundaryPointBeforeNode(Node&);
+WEBCORE_EXPORT std::optional<BoundaryPoint> makeBoundaryPointAfterNode(Node&);
 BoundaryPoint makeBoundaryPointBeforeNodeContents(Node&);
 BoundaryPoint makeBoundaryPointAfterNodeContents(Node&);
 

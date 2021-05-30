@@ -52,9 +52,9 @@ ExceptionOr<Ref<TextDecoder>> TextDecoder::create(const String& label, Options o
     return decoder;
 }
 
-ExceptionOr<String> TextDecoder::decode(Optional<BufferSource::VariantType> input, DecodeOptions options)
+ExceptionOr<String> TextDecoder::decode(std::optional<BufferSource::VariantType> input, DecodeOptions options)
 {
-    Optional<BufferSource> inputBuffer;
+    std::optional<BufferSource> inputBuffer;
     const uint8_t* data = nullptr;
     size_t length = 0;
     if (input) {

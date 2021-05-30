@@ -53,10 +53,10 @@ public:
     WEBCORE_EXPORT const FloatPoint pointAtAbsoluteDistance(float) const;
     const FloatPoint pointAtRelativeDistance(float) const;
     const FloatLine extendedToBounds(const FloatRect&) const;
-    const Optional<FloatPoint> intersectionWith(const FloatLine&) const;
+    const std::optional<FloatPoint> intersectionWith(const FloatLine&) const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<FloatLine> decode(Decoder&);
+    template<class Decoder> static std::optional<FloatLine> decode(Decoder&);
     
 private:
     FloatPoint m_start { 0, 0 };
@@ -70,14 +70,14 @@ template<class Encoder> void FloatLine::encode(Encoder& encoder) const
     encoder << m_end;
 }
 
-template<class Decoder> Optional<FloatLine> FloatLine::decode(Decoder& decoder)
+template<class Decoder> std::optional<FloatLine> FloatLine::decode(Decoder& decoder)
 {
-    Optional<FloatPoint> start;
+    std::optional<FloatPoint> start;
     decoder >> start;
     if (!start)
         return std::nullopt;
 
-    Optional<FloatPoint> end;
+    std::optional<FloatPoint> end;
     decoder >> end;
     if (!end)
         return std::nullopt;

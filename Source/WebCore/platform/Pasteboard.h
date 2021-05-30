@@ -213,9 +213,9 @@ public:
     virtual WEBCORE_EXPORT void clear();
     virtual WEBCORE_EXPORT void clear(const String& type);
 
-    virtual WEBCORE_EXPORT void read(PasteboardPlainText&, PlainTextURLReadingPolicy = PlainTextURLReadingPolicy::AllowURL, Optional<size_t> itemIndex = std::nullopt);
-    virtual WEBCORE_EXPORT void read(PasteboardWebContentReader&, WebContentReadingPolicy = WebContentReadingPolicy::AnyType, Optional<size_t> itemIndex = std::nullopt);
-    virtual WEBCORE_EXPORT void read(PasteboardFileReader&, Optional<size_t> itemIndex = std::nullopt);
+    virtual WEBCORE_EXPORT void read(PasteboardPlainText&, PlainTextURLReadingPolicy = PlainTextURLReadingPolicy::AllowURL, std::optional<size_t> itemIndex = std::nullopt);
+    virtual WEBCORE_EXPORT void read(PasteboardWebContentReader&, WebContentReadingPolicy = WebContentReadingPolicy::AnyType, std::optional<size_t> itemIndex = std::nullopt);
+    virtual WEBCORE_EXPORT void read(PasteboardFileReader&, std::optional<size_t> itemIndex = std::nullopt);
 
     static bool canWriteTrustworthyWebURLsPboardType();
 
@@ -292,8 +292,8 @@ public:
     void writeImageToDataObject(Element&, const URL&); // FIXME: Layering violation.
 #endif
 
-    Optional<Vector<PasteboardItemInfo>> allPasteboardItemInfo() const;
-    Optional<PasteboardItemInfo> pasteboardItemInfo(size_t index) const;
+    std::optional<Vector<PasteboardItemInfo>> allPasteboardItemInfo() const;
+    std::optional<PasteboardItemInfo> pasteboardItemInfo(size_t index) const;
 
     String readString(size_t index, const String& type);
     RefPtr<WebCore::SharedBuffer> readBuffer(size_t index, const String& type);
@@ -304,7 +304,7 @@ public:
 private:
 #if PLATFORM(IOS_FAMILY)
     bool respectsUTIFidelities() const;
-    void readRespectingUTIFidelities(PasteboardWebContentReader&, WebContentReadingPolicy, Optional<size_t>);
+    void readRespectingUTIFidelities(PasteboardWebContentReader&, WebContentReadingPolicy, std::optional<size_t>);
 
     enum class ReaderResult {
         ReadType,
@@ -319,7 +319,7 @@ private:
     void writeRangeToDataObject(const SimpleRange&, Frame&); // FIXME: Layering violation.
     void writeURLToDataObject(const URL&, const String&);
     void writePlainTextToDataObject(const String&, SmartReplaceOption);
-    Optional<PasteboardCustomData> readPasteboardCustomData();
+    std::optional<PasteboardCustomData> readPasteboardCustomData();
 #endif
 
 #if PLATFORM(COCOA)
@@ -334,14 +334,14 @@ private:
     std::unique_ptr<PasteboardContext> m_context;
 
 #if PLATFORM(GTK)
-    Optional<SelectionData> m_selectionData;
+    std::optional<SelectionData> m_selectionData;
     String m_name;
 #endif
 
 #if PLATFORM(COCOA)
     String m_pasteboardName;
     int64_t m_changeCount;
-    Optional<PasteboardCustomData> m_customDataCache;
+    std::optional<PasteboardCustomData> m_customDataCache;
 #endif
 
 #if PLATFORM(MAC)

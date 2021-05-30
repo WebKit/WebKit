@@ -85,7 +85,7 @@ OptionSet<ResourceType> toResourceType(CachedResource::Type type, ResourceReques
     return { };
 }
 
-Optional<OptionSet<ResourceType>> readResourceType(StringView name)
+std::optional<OptionSet<ResourceType>> readResourceType(StringView name)
 {
     if (name == "document")
         return { ResourceType::Document };
@@ -116,7 +116,7 @@ Optional<OptionSet<ResourceType>> readResourceType(StringView name)
     return std::nullopt;
 }
 
-Optional<OptionSet<LoadType>> readLoadType(StringView name)
+std::optional<OptionSet<LoadType>> readLoadType(StringView name)
 {
     if (name == "first-party")
         return { LoadType::FirstParty };
@@ -125,7 +125,7 @@ Optional<OptionSet<LoadType>> readLoadType(StringView name)
     return std::nullopt;
 }
 
-Optional<OptionSet<LoadContext>> readLoadContext(StringView name)
+std::optional<OptionSet<LoadContext>> readLoadContext(StringView name)
 {
     if (name == "top-frame")
         return { LoadContext::TopFrame };

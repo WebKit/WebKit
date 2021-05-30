@@ -37,7 +37,7 @@ void ArgumentCoder<WebKit::InsertTextOptions>::encode(Encoder& encoder, const We
     encoder << options.editingRangeIsRelativeTo;
 }
 
-Optional<WebKit::InsertTextOptions> ArgumentCoder<WebKit::InsertTextOptions>::decode(Decoder& decoder)
+std::optional<WebKit::InsertTextOptions> ArgumentCoder<WebKit::InsertTextOptions>::decode(Decoder& decoder)
 {
     WebKit::InsertTextOptions options;
     if (!decoder.decode(options.registerUndoGroup))

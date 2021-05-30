@@ -414,11 +414,11 @@ public:
 namespace TestHelpers {
 
 template<typename ProtocolEnumType>
-Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
+std::optional<ProtocolEnumType> parseEnumValueFromString(const String&);
 
 // Enums in the 'Runtime' Domain
 template<>
-Optional<Protocol::Runtime::KeyPath::Type> parseEnumValueFromString<Protocol::Runtime::KeyPath::Type>(const String&);
+std::optional<Protocol::Runtime::KeyPath::Type> parseEnumValueFromString<Protocol::Runtime::KeyPath::Type>(const String&);
 
 } // namespace TestHelpers
 
@@ -480,8 +480,7 @@ String getEnumConstantValue(int code) {
 
 // Enums in the 'Runtime' Domain
 
-template<>
-Optional<Protocol::Runtime::KeyPath::Type> parseEnumValueFromString<Protocol::Runtime::KeyPath::Type>(const String& protocolString)
+template<> std::optional<Protocol::Runtime::KeyPath::Type> parseEnumValueFromString<Protocol::Runtime::KeyPath::Type>(const String& protocolString)
 {
     static const size_t constantValues[] = {
         (size_t)Protocol::Runtime::KeyPath::Type::Null,
@@ -868,7 +867,7 @@ __attribute__((visibility ("default")))
 namespace Inspector {
 
 template<typename ObjCEnumType>
-Optional<ObjCEnumType> fromProtocolString(const String& value);
+std::optional<ObjCEnumType> fromProtocolString(const String& value);
 
 inline String toProtocolString(TestProtocolRuntimeKeyPathType value)
 {
@@ -883,7 +882,7 @@ inline String toProtocolString(TestProtocolRuntimeKeyPathType value)
 }
 
 template<>
-inline Optional<TestProtocolRuntimeKeyPathType> fromProtocolString(const String& value)
+inline std::optional<TestProtocolRuntimeKeyPathType> fromProtocolString(const String& value)
 {
     if (value == "null")
         return TestProtocolRuntimeKeyPathTypeNull;
@@ -1002,9 +1001,9 @@ using namespace Inspector;
         return nil;
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"type"], @"type");
-    Optional<TestProtocolRuntimeKeyPathType> type = fromProtocolString<TestProtocolRuntimeKeyPathType>((__bridge CFStringRef)payload[@"type"]);
+    auto type = fromProtocolString<TestProtocolRuntimeKeyPathType>((__bridge CFStringRef)payload[@"type"]);
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(type, @"type");
-    self.type = type.value();
+    self.type = *type;
 
     self.string = payload[@"string"];
 

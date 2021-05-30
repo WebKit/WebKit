@@ -41,9 +41,9 @@ struct RemoteCDMInstanceConfiguration {
     }
 
     template <class Decoder>
-    static Optional<RemoteCDMInstanceConfiguration> decode(Decoder& decoder)
+    static std::optional<RemoteCDMInstanceConfiguration> decode(Decoder& decoder)
     {
-        Optional<String> keySystem;
+        std::optional<String> keySystem;
         decoder >> keySystem;
         if (!keySystem)
             return std::nullopt;

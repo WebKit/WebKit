@@ -191,7 +191,7 @@ void ArgumentCoder<CurlProxySettings>::encode(Encoder& encoder, const CurlProxyS
     encoder << settings.ignoreHosts();
 }
 
-Optional<CurlProxySettings> ArgumentCoder<CurlProxySettings>::decode(Decoder& decoder)
+std::optional<CurlProxySettings> ArgumentCoder<CurlProxySettings>::decode(Decoder& decoder)
 {
     CurlProxySettings::Mode mode;
     if (!decoder.decode(mode))
@@ -228,7 +228,7 @@ void ArgumentCoder<SerializedPlatformDataCueValue>::encodePlatformData(Encoder& 
     ASSERT_NOT_REACHED();
 }
 
-Optional<SerializedPlatformDataCueValue>  ArgumentCoder<SerializedPlatformDataCueValue>::decodePlatformData(Decoder& decoder, WebCore::SerializedPlatformDataCueValue::PlatformType platformType)
+std::optional<SerializedPlatformDataCueValue>  ArgumentCoder<SerializedPlatformDataCueValue>::decodePlatformData(Decoder& decoder, WebCore::SerializedPlatformDataCueValue::PlatformType platformType)
 {
     ASSERT_NOT_REACHED();
     return std::nullopt;

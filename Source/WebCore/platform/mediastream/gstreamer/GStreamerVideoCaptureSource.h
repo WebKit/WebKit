@@ -53,8 +53,8 @@ protected:
     void generatePresets() override;
 
 
-    mutable Optional<RealtimeMediaSourceCapabilities> m_capabilities;
-    mutable Optional<RealtimeMediaSourceSettings> m_currentSettings;
+    mutable std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
+    mutable std::optional<RealtimeMediaSourceSettings> m_currentSettings;
     CaptureDevice::DeviceType deviceType() const override { return CaptureDevice::DeviceType::Camera; }
 
 private:

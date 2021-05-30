@@ -48,7 +48,7 @@ static const EVP_CIPHER* aesAlgorithm(size_t keySize)
     return nullptr;
 }
 
-static Optional<Vector<uint8_t>> cryptWrapKey(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
+static std::optional<Vector<uint8_t>> cryptWrapKey(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
 {
     const EVP_CIPHER* algorithm = aesAlgorithm(key.size());
     if (!algorithm)
@@ -79,7 +79,7 @@ static Optional<Vector<uint8_t>> cryptWrapKey(const Vector<uint8_t>& key, const 
     return cipherText;
 }
 
-static Optional<Vector<uint8_t>> cryptUnwrapKey(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
+static std::optional<Vector<uint8_t>> cryptUnwrapKey(const Vector<uint8_t>& key, const Vector<uint8_t>& data)
 {
     const EVP_CIPHER* algorithm = aesAlgorithm(key.size());
     if (!algorithm)

@@ -29,7 +29,7 @@ messages -> RemoteMediaSessionCoordinator NotRefCounted {
 
     SeekSessionToTime(double time) -> (bool result) Async
 
-    PlaySession(Optional<double> atTime, Optional<double> hostTime) -> (bool result) Async
+    PlaySession(std::optional<double> atTime, std::optional<double> hostTime) -> (bool result) Async
 
     PauseSession() -> (bool result) Async
 

@@ -54,17 +54,17 @@ public:
 private:
     bool shouldBeginEditing(WebPage&, const WebCore::SimpleRange&) final;
     bool shouldEndEditing(WebPage&, const WebCore::SimpleRange&) final;
-    bool shouldInsertNode(WebPage&, WebCore::Node&, const Optional<WebCore::SimpleRange>& rangeToReplace, WebCore::EditorInsertAction) final;
-    bool shouldInsertText(WebPage&, const String&, const Optional<WebCore::SimpleRange>& rangeToReplace, WebCore::EditorInsertAction) final;
-    bool shouldDeleteRange(WebPage&, const Optional<WebCore::SimpleRange>&) final;
-    bool shouldChangeSelectedRange(WebPage&, const Optional<WebCore::SimpleRange>& fromRange, const Optional<WebCore::SimpleRange>& toRange, WebCore::Affinity, bool stillSelecting) final;
-    bool shouldApplyStyle(WebPage&, const WebCore::StyleProperties&, const Optional<WebCore::SimpleRange>&) final;
+    bool shouldInsertNode(WebPage&, WebCore::Node&, const std::optional<WebCore::SimpleRange>& rangeToReplace, WebCore::EditorInsertAction) final;
+    bool shouldInsertText(WebPage&, const String&, const std::optional<WebCore::SimpleRange>& rangeToReplace, WebCore::EditorInsertAction) final;
+    bool shouldDeleteRange(WebPage&, const std::optional<WebCore::SimpleRange>&) final;
+    bool shouldChangeSelectedRange(WebPage&, const std::optional<WebCore::SimpleRange>& fromRange, const std::optional<WebCore::SimpleRange>& toRange, WebCore::Affinity, bool stillSelecting) final;
+    bool shouldApplyStyle(WebPage&, const WebCore::StyleProperties&, const std::optional<WebCore::SimpleRange>&) final;
     void didBeginEditing(WebPage&, const String& notificationName) final;
     void didEndEditing(WebPage&, const String& notificationName) final;
     void didChange(WebPage&, const String& notificationName) final;
     void didChangeSelection(WebPage&, const String& notificationName) final;
-    void willWriteToPasteboard(WebPage&, const Optional<WebCore::SimpleRange>&) final;
-    void getPasteboardDataForRange(WebPage&, const Optional<WebCore::SimpleRange>&, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData) final;
+    void willWriteToPasteboard(WebPage&, const std::optional<WebCore::SimpleRange>&) final;
+    void getPasteboardDataForRange(WebPage&, const std::optional<WebCore::SimpleRange>&, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData) final;
     void didWriteToPasteboard(WebPage&) final;
     bool performTwoStepDrop(WebPage&, WebCore::DocumentFragment&, const WebCore::SimpleRange& destination, bool isMove) final;
 };

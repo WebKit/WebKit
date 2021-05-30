@@ -62,7 +62,7 @@ bool validateAudioBufferList(AudioBufferList* bufferList)
     if (!bufferList)
         return false;
 
-    Optional<unsigned> expectedDataSize;
+    std::optional<unsigned> expectedDataSize;
     const AudioBuffer* buffer = bufferList->mBuffers;
     const AudioBuffer* bufferEnd = buffer + bufferList->mNumberBuffers;
     for ( ; buffer < bufferEnd; ++buffer) {

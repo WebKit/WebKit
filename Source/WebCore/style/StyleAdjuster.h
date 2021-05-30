@@ -53,9 +53,9 @@ public:
 
 #if ENABLE(TEXT_AUTOSIZING)
     struct AdjustmentForTextAutosizing {
-        Optional<float> newFontSize;
-        Optional<float> newLineHeight;
-        Optional<AutosizeStatus> newStatus;
+        std::optional<float> newFontSize;
+        std::optional<float> newLineHeight;
+        std::optional<AutosizeStatus> newStatus;
         explicit operator bool() const { return newFontSize || newLineHeight || newStatus; }
     };
     static AdjustmentForTextAutosizing adjustmentForTextAutosizing(const RenderStyle&, const Element&);

@@ -97,7 +97,7 @@ public:
         return { };
     }
 
-    virtual Optional<std::size_t> requiredSizeForItem(const DisplayListItem&) const
+    virtual std::optional<std::size_t> requiredSizeForItem(const DisplayListItem&) const
     {
         return std::nullopt;
     }
@@ -123,7 +123,7 @@ public:
     {
     }
 
-    virtual Optional<ItemHandle> WARN_UNUSED_RETURN decodeItem(const uint8_t* data, size_t dataLength, ItemType, uint8_t* handleLocation) = 0;
+    virtual std::optional<ItemHandle> WARN_UNUSED_RETURN decodeItem(const uint8_t* data, size_t dataLength, ItemType, uint8_t* handleLocation) = 0;
 };
 
 // An ItemBuffer contains display list item data, and consists of a readwrite ItemBufferHandle (to which display

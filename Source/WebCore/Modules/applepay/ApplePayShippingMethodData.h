@@ -41,7 +41,7 @@ struct ApplePayShippingMethodData {
 #endif
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ApplePayShippingMethodData> decode(Decoder&);
+    template<class Decoder> static std::optional<ApplePayShippingMethodData> decode(Decoder&);
 
     template<class Decoder> WARN_UNUSED_RETURN bool decodeData(Decoder&);
 };
@@ -57,7 +57,7 @@ void ApplePayShippingMethodData::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ApplePayShippingMethodData> ApplePayShippingMethodData::decode(Decoder& decoder)
+std::optional<ApplePayShippingMethodData> ApplePayShippingMethodData::decode(Decoder& decoder)
 {
     ApplePayShippingMethodData result;
     if (!result.decodeData(decoder))

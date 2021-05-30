@@ -42,7 +42,7 @@ struct FontRaw;
 
 namespace Style {
 
-Optional<FontCascade> resolveForFontRaw(const CSSPropertyParserHelpers::FontRaw&, FontCascadeDescription&&, ScriptExecutionContext&);
+std::optional<FontCascade> resolveForFontRaw(const CSSPropertyParserHelpers::FontRaw&, FontCascadeDescription&&, ScriptExecutionContext&);
 
 }
 }

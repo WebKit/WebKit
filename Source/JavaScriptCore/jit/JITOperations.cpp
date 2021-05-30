@@ -820,7 +820,7 @@ static void putByVal(JSGlobalObject* globalObject, JSValue baseValue, JSValue su
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    if (Optional<uint32_t> index = subscript.tryGetAsUint32Index()) {
+    if (std::optional<uint32_t> index = subscript.tryGetAsUint32Index()) {
         byValInfo->tookSlowPath = true;
         uint32_t i = *index;
         if (baseValue.isObject()) {
@@ -863,7 +863,7 @@ static void directPutByVal(JSGlobalObject* globalObject, JSObject* baseObject, J
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (Optional<uint32_t> maybeIndex = subscript.tryGetAsUint32Index()) {
+    if (std::optional<uint32_t> maybeIndex = subscript.tryGetAsUint32Index()) {
         byValInfo->tookSlowPath = true;
         uint32_t index = *maybeIndex;
 
@@ -889,7 +889,7 @@ static void directPutByVal(JSGlobalObject* globalObject, JSObject* baseObject, J
     auto property = subscript.toPropertyKey(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
 
-    if (Optional<uint32_t> index = parseIndex(property)) {
+    if (std::optional<uint32_t> index = parseIndex(property)) {
         byValInfo->tookSlowPath = true;
         scope.release();
         baseObject->putDirectIndex(globalObject, index.value(), value, 0, ecmaMode.isStrict() ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
@@ -1978,7 +1978,7 @@ JSC_DEFINE_JIT_OPERATION(operationOptimize, SlowPathReturnType, (VM* vmPointer, 
         if (bytecodeIndex)
             numVarsWithValues = codeBlock->numCalleeLocals();
 
-        Operands<Optional<JSValue>> mustHandleValues(codeBlock->numParameters(), numVarsWithValues, 0);
+        Operands<std::optional<JSValue>> mustHandleValues(codeBlock->numParameters(), numVarsWithValues, 0);
         int localsUsedForCalleeSaves = static_cast<int>(CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters());
         for (size_t i = 0; i < mustHandleValues.size(); ++i) {
             Operand operand = mustHandleValues.operandForIndex(i);
@@ -2237,7 +2237,7 @@ ALWAYS_INLINE static JSValue getByVal(JSGlobalObject* globalObject, CallFrame* c
         }
     }
 
-    if (Optional<int32_t> index = subscript.tryGetAsInt32()) {
+    if (std::optional<int32_t> index = subscript.tryGetAsInt32()) {
         int32_t i = *index;
         if (isJSString(baseValue)) {
             if (i >= 0 && asString(baseValue)->canGetIndex(i))
@@ -2349,7 +2349,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetByVal, EncodedJSValue, (JSGlobalObject* glo
     if (LIKELY(baseValue.isCell())) {
         JSCell* base = baseValue.asCell();
 
-        if (Optional<uint32_t> index = property.tryGetAsUint32Index())
+        if (std::optional<uint32_t> index = property.tryGetAsUint32Index())
             RELEASE_AND_RETURN(scope, getByValWithIndex(globalObject, base, *index));
 
         if (property.isString()) {

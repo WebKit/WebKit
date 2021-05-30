@@ -69,7 +69,7 @@ public:
     using RefCounted::ref;
     using RefCounted::deref;
     
-    ExceptionOr<void> startRecording(Optional<unsigned>);
+    ExceptionOr<void> startRecording(std::optional<unsigned>);
     void stopRecording();
     ExceptionOr<void> requestData();
     ExceptionOr<void> pauseRecording();
@@ -125,7 +125,7 @@ private:
     std::unique_ptr<MediaRecorderPrivate> m_private;
     RecordingState m_state { RecordingState::Inactive };
     Vector<Ref<MediaStreamTrackPrivate>> m_tracks;
-    Optional<unsigned> m_timeSlice;
+    std::optional<unsigned> m_timeSlice;
     Timer m_timeSliceTimer;
     
     bool m_isActive { true };

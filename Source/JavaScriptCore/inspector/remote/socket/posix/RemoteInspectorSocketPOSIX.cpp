@@ -44,7 +44,7 @@ void init()
 {
 }
 
-Optional<PlatformSocketType> connect(const char* serverAddress, uint16_t serverPort)
+std::optional<PlatformSocketType> connect(const char* serverAddress, uint16_t serverPort)
 {
     struct sockaddr_in address = { };
 
@@ -68,7 +68,7 @@ Optional<PlatformSocketType> connect(const char* serverAddress, uint16_t serverP
     return fd;
 }
 
-Optional<PlatformSocketType> listen(const char* addressStr, uint16_t port)
+std::optional<PlatformSocketType> listen(const char* addressStr, uint16_t port)
 {
     struct sockaddr_in address = { };
 
@@ -125,7 +125,7 @@ Optional<PlatformSocketType> listen(const char* addressStr, uint16_t port)
     return fdListen;
 }
 
-Optional<PlatformSocketType> accept(PlatformSocketType socket)
+std::optional<PlatformSocketType> accept(PlatformSocketType socket)
 {
     struct sockaddr_in address = { };
 
@@ -138,7 +138,7 @@ Optional<PlatformSocketType> accept(PlatformSocketType socket)
     return std::nullopt;
 }
 
-Optional<std::array<PlatformSocketType, 2>> createPair()
+std::optional<std::array<PlatformSocketType, 2>> createPair()
 {
     std::array<PlatformSocketType, 2> sockets;
 
@@ -189,7 +189,7 @@ bool isListening(PlatformSocketType socket)
     return false;
 }
 
-Optional<uint16_t> getPort(PlatformSocketType socket)
+std::optional<uint16_t> getPort(PlatformSocketType socket)
 {
     ASSERT(isValid(socket));
 
@@ -202,7 +202,7 @@ Optional<uint16_t> getPort(PlatformSocketType socket)
     return address.sin_port;
 }
 
-Optional<size_t> read(PlatformSocketType socket, void* buffer, int bufferSize)
+std::optional<size_t> read(PlatformSocketType socket, void* buffer, int bufferSize)
 {
     ASSERT(isValid(socket));
 
@@ -214,7 +214,7 @@ Optional<size_t> read(PlatformSocketType socket, void* buffer, int bufferSize)
     return std::nullopt;
 }
 
-Optional<size_t> write(PlatformSocketType socket, const void* data, int size)
+std::optional<size_t> write(PlatformSocketType socket, const void* data, int size)
 {
     ASSERT(isValid(socket));
 

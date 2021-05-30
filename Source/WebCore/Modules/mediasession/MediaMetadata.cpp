@@ -89,7 +89,7 @@ void ArtworkImageLoader::notifyFinished(CachedResource& resource, const NetworkL
     m_callback(bitmapImage.ptr());
 }
 
-ExceptionOr<Ref<MediaMetadata>> MediaMetadata::create(ScriptExecutionContext& context, Optional<MediaMetadataInit>&& init)
+ExceptionOr<Ref<MediaMetadata>> MediaMetadata::create(ScriptExecutionContext& context, std::optional<MediaMetadataInit>&& init)
 {
     auto metadata = adoptRef(*new MediaMetadata);
     if (init) {

@@ -76,7 +76,7 @@ bool WebPage::hoverSupportedByAnyAvailablePointingDevice() const
     return true;
 }
 
-Optional<PointerCharacteristics> WebPage::pointerCharacteristicsOfPrimaryPointingDevice() const
+std::optional<PointerCharacteristics> WebPage::pointerCharacteristicsOfPrimaryPointingDevice() const
 {
     return PointerCharacteristics::Fine;
 }

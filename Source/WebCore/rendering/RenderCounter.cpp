@@ -150,7 +150,7 @@ struct CounterPlan {
     int value;
 };
 
-static Optional<CounterPlan> planCounter(RenderElement& renderer, const AtomString& identifier)
+static std::optional<CounterPlan> planCounter(RenderElement& renderer, const AtomString& identifier)
 {
     // We must have a generating node or else we cannot have a counter.
     Element* generatingElement = renderer.generatingElement();

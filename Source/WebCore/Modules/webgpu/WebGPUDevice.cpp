@@ -286,7 +286,7 @@ Ref<WebGPUQueue> WebGPUDevice::getQueue() const
 void WebGPUDevice::popErrorScope(ErrorPromise&& promise)
 {
     String failMessage;
-    Optional<GPUError> error = m_errorScopes->popErrorScope(failMessage);
+    std::optional<GPUError> error = m_errorScopes->popErrorScope(failMessage);
     if (failMessage.isEmpty())
         promise.resolve(error);
     else

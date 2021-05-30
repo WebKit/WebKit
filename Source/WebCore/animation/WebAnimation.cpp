@@ -206,8 +206,8 @@ void WebAnimation::setEffectInternal(RefPtr<AnimationEffect>&& newEffect, bool d
 
     auto oldEffect = std::exchange(m_effect, WTFMove(newEffect));
 
-    Optional<const Styleable> previousTarget = is<KeyframeEffect>(oldEffect) ? downcast<KeyframeEffect>(oldEffect.get())->targetStyleable() : std::nullopt;
-    Optional<const Styleable> newTarget = is<KeyframeEffect>(m_effect) ? downcast<KeyframeEffect>(m_effect.get())->targetStyleable() : std::nullopt;
+    std::optional<const Styleable> previousTarget = is<KeyframeEffect>(oldEffect) ? downcast<KeyframeEffect>(oldEffect.get())->targetStyleable() : std::nullopt;
+    std::optional<const Styleable> newTarget = is<KeyframeEffect>(m_effect) ? downcast<KeyframeEffect>(m_effect.get())->targetStyleable() : std::nullopt;
 
     // Update the effect-to-animation relationships and the timeline's animation map.
     if (oldEffect) {
@@ -277,7 +277,7 @@ void WebAnimation::setTimelineInternal(RefPtr<AnimationTimeline>&& timeline)
         m_effect->animationTimelineDidChange(m_timeline.get());
 }
 
-void WebAnimation::effectTargetDidChange(const Optional<const Styleable>& previousTarget, const Optional<const Styleable>& newTarget)
+void WebAnimation::effectTargetDidChange(const std::optional<const Styleable>& previousTarget, const std::optional<const Styleable>& newTarget)
 {
     if (m_timeline) {
         if (previousTarget)
@@ -293,14 +293,14 @@ void WebAnimation::effectTargetDidChange(const Optional<const Styleable>& previo
     InspectorInstrumentation::didChangeWebAnimationEffectTarget(*this);
 }
 
-Optional<double> WebAnimation::bindingsStartTime() const
+std::optional<double> WebAnimation::bindingsStartTime() const
 {
     if (!m_startTime)
         return std::nullopt;
     return secondsToWebAnimationsAPITime(*m_startTime);
 }
 
-void WebAnimation::setBindingsStartTime(Optional<double> newStartTime)
+void WebAnimation::setBindingsStartTime(std::optional<double> newStartTime)
 {
     if (newStartTime)
         setStartTime(Seconds::fromMilliseconds(*newStartTime));
@@ -308,7 +308,7 @@ void WebAnimation::setBindingsStartTime(Optional<double> newStartTime)
         setStartTime(std::nullopt);
 }
 
-void WebAnimation::setStartTime(Optional<Seconds> newStartTime)
+void WebAnimation::setStartTime(std::optional<Seconds> newStartTime)
 {
     // 3.4.6 The procedure to set the start time of animation, animation, to new start time, is as follows:
     // https://drafts.csswg.org/web-animations/#setting-the-start-time-of-an-animation
@@ -356,7 +356,7 @@ void WebAnimation::setStartTime(Optional<Seconds> newStartTime)
     invalidateEffect();
 }
 
-Optional<double> WebAnimation::bindingsCurrentTime() const
+std::optional<double> WebAnimation::bindingsCurrentTime() const
 {
     auto time = currentTime();
     if (!time)
@@ -364,19 +364,19 @@ Optional<double> WebAnimation::bindingsCurrentTime() const
     return secondsToWebAnimationsAPITime(time.value());
 }
 
-ExceptionOr<void> WebAnimation::setBindingsCurrentTime(Optional<double> currentTime)
+ExceptionOr<void> WebAnimation::setBindingsCurrentTime(std::optional<double> currentTime)
 {
     if (!currentTime)
         return setCurrentTime(std::nullopt);
     return setCurrentTime(Seconds::fromMilliseconds(currentTime.value()));
 }
 
-Optional<Seconds> WebAnimation::currentTime(Optional<Seconds> startTime) const
+std::optional<Seconds> WebAnimation::currentTime(std::optional<Seconds> startTime) const
 {
     return currentTime(RespectHoldTime::Yes, startTime);
 }
 
-Optional<Seconds> WebAnimation::currentTime(RespectHoldTime respectHoldTime, Optional<Seconds> startTime) const
+std::optional<Seconds> WebAnimation::currentTime(RespectHoldTime respectHoldTime, std::optional<Seconds> startTime) const
 {
     // 3.4.4. The current time of an animation
     // https://drafts.csswg.org/web-animations-1/#the-current-time-of-an-animation
@@ -399,7 +399,7 @@ Optional<Seconds> WebAnimation::currentTime(RespectHoldTime respectHoldTime, Opt
     return (*m_timeline->currentTime() - startTime.value_or(*m_startTime)) * m_playbackRate;
 }
 
-ExceptionOr<void> WebAnimation::silentlySetCurrentTime(Optional<Seconds> seekTime)
+ExceptionOr<void> WebAnimation::silentlySetCurrentTime(std::optional<Seconds> seekTime)
 {
     LOG_WITH_STREAM(Animations, stream << "WebAnimation " << this << " silentlySetCurrentTime " << seekTime);
 
@@ -439,7 +439,7 @@ ExceptionOr<void> WebAnimation::silentlySetCurrentTime(Optional<Seconds> seekTim
     return { };
 }
 
-ExceptionOr<void> WebAnimation::setCurrentTime(Optional<Seconds> seekTime)
+ExceptionOr<void> WebAnimation::setCurrentTime(std::optional<Seconds> seekTime)
 {
     LOG_WITH_STREAM(Animations, stream << "WebAnimation " << this << " setCurrentTime " << seekTime);
 
@@ -677,7 +677,7 @@ void WebAnimation::willChangeRenderer()
         downcast<KeyframeEffect>(*m_effect).willChangeRenderer();
 }
 
-void WebAnimation::enqueueAnimationPlaybackEvent(const AtomString& type, Optional<Seconds> currentTime, Optional<Seconds> timelineTime)
+void WebAnimation::enqueueAnimationPlaybackEvent(const AtomString& type, std::optional<Seconds> currentTime, std::optional<Seconds> timelineTime)
 {
     auto event = AnimationPlaybackEvent::create(type, currentTime, timelineTime, this);
     event->setTarget(this);
@@ -1228,7 +1228,7 @@ void WebAnimation::tick()
         m_effect->animationDidTick();
 }
 
-void WebAnimation::resolve(RenderStyle& targetStyle, const RenderStyle* parentElementStyle, Optional<Seconds> startTime)
+void WebAnimation::resolve(RenderStyle& targetStyle, const RenderStyle* parentElementStyle, std::optional<Seconds> startTime)
 {
     if (!m_shouldSkipUpdatingFinishedStateWhenResolving)
         updateFinishedState(DidSeek::No, SynchronouslyNotify::Yes);

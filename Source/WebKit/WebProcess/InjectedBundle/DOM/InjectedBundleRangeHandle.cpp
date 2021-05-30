@@ -180,7 +180,7 @@ String InjectedBundleRangeHandle::text() const
     return plainText(range);
 }
 
-RefPtr<InjectedBundleRangeHandle> createHandle(const Optional<WebCore::SimpleRange>& range)
+RefPtr<InjectedBundleRangeHandle> createHandle(const std::optional<WebCore::SimpleRange>& range)
 {
     return InjectedBundleRangeHandle::getOrCreate(createLiveRange(range).get());
 }

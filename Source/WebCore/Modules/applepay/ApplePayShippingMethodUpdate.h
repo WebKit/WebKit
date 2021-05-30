@@ -33,7 +33,7 @@ namespace WebCore {
 
 struct ApplePayShippingMethodUpdate final : public ApplePayDetailsUpdateBase {
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ApplePayShippingMethodUpdate> decode(Decoder&);
+    template<class Decoder> static std::optional<ApplePayShippingMethodUpdate> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -43,7 +43,7 @@ void ApplePayShippingMethodUpdate::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ApplePayShippingMethodUpdate> ApplePayShippingMethodUpdate::decode(Decoder& decoder)
+std::optional<ApplePayShippingMethodUpdate> ApplePayShippingMethodUpdate::decode(Decoder& decoder)
 {
     ApplePayShippingMethodUpdate result;
 

@@ -224,7 +224,7 @@ private:
     void updateVideoLayerGravity() final;
 
     bool didPassCORSAccessCheck() const final;
-    Optional<bool> wouldTaintOrigin(const SecurityOrigin&) const final;
+    std::optional<bool> wouldTaintOrigin(const SecurityOrigin&) const final;
 
     MediaTime getStartDate() const final;
 
@@ -307,7 +307,7 @@ private:
     void setShouldDisableSleep(bool) final;
     void updateRotationSession();
 
-    Optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
+    std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "MediaPlayerPrivateAVFoundationObjC"; }
@@ -397,7 +397,7 @@ private:
     MediaTime m_cachedDuration;
     mutable MediaPlayer::CurrentTimeDidChangeCallback m_currentTimeDidChangeCallback;
     mutable MediaTime m_cachedCurrentMediaTime;
-    mutable Optional<WallTime> m_wallClockAtCachedCurrentTime;
+    mutable std::optional<WallTime> m_wallClockAtCachedCurrentTime;
     mutable int m_timeControlStatusAtCachedCurrentTime { 0 };
     mutable double m_requestedRateAtCachedCurrentTime { 0 };
     RefPtr<SharedBuffer> m_keyID;
@@ -418,10 +418,10 @@ private:
     bool m_cachedCanPlayFastForward { false };
     bool m_cachedCanPlayFastReverse { false };
     mutable bool m_cachedAssetIsLoaded { false };
-    mutable Optional<bool> m_cachedAssetIsPlayable;
+    mutable std::optional<bool> m_cachedAssetIsPlayable;
     bool m_muted { false };
     bool m_shouldObserveTimeControlStatus { false };
-    mutable Optional<bool> m_tracksArePlayable;
+    mutable std::optional<bool> m_tracksArePlayable;
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     mutable bool m_allowsWirelessVideoPlayback { true };
     bool m_shouldPlayToPlaybackTarget { false };

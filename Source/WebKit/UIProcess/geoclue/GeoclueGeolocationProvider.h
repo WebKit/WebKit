@@ -44,7 +44,7 @@ public:
     GeoclueGeolocationProvider();
     ~GeoclueGeolocationProvider();
 
-    using UpdateNotifyFunction = Function<void(WebCore::GeolocationPositionData&&, Optional<CString> error)>;
+    using UpdateNotifyFunction = Function<void(WebCore::GeolocationPositionData&&, std::optional<CString> error)>;
     void start(UpdateNotifyFunction&&);
     void stop();
     void setEnableHighAccuracy(bool);

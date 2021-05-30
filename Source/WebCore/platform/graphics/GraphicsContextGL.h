@@ -1292,7 +1292,7 @@ public:
     // display buffer abstractions that the caller should hold separate to
     // the context.
     virtual void paintRenderingResultsToCanvas(ImageBuffer&) = 0;
-    virtual Optional<PixelBuffer> paintRenderingResultsToPixelBuffer() = 0;
+    virtual std::optional<PixelBuffer> paintRenderingResultsToPixelBuffer() = 0;
     virtual void paintCompositedResultsToCanvas(ImageBuffer&) = 0;
 
     // FIXME: this should be removed. The layer should be marked composited by

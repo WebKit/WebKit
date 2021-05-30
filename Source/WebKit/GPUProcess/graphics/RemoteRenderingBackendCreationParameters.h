@@ -45,24 +45,24 @@ struct RemoteRenderingBackendCreationParameters {
         encoder << identifier << resumeDisplayListSemaphore << pageProxyID << pageID;
     }
 
-    static Optional<RemoteRenderingBackendCreationParameters> decode(IPC::Decoder& decoder)
+    static std::optional<RemoteRenderingBackendCreationParameters> decode(IPC::Decoder& decoder)
     {
-        Optional<RenderingBackendIdentifier> identifier;
+        std::optional<RenderingBackendIdentifier> identifier;
         decoder >> identifier;
         if (!identifier)
             return std::nullopt;
 
-        Optional<IPC::Semaphore> resumeDisplayListSemaphore;
+        std::optional<IPC::Semaphore> resumeDisplayListSemaphore;
         decoder >> resumeDisplayListSemaphore;
         if (!resumeDisplayListSemaphore)
             return std::nullopt;
 
-        Optional<WebPageProxyIdentifier> pageProxyID;
+        std::optional<WebPageProxyIdentifier> pageProxyID;
         decoder >> pageProxyID;
         if (!pageProxyID)
             return std::nullopt;
 
-        Optional<WebCore::PageIdentifier> pageID;
+        std::optional<WebCore::PageIdentifier> pageID;
         decoder >> pageID;
         if (!pageID)
             return std::nullopt;

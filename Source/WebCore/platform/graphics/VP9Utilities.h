@@ -125,7 +125,7 @@ struct VPCodecConfigurationRecord {
     uint8_t matrixCoefficients { VPConfigurationMatrixCoefficients::BT_709_6 };
 };
 
-WEBCORE_EXPORT Optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecString);
+WEBCORE_EXPORT std::optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecString);
 
 struct ScreenDataOverrides {
     double width { 0 };
@@ -141,10 +141,10 @@ struct ScreenDataOverrides {
     }
 
     template <class Decoder>
-    static Optional<ScreenDataOverrides> decode(Decoder& decoder)
+    static std::optional<ScreenDataOverrides> decode(Decoder& decoder)
     {
 #define DECODE(name, type) \
-        Optional<type> name; \
+        std::optional<type> name; \
         decoder >> name; \
         if (!name) \
             return std::nullopt; \

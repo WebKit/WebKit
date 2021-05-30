@@ -205,7 +205,7 @@ bool RenderLayerScrollableArea::usesAsyncScrolling() const
     return m_layer.compositor().useCoordinatedScrollingForLayer(m_layer);
 }
 
-void RenderLayerScrollableArea::setPostLayoutScrollPosition(Optional<ScrollPosition> position)
+void RenderLayerScrollableArea::setPostLayoutScrollPosition(std::optional<ScrollPosition> position)
 {
     m_postLayoutScrollPosition = position;
 }
@@ -482,7 +482,7 @@ ScrollingNodeID RenderLayerScrollableArea::scrollingNodeID() const
     return m_layer.backing()->scrollingNodeIDForRole(ScrollCoordinationRole::Scrolling);
 }
 
-bool RenderLayerScrollableArea::handleWheelEventForScrolling(const PlatformWheelEvent& wheelEvent, Optional<WheelScrollGestureState> gestureState)
+bool RenderLayerScrollableArea::handleWheelEventForScrolling(const PlatformWheelEvent& wheelEvent, std::optional<WheelScrollGestureState> gestureState)
 {
     if (!isScrollableOrRubberbandable())
         return false;
@@ -1738,7 +1738,7 @@ void RenderLayerScrollableArea::panScrollFromPoint(const IntPoint& sourcePoint)
     scrollByRecursively(adjustedScrollDelta(delta));
 }
 
-Optional<LayoutRect> RenderLayerScrollableArea::updateScrollPosition(const ScrollPositionChangeOptions& options, const LayoutRect& revealRect, const LayoutRect& localExposeRect)
+std::optional<LayoutRect> RenderLayerScrollableArea::updateScrollPosition(const ScrollPositionChangeOptions& options, const LayoutRect& revealRect, const LayoutRect& localExposeRect)
 {
     ASSERT(m_layer.allowsCurrentScroll());
 

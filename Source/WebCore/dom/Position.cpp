@@ -1602,7 +1602,7 @@ Position makeDeprecatedLegacyPosition(const BoundaryPoint& point)
     return makeDeprecatedLegacyPosition(point.container.ptr(), point.offset);
 }
 
-Optional<BoundaryPoint> makeBoundaryPoint(const Position& position)
+std::optional<BoundaryPoint> makeBoundaryPoint(const Position& position)
 {
     auto container = makeRefPtr(position.containerNode());
     if (!container)

@@ -395,7 +395,7 @@ bool HTMLAnchorElement::isSystemPreviewLink()
 }
 #endif
 
-Optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasurement() const
+std::optional<PrivateClickMeasurement> HTMLAnchorElement::parsePrivateClickMeasurement() const
 {
     using SourceID = PrivateClickMeasurement::SourceID;
     using SourceSite = PrivateClickMeasurement::SourceSite;
@@ -517,7 +517,7 @@ void HTMLAnchorElement::handleClick(Event& event)
     auto referrerPolicy = hasRel(Relation::NoReferrer) ? ReferrerPolicy::NoReferrer : this->referrerPolicy();
 
     auto effectiveTarget = this->effectiveTarget();
-    Optional<NewFrameOpenerPolicy> newFrameOpenerPolicy;
+    std::optional<NewFrameOpenerPolicy> newFrameOpenerPolicy;
     if (hasRel(Relation::Opener))
         newFrameOpenerPolicy = NewFrameOpenerPolicy::Allow;
     else if (hasRel(Relation::NoOpener) || (document().settings().blankAnchorTargetImpliesNoOpenerEnabled() && equalIgnoringASCIICase(effectiveTarget, "_blank")))

@@ -69,7 +69,7 @@ public:
     ImageOrientation orientation() const { return m_orientation; }
 
     void setDensityCorrectedSize(const IntSize& size) { m_densityCorrectedSize = size; }
-    Optional<IntSize> densityCorrectedSize() const { return m_densityCorrectedSize; }
+    std::optional<IntSize> densityCorrectedSize() const { return m_densityCorrectedSize; }
 
     void setDuration(const Seconds& duration) { m_duration = duration; }
     Seconds duration() const { return m_duration; }
@@ -77,9 +77,9 @@ public:
     void setHasAlpha(bool hasAlpha) { m_hasAlpha = hasAlpha; }
     bool hasAlpha() const { return !hasMetadata() || m_hasAlpha; }
 
-    bool hasNativeImage(const Optional<SubsamplingLevel>& = { }) const;
-    bool hasFullSizeNativeImage(const Optional<SubsamplingLevel>& = { }) const;
-    bool hasDecodedNativeImageCompatibleWithOptions(const Optional<SubsamplingLevel>&, const DecodingOptions&) const;
+    bool hasNativeImage(const std::optional<SubsamplingLevel>& = { }) const;
+    bool hasFullSizeNativeImage(const std::optional<SubsamplingLevel>& = { }) const;
+    bool hasDecodedNativeImageCompatibleWithOptions(const std::optional<SubsamplingLevel>&, const DecodingOptions&) const;
     bool hasMetadata() const { return !size().isEmpty(); }
 
     Color singlePixelSolidColor() const;
@@ -93,7 +93,7 @@ private:
     DecodingOptions m_decodingOptions;
 
     ImageOrientation m_orientation { ImageOrientation::None };
-    Optional<IntSize> m_densityCorrectedSize;
+    std::optional<IntSize> m_densityCorrectedSize;
     Seconds m_duration;
     bool m_hasAlpha { true };
 };

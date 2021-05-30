@@ -40,7 +40,7 @@ class WEBCORE_EXPORT ISOBox {
 public:
     virtual ~ISOBox() = default;
 
-    using PeekResult = Optional<std::pair<FourCC, uint64_t>>;
+    using PeekResult = std::optional<std::pair<FourCC, uint64_t>>;
     static PeekResult peekBox(JSC::DataView&, unsigned offset);
     static size_t minimumBoxSize() { return 2 * sizeof(uint32_t); }
 

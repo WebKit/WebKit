@@ -461,7 +461,7 @@ void CanvasRenderingContext2DBase::restore()
         return;
     m_path.transform(state().transform);
     m_stateStack.removeLast();
-    if (Optional<AffineTransform> inverse = state().transform.inverse())
+    if (std::optional<AffineTransform> inverse = state().transform.inverse())
         m_path.transform(inverse.value());
     GraphicsContext* c = drawingContext();
     if (!c)
@@ -880,7 +880,7 @@ void CanvasRenderingContext2DBase::resetTransform()
     modifiableState().hasInvertibleTransform = true;
 }
 
-void CanvasRenderingContext2DBase::setStrokeColor(const String& color, Optional<float> alpha)
+void CanvasRenderingContext2DBase::setStrokeColor(const String& color, std::optional<float> alpha)
 {
     if (alpha) {
         if (std::isnan(*alpha))
@@ -920,7 +920,7 @@ void CanvasRenderingContext2DBase::setStrokeColor(float r, float g, float b, flo
     setStrokeStyle(CanvasStyle(color));
 }
 
-void CanvasRenderingContext2DBase::setFillColor(const String& color, Optional<float> alpha)
+void CanvasRenderingContext2DBase::setFillColor(const String& color, std::optional<float> alpha)
 {
     if (alpha) {
         if (std::isnan(*alpha))
@@ -1321,7 +1321,7 @@ void CanvasRenderingContext2DBase::strokeRect(float x, float y, float width, flo
     }
 }
 
-void CanvasRenderingContext2DBase::setShadow(float width, float height, float blur, const String& colorString, Optional<float> alpha)
+void CanvasRenderingContext2DBase::setShadow(float width, float height, float blur, const String& colorString, std::optional<float> alpha)
 {
     if (alpha && std::isnan(*alpha))
         return;
@@ -2061,7 +2061,7 @@ void CanvasRenderingContext2DBase::didDrawEntireCanvas()
     didDraw(backingStoreBounds(), DidDrawOption::ApplyClip);
 }
 
-void CanvasRenderingContext2DBase::didDraw(Optional<FloatRect> rect, OptionSet<DidDrawOption> options)
+void CanvasRenderingContext2DBase::didDraw(std::optional<FloatRect> rect, OptionSet<DidDrawOption> options)
 {
     if (!drawingContext())
         return;
@@ -2169,7 +2169,7 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::createImageData(ImageD
     return newImageData;
 }
 
-ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::createImageData(int sw, int sh, Optional<ImageDataSettings> settings) const
+ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::createImageData(int sw, int sh, std::optional<ImageDataSettings> settings) const
 {
     if (!sw || !sh)
         return Exception { IndexSizeError };
@@ -2180,7 +2180,7 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::createImageData(int sw
     return imageData;
 }
 
-ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, int sy, int sw, int sh, Optional<ImageDataSettings> settings) const
+ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, int sy, int sw, int sh, std::optional<ImageDataSettings> settings) const
 {
     if (!sw || !sh)
         return Exception { IndexSizeError };
@@ -2360,7 +2360,7 @@ void CanvasRenderingContext2DBase::setDirection(Direction direction)
     modifiableState().direction = direction;
 }
 
-bool CanvasRenderingContext2DBase::canDrawText(float x, float y, bool fill, Optional<float> maxWidth)
+bool CanvasRenderingContext2DBase::canDrawText(float x, float y, bool fill, std::optional<float> maxWidth)
 {
     if (!fontProxy()->realized())
         return false;
@@ -2417,7 +2417,7 @@ String CanvasRenderingContext2DBase::normalizeSpaces(const String& text)
     return String::adopt(WTFMove(charVector));
 }
 
-void CanvasRenderingContext2DBase::drawText(const String& text, float x, float y, bool fill, Optional<float> maxWidth)
+void CanvasRenderingContext2DBase::drawText(const String& text, float x, float y, bool fill, std::optional<float> maxWidth)
 {
     if (!canDrawText(x, y, fill, maxWidth))
         return;
@@ -2428,7 +2428,7 @@ void CanvasRenderingContext2DBase::drawText(const String& text, float x, float y
     drawTextUnchecked(textRun, x, y, fill, maxWidth);
 }
 
-void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, float x, float y, bool fill, Optional<float> maxWidth)
+void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, float x, float y, bool fill, std::optional<float> maxWidth)
 {
     auto* c = drawingContext();
     auto& fontProxy = *this->fontProxy();

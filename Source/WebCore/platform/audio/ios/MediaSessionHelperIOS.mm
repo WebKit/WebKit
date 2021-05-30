@@ -98,7 +98,7 @@ public:
     void externalOutputDeviceAvailableDidChange();
 #if HAVE(CELESTIAL)
     void mediaServerConnectionDied();
-    void updateCarPlayIsConnected(Optional<bool>&&);
+    void updateCarPlayIsConnected(std::optional<bool>&&);
 #endif
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS)
     void activeAudioRouteDidChange(bool);
@@ -312,7 +312,7 @@ void MediaSessionHelperiOS::mediaServerConnectionDied()
     MediaSessionHelper::mediaServerConnectionDied();
 }
 
-void MediaSessionHelperiOS::updateCarPlayIsConnected(Optional<bool>&& carPlayIsConnected)
+void MediaSessionHelperiOS::updateCarPlayIsConnected(std::optional<bool>&& carPlayIsConnected)
 {
     if (carPlayIsConnected) {
         setIsPlayingToAutomotiveHeadUnit(carPlayIsConnected.value());
@@ -582,7 +582,7 @@ void MediaSessionHelperiOS::externalOutputDeviceAvailableDidChange()
     if (!_callback)
         return;
 
-    Optional<bool> carPlayIsConnected;
+    std::optional<bool> carPlayIsConnected;
     if (notification && canLoadAVSystemController_CarPlayIsConnectedNotificationParameter()) {
         NSNumber *nsCarPlayIsConnected = [[notification userInfo] valueForKey:getAVSystemController_CarPlayIsConnectedNotificationParameter()];
         if (nsCarPlayIsConnected)

@@ -71,7 +71,7 @@ FormattingGeometry::FormattingGeometry(const FormattingContext& formattingContex
 {
 }
 
-Optional<LayoutUnit> FormattingGeometry::computedHeightValue(const Box& layoutBox, HeightType heightType, Optional<LayoutUnit> containingBlockHeight) const
+std::optional<LayoutUnit> FormattingGeometry::computedHeightValue(const Box& layoutBox, HeightType heightType, std::optional<LayoutUnit> containingBlockHeight) const
 {
     auto& style = layoutBox.style();
     auto height = heightType == HeightType::Normal ? style.logicalHeight() : heightType == HeightType::Min ? style.logicalMinHeight() : style.logicalMaxHeight();
@@ -106,7 +106,7 @@ Optional<LayoutUnit> FormattingGeometry::computedHeightValue(const Box& layoutBo
     return valueForLength(height, *containingBlockHeight);
 }
 
-Optional<LayoutUnit> FormattingGeometry::computedHeight(const Box& layoutBox, Optional<LayoutUnit> containingBlockHeight) const
+std::optional<LayoutUnit> FormattingGeometry::computedHeight(const Box& layoutBox, std::optional<LayoutUnit> containingBlockHeight) const
 {
     if (auto height = computedHeightValue(layoutBox, HeightType::Normal, containingBlockHeight)) {
         if (layoutBox.style().boxSizing() == BoxSizing::ContentBox)
@@ -117,7 +117,7 @@ Optional<LayoutUnit> FormattingGeometry::computedHeight(const Box& layoutBox, Op
     return { };
 }
 
-Optional<LayoutUnit> FormattingGeometry::computedWidthValue(const Box& layoutBox, WidthType widthType, LayoutUnit containingBlockWidth) const
+std::optional<LayoutUnit> FormattingGeometry::computedWidthValue(const Box& layoutBox, WidthType widthType, LayoutUnit containingBlockWidth) const
 {
     // Applies to: all elements except non-replaced inlines (out-of-flow check is required for positioned <br> as for some reason we don't blockify them).
     ASSERT(!layoutBox.isInlineBox() || layoutBox.isOutOfFlowPositioned());
@@ -167,7 +167,7 @@ Optional<LayoutUnit> FormattingGeometry::computedWidthValue(const Box& layoutBox
     return { };
 }
 
-Optional<LayoutUnit> FormattingGeometry::computedWidth(const Box& layoutBox, LayoutUnit containingBlockWidth) const
+std::optional<LayoutUnit> FormattingGeometry::computedWidth(const Box& layoutBox, LayoutUnit containingBlockWidth) const
 {
     if (auto computedWidth = computedWidthValue(layoutBox, WidthType::Normal, containingBlockWidth)) {
         auto& style = layoutBox.style();
@@ -193,7 +193,7 @@ LayoutUnit FormattingGeometry::contentHeightForFormattingContextRoot(const Conta
     return usedContentHeight;
 }
 
-Optional<LayoutUnit> FormattingGeometry::computedValue(const Length& geometryProperty, LayoutUnit containingBlockWidth) const
+std::optional<LayoutUnit> FormattingGeometry::computedValue(const Length& geometryProperty, LayoutUnit containingBlockWidth) const
 {
     //  In general, the computed value resolves the specified value as far as possible without laying out the content.
     if (geometryProperty.isFixed() || geometryProperty.isPercent() || geometryProperty.isCalculated())
@@ -201,7 +201,7 @@ Optional<LayoutUnit> FormattingGeometry::computedValue(const Length& geometryPro
     return { };
 }
 
-Optional<LayoutUnit> FormattingGeometry::fixedValue(const Length& geometryProperty) const
+std::optional<LayoutUnit> FormattingGeometry::fixedValue(const Length& geometryProperty) const
 {
     if (!geometryProperty.isFixed())
         return { };
@@ -212,22 +212,22 @@ Optional<LayoutUnit> FormattingGeometry::fixedValue(const Length& geometryProper
 // Specifies a percentage for determining the used value. The percentage is calculated with respect to the height of the generated box's containing block.
 // If the height of the containing block is not specified explicitly (i.e., it depends on content height), and this element is not absolutely positioned,
 // the percentage value is treated as '0' (for 'min-height') or 'none' (for 'max-height').
-Optional<LayoutUnit> FormattingGeometry::computedMaxHeight(const Box& layoutBox, Optional<LayoutUnit> containingBlockHeight) const
+std::optional<LayoutUnit> FormattingGeometry::computedMaxHeight(const Box& layoutBox, std::optional<LayoutUnit> containingBlockHeight) const
 {
     return computedHeightValue(layoutBox, HeightType::Max, containingBlockHeight);
 }
 
-Optional<LayoutUnit> FormattingGeometry::computedMinHeight(const Box& layoutBox, Optional<LayoutUnit> containingBlockHeight) const
+std::optional<LayoutUnit> FormattingGeometry::computedMinHeight(const Box& layoutBox, std::optional<LayoutUnit> containingBlockHeight) const
 {
     return computedHeightValue(layoutBox, HeightType::Min, containingBlockHeight);
 }
 
-Optional<LayoutUnit> FormattingGeometry::computedMinWidth(const Box& layoutBox, LayoutUnit containingBlockWidth) const
+std::optional<LayoutUnit> FormattingGeometry::computedMinWidth(const Box& layoutBox, LayoutUnit containingBlockWidth) const
 {
     return computedWidthValue(layoutBox, WidthType::Min, containingBlockWidth);
 }
 
-Optional<LayoutUnit> FormattingGeometry::computedMaxWidth(const Box& layoutBox, LayoutUnit containingBlockWidth) const
+std::optional<LayoutUnit> FormattingGeometry::computedMaxWidth(const Box& layoutBox, LayoutUnit containingBlockWidth) const
 {
     return computedWidthValue(layoutBox, WidthType::Max, containingBlockWidth);
 }
@@ -608,8 +608,8 @@ VerticalGeometry FormattingGeometry::outOfFlowReplacedVerticalGeometry(const Rep
     auto bottom = computedValue(style.logicalBottom(), containingBlockWidth);
     auto height = inlineReplacedContentHeightAndMargin(replacedBox, horizontalConstraints, verticalConstraints, overriddenVerticalValues).contentHeight;
     auto computedVerticalMargin = FormattingGeometry::computedVerticalMargin(replacedBox, horizontalConstraints);
-    Optional<LayoutUnit> usedMarginBefore = computedVerticalMargin.before;
-    Optional<LayoutUnit> usedMarginAfter = computedVerticalMargin.after;
+    std::optional<LayoutUnit> usedMarginBefore = computedVerticalMargin.before;
+    std::optional<LayoutUnit> usedMarginAfter = computedVerticalMargin.after;
     auto paddingTop = boxGeometry.paddingTop().value_or(0);
     auto paddingBottom = boxGeometry.paddingBottom().value_or(0);
     auto borderTop = boxGeometry.borderTop();
@@ -692,8 +692,8 @@ HorizontalGeometry FormattingGeometry::outOfFlowReplacedHorizontalGeometry(const
     auto left = computedValue(style.logicalLeft(), containingBlockWidth);
     auto right = computedValue(style.logicalRight(), containingBlockWidth);
     auto computedHorizontalMargin = FormattingGeometry::computedHorizontalMargin(replacedBox, horizontalConstraints);
-    Optional<LayoutUnit> usedMarginStart = computedHorizontalMargin.start;
-    Optional<LayoutUnit> usedMarginEnd = computedHorizontalMargin.end;
+    std::optional<LayoutUnit> usedMarginStart = computedHorizontalMargin.start;
+    std::optional<LayoutUnit> usedMarginEnd = computedHorizontalMargin.end;
     auto width = inlineReplacedContentWidthAndMargin(replacedBox, horizontalConstraints, verticalConstraints, overriddenHorizontalValues).contentWidth;
     auto paddingLeft = boxGeometry.paddingLeft().value_or(0);
     auto paddingRight = boxGeometry.paddingRight().value_or(0);
@@ -903,7 +903,7 @@ ContentWidthAndMargin FormattingGeometry::floatingContentWidthAndMargin(const Bo
     return floatingReplacedContentWidthAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, overriddenHorizontalValues);
 }
 
-ContentHeightAndMargin FormattingGeometry::inlineReplacedContentHeightAndMargin(const ReplacedBox& replacedBox, const HorizontalConstraints& horizontalConstraints, Optional<VerticalConstraints> verticalConstraints, const OverriddenVerticalValues& overriddenVerticalValues) const
+ContentHeightAndMargin FormattingGeometry::inlineReplacedContentHeightAndMargin(const ReplacedBox& replacedBox, const HorizontalConstraints& horizontalConstraints, std::optional<VerticalConstraints> verticalConstraints, const OverriddenVerticalValues& overriddenVerticalValues) const
 {
     // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block' replaced elements in normal flow and floating replaced elements
     //
@@ -946,7 +946,7 @@ ContentHeightAndMargin FormattingGeometry::inlineReplacedContentHeightAndMargin(
     return { *height, usedVerticalMargin };
 }
 
-ContentWidthAndMargin FormattingGeometry::inlineReplacedContentWidthAndMargin(const ReplacedBox& replacedBox, const HorizontalConstraints& horizontalConstraints, Optional<VerticalConstraints> verticalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues) const
+ContentWidthAndMargin FormattingGeometry::inlineReplacedContentWidthAndMargin(const ReplacedBox& replacedBox, const HorizontalConstraints& horizontalConstraints, std::optional<VerticalConstraints> verticalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues) const
 {
     // 10.3.2 Inline, replaced elements
     //
@@ -1103,7 +1103,7 @@ Edges FormattingGeometry::computedBorder(const Box& layoutBox) const
     };
 }
 
-Optional<Edges> FormattingGeometry::computedPadding(const Box& layoutBox, const LayoutUnit containingBlockWidth) const
+std::optional<Edges> FormattingGeometry::computedPadding(const Box& layoutBox, const LayoutUnit containingBlockWidth) const
 {
     if (!layoutBox.isPaddingApplicable())
         return std::nullopt;
@@ -1165,7 +1165,7 @@ ConstraintsForOutOfFlowContent FormattingGeometry::constraintsForOutOfFlowConten
         boxGeometry.contentBoxWidth() };
 }
 
-ConstraintsForInFlowContent FormattingGeometry::constraintsForInFlowContent(const ContainerBox& containerBox, Optional<FormattingContext::EscapeReason> escapeReason) const
+ConstraintsForInFlowContent FormattingGeometry::constraintsForInFlowContent(const ContainerBox& containerBox, std::optional<FormattingContext::EscapeReason> escapeReason) const
 {
     auto& boxGeometry = formattingContext().geometryForBox(containerBox, escapeReason);
     return { { boxGeometry.contentBoxLeft(), boxGeometry.contentBoxWidth() }, { boxGeometry.contentBoxTop(), computedHeight(containerBox) } };

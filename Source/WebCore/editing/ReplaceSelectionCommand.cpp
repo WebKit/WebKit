@@ -573,7 +573,7 @@ static bool fragmentNeedsColorTransformed(ReplacementFragment& fragment, const P
         }
     }
 
-    auto propertyLightness = [&](const StyleProperties& inlineStyle, CSSPropertyID propertyID) -> Optional<double> {
+    auto propertyLightness = [&](const StyleProperties& inlineStyle, CSSPropertyID propertyID) -> std::optional<double> {
         auto color = inlineStyle.propertyAsColor(propertyID);
         if (!color || !color.value().isVisible() || color.value().isSemantic())
             return { };
@@ -1820,7 +1820,7 @@ bool ReplaceSelectionCommand::performTrivialReplace(const ReplacementFragment& f
     return true;
 }
 
-Optional<SimpleRange> ReplaceSelectionCommand::insertedContentRange() const
+std::optional<SimpleRange> ReplaceSelectionCommand::insertedContentRange() const
 {
     return makeSimpleRange(m_startOfInsertedContent, m_endOfInsertedContent);
 }

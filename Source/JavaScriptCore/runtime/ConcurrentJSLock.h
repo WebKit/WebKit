@@ -65,7 +65,7 @@ public:
     }
 
 private:
-    Optional<ConcurrentJSLockerImpl> m_locker;
+    std::optional<ConcurrentJSLockerImpl> m_locker;
 };
 
 class GCSafeConcurrentJSLocker : public ConcurrentJSLockerBase {
@@ -125,7 +125,7 @@ public:
 
 #if !defined(NDEBUG)
 private:
-    Optional<DisallowGC> m_disallowGC;
+    std::optional<DisallowGC> m_disallowGC;
 #endif
 };
 

@@ -41,7 +41,7 @@ struct MessageWithMessagePorts {
     TransferredMessagePortArray transferredPorts;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<MessageWithMessagePorts> decode(Decoder&);
+    template<class Decoder> static std::optional<MessageWithMessagePorts> decode(Decoder&);
 };
 
 
@@ -53,7 +53,7 @@ void MessageWithMessagePorts::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<MessageWithMessagePorts> MessageWithMessagePorts::decode(Decoder& decoder)
+std::optional<MessageWithMessagePorts> MessageWithMessagePorts::decode(Decoder& decoder)
 {
     MessageWithMessagePorts result;
 

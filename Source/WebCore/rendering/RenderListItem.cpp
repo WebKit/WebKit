@@ -310,7 +310,7 @@ void RenderListItem::explicitValueChanged()
         item->updateValue();
 }
 
-void RenderListItem::setExplicitValue(Optional<int> value)
+void RenderListItem::setExplicitValue(std::optional<int> value)
 {
     if (!value) {
         if (!m_valueWasSetExplicitly)

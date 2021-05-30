@@ -107,8 +107,8 @@ void ResourceUsageThread::platformSaveStateBeforeStarting()
 }
 
 struct ThreadInfo {
-    Optional<String> name;
-    Optional<float> cpuUsage;
+    std::optional<String> name;
+    std::optional<float> cpuUsage;
     unsigned long long previousUtime { 0 };
     unsigned long long previousStime { 0 };
 };

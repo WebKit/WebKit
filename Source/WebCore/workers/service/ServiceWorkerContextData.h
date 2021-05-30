@@ -52,19 +52,19 @@ struct ServiceWorkerContextData {
             encoder << script << responseURL << mimeType;
         }
 
-        template<class Decoder> static Optional<ImportedScript> decode(Decoder& decoder)
+        template<class Decoder> static std::optional<ImportedScript> decode(Decoder& decoder)
         {
-            Optional<ScriptBuffer> script;
+            std::optional<ScriptBuffer> script;
             decoder >> script;
             if (!script)
                 return std::nullopt;
 
-            Optional<URL> responseURL;
+            std::optional<URL> responseURL;
             decoder >> responseURL;
             if (!responseURL)
                 return std::nullopt;
 
-            Optional<String> mimeType;
+            std::optional<String> mimeType;
             decoder >> mimeType;
             if (!mimeType)
                 return std::nullopt;
@@ -79,7 +79,7 @@ struct ServiceWorkerContextData {
         ImportedScript isolatedCopy() const { return { script.isolatedCopy(), responseURL.isolatedCopy(), mimeType.isolatedCopy() }; }
     };
 
-    Optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier;
+    std::optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier;
     ServiceWorkerRegistrationData registration;
     ServiceWorkerIdentifier serviceWorkerIdentifier;
     ScriptBuffer script;
@@ -89,11 +89,11 @@ struct ServiceWorkerContextData {
     URL scriptURL;
     WorkerType workerType;
     bool loadedFromDisk;
-    Optional<LastNavigationWasAppBound> lastNavigationWasAppBound;
+    std::optional<LastNavigationWasAppBound> lastNavigationWasAppBound;
     HashMap<URL, ImportedScript> scriptResourceMap;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ServiceWorkerContextData> decode(Decoder&);
+    template<class Decoder> static std::optional<ServiceWorkerContextData> decode(Decoder&);
 
     ServiceWorkerContextData isolatedCopy() const;
 };
@@ -106,14 +106,14 @@ void ServiceWorkerContextData::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder& decoder)
+std::optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder& decoder)
 {
-    Optional<Optional<ServiceWorkerJobDataIdentifier>> jobDataIdentifier;
+    std::optional<std::optional<ServiceWorkerJobDataIdentifier>> jobDataIdentifier;
     decoder >> jobDataIdentifier;
     if (!jobDataIdentifier)
         return std::nullopt;
 
-    Optional<ServiceWorkerRegistrationData> registration;
+    std::optional<ServiceWorkerRegistrationData> registration;
     decoder >> registration;
     if (!registration)
         return std::nullopt;
@@ -122,7 +122,7 @@ Optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder& dec
     if (!serviceWorkerIdentifier)
         return std::nullopt;
 
-    Optional<ScriptBuffer> script;
+    std::optional<ScriptBuffer> script;
     decoder >> script;
     if (!script)
         return std::nullopt;
@@ -147,7 +147,7 @@ Optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder& dec
     if (!decoder.decode(loadedFromDisk))
         return std::nullopt;
 
-    Optional<LastNavigationWasAppBound> lastNavigationWasAppBound;
+    std::optional<LastNavigationWasAppBound> lastNavigationWasAppBound;
     if (!decoder.decode(lastNavigationWasAppBound))
         return std::nullopt;
 
@@ -155,7 +155,7 @@ Optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder& dec
     if (!decoder.decode(scriptResourceMap))
         return std::nullopt;
 
-    Optional<CertificateInfo> certificateInfo;
+    std::optional<CertificateInfo> certificateInfo;
     decoder >> certificateInfo;
     if (!certificateInfo)
         return std::nullopt;

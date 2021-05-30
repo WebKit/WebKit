@@ -103,7 +103,7 @@ RTCEncodedVideoFrameMetadata LibWebRTCRtpTransformableFrame::videoMetadata() con
     auto* videoFrame = static_cast<webrtc::TransformableVideoFrameInterface*>(m_rtcFrame.get());
     auto& metadata = videoFrame->GetMetadata();
 
-    Optional<int64_t> frameId;
+    std::optional<int64_t> frameId;
     if (metadata.GetFrameId())
         frameId = *metadata.GetFrameId();
 

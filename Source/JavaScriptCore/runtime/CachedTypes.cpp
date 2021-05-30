@@ -140,7 +140,7 @@ public:
         m_ptrToOffsetMap.add(ptr, offset);
     }
 
-    Optional<ptrdiff_t> cachedOffsetForPtr(const void* ptr)
+    std::optional<ptrdiff_t> cachedOffsetForPtr(const void* ptr)
     {
         auto it = m_ptrToOffsetMap.find(ptr);
         if (it == m_ptrToOffsetMap.end())
@@ -482,7 +482,7 @@ public:
         if (!src)
             return;
 
-        if (Optional<ptrdiff_t> offset = encoder.cachedOffsetForPtr(src)) {
+        if (std::optional<ptrdiff_t> offset = encoder.cachedOffsetForPtr(src)) {
             this->m_offset = *offset - encoder.offsetOf(&this->m_offset);
             return;
         }
@@ -501,7 +501,7 @@ public:
         }
 
         ptrdiff_t bufferOffset = decoder.offsetOf(this->buffer());
-        if (Optional<void*> ptr = decoder.cachedPtrForOffset(bufferOffset)) {
+        if (std::optional<void*> ptr = decoder.cachedPtrForOffset(bufferOffset)) {
             isNewAllocation = false;
             return static_cast<Source*>(*ptr);
         }
@@ -823,9 +823,9 @@ private:
 };
 
 template<typename T>
-class CachedOptional : public VariableLengthObject<Optional<SourceType<T>>> {
+class CachedOptional : public VariableLengthObject<std::optional<SourceType<T>>> {
 public:
-    void encode(Encoder& encoder, const Optional<SourceType<T>>& source)
+    void encode(Encoder& encoder, const std::optional<SourceType<T>>& source)
     {
         if (!source)
             return;
@@ -833,7 +833,7 @@ public:
         this->template allocate<T>(encoder)->encode(encoder, *source);
     }
 
-    Optional<SourceType<T>> decode(Decoder& decoder) const
+    std::optional<SourceType<T>> decode(Decoder& decoder) const
     {
         if (this->isEmpty())
             return std::nullopt;
@@ -841,7 +841,7 @@ public:
         return { this->template buffer<T>()->decode(decoder) };
     }
 
-    void decode(Decoder& decoder, Optional<SourceType<T>>& dst) const
+    void decode(Decoder& decoder, std::optional<SourceType<T>>& dst) const
     {
         dst = decode(decoder);
     }

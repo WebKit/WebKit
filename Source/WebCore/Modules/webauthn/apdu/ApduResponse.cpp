@@ -37,7 +37,7 @@
 namespace apdu {
 
 // static
-Optional<ApduResponse> ApduResponse::createFromMessage(const Vector<uint8_t>& data)
+std::optional<ApduResponse> ApduResponse::createFromMessage(const Vector<uint8_t>& data)
 {
     // Invalid message size, data is appended by status byte.
     if (data.size() < 2)

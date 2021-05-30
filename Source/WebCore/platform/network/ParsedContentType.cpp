@@ -327,7 +327,7 @@ bool ParsedContentType::parseContentType(Mode mode)
     return true;
 }
 
-Optional<ParsedContentType> ParsedContentType::create(const String& contentType, Mode mode)
+std::optional<ParsedContentType> ParsedContentType::create(const String& contentType, Mode mode)
 {
     ParsedContentType parsedContentType(mode == Mode::Rfc2045 ? contentType : stripLeadingAndTrailingHTTPSpaces(contentType));
     if (!parsedContentType.parseContentType(mode))

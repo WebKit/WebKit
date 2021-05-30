@@ -309,8 +309,8 @@ void EventSource::parseEventStream()
             m_discardTrailingNewline = false;
         }
 
-        Optional<unsigned> lineLength;
-        Optional<unsigned> fieldLength;
+        std::optional<unsigned> lineLength;
+        std::optional<unsigned> fieldLength;
         for (unsigned i = position; !lineLength && i < size; ++i) {
             switch (m_receiveBuffer[i]) {
             case ':':
@@ -346,7 +346,7 @@ void EventSource::parseEventStream()
         m_receiveBuffer.remove(0, position);
 }
 
-void EventSource::parseEventStreamLine(unsigned position, Optional<unsigned> fieldLength, unsigned lineLength)
+void EventSource::parseEventStreamLine(unsigned position, std::optional<unsigned> fieldLength, unsigned lineLength)
 {
     if (!lineLength) {
         if (!m_data.isEmpty())

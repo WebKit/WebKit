@@ -1606,7 +1606,7 @@ static InspectorOverlay::Highlight::GridHighlightOverlay::Label buildLabel(Strin
     return label;
 }
 
-Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::buildGridOverlay(const InspectorOverlay::Grid& gridOverlay, bool offsetBoundsByScroll)
+std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::buildGridOverlay(const InspectorOverlay::Grid& gridOverlay, bool offsetBoundsByScroll)
 {
     // If the node WeakPtr has been cleared, then the node is gone and there's nothing to draw.
     if (!gridOverlay.gridNode) {
@@ -1918,10 +1918,10 @@ Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::bu
             auto rowStartLine = rowLineAt(rowPositions[area.rows.startLine()]);
             auto rowEndLine = rowLineAt(rowPositions[area.rows.endLine() - 1] + rowHeights[area.rows.endLine() - 1]);
 
-            Optional<FloatPoint> topLeft = columnStartLine.intersectionWith(rowStartLine);
-            Optional<FloatPoint> topRight = columnEndLine.intersectionWith(rowStartLine);
-            Optional<FloatPoint> bottomRight = columnEndLine.intersectionWith(rowEndLine);
-            Optional<FloatPoint> bottomLeft = columnStartLine.intersectionWith(rowEndLine);
+            std::optional<FloatPoint> topLeft = columnStartLine.intersectionWith(rowStartLine);
+            std::optional<FloatPoint> topRight = columnEndLine.intersectionWith(rowStartLine);
+            std::optional<FloatPoint> bottomRight = columnEndLine.intersectionWith(rowEndLine);
+            std::optional<FloatPoint> bottomLeft = columnStartLine.intersectionWith(rowEndLine);
 
             // If any two lines are coincident with each other, they will not have an intersection, which can occur with extreme `transform: perspective(...)` values.
             if (!topLeft || !topRight || !bottomRight || !bottomLeft)

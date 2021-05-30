@@ -47,7 +47,7 @@ FileStream::~FileStream()
     close();
 }
 
-long long FileStream::getSize(const String& path, Optional<WallTime> expectedModificationTime)
+long long FileStream::getSize(const String& path, std::optional<WallTime> expectedModificationTime)
 {
     // Check the modification time for the possible file change.
     auto modificationTime = FileSystem::fileModificationTime(path);

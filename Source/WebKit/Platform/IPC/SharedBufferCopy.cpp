@@ -46,7 +46,7 @@ void SharedBufferCopy::encode(Encoder& encoder) const
         encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(segment.segment->data()), segment.segment->size(), 1);
 }
 
-Optional<SharedBufferCopy> SharedBufferCopy::decode(Decoder& decoder)
+std::optional<SharedBufferCopy> SharedBufferCopy::decode(Decoder& decoder)
 {
     IPC::DataReference data;
     if (!decoder.decode(data))

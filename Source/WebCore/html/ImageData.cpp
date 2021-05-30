@@ -43,7 +43,7 @@ static Checked<unsigned, RecordOverflow> computeDataSize(const IntSize& size)
     return checkedDataSize;
 }
 
-PredefinedColorSpace ImageData::computeColorSpace(Optional<ImageDataSettings> settings, PredefinedColorSpace defaultColorSpace)
+PredefinedColorSpace ImageData::computeColorSpace(std::optional<ImageDataSettings> settings, PredefinedColorSpace defaultColorSpace)
 {
     if (settings && settings->colorSpace)
         return *settings->colorSpace;
@@ -56,7 +56,7 @@ Ref<ImageData> ImageData::create(PixelBuffer&& pixelBuffer)
     return adoptRef(*new ImageData(pixelBuffer.size(), pixelBuffer.takeData(), *colorSpace));
 }
 
-RefPtr<ImageData> ImageData::create(Optional<PixelBuffer>&& pixelBuffer)
+RefPtr<ImageData> ImageData::create(std::optional<PixelBuffer>&& pixelBuffer)
 {
     if (!pixelBuffer)
         return nullptr;
@@ -83,7 +83,7 @@ RefPtr<ImageData> ImageData::create(const IntSize& size, Ref<Uint8ClampedArray>&
     return adoptRef(*new ImageData(size, WTFMove(byteArray), colorSpace));
 }
 
-ExceptionOr<Ref<ImageData>> ImageData::createUninitialized(unsigned rows, unsigned pixelsPerRow, PredefinedColorSpace defaultColorSpace, Optional<ImageDataSettings> settings)
+ExceptionOr<Ref<ImageData>> ImageData::createUninitialized(unsigned rows, unsigned pixelsPerRow, PredefinedColorSpace defaultColorSpace, std::optional<ImageDataSettings> settings)
 {
     IntSize size(rows, pixelsPerRow);
     auto dataSize = computeDataSize(size);
@@ -100,7 +100,7 @@ ExceptionOr<Ref<ImageData>> ImageData::createUninitialized(unsigned rows, unsign
     return adoptRef(*new ImageData(size, byteArray.releaseNonNull(), colorSpace));
 }
 
-ExceptionOr<Ref<ImageData>> ImageData::create(unsigned sw, unsigned sh, Optional<ImageDataSettings> settings)
+ExceptionOr<Ref<ImageData>> ImageData::create(unsigned sw, unsigned sh, std::optional<ImageDataSettings> settings)
 {
     if (!sw || !sh)
         return Exception { IndexSizeError };
@@ -121,7 +121,7 @@ ExceptionOr<Ref<ImageData>> ImageData::create(unsigned sw, unsigned sh, Optional
     return adoptRef(*new ImageData(size, byteArray.releaseNonNull(), colorSpace));
 }
 
-ExceptionOr<Ref<ImageData>> ImageData::create(Ref<Uint8ClampedArray>&& byteArray, unsigned sw, Optional<unsigned> sh, Optional<ImageDataSettings> settings)
+ExceptionOr<Ref<ImageData>> ImageData::create(Ref<Uint8ClampedArray>&& byteArray, unsigned sw, std::optional<unsigned> sh, std::optional<ImageDataSettings> settings)
 {
     unsigned length = byteArray->length();
     if (!length || length % 4)

@@ -1073,7 +1073,7 @@ private:
             case Array::Contiguous:
             case Array::Double:
             case Array::Int32: {
-                Optional<Array::Speculation> saneChainSpeculation;
+                std::optional<Array::Speculation> saneChainSpeculation;
                 if (arrayMode.isJSArrayWithOriginalStructure()) {
                     // Check if InBoundsSaneChain will work on a per-type basis. Note that:
                     //
@@ -3014,7 +3014,7 @@ private:
 
     void fixupIsCellWithType(Node* node)
     {
-        Optional<SpeculatedType> filter = node->speculatedTypeForQuery();
+        std::optional<SpeculatedType> filter = node->speculatedTypeForQuery();
         if (filter) {
             switch (filter.value()) {
             case SpecString:

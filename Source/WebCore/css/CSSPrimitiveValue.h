@@ -156,9 +156,9 @@ public:
     double doubleValue() const;
 
     // These return nullopt for calc, for which range checking is not done at parse time: <https://www.w3.org/TR/css3-values/#calc-range>.
-    Optional<bool> isZero() const;
-    Optional<bool> isPositive() const;
-    Optional<bool> isNegative() const;
+    std::optional<bool> isZero() const;
+    std::optional<bool> isPositive() const;
+    std::optional<bool> isNegative() const;
     bool isCenterPosition() const;
 
     template<typename T> inline T value(CSSUnitType type) const { return clampTo<T>(doubleValue(type)); }
@@ -239,7 +239,7 @@ private:
     CSSUnitType primitiveUnitType() const { return static_cast<CSSUnitType>(m_primitiveUnitType); }
     void setPrimitiveUnitType(CSSUnitType type) { m_primitiveUnitType = static_cast<unsigned>(type); }
 
-    Optional<double> doubleValueInternal(CSSUnitType targetUnitType) const;
+    std::optional<double> doubleValueInternal(CSSUnitType targetUnitType) const;
 
     double computeLengthDouble(const CSSToLengthConversionData&) const;
 

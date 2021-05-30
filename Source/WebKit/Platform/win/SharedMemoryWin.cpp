@@ -138,7 +138,7 @@ static bool getDuplicatedHandle(HANDLE sourceHandle, DWORD sourcePID, HANDLE& du
     return success;
 }
 
-Optional<HANDLE> SharedMemory::Handle::decodeHandle(IPC::Decoder& decoder)
+std::optional<HANDLE> SharedMemory::Handle::decodeHandle(IPC::Decoder& decoder)
 {
     uint64_t sourceHandle;
     if (!decoder.decode(sourceHandle))

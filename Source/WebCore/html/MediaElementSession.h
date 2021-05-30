@@ -173,10 +173,10 @@ public:
             || type == MediaType::VideoAudio;
     }
 
-    Optional<NowPlayingInfo> nowPlayingInfo() const final;
+    std::optional<NowPlayingInfo> nowPlayingInfo() const final;
 
     WEBCORE_EXPORT void updateMediaUsageIfChanged() final;
-    Optional<MediaUsageInfo> mediaUsageInfo() const { return m_mediaUsageInfo; }
+    std::optional<MediaUsageInfo> mediaUsageInfo() const { return m_mediaUsageInfo; }
 
 #if !RELEASE_LOG_DISABLED
     const void* logIdentifier() const final { return m_logIdentifier; }
@@ -187,7 +187,7 @@ public:
     void didReceiveRemoteControlCommand(RemoteControlCommandType, const RemoteCommandArgument&) final;
 #endif
     void metadataChanged(const RefPtr<MediaMetadata>&);
-    void positionStateChanged(const Optional<MediaPositionState>&);
+    void positionStateChanged(const std::optional<MediaPositionState>&);
     void playbackStateChanged(MediaSessionPlaybackState);
     void actionHandlersChanged();
 
@@ -220,7 +220,7 @@ private:
     HTMLMediaElement& m_element;
     BehaviorRestrictions m_restrictions;
 
-    Optional<MediaUsageInfo> m_mediaUsageInfo;
+    std::optional<MediaUsageInfo> m_mediaUsageInfo;
 
     bool m_elementIsHiddenUntilVisibleInViewport { false };
     bool m_elementIsHiddenBecauseItWasRemovedFromDOM { false };

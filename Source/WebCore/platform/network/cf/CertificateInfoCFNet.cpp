@@ -128,7 +128,7 @@ bool CertificateInfo::containsNonRootSHA1SignedCertificate() const
     return false;
 }
 
-Optional<CertificateSummary> CertificateInfo::summary() const
+std::optional<CertificateSummary> CertificateInfo::summary() const
 {
     auto chain = certificateChain();
     if (!chain)
@@ -201,9 +201,9 @@ static void encodeCFData(Encoder& encoder, CFDataRef data)
     encoder.encodeFixedLengthData(bytePtr, static_cast<size_t>(length));
 }
 
-static Optional<RetainPtr<CFDataRef>> decodeCFData(Decoder& decoder)
+static std::optional<RetainPtr<CFDataRef>> decodeCFData(Decoder& decoder)
 {
-    Optional<uint64_t> size;
+    std::optional<uint64_t> size;
     decoder >> size;
 
     if (UNLIKELY(!isInBounds<size_t>(*size)))
@@ -229,9 +229,9 @@ static void encodeSecTrustRef(Encoder& encoder, SecTrustRef trust)
     encodeCFData(encoder, data.get());
 }
 
-static Optional<RetainPtr<SecTrustRef>> decodeSecTrustRef(Decoder& decoder)
+static std::optional<RetainPtr<SecTrustRef>> decodeSecTrustRef(Decoder& decoder)
 {
-    Optional<bool> hasTrust;
+    std::optional<bool> hasTrust;
     decoder >> hasTrust;
     if (!hasTrust)
         return std::nullopt;
@@ -268,9 +268,9 @@ static void encodeCertificateChain(Encoder& encoder, CFArrayRef certificateChain
     }
 }
 
-static Optional<RetainPtr<CFArrayRef>> decodeCertificateChain(Decoder& decoder)
+static std::optional<RetainPtr<CFArrayRef>> decodeCertificateChain(Decoder& decoder)
 {
-    Optional<uint64_t> size;
+    std::optional<uint64_t> size;
     decoder >> size;
     if (!size)
         return std::nullopt;
@@ -312,9 +312,9 @@ void Coder<WebCore::CertificateInfo>::encode(Encoder& encoder, const WebCore::Ce
     }
 }
 
-Optional<WebCore::CertificateInfo> Coder<WebCore::CertificateInfo>::decode(Decoder& decoder)
+std::optional<WebCore::CertificateInfo> Coder<WebCore::CertificateInfo>::decode(Decoder& decoder)
 {
-    Optional<WebCore::CertificateInfo::Type> certificateInfoType;
+    std::optional<WebCore::CertificateInfo::Type> certificateInfoType;
     decoder >> certificateInfoType;
     if (!certificateInfoType)
         return std::nullopt;

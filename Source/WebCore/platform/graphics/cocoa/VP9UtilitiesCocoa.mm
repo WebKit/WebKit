@@ -56,14 +56,14 @@ VP9TestingOverrides& VP9TestingOverrides::singleton()
     return instance;
 }
 
-void VP9TestingOverrides::setHardwareDecoderDisabled(Optional<bool>&& disabled)
+void VP9TestingOverrides::setHardwareDecoderDisabled(std::optional<bool>&& disabled)
 {
     m_hardwareDecoderDisabled = WTFMove(disabled);
     if (m_configurationChangedCallback)
         m_configurationChangedCallback();
 }
 
-void VP9TestingOverrides::setVP9ScreenSizeAndScale(Optional<ScreenDataOverrides>&& overrides)
+void VP9TestingOverrides::setVP9ScreenSizeAndScale(std::optional<ScreenDataOverrides>&& overrides)
 {
     m_screenSizeAndScale = WTFMove(overrides);
     if (m_configurationChangedCallback)
@@ -230,7 +230,7 @@ bool isVPCodecConfigurationRecordSupported(const VPCodecConfigurationRecord& cod
     return false;
 }
 
-Optional<MediaCapabilitiesInfo> validateVPParameters(const VPCodecConfigurationRecord& codecConfiguration, const VideoConfiguration& videoConfiguration)
+std::optional<MediaCapabilitiesInfo> validateVPParameters(const VPCodecConfigurationRecord& codecConfiguration, const VideoConfiguration& videoConfiguration)
 {
     if (!isVPCodecConfigurationRecordSupported(codecConfiguration))
         return std::nullopt;
@@ -610,7 +610,7 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromVP9HeaderParser(con
     return createFormatDescriptionFromVPCodecConfigurationRecord(record, parser.width(), parser.height());
 }
 
-Optional<VP8FrameHeader> parseVP8FrameHeader(uint8_t* frameData, size_t frameSize)
+std::optional<VP8FrameHeader> parseVP8FrameHeader(uint8_t* frameData, size_t frameSize)
 {
     // VP8 frame headers are defined in RFC 6386: <https://tools.ietf.org/html/rfc6386>.
 

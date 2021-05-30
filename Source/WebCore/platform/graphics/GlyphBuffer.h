@@ -75,7 +75,7 @@ public:
     GlyphBufferAdvance advanceAt(unsigned index) const { return m_advances[index]; }
     GlyphBufferOrigin originAt(unsigned index) const { return m_origins[index]; }
     GlyphBufferStringOffset uncheckedStringOffsetAt(unsigned index) const { return m_offsetsInString[index]; }
-    Optional<GlyphBufferStringOffset> checkedStringOffsetAt(unsigned index, unsigned stringLength) const
+    std::optional<GlyphBufferStringOffset> checkedStringOffsetAt(unsigned index, unsigned stringLength) const
     {
         auto result = uncheckedStringOffsetAt(index);
         if (static_cast<std::make_unsigned_t<GlyphBufferStringOffset>>(result) >= stringLength)

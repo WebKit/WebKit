@@ -49,7 +49,7 @@ public:
 
     Document* document() const { return m_document.get(); }
 
-    Optional<Seconds> currentTime() override;
+    std::optional<Seconds> currentTime() override;
 
     void animationTimingDidChange(WebAnimation&) override;
     void removeAnimation(WebAnimation&) override;

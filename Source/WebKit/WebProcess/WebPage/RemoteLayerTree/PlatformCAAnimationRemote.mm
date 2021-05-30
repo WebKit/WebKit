@@ -119,7 +119,7 @@ static void encodeTimingFunction(IPC::Encoder& encoder, TimingFunction* timingFu
     }
 }
 
-static Optional<RefPtr<TimingFunction>> decodeTimingFunction(IPC::Decoder& decoder)
+static std::optional<RefPtr<TimingFunction>> decodeTimingFunction(IPC::Decoder& decoder)
 {
     TimingFunction::TimingFunctionType type;
     if (!decoder.decode(type))
@@ -190,7 +190,7 @@ void PlatformCAAnimationRemote::Properties::encode(IPC::Encoder& encoder) const
     encoder << animations;
 }
 
-Optional<PlatformCAAnimationRemote::Properties> PlatformCAAnimationRemote::Properties::decode(IPC::Decoder& decoder)
+std::optional<PlatformCAAnimationRemote::Properties> PlatformCAAnimationRemote::Properties::decode(IPC::Decoder& decoder)
 {
     PlatformCAAnimationRemote::Properties properties;
     if (!decoder.decode(properties.keyPath))

@@ -55,8 +55,8 @@ struct RemoteMediaPlayerState {
     double seekableTimeRangesLastModifiedTime { 0 };
     double liveUpdateInterval { 0 };
     uint64_t totalBytes { 0 };
-    Optional<WebCore::VideoPlaybackQualityMetrics> videoMetrics;
-    Optional<bool> wouldTaintDocumentSecurityOrigin { true };
+    std::optional<WebCore::VideoPlaybackQualityMetrics> videoMetrics;
+    std::optional<bool> wouldTaintDocumentSecurityOrigin { true };
     bool paused { true };
     bool canSaveMediaData { false };
     bool hasAudio { false };
@@ -102,44 +102,44 @@ struct RemoteMediaPlayerState {
     }
 
     template <class Decoder>
-    static Optional<RemoteMediaPlayerState> decode(Decoder& decoder)
+    static std::optional<RemoteMediaPlayerState> decode(Decoder& decoder)
     {
-        Optional<MediaTime> duration;
+        std::optional<MediaTime> duration;
         decoder >> duration;
         if (!duration)
             return std::nullopt;
 
-        Optional<MediaTime> minTimeSeekable;
+        std::optional<MediaTime> minTimeSeekable;
         decoder >> minTimeSeekable;
         if (!minTimeSeekable)
             return std::nullopt;
 
-        Optional<MediaTime> maxTimeSeekable;
+        std::optional<MediaTime> maxTimeSeekable;
         decoder >> maxTimeSeekable;
         if (!maxTimeSeekable)
             return std::nullopt;
 
-        Optional<MediaTime> startDate;
+        std::optional<MediaTime> startDate;
         decoder >> startDate;
         if (!startDate)
             return std::nullopt;
 
-        Optional<MediaTime> startTime;
+        std::optional<MediaTime> startTime;
         decoder >> startTime;
         if (!startTime)
             return std::nullopt;
 
-        Optional<String> languageOfPrimaryAudioTrack;
+        std::optional<String> languageOfPrimaryAudioTrack;
         decoder >> languageOfPrimaryAudioTrack;
         if (!languageOfPrimaryAudioTrack)
             return std::nullopt;
 
-        Optional<String> wirelessPlaybackTargetName;
+        std::optional<String> wirelessPlaybackTargetName;
         decoder >> wirelessPlaybackTargetName;
         if (!wirelessPlaybackTargetName)
             return std::nullopt;
 
-        Optional<WebCore::PlatformTimeRanges> bufferedRanges;
+        std::optional<WebCore::PlatformTimeRanges> bufferedRanges;
         decoder >> bufferedRanges;
         if (!bufferedRanges)
             return std::nullopt;
@@ -160,87 +160,87 @@ struct RemoteMediaPlayerState {
         if (!decoder.decode(wirelessPlaybackTargetType))
             return std::nullopt;
 
-        Optional<WebCore::FloatSize> naturalSize;
+        std::optional<WebCore::FloatSize> naturalSize;
         decoder >> naturalSize;
         if (!naturalSize)
             return std::nullopt;
 
-        Optional<double> maxFastForwardRate;
+        std::optional<double> maxFastForwardRate;
         decoder >> maxFastForwardRate;
         if (!maxFastForwardRate)
             return std::nullopt;
 
-        Optional<double> minFastReverseRate;
+        std::optional<double> minFastReverseRate;
         decoder >> minFastReverseRate;
         if (!minFastReverseRate)
             return std::nullopt;
 
-        Optional<double> seekableTimeRangesLastModifiedTime;
+        std::optional<double> seekableTimeRangesLastModifiedTime;
         decoder >> seekableTimeRangesLastModifiedTime;
         if (!seekableTimeRangesLastModifiedTime)
             return std::nullopt;
 
-        Optional<double> liveUpdateInterval;
+        std::optional<double> liveUpdateInterval;
         decoder >> liveUpdateInterval;
         if (!liveUpdateInterval)
             return std::nullopt;
 
-        Optional<uint64_t> totalBytes;
+        std::optional<uint64_t> totalBytes;
         decoder >> totalBytes;
         if (!totalBytes)
             return std::nullopt;
 
-        Optional<Optional<WebCore::VideoPlaybackQualityMetrics>> videoMetrics;
+        std::optional<std::optional<WebCore::VideoPlaybackQualityMetrics>> videoMetrics;
         decoder >> videoMetrics;
         if (!videoMetrics)
             return std::nullopt;
 
-        Optional<Optional<bool>> wouldTaintDocumentSecurityOrigin;
+        std::optional<std::optional<bool>> wouldTaintDocumentSecurityOrigin;
         decoder >> wouldTaintDocumentSecurityOrigin;
         if (!wouldTaintDocumentSecurityOrigin)
             return std::nullopt;
 
-        Optional<bool> paused;
+        std::optional<bool> paused;
         decoder >> paused;
         if (!paused)
             return std::nullopt;
 
-        Optional<bool> canSaveMediaData;
+        std::optional<bool> canSaveMediaData;
         decoder >> canSaveMediaData;
         if (!canSaveMediaData)
             return std::nullopt;
 
-        Optional<bool> hasAudio;
+        std::optional<bool> hasAudio;
         decoder >> hasAudio;
         if (!hasAudio)
             return std::nullopt;
 
-        Optional<bool> hasVideo;
+        std::optional<bool> hasVideo;
         decoder >> hasVideo;
         if (!hasVideo)
             return std::nullopt;
 
-        Optional<bool> hasClosedCaptions;
+        std::optional<bool> hasClosedCaptions;
         decoder >> hasClosedCaptions;
         if (!hasClosedCaptions)
             return std::nullopt;
 
-        Optional<bool> hasAvailableVideoFrame;
+        std::optional<bool> hasAvailableVideoFrame;
         decoder >> hasAvailableVideoFrame;
         if (!hasAvailableVideoFrame)
             return std::nullopt;
 
-        Optional<bool> wirelessVideoPlaybackDisabled;
+        std::optional<bool> wirelessVideoPlaybackDisabled;
         decoder >> wirelessVideoPlaybackDisabled;
         if (!wirelessVideoPlaybackDisabled)
             return std::nullopt;
 
-        Optional<bool> hasSingleSecurityOrigin;
+        std::optional<bool> hasSingleSecurityOrigin;
         decoder >> hasSingleSecurityOrigin;
         if (!hasSingleSecurityOrigin)
             return std::nullopt;
 
-        Optional<bool> didPassCORSAccessCheck;
+        std::optional<bool> didPassCORSAccessCheck;
         decoder >> didPassCORSAccessCheck;
         if (!didPassCORSAccessCheck)
             return std::nullopt;

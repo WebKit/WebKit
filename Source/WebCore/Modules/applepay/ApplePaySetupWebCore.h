@@ -63,8 +63,8 @@ private:
     void suspend(ReasonForSuspension) final;
 
     ApplePaySetupConfiguration m_configuration;
-    Optional<SetupFeaturesPromise> m_setupFeaturesPromise;
-    Optional<BeginPromise> m_beginPromise;
+    std::optional<SetupFeaturesPromise> m_setupFeaturesPromise;
+    std::optional<BeginPromise> m_beginPromise;
     RefPtr<PendingActivity<ApplePaySetup>> m_pendingActivity;
 };
 

@@ -60,7 +60,7 @@ SocketStreamHandleImpl::~SocketStreamHandleImpl()
     destructStream();
 }
 
-Optional<size_t> SocketStreamHandleImpl::platformSendInternal(const uint8_t* data, size_t length)
+std::optional<size_t> SocketStreamHandleImpl::platformSendInternal(const uint8_t* data, size_t length)
 {
     if (isStreamInvalidated())
         return std::nullopt;

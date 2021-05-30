@@ -57,11 +57,11 @@ public:
     static Ref<RTCDataChannel> create(ScriptExecutionContext&, RTCDataChannelIdentifier, String&&, RTCDataChannelInit&&, RTCDataChannelState);
 
     bool ordered() const { return *m_options.ordered; }
-    Optional<unsigned short> maxPacketLifeTime() const { return m_options.maxPacketLifeTime; }
-    Optional<unsigned short> maxRetransmits() const { return m_options.maxRetransmits; }
+    std::optional<unsigned short> maxPacketLifeTime() const { return m_options.maxPacketLifeTime; }
+    std::optional<unsigned short> maxRetransmits() const { return m_options.maxRetransmits; }
     String protocol() const { return m_options.protocol; }
     bool negotiated() const { return *m_options.negotiated; };
-    Optional<unsigned short> id() const { return m_options.id; };
+    std::optional<unsigned short> id() const { return m_options.id; };
     RTCPriorityType priority() const { return m_options.priority; };
     const RTCDataChannelInit& options() const { return m_options; }
 

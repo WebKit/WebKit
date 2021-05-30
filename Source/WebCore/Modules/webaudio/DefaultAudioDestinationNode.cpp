@@ -47,7 +47,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DefaultAudioDestinationNode);
 
-DefaultAudioDestinationNode::DefaultAudioDestinationNode(AudioContext& context, Optional<float> sampleRate)
+DefaultAudioDestinationNode::DefaultAudioDestinationNode(AudioContext& context, std::optional<float> sampleRate)
     : AudioDestinationNode(context, sampleRate.value_or(AudioDestination::hardwareSampleRate()))
 {
     ASSERT(BaseAudioContext::isSupportedSampleRate(AudioDestination::hardwareSampleRate()));
@@ -148,7 +148,7 @@ Function<void(Function<void()>&&)> DefaultAudioDestinationNode::dispatchToRender
     return nullptr;
 }
 
-void DefaultAudioDestinationNode::startRendering(CompletionHandler<void(Optional<Exception>&&)>&& completionHandler)
+void DefaultAudioDestinationNode::startRendering(CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)
 {
     ASSERT(isInitialized());
     if (!isInitialized())
@@ -162,7 +162,7 @@ void DefaultAudioDestinationNode::startRendering(CompletionHandler<void(Optional
     m_destination->start(dispatchToRenderThreadFunction(), WTFMove(innerCompletionHandler));
 }
 
-void DefaultAudioDestinationNode::resume(CompletionHandler<void(Optional<Exception>&&)>&& completionHandler)
+void DefaultAudioDestinationNode::resume(CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)
 {
     ASSERT(isInitialized());
     if (!isInitialized()) {
@@ -177,7 +177,7 @@ void DefaultAudioDestinationNode::resume(CompletionHandler<void(Optional<Excepti
     });
 }
 
-void DefaultAudioDestinationNode::suspend(CompletionHandler<void(Optional<Exception>&&)>&& completionHandler)
+void DefaultAudioDestinationNode::suspend(CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)
 {
     ASSERT(isInitialized());
     if (!isInitialized()) {

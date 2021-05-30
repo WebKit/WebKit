@@ -507,7 +507,7 @@ void WebContextMenuProxyMac::getContextMenuFromItems(const Vector<WebContextMenu
         });
     }
 
-    Optional<WebContextMenuItemData> revealImageItem;
+    std::optional<WebContextMenuItemData> revealImageItem;
 
 #if ENABLE(IMAGE_EXTRACTION)
     filteredItems.removeFirstMatching([&] (auto& item) {

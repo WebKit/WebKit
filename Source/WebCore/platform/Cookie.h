@@ -45,7 +45,7 @@ struct Cookie {
     Cookie() = default;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<Cookie> decode(Decoder&);
+    template<class Decoder> static std::optional<Cookie> decode(Decoder&);
 
     WEBCORE_EXPORT bool operator==(const Cookie&) const;
     WEBCORE_EXPORT unsigned hash() const;
@@ -86,7 +86,7 @@ struct Cookie {
     String path;
     // Creation and expiration dates are expressed as milliseconds since the UNIX epoch.
     double created { 0 };
-    Optional<double> expires;
+    std::optional<double> expires;
     bool httpOnly { false };
     bool secure { false };
     bool session { false };
@@ -130,7 +130,7 @@ void Cookie::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<Cookie> Cookie::decode(Decoder& decoder)
+std::optional<Cookie> Cookie::decode(Decoder& decoder)
 {
     Cookie cookie;
     if (!decoder.decode(cookie.name))

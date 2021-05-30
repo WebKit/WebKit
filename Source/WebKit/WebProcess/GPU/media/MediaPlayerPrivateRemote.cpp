@@ -152,7 +152,7 @@ void MediaPlayerPrivateRemote::prepareForPlayback(bool privateMode, MediaPlayer:
 
 void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentType, const String& keySystem)
 {
-    Optional<SandboxExtension::Handle> sandboxExtensionHandle;
+    std::optional<SandboxExtension::Handle> sandboxExtensionHandle;
     if (url.isLocalFile()) {
         SandboxExtension::Handle handle;
         auto fileSystemPath = url.fileSystemPath();
@@ -976,7 +976,7 @@ bool MediaPlayerPrivateRemote::didPassCORSAccessCheck() const
     return m_cachedState.didPassCORSAccessCheck;
 }
 
-Optional<bool> MediaPlayerPrivateRemote::wouldTaintOrigin(const SecurityOrigin& origin) const
+std::optional<bool> MediaPlayerPrivateRemote::wouldTaintOrigin(const SecurityOrigin& origin) const
 {
     if (origin.data() == m_documentSecurityOrigin)
         return m_cachedState.wouldTaintDocumentSecurityOrigin;
@@ -984,7 +984,7 @@ Optional<bool> MediaPlayerPrivateRemote::wouldTaintOrigin(const SecurityOrigin& 
     if (auto result = m_wouldTaintOriginCache.get(origin.data()))
         return result;
 
-    Optional<bool> wouldTaint;
+    std::optional<bool> wouldTaint;
     if (!connection().sendSync(Messages::RemoteMediaPlayerProxy::WouldTaintOrigin(origin.data()), Messages::RemoteMediaPlayerProxy::WouldTaintOrigin::Reply(wouldTaint), m_id))
         return std::nullopt;
 
@@ -1184,7 +1184,7 @@ void MediaPlayerPrivateRemote::updateVideoPlaybackMetricsUpdateInterval(const Se
     connection().send(Messages::RemoteMediaPlayerProxy::SetVideoPlaybackMetricsUpdateInterval(m_videoPlaybackMetricsUpdateInterval.value()), m_id);
 }
 
-Optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateRemote::videoPlaybackQualityMetrics()
+std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateRemote::videoPlaybackQualityMetrics()
 {
     const Seconds maximumPlaybackQualityMetricsSampleTimeDelta = 0.25_s;
 
@@ -1241,7 +1241,7 @@ void MediaPlayerPrivateRemote::setPreferredDynamicRangeMode(DynamicRangeMode mod
 
 bool MediaPlayerPrivateRemote::performTaskAtMediaTime(WTF::Function<void()>&& completionHandler, const MediaTime& mediaTime)
 {
-    auto asyncReplyHandler = [weakThis = makeWeakPtr(*this), this, completionHandler = WTFMove(completionHandler)](Optional<MediaTime> currentTime, Optional<MonotonicTime> queryTime) mutable {
+    auto asyncReplyHandler = [weakThis = makeWeakPtr(*this), this, completionHandler = WTFMove(completionHandler)](std::optional<MediaTime> currentTime, std::optional<MonotonicTime> queryTime) mutable {
         if (!weakThis || !currentTime || !queryTime)
             return;
 

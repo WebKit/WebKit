@@ -54,91 +54,91 @@ void WebsiteDataStoreParameters::encode(IPC::Encoder& encoder) const
     encoder << perThirdPartyOriginStorageQuota;
 }
 
-Optional<WebsiteDataStoreParameters> WebsiteDataStoreParameters::decode(IPC::Decoder& decoder)
+std::optional<WebsiteDataStoreParameters> WebsiteDataStoreParameters::decode(IPC::Decoder& decoder)
 {
     WebsiteDataStoreParameters parameters;
 
-    Optional<NetworkSessionCreationParameters> networkSessionParameters;
+    std::optional<NetworkSessionCreationParameters> networkSessionParameters;
     decoder >> networkSessionParameters;
     if (!networkSessionParameters)
         return std::nullopt;
     parameters.networkSessionParameters = WTFMove(*networkSessionParameters);
 
-    Optional<Vector<uint8_t>> uiProcessCookieStorageIdentifier;
+    std::optional<Vector<uint8_t>> uiProcessCookieStorageIdentifier;
     decoder >> uiProcessCookieStorageIdentifier;
     if (!uiProcessCookieStorageIdentifier)
         return std::nullopt;
     parameters.uiProcessCookieStorageIdentifier = WTFMove(*uiProcessCookieStorageIdentifier);
 
-    Optional<SandboxExtension::Handle> cookieStoragePathExtensionHandle;
+    std::optional<SandboxExtension::Handle> cookieStoragePathExtensionHandle;
     decoder >> cookieStoragePathExtensionHandle;
     if (!cookieStoragePathExtensionHandle)
         return std::nullopt;
     parameters.cookieStoragePathExtensionHandle = WTFMove(*cookieStoragePathExtensionHandle);
 
-    Optional<String> indexedDatabaseDirectory;
+    std::optional<String> indexedDatabaseDirectory;
     decoder >> indexedDatabaseDirectory;
     if (!indexedDatabaseDirectory)
         return std::nullopt;
     parameters.indexedDatabaseDirectory = WTFMove(*indexedDatabaseDirectory);
     
-    Optional<SandboxExtension::Handle> indexedDatabaseDirectoryExtensionHandle;
+    std::optional<SandboxExtension::Handle> indexedDatabaseDirectoryExtensionHandle;
     decoder >> indexedDatabaseDirectoryExtensionHandle;
     if (!indexedDatabaseDirectoryExtensionHandle)
         return std::nullopt;
     parameters.indexedDatabaseDirectoryExtensionHandle = WTFMove(*indexedDatabaseDirectoryExtensionHandle);
 
 #if ENABLE(SERVICE_WORKER)
-    Optional<String> serviceWorkerRegistrationDirectory;
+    std::optional<String> serviceWorkerRegistrationDirectory;
     decoder >> serviceWorkerRegistrationDirectory;
     if (!serviceWorkerRegistrationDirectory)
         return std::nullopt;
     parameters.serviceWorkerRegistrationDirectory = WTFMove(*serviceWorkerRegistrationDirectory);
     
-    Optional<SandboxExtension::Handle> serviceWorkerRegistrationDirectoryExtensionHandle;
+    std::optional<SandboxExtension::Handle> serviceWorkerRegistrationDirectoryExtensionHandle;
     decoder >> serviceWorkerRegistrationDirectoryExtensionHandle;
     if (!serviceWorkerRegistrationDirectoryExtensionHandle)
         return std::nullopt;
     parameters.serviceWorkerRegistrationDirectoryExtensionHandle = WTFMove(*serviceWorkerRegistrationDirectoryExtensionHandle);
     
-    Optional<bool> serviceWorkerProcessTerminationDelayEnabled;
+    std::optional<bool> serviceWorkerProcessTerminationDelayEnabled;
     decoder >> serviceWorkerProcessTerminationDelayEnabled;
     if (!serviceWorkerProcessTerminationDelayEnabled)
         return std::nullopt;
     parameters.serviceWorkerProcessTerminationDelayEnabled = WTFMove(*serviceWorkerProcessTerminationDelayEnabled);
 #endif
 
-    Optional<String> localStorageDirectory;
+    std::optional<String> localStorageDirectory;
     decoder >> localStorageDirectory;
     if (!localStorageDirectory)
         return std::nullopt;
     parameters.localStorageDirectory = WTFMove(*localStorageDirectory);
 
-    Optional<SandboxExtension::Handle> localStorageDirectoryExtensionHandle;
+    std::optional<SandboxExtension::Handle> localStorageDirectoryExtensionHandle;
     decoder >> localStorageDirectoryExtensionHandle;
     if (!localStorageDirectoryExtensionHandle)
         return std::nullopt;
     parameters.localStorageDirectoryExtensionHandle = WTFMove(*localStorageDirectoryExtensionHandle);
 
-    Optional<String> cacheStorageDirectory;
+    std::optional<String> cacheStorageDirectory;
     decoder >> cacheStorageDirectory;
     if (!cacheStorageDirectory)
         return std::nullopt;
     parameters.cacheStorageDirectory = WTFMove(*cacheStorageDirectory);
 
-    Optional<SandboxExtension::Handle> cacheStorageDirectoryExtensionHandle;
+    std::optional<SandboxExtension::Handle> cacheStorageDirectoryExtensionHandle;
     decoder >> cacheStorageDirectoryExtensionHandle;
     if (!cacheStorageDirectoryExtensionHandle)
         return std::nullopt;
     parameters.cacheStorageDirectoryExtensionHandle = WTFMove(*cacheStorageDirectoryExtensionHandle);
 
-    Optional<uint64_t> perOriginStorageQuota;
+    std::optional<uint64_t> perOriginStorageQuota;
     decoder >> perOriginStorageQuota;
     if (!perOriginStorageQuota)
         return std::nullopt;
     parameters.perOriginStorageQuota = *perOriginStorageQuota;
 
-    Optional<uint64_t> perThirdPartyOriginStorageQuota;
+    std::optional<uint64_t> perThirdPartyOriginStorageQuota;
     decoder >> perThirdPartyOriginStorageQuota;
     if (!perThirdPartyOriginStorageQuota)
         return std::nullopt;

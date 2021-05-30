@@ -107,7 +107,7 @@ static HashMap<String, String> parseParameters(StringView input, size_t position
 }
 
 // https://mimesniff.spec.whatwg.org/#parsing-a-mime-type
-static Optional<MimeType> parseMIMEType(const String& contentType)
+static std::optional<MimeType> parseMIMEType(const String& contentType)
 {
     String input = stripLeadingAndTrailingHTTPSpaces(contentType);
     size_t slashIndex = input.find('/');
@@ -173,7 +173,7 @@ static RefPtr<DOMFormData> packageFormData(ScriptExecutionContext* context, cons
         return true;
     };
     
-    auto parseMultipartBoundary = [] (const Optional<MimeType>& mimeType) -> Optional<String> {
+    auto parseMultipartBoundary = [] (const std::optional<MimeType>& mimeType) -> std::optional<String> {
         if (!mimeType)
             return std::nullopt;
         if (equalIgnoringASCIICase(mimeType->type, "multipart") && equalIgnoringASCIICase(mimeType->subtype, "form-data")) {

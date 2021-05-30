@@ -62,7 +62,7 @@ void PaymentSetupFeatures::encode(IPC::Encoder& encoder) const
     encoder << m_platformFeatures;
 }
 
-Optional<PaymentSetupFeatures> PaymentSetupFeatures::decode(IPC::Decoder& decoder)
+std::optional<PaymentSetupFeatures> PaymentSetupFeatures::decode(IPC::Decoder& decoder)
 {
     static NeverDestroyed<RetainPtr<NSArray>> allowedClasses;
     static std::once_flag onceFlag;

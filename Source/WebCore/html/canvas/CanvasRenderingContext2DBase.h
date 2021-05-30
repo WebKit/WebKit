@@ -141,11 +141,11 @@ public:
     ExceptionOr<void> setTransform(DOMMatrix2DInit&&);
     void resetTransform();
 
-    void setStrokeColor(const String& color, Optional<float> alpha = std::nullopt);
+    void setStrokeColor(const String& color, std::optional<float> alpha = std::nullopt);
     void setStrokeColor(float grayLevel, float alpha = 1.0);
     void setStrokeColor(float r, float g, float b, float a);
 
-    void setFillColor(const String& color, Optional<float> alpha = std::nullopt);
+    void setFillColor(const String& color, std::optional<float> alpha = std::nullopt);
     void setFillColor(float grayLevel, float alpha = 1.0f);
     void setFillColor(float r, float g, float b, float a);
 
@@ -169,7 +169,7 @@ public:
     void fillRect(float x, float y, float width, float height);
     void strokeRect(float x, float y, float width, float height);
 
-    void setShadow(float width, float height, float blur, const String& color = String(), Optional<float> alpha = std::nullopt);
+    void setShadow(float width, float height, float blur, const String& color = String(), std::optional<float> alpha = std::nullopt);
     void setShadow(float width, float height, float blur, float grayLevel, float alpha = 1.0);
     void setShadow(float width, float height, float blur, float r, float g, float b, float a);
 
@@ -194,8 +194,8 @@ public:
     ExceptionOr<RefPtr<CanvasPattern>> createPattern(CanvasImageSource&&, const String& repetition);
 
     ExceptionOr<Ref<ImageData>> createImageData(ImageData&) const;
-    ExceptionOr<Ref<ImageData>> createImageData(int width, int height, Optional<ImageDataSettings>) const;
-    ExceptionOr<Ref<ImageData>> getImageData(int sx, int sy, int sw, int sh, Optional<ImageDataSettings>) const;
+    ExceptionOr<Ref<ImageData>> createImageData(int width, int height, std::optional<ImageDataSettings>) const;
+    ExceptionOr<Ref<ImageData>> getImageData(int sx, int sy, int sw, int sh, std::optional<ImageDataSettings>) const;
     void putImageData(ImageData&, int dx, int dy);
     void putImageData(ImageData&, int dx, int dy, int dirtyX, int dirtyY, int dirtyWidth, int dirtyHeight);
 
@@ -302,9 +302,9 @@ protected:
 
     static String normalizeSpaces(const String&);
 
-    void drawText(const String& text, float x, float y, bool fill, Optional<float> maxWidth = std::nullopt);
-    bool canDrawText(float x, float y, bool fill, Optional<float> maxWidth = std::nullopt);
-    void drawTextUnchecked(const TextRun&, float x, float y, bool fill, Optional<float> maxWidth = std::nullopt);
+    void drawText(const String& text, float x, float y, bool fill, std::optional<float> maxWidth = std::nullopt);
+    bool canDrawText(float x, float y, bool fill, std::optional<float> maxWidth = std::nullopt);
+    void drawTextUnchecked(const TextRun&, float x, float y, bool fill, std::optional<float> maxWidth = std::nullopt);
 
     Ref<TextMetrics> measureTextInternal(const TextRun&);
     Ref<TextMetrics> measureTextInternal(const String& text);
@@ -322,7 +322,7 @@ private:
         ApplyShadow = 1 << 1,
         ApplyClip = 1 << 2,
     };
-    void didDraw(Optional<FloatRect>, OptionSet<DidDrawOption> = { DidDrawOption::ApplyTransform, DidDrawOption::ApplyShadow, DidDrawOption::ApplyClip });
+    void didDraw(std::optional<FloatRect>, OptionSet<DidDrawOption> = { DidDrawOption::ApplyTransform, DidDrawOption::ApplyShadow, DidDrawOption::ApplyClip });
     void didDrawEntireCanvas();
 
     void paintRenderingResultsToCanvas() override;

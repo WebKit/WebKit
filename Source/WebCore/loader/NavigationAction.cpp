@@ -84,14 +84,14 @@ static bool shouldTreatAsSameOriginNavigation(const Document& document, const UR
     return url.protocolIsAbout() || url.protocolIsData() || (url.protocolIsBlob() && document.securityOrigin().canRequest(url));
 }
 
-static Optional<NavigationAction::UIEventWithKeyStateData> keyStateDataForFirstEventWithKeyState(Event* event)
+static std::optional<NavigationAction::UIEventWithKeyStateData> keyStateDataForFirstEventWithKeyState(Event* event)
 {
     if (UIEventWithKeyState* uiEvent = findEventWithKeyState(event))
         return NavigationAction::UIEventWithKeyStateData { *uiEvent };
     return std::nullopt;
 }
 
-static Optional<NavigationAction::MouseEventData> mouseEventDataForFirstMouseEvent(Event* event)
+static std::optional<NavigationAction::MouseEventData> mouseEventDataForFirstMouseEvent(Event* event)
 {
     for (Event* e = event; e; e = e->underlyingEvent()) {
         if (e->isMouseEvent())

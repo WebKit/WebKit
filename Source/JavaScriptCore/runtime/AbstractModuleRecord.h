@@ -107,8 +107,8 @@ public:
     void addImportEntry(const ImportEntry&);
     void addExportEntry(const ExportEntry&);
 
-    Optional<ImportEntry> tryGetImportEntry(UniquedStringImpl* localName);
-    Optional<ExportEntry> tryGetExportEntry(UniquedStringImpl* exportName);
+    std::optional<ImportEntry> tryGetImportEntry(UniquedStringImpl* localName);
+    std::optional<ExportEntry> tryGetExportEntry(UniquedStringImpl* exportName);
 
     const Identifier& moduleKey() const { return m_moduleKey; }
     const OrderedIdentifierSet& requestedModules() const { return m_requestedModules; }
@@ -164,7 +164,7 @@ protected:
 private:
     struct ResolveQuery;
     static Resolution resolveExportImpl(JSGlobalObject*, const ResolveQuery&);
-    Optional<Resolution> tryGetCachedResolution(UniquedStringImpl* exportName);
+    std::optional<Resolution> tryGetCachedResolution(UniquedStringImpl* exportName);
     void cacheResolution(UniquedStringImpl* exportName, const Resolution&);
 
     // The loader resolves the given module name to the module key. The module key is the unique value to represent this module.

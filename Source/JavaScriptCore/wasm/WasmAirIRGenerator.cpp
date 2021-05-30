@@ -2163,7 +2163,7 @@ inline TypedTmp AirIRGenerator::emitAtomicLoadOp(ExtAtomicOpType op, Type valueT
         });
     }
 
-    Optional<B3::Air::Opcode> opcode;
+    std::optional<B3::Air::Opcode> opcode;
     if (isX86() || isARM64E())
         opcode = OPCODE_FOR_WIDTH(AtomicXchgAdd, accessWidth(op));
     B3::Air::Opcode nonAtomicOpcode = OPCODE_FOR_CANONICAL_WIDTH(Add, accessWidth(op));
@@ -2235,7 +2235,7 @@ inline void AirIRGenerator::emitAtomicStoreOp(ExtAtomicOpType op, Type valueType
         });
     }
 
-    Optional<B3::Air::Opcode> opcode;
+    std::optional<B3::Air::Opcode> opcode;
     if (isX86() || isARM64E())
         opcode = OPCODE_FOR_WIDTH(AtomicXchg, accessWidth(op));
     B3::Air::Opcode nonAtomicOpcode = B3::Air::Nop;
@@ -2289,7 +2289,7 @@ TypedTmp AirIRGenerator::emitAtomicBinaryRMWOp(ExtAtomicOpType op, Type valueTyp
         });
     }
 
-    Optional<B3::Air::Opcode> opcode;
+    std::optional<B3::Air::Opcode> opcode;
     B3::Air::Opcode nonAtomicOpcode = B3::Air::Nop;
     B3::Commutativity commutativity = B3::NotCommutative;
     switch (op) {
@@ -2486,7 +2486,7 @@ TypedTmp AirIRGenerator::emitAtomicCompareExchange(ExtAtomicOpType op, Type valu
 
     m_currentBlock = failureCase;
     ([&] {
-        Optional<B3::Air::Opcode> opcode;
+        std::optional<B3::Air::Opcode> opcode;
         if (isX86() || isARM64E())
             opcode = OPCODE_FOR_WIDTH(AtomicXchgAdd, accessWidth);
         B3::Air::Opcode nonAtomicOpcode = OPCODE_FOR_CANONICAL_WIDTH(Add, accessWidth);

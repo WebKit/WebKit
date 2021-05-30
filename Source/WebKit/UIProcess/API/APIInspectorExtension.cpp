@@ -60,7 +60,7 @@ void InspectorExtension::createTab(const WTF::String& tabName, const WTF::URL& t
     m_extensionControllerProxy->createTabForExtension(m_identifier, tabName, tabIconURL, sourceURL, WTFMove(completionHandler));
 }
 
-void InspectorExtension::evaluateScript(const WTF::String& scriptSource, const Optional<WTF::URL>& frameURL, const Optional<WTF::URL>& contextSecurityOrigin, const Optional<bool>& useContentScriptContext, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&& completionHandler)
+void InspectorExtension::evaluateScript(const WTF::String& scriptSource, const std::optional<WTF::URL>& frameURL, const std::optional<WTF::URL>& contextSecurityOrigin, const std::optional<bool>& useContentScriptContext, WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&& completionHandler)
 {
     if (!m_extensionControllerProxy) {
         completionHandler(makeUnexpected(Inspector::ExtensionError::ContextDestroyed));
@@ -70,7 +70,7 @@ void InspectorExtension::evaluateScript(const WTF::String& scriptSource, const O
     m_extensionControllerProxy->evaluateScriptForExtension(m_identifier, scriptSource, frameURL, contextSecurityOrigin, useContentScriptContext, WTFMove(completionHandler));
 }
 
-void InspectorExtension::reloadIgnoringCache(const Optional<bool>& ignoreCache, const Optional<WTF::String>& userAgent, const Optional<WTF::String>& injectedScript,  WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&& completionHandler)
+void InspectorExtension::reloadIgnoringCache(const std::optional<bool>& ignoreCache, const std::optional<WTF::String>& userAgent, const std::optional<WTF::String>& injectedScript,  WTF::CompletionHandler<void(Inspector::ExtensionEvaluationResult)>&& completionHandler)
 {
     if (!m_extensionControllerProxy) {
         completionHandler(makeUnexpected(Inspector::ExtensionError::ContextDestroyed));

@@ -177,7 +177,7 @@ auto SectionParser::parseFunction() -> PartialResult
     return { };
 }
 
-auto SectionParser::parseResizableLimits(uint32_t& initial, Optional<uint32_t>& maximum, bool& isShared, LimitsType limitsType) -> PartialResult
+auto SectionParser::parseResizableLimits(uint32_t& initial, std::optional<uint32_t>& maximum, bool& isShared, LimitsType limitsType) -> PartialResult
 {
     ASSERT(!maximum);
 
@@ -209,7 +209,7 @@ auto SectionParser::parseTableHelper(bool isImport) -> PartialResult
     WASM_PARSER_FAIL_IF(type != static_cast<int8_t>(TypeKind::Funcref) && type != static_cast<int8_t>(TypeKind::Externref), "Table type should be funcref or anyref, got ", type);
 
     uint32_t initial;
-    Optional<uint32_t> maximum;
+    std::optional<uint32_t> maximum;
     bool isShared = false;
     PartialResult limits = parseResizableLimits(initial, maximum, isShared, LimitsType::Table);
     if (UNLIKELY(!limits))
@@ -248,7 +248,7 @@ auto SectionParser::parseMemoryHelper(bool isImport) -> PartialResult
     bool isShared = false;
     {
         uint32_t initial;
-        Optional<uint32_t> maximum;
+        std::optional<uint32_t> maximum;
         PartialResult limits = parseResizableLimits(initial, maximum, isShared, LimitsType::Memory);
         if (UNLIKELY(!limits))
             return makeUnexpected(WTFMove(limits.error()));
@@ -396,7 +396,7 @@ auto SectionParser::parseElement() -> PartialResult
             constexpr uint32_t tableIndex = 0;
             WASM_FAIL_IF_HELPER_FAILS(validateElementTableIdx(tableIndex));
 
-            Optional<I32InitExpr> initExpr;
+            std::optional<I32InitExpr> initExpr;
             WASM_FAIL_IF_HELPER_FAILS(parseI32InitExprForElementSection(initExpr));
 
             uint32_t indexCount;
@@ -430,7 +430,7 @@ auto SectionParser::parseElement() -> PartialResult
             WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't get ", elementNum, "th Element table index");
             WASM_FAIL_IF_HELPER_FAILS(validateElementTableIdx(tableIndex));
 
-            Optional<I32InitExpr> initExpr;
+            std::optional<I32InitExpr> initExpr;
             WASM_FAIL_IF_HELPER_FAILS(parseI32InitExprForElementSection(initExpr));
 
             uint8_t elementKind;
@@ -467,7 +467,7 @@ auto SectionParser::parseElement() -> PartialResult
             constexpr uint32_t tableIndex = 0;
             WASM_FAIL_IF_HELPER_FAILS(validateElementTableIdx(tableIndex));
 
-            Optional<I32InitExpr> initExpr;
+            std::optional<I32InitExpr> initExpr;
             WASM_FAIL_IF_HELPER_FAILS(parseI32InitExprForElementSection(initExpr));
 
             uint32_t indexCount;
@@ -504,7 +504,7 @@ auto SectionParser::parseElement() -> PartialResult
             WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't get ", elementNum, "th Element table index");
             WASM_FAIL_IF_HELPER_FAILS(validateElementTableIdx(tableIndex));
 
-            Optional<I32InitExpr> initExpr;
+            std::optional<I32InitExpr> initExpr;
             WASM_FAIL_IF_HELPER_FAILS(parseI32InitExprForElementSection(initExpr));
 
             Type refType;
@@ -641,7 +641,7 @@ auto SectionParser::validateElementTableIdx(uint32_t tableIndex) -> PartialResul
     return { };
 }
 
-auto SectionParser::parseI32InitExpr(Optional<I32InitExpr>& initExpr, ASCIILiteral failMessage) -> PartialResult
+auto SectionParser::parseI32InitExpr(std::optional<I32InitExpr>& initExpr, ASCIILiteral failMessage) -> PartialResult
 {
     uint8_t initOpcode;
     uint64_t initExprBits;
@@ -653,7 +653,7 @@ auto SectionParser::parseI32InitExpr(Optional<I32InitExpr>& initExpr, ASCIILiter
     return { };
 }
 
-auto SectionParser::parseI32InitExprForElementSection(Optional<I32InitExpr>& initExpr) -> PartialResult
+auto SectionParser::parseI32InitExprForElementSection(std::optional<I32InitExpr>& initExpr) -> PartialResult
 {
     return parseI32InitExpr(initExpr, "Element init_expr must produce an i32"_s);
 }
@@ -720,7 +720,7 @@ auto SectionParser::parseElementSegmentVectorOfIndexes(Vector<uint32_t>& result,
     return { };
 }
 
-auto SectionParser::parseI32InitExprForDataSection(Optional<I32InitExpr>& initExpr) -> PartialResult
+auto SectionParser::parseI32InitExprForDataSection(std::optional<I32InitExpr>& initExpr) -> PartialResult
 {
     return parseI32InitExpr(initExpr, "Data init_expr must produce an i32"_s);
 }
@@ -750,7 +750,7 @@ auto SectionParser::parseData() -> PartialResult
             const uint32_t memoryIndex = memoryIndexOrDataFlag;
             WASM_PARSER_FAIL_IF(memoryIndex >= m_info->memoryCount(), segmentNumber, "th Data segment has index ", memoryIndex, " which exceeds the number of Memories ", m_info->memoryCount());
 
-            Optional<I32InitExpr> initExpr;
+            std::optional<I32InitExpr> initExpr;
             WASM_FAIL_IF_HELPER_FAILS(parseI32InitExprForDataSection(initExpr));
 
             uint32_t dataByteLength;
@@ -793,7 +793,7 @@ auto SectionParser::parseData() -> PartialResult
             WASM_PARSER_FAIL_IF(!parseVarUInt32(memoryIndex), "can't get ", segmentNumber, "th Data segment's index");
             WASM_PARSER_FAIL_IF(memoryIndex >= m_info->memoryCount(), segmentNumber, "th Data segment has index ", memoryIndex, " which exceeds the number of Memories ", m_info->memoryCount());
 
-            Optional<I32InitExpr> initExpr;
+            std::optional<I32InitExpr> initExpr;
             WASM_FAIL_IF_HELPER_FAILS(parseI32InitExprForDataSection(initExpr));
 
             uint32_t dataByteLength;

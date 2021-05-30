@@ -48,7 +48,7 @@ static Seconds fileTimeToSeconds(const FILETIME& fileTime)
     return Seconds { durationIn100NS.QuadPart / hundredsOfNanosecondsPerSecond };
 }
 
-Optional<CPUTime> CPUTime::get()
+std::optional<CPUTime> CPUTime::get()
 {
     // https://msdn.microsoft.com/ja-jp/library/windows/desktop/ms683223(v=vs.85).aspx
     FILETIME creationTime;

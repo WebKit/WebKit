@@ -114,7 +114,7 @@ public:
 
     static constexpr size_t maximumSize() { return std::min(static_cast<size_t>(ClientOffset::serverIsSleepingTag), static_cast<size_t>(ClientOffset::serverIsSleepingTag)) - 1; }
     void encode(Encoder&) const;
-    static Optional<StreamConnectionBuffer> decode(Decoder&);
+    static std::optional<StreamConnectionBuffer> decode(Decoder&);
 
 private:
     StreamConnectionBuffer(Ref<WebKit::SharedMemory>&&, size_t memorySize, Semaphore&& clientWaitSemaphore);

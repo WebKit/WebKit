@@ -51,14 +51,14 @@ AtomString VideoTrackPrivateWebM::id() const
     return m_trackID;
 }
 
-Optional<uint64_t> VideoTrackPrivateWebM::trackUID() const
+std::optional<uint64_t> VideoTrackPrivateWebM::trackUID() const
 {
     if (m_track.track_uid.is_present())
         return m_track.track_uid.value();
     return std::nullopt;
 }
 
-Optional<bool> VideoTrackPrivateWebM::defaultEnabled() const
+std::optional<bool> VideoTrackPrivateWebM::defaultEnabled() const
 {
     if (m_track.is_enabled.is_present())
         return m_track.is_enabled.value();

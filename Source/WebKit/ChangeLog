@@ -1,3 +1,15 @@
+2021-05-30  Darin Adler  <darin@apple.com>
+
+        Remove WTF::Optional synonym for std::optional, using that class template directly instead
+        https://bugs.webkit.org/show_bug.cgi?id=226433
+
+        Reviewed by Chris Dumez.
+
+        * <many files>: Let the do-webcore-rename script rename Optional<> to std::optional<>.
+
+        * Scripts/webkit/tests: Regenerated expected results, by running the command "python
+        Scripts/webkit/messages_unittest.py -r". (How am I supposed to know to do that?)
+
 2021-05-28  Darin Adler  <darin@apple.com>
 
         Clients of optional should use has_value instead of relying on hasValue macro

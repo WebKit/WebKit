@@ -37,7 +37,7 @@ static JSC_DECLARE_HOST_FUNCTION(arrayBufferProtoGetterFuncByteLength);
 static JSC_DECLARE_HOST_FUNCTION(sharedArrayBufferProtoFuncSlice);
 static JSC_DECLARE_HOST_FUNCTION(sharedArrayBufferProtoGetterFuncByteLength);
 
-Optional<JSValue> arrayBufferSpeciesConstructorSlow(JSGlobalObject* globalObject, JSArrayBuffer* thisObject, ArrayBufferSharingMode mode)
+std::optional<JSValue> arrayBufferSpeciesConstructorSlow(JSGlobalObject* globalObject, JSArrayBuffer* thisObject, ArrayBufferSharingMode mode)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -90,7 +90,7 @@ static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSArrayBuffer*> speciesCo
 
     // Fast path in the normal case where the user has not set an own constructor and the ArrayBuffer.prototype.constructor is normal.
     // We need prototype check for subclasses of ArrayBuffer, which are ArrayBuffer objects but have a different prototype by default.
-    Optional<JSValue> species = arrayBufferSpeciesConstructor(globalObject, thisObject, mode);
+    std::optional<JSValue> species = arrayBufferSpeciesConstructor(globalObject, thisObject, mode);
     RETURN_IF_EXCEPTION(scope, errorResult);
     if (!species)
         return fastPathResult;

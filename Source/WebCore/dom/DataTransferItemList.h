@@ -79,7 +79,7 @@ private:
     Document* document() const;
 
     DataTransfer& m_dataTransfer;
-    mutable Optional<Vector<Ref<DataTransferItem>>> m_items;
+    mutable std::optional<Vector<Ref<DataTransferItem>>> m_items;
 };
 
 } // namespace WebCore

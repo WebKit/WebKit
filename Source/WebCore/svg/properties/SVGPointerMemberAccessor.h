@@ -47,7 +47,7 @@ public:
         property(owner)->detach();
     }
 
-    Optional<String> synchronize(const OwnerType& owner) const override
+    std::optional<String> synchronize(const OwnerType& owner) const override
     {
         return property(owner)->synchronize();
     }

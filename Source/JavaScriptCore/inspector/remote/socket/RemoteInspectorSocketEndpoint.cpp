@@ -80,14 +80,14 @@ void RemoteInspectorSocketEndpoint::wakeupWorkerThread()
         Socket::write(m_wakeupSendSocket, "1", 1);
 }
 
-Optional<ConnectionID> RemoteInspectorSocketEndpoint::connectInet(const char* serverAddress, uint16_t serverPort, Client& client)
+std::optional<ConnectionID> RemoteInspectorSocketEndpoint::connectInet(const char* serverAddress, uint16_t serverPort, Client& client)
 {
     if (auto socket = Socket::connect(serverAddress, serverPort))
         return createClient(*socket, client);
     return std::nullopt;
 }
 
-Optional<ConnectionID> RemoteInspectorSocketEndpoint::listenInet(const char* address, uint16_t port, Listener& listener)
+std::optional<ConnectionID> RemoteInspectorSocketEndpoint::listenInet(const char* address, uint16_t port, Listener& listener)
 {
     Locker locker { m_connectionsLock };
     auto id = generateConnectionID();
@@ -110,7 +110,7 @@ bool RemoteInspectorSocketEndpoint::isListening(ConnectionID id)
 
 int RemoteInspectorSocketEndpoint::pollingTimeout()
 {
-    Optional<MonotonicTime> mostRecentWakeup;
+    std::optional<MonotonicTime> mostRecentWakeup;
     for (const auto& connection : m_listeners) {
         if (connection.value->nextRetryTime) {
             if (mostRecentWakeup)
@@ -199,7 +199,7 @@ ConnectionID RemoteInspectorSocketEndpoint::generateConnectionID()
     return id;
 }
 
-Optional<ConnectionID> RemoteInspectorSocketEndpoint::createClient(PlatformSocketType socket, Client& client)
+std::optional<ConnectionID> RemoteInspectorSocketEndpoint::createClient(PlatformSocketType socket, Client& client)
 {
     ASSERT(Socket::isValid(socket));
 
@@ -263,7 +263,7 @@ void RemoteInspectorSocketEndpoint::invalidateListener(Listener& listener)
     });
 }
 
-Optional<uint16_t> RemoteInspectorSocketEndpoint::getPort(ConnectionID id) const
+std::optional<uint16_t> RemoteInspectorSocketEndpoint::getPort(ConnectionID id) const
 {
     Locker locker { m_connectionsLock };
     if (const auto& connection = m_listeners.get(id))

@@ -36,7 +36,7 @@ struct HEVCParameters {
     uint16_t generalLevelIDC { 0 };
 };
 
-WEBCORE_EXPORT Optional<HEVCParameters> parseHEVCCodecParameters(StringView);
+WEBCORE_EXPORT std::optional<HEVCParameters> parseHEVCCodecParameters(StringView);
 
 struct DoViParameters {
     enum class Codec { AVC1, AVC3, HEV1, HVC1 } codec;
@@ -44,6 +44,6 @@ struct DoViParameters {
     uint16_t bitstreamLevelID { 0 };
 };
 
-WEBCORE_EXPORT Optional<DoViParameters> parseDoViCodecParameters(StringView);
+WEBCORE_EXPORT std::optional<DoViParameters> parseDoViCodecParameters(StringView);
 
 }

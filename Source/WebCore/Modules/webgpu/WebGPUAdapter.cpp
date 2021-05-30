@@ -35,12 +35,12 @@
 
 namespace WebCore {
 
-Ref<WebGPUAdapter> WebGPUAdapter::create(Optional<GPURequestAdapterOptions>&& options)
+Ref<WebGPUAdapter> WebGPUAdapter::create(std::optional<GPURequestAdapterOptions>&& options)
 {
     return adoptRef(*new WebGPUAdapter(WTFMove(options)));
 }
 
-WebGPUAdapter::WebGPUAdapter(Optional<GPURequestAdapterOptions>&& options)
+WebGPUAdapter::WebGPUAdapter(std::optional<GPURequestAdapterOptions>&& options)
     : m_options(WTFMove(options))
 {
 }

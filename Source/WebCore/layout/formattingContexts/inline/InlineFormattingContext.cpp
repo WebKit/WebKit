@@ -182,9 +182,9 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
     struct PreviousLine {
         LineBuilder::InlineItemRange range;
         size_t overflowContentLength { 0 };
-        Optional<InlineLayoutUnit> overflowLogicalWidth;
+        std::optional<InlineLayoutUnit> overflowLogicalWidth;
     };
-    Optional<PreviousLine> previousLine;
+    std::optional<PreviousLine> previousLine;
     auto& floatingState = formattingState.floatingState();
     auto floatingContext = FloatingContext { *this, floatingState };
     auto isFirstLine = formattingState.lines().isEmpty();
@@ -355,7 +355,7 @@ void InlineFormattingContext::computeHorizontalMargin(const Box& layoutBox, cons
 
 void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints)
 {
-    auto compute = [&](Optional<LayoutUnit> usedWidth) {
+    auto compute = [&](std::optional<LayoutUnit> usedWidth) {
         if (layoutBox.isFloatingPositioned())
             return formattingGeometry().floatingContentWidthAndMargin(layoutBox, horizontalConstraints, { usedWidth, { } });
         if (layoutBox.isInlineBlockBox())
@@ -387,7 +387,7 @@ void InlineFormattingContext::computeWidthAndMargin(const Box& layoutBox, const 
 
 void InlineFormattingContext::computeHeightAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints)
 {
-    auto compute = [&](Optional<LayoutUnit> usedHeight) {
+    auto compute = [&](std::optional<LayoutUnit> usedHeight) {
         if (layoutBox.isFloatingPositioned())
             return formattingGeometry().floatingContentHeightAndMargin(layoutBox, horizontalConstraints, { usedHeight });
         if (layoutBox.isInlineBlockBox())

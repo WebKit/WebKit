@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-Optional<Vector<uint8_t>> defaultWebCryptoMasterKey()
+std::optional<Vector<uint8_t>> defaultWebCryptoMasterKey()
 {
     notImplemented();
     return std::nullopt;

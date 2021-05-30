@@ -41,7 +41,7 @@ struct AuthenticatorResponseData {
     RefPtr<ArrayBuffer> rawId;
 
     // Extensions
-    Optional<bool> appid;
+    std::optional<bool> appid;
 
     // AuthenticatorAttestationResponse
     RefPtr<ArrayBuffer> attestationObject;
@@ -52,7 +52,7 @@ struct AuthenticatorResponseData {
     RefPtr<ArrayBuffer> userHandle;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<AuthenticatorResponseData> decode(Decoder&);
+    template<class Decoder> static std::optional<AuthenticatorResponseData> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -65,7 +65,7 @@ static void encodeArrayBuffer(Encoder& encoder, const ArrayBuffer& buffer)
 template<class Decoder>
 RefPtr<ArrayBuffer> decodeArrayBuffer(Decoder& decoder)
 {
-    Optional<uint64_t> length;
+    std::optional<uint64_t> length;
     decoder >> length;
     if (!length)
         return nullptr;
@@ -114,11 +114,11 @@ void AuthenticatorResponseData::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<AuthenticatorResponseData> AuthenticatorResponseData::decode(Decoder& decoder)
+std::optional<AuthenticatorResponseData> AuthenticatorResponseData::decode(Decoder& decoder)
 {
     AuthenticatorResponseData result;
 
-    Optional<bool> isEmpty;
+    std::optional<bool> isEmpty;
     decoder >> isEmpty;
     if (!isEmpty)
         return std::nullopt;
@@ -129,7 +129,7 @@ Optional<AuthenticatorResponseData> AuthenticatorResponseData::decode(Decoder& d
     if (!result.rawId)
         return std::nullopt;
 
-    Optional<bool> isAuthenticatorAttestationResponse;
+    std::optional<bool> isAuthenticatorAttestationResponse;
     decoder >> isAuthenticatorAttestationResponse;
     if (!isAuthenticatorAttestationResponse)
         return std::nullopt;
@@ -150,13 +150,13 @@ Optional<AuthenticatorResponseData> AuthenticatorResponseData::decode(Decoder& d
     if (!result.signature)
         return std::nullopt;
 
-    Optional<Optional<bool>> appid;
+    std::optional<std::optional<bool>> appid;
     decoder >> appid;
     if (!appid)
         return std::nullopt;
     result.appid = WTFMove(*appid);
 
-    Optional<bool> hasUserHandle;
+    std::optional<bool> hasUserHandle;
     decoder >> hasUserHandle;
     if (!hasUserHandle)
         return std::nullopt;

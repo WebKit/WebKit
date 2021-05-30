@@ -38,9 +38,9 @@ namespace WebCore {
 
 namespace WHLSL {
 
-Optional<ComputeDimensions> computeDimensions(Program& program, AST::FunctionDefinition& entryPoint)
+std::optional<ComputeDimensions> computeDimensions(Program& program, AST::FunctionDefinition& entryPoint)
 {
-    Optional<ComputeDimensions> computeDimensions;
+    std::optional<ComputeDimensions> computeDimensions;
 
     for (auto& functionDefinition : program.functionDefinitions()) {
         bool foundNumThreadsFunctionAttribute = false;

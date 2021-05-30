@@ -79,12 +79,12 @@ fail:
     result.clear();
 }
 
-static Optional<Vector<UnitBezier>> parseKeySplines(StringView string)
+static std::optional<Vector<UnitBezier>> parseKeySplines(StringView string)
 {
     if (string.isEmpty())
         return std::nullopt;
 
-    return readCharactersForParsing(string, [&](auto buffer) -> Optional<Vector<UnitBezier>> {
+    return readCharactersForParsing(string, [&](auto buffer) -> std::optional<Vector<UnitBezier>> {
         skipOptionalSVGSpaces(buffer);
 
         Vector<UnitBezier> result;

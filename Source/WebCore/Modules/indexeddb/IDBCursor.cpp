@@ -365,7 +365,7 @@ void IDBCursor::clearWrappers()
     m_valueWrapper.clear();
 }
 
-Optional<IDBGetResult> IDBCursor::iterateWithPrefetchedRecords(unsigned count, uint64_t lastWriteOperationID)
+std::optional<IDBGetResult> IDBCursor::iterateWithPrefetchedRecords(unsigned count, uint64_t lastWriteOperationID)
 {
     unsigned step = count > 0 ? count : 1;
     if (step > m_prefetchedRecords.size() || m_prefetchOperationID <= lastWriteOperationID)

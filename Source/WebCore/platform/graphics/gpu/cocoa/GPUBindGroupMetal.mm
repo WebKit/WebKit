@@ -41,7 +41,7 @@
 
 namespace WebCore {
     
-static Optional<GPUBufferBinding> tryGetResourceAsBufferBinding(const GPUBindingResource& resource, const char* const functionName)
+static std::optional<GPUBufferBinding> tryGetResourceAsBufferBinding(const GPUBindingResource& resource, const char* const functionName)
 {
 #if LOG_DISABLED
     UNUSED_PARAM(functionName);

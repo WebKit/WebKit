@@ -1144,7 +1144,7 @@ void jsc_value_object_define_property_accessor(JSCValue* value, const char* prop
     }
 }
 
-static GRefPtr<JSCValue> jscValueFunctionCreate(JSCContext* context, const char* name, GCallback callback, gpointer userData, GDestroyNotify destroyNotify, GType returnType, Optional<Vector<GType>>&& parameters)
+static GRefPtr<JSCValue> jscValueFunctionCreate(JSCContext* context, const char* name, GCallback callback, gpointer userData, GDestroyNotify destroyNotify, GType returnType, std::optional<Vector<GType>>&& parameters)
 {
     GRefPtr<GClosure> closure;
     // If the function doesn't have arguments, we need to swap the fake instance and user data to ensure

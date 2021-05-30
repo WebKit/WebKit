@@ -126,7 +126,7 @@ Profiler::CompilationKind profilerCompilationKindForMode(JITCompilationMode mode
 
 Plan::Plan(CodeBlock* passedCodeBlock, CodeBlock* profiledDFGCodeBlock,
     JITCompilationMode mode, BytecodeIndex osrEntryBytecodeIndex,
-    const Operands<Optional<JSValue>>& mustHandleValues)
+    const Operands<std::optional<JSValue>>& mustHandleValues)
         : Base(mode, passedCodeBlock)
         , m_profiledDFGCodeBlock(profiledDFGCodeBlock)
         , m_mustHandleValues(mustHandleValues)
@@ -613,7 +613,7 @@ bool Plan::checkLivenessAndVisitChildren(AbstractSlotVisitor& visitor)
 
     cleanMustHandleValuesIfNecessary();
     for (unsigned i = m_mustHandleValues.size(); i--;) {
-        Optional<JSValue> value = m_mustHandleValues[i];
+        std::optional<JSValue> value = m_mustHandleValues[i];
         if (value)
             visitor.appendUnbarriered(value.value());
     }

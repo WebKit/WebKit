@@ -50,7 +50,7 @@ public:
     }
 
     ShadowData(const ShadowData&);
-    static Optional<ShadowData> clone(const ShadowData*);
+    static std::optional<ShadowData> clone(const ShadowData*);
 
     ShadowData& operator=(ShadowData&&) = default;
 

@@ -74,13 +74,13 @@ public:
     Color() = default;
 
     Color(SRGBA<uint8_t>, OptionSet<Flags> = { });
-    Color(Optional<SRGBA<uint8_t>>, OptionSet<Flags> = { });
+    Color(std::optional<SRGBA<uint8_t>>, OptionSet<Flags> = { });
     
     template<typename ColorType, typename std::enable_if_t<IsColorTypeWithComponentType<ColorType, float>>* = nullptr>
     Color(const ColorType&, OptionSet<Flags> = { });
     
     template<typename ColorType, typename std::enable_if_t<IsColorTypeWithComponentType<ColorType, float>>* = nullptr>
-    Color(const Optional<ColorType>&, OptionSet<Flags> = { });
+    Color(const std::optional<ColorType>&, OptionSet<Flags> = { });
 
     explicit Color(WTF::HashTableEmptyValueType);
     explicit Color(WTF::HashTableDeletedValueType);
@@ -129,13 +129,13 @@ public:
     WEBCORE_EXPORT Color lightened() const;
     WEBCORE_EXPORT Color darkened() const;
 
-    Color invertedColorWithAlpha(Optional<float> alpha) const;
+    Color invertedColorWithAlpha(std::optional<float> alpha) const;
     Color invertedColorWithAlpha(float alpha) const;
 
-    Color colorWithAlphaMultipliedBy(Optional<float>) const;
+    Color colorWithAlphaMultipliedBy(std::optional<float>) const;
     Color colorWithAlphaMultipliedBy(float) const;
 
-    Color colorWithAlpha(Optional<float>) const;
+    Color colorWithAlpha(std::optional<float>) const;
     WEBCORE_EXPORT Color colorWithAlpha(float) const;
 
     Color opaqueColor() const { return colorWithAlpha(1.0f); }
@@ -143,7 +143,7 @@ public:
     Color semanticColor() const;
 
     // Returns the underlying color if its type is SRGBA<uint8_t>.
-    Optional<SRGBA<uint8_t>> tryGetAsSRGBABytes() const;
+    std::optional<SRGBA<uint8_t>> tryGetAsSRGBABytes() const;
 
 #if PLATFORM(GTK)
     Color(const GdkRGBA&);
@@ -185,7 +185,7 @@ public:
     friend bool outOfLineComponentssEqualIgnoringSemanticColor(const Color&, const Color&);
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<Color> decode(Decoder&);
+    template<class Decoder> static std::optional<Color> decode(Decoder&);
 
 private:
     class OutOfLineComponents : public ThreadSafeRefCounted<OutOfLineComponents> {
@@ -321,7 +321,7 @@ inline Color::Color(SRGBA<uint8_t> color, OptionSet<Flags> flags)
     setColor(color, toFlagsIncludingPrivate(flags));
 }
 
-inline Color::Color(Optional<SRGBA<uint8_t>> color, OptionSet<Flags> flags)
+inline Color::Color(std::optional<SRGBA<uint8_t>> color, OptionSet<Flags> flags)
 {
     if (color)
         setColor(*color, toFlagsIncludingPrivate(flags));
@@ -334,7 +334,7 @@ inline Color::Color(const ColorType& color, OptionSet<Flags> flags)
 }
 
 template<typename ColorType, typename std::enable_if_t<IsColorTypeWithComponentType<ColorType, float>>*>
-inline Color::Color(const Optional<ColorType>& color, OptionSet<Flags> flags)
+inline Color::Color(const std::optional<ColorType>& color, OptionSet<Flags> flags)
 {
     if (color)
         setOutOfLineComponents(OutOfLineComponents::create(asColorComponents(*color)), ColorSpaceFor<ColorType>, toFlagsIncludingPrivate(flags));
@@ -407,7 +407,7 @@ template<typename ColorType> ColorType Color::toColorTypeLossy() const
     });
 }
 
-inline Color Color::invertedColorWithAlpha(Optional<float> alpha) const
+inline Color Color::invertedColorWithAlpha(std::optional<float> alpha) const
 {
     return alpha ? invertedColorWithAlpha(alpha.value()) : *this;
 }
@@ -417,12 +417,12 @@ inline Color Color::colorWithAlphaMultipliedBy(float amount) const
     return colorWithAlpha(amount * alphaAsFloat());
 }
 
-inline Color Color::colorWithAlphaMultipliedBy(Optional<float> alpha) const
+inline Color Color::colorWithAlphaMultipliedBy(std::optional<float> alpha) const
 {
     return alpha ? colorWithAlphaMultipliedBy(alpha.value()) : *this;
 }
 
-inline Color Color::colorWithAlpha(Optional<float> alpha) const
+inline Color Color::colorWithAlpha(std::optional<float> alpha) const
 {
     return alpha ? colorWithAlpha(alpha.value()) : *this;
 }
@@ -466,7 +466,7 @@ inline PackedColor::RGBA Color::asPackedInline() const
     return decodedPackedInlineColor(m_colorAndFlags);
 }
 
-inline Optional<SRGBA<uint8_t>> Color::tryGetAsSRGBABytes() const
+inline std::optional<SRGBA<uint8_t>> Color::tryGetAsSRGBABytes() const
 {
     if (isInline())
         return asInline();
@@ -573,7 +573,7 @@ template<class Encoder> void Color::encode(Encoder& encoder) const
     encoder << asPackedInline().value;
 }
 
-template<class Decoder> Optional<Color> Color::decode(Decoder& decoder)
+template<class Decoder> std::optional<Color> Color::decode(Decoder& decoder)
 {
     bool isValid;
     if (!decoder.decode(isValid))

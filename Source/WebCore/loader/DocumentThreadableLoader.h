@@ -134,12 +134,12 @@ namespace WebCore {
         bool m_async;
         bool m_delayCallbacksForIntegrityCheck;
         std::unique_ptr<ContentSecurityPolicy> m_contentSecurityPolicy;
-        Optional<CrossOriginPreflightChecker> m_preflightChecker;
-        Optional<HTTPHeaderMap> m_originalHeaders;
+        std::optional<CrossOriginPreflightChecker> m_preflightChecker;
+        std::optional<HTTPHeaderMap> m_originalHeaders;
 
         ShouldLogError m_shouldLogError;
 #if ENABLE(SERVICE_WORKER)
-        Optional<ResourceRequest> m_bypassingPreflightForServiceWorkerRequest;
+        std::optional<ResourceRequest> m_bypassingPreflightForServiceWorkerRequest;
 #endif
     };
 

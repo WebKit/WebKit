@@ -238,8 +238,8 @@ public:
 
     bool hasRunningAcceleratedAnimations() const;
 
-    virtual Optional<LayoutUnit> overridingContainingBlockContentWidth() const { ASSERT_NOT_REACHED(); return -1_lu; }
-    virtual Optional<LayoutUnit> overridingContainingBlockContentHeight() const { ASSERT_NOT_REACHED(); return -1_lu; }
+    virtual std::optional<LayoutUnit> overridingContainingBlockContentWidth() const { ASSERT_NOT_REACHED(); return -1_lu; }
+    virtual std::optional<LayoutUnit> overridingContainingBlockContentHeight() const { ASSERT_NOT_REACHED(); return -1_lu; }
     virtual bool hasOverridingContainingBlockContentWidth() const { return false; }
     virtual bool hasOverridingContainingBlockContentHeight() const { return false; }
 

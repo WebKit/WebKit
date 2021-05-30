@@ -595,7 +595,7 @@ IPC::Connection::Identifier Connection::identifier() const
     return Identifier(m_isServer ? m_receivePort : m_sendPort, m_xpcConnection);
 }
 
-Optional<audit_token_t> Connection::getAuditToken()
+std::optional<audit_token_t> Connection::getAuditToken()
 {
     if (!m_xpcConnection)
         return std::nullopt;

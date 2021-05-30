@@ -112,7 +112,7 @@ public:
 
     WEBCORE_EXPORT IDBResultData();
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<IDBResultData> decode(Decoder&);
+    template<class Decoder> static std::optional<IDBResultData> decode(Decoder&);
 
 private:
     IDBResultData(const IDBResourceIdentifier&);
@@ -161,7 +161,7 @@ void IDBResultData::encode(Encoder& encoder) const
         encoder << *m_getAllResult;
 }
 
-template<class Decoder> Optional<IDBResultData> IDBResultData::decode(Decoder& decoder)
+template<class Decoder> std::optional<IDBResultData> IDBResultData::decode(Decoder& decoder)
 {
     IDBResultData result;
     if (!decoder.decode(result.m_requestIdentifier))
@@ -203,7 +203,7 @@ template<class Decoder> Optional<IDBResultData> IDBResultData::decode(Decoder& d
         return std::nullopt;
     if (hasObject) {
         auto object = makeUnique<IDBKeyData>();
-        Optional<IDBKeyData> optional;
+        std::optional<IDBKeyData> optional;
         decoder >> optional;
         if (!optional)
             return std::nullopt;

@@ -44,7 +44,7 @@ struct DataListSuggestion {
     String label;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<DataListSuggestion> decode(Decoder&);
+    template<class Decoder> static std::optional<DataListSuggestion> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -55,14 +55,14 @@ void DataListSuggestion::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<DataListSuggestion> DataListSuggestion::decode(Decoder& decoder)
+std::optional<DataListSuggestion> DataListSuggestion::decode(Decoder& decoder)
 {
-    Optional<String> value;
+    std::optional<String> value;
     decoder >> value;
     if (!value)
         return std::nullopt;
 
-    Optional<String> label;
+    std::optional<String> label;
     decoder >> label;
     if (!label)
         return std::nullopt;
@@ -76,7 +76,7 @@ struct DataListSuggestionInformation {
     IntRect elementRect;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<DataListSuggestionInformation> decode(Decoder&);
+    template<class Decoder> static std::optional<DataListSuggestionInformation> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -88,18 +88,18 @@ void DataListSuggestionInformation::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<DataListSuggestionInformation> DataListSuggestionInformation::decode(Decoder& decoder)
+std::optional<DataListSuggestionInformation> DataListSuggestionInformation::decode(Decoder& decoder)
 {
     DataListSuggestionActivationType activationType;
     if (!decoder.decode(activationType))
         return std::nullopt;
 
-    Optional<Vector<DataListSuggestion>> suggestions;
+    std::optional<Vector<DataListSuggestion>> suggestions;
     decoder >> suggestions;
     if (!suggestions)
         return std::nullopt;
 
-    Optional<IntRect> elementRect;
+    std::optional<IntRect> elementRect;
     decoder >> elementRect;
     if (!elementRect)
         return std::nullopt;

@@ -91,8 +91,8 @@ public:
         RefPtr<SharedBuffer> buffer() const { return m_buffer.copyRef(); }
         void setBuffer(RefPtr<SharedBuffer>&& buffer) { m_buffer = WTFMove(buffer); }
 
-        const Optional<CertificateInfo>& certificateInfo() const { return m_certificateInfo; }
-        void setCertificateInfo(const Optional<CertificateInfo>& certificateInfo) { m_certificateInfo = certificateInfo; }
+        const std::optional<CertificateInfo>& certificateInfo() const { return m_certificateInfo; }
+        void setCertificateInfo(const std::optional<CertificateInfo>& certificateInfo) { m_certificateInfo = certificateInfo; }
 
         CachedResource* cachedResource() const { return m_cachedResource; }
         void setCachedResource(CachedResource* cachedResource) { m_cachedResource = cachedResource; }
@@ -121,7 +121,7 @@ public:
         RefPtr<TextResourceDecoder> m_decoder;
         RefPtr<SharedBuffer> m_dataBuffer;
         RefPtr<SharedBuffer> m_buffer;
-        Optional<CertificateInfo> m_certificateInfo;
+        std::optional<CertificateInfo> m_certificateInfo;
         CachedResource* m_cachedResource { nullptr };
         InspectorPageAgent::ResourceType m_type { InspectorPageAgent::OtherResource };
         int m_httpStatusCode { 0 };
@@ -148,7 +148,7 @@ public:
     ResourceData const* data(const String& requestId);
     ResourceData const* dataForURL(const String& url);
     Vector<String> removeCachedResource(CachedResource*);
-    void clear(Optional<String> preservedLoaderId = std::nullopt);
+    void clear(std::optional<String> preservedLoaderId = std::nullopt);
     Vector<ResourceData*> resources();
 
 private:

@@ -43,7 +43,7 @@ struct TranslationContextMenuInfo {
     TranslationContextMenuMode mode { TranslationContextMenuMode::NonEditable };
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<TranslationContextMenuInfo> decode(Decoder&);
+    template<class Decoder> static std::optional<TranslationContextMenuInfo> decode(Decoder&);
 };
 
 template<class Encoder> void TranslationContextMenuInfo::encode(Encoder& encoder) const
@@ -54,24 +54,24 @@ template<class Encoder> void TranslationContextMenuInfo::encode(Encoder& encoder
     encoder << mode;
 }
 
-template<class Decoder> Optional<TranslationContextMenuInfo> TranslationContextMenuInfo::decode(Decoder& decoder)
+template<class Decoder> std::optional<TranslationContextMenuInfo> TranslationContextMenuInfo::decode(Decoder& decoder)
 {
-    Optional<String> text;
+    std::optional<String> text;
     decoder >> text;
     if (!text)
         return std::nullopt;
 
-    Optional<IntRect> selectionBoundsInRootView;
+    std::optional<IntRect> selectionBoundsInRootView;
     decoder >> selectionBoundsInRootView;
     if (!selectionBoundsInRootView)
         return std::nullopt;
 
-    Optional<IntPoint> locationInRootView;
+    std::optional<IntPoint> locationInRootView;
     decoder >> locationInRootView;
     if (!locationInRootView)
         return std::nullopt;
 
-    Optional<TranslationContextMenuMode> mode;
+    std::optional<TranslationContextMenuMode> mode;
     decoder >> mode;
     if (!mode)
         return std::nullopt;

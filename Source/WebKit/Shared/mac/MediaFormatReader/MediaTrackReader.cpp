@@ -59,7 +59,7 @@ CoreMediaWrapped<MediaTrackReader>* MediaTrackReader::unwrap(CMBaseObjectRef obj
     return unwrap(checked_cf_cast<WrapperRef>(object));
 }
 
-RefPtr<MediaTrackReader> MediaTrackReader::create(Allocator&& allocator, const MediaFormatReader& formatReader, CMMediaType mediaType, uint64_t trackID, Optional<bool> enabled)
+RefPtr<MediaTrackReader> MediaTrackReader::create(Allocator&& allocator, const MediaFormatReader& formatReader, CMMediaType mediaType, uint64_t trackID, std::optional<bool> enabled)
 {
     return adoptRef(new (allocator) MediaTrackReader(WTFMove(allocator), formatReader, mediaType, trackID, enabled));
 }
@@ -70,7 +70,7 @@ WorkQueue& MediaTrackReader::storageQueue()
     return queue;
 }
 
-MediaTrackReader::MediaTrackReader(Allocator&& allocator, const MediaFormatReader& formatReader, CMMediaType mediaType, uint64_t trackID, Optional<bool> enabled)
+MediaTrackReader::MediaTrackReader(Allocator&& allocator, const MediaFormatReader& formatReader, CMMediaType mediaType, uint64_t trackID, std::optional<bool> enabled)
     : CoreMediaWrapped(WTFMove(allocator))
     , m_trackID(trackID)
     , m_mediaType(mediaType)

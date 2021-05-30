@@ -37,7 +37,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, Optional<FloatSize> screenSizeInPixels, AllowAnimatedImages allowAnimatedImages)
+RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, std::optional<FloatSize> screenSizeInPixels, AllowAnimatedImages allowAnimatedImages)
 {
     auto* cachedImage = renderImage.cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())

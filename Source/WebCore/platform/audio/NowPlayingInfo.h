@@ -50,7 +50,7 @@ struct NowPlayingInfoArtwork {
     }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<NowPlayingInfoArtwork> decode(Decoder&);
+    template<class Decoder> static std::optional<NowPlayingInfoArtwork> decode(Decoder&);
 };
 
 template<class Encoder> inline void NowPlayingInfoArtwork::encode(Encoder& encoder) const
@@ -58,7 +58,7 @@ template<class Encoder> inline void NowPlayingInfoArtwork::encode(Encoder& encod
     encoder << src << mimeType << imageData;
 }
 
-template<class Decoder> inline Optional<NowPlayingInfoArtwork> NowPlayingInfoArtwork::decode(Decoder& decoder)
+template<class Decoder> inline std::optional<NowPlayingInfoArtwork> NowPlayingInfoArtwork::decode(Decoder& decoder)
 {
     String src;
     if (!decoder.decode(src))
@@ -86,7 +86,7 @@ struct NowPlayingInfo {
     MediaUniqueIdentifier uniqueIdentifier;
     bool isPlaying { false };
     bool allowsNowPlayingControlsVisibility { false };
-    Optional<NowPlayingInfoArtwork> artwork;
+    std::optional<NowPlayingInfoArtwork> artwork;
 
     bool operator==(const NowPlayingInfo& other) const
     {
@@ -109,7 +109,7 @@ struct NowPlayingInfo {
     }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<NowPlayingInfo> decode(Decoder&);
+    template<class Decoder> static std::optional<NowPlayingInfo> decode(Decoder&);
 };
 
 template<class Encoder> inline void NowPlayingInfo::encode(Encoder& encoder) const
@@ -117,7 +117,7 @@ template<class Encoder> inline void NowPlayingInfo::encode(Encoder& encoder) con
     encoder << title << artist << album << sourceApplicationIdentifier << duration << currentTime << supportsSeeking << uniqueIdentifier << isPlaying << allowsNowPlayingControlsVisibility << artwork;
 }
 
-template<class Decoder> inline Optional<NowPlayingInfo> NowPlayingInfo::decode(Decoder& decoder)
+template<class Decoder> inline std::optional<NowPlayingInfo> NowPlayingInfo::decode(Decoder& decoder)
 {
     String title;
     if (!decoder.decode(title))
@@ -159,7 +159,7 @@ template<class Decoder> inline Optional<NowPlayingInfo> NowPlayingInfo::decode(D
     if (!decoder.decode(allowsNowPlayingControlsVisibility))
         return { };
 
-    Optional<NowPlayingInfoArtwork> artwork;
+    std::optional<NowPlayingInfoArtwork> artwork;
     if (!decoder.decode(artwork))
         return { };
 

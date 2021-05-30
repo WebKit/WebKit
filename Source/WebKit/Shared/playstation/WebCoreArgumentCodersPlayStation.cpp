@@ -38,7 +38,7 @@ void ArgumentCoder<FontAttributes>::encodePlatformData(Encoder&, const FontAttri
     ASSERT_NOT_REACHED();
 }
 
-Optional<FontAttributes> ArgumentCoder<FontAttributes>::decodePlatformData(Decoder&, FontAttributes&)
+std::optional<FontAttributes> ArgumentCoder<FontAttributes>::decodePlatformData(Decoder&, FontAttributes&)
 {
     ASSERT_NOT_REACHED();
     return std::nullopt;
@@ -49,7 +49,7 @@ void ArgumentCoder<Ref<Font>>::encodePlatformData(Encoder& encoder, const Ref<Fo
     ASSERT_NOT_REACHED();
 }
 
-Optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder& decoder)
+std::optional<FontPlatformData> ArgumentCoder<Ref<Font>>::decodePlatformData(Decoder& decoder)
 {
     ASSERT_NOT_REACHED();
     return std::nullopt;

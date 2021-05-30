@@ -77,12 +77,12 @@ private:
     String mediaKeysStorageDirectory() const final;
 
     // Messages
-    using GenerateKeyCallback = CompletionHandler<void(Optional<IPC::SharedBufferCopy>&&, const String&, unsigned short, uint32_t)>;
+    using GenerateKeyCallback = CompletionHandler<void(std::optional<IPC::SharedBufferCopy>&&, const String&, unsigned short, uint32_t)>;
     void generateKeyRequest(const String& mimeType, IPC::SharedBufferCopy&& initData, GenerateKeyCallback&&);
     void releaseKeys();
-    using UpdateCallback = CompletionHandler<void(bool, Optional<IPC::SharedBufferCopy>&&, unsigned short, uint32_t)>;
+    using UpdateCallback = CompletionHandler<void(bool, std::optional<IPC::SharedBufferCopy>&&, unsigned short, uint32_t)>;
     void update(IPC::SharedBufferCopy&& update, UpdateCallback&&);
-    using CachedKeyForKeyIDCallback = CompletionHandler<void(Optional<IPC::SharedBufferCopy>&&)>;
+    using CachedKeyForKeyIDCallback = CompletionHandler<void(std::optional<IPC::SharedBufferCopy>&&)>;
     void cachedKeyForKeyID(String keyId, CachedKeyForKeyIDCallback&&);
 
     WeakPtr<RemoteLegacyCDMFactoryProxy> m_factory;

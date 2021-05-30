@@ -176,7 +176,7 @@ private:
     }
 
     FourCharCode m_originalCodec;
-    mutable Optional<AtomString> m_codec;
+    mutable std::optional<AtomString> m_codec;
     bool m_isVideo;
     bool m_isAudio;
     bool m_isText;

@@ -42,7 +42,7 @@ struct ApplePayShippingContactUpdate final : public ApplePayDetailsUpdateBase {
     Vector<ApplePayShippingMethod> newShippingMethods;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ApplePayShippingContactUpdate> decode(Decoder&);
+    template<class Decoder> static std::optional<ApplePayShippingContactUpdate> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -54,7 +54,7 @@ void ApplePayShippingContactUpdate::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ApplePayShippingContactUpdate> ApplePayShippingContactUpdate::decode(Decoder& decoder)
+std::optional<ApplePayShippingContactUpdate> ApplePayShippingContactUpdate::decode(Decoder& decoder)
 {
     ApplePayShippingContactUpdate result;
 
@@ -62,7 +62,7 @@ Optional<ApplePayShippingContactUpdate> ApplePayShippingContactUpdate::decode(De
         return std::nullopt;
 
 #define DECODE(name, type) \
-    Optional<type> name; \
+    std::optional<type> name; \
     decoder >> name; \
     if (!name) \
         return std::nullopt; \

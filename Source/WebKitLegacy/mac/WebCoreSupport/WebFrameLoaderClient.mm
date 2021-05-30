@@ -205,12 +205,12 @@ WebFrameLoaderClient::WebFrameLoaderClient(WebFrame *webFrame)
 {
 }
 
-Optional<WebCore::PageIdentifier> WebFrameLoaderClient::pageID() const
+std::optional<WebCore::PageIdentifier> WebFrameLoaderClient::pageID() const
 {
     return std::nullopt;
 }
 
-Optional<WebCore::FrameIdentifier> WebFrameLoaderClient::frameID() const
+std::optional<WebCore::FrameIdentifier> WebFrameLoaderClient::frameID() const
 {
     return std::nullopt;
 }
@@ -694,7 +694,7 @@ void WebFrameLoaderClient::dispatchDidReceiveTitle(const WebCore::StringWithDire
     }
 }
 
-void WebFrameLoaderClient::dispatchDidCommitLoad(Optional<WebCore::HasInsecureContent>, Optional<WebCore::UsedLegacyTLS>)
+void WebFrameLoaderClient::dispatchDidCommitLoad(std::optional<WebCore::HasInsecureContent>, std::optional<WebCore::UsedLegacyTLS>)
 {
     // Tell the client we've committed this URL.
     ASSERT([m_webFrame->_private->webFrameView documentView] != nil);

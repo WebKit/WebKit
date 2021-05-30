@@ -80,8 +80,8 @@ AXTextMarkerRef textMarkerForCharacterOffset(AXObjectCache*, const CharacterOffs
 CharacterOffset characterOffsetForTextMarker(AXObjectCache*, AXTextMarkerRef);
 
 // TextMarkerRange <-> SimpleRange conversion.
-AXTextMarkerRef startOrEndTextMarkerForRange(AXObjectCache*, const Optional<SimpleRange>&, bool isStart);
-AXTextMarkerRangeRef textMarkerRangeFromRange(AXObjectCache*, const Optional<SimpleRange>&);
-Optional<SimpleRange> rangeForTextMarkerRange(AXObjectCache*, AXTextMarkerRangeRef);
+AXTextMarkerRef startOrEndTextMarkerForRange(AXObjectCache*, const std::optional<SimpleRange>&, bool isStart);
+AXTextMarkerRangeRef textMarkerRangeFromRange(AXObjectCache*, const std::optional<SimpleRange>&);
+std::optional<SimpleRange> rangeForTextMarkerRange(AXObjectCache*, AXTextMarkerRangeRef);
 
 }

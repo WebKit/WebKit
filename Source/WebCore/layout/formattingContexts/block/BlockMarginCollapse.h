@@ -72,7 +72,7 @@ private:
     UsedVerticalMargin::PositiveAndNegativePair::Values precomputedPositiveNegativeMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues, const BlockFormattingGeometry&) const;
     UsedVerticalMargin::PositiveAndNegativePair::Values precomputedPositiveNegativeValues(const Box&, const BlockFormattingGeometry&) const;
 
-    Optional<LayoutUnit> marginValue(UsedVerticalMargin::PositiveAndNegativePair::Values) const;
+    std::optional<LayoutUnit> marginValue(UsedVerticalMargin::PositiveAndNegativePair::Values) const;
 
     bool hasClearance(const Box&) const;
 

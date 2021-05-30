@@ -51,7 +51,7 @@ public:
     using WebCore::SampleBufferDisplayLayer::Client::weakPtrFactory;
     using WeakValueType = WebCore::SampleBufferDisplayLayer::Client::WeakValueType;
 
-    using LayerInitializationCallback = CompletionHandler<void(Optional<LayerHostingContextID>)>;
+    using LayerInitializationCallback = CompletionHandler<void(std::optional<LayerHostingContextID>)>;
     void initialize(bool hideRootLayer, WebCore::IntSize, LayerInitializationCallback&&);
 
     // IPC::MessageReceiver

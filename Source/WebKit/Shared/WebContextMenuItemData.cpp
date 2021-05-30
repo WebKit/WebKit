@@ -113,7 +113,7 @@ void WebContextMenuItemData::encode(IPC::Encoder& encoder) const
     encoder << m_submenu;
 }
 
-Optional<WebContextMenuItemData> WebContextMenuItemData::decode(IPC::Decoder& decoder)
+std::optional<WebContextMenuItemData> WebContextMenuItemData::decode(IPC::Decoder& decoder)
 {
     WebCore::ContextMenuItemType type;
     if (!decoder.decode(type))
@@ -139,7 +139,7 @@ Optional<WebContextMenuItemData> WebContextMenuItemData::decode(IPC::Decoder& de
     if (!decoder.decode(indentationLevel))
         return std::nullopt;
 
-    Optional<Vector<WebContextMenuItemData>> submenu;
+    std::optional<Vector<WebContextMenuItemData>> submenu;
     decoder >> submenu;
     if (!submenu)
         return std::nullopt;

@@ -138,12 +138,12 @@ MediaSampleCursor::MediaSampleCursor(Allocator&& allocator, const MediaSampleCur
 }
 
 template<typename OrderedMap>
-Optional<typename OrderedMap::iterator> MediaSampleCursor::locateIterator(OrderedMap& samples, bool hasAllSamples) const
+std::optional<typename OrderedMap::iterator> MediaSampleCursor::locateIterator(OrderedMap& samples, bool hasAllSamples) const
 {
     ASSERT(m_locatorLock.isLocked());
     using Iterator = typename OrderedMap::iterator;
     return WTF::switchOn(m_locator,
-        [&](const MediaTime& presentationTime) -> Optional<Iterator> {
+        [&](const MediaTime& presentationTime) -> std::optional<Iterator> {
             assertIsHeld(m_locatorLock);
             auto iterator = upperBound(samples, presentationTime);
             if (iterator == samples.begin())

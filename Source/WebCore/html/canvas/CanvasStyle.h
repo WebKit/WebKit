@@ -51,7 +51,7 @@ public:
 
     bool isValid() const { return !WTF::holds_alternative<Invalid>(m_style); }
     bool isCurrentColor() const { return WTF::holds_alternative<CurrentColor>(m_style); }
-    Optional<float> overrideAlpha() const { return WTF::get<CurrentColor>(m_style).overrideAlpha; }
+    std::optional<float> overrideAlpha() const { return WTF::get<CurrentColor>(m_style).overrideAlpha; }
 
     String color() const;
     RefPtr<CanvasGradient> canvasGradient() const;
@@ -67,7 +67,7 @@ private:
     struct Invalid { };
 
     struct CurrentColor {
-        Optional<float> overrideAlpha;
+        std::optional<float> overrideAlpha;
     };
 
     CanvasStyle(CurrentColor);

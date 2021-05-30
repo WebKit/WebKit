@@ -109,7 +109,7 @@ public:
             ::BIO_free(m_bio);
     }
 
-    Optional<Vector<uint8_t>> getDataAsVector() const
+    std::optional<Vector<uint8_t>> getDataAsVector() const
     {
         uint8_t* data { nullptr };
         auto length = ::BIO_get_mem_data(m_bio, &data);
@@ -158,7 +158,7 @@ static Vector<WebCore::CertificateInfo::Certificate> pemDataFromCtx(X509_STORE_C
     return result;
 }
 
-Optional<WebCore::CertificateInfo> createCertificateInfo(X509_STORE_CTX* ctx)
+std::optional<WebCore::CertificateInfo> createCertificateInfo(X509_STORE_CTX* ctx)
 {
     if (!ctx)
         return std::nullopt;
@@ -215,7 +215,7 @@ static String getSubjectName(const X509* x509)
     return bio.getDataAsString();
 }
 
-static Optional<Seconds> convertASN1TimeToSeconds(const ASN1_TIME* ans1Time)
+static std::optional<Seconds> convertASN1TimeToSeconds(const ASN1_TIME* ans1Time)
 {
     if (!ans1Time)
         return std::nullopt;
@@ -297,7 +297,7 @@ static void getSubjectAltName(const X509* x509, Vector<String>& dnsNames, Vector
     }
 }
 
-Optional<WebCore::CertificateSummary> createSummaryInfo(const Vector<uint8_t>& pem)
+std::optional<WebCore::CertificateSummary> createSummaryInfo(const Vector<uint8_t>& pem)
 {
     BIO bio { pem };
     auto x509 = bio.readX509();

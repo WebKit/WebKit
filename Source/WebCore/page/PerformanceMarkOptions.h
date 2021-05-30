@@ -32,7 +32,7 @@ namespace WebCore {
 
 struct PerformanceMarkOptions {
     JSC::JSValue detail;
-    Optional<double> startTime;
+    std::optional<double> startTime;
 };
 
 }

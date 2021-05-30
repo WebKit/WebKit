@@ -188,7 +188,7 @@ public:
         return m_watchpointSet;
     }
 
-    Optional<DOMAttributeAnnotation> domAttribute() const
+    std::optional<DOMAttributeAnnotation> domAttribute() const
     {
         if (m_additionalDataType == AdditionalDataType::DOMAttribute)
             return m_additionalData.domAttribute;
@@ -200,7 +200,7 @@ public:
         unsigned scopeOffset;
     };
 
-    Optional<ModuleNamespaceSlot> moduleNamespaceSlot() const
+    std::optional<ModuleNamespaceSlot> moduleNamespaceSlot() const
     {
         if (m_additionalDataType == AdditionalDataType::ModuleNamespace)
             return m_additionalData.moduleNamespaceSlot;
@@ -390,7 +390,7 @@ private:
     AdditionalDataType m_additionalDataType { AdditionalDataType::None };
     bool m_isTaintedByOpaqueObject { false };
 public:
-    Optional<DisallowVMEntry> disallowVMEntry;
+    std::optional<DisallowVMEntry> disallowVMEntry;
 private:
     union {
         DOMAttributeAnnotation domAttribute;

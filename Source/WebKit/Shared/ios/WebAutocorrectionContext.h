@@ -41,7 +41,7 @@ struct WebAutocorrectionContext {
     EditingRange markedTextRange;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<WebAutocorrectionContext> decode(Decoder&);
+    template<class Decoder> static std::optional<WebAutocorrectionContext> decode(Decoder&);
 };
 
 template<class Encoder> void WebAutocorrectionContext::encode(Encoder& encoder) const
@@ -53,7 +53,7 @@ template<class Encoder> void WebAutocorrectionContext::encode(Encoder& encoder) 
     encoder << markedTextRange;
 }
 
-template<class Decoder> Optional<WebAutocorrectionContext> WebAutocorrectionContext::decode(Decoder& decoder)
+template<class Decoder> std::optional<WebAutocorrectionContext> WebAutocorrectionContext::decode(Decoder& decoder)
 {
     WebAutocorrectionContext correction;
     if (!decoder.decode(correction.contextBefore))

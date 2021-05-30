@@ -49,7 +49,7 @@ private:
     void revokeAuthorizationToken(const String&) override;
     void setEnableHighAccuracy(bool) override;
 
-    Optional<WebCore::GeolocationPositionData> lastPosition() override;
+    std::optional<WebCore::GeolocationPositionData> lastPosition() override;
 
     void requestPermission(WebCore::Geolocation&) override;
     void cancelPermissionRequest(WebCore::Geolocation&) override;

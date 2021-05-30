@@ -189,7 +189,7 @@ public:
     };
     static bool identifierIsValid(Identifier identifier) { return MACH_PORT_VALID(identifier.port); }
     xpc_connection_t xpcConnection() const { return m_xpcConnection.get(); }
-    Optional<audit_token_t> getAuditToken();
+    std::optional<audit_token_t> getAuditToken();
     pid_t remoteProcessID() const;
 #elif OS(WINDOWS)
     typedef HANDLE Identifier;
@@ -579,7 +579,7 @@ template<typename T> Connection::SendSyncResult Connection::sendSync(T&& message
         return { };
 
     // Decode the reply.
-    Optional<typename T::ReplyArguments> replyArguments;
+    std::optional<typename T::ReplyArguments> replyArguments;
     *replyDecoder >> replyArguments;
     if (!replyArguments)
         return { };

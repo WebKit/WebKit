@@ -47,50 +47,50 @@ class RTCIceCandidate final : public RefCounted<RTCIceCandidate>, public ScriptW
     WTF_MAKE_ISO_ALLOCATED(RTCIceCandidate);
 public:
     static ExceptionOr<Ref<RTCIceCandidate>> create(const RTCIceCandidateInit&);
-    static Ref<RTCIceCandidate> create(const String& candidate, const String& sdpMid, Optional<unsigned short> sdpMLineIndex);
+    static Ref<RTCIceCandidate> create(const String& candidate, const String& sdpMid, std::optional<unsigned short> sdpMLineIndex);
 
     const String& candidate() const { return m_candidate; }
     const String& sdpMid() const { return m_sdpMid; }
-    Optional<unsigned short> sdpMLineIndex() const { return m_sdpMLineIndex; }
+    std::optional<unsigned short> sdpMLineIndex() const { return m_sdpMLineIndex; }
 
     struct Fields {
         String foundation;
-        Optional<RTCIceComponent> component;
-        Optional<unsigned> priority;
+        std::optional<RTCIceComponent> component;
+        std::optional<unsigned> priority;
         String address;
-        Optional<RTCIceProtocol> protocol;
-        Optional<unsigned short> port;
-        Optional<RTCIceCandidateType> type;
-        Optional<RTCIceTcpCandidateType> tcpType;
+        std::optional<RTCIceProtocol> protocol;
+        std::optional<unsigned short> port;
+        std::optional<RTCIceCandidateType> type;
+        std::optional<RTCIceTcpCandidateType> tcpType;
         String relatedAddress;
-        Optional<unsigned short> relatedPort;
+        std::optional<unsigned short> relatedPort;
         String usernameFragment;
     };
 
     String foundation() const { return m_fields.foundation; }
-    Optional<RTCIceComponent> component() const { return m_fields.component; }
-    Optional<unsigned> priority() const { return m_fields.priority; }
+    std::optional<RTCIceComponent> component() const { return m_fields.component; }
+    std::optional<unsigned> priority() const { return m_fields.priority; }
     String address() const { return m_fields.address; }
-    Optional<RTCIceProtocol> protocol() const { return m_fields.protocol; }
-    Optional<unsigned short> port() const { return m_fields.port; }
-    Optional<RTCIceCandidateType> type() const { return m_fields.type; }
-    Optional<RTCIceTcpCandidateType> tcpType() const { return m_fields.tcpType; }
+    std::optional<RTCIceProtocol> protocol() const { return m_fields.protocol; }
+    std::optional<unsigned short> port() const { return m_fields.port; }
+    std::optional<RTCIceCandidateType> type() const { return m_fields.type; }
+    std::optional<RTCIceTcpCandidateType> tcpType() const { return m_fields.tcpType; }
     String relatedAddress() const { return m_fields.relatedAddress; }
-    Optional<unsigned short> relatedPort() const { return m_fields.relatedPort; }
+    std::optional<unsigned short> relatedPort() const { return m_fields.relatedPort; }
     String usernameFragment() const { return m_fields.usernameFragment; }
 
     RTCIceCandidateInit toJSON() const;
 
 private:
-    RTCIceCandidate(const String& candidate, const String& sdpMid, Optional<unsigned short> sdpMLineIndex, Fields&&);
+    RTCIceCandidate(const String& candidate, const String& sdpMid, std::optional<unsigned short> sdpMLineIndex, Fields&&);
 
     String m_candidate;
     String m_sdpMid;
-    Optional<unsigned short> m_sdpMLineIndex;
+    std::optional<unsigned short> m_sdpMLineIndex;
     Fields m_fields;
 };
 
-Optional<RTCIceCandidate::Fields> parseIceCandidateSDP(const String&);
+std::optional<RTCIceCandidate::Fields> parseIceCandidateSDP(const String&);
 
 } // namespace WebCore
 

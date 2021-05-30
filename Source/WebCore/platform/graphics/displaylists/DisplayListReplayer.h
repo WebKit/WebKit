@@ -48,8 +48,8 @@ enum class StopReplayReason : uint8_t {
 struct ReplayResult {
     std::unique_ptr<InMemoryDisplayList> trackedDisplayList;
     size_t numberOfBytesRead { 0 };
-    Optional<RenderingResourceIdentifier> nextDestinationImageBuffer;
-    Optional<RenderingResourceIdentifier> missingCachedResourceIdentifier;
+    std::optional<RenderingResourceIdentifier> nextDestinationImageBuffer;
+    std::optional<RenderingResourceIdentifier> missingCachedResourceIdentifier;
     StopReplayReason reasonForStopping { StopReplayReason::ReplayedAllItems };
 };
 
@@ -72,7 +72,7 @@ public:
     
 private:
     GraphicsContext& context() const;
-    std::pair<Optional<StopReplayReason>, Optional<RenderingResourceIdentifier>> applyItem(ItemHandle);
+    std::pair<std::optional<StopReplayReason>, std::optional<RenderingResourceIdentifier>> applyItem(ItemHandle);
 
     GraphicsContext& m_context;
     RefPtr<WebCore::ImageBuffer> m_maskImageBuffer;

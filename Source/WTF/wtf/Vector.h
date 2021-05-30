@@ -1705,10 +1705,10 @@ struct CompactMapTraits {
 };
 
 template<typename T>
-struct CompactMapTraits<Optional<T>> {
+struct CompactMapTraits<std::optional<T>> {
     using ItemType = T;
-    static bool hasValue(const Optional<T>& returnValue) { return !!returnValue; }
-    static ItemType extractValue(Optional<T>&& returnValue) { return WTFMove(*returnValue); }
+    static bool hasValue(const std::optional<T>& returnValue) { return !!returnValue; }
+    static ItemType extractValue(std::optional<T>&& returnValue) { return WTFMove(*returnValue); }
 };
 
 template<typename T>

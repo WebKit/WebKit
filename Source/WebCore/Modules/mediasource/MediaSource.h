@@ -77,7 +77,7 @@ public:
     void sourceBufferDidChangeBufferedDirty(SourceBuffer&, bool);
 
     enum class EndOfStreamError { Network, Decode };
-    void streamEndedWithError(Optional<EndOfStreamError>);
+    void streamEndedWithError(std::optional<EndOfStreamError>);
 
     MediaTime duration() const final;
     std::unique_ptr<PlatformTimeRanges> buffered() const final;
@@ -100,7 +100,7 @@ public:
 
     enum class ReadyState { Closed, Open, Ended };
     ReadyState readyState() const { return m_readyState; }
-    ExceptionOr<void> endOfStream(Optional<EndOfStreamError>);
+    ExceptionOr<void> endOfStream(std::optional<EndOfStreamError>);
 
     HTMLMediaElement* mediaElement() const { return m_mediaElement.get(); }
 

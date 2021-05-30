@@ -286,7 +286,7 @@ public:
     WEBCORE_EXPORT static TransformationMatrix rectToRect(const FloatRect&, const FloatRect&);
 
     WEBCORE_EXPORT bool isInvertible() const;
-    WEBCORE_EXPORT Optional<TransformationMatrix> inverse() const;
+    WEBCORE_EXPORT std::optional<TransformationMatrix> inverse() const;
 
     // Decompose the matrix into its component parts.
     struct Decomposed2Type {

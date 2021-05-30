@@ -219,8 +219,8 @@ public:
 
     int32_t asInt32() const;
     uint32_t asUInt32() const;
-    Optional<uint32_t> tryGetAsUint32Index();
-    Optional<int32_t> tryGetAsInt32();
+    std::optional<uint32_t> tryGetAsUint32Index();
+    std::optional<int32_t> tryGetAsInt32();
     int64_t asAnyInt() const;
     uint32_t asUInt32AsAnyInt() const;
     int32_t asInt32AsAnyInt() const;
@@ -282,7 +282,7 @@ public:
     JSBigInt* asHeapBigInt() const;
 
     // toNumber conversion if it can be done without side effects.
-    Optional<double> toNumberFromPrimitive() const;
+    std::optional<double> toNumberFromPrimitive() const;
 
     JSString* toString(JSGlobalObject*) const; // On exception, this returns the empty string.
     JSString* toStringOrNull(JSGlobalObject*) const; // On exception, this returns null, to make exception checks faster.
@@ -303,7 +303,7 @@ public:
     int64_t toBigInt64(JSGlobalObject*) const;
     uint64_t toBigUInt64(JSGlobalObject*) const;
 
-    Optional<uint32_t> toUInt32AfterToNumeric(JSGlobalObject*) const;
+    std::optional<uint32_t> toUInt32AfterToNumeric(JSGlobalObject*) const;
 
     // Floating point conversions (this is a convenience function for WebCore;
     // single precision float is not a representation used in JS or JSC).

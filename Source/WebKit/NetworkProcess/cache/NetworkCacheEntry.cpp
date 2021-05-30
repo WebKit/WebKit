@@ -118,20 +118,20 @@ std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storage
     entry->m_response = WTFMove(response);
     entry->m_response.setSource(WebCore::ResourceResponse::Source::DiskCache);
 
-    Optional<bool> hasVaryingRequestHeaders;
+    std::optional<bool> hasVaryingRequestHeaders;
     decoder >> hasVaryingRequestHeaders;
     if (!hasVaryingRequestHeaders)
         return nullptr;
 
     if (*hasVaryingRequestHeaders) {
-        Optional<Vector<std::pair<String, String>>> varyingRequestHeaders;
+        std::optional<Vector<std::pair<String, String>>> varyingRequestHeaders;
         decoder >> varyingRequestHeaders;
         if (!varyingRequestHeaders)
             return nullptr;
         entry->m_varyingRequestHeaders = WTFMove(*varyingRequestHeaders);
     }
 
-    Optional<bool> isRedirect;
+    std::optional<bool> isRedirect;
     decoder >> isRedirect;
     if (!isRedirect)
         return nullptr;
@@ -142,7 +142,7 @@ std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storage
             return nullptr;
     }
 
-    Optional<Optional<Seconds>> maxAgeCap;
+    std::optional<std::optional<Seconds>> maxAgeCap;
     decoder >> maxAgeCap;
     if (!maxAgeCap)
         return nullptr;

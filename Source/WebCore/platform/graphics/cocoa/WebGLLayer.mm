@@ -47,7 +47,7 @@ private:
 
 @implementation WebGLLayer {
     BOOL _preparedForDisplay;
-    Optional<WebGLLayerSwapChain> _swapChain;
+    std::optional<WebGLLayerSwapChain> _swapChain;
 }
 
 - (id)initWithDevicePixelRatio:(float)devicePixelRatio contentsOpaque:(bool)contentsOpaque

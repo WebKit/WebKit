@@ -40,7 +40,7 @@ AnimationEvent::AnimationEvent(const AtomString& type, const Init& initializer, 
 {
 }
 
-AnimationEvent::AnimationEvent(const AtomString& type, const String& animationName, double elapsedTime, const String& pseudoElement, Optional<Seconds> timelineTime, WebAnimation* animation)
+AnimationEvent::AnimationEvent(const AtomString& type, const String& animationName, double elapsedTime, const String& pseudoElement, std::optional<Seconds> timelineTime, WebAnimation* animation)
     : AnimationEventBase(type, animation, timelineTime)
     , m_animationName(animationName)
     , m_elapsedTime(elapsedTime)

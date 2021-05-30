@@ -222,7 +222,7 @@ void MockHidConnection::feedReports()
         return;
     }
 
-    Optional<FidoHidMessage> message;
+    std::optional<FidoHidMessage> message;
     if (m_stage == Mock::HidStage::Info && m_subStage == Mock::HidSubStage::Msg) {
         // FIXME(205839):
         Vector<uint8_t> infoData;

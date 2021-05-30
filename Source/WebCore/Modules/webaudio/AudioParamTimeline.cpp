@@ -241,8 +241,8 @@ ExceptionOr<void> AudioParamTimeline::cancelAndHoldAtTime(Seconds cancelTime)
     auto eventType = cancelledEvent.type();
 
     // New event to be inserted, if any, and a SetValueEvent if needed.
-    Optional<ParamEvent> newEvent;
-    Optional<ParamEvent> newSetValueEvent;
+    std::optional<ParamEvent> newEvent;
+    std::optional<ParamEvent> newSetValueEvent;
 
     switch (eventType) {
     case ParamEvent::LinearRampToValue:
@@ -324,7 +324,7 @@ void AudioParamTimeline::removeCancelledEvents(size_t firstEventToRemove)
     m_events.remove(firstEventToRemove, m_events.size() - firstEventToRemove);
 }
 
-Optional<float> AudioParamTimeline::valueForContextTime(BaseAudioContext& context, float defaultValue, float minValue, float maxValue)
+std::optional<float> AudioParamTimeline::valueForContextTime(BaseAudioContext& context, float defaultValue, float minValue, float maxValue)
 {
     {
         if (!m_eventsLock.tryLock())
@@ -932,7 +932,7 @@ auto AudioParamTimeline::ParamEvent::createSetValueCurveEvent(Vector<float>&& cu
     return { ParamEvent::SetValueCurve, 0, time, 0, duration, WTFMove(curve), curvePointsPerSecond, curveEndValue, std::nullopt };
 }
 
-auto AudioParamTimeline::ParamEvent::createCancelValuesEvent(Seconds cancelTime, Optional<SavedEvent>&& savedEvent) -> ParamEvent
+auto AudioParamTimeline::ParamEvent::createCancelValuesEvent(Seconds cancelTime, std::optional<SavedEvent>&& savedEvent) -> ParamEvent
 {
 #if ASSERT_ENABLED
     if (savedEvent) {

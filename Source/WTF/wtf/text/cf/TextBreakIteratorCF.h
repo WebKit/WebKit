@@ -59,7 +59,7 @@ public:
         m_string = string.createCFStringWithoutCopying();
     }
 
-    Optional<unsigned> preceding(unsigned location) const
+    std::optional<unsigned> preceding(unsigned location) const
     {
         if (!location)
             return { };
@@ -70,7 +70,7 @@ public:
         return range.location;
     }
 
-    Optional<unsigned> following(unsigned location) const
+    std::optional<unsigned> following(unsigned location) const
     {
         if (location >= static_cast<unsigned long>(CFStringGetLength(m_string.get())))
             return { };

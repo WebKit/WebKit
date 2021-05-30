@@ -36,7 +36,7 @@ template<> struct WrapperTraits<API::WebsiteDataRecord> {
     using WrapperClass = WKWebsiteDataRecord;
 };
 
-static inline Optional<WebsiteDataType> toWebsiteDataType(NSString *websiteDataType)
+static inline std::optional<WebsiteDataType> toWebsiteDataType(NSString *websiteDataType)
 {
     if ([websiteDataType isEqualToString:WKWebsiteDataTypeCookies])
         return WebsiteDataType::Cookies;

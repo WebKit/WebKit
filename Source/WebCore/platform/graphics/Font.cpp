@@ -58,12 +58,12 @@ const float emphasisMarkFontSizeMultiplier = 0.5f;
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Font);
 
-Ref<Font> Font::create(const FontPlatformData& platformData, Origin origin, Interstitial interstitial, Visibility visibility, OrientationFallback orientationFallback, Optional<RenderingResourceIdentifier> identifier)
+Ref<Font> Font::create(const FontPlatformData& platformData, Origin origin, Interstitial interstitial, Visibility visibility, OrientationFallback orientationFallback, std::optional<RenderingResourceIdentifier> identifier)
 {
     return adoptRef(*new Font(platformData, origin, interstitial, visibility, orientationFallback, identifier, nullptr));
 }
 
-Ref<Font> Font::create(const FontPlatformData& platformData, Origin origin, FontCache* fontCacheForVerticalData, Interstitial interstitial, Visibility visibility, OrientationFallback orientationFallback, Optional<RenderingResourceIdentifier> identifier)
+Ref<Font> Font::create(const FontPlatformData& platformData, Origin origin, FontCache* fontCacheForVerticalData, Interstitial interstitial, Visibility visibility, OrientationFallback orientationFallback, std::optional<RenderingResourceIdentifier> identifier)
 {
     return adoptRef(*new Font(platformData, origin, interstitial, visibility, orientationFallback, identifier, fontCacheForVerticalData));
 }
@@ -77,7 +77,7 @@ Ref<Font> Font::create(Ref<SharedBuffer>&& fontFaceData, Font::Origin origin, fl
     return Font::create(CachedFont::platformDataFromCustomData(*customFontData, description, syntheticBold, syntheticItalic, { }, { }), origin, fontCacheForVerticalData);
 }
 
-Font::Font(const FontPlatformData& platformData, Origin origin, Interstitial interstitial, Visibility visibility, OrientationFallback orientationFallback, Optional<RenderingResourceIdentifier> renderingResourceIdentifier, FontCache* fontCacheForVerticalData)
+Font::Font(const FontPlatformData& platformData, Origin origin, Interstitial interstitial, Visibility visibility, OrientationFallback orientationFallback, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier, FontCache* fontCacheForVerticalData)
     : m_platformData(platformData)
     , m_renderingResourceIdentifier(renderingResourceIdentifier)
     , m_origin(origin)
@@ -191,7 +191,7 @@ static bool fillGlyphPage(GlyphPage& pageToFill, UChar* buffer, unsigned bufferL
     return hasGlyphs;
 }
 
-static Optional<size_t> codePointSupportIndex(UChar32 codePoint)
+static std::optional<size_t> codePointSupportIndex(UChar32 codePoint)
 {
     // FIXME: Consider reordering these so the most common ones are at the front.
     // Doing this could cause the BitVector to fit inside inline storage and therefore
@@ -200,7 +200,7 @@ static Optional<size_t> codePointSupportIndex(UChar32 codePoint)
         return codePoint;
     if (codePoint >= 0x7F && codePoint < 0xA0)
         return codePoint - 0x7F + 0x20;
-    Optional<size_t> result;
+    std::optional<size_t> result;
     switch (codePoint) {
     case softHyphen:
         result = 0x41;

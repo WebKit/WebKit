@@ -53,7 +53,7 @@ public:
     const char* read(const char* name) { return ::getenv(name); }
     bool defined(const char* name) { return read(name) != nullptr; }
 
-    template<typename T> Optional<T> readAs(const char* name)
+    template<typename T> std::optional<T> readAs(const char* name)
     {
         if (const char* valueStr = read(name)) {
             T value;
@@ -672,7 +672,7 @@ void CurlHandle::enableConnectionOnly()
     curl_easy_setopt(m_handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
 }
 
-Optional<String> CurlHandle::getProxyUrl()
+std::optional<String> CurlHandle::getProxyUrl()
 {
     auto& proxy = CurlContext::singleton().proxySettings();
     if (proxy.mode() == CurlProxySettings::Mode::Default)
@@ -681,7 +681,7 @@ Optional<String> CurlHandle::getProxyUrl()
     return proxy.url();
 }
 
-Optional<long> CurlHandle::getResponseCode()
+std::optional<long> CurlHandle::getResponseCode()
 {
     if (!m_handle)
         return std::nullopt;
@@ -694,7 +694,7 @@ Optional<long> CurlHandle::getResponseCode()
     return responseCode;
 }
 
-Optional<long> CurlHandle::getHttpConnectCode()
+std::optional<long> CurlHandle::getHttpConnectCode()
 {
     if (!m_handle)
         return std::nullopt;
@@ -707,7 +707,7 @@ Optional<long> CurlHandle::getHttpConnectCode()
     return httpConnectCode;
 }
 
-Optional<long long> CurlHandle::getContentLength()
+std::optional<long long> CurlHandle::getContentLength()
 {
     if (!m_handle)
         return std::nullopt;
@@ -721,7 +721,7 @@ Optional<long long> CurlHandle::getContentLength()
     return static_cast<long long>(contentLength);
 }
 
-Optional<long> CurlHandle::getHttpAuthAvail()
+std::optional<long> CurlHandle::getHttpAuthAvail()
 {
     if (!m_handle)
         return std::nullopt;
@@ -734,7 +734,7 @@ Optional<long> CurlHandle::getHttpAuthAvail()
     return httpAuthAvailable;
 }
 
-Optional<long> CurlHandle::getProxyAuthAvail()
+std::optional<long> CurlHandle::getProxyAuthAvail()
 {
     if (!m_handle)
         return std::nullopt;
@@ -747,7 +747,7 @@ Optional<long> CurlHandle::getProxyAuthAvail()
     return proxyAuthAvailable;
 }
 
-Optional<long> CurlHandle::getHttpVersion()
+std::optional<long> CurlHandle::getHttpVersion()
 {
     if (!m_handle)
         return std::nullopt;
@@ -760,7 +760,7 @@ Optional<long> CurlHandle::getHttpVersion()
     return version;
 }
 
-Optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics(const WTF::Seconds& domainLookupStart)
+std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics(const WTF::Seconds& domainLookupStart)
 {
     double nameLookup = 0.0;
     double connect = 0.0;
@@ -862,7 +862,7 @@ void CurlHandle::addExtraNetworkLoadMetrics(NetworkLoadMetrics& networkLoadMetri
     }
 }
 
-Optional<CertificateInfo> CurlHandle::certificateInfo() const
+std::optional<CertificateInfo> CurlHandle::certificateInfo() const
 {
     if (!m_sslVerifier)
         return std::nullopt;

@@ -131,7 +131,7 @@ bool CDMPrivate::isPersistentType(CDMSessionType sessionType)
     return false;
 }
 
-Optional<CDMKeySystemConfiguration> CDMPrivate::getSupportedConfiguration(const CDMKeySystemConfiguration& candidateConfiguration, CDMRestrictions& restrictions, LocalStorageAccess access)
+std::optional<CDMKeySystemConfiguration> CDMPrivate::getSupportedConfiguration(const CDMKeySystemConfiguration& candidateConfiguration, CDMRestrictions& restrictions, LocalStorageAccess access)
 {
     // https://w3c.github.io/encrypted-media/#get-supported-configuration-and-consent
     // W3C Editor's Draft 09 November 2016
@@ -359,7 +359,7 @@ Optional<CDMKeySystemConfiguration> CDMPrivate::getSupportedConfiguration(const 
     // NOTE: Continued in getConsentStatus().
 }
 
-Optional<Vector<CDMMediaCapability>> CDMPrivate::getSupportedCapabilitiesForAudioVideoType(CDMPrivate::AudioVideoType type, const Vector<CDMMediaCapability>& requestedCapabilities, const CDMKeySystemConfiguration& partialConfiguration, CDMRestrictions& restrictions)
+std::optional<Vector<CDMMediaCapability>> CDMPrivate::getSupportedCapabilitiesForAudioVideoType(CDMPrivate::AudioVideoType type, const Vector<CDMMediaCapability>& requestedCapabilities, const CDMKeySystemConfiguration& partialConfiguration, CDMRestrictions& restrictions)
 {
     // https://w3c.github.io/encrypted-media/#get-supported-capabilities-for-audio-video-type
     // W3C Editor's Draft 09 November 2016
@@ -387,7 +387,7 @@ Optional<Vector<CDMMediaCapability>> CDMPrivate::getSupportedCapabilitiesForAudi
             return std::nullopt;
 
         // 3.4. If content type is an invalid or unrecognized MIME type, continue to the next iteration.
-        Optional<ParsedContentType> contentType = ParsedContentType::create(requestedCapability.contentType, Mode::Rfc2045);
+        std::optional<ParsedContentType> contentType = ParsedContentType::create(requestedCapability.contentType, Mode::Rfc2045);
         if (!contentType)
             continue;
 

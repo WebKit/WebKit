@@ -65,8 +65,8 @@ protected:
     ScrollBehaviorForFixedElements scrollBehaviorForFixedElements() const { return m_behaviorForFixed; }
 
 private:
-    void updateViewportForCurrentScrollPosition(Optional<FloatRect>) override;
-    bool scrollPositionAndLayoutViewportMatch(const FloatPoint& position, Optional<FloatRect> overrideLayoutViewport) override;
+    void updateViewportForCurrentScrollPosition(std::optional<FloatRect>) override;
+    bool scrollPositionAndLayoutViewportMatch(const FloatPoint& position, std::optional<FloatRect> overrideLayoutViewport) override;
     FloatRect layoutViewportForScrollPosition(const FloatPoint&, float scale, ScrollBehaviorForFixedElements = StickToDocumentBounds) const;
 
     void dumpProperties(WTF::TextStream&, ScrollingStateTreeAsTextBehavior) const override;
@@ -74,7 +74,7 @@ private:
     FloatRect m_layoutViewport;
     FloatPoint m_minLayoutViewportOrigin;
     FloatPoint m_maxLayoutViewportOrigin;
-    Optional<FloatSize> m_overrideVisualViewportSize;
+    std::optional<FloatSize> m_overrideVisualViewportSize;
     
     float m_frameScaleFactor { 1 };
     float m_topContentInset { 0 };

@@ -57,7 +57,7 @@ void NavigationActionData::encode(IPC::Encoder& encoder) const
     encoder << privateClickMeasurement;
 }
 
-Optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& decoder)
+std::optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& decoder)
 {
     WebCore::NavigationType navigationType;
     if (!decoder.decode(navigationType))
@@ -75,12 +75,12 @@ Optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& decode
     if (!decoder.decode(syntheticClickType))
         return std::nullopt;
     
-    Optional<uint64_t> userGestureTokenIdentifier;
+    std::optional<uint64_t> userGestureTokenIdentifier;
     decoder >> userGestureTokenIdentifier;
     if (!userGestureTokenIdentifier)
         return std::nullopt;
     
-    Optional<bool> canHandleRequest;
+    std::optional<bool> canHandleRequest;
     decoder >> canHandleRequest;
     if (!canHandleRequest)
         return std::nullopt;
@@ -89,7 +89,7 @@ Optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& decode
     if (!decoder.decode(shouldOpenExternalURLsPolicy))
         return std::nullopt;
     
-    Optional<String> downloadAttribute;
+    std::optional<String> downloadAttribute;
     decoder >> downloadAttribute;
     if (!downloadAttribute)
         return std::nullopt;
@@ -98,37 +98,37 @@ Optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& decode
     if (!decoder.decode(clickLocationInRootViewCoordinates))
         return std::nullopt;
     
-    Optional<bool> isRedirect;
+    std::optional<bool> isRedirect;
     decoder >> isRedirect;
     if (!isRedirect)
         return std::nullopt;
 
-    Optional<bool> treatAsSameOriginNavigation;
+    std::optional<bool> treatAsSameOriginNavigation;
     decoder >> treatAsSameOriginNavigation;
     if (!treatAsSameOriginNavigation)
         return std::nullopt;
 
-    Optional<bool> hasOpenedFrames;
+    std::optional<bool> hasOpenedFrames;
     decoder >> hasOpenedFrames;
     if (!hasOpenedFrames)
         return std::nullopt;
 
-    Optional<bool> openedByDOMWithOpener;
+    std::optional<bool> openedByDOMWithOpener;
     decoder >> openedByDOMWithOpener;
     if (!openedByDOMWithOpener)
         return std::nullopt;
 
-    Optional<WebCore::SecurityOriginData> requesterOrigin;
+    std::optional<WebCore::SecurityOriginData> requesterOrigin;
     decoder >> requesterOrigin;
     if (!requesterOrigin)
         return std::nullopt;
 
-    Optional<Optional<WebCore::BackForwardItemIdentifier>> targetBackForwardItemIdentifier;
+    std::optional<std::optional<WebCore::BackForwardItemIdentifier>> targetBackForwardItemIdentifier;
     decoder >> targetBackForwardItemIdentifier;
     if (!targetBackForwardItemIdentifier)
         return std::nullopt;
 
-    Optional<Optional<WebCore::BackForwardItemIdentifier>> sourceBackForwardItemIdentifier;
+    std::optional<std::optional<WebCore::BackForwardItemIdentifier>> sourceBackForwardItemIdentifier;
     decoder >> sourceBackForwardItemIdentifier;
     if (!sourceBackForwardItemIdentifier)
         return std::nullopt;
@@ -141,12 +141,12 @@ Optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& decode
     if (!decoder.decode(lockBackForwardList))
         return std::nullopt;
 
-    Optional<String> clientRedirectSourceForHistory;
+    std::optional<String> clientRedirectSourceForHistory;
     decoder >> clientRedirectSourceForHistory;
     if (!clientRedirectSourceForHistory)
         return std::nullopt;
 
-    Optional<Optional<WebCore::PrivateClickMeasurement>> privateClickMeasurement;
+    std::optional<std::optional<WebCore::PrivateClickMeasurement>> privateClickMeasurement;
     decoder >> privateClickMeasurement;
     if (!privateClickMeasurement)
         return std::nullopt;

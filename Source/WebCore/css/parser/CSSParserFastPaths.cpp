@@ -251,7 +251,7 @@ static int parseDouble(const CharacterType* string, const CharacterType* end, co
 }
 
 template <typename CharacterType>
-static Optional<uint8_t> parseColorIntOrPercentage(const CharacterType*& string, const CharacterType* end, const char terminator, CSSUnitType& expect)
+static std::optional<uint8_t> parseColorIntOrPercentage(const CharacterType*& string, const CharacterType* end, const char terminator, CSSUnitType& expect)
 {
     const CharacterType* current = string;
     double localValue = 0;
@@ -334,7 +334,7 @@ static inline bool isTenthAlpha(const CharacterType* string, const int length)
 }
 
 template <typename CharacterType>
-static inline Optional<uint8_t> parseAlphaValue(const CharacterType*& string, const CharacterType* end, const char terminator)
+static inline std::optional<uint8_t> parseAlphaValue(const CharacterType*& string, const CharacterType* end, const char terminator)
 {
     while (string != end && isHTMLSpace<CharacterType>(*string))
         string++;
@@ -405,7 +405,7 @@ static inline bool mightBeRGB(const CharacterType* characters, unsigned length)
         && isASCIIAlphaCaselessEqual(characters[2], 'b');
 }
 
-static Optional<SRGBA<uint8_t>> finishParsingHexColor(uint32_t value, unsigned length)
+static std::optional<SRGBA<uint8_t>> finishParsingHexColor(uint32_t value, unsigned length)
 {
     switch (length) {
     case 3:
@@ -436,7 +436,7 @@ static Optional<SRGBA<uint8_t>> finishParsingHexColor(uint32_t value, unsigned l
     return std::nullopt;
 }
 
-template<typename CharacterType> static Optional<SRGBA<uint8_t>> parseHexColorInternal(const CharacterType* characters, unsigned length)
+template<typename CharacterType> static std::optional<SRGBA<uint8_t>> parseHexColorInternal(const CharacterType* characters, unsigned length)
 {
     if (length != 3 && length != 4 && length != 6 && length != 8)
         return std::nullopt;
@@ -451,7 +451,7 @@ template<typename CharacterType> static Optional<SRGBA<uint8_t>> parseHexColorIn
     return finishParsingHexColor(value, length);
 }
 
-template<typename CharacterType> static Optional<SRGBA<uint8_t>> parseNumericColor(const CharacterType* characters, unsigned length, bool strict)
+template<typename CharacterType> static std::optional<SRGBA<uint8_t>> parseNumericColor(const CharacterType* characters, unsigned length, bool strict)
 {
     if (length >= 4 && characters[0] == '#') {
         if (auto hexColor = parseHexColorInternal(characters + 1, length - 1))
@@ -507,7 +507,7 @@ template<typename CharacterType> static Optional<SRGBA<uint8_t>> parseNumericCol
     return std::nullopt;
 }
 
-static Optional<SRGBA<uint8_t>> parseNumericColor(StringView string, const CSSParserContext& context)
+static std::optional<SRGBA<uint8_t>> parseNumericColor(StringView string, const CSSParserContext& context)
 {
     bool strict = !isQuirksModeBehavior(context.mode);
     if (string.is8Bit())
@@ -529,7 +529,7 @@ static RefPtr<CSSValue> parseColor(StringView string, const CSSParserContext& co
     return nullptr;
 }
 
-static Optional<SRGBA<uint8_t>> finishParsingNamedColor(char* buffer, unsigned length)
+static std::optional<SRGBA<uint8_t>> finishParsingNamedColor(char* buffer, unsigned length)
 {
     buffer[length] = '\0';
     auto namedColor = findColor(buffer, length);
@@ -538,7 +538,7 @@ static Optional<SRGBA<uint8_t>> finishParsingNamedColor(char* buffer, unsigned l
     return asSRGBA(PackedColor::ARGB { namedColor->ARGBValue });
 }
 
-template<typename CharacterType> static Optional<SRGBA<uint8_t>> parseNamedColorInternal(const CharacterType* characters, unsigned length)
+template<typename CharacterType> static std::optional<SRGBA<uint8_t>> parseNamedColorInternal(const CharacterType* characters, unsigned length)
 {
     char buffer[64]; // Easily big enough for the longest color name.
     if (length > sizeof(buffer) - 1)
@@ -552,28 +552,28 @@ template<typename CharacterType> static Optional<SRGBA<uint8_t>> parseNamedColor
     return finishParsingNamedColor(buffer, length);
 }
 
-template<typename CharacterType> static Optional<SRGBA<uint8_t>> parseSimpleColorInternal(const CharacterType* characters, unsigned length, bool strict)
+template<typename CharacterType> static std::optional<SRGBA<uint8_t>> parseSimpleColorInternal(const CharacterType* characters, unsigned length, bool strict)
 {
     if (auto color = parseNumericColor(characters, length, strict))
         return color;
     return parseNamedColorInternal(characters, length);
 }
 
-Optional<SRGBA<uint8_t>> CSSParserFastPaths::parseSimpleColor(StringView string, bool strict)
+std::optional<SRGBA<uint8_t>> CSSParserFastPaths::parseSimpleColor(StringView string, bool strict)
 {
     if (string.is8Bit())
         return parseSimpleColorInternal(string.characters8(), string.length(), strict);
     return parseSimpleColorInternal(string.characters16(), string.length(), strict);
 }
 
-Optional<SRGBA<uint8_t>> CSSParserFastPaths::parseHexColor(StringView string)
+std::optional<SRGBA<uint8_t>> CSSParserFastPaths::parseHexColor(StringView string)
 {
     if (string.is8Bit())
         return parseHexColorInternal(string.characters8(), string.length());
     return parseHexColorInternal(string.characters16(), string.length());
 }
 
-Optional<SRGBA<uint8_t>> CSSParserFastPaths::parseNamedColor(StringView string)
+std::optional<SRGBA<uint8_t>> CSSParserFastPaths::parseNamedColor(StringView string)
 {
     if (string.is8Bit())
         return parseNamedColorInternal(string.characters8(), string.length());

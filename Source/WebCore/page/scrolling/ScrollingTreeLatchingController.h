@@ -50,11 +50,11 @@ public:
 
     void receivedWheelEvent(const PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>, bool allowLatching);
 
-    Optional<ScrollingNodeAndProcessingSteps> latchingDataForEvent(const PlatformWheelEvent&, bool allowLatching) const;
+    std::optional<ScrollingNodeAndProcessingSteps> latchingDataForEvent(const PlatformWheelEvent&, bool allowLatching) const;
     void nodeDidHandleEvent(ScrollingNodeID, OptionSet<WheelEventProcessingSteps>, const PlatformWheelEvent&, bool allowLatching);
 
-    Optional<ScrollingNodeID> latchedNodeID() const;
-    Optional<ScrollingNodeAndProcessingSteps> latchedNodeAndSteps() const;
+    std::optional<ScrollingNodeID> latchedNodeID() const;
+    std::optional<ScrollingNodeAndProcessingSteps> latchedNodeAndSteps() const;
 
     void nodeWasRemoved(ScrollingNodeID);
     void clearLatchedNode();
@@ -63,8 +63,8 @@ private:
     bool latchedNodeIsRelevant() const;
 
     mutable Lock m_latchedNodeLock;
-    Optional<ScrollingNodeAndProcessingSteps> m_latchedNodeAndSteps WTF_GUARDED_BY_LOCK(m_latchedNodeLock);
-    Optional<OptionSet<WheelEventProcessingSteps>> m_processingStepsForCurrentGesture;
+    std::optional<ScrollingNodeAndProcessingSteps> m_latchedNodeAndSteps WTF_GUARDED_BY_LOCK(m_latchedNodeLock);
+    std::optional<OptionSet<WheelEventProcessingSteps>> m_processingStepsForCurrentGesture;
     MonotonicTime m_lastLatchedNodeInterationTime;
 };
 

@@ -105,7 +105,7 @@ using CocoaDragOperation = uint64_t;
 
 OptionSet<WebCore::DragOperation> coreDragOperationMask(CocoaDragOperation);
 
-WebDragSourceAction kit(Optional<WebCore::DragSourceAction>);
+WebDragSourceAction kit(std::optional<WebCore::DragSourceAction>);
 #endif // ENABLE(DRAG_SUPPORT)
 
 WebCore::FindOptions coreOptions(WebFindOptions);

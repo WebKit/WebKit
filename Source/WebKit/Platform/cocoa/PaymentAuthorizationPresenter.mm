@@ -198,7 +198,7 @@ void PaymentAuthorizationPresenter::completeMerchantValidation(const WebCore::Pa
     [platformDelegate() completeMerchantValidation:merchantSession.pkPaymentMerchantSession() error:nil];
 }
 
-void PaymentAuthorizationPresenter::completePaymentMethodSelection(Optional<WebCore::ApplePayPaymentMethodUpdate>&& update)
+void PaymentAuthorizationPresenter::completePaymentMethodSelection(std::optional<WebCore::ApplePayPaymentMethodUpdate>&& update)
 {
     ASSERT(platformDelegate());
     if (!update) {
@@ -216,7 +216,7 @@ void PaymentAuthorizationPresenter::completePaymentMethodSelection(Optional<WebC
     [platformDelegate() completePaymentMethodSelection:paymentMethodUpdate.get()];
 }
 
-void PaymentAuthorizationPresenter::completePaymentSession(const Optional<WebCore::PaymentAuthorizationResult>& result)
+void PaymentAuthorizationPresenter::completePaymentSession(const std::optional<WebCore::PaymentAuthorizationResult>& result)
 {
     ASSERT(platformDelegate());
     auto status = result ? toPKPaymentAuthorizationStatus(result->status) : PKPaymentAuthorizationStatusSuccess;
@@ -224,7 +224,7 @@ void PaymentAuthorizationPresenter::completePaymentSession(const Optional<WebCor
     [platformDelegate() completePaymentSession:status errors:errors.get()];
 }
 
-void PaymentAuthorizationPresenter::completeShippingContactSelection(Optional<WebCore::ApplePayShippingContactUpdate>&& update)
+void PaymentAuthorizationPresenter::completeShippingContactSelection(std::optional<WebCore::ApplePayShippingContactUpdate>&& update)
 {
     ASSERT(platformDelegate());
     if (!update) {
@@ -241,7 +241,7 @@ void PaymentAuthorizationPresenter::completeShippingContactSelection(Optional<We
     [platformDelegate() completeShippingContactSelection:shippingContactUpdate.get()];
 }
 
-void PaymentAuthorizationPresenter::completeShippingMethodSelection(Optional<WebCore::ApplePayShippingMethodUpdate>&& update)
+void PaymentAuthorizationPresenter::completeShippingMethodSelection(std::optional<WebCore::ApplePayShippingMethodUpdate>&& update)
 {
     ASSERT(platformDelegate());
     if (!update) {
@@ -258,7 +258,7 @@ void PaymentAuthorizationPresenter::completeShippingMethodSelection(Optional<Web
 
 #if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
 
-void PaymentAuthorizationPresenter::completePaymentMethodModeChange(Optional<WebCore::ApplePayPaymentMethodModeUpdate>&& update)
+void PaymentAuthorizationPresenter::completePaymentMethodModeChange(std::optional<WebCore::ApplePayPaymentMethodModeUpdate>&& update)
 {
     ASSERT(platformDelegate());
     if (!update) {

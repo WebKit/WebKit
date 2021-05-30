@@ -31,7 +31,7 @@
 namespace WebCore {
 
 struct ImageDataSettings {
-    Optional<PredefinedColorSpace> colorSpace;
+    std::optional<PredefinedColorSpace> colorSpace;
 };
 
 } // namespace WebCore

@@ -48,7 +48,7 @@ template<typename CollectionType> void sortByFirst(CollectionType&);
 template<typename CollectionType> void stableSortByFirst(CollectionType&);
 template<typename CollectionType> bool isSortedByFirst(const CollectionType&);
 template<typename CollectionType> bool sortedFirstsAreUnique(const CollectionType&);
-template<typename CollectionType, typename KeyType> static auto findFirstInSortedPairs(const CollectionType& collection, const KeyType&) -> Optional<decltype(std::begin(collection)->second)>;
+template<typename CollectionType, typename KeyType> static auto findFirstInSortedPairs(const CollectionType& collection, const KeyType&) -> std::optional<decltype(std::begin(collection)->second)>;
 template<typename CollectionType, typename KeyType> static auto findInSortedPairs(const CollectionType& collection, const KeyType&) -> std::pair<decltype(std::begin(collection)), decltype(std::begin(collection))>;
 
 #if !ASSERT_ENABLED
@@ -112,7 +112,7 @@ template<typename CollectionType> bool sortedFirstsAreUnique(const CollectionTyp
     return std::adjacent_find(std::begin(collection), std::end(collection), EqualFirst { }) == std::end(collection);
 }
 
-template<typename CollectionType, typename KeyType> static auto findFirstInSortedPairs(const CollectionType& collection, const KeyType& key) -> Optional<decltype(std::begin(collection)->second)>
+template<typename CollectionType, typename KeyType> static auto findFirstInSortedPairs(const CollectionType& collection, const KeyType& key) -> std::optional<decltype(std::begin(collection)->second)>
 {
     if constexpr (std::is_integral_v<KeyType>) {
         if (key != decltype(std::begin(collection)->first)(key))

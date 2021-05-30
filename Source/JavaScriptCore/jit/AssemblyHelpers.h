@@ -564,7 +564,7 @@ public:
     }
 
     // dest = base + index << shift.
-    void shiftAndAdd(RegisterID base, RegisterID index, uint8_t shift, RegisterID dest, Optional<RegisterID> optionalScratch = { })
+    void shiftAndAdd(RegisterID base, RegisterID index, uint8_t shift, RegisterID dest, std::optional<RegisterID> optionalScratch = { })
     {
         ASSERT(shift < 32);
         if (shift <= 3) {
@@ -637,7 +637,7 @@ public:
 
 #if CPU(ARM64)
     // dest = base + index << shift.
-    void shiftAndAdd(RegisterID base, RegisterID index, uint8_t shift, RegisterID dest, Optional<RegisterID> = { })
+    void shiftAndAdd(RegisterID base, RegisterID index, uint8_t shift, RegisterID dest, std::optional<RegisterID> = { })
     {
         ASSERT(shift < 32);
         ASSERT(base != index);

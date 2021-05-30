@@ -76,7 +76,7 @@ static void indicesOfNearestSnapOffsets(LayoutType offset, const Vector<SnapOffs
 }
 
 template <typename LayoutType>
-static Optional<unsigned> findFirstSnapStopOffsetBetweenOriginAndDestination(const Vector<SnapOffset<LayoutType>>& snapOffsets, LayoutType scrollOriginOffset, LayoutType scrollDestinationOffset)
+static std::optional<unsigned> findFirstSnapStopOffsetBetweenOriginAndDestination(const Vector<SnapOffset<LayoutType>>& snapOffsets, LayoutType scrollOriginOffset, LayoutType scrollDestinationOffset)
 {
     LayoutType difference = scrollDestinationOffset - scrollOriginOffset;
     if (!difference)

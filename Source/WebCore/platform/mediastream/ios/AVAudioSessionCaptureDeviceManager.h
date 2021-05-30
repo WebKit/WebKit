@@ -49,9 +49,9 @@ public:
     const Vector<CaptureDevice>& captureDevices() final;
     void computeCaptureDevices(CompletionHandler<void()>&&) final;
     const Vector<CaptureDevice>& speakerDevices() const { return m_speakerDevices; }
-    Optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
+    std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
 
-    Optional<AVAudioSessionCaptureDevice> audioSessionDeviceWithUID(const String&);
+    std::optional<AVAudioSessionCaptureDevice> audioSessionDeviceWithUID(const String&);
     
     void scheduleUpdateCaptureDevices();
 
@@ -70,9 +70,9 @@ private:
 
     enum class AudioSessionState { NotNeeded, Inactive, Active };
 
-    Optional<Vector<CaptureDevice>> m_devices;
+    std::optional<Vector<CaptureDevice>> m_devices;
     Vector<CaptureDevice> m_speakerDevices;
-    Optional<Vector<AVAudioSessionCaptureDevice>> m_audioSessionCaptureDevices;
+    std::optional<Vector<AVAudioSessionCaptureDevice>> m_audioSessionCaptureDevices;
     RetainPtr<WebAVAudioSessionAvailableInputsListener> m_listener;
     RetainPtr<AVAudioSession> m_audioSession;
     GenericTaskQueue<Timer> m_updateDeviceStateQueue;

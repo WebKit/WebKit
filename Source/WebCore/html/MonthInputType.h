@@ -52,8 +52,8 @@ private:
     Decimal parseToNumber(const String&, const Decimal&) const override;
     Decimal defaultValueForStepUp() const override;
     StepRange createStepRange(AnyStepHandling) const override;
-    Optional<DateComponents> parseToDateComponents(const StringView&) const override;
-    Optional<DateComponents> setMillisecondToDateComponents(double) const override;
+    std::optional<DateComponents> parseToDateComponents(const StringView&) const override;
+    std::optional<DateComponents> setMillisecondToDateComponents(double) const override;
     void handleDOMActivateEvent(Event&) override;
 
     bool isValidFormat(OptionSet<DateTimeFormatValidationResults>) const final;

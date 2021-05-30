@@ -40,8 +40,8 @@ struct ApplePayPayment {
     };
 
     Token token;
-    Optional<ApplePayPaymentContact> billingContact;
-    Optional<ApplePayPaymentContact> shippingContact;
+    std::optional<ApplePayPaymentContact> billingContact;
+    std::optional<ApplePayPaymentContact> shippingContact;
     String installmentAuthorizationToken;
 };
 

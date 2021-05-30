@@ -422,7 +422,7 @@ template<> struct IntegerToStringConversionTrait<String> {
 #ifdef __OBJC__
 
 WTF_EXPORT_PRIVATE RetainPtr<id> makeNSArrayElement(const String&);
-WTF_EXPORT_PRIVATE Optional<String> makeVectorElement(const String*, id);
+WTF_EXPORT_PRIVATE std::optional<String> makeVectorElement(const String*, id);
 
 #endif
 

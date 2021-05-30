@@ -596,7 +596,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     return platformData;
 }
 
-Optional<ASCIILiteral> FontCache::platformAlternateFamilyName(const String&)
+std::optional<ASCIILiteral> FontCache::platformAlternateFamilyName(const String&)
 {
     return std::nullopt;
 }

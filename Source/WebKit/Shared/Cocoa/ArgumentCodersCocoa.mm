@@ -255,7 +255,7 @@ static void encodeArrayInternal(Encoder& encoder, NSArray *array)
     }
 }
 
-static Optional<RetainPtr<id>> decodeArrayInternal(Decoder& decoder, NSArray<Class> *allowedClasses)
+static std::optional<RetainPtr<id>> decodeArrayInternal(Decoder& decoder, NSArray<Class> *allowedClasses)
 {
     uint64_t size;
     if (!decoder.decode(size))
@@ -280,7 +280,7 @@ static inline void encodeColorInternal(Encoder& encoder, NSColor *color)
     encoder << colorFromNSColor(color);
 }
 
-static inline Optional<RetainPtr<id>> decodeColorInternal(Decoder& decoder)
+static inline std::optional<RetainPtr<id>> decodeColorInternal(Decoder& decoder)
 {
     Color color;
     if (!decoder.decode(color))
@@ -293,7 +293,7 @@ static inline void encodeColorInternal(Encoder& encoder, UIColor *color)
     encoder << colorFromUIColor(color);
 }
 
-static inline Optional<RetainPtr<id>> decodeColorInternal(Decoder& decoder)
+static inline std::optional<RetainPtr<id>> decodeColorInternal(Decoder& decoder)
 {
     Color color;
     if (!decoder.decode(color))
@@ -309,7 +309,7 @@ static inline void encodeDataInternal(Encoder& encoder, NSData *data)
     encoder << (__bridge CFDataRef)data;
 }
 
-static inline Optional<RetainPtr<id>> decodeDataInternal(Decoder& decoder)
+static inline std::optional<RetainPtr<id>> decodeDataInternal(Decoder& decoder)
 {
     RetainPtr<CFDataRef> data;
     if (!decoder.decode(data))
@@ -324,7 +324,7 @@ static inline void encodeDateInternal(Encoder& encoder, NSDate *date)
     encoder << (__bridge CFDateRef)date;
 }
 
-static inline Optional<RetainPtr<id>> decodeDateInternal(Decoder& decoder)
+static inline std::optional<RetainPtr<id>> decodeDateInternal(Decoder& decoder)
 {
     RetainPtr<CFDateRef> date;
     if (!decoder.decode(date))
@@ -366,7 +366,7 @@ static void encodeDictionaryInternal(Encoder& encoder, NSDictionary *dictionary)
     }
 }
 
-static Optional<RetainPtr<id>> decodeDictionaryInternal(Decoder& decoder, NSArray<Class> *allowedClasses)
+static std::optional<RetainPtr<id>> decodeDictionaryInternal(Decoder& decoder, NSArray<Class> *allowedClasses)
 {
     uint64_t size;
     if (!decoder.decode(size))
@@ -395,7 +395,7 @@ static inline void encodeFontInternal(Encoder& encoder, CocoaFont *font)
     encode(encoder, font.fontDescriptor.fontAttributes);
 }
 
-static Optional<RetainPtr<id>> decodeFontInternal(Decoder& decoder)
+static std::optional<RetainPtr<id>> decodeFontInternal(Decoder& decoder)
 {
     RetainPtr<NSDictionary> fontAttributes;
     if (!decode(decoder, fontAttributes))
@@ -417,7 +417,7 @@ static inline void encodeNumberInternal(Encoder& encoder, NSNumber *number)
     encoder << (__bridge CFNumberRef)number;
 }
 
-static inline Optional<RetainPtr<id>> decodeNumberInternal(Decoder& decoder)
+static inline std::optional<RetainPtr<id>> decodeNumberInternal(Decoder& decoder)
 {
     RetainPtr<CFNumberRef> number;
     if (!decoder.decode(number))
@@ -441,7 +441,7 @@ static void encodeSecureCodingInternal(Encoder& encoder, id <NSObject, NSSecureC
     encoder << (__bridge CFDataRef)[archiver encodedData];
 }
 
-static Optional<RetainPtr<id>> decodeSecureCodingInternal(Decoder& decoder, NSArray<Class> *allowedClasses)
+static std::optional<RetainPtr<id>> decodeSecureCodingInternal(Decoder& decoder, NSArray<Class> *allowedClasses)
 {
     ASSERT(allowedClasses && allowedClasses.count);
     if (!allowedClasses || !allowedClasses.count)
@@ -480,7 +480,7 @@ static inline void encodeStringInternal(Encoder& encoder, NSString *string)
     encoder << (__bridge CFStringRef)string;
 }
 
-static inline Optional<RetainPtr<id>> decodeStringInternal(Decoder& decoder)
+static inline std::optional<RetainPtr<id>> decodeStringInternal(Decoder& decoder)
 {
     RetainPtr<CFStringRef> string;
     if (!decoder.decode(string))
@@ -495,7 +495,7 @@ static inline void encodeURLInternal(Encoder& encoder, NSURL *URL)
     encoder << (__bridge CFURLRef)URL;
 }
 
-static inline Optional<RetainPtr<id>> decodeURLInternal(Decoder& decoder)
+static inline std::optional<RetainPtr<id>> decodeURLInternal(Decoder& decoder)
 {
     RetainPtr<CFURLRef> URL;
     if (!decoder.decode(URL))
@@ -552,7 +552,7 @@ void encodeObject(Encoder& encoder, id object)
     ASSERT_NOT_REACHED();
 }
 
-Optional<RetainPtr<id>> decodeObject(Decoder& decoder, NSArray<Class> *allowedClasses)
+std::optional<RetainPtr<id>> decodeObject(Decoder& decoder, NSArray<Class> *allowedClasses)
 {
     bool isNull;
     if (!decoder.decode(isNull))

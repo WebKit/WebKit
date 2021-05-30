@@ -80,8 +80,8 @@ private:
     ScrollExtentsCallback m_scrollExtentsFunction;
     NotifyPositionChangedCallback m_notifyPositionChangedFunction;
 
-    Optional<PerAxisData> m_horizontalData;
-    Optional<PerAxisData> m_verticalData;
+    std::optional<PerAxisData> m_horizontalData;
+    std::optional<PerAxisData> m_verticalData;
 
     MonotonicTime m_startTime;
     RunLoop::Timer<ScrollAnimationKinetic> m_animationTimer;

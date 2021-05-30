@@ -53,7 +53,7 @@ static inline void logError(gcry_error_t error)
 #endif
 }
 
-static inline Optional<int> aesAlgorithmForKeySize(size_t keySize)
+static inline std::optional<int> aesAlgorithmForKeySize(size_t keySize)
 {
     switch (keySize) {
     case 128:

@@ -75,7 +75,7 @@ bool ResourceSemantic::isAcceptableType(const UnnamedType& unnamedType, const In
     }
 }
 
-bool ResourceSemantic::isAcceptableForShaderItemDirection(ShaderItemDirection direction, const Optional<EntryPointType>&) const
+bool ResourceSemantic::isAcceptableForShaderItemDirection(ShaderItemDirection direction, const std::optional<EntryPointType>&) const
 {
     return direction == ShaderItemDirection::Input;
 }

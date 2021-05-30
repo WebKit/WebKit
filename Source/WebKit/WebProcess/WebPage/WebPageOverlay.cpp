@@ -109,7 +109,7 @@ void WebPageOverlay::didScrollFrame(PageOverlay&, Frame& frame)
 }
 
 #if PLATFORM(MAC)
-auto WebPageOverlay::actionContextForResultAtPoint(FloatPoint location) -> Optional<ActionContext>
+auto WebPageOverlay::actionContextForResultAtPoint(FloatPoint location) -> std::optional<ActionContext>
 {
     return m_client->actionContextForResultAtPoint(*this, location);
 }

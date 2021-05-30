@@ -174,7 +174,7 @@ bool setAllowsMaterializingDatalessFiles(bool allow, PolicyScope scope)
 #endif
 }
 
-Optional<bool> allowsMaterializingDatalessFiles(PolicyScope scope)
+std::optional<bool> allowsMaterializingDatalessFiles(PolicyScope scope)
 {
 #ifdef IOPOL_TYPE_VFS_MATERIALIZE_DATALESS_FILES
     int ret = getiopolicy_np(IOPOL_TYPE_VFS_MATERIALIZE_DATALESS_FILES, toIOPolicyScope(scope));

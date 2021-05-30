@@ -74,7 +74,7 @@ public:
     bool isAlwaysOnLoggingAllowed() const { return !isEphemeral(); }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<SessionID> decode(Decoder&);
+    template<class Decoder> static std::optional<SessionID> decode(Decoder&);
 
     SessionID isolatedCopy() const { return *this; }
 
@@ -94,9 +94,9 @@ void SessionID::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<SessionID> SessionID::decode(Decoder& decoder)
+std::optional<SessionID> SessionID::decode(Decoder& decoder)
 {
-    Optional<uint64_t> sessionID;
+    std::optional<uint64_t> sessionID;
     decoder >> sessionID;
     if (!sessionID || !isValidSessionIDValue(*sessionID))
         return std::nullopt;

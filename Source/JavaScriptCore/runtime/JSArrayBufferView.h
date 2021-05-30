@@ -192,7 +192,7 @@ public:
     void* vector() const { return m_vector.getMayBeNull(length()); }
     
     inline unsigned byteOffset();
-    inline Optional<unsigned> byteOffsetConcurrently();
+    inline std::optional<unsigned> byteOffsetConcurrently();
 
     unsigned length() const { return m_length; }
     unsigned byteLength() const;

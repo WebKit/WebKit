@@ -36,7 +36,7 @@ IGNORE_RETURN_TYPE_WARNINGS_BEGIN
 
 namespace JSC { namespace B3 {
 
-Optional<Opcode> invertedCompare(Opcode opcode, Type type)
+std::optional<Opcode> invertedCompare(Opcode opcode, Type type)
 {
     switch (opcode) {
     case Equal:

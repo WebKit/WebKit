@@ -95,7 +95,7 @@ public:
     // TimelineBackendDispatcherHandler
     Inspector::Protocol::ErrorStringOr<void> enable();
     Inspector::Protocol::ErrorStringOr<void> disable();
-    Inspector::Protocol::ErrorStringOr<void> start(Optional<int>&& maxCallStackDepth);
+    Inspector::Protocol::ErrorStringOr<void> start(std::optional<int>&& maxCallStackDepth);
     Inspector::Protocol::ErrorStringOr<void> stop();
     Inspector::Protocol::ErrorStringOr<void> setAutoCaptureEnabled(bool);
     Inspector::Protocol::ErrorStringOr<void> setInstruments(Ref<JSON::Array>&&);
@@ -172,7 +172,7 @@ private:
         TimelineRecordType type;
     };
 
-    void internalStart(Optional<int>&& maxCallStackDepth);
+    void internalStart(std::optional<int>&& maxCallStackDepth);
     void internalStop();
     double timestamp();
 

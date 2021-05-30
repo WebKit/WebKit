@@ -83,8 +83,8 @@ class PeerConnectionBackend
 public:
     WEBCORE_EXPORT static CreatePeerConnectionBackend create;
 
-    static Optional<RTCRtpCapabilities> receiverCapabilities(ScriptExecutionContext&, const String& kind);
-    static Optional<RTCRtpCapabilities> senderCapabilities(ScriptExecutionContext&, const String& kind);
+    static std::optional<RTCRtpCapabilities> receiverCapabilities(ScriptExecutionContext&, const String& kind);
+    static std::optional<RTCRtpCapabilities> senderCapabilities(ScriptExecutionContext&, const String& kind);
 
     explicit PeerConnectionBackend(RTCPeerConnection&);
     virtual ~PeerConnectionBackend();
@@ -168,9 +168,9 @@ public:
         }
 
         Type type;
-        Optional<double> expires;
+        std::optional<double> expires;
 
-        Optional<RSA> rsaParameters;
+        std::optional<RSA> rsaParameters;
     };
     static void generateCertificate(Document&, const CertificateInformation&, DOMPromiseDeferred<IDLInterface<RTCCertificate>>&&);
 

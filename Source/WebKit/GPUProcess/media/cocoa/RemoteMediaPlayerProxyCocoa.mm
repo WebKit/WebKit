@@ -49,7 +49,7 @@ static void setVideoInlineSizeIfPossible(LayerHostingContext& context, const Web
     [CATransaction commit];
 }
 
-void RemoteMediaPlayerProxy::prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, float videoContentScale, WebCore::DynamicRangeMode preferredDynamicRangeMode, CompletionHandler<void(Optional<LayerHostingContextID>&& inlineLayerHostingContextId)>&& completionHandler)
+void RemoteMediaPlayerProxy::prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload preload, bool preservesPitch, bool prepareForRendering, float videoContentScale, WebCore::DynamicRangeMode preferredDynamicRangeMode, CompletionHandler<void(std::optional<LayerHostingContextID>&& inlineLayerHostingContextId)>&& completionHandler)
 {
     m_player->setPrivateBrowsingMode(privateMode);
     m_player->setPreload(preload);
@@ -79,7 +79,7 @@ void RemoteMediaPlayerProxy::setVideoInlineSizeFenced(const WebCore::FloatSize& 
     setVideoInlineSizeIfPossible(*m_inlineLayerHostingContext, size);
 }
 
-void RemoteMediaPlayerProxy::nativeImageForCurrentTime(CompletionHandler<void(Optional<WTF::MachSendRight>&&)>&& completionHandler)
+void RemoteMediaPlayerProxy::nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&)>&& completionHandler)
 {
     if (!m_player) {
         completionHandler(std::nullopt);
@@ -107,7 +107,7 @@ void RemoteMediaPlayerProxy::nativeImageForCurrentTime(CompletionHandler<void(Op
     completionHandler(surface->createSendRight());
 }
 
-void RemoteMediaPlayerProxy::pixelBufferForCurrentTime(CompletionHandler<void(Optional<WTF::MachSendRight>&&)>&& completionHandler)
+void RemoteMediaPlayerProxy::pixelBufferForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&)>&& completionHandler)
 {
 #if !USE(AVFOUNDATION)
     completionHandler(std::nullopt);

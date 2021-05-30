@@ -38,15 +38,15 @@ namespace WebCore {
 struct PublicKeyCredentialRequestOptions {
 #if ENABLE(WEB_AUTHN)
     BufferSource challenge;
-    Optional<unsigned> timeout;
+    std::optional<unsigned> timeout;
     mutable String rpId;
     Vector<PublicKeyCredentialDescriptor> allowCredentials;
     UserVerificationRequirement userVerification { UserVerificationRequirement::Preferred };
-    Optional<AuthenticatorAttachment> authenticatorAttachment;
-    mutable Optional<AuthenticationExtensionsClientInputs> extensions;
+    std::optional<AuthenticatorAttachment> authenticatorAttachment;
+    mutable std::optional<AuthenticationExtensionsClientInputs> extensions;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<PublicKeyCredentialRequestOptions> decode(Decoder&);
+    template<class Decoder> static std::optional<PublicKeyCredentialRequestOptions> decode(Decoder&);
 #endif // ENABLE(WEB_AUTHN)
 };
 
@@ -59,11 +59,11 @@ void PublicKeyCredentialRequestOptions::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<PublicKeyCredentialRequestOptions> PublicKeyCredentialRequestOptions::decode(Decoder& decoder)
+std::optional<PublicKeyCredentialRequestOptions> PublicKeyCredentialRequestOptions::decode(Decoder& decoder)
 {
     PublicKeyCredentialRequestOptions result;
 
-    Optional<Optional<unsigned>> timeout;
+    std::optional<std::optional<unsigned>> timeout;
     decoder >> timeout;
     if (!timeout)
         return std::nullopt;
@@ -74,13 +74,13 @@ Optional<PublicKeyCredentialRequestOptions> PublicKeyCredentialRequestOptions::d
     if (!decoder.decode(result.allowCredentials))
         return std::nullopt;
 
-    Optional<UserVerificationRequirement> userVerification;
+    std::optional<UserVerificationRequirement> userVerification;
     decoder >> userVerification;
     if (!userVerification)
         return std::nullopt;
     result.userVerification = WTFMove(*userVerification);
 
-    Optional<Optional<AuthenticationExtensionsClientInputs>> extensions;
+    std::optional<std::optional<AuthenticationExtensionsClientInputs>> extensions;
     decoder >> extensions;
     if (!extensions)
         return std::nullopt;

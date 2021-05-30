@@ -32,7 +32,7 @@
 
 namespace JSC { namespace Yarr {
 
-Optional<OptionSet<Flags>> parseFlags(StringView string)
+std::optional<OptionSet<Flags>> parseFlags(StringView string)
 {
     OptionSet<Flags> flags;
     for (auto character : string.codeUnits()) {

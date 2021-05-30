@@ -40,7 +40,7 @@ namespace WebCore {
 // We should switch to the libgcrypt-provided implementation once it's available.
 // https://bugs.webkit.org/show_bug.cgi?id=171536
 
-static Optional<Vector<uint8_t>> gcryptDeriveBits(const Vector<uint8_t>& key, const Vector<uint8_t>& salt, const Vector<uint8_t>& info, size_t lengthInBytes, CryptoAlgorithmIdentifier identifier)
+static std::optional<Vector<uint8_t>> gcryptDeriveBits(const Vector<uint8_t>& key, const Vector<uint8_t>& salt, const Vector<uint8_t>& info, size_t lengthInBytes, CryptoAlgorithmIdentifier identifier)
 {
     // libgcrypt doesn't provide HKDF support, so we have to implement
     // the functionality ourselves as specified in RFC5869.

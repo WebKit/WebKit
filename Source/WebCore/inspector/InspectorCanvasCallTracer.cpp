@@ -84,7 +84,7 @@ static InspectorCanvasAgent* enabledCanvasAgent(CanvasRenderingContext& canvasRe
 }
 
 #define PROCESS_ARGUMENT_DEFINITION(ArgumentType) \
-Optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvasCallTracer::processArgument(CanvasRenderingContext& canvasRenderingContext, ArgumentType argument) \
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvasCallTracer::processArgument(CanvasRenderingContext& canvasRenderingContext, ArgumentType argument) \
 { \
     if (auto* canvasAgent = enabledCanvasAgent(canvasRenderingContext)) \
         return canvasAgent->processArgument(canvasRenderingContext, argument); \
@@ -100,7 +100,7 @@ void InspectorCanvasCallTracer::recordAction(CanvasRenderingContext& canvasRende
         canvasAgent->recordAction(canvasRenderingContext, WTFMove(name), WTFMove(arguments));
 }
 
-Optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvasCallTracer::processArgument(const HTMLCanvasElement& canvasElement, uint32_t argument)
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvasCallTracer::processArgument(const HTMLCanvasElement& canvasElement, uint32_t argument)
 {
     ASSERT(canvasElement.renderingContext());
     return processArgument(*canvasElement.renderingContext(), argument);

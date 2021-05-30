@@ -56,7 +56,7 @@ public:
     static Ref<RTCRtpSFrameTransform> create(ScriptExecutionContext& context, Options options) { return adoptRef(*new RTCRtpSFrameTransform(context, options)); }
     ~RTCRtpSFrameTransform();
 
-    void setEncryptionKey(CryptoKey&, Optional<uint64_t>, DOMPromiseDeferred<void>&&);
+    void setEncryptionKey(CryptoKey&, std::optional<uint64_t>, DOMPromiseDeferred<void>&&);
 
     bool isAttached() const;
     void initializeBackendForReceiver(RTCRtpTransformBackend&);

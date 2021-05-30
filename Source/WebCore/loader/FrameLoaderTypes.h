@@ -81,7 +81,7 @@ public:
     bool operator==(const PolicyCheckIdentifier& other) const { return m_process == other.m_process && m_policyCheck == other.m_policyCheck; }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<PolicyCheckIdentifier> decode(Decoder&);
+    template<class Decoder> static std::optional<PolicyCheckIdentifier> decode(Decoder&);
 
 private:
     PolicyCheckIdentifier(ProcessIdentifier process, uint64_t policyCheck)
@@ -100,7 +100,7 @@ void PolicyCheckIdentifier::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<PolicyCheckIdentifier> PolicyCheckIdentifier::decode(Decoder& decoder)
+std::optional<PolicyCheckIdentifier> PolicyCheckIdentifier::decode(Decoder& decoder)
 {
     auto process = ProcessIdentifier::decode(decoder);
     if (!process)
@@ -193,7 +193,7 @@ struct SystemPreviewInfo {
     bool isPreview { false };
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<SystemPreviewInfo> decode(Decoder&);
+    template<class Decoder> static std::optional<SystemPreviewInfo> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -203,19 +203,19 @@ void SystemPreviewInfo::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<SystemPreviewInfo> SystemPreviewInfo::decode(Decoder& decoder)
+std::optional<SystemPreviewInfo> SystemPreviewInfo::decode(Decoder& decoder)
 {
-    Optional<ElementContext> element;
+    std::optional<ElementContext> element;
     decoder >> element;
     if (!element)
         return std::nullopt;
 
-    Optional<IntRect> previewRect;
+    std::optional<IntRect> previewRect;
     decoder >> previewRect;
     if (!previewRect)
         return std::nullopt;
 
-    Optional<bool> isPreview;
+    std::optional<bool> isPreview;
     decoder >> isPreview;
     if (!isPreview)
         return std::nullopt;

@@ -285,7 +285,7 @@ ImageBuffer* FilterEffect::imageBufferResult()
     return m_imageBufferResult.get();
 }
 
-RefPtr<Uint8ClampedArray> FilterEffect::unmultipliedResult(const IntRect& rect, Optional<DestinationColorSpace> colorSpace)
+RefPtr<Uint8ClampedArray> FilterEffect::unmultipliedResult(const IntRect& rect, std::optional<DestinationColorSpace> colorSpace)
 {
     IntSize scaledSize(rect.size());
     ASSERT(!ImageBuffer::sizeNeedsClamping(scaledSize));
@@ -300,7 +300,7 @@ RefPtr<Uint8ClampedArray> FilterEffect::unmultipliedResult(const IntRect& rect, 
     return pixelArray;
 }
 
-RefPtr<Uint8ClampedArray> FilterEffect::premultipliedResult(const IntRect& rect, Optional<DestinationColorSpace> colorSpace)
+RefPtr<Uint8ClampedArray> FilterEffect::premultipliedResult(const IntRect& rect, std::optional<DestinationColorSpace> colorSpace)
 {
     IntSize scaledSize(rect.size());
     ASSERT(!ImageBuffer::sizeNeedsClamping(scaledSize));
@@ -439,7 +439,7 @@ static void copyUnpremultiplyingAlpha(const Uint8ClampedArray& source, Uint8Clam
 #endif
 }
 
-Optional<PixelBuffer> FilterEffect::convertPixelBufferToColorSpace(const DestinationColorSpace& targetColorSpace, PixelBuffer& pixelBuffer)
+std::optional<PixelBuffer> FilterEffect::convertPixelBufferToColorSpace(const DestinationColorSpace& targetColorSpace, PixelBuffer& pixelBuffer)
 {
     // FIXME: Using an ImageBuffer to perform the color space conversion is unnecessary. We can do it directly.
 
@@ -454,7 +454,7 @@ Optional<PixelBuffer> FilterEffect::convertPixelBufferToColorSpace(const Destina
     return convertImageBufferToColorSpace(targetColorSpace, *buffer, destinationRect, pixelBuffer.format().alphaFormat);
 }
 
-Optional<PixelBuffer> FilterEffect::convertImageBufferToColorSpace(const DestinationColorSpace& targetColorSpace, ImageBuffer& inputBuffer, const IntRect& rect, AlphaPremultiplication outputAlphaFormat)
+std::optional<PixelBuffer> FilterEffect::convertImageBufferToColorSpace(const DestinationColorSpace& targetColorSpace, ImageBuffer& inputBuffer, const IntRect& rect, AlphaPremultiplication outputAlphaFormat)
 {
     // FIXME: This can be done more directly using PixelBufferConversion.
 
@@ -491,7 +491,7 @@ void FilterEffect::copyConvertedPixelBufferToDestination(Uint8ClampedArray& dest
     copyImageBytes(convertedPixelBuffer->data(), destination, destRect);
 }
 
-void FilterEffect::copyUnmultipliedResult(Uint8ClampedArray& destination, const IntRect& rect, Optional<DestinationColorSpace> colorSpace)
+void FilterEffect::copyUnmultipliedResult(Uint8ClampedArray& destination, const IntRect& rect, std::optional<DestinationColorSpace> colorSpace)
 {
     ASSERT(hasResult());
     
@@ -530,7 +530,7 @@ void FilterEffect::copyUnmultipliedResult(Uint8ClampedArray& destination, const 
     copyImageBytes(m_unmultipliedImageResult->data(), destination, rect);
 }
 
-void FilterEffect::copyPremultipliedResult(Uint8ClampedArray& destination, const IntRect& rect, Optional<DestinationColorSpace> colorSpace)
+void FilterEffect::copyPremultipliedResult(Uint8ClampedArray& destination, const IntRect& rect, std::optional<DestinationColorSpace> colorSpace)
 {
     ASSERT(hasResult());
 
@@ -584,7 +584,7 @@ ImageBuffer* FilterEffect::createImageBufferResult()
     return m_imageBufferResult.get();
 }
 
-Optional<PixelBuffer>& FilterEffect::createUnmultipliedImageResult()
+std::optional<PixelBuffer>& FilterEffect::createUnmultipliedImageResult()
 {
     LOG(Filters, "FilterEffect %s %p createUnmultipliedImageResult", filterName(), this);
 
@@ -603,7 +603,7 @@ Optional<PixelBuffer>& FilterEffect::createUnmultipliedImageResult()
     return m_unmultipliedImageResult;
 }
 
-Optional<PixelBuffer>& FilterEffect::createPremultipliedImageResult()
+std::optional<PixelBuffer>& FilterEffect::createPremultipliedImageResult()
 {
     LOG(Filters, "FilterEffect %s %p createPremultipliedImageResult", filterName(), this);
 
@@ -622,7 +622,7 @@ Optional<PixelBuffer>& FilterEffect::createPremultipliedImageResult()
     return m_premultipliedImageResult;
 }
 
-bool FilterEffect::requiresPixelBufferColorSpaceConversion(Optional<DestinationColorSpace> destinationColorSpace)
+bool FilterEffect::requiresPixelBufferColorSpaceConversion(std::optional<DestinationColorSpace> destinationColorSpace)
 {
 #if USE(CG)
     // This function determines whether we need the step of an extra color space conversion

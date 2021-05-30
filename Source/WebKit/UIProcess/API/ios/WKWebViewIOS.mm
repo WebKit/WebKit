@@ -956,7 +956,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
         _gestureController->didRestoreScrollPosition();
 }
 
-- (void)_restorePageScrollPosition:(Optional<WebCore::FloatPoint>)scrollPosition scrollOrigin:(WebCore::FloatPoint)scrollOrigin previousObscuredInset:(WebCore::FloatBoxExtent)obscuredInsets scale:(double)scale
+- (void)_restorePageScrollPosition:(std::optional<WebCore::FloatPoint>)scrollPosition scrollOrigin:(WebCore::FloatPoint)scrollOrigin previousObscuredInset:(WebCore::FloatBoxExtent)obscuredInsets scale:(double)scale
 {
     if (_dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing) {
         // Defer scroll position restoration until after the current resize completes.
@@ -980,7 +980,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
     _scaleToRestore = scale;
 }
 
-- (void)_restorePageStateToUnobscuredCenter:(Optional<WebCore::FloatPoint>)center scale:(double)scale
+- (void)_restorePageStateToUnobscuredCenter:(std::optional<WebCore::FloatPoint>)center scale:(double)scale
 {
     if (_dynamicViewportUpdateMode != WebKit::DynamicViewportUpdateMode::NotResizing) {
         // Defer scroll position restoration until after the current resize completes.
@@ -1460,7 +1460,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (!_page)
         return;
 
-    Optional<WebCore::Color> backgroundColor;
+    std::optional<WebCore::Color> backgroundColor;
     if (!opaque)
         backgroundColor = WebCore::Color(WebCore::Color::transparentBlack);
     _page->setBackgroundColor(backgroundColor);
@@ -1674,7 +1674,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     bool hasActiveWheelHandlers = eventListeners.contains(WebCore::EventListenerRegionType::NonPassiveWheel);
     bool isCancelable = hasActiveWheelHandlers && (!_currentScrollGestureState || _currentScrollGestureState == WebCore::WheelScrollGestureState::Blocking);
 
-    Optional<WebKit::WebWheelEvent::Phase> overridePhase;
+    std::optional<WebKit::WebWheelEvent::Phase> overridePhase;
     // The first event with non-zero delta in a given gesture should be considered the
     // "Began" event in the WebCore sense (e.g. for deciding cancelability). Note that
     // this may not be a UIScrollPhaseBegin event, nor even necessarily the first UIScrollPhaseChanged event.

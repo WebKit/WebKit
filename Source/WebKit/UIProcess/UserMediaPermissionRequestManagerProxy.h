@@ -71,7 +71,7 @@ public:
 
     void requestUserMediaPermissionForFrame(uint64_t userMediaID, WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&&  userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, WebCore::MediaStreamRequest&&);
 
-    void resetAccess(Optional<WebCore::FrameIdentifier> mainFrameID = { });
+    void resetAccess(std::optional<WebCore::FrameIdentifier> mainFrameID = { });
     void viewIsBecomingVisible();
 
     void grantRequest(UserMediaPermissionRequestProxy&);
@@ -94,7 +94,7 @@ public:
         Prompt
     };
 
-    void setMockCaptureDevicesEnabledOverride(Optional<bool>);
+    void setMockCaptureDevicesEnabledOverride(std::optional<bool>);
     bool hasPendingCapture() const { return m_hasPendingCapture; }
 
     void checkUserMediaPermissionForSpeechRecognition(WebCore::FrameIdentifier, const WebCore::SecurityOrigin&, const WebCore::SecurityOrigin&, const WebCore::CaptureDevice&, CompletionHandler<void(bool)>&&);
@@ -176,7 +176,7 @@ private:
     bool m_hasCreatedSandboxExtensionForTCCD { false };
 #endif
     uint64_t m_hasPendingCapture { 0 };
-    Optional<bool> m_mockDevicesEnabledOverride;
+    std::optional<bool> m_mockDevicesEnabledOverride;
 };
 
 String convertEnumerationToString(UserMediaPermissionRequestManagerProxy::RequestAction);

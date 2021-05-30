@@ -60,7 +60,7 @@ public:
         searchForOverlapsFrom(this->root(), adapter);
     }
 
-    Optional<IntervalType> nextIntervalAfter(const T& point)
+    std::optional<IntervalType> nextIntervalAfter(const T& point)
     {
         auto next = smallestNodeGreaterThanFrom(point, this->root());
         if (!next)

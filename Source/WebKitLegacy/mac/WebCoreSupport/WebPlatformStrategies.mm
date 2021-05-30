@@ -192,12 +192,12 @@ bool WebPlatformStrategies::containsStringSafeForDOMToReadForType(const String& 
     return PlatformPasteboard(pasteboardName).containsStringSafeForDOMToReadForType(type);
 }
 
-Optional<WebCore::PasteboardItemInfo> WebPlatformStrategies::informationForItemAtIndex(size_t index, const String& pasteboardName, int64_t changeCount, const PasteboardContext*)
+std::optional<WebCore::PasteboardItemInfo> WebPlatformStrategies::informationForItemAtIndex(size_t index, const String& pasteboardName, int64_t changeCount, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).informationForItemAtIndex(index, changeCount);
 }
 
-Optional<Vector<WebCore::PasteboardItemInfo>> WebPlatformStrategies::allPasteboardItemInfo(const String& pasteboardName, int64_t changeCount, const PasteboardContext*)
+std::optional<Vector<WebCore::PasteboardItemInfo>> WebPlatformStrategies::allPasteboardItemInfo(const String& pasteboardName, int64_t changeCount, const PasteboardContext*)
 {
     return PlatformPasteboard(pasteboardName).allPasteboardItemInfo(changeCount);
 }

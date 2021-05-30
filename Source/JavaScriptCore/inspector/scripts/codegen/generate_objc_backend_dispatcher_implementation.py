@@ -210,7 +210,7 @@ class ObjCBackendDispatcherImplementationGenerator(ObjCGenerator):
             objc_in_param_name = 'o_%s' % in_param_name
             objc_type = self.objc_type_for_param(domain, command.command_name, parameter, False)
             if isinstance(parameter.type, EnumType):
-                objc_type = 'Optional<%s>' % objc_type
+                objc_type = 'std::optional<%s>' % objc_type
             param_expression = in_param_expression(in_param_name, parameter)
             import_expression = self.objc_protocol_import_expression_for_parameter(param_expression, domain, command.command_name, parameter)
             if not parameter.is_optional:

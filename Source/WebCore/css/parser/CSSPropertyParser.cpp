@@ -424,8 +424,8 @@ static RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange& range)
     }
 
     // Parse [ <display-outside> || <display-inside> ]
-    Optional<CSSValueID> parsedDisplayOutside;
-    Optional<CSSValueID> parsedDisplayInside;
+    std::optional<CSSValueID> parsedDisplayOutside;
+    std::optional<CSSValueID> parsedDisplayInside;
     while (!range.atEnd()) {
         auto nextValueID = range.peek().id();
         switch (nextValueID) {
@@ -1356,7 +1356,7 @@ static RefPtr<CSSValue> consumeSteps(CSSParserTokenRange& range)
     if (!stepsValue)
         return nullptr;
     
-    Optional<StepsTimingFunction::StepPosition> stepPosition;
+    std::optional<StepsTimingFunction::StepPosition> stepPosition;
     if (consumeCommaIncludingWhitespace(args)) {
         switch (args.consumeIncludingWhitespace().id()) {
         case CSSValueJumpStart:

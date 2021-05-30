@@ -42,7 +42,7 @@ template <typename FloatType> static inline bool isValidRange(const FloatType& x
 // at a higher precision internally, without any unnecessary runtime cost or code
 // complexity.
 // FIXME: Can this be shared/replaced with number parsing in WTF?
-template <typename CharacterType, typename FloatType = float> static Optional<FloatType> genericParseNumber(StringParsingBuffer<CharacterType>& buffer, SuffixSkippingPolicy skip = SuffixSkippingPolicy::Skip)
+template <typename CharacterType, typename FloatType = float> static std::optional<FloatType> genericParseNumber(StringParsingBuffer<CharacterType>& buffer, SuffixSkippingPolicy skip = SuffixSkippingPolicy::Skip)
 {
     FloatType number = 0;
     FloatType integer = 0;
@@ -139,19 +139,19 @@ template <typename CharacterType, typename FloatType = float> static Optional<Fl
     return number;
 }
 
-Optional<float> parseNumber(StringParsingBuffer<LChar>& buffer, SuffixSkippingPolicy skip)
+std::optional<float> parseNumber(StringParsingBuffer<LChar>& buffer, SuffixSkippingPolicy skip)
 {
     return genericParseNumber(buffer, skip);
 }
 
-Optional<float> parseNumber(StringParsingBuffer<UChar>& buffer, SuffixSkippingPolicy skip)
+std::optional<float> parseNumber(StringParsingBuffer<UChar>& buffer, SuffixSkippingPolicy skip)
 {
     return genericParseNumber(buffer, skip);
 }
 
-Optional<float> parseNumber(const StringView& string, SuffixSkippingPolicy skip)
+std::optional<float> parseNumber(const StringView& string, SuffixSkippingPolicy skip)
 {
-    return readCharactersForParsing(string, [skip](auto buffer) -> Optional<float> {
+    return readCharactersForParsing(string, [skip](auto buffer) -> std::optional<float> {
         auto result = genericParseNumber(buffer, skip);
         if (!buffer.atEnd())
             return std::nullopt;
@@ -161,7 +161,7 @@ Optional<float> parseNumber(const StringView& string, SuffixSkippingPolicy skip)
 
 // only used to parse largeArcFlag and sweepFlag which must be a "0" or "1"
 // and might not have any whitespace/comma after it
-template <typename CharacterType> Optional<bool> genericParseArcFlag(StringParsingBuffer<CharacterType>& buffer)
+template <typename CharacterType> std::optional<bool> genericParseArcFlag(StringParsingBuffer<CharacterType>& buffer)
 {
     if (buffer.atEnd())
         return std::nullopt;
@@ -182,22 +182,22 @@ template <typename CharacterType> Optional<bool> genericParseArcFlag(StringParsi
     return flag;
 }
 
-Optional<bool> parseArcFlag(StringParsingBuffer<LChar>& buffer)
+std::optional<bool> parseArcFlag(StringParsingBuffer<LChar>& buffer)
 {
     return genericParseArcFlag(buffer);
 }
 
-Optional<bool> parseArcFlag(StringParsingBuffer<UChar>& buffer)
+std::optional<bool> parseArcFlag(StringParsingBuffer<UChar>& buffer)
 {
     return genericParseArcFlag(buffer);
 }
 
-Optional<std::pair<float, float>> parseNumberOptionalNumber(const StringView& string)
+std::optional<std::pair<float, float>> parseNumberOptionalNumber(const StringView& string)
 {
     if (string.isEmpty())
         return std::nullopt;
 
-    return readCharactersForParsing(string, [](auto buffer) -> Optional<std::pair<float, float>> {
+    return readCharactersForParsing(string, [](auto buffer) -> std::optional<std::pair<float, float>> {
         auto x = parseNumber(buffer);
         if (!x)
             return std::nullopt;
@@ -216,12 +216,12 @@ Optional<std::pair<float, float>> parseNumberOptionalNumber(const StringView& st
     });
 }
 
-Optional<FloatPoint> parsePoint(const StringView& string)
+std::optional<FloatPoint> parsePoint(const StringView& string)
 {
     if (string.isEmpty())
         return std::nullopt;
 
-    return readCharactersForParsing(string, [](auto buffer) -> Optional<FloatPoint> {
+    return readCharactersForParsing(string, [](auto buffer) -> std::optional<FloatPoint> {
         if (!skipOptionalSVGSpaces(buffer))
             return std::nullopt;
 
@@ -236,9 +236,9 @@ Optional<FloatPoint> parsePoint(const StringView& string)
     });
 }
 
-Optional<FloatRect> parseRect(const StringView& string)
+std::optional<FloatRect> parseRect(const StringView& string)
 {
-    return readCharactersForParsing(string, [](auto buffer) -> Optional<FloatRect> {
+    return readCharactersForParsing(string, [](auto buffer) -> std::optional<FloatRect> {
         skipOptionalSVGSpaces(buffer);
         
         auto x = parseNumber(buffer);
@@ -258,7 +258,7 @@ Optional<FloatRect> parseRect(const StringView& string)
     });
 }
 
-Optional<HashSet<String>> parseGlyphName(const StringView& string)
+std::optional<HashSet<String>> parseGlyphName(const StringView& string)
 {
     // FIXME: Parsing error detection is missing.
 
@@ -289,7 +289,7 @@ Optional<HashSet<String>> parseGlyphName(const StringView& string)
 
 }
 
-template<typename CharacterType> static Optional<UnicodeRange> parseUnicodeRange(StringParsingBuffer<CharacterType> buffer)
+template<typename CharacterType> static std::optional<UnicodeRange> parseUnicodeRange(StringParsingBuffer<CharacterType> buffer)
 {
     unsigned length = buffer.lengthRemaining();
     if (length < 2 || buffer[0] != 'U' || buffer[1] != '+')
@@ -361,7 +361,7 @@ template<typename CharacterType> static Optional<UnicodeRange> parseUnicodeRange
     return range;
 }
 
-Optional<std::pair<UnicodeRanges, HashSet<String>>> parseKerningUnicodeString(const StringView& string)
+std::optional<std::pair<UnicodeRanges, HashSet<String>>> parseKerningUnicodeString(const StringView& string)
 {
     // FIXME: Parsing error detection is missing.
 
@@ -393,7 +393,7 @@ Optional<std::pair<UnicodeRanges, HashSet<String>>> parseKerningUnicodeString(co
     });
 }
 
-template <typename CharacterType> static Optional<FloatPoint> genericParseFloatPoint(StringParsingBuffer<CharacterType>& buffer)
+template <typename CharacterType> static std::optional<FloatPoint> genericParseFloatPoint(StringParsingBuffer<CharacterType>& buffer)
 {
     auto x = parseNumber(buffer);
     if (!x)
@@ -406,12 +406,12 @@ template <typename CharacterType> static Optional<FloatPoint> genericParseFloatP
     return FloatPoint { *x, *y };
 }
 
-Optional<FloatPoint> parseFloatPoint(StringParsingBuffer<LChar>& buffer)
+std::optional<FloatPoint> parseFloatPoint(StringParsingBuffer<LChar>& buffer)
 {
     return genericParseFloatPoint(buffer);
 }
 
-Optional<FloatPoint> parseFloatPoint(StringParsingBuffer<UChar>& buffer)
+std::optional<FloatPoint> parseFloatPoint(StringParsingBuffer<UChar>& buffer)
 {
     return genericParseFloatPoint(buffer);
 }

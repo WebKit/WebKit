@@ -34,7 +34,7 @@ class Page;
 
 class PageColorSampler {
 public:
-    static Optional<Color> sampleTop(Page&);
+    static std::optional<Color> sampleTop(Page&);
 };
 
 } // namespace WebCore

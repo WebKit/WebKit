@@ -63,7 +63,7 @@ void PaymentResponse::setDetailsFunction(DetailsFunction&& detailsFunction)
     m_cachedDetails = { };
 }
 
-void PaymentResponse::complete(Optional<PaymentComplete>&& result, DOMPromiseDeferred<void>&& promise)
+void PaymentResponse::complete(std::optional<PaymentComplete>&& result, DOMPromiseDeferred<void>&& promise)
 {
     if (m_state == State::Stopped || !m_request) {
         promise.reject(Exception { AbortError });

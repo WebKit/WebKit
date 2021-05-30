@@ -37,7 +37,7 @@ namespace WebCore {
 struct RTCIceCandidateInit {
     String candidate;
     String sdpMid;
-    Optional<unsigned short> sdpMLineIndex;
+    std::optional<unsigned short> sdpMLineIndex;
     String usernameFragment;
 };
 

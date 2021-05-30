@@ -52,11 +52,11 @@ public:
     bool allowsExitUnderMemoryPressure() const;
 
 private:
-    void createDecoder(const IPC::DataReference&, const String& mimeType, CompletionHandler<void(Optional<WebCore::ImageDecoderIdentifier>&&)>&&);
+    void createDecoder(const IPC::DataReference&, const String& mimeType, CompletionHandler<void(std::optional<WebCore::ImageDecoderIdentifier>&&)>&&);
     void deleteDecoder(WebCore::ImageDecoderIdentifier);
     void setExpectedContentSize(WebCore::ImageDecoderIdentifier, long long expectedContentSize);
-    void setData(WebCore::ImageDecoderIdentifier, const IPC::DataReference&, bool allDataReceived, CompletionHandler<void(size_t frameCount, const WebCore::IntSize& size, bool hasTrack, Optional<Vector<WebCore::ImageDecoder::FrameInfo>>&&)>&&);
-    void createFrameImageAtIndex(WebCore::ImageDecoderIdentifier, size_t index, CompletionHandler<void(Optional<WTF::MachSendRight>&&, Optional<WebCore::DestinationColorSpace>&&)>&&);
+    void setData(WebCore::ImageDecoderIdentifier, const IPC::DataReference&, bool allDataReceived, CompletionHandler<void(size_t frameCount, const WebCore::IntSize& size, bool hasTrack, std::optional<Vector<WebCore::ImageDecoder::FrameInfo>>&&)>&&);
+    void createFrameImageAtIndex(WebCore::ImageDecoderIdentifier, size_t index, CompletionHandler<void(std::optional<WTF::MachSendRight>&&, std::optional<WebCore::DestinationColorSpace>&&)>&&);
     void clearFrameBufferCache(WebCore::ImageDecoderIdentifier, size_t index);
 
     void encodedDataStatusChanged(WebCore::ImageDecoderIdentifier);

@@ -166,7 +166,7 @@ struct HorizontalConstraints {
 
 struct VerticalConstraints {
     LayoutUnit logicalTop;
-    Optional<LayoutUnit> logicalHeight;
+    std::optional<LayoutUnit> logicalHeight;
 };
 
 struct ConstraintsForInFlowContent {
@@ -193,13 +193,13 @@ struct IntrinsicWidthConstraints {
 };
 
 struct OverriddenHorizontalValues {
-    Optional<LayoutUnit> width;
-    Optional<UsedHorizontalMargin> margin;
+    std::optional<LayoutUnit> width;
+    std::optional<UsedHorizontalMargin> margin;
 };
 
 struct OverriddenVerticalValues {
     // Consider collapsing it.
-    Optional<LayoutUnit> height;
+    std::optional<LayoutUnit> height;
 };
 
 inline LayoutUnit toLayoutUnit(InlineLayoutUnit value)

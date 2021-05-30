@@ -44,7 +44,7 @@ bool CryptoKeyEC::platformSupportedCurve(NamedCurve)
     return false;
 }
 
-Optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmIdentifier, NamedCurve, bool extractable, CryptoKeyUsageBitmap)
+std::optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmIdentifier, NamedCurve, bool extractable, CryptoKeyUsageBitmap)
 {
     UNUSED_PARAM(extractable);
     notImplemented();

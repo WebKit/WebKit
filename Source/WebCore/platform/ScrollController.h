@@ -147,7 +147,7 @@ public:
     unsigned activeScrollSnapIndexForAxis(ScrollEventAxis) const;
     void updateScrollSnapState(const ScrollableArea&);
     void updateGestureInProgressState(const PlatformWheelEvent&);
-    float adjustScrollDestination(ScrollEventAxis, float destinationOffset, float velocity, Optional<float> originalOffset);
+    float adjustScrollDestination(ScrollEventAxis, float destinationOffset, float velocity, std::optional<float> originalOffset);
 #endif
 
 #if PLATFORM(MAC)
@@ -155,7 +155,7 @@ public:
     bool handleWheelEvent(const PlatformWheelEvent&);
 
     enum class WheelAxisBias { None, Vertical };
-    static Optional<ScrollDirection> directionFromEvent(const PlatformWheelEvent&, Optional<ScrollEventAxis>, WheelAxisBias = WheelAxisBias::None);
+    static std::optional<ScrollDirection> directionFromEvent(const PlatformWheelEvent&, std::optional<ScrollEventAxis>, WheelAxisBias = WheelAxisBias::None);
     static FloatSize wheelDeltaBiasingTowardsVertical(const PlatformWheelEvent&);
 
     bool isScrollSnapInProgress() const;

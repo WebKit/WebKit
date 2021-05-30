@@ -84,7 +84,7 @@ static double cookieCreated(NSHTTPCookie *cookie)
     return 0;
 }
 
-static Optional<double> cookieExpiry(NSHTTPCookie *cookie)
+static std::optional<double> cookieExpiry(NSHTTPCookie *cookie)
 {
     NSDate *expiryDate = cookie.expiresDate;
     if (!expiryDate)

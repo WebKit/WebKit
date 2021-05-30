@@ -78,8 +78,8 @@ String CookieJar::cookies(Document& document, const URL& url) const
 
     auto includeSecureCookies = shouldIncludeSecureCookies(document, url);
 
-    Optional<FrameIdentifier> frameID;
-    Optional<PageIdentifier> pageID;
+    std::optional<FrameIdentifier> frameID;
+    std::optional<PageIdentifier> pageID;
     if (auto* frame = document.frame()) {
         frameID = frame->loader().frameID();
         pageID = frame->loader().pageID();
@@ -101,8 +101,8 @@ CookieRequestHeaderFieldProxy CookieJar::cookieRequestHeaderFieldProxy(const Doc
 {
     TraceScope scope(FetchCookiesStart, FetchCookiesEnd);
 
-    Optional<FrameIdentifier> frameID;
-    Optional<PageIdentifier> pageID;
+    std::optional<FrameIdentifier> frameID;
+    std::optional<PageIdentifier> pageID;
     if (auto* frame = document.frame()) {
         frameID = frame->loader().frameID();
         pageID = frame->loader().pageID();
@@ -113,8 +113,8 @@ CookieRequestHeaderFieldProxy CookieJar::cookieRequestHeaderFieldProxy(const Doc
 
 void CookieJar::setCookies(Document& document, const URL& url, const String& cookieString)
 {
-    Optional<FrameIdentifier> frameID;
-    Optional<PageIdentifier> pageID;
+    std::optional<FrameIdentifier> frameID;
+    std::optional<PageIdentifier> pageID;
     if (auto* frame = document.frame()) {
         frameID = frame->loader().frameID();
         pageID = frame->loader().pageID();
@@ -135,7 +135,7 @@ bool CookieJar::cookiesEnabled(const Document&) const
     return false;
 }
 
-std::pair<String, SecureCookiesAccessed> CookieJar::cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, Optional<FrameIdentifier> frameID, Optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies) const
+std::pair<String, SecureCookiesAccessed> CookieJar::cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies) const
 {
     if (auto* session = m_storageSessionProvider->storageSession()) {
         std::pair<String, bool> result = session->cookieRequestHeaderFieldValue(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies, ShouldAskITP::Yes, ShouldRelaxThirdPartyCookieBlocking::No);
@@ -148,8 +148,8 @@ std::pair<String, SecureCookiesAccessed> CookieJar::cookieRequestHeaderFieldValu
 
 String CookieJar::cookieRequestHeaderFieldValue(Document& document, const URL& url) const
 {
-    Optional<FrameIdentifier> frameID;
-    Optional<PageIdentifier> pageID;
+    std::optional<FrameIdentifier> frameID;
+    std::optional<PageIdentifier> pageID;
     if (auto* frame = document.frame()) {
         frameID = frame->loader().frameID();
         pageID = frame->loader().pageID();
@@ -163,8 +163,8 @@ String CookieJar::cookieRequestHeaderFieldValue(Document& document, const URL& u
 
 bool CookieJar::getRawCookies(const Document& document, const URL& url, Vector<Cookie>& cookies) const
 {
-    Optional<FrameIdentifier> frameID;
-    Optional<PageIdentifier> pageID;
+    std::optional<FrameIdentifier> frameID;
+    std::optional<PageIdentifier> pageID;
     if (auto* frame = document.frame()) {
         frameID = frame->loader().frameID();
         pageID = frame->loader().pageID();

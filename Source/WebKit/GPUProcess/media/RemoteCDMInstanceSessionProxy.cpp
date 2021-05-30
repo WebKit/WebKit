@@ -89,7 +89,7 @@ void RemoteCDMInstanceSessionProxy::updateLicense(String sessionId, LicenseType 
         return;
     }
 
-    m_session->updateLicense(sessionId, type, sanitizedResponse.releaseNonNull(), [completion = WTFMove(completion)] (bool sessionClosed, Optional<CDMInstanceSession::KeyStatusVector>&& keyStatuses, Optional<double>&& expirationTime, Optional<CDMInstanceSession::Message>&& message, CDMInstanceSession::SuccessValue succeeded) mutable {
+    m_session->updateLicense(sessionId, type, sanitizedResponse.releaseNonNull(), [completion = WTFMove(completion)] (bool sessionClosed, std::optional<CDMInstanceSession::KeyStatusVector>&& keyStatuses, std::optional<double>&& expirationTime, std::optional<CDMInstanceSession::Message>&& message, CDMInstanceSession::SuccessValue succeeded) mutable {
         completion(sessionClosed, WTFMove(keyStatuses), WTFMove(expirationTime), WTFMove(message), succeeded == CDMInstanceSession::Succeeded);
     });
 }
@@ -103,7 +103,7 @@ void RemoteCDMInstanceSessionProxy::loadSession(LicenseType type, String session
         return;
     }
 
-    m_session->loadSession(type, *sanitizedSessionId, origin, [completion = WTFMove(completion)] (Optional<CDMInstanceSession::KeyStatusVector>&& keyStatuses, Optional<double>&& expirationTime, Optional<CDMInstanceSession::Message>&& message, CDMInstanceSession::SuccessValue succeeded, CDMInstanceSession::SessionLoadFailure failure) mutable {
+    m_session->loadSession(type, *sanitizedSessionId, origin, [completion = WTFMove(completion)] (std::optional<CDMInstanceSession::KeyStatusVector>&& keyStatuses, std::optional<double>&& expirationTime, std::optional<CDMInstanceSession::Message>&& message, CDMInstanceSession::SuccessValue succeeded, CDMInstanceSession::SessionLoadFailure failure) mutable {
         completion(WTFMove(keyStatuses), WTFMove(expirationTime), WTFMove(message), succeeded == CDMInstanceSession::Succeeded, failure);
     });
 }
@@ -115,8 +115,8 @@ void RemoteCDMInstanceSessionProxy::closeSession(const String& sessionId, CloseS
 
 void RemoteCDMInstanceSessionProxy::removeSessionData(const String& sessionId, LicenseType type, RemoveSessionDataCallback&& completion)
 {
-    m_session->removeSessionData(sessionId, type, [completion = WTFMove(completion)] (CDMInstanceSession::KeyStatusVector&& keyStatuses, Optional<Ref<SharedBuffer>>&& expiredSessionsData, CDMInstanceSession::SuccessValue succeeded) mutable {
-        Optional<IPC::SharedBufferCopy> expiredSessionDataReference;
+    m_session->removeSessionData(sessionId, type, [completion = WTFMove(completion)] (CDMInstanceSession::KeyStatusVector&& keyStatuses, std::optional<Ref<SharedBuffer>>&& expiredSessionsData, CDMInstanceSession::SuccessValue succeeded) mutable {
+        std::optional<IPC::SharedBufferCopy> expiredSessionDataReference;
         if (expiredSessionsData)
             expiredSessionDataReference = IPC::SharedBufferCopy(WTFMove(*expiredSessionsData));
         completion(WTFMove(keyStatuses), WTFMove(expiredSessionDataReference), succeeded == CDMInstanceSession::Succeeded);

@@ -195,7 +195,7 @@ template void ArgumentCoder<CFTypeRef>::encode<StreamConnectionEncoder>(StreamCo
 
 bool ArgumentCoder<RetainPtr<CFTypeRef>>::decode(Decoder& decoder, RetainPtr<CFTypeRef>& result)
 {
-    Optional<CFType> type;
+    std::optional<CFType> type;
     decoder >> type;
     if (!type)
         return false;
@@ -566,7 +566,7 @@ static size_t sizeForNumberType(CFNumberType numberType)
 
 bool ArgumentCoder<RetainPtr<CFNumberRef>>::decode(Decoder& decoder, RetainPtr<CFNumberRef>& result)
 {
-    Optional<uint8_t> numberTypeFromIPC;
+    std::optional<uint8_t> numberTypeFromIPC;
     decoder >> numberTypeFromIPC;
     if (!numberTypeFromIPC || *numberTypeFromIPC > kCFNumberMaxType)
         return false;
@@ -610,7 +610,7 @@ template void ArgumentCoder<CFStringRef>::encode<StreamConnectionEncoder>(Stream
 
 bool ArgumentCoder<RetainPtr<CFStringRef>>::decode(Decoder& decoder, RetainPtr<CFStringRef>& result)
 {
-    Optional<uint32_t> encodingFromIPC;
+    std::optional<uint32_t> encodingFromIPC;
     decoder >> encodingFromIPC;
     if (!encodingFromIPC)
         return false;

@@ -47,7 +47,7 @@ struct ListedChild {
     ListedChild isolatedCopy() const { return { filename.isolatedCopy(), type }; }
 };
 
-static Optional<FileSystem::FileType> fileTypeIgnoringHiddenFiles(const String& fullPath)
+static std::optional<FileSystem::FileType> fileTypeIgnoringHiddenFiles(const String& fullPath)
 {
     if (FileSystem::isHiddenFile(fullPath))
         return std::nullopt;

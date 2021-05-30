@@ -54,21 +54,21 @@ public:
     {
     }
 
-    IDBGetResult(const IDBKeyData& keyData, const ThreadSafeDataBuffer& buffer, const Optional<IDBKeyPath>& keyPath)
+    IDBGetResult(const IDBKeyData& keyData, const ThreadSafeDataBuffer& buffer, const std::optional<IDBKeyPath>& keyPath)
         : m_value(buffer)
         , m_keyData(keyData)
         , m_keyPath(keyPath)
     {
     }
 
-    IDBGetResult(const IDBKeyData& keyData, IDBValue&& value, const Optional<IDBKeyPath>& keyPath)
+    IDBGetResult(const IDBKeyData& keyData, IDBValue&& value, const std::optional<IDBKeyPath>& keyPath)
         : m_value(WTFMove(value))
         , m_keyData(keyData)
         , m_keyPath(keyPath)
     {
     }
 
-    IDBGetResult(const IDBKeyData& keyData, const IDBKeyData& primaryKeyData, IDBValue&& value, const Optional<IDBKeyPath>& keyPath)
+    IDBGetResult(const IDBKeyData& keyData, const IDBKeyData& primaryKeyData, IDBValue&& value, const std::optional<IDBKeyPath>& keyPath)
         : m_value(WTFMove(value))
         , m_keyData(keyData)
         , m_primaryKeyData(primaryKeyData)
@@ -76,7 +76,7 @@ public:
     {
     }
 
-    IDBGetResult(const IDBKeyData& keyData, const IDBKeyData& primaryKeyData, IDBValue&& value, const Optional<IDBKeyPath>& keyPath, Vector<IDBCursorRecord>&& prefetechedRecords)
+    IDBGetResult(const IDBKeyData& keyData, const IDBKeyData& primaryKeyData, IDBValue&& value, const std::optional<IDBKeyPath>& keyPath, Vector<IDBCursorRecord>&& prefetechedRecords)
         : m_value(WTFMove(value))
         , m_keyData(keyData)
         , m_primaryKeyData(primaryKeyData)
@@ -95,7 +95,7 @@ public:
     const IDBValue& value() const { return m_value; }
     const IDBKeyData& keyData() const { return m_keyData; }
     const IDBKeyData& primaryKeyData() const { return m_primaryKeyData; }
-    const Optional<IDBKeyPath>& keyPath() const { return m_keyPath; }
+    const std::optional<IDBKeyPath>& keyPath() const { return m_keyPath; }
     const Vector<IDBCursorRecord>& prefetchedRecords() const { return m_prefetchedRecords; }
     bool isDefined() const { return m_isDefined; }
 
@@ -110,7 +110,7 @@ private:
     IDBValue m_value;
     IDBKeyData m_keyData;
     IDBKeyData m_primaryKeyData;
-    Optional<IDBKeyPath> m_keyPath;
+    std::optional<IDBKeyPath> m_keyPath;
     Vector<IDBCursorRecord> m_prefetchedRecords;
     bool m_isDefined { true };
 };
@@ -124,13 +124,13 @@ void IDBGetResult::encode(Encoder& encoder) const
 template<class Decoder>
 bool IDBGetResult::decode(Decoder& decoder, IDBGetResult& result)
 {
-    Optional<IDBKeyData> keyData;
+    std::optional<IDBKeyData> keyData;
     decoder >> keyData;
     if (!keyData)
         return false;
     result.m_keyData = WTFMove(*keyData);
 
-    Optional<IDBKeyData> primaryKeyData;
+    std::optional<IDBKeyData> primaryKeyData;
     decoder >> primaryKeyData;
     if (!primaryKeyData)
         return false;
@@ -142,13 +142,13 @@ bool IDBGetResult::decode(Decoder& decoder, IDBGetResult& result)
     if (!decoder.decode(result.m_isDefined))
         return false;
 
-    Optional<IDBValue> value;
+    std::optional<IDBValue> value;
     decoder >> value;
     if (!value)
         return false;
     result.m_value = WTFMove(*value);
 
-    Optional<Vector<IDBCursorRecord>> prefetchedRecords;
+    std::optional<Vector<IDBCursorRecord>> prefetchedRecords;
     decoder >> prefetchedRecords;
     if (!prefetchedRecords)
         return false;

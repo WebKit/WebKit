@@ -1118,7 +1118,7 @@ private:
         return n;
     }
 
-    Optional<String> tryConsumeGroupName()
+    std::optional<String> tryConsumeGroupName()
     {
         if (atEndOfPattern())
             return std::nullopt;
@@ -1134,7 +1134,7 @@ private:
             while (!atEndOfPattern()) {
                 ch = tryConsumeIdentifierCharacter();
                 if (ch == '>')
-                    return Optional<String>(identifierBuilder.toString());
+                    return std::optional<String>(identifierBuilder.toString());
 
                 if (!isIdentifierPart(ch))
                     break;
@@ -1148,7 +1148,7 @@ private:
         return std::nullopt;
     }
 
-    Optional<BuiltInCharacterClassID> tryConsumeUnicodePropertyExpression()
+    std::optional<BuiltInCharacterClassID> tryConsumeUnicodePropertyExpression()
     {
         if (atEndOfPattern() || !isUnicodePropertyValueExpressionChar(peek())) {
             m_errorCode = ErrorCode::InvalidUnicodePropertyExpression;
@@ -1244,7 +1244,7 @@ private:
  *    void atomCharacterClassRange(UChar32 begin, UChar32 end)
  *    void atomCharacterClassBuiltIn(BuiltInCharacterClassID classID, bool invert)
  *    void atomCharacterClassEnd()
- *    void atomParenthesesSubpatternBegin(bool capture = true, Optional<String> groupName);
+ *    void atomParenthesesSubpatternBegin(bool capture = true, std::optional<String> groupName);
  *    void atomParentheticalAssertionBegin(bool invert = false);
  *    void atomParenthesesEnd();
  *    void atomBackReference(unsigned subpatternId);

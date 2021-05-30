@@ -47,7 +47,7 @@ struct WebPopupItem {
     WebPopupItem(Type, const String& text, WebCore::TextDirection, bool hasTextDirectionOverride, const String& toolTip, const String& accessibilityText, bool isEnabled, bool isLabel, bool isSelected);
 
     void encode(IPC::Encoder&) const;
-    static Optional<WebPopupItem> decode(IPC::Decoder&);
+    static std::optional<WebPopupItem> decode(IPC::Decoder&);
 
     Type m_type;
     String m_text;

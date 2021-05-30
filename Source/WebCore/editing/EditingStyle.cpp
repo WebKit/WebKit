@@ -560,7 +560,7 @@ Ref<MutableStyleProperties> EditingStyle::styleWithResolvedTextDecorations() con
     return style;
 }
 
-Optional<WritingDirection> EditingStyle::textDirection() const
+std::optional<WritingDirection> EditingStyle::textDirection() const
 {
     if (!m_mutableStyle)
         return std::nullopt;
@@ -1608,7 +1608,7 @@ Ref<EditingStyle> EditingStyle::inverseTransformColorIfNeeded(Element& element)
     if (!m_mutableStyle || !renderer || !renderer->style().hasAppleColorFilter())
         return *this;
 
-    auto colorForPropertyIfInvertible = [&](CSSPropertyID id) -> Optional<Color> {
+    auto colorForPropertyIfInvertible = [&](CSSPropertyID id) -> std::optional<Color> {
         auto color = m_mutableStyle->propertyAsColor(id);
         if (!color || !color->isVisible() || color->isSemantic())
             return std::nullopt;

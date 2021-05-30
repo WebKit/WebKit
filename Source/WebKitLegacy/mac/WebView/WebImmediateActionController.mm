@@ -427,7 +427,7 @@ static WebCore::IntRect elementBoundingBoxInWindowCoordinatesFromNode(WebCore::N
     if (!DataDetectorsLibrary())
         return nil;
 
-    Optional<WebCore::DetectedItem> detectedItem;
+    std::optional<WebCore::DetectedItem> detectedItem;
 
     if ([[_webView UIDelegate] respondsToSelector:@selector(_webView:actionContextForHitTestResult:range:)]) {
         DOMRange *customDataDetectorsRange;

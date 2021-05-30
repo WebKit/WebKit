@@ -64,7 +64,7 @@ RefPtr<Frame> DOMSelection::frame() const
     return DOMWindowProperty::frame();
 }
 
-Optional<SimpleRange> DOMSelection::range() const
+std::optional<SimpleRange> DOMSelection::range() const
 {
     auto frame = this->frame();
     if (!frame)

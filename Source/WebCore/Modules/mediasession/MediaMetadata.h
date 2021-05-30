@@ -68,7 +68,7 @@ private:
 
 class MediaMetadata : public RefCounted<MediaMetadata> {
 public:
-    static ExceptionOr<Ref<MediaMetadata>> create(ScriptExecutionContext&, Optional<MediaMetadataInit>&&);
+    static ExceptionOr<Ref<MediaMetadata>> create(ScriptExecutionContext&, std::optional<MediaMetadataInit>&&);
     ~MediaMetadata();
 
     void setMediaSession(MediaSession&);

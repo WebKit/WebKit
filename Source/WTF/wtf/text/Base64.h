@@ -69,12 +69,12 @@ String base64EncodeToString(const Vector<uint8_t>&, Base64EncodePolicy = Base64E
 String base64EncodeToString(const Vector<char>&, Base64EncodePolicy = Base64EncodePolicy::DoNotInsertLFs, Base64EncodeMap = Base64EncodeMap::Default);
 String base64EncodeToString(const CString&, Base64EncodePolicy = Base64EncodePolicy::DoNotInsertLFs, Base64EncodeMap = Base64EncodeMap::Default);
 
-WTF_EXPORT_PRIVATE Optional<Vector<uint8_t>> base64Decode(const String&, OptionSet<Base64DecodeOptions> = { }, Base64DecodeMap = Base64DecodeMap::Default);
-WTF_EXPORT_PRIVATE Optional<Vector<uint8_t>> base64Decode(StringView, OptionSet<Base64DecodeOptions> = { }, Base64DecodeMap = Base64DecodeMap::Default);
-WTF_EXPORT_PRIVATE Optional<Vector<uint8_t>> base64Decode(const Vector<uint8_t>&, OptionSet<Base64DecodeOptions> = { }, Base64DecodeMap = Base64DecodeMap::Default);
-WTF_EXPORT_PRIVATE Optional<Vector<uint8_t>> base64Decode(const Vector<char>&, OptionSet<Base64DecodeOptions> = { }, Base64DecodeMap = Base64DecodeMap::Default);
-WTF_EXPORT_PRIVATE Optional<Vector<uint8_t>> base64Decode(const uint8_t*, unsigned, OptionSet<Base64DecodeOptions> = { }, Base64DecodeMap = Base64DecodeMap::Default);
-WTF_EXPORT_PRIVATE Optional<Vector<uint8_t>> base64Decode(const char*, unsigned, OptionSet<Base64DecodeOptions> = { }, Base64DecodeMap = Base64DecodeMap::Default);
+WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64Decode(const String&, OptionSet<Base64DecodeOptions> = { }, Base64DecodeMap = Base64DecodeMap::Default);
+WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64Decode(StringView, OptionSet<Base64DecodeOptions> = { }, Base64DecodeMap = Base64DecodeMap::Default);
+WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64Decode(const Vector<uint8_t>&, OptionSet<Base64DecodeOptions> = { }, Base64DecodeMap = Base64DecodeMap::Default);
+WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64Decode(const Vector<char>&, OptionSet<Base64DecodeOptions> = { }, Base64DecodeMap = Base64DecodeMap::Default);
+WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64Decode(const uint8_t*, unsigned, OptionSet<Base64DecodeOptions> = { }, Base64DecodeMap = Base64DecodeMap::Default);
+WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64Decode(const char*, unsigned, OptionSet<Base64DecodeOptions> = { }, Base64DecodeMap = Base64DecodeMap::Default);
 
 inline Vector<uint8_t> base64EncodeToVector(const Vector<uint8_t>& input, Base64EncodePolicy policy, Base64EncodeMap map)
 {
@@ -122,12 +122,12 @@ String base64URLEncodeToString(const Vector<uint8_t>&);
 String base64URLEncodeToString(const Vector<char>&);
 String base64URLEncodeToString(const CString&);
 
-WTF_EXPORT_PRIVATE Optional<Vector<uint8_t>> base64URLDecode(const String&);
-WTF_EXPORT_PRIVATE Optional<Vector<uint8_t>> base64URLDecode(StringView);
-WTF_EXPORT_PRIVATE Optional<Vector<uint8_t>> base64URLDecode(const Vector<uint8_t>&);
-WTF_EXPORT_PRIVATE Optional<Vector<uint8_t>> base64URLDecode(const Vector<char>&);
-WTF_EXPORT_PRIVATE Optional<Vector<uint8_t>> base64URLDecode(const uint8_t*, unsigned);
-WTF_EXPORT_PRIVATE Optional<Vector<uint8_t>> base64URLDecode(const char*, unsigned);
+WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64URLDecode(const String&);
+WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64URLDecode(StringView);
+WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64URLDecode(const Vector<uint8_t>&);
+WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64URLDecode(const Vector<char>&);
+WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64URLDecode(const uint8_t*, unsigned);
+WTF_EXPORT_PRIVATE std::optional<Vector<uint8_t>> base64URLDecode(const char*, unsigned);
 
 inline Vector<uint8_t> base64URLEncodeToVector(const void* input, unsigned length)
 {

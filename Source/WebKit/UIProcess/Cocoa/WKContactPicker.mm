@@ -123,7 +123,7 @@ SOFT_LINK_CLASS(ContactsUI, CNContactPickerViewController)
     WeakObjCPtr<id<WKContactPickerDelegate>> _delegate;
 
     Vector<WebCore::ContactProperty> _properties;
-    WTF::CompletionHandler<void(Optional<Vector<WebCore::ContactInfo>>&&)> _completionHandler;
+    WTF::CompletionHandler<void(std::optional<Vector<WebCore::ContactInfo>>&&)> _completionHandler;
 
     RetainPtr<WKCNContactPickerDelegate> _contactPickerDelegate;
 #if HAVE(CNCONTACTPICKERVIEWCONTROLLER)
@@ -151,7 +151,7 @@ SOFT_LINK_CLASS(ContactsUI, CNContactPickerViewController)
     return self;
 }
 
-- (void)presentWithRequestData:(const WebCore::ContactsRequestData&)requestData completionHandler:(WTF::CompletionHandler<void(Optional<Vector<WebCore::ContactInfo>>&&)>&&)completionHandler
+- (void)presentWithRequestData:(const WebCore::ContactsRequestData&)requestData completionHandler:(WTF::CompletionHandler<void(std::optional<Vector<WebCore::ContactInfo>>&&)>&&)completionHandler
 {
     _properties = requestData.properties;
     _completionHandler = WTFMove(completionHandler);

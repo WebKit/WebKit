@@ -34,7 +34,7 @@ class SecurityOrigin;
 
 struct SecurityOriginData {
     SecurityOriginData() = default;
-    SecurityOriginData(const String& protocol, const String& host, Optional<uint16_t> port)
+    SecurityOriginData(const String& protocol, const String& host, std::optional<uint16_t> port)
         : protocol(protocol)
         , host(host)
         , port(port)
@@ -62,17 +62,17 @@ struct SecurityOriginData {
 
     String protocol;
     String host;
-    Optional<uint16_t> port;
+    std::optional<uint16_t> port;
 
     WEBCORE_EXPORT SecurityOriginData isolatedCopy() const;
 
     // Serialize the security origin to a string that could be used as part of
     // file names. This format should be used in storage APIs only.
     WEBCORE_EXPORT String databaseIdentifier() const;
-    WEBCORE_EXPORT static Optional<SecurityOriginData> fromDatabaseIdentifier(const String&);
+    WEBCORE_EXPORT static std::optional<SecurityOriginData> fromDatabaseIdentifier(const String&);
     
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<SecurityOriginData> decode(Decoder&);
+    template<class Decoder> static std::optional<SecurityOriginData> decode(Decoder&);
 
     bool isEmpty() const
     {
@@ -103,19 +103,19 @@ void SecurityOriginData::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<SecurityOriginData> SecurityOriginData::decode(Decoder& decoder)
+std::optional<SecurityOriginData> SecurityOriginData::decode(Decoder& decoder)
 {
-    Optional<String> protocol;
+    std::optional<String> protocol;
     decoder >> protocol;
     if (!protocol)
         return std::nullopt;
     
-    Optional<String> host;
+    std::optional<String> host;
     decoder >> host;
     if (!host)
         return std::nullopt;
     
-    Optional<Optional<uint16_t>> port;
+    std::optional<std::optional<uint16_t>> port;
     decoder >> port;
     if (!port)
         return std::nullopt;

@@ -139,7 +139,7 @@ private:
     bool m_isFlushingSamples { false };
     bool m_shouldStopAfterFlushingSamples { false };
     bool m_firstVideoFrame { false };
-    Optional<CGAffineTransform> m_videoTransform;
+    std::optional<CGAffineTransform> m_videoTransform;
     CMTime m_resumedVideoTime { kCMTimeZero };
     CMTime m_currentVideoDuration { kCMTimeZero };
     CMTime m_currentAudioSampleTime { kCMTimeZero };

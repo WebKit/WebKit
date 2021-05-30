@@ -85,7 +85,7 @@ public:
         Stretched = 18
     };
 
-    virtual Optional<MathVariant> specifiedMathVariant() { return std::nullopt; }
+    virtual std::optional<MathVariant> specifiedMathVariant() { return std::nullopt; }
 
     virtual void updateSelectedChild() { }
 

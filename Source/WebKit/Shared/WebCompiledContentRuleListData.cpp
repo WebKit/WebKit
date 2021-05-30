@@ -58,54 +58,54 @@ void WebCompiledContentRuleListData::encode(IPC::Encoder& encoder) const
     encoder << topURLFiltersBytecodeSize;
 }
 
-Optional<WebCompiledContentRuleListData> WebCompiledContentRuleListData::decode(IPC::Decoder& decoder)
+std::optional<WebCompiledContentRuleListData> WebCompiledContentRuleListData::decode(IPC::Decoder& decoder)
 {
     SharedMemory::IPCHandle ipcHandle;
     if (!decoder.decode(ipcHandle))
         return std::nullopt;
     RefPtr<SharedMemory> data = SharedMemory::map(ipcHandle.handle, SharedMemory::Protection::ReadOnly);
 
-    Optional<unsigned> conditionsApplyOnlyToDomainOffset;
+    std::optional<unsigned> conditionsApplyOnlyToDomainOffset;
     decoder >> conditionsApplyOnlyToDomainOffset;
     if (!conditionsApplyOnlyToDomainOffset)
         return std::nullopt;
 
-    Optional<unsigned> actionsOffset;
+    std::optional<unsigned> actionsOffset;
     decoder >> actionsOffset;
     if (!actionsOffset)
         return std::nullopt;
 
-    Optional<unsigned> actionsSize;
+    std::optional<unsigned> actionsSize;
     decoder >> actionsSize;
     if (!actionsSize)
         return std::nullopt;
 
-    Optional<unsigned> filtersWithoutConditionsBytecodeOffset;
+    std::optional<unsigned> filtersWithoutConditionsBytecodeOffset;
     decoder >> filtersWithoutConditionsBytecodeOffset;
     if (!filtersWithoutConditionsBytecodeOffset)
         return std::nullopt;
 
-    Optional<unsigned> filtersWithoutConditionsBytecodeSize;
+    std::optional<unsigned> filtersWithoutConditionsBytecodeSize;
     decoder >> filtersWithoutConditionsBytecodeSize;
     if (!filtersWithoutConditionsBytecodeSize)
         return std::nullopt;
 
-    Optional<unsigned> filtersWithConditionsBytecodeOffset;
+    std::optional<unsigned> filtersWithConditionsBytecodeOffset;
     decoder >> filtersWithConditionsBytecodeOffset;
     if (!filtersWithConditionsBytecodeOffset)
         return std::nullopt;
 
-    Optional<unsigned> filtersWithConditionsBytecodeSize;
+    std::optional<unsigned> filtersWithConditionsBytecodeSize;
     decoder >> filtersWithConditionsBytecodeSize;
     if (!filtersWithConditionsBytecodeSize)
         return std::nullopt;
 
-    Optional<unsigned> topURLFiltersBytecodeOffset;
+    std::optional<unsigned> topURLFiltersBytecodeOffset;
     decoder >> topURLFiltersBytecodeOffset;
     if (!topURLFiltersBytecodeOffset)
         return std::nullopt;
 
-    Optional<unsigned> topURLFiltersBytecodeSize;
+    std::optional<unsigned> topURLFiltersBytecodeSize;
     decoder >> topURLFiltersBytecodeSize;
     if (!topURLFiltersBytecodeSize)
         return std::nullopt;

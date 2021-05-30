@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-Optional<uint64_t> PerformanceLogging::physicalFootprint()
+std::optional<uint64_t> PerformanceLogging::physicalFootprint()
 {
     task_vm_info_data_t vmInfo;
     mach_msg_type_number_t count = TASK_VM_INFO_COUNT;

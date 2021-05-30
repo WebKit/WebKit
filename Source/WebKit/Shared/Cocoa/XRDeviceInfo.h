@@ -44,7 +44,7 @@ struct XRDeviceInfo {
     PlatformXR::Device::FeatureList features;
 
     void encode(IPC::Encoder&) const;
-    static Optional<XRDeviceInfo> decode(IPC::Decoder&);
+    static std::optional<XRDeviceInfo> decode(IPC::Decoder&);
 };
 
 } // namespace WebKit

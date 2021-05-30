@@ -219,7 +219,7 @@ static Ref<SharedBuffer> convertTIFFToPNG(SharedBuffer& tiffBuffer)
 }
 #endif
 
-void Pasteboard::read(PasteboardFileReader& reader, Optional<size_t> itemIndex)
+void Pasteboard::read(PasteboardFileReader& reader, std::optional<size_t> itemIndex)
 {
     if (!itemIndex) {
         auto filenames = readFilePaths();

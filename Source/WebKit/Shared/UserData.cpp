@@ -335,7 +335,7 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
         break;
 
     case API::Object::Type::CertificateInfo: {
-        Optional<WebCore::CertificateInfo> certificateInfo;
+        std::optional<WebCore::CertificateInfo> certificateInfo;
         decoder >> certificateInfo;
         if (!certificateInfo)
             return false;

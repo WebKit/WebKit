@@ -299,9 +299,9 @@ ContentWidthAndMargin BlockFormattingGeometry::inFlowContentWidthAndMargin(const
     return inFlowReplacedContentWidthAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, overriddenHorizontalValues);
 }
 
-ContentWidthAndMargin BlockFormattingGeometry::computedContentWidthAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, Optional<LayoutUnit> availableWidthFloatAvoider) const
+ContentWidthAndMargin BlockFormattingGeometry::computedContentWidthAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, std::optional<LayoutUnit> availableWidthFloatAvoider) const
 {
-    auto compute = [&] (auto constraintsForWidth, Optional<LayoutUnit> usedWidth) {
+    auto compute = [&] (auto constraintsForWidth, std::optional<LayoutUnit> usedWidth) {
         if (layoutBox.isFloatingPositioned())
             return floatingContentWidthAndMargin(layoutBox, constraintsForWidth, { usedWidth, { } });
 

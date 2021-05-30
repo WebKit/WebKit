@@ -48,34 +48,34 @@ DeviceOrientationEvent::DeviceOrientationEvent(const AtomString& eventType, Devi
 {
 }
 
-Optional<double> DeviceOrientationEvent::alpha() const
+std::optional<double> DeviceOrientationEvent::alpha() const
 {
     return m_orientation->alpha();
 }
 
-Optional<double> DeviceOrientationEvent::beta() const
+std::optional<double> DeviceOrientationEvent::beta() const
 {
     return m_orientation->beta();
 }
 
-Optional<double> DeviceOrientationEvent::gamma() const
+std::optional<double> DeviceOrientationEvent::gamma() const
 {
     return m_orientation->gamma();
 }
 
 #if PLATFORM(IOS_FAMILY)
 
-Optional<double> DeviceOrientationEvent::compassHeading() const
+std::optional<double> DeviceOrientationEvent::compassHeading() const
 {
     return m_orientation->compassHeading();
 }
 
-Optional<double> DeviceOrientationEvent::compassAccuracy() const
+std::optional<double> DeviceOrientationEvent::compassAccuracy() const
 {
     return m_orientation->compassAccuracy();
 }
 
-void DeviceOrientationEvent::initDeviceOrientationEvent(const AtomString& type, bool bubbles, bool cancelable, Optional<double> alpha, Optional<double> beta, Optional<double> gamma, Optional<double> compassHeading, Optional<double> compassAccuracy)
+void DeviceOrientationEvent::initDeviceOrientationEvent(const AtomString& type, bool bubbles, bool cancelable, std::optional<double> alpha, std::optional<double> beta, std::optional<double> gamma, std::optional<double> compassHeading, std::optional<double> compassAccuracy)
 {
     if (isBeingDispatched())
         return;
@@ -86,12 +86,12 @@ void DeviceOrientationEvent::initDeviceOrientationEvent(const AtomString& type, 
 
 #else
 
-Optional<bool> DeviceOrientationEvent::absolute() const
+std::optional<bool> DeviceOrientationEvent::absolute() const
 {
     return m_orientation->absolute();
 }
 
-void DeviceOrientationEvent::initDeviceOrientationEvent(const AtomString& type, bool bubbles, bool cancelable, Optional<double> alpha, Optional<double> beta, Optional<double> gamma, Optional<bool> absolute)
+void DeviceOrientationEvent::initDeviceOrientationEvent(const AtomString& type, bool bubbles, bool cancelable, std::optional<double> alpha, std::optional<double> beta, std::optional<double> gamma, std::optional<bool> absolute)
 {
     if (isBeingDispatched())
         return;

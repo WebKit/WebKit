@@ -99,7 +99,7 @@ template<typename CharacterType> static int parseTransformParamList(StringParsin
 static constexpr int requiredValuesForType[] =  { 0, 6, 1, 1, 1, 1, 1 };
 static constexpr int optionalValuesForType[] =  { 0, 0, 1, 1, 2, 0, 0 };
 
-template<typename CharacterType> static Optional<SVGTransformValue> parseTransformValueGeneric(SVGTransformValue::SVGTransformType type, StringParsingBuffer<CharacterType>& buffer)
+template<typename CharacterType> static std::optional<SVGTransformValue> parseTransformValueGeneric(SVGTransformValue::SVGTransformType type, StringParsingBuffer<CharacterType>& buffer)
 {
     if (type == SVGTransformValue::SVG_TRANSFORM_UNKNOWN)
         return std::nullopt;
@@ -146,12 +146,12 @@ template<typename CharacterType> static Optional<SVGTransformValue> parseTransfo
     return transform;
 }
 
-Optional<SVGTransformValue> SVGTransformable::parseTransformValue(SVGTransformValue::SVGTransformType type, StringParsingBuffer<LChar>& buffer)
+std::optional<SVGTransformValue> SVGTransformable::parseTransformValue(SVGTransformValue::SVGTransformType type, StringParsingBuffer<LChar>& buffer)
 {
     return parseTransformValueGeneric(type, buffer);
 }
 
-Optional<SVGTransformValue> SVGTransformable::parseTransformValue(SVGTransformValue::SVGTransformType type, StringParsingBuffer<UChar>& buffer)
+std::optional<SVGTransformValue> SVGTransformable::parseTransformValue(SVGTransformValue::SVGTransformType type, StringParsingBuffer<UChar>& buffer)
 {
     return parseTransformValueGeneric(type, buffer);
 }
@@ -163,7 +163,7 @@ template<typename CharacterType> static constexpr CharacterType translateDesc[] 
 template<typename CharacterType> static constexpr CharacterType rotateDesc[] =  {'r', 'o', 't', 'a', 't', 'e'};
 template<typename CharacterType> static constexpr CharacterType matrixDesc[] =  {'m', 'a', 't', 'r', 'i', 'x'};
 
-template<typename CharacterType> static Optional<SVGTransformValue::SVGTransformType> parseTransformTypeGeneric(StringParsingBuffer<CharacterType>& buffer)
+template<typename CharacterType> static std::optional<SVGTransformValue::SVGTransformType> parseTransformTypeGeneric(StringParsingBuffer<CharacterType>& buffer)
 {
     if (buffer.atEnd())
         return std::nullopt;
@@ -188,19 +188,19 @@ template<typename CharacterType> static Optional<SVGTransformValue::SVGTransform
     return std::nullopt;
 }
 
-Optional<SVGTransformValue::SVGTransformType> SVGTransformable::parseTransformType(StringView string)
+std::optional<SVGTransformValue::SVGTransformType> SVGTransformable::parseTransformType(StringView string)
 {
     return readCharactersForParsing(string, [](auto buffer) {
         return parseTransformType(buffer);
     });
 }
 
-Optional<SVGTransformValue::SVGTransformType> SVGTransformable::parseTransformType(StringParsingBuffer<LChar>& buffer)
+std::optional<SVGTransformValue::SVGTransformType> SVGTransformable::parseTransformType(StringParsingBuffer<LChar>& buffer)
 {
     return parseTransformTypeGeneric(buffer);
 }
 
-Optional<SVGTransformValue::SVGTransformType> SVGTransformable::parseTransformType(StringParsingBuffer<UChar>& buffer)
+std::optional<SVGTransformValue::SVGTransformType> SVGTransformable::parseTransformType(StringParsingBuffer<UChar>& buffer)
 {
     return parseTransformTypeGeneric(buffer);
 }

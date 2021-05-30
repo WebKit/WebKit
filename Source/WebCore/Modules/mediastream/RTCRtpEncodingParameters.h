@@ -39,10 +39,10 @@ struct RTCRtpEncodingParameters : RTCRtpCodingParameters {
     unsigned long ssrc { 0 };
     RTCRtpRtxParameters rtx;
     RTCRtpFecParameters fec;
-    Optional<RTCDtxStatus> dtx;
+    std::optional<RTCDtxStatus> dtx;
     bool active { false};
     RTCPriorityType priority { RTCPriorityType::Low };
-    Optional<RTCPriorityType> networkPriority;
+    std::optional<RTCPriorityType> networkPriority;
     unsigned long maxBitrate { 0 };
     unsigned long maxFramerate { 0 };
     double scaleResolutionDownBy { 1 };

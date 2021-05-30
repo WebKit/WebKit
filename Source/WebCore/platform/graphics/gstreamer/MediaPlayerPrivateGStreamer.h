@@ -175,7 +175,7 @@ public:
     bool didLoadingProgress() const final;
     unsigned long long totalBytes() const final;
     bool hasSingleSecurityOrigin() const final;
-    Optional<bool> wouldTaintOrigin(const SecurityOrigin&) const final;
+    std::optional<bool> wouldTaintOrigin(const SecurityOrigin&) const final;
     void simulateAudioInterruption() final;
 #if ENABLE(WEB_AUDIO)
     AudioSourceProvider* audioSourceProvider() final;
@@ -184,7 +184,7 @@ public:
     bool supportsFullscreen() const final;
     MediaPlayer::MovieLoadType movieLoadType() const final;
 
-    Optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
+    std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
     void acceleratedRenderingStateChanged() final;
     bool performTaskAtMediaTime(Function<void()>&&, const MediaTime&) override;
 
@@ -326,7 +326,7 @@ protected:
     Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
     MediaPlayer* m_player;
     String m_referrer;
-    mutable Optional<MediaTime> m_cachedPosition;
+    mutable std::optional<MediaTime> m_cachedPosition;
     mutable MediaTime m_cachedDuration;
     bool m_canFallBackToLastFinishedSeekPosition { false };
     bool m_isChangingRate { false };
@@ -388,7 +388,7 @@ protected:
     bool m_isWaitingForKey { false };
 #endif
 
-    Optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
+    std::optional<GstVideoDecoderPlatform> m_videoDecoderPlatform;
 
 private:
     class TaskAtMediaTimeScheduler {
@@ -403,12 +403,12 @@ private:
             m_task = WTFMove(task);
             m_playbackDirection = playbackDirection;
         }
-        Optional<Function<void()>> checkTaskForScheduling(const MediaTime& currentTime)
+        std::optional<Function<void()>> checkTaskForScheduling(const MediaTime& currentTime)
         {
             if (!m_targetTime.isValid() || !currentTime.isFinite()
                 || (m_playbackDirection == Forward && currentTime < m_targetTime)
                 || (m_playbackDirection == Backward && currentTime > m_targetTime))
-                return Optional<Function<void()>>();
+                return std::optional<Function<void()>>();
             m_targetTime = MediaTime::invalidTime();
             return WTFMove(m_task);
         }
@@ -556,7 +556,7 @@ private:
     mutable uint64_t m_readPositionAtLastDidLoadingProgress { 0 };
 
     HashSet<RefPtr<WebCore::SecurityOrigin>> m_origins;
-    Optional<bool> m_hasTaintedOrigin { std::nullopt };
+    std::optional<bool> m_hasTaintedOrigin { std::nullopt };
 
     GRefPtr<GstElement> m_fpsSink { nullptr };
     uint64_t m_totalVideoFrames { 0 };

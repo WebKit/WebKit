@@ -133,21 +133,21 @@ void PaymentCoordinator::completeMerchantValidation(const PaymentMerchantSession
     m_client.completeMerchantValidation(paymentMerchantSession);
 }
 
-void PaymentCoordinator::completeShippingMethodSelection(Optional<ApplePayShippingMethodUpdate>&& update)
+void PaymentCoordinator::completeShippingMethodSelection(std::optional<ApplePayShippingMethodUpdate>&& update)
 {
     ASSERT(m_activeSession);
     RELEASE_LOG_IF_ALLOWED("completeShippingMethodSelection()");
     m_client.completeShippingMethodSelection(WTFMove(update));
 }
 
-void PaymentCoordinator::completeShippingContactSelection(Optional<ApplePayShippingContactUpdate>&& update)
+void PaymentCoordinator::completeShippingContactSelection(std::optional<ApplePayShippingContactUpdate>&& update)
 {
     ASSERT(m_activeSession);
     RELEASE_LOG_IF_ALLOWED("completeShippingContactSelection()");
     m_client.completeShippingContactSelection(WTFMove(update));
 }
 
-void PaymentCoordinator::completePaymentMethodSelection(Optional<ApplePayPaymentMethodUpdate>&& update)
+void PaymentCoordinator::completePaymentMethodSelection(std::optional<ApplePayPaymentMethodUpdate>&& update)
 {
     ASSERT(m_activeSession);
     RELEASE_LOG_IF_ALLOWED("completePaymentMethodSelection()");
@@ -156,7 +156,7 @@ void PaymentCoordinator::completePaymentMethodSelection(Optional<ApplePayPayment
 
 #if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
 
-void PaymentCoordinator::completePaymentMethodModeChange(Optional<ApplePayPaymentMethodModeUpdate>&& update)
+void PaymentCoordinator::completePaymentMethodModeChange(std::optional<ApplePayPaymentMethodModeUpdate>&& update)
 {
     ASSERT(m_activeSession);
     RELEASE_LOG_IF_ALLOWED("completePaymentMethodModeChange()");
@@ -165,7 +165,7 @@ void PaymentCoordinator::completePaymentMethodModeChange(Optional<ApplePayPaymen
 
 #endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
 
-void PaymentCoordinator::completePaymentSession(Optional<PaymentAuthorizationResult>&& result)
+void PaymentCoordinator::completePaymentSession(std::optional<PaymentAuthorizationResult>&& result)
 {
     ASSERT(m_activeSession);
 
@@ -276,7 +276,7 @@ void PaymentCoordinator::didCancelPaymentSession(PaymentSessionError&& error)
     m_activeSession = nullptr;
 }
 
-Optional<String> PaymentCoordinator::validatedPaymentNetwork(Document&, unsigned version, const String& paymentNetwork) const
+std::optional<String> PaymentCoordinator::validatedPaymentNetwork(Document&, unsigned version, const String& paymentNetwork) const
 {
     if (version < 2 && equalIgnoringASCIICase(paymentNetwork, "jcb"))
         return std::nullopt;

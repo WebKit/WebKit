@@ -126,11 +126,11 @@ public:
 
     CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
 
-    ExceptionOr<Optional<OffscreenRenderingContext>> getContext(JSC::JSGlobalObject&, RenderingContextType, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
+    ExceptionOr<std::optional<OffscreenRenderingContext>> getContext(JSC::JSGlobalObject&, RenderingContextType, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
     ExceptionOr<RefPtr<ImageBitmap>> transferToImageBitmap();
     void convertToBlob(ImageEncodeOptions&&, Ref<DeferredPromise>&&);
 
-    void didDraw(const Optional<FloatRect>&) final;
+    void didDraw(const std::optional<FloatRect>&) final;
 
     Image* copiedImage() const final;
     void clearCopiedImage() const final;

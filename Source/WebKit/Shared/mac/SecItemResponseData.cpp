@@ -45,7 +45,7 @@ void SecItemResponseData::encode(IPC::Encoder& encoder) const
         encoder << m_resultObject;
 }
 
-Optional<SecItemResponseData> SecItemResponseData::decode(IPC::Decoder& decoder)
+std::optional<SecItemResponseData> SecItemResponseData::decode(IPC::Decoder& decoder)
 {
     int64_t resultCode;
     if (!decoder.decode(resultCode))

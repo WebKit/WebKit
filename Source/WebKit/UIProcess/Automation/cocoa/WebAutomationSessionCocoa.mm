@@ -39,7 +39,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-Optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle& imageDataHandle)
+std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle& imageDataHandle)
 {
     auto bitmap = ShareableBitmap::create(imageDataHandle, SharedMemory::Protection::ReadOnly);
     if (!bitmap)
@@ -59,7 +59,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return String([imageData base64EncodedStringWithOptions:0]);
 }
 
-Optional<String> WebAutomationSession::platformGenerateLocalFilePathForRemoteFile(const String& remoteFilePath, const String& base64EncodedFileContents)
+std::optional<String> WebAutomationSession::platformGenerateLocalFilePathForRemoteFile(const String& remoteFilePath, const String& base64EncodedFileContents)
 {
     RetainPtr<NSData> fileContents = adoptNS([[NSData alloc] initWithBase64EncodedString:base64EncodedFileContents options:0]);
     if (!fileContents) {
@@ -81,7 +81,7 @@ Optional<String> WebAutomationSession::platformGenerateLocalFilePathForRemoteFil
     return String(localFilePath);
 }
 
-Optional<unichar> WebAutomationSession::charCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey key) const
+std::optional<unichar> WebAutomationSession::charCodeForVirtualKey(Inspector::Protocol::Automation::VirtualKey key) const
 {
     switch (key) {
     case Inspector::Protocol::Automation::VirtualKey::Shift:
@@ -197,7 +197,7 @@ Optional<unichar> WebAutomationSession::charCodeForVirtualKey(Inspector::Protoco
     }
 }
 
-Optional<unichar> WebAutomationSession::charCodeIgnoringModifiersForVirtualKey(Inspector::Protocol::Automation::VirtualKey key) const
+std::optional<unichar> WebAutomationSession::charCodeIgnoringModifiersForVirtualKey(Inspector::Protocol::Automation::VirtualKey key) const
 {
     switch (key) {
     case Inspector::Protocol::Automation::VirtualKey::NumberPadMultiply:

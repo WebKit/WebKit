@@ -69,7 +69,7 @@ public:
     size_t size() const final { return m_mappedBuffer->size(); }
 
     const GstBuffer* getBuffer() const { return gst_sample_get_buffer(m_sample.get()); }
-    Optional<FloatSize> getVideoResolution() const { return getVideoResolutionFromCaps(gst_sample_get_caps(m_sample.get())); }
+    std::optional<FloatSize> getVideoResolution() const { return getVideoResolutionFromCaps(gst_sample_get_caps(m_sample.get())); }
 
 protected:
     GStreamerEncodedImageBuffer() = default;

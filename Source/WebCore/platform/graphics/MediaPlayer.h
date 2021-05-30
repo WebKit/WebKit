@@ -107,29 +107,29 @@ struct MediaEngineSupportParameters {
     }
 
     template <class Decoder>
-    static Optional<MediaEngineSupportParameters> decode(Decoder& decoder)
+    static std::optional<MediaEngineSupportParameters> decode(Decoder& decoder)
     {
-        Optional<ContentType> type;
+        std::optional<ContentType> type;
         decoder >> type;
         if (!type)
             return std::nullopt;
 
-        Optional<URL> url;
+        std::optional<URL> url;
         decoder >> url;
         if (!url)
             return std::nullopt;
 
-        Optional<bool> isMediaSource;
+        std::optional<bool> isMediaSource;
         decoder >> isMediaSource;
         if (!isMediaSource)
             return std::nullopt;
 
-        Optional<bool> isMediaStream;
+        std::optional<bool> isMediaStream;
         decoder >> isMediaStream;
         if (!isMediaStream)
             return std::nullopt;
 
-        Optional<Vector<ContentType>> typesRequiringHardware;
+        std::optional<Vector<ContentType>> typesRequiringHardware;
         decoder >> typesRequiringHardware;
         if (!typesRequiringHardware)
             return std::nullopt;
@@ -596,7 +596,7 @@ public:
 
     unsigned long long fileSize() const;
 
-    Optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics();
+    std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics();
 
     String sourceApplicationIdentifier() const;
     Vector<String> preferredAudioCharacteristics() const;
@@ -679,8 +679,8 @@ private:
     URL m_url;
     ContentType m_contentType;
     String m_keySystem;
-    Optional<MediaPlayerEnums::MediaEngineIdentifier> m_activeEngineIdentifier;
-    Optional<MediaTime> m_pendingSeekRequest;
+    std::optional<MediaPlayerEnums::MediaEngineIdentifier> m_activeEngineIdentifier;
+    std::optional<MediaTime> m_pendingSeekRequest;
     IntSize m_size;
     Preload m_preload { Preload::Auto };
     double m_volume { 1 };

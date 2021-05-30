@@ -1,3 +1,19 @@
+2021-05-30  Darin Adler  <darin@apple.com>
+
+        Remove WTF::Optional synonym for std::optional, using that class template directly instead
+        https://bugs.webkit.org/show_bug.cgi?id=226433
+
+        Reviewed by Chris Dumez.
+
+        * <many files>: Let the do-webcore-rename script rename Optional<> to std::optional<>.
+
+        * inspector/scripts/codegen/generate_objc_protocol_types_implementation.py:
+        (ObjCProtocolTypesImplementationGenerator._generate_init_method_for_payload): Use auto instead
+        of Optional<>. Also use * instead of value() and nest the definition of the local inside an if
+        statement in the case where it's an optional.
+
+        * inspector/scripts/tests/expected/*: Regenerated these results.
+
 2021-05-29  Chris Dumez  <cdumez@apple.com>
 
         Stop using UncheckedLock in JSC::VMInspector

@@ -30,7 +30,7 @@
 namespace WebCore {
 
 struct ScrollOptions {
-    Optional<ScrollBehavior> behavior { ScrollBehavior::Auto };
+    std::optional<ScrollBehavior> behavior { ScrollBehavior::Auto };
 };
 
 } // namespace WebCore

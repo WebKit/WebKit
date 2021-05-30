@@ -37,12 +37,12 @@ namespace WTF {
 // FIXME: Should we add a version that allows other definitions of spaces, like isHTMLSpace or isHTTPSpace?
 // FIXME: Should we add a version that does not allow leading and trailing spaces?
 
-template<typename IntegralType> Optional<IntegralType> parseInteger(StringView, uint8_t base = 10);
-template<typename IntegralType> Optional<IntegralType> parseIntegerAllowingTrailingJunk(StringView, uint8_t base = 10);
+template<typename IntegralType> std::optional<IntegralType> parseInteger(StringView, uint8_t base = 10);
+template<typename IntegralType> std::optional<IntegralType> parseIntegerAllowingTrailingJunk(StringView, uint8_t base = 10);
 
 enum class TrailingJunkPolicy { Disallow, Allow };
 
-template<typename IntegralType, typename CharacterType> Optional<IntegralType> parseInteger(const CharacterType* data, size_t length, uint8_t base, TrailingJunkPolicy policy)
+template<typename IntegralType, typename CharacterType> std::optional<IntegralType> parseInteger(const CharacterType* data, size_t length, uint8_t base, TrailingJunkPolicy policy)
 {
     if (!data)
         return std::nullopt;
@@ -96,14 +96,14 @@ template<typename IntegralType, typename CharacterType> Optional<IntegralType> p
     return value.unsafeGet();
 }
 
-template<typename IntegralType> Optional<IntegralType> parseInteger(StringView string, uint8_t base)
+template<typename IntegralType> std::optional<IntegralType> parseInteger(StringView string, uint8_t base)
 {
     if (string.is8Bit())
         return parseInteger<IntegralType>(string.characters8(), string.length(), base, TrailingJunkPolicy::Disallow);
     return parseInteger<IntegralType>(string.characters16(), string.length(), base, TrailingJunkPolicy::Disallow);
 }
 
-template<typename IntegralType> Optional<IntegralType> parseIntegerAllowingTrailingJunk(StringView string, uint8_t base)
+template<typename IntegralType> std::optional<IntegralType> parseIntegerAllowingTrailingJunk(StringView string, uint8_t base)
 {
     if (string.is8Bit())
         return parseInteger<IntegralType>(string.characters8(), string.length(), base, TrailingJunkPolicy::Allow);

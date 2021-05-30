@@ -49,7 +49,7 @@ WebAuthnProcess::~WebAuthnProcess()
 {
 }
 
-void WebAuthnProcess::createWebAuthnConnectionToWebProcess(ProcessIdentifier identifier, CompletionHandler<void(Optional<IPC::Attachment>&&)>&& completionHandler)
+void WebAuthnProcess::createWebAuthnConnectionToWebProcess(ProcessIdentifier identifier, CompletionHandler<void(std::optional<IPC::Attachment>&&)>&& completionHandler)
 {
     auto ipcConnection = createIPCConnectionPair();
     if (!ipcConnection) {

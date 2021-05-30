@@ -38,7 +38,7 @@ namespace WebKit {
 
 struct WebUserScriptData {
     void encode(IPC::Encoder&) const;
-    static Optional<WebUserScriptData> decode(IPC::Decoder&);
+    static std::optional<WebUserScriptData> decode(IPC::Decoder&);
 
     uint64_t identifier;
     ContentWorldIdentifier worldIdentifier;
@@ -47,7 +47,7 @@ struct WebUserScriptData {
 
 struct WebUserStyleSheetData {
     void encode(IPC::Encoder&) const;
-    static Optional<WebUserStyleSheetData> decode(IPC::Decoder&);
+    static std::optional<WebUserStyleSheetData> decode(IPC::Decoder&);
 
     uint64_t identifier;
     ContentWorldIdentifier worldIdentifier;
@@ -56,7 +56,7 @@ struct WebUserStyleSheetData {
 
 struct WebScriptMessageHandlerData {
     void encode(IPC::Encoder&) const;
-    static Optional<WebScriptMessageHandlerData> decode(IPC::Decoder&);
+    static std::optional<WebScriptMessageHandlerData> decode(IPC::Decoder&);
 
     uint64_t identifier;
     ContentWorldIdentifier worldIdentifier;

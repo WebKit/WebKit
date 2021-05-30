@@ -54,7 +54,7 @@ RetainPtr<CGColorRef> TinyLRUCachePolicy<WebCore::Color, RetainPtr<CGColorRef>>:
 
 namespace WebCore {
 
-static Optional<SRGBA<uint8_t>> roundAndClampToSRGBALossy(CGColorRef color)
+static std::optional<SRGBA<uint8_t>> roundAndClampToSRGBALossy(CGColorRef color)
 {
     // FIXME: ExtendedColor - needs to handle color spaces.
 

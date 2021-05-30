@@ -189,7 +189,7 @@ static bool mayHaveDensityCorrectedSize(CFDictionaryRef imageProperties)
         && (resolutionX != ImageResolution::DefaultResolution || resolutionY != ImageResolution::DefaultResolution);
 }
 
-static Optional<IntSize> densityCorrectedSizeFromProperties(CFDictionaryRef imageProperties)
+static std::optional<IntSize> densityCorrectedSizeFromProperties(CFDictionaryRef imageProperties)
 {
     ASSERT(imageProperties);
     auto exifDictionary = (CFDictionaryRef)CFDictionaryGetValue(imageProperties, kCGImagePropertyExifDictionary);
@@ -387,7 +387,7 @@ RepetitionCount ImageDecoderCG::repetitionCount() const
 #endif
 }
 
-Optional<IntPoint> ImageDecoderCG::hotSpot() const
+std::optional<IntPoint> ImageDecoderCG::hotSpot() const
 {
     auto properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), 0, imageSourceOptions().get()));
     if (!properties)
@@ -530,7 +530,7 @@ PlatformImagePtr ImageDecoderCG::createFrameImageAtIndex(size_t index, Subsampli
         
         if (decodingOptions.hasSizeForDrawing()) {
             // See which size is smaller: the image native size or the sizeForDrawing.
-            Optional<IntSize> sizeForDrawing = decodingOptions.sizeForDrawing();
+            std::optional<IntSize> sizeForDrawing = decodingOptions.sizeForDrawing();
             if (sizeForDrawing.value().unclampedArea() < size.unclampedArea())
                 size = sizeForDrawing.value();
         }

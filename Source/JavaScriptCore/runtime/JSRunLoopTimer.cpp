@@ -190,7 +190,7 @@ void JSRunLoopTimer::Manager::cancelTimer(JSRunLoopTimer& timer)
     data.timer->startOneShot(std::max(0_s, scheduleTime - MonotonicTime::now().secondsSinceEpoch()));
 }
 
-Optional<Seconds> JSRunLoopTimer::Manager::timeUntilFire(JSRunLoopTimer& timer)
+std::optional<Seconds> JSRunLoopTimer::Manager::timeUntilFire(JSRunLoopTimer& timer)
 {
     Locker locker { m_lock };
     auto iter = m_mapping.find(timer.m_apiLock);
@@ -239,7 +239,7 @@ JSRunLoopTimer::~JSRunLoopTimer()
 {
 }
 
-Optional<Seconds> JSRunLoopTimer::timeUntilFire()
+std::optional<Seconds> JSRunLoopTimer::timeUntilFire()
 {
     return Manager::shared().timeUntilFire(*this);
 }

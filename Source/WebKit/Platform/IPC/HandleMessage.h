@@ -111,7 +111,7 @@ struct CodingType<std::tuple<Ts...>> {
 template<typename T, typename C, typename MF>
 void handleMessage(Decoder& decoder, C* object, MF function)
 {
-    Optional<typename CodingType<typename T::Arguments>::Type> arguments;
+    std::optional<typename CodingType<typename T::Arguments>::Type> arguments;
     decoder >> arguments;
     if (UNLIKELY(!arguments))
         return;
@@ -122,7 +122,7 @@ void handleMessage(Decoder& decoder, C* object, MF function)
 template<typename T, typename C, typename MF>
 void handleMessage(Connection& connection, Decoder& decoder, C* object, MF function)
 {
-    Optional<typename CodingType<typename T::Arguments>::Type> arguments;
+    std::optional<typename CodingType<typename T::Arguments>::Type> arguments;
     decoder >> arguments;
     if (UNLIKELY(!arguments))
         return;
@@ -132,7 +132,7 @@ void handleMessage(Connection& connection, Decoder& decoder, C* object, MF funct
 template<typename T, typename C, typename MF>
 bool handleMessageSynchronous(Connection& connection, Decoder& decoder, UniqueRef<Encoder>& replyEncoder, C* object, MF function)
 {
-    Optional<typename CodingType<typename T::Arguments>::Type> arguments;
+    std::optional<typename CodingType<typename T::Arguments>::Type> arguments;
     decoder >> arguments;
     if (UNLIKELY(!arguments))
         return false;
@@ -147,7 +147,7 @@ bool handleMessageSynchronous(Connection& connection, Decoder& decoder, UniqueRe
 template<typename T, typename C, typename MF>
 bool handleMessageSynchronousWantsConnection(Connection& connection, Decoder& decoder, UniqueRef<Encoder>& replyEncoder, C* object, MF function)
 {
-    Optional<typename CodingType<typename T::Arguments>::Type> arguments;
+    std::optional<typename CodingType<typename T::Arguments>::Type> arguments;
     decoder >> arguments;
     if (UNLIKELY(!arguments))
         return false;
@@ -166,7 +166,7 @@ void handleMessageSynchronous(StreamServerConnectionBase& connection, Decoder& d
     if (UNLIKELY(!decoder.decode(syncRequestID)))
         return;
 
-    Optional<typename CodingType<typename T::Arguments>::Type> arguments;
+    std::optional<typename CodingType<typename T::Arguments>::Type> arguments;
     decoder >> arguments;
     if (UNLIKELY(!arguments))
         return;
@@ -180,12 +180,12 @@ void handleMessageSynchronous(StreamServerConnectionBase& connection, Decoder& d
 template<typename T, typename C, typename MF>
 void handleMessageAsync(Connection& connection, Decoder& decoder, C* object, MF function)
 {
-    Optional<uint64_t> listenerID;
+    std::optional<uint64_t> listenerID;
     decoder >> listenerID;
     if (!listenerID)
         return;
 
-    Optional<typename CodingType<typename T::Arguments>::Type> arguments;
+    std::optional<typename CodingType<typename T::Arguments>::Type> arguments;
     decoder >> arguments;
     if (UNLIKELY(!arguments))
         return;
@@ -200,7 +200,7 @@ void handleMessageAsync(Connection& connection, Decoder& decoder, C* object, MF 
 template<typename T, typename C, typename MF>
 void handleMessageAsyncWantsConnection(Connection& connection, Decoder& decoder, C* object, MF function)
 {
-    Optional<typename CodingType<typename T::Arguments>::Type> arguments;
+    std::optional<typename CodingType<typename T::Arguments>::Type> arguments;
     decoder >> arguments;
     if (UNLIKELY(!arguments))
         return;

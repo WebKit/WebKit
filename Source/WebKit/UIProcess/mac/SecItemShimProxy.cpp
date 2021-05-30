@@ -61,7 +61,7 @@ void SecItemShimProxy::initializeConnection(IPC::Connection& connection)
     connection.addWorkQueueMessageReceiver(Messages::SecItemShimProxy::messageReceiverName(), m_queue.get(), this);
 }
 
-void SecItemShimProxy::secItemRequest(const SecItemRequestData& request, CompletionHandler<void(Optional<SecItemResponseData>&&)>&& response)
+void SecItemShimProxy::secItemRequest(const SecItemRequestData& request, CompletionHandler<void(std::optional<SecItemResponseData>&&)>&& response)
 {
     switch (request.type()) {
     case SecItemRequestData::Invalid:
@@ -98,7 +98,7 @@ void SecItemShimProxy::secItemRequest(const SecItemRequestData& request, Complet
     }
 }
 
-void SecItemShimProxy::secItemRequestSync(const SecItemRequestData& data, CompletionHandler<void(Optional<SecItemResponseData>&&)>&& completionHandler)
+void SecItemShimProxy::secItemRequestSync(const SecItemRequestData& data, CompletionHandler<void(std::optional<SecItemResponseData>&&)>&& completionHandler)
 {
     secItemRequest(data, WTFMove(completionHandler));
 }

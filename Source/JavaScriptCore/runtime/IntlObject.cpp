@@ -1438,7 +1438,7 @@ bool isWellFormedCurrencyCode(StringView currency)
     return currency.length() == 3 && currency.isAllSpecialCharacters<isASCIIAlpha>();
 }
 
-Optional<Vector<char, 32>> canonicalizeLocaleIDWithoutNullTerminator(const char* localeID)
+std::optional<Vector<char, 32>> canonicalizeLocaleIDWithoutNullTerminator(const char* localeID)
 {
     ASSERT(localeID);
     Vector<char, 32> buffer;

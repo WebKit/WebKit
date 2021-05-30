@@ -64,7 +64,7 @@ MockPaymentCoordinator::MockPaymentCoordinator(Page& page)
     m_availablePaymentNetworks.add("visa");
 }
 
-Optional<String> MockPaymentCoordinator::validatedPaymentNetwork(const String& paymentNetwork)
+std::optional<String> MockPaymentCoordinator::validatedPaymentNetwork(const String& paymentNetwork)
 {
     auto result = m_availablePaymentNetworks.find(paymentNetwork);
     if (result == m_availablePaymentNetworks.end())
@@ -132,7 +132,7 @@ void MockPaymentCoordinator::completeMerchantValidation(const PaymentMerchantSes
     });
 }
 
-void MockPaymentCoordinator::completeShippingMethodSelection(Optional<ApplePayShippingMethodUpdate>&& shippingMethodUpdate)
+void MockPaymentCoordinator::completeShippingMethodSelection(std::optional<ApplePayShippingMethodUpdate>&& shippingMethodUpdate)
 {
     if (!shippingMethodUpdate)
         return;
@@ -154,7 +154,7 @@ static Vector<MockPaymentError> convert(Vector<RefPtr<ApplePayError>>&& errors)
     return result;
 }
 
-void MockPaymentCoordinator::completeShippingContactSelection(Optional<ApplePayShippingContactUpdate>&& shippingContactUpdate)
+void MockPaymentCoordinator::completeShippingContactSelection(std::optional<ApplePayShippingContactUpdate>&& shippingContactUpdate)
 {
     if (!shippingContactUpdate)
         return;
@@ -168,7 +168,7 @@ void MockPaymentCoordinator::completeShippingContactSelection(Optional<ApplePayS
 #endif
 }
 
-void MockPaymentCoordinator::completePaymentMethodSelection(Optional<ApplePayPaymentMethodUpdate>&& paymentMethodUpdate)
+void MockPaymentCoordinator::completePaymentMethodSelection(std::optional<ApplePayPaymentMethodUpdate>&& paymentMethodUpdate)
 {
     if (!paymentMethodUpdate)
         return;
@@ -182,7 +182,7 @@ void MockPaymentCoordinator::completePaymentMethodSelection(Optional<ApplePayPay
 
 #if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
 
-void MockPaymentCoordinator::completePaymentMethodModeChange(Optional<ApplePayPaymentMethodModeUpdate>&& paymentMethodModeUpdate)
+void MockPaymentCoordinator::completePaymentMethodModeChange(std::optional<ApplePayPaymentMethodModeUpdate>&& paymentMethodModeUpdate)
 {
     if (!paymentMethodModeUpdate)
         return;
@@ -232,7 +232,7 @@ void MockPaymentCoordinator::cancelPayment()
     });
 }
 
-void MockPaymentCoordinator::completePaymentSession(Optional<PaymentAuthorizationResult>&& result)
+void MockPaymentCoordinator::completePaymentSession(std::optional<PaymentAuthorizationResult>&& result)
 {
     auto isFinalState = isFinalStateResult(result);
     m_errors = convert(WTFMove(result->errors));

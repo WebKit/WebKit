@@ -53,7 +53,7 @@ private:
     ProtectionSpaceServerType protectionSpaceServerTypeFromURI(const URL&, bool isForProxy);
     ProtectionSpace protectionSpaceForPasswordBased(const CurlResponse&, const ResourceResponse&);
     ProtectionSpace protectionSpaceForServerTrust(const URL&, const CertificateInfo&);
-    Optional<uint16_t> determineProxyPort(const URL&);
+    std::optional<uint16_t> determineProxyPort(const URL&);
     ProtectionSpaceAuthenticationScheme authenticationSchemeFromCurlAuth(long);
     String parseRealm(const ResourceResponse&);
     void removeLeadingAndTrailingQuotes(String&);

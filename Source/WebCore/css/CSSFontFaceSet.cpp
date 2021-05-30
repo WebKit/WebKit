@@ -334,7 +334,7 @@ static FontSelectionRequest computeFontSelectionRequest(CSSPropertyParserHelpers
     ASSERT(stretchSelectionValue);
 
     auto styleKeyword = font.style ? font.style->style : CSSValueNormal;
-    auto styleSelectionValue = [&] () -> Optional<FontSelectionValue> {
+    auto styleSelectionValue = [&] () -> std::optional<FontSelectionValue> {
         if (styleKeyword == CSSValueNormal)
             return std::nullopt;
         if (styleKeyword == CSSValueItalic)

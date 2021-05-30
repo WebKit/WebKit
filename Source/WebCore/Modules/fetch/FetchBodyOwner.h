@@ -42,7 +42,7 @@ namespace WebCore {
 
 class FetchBodyOwner : public RefCounted<FetchBodyOwner>, public ActiveDOMObject {
 public:
-    FetchBodyOwner(ScriptExecutionContext&, Optional<FetchBody>&&, Ref<FetchHeaders>&&);
+    FetchBodyOwner(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&);
     ~FetchBodyOwner();
 
     bool bodyUsed() const { return isDisturbed(); }
@@ -68,7 +68,7 @@ public:
 
     bool hasLoadingError() const;
     ResourceError loadingError() const;
-    Optional<Exception> loadingException() const;
+    std::optional<Exception> loadingException() const;
 
     const String& contentType() const { return m_contentType; }
 
@@ -121,14 +121,14 @@ private:
     };
 
 protected:
-    Optional<FetchBody> m_body;
+    std::optional<FetchBody> m_body;
     String m_contentType;
     bool m_isDisturbed { false };
     RefPtr<FetchBodySource> m_readableStreamSource;
     Ref<FetchHeaders> m_headers;
 
 private:
-    Optional<BlobLoader> m_blobLoader;
+    std::optional<BlobLoader> m_blobLoader;
     bool m_isBodyOpaque { false };
 
     Variant<std::nullptr_t, Exception, ResourceError> m_loadingError;

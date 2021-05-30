@@ -77,8 +77,8 @@ private:
 
 TEST_F(SecurityOriginTest, SecurityOriginConstructors)
 {
-    auto o1 = SecurityOrigin::create("http", "example.com", Optional<uint16_t>(80));
-    auto o2 = SecurityOrigin::create("http", "example.com", Optional<uint16_t>());
+    auto o1 = SecurityOrigin::create("http", "example.com", std::optional<uint16_t>(80));
+    auto o2 = SecurityOrigin::create("http", "example.com", std::optional<uint16_t>());
     auto o3 = SecurityOrigin::createFromString("http://example.com");
     auto o4 = SecurityOrigin::createFromString("http://example.com:80");
     auto o5 = SecurityOrigin::create(URL(URL(), "http://example.com"));
@@ -122,7 +122,7 @@ TEST_F(SecurityOriginTest, SecurityOriginConstructors)
     EXPECT_FALSE(o4->port());
     EXPECT_FALSE(o5->port());
     EXPECT_FALSE(o6->port());
-    EXPECT_EQ(o7->port(), Optional<uint16_t>(81));
+    EXPECT_EQ(o7->port(), std::optional<uint16_t>(81));
     EXPECT_FALSE(o8->port());
 #if PLATFORM(COCOA)
     EXPECT_FALSE(o9->port());

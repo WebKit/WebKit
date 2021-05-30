@@ -44,7 +44,7 @@ using JSC::Yarr::RegularExpression;
 
 namespace WebCore {
 
-auto CDMPrivateMediaSourceAVFObjC::parseKeySystem(const String& keySystem) -> Optional<KeySystemParameters>
+auto CDMPrivateMediaSourceAVFObjC::parseKeySystem(const String& keySystem) -> std::optional<KeySystemParameters>
 {
     static NeverDestroyed<RegularExpression> keySystemRE("^com\\.apple\\.fps\\.[23]_\\d+(?:,\\d+)*$", JSC::Yarr::TextCaseInsensitive);
 

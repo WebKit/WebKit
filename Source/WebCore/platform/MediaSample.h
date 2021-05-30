@@ -95,7 +95,7 @@ public:
         size_t byteOffset { 0 };
         size_t byteLength { 0 };
     };
-    virtual Optional<ByteRange> byteRange() const = 0;
+    virtual std::optional<ByteRange> byteRange() const = 0;
 
     enum class VideoRotation {
         None = 0,

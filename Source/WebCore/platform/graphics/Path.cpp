@@ -416,7 +416,7 @@ FloatRect Path::fastBoundingRect() const
 
 #if ENABLE(INLINE_PATH_DATA)
 
-Optional<FloatRect> Path::fastBoundingRectFromInlineData() const
+std::optional<FloatRect> Path::fastBoundingRectFromInlineData() const
 {
     if (hasInlineData<ArcData>()) {
         auto& arc = inlineData<ArcData>();
@@ -479,7 +479,7 @@ static FloatRect computeArcBounds(const FloatPoint& center, float radius, float 
     return result;
 }
 
-Optional<FloatRect> Path::boundingRectFromInlineData() const
+std::optional<FloatRect> Path::boundingRectFromInlineData() const
 {
     if (hasInlineData<ArcData>()) {
         auto& arc = inlineData<ArcData>();

@@ -101,7 +101,7 @@ DropTarget::~DropTarget()
     g_cancellable_cancel(m_cancellable.get());
 }
 
-void DropTarget::accept(GdkDrop* drop, Optional<WebCore::IntPoint> position, unsigned)
+void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position, unsigned)
 {
     m_drop = drop;
     m_position = position;

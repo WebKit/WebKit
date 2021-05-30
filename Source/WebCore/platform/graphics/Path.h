@@ -233,7 +233,7 @@ public:
 #endif
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<Path> decode(Decoder&);
+    template<class Decoder> static std::optional<Path> decode(Decoder&);
 
 #if ENABLE(INLINE_PATH_DATA)
     template<typename DataType> const DataType& inlineData() const;
@@ -245,8 +245,8 @@ public:
 private:
 #if ENABLE(INLINE_PATH_DATA)
     template<typename DataType> DataType& inlineData();
-    Optional<FloatRect> fastBoundingRectFromInlineData() const;
-    Optional<FloatRect> boundingRectFromInlineData() const;
+    std::optional<FloatRect> fastBoundingRectFromInlineData() const;
+    std::optional<FloatRect> boundingRectFromInlineData() const;
 #endif
 
     void moveToSlowCase(const FloatPoint&);
@@ -291,7 +291,7 @@ private:
     mutable bool m_copyPathBeforeMutation { false };
 #endif
 #if USE(CAIRO)
-    Optional<Vector<PathElement>> m_elements;
+    std::optional<Vector<PathElement>> m_elements;
 #endif
 };
 
@@ -335,7 +335,7 @@ template<class Encoder> void Path::encode(Encoder& encoder) const
     });
 }
 
-template<class Decoder> Optional<Path> Path::decode(Decoder& decoder)
+template<class Decoder> std::optional<Path> Path::decode(Decoder& decoder)
 {
     Path path;
 

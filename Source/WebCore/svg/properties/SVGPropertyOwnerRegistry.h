@@ -223,9 +223,9 @@ public:
 
     // Finds the property whose name is attributeName and returns the synchronize
     // string through the associated SVGMemberAccessor.
-    Optional<String> synchronize(const QualifiedName& attributeName) const override
+    std::optional<String> synchronize(const QualifiedName& attributeName) const override
     {
-        Optional<String> value;
+        std::optional<String> value;
         enumerateRecursively([&](const auto& entry) -> bool {
             if (!entry.key.matches(attributeName))
                 return true;

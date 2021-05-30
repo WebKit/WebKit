@@ -211,7 +211,7 @@ void DisplayLink::notifyObserversDisplayWasRefreshed()
     Locker locker { m_observersLock };
 
     auto maxFramesPerSecond = [](const Vector<ObserverInfo>& observers) {
-        Optional<WebCore::FramesPerSecond> observersMaxFramesPerSecond;
+        std::optional<WebCore::FramesPerSecond> observersMaxFramesPerSecond;
         for (const auto& observer : observers)
             observersMaxFramesPerSecond = std::max(observersMaxFramesPerSecond.value_or(0), observer.preferredFramesPerSecond);
         return observersMaxFramesPerSecond;

@@ -76,7 +76,7 @@ private:
     SWServer& m_server;
     Ref<RegistrationDatabase> m_database;
 
-    HashMap<ServiceWorkerRegistrationKey, Optional<ServiceWorkerContextData>> m_updatedRegistrations;
+    HashMap<ServiceWorkerRegistrationKey, std::optional<ServiceWorkerContextData>> m_updatedRegistrations;
     Timer m_databasePushTimer;
 
     bool m_isSuspended { false };

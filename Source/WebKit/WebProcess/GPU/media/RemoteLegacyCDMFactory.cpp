@@ -108,7 +108,7 @@ std::unique_ptr<CDMPrivateInterface> RemoteLegacyCDMFactory::createCDM(WebCore::
         return nullptr;
     }
 
-    Optional<MediaPlayerIdentifier> playerId;
+    std::optional<MediaPlayerIdentifier> playerId;
     if (auto player = cdm->mediaPlayer())
         playerId = gpuProcessConnection().mediaPlayerManager().findRemotePlayerId(player->playerPrivate());
 

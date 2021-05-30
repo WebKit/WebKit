@@ -215,13 +215,13 @@ TEST(RetainPtr, MoveAssignmentFromSimilarNSTypeReversed)
 TEST(RetainPtr, OptionalRetainPtrNS)
 {
     // Test assignment from adoptNS().
-    Optional<RetainPtr<NSObject>> optionalObject1 = adoptNS([NSObject new]);
+    std::optional<RetainPtr<NSObject>> optionalObject1 = adoptNS([NSObject new]);
     EXPECT_EQ(1, CFGetRetainCount(optionalObject1.value().get()));
     RetainPtr<NSObject> object1 = optionalObject1.value();
     EXPECT_EQ(optionalObject1.value(), object1);
 
     // Test assignment from retainPtr().
-    Optional<RetainPtr<NSObject>> optionalObject2;
+    std::optional<RetainPtr<NSObject>> optionalObject2;
     @autoreleasepool {
         optionalObject2 = retainPtr([[NSObject new] autorelease]);
     }
@@ -231,7 +231,7 @@ TEST(RetainPtr, OptionalRetainPtrNS)
 
     EXPECT_NE(object1, object2);
 
-    // Test assignment from Optional<RetainPtr<NSObject>>.
+    // Test assignment from std::optional<RetainPtr<NSObject>>.
     optionalObject1 = optionalObject2;
     EXPECT_TRUE(optionalObject1.value());
     EXPECT_TRUE(optionalObject1.value().get());
@@ -245,7 +245,7 @@ TEST(RetainPtr, OptionalRetainPtrNS)
     EXPECT_EQ(optionalObject1.value(), object1);
     EXPECT_EQ(optionalObject2.value(), object2);
 
-    // Test move from Optional<RetainPtr<NSObject>>.
+    // Test move from std::optional<RetainPtr<NSObject>>.
     EXPECT_EQ(2, CFGetRetainCount(object2.get()));
     optionalObject1 = WTFMove(optionalObject2);
     EXPECT_EQ(2, CFGetRetainCount(object2.get()));

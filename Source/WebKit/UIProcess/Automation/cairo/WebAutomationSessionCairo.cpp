@@ -34,7 +34,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-static Optional<String> base64EncodedPNGData(cairo_surface_t* surface)
+static std::optional<String> base64EncodedPNGData(cairo_surface_t* surface)
 {
     if (!surface)
         return std::nullopt;
@@ -52,7 +52,7 @@ static Optional<String> base64EncodedPNGData(cairo_surface_t* surface)
     return base64EncodeToString(pngData);
 }
 
-Optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle& handle)
+std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle& handle)
 {
     auto bitmap = ShareableBitmap::create(handle, SharedMemory::Protection::ReadOnly);
     if (!bitmap)
@@ -62,7 +62,7 @@ Optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const Sha
     return base64EncodedPNGData(surface.get());
 }
 
-Optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ViewSnapshot& snapshot)
+std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ViewSnapshot& snapshot)
 {
 #if PLATFORM(GTK)
     return base64EncodedPNGData(snapshot.surface());

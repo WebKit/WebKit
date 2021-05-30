@@ -57,7 +57,7 @@ private:
     Document* document() const;
 
     Ref<FileSystemDirectoryEntry> m_directory;
-    Optional<Exception> m_error;
+    std::optional<Exception> m_error;
     bool m_isReading { false };
     bool m_isDone { false };
 };

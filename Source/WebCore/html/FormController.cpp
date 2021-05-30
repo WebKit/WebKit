@@ -62,7 +62,7 @@ static inline void serializeFormControlStateTo(const FormControlState& formContr
         stateVector.append(value.isNull() ? emptyString() : value);
 }
 
-static inline Optional<FormControlState> deserializeFormControlState(const Vector<String>& stateVector, size_t& index)
+static inline std::optional<FormControlState> deserializeFormControlState(const Vector<String>& stateVector, size_t& index)
 {
     if (index >= stateVector.size())
         return std::nullopt;

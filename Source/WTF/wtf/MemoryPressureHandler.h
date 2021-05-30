@@ -139,11 +139,11 @@ public:
             size_t resident { 0 };
             size_t physical { 0 };
         };
-        Optional<MemoryUsage> platformMemoryUsage();
+        std::optional<MemoryUsage> platformMemoryUsage();
         void logMemoryUsageChange();
 
         const char* m_logString;
-        Optional<MemoryUsage> m_initialMemory;
+        std::optional<MemoryUsage> m_initialMemory;
 
         WTF_EXPORT_PRIVATE static bool s_loggingEnabled;
     };
@@ -161,7 +161,7 @@ public:
     void setShouldLogMemoryMemoryPressureEvents(bool shouldLog) { m_shouldLogMemoryMemoryPressureEvents = shouldLog; }
 
 private:
-    Optional<size_t> thresholdForMemoryKill();
+    std::optional<size_t> thresholdForMemoryKill();
     void memoryPressureStatusChanged();
 
     void uninstall();

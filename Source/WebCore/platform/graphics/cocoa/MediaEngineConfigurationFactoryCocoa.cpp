@@ -55,7 +55,7 @@ static CMVideoCodecType videoCodecTypeFromRFC4281Type(StringView type)
     return 0;
 }
 
-static Optional<MediaCapabilitiesInfo> computeMediaCapabilitiesInfo(const MediaDecodingConfiguration& configuration)
+static std::optional<MediaCapabilitiesInfo> computeMediaCapabilitiesInfo(const MediaDecodingConfiguration& configuration)
 {
     MediaCapabilitiesInfo info;
 

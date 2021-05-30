@@ -29,8 +29,8 @@
 #include "MessageNames.h"
 #include "TestClassName.h"
 #include "TestWithSuperclassMessagesReplies.h"
+#include <optional>
 #include <wtf/Forward.h>
-#include <wtf/Optional.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -216,9 +216,9 @@ public:
 
     using DelayedReply = TestSynchronousMessageDelayedReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
-    static void send(UniqueRef<IPC::Encoder>&&, IPC::Connection&, const Optional<WebKit::TestClassName>& optionalReply);
-    using Reply = std::tuple<Optional<WebKit::TestClassName>&>;
-    using ReplyArguments = std::tuple<Optional<WebKit::TestClassName>>;
+    static void send(UniqueRef<IPC::Encoder>&&, IPC::Connection&, const std::optional<WebKit::TestClassName>& optionalReply);
+    using Reply = std::tuple<std::optional<WebKit::TestClassName>&>;
+    using ReplyArguments = std::tuple<std::optional<WebKit::TestClassName>>;
     explicit TestSynchronousMessage(bool value)
         : m_arguments(value)
     {

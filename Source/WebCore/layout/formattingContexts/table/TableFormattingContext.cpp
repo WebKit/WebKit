@@ -248,7 +248,7 @@ void TableFormattingContext::setUsedGeometryForSections(const ConstraintsForInFl
     auto sectionWidth = grid.columns().logicalWidth() + 2 * grid.horizontalSpacing();
     auto logicalTop = constraints.vertical.logicalTop;
     auto verticalSpacing = grid.verticalSpacing();
-    auto paddingBefore = Optional<LayoutUnit> { verticalSpacing };
+    auto paddingBefore = std::optional<LayoutUnit> { verticalSpacing };
     auto paddingAfter = verticalSpacing;
     for (auto& sectionBox : childrenOfType<ContainerBox>(tableBox)) {
         auto& sectionBoxGeometry = formattingState().boxGeometry(sectionBox);
@@ -277,7 +277,7 @@ void TableFormattingContext::setUsedGeometryForSections(const ConstraintsForInFl
     }
 }
 
-void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, LayoutUnit availableHorizontalSpace, Optional<LayoutUnit> availableVerticalSpaceForContent)
+void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, LayoutUnit availableHorizontalSpace, std::optional<LayoutUnit> availableVerticalSpaceForContent)
 {
     ASSERT(cell.box().establishesBlockFormattingContext());
 
@@ -417,9 +417,9 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
 
     // 2. Collect the fixed width <col>s.
     auto& columnList = grid.columns().list();
-    Vector<Optional<LayoutUnit>> fixedWidthColumns;
+    Vector<std::optional<LayoutUnit>> fixedWidthColumns;
     for (auto& column : columnList) {
-        auto fixedWidth = [&] () -> Optional<LayoutUnit> {
+        auto fixedWidth = [&] () -> std::optional<LayoutUnit> {
             auto* columnBox = column.box();
             if (!columnBox) {
                 // Anoynmous columns don't have associated layout boxes and can't have fixed col size.
@@ -488,7 +488,7 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
     return tableWidthConstraints;
 }
 
-void TableFormattingContext::computeAndDistributeExtraSpace(LayoutUnit availableHorizontalSpace, Optional<LayoutUnit> availableVerticalSpace)
+void TableFormattingContext::computeAndDistributeExtraSpace(LayoutUnit availableHorizontalSpace, std::optional<LayoutUnit> availableVerticalSpace)
 {
     // Compute and balance the column and row spaces.
     auto& grid = formattingState().tableGrid();

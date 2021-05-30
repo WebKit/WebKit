@@ -36,7 +36,7 @@ namespace WebCore {
 
 struct CredentialCreationOptions {
     RefPtr<AbortSignal> signal;
-    Optional<PublicKeyCredentialCreationOptions> publicKey;
+    std::optional<PublicKeyCredentialCreationOptions> publicKey;
 };
 
 } // namespace WebCore

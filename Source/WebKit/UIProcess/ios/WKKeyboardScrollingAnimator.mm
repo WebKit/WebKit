@@ -97,7 +97,7 @@ struct KeyboardScrollParameters {
     id <WKKeyboardScrollableInternal> _scrollable;
     RetainPtr<CADisplayLink> _displayLink;
 
-    Optional<WebKit::KeyboardScroll> _currentScroll;
+    std::optional<WebKit::KeyboardScroll> _currentScroll;
 
     BOOL _scrollTriggeringKeyIsPressed;
 
@@ -177,7 +177,7 @@ static WebCore::BoxSide boxSide(WebKit::ScrollingDirection direction)
     }
 }
 
-- (Optional<WebKit::KeyboardScroll>)keyboardScrollForEvent:(::WebEvent *)event
+- (std::optional<WebKit::KeyboardScroll>)keyboardScrollForEvent:(::WebEvent *)event
 {
     static const unsigned kWebSpaceKey = 0x20;
 

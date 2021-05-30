@@ -56,9 +56,9 @@ public:
     }
 
     template <class Decoder>
-    static Optional<ContentType> decode(Decoder& decoder)
+    static std::optional<ContentType> decode(Decoder& decoder)
     {
-        Optional<String> type;
+        std::optional<String> type;
         decoder >> type;
         if (!type)
             return std::nullopt;

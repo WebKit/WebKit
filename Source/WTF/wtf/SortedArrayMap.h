@@ -82,7 +82,7 @@ enum class ASCIISubset { All, NoUppercaseLetters, NoUppercaseLettersOptimized };
 template<ASCIISubset> struct ComparableASCIISubsetLiteral {
     ASCIILiteral literal;
     template<unsigned size> constexpr ComparableASCIISubsetLiteral(const char (&characters)[size]);
-    static Optional<ComparableStringView> parse(StringView string) { return { { string } }; }
+    static std::optional<ComparableStringView> parse(StringView string) { return { { string } }; }
 };
 
 using ComparableASCIILiteral = ComparableASCIISubsetLiteral<ASCIISubset::All>;
@@ -109,7 +109,7 @@ public:
     static_assert(std::is_unsigned_v<StorageInteger>);
 
     template<unsigned size> constexpr PackedASCIILowerCodes(const char (&characters)[size]);
-    static Optional<PackedASCIILowerCodes> parse(StringView);
+    static std::optional<PackedASCIILowerCodes> parse(StringView);
     constexpr StorageInteger value() const { return m_value; }
 
 private:
@@ -341,7 +341,7 @@ template<typename StorageInteger> template<unsigned size> constexpr StorageInteg
     return result;
 }
 
-template<typename StorageInteger> auto PackedASCIILowerCodes<StorageInteger>::parse(StringView string) -> Optional<PackedASCIILowerCodes>
+template<typename StorageInteger> auto PackedASCIILowerCodes<StorageInteger>::parse(StringView string) -> std::optional<PackedASCIILowerCodes>
 {
     if (string.length() > sizeof(StorageInteger))
         return std::nullopt;

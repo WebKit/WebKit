@@ -109,7 +109,7 @@ void InputMethodState::encode(IPC::Encoder& encoder) const
     encoder << hints;
 }
 
-Optional<InputMethodState> InputMethodState::decode(IPC::Decoder& decoder)
+std::optional<InputMethodState> InputMethodState::decode(IPC::Decoder& decoder)
 {
     InputMethodState state;
     if (!decoder.decode(state.purpose))

@@ -566,21 +566,21 @@ String Value::toJSONString() const
     return result.toString();
 }
 
-Optional<bool> Value::asBoolean() const
+std::optional<bool> Value::asBoolean() const
 {
     if (type() != Type::Boolean)
         return std::nullopt;
     return m_value.boolean;
 }
 
-Optional<double> Value::asDouble() const
+std::optional<double> Value::asDouble() const
 {
     if (type() != Type::Double && type() != Type::Integer)
         return std::nullopt;
     return m_value.number;
 }
 
-Optional<int> Value::asInteger() const
+std::optional<int> Value::asInteger() const
 {
     if (type() != Type::Double && type() != Type::Integer)
         return std::nullopt;
@@ -648,7 +648,7 @@ size_t ObjectBase::memoryCost() const
     return memoryCost;
 }
 
-Optional<bool> ObjectBase::getBoolean(const String& name) const
+std::optional<bool> ObjectBase::getBoolean(const String& name) const
 {
     auto value = getValue(name);
     if (!value)
@@ -656,7 +656,7 @@ Optional<bool> ObjectBase::getBoolean(const String& name) const
     return value->asBoolean();
 }
 
-Optional<double> ObjectBase::getDouble(const String& name) const
+std::optional<double> ObjectBase::getDouble(const String& name) const
 {
     auto value = getValue(name);
     if (!value)
@@ -664,7 +664,7 @@ Optional<double> ObjectBase::getDouble(const String& name) const
     return value->asDouble();
 }
 
-Optional<int> ObjectBase::getInteger(const String& name) const
+std::optional<int> ObjectBase::getInteger(const String& name) const
 {
     auto value = getValue(name);
     if (!value)

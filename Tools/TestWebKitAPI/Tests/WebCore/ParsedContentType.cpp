@@ -168,7 +168,7 @@ static const char* escapeNonASCIIPrintableCharacters(StringView string)
 
 static const char* serializeIfValid(const String& input)
 {
-    if (Optional<ParsedContentType> parsedContentType = ParsedContentType::create(input))
+    if (std::optional<ParsedContentType> parsedContentType = ParsedContentType::create(input))
         return escapeNonASCIIPrintableCharacters(parsedContentType->serialize());
     return "NOTVALID";
 }

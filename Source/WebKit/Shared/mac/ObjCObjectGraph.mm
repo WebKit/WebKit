@@ -109,7 +109,7 @@ enum class ObjCType : uint8_t {
     WKTypeRefWrapper,
 };
 
-static Optional<ObjCType> typeFromObject(id object)
+static std::optional<ObjCType> typeFromObject(id object)
 {
     ASSERT(object);
 
@@ -307,11 +307,11 @@ bool ObjCObjectGraph::decode(IPC::Decoder& decoder, RetainPtr<id>& result)
     }
 
     case ObjCType::WKBrowsingContextHandle: {
-        Optional<WebPageProxyIdentifier> pageProxyID;
+        std::optional<WebPageProxyIdentifier> pageProxyID;
         decoder >> pageProxyID;
         if (!pageProxyID)
             return false;
-        Optional<WebCore::PageIdentifier> webPageID;
+        std::optional<WebCore::PageIdentifier> webPageID;
         decoder >> webPageID;
         if (!webPageID)
             return false;

@@ -32,7 +32,7 @@
 
 namespace WTF {
 
-static Optional<ChassisType> readMachineInfoChassisType()
+static std::optional<ChassisType> readMachineInfoChassisType()
 {
     GUniqueOutPtr<char> buffer;
     GUniqueOutPtr<GError> error;
@@ -61,7 +61,7 @@ static Optional<ChassisType> readMachineInfoChassisType()
     return std::nullopt;
 }
 
-static Optional<ChassisType> readDMIChassisType()
+static std::optional<ChassisType> readDMIChassisType()
 {
     GUniqueOutPtr<char> buffer;
     GUniqueOutPtr<GError> error;
@@ -96,7 +96,7 @@ static Optional<ChassisType> readDMIChassisType()
     return std::nullopt;
 }
 
-static Optional<ChassisType> readACPIChassisType()
+static std::optional<ChassisType> readACPIChassisType()
 {
     GUniqueOutPtr<char> buffer;
     GUniqueOutPtr<GError> error;
@@ -129,7 +129,7 @@ ChassisType chassisType()
     static ChassisType chassisType;
     static std::once_flag initializeChassis;
     std::call_once(initializeChassis, [] {
-        Optional<ChassisType> optionalChassisType = readMachineInfoChassisType();
+        std::optional<ChassisType> optionalChassisType = readMachineInfoChassisType();
         if (!optionalChassisType)
             optionalChassisType = readDMIChassisType();
         if (!optionalChassisType)

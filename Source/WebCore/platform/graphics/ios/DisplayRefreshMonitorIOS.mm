@@ -149,7 +149,7 @@ void DisplayRefreshMonitorIOS::stopNotificationMechanism()
     m_displayLinkIsActive = false;
 }
 
-Optional<FramesPerSecond> DisplayRefreshMonitorIOS::displayNominalFramesPerSecond()
+std::optional<FramesPerSecond> DisplayRefreshMonitorIOS::displayNominalFramesPerSecond()
 {
     return DisplayLinkFramesPerSecond;
 }

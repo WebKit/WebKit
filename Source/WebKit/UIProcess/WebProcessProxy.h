@@ -455,7 +455,7 @@ private:
 
     // Plugins
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    void getPlugins(bool refresh, CompletionHandler<void(Vector<WebCore::PluginInfo>&& plugins, Vector<WebCore::PluginInfo>&& applicationPlugins, Optional<Vector<WebCore::SupportedPluginIdentifier>>&&)>&&);
+    void getPlugins(bool refresh, CompletionHandler<void(Vector<WebCore::PluginInfo>&& plugins, Vector<WebCore::PluginInfo>&& applicationPlugins, std::optional<Vector<WebCore::SupportedPluginIdentifier>>&&)>&&);
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 #if ENABLE(NETSCAPE_PLUGIN_API)
     void getPluginProcessConnection(uint64_t pluginProcessToken, Messages::WebProcessProxy::GetPluginProcessConnectionDelayedReply&&);
@@ -595,7 +595,7 @@ private:
 
     HashMap<String, uint64_t> m_pageURLRetainCountMap;
 
-    Optional<WebCore::RegistrableDomain> m_registrableDomain;
+    std::optional<WebCore::RegistrableDomain> m_registrableDomain;
     bool m_isInProcessCache { false };
 
     enum class NoOrMaybe { No, Maybe } m_isResponsive;
@@ -624,7 +624,7 @@ private:
 #if PLATFORM(IOS)
     bool m_hasManagedSessionSandboxAccess { false };
 #endif
-    Optional<UseLazyStop> m_shouldStartResponsivenessTimerWhenLaunched;
+    std::optional<UseLazyStop> m_shouldStartResponsivenessTimerWhenLaunched;
 
 #if PLATFORM(WATCHOS)
     std::unique_ptr<ProcessThrottler::BackgroundActivity> m_backgroundActivityForFullscreenFormControls;
@@ -642,7 +642,7 @@ private:
         ProcessThrottler::ActivityVariant activity;
         WeakHashSet<WebProcessProxy> clientProcesses;
     };
-    Optional<ServiceWorkerInformation> m_serviceWorkerInformation;
+    std::optional<ServiceWorkerInformation> m_serviceWorkerInformation;
 
     HashMap<WebCore::SleepDisablerIdentifier, std::unique_ptr<WebCore::SleepDisabler>> m_sleepDisablers;
 
@@ -650,7 +650,7 @@ private:
         UniqueRef<ProcessAssertion> assertion;
         WebProcessWithAudibleMediaToken token;
     };
-    Optional<AudibleMediaActivity> m_audibleMediaActivity;
+    std::optional<AudibleMediaActivity> m_audibleMediaActivity;
 
     ShutdownPreventingScopeCounter m_shutdownPreventingScopeCounter;
 

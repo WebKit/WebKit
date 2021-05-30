@@ -155,7 +155,7 @@ bool unlockFile(PlatformFileHandle handle)
 }
 #endif
 
-Optional<uint64_t> fileSize(PlatformFileHandle handle)
+std::optional<uint64_t> fileSize(PlatformFileHandle handle)
 {
     struct stat fileInfo;
     if (fstat(handle, &fileInfo))
@@ -164,7 +164,7 @@ Optional<uint64_t> fileSize(PlatformFileHandle handle)
     return fileInfo.st_size;
 }
 
-Optional<WallTime> fileCreationTime(const String& path)
+std::optional<WallTime> fileCreationTime(const String& path)
 {
 #if OS(DARWIN) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD)
     CString fsRep = fileSystemRepresentation(path);
@@ -226,7 +226,7 @@ end:
 }
 #endif // !PLATFORM(COCOA)
 
-Optional<int32_t> getFileDeviceId(const CString& fsFile)
+std::optional<int32_t> getFileDeviceId(const CString& fsFile)
 {
     struct stat fileStat;
     if (stat(fsFile.data(), &fileStat) == -1)

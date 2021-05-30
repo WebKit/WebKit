@@ -93,7 +93,7 @@ private:
     ScriptBuffer m_scriptBuffer;
     mutable unsigned m_scriptHash { 0 };
     mutable String m_cachedScriptString;
-    mutable Optional<bool> m_containsOnlyASCII;
+    mutable std::optional<bool> m_containsOnlyASCII;
 };
 
 } // namespace WebCore

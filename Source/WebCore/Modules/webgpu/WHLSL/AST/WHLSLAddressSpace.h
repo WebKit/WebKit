@@ -101,7 +101,7 @@ public:
     TypeAnnotation& operator=(const TypeAnnotation&) = default;
     TypeAnnotation& operator=(TypeAnnotation&& other) = default;
 
-    Optional<AddressSpace> leftAddressSpace() const
+    std::optional<AddressSpace> leftAddressSpace() const
     {
         ASSERT(!m_empty);
         if (WTF::holds_alternative<LeftValue>(m_inner))

@@ -67,7 +67,7 @@ public:
         static LineBox::InlineLevelBox createGenericInlineLevelBox(const Box&, InlineLayoutUnit logicalLeft);
 
         InlineLayoutUnit baseline() const { return m_baseline; }
-        Optional<InlineLayoutUnit> descent() const { return m_descent; }
+        std::optional<InlineLayoutUnit> descent() const { return m_descent; }
         // See https://www.w3.org/TR/css-inline-3/#layout-bounds
         struct LayoutBounds {
             InlineLayoutUnit height() const { return ascent + descent; }
@@ -128,7 +128,7 @@ public:
         InlineRect m_logicalRect;
         LayoutBounds m_layoutBounds;
         InlineLayoutUnit m_baseline { 0 };
-        Optional<InlineLayoutUnit> m_descent;
+        std::optional<InlineLayoutUnit> m_descent;
         bool m_hasContent { false };
         Type m_type { Type::InlineBox };
     };

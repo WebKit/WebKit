@@ -54,7 +54,7 @@ public:
     void reject(Exception, RejectAsHandled = RejectAsHandled::No);
     
 private:
-    Optional<ExceptionOr<Value>> m_valueOrException;
+    std::optional<ExceptionOr<Value>> m_valueOrException;
     Vector<Ref<DeferredPromise>, 1> m_deferredPromises;
 };
 
@@ -75,7 +75,7 @@ public:
     void reject(Exception, RejectAsHandled = RejectAsHandled::No);
 
 private:
-    Optional<ExceptionOr<void>> m_valueOrException;
+    std::optional<ExceptionOr<void>> m_valueOrException;
     Vector<Ref<DeferredPromise>, 1> m_deferredPromises;
 };
 
@@ -106,7 +106,7 @@ public:
     
 private:
     ResolveCallback m_resolveCallback;
-    Optional<ExceptionOr<void>> m_valueOrException;
+    std::optional<ExceptionOr<void>> m_valueOrException;
     Vector<Ref<DeferredPromise>, 1> m_deferredPromises;
 };
 

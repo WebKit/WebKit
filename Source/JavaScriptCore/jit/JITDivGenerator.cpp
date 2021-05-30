@@ -82,7 +82,7 @@ void JITDivGenerator::generateFastPath(CCallHelpers& jit)
     loadOperand(jit, m_leftOperand, m_left, m_leftFPR);
 
 #if USE(JSVALUE64)
-    Optional<double> safeReciprocal;
+    std::optional<double> safeReciprocal;
     if (m_rightOperand.isConst()) {
         double constant = m_rightOperand.asConstNumber();
         safeReciprocal = safeReciprocalForDivByConst(constant);

@@ -473,7 +473,7 @@ void Chrome::showShareSheet(ShareDataWithParsedURL& shareData, CompletionHandler
     m_client.showShareSheet(shareData, WTFMove(callback));
 }
 
-void Chrome::showContactPicker(const ContactsRequestData& requestData, CompletionHandler<void(Optional<Vector<ContactInfo>>&&)>&& callback)
+void Chrome::showContactPicker(const ContactsRequestData& requestData, CompletionHandler<void(std::optional<Vector<ContactInfo>>&&)>&& callback)
 {
     m_client.showContactPicker(requestData, WTFMove(callback));
 }
@@ -546,7 +546,7 @@ PlatformDisplayID Chrome::displayID() const
     return m_page.displayID();
 }
 
-void Chrome::windowScreenDidChange(PlatformDisplayID displayID, Optional<FramesPerSecond> nominalFrameInterval)
+void Chrome::windowScreenDidChange(PlatformDisplayID displayID, std::optional<FramesPerSecond> nominalFrameInterval)
 {
     m_page.windowScreenDidChange(displayID, nominalFrameInterval);
 }

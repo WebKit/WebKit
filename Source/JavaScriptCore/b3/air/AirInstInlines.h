@@ -116,7 +116,7 @@ inline bool Inst::admitsExtendedOffsetAddr(Arg& arg)
     return admitsExtendedOffsetAddr(&arg - &args[0]);
 }
 
-inline Optional<unsigned> Inst::shouldTryAliasingDef()
+inline std::optional<unsigned> Inst::shouldTryAliasingDef()
 {
     if (!isX86())
         return std::nullopt;

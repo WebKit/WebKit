@@ -48,7 +48,7 @@ namespace AST {
 class FunctionDeclaration {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FunctionDeclaration(CodeLocation location, AttributeBlock&& attributeBlock, Optional<EntryPointType> entryPointType, Ref<UnnamedType> type, String&& name, VariableDeclarations&& parameters, std::unique_ptr<Semantic>&& semantic, bool isOperator, ParsingMode parsingMode)
+    FunctionDeclaration(CodeLocation location, AttributeBlock&& attributeBlock, std::optional<EntryPointType> entryPointType, Ref<UnnamedType> type, String&& name, VariableDeclarations&& parameters, std::unique_ptr<Semantic>&& semantic, bool isOperator, ParsingMode parsingMode)
         : m_codeLocation(location)
         , m_attributeBlock(WTFMove(attributeBlock))
         , m_entryPointType(entryPointType)
@@ -70,7 +70,7 @@ public:
     virtual bool isNativeFunctionDeclaration() const { return false; }
 
     AttributeBlock& attributeBlock() { return m_attributeBlock; }
-    const Optional<EntryPointType>& entryPointType() const { return m_entryPointType; }
+    const std::optional<EntryPointType>& entryPointType() const { return m_entryPointType; }
     const UnnamedType& type() const { return m_type; }
     UnnamedType& type() { return m_type; }
     const String& name() const { return m_name; }
@@ -90,7 +90,7 @@ public:
 private:
     CodeLocation m_codeLocation;
     AttributeBlock m_attributeBlock;
-    Optional<EntryPointType> m_entryPointType;
+    std::optional<EntryPointType> m_entryPointType;
     bool m_isOperator;
     ParsingMode m_parsingMode;
     Ref<UnnamedType> m_type;

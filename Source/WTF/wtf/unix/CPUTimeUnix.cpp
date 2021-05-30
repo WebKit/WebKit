@@ -38,7 +38,7 @@ static Seconds timevalToSeconds(const struct timeval& value)
     return Seconds(value.tv_sec) + Seconds::fromMicroseconds(value.tv_usec);
 }
 
-Optional<CPUTime> CPUTime::get()
+std::optional<CPUTime> CPUTime::get()
 {
     struct rusage resource { };
     int ret = getrusage(RUSAGE_SELF, &resource);

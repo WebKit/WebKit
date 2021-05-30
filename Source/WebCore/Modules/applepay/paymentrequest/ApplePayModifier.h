@@ -37,7 +37,7 @@
 namespace WebCore {
 
 struct ApplePayModifier {
-    Optional<ApplePayPaymentMethodType> paymentMethodType;
+    std::optional<ApplePayPaymentMethodType> paymentMethodType;
     Vector<ApplePayShippingMethod> additionalShippingOptions;
 
 #if defined(ApplePayModifierAdditions_members)

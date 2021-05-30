@@ -59,7 +59,7 @@ bool RemoteInspectorServer::start(const char* address, uint16_t port)
     return isRunning();
 }
 
-Optional<uint16_t> RemoteInspectorServer::getPort() const
+std::optional<uint16_t> RemoteInspectorServer::getPort() const
 {
     if (!isRunning())
         return std::nullopt;
@@ -68,7 +68,7 @@ Optional<uint16_t> RemoteInspectorServer::getPort() const
     return endpoint.getPort(m_server.value());
 }
 
-Optional<ConnectionID> RemoteInspectorServer::doAccept(RemoteInspectorSocketEndpoint& endpoint, PlatformSocketType socket)
+std::optional<ConnectionID> RemoteInspectorServer::doAccept(RemoteInspectorSocketEndpoint& endpoint, PlatformSocketType socket)
 {
     ASSERT(!isMainThread());
 

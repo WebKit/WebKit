@@ -394,7 +394,7 @@ void ImageSource::startAsyncDecodingQueue()
     });
 }
 
-void ImageSource::requestFrameAsyncDecodingAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const Optional<IntSize>& sizeForDrawing)
+void ImageSource::requestFrameAsyncDecodingAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const std::optional<IntSize>& sizeForDrawing)
 {
     ASSERT(isDecoderAvailable());
     if (!hasAsyncDecodingQueue())
@@ -435,7 +435,7 @@ void ImageSource::stopAsyncDecodingQueue()
     LOG(Images, "ImageSource::%s - %p - url: %s [decoding has been stopped]", __FUNCTION__, this, sourceURL().string().utf8().data());
 }
 
-const ImageFrame& ImageSource::frameAtIndexCacheIfNeeded(size_t index, ImageFrame::Caching caching, const Optional<SubsamplingLevel>& subsamplingLevel)
+const ImageFrame& ImageSource::frameAtIndexCacheIfNeeded(size_t index, ImageFrame::Caching caching, const std::optional<SubsamplingLevel>& subsamplingLevel)
 {
     if (index >= m_frames.size())
         return ImageFrame::defaultFrame();
@@ -510,7 +510,7 @@ T ImageSource::metadataCacheIfNeeded(T& cachedValue, const T& defaultValue, Meta
 }
 
 template<typename T>
-T ImageSource::firstFrameMetadataCacheIfNeeded(T& cachedValue, MetadataType metadataType, T (ImageFrame::*functor)() const, ImageFrame::Caching caching, const Optional<SubsamplingLevel>& subsamplingLevel)
+T ImageSource::firstFrameMetadataCacheIfNeeded(T& cachedValue, MetadataType metadataType, T (ImageFrame::*functor)() const, ImageFrame::Caching caching, const std::optional<SubsamplingLevel>& subsamplingLevel)
 {
     if (m_cachedMetadata.contains(metadataType))
         return cachedValue;
@@ -560,7 +560,7 @@ String ImageSource::accessibilityDescription()
     return metadataCacheIfNeeded(m_accessibilityDescription, String(), MetadataType::AccessibilityDescription, &ImageDecoder::accessibilityDescription);
 }
 
-Optional<IntPoint> ImageSource::hotSpot()
+std::optional<IntPoint> ImageSource::hotSpot()
 {
     return metadataCacheIfNeeded(m_hotSpot, { }, MetadataType::HotSpot, &ImageDecoder::hotSpot);
 }
@@ -570,7 +570,7 @@ ImageOrientation ImageSource::orientation()
     return firstFrameMetadataCacheIfNeeded(m_orientation, MetadataType::Orientation, &ImageFrame::orientation, ImageFrame::Caching::Metadata);
 }
 
-Optional<IntSize> ImageSource::densityCorrectedSize(ImageOrientation orientation)
+std::optional<IntSize> ImageSource::densityCorrectedSize(ImageOrientation orientation)
 {
     auto size = firstFrameMetadataCacheIfNeeded(m_densityCorrectedSize, MetadataType::DensityCorrectedSize, &ImageFrame::densityCorrectedSize, ImageFrame::Caching::Metadata);
     if (!size)
@@ -579,7 +579,7 @@ Optional<IntSize> ImageSource::densityCorrectedSize(ImageOrientation orientation
     if (orientation == ImageOrientation::FromImage)
         orientation = this->orientation();
 
-    return orientation.usesWidthAsHeight() ? Optional<IntSize>(size.value().transposedSize()) : size;
+    return orientation.usesWidthAsHeight() ? std::optional<IntSize>(size.value().transposedSize()) : size;
 }
 
 IntSize ImageSource::size(ImageOrientation orientation)
@@ -658,12 +658,12 @@ bool ImageSource::frameHasAlphaAtIndex(size_t index)
     return frameAtIndex(index).hasAlpha();
 }
 
-bool ImageSource::frameHasFullSizeNativeImageAtIndex(size_t index, const Optional<SubsamplingLevel>& subsamplingLevel)
+bool ImageSource::frameHasFullSizeNativeImageAtIndex(size_t index, const std::optional<SubsamplingLevel>& subsamplingLevel)
 {
     return frameAtIndex(index).hasFullSizeNativeImage(subsamplingLevel);
 }
 
-bool ImageSource::frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(size_t index, const Optional<SubsamplingLevel>& subsamplingLevel, const DecodingOptions& decodingOptions)
+bool ImageSource::frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(size_t index, const std::optional<SubsamplingLevel>& subsamplingLevel, const DecodingOptions& decodingOptions)
 {
     return frameAtIndex(index).hasDecodedNativeImageCompatibleWithOptions(subsamplingLevel, decodingOptions);
 }

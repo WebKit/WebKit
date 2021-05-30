@@ -68,7 +68,7 @@ protected:
         uint8_t* data;
         size_t size;
     };
-    Optional<Span> tryAcquire();
+    std::optional<Span> tryAcquire();
     Span acquireAll();
 
     void release(size_t readSize);

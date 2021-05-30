@@ -283,7 +283,7 @@ void CDMProxy::abortWaitingForKey() const
     m_keysCondition.notifyAll();
 }
 
-Optional<Ref<KeyHandle>> CDMProxy::tryWaitForKeyHandle(const KeyIDType& keyID, WeakPtr<CDMProxyDecryptionClient>&& client) const
+std::optional<Ref<KeyHandle>> CDMProxy::tryWaitForKeyHandle(const KeyIDType& keyID, WeakPtr<CDMProxyDecryptionClient>&& client) const
 {
     startedWaitingForKey();
     // Unconditionally saying we have stopped waiting for a key means that decryptors only get
@@ -327,7 +327,7 @@ bool CDMProxy::keyAvailable(const KeyIDType& keyID) const
     return keyAvailableUnlocked(keyID);
 }
 
-Optional<Ref<KeyHandle>> CDMProxy::getOrWaitForKeyHandle(const KeyIDType& keyID, WeakPtr<CDMProxyDecryptionClient>&& client) const
+std::optional<Ref<KeyHandle>> CDMProxy::getOrWaitForKeyHandle(const KeyIDType& keyID, WeakPtr<CDMProxyDecryptionClient>&& client) const
 {
     if (!keyAvailable(keyID)) {
         LOG(EME, "EME - CDMProxy key cache does not contain key ID %s", vectorToHexString(keyID).ascii().data());
@@ -338,7 +338,7 @@ Optional<Ref<KeyHandle>> CDMProxy::getOrWaitForKeyHandle(const KeyIDType& keyID,
     return std::make_optional(handle.releaseNonNull());
 }
 
-Optional<KeyHandleValueVariant> CDMProxy::getOrWaitForKeyValue(const KeyIDType& keyID, WeakPtr<CDMProxyDecryptionClient>&& client) const
+std::optional<KeyHandleValueVariant> CDMProxy::getOrWaitForKeyValue(const KeyIDType& keyID, WeakPtr<CDMProxyDecryptionClient>&& client) const
 {
     if (auto keyHandle = getOrWaitForKeyHandle(keyID, WTFMove(client)))
         return std::make_optional((*keyHandle)->value());

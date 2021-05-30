@@ -40,10 +40,10 @@ struct ServiceWorkerClientIdentifier {
     unsigned hash() const;
 
     String toString() const { return makeString(serverConnectionIdentifier.toUInt64(), '-', contextIdentifier.toUInt64()); }
-    static Optional<ServiceWorkerClientIdentifier> fromString(StringView);
+    static std::optional<ServiceWorkerClientIdentifier> fromString(StringView);
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ServiceWorkerClientIdentifier> decode(Decoder&);
+    template<class Decoder> static std::optional<ServiceWorkerClientIdentifier> decode(Decoder&);
 };
 
 inline bool operator==(const ServiceWorkerClientIdentifier& a, const ServiceWorkerClientIdentifier& b)
@@ -58,14 +58,14 @@ void ServiceWorkerClientIdentifier::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ServiceWorkerClientIdentifier> ServiceWorkerClientIdentifier::decode(Decoder& decoder)
+std::optional<ServiceWorkerClientIdentifier> ServiceWorkerClientIdentifier::decode(Decoder& decoder)
 {
-    Optional<SWServerConnectionIdentifier> serverConnectionIdentifier;
+    std::optional<SWServerConnectionIdentifier> serverConnectionIdentifier;
     decoder >> serverConnectionIdentifier;
     if (!serverConnectionIdentifier)
         return std::nullopt;
 
-    Optional<DocumentIdentifier> contextIdentifier;
+    std::optional<DocumentIdentifier> contextIdentifier;
     decoder >> contextIdentifier;
     if (!contextIdentifier)
         return std::nullopt;

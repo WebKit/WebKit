@@ -394,7 +394,7 @@ double InspectorPageAgent::timestamp()
     return m_environment.executionStopwatch().elapsedTime().seconds();
 }
 
-Protocol::ErrorStringOr<void> InspectorPageAgent::reload(Optional<bool>&& ignoreCache, Optional<bool>&& revalidateAllResources)
+Protocol::ErrorStringOr<void> InspectorPageAgent::reload(std::optional<bool>&& ignoreCache, std::optional<bool>&& revalidateAllResources)
 {
     OptionSet<ReloadOption> reloadOptions;
     if (ignoreCache && *ignoreCache)
@@ -426,7 +426,7 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::overrideUserAgent(const String
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorPageAgent::overrideSetting(Protocol::Page::Setting setting, Optional<bool>&& value)
+Protocol::ErrorStringOr<void> InspectorPageAgent::overrideSetting(Protocol::Page::Setting setting, std::optional<bool>&& value)
 {
     auto& inspectedPageSettings = m_inspectedPage.settings();
 
@@ -562,7 +562,7 @@ Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Page::Cookie>>> InspectorPag
     return buildArrayForCookies(allRawCookies);
 }
 
-static Optional<Cookie> parseCookieObject(Protocol::ErrorString& errorString, Ref<JSON::Object>&& cookieObject)
+static std::optional<Cookie> parseCookieObject(Protocol::ErrorString& errorString, Ref<JSON::Object>&& cookieObject)
 {
     Cookie cookie;
 
@@ -703,7 +703,7 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::setBootstrapScript(const Strin
     return { };
 }
 
-Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>>> InspectorPageAgent::searchInResource(const Protocol::Network::FrameId& frameId, const String& url, const String& query, Optional<bool>&& caseSensitive, Optional<bool>&& isRegex, const Protocol::Network::RequestId& requestId)
+Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::GenericTypes::SearchMatch>>> InspectorPageAgent::searchInResource(const Protocol::Network::FrameId& frameId, const String& url, const String& query, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, const Protocol::Network::RequestId& requestId)
 {
     Protocol::ErrorString errorString;
 
@@ -756,7 +756,7 @@ static Ref<Protocol::Page::SearchResult> buildObjectForSearchResult(const Protoc
         .release();
 }
 
-Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Page::SearchResult>>> InspectorPageAgent::searchInResources(const String& text, Optional<bool>&& caseSensitive, Optional<bool>&& isRegex)
+Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Protocol::Page::SearchResult>>> InspectorPageAgent::searchInResources(const String& text, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex)
 {
     auto result = JSON::ArrayOf<Protocol::Page::SearchResult>::create();
 
@@ -1028,7 +1028,7 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::setEmulatedMedia(const String&
 }
 
 #if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
-Protocol::ErrorStringOr<void> InspectorPageAgent::setForcedAppearance(Optional<Protocol::Page::Appearance>&& appearance)
+Protocol::ErrorStringOr<void> InspectorPageAgent::setForcedAppearance(std::optional<Protocol::Page::Appearance>&& appearance)
 {
     if (!appearance) {
         m_inspectedPage.setUseDarkAppearanceOverride(std::nullopt);
@@ -1107,7 +1107,7 @@ Protocol::ErrorStringOr<String> InspectorPageAgent::archive()
 #endif
 
 #if !PLATFORM(COCOA)
-Protocol::ErrorStringOr<void> InspectorPageAgent::setScreenSizeOverride(Optional<int>&& width, Optional<int>&& height)
+Protocol::ErrorStringOr<void> InspectorPageAgent::setScreenSizeOverride(std::optional<int>&& width, std::optional<int>&& height)
 {
     if (width.has_value() != height.has_value())
         return makeUnexpected("Screen width and height override should be both specified or omitted"_s);

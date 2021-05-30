@@ -31,7 +31,7 @@
 namespace WebCore {
 namespace DisplayList {
 
-Optional<std::size_t> InMemoryDisplayList::WritingClient::requiredSizeForItem(const DisplayListItem& displayListItem) const
+std::optional<std::size_t> InMemoryDisplayList::WritingClient::requiredSizeForItem(const DisplayListItem& displayListItem) const
 {
     return paddedSizeOfTypeAndItemInBytes(displayListItem);
 }
@@ -41,7 +41,7 @@ void InMemoryDisplayList::WritingClient::encodeItemInline(const DisplayListItem&
     safeCopy({ location }, displayListItem);
 }
 
-Optional<ItemHandle> WARN_UNUSED_RETURN InMemoryDisplayList::ReadingClient::decodeItem(const uint8_t* data, size_t dataLength, ItemType type, uint8_t* handleLocation)
+std::optional<ItemHandle> WARN_UNUSED_RETURN InMemoryDisplayList::ReadingClient::decodeItem(const uint8_t* data, size_t dataLength, ItemType type, uint8_t* handleLocation)
 {
     const ItemHandle dataHandle { const_cast<uint8_t*>(data) };
     ASSERT_UNUSED(dataLength, dataLength >= paddedSizeOfTypeAndItemInBytes(dataHandle.type()));

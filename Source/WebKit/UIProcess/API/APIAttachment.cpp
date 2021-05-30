@@ -93,7 +93,7 @@ WTF::String Attachment::fileName() const
     return { };
 }
 
-Optional<uint64_t> Attachment::fileSizeForDisplay() const
+std::optional<uint64_t> Attachment::fileSizeForDisplay() const
 {
     return std::nullopt;
 }

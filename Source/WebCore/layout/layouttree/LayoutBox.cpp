@@ -42,7 +42,7 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Box);
 
-Box::Box(Optional<ElementAttributes> attributes, RenderStyle&& style, OptionSet<BaseTypeFlag> baseTypeFlags)
+Box::Box(std::optional<ElementAttributes> attributes, RenderStyle&& style, OptionSet<BaseTypeFlag> baseTypeFlags)
     : m_style(WTFMove(style))
     , m_elementAttributes(attributes)
     , m_baseTypeFlags(baseTypeFlags.toRaw())
@@ -514,7 +514,7 @@ void Box::setColumnWidth(LayoutUnit columnWidth)
     ensureRareData().columnWidth = columnWidth;
 }
 
-Optional<LayoutUnit> Box::columnWidth() const
+std::optional<LayoutUnit> Box::columnWidth() const
 {
     if (!hasRareData())
         return { };

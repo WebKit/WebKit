@@ -40,7 +40,7 @@ class ScopeRuleSets;
 
 class PseudoElementRequest {
 public:
-    PseudoElementRequest(PseudoId pseudoId, Optional<StyleScrollbarState> scrollbarState = std::nullopt)
+    PseudoElementRequest(PseudoId pseudoId, std::optional<StyleScrollbarState> scrollbarState = std::nullopt)
         : pseudoId(pseudoId)
         , scrollbarState(scrollbarState)
     {
@@ -54,7 +54,7 @@ public:
     }
 
     PseudoId pseudoId;
-    Optional<StyleScrollbarState> scrollbarState;
+    std::optional<StyleScrollbarState> scrollbarState;
     AtomString highlightName;
 };
 
@@ -144,7 +144,7 @@ private:
     enum class DeclarationOrigin { UserAgent, User, Author };
     static Vector<MatchedProperties>& declarationsForOrigin(MatchResult&, DeclarationOrigin);
     void sortAndTransferMatchedRules(DeclarationOrigin);
-    void transferMatchedRules(DeclarationOrigin, Optional<ScopeOrdinal> forScope = { });
+    void transferMatchedRules(DeclarationOrigin, std::optional<ScopeOrdinal> forScope = { });
 
     void addMatchedRule(const RuleData&, unsigned specificity, ScopeOrdinal);
     void addMatchedProperties(MatchedProperties&&, DeclarationOrigin);

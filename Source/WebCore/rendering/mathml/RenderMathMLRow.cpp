@@ -52,11 +52,11 @@ MathMLRowElement& RenderMathMLRow::element() const
     return static_cast<MathMLRowElement&>(nodeForNonAnonymous());
 }
 
-Optional<LayoutUnit> RenderMathMLRow::firstLineBaseline() const
+std::optional<LayoutUnit> RenderMathMLRow::firstLineBaseline() const
 {
     auto* baselineChild = firstChildBox();
     if (!baselineChild)
-        return Optional<LayoutUnit>();
+        return std::optional<LayoutUnit>();
 
     return LayoutUnit { static_cast<int>(lroundf(ascentForChild(*baselineChild) + baselineChild->logicalTop())) };
 }

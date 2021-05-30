@@ -65,7 +65,7 @@ private:
     void computeAddressErrors(String&& error, AddressErrors&&, Vector<RefPtr<ApplePayError>>&) const;
     void computePayerErrors(PayerErrorFields&&, Vector<RefPtr<ApplePayError>>&) const;
     ExceptionOr<void> computePaymentMethodErrors(JSC::JSObject* paymentMethodErrors, Vector<RefPtr<ApplePayError>>&) const;
-    ExceptionOr<Optional<std::tuple<PaymentDetailsModifier, ApplePayModifier>>> firstApplicableModifier() const;
+    ExceptionOr<std::optional<std::tuple<PaymentDetailsModifier, ApplePayModifier>>> firstApplicableModifier() const;
 
     ExceptionOr<void> shippingAddressUpdated(Vector<RefPtr<ApplePayError>>&& errors);
     ExceptionOr<void> shippingOptionUpdated();
@@ -78,7 +78,7 @@ private:
     void canMakePayment(Document&, WTF::Function<void(bool)>&& completionHandler) final;
     ExceptionOr<void> detailsUpdated(PaymentRequest::UpdateReason, String&& error, AddressErrors&&, PayerErrorFields&&, JSC::JSObject* paymentMethodErrors) final;
     ExceptionOr<void> merchantValidationCompleted(JSC::JSValue&&) final;
-    void complete(Optional<PaymentComplete>&&) final;
+    void complete(std::optional<PaymentComplete>&&) final;
     ExceptionOr<void> retry(PaymentValidationErrors&&) final;
 
     // PaymentSession
@@ -95,8 +95,8 @@ private:
 
     PaymentRequest::MethodIdentifier m_identifier;
     Ref<PaymentRequest> m_paymentRequest;
-    Optional<ApplePayRequest> m_applePayRequest;
-    Optional<ApplePayPaymentMethodType> m_selectedPaymentMethodType;
+    std::optional<ApplePayRequest> m_applePayRequest;
+    std::optional<ApplePayPaymentMethodType> m_selectedPaymentMethodType;
 
     enum class UpdateState : uint8_t {
         None,

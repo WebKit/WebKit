@@ -49,7 +49,7 @@ class FilterOperations;
 class KeyframeEffect : public AnimationEffect
     , public CSSPropertyBlendingClient {
 public:
-    static ExceptionOr<Ref<KeyframeEffect>> create(JSC::JSGlobalObject&, Element*, JSC::Strong<JSC::JSObject>&&, Optional<Variant<double, KeyframeEffectOptions>>&&);
+    static ExceptionOr<Ref<KeyframeEffect>> create(JSC::JSGlobalObject&, Element*, JSC::Strong<JSC::JSObject>&&, std::optional<Variant<double, KeyframeEffectOptions>>&&);
     static ExceptionOr<Ref<KeyframeEffect>> create(JSC::JSGlobalObject&, Ref<KeyframeEffect>&&);
     static Ref<KeyframeEffect> create(const Element&, PseudoId);
     ~KeyframeEffect() { }
@@ -57,7 +57,7 @@ public:
     bool isKeyframeEffect() const final { return true; }
 
     struct BasePropertyIndexedKeyframe {
-        Variant<std::nullptr_t, Vector<Optional<double>>, double> offset = Vector<Optional<double>>();
+        Variant<std::nullptr_t, Vector<std::optional<double>>, double> offset = Vector<std::optional<double>>();
         Variant<Vector<String>, String> easing = Vector<String>();
         Variant<Vector<CompositeOperationOrAuto>, CompositeOperationOrAuto> composite = Vector<CompositeOperationOrAuto>();
     };
@@ -110,7 +110,7 @@ public:
     const String pseudoElement() const;
     ExceptionOr<void> setPseudoElement(const String&);
 
-    const Optional<const Styleable> targetStyleable() const;
+    const std::optional<const Styleable> targetStyleable() const;
 
     Vector<JSC::Strong<JSC::JSObject>> getBindingsKeyframes(JSC::JSGlobalObject&);
     Vector<JSC::Strong<JSC::JSObject>> getKeyframes(JSC::JSGlobalObject&);
@@ -123,7 +123,7 @@ public:
     void setComposite(CompositeOperation compositeOperation) { m_compositeOperation = compositeOperation; }
 
     void getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle);
-    void apply(RenderStyle& targetStyle, const RenderStyle* parentElementStyle, Optional<Seconds> = std::nullopt) override;
+    void apply(RenderStyle& targetStyle, const RenderStyle* parentElementStyle, std::optional<Seconds> = std::nullopt) override;
     void invalidate() override;
     void animationDidTick() final;
     void animationDidPlay() final;
@@ -185,7 +185,7 @@ private:
     Document* document() const;
     void updateEffectStackMembership();
     void copyPropertiesFromSource(Ref<KeyframeEffect>&&);
-    void didChangeTargetStyleable(const Optional<const Styleable>&);
+    void didChangeTargetStyleable(const std::optional<const Styleable>&);
     ExceptionOr<void> processKeyframes(JSC::JSGlobalObject&, JSC::Strong<JSC::JSObject>&&);
     void addPendingAcceleratedAction(AcceleratedAction);
     bool canBeAccelerated() const;
@@ -204,7 +204,7 @@ private:
     void computeAcceleratedPropertiesState();
     void setBlendingKeyframes(KeyframeList&);
     Seconds timeToNextTick() const final;
-    Optional<double> progressUntilNextStep(double) const final;
+    std::optional<double> progressUntilNextStep(double) const final;
     bool isTargetingTransformRelatedProperty() const;
     void checkForMatchingTransformFunctionLists();
     void checkForMatchingFilterFunctionLists();

@@ -70,71 +70,71 @@ struct ResourceLoadStatisticsParameters {
         encoder << manualPrevalentResource;
     }
 
-    static Optional<ResourceLoadStatisticsParameters> decode(IPC::Decoder& decoder)
+    static std::optional<ResourceLoadStatisticsParameters> decode(IPC::Decoder& decoder)
     {
-        Optional<String> directory;
+        std::optional<String> directory;
         decoder >> directory;
         if (!directory)
             return std::nullopt;
         
-        Optional<SandboxExtension::Handle> directoryExtensionHandle;
+        std::optional<SandboxExtension::Handle> directoryExtensionHandle;
         decoder >> directoryExtensionHandle;
         if (!directoryExtensionHandle)
             return std::nullopt;
         
-        Optional<bool> enabled;
+        std::optional<bool> enabled;
         decoder >> enabled;
         if (!enabled)
             return std::nullopt;
 
-        Optional<bool> isItpStateExplicitlySet;
+        std::optional<bool> isItpStateExplicitlySet;
         decoder >> isItpStateExplicitlySet;
         if (!isItpStateExplicitlySet)
             return std::nullopt;
 
-        Optional<bool> enableLogTestingEvent;
+        std::optional<bool> enableLogTestingEvent;
         decoder >> enableLogTestingEvent;
         if (!enableLogTestingEvent)
             return std::nullopt;
 
-        Optional<bool> shouldIncludeLocalhost;
+        std::optional<bool> shouldIncludeLocalhost;
         decoder >> shouldIncludeLocalhost;
         if (!shouldIncludeLocalhost)
             return std::nullopt;
 
-        Optional<bool> enableDebugMode;
+        std::optional<bool> enableDebugMode;
         decoder >> enableDebugMode;
         if (!enableDebugMode)
             return std::nullopt;
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-        Optional<WebCore::ThirdPartyCookieBlockingMode> thirdPartyCookieBlockingMode;
+        std::optional<WebCore::ThirdPartyCookieBlockingMode> thirdPartyCookieBlockingMode;
         decoder >> thirdPartyCookieBlockingMode;
         if (!thirdPartyCookieBlockingMode)
             return std::nullopt;
 
-        Optional<WebCore::SameSiteStrictEnforcementEnabled> sameSiteStrictEnforcementEnabled;
+        std::optional<WebCore::SameSiteStrictEnforcementEnabled> sameSiteStrictEnforcementEnabled;
         decoder >> sameSiteStrictEnforcementEnabled;
         if (!sameSiteStrictEnforcementEnabled)
             return std::nullopt;
 #endif
 
-        Optional<WebCore::FirstPartyWebsiteDataRemovalMode> firstPartyWebsiteDataRemovalMode;
+        std::optional<WebCore::FirstPartyWebsiteDataRemovalMode> firstPartyWebsiteDataRemovalMode;
         decoder >> firstPartyWebsiteDataRemovalMode;
         if (!firstPartyWebsiteDataRemovalMode)
             return std::nullopt;
 
-        Optional<WebCore::RegistrableDomain> standaloneApplicationDomain;
+        std::optional<WebCore::RegistrableDomain> standaloneApplicationDomain;
         decoder >> standaloneApplicationDomain;
         if (!standaloneApplicationDomain)
             return std::nullopt;
 
-        Optional<HashSet<WebCore::RegistrableDomain>> appBoundDomains;
+        std::optional<HashSet<WebCore::RegistrableDomain>> appBoundDomains;
         decoder >> appBoundDomains;
         if (!appBoundDomains)
             return std::nullopt;
 
-        Optional<WebCore::RegistrableDomain> manualPrevalentResource;
+        std::optional<WebCore::RegistrableDomain> manualPrevalentResource;
         decoder >> manualPrevalentResource;
         if (!manualPrevalentResource)
             return std::nullopt;

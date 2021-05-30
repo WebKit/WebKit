@@ -37,7 +37,7 @@ class StorageQuotaManager : public ThreadSafeRefCounted<StorageQuotaManager>, pu
     WTF_MAKE_FAST_ALLOCATED;
 public:
     using UsageGetter = Function<uint64_t()>;
-    using QuotaIncreaseRequester = Function<void(uint64_t currentQuota, uint64_t currentUsage, uint64_t requestedIncrease, CompletionHandler<void(Optional<uint64_t>)>&&)>;
+    using QuotaIncreaseRequester = Function<void(uint64_t currentQuota, uint64_t currentUsage, uint64_t requestedIncrease, CompletionHandler<void(std::optional<uint64_t>)>&&)>;
     WEBCORE_EXPORT static Ref<StorageQuotaManager> create(uint64_t quota, UsageGetter&&, QuotaIncreaseRequester&&);
 
     static constexpr uint64_t defaultThirdPartyQuotaFromPerOriginQuota(uint64_t quota) { return quota / 10; }

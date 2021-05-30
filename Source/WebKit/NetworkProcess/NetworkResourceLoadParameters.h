@@ -46,7 +46,7 @@ typedef uint64_t ResourceLoadIdentifier;
 class NetworkResourceLoadParameters : public NetworkLoadParameters {
 public:
     void encode(IPC::Encoder&) const;
-    static Optional<NetworkResourceLoadParameters> decode(IPC::Decoder&);
+    static std::optional<NetworkResourceLoadParameters> decode(IPC::Decoder&);
 
     ResourceLoadIdentifier identifier { 0 };
     Vector<RefPtr<SandboxExtension>> requestBodySandboxExtensions; // Created automatically for the sender.
@@ -54,29 +54,29 @@ public:
     Seconds maximumBufferingTime;
     RefPtr<WebCore::SecurityOrigin> sourceOrigin;
     WebCore::FetchOptions options;
-    Optional<WebCore::ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
+    std::optional<WebCore::ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
     WebCore::HTTPHeaderMap originalRequestHeaders;
     bool shouldRestrictHTTPResponseAccess { false };
     WebCore::PreflightPolicy preflightPolicy { WebCore::PreflightPolicy::Consider };
     bool shouldEnableCrossOriginResourcePolicy { false };
     Vector<RefPtr<WebCore::SecurityOrigin>> frameAncestorOrigins;
     bool pageHasResourceLoadClient { false };
-    Optional<WebCore::FrameIdentifier> parentFrameID;
+    std::optional<WebCore::FrameIdentifier> parentFrameID;
     bool crossOriginAccessControlCheckEnabled { true };
     URL documentURL;
     
 #if ENABLE(SERVICE_WORKER)
     WebCore::ServiceWorkersMode serviceWorkersMode { WebCore::ServiceWorkersMode::None };
-    Optional<WebCore::ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
+    std::optional<WebCore::ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
     OptionSet<WebCore::HTTPHeadersToKeepFromCleaning> httpHeadersToKeep;
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
     URL mainDocumentURL;
-    Optional<UserContentControllerIdentifier> userContentControllerIdentifier;
+    std::optional<UserContentControllerIdentifier> userContentControllerIdentifier;
 #endif
     
-    Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
+    std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
 };
 
 } // namespace WebKit

@@ -124,8 +124,8 @@ public:
     // Callback is executed on a background thread.
     void prepareCertificateGenerator(Function<void(rtc::RTCCertificateGenerator&)>&&);
 
-    Optional<RTCRtpCapabilities> receiverCapabilities(const String& kind);
-    Optional<RTCRtpCapabilities> senderCapabilities(const String& kind);
+    std::optional<RTCRtpCapabilities> receiverCapabilities(const String& kind);
+    std::optional<RTCRtpCapabilities> senderCapabilities(const String& kind);
 
     void clearFactory() { m_factory = nullptr; }
 

@@ -262,7 +262,7 @@ static bool canCreateRevealItems()
     return result;
 }
 
-Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeForSelection(const VisibleSelection& selection)
+std::optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeForSelection(const VisibleSelection& selection)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
@@ -294,7 +294,7 @@ Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeForSele
     return std::nullopt;
 }
 
-Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeAtHitTestResult(const HitTestResult& hitTestResult)
+std::optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeAtHitTestResult(const HitTestResult& hitTestResult)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     
@@ -321,7 +321,7 @@ Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeAtHitTe
     auto selection = frame->page()->focusController().focusedOrMainFrame().selection().selection();
     NSRange selectionRange;
     NSUInteger hitIndex;
-    Optional<SimpleRange> fullCharacterRange;
+    std::optional<SimpleRange> fullCharacterRange;
     
     if (selection.isRange()) {
         auto selectionStart = selection.visibleStart();
@@ -521,12 +521,12 @@ WKRevealController DictionaryLookup::animationControllerForPopup(const Dictionar
 
 #elif PLATFORM(IOS_FAMILY) // PLATFORM(IOS_FAMILY) && !ENABLE(REVEAL)
 
-Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeForSelection(const VisibleSelection&)
+std::optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeForSelection(const VisibleSelection&)
 {
     return std::nullopt;
 }
 
-Optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeAtHitTestResult(const HitTestResult&)
+std::optional<std::tuple<SimpleRange, NSDictionary *>> DictionaryLookup::rangeAtHitTestResult(const HitTestResult&)
 {
     return std::nullopt;
 }

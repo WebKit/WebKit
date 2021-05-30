@@ -64,7 +64,7 @@ static int toVMMemoryLedger(MemoryLedger memoryLedger)
 }
 #endif
 
-static inline Optional<size_t> safeRoundPage(size_t size)
+static inline std::optional<size_t> safeRoundPage(size_t size)
 {
     size_t roundedSize;
     if (__builtin_add_overflow(size, static_cast<size_t>(PAGE_MASK), &roundedSize))

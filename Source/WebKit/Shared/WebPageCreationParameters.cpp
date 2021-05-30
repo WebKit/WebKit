@@ -187,7 +187,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #endif
 }
 
-Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decoder& decoder)
+std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decoder& decoder)
 {
     WebPageCreationParameters parameters;
 
@@ -199,17 +199,17 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return std::nullopt;
     if (!decoder.decode(parameters.drawingAreaType))
         return std::nullopt;
-    Optional<DrawingAreaIdentifier> drawingAreaIdentifier;
+    std::optional<DrawingAreaIdentifier> drawingAreaIdentifier;
     decoder >> drawingAreaIdentifier;
     if (!drawingAreaIdentifier)
         return std::nullopt;
     parameters.drawingAreaIdentifier = *drawingAreaIdentifier;
-    Optional<WebPageProxyIdentifier> webPageProxyIdentifier;
+    std::optional<WebPageProxyIdentifier> webPageProxyIdentifier;
     decoder >> webPageProxyIdentifier;
     if (!webPageProxyIdentifier)
         return std::nullopt;
     parameters.webPageProxyIdentifier = WTFMove(*webPageProxyIdentifier);
-    Optional<WebPageGroupData> pageGroupData;
+    std::optional<WebPageGroupData> pageGroupData;
     decoder >> pageGroupData;
     if (!pageGroupData)
         return std::nullopt;
@@ -239,19 +239,19 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.paginationLineGridEnabled))
         return std::nullopt;
 
-    Optional<String> userAgent;
+    std::optional<String> userAgent;
     decoder >> userAgent;
     if (!userAgent)
         return std::nullopt;
     parameters.userAgent = WTFMove(*userAgent);
 
-    Optional<bool> itemStatesWereRestoredByAPIRequest;
+    std::optional<bool> itemStatesWereRestoredByAPIRequest;
     decoder >> itemStatesWereRestoredByAPIRequest;
     if (!itemStatesWereRestoredByAPIRequest)
         return std::nullopt;
     parameters.itemStatesWereRestoredByAPIRequest = *itemStatesWereRestoredByAPIRequest;
 
-    Optional<Vector<BackForwardListItemState>> itemStates;
+    std::optional<Vector<BackForwardListItemState>> itemStates;
     decoder >> itemStates;
     if (!itemStates)
         return std::nullopt;
@@ -276,7 +276,7 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.mediaVolume))
         return std::nullopt;
 
-    Optional<WebCore::MediaProducer::MutedStateFlags> mutedStateFlags;
+    std::optional<WebCore::MediaProducer::MutedStateFlags> mutedStateFlags;
     decoder >> mutedStateFlags;
     if (!mutedStateFlags)
         return std::nullopt;
@@ -297,7 +297,7 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.scrollPinningBehavior))
         return std::nullopt;
 
-    Optional<Optional<uint32_t>> scrollbarOverlayStyle;
+    std::optional<std::optional<uint32_t>> scrollbarOverlayStyle;
     decoder >> scrollbarOverlayStyle;
     if (!scrollbarOverlayStyle)
         return std::nullopt;
@@ -318,14 +318,14 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.useElevatedUserInterfaceLevel))
         return std::nullopt;
 
-    Optional<bool> hasResourceLoadClient;
+    std::optional<bool> hasResourceLoadClient;
     decoder >> hasResourceLoadClient;
     if (!hasResourceLoadClient)
         return std::nullopt;
     parameters.hasResourceLoadClient = WTFMove(*hasResourceLoadClient);
 
 #if PLATFORM(MAC)
-    Optional<Optional<DestinationColorSpace>> colorSpace;
+    std::optional<std::optional<DestinationColorSpace>> colorSpace;
     decoder >> colorSpace;
     if (!colorSpace)
         return std::nullopt;
@@ -345,7 +345,7 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return std::nullopt;
     if (!decoder.decode(parameters.viewportConfigurationViewSize))
         return std::nullopt;
-    Optional<Optional<WebCore::ViewportArguments>> overrideViewportArguments;
+    std::optional<std::optional<WebCore::ViewportArguments>> overrideViewportArguments;
     decoder >> overrideViewportArguments;
     if (!overrideViewportArguments)
         return std::nullopt;
@@ -353,7 +353,7 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    Optional<Optional<SandboxExtension::HandleArray>> attachmentElementExtensionHandles;
+    std::optional<std::optional<SandboxExtension::HandleArray>> attachmentElementExtensionHandles;
     decoder >> attachmentElementExtensionHandles;
     if (!attachmentElementExtensionHandles)
         return std::nullopt;
@@ -388,26 +388,26 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
         return std::nullopt;
 
     // FIXME(207716): The following should be removed when the GPU process is complete.
-    Optional<SandboxExtension::HandleArray> mediaExtensionHandles;
+    std::optional<SandboxExtension::HandleArray> mediaExtensionHandles;
     decoder >> mediaExtensionHandles;
     if (!mediaExtensionHandles)
         return std::nullopt;
     parameters.mediaExtensionHandles = WTFMove(*mediaExtensionHandles);
 
-    Optional<SandboxExtension::HandleArray> mediaIOKitExtensionHandles;
+    std::optional<SandboxExtension::HandleArray> mediaIOKitExtensionHandles;
     decoder >> mediaIOKitExtensionHandles;
     if (!mediaIOKitExtensionHandles)
         return std::nullopt;
     parameters.mediaIOKitExtensionHandles = WTFMove(*mediaIOKitExtensionHandles);
     // FIXME(207716): End region to remove.
 
-    Optional<SandboxExtension::HandleArray> gpuIOKitExtensionHandles;
+    std::optional<SandboxExtension::HandleArray> gpuIOKitExtensionHandles;
     decoder >> gpuIOKitExtensionHandles;
     if (!gpuIOKitExtensionHandles)
         return std::nullopt;
     parameters.gpuIOKitExtensionHandles = WTFMove(*gpuIOKitExtensionHandles);
 
-    Optional<SandboxExtension::HandleArray> gpuMachExtensionHandles;
+    std::optional<SandboxExtension::HandleArray> gpuMachExtensionHandles;
     decoder >> gpuMachExtensionHandles;
     if (!gpuMachExtensionHandles)
         return std::nullopt;
@@ -415,7 +415,7 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
 #endif
 
 #if HAVE(STATIC_FONT_REGISTRY)
-    Optional<Optional<SandboxExtension::Handle>> fontMachExtensionHandle;
+    std::optional<std::optional<SandboxExtension::Handle>> fontMachExtensionHandle;
     decoder >> fontMachExtensionHandle;
     if (!fontMachExtensionHandle)
         return std::nullopt;
@@ -448,7 +448,7 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.overrideContentSecurityPolicy))
         return std::nullopt;
 
-    Optional<Optional<double>> cpuLimit;
+    std::optional<std::optional<double>> cpuLimit;
     decoder >> cpuLimit;
     if (!cpuLimit)
         return std::nullopt;
@@ -457,14 +457,14 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.urlSchemeHandlers))
         return std::nullopt;
     
-    Optional<Vector<String>> urlSchemesWithLegacyCustomProtocolHandlers;
+    std::optional<Vector<String>> urlSchemesWithLegacyCustomProtocolHandlers;
     decoder >> urlSchemesWithLegacyCustomProtocolHandlers;
     if (!urlSchemesWithLegacyCustomProtocolHandlers)
         return std::nullopt;
     parameters.urlSchemesWithLegacyCustomProtocolHandlers = WTFMove(*urlSchemesWithLegacyCustomProtocolHandlers);
 
 #if ENABLE(APPLICATION_MANIFEST)
-    Optional<Optional<WebCore::ApplicationManifest>> applicationManifest;
+    std::optional<std::optional<WebCore::ApplicationManifest>> applicationManifest;
     decoder >> applicationManifest;
     if (!applicationManifest)
         return std::nullopt;
@@ -479,19 +479,19 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.enumeratingAllNetworkInterfacesEnabled))
         return std::nullopt;
 
-    Optional<UserContentControllerParameters> userContentControllerParameters;
+    std::optional<UserContentControllerParameters> userContentControllerParameters;
     decoder >> userContentControllerParameters;
     if (!userContentControllerParameters)
         return std::nullopt;
     parameters.userContentControllerParameters = WTFMove(*userContentControllerParameters);
 
-    Optional<Optional<WebCore::Color>> backgroundColor;
+    std::optional<std::optional<WebCore::Color>> backgroundColor;
     decoder >> backgroundColor;
     if (!backgroundColor)
         return std::nullopt;
     parameters.backgroundColor = WTFMove(*backgroundColor);
 
-    Optional<Optional<WebCore::PageIdentifier>> oldPageID;
+    std::optional<std::optional<WebCore::PageIdentifier>> oldPageID;
     decoder >> oldPageID;
     if (!oldPageID)
         return std::nullopt;
@@ -500,37 +500,37 @@ Optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::Decod
     if (!decoder.decode(parameters.overriddenMediaType))
         return std::nullopt;
 
-    Optional<Vector<String>> corsDisablingPatterns;
+    std::optional<Vector<String>> corsDisablingPatterns;
     decoder >> corsDisablingPatterns;
     if (!corsDisablingPatterns)
         return std::nullopt;
     parameters.corsDisablingPatterns = WTFMove(*corsDisablingPatterns);
 
-    Optional<bool> loadsSubresources;
+    std::optional<bool> loadsSubresources;
     decoder >> loadsSubresources;
     if (!loadsSubresources)
         return std::nullopt;
     parameters.loadsSubresources = *loadsSubresources;
 
-    Optional<Optional<HashSet<String>>> allowedNetworkHosts;
+    std::optional<std::optional<HashSet<String>>> allowedNetworkHosts;
     decoder >> allowedNetworkHosts;
     if (!allowedNetworkHosts)
         return std::nullopt;
     parameters.allowedNetworkHosts = *allowedNetworkHosts;
 
-    Optional<bool> userScriptsShouldWaitUntilNotification;
+    std::optional<bool> userScriptsShouldWaitUntilNotification;
     decoder >> userScriptsShouldWaitUntilNotification;
     if (!userScriptsShouldWaitUntilNotification)
         return std::nullopt;
     parameters.userScriptsShouldWaitUntilNotification = *userScriptsShouldWaitUntilNotification;
     
-    Optional<bool> crossOriginAccessControlCheckEnabled;
+    std::optional<bool> crossOriginAccessControlCheckEnabled;
     decoder >> crossOriginAccessControlCheckEnabled;
     if (!crossOriginAccessControlCheckEnabled)
         return std::nullopt;
     parameters.crossOriginAccessControlCheckEnabled = *crossOriginAccessControlCheckEnabled;
     
-    Optional<String> processDisplayName;
+    std::optional<String> processDisplayName;
     decoder >> processDisplayName;
     if (!processDisplayName)
         return std::nullopt;

@@ -66,9 +66,9 @@ public:
         CodeBlock* verifiedCodeBlock { nullptr };
         CallSiteIndex callSiteIndex;
 #if ENABLE(WEBASSEMBLY)
-        Optional<Wasm::IndexOrName> wasmIndexOrName;
+        std::optional<Wasm::IndexOrName> wasmIndexOrName;
 #endif
-        Optional<Wasm::CompilationMode> wasmCompilationMode;
+        std::optional<Wasm::CompilationMode> wasmCompilationMode;
     };
 
     enum class FrameType { 
@@ -93,9 +93,9 @@ public:
         ExecutableBase* executable { nullptr };
         JSObject* callee { nullptr };
 #if ENABLE(WEBASSEMBLY)
-        Optional<Wasm::IndexOrName> wasmIndexOrName;
+        std::optional<Wasm::IndexOrName> wasmIndexOrName;
 #endif
-        Optional<Wasm::CompilationMode> wasmCompilationMode;
+        std::optional<Wasm::CompilationMode> wasmCompilationMode;
 
         struct CodeLocation {
             bool hasCodeBlockHash() const
@@ -123,7 +123,7 @@ public:
         };
 
         CodeLocation semanticLocation;
-        Optional<std::pair<CodeLocation, CodeBlock*>> machineLocation; // This is non-null if we were inlined. It represents the machine frame we were inlined into.
+        std::optional<std::pair<CodeLocation, CodeBlock*>> machineLocation; // This is non-null if we were inlined. It represents the machine frame we were inlined into.
 
         bool hasExpressionInfo() const { return semanticLocation.hasExpressionInfo(); }
         unsigned lineNumber() const

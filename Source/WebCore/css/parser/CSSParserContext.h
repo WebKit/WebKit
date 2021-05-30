@@ -44,7 +44,7 @@ struct CSSParserContext {
     URL baseURL;
     String charset;
     CSSParserMode mode { HTMLStandardMode };
-    Optional<StyleRuleType> enclosingRuleType;
+    std::optional<StyleRuleType> enclosingRuleType;
     bool isHTMLDocument { false };
 
     // This is only needed to support getMatchedCSSRules.

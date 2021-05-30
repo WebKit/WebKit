@@ -53,7 +53,7 @@ struct MarkedTextStyle {
     Color backgroundColor;
     TextPaintStyle textStyles;
     TextDecorationPainter::Styles textDecorationStyles;
-    Optional<ShadowData> textShadow;
+    std::optional<ShadowData> textShadow;
     float alpha;
 };
 

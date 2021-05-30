@@ -111,7 +111,7 @@ private:
     bool m_isRubyText { false };
     int m_pageNumber { 0 };
 
-    mutable Optional<IntRect> m_cachedEnclosingRect;
+    mutable std::optional<IntRect> m_cachedEnclosingRect;
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, SelectionGeometry);

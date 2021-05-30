@@ -35,7 +35,7 @@ namespace WebCore {
 
 struct AudioContextOptions {
     Variant<AudioContextLatencyCategory, double> latencyHint { AudioContextLatencyCategory::Interactive };
-    Optional<float> sampleRate;
+    std::optional<float> sampleRate;
 };
 
 } // namespace WebCore

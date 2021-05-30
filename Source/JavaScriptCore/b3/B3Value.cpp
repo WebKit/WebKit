@@ -434,7 +434,7 @@ Value* Value::invertedCompare(Procedure& proc) const
 {
     if (numChildren() != 2)
         return nullptr;
-    if (Optional<Opcode> invertedOpcode = B3::invertedCompare(opcode(), child(0)->type())) {
+    if (std::optional<Opcode> invertedOpcode = B3::invertedCompare(opcode(), child(0)->type())) {
         ASSERT(!kind().hasExtraBits());
         return proc.add<Value>(*invertedOpcode, type(), origin(), child(0), child(1));
     }

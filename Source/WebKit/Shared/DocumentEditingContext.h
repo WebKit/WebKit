@@ -58,7 +58,7 @@ struct DocumentEditingContextRequest {
 
     WebCore::FloatRect rect;
 
-    Optional<WebCore::ElementContext> textInputContext;
+    std::optional<WebCore::ElementContext> textInputContext;
 };
 
 struct DocumentEditingContext {
@@ -90,22 +90,22 @@ struct DocumentEditingContext {
 namespace IPC {
 template<> struct ArgumentCoder<WebKit::DocumentEditingContext::Range> {
     static void encode(Encoder&, const WebKit::DocumentEditingContext::Range&);
-    static Optional<WebKit::DocumentEditingContext::Range> decode(Decoder&);
+    static std::optional<WebKit::DocumentEditingContext::Range> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebKit::DocumentEditingContext::TextRectAndRange> {
     static void encode(Encoder&, const WebKit::DocumentEditingContext::TextRectAndRange&);
-    static Optional<WebKit::DocumentEditingContext::TextRectAndRange> decode(Decoder&);
+    static std::optional<WebKit::DocumentEditingContext::TextRectAndRange> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebKit::DocumentEditingContext> {
     static void encode(Encoder&, const WebKit::DocumentEditingContext&);
-    static Optional<WebKit::DocumentEditingContext> decode(Decoder&);
+    static std::optional<WebKit::DocumentEditingContext> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebKit::DocumentEditingContextRequest> {
     static void encode(Encoder&, const WebKit::DocumentEditingContextRequest&);
-    static Optional<WebKit::DocumentEditingContextRequest> decode(Decoder&);
+    static std::optional<WebKit::DocumentEditingContextRequest> decode(Decoder&);
 };
 }
 

@@ -77,7 +77,7 @@ ExceptionOr<FetchBody> FetchBody::extract(Init&& value, String& contentType)
     });
 }
 
-Optional<FetchBody> FetchBody::fromFormData(ScriptExecutionContext& context, FormData& formData)
+std::optional<FetchBody> FetchBody::fromFormData(ScriptExecutionContext& context, FormData& formData)
 {
     ASSERT(!formData.isEmpty());
 

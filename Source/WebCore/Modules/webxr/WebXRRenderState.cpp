@@ -43,7 +43,7 @@ Ref<WebXRRenderState> WebXRRenderState::create(XRSessionMode mode)
     return adoptRef(*new WebXRRenderState(mode == XRSessionMode::Inline ? std::make_optional(piOverTwoDouble) : std::nullopt));
 }
 
-WebXRRenderState::WebXRRenderState(Optional<double> inlineVerticalFieldOfView)
+WebXRRenderState::WebXRRenderState(std::optional<double> inlineVerticalFieldOfView)
     : m_inlineVerticalFieldOfView(inlineVerticalFieldOfView)
 {
 }

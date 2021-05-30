@@ -94,7 +94,7 @@ private:
     State m_state { State::Open };
     WebCore::Timer m_errorTimer;
     String m_errorMessage;
-    Optional<std::pair<unsigned short, String>> m_closeInfo;
+    std::optional<std::pair<unsigned short, String>> m_closeInfo;
     WebPageProxyIdentifier m_webPageProxyID;
 };
 

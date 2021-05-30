@@ -3011,7 +3011,7 @@ void BytecodeGenerator::pushTDZVariables(const VariableEnvironment& environment,
     m_TDZStack.append(TDZStackEntry { WTFMove(map), nullptr });
 }
 
-Optional<PrivateNameEnvironment> BytecodeGenerator::getAvailablePrivateAccessNames()
+std::optional<PrivateNameEnvironment> BytecodeGenerator::getAvailablePrivateAccessNames()
 {
     PrivateNameEnvironment result;
     HashSet<UniquedStringImpl*> excludedNames;
@@ -3266,7 +3266,7 @@ RegisterID* BytecodeGenerator::emitNewClassFieldInitializerFunction(RegisterID* 
     }
 
     auto variablesUnderTDZ = getVariablesUnderTDZ();
-    Optional<PrivateNameEnvironment> parentPrivateNameEnvironment = getAvailablePrivateAccessNames();
+    std::optional<PrivateNameEnvironment> parentPrivateNameEnvironment = getAvailablePrivateAccessNames();
     SourceParseMode parseMode = SourceParseMode::ClassFieldInitializerMode;
     ConstructAbility constructAbility = ConstructAbility::CannotConstruct;
 
@@ -4698,7 +4698,7 @@ void BytecodeGenerator::emitPutThisToArrowFunctionContextScope()
     }
 }
 
-void BytecodeGenerator::pushStructureForInScope(RegisterID* localRegister, RegisterID* indexRegister, RegisterID* propertyRegister, RegisterID* enumeratorRegister, Optional<Variable> baseVariable)
+void BytecodeGenerator::pushStructureForInScope(RegisterID* localRegister, RegisterID* indexRegister, RegisterID* propertyRegister, RegisterID* enumeratorRegister, std::optional<Variable> baseVariable)
 {
     if (!localRegister)
         return;

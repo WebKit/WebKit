@@ -65,7 +65,7 @@
 
 - (CocoaImage *)renderedImageWithOptions:(WKSnapshotOptions)options width:(NSNumber *)width
 {
-    Optional<float> optionalWidth;
+    std::optional<float> optionalWidth;
     if (width)
         optionalWidth = width.floatValue;
 

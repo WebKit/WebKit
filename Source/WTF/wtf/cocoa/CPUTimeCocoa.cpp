@@ -47,7 +47,7 @@ static int64_t timeValueToMicroseconds(const time_value_t& value)
     return result;
 }
 
-Optional<CPUTime> CPUTime::get()
+std::optional<CPUTime> CPUTime::get()
 {
     // Account for current threads.
     task_thread_times_info threadInfoData;

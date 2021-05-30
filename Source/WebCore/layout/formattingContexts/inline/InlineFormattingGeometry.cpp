@@ -49,7 +49,7 @@ private:
     struct SimplifiedVerticalAlignment {
         SimplifiedVerticalAlignment(const LineBox::InlineLevelBox& rootInlineBox);
 
-        static bool canUseSimplifiedAlignment(const LineBox::InlineLevelBox& rootInlineBox, const LineBox::InlineLevelBox&, Optional<const BoxGeometry> inlineLevelBoxGeometry);
+        static bool canUseSimplifiedAlignment(const LineBox::InlineLevelBox& rootInlineBox, const LineBox::InlineLevelBox&, std::optional<const BoxGeometry> inlineLevelBoxGeometry);
 
         void align(LineBox::InlineLevelBox&);
 
@@ -127,7 +127,7 @@ static HangingTrailingWhitespaceContent collectHangingTrailingWhitespaceContent(
     return hangingContent;
 }
 
-static Optional<InlineLayoutUnit> horizontalAlignmentOffset(const Line::RunList& runs, TextAlignMode textAlign, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit contentLogicalWidth, bool isLastLine)
+static std::optional<InlineLayoutUnit> horizontalAlignmentOffset(const Line::RunList& runs, TextAlignMode textAlign, InlineLayoutUnit lineLogicalWidth, InlineLayoutUnit contentLogicalWidth, bool isLastLine)
 {
     auto availableWidth = lineLogicalWidth - contentLogicalWidth;
     auto hangingTrailingWhitespaceContent = collectHangingTrailingWhitespaceContent(runs, isLastLine);
@@ -228,7 +228,7 @@ void LineBoxBuilder::constructAndAlignInlineLevelBoxes(LineBox& lineBox, const L
     // FIXME: Add fast path support for line-height content.
     simplifiedVerticalAlignment.setEnabled(layoutState().inStandardsMode() && rootBox().style().lineHeight().isNegative());
 
-    auto simplifiedAlignVerticallyIfApplicable = [&](auto& inlineLevelBox, Optional<const BoxGeometry> boxGeometry) {
+    auto simplifiedAlignVerticallyIfApplicable = [&](auto& inlineLevelBox, std::optional<const BoxGeometry> boxGeometry) {
         if (!simplifiedVerticalAlignment.isEnabled())
             return;
         if (!SimplifiedVerticalAlignment::canUseSimplifiedAlignment(rootInlineBox, inlineLevelBox, boxGeometry)) {
@@ -401,8 +401,8 @@ void LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically(Line
         };
         HashMap<const LineBox::InlineLevelBox*, AbsoluteTopAndBottom> inlineLevelBoxAbsoluteTopAndBottomMap;
 
-        auto minimumLogicalTop = Optional<InlineLayoutUnit> { };
-        auto maximumLogicalBottom = Optional<InlineLayoutUnit> { };
+        auto minimumLogicalTop = std::optional<InlineLayoutUnit> { };
+        auto maximumLogicalBottom = std::optional<InlineLayoutUnit> { };
         if (formattingGeometry.inlineLevelBoxAffectsLineBox(rootInlineBox, lineBox)) {
             minimumLogicalTop = InlineLayoutUnit { };
             maximumLogicalBottom = rootInlineBox.layoutBounds().height();
@@ -487,7 +487,7 @@ void LineBoxBuilder::computeLineBoxHeightAndAlignInlineLevelBoxesVertically(Line
         HashMap<const LineBox::InlineLevelBox*, InlineLayoutUnit> inlineLevelBoxAbsoluteBaselineOffsetMap;
         inlineLevelBoxAbsoluteBaselineOffsetMap.add(&rootInlineBox, InlineLayoutUnit { });
 
-        auto maximumTopOffsetFromRootInlineBoxBaseline = Optional<InlineLayoutUnit> { };
+        auto maximumTopOffsetFromRootInlineBoxBaseline = std::optional<InlineLayoutUnit> { };
         if (formattingGeometry.inlineLevelBoxAffectsLineBox(rootInlineBox, lineBox))
             maximumTopOffsetFromRootInlineBoxBaseline = rootInlineBox.layoutBounds().ascent;
 
@@ -622,7 +622,7 @@ LineBoxBuilder::SimplifiedVerticalAlignment::SimplifiedVerticalAlignment(const L
     adjust(rootInlineBox);
 }
 
-bool LineBoxBuilder::SimplifiedVerticalAlignment::canUseSimplifiedAlignment(const LineBox::InlineLevelBox& rootInlineBox, const LineBox::InlineLevelBox& inlineLevelBox, Optional<const BoxGeometry> inlineLevelBoxGeometry)
+bool LineBoxBuilder::SimplifiedVerticalAlignment::canUseSimplifiedAlignment(const LineBox::InlineLevelBox& rootInlineBox, const LineBox::InlineLevelBox& inlineLevelBox, std::optional<const BoxGeometry> inlineLevelBoxGeometry)
 {
     if (inlineLevelBox.isAtomicInlineLevelBox()) {
         ASSERT(inlineLevelBoxGeometry);

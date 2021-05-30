@@ -73,7 +73,7 @@ RefPtr<SharedBuffer> RemoteCDMProxy::sanitizeResponse(const SharedBuffer& respon
     return m_private->sanitizeResponse(response);
 }
 
-Optional<String> RemoteCDMProxy::sanitizeSessionId(const String& sessionId)
+std::optional<String> RemoteCDMProxy::sanitizeSessionId(const String& sessionId)
 {
     return m_private->sanitizeSessionId(sessionId);
 }

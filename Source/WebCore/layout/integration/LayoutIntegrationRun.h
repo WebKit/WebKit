@@ -61,13 +61,13 @@ struct Run {
     };
 
     struct Expansion;
-    Run(size_t lineIndex, const Layout::Box&, const FloatRect&, const FloatRect& inkOverflow, Expansion, Optional<TextContent> = std::nullopt);
+    Run(size_t lineIndex, const Layout::Box&, const FloatRect&, const FloatRect& inkOverflow, Expansion, std::optional<TextContent> = std::nullopt);
 
     const FloatRect& rect() const { return m_rect; }
     const FloatRect& inkOverflow() const { return m_inkOverflow; }
 
-    Optional<TextContent>& textContent() { return m_textContent; }
-    const Optional<TextContent>& textContent() const { return m_textContent; }
+    std::optional<TextContent>& textContent() { return m_textContent; }
+    const std::optional<TextContent>& textContent() const { return m_textContent; }
     // FIXME: This information should be preserved at Run construction time.
     bool isLineBreak() const { return layoutBox().isLineBreakBox() || (textContent() && textContent()->originalContent() == "\n" && style().preserveNewline()); }
 
@@ -94,10 +94,10 @@ private:
     FloatRect m_rect;
     FloatRect m_inkOverflow;
     Expansion m_expansion;
-    Optional<TextContent> m_textContent;
+    std::optional<TextContent> m_textContent;
 };
 
-inline Run::Run(size_t lineIndex, const Layout::Box& layoutBox, const FloatRect& rect, const FloatRect& inkOverflow, Expansion expansion, Optional<TextContent> textContent)
+inline Run::Run(size_t lineIndex, const Layout::Box& layoutBox, const FloatRect& rect, const FloatRect& inkOverflow, Expansion expansion, std::optional<TextContent> textContent)
     : m_lineIndex(lineIndex)
     , m_layoutBox(makeWeakPtr(layoutBox))
     , m_rect(rect)

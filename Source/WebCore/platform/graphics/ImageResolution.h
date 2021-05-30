@@ -50,7 +50,7 @@ struct ImageResolution {
         ResolutionUnit resolutionUnit;
     };
 
-    static Optional<IntSize> densityCorrectedSize(const FloatSize& sourceSize, const ResolutionMetadata&);
+    static std::optional<IntSize> densityCorrectedSize(const FloatSize& sourceSize, const ResolutionMetadata&);
 };
 
 } // namespace WebCore

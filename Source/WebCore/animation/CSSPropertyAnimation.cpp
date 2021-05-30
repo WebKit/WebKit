@@ -575,7 +575,7 @@ static inline FontSelectionValue blendFunc(FontSelectionValue from, FontSelectio
     return FontSelectionValue(std::max(0.0f, blendFunc(static_cast<float>(from), static_cast<float>(to), context)));
 }
 
-static inline Optional<FontSelectionValue> blendFunc(Optional<FontSelectionValue> from, Optional<FontSelectionValue> to, const CSSPropertyBlendingContext& context)
+static inline std::optional<FontSelectionValue> blendFunc(std::optional<FontSelectionValue> from, std::optional<FontSelectionValue> to, const CSSPropertyBlendingContext& context)
 {
     return blendFunc(*from, *to, context);
 }
@@ -1990,11 +1990,11 @@ private:
     void (RenderStyle::*m_setter)(const Color&);
 };
 
-class PropertyWrapperFontStyle final : public PropertyWrapper<Optional<FontSelectionValue>> {
+class PropertyWrapperFontStyle final : public PropertyWrapper<std::optional<FontSelectionValue>> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PropertyWrapperFontStyle()
-        : PropertyWrapper<Optional<FontSelectionValue>>(CSSPropertyFontStyle, &RenderStyle::fontItalic, &RenderStyle::setFontItalic)
+        : PropertyWrapper<std::optional<FontSelectionValue>>(CSSPropertyFontStyle, &RenderStyle::fontItalic, &RenderStyle::setFontItalic)
     {
     }
 
@@ -2029,7 +2029,7 @@ template <typename T>
 class AutoPropertyWrapper final : public PropertyWrapper<T> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    AutoPropertyWrapper(CSSPropertyID property, T (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T), bool (RenderStyle::*autoGetter)() const, void (RenderStyle::*autoSetter)(), Optional<T> minValue = std::nullopt)
+    AutoPropertyWrapper(CSSPropertyID property, T (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T), bool (RenderStyle::*autoGetter)() const, void (RenderStyle::*autoSetter)(), std::optional<T> minValue = std::nullopt)
         : PropertyWrapper<T>(property, getter, setter)
         , m_autoGetter(autoGetter)
         , m_autoSetter(autoSetter)
@@ -2065,7 +2065,7 @@ private:
 
     bool (RenderStyle::*m_autoGetter)() const;
     void (RenderStyle::*m_autoSetter)();
-    Optional<T> m_minValue;
+    std::optional<T> m_minValue;
 };
 
 class NonNegativeFloatPropertyWrapper : public PropertyWrapper<float> {
@@ -2690,7 +2690,7 @@ bool CSSPropertyAnimation::canPropertyBeInterpolated(CSSPropertyID property, con
     return false;
 }
 
-CSSPropertyID CSSPropertyAnimation::getPropertyAtIndex(int i, Optional<bool>& isShorthand)
+CSSPropertyID CSSPropertyAnimation::getPropertyAtIndex(int i, std::optional<bool>& isShorthand)
 {
     CSSPropertyAnimationWrapperMap& map = CSSPropertyAnimationWrapperMap::singleton();
 

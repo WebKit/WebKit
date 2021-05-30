@@ -94,9 +94,9 @@ public:
         String name;
         String hash;
         String namedCurve;
-        Optional<uint32_t> modulusLength;
+        std::optional<uint32_t> modulusLength;
         RefPtr<Uint8Array> publicExponent;
-        Optional<double> expires;
+        std::optional<double> expires;
     };
 
     using AlgorithmIdentifier = Variant<JSC::Strong<JSC::JSObject>, String>;
@@ -107,7 +107,7 @@ public:
     void createAnswer(RTCAnswerOptions&&, Ref<DeferredPromise>&&);
 
     using Description = Variant<RTCSessionDescriptionInit, RefPtr<RTCSessionDescription>>;
-    void setLocalDescription(Optional<Description>&&, Ref<DeferredPromise>&&);
+    void setLocalDescription(std::optional<Description>&&, Ref<DeferredPromise>&&);
     RefPtr<RTCSessionDescription> localDescription() const;
     RefPtr<RTCSessionDescription> currentLocalDescription() const;
     RefPtr<RTCSessionDescription> pendingLocalDescription() const;
@@ -117,7 +117,7 @@ public:
     RefPtr<RTCSessionDescription> currentRemoteDescription() const;
     RefPtr<RTCSessionDescription> pendingRemoteDescription() const;
 
-    using Candidate = Optional<Variant<RTCIceCandidateInit, RefPtr<RTCIceCandidate>>>;
+    using Candidate = std::optional<Variant<RTCIceCandidateInit, RefPtr<RTCIceCandidate>>>;
     void addIceCandidate(Candidate&&, Ref<DeferredPromise>&&);
 
     RTCSignalingState signalingState() const { return m_signalingState; }

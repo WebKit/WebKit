@@ -238,7 +238,7 @@ public:
 #endif
 
 #if HAVE(CVDISPLAYLINK)
-    Optional<WebCore::FramesPerSecond> nominalFramesPerSecondForDisplay(WebCore::PlatformDisplayID);
+    std::optional<WebCore::FramesPerSecond> nominalFramesPerSecondForDisplay(WebCore::PlatformDisplayID);
     void startDisplayLink(IPC::Connection&, DisplayLinkObserverID, WebCore::PlatformDisplayID, WebCore::FramesPerSecond);
     void stopDisplayLink(IPC::Connection&, DisplayLinkObserverID, WebCore::PlatformDisplayID);
     void setDisplayLinkPreferredFramesPerSecond(IPC::Connection&, DisplayLinkObserverID, WebCore::PlatformDisplayID, WebCore::FramesPerSecond);
@@ -498,7 +498,7 @@ public:
     static bool useSeparateServiceWorkerProcess() { return s_useSeparateServiceWorkerProcess; }
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
-    void notifyPreferencesChanged(const String& domain, const String& key, const Optional<String>& encodedValue);
+    void notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue);
 #endif
 
 #if PLATFORM(PLAYSTATION)
@@ -606,7 +606,7 @@ private:
     static WeakHashSet<WebProcessProxy>& serviceWorkerProcesses();
     bool m_waitingForWorkerContextProcessConnection { false };
     String m_serviceWorkerUserAgent;
-    Optional<WebPreferencesStore> m_serviceWorkerPreferences;
+    std::optional<WebPreferencesStore> m_serviceWorkerPreferences;
     RefPtr<WebUserContentControllerProxy> m_userContentControllerForServiceWorker;
 #endif
 
@@ -770,7 +770,7 @@ private:
         std::unique_ptr<ProcessAssertion> gpuProcessMediaPlaybackAssertion;
 #endif
     };
-    Optional<AudibleMediaActivity> m_audibleMediaActivity;
+    std::optional<AudibleMediaActivity> m_audibleMediaActivity;
 
 #if PLATFORM(PLAYSTATION)
     int32_t m_userId { -1 };

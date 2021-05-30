@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-static Optional<Vector<uint8_t>> gcryptEncrypt(gcry_sexp_t keySexp, const Vector<uint8_t>& plainText, size_t keySizeInBytes)
+static std::optional<Vector<uint8_t>> gcryptEncrypt(gcry_sexp_t keySexp, const Vector<uint8_t>& plainText, size_t keySizeInBytes)
 {
     // Embed the plain-text data in a `data` s-expression using PKCS#1 padding.
     PAL::GCrypt::Handle<gcry_sexp_t> dataSexp;
@@ -63,7 +63,7 @@ static Optional<Vector<uint8_t>> gcryptEncrypt(gcry_sexp_t keySexp, const Vector
     return mpiZeroPrefixedData(aSexp, keySizeInBytes);
 }
 
-static Optional<Vector<uint8_t>> gcryptDecrypt(gcry_sexp_t keySexp, const Vector<uint8_t>& cipherText)
+static std::optional<Vector<uint8_t>> gcryptDecrypt(gcry_sexp_t keySexp, const Vector<uint8_t>& cipherText)
 {
     // Embed the cipher-text data in an `enc-val` s-expression using PKCS#1 padding.
     PAL::GCrypt::Handle<gcry_sexp_t> encValSexp;

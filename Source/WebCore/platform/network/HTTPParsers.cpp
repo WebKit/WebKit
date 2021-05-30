@@ -319,7 +319,7 @@ static String trimInputSample(const char* p, size_t length)
     return s;
 }
 
-Optional<WallTime> parseHTTPDate(const String& value)
+std::optional<WallTime> parseHTTPDate(const String& value)
 {
     double dateInMillisecondsSinceEpoch = parseDateFromNullTerminatedCharacters(value.utf8().data());
     if (!std::isfinite(dateInMillisecondsSinceEpoch))

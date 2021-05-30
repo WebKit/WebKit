@@ -3043,7 +3043,7 @@ class CppStyleTest(CppStyleTestBase):
 
         self.perform_function_definition_check(
             'Source/WTF/wtf/foo.h',
-            '    static Optional<std::tuple<>> decode(Decoder&)\n'
+            '    static std::optional<std::tuple<>> decode(Decoder&)\n'
             '    {',
             warning_none)
 

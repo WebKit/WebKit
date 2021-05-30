@@ -170,7 +170,7 @@ public:
     size_t columnSpan() const;
 
     void setColumnWidth(LayoutUnit);
-    Optional<LayoutUnit> columnWidth() const;
+    std::optional<LayoutUnit> columnWidth() const;
 
     void setParent(ContainerBox& parent) { m_parent = &parent; }
     void setNextSibling(Box& nextSibling) { m_nextSibling = &nextSibling; }
@@ -183,7 +183,7 @@ public:
     void setCachedGeometryForLayoutState(LayoutState&, std::unique_ptr<BoxGeometry>) const;
 
 protected:
-    Box(Optional<ElementAttributes>, RenderStyle&&, OptionSet<BaseTypeFlag>);
+    Box(std::optional<ElementAttributes>, RenderStyle&&, OptionSet<BaseTypeFlag>);
 
 private:
     class BoxRareData {
@@ -192,7 +192,7 @@ private:
         BoxRareData() = default;
 
         CellSpan tableCellSpan;
-        Optional<LayoutUnit> columnWidth;
+        std::optional<LayoutUnit> columnWidth;
     };
 
     bool hasRareData() const { return m_hasRareData; }
@@ -208,7 +208,7 @@ private:
     static RareDataMap& rareDataMap();
 
     RenderStyle m_style;
-    Optional<ElementAttributes> m_elementAttributes;
+    std::optional<ElementAttributes> m_elementAttributes;
 
     ContainerBox* m_parent { nullptr };
     Box* m_previousSibling { nullptr };

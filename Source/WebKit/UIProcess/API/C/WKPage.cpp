@@ -3028,7 +3028,7 @@ void WKPageGetApplicationManifest_b(WKPageRef pageRef, WKPageGetApplicationManif
 {
     CRASH_IF_SUSPENDED;
 #if ENABLE(APPLICATION_MANIFEST)
-    toImpl(pageRef)->getApplicationManifest([block](const Optional<WebCore::ApplicationManifest>& manifest) {
+    toImpl(pageRef)->getApplicationManifest([block](const std::optional<WebCore::ApplicationManifest>& manifest) {
         block();
     });
 #else // ENABLE(APPLICATION_MANIFEST)

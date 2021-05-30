@@ -222,7 +222,7 @@ bool PluginInfoStore::isSupportedPlugin(const String& mimeType, const URL& plugi
     }) != notFound;
 }
 
-Optional<Vector<SupportedPluginIdentifier>> PluginInfoStore::supportedPluginIdentifiers()
+std::optional<Vector<SupportedPluginIdentifier>> PluginInfoStore::supportedPluginIdentifiers()
 {
     if (!m_supportedPlugins)
         return std::nullopt;

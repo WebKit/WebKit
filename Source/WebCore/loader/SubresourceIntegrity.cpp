@@ -46,7 +46,7 @@ static bool isVCHAR(CharacterType c)
 template<typename CharacterType>
 struct IntegrityMetadataParser {
 public:
-    IntegrityMetadataParser(Optional<Vector<EncodedResourceCryptographicDigest>>& digests)
+    IntegrityMetadataParser(std::optional<Vector<EncodedResourceCryptographicDigest>>& digests)
         : m_digests(digests)
     {
     }
@@ -79,7 +79,7 @@ public:
     }
 
 private:
-    Optional<Vector<EncodedResourceCryptographicDigest>>& m_digests;
+    std::optional<Vector<EncodedResourceCryptographicDigest>>& m_digests;
 };
 
 }
@@ -96,12 +96,12 @@ static inline void splitOnSpaces(StringParsingBuffer<CharacterType> buffer, Func
     }
 }
 
-static Optional<Vector<EncodedResourceCryptographicDigest>> parseIntegrityMetadata(const String& integrityMetadata)
+static std::optional<Vector<EncodedResourceCryptographicDigest>> parseIntegrityMetadata(const String& integrityMetadata)
 {
     if (integrityMetadata.isEmpty())
         return std::nullopt;
 
-    Optional<Vector<EncodedResourceCryptographicDigest>> result;
+    std::optional<Vector<EncodedResourceCryptographicDigest>> result;
     
     readCharactersForParsing(integrityMetadata, [&result] (auto buffer) {
         using CharacterType = typename decltype(buffer)::CharacterType;
@@ -117,7 +117,7 @@ static bool isResponseEligible(const CachedResource& resource)
     return resource.isCORSSameOrigin();
 }
 
-static Optional<EncodedResourceCryptographicDigest::Algorithm> prioritizedHashFunction(EncodedResourceCryptographicDigest::Algorithm a, EncodedResourceCryptographicDigest::Algorithm b)
+static std::optional<EncodedResourceCryptographicDigest::Algorithm> prioritizedHashFunction(EncodedResourceCryptographicDigest::Algorithm a, EncodedResourceCryptographicDigest::Algorithm b)
 {
     if (a == b)
         return std::nullopt;

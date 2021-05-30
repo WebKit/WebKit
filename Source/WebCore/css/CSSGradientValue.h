@@ -124,7 +124,7 @@ private:
     CSSGradientType m_gradientType;
     bool m_repeating { false };
 
-    mutable Optional<bool> m_hasColorDerivedFromElement;
+    mutable std::optional<bool> m_hasColorDerivedFromElement;
 };
 
 class CSSLinearGradientValue final : public CSSGradientValue {

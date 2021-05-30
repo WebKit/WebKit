@@ -91,7 +91,7 @@ static decltype(auto) visibleNamedPropertyItemAccessorFunctor(InnerItemAccessor&
     if constexpr (IsExceptionOr<std::invoke_result_t<InnerItemAccessor, JSClass&, JSC::PropertyName>>) {
         using ReturnType = ExceptionOr<typename IDLType::ImplementationType>;
 
-        return [innerItemAccessor = std::forward<InnerItemAccessor>(innerItemAccessor)] (JSClass& thisObject, JSC::PropertyName propertyName) -> Optional<ReturnType> {
+        return [innerItemAccessor = std::forward<InnerItemAccessor>(innerItemAccessor)] (JSClass& thisObject, JSC::PropertyName propertyName) -> std::optional<ReturnType> {
             auto result = innerItemAccessor(thisObject, propertyName);
             if (result.hasException())
                 return ReturnType { result.releaseException() };
@@ -102,7 +102,7 @@ static decltype(auto) visibleNamedPropertyItemAccessorFunctor(InnerItemAccessor&
     } else {
         using ReturnType = typename IDLType::ImplementationType;
 
-        return [innerItemAccessor = std::forward<InnerItemAccessor>(innerItemAccessor)] (JSClass& thisObject, JSC::PropertyName propertyName) -> Optional<ReturnType> {
+        return [innerItemAccessor = std::forward<InnerItemAccessor>(innerItemAccessor)] (JSClass& thisObject, JSC::PropertyName propertyName) -> std::optional<ReturnType> {
             auto result = innerItemAccessor(thisObject, propertyName);
             if (!IDLType::isNullValue(result))
                 return ReturnType { IDLType::extractValueFromNullable(result) };

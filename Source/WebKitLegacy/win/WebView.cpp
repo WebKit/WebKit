@@ -5838,7 +5838,7 @@ HRESULT WebView::visibleContentRect(_Out_ LPRECT rect)
     return S_OK;
 }
 
-static DWORD dragOperationToDragCursor(Optional<DragOperation> operation)
+static DWORD dragOperationToDragCursor(std::optional<DragOperation> operation)
 {
     if (!operation)
         return DROPEFFECT_NONE;
@@ -6446,7 +6446,7 @@ LRESULT WebView::onIMERequestCharPosition(Frame* targetFrame, IMECHARPOSITION* c
     if (charPos->dwCharPos && !targetFrame->editor().hasComposition())
         return 0;
     IntRect caret;
-    Optional<SimpleRange> range;
+    std::optional<SimpleRange> range;
     if (targetFrame->editor().hasComposition())
         range = targetFrame->editor().compositionRange();
     else

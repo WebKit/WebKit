@@ -89,7 +89,7 @@ struct PatchCustom {
         return inst.args[0].special()->admitsExtendedOffsetAddr(inst, argIndex);
     }
 
-    static Optional<unsigned> shouldTryAliasingDef(Inst& inst)
+    static std::optional<unsigned> shouldTryAliasingDef(Inst& inst)
     {
         return inst.args[0].special()->shouldTryAliasingDef(inst);
     }

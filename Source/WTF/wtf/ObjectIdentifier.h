@@ -71,9 +71,9 @@ public:
         encoder << m_identifier;
     }
 
-    template<typename Decoder> static Optional<ObjectIdentifier> decode(Decoder& decoder)
+    template<typename Decoder> static std::optional<ObjectIdentifier> decode(Decoder& decoder)
     {
-        Optional<uint64_t> identifier;
+        std::optional<uint64_t> identifier;
         decoder >> identifier;
         if (!identifier || !isValidIdentifier(*identifier))
             return std::nullopt;

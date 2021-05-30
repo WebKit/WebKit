@@ -72,7 +72,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
 
-    using LayerCreationCallback = CompletionHandler<void(Optional<LayerHostingContextID>)>&&;
+    using LayerCreationCallback = CompletionHandler<void(std::optional<LayerHostingContextID>)>&&;
     void createLayer(SampleBufferDisplayLayerIdentifier, bool hideRootLayer, WebCore::IntSize, LayerCreationCallback);
     void releaseLayer(SampleBufferDisplayLayerIdentifier);
 

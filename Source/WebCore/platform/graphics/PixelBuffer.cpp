@@ -56,7 +56,7 @@ Checked<unsigned, RecordOverflow> PixelBuffer::computeBufferSize(const PixelBuff
     return size.area<RecordOverflow>() * bytesPerPixel;
 }
 
-Optional<PixelBuffer> PixelBuffer::tryCreateForDecoding(const PixelBufferFormat& format, const IntSize& size, unsigned dataByteLength)
+std::optional<PixelBuffer> PixelBuffer::tryCreateForDecoding(const PixelBufferFormat& format, const IntSize& size, unsigned dataByteLength)
 {
     ASSERT(supportedPixelFormat(format.pixelFormat));
     ASSERT(computeBufferSize(format, size).unsafeGet() == dataByteLength);
@@ -67,7 +67,7 @@ Optional<PixelBuffer> PixelBuffer::tryCreateForDecoding(const PixelBufferFormat&
     return { { format, size, pixelArray.releaseNonNull() } };
 }
 
-Optional<PixelBuffer> PixelBuffer::tryCreate(const PixelBufferFormat& format, const IntSize& size)
+std::optional<PixelBuffer> PixelBuffer::tryCreate(const PixelBufferFormat& format, const IntSize& size)
 {
     ASSERT(supportedPixelFormat(format.pixelFormat));
 
@@ -80,7 +80,7 @@ Optional<PixelBuffer> PixelBuffer::tryCreate(const PixelBufferFormat& format, co
     return { { format, size, pixelArray.releaseNonNull() } };
 }
 
-Optional<PixelBuffer> PixelBuffer::tryCreate(const PixelBufferFormat& format, const IntSize& size, Ref<JSC::ArrayBuffer>&& arrayBuffer)
+std::optional<PixelBuffer> PixelBuffer::tryCreate(const PixelBufferFormat& format, const IntSize& size, Ref<JSC::ArrayBuffer>&& arrayBuffer)
 {
     ASSERT(supportedPixelFormat(format.pixelFormat));
 

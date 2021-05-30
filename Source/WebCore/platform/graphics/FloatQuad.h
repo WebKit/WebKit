@@ -151,7 +151,7 @@ public:
     bool isCounterclockwise() const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<FloatQuad> decode(Decoder&);
+    template<class Decoder> static std::optional<FloatQuad> decode(Decoder&);
 
 private:
     FloatPoint m_p1;
@@ -168,24 +168,24 @@ template<class Encoder> void FloatQuad::encode(Encoder& encoder) const
     encoder << m_p4;
 }
 
-template<class Decoder> Optional<FloatQuad> FloatQuad::decode(Decoder& decoder)
+template<class Decoder> std::optional<FloatQuad> FloatQuad::decode(Decoder& decoder)
 {
-    Optional<FloatPoint> p1;
+    std::optional<FloatPoint> p1;
     decoder >> p1;
     if (!p1)
         return std::nullopt;
 
-    Optional<FloatPoint> p2;
+    std::optional<FloatPoint> p2;
     decoder >> p2;
     if (!p2)
         return std::nullopt;
 
-    Optional<FloatPoint> p3;
+    std::optional<FloatPoint> p3;
     decoder >> p3;
     if (!p3)
         return std::nullopt;
 
-    Optional<FloatPoint> p4;
+    std::optional<FloatPoint> p4;
     decoder >> p4;
     if (!p4)
         return std::nullopt;

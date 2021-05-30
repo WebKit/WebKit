@@ -59,7 +59,7 @@ public:
     void fireDisplayRefreshIfNeeded(const DisplayUpdate&);
 
 private:
-    Optional<PlatformDisplayID> m_displayID;
+    std::optional<PlatformDisplayID> m_displayID;
     FramesPerSecond m_preferredFramesPerSecond { FullSpeedFramesPerSecond };
     bool m_scheduled { false };
 };

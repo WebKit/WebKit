@@ -94,7 +94,7 @@ public:
 
     VM* vm() { return m_vm; }
 
-    Optional<RefPtr<Thread>> ownerThread() const
+    std::optional<RefPtr<Thread>> ownerThread() const
     {
         if (m_hasOwnerThread)
             return m_ownerThread;

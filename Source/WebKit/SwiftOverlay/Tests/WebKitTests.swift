@@ -40,7 +40,7 @@ class WebKitTests: XCTestCase {
     func testWKPDFConfigurationRect() {
         let configuration = WKPDFConfiguration()
 
-        XCTAssert(type(of: configuration.rect) == Optional<CGRect>.self)
+        XCTAssert(type(of: configuration.rect) == std::optional<CGRect>.self)
 
         configuration.rect = nil
         XCTAssertEqual(configuration.rect, nil)

@@ -128,7 +128,7 @@ public:
     bool hasSelectorForAttribute(const Element&, const AtomString&) const;
 
     bool hasViewportDependentMediaQueries() const;
-    Optional<DynamicMediaQueryEvaluationChanges> evaluateDynamicMediaQueries();
+    std::optional<DynamicMediaQueryEvaluationChanges> evaluateDynamicMediaQueries();
 
     void addKeyframeStyle(Ref<StyleRuleKeyframes>&&);
 

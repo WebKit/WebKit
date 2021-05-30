@@ -80,7 +80,7 @@ Vector<uint8_t> encodeRawPublicKey(const Vector<uint8_t>& x, const Vector<uint8_
     return rawKey;
 }
 
-Optional<CString> validateAndConvertToUTF8(const String& pin)
+std::optional<CString> validateAndConvertToUTF8(const String& pin)
 {
     if (!hasAtLeastFourCodepoints(pin))
         return std::nullopt;
@@ -112,7 +112,7 @@ static Vector<uint8_t> encodePinCommand(Subcommand subcommand, Function<void(CBO
 
 RetriesResponse::RetriesResponse() = default;
 
-Optional<RetriesResponse> RetriesResponse::parse(const Vector<uint8_t>& inBuffer)
+std::optional<RetriesResponse> RetriesResponse::parse(const Vector<uint8_t>& inBuffer)
 {
     auto decodedMap = decodeResponseMap(inBuffer);
     if (!decodedMap)
@@ -133,7 +133,7 @@ KeyAgreementResponse::KeyAgreementResponse(Ref<CryptoKeyEC>&& peerKey)
 {
 }
 
-Optional<KeyAgreementResponse> KeyAgreementResponse::parse(const Vector<uint8_t>& inBuffer)
+std::optional<KeyAgreementResponse> KeyAgreementResponse::parse(const Vector<uint8_t>& inBuffer)
 {
     auto decodedMap = decodeResponseMap(inBuffer);
     if (!decodedMap)
@@ -149,7 +149,7 @@ Optional<KeyAgreementResponse> KeyAgreementResponse::parse(const Vector<uint8_t>
     return parseFromCOSE(coseKey);
 }
 
-Optional<KeyAgreementResponse> KeyAgreementResponse::parseFromCOSE(const CBORValue::MapValue& coseKey)
+std::optional<KeyAgreementResponse> KeyAgreementResponse::parseFromCOSE(const CBORValue::MapValue& coseKey)
 {
     // The COSE key must be a P-256 point. See
     // https://tools.ietf.org/html/rfc8152#section-7.1
@@ -199,7 +199,7 @@ TokenResponse::TokenResponse(Ref<WebCore::CryptoKeyHMAC>&& token)
 {
 }
 
-Optional<TokenResponse> TokenResponse::parse(const WebCore::CryptoKeyAES& sharedKey, const Vector<uint8_t>& inBuffer)
+std::optional<TokenResponse> TokenResponse::parse(const WebCore::CryptoKeyAES& sharedKey, const Vector<uint8_t>& inBuffer)
 {
     auto decodedMap = decodeResponseMap(inBuffer);
     if (!decodedMap)
@@ -242,7 +242,7 @@ Vector<uint8_t> encodeAsCBOR(const KeyAgreementRequest&)
     return encodePinCommand(Subcommand::kGetKeyAgreement);
 }
 
-Optional<TokenRequest> TokenRequest::tryCreate(const CString& pin, const CryptoKeyEC& peerKey)
+std::optional<TokenRequest> TokenRequest::tryCreate(const CString& pin, const CryptoKeyEC& peerKey)
 {
     // The following implements Section 5.5.4 Getting sharedSecret from Authenticator.
     // https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#gettingSharedSecret

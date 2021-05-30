@@ -72,7 +72,7 @@ public:
     void unregisterAsTouchEventListenerForScrolling();
 #endif
 
-    void setPostLayoutScrollPosition(Optional<ScrollPosition>);
+    void setPostLayoutScrollPosition(std::optional<ScrollPosition>);
     void applyPostLayoutScrollPositionIfNeeded();
 
     int scrollWidth() const;
@@ -142,7 +142,7 @@ public:
     Scrollbar* verticalScrollbar() const final { return m_vBar.get(); }
     ScrollableArea* enclosingScrollableArea() const final;
 
-    bool handleWheelEventForScrolling(const PlatformWheelEvent&, Optional<WheelScrollGestureState>) final;
+    bool handleWheelEventForScrolling(const PlatformWheelEvent&, std::optional<WheelScrollGestureState>) final;
     bool isScrollableOrRubberbandable() final;
     bool hasScrollableOrRubberbandableAncestor() final;
     bool useDarkAppearance() const final;
@@ -252,7 +252,7 @@ public:
     void updateLayerPositionsAfterOverflowScroll();
     void updateLayerPositionsAfterDocumentScroll();
 
-    Optional<LayoutRect> updateScrollPosition(const ScrollPositionChangeOptions&, const LayoutRect& revealRect, const LayoutRect& localExposeRect);
+    std::optional<LayoutRect> updateScrollPosition(const ScrollPositionChangeOptions&, const LayoutRect& revealRect, const LayoutRect& localExposeRect);
 
 #if PLATFORM(IOS_FAMILY)
     bool adjustForIOSCaretWhenScrolling() const { return m_adjustForIOSCaretWhenScrolling; }
@@ -285,7 +285,7 @@ private:
 
     RenderLayer& m_layer;
     ScrollPosition m_scrollPosition;
-    Optional<ScrollPosition> m_postLayoutScrollPosition;
+    std::optional<ScrollPosition> m_postLayoutScrollPosition;
 
     // For layers with overflow, we have a pair of scrollbars.
     RefPtr<Scrollbar> m_hBar;

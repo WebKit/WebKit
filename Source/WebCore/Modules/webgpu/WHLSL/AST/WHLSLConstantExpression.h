@@ -111,7 +111,7 @@ public:
 
     bool matches(const ConstantExpression& other) const
     {
-        Optional<bool> result;
+        std::optional<bool> result;
         double value;
         visit(WTF::makeVisitor([&](const IntegerLiteral& integerLiteral) {
             value = integerLiteral.value();

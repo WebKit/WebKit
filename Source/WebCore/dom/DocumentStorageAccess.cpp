@@ -74,7 +74,7 @@ void DocumentStorageAccess::hasStorageAccess(Document& document, Ref<DeferredPro
     DocumentStorageAccess::from(document)->hasStorageAccess(WTFMove(promise));
 }
 
-Optional<bool> DocumentStorageAccess::hasStorageAccessQuickCheck()
+std::optional<bool> DocumentStorageAccess::hasStorageAccessQuickCheck()
 {
     ASSERT(m_document.settings().storageAccessAPIEnabled());
 
@@ -145,7 +145,7 @@ void DocumentStorageAccess::requestStorageAccess(Document& document, Ref<Deferre
     DocumentStorageAccess::from(document)->requestStorageAccess(WTFMove(promise));
 }
 
-Optional<StorageAccessQuickResult> DocumentStorageAccess::requestStorageAccessQuickCheck()
+std::optional<StorageAccessQuickResult> DocumentStorageAccess::requestStorageAccessQuickCheck()
 {
     ASSERT(m_document.settings().storageAccessAPIEnabled());
 

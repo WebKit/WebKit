@@ -173,41 +173,41 @@ void Key::encode(WTF::Persistence::Encoder& encoder) const
     encoder << m_partitionHash;
 }
 
-Optional<Key> Key::decode(WTF::Persistence::Decoder& decoder)
+std::optional<Key> Key::decode(WTF::Persistence::Decoder& decoder)
 {
     Key key;
     
-    Optional<String> partition;
+    std::optional<String> partition;
     decoder >> partition;
     if (!partition)
         return std::nullopt;
     key.m_partition = WTFMove(*partition);
 
-    Optional<String> type;
+    std::optional<String> type;
     decoder >> type;
     if (!type)
         return std::nullopt;
     key.m_type = WTFMove(*type);
 
-    Optional<String> identifier;
+    std::optional<String> identifier;
     decoder >> identifier;
     if (!identifier)
         return std::nullopt;
     key.m_identifier = WTFMove(*identifier);
 
-    Optional<String> range;
+    std::optional<String> range;
     decoder >> range;
     if (!range)
         return std::nullopt;
     key.m_range = WTFMove(*range);
 
-    Optional<HashType> hash;
+    std::optional<HashType> hash;
     decoder >> hash;
     if (!hash)
         return std::nullopt;
     key.m_hash = WTFMove(*hash);
 
-    Optional<HashType> partitionHash;
+    std::optional<HashType> partitionHash;
     decoder >> partitionHash;
     if (!partitionHash)
         return std::nullopt;

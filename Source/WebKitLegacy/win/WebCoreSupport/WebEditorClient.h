@@ -49,13 +49,13 @@ private:
 
     bool shouldBeginEditing(const WebCore::SimpleRange&) final;
     bool shouldEndEditing(const WebCore::SimpleRange&) final;
-    bool shouldInsertText(const WTF::String&, const Optional<WebCore::SimpleRange>&, WebCore::EditorInsertAction) final;
+    bool shouldInsertText(const WTF::String&, const std::optional<WebCore::SimpleRange>&, WebCore::EditorInsertAction) final;
 
     void didBeginEditing() final;
     void didEndEditing() final;
-    void willWriteSelectionToPasteboard(const Optional<WebCore::SimpleRange>&) final;
+    void willWriteSelectionToPasteboard(const std::optional<WebCore::SimpleRange>&) final;
     void didWriteSelectionToPasteboard() final;
-    void getClientPasteboardData(const Optional<WebCore::SimpleRange>&, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData) final;
+    void getClientPasteboardData(const std::optional<WebCore::SimpleRange>&, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData) final;
 
     void didEndUserTriggeredSelectionChanges() final { }
     void respondToChangedContents() final;
@@ -65,10 +65,10 @@ private:
     void discardedComposition(WebCore::Frame*) final;
     void didUpdateComposition() final { }
 
-    bool shouldDeleteRange(const Optional<WebCore::SimpleRange>&) final;
+    bool shouldDeleteRange(const std::optional<WebCore::SimpleRange>&) final;
 
-    bool shouldInsertNode(WebCore::Node&, const Optional<WebCore::SimpleRange>& replacingRange, WebCore::EditorInsertAction) final;
-    bool shouldApplyStyle(const WebCore::StyleProperties&, const Optional<WebCore::SimpleRange>&) final;
+    bool shouldInsertNode(WebCore::Node&, const std::optional<WebCore::SimpleRange>& replacingRange, WebCore::EditorInsertAction) final;
+    bool shouldApplyStyle(const WebCore::StyleProperties&, const std::optional<WebCore::SimpleRange>&) final;
     void didApplyStyle() final;
     bool shouldMoveRangeAfterDelete(const WebCore::SimpleRange&, const WebCore::SimpleRange&) final;
 
@@ -87,7 +87,7 @@ private:
     void undo() final;
     void redo() final;
     
-    bool shouldChangeSelectedRange(const Optional<WebCore::SimpleRange>& fromRange, const Optional<WebCore::SimpleRange>& toRange, WebCore::Affinity, bool stillSelecting) final;
+    bool shouldChangeSelectedRange(const std::optional<WebCore::SimpleRange>& fromRange, const std::optional<WebCore::SimpleRange>& toRange, WebCore::Affinity, bool stillSelecting) final;
     void textFieldDidBeginEditing(WebCore::Element*) final;
     void textFieldDidEndEditing(WebCore::Element*) final;
     void textDidChangeInTextField(WebCore::Element*) final;

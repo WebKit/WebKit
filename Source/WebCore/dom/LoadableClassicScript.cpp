@@ -53,7 +53,7 @@ bool LoadableClassicScript::isLoaded() const
     return m_cachedScript->isLoaded();
 }
 
-Optional<LoadableScript::Error> LoadableClassicScript::error() const
+std::optional<LoadableScript::Error> LoadableClassicScript::error() const
 {
     ASSERT(m_cachedScript);
     if (m_error)
@@ -128,7 +128,7 @@ bool LoadableClassicScript::load(Document& document, const URL& sourceURL)
 {
     ASSERT(!m_cachedScript);
 
-    auto priority = [&]() -> Optional<ResourceLoadPriority> {
+    auto priority = [&]() -> std::optional<ResourceLoadPriority> {
         if (m_isAsync)
             return DefaultResourceLoadPriority::asyncScript;
         // Use default.

@@ -219,12 +219,12 @@ String TextCodecCJK::decodeCommon(const uint8_t* bytes, size_t length, bool flus
     return result.toString();
 }
 
-static Optional<UChar> codePointJIS0208(uint16_t pointer)
+static std::optional<UChar> codePointJIS0208(uint16_t pointer)
 {
     return findFirstInSortedPairs(jis0208(), pointer);
 }
 
-static Optional<UChar> codePointJIS0212(uint16_t pointer)
+static std::optional<UChar> codePointJIS0212(uint16_t pointer)
 {
     return findFirstInSortedPairs(jis0212(), pointer);
 }
@@ -397,7 +397,7 @@ String TextCodecCJK::iso2022JPDecode(const uint8_t* bytes, size_t length, bool f
             return SawError::Yes;
         case ISO2022JPDecoderState::Escape: {
             uint8_t lead = std::exchange(m_lead, 0x00);
-            Optional<ISO2022JPDecoderState> state;
+            std::optional<ISO2022JPDecoderState> state;
             if (lead == 0x28) {
                 if (byte == 0x42)
                     state = ISO2022JPDecoderState::ASCII;
@@ -851,7 +851,7 @@ static const std::array<std::pair<uint32_t, UChar32>, 207>& gb18030Ranges()
 }
 
 // https://encoding.spec.whatwg.org/#index-gb18030-ranges-code-point
-static Optional<UChar32> gb18030RangesCodePoint(uint32_t pointer)
+static std::optional<UChar32> gb18030RangesCodePoint(uint32_t pointer)
 {
     if ((pointer > 39419 && pointer < 189000) || pointer > 1237575)
         return std::nullopt;

@@ -38,7 +38,7 @@ enum class ForceUserGesture : bool { No, Yes };
 using ArgumentWireBytesMap = HashMap<String, Vector<uint8_t>>;
 
 struct RunJavaScriptParameters {
-    RunJavaScriptParameters(String&& source, URL&& sourceURL, RunAsAsyncFunction runAsAsyncFunction, Optional<ArgumentWireBytesMap>&& arguments, ForceUserGesture forceUserGesture)
+    RunJavaScriptParameters(String&& source, URL&& sourceURL, RunAsAsyncFunction runAsAsyncFunction, std::optional<ArgumentWireBytesMap>&& arguments, ForceUserGesture forceUserGesture)
         : source(WTFMove(source))
         , sourceURL(WTFMove(sourceURL))
         , runAsAsyncFunction(runAsAsyncFunction)
@@ -47,7 +47,7 @@ struct RunJavaScriptParameters {
     {
     }
 
-    RunJavaScriptParameters(const String& source, URL&& sourceURL, bool runAsAsyncFunction, Optional<ArgumentWireBytesMap>&& arguments, bool forceUserGesture)
+    RunJavaScriptParameters(const String& source, URL&& sourceURL, bool runAsAsyncFunction, std::optional<ArgumentWireBytesMap>&& arguments, bool forceUserGesture)
         : source(source)
         , sourceURL(WTFMove(sourceURL))
         , runAsAsyncFunction(runAsAsyncFunction ? RunAsAsyncFunction::Yes : RunAsAsyncFunction::No)
@@ -56,7 +56,7 @@ struct RunJavaScriptParameters {
     {
     }
 
-    RunJavaScriptParameters(String&& source, URL&& sourceURL, bool runAsAsyncFunction, Optional<ArgumentWireBytesMap>&& arguments, bool forceUserGesture)
+    RunJavaScriptParameters(String&& source, URL&& sourceURL, bool runAsAsyncFunction, std::optional<ArgumentWireBytesMap>&& arguments, bool forceUserGesture)
         : source(WTFMove(source))
         , sourceURL(WTFMove(sourceURL))
         , runAsAsyncFunction(runAsAsyncFunction ? RunAsAsyncFunction::Yes : RunAsAsyncFunction::No)
@@ -68,7 +68,7 @@ struct RunJavaScriptParameters {
     String source;
     URL sourceURL;
     RunAsAsyncFunction runAsAsyncFunction;
-    Optional<ArgumentWireBytesMap> arguments;
+    std::optional<ArgumentWireBytesMap> arguments;
     ForceUserGesture forceUserGesture;
 
     template<typename Encoder> void encode(Encoder& encoder) const
@@ -76,7 +76,7 @@ struct RunJavaScriptParameters {
         encoder << source << sourceURL << runAsAsyncFunction << arguments << forceUserGesture;
     }
 
-    template<typename Decoder> static Optional<RunJavaScriptParameters> decode(Decoder& decoder)
+    template<typename Decoder> static std::optional<RunJavaScriptParameters> decode(Decoder& decoder)
     {
         String source;
         if (!decoder.decode(source))
@@ -90,7 +90,7 @@ struct RunJavaScriptParameters {
         if (!decoder.decode(runAsAsyncFunction))
             return std::nullopt;
 
-        Optional<ArgumentWireBytesMap> arguments;
+        std::optional<ArgumentWireBytesMap> arguments;
         if (!decoder.decode(arguments))
             return std::nullopt;
 

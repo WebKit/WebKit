@@ -50,7 +50,7 @@ ALWAYS_INLINE bool speciesWatchpointIsValid(VM& vm, JSObject* thisObject, ArrayB
         && globalObject->arrayBufferSpeciesWatchpointSet(mode).stateOnJSThread() == IsWatched;
 }
 
-ALWAYS_INLINE Optional<JSValue> arrayBufferSpeciesConstructor(JSGlobalObject* globalObject, JSArrayBuffer* thisObject, ArrayBufferSharingMode mode)
+ALWAYS_INLINE std::optional<JSValue> arrayBufferSpeciesConstructor(JSGlobalObject* globalObject, JSArrayBuffer* thisObject, ArrayBufferSharingMode mode)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

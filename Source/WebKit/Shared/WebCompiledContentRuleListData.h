@@ -56,7 +56,7 @@ public:
     }
 
     void encode(IPC::Encoder&) const;
-    static Optional<WebCompiledContentRuleListData> decode(IPC::Decoder&);
+    static std::optional<WebCompiledContentRuleListData> decode(IPC::Decoder&);
 
     RefPtr<SharedMemory> data;
     unsigned conditionsApplyOnlyToDomainOffset { 0 };

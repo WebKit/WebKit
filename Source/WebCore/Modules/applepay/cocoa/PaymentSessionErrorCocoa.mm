@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-static Optional<ApplePaySessionError> additionalError(NSError *error)
+static std::optional<ApplePaySessionError> additionalError(NSError *error)
 {
 #if HAVE(PASSKIT_INSTALLMENTS)
     // FIXME: Replace with PKPaymentErrorBindTokenUserInfoKey and

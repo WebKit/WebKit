@@ -61,7 +61,7 @@ public:
     Vector<String> types() const;
     void getType(const String&, Ref<DeferredPromise>&&);
 
-    void collectDataForWriting(Clipboard& destination, CompletionHandler<void(Optional<PasteboardCustomData>)>&&);
+    void collectDataForWriting(Clipboard& destination, CompletionHandler<void(std::optional<PasteboardCustomData>)>&&);
 
     PresentationStyle presentationStyle() const { return m_presentationStyle; };
     Navigator* navigator();

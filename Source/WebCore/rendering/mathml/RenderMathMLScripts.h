@@ -50,14 +50,14 @@ protected:
 
 private:
     MathMLScriptsElement& element() const;
-    Optional<LayoutUnit> firstLineBaseline() const final;
+    std::optional<LayoutUnit> firstLineBaseline() const final;
     struct ReferenceChildren {
         RenderBox* base;
         RenderBox* prescriptDelimiter;
         RenderBox* firstPostScript;
         RenderBox* firstPreScript;
     };
-    Optional<ReferenceChildren> validateAndGetReferenceChildren();
+    std::optional<ReferenceChildren> validateAndGetReferenceChildren();
     LayoutUnit spaceAfterScript();
     LayoutUnit italicCorrection(const ReferenceChildren&);
     struct VerticalParameters {

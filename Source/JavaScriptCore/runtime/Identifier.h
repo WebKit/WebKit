@@ -38,7 +38,7 @@ ALWAYS_INLINE bool isIndex(uint32_t index)
 }
 
 template <typename CharType>
-ALWAYS_INLINE Optional<uint32_t> parseIndex(const CharType* characters, unsigned length)
+ALWAYS_INLINE std::optional<uint32_t> parseIndex(const CharType* characters, unsigned length)
 {
     // An empty string is not a number.
     if (!length)
@@ -77,7 +77,7 @@ ALWAYS_INLINE Optional<uint32_t> parseIndex(const CharType* characters, unsigned
     return value;
 }
 
-ALWAYS_INLINE Optional<uint32_t> parseIndex(StringImpl& impl)
+ALWAYS_INLINE std::optional<uint32_t> parseIndex(StringImpl& impl)
 {
     if (impl.is8Bit())
         return parseIndex(impl.characters8(), impl.length());
@@ -272,7 +272,7 @@ inline bool Identifier::equal(const StringImpl* r, const UChar* s, unsigned leng
     return WTF::equal(r, s, length);
 }
 
-ALWAYS_INLINE Optional<uint32_t> parseIndex(const Identifier& identifier)
+ALWAYS_INLINE std::optional<uint32_t> parseIndex(const Identifier& identifier)
 {
     auto uid = identifier.impl();
     if (!uid)

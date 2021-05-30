@@ -47,7 +47,7 @@ GPUBindGroupAllocator::GPUBindGroupAllocator(GPUErrorScopes& errors)
 
 #if USE(METAL)
 
-Optional<GPUBindGroupAllocator::ArgumentBufferOffsets> GPUBindGroupAllocator::allocateAndSetEncoders(MTLArgumentEncoder *vertex, MTLArgumentEncoder *fragment, MTLArgumentEncoder *compute)
+std::optional<GPUBindGroupAllocator::ArgumentBufferOffsets> GPUBindGroupAllocator::allocateAndSetEncoders(MTLArgumentEncoder *vertex, MTLArgumentEncoder *fragment, MTLArgumentEncoder *compute)
 {
     id<MTLDevice> device = nil;
     auto checkedOffset = Checked<NSUInteger>(m_lastOffset);

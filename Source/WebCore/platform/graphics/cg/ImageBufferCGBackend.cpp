@@ -213,7 +213,7 @@ RetainPtr<CGImageRef> ImageBufferCGBackend::copyCGImageForEncoding(CFStringRef d
     return adoptCF(CGBitmapContextCreateImage(context.get()));
 }
 
-Vector<uint8_t> ImageBufferCGBackend::toData(const String& mimeType, Optional<double> quality) const
+Vector<uint8_t> ImageBufferCGBackend::toData(const String& mimeType, std::optional<double> quality) const
 {
 #if ENABLE(GPU_PROCESS)
     ASSERT_IMPLIES(!isInGPUProcess(), MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
@@ -227,7 +227,7 @@ Vector<uint8_t> ImageBufferCGBackend::toData(const String& mimeType, Optional<do
     return WebCore::data(image.get(), destinationUTI.get(), quality);
 }
 
-String ImageBufferCGBackend::toDataURL(const String& mimeType, Optional<double> quality, PreserveResolution preserveResolution) const
+String ImageBufferCGBackend::toDataURL(const String& mimeType, std::optional<double> quality, PreserveResolution preserveResolution) const
 {
 #if ENABLE(GPU_PROCESS)
     ASSERT_IMPLIES(!isInGPUProcess(), MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));

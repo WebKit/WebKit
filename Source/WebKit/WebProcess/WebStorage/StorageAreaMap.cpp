@@ -258,7 +258,7 @@ void StorageAreaMap::applyChange(const String& key, const String& newValue)
     m_map->setItemIgnoringQuota(key, newValue);
 }
 
-void StorageAreaMap::dispatchStorageEvent(const Optional<StorageAreaImplIdentifier>& storageAreaImplID, const String& key, const String& oldValue, const String& newValue, const String& urlString)
+void StorageAreaMap::dispatchStorageEvent(const std::optional<StorageAreaImplIdentifier>& storageAreaImplID, const String& key, const String& oldValue, const String& newValue, const String& urlString)
 {
     if (!storageAreaImplID) {
         // This storage event originates from another process so we need to apply the change to our storage area map.
@@ -276,7 +276,7 @@ void StorageAreaMap::clearCache()
     resetValues();
 }
 
-static Vector<RefPtr<Frame>> framesForEventDispatching(Page& page, SecurityOrigin& origin, StorageType storageType, const Optional<StorageAreaImplIdentifier>& storageAreaImplID)
+static Vector<RefPtr<Frame>> framesForEventDispatching(Page& page, SecurityOrigin& origin, StorageType storageType, const std::optional<StorageAreaImplIdentifier>& storageAreaImplID)
 {
     Vector<RefPtr<Frame>> frames;
     page.forEachDocument([&](auto& document) {
@@ -313,7 +313,7 @@ static Vector<RefPtr<Frame>> framesForEventDispatching(Page& page, SecurityOrigi
     return frames;
 }
 
-void StorageAreaMap::dispatchSessionStorageEvent(const Optional<StorageAreaImplIdentifier>& storageAreaImplID, const String& key, const String& oldValue, const String& newValue, const String& urlString)
+void StorageAreaMap::dispatchSessionStorageEvent(const std::optional<StorageAreaImplIdentifier>& storageAreaImplID, const String& key, const String& oldValue, const String& newValue, const String& urlString)
 {
     // Namespace IDs for session storage namespaces are equivalent to web page IDs
     // so we can get the right page here.
@@ -329,7 +329,7 @@ void StorageAreaMap::dispatchSessionStorageEvent(const Optional<StorageAreaImplI
     StorageEventDispatcher::dispatchSessionStorageEventsToFrames(*page, frames, key, oldValue, newValue, urlString, m_securityOrigin->data());
 }
 
-void StorageAreaMap::dispatchLocalStorageEvent(const Optional<StorageAreaImplIdentifier>& storageAreaImplID, const String& key, const String& oldValue, const String& newValue, const String& urlString)
+void StorageAreaMap::dispatchLocalStorageEvent(const std::optional<StorageAreaImplIdentifier>& storageAreaImplID, const String& key, const String& oldValue, const String& newValue, const String& urlString)
 {
     ASSERT(isLocalStorage(type()));
 

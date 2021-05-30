@@ -661,7 +661,7 @@ void GraphicsContextGLOpenGL::prepareForDisplay()
     markLayerComposited();
 }
 
-Optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResults()
+std::optional<PixelBuffer> GraphicsContextGLOpenGL::readCompositedResults()
 {
     auto& displayBuffer = m_swapChain->displayBuffer();
     if (!displayBuffer.surface || !displayBuffer.handle)

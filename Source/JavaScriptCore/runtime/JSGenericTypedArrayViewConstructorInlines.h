@@ -115,7 +115,7 @@ inline JSArrayBuffer* constructCustomArrayBufferIfNeeded(JSGlobalObject* globalO
     if (source->isShared())
         return nullptr;
 
-    Optional<JSValue> species = arrayBufferSpeciesConstructor(globalObject, source, ArrayBufferSharingMode::Default);
+    std::optional<JSValue> species = arrayBufferSpeciesConstructor(globalObject, source, ArrayBufferSharingMode::Default);
     RETURN_IF_EXCEPTION(scope, nullptr);
     if (!species)
         return nullptr;
@@ -143,7 +143,7 @@ inline JSArrayBuffer* constructCustomArrayBufferIfNeeded(JSGlobalObject* globalO
 }
 
 template<typename ViewClass>
-inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* globalObject, Structure* structure, EncodedJSValue firstArgument, unsigned offset, Optional<unsigned> lengthOpt)
+inline JSObject* constructGenericTypedArrayViewWithArguments(JSGlobalObject* globalObject, Structure* structure, EncodedJSValue firstArgument, unsigned offset, std::optional<unsigned> lengthOpt)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -276,7 +276,7 @@ ALWAYS_INLINE EncodedJSValue constructGenericTypedArrayViewImpl(JSGlobalObject* 
 
     JSValue firstValue = callFrame->uncheckedArgument(0);
     unsigned offset = 0;
-    Optional<unsigned> length = std::nullopt;
+    std::optional<unsigned> length = std::nullopt;
     if (jsDynamicCast<JSArrayBuffer*>(vm, firstValue) && argCount > 1) {
         offset = callFrame->uncheckedArgument(1).toIndex(globalObject, "byteOffset");
         RETURN_IF_EXCEPTION(scope, encodedJSValue());

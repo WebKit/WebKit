@@ -69,10 +69,10 @@ public:
                 continue;
             if (block->bytecodeBegin != m_graph.m_plan.osrEntryBytecodeIndex())
                 continue;
-            const Operands<Optional<JSValue>>& mustHandleValues = m_graph.m_plan.mustHandleValues();
+            const Operands<std::optional<JSValue>>& mustHandleValues = m_graph.m_plan.mustHandleValues();
             for (size_t i = 0; i < mustHandleValues.size(); ++i) {
                 Operand operand = mustHandleValues.operandForIndex(i);
-                Optional<JSValue> value = mustHandleValues[i];
+                std::optional<JSValue> value = mustHandleValues[i];
                 if (!value)
                     continue;
                 Node* node = block->variablesAtHead.operand(operand);

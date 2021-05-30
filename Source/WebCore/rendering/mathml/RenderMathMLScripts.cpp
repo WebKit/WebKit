@@ -67,7 +67,7 @@ RenderMathMLOperator* RenderMathMLScripts::unembellishedOperator() const
     return downcast<RenderMathMLBlock>(base)->unembellishedOperator();
 }
 
-Optional<RenderMathMLScripts::ReferenceChildren> RenderMathMLScripts::validateAndGetReferenceChildren()
+std::optional<RenderMathMLScripts::ReferenceChildren> RenderMathMLScripts::validateAndGetReferenceChildren()
 {
     // All scripted elements must have at least one child.
     // The first child is the base.
@@ -146,7 +146,7 @@ Optional<RenderMathMLScripts::ReferenceChildren> RenderMathMLScripts::validateAn
             }
             numberOfScriptIsEven = !numberOfScriptIsEven;
         }
-        return numberOfScriptIsEven ? Optional<ReferenceChildren>(reference) : std::nullopt; // We verify 2b).
+        return numberOfScriptIsEven ? std::optional<ReferenceChildren>(reference) : std::nullopt; // We verify 2b).
     }
     }
 
@@ -466,11 +466,11 @@ void RenderMathMLScripts::layoutBlock(bool relayoutChildren, LayoutUnit)
     clearNeedsLayout();
 }
 
-Optional<LayoutUnit> RenderMathMLScripts::firstLineBaseline() const
+std::optional<LayoutUnit> RenderMathMLScripts::firstLineBaseline() const
 {
     auto* base = firstChildBox();
     if (!base)
-        return Optional<LayoutUnit>();
+        return std::optional<LayoutUnit>();
     return LayoutUnit { roundf(ascentForChild(*base) + base->logicalTop()) };
 }
 

@@ -30,7 +30,7 @@ class SVGHKernElement final : public SVGElement {
 public:
     static Ref<SVGHKernElement> create(const QualifiedName&, Document&);
 
-    Optional<SVGKerningPair> buildHorizontalKerningPair() const;
+    std::optional<SVGKerningPair> buildHorizontalKerningPair() const;
 
 private:
     SVGHKernElement(const QualifiedName&, Document&);

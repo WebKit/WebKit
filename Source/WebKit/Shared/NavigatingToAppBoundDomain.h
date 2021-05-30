@@ -70,24 +70,24 @@ struct AppBoundNavigationTestingData {
         encoder << contextData;
     }
 
-    static Optional<AppBoundNavigationTestingData> decode(IPC::Decoder& decoder)
+    static std::optional<AppBoundNavigationTestingData> decode(IPC::Decoder& decoder)
     {
-        Optional<bool> hasLoadedAppBoundRequestTesting;
+        std::optional<bool> hasLoadedAppBoundRequestTesting;
         decoder >> hasLoadedAppBoundRequestTesting;
         if (!hasLoadedAppBoundRequestTesting)
             return std::nullopt;
 
-        Optional<bool> hasLoadedNonAppBoundRequestTesting;
+        std::optional<bool> hasLoadedNonAppBoundRequestTesting;
         decoder >> hasLoadedNonAppBoundRequestTesting;
         if (!hasLoadedNonAppBoundRequestTesting)
             return std::nullopt;
         
-        Optional<bool> didPerformSoftUpdate;
+        std::optional<bool> didPerformSoftUpdate;
         decoder >> didPerformSoftUpdate;
         if (!didPerformSoftUpdate)
             return std::nullopt;
 
-        Optional<HashMap<RequestDomain, ContextDomain>> contextData;
+        std::optional<HashMap<RequestDomain, ContextDomain>> contextData;
         decoder >> contextData;
         if (!contextData)
             return std::nullopt;

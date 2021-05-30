@@ -44,7 +44,7 @@ struct RawFile {
     
 struct ShareDataWithParsedURL {
     ShareData shareData;
-    Optional<URL> url;
+    std::optional<URL> url;
     Vector<RawFile> files;
 };
     

@@ -57,7 +57,7 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
     }
 
-    void platformSendHandshake(const uint8_t*, size_t, const Optional<CookieRequestHeaderFieldProxy>&, Function<void(bool, bool)>&&) final
+    void platformSendHandshake(const uint8_t*, size_t, const std::optional<CookieRequestHeaderFieldProxy>&, Function<void(bool, bool)>&&) final
     {
         RELEASE_ASSERT_NOT_REACHED();
     }

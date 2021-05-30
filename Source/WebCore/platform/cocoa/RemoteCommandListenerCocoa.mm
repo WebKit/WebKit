@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-static Optional<MRMediaRemoteCommand> mediaRemoteCommandForPlatformCommand(PlatformMediaSession::RemoteControlCommandType command)
+static std::optional<MRMediaRemoteCommand> mediaRemoteCommandForPlatformCommand(PlatformMediaSession::RemoteControlCommandType command)
 {
     static const auto commandMap = makeNeverDestroyed([] {
         using CommandToActionMap = HashMap<PlatformMediaSession::RemoteControlCommandType, MRMediaRemoteCommand, WTF::IntHash<PlatformMediaSession::RemoteControlCommandType>, WTF::StrongEnumHashTraits<PlatformMediaSession::RemoteControlCommandType>>;

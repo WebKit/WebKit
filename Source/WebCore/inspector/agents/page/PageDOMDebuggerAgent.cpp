@@ -158,7 +158,7 @@ void PageDOMDebuggerAgent::frameDocumentUpdated(Frame& frame)
 }
 
 
-static Optional<size_t> calculateDistance(Node& child, Node& ancestor)
+static std::optional<size_t> calculateDistance(Node& child, Node& ancestor)
 {
     size_t distance = 0;
 
@@ -182,7 +182,7 @@ void PageDOMDebuggerAgent::willInsertDOMNode(Node& parent)
     if (m_domSubtreeModifiedBreakpoints.isEmpty())
         return;
 
-    Optional<size_t> closestDistance;
+    std::optional<size_t> closestDistance;
     RefPtr<JSC::Breakpoint> closestBreakpoint;
     Node* closestBreakpointOwner = nullptr;
 
@@ -218,9 +218,9 @@ void PageDOMDebuggerAgent::willRemoveDOMNode(Node& node)
     if (m_domNodeRemovedBreakpoints.isEmpty() && m_domSubtreeModifiedBreakpoints.isEmpty())
         return;
 
-    Optional<size_t> closestDistance;
+    std::optional<size_t> closestDistance;
     RefPtr<JSC::Breakpoint> closestBreakpoint;
-    Optional<Protocol::DOMDebugger::DOMBreakpointType> closestBreakpointType;
+    std::optional<Protocol::DOMDebugger::DOMBreakpointType> closestBreakpointType;
     Node* closestBreakpointOwner = nullptr;
 
     for (auto [breakpointOwner, breakpoint] : m_domNodeRemovedBreakpoints) {

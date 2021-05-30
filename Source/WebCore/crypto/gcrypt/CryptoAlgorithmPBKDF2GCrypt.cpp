@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-static Optional<Vector<uint8_t>> gcryptDeriveBits(const Vector<uint8_t>& keyData, const Vector<uint8_t>& saltData, CryptoAlgorithmIdentifier hashIdentifier, size_t iterations, size_t length)
+static std::optional<Vector<uint8_t>> gcryptDeriveBits(const Vector<uint8_t>& keyData, const Vector<uint8_t>& saltData, CryptoAlgorithmIdentifier hashIdentifier, size_t iterations, size_t length)
 {
     // Determine the hash algorithm that will be used for derivation.
     auto hashAlgorithm = digestAlgorithm(hashIdentifier);

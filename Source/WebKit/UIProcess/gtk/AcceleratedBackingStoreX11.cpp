@@ -53,10 +53,10 @@
 
 namespace WebKit {
 
-static Optional<int> s_damageEventBase;
-static Optional<int> s_damageErrorBase;
+static std::optional<int> s_damageEventBase;
+static std::optional<int> s_damageErrorBase;
 #if USE(GLX)
-static Optional<int> s_glxErrorBase;
+static std::optional<int> s_glxErrorBase;
 #endif
 
 class XDamageNotifier {

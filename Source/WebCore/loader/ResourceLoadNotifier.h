@@ -68,7 +68,7 @@ public:
 
 private:
     Frame& m_frame;
-    Optional<unsigned long> m_initialRequestIdentifier;
+    std::optional<unsigned long> m_initialRequestIdentifier;
 };
 
 } // namespace WebCore

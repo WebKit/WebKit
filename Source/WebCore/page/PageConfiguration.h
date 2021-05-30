@@ -97,7 +97,7 @@ public:
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
-    Optional<ApplicationManifest> applicationManifest;
+    std::optional<ApplicationManifest> applicationManifest;
 #endif
 
     UniqueRef<LibWebRTCProvider> libWebRTCProvider;
@@ -133,7 +133,7 @@ public:
 
     // FIXME: These should be all be Settings.
     bool loadsSubresources { true };
-    Optional<HashSet<String>> allowedNetworkHosts;
+    std::optional<HashSet<String>> allowedNetworkHosts;
     bool userScriptsShouldWaitUntilNotification { true };
     ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { ShouldRelaxThirdPartyCookieBlocking::No };
     bool httpsUpgradeEnabled { true };

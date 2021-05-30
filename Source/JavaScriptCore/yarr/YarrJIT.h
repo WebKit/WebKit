@@ -94,7 +94,7 @@ public:
     YarrCodeBlock() = default;
 
     void setFallBackWithFailureReason(JITFailureReason failureReason) { m_failureReason = failureReason; }
-    Optional<JITFailureReason> failureReason() { return m_failureReason; }
+    std::optional<JITFailureReason> failureReason() { return m_failureReason; }
 
     bool has8BitCode() { return m_ref8.size(); }
     bool has16BitCode() { return m_ref16.size(); }
@@ -205,7 +205,7 @@ private:
     MacroAssemblerCodeRef<YarrMatchOnly8BitPtrTag> m_matchOnly8;
     MacroAssemblerCodeRef<YarrMatchOnly16BitPtrTag> m_matchOnly16;
     bool m_usesPatternContextBuffer { false };
-    Optional<JITFailureReason> m_failureReason;
+    std::optional<JITFailureReason> m_failureReason;
 };
 
 enum YarrJITCompileMode {

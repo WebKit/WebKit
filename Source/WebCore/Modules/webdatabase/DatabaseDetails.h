@@ -66,7 +66,7 @@ public:
         return *this;
     }
 
-    DatabaseDetails(const String& databaseName, const String& displayName, uint64_t expectedUsage, uint64_t currentUsage, Optional<WallTime> creationTime, Optional<WallTime> modificationTime)
+    DatabaseDetails(const String& databaseName, const String& displayName, uint64_t expectedUsage, uint64_t currentUsage, std::optional<WallTime> creationTime, std::optional<WallTime> modificationTime)
         : m_name(databaseName)
         , m_displayName(displayName)
         , m_expectedUsage(expectedUsage)
@@ -80,8 +80,8 @@ public:
     const String& displayName() const { return m_displayName; }
     uint64_t expectedUsage() const { return m_expectedUsage; }
     uint64_t currentUsage() const { return m_currentUsage; }
-    Optional<WallTime> creationTime() const { return m_creationTime; }
-    Optional<WallTime> modificationTime() const { return m_modificationTime; }
+    std::optional<WallTime> creationTime() const { return m_creationTime; }
+    std::optional<WallTime> modificationTime() const { return m_modificationTime; }
 #if ASSERT_ENABLED
     Thread& thread() const { return m_thread.get(); }
 #endif

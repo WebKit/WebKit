@@ -85,24 +85,24 @@ bool SVGFitToViewBox::parseAttribute(const QualifiedName& name, const AtomString
     return false;
 }
 
-Optional<FloatRect> SVGFitToViewBox::parseViewBox(StringView value)
+std::optional<FloatRect> SVGFitToViewBox::parseViewBox(StringView value)
 {
     return readCharactersForParsing(value, [&](auto buffer) {
         return parseViewBoxGeneric(buffer);
     });
 }
 
-Optional<FloatRect> SVGFitToViewBox::parseViewBox(StringParsingBuffer<LChar>& buffer, bool validate)
+std::optional<FloatRect> SVGFitToViewBox::parseViewBox(StringParsingBuffer<LChar>& buffer, bool validate)
 {
     return parseViewBoxGeneric(buffer, validate);
 }
 
-Optional<FloatRect> SVGFitToViewBox::parseViewBox(StringParsingBuffer<UChar>& buffer, bool validate)
+std::optional<FloatRect> SVGFitToViewBox::parseViewBox(StringParsingBuffer<UChar>& buffer, bool validate)
 {
     return parseViewBoxGeneric(buffer, validate);
 }
 
-template<typename CharacterType> Optional<FloatRect> SVGFitToViewBox::parseViewBoxGeneric(StringParsingBuffer<CharacterType>& buffer, bool validate)
+template<typename CharacterType> std::optional<FloatRect> SVGFitToViewBox::parseViewBoxGeneric(StringParsingBuffer<CharacterType>& buffer, bool validate)
 {
     StringView stringToParse = buffer.stringViewOfCharactersRemaining();
 

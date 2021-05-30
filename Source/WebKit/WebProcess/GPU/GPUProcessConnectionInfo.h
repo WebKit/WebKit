@@ -32,7 +32,7 @@ namespace WebKit {
 struct GPUProcessConnectionInfo {
     IPC::Attachment connection;
 #if HAVE(AUDIT_TOKEN)
-    Optional<audit_token_t> auditToken;
+    std::optional<audit_token_t> auditToken;
 #endif
 
     IPC::Connection::Identifier identifier() const

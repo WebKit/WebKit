@@ -34,7 +34,7 @@ namespace WebCore {
 struct RTCRtpCodecCapability {
     String mimeType;
     unsigned long clockRate { 0 };
-    Optional<unsigned short> channels;
+    std::optional<unsigned short> channels;
     String sdpFmtpLine;
 };
 

@@ -240,7 +240,7 @@ AST::FunctionDeclaration* NameContext::searchFunctions(String& name) const
     return nullptr;
 }
 
-Optional<CodeLocation> NameContext::topLevelExists(String& name) const
+std::optional<CodeLocation> NameContext::topLevelExists(String& name) const
 {
     if (auto* type = searchTypes(name))
         return type->codeLocation();

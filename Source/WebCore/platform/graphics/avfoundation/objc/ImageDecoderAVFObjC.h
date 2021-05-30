@@ -71,7 +71,7 @@ public:
     RepetitionCount repetitionCount() const final;
     String uti() const final;
     String filenameExtension() const final;
-    Optional<IntPoint> hotSpot() const final { return std::nullopt; }
+    std::optional<IntPoint> hotSpot() const final { return std::nullopt; }
     String accessibilityDescription() const final { return String(); }
 
     IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const final;
@@ -119,7 +119,7 @@ private:
     DecodeOrderSampleMap::iterator m_cursor;
     Lock m_sampleGeneratorLock;
     bool m_isAllDataReceived { false };
-    Optional<IntSize> m_size;
+    std::optional<IntSize> m_size;
 };
 
 }

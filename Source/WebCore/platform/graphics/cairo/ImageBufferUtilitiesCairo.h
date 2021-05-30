@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-Vector<uint8_t> data(cairo_surface_t*, const String& mimeType, Optional<double> quality);
+Vector<uint8_t> data(cairo_surface_t*, const String& mimeType, std::optional<double> quality);
 
 } // namespace WebCore
 

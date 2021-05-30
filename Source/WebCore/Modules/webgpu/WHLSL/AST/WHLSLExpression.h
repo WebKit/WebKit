@@ -150,7 +150,7 @@ public:
 private:
     CodeLocation m_codeLocation;
     RefPtr<UnnamedType> m_type;
-    Optional<TypeAnnotation> m_typeAnnotation;
+    std::optional<TypeAnnotation> m_typeAnnotation;
     Kind m_kind;
 };
 

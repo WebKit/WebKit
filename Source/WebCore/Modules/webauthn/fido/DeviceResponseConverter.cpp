@@ -54,13 +54,13 @@ static ProtocolVersion convertStringToProtocolVersion(const String& version)
     return ProtocolVersion::kUnknown;
 }
 
-Optional<cbor::CBORValue> decodeResponseMap(const Vector<uint8_t>& inBuffer)
+std::optional<cbor::CBORValue> decodeResponseMap(const Vector<uint8_t>& inBuffer)
 {
     if (inBuffer.size() <= kResponseCodeLength || getResponseCode(inBuffer) != CtapDeviceResponseCode::kSuccess)
         return std::nullopt;
 
     Vector<uint8_t> buffer { inBuffer.data() + 1, inBuffer.size() - 1 };
-    Optional<CBOR> decodedResponse = cbor::CBORReader::read(buffer);
+    std::optional<CBOR> decodedResponse = cbor::CBORReader::read(buffer);
     if (!decodedResponse || !decodedResponse->isMap())
         return std::nullopt;
     return decodedResponse;
@@ -121,7 +121,7 @@ RefPtr<AuthenticatorAttestationResponse> readCTAPMakeCredentialResponse(const Ve
         return nullptr;
     auto attStmt = it->second.clone();
 
-    Optional<Vector<uint8_t>> attestationObject;
+    std::optional<Vector<uint8_t>> attestationObject;
     if (attestation == AttestationConveyancePreference::None) {
         // The reason why we can't directly pass authenticatorData/format/attStmt to buildAttestationObject
         // is that they are CBORValue instead of the raw type.
@@ -198,7 +198,7 @@ RefPtr<AuthenticatorAssertionResponse> readCTAPGetAssertionResponse(const Vector
     return response;
 }
 
-Optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector<uint8_t>& inBuffer)
+std::optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector<uint8_t>& inBuffer)
 {
     auto decodedMap = decodeResponseMap(inBuffer);
     if (!decodedMap)

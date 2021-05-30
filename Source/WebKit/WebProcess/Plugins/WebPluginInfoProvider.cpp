@@ -70,7 +70,7 @@ void WebPluginInfoProvider::refreshPlugins()
 #endif
 }
 
-Vector<PluginInfo> WebPluginInfoProvider::pluginInfo(Page& page, Optional<Vector<SupportedPluginIdentifier>>& supportedPluginIdentifiers)
+Vector<PluginInfo> WebPluginInfoProvider::pluginInfo(Page& page, std::optional<Vector<SupportedPluginIdentifier>>& supportedPluginIdentifiers)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     populatePluginCache(page);
@@ -88,7 +88,7 @@ Vector<PluginInfo> WebPluginInfoProvider::pluginInfo(Page& page, Optional<Vector
 
 Vector<WebCore::PluginInfo> WebPluginInfoProvider::webVisiblePluginInfo(Page& page, const URL& url)
 {
-    Optional<Vector<WebCore::SupportedPluginIdentifier>> supportedPluginIdentifiers;
+    std::optional<Vector<WebCore::SupportedPluginIdentifier>> supportedPluginIdentifiers;
     auto plugins = pluginInfo(page, supportedPluginIdentifiers);
 
     plugins.removeAllMatching([&] (auto& plugin) {

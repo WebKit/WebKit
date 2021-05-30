@@ -36,14 +36,14 @@ void WebPageGroupData::encode(IPC::Encoder& encoder) const
     encoder << pageGroupID;
 }
 
-Optional<WebPageGroupData> WebPageGroupData::decode(IPC::Decoder& decoder)
+std::optional<WebPageGroupData> WebPageGroupData::decode(IPC::Decoder& decoder)
 {
-    Optional<String> identifier;
+    std::optional<String> identifier;
     decoder >> identifier;
     if (!identifier)
         return std::nullopt;
     
-    Optional<uint64_t> pageGroupID;
+    std::optional<uint64_t> pageGroupID;
     decoder >> pageGroupID;
     if (!pageGroupID)
         return std::nullopt;

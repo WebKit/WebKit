@@ -69,7 +69,7 @@ public:
         ITPDebugModeEnabled,
         MockCaptureDevicesEnabled,
     };
-    virtual void setDeveloperPreferenceOverride(DeveloperPreference, Optional<bool>) { }
+    virtual void setDeveloperPreferenceOverride(DeveloperPreference, std::optional<bool>) { }
 
 #if ENABLE(REMOTE_INSPECTOR)
     virtual bool allowRemoteInspectionToPageDirectly() const { return false; }

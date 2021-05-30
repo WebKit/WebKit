@@ -122,7 +122,7 @@ static bool isValidVPMatrixCoefficients(uint8_t matrixCoefficients)
     return std::binary_search(std::begin(validMatrixCoefficients), std::end(validMatrixCoefficients), matrixCoefficients);
 }
 
-Optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecView)
+std::optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecView)
 {
     auto codecSplit = codecView.split('.');
     auto nextElement = codecSplit.begin();

@@ -70,9 +70,9 @@ struct _WebKitAuthenticationRequestPrivate {
     bool handledRequest;
     CString host;
     CString realm;
-    Optional<WebCore::Credential> proposedCredential;
-    Optional<WebCore::Credential> acceptedCredential;
-    Optional<bool> canSaveCredentials;
+    std::optional<WebCore::Credential> proposedCredential;
+    std::optional<WebCore::Credential> acceptedCredential;
+    std::optional<bool> canSaveCredentials;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };

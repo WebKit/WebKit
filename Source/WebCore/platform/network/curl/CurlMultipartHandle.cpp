@@ -49,7 +49,7 @@ std::unique_ptr<CurlMultipartHandle> CurlMultipartHandle::createIfNeeded(CurlMul
     return makeUnique<CurlMultipartHandle>(client, *boundary);
 }
 
-Optional<String> CurlMultipartHandle::extractBoundary(const CurlResponse& response)
+std::optional<String> CurlMultipartHandle::extractBoundary(const CurlResponse& response)
 {
     for (auto header : response.headers) {
         auto splitPosistion = header.find(":");
@@ -75,7 +75,7 @@ Optional<String> CurlMultipartHandle::extractBoundary(const CurlResponse& respon
     return std::nullopt;
 }
 
-Optional<String> CurlMultipartHandle::extractBoundaryFromContentType(const String& contentType)
+std::optional<String> CurlMultipartHandle::extractBoundaryFromContentType(const String& contentType)
 {
     static const size_t length = strlen("boundary=");
 

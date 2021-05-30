@@ -132,7 +132,7 @@ GList* GStreamerRegistryScanner::ElementFactories::factory(GStreamerRegistryScan
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::ElementFactories::hasElementForMediaType(ElementFactories::Type factoryType, const char* capsString, ElementFactories::CheckHardwareClassifier shouldCheckHardwareClassifier, Optional<Vector<String>> disallowedList) const
+GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::ElementFactories::hasElementForMediaType(ElementFactories::Type factoryType, const char* capsString, ElementFactories::CheckHardwareClassifier shouldCheckHardwareClassifier, std::optional<Vector<String>> disallowedList) const
 {
     auto* elementFactories = factory(factoryType);
     if (!elementFactories)

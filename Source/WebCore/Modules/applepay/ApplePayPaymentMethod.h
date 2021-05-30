@@ -40,9 +40,9 @@ struct ApplePayPaymentMethod {
 
     String displayName;
     String network;
-    Optional<Type> type;
-    Optional<ApplePayPaymentPass> paymentPass;
-    Optional<ApplePayPaymentContact> billingContact;
+    std::optional<Type> type;
+    std::optional<ApplePayPaymentPass> paymentPass;
+    std::optional<ApplePayPaymentContact> billingContact;
     String bindToken;
 };
 

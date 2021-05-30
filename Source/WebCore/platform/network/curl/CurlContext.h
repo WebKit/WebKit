@@ -289,18 +289,18 @@ public:
     void setDebugCallbackFunction(curl_debug_callback, void*);
 
     // Status
-    Optional<String> getProxyUrl();
-    Optional<long> getResponseCode();
-    Optional<long> getHttpConnectCode();
-    Optional<long long> getContentLength();
-    Optional<long> getHttpAuthAvail();
-    Optional<long> getProxyAuthAvail();
-    Optional<long> getHttpVersion();
-    Optional<NetworkLoadMetrics> getNetworkLoadMetrics(const WTF::Seconds& domainLookupStart);
+    std::optional<String> getProxyUrl();
+    std::optional<long> getResponseCode();
+    std::optional<long> getHttpConnectCode();
+    std::optional<long long> getContentLength();
+    std::optional<long> getHttpAuthAvail();
+    std::optional<long> getProxyAuthAvail();
+    std::optional<long> getHttpVersion();
+    std::optional<NetworkLoadMetrics> getNetworkLoadMetrics(const WTF::Seconds& domainLookupStart);
     void addExtraNetworkLoadMetrics(NetworkLoadMetrics&);
 
     int sslErrors() const;
-    Optional<CertificateInfo> certificateInfo() const;
+    std::optional<CertificateInfo> certificateInfo() const;
 
     static long long maxCurlOffT();
 

@@ -262,7 +262,7 @@ Expected<RenderPrepareResult, String> prepare(const ShaderModule& vertexShaderMo
         if (!program)
             return makeUnexpected(program.error());
 
-        Optional<MatchedRenderSemantics> matchedSemantics;
+        std::optional<MatchedRenderSemantics> matchedSemantics;
         {
             PhaseTimer phaseTimer("matchSemantics", phaseTimes);
             matchedSemantics = matchSemantics(*program, renderPipelineDescriptor, distinctFragmentShader, fragmentShaderModule);
@@ -289,7 +289,7 @@ Expected<ComputePrepareResult, String> prepare(const ShaderModule& shaderModule,
 {
     PhaseTimes phaseTimes;
     Metal::ComputeMetalCode generatedCode;
-    Optional<ComputeDimensions> computeDimensions;
+    std::optional<ComputeDimensions> computeDimensions;
 
     {
         PhaseTimer phaseTimer("prepare total", phaseTimes);
@@ -297,7 +297,7 @@ Expected<ComputePrepareResult, String> prepare(const ShaderModule& shaderModule,
         if (!program)
             return makeUnexpected(program.error());
 
-        Optional<MatchedComputeSemantics> matchedSemantics;
+        std::optional<MatchedComputeSemantics> matchedSemantics;
         {
             PhaseTimer phaseTimer("matchSemantics", phaseTimes);
             matchedSemantics = matchSemantics(*program, computePipelineDescriptor);

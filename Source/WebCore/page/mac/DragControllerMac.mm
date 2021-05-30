@@ -64,7 +64,7 @@ bool DragController::isCopyKeyDown(const DragData& dragData)
     return dragData.flags().contains(DragApplicationFlags::IsCopyKeyDown);
 }
     
-Optional<DragOperation> DragController::dragOperation(const DragData& dragData)
+std::optional<DragOperation> DragController::dragOperation(const DragData& dragData)
 {
     if (dragData.flags().contains(DragApplicationFlags::IsModal))
         return std::nullopt;

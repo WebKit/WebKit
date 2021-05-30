@@ -68,9 +68,9 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(AudioContext);
 static unsigned hardwareContextCount;
 #endif
 
-static Optional<float>& defaultSampleRateForTesting()
+static std::optional<float>& defaultSampleRateForTesting()
 {
-    static Optional<float> sampleRate;
+    static std::optional<float> sampleRate;
     return sampleRate;
 }
 
@@ -81,7 +81,7 @@ static bool shouldDocumentAllowWebAudioToAutoPlay(const Document& document)
     return document.quirks().shouldAutoplayWebAudioForArbitraryUserGesture() && document.topDocument().hasHadUserInteraction();
 }
 
-void AudioContext::setDefaultSampleRateForTesting(Optional<float> sampleRate)
+void AudioContext::setDefaultSampleRateForTesting(std::optional<float> sampleRate)
 {
     defaultSampleRateForTesting() = sampleRate;
 }
@@ -239,7 +239,7 @@ void AudioContext::suspendRendering(DOMPromiseDeferred<void>&& promise)
 
     lazyInitialize();
 
-    destination().suspend([this, activity = makePendingActivity(*this), promise = WTFMove(promise)](Optional<Exception>&& exception) mutable {
+    destination().suspend([this, activity = makePendingActivity(*this), promise = WTFMove(promise)](std::optional<Exception>&& exception) mutable {
         if (exception) {
             promise.reject(WTFMove(*exception));
             return;
@@ -270,7 +270,7 @@ void AudioContext::resumeRendering(DOMPromiseDeferred<void>&& promise)
 
     lazyInitialize();
 
-    destination().resume([this, activity = makePendingActivity(*this), promise = WTFMove(promise)](Optional<Exception>&& exception) mutable {
+    destination().resume([this, activity = makePendingActivity(*this), promise = WTFMove(promise)](std::optional<Exception>&& exception) mutable {
         if (exception) {
             promise.reject(WTFMove(*exception));
             return;
@@ -312,7 +312,7 @@ void AudioContext::startRendering()
     setPendingActivity();
 
     lazyInitialize();
-    destination().startRendering([this, protectedThis = makeRef(*this)](Optional<Exception>&& exception) {
+    destination().startRendering([this, protectedThis = makeRef(*this)](std::optional<Exception>&& exception) {
         if (!exception)
             setState(State::Running);
     });
@@ -385,7 +385,7 @@ void AudioContext::mayResumePlayback(bool shouldResume)
 
     lazyInitialize();
 
-    destination().resume([this, protectedThis = makeRef(*this)](Optional<Exception>&& exception) {
+    destination().resume([this, protectedThis = makeRef(*this)](std::optional<Exception>&& exception) {
         setState(exception ? State::Suspended : State::Running);
     });
 }
@@ -471,7 +471,7 @@ void AudioContext::suspendPlayback()
 
     lazyInitialize();
 
-    destination().suspend([this, protectedThis = makeRef(*this)](Optional<Exception>&& exception) {
+    destination().suspend([this, protectedThis = makeRef(*this)](std::optional<Exception>&& exception) {
         if (exception)
             return;
 

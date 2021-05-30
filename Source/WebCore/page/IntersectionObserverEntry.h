@@ -43,7 +43,7 @@ public:
 
     struct Init {
         double time;
-        Optional<DOMRectInit> rootBounds;
+        std::optional<DOMRectInit> rootBounds;
         DOMRectInit boundingClientRect;
         DOMRectInit intersectionRect;
         double intersectionRatio;

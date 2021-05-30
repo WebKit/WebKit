@@ -45,14 +45,14 @@ struct ServiceWorkerRegistrationData {
     ServiceWorkerUpdateViaCache updateViaCache;
     WallTime lastUpdateTime;
 
-    Optional<ServiceWorkerData> installingWorker;
-    Optional<ServiceWorkerData> waitingWorker;
-    Optional<ServiceWorkerData> activeWorker;
+    std::optional<ServiceWorkerData> installingWorker;
+    std::optional<ServiceWorkerData> waitingWorker;
+    std::optional<ServiceWorkerData> activeWorker;
 
     ServiceWorkerRegistrationData isolatedCopy() const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ServiceWorkerRegistrationData> decode(Decoder&);
+    template<class Decoder> static std::optional<ServiceWorkerRegistrationData> decode(Decoder&);
 };
 
 
@@ -63,44 +63,44 @@ void ServiceWorkerRegistrationData::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ServiceWorkerRegistrationData> ServiceWorkerRegistrationData::decode(Decoder& decoder)
+std::optional<ServiceWorkerRegistrationData> ServiceWorkerRegistrationData::decode(Decoder& decoder)
 {
-    Optional<ServiceWorkerRegistrationKey> key;
+    std::optional<ServiceWorkerRegistrationKey> key;
     decoder >> key;
     if (!key)
         return std::nullopt;
     
-    Optional<ServiceWorkerRegistrationIdentifier> identifier;
+    std::optional<ServiceWorkerRegistrationIdentifier> identifier;
     decoder >> identifier;
     if (!identifier)
         return std::nullopt;
 
-    Optional<URL> scopeURL;
+    std::optional<URL> scopeURL;
     decoder >> scopeURL;
     if (!scopeURL)
         return std::nullopt;
 
-    Optional<ServiceWorkerUpdateViaCache> updateViaCache;
+    std::optional<ServiceWorkerUpdateViaCache> updateViaCache;
     decoder >> updateViaCache;
     if (!updateViaCache)
         return std::nullopt;
 
-    Optional<double> rawWallTime;
+    std::optional<double> rawWallTime;
     decoder >> rawWallTime;
     if (!rawWallTime)
         return std::nullopt;
 
-    Optional<Optional<ServiceWorkerData>> installingWorker;
+    std::optional<std::optional<ServiceWorkerData>> installingWorker;
     decoder >> installingWorker;
     if (!installingWorker)
         return std::nullopt;
 
-    Optional<Optional<ServiceWorkerData>> waitingWorker;
+    std::optional<std::optional<ServiceWorkerData>> waitingWorker;
     decoder >> waitingWorker;
     if (!waitingWorker)
         return std::nullopt;
 
-    Optional<Optional<ServiceWorkerData>> activeWorker;
+    std::optional<std::optional<ServiceWorkerData>> activeWorker;
     decoder >> activeWorker;
     if (!activeWorker)
         return std::nullopt;

@@ -824,7 +824,7 @@ static inline bool shouldWrapWithShiftKeyEventForCharacter(NSString *key)
     return false;
 }
 
-static Optional<uint32_t> keyCodeForDOMFunctionKey(NSString *key)
+static std::optional<uint32_t> keyCodeForDOMFunctionKey(NSString *key)
 {
     // Compare the input string with the function-key names defined by the DOM spec (i.e. "F1",...,"F24").
     // If the input string is a function-key name, set its key code. On iOS the key codes for the first 12

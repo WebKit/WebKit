@@ -41,7 +41,7 @@ struct ApplePayLineItemData {
 #endif
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ApplePayLineItemData> decode(Decoder&);
+    template<class Decoder> static std::optional<ApplePayLineItemData> decode(Decoder&);
 
     template<class Decoder> WARN_UNUSED_RETURN bool decodeData(Decoder&);
 };
@@ -57,7 +57,7 @@ void ApplePayLineItemData::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ApplePayLineItemData> ApplePayLineItemData::decode(Decoder& decoder)
+std::optional<ApplePayLineItemData> ApplePayLineItemData::decode(Decoder& decoder)
 {
     ApplePayLineItemData result;
     if (!result.decodeData(decoder))

@@ -270,7 +270,7 @@ void SVGAnimateMotionElement::applyResultsToTarget()
     }
 }
 
-Optional<float> SVGAnimateMotionElement::calculateDistance(const String& fromString, const String& toString)
+std::optional<float> SVGAnimateMotionElement::calculateDistance(const String& fromString, const String& toString)
 {
     auto from = parsePoint(fromString);
     if (!from)

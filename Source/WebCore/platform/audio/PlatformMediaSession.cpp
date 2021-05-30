@@ -409,7 +409,7 @@ PlatformMediaSessionManager& PlatformMediaSession::manager()
     return *m_manager;
 }
 
-Optional<NowPlayingInfo> PlatformMediaSession::nowPlayingInfo() const
+std::optional<NowPlayingInfo> PlatformMediaSession::nowPlayingInfo() const
 {
     return { };
 }

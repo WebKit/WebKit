@@ -33,7 +33,7 @@
 
 namespace WebCore {
     
-Optional<GPUPipelineLayoutDescriptor> WebGPUPipelineLayoutDescriptor::tryCreateGPUPipelineLayoutDescriptor() const
+std::optional<GPUPipelineLayoutDescriptor> WebGPUPipelineLayoutDescriptor::tryCreateGPUPipelineLayoutDescriptor() const
 {
     Vector<Ref<const GPUBindGroupLayout>> gpuLayouts;
     gpuLayouts.reserveCapacity(bindGroupLayouts.size());

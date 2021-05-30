@@ -86,7 +86,7 @@ struct AudioPacketHolder {
             close(*fd);
     }
 
-    Optional<std::pair<uint32_t, size_t>> map()
+    std::optional<std::pair<uint32_t, size_t>> map()
     {
         fd = memfd_create("wpe-audio-buffer", MFD_CLOEXEC);
         if (*fd == -1)
@@ -108,7 +108,7 @@ struct AudioPacketHolder {
         return std::make_pair(static_cast<uint32_t>(*fd), buffer->size());
     }
 
-    Optional<int32_t> fd;
+    std::optional<int32_t> fd;
     RefPtr<GstMappedOwnedBuffer> buffer;
 };
 

@@ -56,7 +56,7 @@ public:
     }
     static FunctionExecutable* fromGlobalCode(
         const Identifier& name, JSGlobalObject*, const SourceCode&, 
-        JSObject*& exception, int overrideLineNumber, Optional<int> functionConstructorParametersEndPosition);
+        JSObject*& exception, int overrideLineNumber, std::optional<int> functionConstructorParametersEndPosition);
 
     static void destroy(JSCell*);
         
@@ -182,7 +182,7 @@ public:
         ensureRareData().m_overrideLineNumber = overrideLineNumber;
     }
 
-    Optional<int> overrideLineNumber() const
+    std::optional<int> overrideLineNumber() const
     {
         if (UNLIKELY(m_rareData))
             return m_rareData->m_overrideLineNumber;

@@ -121,7 +121,7 @@ WebFrameLoaderClient::~WebFrameLoaderClient()
     m_frame->invalidate();
 }
 
-Optional<WebPageProxyIdentifier> WebFrameLoaderClient::webPageProxyID() const
+std::optional<WebPageProxyIdentifier> WebFrameLoaderClient::webPageProxyID() const
 {
     if (m_frame->page())
         return m_frame->page()->webPageProxyIdentifier();
@@ -129,7 +129,7 @@ Optional<WebPageProxyIdentifier> WebFrameLoaderClient::webPageProxyID() const
     return std::nullopt;
 }
 
-Optional<PageIdentifier> WebFrameLoaderClient::pageID() const
+std::optional<PageIdentifier> WebFrameLoaderClient::pageID() const
 {
     if (m_frame->page())
         return m_frame->page()->identifier();
@@ -137,7 +137,7 @@ Optional<PageIdentifier> WebFrameLoaderClient::pageID() const
     return std::nullopt;
 }
 
-Optional<FrameIdentifier> WebFrameLoaderClient::frameID() const
+std::optional<FrameIdentifier> WebFrameLoaderClient::frameID() const
 {
     return m_frame->frameID();
 }
@@ -555,7 +555,7 @@ void WebFrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection& ti
     webPage->send(Messages::WebPageProxy::DidReceiveTitleForFrame(m_frame->frameID(), truncatedTitle.string, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
-void WebFrameLoaderClient::dispatchDidCommitLoad(Optional<HasInsecureContent> hasInsecureContent, Optional<UsedLegacyTLS> usedLegacyTLSFromPageCache)
+void WebFrameLoaderClient::dispatchDidCommitLoad(std::optional<HasInsecureContent> hasInsecureContent, std::optional<UsedLegacyTLS> usedLegacyTLSFromPageCache)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
@@ -949,8 +949,8 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     auto requester = navigationAction.requester().value();
 
     auto* requestingFrame = requester.globalFrameIdentifier().frameID ? WebProcess::singleton().webFrame(requester.globalFrameIdentifier().frameID) : nullptr;
-    Optional<WebCore::FrameIdentifier> originatingFrameID;
-    Optional<WebCore::FrameIdentifier> parentFrameID;
+    std::optional<WebCore::FrameIdentifier> originatingFrameID;
+    std::optional<WebCore::FrameIdentifier> parentFrameID;
     if (requestingFrame) {
         originatingFrameID = requestingFrame->frameID();
         if (auto* parentFrame = requestingFrame->parentFrame())
@@ -965,7 +965,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         WTFMove(parentFrameID),
     };
 
-    Optional<WebPageProxyIdentifier> originatingPageID;
+    std::optional<WebPageProxyIdentifier> originatingPageID;
     if (auto& pageID = requester.globalFrameIdentifier().pageID) {
         if (auto* webPage = WebProcess::singleton().webPage(pageID))
             originatingPageID = webPage->webPageProxyIdentifier();
@@ -1925,7 +1925,7 @@ void WebFrameLoaderClient::didCreateWindow(DOMWindow& window)
 }
 
 #if ENABLE(APPLICATION_MANIFEST)
-void WebFrameLoaderClient::finishedLoadingApplicationManifest(uint64_t callbackIdentifier, const Optional<WebCore::ApplicationManifest>& manifest)
+void WebFrameLoaderClient::finishedLoadingApplicationManifest(uint64_t callbackIdentifier, const std::optional<WebCore::ApplicationManifest>& manifest)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)

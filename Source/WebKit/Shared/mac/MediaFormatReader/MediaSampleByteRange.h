@@ -47,7 +47,7 @@ public:
     size_t sizeInBytes() const final { return m_sizeInBytes; }
     FloatSize presentationSize() const final { return m_presentationSize; }
     SampleFlags flags() const final { return m_flags; }
-    Optional<ByteRange> byteRange() const final { return m_byteRange; }
+    std::optional<ByteRange> byteRange() const final { return m_byteRange; }
 
     AtomString trackID() const final;
     PlatformSample platformSample() final;

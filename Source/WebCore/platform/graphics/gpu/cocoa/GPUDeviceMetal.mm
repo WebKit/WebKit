@@ -52,7 +52,7 @@ void GPUDevice::prewarm()
 #endif
 }
 
-RefPtr<GPUDevice> GPUDevice::tryCreate(const Optional<GPURequestAdapterOptions>& options)
+RefPtr<GPUDevice> GPUDevice::tryCreate(const std::optional<GPURequestAdapterOptions>& options)
 {
     RetainPtr<MTLDevice> devicePtr;
 

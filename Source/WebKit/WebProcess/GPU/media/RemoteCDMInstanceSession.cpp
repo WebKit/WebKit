@@ -73,7 +73,7 @@ void RemoteCDMInstanceSession::updateLicense(const String& sessionId, LicenseTyp
         return;
     }
 
-    m_factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::UpdateLicense(sessionId, type, WTFMove(response)), [callback = WTFMove(callback)] (bool sessionWasClosed, Optional<KeyStatusVector>&& changedKeys, Optional<double>&& changedExpiration, Optional<Message>&& message, bool succeeded) mutable {
+    m_factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::UpdateLicense(sessionId, type, WTFMove(response)), [callback = WTFMove(callback)] (bool sessionWasClosed, std::optional<KeyStatusVector>&& changedKeys, std::optional<double>&& changedExpiration, std::optional<Message>&& message, bool succeeded) mutable {
         callback(sessionWasClosed, WTFMove(changedKeys), WTFMove(changedExpiration), WTFMove(message), succeeded ? Succeeded : Failed);
     }, m_identifier);
 }
@@ -85,7 +85,7 @@ void RemoteCDMInstanceSession::loadSession(LicenseType type, const String& sessi
         return;
     }
 
-    m_factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::LoadSession(type, sessionId, origin), [callback = WTFMove(callback)] (Optional<KeyStatusVector>&& changedKeys, Optional<double>&& changedExpiration, Optional<Message>&& message, bool succeeded, SessionLoadFailure loadFailure) mutable {
+    m_factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::LoadSession(type, sessionId, origin), [callback = WTFMove(callback)] (std::optional<KeyStatusVector>&& changedKeys, std::optional<double>&& changedExpiration, std::optional<Message>&& message, bool succeeded, SessionLoadFailure loadFailure) mutable {
         callback(WTFMove(changedKeys), WTFMove(changedExpiration), WTFMove(message), succeeded ? Succeeded : Failed, loadFailure);
     }, m_identifier);
 }
@@ -109,8 +109,8 @@ void RemoteCDMInstanceSession::removeSessionData(const String& sessionId, Licens
         return;
     }
 
-    m_factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::RemoveSessionData(sessionId, type), [callback = WTFMove(callback)] (KeyStatusVector&& changedKeys, Optional<IPC::SharedBufferCopy>&& message, bool succeeded) mutable {
-        Optional<Ref<SharedBuffer>> realMessage = std::nullopt;
+    m_factory->gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteCDMInstanceSessionProxy::RemoveSessionData(sessionId, type), [callback = WTFMove(callback)] (KeyStatusVector&& changedKeys, std::optional<IPC::SharedBufferCopy>&& message, bool succeeded) mutable {
+        std::optional<Ref<SharedBuffer>> realMessage = std::nullopt;
         if (message && message.value().buffer())
             realMessage = message.value().buffer().releaseNonNull();
         callback(WTFMove(changedKeys), WTFMove(realMessage), succeeded ? Succeeded : Failed);

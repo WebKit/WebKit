@@ -87,7 +87,7 @@ private:
 
     // FIXME: Change DOMWindowProperty::frame to return RefPtr and then delete this.
     RefPtr<Frame> frame() const;
-    Optional<SimpleRange> range() const;
+    std::optional<SimpleRange> range() const;
 
     Position anchorPosition() const;
     Position focusPosition() const;

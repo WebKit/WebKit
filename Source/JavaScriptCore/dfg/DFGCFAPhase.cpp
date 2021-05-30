@@ -168,10 +168,10 @@ private:
         // type widening is critical to navier-stokes. Without it, navier-stokes has more strict constraint on OSR entry and
         // fails OSR entry repeatedly.
         bool changed = false;
-        const Operands<Optional<JSValue>>& mustHandleValues = m_graph.m_plan.mustHandleValues();
+        const Operands<std::optional<JSValue>>& mustHandleValues = m_graph.m_plan.mustHandleValues();
         for (size_t i = mustHandleValues.size(); i--;) {
             Operand operand = mustHandleValues.operandForIndex(i);
-            Optional<JSValue> value = mustHandleValues[i];
+            std::optional<JSValue> value = mustHandleValues[i];
             if (!value) {
                 if (m_verbose)
                     dataLog("   Not live in bytecode: ", operand, "\n");

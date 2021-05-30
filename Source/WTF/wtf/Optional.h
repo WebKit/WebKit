@@ -24,8 +24,6 @@
 
 namespace WTF {
 
-template<typename T> using Optional = std::optional<T>;
-
 template<typename OptionalType, class Callback> auto valueOrCompute(OptionalType optional, Callback callback) -> typename OptionalType::value_type
 {
     return optional ? *optional : callback();
@@ -33,5 +31,4 @@ template<typename OptionalType, class Callback> auto valueOrCompute(OptionalType
 
 } // namespace WTF
 
-using WTF::Optional;
 using WTF::valueOrCompute;

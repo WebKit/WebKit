@@ -91,7 +91,7 @@ void Semaphore::encode(Encoder& encoder) const
     WebKit::SharedMemory::Handle::encodeHandle(encoder, duplicatedHandle);
 }
 
-Optional<Semaphore> Semaphore::decode(Decoder& decoder)
+std::optional<Semaphore> Semaphore::decode(Decoder& decoder)
 {
     auto handle = WebKit::SharedMemory::Handle::decodeHandle(decoder);
     if (!handle)

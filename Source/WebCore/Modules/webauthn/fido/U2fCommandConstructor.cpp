@@ -62,7 +62,7 @@ static Vector<uint8_t> constructU2fRegisterCommand(const Vector<uint8_t>& applic
     return command.getEncodedCommand();
 }
 
-static Optional<Vector<uint8_t>> constructU2fSignCommand(const Vector<uint8_t>& applicationParameter, const Vector<uint8_t>& challengeParameter, const Vector<uint8_t>& keyHandle, bool checkOnly)
+static std::optional<Vector<uint8_t>> constructU2fSignCommand(const Vector<uint8_t>& applicationParameter, const Vector<uint8_t>& challengeParameter, const Vector<uint8_t>& keyHandle, bool checkOnly)
 {
     if (keyHandle.size() > kMaxKeyHandleLength)
         return std::nullopt;
@@ -98,7 +98,7 @@ bool isConvertibleToU2fSignCommand(const PublicKeyCredentialRequestOptions& requ
     return (request.userVerification != UserVerificationRequirement::Required) && !request.allowCredentials.isEmpty();
 }
 
-Optional<Vector<uint8_t>> convertToU2fRegisterCommand(const Vector<uint8_t>& clientDataHash, const PublicKeyCredentialCreationOptions& request)
+std::optional<Vector<uint8_t>> convertToU2fRegisterCommand(const Vector<uint8_t>& clientDataHash, const PublicKeyCredentialCreationOptions& request)
 {
     if (!isConvertibleToU2fRegisterCommand(request))
         return std::nullopt;
@@ -107,7 +107,7 @@ Optional<Vector<uint8_t>> convertToU2fRegisterCommand(const Vector<uint8_t>& cli
     return constructU2fRegisterCommand(produceRpIdHash(!appId ? request.rp.id : appId), clientDataHash);
 }
 
-Optional<Vector<uint8_t>> convertToU2fCheckOnlySignCommand(const Vector<uint8_t>& clientDataHash, const PublicKeyCredentialCreationOptions& request, const PublicKeyCredentialDescriptor& keyHandle)
+std::optional<Vector<uint8_t>> convertToU2fCheckOnlySignCommand(const Vector<uint8_t>& clientDataHash, const PublicKeyCredentialCreationOptions& request, const PublicKeyCredentialDescriptor& keyHandle)
 {
     if (keyHandle.type != PublicKeyCredentialType::PublicKey)
         return std::nullopt;
@@ -115,7 +115,7 @@ Optional<Vector<uint8_t>> convertToU2fCheckOnlySignCommand(const Vector<uint8_t>
     return constructU2fSignCommand(produceRpIdHash(request.rp.id), clientDataHash, keyHandle.idVector, true /* checkOnly */);
 }
 
-Optional<Vector<uint8_t>> convertToU2fSignCommand(const Vector<uint8_t>& clientDataHash, const PublicKeyCredentialRequestOptions& request, const Vector<uint8_t>& keyHandle, bool isAppId)
+std::optional<Vector<uint8_t>> convertToU2fSignCommand(const Vector<uint8_t>& clientDataHash, const PublicKeyCredentialRequestOptions& request, const Vector<uint8_t>& keyHandle, bool isAppId)
 {
     if (!isConvertibleToU2fSignCommand(request))
         return std::nullopt;
@@ -131,7 +131,7 @@ Vector<uint8_t> constructBogusU2fRegistrationCommand()
     return constructU2fRegisterCommand(convertBytesToVector(kBogusAppParam, sizeof(kBogusAppParam)), convertBytesToVector(kBogusChallenge, sizeof(kBogusChallenge)));
 }
 
-String processGoogleLegacyAppIdSupportExtension(const Optional<AuthenticationExtensionsClientInputs>& extensions)
+String processGoogleLegacyAppIdSupportExtension(const std::optional<AuthenticationExtensionsClientInputs>& extensions)
 {
     if (!extensions) {
         // AuthenticatorCoordinator::create should always set it.

@@ -70,7 +70,7 @@ enum ObjCBlockConversion {
     /// Converts a block from `(Result<Value, Error>) -> Void` to `(Value?, Error) -> Void`.
     ///
     /// This performs the same conversion as `Self.exclusive(_:)`, but if the result block is called
-    /// with `(nil, nil)` then `handler` is called with `.success(Optional<Any>.none as Any)`. This
+    /// with `(nil, nil)` then `handler` is called with `.success(std::optional<Any>.none as Any)`. This
     /// is a compatibility behavior for http://webkit.org/b/216198, and should not be adopted by
     /// new code.
     static func boxingNilAsAnyForCompatibility(_ handler: @escaping (Result<Any, Error>) -> Void) -> (Any?, Error?) -> Void {
@@ -80,7 +80,7 @@ enum ObjCBlockConversion {
             } else if let success = value {
                 handler(.success(success))
             } else {
-                handler(.success(Optional<Any>.none as Any))
+                handler(.success(std::optional<Any>.none as Any))
             }
         }
     }

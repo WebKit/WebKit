@@ -114,7 +114,7 @@ bool operator>(const VisiblePosition&, const VisiblePosition&);
 bool operator<=(const VisiblePosition&, const VisiblePosition&);
 bool operator>=(const VisiblePosition&, const VisiblePosition&);
 
-WEBCORE_EXPORT Optional<BoundaryPoint> makeBoundaryPoint(const VisiblePosition&);
+WEBCORE_EXPORT std::optional<BoundaryPoint> makeBoundaryPoint(const VisiblePosition&);
 
 WEBCORE_EXPORT Element* enclosingBlockFlowElement(const VisiblePosition&);
 
@@ -135,8 +135,8 @@ struct VisiblePositionRange {
     bool isNull() const { return start.isNull() || end.isNull(); }
 };
 
-WEBCORE_EXPORT Optional<SimpleRange> makeSimpleRange(const VisiblePositionRange&);
-WEBCORE_EXPORT VisiblePositionRange makeVisiblePositionRange(const Optional<SimpleRange>&);
+WEBCORE_EXPORT std::optional<SimpleRange> makeSimpleRange(const VisiblePositionRange&);
+WEBCORE_EXPORT VisiblePositionRange makeVisiblePositionRange(const std::optional<SimpleRange>&);
 
 Node* commonInclusiveAncestor(const VisiblePositionRange&);
 

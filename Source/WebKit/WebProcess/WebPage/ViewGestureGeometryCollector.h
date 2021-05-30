@@ -68,7 +68,7 @@ private:
     void computeMinimumAndMaximumViewportScales(double& viewportMinimumScale, double& viewportMaximumScale) const;
 
 #if PLATFORM(IOS_FAMILY)
-    Optional<std::pair<double, double>> computeTextLegibilityScales(double& viewportMinimumScale, double& viewportMaximumScale);
+    std::optional<std::pair<double, double>> computeTextLegibilityScales(double& viewportMinimumScale, double& viewportMaximumScale);
 #endif
 
     WebPage& m_webPage;
@@ -76,7 +76,7 @@ private:
 #if !PLATFORM(IOS_FAMILY)
     uint64_t m_renderTreeSizeNotificationThreshold;
 #else
-    Optional<std::pair<double, double>> m_cachedTextLegibilityScales;
+    std::optional<std::pair<double, double>> m_cachedTextLegibilityScales;
 #endif
 };
 

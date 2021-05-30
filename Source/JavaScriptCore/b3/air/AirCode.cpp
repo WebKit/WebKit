@@ -210,7 +210,7 @@ bool Code::isEntrypoint(BasicBlock* block) const
     return false;
 }
 
-Optional<unsigned> Code::entrypointIndex(BasicBlock* block) const
+std::optional<unsigned> Code::entrypointIndex(BasicBlock* block) const
 {
     RELEASE_ASSERT(m_entrypoints.size());
     for (unsigned i = 0; i < m_entrypoints.size(); ++i) {

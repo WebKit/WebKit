@@ -34,9 +34,9 @@
 namespace WebCore {
 
 struct AudioNodeOptions {
-    Optional<unsigned> channelCount;
-    Optional<ChannelCountMode> channelCountMode;
-    Optional<ChannelInterpretation> channelInterpretation;
+    std::optional<unsigned> channelCount;
+    std::optional<ChannelCountMode> channelCountMode;
+    std::optional<ChannelInterpretation> channelInterpretation;
 };
 
 } // namespace WebCore

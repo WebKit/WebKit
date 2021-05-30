@@ -308,7 +308,7 @@ RefPtr<CSSCalcOperationNode> CSSCalcOperationNode::createMinOrMaxOrClamp(CalcOpe
     ASSERT(op == CalcOperator::Min || op == CalcOperator::Max || op == CalcOperator::Clamp);
     ASSERT_IMPLIES(op == CalcOperator::Clamp, values.size() == 3);
 
-    Optional<CalculationCategory> category = std::nullopt;
+    std::optional<CalculationCategory> category = std::nullopt;
     for (auto& value : values) {
         auto valueCategory = resolvedTypeForMinOrMaxOrClamp(value->category(), destinationCategory);
 

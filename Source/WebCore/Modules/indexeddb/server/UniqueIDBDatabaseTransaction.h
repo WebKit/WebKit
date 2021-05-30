@@ -87,7 +87,7 @@ public:
     const Vector<uint64_t>& objectStoreIdentifiers();
 
     void setMainThreadAbortResult(const IDBError& error) { m_mainThreadAbortResult = { error }; }
-    const Optional<IDBError>& mainThreadAbortResult() const { return m_mainThreadAbortResult; }
+    const std::optional<IDBError>& mainThreadAbortResult() const { return m_mainThreadAbortResult; }
 
 private:
     UniqueIDBDatabaseTransaction(UniqueIDBDatabaseConnection&, const IDBTransactionInfo&);
@@ -99,7 +99,7 @@ private:
 
     Vector<uint64_t> m_objectStoreIdentifiers;
 
-    Optional<IDBError> m_mainThreadAbortResult;
+    std::optional<IDBError> m_mainThreadAbortResult;
 };
 
 } // namespace IDBServer

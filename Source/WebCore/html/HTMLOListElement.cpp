@@ -32,9 +32,9 @@
 
 // FIXME: There should be a standard way to turn a std::expected into a Optional.
 // Maybe we should put this into the header file for Expected and give it a better name.
-template<typename T, typename E> inline Optional<T> optionalValue(Expected<T, E>&& expected)
+template<typename T, typename E> inline std::optional<T> optionalValue(Expected<T, E>&& expected)
 {
-    return expected ? Optional<T>(WTFMove(expected.value())) : std::nullopt;
+    return expected ? std::optional<T>(WTFMove(expected.value())) : std::nullopt;
 }
 
 namespace WebCore {

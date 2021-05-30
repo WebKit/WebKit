@@ -62,7 +62,7 @@ struct ServiceWorkerJobData {
     ServiceWorkerJobData isolatedCopy() const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ServiceWorkerJobData> decode(Decoder&);
+    template<class Decoder> static std::optional<ServiceWorkerJobData> decode(Decoder&);
 
 private:
     ServiceWorkerJobData() = default;
@@ -86,9 +86,9 @@ void ServiceWorkerJobData::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ServiceWorkerJobData> ServiceWorkerJobData::decode(Decoder& decoder)
+std::optional<ServiceWorkerJobData> ServiceWorkerJobData::decode(Decoder& decoder)
 {
-    Optional<ServiceWorkerJobDataIdentifier> identifier;
+    std::optional<ServiceWorkerJobDataIdentifier> identifier;
     decoder >> identifier;
     if (!identifier)
         return std::nullopt;
@@ -101,7 +101,7 @@ Optional<ServiceWorkerJobData> ServiceWorkerJobData::decode(Decoder& decoder)
     if (!decoder.decode(jobData.clientCreationURL))
         return std::nullopt;
 
-    Optional<SecurityOriginData> topOrigin;
+    std::optional<SecurityOriginData> topOrigin;
     decoder >> topOrigin;
     if (!topOrigin)
         return std::nullopt;
@@ -118,7 +118,7 @@ Optional<ServiceWorkerJobData> ServiceWorkerJobData::decode(Decoder& decoder)
 
     switch (jobData.type) {
     case ServiceWorkerJobType::Register: {
-        Optional<ServiceWorkerRegistrationOptions> registrationOptions;
+        std::optional<ServiceWorkerRegistrationOptions> registrationOptions;
         decoder >> registrationOptions;
         if (!registrationOptions)
             return std::nullopt;

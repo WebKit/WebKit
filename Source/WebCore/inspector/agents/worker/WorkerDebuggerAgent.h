@@ -46,7 +46,7 @@ private:
     void muteConsole() { }
     void unmuteConsole() { }
 
-    Inspector::InjectedScript injectedScriptForEval(Inspector::Protocol::ErrorString&, Optional<Inspector::Protocol::Runtime::ExecutionContextId>&&);
+    Inspector::InjectedScript injectedScriptForEval(Inspector::Protocol::ErrorString&, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&&);
 
     WorkerOrWorkletGlobalScope& m_globalScope;
 };

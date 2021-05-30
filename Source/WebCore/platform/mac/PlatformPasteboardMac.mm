@@ -530,7 +530,7 @@ int64_t PlatformPasteboard::write(const Vector<PasteboardCustomData>& itemData)
     return [m_pasteboard changeCount];
 }
 
-Optional<PasteboardItemInfo> PlatformPasteboard::informationForItemAtIndex(size_t index, int64_t changeCount)
+std::optional<PasteboardItemInfo> PlatformPasteboard::informationForItemAtIndex(size_t index, int64_t changeCount)
 {
     if (changeCount != [m_pasteboard changeCount])
         return std::nullopt;

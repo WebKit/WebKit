@@ -65,7 +65,7 @@ void ServiceWorkerFetchResult::encode(Encoder& encoder) const
 template<class Decoder>
 bool ServiceWorkerFetchResult::decode(Decoder& decoder, ServiceWorkerFetchResult& result)
 {
-    Optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier;
+    std::optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier;
     decoder >> jobDataIdentifier;
     if (!jobDataIdentifier)
         return false;
@@ -85,7 +85,7 @@ bool ServiceWorkerFetchResult::decode(Decoder& decoder, ServiceWorkerFetchResult
     if (!decoder.decode(result.scriptError))
         return false;
     
-    Optional<CertificateInfo> certificateInfo;
+    std::optional<CertificateInfo> certificateInfo;
     decoder >> certificateInfo;
     if (!certificateInfo)
         return false;

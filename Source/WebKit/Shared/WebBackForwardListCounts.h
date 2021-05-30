@@ -41,14 +41,14 @@ struct WebBackForwardListCounts {
         encoder << forwardCount;
     }
 
-    static Optional<WebBackForwardListCounts> decode(IPC::Decoder& decoder)
+    static std::optional<WebBackForwardListCounts> decode(IPC::Decoder& decoder)
     {
-        Optional<uint32_t> backCount;
+        std::optional<uint32_t> backCount;
         decoder >> backCount;
         if (!backCount)
             return std::nullopt;
 
-        Optional<uint32_t> forwardCount;
+        std::optional<uint32_t> forwardCount;
         decoder >> forwardCount;
         if (!forwardCount)
             return std::nullopt;

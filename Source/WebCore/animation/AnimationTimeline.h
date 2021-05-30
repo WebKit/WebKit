@@ -49,8 +49,8 @@ public:
     virtual void animationTimingDidChange(WebAnimation&);
     virtual void removeAnimation(WebAnimation&);
 
-    Optional<double> bindingsCurrentTime();
-    virtual Optional<Seconds> currentTime() { return m_currentTime; }
+    std::optional<double> bindingsCurrentTime();
+    virtual std::optional<Seconds> currentTime() { return m_currentTime; }
 
 protected:
     explicit AnimationTimeline();

@@ -40,7 +40,7 @@ void OptionItem::encode(IPC::Encoder& encoder) const
     encoder << parentGroupID;
 }
 
-Optional<OptionItem> OptionItem::decode(IPC::Decoder& decoder)
+std::optional<OptionItem> OptionItem::decode(IPC::Decoder& decoder)
 {
     OptionItem result;
     if (!decoder.decode(result.text))

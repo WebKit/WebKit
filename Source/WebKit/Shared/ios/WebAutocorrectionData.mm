@@ -44,9 +44,9 @@ void WebAutocorrectionData::encode(IPC::Encoder& encoder) const
     IPC::encode(encoder, font.get());
 }
 
-Optional<WebAutocorrectionData> WebAutocorrectionData::decode(IPC::Decoder& decoder)
+std::optional<WebAutocorrectionData> WebAutocorrectionData::decode(IPC::Decoder& decoder)
 {
-    Optional<Vector<FloatRect>> textRects;
+    std::optional<Vector<FloatRect>> textRects;
     decoder >> textRects;
     if (!textRects)
         return std::nullopt;

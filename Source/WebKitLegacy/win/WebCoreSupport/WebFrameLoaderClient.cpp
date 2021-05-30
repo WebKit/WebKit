@@ -118,12 +118,12 @@ WebFrameLoaderClient::~WebFrameLoaderClient()
 {
 }
 
-Optional<WebCore::PageIdentifier> WebFrameLoaderClient::pageID() const
+std::optional<WebCore::PageIdentifier> WebFrameLoaderClient::pageID() const
 {
     return std::nullopt;
 }
 
-Optional<WebCore::FrameIdentifier> WebFrameLoaderClient::frameID() const
+std::optional<WebCore::FrameIdentifier> WebFrameLoaderClient::frameID() const
 {
     return std::nullopt;
 }
@@ -433,7 +433,7 @@ void WebFrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection& ti
         frameLoadDelegate->didReceiveTitle(webView, BString(title.string), m_webFrame);
 }
 
-void WebFrameLoaderClient::dispatchDidCommitLoad(Optional<HasInsecureContent>, Optional<UsedLegacyTLS>)
+void WebFrameLoaderClient::dispatchDidCommitLoad(std::optional<HasInsecureContent>, std::optional<UsedLegacyTLS>)
 {
     WebView* webView = m_webFrame->webView();
     COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
@@ -957,7 +957,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
 
     RECT pixelRect;
     view->frameRect(&pixelRect);
-    Optional<Color> backgroundColor;
+    std::optional<Color> backgroundColor;
     if (view->transparent())
         backgroundColor = Color(Color::transparentBlack);
     FloatRect logicalFrame(pixelRect);

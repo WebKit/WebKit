@@ -285,7 +285,7 @@ void IconDatabase::startClearLoadedIconsTimer()
     m_clearLoadedIconsTimer.startOneShot(loadedIconExpirationTime);
 }
 
-Optional<int64_t> IconDatabase::iconIDForIconURL(const String& iconURL, bool& expired)
+std::optional<int64_t> IconDatabase::iconIDForIconURL(const String& iconURL, bool& expired)
 {
     ASSERT(!isMainRunLoop());
     ASSERT(m_db.isOpen());
@@ -304,7 +304,7 @@ Optional<int64_t> IconDatabase::iconIDForIconURL(const String& iconURL, bool& ex
         return std::nullopt;
     }
 
-    Optional<int64_t> result;
+    std::optional<int64_t> result;
     if (m_iconIDForIconURLStatement->step() == SQLITE_ROW) {
         result = m_iconIDForIconURLStatement->columnInt64(0);
         expired = m_iconIDForIconURLStatement->columnInt64(1) <= floor((WallTime::now() - iconExpirationTime).secondsSinceEpoch().seconds());
@@ -366,7 +366,7 @@ Vector<uint8_t> IconDatabase::iconData(int64_t iconID)
     return result;
 }
 
-Optional<int64_t> IconDatabase::addIcon(const String& iconURL, const Vector<char>& iconData)
+std::optional<int64_t> IconDatabase::addIcon(const String& iconURL, const Vector<char>& iconData)
 {
     ASSERT(!isMainRunLoop());
     ASSERT(m_db.isOpen());
@@ -538,7 +538,7 @@ void IconDatabase::loadIconForPageURL(const String& pageURL, AllowDatabaseWrite 
     ASSERT(isMainRunLoop());
 
     m_workQueue->dispatch([this, protectedThis = makeRef(*this), pageURL = pageURL.isolatedCopy(), allowDatabaseWrite, timestamp = WallTime::now().secondsSinceEpoch(), completionHandler = WTFMove(completionHandler)]() mutable {
-        Optional<int64_t> iconID;
+        std::optional<int64_t> iconID;
         Vector<uint8_t> iconData;
         String iconURL;
         {

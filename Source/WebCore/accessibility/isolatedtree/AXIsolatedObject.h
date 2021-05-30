@@ -390,7 +390,7 @@ private:
     String selectedText() const override;
     VisiblePositionRange visiblePositionRange() const override;
     VisiblePositionRange visiblePositionRangeForLine(unsigned) const override;
-    Optional<SimpleRange> elementRange() const override;
+    std::optional<SimpleRange> elementRange() const override;
     VisiblePositionRange visiblePositionRangeForUnorderedPositions(const VisiblePosition&, const VisiblePosition&) const override;
     VisiblePositionRange positionOfLeftWord(const VisiblePosition&) const override;
     VisiblePositionRange positionOfRightWord(const VisiblePosition&) const override;
@@ -401,7 +401,7 @@ private:
     VisiblePositionRange styleRangeForPosition(const VisiblePosition&) const override;
     VisiblePositionRange visiblePositionRangeForRange(const PlainTextRange&) const override;
     VisiblePositionRange lineRangeForPosition(const VisiblePosition&) const override;
-    Optional<SimpleRange> rangeForPlainTextRange(const PlainTextRange&) const override;
+    std::optional<SimpleRange> rangeForPlainTextRange(const PlainTextRange&) const override;
 #if PLATFORM(MAC)
     AXTextMarkerRangeRef textMarkerRangeForNSRange(const NSRange&) const override;
 #endif
@@ -446,7 +446,7 @@ private:
     void setPreventKeyboardDOMEventDispatch(bool) override;
 
     String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override;
-    Optional<SimpleRange> misspellingRange(const SimpleRange&, AccessibilitySearchDirection) const override;
+    std::optional<SimpleRange> misspellingRange(const SimpleRange&, AccessibilitySearchDirection) const override;
     FloatRect convertFrameToSpace(const FloatRect&, AccessibilityConversionSpace) const override;
     void increment() override;
     void decrement() override;

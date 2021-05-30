@@ -121,7 +121,7 @@ static Vector<LayoutUnit> distributeAvailableSpace(const TableGrid& grid, Layout
     auto& columns = grid.columns();
     auto& rows = grid.rows();
     // 1. Collect the non-spanning spaces first. They are used for the final distribution as well as for distributing the spanning space.
-    Vector<Optional<ResolvedItem>> resolvedItems(SpanType::size(grid));
+    Vector<std::optional<ResolvedItem>> resolvedItems(SpanType::size(grid));
     for (size_t columnIndex = 0; columnIndex < columns.size(); ++columnIndex) {
         for (size_t rowIndex = 0; rowIndex < rows.size(); ++rowIndex) {
             auto& slot = *grid.slot({ columnIndex, rowIndex });
@@ -260,7 +260,7 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
     });
 }
 
-TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::TableLayout::distributedVerticalSpace(Optional<LayoutUnit> availableVerticalSpace)
+TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::TableLayout::distributedVerticalSpace(std::optional<LayoutUnit> availableVerticalSpace)
 {
     auto& rows = m_grid.rows();
     auto& columns = m_grid.columns();

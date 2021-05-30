@@ -169,7 +169,7 @@
 namespace TestWebKitAPI {
 
 template <typename ViewClass>
-RetainPtr<ViewClass> setUpWebViewForPreferredContentModeTestingWithoutNavigationDelegate(Optional<WKContentMode> defaultContentMode = { }, Optional<String> applicationNameForUserAgent = { "TestWebKitAPI" }, CGSize size = CGSizeMake(1024, 768))
+RetainPtr<ViewClass> setUpWebViewForPreferredContentModeTestingWithoutNavigationDelegate(std::optional<WKContentMode> defaultContentMode = { }, std::optional<String> applicationNameForUserAgent = { "TestWebKitAPI" }, CGSize size = CGSizeMake(1024, 768))
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     if (defaultContentMode)
@@ -182,7 +182,7 @@ RetainPtr<ViewClass> setUpWebViewForPreferredContentModeTestingWithoutNavigation
 }
 
 template <typename ViewClass>
-std::pair<RetainPtr<ViewClass>, RetainPtr<ContentModeNavigationDelegate>> setUpWebViewForPreferredContentModeTesting(Optional<WKContentMode> defaultContentMode = { }, Optional<String> applicationNameForUserAgent = { "TestWebKitAPI" }, CGSize size = CGSizeMake(1024, 768))
+std::pair<RetainPtr<ViewClass>, RetainPtr<ContentModeNavigationDelegate>> setUpWebViewForPreferredContentModeTesting(std::optional<WKContentMode> defaultContentMode = { }, std::optional<String> applicationNameForUserAgent = { "TestWebKitAPI" }, CGSize size = CGSizeMake(1024, 768))
 {
     auto webView = setUpWebViewForPreferredContentModeTestingWithoutNavigationDelegate<ViewClass>(defaultContentMode, applicationNameForUserAgent, size);
     auto navigationDelegate = adoptNS([[ContentModeNavigationDelegate alloc] init]);

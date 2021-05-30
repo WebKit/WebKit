@@ -395,7 +395,7 @@ LayoutRect RenderTableCell::clippedOverflowRect(const RenderLayerModelObject* re
     return computeRect(r, repaintContainer, context);
 }
 
-Optional<LayoutRect> RenderTableCell::computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
+std::optional<LayoutRect> RenderTableCell::computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
 {
     if (container == this)
         return rect;

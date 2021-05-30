@@ -39,7 +39,7 @@ struct ClientOrigin {
     bool operator==(const ClientOrigin&) const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ClientOrigin> decode(Decoder&);
+    template<class Decoder> static std::optional<ClientOrigin> decode(Decoder&);
 
     ClientOrigin isolatedCopy() const;
     bool isRelated(const SecurityOriginData& other) const { return topOrigin == other || clientOrigin == other; }
@@ -75,10 +75,10 @@ template<class Encoder> inline void ClientOrigin::encode(Encoder& encoder) const
     encoder << clientOrigin;
 }
 
-template<class Decoder> inline Optional<ClientOrigin> ClientOrigin::decode(Decoder& decoder)
+template<class Decoder> inline std::optional<ClientOrigin> ClientOrigin::decode(Decoder& decoder)
 {
-    Optional<SecurityOriginData> topOrigin;
-    Optional<SecurityOriginData> clientOrigin;
+    std::optional<SecurityOriginData> topOrigin;
+    std::optional<SecurityOriginData> clientOrigin;
     decoder >> topOrigin;
     if (!topOrigin || topOrigin->isEmpty())
         return std::nullopt;

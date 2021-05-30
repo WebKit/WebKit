@@ -52,7 +52,7 @@ struct InteractionInformationAtPosition {
     InteractionInformationRequest request;
 
     bool canBeValid { true };
-    Optional<bool> nodeAtPositionHasDoubleClickHandler;
+    std::optional<bool> nodeAtPositionHasDoubleClickHandler;
     bool isSelectable { false };
     bool isSelected { false };
     bool prefersDraggingOverTextSelection { false };
@@ -88,7 +88,7 @@ struct InteractionInformationAtPosition {
     float caretHeight { 0 };
     WebCore::FloatRect lineCaretExtent;
 
-    Optional<WebCore::Cursor> cursor;
+    std::optional<WebCore::Cursor> cursor;
 
     WebCore::TextIndicatorData linkIndicator;
 #if ENABLE(DATA_DETECTION)
@@ -96,8 +96,8 @@ struct InteractionInformationAtPosition {
     RetainPtr<NSArray> dataDetectorResults;
 #endif
 
-    Optional<WebCore::ElementContext> elementContext;
-    Optional<WebCore::ElementContext> imageElementContext;
+    std::optional<WebCore::ElementContext> elementContext;
+    std::optional<WebCore::ElementContext> imageElementContext;
 
     // Copy compatible optional bits forward (for example, if we have a InteractionInformationAtPosition
     // with snapshots in it, and perform another request for the same point without requesting the snapshots,

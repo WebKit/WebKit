@@ -106,7 +106,7 @@ template<typename CharacterType> static unsigned countDigits(StringParsingBuffer
 }
 
 // Differences from parseInteger<int>: Takes StringParsingBuffer. Does not allow leading or trailing spaces. Does not allow leading "+".
-template<typename CharacterType> static Optional<int> parseInt(StringParsingBuffer<CharacterType>& buffer, unsigned maximumNumberOfDigitsToParse)
+template<typename CharacterType> static std::optional<int> parseInt(StringParsingBuffer<CharacterType>& buffer, unsigned maximumNumberOfDigitsToParse)
 {
     if (maximumNumberOfDigitsToParse > buffer.lengthRemaining() || !maximumNumberOfDigitsToParse)
         return std::nullopt;
@@ -128,7 +128,7 @@ template<typename CharacterType> static Optional<int> parseInt(StringParsingBuff
     return value;
 }
 
-template<typename CharacterType> static Optional<int> parseIntWithinLimits(StringParsingBuffer<CharacterType>& buffer, unsigned maximumNumberOfDigitsToParse, int minimumValue, int maximumValue)
+template<typename CharacterType> static std::optional<int> parseIntWithinLimits(StringParsingBuffer<CharacterType>& buffer, unsigned maximumNumberOfDigitsToParse, int minimumValue, int maximumValue)
 {
     auto value = parseInt(buffer, maximumNumberOfDigitsToParse);
     if (!(value && *value >= minimumValue && *value <= maximumValue))
@@ -187,12 +187,12 @@ static bool withinHTMLDateLimits(int year, int month, int monthDay, int hour, in
     return !hour && !minute && !second && !millisecond;
 }
 
-template<typename F> static Optional<DateComponents> createFromString(StringView source, F&& parseFunction)
+template<typename F> static std::optional<DateComponents> createFromString(StringView source, F&& parseFunction)
 {
     if (source.isEmpty())
         return std::nullopt;
 
-    return readCharactersForParsing(source, [&](auto buffer) -> Optional<DateComponents> {
+    return readCharactersForParsing(source, [&](auto buffer) -> std::optional<DateComponents> {
         DateComponents date;
         if (!parseFunction(buffer, date) || !buffer.atEnd())
             return std::nullopt;
@@ -200,35 +200,35 @@ template<typename F> static Optional<DateComponents> createFromString(StringView
     });
 }
 
-Optional<DateComponents> DateComponents::fromParsingMonth(StringView source)
+std::optional<DateComponents> DateComponents::fromParsingMonth(StringView source)
 {
     return createFromString(source, [] (auto& buffer, auto& date) {
         return date.parseMonth(buffer);
     });
 }
 
-Optional<DateComponents> DateComponents::fromParsingDate(StringView source)
+std::optional<DateComponents> DateComponents::fromParsingDate(StringView source)
 {
     return createFromString(source, [] (auto& buffer, auto& date) {
         return date.parseDate(buffer);
     });
 }
 
-Optional<DateComponents> DateComponents::fromParsingWeek(StringView source)
+std::optional<DateComponents> DateComponents::fromParsingWeek(StringView source)
 {
     return createFromString(source, [] (auto& buffer, auto& date) {
         return date.parseWeek(buffer);
     });
 }
 
-Optional<DateComponents> DateComponents::fromParsingTime(StringView source)
+std::optional<DateComponents> DateComponents::fromParsingTime(StringView source)
 {
     return createFromString(source, [] (auto& buffer, auto& date) {
         return date.parseTime(buffer);
     });
 }
 
-Optional<DateComponents> DateComponents::fromParsingDateTimeLocal(StringView source)
+std::optional<DateComponents> DateComponents::fromParsingDateTimeLocal(StringView source)
 {
     return createFromString(source, [] (auto& buffer, auto& date) {
         return date.parseDateTimeLocal(buffer);
@@ -451,8 +451,8 @@ template<typename CharacterType> bool DateComponents::parseTime(StringParsingBuf
 
     // Optional second part.
     // Do not return with false because the part is optional.
-    Optional<int> second;
-    Optional<int> millisecond;
+    std::optional<int> second;
+    std::optional<int> millisecond;
 
     auto temporaryBuffer = buffer;
     if (skipExactly(temporaryBuffer, ':')) {
@@ -520,7 +520,7 @@ static inline double positiveFmod(double value, double divider)
     return remainder < 0 ? remainder + divider : remainder;
 }
 
-template<typename F> static Optional<DateComponents> createFromTimeOffset(double timeOffset, F&& function)
+template<typename F> static std::optional<DateComponents> createFromTimeOffset(double timeOffset, F&& function)
 {
     DateComponents result;
     if (!function(result, timeOffset))
@@ -528,42 +528,42 @@ template<typename F> static Optional<DateComponents> createFromTimeOffset(double
     return result;
 }
 
-Optional<DateComponents> DateComponents::fromMillisecondsSinceEpochForDate(double ms)
+std::optional<DateComponents> DateComponents::fromMillisecondsSinceEpochForDate(double ms)
 {
     return createFromTimeOffset(ms, [] (auto& date, auto ms) {
         return date.setMillisecondsSinceEpochForDate(ms);
     });
 }
 
-Optional<DateComponents> DateComponents::fromMillisecondsSinceEpochForDateTimeLocal(double ms)
+std::optional<DateComponents> DateComponents::fromMillisecondsSinceEpochForDateTimeLocal(double ms)
 {
     return createFromTimeOffset(ms, [] (auto& date, auto ms) {
         return date.setMillisecondsSinceEpochForDateTimeLocal(ms);
     });
 }
 
-Optional<DateComponents> DateComponents::fromMillisecondsSinceEpochForMonth(double ms)
+std::optional<DateComponents> DateComponents::fromMillisecondsSinceEpochForMonth(double ms)
 {
     return createFromTimeOffset(ms, [] (auto& date, auto ms) {
         return date.setMillisecondsSinceEpochForMonth(ms);
     });
 }
 
-Optional<DateComponents> DateComponents::fromMillisecondsSinceEpochForWeek(double ms)
+std::optional<DateComponents> DateComponents::fromMillisecondsSinceEpochForWeek(double ms)
 {
     return createFromTimeOffset(ms, [] (auto& date, auto ms) {
         return date.setMillisecondsSinceEpochForWeek(ms);
     });
 }
 
-Optional<DateComponents> DateComponents::fromMillisecondsSinceMidnight(double ms)
+std::optional<DateComponents> DateComponents::fromMillisecondsSinceMidnight(double ms)
 {
     return createFromTimeOffset(ms, [] (auto& date, auto ms) {
         return date.setMillisecondsSinceMidnight(ms);
     });
 }
 
-Optional<DateComponents> DateComponents::fromMonthsSinceEpoch(double months)
+std::optional<DateComponents> DateComponents::fromMonthsSinceEpoch(double months)
 {
     return createFromTimeOffset(months, [] (auto& date, auto months) {
         return date.setMonthsSinceEpoch(months);

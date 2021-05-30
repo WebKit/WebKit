@@ -65,15 +65,15 @@ void* prepareOSREntry(
         return nullptr;
     }
     
-    Operands<Optional<JSValue>> values;
+    Operands<std::optional<JSValue>> values;
     dfgCode->reconstruct(callFrame, dfgCodeBlock, CodeOrigin(bytecodeIndex), streamIndex, values);
     
     dataLogLnIf(Options::verboseOSR(), "    Values at entry: ", values);
     
-    Optional<JSValue> reconstructedThis;
+    std::optional<JSValue> reconstructedThis;
     for (int argument = values.numberOfArguments(); argument--;) {
         JSValue valueOnStack = callFrame->r(virtualRegisterForArgumentIncludingThis(argument)).asanUnsafeJSValue();
-        Optional<JSValue> reconstructedValue = values.argument(argument);
+        std::optional<JSValue> reconstructedValue = values.argument(argument);
         {
             JSValue valueToValidate = reconstructedValue ? *reconstructedValue : valueOnStack;
             auto flushFormat = entryCode->argumentFlushFormats()[argument];
@@ -119,7 +119,7 @@ void* prepareOSREntry(
         entryCode->entryBuffer()->dataBuffer());
     
     for (int local = values.numberOfLocals(); local--;) {
-        Optional<JSValue> value = values.local(local);
+        std::optional<JSValue> value = values.local(local);
         if (value)
             scratch[local] = JSValue::encode(value.value());
         else

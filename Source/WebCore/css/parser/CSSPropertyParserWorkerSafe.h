@@ -44,7 +44,7 @@ class ScriptExecutionContext;
 class CSSPropertyParserWorkerSafe {
 public:
     static Color parseColor(const String&);
-    static Optional<CSSPropertyParserHelpers::FontRaw> parseFont(const String&, CSSParserMode = HTMLStandardMode);
+    static std::optional<CSSPropertyParserHelpers::FontRaw> parseFont(const String&, CSSParserMode = HTMLStandardMode);
 
     static RefPtr<CSSValueList> parseFontFaceSrc(const String&, const CSSParserContext&);
     static RefPtr<CSSValue> parseFontFaceStyle(const String&, ScriptExecutionContext&);

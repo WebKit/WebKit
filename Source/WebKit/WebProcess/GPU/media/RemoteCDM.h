@@ -55,7 +55,7 @@ private:
     RefPtr<WebCore::CDMInstance> createInstance() final;
     void loadAndInitialize() final;
     RefPtr<WebCore::SharedBuffer> sanitizeResponse(const WebCore::SharedBuffer&) const final;
-    Optional<String> sanitizeSessionId(const String&) const final;
+    std::optional<String> sanitizeSessionId(const String&) const final;
 
     Vector<AtomString> supportedInitDataTypes() const final { return m_configuration.supportedInitDataTypes; }
     Vector<AtomString> supportedRobustnesses() const final { return m_configuration.supportedRobustnesses; }

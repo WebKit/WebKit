@@ -116,12 +116,12 @@ Color CSSParser::parseSystemColor(StringView string)
     return RenderTheme::singleton().systemColor(keyword, { });
 }
 
-Optional<SRGBA<uint8_t>> CSSParser::parseNamedColor(StringView string)
+std::optional<SRGBA<uint8_t>> CSSParser::parseNamedColor(StringView string)
 {
     return CSSParserFastPaths::parseNamedColor(string);
 }
 
-Optional<SRGBA<uint8_t>> CSSParser::parseHexColor(StringView string)
+std::optional<SRGBA<uint8_t>> CSSParser::parseHexColor(StringView string)
 {
     return CSSParserFastPaths::parseHexColor(string);
 }
@@ -155,7 +155,7 @@ CSSParser::ParseResult CSSParser::parseValue(MutableStyleProperties& declaration
     return CSSParserImpl::parseValue(&declaration, propertyID, string, important, m_context);
 }
 
-Optional<CSSSelectorList> CSSParser::parseSelector(const String& string)
+std::optional<CSSSelectorList> CSSParser::parseSelector(const String& string)
 {
     return parseCSSSelector(CSSTokenizer(string).tokenRange(), m_context, nullptr);
 }

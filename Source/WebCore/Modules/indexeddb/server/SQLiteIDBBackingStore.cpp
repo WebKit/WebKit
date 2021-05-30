@@ -485,7 +485,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::createAndPopulateInitial
     return makeUnique<IDBDatabaseInfo>(m_identifier.databaseName(), 0, 0);
 }
 
-Optional<IsSchemaUpgraded> SQLiteIDBBackingStore::ensureValidObjectStoreInfoTable()
+std::optional<IsSchemaUpgraded> SQLiteIDBBackingStore::ensureValidObjectStoreInfoTable()
 {
     ASSERT(m_sqliteDB);
     ASSERT(m_sqliteDB->isOpen());
@@ -822,7 +822,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
             String objectStoreName = sql->columnText(1);
             auto keyPathBufferView = sql->columnBlobView(2);
 
-            Optional<IDBKeyPath> objectStoreKeyPath;
+            std::optional<IDBKeyPath> objectStoreKeyPath;
             if (!deserializeIDBKeyPath(keyPathBufferView.data(), keyPathBufferView.size(), objectStoreKeyPath)) {
                 LOG_ERROR("Unable to extract key path from database");
                 return nullptr;
@@ -858,7 +858,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
             uint64_t objectStoreID = sql->columnInt64(2);
             auto keyPathBufferView = sql->columnBlobView(3);
 
-            Optional<IDBKeyPath> indexKeyPath;
+            std::optional<IDBKeyPath> indexKeyPath;
             if (!deserializeIDBKeyPath(keyPathBufferView.data(), keyPathBufferView.size(), indexKeyPath)) {
                 LOG_ERROR("Unable to extract key path from database");
                 return nullptr;
@@ -937,7 +937,7 @@ String SQLiteIDBBackingStore::fullDatabasePath() const
     return fullDatabasePathForDirectory(m_databaseDirectory);
 }
 
-Optional<IDBDatabaseNameAndVersion> SQLiteIDBBackingStore::databaseNameAndVersionFromFile(const String& databasePath)
+std::optional<IDBDatabaseNameAndVersion> SQLiteIDBBackingStore::databaseNameAndVersionFromFile(const String& databasePath)
 {
     SQLiteDatabase database;
     if (!database.open(databasePath)) {

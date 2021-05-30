@@ -35,8 +35,8 @@
 namespace WebCore {
 
 struct ScrollToOptions : ScrollOptions {
-    Optional<double> left;
-    Optional<double> top;
+    std::optional<double> left;
+    std::optional<double> top;
 
     ScrollToOptions() = default;
     ScrollToOptions(double x, double y)
@@ -45,7 +45,7 @@ struct ScrollToOptions : ScrollOptions {
     { }
 };
 
-inline double normalizeNonFiniteValueOrFallBackTo(Optional<double> value, double fallbackValue)
+inline double normalizeNonFiniteValueOrFallBackTo(std::optional<double> value, double fallbackValue)
 {
     // Normalize non-finite values (https://drafts.csswg.org/cssom-view/#normalize-non-finite-values).
     return value ? (std::isfinite(*value) ? *value : 0) : fallbackValue;

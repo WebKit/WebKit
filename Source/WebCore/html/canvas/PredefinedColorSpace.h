@@ -40,7 +40,7 @@ enum class PredefinedColorSpace {
 };
 
 DestinationColorSpace toDestinationColorSpace(PredefinedColorSpace);
-Optional<PredefinedColorSpace> toPredefinedColorSpace(const DestinationColorSpace&);
+std::optional<PredefinedColorSpace> toPredefinedColorSpace(const DestinationColorSpace&);
 
 }
 

@@ -87,7 +87,7 @@ static ItemBufferIdentifier globalBufferIdentifier = ItemBufferIdentifier::gener
 
 class ReadingClient : public ItemBufferReadingClient {
 private:
-    Optional<ItemHandle> WARN_UNUSED_RETURN decodeItem(const uint8_t*, size_t, ItemType type, uint8_t*) final
+    std::optional<ItemHandle> WARN_UNUSED_RETURN decodeItem(const uint8_t*, size_t, ItemType type, uint8_t*) final
     {
         EXPECT_EQ(type, ItemType::FillPath);
         return std::nullopt;

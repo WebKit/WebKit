@@ -120,7 +120,7 @@ bool decodeStructure(asn1_node* root, const char* elementName, const Vector<uint
     return ret == ASN1_SUCCESS;
 }
 
-Optional<Vector<uint8_t>> elementData(asn1_node root, const char* elementName)
+std::optional<Vector<uint8_t>> elementData(asn1_node root, const char* elementName)
 {
     int length = 0;
     unsigned type = 0;
@@ -142,7 +142,7 @@ Optional<Vector<uint8_t>> elementData(asn1_node root, const char* elementName)
     return data;
 }
 
-Optional<Vector<uint8_t>> encodedData(asn1_node root, const char* elementName)
+std::optional<Vector<uint8_t>> encodedData(asn1_node root, const char* elementName)
 {
     int length = 0;
     int ret = asn1_der_coding(root, elementName, nullptr, &length, nullptr);

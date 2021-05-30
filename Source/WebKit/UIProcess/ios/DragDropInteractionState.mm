@@ -151,7 +151,7 @@ static bool canUpdatePreviewForActiveDragSource(const DragSourceState& source)
     return false;
 }
 
-Optional<DragSourceState> DragDropInteractionState::activeDragSourceForItem(UIDragItem *item) const
+std::optional<DragSourceState> DragDropInteractionState::activeDragSourceForItem(UIDragItem *item) const
 {
     if (![item.privateLocalContext isKindOfClass:[NSNumber class]])
         return std::nullopt;

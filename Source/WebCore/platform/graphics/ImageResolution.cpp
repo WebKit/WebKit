@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-Optional<IntSize> ImageResolution::densityCorrectedSize(const FloatSize& sourceSize, const ResolutionMetadata& metadata)
+std::optional<IntSize> ImageResolution::densityCorrectedSize(const FloatSize& sourceSize, const ResolutionMetadata& metadata)
 {
     if (metadata.resolutionUnit != ResolutionUnit::Inches || metadata.resolution.isEmpty() || metadata.preferredSize.isEmpty())
         return std::nullopt;

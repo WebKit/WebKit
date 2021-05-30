@@ -51,7 +51,7 @@ struct ApplicationManifest {
     Color themeColor;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ApplicationManifest> decode(Decoder&);
+    template<class Decoder> static std::optional<ApplicationManifest> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -61,7 +61,7 @@ void ApplicationManifest::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ApplicationManifest> ApplicationManifest::decode(Decoder& decoder)
+std::optional<ApplicationManifest> ApplicationManifest::decode(Decoder& decoder)
 {
     ApplicationManifest result;
 

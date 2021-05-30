@@ -56,7 +56,7 @@ void UserMessage::encode(IPC::Encoder& encoder) const
     encoder << attachments;
 }
 
-Optional<UserMessage> UserMessage::decode(IPC::Decoder& decoder)
+std::optional<UserMessage> UserMessage::decode(IPC::Decoder& decoder)
 {
     UserMessage result;
     if (!decoder.decode(result.type))
@@ -69,7 +69,7 @@ Optional<UserMessage> UserMessage::decode(IPC::Decoder& decoder)
         return std::nullopt;
 
     if (result.type == Type::Error) {
-        Optional<uint32_t> errorCode;
+        std::optional<uint32_t> errorCode;
         decoder >> errorCode;
         if (!errorCode)
             return std::nullopt;
@@ -78,13 +78,13 @@ Optional<UserMessage> UserMessage::decode(IPC::Decoder& decoder)
         return result;
     }
 
-    Optional<GRefPtr<GVariant>> parameters;
+    std::optional<GRefPtr<GVariant>> parameters;
     decoder >> parameters;
     if (!parameters)
         return std::nullopt;
     result.parameters = WTFMove(*parameters);
 
-    Optional<Vector<IPC::Attachment>> attachments;
+    std::optional<Vector<IPC::Attachment>> attachments;
     decoder >> attachments;
     if (!attachments)
         return std::nullopt;

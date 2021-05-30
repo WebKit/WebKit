@@ -41,7 +41,7 @@ String CSSCanvasValue::customCSSText() const
     return makeString("-webkit-canvas(", m_name, ')');
 }
 
-void CSSCanvasValue::canvasChanged(HTMLCanvasElement&, const Optional<FloatRect>& changedRect)
+void CSSCanvasValue::canvasChanged(HTMLCanvasElement&, const std::optional<FloatRect>& changedRect)
 {
     if (!changedRect)
         return;

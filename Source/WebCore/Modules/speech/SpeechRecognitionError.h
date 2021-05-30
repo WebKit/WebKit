@@ -45,7 +45,7 @@ struct SpeechRecognitionError {
     String message;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<SpeechRecognitionError> decode(Decoder&);
+    template<class Decoder> static std::optional<SpeechRecognitionError> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -55,14 +55,14 @@ void SpeechRecognitionError::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<SpeechRecognitionError> SpeechRecognitionError::decode(Decoder& decoder)
+std::optional<SpeechRecognitionError> SpeechRecognitionError::decode(Decoder& decoder)
 {
-    Optional<SpeechRecognitionErrorType> type;
+    std::optional<SpeechRecognitionErrorType> type;
     decoder >> type;
     if (!type)
         return std::nullopt;
 
-    Optional<String> message;
+    std::optional<String> message;
     decoder >> message;
     if (!message)
         return std::nullopt;

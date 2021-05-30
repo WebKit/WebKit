@@ -48,7 +48,7 @@ public:
     ~RemotePlayback();
 
     void watchAvailability(Ref<RemotePlaybackAvailabilityCallback>&&, Ref<DeferredPromise>&&);
-    void cancelWatchAvailability(Optional<int32_t> id, Ref<DeferredPromise>&&);
+    void cancelWatchAvailability(std::optional<int32_t> id, Ref<DeferredPromise>&&);
     void prompt(Ref<DeferredPromise>&&);
 
     bool hasAvailabilityCallbacks() const;

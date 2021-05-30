@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-Optional<int> GridPosition::gMaxPositionForTesting;
+std::optional<int> GridPosition::gMaxPositionForTesting;
 static const int kGridMaxPosition = 1000000;
 
 void GridPosition::setExplicitPosition(int position, const String& namedGridLine)

@@ -43,7 +43,7 @@ public:
 
     using WebGPUAdapterPromise = DOMPromiseDeferred<IDLInterface<WebGPUAdapter>>;
 
-    void requestAdapter(Optional<GPURequestAdapterOptions>&&, WebGPUAdapterPromise&&) const;
+    void requestAdapter(std::optional<GPURequestAdapterOptions>&&, WebGPUAdapterPromise&&) const;
 
 private:
     WebGPU() = default;

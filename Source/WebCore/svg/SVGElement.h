@@ -91,7 +91,7 @@ public:
     // The instances of an element are clones made in shadow trees to implement <use>.
     const WeakHashSet<SVGElement>& instances() const;
 
-    Optional<FloatRect> getBoundingBox() const;
+    std::optional<FloatRect> getBoundingBox() const;
 
     Vector<Ref<SVGElement>> referencingElements() const;
     void addReferencingElement(SVGElement&);
@@ -103,7 +103,7 @@ public:
 
     void setCorrespondingElement(SVGElement*);
 
-    Optional<Style::ElementStyle> resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle) override;
+    std::optional<Style::ElementStyle> resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle) override;
 
     static QualifiedName animatableAttributeForName(const AtomString&);
 #ifndef NDEBUG

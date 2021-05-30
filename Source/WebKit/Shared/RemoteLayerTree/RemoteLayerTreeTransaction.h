@@ -108,7 +108,7 @@ public:
         LayerCreationProperties();
 
         void encode(IPC::Encoder&) const;
-        static Optional<LayerCreationProperties> decode(IPC::Decoder&);
+        static std::optional<LayerCreationProperties> decode(IPC::Decoder&);
 
         WebCore::GraphicsLayer::PlatformLayerID layerID;
         WebCore::PlatformCALayer::LayerType type;
@@ -305,7 +305,7 @@ public:
     const EditorState& editorState() const { return m_editorState.value(); }
     void setEditorState(const EditorState& editorState) { m_editorState = editorState; }
 
-    Optional<DynamicViewportSizeUpdateID> dynamicViewportSizeUpdateID() const { return m_dynamicViewportSizeUpdateID; }
+    std::optional<DynamicViewportSizeUpdateID> dynamicViewportSizeUpdateID() const { return m_dynamicViewportSizeUpdateID; }
     void setDynamicViewportSizeUpdateID(DynamicViewportSizeUpdateID resizeID) { m_dynamicViewportSizeUpdateID = resizeID; }
     
 private:
@@ -345,8 +345,8 @@ private:
     bool m_viewportMetaTagCameFromImageDocument { false };
     bool m_isInStableState { false };
 
-    Optional<EditorState> m_editorState;
-    Optional<DynamicViewportSizeUpdateID> m_dynamicViewportSizeUpdateID;
+    std::optional<EditorState> m_editorState;
+    std::optional<DynamicViewportSizeUpdateID> m_dynamicViewportSizeUpdateID;
 };
 
 } // namespace WebKit

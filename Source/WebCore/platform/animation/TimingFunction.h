@@ -208,7 +208,7 @@ public:
         End,
     };
 
-    static Ref<StepsTimingFunction> create(int steps, Optional<StepPosition> stepPosition)
+    static Ref<StepsTimingFunction> create(int steps, std::optional<StepPosition> stepPosition)
     {
         return adoptRef(*new StepsTimingFunction(steps, stepPosition));
     }
@@ -228,11 +228,11 @@ public:
     int numberOfSteps() const { return m_steps; }
     void setNumberOfSteps(int steps) { m_steps = steps; }
 
-    Optional<StepPosition> stepPosition() const { return m_stepPosition; }
-    void setStepPosition(Optional<StepPosition> stepPosition) { m_stepPosition = stepPosition; }
+    std::optional<StepPosition> stepPosition() const { return m_stepPosition; }
+    void setStepPosition(std::optional<StepPosition> stepPosition) { m_stepPosition = stepPosition; }
 
 private:
-    StepsTimingFunction(int steps, Optional<StepPosition> stepPosition)
+    StepsTimingFunction(int steps, std::optional<StepPosition> stepPosition)
         : TimingFunction(StepsFunction)
         , m_steps(steps)
         , m_stepPosition(stepPosition)
@@ -245,7 +245,7 @@ private:
     }
     
     int m_steps;
-    Optional<StepPosition> m_stepPosition;
+    std::optional<StepPosition> m_stepPosition;
 };
 
 class SpringTimingFunction final : public TimingFunction {

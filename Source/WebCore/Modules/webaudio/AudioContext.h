@@ -56,7 +56,7 @@ public:
     static ExceptionOr<Ref<AudioContext>> create(Document&, AudioContextOptions&&);
     ~AudioContext();
 
-    WEBCORE_EXPORT static void setDefaultSampleRateForTesting(Optional<float>);
+    WEBCORE_EXPORT static void setDefaultSampleRateForTesting(std::optional<float>);
 
     void close(DOMPromiseDeferred<void>&&);
 

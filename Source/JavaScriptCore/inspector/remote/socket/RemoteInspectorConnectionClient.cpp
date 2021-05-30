@@ -40,13 +40,13 @@ RemoteInspectorConnectionClient::~RemoteInspectorConnectionClient()
     endpoint.invalidateClient(*this);
 }
 
-Optional<ConnectionID> RemoteInspectorConnectionClient::connectInet(const char* serverAddr, uint16_t serverPort)
+std::optional<ConnectionID> RemoteInspectorConnectionClient::connectInet(const char* serverAddr, uint16_t serverPort)
 {
     auto& endpoint = Inspector::RemoteInspectorSocketEndpoint::singleton();
     return endpoint.connectInet(serverAddr, serverPort, *this);
 }
 
-Optional<ConnectionID> RemoteInspectorConnectionClient::createClient(PlatformSocketType socket)
+std::optional<ConnectionID> RemoteInspectorConnectionClient::createClient(PlatformSocketType socket)
 {
     auto& endpoint = Inspector::RemoteInspectorSocketEndpoint::singleton();
     return endpoint.createClient(socket, *this);
@@ -85,7 +85,7 @@ void RemoteInspectorConnectionClient::didReceive(RemoteInspectorSocketEndpoint&,
     result.iterator->value.pushReceivedData(data.data(), data.size());
 }
 
-Optional<RemoteInspectorConnectionClient::Event> RemoteInspectorConnectionClient::extractEvent(ConnectionID clientID, Vector<uint8_t>&& data)
+std::optional<RemoteInspectorConnectionClient::Event> RemoteInspectorConnectionClient::extractEvent(ConnectionID clientID, Vector<uint8_t>&& data)
 {
     if (data.isEmpty())
         return std::nullopt;
@@ -119,7 +119,7 @@ Optional<RemoteInspectorConnectionClient::Event> RemoteInspectorConnectionClient
     return event;
 }
 
-Optional<Vector<Ref<JSON::Object>>> RemoteInspectorConnectionClient::parseTargetListJSON(const String& message)
+std::optional<Vector<Ref<JSON::Object>>> RemoteInspectorConnectionClient::parseTargetListJSON(const String& message)
 {
     auto messageValue = JSON::Value::parseJSON(message);
     if (!messageValue)

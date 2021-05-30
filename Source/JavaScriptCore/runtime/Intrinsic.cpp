@@ -344,7 +344,7 @@ const char* intrinsicName(Intrinsic intrinsic)
     return nullptr;
 }
 
-Optional<IterationKind> interationKindForIntrinsic(Intrinsic intrinsic)
+std::optional<IterationKind> interationKindForIntrinsic(Intrinsic intrinsic)
 {
     switch (intrinsic) {
     case ArrayValuesIntrinsic:

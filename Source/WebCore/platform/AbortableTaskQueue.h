@@ -138,7 +138,7 @@ public:
     // It is allowed for the main thread task handler to abort the AbortableTaskQueue. In that case, the return
     // value is discarded and the caller receives an empty optional.
     template<typename R>
-    Optional<R> enqueueTaskAndWait(WTF::Function<R()>&& mainThreadTaskHandler)
+    std::optional<R> enqueueTaskAndWait(WTF::Function<R()>&& mainThreadTaskHandler)
     {
         // Don't deadlock the main thread with itself.
         ASSERT(!isMainThread());
@@ -147,7 +147,7 @@ public:
         if (m_aborting)
             return std::nullopt;
 
-        Optional<R> response = std::nullopt;
+        std::optional<R> response = std::nullopt;
         postTask([this, &response, &mainThreadTaskHandler]() {
             R responseValue = mainThreadTaskHandler();
             Locker locker { m_lock };

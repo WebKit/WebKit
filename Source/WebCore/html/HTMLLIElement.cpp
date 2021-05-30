@@ -118,7 +118,7 @@ void HTMLLIElement::didAttachRenderers()
 inline void HTMLLIElement::parseValue(const AtomString& value)
 {
     ASSERT(renderer());
-    Optional<int> explicitValue;
+    std::optional<int> explicitValue;
     if (auto parsedValue = parseHTMLInteger(value))
         explicitValue = *parsedValue;
     downcast<RenderListItem>(*renderer()).setExplicitValue(explicitValue);

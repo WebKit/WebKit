@@ -126,20 +126,20 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
     encoder << pcmDataCarried;
 }
 
-Optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::decode(IPC::Decoder& decoder)
+std::optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::decode(IPC::Decoder& decoder)
 {
     NetworkResourceLoadParameters result;
 
     if (!decoder.decode(result.identifier))
         return std::nullopt;
         
-    Optional<WebPageProxyIdentifier> webPageProxyID;
+    std::optional<WebPageProxyIdentifier> webPageProxyID;
     decoder >> webPageProxyID;
     if (!webPageProxyID)
         return std::nullopt;
     result.webPageProxyID = *webPageProxyID;
 
-    Optional<PageIdentifier> webPageID;
+    std::optional<PageIdentifier> webPageID;
     decoder >> webPageID;
     if (!webPageID)
         return std::nullopt;
@@ -164,7 +164,7 @@ Optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::decode(IP
             return std::nullopt;
         result.request.setHTTPBody(WTFMove(formData));
 
-        Optional<SandboxExtension::HandleArray> requestBodySandboxExtensionHandles;
+        std::optional<SandboxExtension::HandleArray> requestBodySandboxExtensionHandles;
         decoder >> requestBodySandboxExtensionHandles;
         if (!requestBodySandboxExtensionHandles)
             return std::nullopt;
@@ -175,7 +175,7 @@ Optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::decode(IP
     }
 
     if (result.request.url().isLocalFile()) {
-        Optional<SandboxExtension::Handle> resourceSandboxExtensionHandle;
+        std::optional<SandboxExtension::Handle> resourceSandboxExtensionHandle;
         decoder >> resourceSandboxExtensionHandle;
         if (!resourceSandboxExtensionHandle)
             return std::nullopt;
@@ -223,7 +223,7 @@ Optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::decode(IP
             return std::nullopt;
     }
 
-    Optional<FetchOptions> options;
+    std::optional<FetchOptions> options;
     decoder >> options;
     if (!options)
         return std::nullopt;
@@ -234,7 +234,7 @@ Optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::decode(IP
     if (!decoder.decode(result.originalRequestHeaders))
         return std::nullopt;
 
-    Optional<bool> shouldRestrictHTTPResponseAccess;
+    std::optional<bool> shouldRestrictHTTPResponseAccess;
     decoder >> shouldRestrictHTTPResponseAccess;
     if (!shouldRestrictHTTPResponseAccess)
         return std::nullopt;
@@ -243,7 +243,7 @@ Optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::decode(IP
     if (!decoder.decode(result.preflightPolicy))
         return std::nullopt;
 
-    Optional<bool> shouldEnableCrossOriginResourcePolicy;
+    std::optional<bool> shouldEnableCrossOriginResourcePolicy;
     decoder >> shouldEnableCrossOriginResourcePolicy;
     if (!shouldEnableCrossOriginResourcePolicy)
         return std::nullopt;
@@ -252,44 +252,44 @@ Optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::decode(IP
     if (!decoder.decode(result.frameAncestorOrigins))
         return std::nullopt;
 
-    Optional<bool> pageHasResourceLoadClient;
+    std::optional<bool> pageHasResourceLoadClient;
     decoder >> pageHasResourceLoadClient;
     if (!pageHasResourceLoadClient)
         return std::nullopt;
     result.pageHasResourceLoadClient = *pageHasResourceLoadClient;
     
-    Optional<Optional<FrameIdentifier>> parentFrameID;
+    std::optional<std::optional<FrameIdentifier>> parentFrameID;
     decoder >> parentFrameID;
     if (!parentFrameID)
         return std::nullopt;
     result.parentFrameID = WTFMove(*parentFrameID);
 
-    Optional<bool> crossOriginAccessControlCheckEnabled;
+    std::optional<bool> crossOriginAccessControlCheckEnabled;
     decoder >> crossOriginAccessControlCheckEnabled;
     if (!crossOriginAccessControlCheckEnabled)
         return std::nullopt;
     result.crossOriginAccessControlCheckEnabled = *crossOriginAccessControlCheckEnabled;
     
-    Optional<URL> documentURL;
+    std::optional<URL> documentURL;
     decoder >> documentURL;
     if (!documentURL)
         return std::nullopt;
     result.documentURL = *documentURL;
 
 #if ENABLE(SERVICE_WORKER)
-    Optional<ServiceWorkersMode> serviceWorkersMode;
+    std::optional<ServiceWorkersMode> serviceWorkersMode;
     decoder >> serviceWorkersMode;
     if (!serviceWorkersMode)
         return std::nullopt;
     result.serviceWorkersMode = *serviceWorkersMode;
 
-    Optional<Optional<ServiceWorkerRegistrationIdentifier>> serviceWorkerRegistrationIdentifier;
+    std::optional<std::optional<ServiceWorkerRegistrationIdentifier>> serviceWorkerRegistrationIdentifier;
     decoder >> serviceWorkerRegistrationIdentifier;
     if (!serviceWorkerRegistrationIdentifier)
         return std::nullopt;
     result.serviceWorkerRegistrationIdentifier = *serviceWorkerRegistrationIdentifier;
 
-    Optional<OptionSet<HTTPHeadersToKeepFromCleaning>> httpHeadersToKeep;
+    std::optional<OptionSet<HTTPHeadersToKeepFromCleaning>> httpHeadersToKeep;
     decoder >> httpHeadersToKeep;
     if (!httpHeadersToKeep)
         return std::nullopt;
@@ -300,20 +300,20 @@ Optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::decode(IP
     if (!decoder.decode(result.mainDocumentURL))
         return std::nullopt;
 
-    Optional<Optional<UserContentControllerIdentifier>> userContentControllerIdentifier;
+    std::optional<std::optional<UserContentControllerIdentifier>> userContentControllerIdentifier;
     decoder >> userContentControllerIdentifier;
     if (!userContentControllerIdentifier)
         return std::nullopt;
     result.userContentControllerIdentifier = *userContentControllerIdentifier;
 #endif
 
-    Optional<Optional<NavigatingToAppBoundDomain>> isNavigatingToAppBoundDomain;
+    std::optional<std::optional<NavigatingToAppBoundDomain>> isNavigatingToAppBoundDomain;
     decoder >> isNavigatingToAppBoundDomain;
     if (!isNavigatingToAppBoundDomain)
         return std::nullopt;
     result.isNavigatingToAppBoundDomain = *isNavigatingToAppBoundDomain;
 
-    Optional<Optional<WebCore::PrivateClickMeasurement::PcmDataCarried>> pcmDataCarried;
+    std::optional<std::optional<WebCore::PrivateClickMeasurement::PcmDataCarried>> pcmDataCarried;
     decoder >> pcmDataCarried;
     if (!pcmDataCarried)
         return std::nullopt;

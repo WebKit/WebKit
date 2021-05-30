@@ -190,12 +190,12 @@ struct FunctionDestructionChecker {
     }
 
     Function<unsigned()>& function;
-    static Optional<bool> functionAsBool;
-    static Optional<unsigned> functionResult;
+    static std::optional<bool> functionAsBool;
+    static std::optional<unsigned> functionResult;
 };
 
-Optional<bool> FunctionDestructionChecker::functionAsBool;
-Optional<unsigned> FunctionDestructionChecker::functionResult;
+std::optional<bool> FunctionDestructionChecker::functionAsBool;
+std::optional<unsigned> FunctionDestructionChecker::functionResult;
 
 TEST(WTF_Function, AssignBeforeDestroy)
 {

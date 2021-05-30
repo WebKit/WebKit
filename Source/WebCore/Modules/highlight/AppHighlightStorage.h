@@ -68,7 +68,7 @@ private:
     WeakPtr<Document> m_document;
     MonotonicTime m_timeAtLastRangeSearch;
     Vector<AppHighlightRangeData> m_unrestoredHighlights;
-    Optional<AppHighlightRangeData> m_unrestoredScrollHighlight;
+    std::optional<AppHighlightRangeData> m_unrestoredScrollHighlight;
 };
 
 #endif

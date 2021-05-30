@@ -46,7 +46,7 @@ public:
     // GCAwareJITStubRoutine is destroyed.
     CallLinkInfo* callLinkInfo() const { return m_callLinkInfo; }
     JSObject* customSlotBase() const { return m_customSlotBase.get(); }
-    Optional<DOMAttributeAnnotation> domAttribute() const { return m_domAttribute; }
+    std::optional<DOMAttributeAnnotation> domAttribute() const { return m_domAttribute; }
 
     bool hasAlternateBase() const final;
     JSObject* alternateBase() const final;
@@ -56,7 +56,7 @@ public:
     static std::unique_ptr<AccessCase> create(
         VM&, JSCell* owner, AccessType, CacheableIdentifier, PropertyOffset, Structure*,
         const ObjectPropertyConditionSet&, bool viaProxy, WatchpointSet* additionalSet, FunctionPtr<CustomAccessorPtrTag> customGetter,
-        JSObject* customSlotBase, Optional<DOMAttributeAnnotation>, RefPtr<PolyProtoAccessChain>&&);
+        JSObject* customSlotBase, std::optional<DOMAttributeAnnotation>, RefPtr<PolyProtoAccessChain>&&);
 
     static std::unique_ptr<AccessCase> create(VM&, JSCell* owner, AccessType, Structure*, CacheableIdentifier, PropertyOffset,
         const ObjectPropertyConditionSet&, RefPtr<PolyProtoAccessChain>&&, bool viaProxy = false,
@@ -77,7 +77,7 @@ private:
     WriteBarrier<JSObject> m_customSlotBase;
     CallLinkInfo* m_callLinkInfo { nullptr };
     FunctionPtr<CustomAccessorPtrTag> m_customAccessor;
-    Optional<DOMAttributeAnnotation> m_domAttribute;
+    std::optional<DOMAttributeAnnotation> m_domAttribute;
 };
 
 } // namespace JSC

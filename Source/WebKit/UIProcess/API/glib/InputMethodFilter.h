@@ -54,7 +54,7 @@ public:
     void setContext(WebKitInputMethodContext*);
     WebKitInputMethodContext* context() const { return m_context.get(); }
 
-    void setState(Optional<InputMethodState>&&);
+    void setState(std::optional<InputMethodState>&&);
 
 #if PLATFORM(GTK)
     using PlatformEventKey = GdkEvent;
@@ -100,7 +100,7 @@ private:
     WebCore::IntRect platformTransformCursorRectToViewCoordinates(const WebCore::IntRect&);
     bool platformEventKeyIsKeyPress(PlatformEventKey*) const;
 
-    Optional<InputMethodState> m_state;
+    std::optional<InputMethodState> m_state;
     GRefPtr<WebKitInputMethodContext> m_context;
 
     struct {

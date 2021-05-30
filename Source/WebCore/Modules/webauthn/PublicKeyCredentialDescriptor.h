@@ -40,7 +40,7 @@ struct PublicKeyCredentialDescriptor {
     Vector<AuthenticatorTransport> transports;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<PublicKeyCredentialDescriptor> decode(Decoder&);
+    template<class Decoder> static std::optional<PublicKeyCredentialDescriptor> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -53,7 +53,7 @@ void PublicKeyCredentialDescriptor::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<PublicKeyCredentialDescriptor> PublicKeyCredentialDescriptor::decode(Decoder& decoder)
+std::optional<PublicKeyCredentialDescriptor> PublicKeyCredentialDescriptor::decode(Decoder& decoder)
 {
     PublicKeyCredentialDescriptor result;
     if (!decoder.decode(result.type))

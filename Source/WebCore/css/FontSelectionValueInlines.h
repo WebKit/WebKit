@@ -48,7 +48,7 @@ inline bool isCSS21Weight(int weight)
     return !((weight % 100) || weight < 100 || weight > 900);
 }
 
-inline Optional<CSSValueID> fontWeightKeyword(FontSelectionValue weight)
+inline std::optional<CSSValueID> fontWeightKeyword(FontSelectionValue weight)
 {
     if (weight == normalWeightValue())
         return CSSValueNormal;
@@ -57,7 +57,7 @@ inline Optional<CSSValueID> fontWeightKeyword(FontSelectionValue weight)
     return std::nullopt;
 }
 
-inline Optional<FontSelectionValue> fontWeightValue(CSSValueID value)
+inline std::optional<FontSelectionValue> fontWeightValue(CSSValueID value)
 {
     switch (value) {
     case CSSValueNormal:
@@ -72,7 +72,7 @@ inline Optional<FontSelectionValue> fontWeightValue(CSSValueID value)
     }
 }
 
-inline Optional<CSSValueID> fontStretchKeyword(FontSelectionValue stretch)
+inline std::optional<CSSValueID> fontStretchKeyword(FontSelectionValue stretch)
 {
     if (stretch == ultraCondensedStretchValue())
         return CSSValueUltraCondensed;
@@ -95,7 +95,7 @@ inline Optional<CSSValueID> fontStretchKeyword(FontSelectionValue stretch)
     return std::nullopt;
 }
 
-inline Optional<FontSelectionValue> fontStretchValue(CSSValueID value)
+inline std::optional<FontSelectionValue> fontStretchValue(CSSValueID value)
 {
     switch (value) {
     case CSSValueUltraCondensed:
@@ -121,7 +121,7 @@ inline Optional<FontSelectionValue> fontStretchValue(CSSValueID value)
     }
 }
 
-inline Optional<CSSValueID> fontStyleKeyword(Optional<FontSelectionValue> style, FontStyleAxis axis)
+inline std::optional<CSSValueID> fontStyleKeyword(std::optional<FontSelectionValue> style, FontStyleAxis axis)
 {
     if (!style || style.value() == normalItalicValue())
         return CSSValueNormal;

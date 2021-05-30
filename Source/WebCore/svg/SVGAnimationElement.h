@@ -121,7 +121,7 @@ private:
     virtual bool calculateFromAndToValues(const String& fromString, const String& toString) = 0;
     virtual bool calculateFromAndByValues(const String& fromString, const String& byString) = 0;
     virtual void calculateAnimatedValue(float percent, unsigned repeatCount) = 0;
-    virtual Optional<float> calculateDistance(const String& /*fromString*/, const String& /*toString*/) = 0;
+    virtual std::optional<float> calculateDistance(const String& /*fromString*/, const String& /*toString*/) = 0;
 
     const Vector<float>& keyTimes() const;
     void currentValuesForValuesAnimation(float percent, float& effectivePercent, String& from, String& to);

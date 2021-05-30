@@ -50,7 +50,7 @@ WKSecurityOriginRef WKSecurityOriginCreateFromDatabaseIdentifier(WKStringRef ide
 
 WKSecurityOriginRef WKSecurityOriginCreate(WKStringRef protocol, WKStringRef host, int port)
 {
-    Optional<uint16_t> validPort;
+    std::optional<uint16_t> validPort;
     if (port && port <= std::numeric_limits<uint16_t>::max())
         validPort = port;
     auto securityOrigin = API::SecurityOrigin::create(WebKit::toImpl(protocol)->string(), WebKit::toImpl(host)->string(), validPort);

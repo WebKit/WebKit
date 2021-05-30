@@ -70,7 +70,7 @@ private:
     bool m_isEncoding { false };
     float m_maxKeyFrameIntervalDuration { 2.0 };
     unsigned m_expectedFrameRate { 30 };
-    Optional<unsigned> m_outputBitRate;
+    std::optional<unsigned> m_outputBitRate;
     Profile m_profile;
 };
 

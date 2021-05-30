@@ -288,7 +288,7 @@ public:
         PrewarmInformation isolatedCopy() const;
 
         template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static Optional<PrewarmInformation> decode(Decoder&);
+        template<class Decoder> static std::optional<PrewarmInformation> decode(Decoder&);
     };
     PrewarmInformation collectPrewarmInformation() const;
     void prewarm(const PrewarmInformation&);
@@ -307,8 +307,8 @@ private:
     // These functions are implemented by each platform (unclear which functions this comment applies to).
     WEBCORE_EXPORT std::unique_ptr<FontPlatformData> createFontPlatformData(const FontDescription&, const AtomString& family, const FontFeatureSettings*, FontSelectionSpecifiedCapabilities);
     
-    static Optional<ASCIILiteral> alternateFamilyName(const String&);
-    static Optional<ASCIILiteral> platformAlternateFamilyName(const String&);
+    static std::optional<ASCIILiteral> alternateFamilyName(const String&);
+    static std::optional<ASCIILiteral> platformAlternateFamilyName(const String&);
 
     Timer m_purgeTimer;
     
@@ -367,7 +367,7 @@ void FontCache::PrewarmInformation::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<FontCache::PrewarmInformation> FontCache::PrewarmInformation::decode(Decoder& decoder)
+std::optional<FontCache::PrewarmInformation> FontCache::PrewarmInformation::decode(Decoder& decoder)
 {
     PrewarmInformation prewarmInformation;
     if (!decoder.decode(prewarmInformation.seenFamilies))

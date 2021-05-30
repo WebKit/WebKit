@@ -90,7 +90,7 @@ private:
     size_t m_sampleBlockBufferSize { 0 };
     size_t m_currentOffsetInSampleBlockBuffer { 0 };
     AudioFormatID m_outputCodecType { kAudioFormatMPEG4AAC };
-    Optional<unsigned> m_outputBitRate;
+    std::optional<unsigned> m_outputBitRate;
 };
 
 }

@@ -60,16 +60,16 @@ struct PublicKeyCredentialCreationOptions {
         int64_t alg;
 
         template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static Optional<Parameters> decode(Decoder&);
+        template<class Decoder> static std::optional<Parameters> decode(Decoder&);
     };
 
     struct AuthenticatorSelectionCriteria {
-        Optional<AuthenticatorAttachment> authenticatorAttachment;
+        std::optional<AuthenticatorAttachment> authenticatorAttachment;
         bool requireResidentKey { false };
         UserVerificationRequirement userVerification { UserVerificationRequirement::Preferred };
 
         template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static Optional<AuthenticatorSelectionCriteria> decode(Decoder&);
+        template<class Decoder> static std::optional<AuthenticatorSelectionCriteria> decode(Decoder&);
     };
 
     RpEntity rp;
@@ -78,14 +78,14 @@ struct PublicKeyCredentialCreationOptions {
     BufferSource challenge;
     Vector<Parameters> pubKeyCredParams;
 
-    Optional<unsigned> timeout;
+    std::optional<unsigned> timeout;
     Vector<PublicKeyCredentialDescriptor> excludeCredentials;
-    Optional<AuthenticatorSelectionCriteria> authenticatorSelection;
+    std::optional<AuthenticatorSelectionCriteria> authenticatorSelection;
     AttestationConveyancePreference attestation;
-    mutable Optional<AuthenticationExtensionsClientInputs> extensions;
+    mutable std::optional<AuthenticationExtensionsClientInputs> extensions;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<PublicKeyCredentialCreationOptions> decode(Decoder&);
+    template<class Decoder> static std::optional<PublicKeyCredentialCreationOptions> decode(Decoder&);
 #endif // ENABLE(WEB_AUTHN)
 };
 
@@ -97,7 +97,7 @@ void PublicKeyCredentialCreationOptions::Parameters::encode(Encoder& encoder) co
 }
 
 template<class Decoder>
-Optional<PublicKeyCredentialCreationOptions::Parameters> PublicKeyCredentialCreationOptions::Parameters::decode(Decoder& decoder)
+std::optional<PublicKeyCredentialCreationOptions::Parameters> PublicKeyCredentialCreationOptions::Parameters::decode(Decoder& decoder)
 {
     PublicKeyCredentialCreationOptions::Parameters result;
     if (!decoder.decode(result.type))
@@ -114,17 +114,17 @@ void PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria::encode(
 }
 
 template<class Decoder>
-Optional<PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria> PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria::decode(Decoder& decoder)
+std::optional<PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria> PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria::decode(Decoder& decoder)
 {
     PublicKeyCredentialCreationOptions::AuthenticatorSelectionCriteria result;
 
-    Optional<Optional<AuthenticatorAttachment>> authenticatorAttachment;
+    std::optional<std::optional<AuthenticatorAttachment>> authenticatorAttachment;
     decoder >> authenticatorAttachment;
     if (!authenticatorAttachment)
         return std::nullopt;
     result.authenticatorAttachment = WTFMove(*authenticatorAttachment);
 
-    Optional<bool> requireResidentKey;
+    std::optional<bool> requireResidentKey;
     decoder >> requireResidentKey;
     if (!requireResidentKey)
         return std::nullopt;
@@ -146,7 +146,7 @@ void PublicKeyCredentialCreationOptions::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<PublicKeyCredentialCreationOptions> PublicKeyCredentialCreationOptions::decode(Decoder& decoder)
+std::optional<PublicKeyCredentialCreationOptions> PublicKeyCredentialCreationOptions::decode(Decoder& decoder)
 {
     PublicKeyCredentialCreationOptions result;
     if (!decoder.decode(result.rp.id))
@@ -166,7 +166,7 @@ Optional<PublicKeyCredentialCreationOptions> PublicKeyCredentialCreationOptions:
     if (!decoder.decode(result.pubKeyCredParams))
         return std::nullopt;
 
-    Optional<Optional<unsigned>> timeout;
+    std::optional<std::optional<unsigned>> timeout;
     decoder >> timeout;
     if (!timeout)
         return std::nullopt;
@@ -175,19 +175,19 @@ Optional<PublicKeyCredentialCreationOptions> PublicKeyCredentialCreationOptions:
     if (!decoder.decode(result.excludeCredentials))
         return std::nullopt;
 
-    Optional<Optional<AuthenticatorSelectionCriteria>> authenticatorSelection;
+    std::optional<std::optional<AuthenticatorSelectionCriteria>> authenticatorSelection;
     decoder >> authenticatorSelection;
     if (!authenticatorSelection)
         return std::nullopt;
     result.authenticatorSelection = WTFMove(*authenticatorSelection);
 
-    Optional<AttestationConveyancePreference> attestation;
+    std::optional<AttestationConveyancePreference> attestation;
     decoder >> attestation;
     if (!attestation)
         return std::nullopt;
     result.attestation = WTFMove(*attestation);
 
-    Optional<Optional<AuthenticationExtensionsClientInputs>> extensions;
+    std::optional<std::optional<AuthenticationExtensionsClientInputs>> extensions;
     decoder >> extensions;
     if (!extensions)
         return std::nullopt;

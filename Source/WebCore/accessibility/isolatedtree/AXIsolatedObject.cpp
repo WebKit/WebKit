@@ -966,7 +966,7 @@ void AXIsolatedObject::updateBackingStore()
         tree->applyPendingChanges();
 }
 
-Optional<SimpleRange> AXIsolatedObject::rangeForPlainTextRange(const PlainTextRange& axRange) const
+std::optional<SimpleRange> AXIsolatedObject::rangeForPlainTextRange(const PlainTextRange& axRange) const
 {
     ASSERT(isMainThread());
     auto* axObject = associatedAXObject();
@@ -1142,7 +1142,7 @@ String AXIsolatedObject::textUnderElement(AccessibilityTextUnderElementMode) con
     return { };
 }
 
-Optional<SimpleRange> AXIsolatedObject::misspellingRange(const SimpleRange& range, AccessibilitySearchDirection direction) const
+std::optional<SimpleRange> AXIsolatedObject::misspellingRange(const SimpleRange& range, AccessibilitySearchDirection direction) const
 {
     ASSERT(isMainThread());
     auto* axObject = associatedAXObject();
@@ -1438,7 +1438,7 @@ void AXIsolatedObject::setSelectedVisiblePositionRange(const VisiblePositionRang
         object->setSelectedVisiblePositionRange(visiblePositionRange);
 }
 
-Optional<SimpleRange> AXIsolatedObject::elementRange() const
+std::optional<SimpleRange> AXIsolatedObject::elementRange() const
 {
     ASSERT(isMainThread());
     auto* axObject = associatedAXObject();

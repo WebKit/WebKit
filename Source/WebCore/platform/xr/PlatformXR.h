@@ -116,7 +116,7 @@ public:
     // when the platform has completed all steps to shut down the XR session.
     virtual bool supportsSessionShutdownNotification() const { return false; }
     virtual void initializeReferenceSpace(ReferenceSpaceType) = 0;
-    virtual Optional<LayerHandle> createLayerProjection(uint32_t width, uint32_t height, bool alpha) = 0;
+    virtual std::optional<LayerHandle> createLayerProjection(uint32_t width, uint32_t height, bool alpha) = 0;
     virtual void deleteLayer(LayerHandle) = 0;
 
     struct FrameData {
@@ -127,7 +127,7 @@ public:
             float w { 1.0f };
 
             template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static Optional<FloatQuaternion> decode(Decoder&);
+            template<class Decoder> static std::optional<FloatQuaternion> decode(Decoder&);
         };
 
         struct Pose {
@@ -135,7 +135,7 @@ public:
             FloatQuaternion orientation;
 
             template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static Optional<Pose> decode(Decoder&);
+            template<class Decoder> static std::optional<Pose> decode(Decoder&);
         };
 
         struct Fov {
@@ -146,7 +146,7 @@ public:
             float right { 0.0f };
 
             template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static Optional<Fov> decode(Decoder&);
+            template<class Decoder> static std::optional<Fov> decode(Decoder&);
         };
 
         static constexpr size_t projectionMatrixSize = 16;
@@ -159,7 +159,7 @@ public:
             Projection projection = { nullptr };
 
             template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static Optional<View> decode(Decoder&);
+            template<class Decoder> static std::optional<View> decode(Decoder&);
         };
 
         struct StageParameters {
@@ -167,7 +167,7 @@ public:
             Vector<WebCore::FloatPoint> bounds;
 
             template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static Optional<StageParameters> decode(Decoder&);
+            template<class Decoder> static std::optional<StageParameters> decode(Decoder&);
         };
 
         struct LayerData {
@@ -177,7 +177,7 @@ public:
 #endif
 
             template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static Optional<LayerData> decode(Decoder&);
+            template<class Decoder> static std::optional<LayerData> decode(Decoder&);
         };
 
         struct InputSourceButton {
@@ -197,7 +197,7 @@ public:
             XRTargetRayMode targetRayMode { XRTargetRayMode::Gaze };
             Vector<String> profiles;
             InputSourcePose pointerOrigin;
-            Optional<InputSourcePose> gripOrigin;
+            std::optional<InputSourcePose> gripOrigin;
             Vector<InputSourceButton> buttons;
             Vector<float> axes;
         };
@@ -208,7 +208,7 @@ public:
         bool shouldRender { false };
         long predictedDisplayTime { 0 };
         Pose origin;
-        Optional<Pose> floorTransform;
+        std::optional<Pose> floorTransform;
         StageParameters stageParameters;
         Vector<View> views;
         HashMap<LayerHandle, LayerData> layers;
@@ -217,7 +217,7 @@ public:
         FrameData copy() const;
 
         template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static Optional<FrameData> decode(Decoder&);
+        template<class Decoder> static std::optional<FrameData> decode(Decoder&);
     };
 
     struct LayerView {
@@ -294,7 +294,7 @@ void Device::FrameData::FloatQuaternion::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<Device::FrameData::FloatQuaternion> Device::FrameData::FloatQuaternion::decode(Decoder& decoder)
+std::optional<Device::FrameData::FloatQuaternion> Device::FrameData::FloatQuaternion::decode(Decoder& decoder)
 {
     Device::FrameData::FloatQuaternion floatQuaternion;
     if (!decoder.decode(floatQuaternion.x))
@@ -315,7 +315,7 @@ void Device::FrameData::Pose::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<Device::FrameData::Pose> Device::FrameData::Pose::decode(Decoder& decoder)
+std::optional<Device::FrameData::Pose> Device::FrameData::Pose::decode(Decoder& decoder)
 {
     Device::FrameData::Pose pose;
     if (!decoder.decode(pose.position))
@@ -332,7 +332,7 @@ void Device::FrameData::Fov::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<Device::FrameData::Fov> Device::FrameData::Fov::decode(Decoder& decoder)
+std::optional<Device::FrameData::Fov> Device::FrameData::Fov::decode(Decoder& decoder)
 {
     Device::FrameData::Fov fov;
     if (!decoder.decode(fov.up))
@@ -370,7 +370,7 @@ void Device::FrameData::View::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<Device::FrameData::View> Device::FrameData::View::decode(Decoder& decoder)
+std::optional<Device::FrameData::View> Device::FrameData::View::decode(Decoder& decoder)
 {
     PlatformXR::Device::FrameData::View view;
     if (!decoder.decode(view.offset))
@@ -416,7 +416,7 @@ void Device::FrameData::StageParameters::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<Device::FrameData::StageParameters> Device::FrameData::StageParameters::decode(Decoder& decoder)
+std::optional<Device::FrameData::StageParameters> Device::FrameData::StageParameters::decode(Decoder& decoder)
 {
     PlatformXR::Device::FrameData::StageParameters stageParameters;
     if (!decoder.decode(stageParameters.id))
@@ -437,7 +437,7 @@ void Device::FrameData::LayerData::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<Device::FrameData::LayerData> Device::FrameData::LayerData::decode(Decoder& decoder)
+std::optional<Device::FrameData::LayerData> Device::FrameData::LayerData::decode(Decoder& decoder)
 {
     PlatformXR::Device::FrameData::LayerData layerData;
     if (!decoder.decode(layerData.opaqueTexture))
@@ -467,7 +467,7 @@ void Device::FrameData::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<Device::FrameData> Device::FrameData::decode(Decoder& decoder)
+std::optional<Device::FrameData> Device::FrameData::decode(Decoder& decoder)
 {
     PlatformXR::Device::FrameData frameData;
     if (!decoder.decode(frameData.isTrackingValid))

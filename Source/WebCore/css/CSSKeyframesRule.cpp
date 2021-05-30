@@ -105,7 +105,7 @@ void StyleRuleKeyframes::wrapperRemoveKeyframe(unsigned index)
     m_keyframes.remove(index);
 }
 
-Optional<size_t> StyleRuleKeyframes::findKeyframeIndex(const String& key) const
+std::optional<size_t> StyleRuleKeyframes::findKeyframeIndex(const String& key) const
 {
     parseDeferredRulesIfNeeded();
     auto keys = CSSParser::parseKeyframeKeyList(key);

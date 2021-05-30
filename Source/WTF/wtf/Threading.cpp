@@ -43,7 +43,7 @@ namespace WTF {
 
 Lock Thread::s_allThreadsLock;
 
-static Optional<size_t> stackSize(ThreadType threadType)
+static std::optional<size_t> stackSize(ThreadType threadType)
 {
     // Return the stack size for the created thread based on its type.
     // If the stack size is not specified, then use the system default. Platforms can tune the values here.

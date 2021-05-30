@@ -38,7 +38,7 @@ int Theme::baselinePositionAdjustment(ControlPart) const
     return 0;
 }
 
-Optional<FontCascadeDescription> Theme::controlFont(ControlPart, const FontCascade&, float) const
+std::optional<FontCascadeDescription> Theme::controlFont(ControlPart, const FontCascade&, float) const
 {
     return std::nullopt;
 }

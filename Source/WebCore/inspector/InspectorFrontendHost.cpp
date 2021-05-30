@@ -175,7 +175,7 @@ void InspectorFrontendHost::loaded()
         m_client->frontendLoaded();
 }
 
-static Optional<InspectorFrontendClient::DockSide> dockSideFromString(const String& dockSideString)
+static std::optional<InspectorFrontendClient::DockSide> dockSideFromString(const String& dockSideString)
 {
     if (dockSideString == "undocked")
         return InspectorFrontendClient::DockSide::Undocked;
@@ -603,7 +603,7 @@ bool InspectorFrontendHost::showCertificate(const String& serializedCertificate)
         return false;
 
     WTF::Persistence::Decoder decoder(data->data(), data->size());
-    Optional<CertificateInfo> certificateInfo;
+    std::optional<CertificateInfo> certificateInfo;
     decoder >> certificateInfo;
     if (!certificateInfo)
         return false;
@@ -630,7 +630,7 @@ bool InspectorFrontendHost::diagnosticLoggingAvailable()
     return m_client && m_client->diagnosticLoggingAvailable();
 }
 
-static Optional<DiagnosticLoggingClient::ValuePayload> valuePayloadFromJSONValue(Ref<JSON::Value>&& value)
+static std::optional<DiagnosticLoggingClient::ValuePayload> valuePayloadFromJSONValue(Ref<JSON::Value>&& value)
 {
     switch (value->type()) {
     case JSON::Value::Type::Array:

@@ -37,9 +37,9 @@ void Coder<AtomString>::encode(Encoder& encoder, const AtomString& atomString)
     encoder << atomString.string();
 }
 
-Optional<AtomString> Coder<AtomString>::decode(Decoder& decoder)
+std::optional<AtomString> Coder<AtomString>::decode(Decoder& decoder)
 {
-    Optional<String> string;
+    std::optional<String> string;
     decoder >> string;
     if (!string)
         return std::nullopt;
@@ -60,9 +60,9 @@ void Coder<CString>::encode(Encoder& encoder, const CString& string)
     encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.data()), length);
 }
 
-Optional<CString> Coder<CString>::decode(Decoder& decoder)
+std::optional<CString> Coder<CString>::decode(Decoder& decoder)
 {
-    Optional<uint32_t> length;
+    std::optional<uint32_t> length;
     decoder >> length;
     if (!length)
         return std::nullopt;
@@ -104,7 +104,7 @@ void Coder<String>::encode(Encoder& encoder, const String& string)
 }
 
 template <typename CharacterType>
-static inline Optional<String> decodeStringText(Decoder& decoder, uint32_t length)
+static inline std::optional<String> decodeStringText(Decoder& decoder, uint32_t length)
 {
     // Before allocating the string, make sure that the decoder buffer is big enough.
     if (!decoder.bufferIsLargeEnoughToContain<CharacterType>(length))
@@ -118,9 +118,9 @@ static inline Optional<String> decodeStringText(Decoder& decoder, uint32_t lengt
     return string;
 }
 
-Optional<String> Coder<String>::decode(Decoder& decoder)
+std::optional<String> Coder<String>::decode(Decoder& decoder)
 {
-    Optional<uint32_t> length;
+    std::optional<uint32_t> length;
     decoder >> length;
     if (!length)
         return std::nullopt;
@@ -130,7 +130,7 @@ Optional<String> Coder<String>::decode(Decoder& decoder)
         return String();
     }
 
-    Optional<bool> is8Bit;
+    std::optional<bool> is8Bit;
     decoder >> is8Bit;
     if (!is8Bit)
         return std::nullopt;
@@ -145,7 +145,7 @@ void Coder<SHA1::Digest>::encode(Encoder& encoder, const SHA1::Digest& digest)
     encoder.encodeFixedLengthData(digest.data(), sizeof(digest));
 }
 
-Optional<SHA1::Digest> Coder<SHA1::Digest>::decode(Decoder& decoder)
+std::optional<SHA1::Digest> Coder<SHA1::Digest>::decode(Decoder& decoder)
 {
     SHA1::Digest tmp;
     if (!decoder.decodeFixedLengthData(tmp.data(), sizeof(tmp)))

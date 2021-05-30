@@ -157,7 +157,7 @@ struct MeasureUnit {
     ASCIILiteral subType;
 };
 
-static Optional<MeasureUnit> sanctionedSimpleUnitIdentifier(StringView unitIdentifier)
+static std::optional<MeasureUnit> sanctionedSimpleUnitIdentifier(StringView unitIdentifier)
 {
     static constexpr MeasureUnit simpleUnits[] = {
         { "area"_s, "acre"_s },
@@ -233,10 +233,10 @@ public:
     }
 
     MeasureUnit numerator;
-    Optional<MeasureUnit> denominator;
+    std::optional<MeasureUnit> denominator;
 };
 
-static Optional<WellFormedUnit> wellFormedUnitIdentifier(StringView unitIdentifier)
+static std::optional<WellFormedUnit> wellFormedUnitIdentifier(StringView unitIdentifier)
 {
     // https://tc39.es/ecma402/#sec-iswellformedunitidentifier
     if (auto unit = sanctionedSimpleUnitIdentifier(unitIdentifier))
@@ -335,7 +335,7 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
 
     String unit = intlStringOption(globalObject, options, Identifier::fromString(vm, "unit"), { }, nullptr, nullptr);
     RETURN_IF_EXCEPTION(scope, void());
-    Optional<WellFormedUnit> wellFormedUnit;
+    std::optional<WellFormedUnit> wellFormedUnit;
     if (!unit.isNull()) {
         wellFormedUnit = wellFormedUnitIdentifier(unit);
         if (!wellFormedUnit) {

@@ -39,7 +39,7 @@ namespace WebCore {
 
 enum class KeyPathType { Null, String, Array };
 
-RefPtr<SharedBuffer> serializeIDBKeyPath(const Optional<IDBKeyPath>& keyPath)
+RefPtr<SharedBuffer> serializeIDBKeyPath(const std::optional<IDBKeyPath>& keyPath)
 {
     auto encoder = KeyedEncoder::encoder();
 
@@ -60,7 +60,7 @@ RefPtr<SharedBuffer> serializeIDBKeyPath(const Optional<IDBKeyPath>& keyPath)
     return encoder->finishEncoding();
 }
 
-bool deserializeIDBKeyPath(const uint8_t* data, size_t size, Optional<IDBKeyPath>& result)
+bool deserializeIDBKeyPath(const uint8_t* data, size_t size, std::optional<IDBKeyPath>& result)
 {
     if (!data || !size)
         return false;

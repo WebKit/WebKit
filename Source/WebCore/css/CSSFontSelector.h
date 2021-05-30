@@ -100,7 +100,7 @@ private:
 
     void opportunisticallyStartFontDataURLLoading(const FontCascadeDescription&, const AtomString& family) final;
 
-    Optional<AtomString> resolveGenericFamily(const FontDescription&, const AtomString& family);
+    std::optional<AtomString> resolveGenericFamily(const FontDescription&, const AtomString& family);
 
     // CSSFontFace::Client
     void fontLoaded(CSSFontFace&) final;

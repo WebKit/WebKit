@@ -473,7 +473,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
         if (disassembler)
             disassembler->startBlock(block, *m_jit);
 
-        if (Optional<unsigned> entrypointIndex = m_code.entrypointIndex(block)) {
+        if (std::optional<unsigned> entrypointIndex = m_code.entrypointIndex(block)) {
             ASSERT(m_code.isEntrypoint(block));
             if (disassembler)
                 disassembler->startEntrypoint(*m_jit); 

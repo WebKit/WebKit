@@ -91,7 +91,7 @@ private:
     bool m_isActive { false };
     MediaTime m_minimumUpcomingPresentationTime;
     Vector<String> m_enqueuedSamples;
-    Optional<uint64_t> m_maxQueueDepth;
+    std::optional<uint64_t> m_maxQueueDepth;
     Vector<char> m_inputBuffer;
 
 #if !RELEASE_LOG_DISABLED

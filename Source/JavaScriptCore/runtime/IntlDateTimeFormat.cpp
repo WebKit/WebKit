@@ -562,7 +562,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
             localeOptions[static_cast<unsigned>(RelevantExtensionKey::Hc)] = String(hourCycleString(hourCycle));
     } else {
         // If there is hour12, hourCycle is ignored.
-        // We are setting null String explicitly here (localeOptions' entries are Optional<String>). This leads us to use HourCycle::None later.
+        // We are setting null String explicitly here (localeOptions' entries are std::optional<String>). This leads us to use HourCycle::None later.
         localeOptions[static_cast<unsigned>(RelevantExtensionKey::Hc)] = String();
     }
 

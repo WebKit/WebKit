@@ -63,7 +63,7 @@ void DateTimeFieldElement::initialize(const AtomString& pseudo)
     setPseudo(pseudo);
 }
 
-Optional<Style::ElementStyle> DateTimeFieldElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle)
+std::optional<Style::ElementStyle> DateTimeFieldElement::resolveCustomStyle(const RenderStyle& parentStyle, const RenderStyle* shadowHostStyle)
 {
     auto elementStyle = resolveStyle(&parentStyle);
     if (!elementStyle.renderStyle)

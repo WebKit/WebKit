@@ -39,12 +39,12 @@ enum class HighlightRequestOriginatedInApp : bool { No, Yes };
 
 struct AppHighlight {
     Ref<WebCore::SharedBuffer> highlight;
-    Optional<String> text;
+    std::optional<String> text;
     CreateNewGroupForHighlight isNewGroup;
     HighlightRequestOriginatedInApp requestOriginatedInApp;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<AppHighlight> decode(Decoder&);
+    template<class Decoder> static std::optional<AppHighlight> decode(Decoder&);
 };
 
 
@@ -62,10 +62,10 @@ void AppHighlight::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<AppHighlight> AppHighlight::decode(Decoder& decoder)
+std::optional<AppHighlight> AppHighlight::decode(Decoder& decoder)
 {
 
-    Optional<size_t> length;
+    std::optional<size_t> length;
     decoder >> length;
     if (!length)
         return std::nullopt;
@@ -78,7 +78,7 @@ Optional<AppHighlight> AppHighlight::decode(Decoder& decoder)
     if (!decoder.decodeFixedLengthData(highlight.data(), highlight.size(), 1))
         return std::nullopt;
 
-    Optional<Optional<String>> text;
+    std::optional<std::optional<String>> text;
     decoder >> text;
     if (!text)
         return std::nullopt;

@@ -94,9 +94,9 @@ namespace WebCore {
         bool handledByInputMethod() const { return m_handledByInputMethod; }
 #endif
 #if PLATFORM(GTK) || USE(LIBWPE)
-        const Optional<Vector<WebCore::CompositionUnderline>>& preeditUnderlines() const { return m_preeditUnderlines; }
-        const Optional<uint64_t>& preeditSelectionRangeStart() const { return m_preeditSelectionRangeStart; }
-        const Optional<uint64_t>& preeditSelectionRangeLength() const { return m_preeditSelectionRangeLength; }
+        const std::optional<Vector<WebCore::CompositionUnderline>>& preeditUnderlines() const { return m_preeditUnderlines; }
+        const std::optional<uint64_t>& preeditSelectionRangeStart() const { return m_preeditSelectionRangeStart; }
+        const std::optional<uint64_t>& preeditSelectionRangeLength() const { return m_preeditSelectionRangeLength; }
 #endif
 #if USE(APPKIT)
         const Vector<KeypressCommand>& commands() const { return m_commands; }
@@ -163,9 +163,9 @@ namespace WebCore {
         bool m_handledByInputMethod { false };
 #endif
 #if PLATFORM(GTK) || USE(LIBWPE)
-        Optional<Vector<WebCore::CompositionUnderline>> m_preeditUnderlines;
-        Optional<uint64_t> m_preeditSelectionRangeStart;
-        Optional<uint64_t> m_preeditSelectionRangeLength;
+        std::optional<Vector<WebCore::CompositionUnderline>> m_preeditUnderlines;
+        std::optional<uint64_t> m_preeditSelectionRangeStart;
+        std::optional<uint64_t> m_preeditSelectionRangeLength;
 #endif
 #if USE(APPKIT)
         Vector<KeypressCommand> m_commands;
@@ -181,7 +181,7 @@ namespace WebCore {
 #endif
 #endif
         // The modifier state is optional, since it is not needed in the UI process or in legacy WebKit.
-        static Optional<OptionSet<Modifier>> s_currentModifiers;
+        static std::optional<OptionSet<Modifier>> s_currentModifiers;
     };
     
 } // namespace WebCore

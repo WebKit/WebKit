@@ -33,12 +33,12 @@ namespace WebCore {
 struct AudioConfiguration {
     String contentType;
     String channels;
-    Optional<uint64_t> bitrate;
-    Optional<uint32_t> samplerate;
-    Optional<bool> spatialRendering;
+    std::optional<uint64_t> bitrate;
+    std::optional<uint32_t> samplerate;
+    std::optional<bool> spatialRendering;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<AudioConfiguration> decode(Decoder&);
+    template<class Decoder> static std::optional<AudioConfiguration> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -52,29 +52,29 @@ void AudioConfiguration::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<AudioConfiguration> AudioConfiguration::decode(Decoder& decoder)
+std::optional<AudioConfiguration> AudioConfiguration::decode(Decoder& decoder)
 {
-    Optional<String> contentType;
+    std::optional<String> contentType;
     decoder >> contentType;
     if (!contentType)
         return std::nullopt;
 
-    Optional<String> channels;
+    std::optional<String> channels;
     decoder >> channels;
     if (!channels)
         return std::nullopt;
 
-    Optional<Optional<uint64_t>> bitrate;
+    std::optional<std::optional<uint64_t>> bitrate;
     decoder >> bitrate;
     if (!bitrate)
         return std::nullopt;
 
-    Optional<Optional<uint32_t>> sampleRate;
+    std::optional<std::optional<uint32_t>> sampleRate;
     decoder >> sampleRate;
     if (!sampleRate)
         return std::nullopt;
 
-    Optional<Optional<bool>> spatialRendering;
+    std::optional<std::optional<bool>> spatialRendering;
     decoder >> spatialRendering;
     if (!spatialRendering)
         return std::nullopt;

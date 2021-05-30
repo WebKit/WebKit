@@ -401,7 +401,7 @@ static Vector<hb_feature_t, 4> fontFeatures(const FontCascade& font, const FontP
     return features;
 }
 
-static Optional<UScriptCode> characterScript(UChar32 character)
+static std::optional<UScriptCode> characterScript(UChar32 character)
 {
     UErrorCode errorCode = U_ZERO_ERROR;
     UScriptCode script = uscript_getScript(character, &errorCode);
@@ -416,7 +416,7 @@ struct HBRun {
     UScriptCode script;
 };
 
-static Optional<HBRun> findNextRun(const UChar* characters, unsigned length, unsigned offset)
+static std::optional<HBRun> findNextRun(const UChar* characters, unsigned length, unsigned offset)
 {
     SurrogatePairAwareTextIterator textIterator(characters + offset, offset, length, length);
     UChar32 character;
@@ -456,10 +456,10 @@ static Optional<HBRun> findNextRun(const UChar* characters, unsigned length, uns
         }
 
         if (currentScript != nextScript && !uscript_hasScript(character, currentScript.value()))
-            return Optional<HBRun>({ startIndex, textIterator.currentIndex(), currentScript.value() });
+            return std::optional<HBRun>({ startIndex, textIterator.currentIndex(), currentScript.value() });
     }
 
-    return Optional<HBRun>({ startIndex, textIterator.currentIndex(), currentScript.value() });
+    return std::optional<HBRun>({ startIndex, textIterator.currentIndex(), currentScript.value() });
 }
 
 static hb_script_t findScriptForVerticalGlyphSubstitution(hb_face_t* face)

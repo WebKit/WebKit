@@ -196,7 +196,7 @@ enum Intrinsic : uint8_t {
     WasmFunctionIntrinsic,
 };
 
-Optional<IterationKind> interationKindForIntrinsic(Intrinsic);
+std::optional<IterationKind> interationKindForIntrinsic(Intrinsic);
 
 const char* intrinsicName(Intrinsic);
 

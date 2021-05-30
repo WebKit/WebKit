@@ -67,7 +67,7 @@
 namespace WebCore {
 using namespace JSC;
 
-static Element* elementOrPseudoElementForStyleable(const Optional<const Styleable>& styleable)
+static Element* elementOrPseudoElementForStyleable(const std::optional<const Styleable>& styleable)
 {
     if (!styleable)
         return nullptr;
@@ -82,7 +82,7 @@ static Element* elementOrPseudoElementForStyleable(const Optional<const Styleabl
     }
 }
 
-static inline void invalidateElement(const Optional<const Styleable>& styleable)
+static inline void invalidateElement(const std::optional<const Styleable>& styleable)
 {
     if (auto* elementOrPseudoElement = elementOrPseudoElementForStyleable(styleable))
         elementOrPseudoElement->invalidateStyleInternal();
@@ -137,7 +137,7 @@ static inline void computeMissingKeyframeOffsets(Vector<KeyframeEffect::ParsedKe
         return;
 
     // 1. For each keyframe, in keyframes, let the computed keyframe offset of the keyframe be equal to its keyframe offset value.
-    // In our implementation, we only set non-null values to avoid making computedOffset Optional<double>. Instead, we'll know
+    // In our implementation, we only set non-null values to avoid making computedOffset std::optional<double>. Instead, we'll know
     // that a keyframe hasn't had a computed offset by checking if it has a null offset and a 0 computedOffset, since the first
     // keyframe will already have a 0 computedOffset.
     for (auto& keyframe : keyframes) {
@@ -436,9 +436,9 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
     // 5. Let offsets be a sequence of nullable double values assigned based on the type of the “offset” member of the property-indexed keyframe as follows:
     //    - sequence<double?>, the value of “offset” as-is.
     //    - double?, a sequence of length one with the value of “offset” as its single item, i.e. « offset »,
-    Vector<Optional<double>> offsets;
-    if (WTF::holds_alternative<Vector<Optional<double>>>(propertyIndexedKeyframe.baseProperties.offset))
-        offsets = WTF::get<Vector<Optional<double>>>(propertyIndexedKeyframe.baseProperties.offset);
+    Vector<std::optional<double>> offsets;
+    if (WTF::holds_alternative<Vector<std::optional<double>>>(propertyIndexedKeyframe.baseProperties.offset))
+        offsets = WTF::get<Vector<std::optional<double>>>(propertyIndexedKeyframe.baseProperties.offset);
     else if (WTF::holds_alternative<double>(propertyIndexedKeyframe.baseProperties.offset))
         offsets.append(WTF::get<double>(propertyIndexedKeyframe.baseProperties.offset));
     else if (WTF::holds_alternative<std::nullptr_t>(propertyIndexedKeyframe.baseProperties.offset))
@@ -507,7 +507,7 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(JSGlobalObject& 
     return { };
 }
 
-ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalGlobalObject, Element* target, Strong<JSObject>&& keyframes, Optional<Variant<double, KeyframeEffectOptions>>&& options)
+ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalGlobalObject, Element* target, Strong<JSObject>&& keyframes, std::optional<Variant<double, KeyframeEffectOptions>>&& options)
 {
     auto keyframeEffect = adoptRef(*new KeyframeEffect(target, PseudoId::None));
 
@@ -1148,7 +1148,7 @@ void KeyframeEffect::setAnimation(WebAnimation* animation)
     updateEffectStackMembership();
 }
 
-const Optional<const Styleable> KeyframeEffect::targetStyleable() const
+const std::optional<const Styleable> KeyframeEffect::targetStyleable() const
 {
     if (m_target)
         return Styleable(*m_target, m_pseudoId);
@@ -1230,7 +1230,7 @@ ExceptionOr<void> KeyframeEffect::setPseudoElement(const String& pseudoElement)
     return { };
 }
 
-void KeyframeEffect::didChangeTargetStyleable(const Optional<const Styleable>& previousTargetStyleable)
+void KeyframeEffect::didChangeTargetStyleable(const std::optional<const Styleable>& previousTargetStyleable)
 {
     auto newTargetStyleable = targetStyleable();
 
@@ -1265,7 +1265,7 @@ void KeyframeEffect::didChangeTargetStyleable(const Optional<const Styleable>& p
         m_inTargetEffectStack = newTargetStyleable->ensureKeyframeEffectStack().addEffect(*this);
 }
 
-void KeyframeEffect::apply(RenderStyle& targetStyle, const RenderStyle* parentElementStyle, Optional<Seconds> startTime)
+void KeyframeEffect::apply(RenderStyle& targetStyle, const RenderStyle* parentElementStyle, std::optional<Seconds> startTime)
 {
     if (!m_target)
         return;
@@ -1444,7 +1444,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
         // 6. Remove any keyframes from property-specific keyframes that do not have a property value for target property.
         unsigned numberOfKeyframesWithZeroOffset = 0;
         unsigned numberOfKeyframesWithOneOffset = 0;
-        Vector<Optional<size_t>> propertySpecificKeyframes;
+        Vector<std::optional<size_t>> propertySpecificKeyframes;
         for (size_t i = 0; i < m_blendingKeyframes.size(); ++i) {
             auto& keyframe = m_blendingKeyframes[i];
             auto offset = keyframe.key();
@@ -1482,7 +1482,7 @@ void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, doub
         }
 
         // 10. Let interval endpoints be an empty sequence of keyframes.
-        Vector<Optional<size_t>> intervalEndpoints;
+        Vector<std::optional<size_t>> intervalEndpoints;
 
         // 11. Populate interval endpoints by following the steps from the first matching condition from below:
         if (iterationProgress < 0 && numberOfKeyframesWithZeroOffset > 1) {
@@ -1997,7 +1997,7 @@ bool KeyframeEffect::requiresPseudoElement() const
     return m_blendingKeyframesSource == BlendingKeyframesSource::WebAnimation && targetsPseudoElement();
 }
 
-Optional<double> KeyframeEffect::progressUntilNextStep(double iterationProgress) const
+std::optional<double> KeyframeEffect::progressUntilNextStep(double iterationProgress) const
 {
     ASSERT(iterationProgress >= 0 && iterationProgress <= 1);
 
@@ -2010,7 +2010,7 @@ Optional<double> KeyframeEffect::progressUntilNextStep(double iterationProgress)
     if (m_blendingKeyframes.isEmpty())
         return std::nullopt;
 
-    auto progressUntilNextStepInInterval = [iterationProgress](double intervalStartProgress, double intervalEndProgress, TimingFunction* timingFunction) -> Optional<double> {
+    auto progressUntilNextStepInInterval = [iterationProgress](double intervalStartProgress, double intervalEndProgress, TimingFunction* timingFunction) -> std::optional<double> {
         if (!is<StepsTimingFunction>(timingFunction))
             return std::nullopt;
 

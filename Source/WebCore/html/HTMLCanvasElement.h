@@ -73,7 +73,7 @@ public:
     void setSize(const IntSize& newSize) override;
 
     CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
-    ExceptionOr<Optional<RenderingContext>> getContext(JSC::JSGlobalObject&, const String& contextId, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
+    ExceptionOr<std::optional<RenderingContext>> getContext(JSC::JSGlobalObject&, const String& contextId, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
 
     CanvasRenderingContext* getContext(const String&);
 
@@ -107,13 +107,13 @@ public:
 #endif
 
     // Used for rendering
-    void didDraw(const Optional<FloatRect>&) final;
+    void didDraw(const std::optional<FloatRect>&) final;
 
     void paint(GraphicsContext&, const LayoutRect&);
 
 #if ENABLE(MEDIA_STREAM)
     RefPtr<MediaSample> toMediaSample();
-    ExceptionOr<Ref<MediaStream>> captureStream(Document&, Optional<double>&& frameRequestRate);
+    ExceptionOr<Ref<MediaStream>> captureStream(Document&, std::optional<double>&& frameRequestRate);
 #endif
 
     Image* copiedImage() const final;
@@ -186,7 +186,7 @@ private:
     std::unique_ptr<CanvasRenderingContext> m_context;
     mutable RefPtr<Image> m_copiedImage; // FIXME: This is temporary for platforms that have to copy the image buffer to render (and for CSSCanvasValue).
 
-    Optional<bool> m_usesDisplayListDrawing;
+    std::optional<bool> m_usesDisplayListDrawing;
     bool m_tracksDisplayListReplay { false };
 
     bool m_ignoreReset { false };

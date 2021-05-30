@@ -134,7 +134,7 @@ TCPServer::TCPServer(Function<void(Socket)>&& connectionHandler, size_t connecti
 }
 
 #if HAVE(SSL)
-void TCPServer::startSecureConnection(Socket socket, Function<void(SSL*)>&& secureConnectionHandler, bool requestClientCertificate, Optional<uint16_t> maxTLSVersion)
+void TCPServer::startSecureConnection(Socket socket, Function<void(SSL*)>&& secureConnectionHandler, bool requestClientCertificate, std::optional<uint16_t> maxTLSVersion)
 {
     SSL_library_init();
 
@@ -206,7 +206,7 @@ void TCPServer::startSecureConnection(Socket socket, Function<void(SSL*)>&& secu
     secureConnectionHandler(acceptResult > 0 ? ssl.get() : nullptr);
 };
 
-TCPServer::TCPServer(Protocol protocol, Function<void(SSL*)>&& secureConnectionHandler, Optional<uint16_t> maxTLSVersion, size_t connections)
+TCPServer::TCPServer(Protocol protocol, Function<void(SSL*)>&& secureConnectionHandler, std::optional<uint16_t> maxTLSVersion, size_t connections)
 {
     switch (protocol) {
     case Protocol::HTTPS:
@@ -259,7 +259,7 @@ TCPServer::~TCPServer()
         connectionThreads.join();
 }
 
-auto TCPServer::socketBindListen(size_t connections) -> Optional<Socket>
+auto TCPServer::socketBindListen(size_t connections) -> std::optional<Socket>
 {
     Socket listeningSocket = socket(PF_INET, SOCK_STREAM, 0);
     if (listeningSocket == -1)

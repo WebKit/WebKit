@@ -62,7 +62,7 @@ const FloatLine FloatLine::extendedToBounds(const FloatRect& bounds) const
     return { left, right };
 }
 
-const Optional<FloatPoint> FloatLine::intersectionWith(const FloatLine& otherLine) const
+const std::optional<FloatPoint> FloatLine::intersectionWith(const FloatLine& otherLine) const
 {
     float denominator = ((m_start.x() - m_end.x()) * (otherLine.start().y() - otherLine.end().y())) - ((m_start.y() - m_end.y()) * (otherLine.start().x() - otherLine.end().x()));
     

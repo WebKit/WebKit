@@ -97,7 +97,7 @@ public:
     virtual void removeMutedStateObserver(MutedStateObserver*) { }
 
     virtual void audioOutputDeviceChanged();
-    virtual void setIsPlayingToBluetoothOverride(Optional<bool>);
+    virtual void setIsPlayingToBluetoothOverride(std::optional<bool>);
 
     virtual bool isMuted() const { return false; }
     virtual void handleMutedStateChange() { }

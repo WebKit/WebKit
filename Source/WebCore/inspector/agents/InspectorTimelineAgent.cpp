@@ -131,7 +131,7 @@ Protocol::ErrorStringOr<void> InspectorTimelineAgent::disable()
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorTimelineAgent::start(Optional<int>&& maxCallStackDepth)
+Protocol::ErrorStringOr<void> InspectorTimelineAgent::start(std::optional<int>&& maxCallStackDepth)
 {
     m_trackingFromFrontend = true;
 
@@ -178,7 +178,7 @@ Protocol::ErrorStringOr<void> InspectorTimelineAgent::setInstruments(Ref<JSON::A
     return { };
 }
 
-void InspectorTimelineAgent::internalStart(Optional<int>&& maxCallStackDepth)
+void InspectorTimelineAgent::internalStart(std::optional<int>&& maxCallStackDepth)
 {
     if (m_tracking)
         return;

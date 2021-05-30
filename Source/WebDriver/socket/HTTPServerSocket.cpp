@@ -29,7 +29,7 @@
 
 namespace WebDriver {
 
-bool HTTPServer::listen(const Optional<String>& host, unsigned port)
+bool HTTPServer::listen(const std::optional<String>& host, unsigned port)
 {
     auto& endpoint = RemoteInspectorSocketEndpoint::singleton();
 
@@ -46,7 +46,7 @@ void HTTPServer::disconnect()
     endpoint.disconnect(m_server.value());
 }
 
-Optional<ConnectionID> HTTPServer::doAccept(RemoteInspectorSocketEndpoint& endpoint, PlatformSocketType socket)
+std::optional<ConnectionID> HTTPServer::doAccept(RemoteInspectorSocketEndpoint& endpoint, PlatformSocketType socket)
 {
     if (auto id = endpoint.createClient(socket, m_requestHandler)) {
         m_requestHandler.connect(id.value());

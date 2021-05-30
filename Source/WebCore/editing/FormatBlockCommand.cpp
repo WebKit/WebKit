@@ -100,7 +100,7 @@ void FormatBlockCommand::formatRange(const Position& start, const Position& end,
         insertBlockPlaceholder(lastParagraphInBlockNode);
 }
     
-Element* FormatBlockCommand::elementForFormatBlockCommand(const Optional<SimpleRange>& range)
+Element* FormatBlockCommand::elementForFormatBlockCommand(const std::optional<SimpleRange>& range)
 {
     if (!range)
         return nullptr;

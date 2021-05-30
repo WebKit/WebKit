@@ -45,14 +45,14 @@ void URLSchemeTaskParameters::encode(IPC::Encoder& encoder) const
     encoder << frameInfo;
 }
 
-Optional<URLSchemeTaskParameters> URLSchemeTaskParameters::decode(IPC::Decoder& decoder)
+std::optional<URLSchemeTaskParameters> URLSchemeTaskParameters::decode(IPC::Decoder& decoder)
 {
-    Optional<uint64_t> handlerIdentifier;
+    std::optional<uint64_t> handlerIdentifier;
     decoder >> handlerIdentifier;
     if (!handlerIdentifier)
         return std::nullopt;
     
-    Optional<uint64_t> taskIdentifier;
+    std::optional<uint64_t> taskIdentifier;
     decoder >> taskIdentifier;
     if (!taskIdentifier)
         return std::nullopt;
@@ -61,7 +61,7 @@ Optional<URLSchemeTaskParameters> URLSchemeTaskParameters::decode(IPC::Decoder& 
     if (!decoder.decode(request))
         return std::nullopt;
 
-    Optional<bool> hasHTTPBody;
+    std::optional<bool> hasHTTPBody;
     decoder >> hasHTTPBody;
     if (!hasHTTPBody)
         return std::nullopt;
@@ -72,7 +72,7 @@ Optional<URLSchemeTaskParameters> URLSchemeTaskParameters::decode(IPC::Decoder& 
         request.setHTTPBody(WTFMove(formData));
     }
     
-    Optional<FrameInfoData> frameInfo;
+    std::optional<FrameInfoData> frameInfo;
     decoder >> frameInfo;
     if (!frameInfo)
         return std::nullopt;

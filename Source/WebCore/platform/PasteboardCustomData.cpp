@@ -97,23 +97,23 @@ PasteboardCustomData PasteboardCustomData::fromPersistenceDecoder(WTF::Persisten
     constexpr unsigned maxSupportedDataSerializationVersionNumber = 1;
 
     PasteboardCustomData result;
-    Optional<unsigned> version;
+    std::optional<unsigned> version;
     decoder >> version;
     if (!version || *version > maxSupportedDataSerializationVersionNumber)
         return { };
 
-    Optional<String> origin;
+    std::optional<String> origin;
     decoder >> origin;
     if (!origin)
         return { };
     result.m_origin = WTFMove(*origin);
 
-    Optional<HashMap<String, String>> sameOriginCustomStringData;
+    std::optional<HashMap<String, String>> sameOriginCustomStringData;
     decoder >> sameOriginCustomStringData;
     if (!sameOriginCustomStringData)
         return { };
 
-    Optional<Vector<String>> orderedTypes;
+    std::optional<Vector<String>> orderedTypes;
     decoder >> orderedTypes;
     if (!orderedTypes)
         return { };

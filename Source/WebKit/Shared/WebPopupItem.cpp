@@ -76,7 +76,7 @@ void WebPopupItem::encode(IPC::Encoder& encoder) const
     encoder << m_isSelected;
 }
 
-Optional<WebPopupItem> WebPopupItem::decode(IPC::Decoder& decoder)
+std::optional<WebPopupItem> WebPopupItem::decode(IPC::Decoder& decoder)
 {
     Type type;
     if (!decoder.decode(type))

@@ -64,7 +64,7 @@ struct GPURenderPassDepthStencilAttachmentDescriptor final : GPURenderPassDepthS
 
 struct GPURenderPassDescriptor {
     Vector<GPURenderPassColorAttachmentDescriptor> colorAttachments;
-    Optional<GPURenderPassDepthStencilAttachmentDescriptor> depthStencilAttachment;
+    std::optional<GPURenderPassDepthStencilAttachmentDescriptor> depthStencilAttachment;
 };
 
 } // namespace WebCore

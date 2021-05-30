@@ -173,7 +173,7 @@ private:
     // Ensure there are no async calls on a dead tile cache.
     RetainPtr<LegacyTileCacheTombstone> m_tombstone;
 
-    Optional<FloatRect> m_overrideVisibleRect;
+    std::optional<FloatRect> m_overrideVisibleRect;
 
     IntSize m_tileSize { 512, 512 };
     

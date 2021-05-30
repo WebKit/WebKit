@@ -38,7 +38,7 @@ public:
     ~OpenXRInputSource();
 
     XrResult suggestBindings(SuggestedBindings&) const;
-    Optional<Device::FrameData::InputSource> getInputSource(XrSpace, const XrFrameState&) const;
+    std::optional<Device::FrameData::InputSource> getInputSource(XrSpace, const XrFrameState&) const;
     XrActionSet actionSet() const { return m_actionSet; }
     XrResult updateInteractionProfile();
 
@@ -58,8 +58,8 @@ private:
     XrResult createBinding(const char* profilePath, XrAction, const String& bindingPath, SuggestedBindings&) const;
 
     XrResult getPose(XrSpace, XrSpace, const XrFrameState&, Device::FrameData::InputSourcePose&) const;
-    Optional<Device::FrameData::InputSourceButton> getButton(OpenXRButtonType) const;
-    Optional<XrVector2f> getAxis(OpenXRAxisType) const;
+    std::optional<Device::FrameData::InputSourceButton> getButton(OpenXRButtonType) const;
+    std::optional<XrVector2f> getAxis(OpenXRAxisType) const;
     XrResult getActionState(XrAction, bool*) const;
     XrResult getActionState(XrAction, float*) const;
     XrResult getActionState(XrAction, XrVector2f*) const;

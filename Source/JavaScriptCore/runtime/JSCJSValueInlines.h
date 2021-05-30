@@ -107,7 +107,7 @@ inline double JSValue::asNumber() const
     return isInt32() ? asInt32() : asDouble();
 }
 
-inline Optional<uint32_t> JSValue::tryGetAsUint32Index()
+inline std::optional<uint32_t> JSValue::tryGetAsUint32Index()
 {
     if (isUInt32()) {
         ASSERT(isIndex(asUInt32()));
@@ -122,7 +122,7 @@ inline Optional<uint32_t> JSValue::tryGetAsUint32Index()
     return std::nullopt;
 }
 
-inline Optional<int32_t> JSValue::tryGetAsInt32()
+inline std::optional<int32_t> JSValue::tryGetAsInt32()
 {
     if (isInt32())
         return asInt32();
@@ -849,7 +849,7 @@ ALWAYS_INLINE JSValue JSValue::toNumeric(JSGlobalObject* globalObject) const
     return jsNumber(value);
 }
 
-ALWAYS_INLINE Optional<uint32_t> JSValue::toUInt32AfterToNumeric(JSGlobalObject* globalObject) const
+ALWAYS_INLINE std::optional<uint32_t> JSValue::toUInt32AfterToNumeric(JSGlobalObject* globalObject) const
 {
     VM& vm = getVM(globalObject);
     auto scope = DECLARE_THROW_SCOPE(vm);

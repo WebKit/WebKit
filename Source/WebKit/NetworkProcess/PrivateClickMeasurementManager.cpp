@@ -388,8 +388,8 @@ void PrivateClickMeasurementManager::firePendingAttributionRequests()
         bool hasSentAttribution = false;
 
         for (auto& attribution : attributions) {
-            Optional<WallTime> earliestTimeToSend = attribution.timesToSend().earliestTimeToSend();
-            Optional<WebCore::PrivateClickMeasurement::AttributionReportEndpoint> attributionReportEndpoint = attribution.timesToSend().attributionReportEndpoint();
+            std::optional<WallTime> earliestTimeToSend = attribution.timesToSend().earliestTimeToSend();
+            std::optional<WebCore::PrivateClickMeasurement::AttributionReportEndpoint> attributionReportEndpoint = attribution.timesToSend().attributionReportEndpoint();
 
             if (!earliestTimeToSend || !attributionReportEndpoint) {
                 ASSERT_NOT_REACHED();

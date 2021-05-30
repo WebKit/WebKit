@@ -109,7 +109,7 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
     encoder << m_scale;
     encoder << m_isOpaque;
 
-    Optional<ImageBufferBackendHandle> handle;
+    std::optional<ImageBufferBackendHandle> handle;
     if (m_frontBuffer.imageBuffer) {
         switch (m_type) {
         case Type::IOSurface:

@@ -508,7 +508,7 @@ void MarkupAccumulator::appendAttribute(StringBuilder& result, const Element& el
 
     result.append(' ');
 
-    Optional<QualifiedName> effectiveXMLPrefixedName;
+    std::optional<QualifiedName> effectiveXMLPrefixedName;
     if (isSerializingHTML)
         result.append(htmlAttributeSerialization(attribute));
     else {

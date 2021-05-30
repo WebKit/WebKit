@@ -56,7 +56,7 @@ struct ScreenData {
 #endif
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ScreenData> decode(Decoder&);
+    template<class Decoder> static std::optional<ScreenData> decode(Decoder&);
 };
 
 using ScreenDataMap = HashMap<PlatformDisplayID, ScreenData>;
@@ -66,7 +66,7 @@ struct ScreenProperties {
     ScreenDataMap screenDataMap;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ScreenProperties> decode(Decoder&);
+    template<class Decoder> static std::optional<ScreenProperties> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -76,14 +76,14 @@ void ScreenProperties::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ScreenProperties> ScreenProperties::decode(Decoder& decoder)
+std::optional<ScreenProperties> ScreenProperties::decode(Decoder& decoder)
 {
-    Optional<PlatformDisplayID> primaryDisplayID;
+    std::optional<PlatformDisplayID> primaryDisplayID;
     decoder >> primaryDisplayID;
     if (!primaryDisplayID)
         return std::nullopt;
 
-    Optional<ScreenDataMap> screenDataMap;
+    std::optional<ScreenDataMap> screenDataMap;
     decoder >> screenDataMap;
     if (!screenDataMap)
         return std::nullopt;
@@ -106,72 +106,72 @@ void ScreenData::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ScreenData> ScreenData::decode(Decoder& decoder)
+std::optional<ScreenData> ScreenData::decode(Decoder& decoder)
 {
-    Optional<FloatRect> screenAvailableRect;
+    std::optional<FloatRect> screenAvailableRect;
     decoder >> screenAvailableRect;
     if (!screenAvailableRect)
         return std::nullopt;
 
-    Optional<FloatRect> screenRect;
+    std::optional<FloatRect> screenRect;
     decoder >> screenRect;
     if (!screenRect)
         return std::nullopt;
 
-    Optional<DestinationColorSpace> screenColorSpace;
+    std::optional<DestinationColorSpace> screenColorSpace;
     decoder >> screenColorSpace;
     if (!screenColorSpace)
         return std::nullopt;
 
-    Optional<int> screenDepth;
+    std::optional<int> screenDepth;
     decoder >> screenDepth;
     if (!screenDepth)
         return std::nullopt;
 
-    Optional<int> screenDepthPerComponent;
+    std::optional<int> screenDepthPerComponent;
     decoder >> screenDepthPerComponent;
     if (!screenDepthPerComponent)
         return std::nullopt;
 
-    Optional<bool> screenSupportsExtendedColor;
+    std::optional<bool> screenSupportsExtendedColor;
     decoder >> screenSupportsExtendedColor;
     if (!screenSupportsExtendedColor)
         return std::nullopt;
 
-    Optional<bool> screenHasInvertedColors;
+    std::optional<bool> screenHasInvertedColors;
     decoder >> screenHasInvertedColors;
     if (!screenHasInvertedColors)
         return std::nullopt;
 
-    Optional<bool> screenSupportsHighDynamicRange;
+    std::optional<bool> screenSupportsHighDynamicRange;
     decoder >> screenSupportsHighDynamicRange;
     if (!screenSupportsHighDynamicRange)
         return std::nullopt;
 
 #if PLATFORM(MAC)
-    Optional<bool> screenIsMonochrome;
+    std::optional<bool> screenIsMonochrome;
     decoder >> screenIsMonochrome;
     if (!screenIsMonochrome)
         return std::nullopt;
 
-    Optional<uint32_t> displayMask;
+    std::optional<uint32_t> displayMask;
     decoder >> displayMask;
     if (!displayMask)
         return std::nullopt;
 
-    Optional<IORegistryGPUID> gpuID;
+    std::optional<IORegistryGPUID> gpuID;
     decoder >> gpuID;
     if (!gpuID)
         return std::nullopt;
 
-    Optional<DynamicRangeMode> preferredDynamicRangeMode;
+    std::optional<DynamicRangeMode> preferredDynamicRangeMode;
     decoder >> preferredDynamicRangeMode;
     if (!preferredDynamicRangeMode)
         return std::nullopt;
 #endif
 
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
-    Optional<float> scaleFactor;
+    std::optional<float> scaleFactor;
     decoder >> scaleFactor;
     if (!scaleFactor)
         return std::nullopt;

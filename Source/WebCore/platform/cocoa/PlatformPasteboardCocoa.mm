@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-Optional<Vector<PasteboardItemInfo>> PlatformPasteboard::allPasteboardItemInfo(int64_t changeCount)
+std::optional<Vector<PasteboardItemInfo>> PlatformPasteboard::allPasteboardItemInfo(int64_t changeCount)
 {
     if (changeCount != [m_pasteboard changeCount])
         return std::nullopt;

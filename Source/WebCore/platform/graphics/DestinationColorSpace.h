@@ -45,7 +45,7 @@ public:
     PlatformColorSpaceValue platformColorSpace() const { return m_platformColorSpace.get(); }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<DestinationColorSpace> decode(Decoder&);
+    template<class Decoder> static std::optional<DestinationColorSpace> decode(Decoder&);
 
 private:
     PlatformColorSpace m_platformColorSpace;
@@ -61,9 +61,9 @@ template<class Encoder> void DestinationColorSpace::encode(Encoder& encoder) con
     encoder << m_platformColorSpace;
 }
 
-template<class Decoder> Optional<DestinationColorSpace> DestinationColorSpace::decode(Decoder& decoder)
+template<class Decoder> std::optional<DestinationColorSpace> DestinationColorSpace::decode(Decoder& decoder)
 {
-    Optional<PlatformColorSpace> platformColorSpace;
+    std::optional<PlatformColorSpace> platformColorSpace;
     decoder >> platformColorSpace;
     if (!platformColorSpace)
         return std::nullopt;

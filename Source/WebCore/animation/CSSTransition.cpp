@@ -61,7 +61,7 @@ CSSTransition::CSSTransition(const Styleable& styleable, CSSPropertyID property,
 {
 }
 
-void CSSTransition::resolve(RenderStyle& targetStyle, const RenderStyle* parentElementStyle, Optional<Seconds> startTime)
+void CSSTransition::resolve(RenderStyle& targetStyle, const RenderStyle* parentElementStyle, std::optional<Seconds> startTime)
 {
     DeclarativeAnimation::resolve(targetStyle, parentElementStyle, startTime);
     m_currentStyle = RenderStyle::clonePtr(targetStyle);
@@ -87,7 +87,7 @@ void CSSTransition::setTimingProperties(Seconds delay, Seconds duration)
     unsuspendEffectInvalidation();
 }
 
-Ref<AnimationEventBase> CSSTransition::createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId, Optional<Seconds> timelineTime)
+Ref<AnimationEventBase> CSSTransition::createEvent(const AtomString& eventType, double elapsedTime, const String& pseudoId, std::optional<Seconds> timelineTime)
 {
     return TransitionEvent::create(eventType, getPropertyNameString(m_property), elapsedTime, pseudoId, timelineTime, this);
 }

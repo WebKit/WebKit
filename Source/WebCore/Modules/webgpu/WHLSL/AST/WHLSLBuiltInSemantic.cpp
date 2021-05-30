@@ -73,7 +73,7 @@ bool BuiltInSemantic::isAcceptableType(const UnnamedType& unnamedType, const Int
     }
 }
 
-bool BuiltInSemantic::isAcceptableForShaderItemDirection(ShaderItemDirection direction, const Optional<EntryPointType>& entryPointType) const
+bool BuiltInSemantic::isAcceptableForShaderItemDirection(ShaderItemDirection direction, const std::optional<EntryPointType>& entryPointType) const
 {
     switch (*entryPointType) {
     case EntryPointType::Vertex:

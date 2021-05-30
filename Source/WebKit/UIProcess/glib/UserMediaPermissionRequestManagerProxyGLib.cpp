@@ -29,7 +29,7 @@ using namespace WebCore;
 
 void UserMediaPermissionRequestManagerProxy::platformValidateUserMediaRequestConstraints(RealtimeMediaSourceCenter::ValidConstraintsHandler&& validHandler, RealtimeMediaSourceCenter::InvalidConstraintsHandler&& invalidHandler, String&& deviceIDHashSalt)
 {
-    m_page.process().connection()->sendWithAsyncReply(Messages::UserMediaCaptureManager::ValidateUserMediaRequestConstraints(m_currentUserMediaRequest->userRequest(), deviceIDHashSalt), [validHandler = WTFMove(validHandler), invalidHandler = WTFMove(invalidHandler)](std::optional<String> invalidConstraint, Vector<WebCore::CaptureDevice> audioDevices, Vector<WebCore::CaptureDevice> videoDevices, Optional<String> deviceIdentifierHashSalt) mutable {
+    m_page.process().connection()->sendWithAsyncReply(Messages::UserMediaCaptureManager::ValidateUserMediaRequestConstraints(m_currentUserMediaRequest->userRequest(), deviceIDHashSalt), [validHandler = WTFMove(validHandler), invalidHandler = WTFMove(invalidHandler)](std::optional<String> invalidConstraint, Vector<WebCore::CaptureDevice> audioDevices, Vector<WebCore::CaptureDevice> videoDevices, std::optional<String> deviceIdentifierHashSalt) mutable {
         if (invalidConstraint)
             invalidHandler(*invalidConstraint);
         else

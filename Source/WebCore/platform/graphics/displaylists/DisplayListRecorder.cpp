@@ -567,7 +567,7 @@ void Recorder::ContextState::rotate(float angleInRadians)
     AffineTransform rotation;
     rotation.rotate(angleInDegrees);
 
-    if (Optional<AffineTransform> inverse = rotation.inverse())
+    if (std::optional<AffineTransform> inverse = rotation.inverse())
         clipBounds = inverse.value().mapRect(clipBounds);
 }
 
@@ -579,7 +579,7 @@ void Recorder::ContextState::scale(const FloatSize& size)
 
 void Recorder::ContextState::setCTM(const AffineTransform& matrix)
 {
-    Optional<AffineTransform> inverseTransformForClipBounds;
+    std::optional<AffineTransform> inverseTransformForClipBounds;
     if (auto originalCTMInverse = ctm.inverse())
         inverseTransformForClipBounds = originalCTMInverse->multiply(matrix).inverse();
 
@@ -593,7 +593,7 @@ void Recorder::ContextState::concatCTM(const AffineTransform& matrix)
 {
     ctm *= matrix;
 
-    if (Optional<AffineTransform> inverse = matrix.inverse())
+    if (std::optional<AffineTransform> inverse = matrix.inverse())
         clipBounds = inverse.value().mapRect(clipBounds);
 }
 

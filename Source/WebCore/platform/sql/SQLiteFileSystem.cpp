@@ -114,12 +114,12 @@ uint64_t SQLiteFileSystem::databaseFileSize(const String& fileName)
     return totalSize;
 }
 
-Optional<WallTime> SQLiteFileSystem::databaseCreationTime(const String& fileName)
+std::optional<WallTime> SQLiteFileSystem::databaseCreationTime(const String& fileName)
 {
     return FileSystem::fileCreationTime(fileName);
 }
 
-Optional<WallTime> SQLiteFileSystem::databaseModificationTime(const String& fileName)
+std::optional<WallTime> SQLiteFileSystem::databaseModificationTime(const String& fileName)
 {
     return FileSystem::fileModificationTime(fileName);
 }

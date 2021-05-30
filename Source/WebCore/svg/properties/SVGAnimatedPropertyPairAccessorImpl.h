@@ -58,7 +58,7 @@ private:
         animatedProperty.setDirty();
     }
 
-    Optional<String> synchronize(const OwnerType& owner) const final
+    std::optional<String> synchronize(const OwnerType& owner) const final
     {
         bool dirty1 = property1(owner)->isDirty();
         bool dirty2 = property2(owner)->isDirty();
@@ -95,7 +95,7 @@ public:
     constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedIntegerPairAccessor, property1, property2>(); }
 
 private:
-    Optional<String> synchronize(const OwnerType& owner) const final
+    std::optional<String> synchronize(const OwnerType& owner) const final
     {
         bool dirty1 = property1(owner)->isDirty();
         bool dirty2 = property2(owner)->isDirty();
@@ -130,7 +130,7 @@ public:
     constexpr static const SVGMemberAccessor<OwnerType>& singleton() { return Base::template singleton<SVGAnimatedNumberPairAccessor, property1, property2>(); }
 
 private:
-    Optional<String> synchronize(const OwnerType& owner) const final
+    std::optional<String> synchronize(const OwnerType& owner) const final
     {
         bool dirty1 = property1(owner)->isDirty();
         bool dirty2 = property2(owner)->isDirty();

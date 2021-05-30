@@ -72,7 +72,7 @@ private:
     MediaSampleCursor(Allocator&&, MediaTrackReader&, Locator);
     MediaSampleCursor(Allocator&&, const MediaSampleCursor&);
 
-    template<typename OrderedMap> Optional<typename OrderedMap::iterator> locateIterator(OrderedMap&, bool hasAllSamples) const WTF_REQUIRES_LOCK(m_locatorLock);
+    template<typename OrderedMap> std::optional<typename OrderedMap::iterator> locateIterator(OrderedMap&, bool hasAllSamples) const WTF_REQUIRES_LOCK(m_locatorLock);
     WebCore::MediaSample* locateMediaSample(WebCore::SampleMap&, bool hasAllSamples) const WTF_REQUIRES_LOCK(m_locatorLock);
     Timing locateTiming(WebCore::SampleMap&, bool hasAllSamples) const WTF_REQUIRES_LOCK(m_locatorLock);
 

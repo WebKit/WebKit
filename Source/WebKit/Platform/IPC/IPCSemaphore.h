@@ -52,7 +52,7 @@ public:
     Semaphore& operator=(Semaphore&&);
 
     void encode(Encoder&) const;
-    static Optional<Semaphore> decode(Decoder&);
+    static std::optional<Semaphore> decode(Decoder&);
 
     void signal();
     bool wait();

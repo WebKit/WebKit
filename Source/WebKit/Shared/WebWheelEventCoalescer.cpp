@@ -112,7 +112,7 @@ bool WebWheelEventCoalescer::shouldDispatchEventNow(const WebWheelEvent& event) 
     return m_wheelEventQueue.size() >= wheelEventQueueSizeThreshold;
 }
 
-Optional<WebWheelEvent> WebWheelEventCoalescer::nextEventToDispatch()
+std::optional<WebWheelEvent> WebWheelEventCoalescer::nextEventToDispatch()
 {
     if (m_wheelEventQueue.isEmpty())
         return std::nullopt;

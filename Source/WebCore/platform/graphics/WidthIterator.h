@@ -81,7 +81,7 @@ private:
     const TextRun& m_run;
     HashSet<const Font*>* m_fallbackFonts { nullptr };
 
-    Optional<unsigned> m_lastCharacterIndex;
+    std::optional<unsigned> m_lastCharacterIndex;
     unsigned m_currentCharacterIndex { 0 };
     float m_leftoverJustificationWidth { 0 };
     float m_runWidthSoFar { 0 };

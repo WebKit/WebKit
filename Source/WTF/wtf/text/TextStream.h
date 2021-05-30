@@ -195,7 +195,7 @@ TextStream& operator<<(TextStream& ts, ValueOrNull<T> item)
 }
 
 template<typename Item>
-TextStream& operator<<(TextStream& ts, const Optional<Item>& item)
+TextStream& operator<<(TextStream& ts, const std::optional<Item>& item)
 {
     if (item)
         return ts << item.value();

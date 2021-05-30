@@ -309,7 +309,7 @@ void UserMediaPermissionRequestManagerProxy::finishGrantingRequest(UserMediaPerm
     });
 }
 
-void UserMediaPermissionRequestManagerProxy::resetAccess(Optional<FrameIdentifier> frameID)
+void UserMediaPermissionRequestManagerProxy::resetAccess(std::optional<FrameIdentifier> frameID)
 {
     if (frameID) {
         ALWAYS_LOG(LOGIDENTIFIER, frameID ? frameID->loggingString() : String { });
@@ -842,7 +842,7 @@ void UserMediaPermissionRequestManagerProxy::enumerateMediaDevicesForFrame(Frame
 #endif
 }
 
-void UserMediaPermissionRequestManagerProxy::setMockCaptureDevicesEnabledOverride(Optional<bool> enabled)
+void UserMediaPermissionRequestManagerProxy::setMockCaptureDevicesEnabledOverride(std::optional<bool> enabled)
 {
     m_mockDevicesEnabledOverride = enabled;
     syncWithWebCorePrefs();

@@ -44,7 +44,7 @@ public:
     ~DNSCache() = default;
 
     enum class Type { Default, IPv4Only, IPv6Only };
-    Optional<Vector<GRefPtr<GInetAddress>>> lookup(const CString& host, Type = Type::Default);
+    std::optional<Vector<GRefPtr<GInetAddress>>> lookup(const CString& host, Type = Type::Default);
     void update(const CString& host, Vector<GRefPtr<GInetAddress>>&&, Type = Type::Default);
     void clear();
 

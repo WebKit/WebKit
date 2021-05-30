@@ -88,7 +88,7 @@ private:
 
     CategoryType m_category { CategoryType::None };
     WebCore::RouteSharingPolicy m_routeSharingPolicy { WebCore::RouteSharingPolicy::Default };
-    Optional<RemoteAudioSessionConfiguration> m_configuration;
+    std::optional<RemoteAudioSessionConfiguration> m_configuration;
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
 };
 

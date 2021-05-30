@@ -71,7 +71,7 @@ public:
 private:
     PerformanceNavigationTiming(MonotonicTime timeOrigin, CachedResource&, const LoadTiming&, const NetworkLoadMetrics&, const DocumentTiming&, const SecurityOrigin&, WebCore::NavigationType);
 
-    double millisecondsSinceOrigin(MonotonicTime, Optional<MonotonicTime> timeOrigin = std::nullopt) const;
+    double millisecondsSinceOrigin(MonotonicTime, std::optional<MonotonicTime> timeOrigin = std::nullopt) const;
     bool sameOriginCheckFails() const;
 
     DocumentTiming m_documentTiming;

@@ -81,19 +81,19 @@ public:
     void deref() const { }
 
 private:
-    Optional<String> validatedPaymentNetwork(const String&) final;
+    std::optional<String> validatedPaymentNetwork(const String&) final;
     bool canMakePayments() final;
     void canMakePaymentsWithActiveCard(const String&, const String&, CompletionHandler<void(bool)>&&) final;
     void openPaymentSetup(const String&, const String&, CompletionHandler<void(bool)>&&) final;
     bool showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest&) final;
     void completeMerchantValidation(const PaymentMerchantSession&) final;
-    void completeShippingMethodSelection(Optional<ApplePayShippingMethodUpdate>&&) final;
-    void completeShippingContactSelection(Optional<ApplePayShippingContactUpdate>&&) final;
-    void completePaymentMethodSelection(Optional<ApplePayPaymentMethodUpdate>&&) final;
+    void completeShippingMethodSelection(std::optional<ApplePayShippingMethodUpdate>&&) final;
+    void completeShippingContactSelection(std::optional<ApplePayShippingContactUpdate>&&) final;
+    void completePaymentMethodSelection(std::optional<ApplePayPaymentMethodUpdate>&&) final;
 #if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    void completePaymentMethodModeChange(Optional<ApplePayPaymentMethodModeUpdate>&&) final;
+    void completePaymentMethodModeChange(std::optional<ApplePayPaymentMethodModeUpdate>&&) final;
 #endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    void completePaymentSession(Optional<PaymentAuthorizationResult>&&) final;
+    void completePaymentSession(std::optional<PaymentAuthorizationResult>&&) final;
     void abortPaymentSession() final;
     void cancelPaymentSession() final;
     void paymentCoordinatorDestroyed() final;

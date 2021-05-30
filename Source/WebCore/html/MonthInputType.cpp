@@ -117,12 +117,12 @@ Decimal MonthInputType::parseToNumber(const String& src, const Decimal& defaultV
     return Decimal::fromDouble(months);
 }
 
-Optional<DateComponents> MonthInputType::parseToDateComponents(const StringView& source) const
+std::optional<DateComponents> MonthInputType::parseToDateComponents(const StringView& source) const
 {
     return DateComponents::fromParsingMonth(source);
 }
 
-Optional<DateComponents> MonthInputType::setMillisecondToDateComponents(double value) const
+std::optional<DateComponents> MonthInputType::setMillisecondToDateComponents(double value) const
 {
     return DateComponents::fromMonthsSinceEpoch(value);
 }

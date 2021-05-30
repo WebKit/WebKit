@@ -226,7 +226,7 @@ enum class Acceptability {
     No
 };
 
-static Optional<AST::NativeFunctionDeclaration> resolveByInstantiation(const String& name, CodeLocation location, const Vector<std::reference_wrapper<ResolvingType>>& types, const Intrinsics& intrinsics)
+static std::optional<AST::NativeFunctionDeclaration> resolveByInstantiation(const String& name, CodeLocation location, const Vector<std::reference_wrapper<ResolvingType>>& types, const Intrinsics& intrinsics)
 {
     if (name == "operator==" && types.size() == 2) {
         auto acceptability = [](ResolvingType& resolvingType) -> Acceptability {
@@ -251,7 +251,7 @@ static Optional<AST::NativeFunctionDeclaration> resolveByInstantiation(const Str
     return std::nullopt;
 }
 
-static bool checkSemantics(Vector<EntryPointItem>& inputItems, Vector<EntryPointItem>& outputItems, const Optional<AST::EntryPointType>& entryPointType, const Intrinsics& intrinsics)
+static bool checkSemantics(Vector<EntryPointItem>& inputItems, Vector<EntryPointItem>& outputItems, const std::optional<AST::EntryPointType>& entryPointType, const Intrinsics& intrinsics)
 {
     {
         auto checkDuplicateSemantics = [&](const Vector<EntryPointItem>& items) -> bool {
@@ -400,8 +400,8 @@ private:
         ResolvingType& resolvingType;
         const AST::TypeAnnotation typeAnnotation;
     };
-    Optional<RecurseInfo> recurseAndGetInfo(AST::Expression&, bool requiresLeftValue = false);
-    Optional<RecurseInfo> getInfo(AST::Expression&, bool requiresLeftValue = false);
+    std::optional<RecurseInfo> recurseAndGetInfo(AST::Expression&, bool requiresLeftValue = false);
+    std::optional<RecurseInfo> getInfo(AST::Expression&, bool requiresLeftValue = false);
     RefPtr<AST::UnnamedType> recurseAndWrapBaseType(AST::PropertyAccessExpression&);
     bool recurseAndRequireBoolType(AST::Expression&);
     void assignConcreteType(AST::Expression&, Ref<AST::UnnamedType>, AST::TypeAnnotation);
@@ -733,7 +733,7 @@ void Checker::visit(AST::TypeReference& typeReference)
         checkErrorAndVisit(typeArgument);
 }
 
-auto Checker::recurseAndGetInfo(AST::Expression& expression, bool requiresLeftValue) -> Optional<RecurseInfo>
+auto Checker::recurseAndGetInfo(AST::Expression& expression, bool requiresLeftValue) -> std::optional<RecurseInfo>
 {
     Visitor::visit(expression);
     if (hasError())
@@ -741,7 +741,7 @@ auto Checker::recurseAndGetInfo(AST::Expression& expression, bool requiresLeftVa
     return getInfo(expression, requiresLeftValue);
 }
 
-auto Checker::getInfo(AST::Expression& expression, bool requiresLeftValue) -> Optional<RecurseInfo>
+auto Checker::getInfo(AST::Expression& expression, bool requiresLeftValue) -> std::optional<RecurseInfo>
 {
     auto typeIterator = m_typeMap.find(&expression);
     ASSERT(typeIterator != m_typeMap.end());

@@ -115,8 +115,8 @@ public:
     void ref();
     void deref();
 
-    void getAllDatabaseNamesAndVersions(ScriptExecutionContext&, Function<void(Optional<Vector<IDBDatabaseNameAndVersion>>&&)>&&);
-    void didGetAllDatabaseNamesAndVersions(const IDBResourceIdentifier&, Optional<Vector<IDBDatabaseNameAndVersion>>&&);
+    void getAllDatabaseNamesAndVersions(ScriptExecutionContext&, Function<void(std::optional<Vector<IDBDatabaseNameAndVersion>>&&)>&&);
+    void didGetAllDatabaseNamesAndVersions(const IDBResourceIdentifier&, std::optional<Vector<IDBDatabaseNameAndVersion>>&&);
 
     void registerDatabaseConnection(IDBDatabase&);
     void unregisterDatabaseConnection(IDBDatabase&);

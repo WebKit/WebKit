@@ -220,7 +220,7 @@ Expected<unsigned, HTMLIntegerParsingError> parseHTMLNonNegativeInteger(StringVi
 }
 
 template <typename CharacterType>
-static Optional<int> parseValidHTMLNonNegativeIntegerInternal(const CharacterType* position, const CharacterType* end)
+static std::optional<int> parseValidHTMLNonNegativeIntegerInternal(const CharacterType* position, const CharacterType* end)
 {
     // A string is a valid non-negative integer if it consists of one or more ASCII digits.
     for (auto* c = position; c < end; ++c) {
@@ -236,7 +236,7 @@ static Optional<int> parseValidHTMLNonNegativeIntegerInternal(const CharacterTyp
 }
 
 // https://html.spec.whatwg.org/#valid-non-negative-integer
-Optional<int> parseValidHTMLNonNegativeInteger(StringView input)
+std::optional<int> parseValidHTMLNonNegativeInteger(StringView input)
 {
     if (input.isEmpty())
         return std::nullopt;
@@ -251,7 +251,7 @@ Optional<int> parseValidHTMLNonNegativeInteger(StringView input)
 }
 
 template <typename CharacterType>
-static Optional<double> parseValidHTMLFloatingPointNumberInternal(const CharacterType* position, size_t length)
+static std::optional<double> parseValidHTMLFloatingPointNumberInternal(const CharacterType* position, size_t length)
 {
     ASSERT(length > 0);
 
@@ -262,11 +262,11 @@ static Optional<double> parseValidHTMLFloatingPointNumberInternal(const Characte
 
     size_t parsedLength = 0;
     double number = parseDouble(position, length, parsedLength);
-    return parsedLength == length && std::isfinite(number) ? number : Optional<double>();
+    return parsedLength == length && std::isfinite(number) ? number : std::optional<double>();
 }
 
 // https://html.spec.whatwg.org/#valid-floating-point-number
-Optional<double> parseValidHTMLFloatingPointNumber(StringView input)
+std::optional<double> parseValidHTMLFloatingPointNumber(StringView input)
 {
     if (input.isEmpty())
         return std::nullopt;

@@ -110,7 +110,7 @@ bool CSSCalcExpressionNodeParser::parseCalcFunction(CSSParserTokenRange& tokens,
 
     // "arguments" refers to things between commas.
     unsigned minArgumentCount = 1;
-    Optional<unsigned> maxArgumentCount;
+    std::optional<unsigned> maxArgumentCount;
 
     switch (functionID) {
     case CSSValueMin:

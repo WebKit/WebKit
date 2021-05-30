@@ -47,7 +47,7 @@ namespace WebKit {
 #if OS(LINUX)
 static bool isFlatpakSpawnUsable()
 {
-    static Optional<bool> ret;
+    static std::optional<bool> ret;
     if (ret)
         return *ret;
 
@@ -67,7 +67,7 @@ static bool isFlatpakSpawnUsable()
 #if ENABLE(BUBBLEWRAP_SANDBOX)
 static bool isInsideDocker()
 {
-    static Optional<bool> ret;
+    static std::optional<bool> ret;
     if (ret)
         return *ret;
 
@@ -77,7 +77,7 @@ static bool isInsideDocker()
 
 static bool isInsideFlatpak()
 {
-    static Optional<bool> ret;
+    static std::optional<bool> ret;
     if (ret)
         return *ret;
 
@@ -87,7 +87,7 @@ static bool isInsideFlatpak()
 
 static bool isInsideSnap()
 {
-    static Optional<bool> ret;
+    static std::optional<bool> ret;
     if (ret)
         return *ret;
 

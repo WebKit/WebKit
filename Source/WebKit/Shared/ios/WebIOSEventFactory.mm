@@ -154,7 +154,7 @@ static WebKit::WebWheelEvent::Phase toWebPhase(UIScrollPhase phase)
     }
 }
 
-WebKit::WebWheelEvent WebIOSEventFactory::createWebWheelEvent(UIScrollEvent *event, UIView *contentView, Optional<WebKit::WebWheelEvent::Phase> overridePhase)
+WebKit::WebWheelEvent WebIOSEventFactory::createWebWheelEvent(UIScrollEvent *event, UIView *contentView, std::optional<WebKit::WebWheelEvent::Phase> overridePhase)
 {
     WebCore::IntPoint scrollLocation = WebCore::roundedIntPoint([event locationInView:contentView]);
     CGVector deltaVector = [event _adjustedAcceleratedDeltaInView:contentView];

@@ -424,7 +424,7 @@ static inline bool isTrueTypeFeature(CFDictionaryRef feature)
     return CFDictionaryContainsKey(feature, kCTFontFeatureTypeIdentifierKey) && CFDictionaryContainsKey(feature, kCTFontFeatureSelectorIdentifierKey);
 }
 
-static inline Optional<CFStringRef> openTypeFeature(CFDictionaryRef feature)
+static inline std::optional<CFStringRef> openTypeFeature(CFDictionaryRef feature)
 {
     ASSERT(isOpenTypeFeature(feature));
     CFStringRef tag = static_cast<CFStringRef>(CFDictionaryGetValue(feature, kCTFontOpenTypeFeatureTag));
@@ -432,7 +432,7 @@ static inline Optional<CFStringRef> openTypeFeature(CFDictionaryRef feature)
     CFNumberRef value = static_cast<CFNumberRef>(CFDictionaryGetValue(feature, kCTFontOpenTypeFeatureValue));
     auto success = CFNumberGetValue(value, kCFNumberIntType, &rawValue);
     ASSERT_UNUSED(success, success);
-    return rawValue ? Optional<CFStringRef>(tag) : std::nullopt;
+    return rawValue ? std::optional<CFStringRef>(tag) : std::nullopt;
 }
 
 static inline std::pair<int, int> trueTypeFeature(CFDictionaryRef feature)
@@ -723,7 +723,7 @@ Path Font::platformPathForGlyph(Glyph glyph) const
     return { adoptCF(CGPathCreateMutableCopy(result.get())) };
 }
 
-bool Font::platformSupportsCodePoint(UChar32 character, Optional<UChar32> variation) const
+bool Font::platformSupportsCodePoint(UChar32 character, std::optional<UChar32> variation) const
 {
     if (variation)
         return false;
@@ -862,14 +862,14 @@ bool Font::glyphHasComplexColorFormat(Glyph glyphID) const
 }
 #endif
 
-Optional<BitVector> Font::findOTSVGGlyphs(const GlyphBufferGlyph* glyphs, unsigned count) const
+std::optional<BitVector> Font::findOTSVGGlyphs(const GlyphBufferGlyph* glyphs, unsigned count) const
 {
 #if PLATFORM(COCOA)
     auto table = otSVGTable().table;
     if (!table)
         return { };
 
-    Optional<BitVector> result;
+    std::optional<BitVector> result;
     for (unsigned i = 0; i < count; ++i) {
         if (PAL::softLinkOTSVGOTSVGTableGetDocumentIndexForGlyph(table, glyphs[i]) != kCFNotFound) {
             if (!result)

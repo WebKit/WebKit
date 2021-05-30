@@ -51,7 +51,7 @@ static long dispatchQueueIdentifier(WorkQueue::QOS qos)
     }
 }
 
-IOChannel::IOChannel(const String& filePath, Type type, Optional<WorkQueue::QOS> qos)
+IOChannel::IOChannel(const String& filePath, Type type, std::optional<WorkQueue::QOS> qos)
     : m_path(filePath)
     , m_type(type)
 {

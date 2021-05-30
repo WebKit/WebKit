@@ -38,7 +38,7 @@ struct TextCheckingResult;
 class TextCheckingParagraph {
 public:
     explicit TextCheckingParagraph(const SimpleRange& checkingAndAutomaticReplacementRange);
-    TextCheckingParagraph(const SimpleRange& checkingRange, const SimpleRange& automaticReplacementRange, const Optional<SimpleRange>& paragraphRange);
+    TextCheckingParagraph(const SimpleRange& checkingRange, const SimpleRange& automaticReplacementRange, const std::optional<SimpleRange>& paragraphRange);
 
     uint64_t rangeLength() const;
     SimpleRange subrange(CharacterRange) const;
@@ -69,13 +69,13 @@ private:
 
     SimpleRange m_checkingRange;
     SimpleRange m_automaticReplacementRange;
-    mutable Optional<SimpleRange> m_paragraphRange;
-    mutable Optional<SimpleRange> m_offsetAsRange;
+    mutable std::optional<SimpleRange> m_paragraphRange;
+    mutable std::optional<SimpleRange> m_offsetAsRange;
     mutable String m_text;
-    mutable Optional<uint64_t> m_checkingStart;
-    mutable Optional<uint64_t> m_checkingLength;
-    mutable Optional<uint64_t> m_automaticReplacementStart;
-    mutable Optional<uint64_t> m_automaticReplacementLength;
+    mutable std::optional<uint64_t> m_checkingStart;
+    mutable std::optional<uint64_t> m_checkingLength;
+    mutable std::optional<uint64_t> m_automaticReplacementStart;
+    mutable std::optional<uint64_t> m_automaticReplacementLength;
 };
 
 class TextCheckingHelper {
@@ -96,14 +96,14 @@ public:
     UngrammaticalPhrase findFirstUngrammaticalPhrase() const;
     Variant<MisspelledWord, UngrammaticalPhrase> findFirstMisspelledWordOrUngrammaticalPhrase(bool checkGrammar) const;
 
-    Optional<SimpleRange> markAllMisspelledWords() const; // Returns the range of the first misspelled word.
+    std::optional<SimpleRange> markAllMisspelledWords() const; // Returns the range of the first misspelled word.
     void markAllUngrammaticalPhrases() const;
 
     TextCheckingGuesses guessesForMisspelledWordOrUngrammaticalPhrase(bool checkGrammar) const;
 
 private:
     enum class Operation : bool { FindFirst, MarkAll };
-    std::pair<MisspelledWord, Optional<SimpleRange>> findMisspelledWords(Operation) const; // Returns the first.
+    std::pair<MisspelledWord, std::optional<SimpleRange>> findMisspelledWords(Operation) const; // Returns the first.
     UngrammaticalPhrase findUngrammaticalPhrases(Operation) const; // Returns the first.
     bool unifiedTextCheckerEnabled() const;
     int findUngrammaticalPhrases(Operation, const Vector<GrammarDetail>&, uint64_t badGrammarPhraseLocation, uint64_t startOffset, uint64_t endOffset) const;

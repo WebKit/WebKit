@@ -712,12 +712,12 @@ void Frame::injectUserScriptsAwaitingNotification()
         injectUserScriptImmediately(world, script.get());
 }
 
-Optional<PageIdentifier> Frame::pageID() const
+std::optional<PageIdentifier> Frame::pageID() const
 {
     return loader().pageID();
 }
 
-Optional<FrameIdentifier> Frame::frameID() const
+std::optional<FrameIdentifier> Frame::frameID() const
 {
     return loader().frameID();
 }
@@ -845,7 +845,7 @@ Document* Frame::documentAtPoint(const IntPoint& point)
     return result.innerNode() ? &result.innerNode()->document() : 0;
 }
 
-Optional<SimpleRange> Frame::rangeForPoint(const IntPoint& framePoint)
+std::optional<SimpleRange> Frame::rangeForPoint(const IntPoint& framePoint)
 {
     auto position = visiblePositionForPoint(framePoint);
 
@@ -866,7 +866,7 @@ Optional<SimpleRange> Frame::rangeForPoint(const IntPoint& framePoint)
     return std::nullopt;
 }
 
-void Frame::createView(const IntSize& viewportSize, const Optional<Color>& backgroundColor,
+void Frame::createView(const IntSize& viewportSize, const std::optional<Color>& backgroundColor,
     const IntSize& fixedLayoutSize, const IntRect& fixedVisibleContentRect,
     bool useFixedLayout, ScrollbarMode horizontalScrollbarMode, bool horizontalLock,
     ScrollbarMode verticalScrollbarMode, bool verticalLock)
@@ -956,7 +956,7 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
     if (is<SVGDocument>(*document) && !downcast<SVGDocument>(*document).zoomAndPanEnabled())
         return;
 
-    Optional<ScrollPosition> scrollPositionAfterZoomed;
+    std::optional<ScrollPosition> scrollPositionAfterZoomed;
     if (m_pageZoomFactor != pageZoomFactor) {
         // Compute the scroll position with scale after zooming to stay the same position in the content.
         if (FrameView* view = this->view()) {

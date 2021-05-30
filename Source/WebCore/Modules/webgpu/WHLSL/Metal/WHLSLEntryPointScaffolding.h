@@ -93,7 +93,7 @@ protected:
     struct NamedBinding {
         MangledStructureElementName elementName;
         unsigned index;
-        Optional<LengthInformation> lengthInformation;
+        std::optional<LengthInformation> lengthInformation;
     };
     struct NamedBindGroup {
         MangledTypeName structName;

@@ -55,7 +55,7 @@ struct WebProcessDataStoreParameters {
     bool resourceLoadStatisticsEnabled { false };
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<WebProcessDataStoreParameters> decode(Decoder&);
+    template<class Decoder> static std::optional<WebProcessDataStoreParameters> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -80,9 +80,9 @@ void WebProcessDataStoreParameters::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<WebProcessDataStoreParameters> WebProcessDataStoreParameters::decode(Decoder& decoder)
+std::optional<WebProcessDataStoreParameters> WebProcessDataStoreParameters::decode(Decoder& decoder)
 {
-    Optional<PAL::SessionID> sessionID;
+    std::optional<PAL::SessionID> sessionID;
     decoder >> sessionID;
     if (!sessionID)
         return std::nullopt;
@@ -91,7 +91,7 @@ Optional<WebProcessDataStoreParameters> WebProcessDataStoreParameters::decode(De
     if (!decoder.decode(applicationCacheDirectory))
         return std::nullopt;
 
-    Optional<SandboxExtension::Handle> applicationCacheDirectoryExtensionHandle;
+    std::optional<SandboxExtension::Handle> applicationCacheDirectoryExtensionHandle;
     decoder >> applicationCacheDirectoryExtensionHandle;
     if (!applicationCacheDirectoryExtensionHandle)
         return std::nullopt;
@@ -104,7 +104,7 @@ Optional<WebProcessDataStoreParameters> WebProcessDataStoreParameters::decode(De
     if (!decoder.decode(mediaCacheDirectory))
         return std::nullopt;
 
-    Optional<SandboxExtension::Handle> mediaCacheDirectoryExtensionHandle;
+    std::optional<SandboxExtension::Handle> mediaCacheDirectoryExtensionHandle;
     decoder >> mediaCacheDirectoryExtensionHandle;
     if (!mediaCacheDirectoryExtensionHandle)
         return std::nullopt;
@@ -113,7 +113,7 @@ Optional<WebProcessDataStoreParameters> WebProcessDataStoreParameters::decode(De
     if (!decoder.decode(mediaKeyStorageDirectory))
         return std::nullopt;
 
-    Optional<SandboxExtension::Handle> mediaKeyStorageDirectoryExtensionHandle;
+    std::optional<SandboxExtension::Handle> mediaKeyStorageDirectoryExtensionHandle;
     decoder >> mediaKeyStorageDirectoryExtensionHandle;
     if (!mediaKeyStorageDirectoryExtensionHandle)
         return std::nullopt;
@@ -122,23 +122,23 @@ Optional<WebProcessDataStoreParameters> WebProcessDataStoreParameters::decode(De
     if (!decoder.decode(javaScriptConfigurationDirectory))
         return std::nullopt;
 
-    Optional<SandboxExtension::Handle> javaScriptConfigurationDirectoryExtensionHandle;
+    std::optional<SandboxExtension::Handle> javaScriptConfigurationDirectoryExtensionHandle;
     decoder >> javaScriptConfigurationDirectoryExtensionHandle;
     if (!javaScriptConfigurationDirectoryExtensionHandle)
         return std::nullopt;
         
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
-    Optional<WebCore::ThirdPartyCookieBlockingMode> thirdPartyCookieBlockingMode;
+    std::optional<WebCore::ThirdPartyCookieBlockingMode> thirdPartyCookieBlockingMode;
     decoder >> thirdPartyCookieBlockingMode;
     if (!thirdPartyCookieBlockingMode)
         return std::nullopt;
 
-    Optional<HashSet<WebCore::RegistrableDomain>> domainsWithUserInteraction;
+    std::optional<HashSet<WebCore::RegistrableDomain>> domainsWithUserInteraction;
     decoder >> domainsWithUserInteraction;
     if (!domainsWithUserInteraction)
         return std::nullopt;
     
-    Optional<HashMap<TopFrameDomain, SubResourceDomain>> domainsWithStorageAccessQuirk;
+    std::optional<HashMap<TopFrameDomain, SubResourceDomain>> domainsWithStorageAccessQuirk;
     decoder >> domainsWithStorageAccessQuirk;
     if (!domainsWithStorageAccessQuirk)
         return std::nullopt;

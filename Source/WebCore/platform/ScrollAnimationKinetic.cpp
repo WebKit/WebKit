@@ -182,7 +182,7 @@ void ScrollAnimationKinetic::start(const FloatPoint& initialPosition, const Floa
     auto delta = deltaToNextFrame();
     auto extents = m_scrollExtentsFunction();
 
-    auto accumulateVelocity = [&](double velocity, Optional<PerAxisData> axisData) -> double {
+    auto accumulateVelocity = [&](double velocity, std::optional<PerAxisData> axisData) -> double {
         if (axisData && axisData.value().animateScroll(delta)) {
             double lastVelocity = axisData.value().velocity();
             if ((std::signbit(lastVelocity) == std::signbit(velocity))

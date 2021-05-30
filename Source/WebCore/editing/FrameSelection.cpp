@@ -2026,7 +2026,7 @@ void FrameSelection::selectAll()
     }
 }
 
-bool FrameSelection::setSelectedRange(const Optional<SimpleRange>& range, Affinity affinity, ShouldCloseTyping closeTyping, EUserTriggered userTriggered)
+bool FrameSelection::setSelectedRange(const std::optional<SimpleRange>& range, Affinity affinity, ShouldCloseTyping closeTyping, EUserTriggered userTriggered)
 {
     if (!range)
         return false;
@@ -2523,7 +2523,7 @@ void FrameSelection::expandSelectionToElementContainingCaretSelection()
     setSelection(VisibleSelection(*range));
 }
 
-Optional<SimpleRange> FrameSelection::elementRangeContainingCaretSelection() const
+std::optional<SimpleRange> FrameSelection::elementRangeContainingCaretSelection() const
 {
     auto element = deprecatedEnclosingBlockFlowElement(m_selection.visibleStart().deepEquivalent().deprecatedNode());
     if (!element)
@@ -2547,7 +2547,7 @@ void FrameSelection::expandSelectionToWordContainingCaretSelection()
         setSelection(selection);
 }
 
-Optional<SimpleRange> FrameSelection::wordRangeContainingCaretSelection()
+std::optional<SimpleRange> FrameSelection::wordRangeContainingCaretSelection()
 {
     return wordSelectionContainingCaretSelection(m_selection).toNormalizedRange();
 }
@@ -2601,12 +2601,12 @@ bool FrameSelection::selectionAtWordStart() const
     return true;
 }
 
-Optional<SimpleRange> FrameSelection::rangeByMovingCurrentSelection(int amount) const
+std::optional<SimpleRange> FrameSelection::rangeByMovingCurrentSelection(int amount) const
 {
     return rangeByAlteringCurrentSelection(AlterationMove, amount);
 }
 
-Optional<SimpleRange> FrameSelection::rangeByExtendingCurrentSelection(int amount) const
+std::optional<SimpleRange> FrameSelection::rangeByExtendingCurrentSelection(int amount) const
 {
     return rangeByAlteringCurrentSelection(AlterationExtend, amount);
 }
@@ -2748,7 +2748,7 @@ bool FrameSelection::selectionAtSentenceStart() const
     return true;
 }
 
-Optional<SimpleRange> FrameSelection::rangeByAlteringCurrentSelection(EAlteration alteration, int amount) const
+std::optional<SimpleRange> FrameSelection::rangeByAlteringCurrentSelection(EAlteration alteration, int amount) const
 {
     if (m_selection.isNone())
         return std::nullopt;
@@ -2797,7 +2797,7 @@ void FrameSelection::setCaretColor(const Color& caretColor)
 
 #endif // PLATFORM(IOS_FAMILY)
 
-static bool containsEndpoints(const WeakPtr<Document>& document, const Optional<SimpleRange>& range)
+static bool containsEndpoints(const WeakPtr<Document>& document, const std::optional<SimpleRange>& range)
 {
     return document && range && document->contains(range->start.container) && document->contains(range->end.container);
 }

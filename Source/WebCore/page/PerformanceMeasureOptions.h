@@ -34,9 +34,9 @@ namespace WebCore {
 
 struct PerformanceMeasureOptions {
     JSC::JSValue detail;
-    Optional<Variant<String, double>> start;
-    Optional<double> duration;
-    Optional<Variant<String, double>> end;
+    std::optional<Variant<String, double>> start;
+    std::optional<double> duration;
+    std::optional<Variant<String, double>> end;
 };
 
 }

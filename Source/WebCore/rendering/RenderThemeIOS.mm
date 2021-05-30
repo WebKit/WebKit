@@ -1229,9 +1229,9 @@ Color RenderThemeIOS::platformInactiveSelectionBackgroundColor(OptionSet<StyleCo
     return Color::transparentBlack;
 }
 
-static Optional<Color>& cachedFocusRingColor()
+static std::optional<Color>& cachedFocusRingColor()
 {
-    static NeverDestroyed<Optional<Color>> color;
+    static NeverDestroyed<std::optional<Color>> color;
     return color;
 }
 
@@ -1340,7 +1340,7 @@ static const Vector<CSSValueSystemColorInformation>& cssValueSystemColorInformat
     return cssValueSystemColorInformationList;
 }
 
-static inline Optional<Color> systemColorFromCSSValueSystemColorInformation(CSSValueSystemColorInformation systemColorInformation, bool useDarkAppearance)
+static inline std::optional<Color> systemColorFromCSSValueSystemColorInformation(CSSValueSystemColorInformation systemColorInformation, bool useDarkAppearance)
 {
     if (auto color = wtfObjCMsgSend<UIColor *>(PAL::getUIColorClass(), systemColorInformation.selector)) {
         Color systemColor = { color.CGColor, Color::Flags::Semantic };
@@ -1357,7 +1357,7 @@ static inline Optional<Color> systemColorFromCSSValueSystemColorInformation(CSSV
     return std::nullopt;
 }
 
-static Optional<Color> systemColorFromCSSValueID(CSSValueID cssValueID, bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
+static std::optional<Color> systemColorFromCSSValueID(CSSValueID cssValueID, bool useDarkAppearance, bool useElevatedUserInterfaceLevel)
 {
     LocalCurrentTraitCollection localTraitCollection(useDarkAppearance, useElevatedUserInterfaceLevel);
 

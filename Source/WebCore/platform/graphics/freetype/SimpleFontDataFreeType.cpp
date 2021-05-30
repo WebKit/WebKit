@@ -86,7 +86,7 @@ static float scaledFontScaleFactor(cairo_scaled_font_t* scaledFont)
     return xScale ? narrowPrecisionToFloat(determinant / xScale) : 0.;
 }
 
-static Optional<unsigned> fontUnitsPerEm(FT_Face freeTypeFace)
+static std::optional<unsigned> fontUnitsPerEm(FT_Face freeTypeFace)
 {
     if (freeTypeFace->units_per_EM)
         return freeTypeFace->units_per_EM;
@@ -114,10 +114,10 @@ void Font::platformInit()
     float descent = narrowPrecisionToFloat(fontExtents.descent);
     float capHeight = narrowPrecisionToFloat(fontExtents.height);
     float lineGap = narrowPrecisionToFloat(fontExtents.height - fontExtents.ascent - fontExtents.descent);
-    Optional<float> xHeight;
-    Optional<unsigned> unitsPerEm;
-    Optional<float> underlinePosition;
-    Optional<float> underlineThickness;
+    std::optional<float> xHeight;
+    std::optional<unsigned> unitsPerEm;
+    std::optional<float> underlinePosition;
+    std::optional<float> underlineThickness;
 
     {
         CairoFtFaceLocker cairoFtFaceLocker(m_platformData.scaledFont());
@@ -220,7 +220,7 @@ bool Font::variantCapsSupportsCharacterForSynthesis(FontVariantCaps fontVariantC
     }
 }
 
-bool Font::platformSupportsCodePoint(UChar32 character, Optional<UChar32> variation) const
+bool Font::platformSupportsCodePoint(UChar32 character, std::optional<UChar32> variation) const
 {
     CairoFtFaceLocker cairoFtFaceLocker(m_platformData.scaledFont());
     if (FT_Face face = cairoFtFaceLocker.ftFace())

@@ -38,7 +38,7 @@ class GPUErrorScopes;
 struct GPUComputePipelineDescriptor;
 
 struct WebGPUComputePipelineDescriptor : WebGPUPipelineDescriptorBase {
-    Optional<GPUComputePipelineDescriptor> tryCreateGPUComputePipelineDescriptor(GPUErrorScopes&) const;
+    std::optional<GPUComputePipelineDescriptor> tryCreateGPUComputePipelineDescriptor(GPUErrorScopes&) const;
 
     WebGPUProgrammableStageDescriptor computeStage;
 };

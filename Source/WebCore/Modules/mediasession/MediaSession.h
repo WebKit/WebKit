@@ -69,10 +69,10 @@ public:
 
     void callActionHandler(const MediaSessionActionDetails&, DOMPromiseDeferred<void>&&);
 
-    ExceptionOr<void> setPositionState(Optional<MediaPositionState>&&);
-    Optional<MediaPositionState> positionState() const { return m_positionState; }
+    ExceptionOr<void> setPositionState(std::optional<MediaPositionState>&&);
+    std::optional<MediaPositionState> positionState() const { return m_positionState; }
 
-    WEBCORE_EXPORT Optional<double> currentPosition() const;
+    WEBCORE_EXPORT std::optional<double> currentPosition() const;
 
     Document* document() const;
     
@@ -107,7 +107,7 @@ public:
         virtual ~Observer() = default;
 
         virtual void metadataChanged(const RefPtr<MediaMetadata>&) { }
-        virtual void positionStateChanged(const Optional<MediaPositionState>&) { }
+        virtual void positionStateChanged(const std::optional<MediaPositionState>&) { }
         virtual void playbackStateChanged(MediaSessionPlaybackState) { }
         virtual void actionHandlersChanged() { }
 
@@ -147,8 +147,8 @@ private:
     WeakPtr<Navigator> m_navigator;
     RefPtr<MediaMetadata> m_metadata;
     MediaSessionPlaybackState m_playbackState { MediaSessionPlaybackState::None };
-    Optional<MediaPositionState> m_positionState;
-    Optional<double> m_lastReportedPosition;
+    std::optional<MediaPositionState> m_positionState;
+    std::optional<double> m_lastReportedPosition;
     MonotonicTime m_timeAtLastPositionUpdate;
     HashMap<MediaSessionAction, RefPtr<MediaSessionActionHandler>, WTF::IntHash<MediaSessionAction>, WTF::StrongEnumHashTraits<MediaSessionAction>> m_actionHandlers;
     RefPtr<const Logger> m_logger;

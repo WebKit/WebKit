@@ -178,7 +178,7 @@ void GraphicsContextGLOpenGL::prepareTexture()
     ::glFlush();
 }
 
-Optional<PixelBuffer> GraphicsContextGLOpenGL::readRenderingResults()
+std::optional<PixelBuffer> GraphicsContextGLOpenGL::readRenderingResults()
 {
     bool mustRestoreFBO = false;
     if (contextAttributes().antialias) {
@@ -915,7 +915,7 @@ static String generateHashedName(const String& name)
     return makeString("webgl_", hex(number, Lowercase));
 }
 
-Optional<String> GraphicsContextGLOpenGL::mappedSymbolInShaderSourceMap(PlatformGLObject shader, ANGLEShaderSymbolType symbolType, const String& name)
+std::optional<String> GraphicsContextGLOpenGL::mappedSymbolInShaderSourceMap(PlatformGLObject shader, ANGLEShaderSymbolType symbolType, const String& name)
 {
     auto result = m_shaderSourceMap.find(shader);
     if (result == m_shaderSourceMap.end())
@@ -973,7 +973,7 @@ String GraphicsContextGLOpenGL::mappedSymbolName(PlatformGLObject program, ANGLE
     return name;
 }
 
-Optional<String> GraphicsContextGLOpenGL::originalSymbolInShaderSourceMap(PlatformGLObject shader, ANGLEShaderSymbolType symbolType, const String& name)
+std::optional<String> GraphicsContextGLOpenGL::originalSymbolInShaderSourceMap(PlatformGLObject shader, ANGLEShaderSymbolType symbolType, const String& name)
 {
     auto result = m_shaderSourceMap.find(shader);
     if (result == m_shaderSourceMap.end())

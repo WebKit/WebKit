@@ -91,7 +91,7 @@ static String timeToString(const WebCore::DateComponents& time, WebCore::SecondF
     return { };
 }
 
-static String calendarDateToString(int year, int month, int day, const Optional<WebCore::DateComponents>& date, WebCore::SecondFormat secondFormat)
+static String calendarDateToString(int year, int month, int day, const std::optional<WebCore::DateComponents>& date, WebCore::SecondFormat secondFormat)
 {
     auto type = date ? date->type() : WebCore::DateComponentsType::Date;
     switch (type) {

@@ -47,7 +47,7 @@ public:
         return adoptRef(*new NameSection);
     }
 
-    void setHash(const Optional<CString> &hash)
+    void setHash(const std::optional<CString> &hash)
     {
         moduleHash = Name(hash ? hash->length() : 3);
         if (hash) {

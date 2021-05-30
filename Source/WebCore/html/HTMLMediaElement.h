@@ -109,7 +109,7 @@ class RemotePlayback;
 using CueInterval = PODInterval<MediaTime, TextTrackCue*>;
 using CueList = Vector<CueInterval>;
 
-using MediaProvider = Optional<Variant<
+using MediaProvider = std::optional<Variant<
 #if ENABLE(MEDIA_STREAM)
     RefPtr<MediaStream>,
 #endif
@@ -1116,7 +1116,7 @@ private:
     String m_subtitleTrackLanguage;
     MediaTime m_lastTextTrackUpdateTime { -1, 1 };
 
-    Optional<CaptionUserPreferences::CaptionDisplayMode> m_captionDisplayMode;
+    std::optional<CaptionUserPreferences::CaptionDisplayMode> m_captionDisplayMode;
 
     RefPtr<AudioTrackList> m_audioTracks;
     RefPtr<TextTrackList> m_textTracks;
@@ -1145,7 +1145,7 @@ private:
 
     WeakPtr<const MediaResourceLoader> m_lastMediaResourceLoaderForTesting;
 
-    Optional<DynamicRangeMode> m_overrideDynamicRangeMode;
+    std::optional<DynamicRangeMode> m_overrideDynamicRangeMode;
 
     friend class TrackDisplayUpdateScope;
 

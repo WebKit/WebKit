@@ -71,7 +71,7 @@ private:
     Ref<SVGAnimatedString> m_target { SVGAnimatedString::create(this) };
 
     // This is computed only once and must not be affected by subsequent URL changes.
-    mutable Optional<SharedStringHash> m_storedVisitedLinkHash;
+    mutable std::optional<SharedStringHash> m_storedVisitedLinkHash;
 
     std::unique_ptr<DOMTokenList> m_relList;
 };

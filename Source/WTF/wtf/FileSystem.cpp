@@ -493,7 +493,7 @@ static Salt makeSalt()
     return salt;
 }
 
-Optional<Salt> readOrMakeSalt(const String& path)
+std::optional<Salt> readOrMakeSalt(const String& path)
 {
     if (FileSystem::fileExists(path)) {
         auto file = FileSystem::openFile(path, FileSystem::FileOpenMode::Read);
@@ -588,7 +588,7 @@ bool moveFile(const String& oldPath, const String& newPath)
     return std::filesystem::remove_all(fsOldPath, ec);
 }
 
-Optional<uint64_t> fileSize(const String& path)
+std::optional<uint64_t> fileSize(const String& path)
 {
     std::error_code ec;
     auto size = std::filesystem::file_size(toStdFileSystemPath(path), ec);
@@ -604,7 +604,7 @@ bool makeAllDirectories(const String& path)
     return !ec;
 }
 
-Optional<uint64_t> volumeFreeSpace(const String& path)
+std::optional<uint64_t> volumeFreeSpace(const String& path)
 {
     std::error_code ec;
     auto spaceInfo = std::filesystem::space(toStdFileSystemPath(path), ec);
@@ -641,7 +641,7 @@ bool hardLinkOrCopyFile(const String& targetPath, const String& linkPath)
     return !ec;
 }
 
-Optional<uint64_t> hardLinkCount(const String& path)
+std::optional<uint64_t> hardLinkCount(const String& path)
 {
     std::error_code ec;
     uint64_t linkCount = std::filesystem::hard_link_count(toStdFileSystemPath(path), ec);
@@ -655,7 +655,7 @@ bool deleteNonEmptyDirectory(const String& path)
     return !ec;
 }
 
-Optional<WallTime> fileModificationTime(const String& path)
+std::optional<WallTime> fileModificationTime(const String& path)
 {
     std::error_code ec;
     auto modificationTime = std::filesystem::last_write_time(toStdFileSystemPath(path), ec);
@@ -684,7 +684,7 @@ bool isHiddenFile(const String& path)
 }
 
 enum class ShouldFollowSymbolicLinks { No, Yes };
-static Optional<FileType> fileTypePotentiallyFollowingSymLinks(const String& path, ShouldFollowSymbolicLinks shouldFollowSymbolicLinks)
+static std::optional<FileType> fileTypePotentiallyFollowingSymLinks(const String& path, ShouldFollowSymbolicLinks shouldFollowSymbolicLinks)
 {
     std::error_code ec;
     auto status = shouldFollowSymbolicLinks == ShouldFollowSymbolicLinks::Yes ? std::filesystem::status(toStdFileSystemPath(path), ec) : std::filesystem::symlink_status(toStdFileSystemPath(path), ec);
@@ -701,12 +701,12 @@ static Optional<FileType> fileTypePotentiallyFollowingSymLinks(const String& pat
     return FileType::Regular;
 }
 
-Optional<FileType> fileType(const String& path)
+std::optional<FileType> fileType(const String& path)
 {
     return fileTypePotentiallyFollowingSymLinks(path, ShouldFollowSymbolicLinks::No);
 }
 
-Optional<FileType> fileTypeFollowingSymlinks(const String& path)
+std::optional<FileType> fileTypeFollowingSymlinks(const String& path)
 {
     return fileTypePotentiallyFollowingSymLinks(path, ShouldFollowSymbolicLinks::Yes);
 }

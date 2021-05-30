@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-GstVideoFrameHolder::GstVideoFrameHolder(GstSample* sample, Optional<GstVideoDecoderPlatform> videoDecoderPlatform, TextureMapperGL::Flags flags, bool gstGLEnabled)
+GstVideoFrameHolder::GstVideoFrameHolder(GstSample* sample, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, TextureMapperGL::Flags flags, bool gstGLEnabled)
     : m_videoDecoderPlatform(videoDecoderPlatform)
 {
     RELEASE_ASSERT(GST_IS_SAMPLE(sample));

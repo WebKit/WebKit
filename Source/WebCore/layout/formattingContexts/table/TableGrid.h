@@ -56,10 +56,10 @@ public:
     LayoutUnit verticalSpacing() const { return m_verticalSpacing; }
 
     void setCollapsedBorder(const Edges& collapsedBorder) { m_collapsedBorder = collapsedBorder; }
-    Optional<Edges> collapsedBorder() const { return m_collapsedBorder; }
+    std::optional<Edges> collapsedBorder() const { return m_collapsedBorder; }
 
     void setWidthConstraints(IntrinsicWidthConstraints intrinsicWidthConstraints) { m_intrinsicWidthConstraints = intrinsicWidthConstraints; }
-    Optional<IntrinsicWidthConstraints> widthConstraints() const { return m_intrinsicWidthConstraints; }
+    std::optional<IntrinsicWidthConstraints> widthConstraints() const { return m_intrinsicWidthConstraints; }
 
     bool isEmpty() const { return m_slotMap.isEmpty(); }
     // Column represents a vertical set of slots in the grid. A column has horizontal position and width.
@@ -231,8 +231,8 @@ private:
 
     LayoutUnit m_horizontalSpacing;
     LayoutUnit m_verticalSpacing;
-    Optional<IntrinsicWidthConstraints> m_intrinsicWidthConstraints;
-    Optional<Edges> m_collapsedBorder;
+    std::optional<IntrinsicWidthConstraints> m_intrinsicWidthConstraints;
+    std::optional<Edges> m_collapsedBorder;
 };
 
 }

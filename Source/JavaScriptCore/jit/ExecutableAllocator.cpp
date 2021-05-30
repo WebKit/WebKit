@@ -784,7 +784,7 @@ private:
             CRASH();
         }
 
-        Optional<size_t> islandBit(uintptr_t island)
+        std::optional<size_t> islandBit(uintptr_t island)
         {
             uintptr_t end = this->end();
             if (islandBegin() <= island && island < end)
@@ -804,7 +804,7 @@ private:
         {
             if (Base::isInAllocatedMemory(locker, address))
                 return true;
-            if (Optional<size_t> bit = islandBit(bitwise_cast<uintptr_t>(address))) {
+            if (std::optional<size_t> bit = islandBit(bitwise_cast<uintptr_t>(address))) {
                 if (bit.value() < islandBits.size())
                     return !!islandBits[bit.value()];
             }

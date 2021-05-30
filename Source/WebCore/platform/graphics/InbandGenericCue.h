@@ -81,88 +81,88 @@ struct GenericCueData {
     Status m_status { Status::Uninitialized };
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<GenericCueData> decode(Decoder&);
+    template<class Decoder> static std::optional<GenericCueData> decode(Decoder&);
 };
 
 template <class Decoder>
-Optional<GenericCueData> GenericCueData::decode(Decoder& decoder)
+std::optional<GenericCueData> GenericCueData::decode(Decoder& decoder)
 {
-    Optional<InbandGenericCueIdentifier> uniqueId;
+    std::optional<InbandGenericCueIdentifier> uniqueId;
     decoder >> uniqueId;
     if (!uniqueId)
         return std::nullopt;
 
-    Optional<MediaTime> startTime;
+    std::optional<MediaTime> startTime;
     decoder >> startTime;
     if (!startTime)
         return std::nullopt;
 
-    Optional<MediaTime> endTime;
+    std::optional<MediaTime> endTime;
     decoder >> endTime;
     if (!endTime)
         return std::nullopt;
 
-    Optional<String> identifier;
+    std::optional<String> identifier;
     decoder >> identifier;
     if (!identifier)
         return std::nullopt;
 
-    Optional<String> content;
+    std::optional<String> content;
     decoder >> content;
     if (!content)
         return std::nullopt;
 
-    Optional<String> fontName;
+    std::optional<String> fontName;
     decoder >> fontName;
     if (!fontName)
         return std::nullopt;
 
-    Optional<double> line;
+    std::optional<double> line;
     decoder >> line;
     if (!line)
         return std::nullopt;
 
-    Optional<double> position;
+    std::optional<double> position;
     decoder >> position;
     if (!position)
         return std::nullopt;
 
-    Optional<double> size;
+    std::optional<double> size;
     decoder >> size;
     if (!size)
         return std::nullopt;
 
-    Optional<double> baseFontSize;
+    std::optional<double> baseFontSize;
     decoder >> baseFontSize;
     if (!baseFontSize)
         return std::nullopt;
 
-    Optional<double> relativeFontSize;
+    std::optional<double> relativeFontSize;
     decoder >> relativeFontSize;
     if (!relativeFontSize)
         return std::nullopt;
 
-    Optional<Color> foregroundColor;
+    std::optional<Color> foregroundColor;
     decoder >> foregroundColor;
     if (!foregroundColor)
         return std::nullopt;
 
-    Optional<Color> backgroundColor;
+    std::optional<Color> backgroundColor;
     decoder >> backgroundColor;
     if (!backgroundColor)
         return std::nullopt;
 
-    Optional<Color> highlightColor;
+    std::optional<Color> highlightColor;
     decoder >> highlightColor;
     if (!highlightColor)
         return std::nullopt;
 
-    Optional<Alignment> alignment;
+    std::optional<Alignment> alignment;
     decoder >> alignment;
     if (!alignment)
         return std::nullopt;
 
-    Optional<Status> status;
+    std::optional<Status> status;
     decoder >> status;
     if (!status)
         return std::nullopt;

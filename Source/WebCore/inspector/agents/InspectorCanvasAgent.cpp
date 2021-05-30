@@ -288,7 +288,7 @@ Protocol::ErrorStringOr<void> InspectorCanvasAgent::setRecordingAutoCaptureFrame
     return { };
 }
 
-Protocol::ErrorStringOr<void> InspectorCanvasAgent::startRecording(const Protocol::Canvas::CanvasId& canvasId, Optional<int>&& frameCount, Optional<int>&& memoryLimit)
+Protocol::ErrorStringOr<void> InspectorCanvasAgent::startRecording(const Protocol::Canvas::CanvasId& canvasId, std::optional<int>&& frameCount, std::optional<int>&& memoryLimit)
 {
     Protocol::ErrorString errorString;
 
@@ -475,7 +475,7 @@ void InspectorCanvasAgent::didChangeCanvasMemory(CanvasRenderingContext& context
         m_frontendDispatcher->canvasMemoryChanged(inspectorCanvas->identifier(), node->memoryCost());
 }
 
-void InspectorCanvasAgent::canvasChanged(CanvasBase& canvasBase, const Optional<FloatRect>&)
+void InspectorCanvasAgent::canvasChanged(CanvasBase& canvasBase, const std::optional<FloatRect>&)
 {
     auto* context = canvasBase.renderingContext();
     if (!context)
@@ -682,7 +682,7 @@ void InspectorCanvasAgent::willDestroyWebGPUPipeline(WebGPUPipeline& pipeline)
 #endif // ENABLE(WEBGPU)
 
 #define PROCESS_ARGUMENT_DEFINITION(ArgumentType) \
-Optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvasAgent::processArgument(CanvasRenderingContext& canvasRenderingContext, ArgumentType argument) \
+std::optional<InspectorCanvasCallTracer::ProcessedArgument> InspectorCanvasAgent::processArgument(CanvasRenderingContext& canvasRenderingContext, ArgumentType argument) \
 { \
     auto inspectorCanvas = findInspectorCanvas(canvasRenderingContext); \
     ASSERT(inspectorCanvas); \
@@ -825,7 +825,7 @@ InspectorCanvas& InspectorCanvasAgent::bindCanvas(CanvasRenderingContext& contex
 #if ENABLE(WEBGL)
     if (is<WebGLRenderingContextBase>(context)) {
         auto& contextWebGL = downcast<WebGLRenderingContextBase>(context);
-        if (Optional<Vector<String>> extensions = contextWebGL.getSupportedExtensions()) {
+        if (std::optional<Vector<String>> extensions = contextWebGL.getSupportedExtensions()) {
             for (const String& extension : *extensions) {
                 if (contextWebGL.extensionIsEnabled(extension))
                     m_frontendDispatcher->extensionEnabled(inspectorCanvas->identifier(), extension);

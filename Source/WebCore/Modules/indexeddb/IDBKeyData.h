@@ -85,7 +85,7 @@ public:
     WEBCORE_EXPORT void setNumberValue(double);
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<IDBKeyData> decode(Decoder&);
+    template<class Decoder> static std::optional<IDBKeyData> decode(Decoder&);
     
 #if !LOG_DISABLED
     WEBCORE_EXPORT String loggingString() const;
@@ -251,7 +251,7 @@ void IDBKeyData::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<IDBKeyData> IDBKeyData::decode(Decoder& decoder)
+std::optional<IDBKeyData> IDBKeyData::decode(Decoder& decoder)
 {
     IDBKeyData keyData;
     if (!decoder.decode(keyData.m_isNull))

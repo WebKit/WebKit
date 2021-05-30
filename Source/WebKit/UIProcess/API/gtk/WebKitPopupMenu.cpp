@@ -68,7 +68,7 @@ void WebKitPopupMenu::cancelTracking()
     m_menu = nullptr;
 }
 
-void WebKitPopupMenu::activateItem(Optional<unsigned> itemIndex)
+void WebKitPopupMenu::activateItem(std::optional<unsigned> itemIndex)
 {
     WebPopupMenuProxyGtk::activateItem(itemIndex);
     if (m_menu) {

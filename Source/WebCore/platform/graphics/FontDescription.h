@@ -45,7 +45,7 @@ public:
 
     float computedSize() const { return m_computedSize; }
     unsigned computedPixelSize() const { return unsigned(m_computedSize + 0.5f); }
-    Optional<FontSelectionValue> italic() const { return m_fontSelectionRequest.slope; }
+    std::optional<FontSelectionValue> italic() const { return m_fontSelectionRequest.slope; }
     FontSelectionValue stretch() const { return m_fontSelectionRequest.width; }
     FontSelectionValue weight() const { return m_fontSelectionRequest.weight; }
     FontSelectionRequest fontSelectionRequest() const { return m_fontSelectionRequest; }
@@ -100,9 +100,9 @@ public:
     bool shouldDisableLigaturesForSpacing() const { return m_shouldDisableLigaturesForSpacing; }
 
     void setComputedSize(float s) { m_computedSize = clampToFloat(s); }
-    void setItalic(Optional<FontSelectionValue> italic) { m_fontSelectionRequest.slope = italic; }
+    void setItalic(std::optional<FontSelectionValue> italic) { m_fontSelectionRequest.slope = italic; }
     void setStretch(FontSelectionValue stretch) { m_fontSelectionRequest.width = stretch; }
-    void setIsItalic(bool isItalic) { setItalic(isItalic ? Optional<FontSelectionValue> { italicValue() } : Optional<FontSelectionValue> { }); }
+    void setIsItalic(bool isItalic) { setItalic(isItalic ? std::optional<FontSelectionValue> { italicValue() } : std::optional<FontSelectionValue> { }); }
     void setWeight(FontSelectionValue weight) { m_fontSelectionRequest.weight = weight; }
     void setRenderingMode(FontRenderingMode mode) { m_renderingMode = static_cast<unsigned>(mode); }
     void setTextRenderingMode(TextRenderingMode rendering) { m_textRendering = static_cast<unsigned>(rendering); }
@@ -139,7 +139,7 @@ public:
     void encode(Encoder&) const;
 
     template<class Decoder>
-    static Optional<FontDescription> decode(Decoder&);
+    static std::optional<FontDescription> decode(Decoder&);
 
 private:
     // FIXME: Investigate moving these into their own object on the heap (to save memory).
@@ -250,165 +250,165 @@ void FontDescription::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<FontDescription> FontDescription::decode(Decoder& decoder)
+std::optional<FontDescription> FontDescription::decode(Decoder& decoder)
 {
     FontDescription fontDescription;
-    Optional<FontFeatureSettings> featureSettings;
+    std::optional<FontFeatureSettings> featureSettings;
     decoder >> featureSettings;
     if (!featureSettings)
         return std::nullopt;
 
-    Optional<FontVariationSettings> variationSettings;
+    std::optional<FontVariationSettings> variationSettings;
     decoder >> variationSettings;
     if (!variationSettings)
         return std::nullopt;
 
-    Optional<AtomString> locale;
+    std::optional<AtomString> locale;
     decoder >> locale;
     if (!locale)
         return std::nullopt;
 
-    Optional<Optional<FontSelectionValue>> italic;
+    std::optional<std::optional<FontSelectionValue>> italic;
     decoder >> italic;
     if (!italic)
         return std::nullopt;
 
-    Optional<FontSelectionValue> stretch;
+    std::optional<FontSelectionValue> stretch;
     decoder >> stretch;
     if (!stretch)
         return std::nullopt;
 
-    Optional<FontSelectionValue> weight;
+    std::optional<FontSelectionValue> weight;
     decoder >> weight;
     if (!weight)
         return std::nullopt;
 
-    Optional<float> computedSize;
+    std::optional<float> computedSize;
     decoder >> computedSize;
     if (!computedSize)
         return std::nullopt;
 
-    Optional<FontOrientation> orientation;
+    std::optional<FontOrientation> orientation;
     decoder >> orientation;
     if (!orientation)
         return std::nullopt;
 
-    Optional<NonCJKGlyphOrientation> nonCJKGlyphOrientation;
+    std::optional<NonCJKGlyphOrientation> nonCJKGlyphOrientation;
     decoder >> nonCJKGlyphOrientation;
     if (!nonCJKGlyphOrientation)
         return std::nullopt;
 
-    Optional<FontWidthVariant> widthVariant;
+    std::optional<FontWidthVariant> widthVariant;
     decoder >> widthVariant;
     if (!widthVariant)
         return std::nullopt;
 
-    Optional<FontRenderingMode> renderingMode;
+    std::optional<FontRenderingMode> renderingMode;
     decoder >> renderingMode;
     if (!renderingMode)
         return std::nullopt;
 
-    Optional<TextRenderingMode> textRenderingMode;
+    std::optional<TextRenderingMode> textRenderingMode;
     decoder >> textRenderingMode;
     if (!textRenderingMode)
         return std::nullopt;
 
-    Optional<FontSynthesis> fontSynthesis;
+    std::optional<FontSynthesis> fontSynthesis;
     decoder >> fontSynthesis;
     if (!fontSynthesis)
         return std::nullopt;
 
-    Optional<FontVariantLigatures> variantCommonLigatures;
+    std::optional<FontVariantLigatures> variantCommonLigatures;
     decoder >> variantCommonLigatures;
     if (!variantCommonLigatures)
         return std::nullopt;
 
-    Optional<FontVariantLigatures> variantDiscretionaryLigatures;
+    std::optional<FontVariantLigatures> variantDiscretionaryLigatures;
     decoder >> variantDiscretionaryLigatures;
     if (!variantDiscretionaryLigatures)
         return std::nullopt;
 
-    Optional<FontVariantLigatures> variantHistoricalLigatures;
+    std::optional<FontVariantLigatures> variantHistoricalLigatures;
     decoder >> variantHistoricalLigatures;
     if (!variantHistoricalLigatures)
         return std::nullopt;
 
-    Optional<FontVariantLigatures> variantContextualAlternates;
+    std::optional<FontVariantLigatures> variantContextualAlternates;
     decoder >> variantContextualAlternates;
     if (!variantContextualAlternates)
         return std::nullopt;
 
-    Optional<FontVariantPosition> variantPosition;
+    std::optional<FontVariantPosition> variantPosition;
     decoder >> variantPosition;
     if (!variantPosition)
         return std::nullopt;
 
-    Optional<FontVariantCaps> variantCaps;
+    std::optional<FontVariantCaps> variantCaps;
     decoder >> variantCaps;
     if (!variantCaps)
         return std::nullopt;
 
-    Optional<FontVariantNumericFigure> variantNumericFigure;
+    std::optional<FontVariantNumericFigure> variantNumericFigure;
     decoder >> variantNumericFigure;
     if (!variantNumericFigure)
         return std::nullopt;
 
-    Optional<FontVariantNumericSpacing> variantNumericSpacing;
+    std::optional<FontVariantNumericSpacing> variantNumericSpacing;
     decoder >> variantNumericSpacing;
     if (!variantNumericSpacing)
         return std::nullopt;
 
-    Optional<FontVariantNumericFraction> variantNumericFraction;
+    std::optional<FontVariantNumericFraction> variantNumericFraction;
     decoder >> variantNumericFraction;
     if (!variantNumericFraction)
         return std::nullopt;
 
-    Optional<FontVariantNumericOrdinal> variantNumericOrdinal;
+    std::optional<FontVariantNumericOrdinal> variantNumericOrdinal;
     decoder >> variantNumericOrdinal;
     if (!variantNumericOrdinal)
         return std::nullopt;
 
-    Optional<FontVariantNumericSlashedZero> variantNumericSlashedZero;
+    std::optional<FontVariantNumericSlashedZero> variantNumericSlashedZero;
     decoder >> variantNumericSlashedZero;
     if (!variantNumericSlashedZero)
         return std::nullopt;
 
-    Optional<FontVariantAlternates> variantAlternates;
+    std::optional<FontVariantAlternates> variantAlternates;
     decoder >> variantAlternates;
     if (!variantAlternates)
         return std::nullopt;
 
-    Optional<FontVariantEastAsianVariant> variantEastAsianVariant;
+    std::optional<FontVariantEastAsianVariant> variantEastAsianVariant;
     decoder >> variantEastAsianVariant;
     if (!variantEastAsianVariant)
         return std::nullopt;
 
-    Optional<FontVariantEastAsianWidth> variantEastAsianWidth;
+    std::optional<FontVariantEastAsianWidth> variantEastAsianWidth;
     decoder >> variantEastAsianWidth;
     if (!variantEastAsianWidth)
         return std::nullopt;
 
-    Optional<FontVariantEastAsianRuby> variantEastAsianRuby;
+    std::optional<FontVariantEastAsianRuby> variantEastAsianRuby;
     decoder >> variantEastAsianRuby;
     if (!variantEastAsianRuby)
         return std::nullopt;
 
-    Optional<FontOpticalSizing> opticalSizing;
+    std::optional<FontOpticalSizing> opticalSizing;
     decoder >> opticalSizing;
     if (!opticalSizing)
         return std::nullopt;
 
-    Optional<FontStyleAxis> fontStyleAxis;
+    std::optional<FontStyleAxis> fontStyleAxis;
     decoder >> fontStyleAxis;
     if (!fontStyleAxis)
         return std::nullopt;
 
-    Optional<AllowUserInstalledFonts> shouldAllowUserInstalledFonts;
+    std::optional<AllowUserInstalledFonts> shouldAllowUserInstalledFonts;
     decoder >> shouldAllowUserInstalledFonts;
     if (!shouldAllowUserInstalledFonts)
         return std::nullopt;
 
-    Optional<bool> shouldDisableLigaturesForSpacing;
+    std::optional<bool> shouldDisableLigaturesForSpacing;
     decoder >> shouldDisableLigaturesForSpacing;
     if (!shouldDisableLigaturesForSpacing)
         return std::nullopt;

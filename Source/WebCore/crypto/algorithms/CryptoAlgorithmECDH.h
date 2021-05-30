@@ -40,7 +40,7 @@ public:
     static Ref<CryptoAlgorithm> create();
 
     // Operations can be performed directly.
-    WEBCORE_EXPORT static Optional<Vector<uint8_t>> platformDeriveBits(const CryptoKeyEC&, const CryptoKeyEC&);
+    WEBCORE_EXPORT static std::optional<Vector<uint8_t>> platformDeriveBits(const CryptoKeyEC&, const CryptoKeyEC&);
 
 private:
     CryptoAlgorithmECDH() = default;

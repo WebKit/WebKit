@@ -183,7 +183,7 @@ void ElementRuleCollector::sortAndTransferMatchedRules(DeclarationOrigin declara
     transferMatchedRules(declarationOrigin);
 }
 
-void ElementRuleCollector::transferMatchedRules(DeclarationOrigin declarationOrigin, Optional<ScopeOrdinal> fromScope)
+void ElementRuleCollector::transferMatchedRules(DeclarationOrigin declarationOrigin, std::optional<ScopeOrdinal> fromScope)
 {
     if (m_mode != SelectorChecker::Mode::CollectingRules)
         declarationsForOrigin(m_result, declarationOrigin).reserveCapacity(m_matchedRules.size());

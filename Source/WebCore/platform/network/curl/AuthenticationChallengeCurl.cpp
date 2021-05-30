@@ -80,7 +80,7 @@ ProtectionSpace AuthenticationChallenge::protectionSpaceForServerTrust(const URL
     return ProtectionSpace(url.host().toString(), static_cast<int>(port.value_or(0)), serverType, String(), authenticationScheme, certificateInfo);
 }
 
-Optional<uint16_t> AuthenticationChallenge::determineProxyPort(const URL& url)
+std::optional<uint16_t> AuthenticationChallenge::determineProxyPort(const URL& url)
 {
     static const uint16_t socksPort = 1080;
 

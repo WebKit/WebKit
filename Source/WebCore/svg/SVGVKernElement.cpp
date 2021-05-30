@@ -41,7 +41,7 @@ Ref<SVGVKernElement> SVGVKernElement::create(const QualifiedName& tagName, Docum
     return adoptRef(*new SVGVKernElement(tagName, document));
 }
 
-Optional<SVGKerningPair> SVGVKernElement::buildVerticalKerningPair() const
+std::optional<SVGKerningPair> SVGVKernElement::buildVerticalKerningPair() const
 {
     // FIXME: Can this be shared with SVGHKernElement::buildVerticalKerningPair?
 

@@ -1710,7 +1710,7 @@ TEST(WKDownload, FailNoResumeData)
 
 TEST(WKDownload, ResumeAfterZeroBytesReceived)
 {
-    Optional<TestWebKitAPI::Connection> serverConnection;
+    std::optional<TestWebKitAPI::Connection> serverConnection;
     HTTPServer server([connectionCount = 0, &serverConnection](TestWebKitAPI::Connection connection) mutable {
         switch (++connectionCount) {
         case 1:

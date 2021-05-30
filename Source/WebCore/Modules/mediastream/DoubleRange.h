@@ -31,8 +31,8 @@
 namespace WebCore {
 
 struct DoubleRange {
-    Optional<double> max;
-    Optional<double> min;
+    std::optional<double> max;
+    std::optional<double> min;
 };
 
 }

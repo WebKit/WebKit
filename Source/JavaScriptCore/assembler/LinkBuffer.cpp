@@ -549,7 +549,7 @@ void LinkBuffer::clearProfileStatistics()
     }
 }
 
-void LinkBuffer::dumpProfileStatistics(Optional<PrintStream*> outStream)
+void LinkBuffer::dumpProfileStatistics(std::optional<PrintStream*> outStream)
 {
     struct Stat {
         Profile profile;

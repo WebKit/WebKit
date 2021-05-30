@@ -50,7 +50,7 @@ const EVP_MD* digestAlgorithm(CryptoAlgorithmIdentifier hashFunction)
     }
 }
 
-Optional<Vector<uint8_t>> calculateDigest(const EVP_MD* algorithm, const Vector<uint8_t>& message)
+std::optional<Vector<uint8_t>> calculateDigest(const EVP_MD* algorithm, const Vector<uint8_t>& message)
 {
     EvpDigestCtxPtr ctx;
     if (!(ctx = EvpDigestCtxPtr(EVP_MD_CTX_create())))

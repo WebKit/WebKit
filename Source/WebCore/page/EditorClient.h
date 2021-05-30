@@ -56,7 +56,7 @@ class EditorClient {
 public:
     virtual ~EditorClient() = default;
 
-    virtual bool shouldDeleteRange(const Optional<SimpleRange>&) = 0;
+    virtual bool shouldDeleteRange(const std::optional<SimpleRange>&) = 0;
     virtual bool smartInsertDeleteEnabled() = 0; 
     virtual bool isSelectTrailingWhitespaceEnabled() const = 0;
     virtual bool isContinuousSpellCheckingEnabled() = 0;
@@ -67,13 +67,13 @@ public:
 
     virtual bool shouldBeginEditing(const SimpleRange&) = 0;
     virtual bool shouldEndEditing(const SimpleRange&) = 0;
-    virtual bool shouldInsertNode(Node&, const Optional<SimpleRange>&, EditorInsertAction) = 0;
-    virtual bool shouldInsertText(const String&, const Optional<SimpleRange>&, EditorInsertAction) = 0;
-    virtual bool shouldChangeSelectedRange(const Optional<SimpleRange>& fromRange, const Optional<SimpleRange>& toRange, Affinity, bool stillSelecting) = 0;
+    virtual bool shouldInsertNode(Node&, const std::optional<SimpleRange>&, EditorInsertAction) = 0;
+    virtual bool shouldInsertText(const String&, const std::optional<SimpleRange>&, EditorInsertAction) = 0;
+    virtual bool shouldChangeSelectedRange(const std::optional<SimpleRange>& fromRange, const std::optional<SimpleRange>& toRange, Affinity, bool stillSelecting) = 0;
     virtual bool shouldRevealCurrentSelectionAfterInsertion() const { return true; };
     virtual bool shouldSuppressPasswordEcho() const { return false; };
     
-    virtual bool shouldApplyStyle(const StyleProperties&, const Optional<SimpleRange>&) = 0;
+    virtual bool shouldApplyStyle(const StyleProperties&, const std::optional<SimpleRange>&) = 0;
     virtual void didApplyStyle() = 0;
     virtual bool shouldMoveRangeAfterDelete(const SimpleRange&, const SimpleRange&) = 0;
 
@@ -95,9 +95,9 @@ public:
     virtual void didEndUserTriggeredSelectionChanges() = 0;
     virtual void updateEditorStateAfterLayoutIfEditabilityChanged() = 0;
     virtual void didEndEditing() = 0;
-    virtual void willWriteSelectionToPasteboard(const Optional<SimpleRange>&) = 0;
+    virtual void willWriteSelectionToPasteboard(const std::optional<SimpleRange>&) = 0;
     virtual void didWriteSelectionToPasteboard() = 0;
-    virtual void getClientPasteboardData(const Optional<SimpleRange>&, Vector<String>& pasteboardTypes, Vector<RefPtr<SharedBuffer>>& pasteboardData) = 0;
+    virtual void getClientPasteboardData(const std::optional<SimpleRange>&, Vector<String>& pasteboardTypes, Vector<RefPtr<SharedBuffer>>& pasteboardData) = 0;
     virtual void requestCandidatesForSelection(const VisibleSelection&) { }
     virtual void handleAcceptedCandidateWithSoftSpaces(TextCheckingResult) { }
 

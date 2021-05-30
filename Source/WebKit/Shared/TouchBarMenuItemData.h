@@ -53,7 +53,7 @@ struct TouchBarMenuItemData {
     explicit TouchBarMenuItemData(const TouchBarMenuItemData&) = default;
     
     void encode(IPC::Encoder&) const;
-    static Optional<TouchBarMenuItemData> decode(IPC::Decoder&);
+    static std::optional<TouchBarMenuItemData> decode(IPC::Decoder&);
     
     ItemType type { ItemType::Button };
     String identifier;

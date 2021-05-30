@@ -176,7 +176,7 @@
 {
 #if ENABLE(CFPREFS_DIRECT_MODE)
     RunLoop::main().dispatch([domain = retainPtr(domain), key = retainPtr(key), encodedValue = retainPtr(encodedValue)] {
-        Optional<String> encodedString;
+        std::optional<String> encodedString;
         if (encodedValue)
             encodedString = String(encodedValue.get());
 

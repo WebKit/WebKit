@@ -48,9 +48,9 @@ private:
     HashMap<String, std::unique_ptr<Node>> m_map;
 };
 
-static Optional<String> readString(WTF::Persistence::Decoder& decoder)
+static std::optional<String> readString(WTF::Persistence::Decoder& decoder)
 {
-    Optional<size_t> size;
+    std::optional<size_t> size;
     decoder >> size;
     if (!size)
         return std::nullopt;
@@ -73,7 +73,7 @@ static bool readSimpleValue(WTF::Persistence::Decoder& decoder, KeyedDecoderGene
     auto key = readString(decoder);
     if (!key)
         return false;
-    Optional<T> value;
+    std::optional<T> value;
     decoder >> value;
     if (!value)
         return false;
@@ -95,7 +95,7 @@ KeyedDecoderGeneric::KeyedDecoderGeneric(const uint8_t* data, size_t size)
 
     bool ok = true;
     while (ok) {
-        Optional<KeyedEncoderGeneric::Type> type;
+        std::optional<KeyedEncoderGeneric::Type> type;
         decoder >> type;
         if (!type)
             break;
@@ -107,7 +107,7 @@ KeyedDecoderGeneric::KeyedDecoderGeneric(const uint8_t* data, size_t size)
                 ok = false;
             if (!ok)
                 break;
-            Optional<size_t> size;
+            std::optional<size_t> size;
             decoder >> size;
             if (!size)
                 ok = false;

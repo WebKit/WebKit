@@ -833,21 +833,21 @@ double CSSPrimitiveValue::doubleValue() const
     return primitiveUnitType() != CSSUnitType::CSS_CALC ? m_value.num : m_value.calc->doubleValue();
 }
 
-Optional<bool> CSSPrimitiveValue::isZero() const
+std::optional<bool> CSSPrimitiveValue::isZero() const
 {
     if (primitiveUnitType() == CSSUnitType::CSS_CALC)
         return std::nullopt;
     return !m_value.num;
 }
 
-Optional<bool> CSSPrimitiveValue::isPositive() const
+std::optional<bool> CSSPrimitiveValue::isPositive() const
 {
     if (primitiveUnitType() == CSSUnitType::CSS_CALC)
         return std::nullopt;
     return m_value.num > 0;
 }
 
-Optional<bool> CSSPrimitiveValue::isNegative() const
+std::optional<bool> CSSPrimitiveValue::isNegative() const
 {
     if (primitiveUnitType() == CSSUnitType::CSS_CALC)
         return std::nullopt;
@@ -859,7 +859,7 @@ bool CSSPrimitiveValue::isCenterPosition() const
     return valueID() == CSSValueCenter || doubleValue(CSSUnitType::CSS_PERCENTAGE) == 50;
 }
 
-Optional<double> CSSPrimitiveValue::doubleValueInternal(CSSUnitType requestedUnitType) const
+std::optional<double> CSSPrimitiveValue::doubleValueInternal(CSSUnitType requestedUnitType) const
 {
     if (!isValidCSSUnitTypeForDoubleConversion(primitiveUnitType()) || !isValidCSSUnitTypeForDoubleConversion(requestedUnitType))
         return std::nullopt;

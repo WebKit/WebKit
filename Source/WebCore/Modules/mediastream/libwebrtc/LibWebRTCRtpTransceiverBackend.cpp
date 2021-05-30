@@ -50,7 +50,7 @@ RTCRtpTransceiverDirection LibWebRTCRtpTransceiverBackend::direction() const
     return toRTCRtpTransceiverDirection(m_rtcTransceiver->direction());
 }
 
-Optional<RTCRtpTransceiverDirection> LibWebRTCRtpTransceiverBackend::currentDirection() const
+std::optional<RTCRtpTransceiverDirection> LibWebRTCRtpTransceiverBackend::currentDirection() const
 {
     auto value = m_rtcTransceiver->current_direction();
     if (!value)

@@ -166,8 +166,8 @@ WebView *getWebView(WebFrame *webFrame);
 #endif
 
 - (NSRange)_convertToNSRange:(const WebCore::SimpleRange&)range;
-- (Optional<WebCore::SimpleRange>)_convertToDOMRange:(NSRange)range;
-- (Optional<WebCore::SimpleRange>)_convertToDOMRange:(NSRange)range rangeIsRelativeTo:(WebRangeIsRelativeTo)rangeIsRelativeTo;
+- (std::optional<WebCore::SimpleRange>)_convertToDOMRange:(NSRange)range;
+- (std::optional<WebCore::SimpleRange>)_convertToDOMRange:(NSRange)range rangeIsRelativeTo:(WebRangeIsRelativeTo)rangeIsRelativeTo;
 
 - (DOMDocumentFragment *)_documentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString;
 - (DOMDocumentFragment *)_documentFragmentWithNodesAsParagraphs:(NSArray *)nodes;

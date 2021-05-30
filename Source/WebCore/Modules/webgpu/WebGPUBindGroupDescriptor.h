@@ -38,7 +38,7 @@ namespace WebCore {
 struct GPUBindGroupDescriptor;
 
 struct WebGPUBindGroupDescriptor {
-    Optional<GPUBindGroupDescriptor> tryCreateGPUBindGroupDescriptor() const;
+    std::optional<GPUBindGroupDescriptor> tryCreateGPUBindGroupDescriptor() const;
 
     RefPtr<const WebGPUBindGroupLayout> layout;
     Vector<WebGPUBindGroupBinding> bindings;

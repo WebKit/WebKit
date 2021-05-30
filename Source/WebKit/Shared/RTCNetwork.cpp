@@ -61,7 +61,7 @@ rtc::Network RTCNetwork::value() const
     return network;
 }
 
-auto RTCNetwork::IPAddress::decode(IPC::Decoder& decoder) -> Optional<IPAddress>
+auto RTCNetwork::IPAddress::decode(IPC::Decoder& decoder) -> std::optional<IPAddress>
 {
     IPAddress result;
     int family;
@@ -120,7 +120,7 @@ rtc::SocketAddress RTCNetwork::isolatedCopy(const rtc::SocketAddress& value)
     return rtc::SocketAddress(copy);
 }
 
-auto RTCNetwork::SocketAddress::decode(IPC::Decoder& decoder) -> Optional<SocketAddress>
+auto RTCNetwork::SocketAddress::decode(IPC::Decoder& decoder) -> std::optional<SocketAddress>
 {
     SocketAddress result;
     uint16_t port;
@@ -143,7 +143,7 @@ auto RTCNetwork::SocketAddress::decode(IPC::Decoder& decoder) -> Optional<Socket
     if (isUnresolved)
         return result;
 
-    Optional<IPAddress> ipAddress;
+    std::optional<IPAddress> ipAddress;
     decoder >> ipAddress;
     if (!ipAddress)
         return std::nullopt;
@@ -167,7 +167,7 @@ void RTCNetwork::SocketAddress::encode(IPC::Encoder& encoder) const
     encoder << RTCNetwork::IPAddress(value.ipaddr());
 }
 
-Optional<RTCNetwork> RTCNetwork::decode(IPC::Decoder& decoder)
+std::optional<RTCNetwork> RTCNetwork::decode(IPC::Decoder& decoder)
 {
     RTCNetwork result;
     IPC::DataReference name, description;
@@ -177,7 +177,7 @@ Optional<RTCNetwork> RTCNetwork::decode(IPC::Decoder& decoder)
     if (!decoder.decode(description))
         return std::nullopt;
     result.description = std::string(reinterpret_cast<const char*>(description.data()), description.size());
-    Optional<IPAddress> prefix;
+    std::optional<IPAddress> prefix;
     decoder >> prefix;
     if (!prefix)
         return std::nullopt;
@@ -202,7 +202,7 @@ Optional<RTCNetwork> RTCNetwork::decode(IPC::Decoder& decoder)
         return std::nullopt;
     result.ips.reserve(length);
     for (size_t index = 0; index < length; ++index) {
-        Optional<IPAddress> address;
+        std::optional<IPAddress> address;
         decoder >> address;
         if (!address)
             return std::nullopt;

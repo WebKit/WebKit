@@ -40,6 +40,6 @@ enum class Flags : uint8_t {
     DeletedValue = 1 << 7
 };
 
-JS_EXPORT_PRIVATE Optional<OptionSet<Flags>> parseFlags(StringView);
+JS_EXPORT_PRIVATE std::optional<OptionSet<Flags>> parseFlags(StringView);
 
 } } // namespace JSC::Yarr

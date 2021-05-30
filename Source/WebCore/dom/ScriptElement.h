@@ -103,7 +103,7 @@ protected:
 private:
     void executeScriptAndDispatchEvent(LoadableScript&);
 
-    Optional<ScriptType> determineScriptType(LegacyTypeSupport) const;
+    std::optional<ScriptType> determineScriptType(LegacyTypeSupport) const;
     bool ignoresLoadRequest() const;
     bool isScriptForEventSupported() const;
     void dispatchLoadEventRespectingUserGestureIndicator();

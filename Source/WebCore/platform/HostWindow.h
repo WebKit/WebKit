@@ -79,7 +79,7 @@ public:
     virtual void setCursorHiddenUntilMouseMoves(bool) = 0;
 
     virtual PlatformDisplayID displayID() const = 0;
-    virtual void windowScreenDidChange(PlatformDisplayID, Optional<FramesPerSecond> nominalFramesPerSecond) = 0;
+    virtual void windowScreenDidChange(PlatformDisplayID, std::optional<FramesPerSecond> nominalFramesPerSecond) = 0;
 
     virtual FloatSize screenSize() const = 0;
     virtual FloatSize availableScreenSize() const = 0;

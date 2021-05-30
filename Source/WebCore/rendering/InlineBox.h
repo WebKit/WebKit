@@ -230,7 +230,7 @@ public:
     void invalidateParentChildList();
 #endif
 
-    bool visibleToHitTesting(Optional<HitTestRequest> hitTestRequest = std::nullopt) const
+    bool visibleToHitTesting(std::optional<HitTestRequest> hitTestRequest = std::nullopt) const
     {
         if (renderer().style().visibility() != Visibility::Visible)
             return false;

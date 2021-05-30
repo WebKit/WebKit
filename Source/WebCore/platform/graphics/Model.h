@@ -62,7 +62,7 @@ void Model::encode(Encoder& encoder) const
 template<class Decoder>
 RefPtr<Model> Model::decode(Decoder& decoder)
 {
-    Optional<size_t> length;
+    std::optional<size_t> length;
     decoder >> length;
     if (!length)
         return nullptr;

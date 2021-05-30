@@ -73,7 +73,7 @@ RangeResponseGenerator::~RangeResponseGenerator()
     ASSERT(isMainThread());
 }
 
-static ResourceResponse synthesizedResponseForRange(const ResourceResponse& originalResponse, const ParsedRequestRange& parsedRequestRange, Optional<size_t> totalContentLength)
+static ResourceResponse synthesizedResponseForRange(const ResourceResponse& originalResponse, const ParsedRequestRange& parsedRequestRange, std::optional<size_t> totalContentLength)
 {
     ASSERT(isMainThread());
     auto begin = parsedRequestRange.begin;
@@ -100,7 +100,7 @@ void RangeResponseGenerator::removeTask(WebCoreNSURLSessionDataTask *task)
     data->taskData.remove(task);
 }
 
-void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSURLSessionDataTask *task, const ParsedRequestRange& range, Optional<size_t> expectedContentLength, const Data& data)
+void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSURLSessionDataTask *task, const ParsedRequestRange& range, std::optional<size_t> expectedContentLength, const Data& data)
 {
     ASSERT(isMainThread());
     auto buffer = data.buffer;
@@ -163,13 +163,13 @@ void RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived(WebCoreNSU
     }
 }
 
-Optional<size_t> RangeResponseGenerator::expectedContentLengthFromData(const Data& data)
+std::optional<size_t> RangeResponseGenerator::expectedContentLengthFromData(const Data& data)
 {
     ASSERT(isMainThread());
     if (data.successfullyFinishedLoading == Data::SuccessfullyFinishedLoading::Yes)
         return data.buffer->size();
 
-    // FIXME: ResourceResponseBase::expectedContentLength() should return Optional<size_t> instead of us doing this check here.
+    // FIXME: ResourceResponseBase::expectedContentLength() should return std::optional<size_t> instead of us doing this check here.
     auto expectedContentLength = data.originalResponse.expectedContentLength();
     if (expectedContentLength == NSURLResponseUnknownLength)
         return std::nullopt;

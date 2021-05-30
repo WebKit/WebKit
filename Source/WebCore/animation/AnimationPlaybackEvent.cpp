@@ -47,7 +47,7 @@ AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, const Ani
         m_timelineTime = std::nullopt;
 }
 
-AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, Optional<Seconds> currentTime, Optional<Seconds> timelineTime, WebAnimation* animation)
+AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, std::optional<Seconds> currentTime, std::optional<Seconds> timelineTime, WebAnimation* animation)
     : AnimationEventBase(type, animation, timelineTime)
     , m_currentTime(currentTime)
 {
@@ -55,14 +55,14 @@ AnimationPlaybackEvent::AnimationPlaybackEvent(const AtomString& type, Optional<
 
 AnimationPlaybackEvent::~AnimationPlaybackEvent() = default;
 
-Optional<double> AnimationPlaybackEvent::bindingsCurrentTime() const
+std::optional<double> AnimationPlaybackEvent::bindingsCurrentTime() const
 {
     if (!m_currentTime)
         return std::nullopt;
     return secondsToWebAnimationsAPITime(m_currentTime.value());
 }
 
-Optional<double> AnimationPlaybackEvent::bindingsTimelineTime() const
+std::optional<double> AnimationPlaybackEvent::bindingsTimelineTime() const
 {
     if (!timelineTime())
         return std::nullopt;

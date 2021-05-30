@@ -452,7 +452,7 @@ static void setContainerAndOffsetForRange(Node* node, unsigned offset, Node*& co
     }
 }
 
-Optional<SimpleRange> HTMLTextFormControlElement::selection() const
+std::optional<SimpleRange> HTMLTextFormControlElement::selection() const
 {
     if (!renderer() || !isTextField() || !hasCachedSelection())
         return std::nullopt;

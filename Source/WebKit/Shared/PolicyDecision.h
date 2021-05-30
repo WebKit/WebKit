@@ -35,12 +35,12 @@ namespace WebKit {
 
 struct PolicyDecision {
     WebCore::PolicyCheckIdentifier identifier { };
-    Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain { std::nullopt };
+    std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain { std::nullopt };
     WebCore::PolicyAction policyAction { WebCore::PolicyAction::Ignore };
     uint64_t navigationID { 0 };
-    Optional<DownloadID> downloadID { std::nullopt };
-    Optional<WebsitePoliciesData> websitePoliciesData { std::nullopt };
-    Optional<SandboxExtension::Handle> sandboxExtensionHandle { std::nullopt };
+    std::optional<DownloadID> downloadID { std::nullopt };
+    std::optional<WebsitePoliciesData> websitePoliciesData { std::nullopt };
+    std::optional<SandboxExtension::Handle> sandboxExtensionHandle { std::nullopt };
 
     template<class Encoder>
     void encode(Encoder& encoder) const
@@ -55,39 +55,39 @@ struct PolicyDecision {
     }
 
     template<class Decoder>
-    static Optional<PolicyDecision> decode(Decoder& decoder)
+    static std::optional<PolicyDecision> decode(Decoder& decoder)
     {
-        Optional<WebCore::PolicyCheckIdentifier> decodedIdentifier;
+        std::optional<WebCore::PolicyCheckIdentifier> decodedIdentifier;
         decoder >> decodedIdentifier;
         if (!decodedIdentifier)
             return std::nullopt;
         
-        Optional<Optional<NavigatingToAppBoundDomain>> decodedIsNavigatingToAppBoundDomain;
+        std::optional<std::optional<NavigatingToAppBoundDomain>> decodedIsNavigatingToAppBoundDomain;
         decoder >> decodedIsNavigatingToAppBoundDomain;
         if (!decodedIsNavigatingToAppBoundDomain)
             return std::nullopt;
 
-        Optional<WebCore::PolicyAction> decodedPolicyAction;
+        std::optional<WebCore::PolicyAction> decodedPolicyAction;
         decoder >> decodedPolicyAction;
         if (!decodedPolicyAction)
             return std::nullopt;
 
-        Optional<uint64_t> decodedNavigationID;
+        std::optional<uint64_t> decodedNavigationID;
         decoder >> decodedNavigationID;
         if (!decodedNavigationID)
             return std::nullopt;
 
-        Optional<Optional<DownloadID>> decodedDownloadID;
+        std::optional<std::optional<DownloadID>> decodedDownloadID;
         decoder >> decodedDownloadID;
         if (!decodedDownloadID)
             return std::nullopt;
 
-        Optional<Optional<WebsitePoliciesData>> decodedWebsitePoliciesData;
+        std::optional<std::optional<WebsitePoliciesData>> decodedWebsitePoliciesData;
         decoder >> decodedWebsitePoliciesData;
         if (!decodedWebsitePoliciesData)
             return std::nullopt;
 
-        Optional<Optional<SandboxExtension::Handle>> sandboxExtensionHandle;
+        std::optional<std::optional<SandboxExtension::Handle>> sandboxExtensionHandle;
         decoder >> sandboxExtensionHandle;
         if (!sandboxExtensionHandle)
             return std::nullopt;

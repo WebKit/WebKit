@@ -50,7 +50,7 @@ public:
     void detachFromDocument();
     void updateAnimationsAndSendEvents(ReducedResolutionSeconds);
 
-    Optional<Seconds> currentTime();
+    std::optional<Seconds> currentTime();
 
     WEBCORE_EXPORT void suspendAnimations();
     WEBCORE_EXPORT void resumeAnimations();

@@ -361,7 +361,7 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-    Optional<NowPlayingInfo> nowPlayingInfo;
+    std::optional<NowPlayingInfo> nowPlayingInfo;
     if (auto* session = nowPlayingEligibleSession())
         nowPlayingInfo = session->nowPlayingInfo();
 

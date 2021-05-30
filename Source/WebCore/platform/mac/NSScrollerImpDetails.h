@@ -40,7 +40,7 @@ public:
     static void setUseOverlayScrollbars(bool);
     
 private:
-    static Optional<bool> m_useOverlayScrollbars;
+    static std::optional<bool> m_useOverlayScrollbars;
 };
 
 }

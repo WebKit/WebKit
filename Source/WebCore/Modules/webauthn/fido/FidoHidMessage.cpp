@@ -39,7 +39,7 @@
 namespace fido {
 
 // static
-Optional<FidoHidMessage> FidoHidMessage::create(uint32_t channelId, FidoHidDeviceCommand type, const Vector<uint8_t>& data)
+std::optional<FidoHidMessage> FidoHidMessage::create(uint32_t channelId, FidoHidDeviceCommand type, const Vector<uint8_t>& data)
 {
     if (data.size() > kHidMaxMessageSize)
         return std::nullopt;
@@ -80,7 +80,7 @@ Optional<FidoHidMessage> FidoHidMessage::create(uint32_t channelId, FidoHidDevic
 }
 
 // static
-Optional<FidoHidMessage> FidoHidMessage::createFromSerializedData(const Vector<uint8_t>& serializedData)
+std::optional<FidoHidMessage> FidoHidMessage::createFromSerializedData(const Vector<uint8_t>& serializedData)
 {
     size_t remainingSize = 0;
     if (serializedData.size() > kHidPacketSize || serializedData.size() < kHidInitPacketHeaderSize)

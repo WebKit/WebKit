@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-Optional<String> BufferedLineReader::nextLine()
+std::optional<String> BufferedLineReader::nextLine()
 {
     if (m_maybeSkipLF) {
         // We ran out of data after a CR (U+000D), which means that we may be

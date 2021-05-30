@@ -57,7 +57,7 @@ void TouchBarMenuItemData::encode(IPC::Encoder& encoder) const
     encoder << priority;
 }
 
-Optional<TouchBarMenuItemData> TouchBarMenuItemData::decode(IPC::Decoder& decoder)
+std::optional<TouchBarMenuItemData> TouchBarMenuItemData::decode(IPC::Decoder& decoder)
 {
     TouchBarMenuItemData result;
     if (!decoder.decode(result.type))

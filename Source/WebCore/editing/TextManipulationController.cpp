@@ -97,7 +97,7 @@ public:
         return type == Type::Exclude;
     }
 
-    Optional<Type> typeForElement(Element& element)
+    std::optional<Type> typeForElement(Element& element)
     {
         auto it = m_cache.find(element);
         if (it != m_cache.end())
@@ -248,7 +248,7 @@ private:
     TextIterator m_iterator;
     RefPtr<Node> m_node;
     RefPtr<Node> m_pastEndNode;
-    Optional<Vector<String>> m_text;
+    std::optional<Vector<String>> m_text;
 };
 
 static bool shouldExtractValueForTextManipulation(const HTMLInputElement& input)
@@ -288,7 +288,7 @@ static bool areEqualIgnoringLeadingAndTrailingWhitespaces(const String& content,
     return content.stripWhiteSpace() == originalContent.stripWhiteSpace();
 }
 
-static Optional<TextManipulationController::ManipulationTokenInfo> tokenInfo(Node* node)
+static std::optional<TextManipulationController::ManipulationTokenInfo> tokenInfo(Node* node)
 {
     if (!node)
         return std::nullopt;
@@ -754,7 +754,7 @@ void TextManipulationController::updateInsertions(Vector<NodeEntry>& lastTopDown
         insertions.append(NodeInsertion { lastTopDownPath.size() ? lastTopDownPath.last().second.ptr() : nullptr, *currentNode });
 }
 
-auto TextManipulationController::replace(const ManipulationItemData& item, const Vector<ManipulationToken>& replacementTokens, HashSet<Ref<Node>>& containersWithoutVisualOverflowBeforeReplacement) -> Optional<ManipulationFailureType>
+auto TextManipulationController::replace(const ManipulationItemData& item, const Vector<ManipulationToken>& replacementTokens, HashSet<Ref<Node>>& containersWithoutVisualOverflowBeforeReplacement) -> std::optional<ManipulationFailureType>
 {
     if (item.start.isOrphan() || item.end.isOrphan())
         return ManipulationFailureType::ContentChanged;

@@ -207,7 +207,7 @@ static StringView singularUnit(StringView unit)
 }
 
 // https://tc39.es/ecma402/#sec-singularrelativetimeunit
-static Optional<URelativeDateTimeUnit> relativeTimeUnitType(StringView unit)
+static std::optional<URelativeDateTimeUnit> relativeTimeUnitType(StringView unit)
 {
     StringView singular = singularUnit(unit);
 

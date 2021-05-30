@@ -31,7 +31,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-Optional<size_t> DisplayListReaderHandle::advance(size_t amount)
+std::optional<size_t> DisplayListReaderHandle::advance(size_t amount)
 {
     auto previousUnreadBytes = header().unreadBytes.exchangeSub(amount);
     if (UNLIKELY(previousUnreadBytes < amount))

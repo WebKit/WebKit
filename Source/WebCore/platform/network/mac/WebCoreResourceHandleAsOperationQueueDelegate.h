@@ -46,7 +46,7 @@ class SynchronousLoaderMessageQueue;
     RefPtr<WebCore::SynchronousLoaderMessageQueue> m_messageQueue;
     RetainPtr<NSURLRequest> m_requestResult;
     RetainPtr<NSCachedURLResponse> m_cachedResponseResult;
-    Optional<SchedulePairHashSet> m_scheduledPairs;
+    std::optional<SchedulePairHashSet> m_scheduledPairs;
     BOOL m_boolResult;
 }
 

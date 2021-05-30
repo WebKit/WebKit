@@ -41,14 +41,14 @@ struct FrameTreeNodeData {
         encoder << children;
     }
 
-    static Optional<FrameTreeNodeData> decode(IPC::Decoder& decoder)
+    static std::optional<FrameTreeNodeData> decode(IPC::Decoder& decoder)
     {
-        Optional<FrameInfoData> info;
+        std::optional<FrameInfoData> info;
         decoder >> info;
         if (!info)
             return std::nullopt;
         
-        Optional<Vector<FrameTreeNodeData>> children;
+        std::optional<Vector<FrameTreeNodeData>> children;
         decoder >> children;
         if (!children)
             return std::nullopt;

@@ -36,7 +36,7 @@
 #include <cairo.h>
 #include <wpe/wpe.h>
 
-static void drawPageBackground(cairo_t* ctx, const Optional<WebCore::Color>& backgroundColor, const WebCore::IntRect& rect)
+static void drawPageBackground(cairo_t* ctx, const std::optional<WebCore::Color>& backgroundColor, const WebCore::IntRect& rect)
 {
     if (!backgroundColor || backgroundColor.value().isVisible())
         return;
@@ -71,8 +71,8 @@ void WKPageHandleKeyboardEvent(WKPageRef pageRef, WKKeyboardEvent event)
     }
 
     NativeWebKeyboardEvent::HandledByInputMethod handledByInputMethod = NativeWebKeyboardEvent::HandledByInputMethod::No;
-    Optional<Vector<WebCore::CompositionUnderline>> preeditUnderlines;
-    Optional<WebKit::EditingRange> preeditSelectionRange;
+    std::optional<Vector<WebCore::CompositionUnderline>> preeditUnderlines;
+    std::optional<WebKit::EditingRange> preeditSelectionRange;
     WebKit::toImpl(pageRef)->handleKeyboardEvent(NativeWebKeyboardEvent(&wpeEvent, "", handledByInputMethod, WTFMove(preeditUnderlines), WTFMove(preeditSelectionRange)));
 }
 

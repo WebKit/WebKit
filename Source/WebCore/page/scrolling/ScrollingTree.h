@@ -123,7 +123,7 @@ public:
     
     WEBCORE_EXPORT ScrollingTreeNode* nodeForID(ScrollingNodeID) const;
 
-    using VisitorFunction = WTF::Function<void (ScrollingNodeID, ScrollingNodeType, Optional<FloatPoint> scrollPosition, Optional<FloatPoint> layoutViewportOrigin, bool scrolledSinceLastCommit)>;
+    using VisitorFunction = WTF::Function<void (ScrollingNodeID, ScrollingNodeType, std::optional<FloatPoint> scrollPosition, std::optional<FloatPoint> layoutViewportOrigin, bool scrolledSinceLastCommit)>;
     void traverseScrollingTree(VisitorFunction&&);
 
     // Called after a scrolling tree node has handled a scroll and updated its layers.
@@ -184,7 +184,7 @@ public:
     WEBCORE_EXPORT bool willWheelEventStartSwipeGesture(const PlatformWheelEvent&);
 
     ScrollingTreeFrameScrollingNode* rootNode() const { return m_rootNode.get(); }
-    Optional<ScrollingNodeID> latchedNodeID() const;
+    std::optional<ScrollingNodeID> latchedNodeID() const;
     void clearLatchedNode();
 
     bool hasFixedOrSticky() const { return !!m_fixedOrStickyNodeCount; }
@@ -218,7 +218,7 @@ public:
 
     Lock& treeLock() WTF_RETURNS_LOCK(m_treeLock) { return m_treeLock; }
 
-    void windowScreenDidChange(PlatformDisplayID, Optional<FramesPerSecond> nominalFramesPerSecond);
+    void windowScreenDidChange(PlatformDisplayID, std::optional<FramesPerSecond> nominalFramesPerSecond);
     PlatformDisplayID displayID();
     
     bool hasProcessedWheelEventsRecently();
@@ -227,7 +227,7 @@ public:
     struct ScrollUpdate {
         ScrollingNodeID nodeID { 0 };
         FloatPoint scrollPosition;
-        Optional<FloatPoint> layoutViewportOrigin;
+        std::optional<FloatPoint> layoutViewportOrigin;
         ScrollingLayerPositionAction updateLayerPositionAction { ScrollingLayerPositionAction::Sync };
         
         bool canMerge(const ScrollUpdate& other) const
@@ -251,10 +251,10 @@ protected:
     FloatPoint mainFrameScrollPosition() const WTF_REQUIRES_LOCK(m_treeStateLock);
     void setMainFrameScrollPosition(FloatPoint);
 
-    void setGestureState(Optional<WheelScrollGestureState>);
-    Optional<WheelScrollGestureState> gestureState();
+    void setGestureState(std::optional<WheelScrollGestureState>);
+    std::optional<WheelScrollGestureState> gestureState();
 
-    Optional<FramesPerSecond> nominalFramesPerSecond();
+    std::optional<FramesPerSecond> nominalFramesPerSecond();
 
     void applyLayerPositionsInternal() WTF_REQUIRES_LOCK(m_treeLock);
     void removeAllNodes() WTF_REQUIRES_LOCK(m_treeLock);
@@ -295,8 +295,8 @@ private:
         EventTrackingRegions eventTrackingRegions;
         FloatPoint mainFrameScrollPosition;
         PlatformDisplayID displayID { 0 };
-        Optional<FramesPerSecond> nominalFramesPerSecond;
-        Optional<WheelScrollGestureState> gestureState;
+        std::optional<FramesPerSecond> nominalFramesPerSecond;
+        std::optional<WheelScrollGestureState> gestureState;
         HashSet<ScrollingNodeID> nodesWithActiveRubberBanding;
         HashSet<ScrollingNodeID> nodesWithActiveScrollSnap;
         HashSet<ScrollingNodeID> nodesWithActiveUserScrolls;

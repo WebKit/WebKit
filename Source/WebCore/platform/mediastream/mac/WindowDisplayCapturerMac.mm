@@ -134,7 +134,7 @@ DisplayCaptureSourceCocoa::DisplayFrameType WindowDisplayCapturerMac::generateFr
     return DisplayCaptureSourceCocoa::DisplayFrameType { RetainPtr<CGImageRef> { windowImage() } };
 }
 
-Optional<CaptureDevice> WindowDisplayCapturerMac::windowCaptureDeviceWithPersistentID(const String& idString)
+std::optional<CaptureDevice> WindowDisplayCapturerMac::windowCaptureDeviceWithPersistentID(const String& idString)
 {
     auto windowID = parseInteger<uint32_t>(idString);
     if (!windowID) {

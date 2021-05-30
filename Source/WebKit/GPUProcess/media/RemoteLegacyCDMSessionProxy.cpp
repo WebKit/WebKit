@@ -65,7 +65,7 @@ static RefPtr<Uint8Array> convertToUint8Array(IPC::SharedBufferCopy&& buffer)
 }
 
 template <typename T>
-static Optional<IPC::SharedBufferCopy> convertToOptionalDataReference(T array)
+static std::optional<IPC::SharedBufferCopy> convertToOptionalDataReference(T array)
 {
     if (!array)
         return std::nullopt;

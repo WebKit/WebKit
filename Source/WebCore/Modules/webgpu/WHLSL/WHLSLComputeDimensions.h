@@ -42,7 +42,7 @@ class FunctionDefinition;
 
 class Program;
 
-Optional<ComputeDimensions> computeDimensions(Program&, AST::FunctionDefinition&);
+std::optional<ComputeDimensions> computeDimensions(Program&, AST::FunctionDefinition&);
 
 }
 

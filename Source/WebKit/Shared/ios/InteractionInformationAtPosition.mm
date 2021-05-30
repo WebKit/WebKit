@@ -173,7 +173,7 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
     if (!decoder.decode(result.cursor))
         return false;
     
-    Optional<WebCore::TextIndicatorData> linkIndicator;
+    std::optional<WebCore::TextIndicatorData> linkIndicator;
     decoder >> linkIndicator;
     if (!linkIndicator)
         return false;

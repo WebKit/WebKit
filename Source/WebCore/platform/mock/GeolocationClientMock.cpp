@@ -157,7 +157,7 @@ void GeolocationClientMock::setEnableHighAccuracy(bool)
     // See https://bugs.webkit.org/show_bug.cgi?id=49438
 }
 
-Optional<GeolocationPositionData> GeolocationClientMock::lastPosition()
+std::optional<GeolocationPositionData> GeolocationClientMock::lastPosition()
 {
     return m_lastPosition;
 }

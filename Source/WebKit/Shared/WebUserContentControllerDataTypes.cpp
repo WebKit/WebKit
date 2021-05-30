@@ -37,19 +37,19 @@ void WebUserScriptData::encode(IPC::Encoder& encoder) const
     encoder << userScript;
 }
 
-Optional<WebUserScriptData> WebUserScriptData::decode(IPC::Decoder& decoder)
+std::optional<WebUserScriptData> WebUserScriptData::decode(IPC::Decoder& decoder)
 {
-    Optional<uint64_t> identifier;
+    std::optional<uint64_t> identifier;
     decoder >> identifier;
     if (!identifier)
         return std::nullopt;
     
-    Optional<ContentWorldIdentifier> worldIdentifier;
+    std::optional<ContentWorldIdentifier> worldIdentifier;
     decoder >> worldIdentifier;
     if (!worldIdentifier)
         return std::nullopt;
     
-    Optional<WebCore::UserScript> userScript;
+    std::optional<WebCore::UserScript> userScript;
     decoder >> userScript;
     if (!userScript)
         return std::nullopt;
@@ -64,14 +64,14 @@ void WebUserStyleSheetData::encode(IPC::Encoder& encoder) const
     encoder << userStyleSheet;
 }
 
-Optional<WebUserStyleSheetData> WebUserStyleSheetData::decode(IPC::Decoder& decoder)
+std::optional<WebUserStyleSheetData> WebUserStyleSheetData::decode(IPC::Decoder& decoder)
 {
-    Optional<uint64_t> identifier;
+    std::optional<uint64_t> identifier;
     decoder >> identifier;
     if (!identifier)
         return std::nullopt;
     
-    Optional<ContentWorldIdentifier> worldIdentifier;
+    std::optional<ContentWorldIdentifier> worldIdentifier;
     decoder >> worldIdentifier;
     if (!worldIdentifier)
         return std::nullopt;
@@ -91,19 +91,19 @@ void WebScriptMessageHandlerData::encode(IPC::Encoder& encoder) const
     encoder << name;
 }
 
-Optional<WebScriptMessageHandlerData> WebScriptMessageHandlerData::decode(IPC::Decoder& decoder)
+std::optional<WebScriptMessageHandlerData> WebScriptMessageHandlerData::decode(IPC::Decoder& decoder)
 {
-    Optional<uint64_t> identifier;
+    std::optional<uint64_t> identifier;
     decoder >> identifier;
     if (!identifier)
         return std::nullopt;
     
-    Optional<ContentWorldIdentifier> worldIdentifier;
+    std::optional<ContentWorldIdentifier> worldIdentifier;
     decoder >> worldIdentifier;
     if (!worldIdentifier)
         return std::nullopt;
     
-    Optional<String> name;
+    std::optional<String> name;
     decoder >> name;
     if (!name)
         return std::nullopt;

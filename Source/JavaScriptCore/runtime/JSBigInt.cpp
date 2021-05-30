@@ -2708,7 +2708,7 @@ JSBigInt::ComparisonResult JSBigInt::compareToDouble(JSBigInt* x, double y)
 }
 
 template <typename BigIntImpl>
-Optional<JSBigInt::Digit> JSBigInt::toShiftAmount(BigIntImpl x)
+std::optional<JSBigInt::Digit> JSBigInt::toShiftAmount(BigIntImpl x)
 {
     if (x.length() > 1)
         return std::nullopt;
@@ -3074,7 +3074,7 @@ static ALWAYS_INLINE unsigned computeHash(JSBigInt::Digit* digits, unsigned leng
     return hasher.hash();
 }
 
-Optional<unsigned> JSBigInt::concurrentHash()
+std::optional<unsigned> JSBigInt::concurrentHash()
 {
     // FIXME: Implement JSBigInt::concurrentHash by inserting right store barriers.
     // https://bugs.webkit.org/show_bug.cgi?id=216801

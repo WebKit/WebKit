@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-Optional<FourCC> FourCC::fromString(const String& stringValue)
+std::optional<FourCC> FourCC::fromString(const String& stringValue)
 {
     auto asciiValue = stringValue.ascii();
     if (asciiValue.length() != 4)

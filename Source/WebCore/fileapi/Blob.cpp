@@ -139,7 +139,7 @@ Blob::Blob(ReferencingExistingBlobConstructor, ScriptExecutionContext* context, 
     ThreadableBlobRegistry::registerBlobURL(m_internalURL, { BlobPart(blob.url()) } , m_type);
 }
 
-Blob::Blob(DeserializationContructor, ScriptExecutionContext* context, const URL& srcURL, const String& type, Optional<unsigned long long> size, const String& fileBackedPath)
+Blob::Blob(DeserializationContructor, ScriptExecutionContext* context, const URL& srcURL, const String& type, std::optional<unsigned long long> size, const String& fileBackedPath)
     : ActiveDOMObject(context)
     , m_type(normalizedContentType(type))
     , m_size(size)
@@ -298,7 +298,7 @@ ExceptionOr<Ref<ReadableStream>> Blob::stream(ScriptExecutionContext& scriptExec
         UniqueRef<FileReaderLoader> m_loader;
         size_t m_bytesRead { 0 };
         bool m_isStarted { false };
-        Optional<Exception> m_exception;
+        std::optional<Exception> m_exception;
     };
 
     auto* globalObject = scriptExecutionContext.globalObject();

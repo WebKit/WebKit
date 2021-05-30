@@ -110,7 +110,7 @@ static bool isValidSampleLocation(Document& document, const IntPoint& location)
     return true;
 }
 
-static Optional<Lab<float>> sampleColor(Document& document, IntPoint&& location)
+static std::optional<Lab<float>> sampleColor(Document& document, IntPoint&& location)
 {
     // FIXME: <https://webkit.org/b/225167> (Sampled Page Top Color: hook into painting logic instead of taking snapshots)
 
@@ -155,7 +155,7 @@ static Lab<float> averageColor(Lab<float> colors[], size_t count)
     };
 }
 
-Optional<Color> PageColorSampler::sampleTop(Page& page)
+std::optional<Color> PageColorSampler::sampleTop(Page& page)
 {
     // If `std::nullopt` is returned then that means that no samples were taken (i.e. the `Page` is not ready yet).
     // If an invalid `Color` is returned then that means that samples Were taken but they were too different.

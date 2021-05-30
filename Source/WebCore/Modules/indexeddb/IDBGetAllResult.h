@@ -42,7 +42,7 @@ public:
     {
     }
 
-    IDBGetAllResult(IndexedDB::GetAllType type, const Optional<IDBKeyPath>& keyPath)
+    IDBGetAllResult(IndexedDB::GetAllType type, const std::optional<IDBKeyPath>& keyPath)
         : m_type(type)
         , m_keyPath(keyPath)
     {
@@ -53,7 +53,7 @@ public:
     IDBGetAllResult isolatedCopy() const;
 
     IndexedDB::GetAllType type() const { return m_type; }
-    const Optional<IDBKeyPath>& keyPath() const { return m_keyPath; }
+    const std::optional<IDBKeyPath>& keyPath() const { return m_keyPath; }
     const Vector<IDBKeyData>& keys() const;
     const Vector<IDBValue>& values() const;
 
@@ -71,7 +71,7 @@ private:
     IndexedDB::GetAllType m_type { IndexedDB::GetAllType::Keys };
     Vector<IDBKeyData> m_keys;
     Vector<IDBValue> m_values;
-    Optional<IDBKeyPath> m_keyPath;
+    std::optional<IDBKeyPath> m_keyPath;
 };
 
 template<class Encoder>

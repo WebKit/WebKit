@@ -249,7 +249,7 @@ private:
 
     bool shouldRedirectAsGET(const ResourceRequest&, bool crossOrigin);
 
-    Optional<Credential> getCredential(const ResourceRequest&, bool);
+    std::optional<Credential> getCredential(const ResourceRequest&, bool);
     void restartRequestWithCredential(const ProtectionSpace&, const Credential&);
 
     void handleDataURL();

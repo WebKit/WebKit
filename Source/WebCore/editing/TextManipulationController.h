@@ -55,17 +55,17 @@ public:
         bool isVisible { false };
 
         template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static Optional<ManipulationTokenInfo> decode(Decoder&);
+        template<class Decoder> static std::optional<ManipulationTokenInfo> decode(Decoder&);
     };
 
     struct ManipulationToken {
         TokenIdentifier identifier;
         String content;
-        Optional<ManipulationTokenInfo> info;
+        std::optional<ManipulationTokenInfo> info;
         bool isExcluded { false };
 
         template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static Optional<ManipulationToken> decode(Decoder&);
+        template<class Decoder> static std::optional<ManipulationToken> decode(Decoder&);
     };
 
     enum ItemIdentifierType { };
@@ -76,7 +76,7 @@ public:
         Vector<ManipulationToken> tokens;
 
         template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static Optional<ManipulationItem> decode(Decoder&);
+        template<class Decoder> static std::optional<ManipulationItem> decode(Decoder&);
     };
 
     struct ExclusionRule {
@@ -86,7 +86,7 @@ public:
             AtomString localName;
 
             template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static Optional<ElementRule> decode(Decoder&);
+            template<class Decoder> static std::optional<ElementRule> decode(Decoder&);
         };
 
         struct AttributeRule {
@@ -94,14 +94,14 @@ public:
             String value;
 
             template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static Optional<AttributeRule> decode(Decoder&);
+            template<class Decoder> static std::optional<AttributeRule> decode(Decoder&);
         };
 
         struct ClassRule {
             AtomString className;
 
             template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static Optional<ClassRule> decode(Decoder&);
+            template<class Decoder> static std::optional<ClassRule> decode(Decoder&);
         };
 
         Type type;
@@ -110,7 +110,7 @@ public:
         bool match(const Element&) const;
 
         template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static Optional<ExclusionRule> decode(Decoder&);
+        template<class Decoder> static std::optional<ExclusionRule> decode(Decoder&);
     };
 
     using ManipulationItemCallback = WTF::Function<void(Document&, const Vector<ManipulationItem>&)>;
@@ -134,7 +134,7 @@ public:
         ManipulationFailureType type;
 
         template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static Optional<ManipulationFailure> decode(Decoder&);
+        template<class Decoder> static std::optional<ManipulationFailure> decode(Decoder&);
     };
 
     WEBCORE_EXPORT Vector<ManipulationFailure> completeManipulation(const Vector<ManipulationItem>&);
@@ -178,7 +178,7 @@ private:
     using NodeEntry = std::pair<Ref<Node>, Ref<Node>>;
     Vector<Ref<Node>> getPath(Node*, Node*);
     void updateInsertions(Vector<NodeEntry>&, const Vector<Ref<Node>>&, Node*, HashSet<Ref<Node>>&, Vector<NodeInsertion>&);
-    Optional<ManipulationFailureType> replace(const ManipulationItemData&, const Vector<ManipulationToken>&, HashSet<Ref<Node>>& containersWithoutVisualOverflowBeforeReplacement);
+    std::optional<ManipulationFailureType> replace(const ManipulationItemData&, const Vector<ManipulationToken>&, HashSet<Ref<Node>>& containersWithoutVisualOverflowBeforeReplacement);
 
     WeakPtr<Document> m_document;
     WeakHashSet<Element> m_elementsWithNewRenderer;
@@ -209,7 +209,7 @@ void TextManipulationController::ManipulationTokenInfo::encode(Encoder& encoder)
 }
 
 template<class Decoder>
-Optional<TextManipulationController::ManipulationTokenInfo> TextManipulationController::ManipulationTokenInfo::decode(Decoder& decoder)
+std::optional<TextManipulationController::ManipulationTokenInfo> TextManipulationController::ManipulationTokenInfo::decode(Decoder& decoder)
 {
     ManipulationTokenInfo result;
     if (!decoder.decode(result.tagName))
@@ -234,7 +234,7 @@ void TextManipulationController::ManipulationToken::encode(Encoder& encoder) con
 }
 
 template<class Decoder>
-Optional<TextManipulationController::ManipulationToken> TextManipulationController::ManipulationToken::decode(Decoder& decoder)
+std::optional<TextManipulationController::ManipulationToken> TextManipulationController::ManipulationToken::decode(Decoder& decoder)
 {
     ManipulationToken result;
     if (!decoder.decode(result.identifier))
@@ -255,7 +255,7 @@ void TextManipulationController::ManipulationItem::encode(Encoder& encoder) cons
 }
 
 template<class Decoder>
-Optional<TextManipulationController::ManipulationItem> TextManipulationController::ManipulationItem::decode(Decoder& decoder)
+std::optional<TextManipulationController::ManipulationItem> TextManipulationController::ManipulationItem::decode(Decoder& decoder)
 {
     ManipulationItem result;
     if (!decoder.decode(result.identifier))
@@ -272,7 +272,7 @@ void TextManipulationController::ExclusionRule::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<TextManipulationController::ExclusionRule> TextManipulationController::ExclusionRule::decode(Decoder& decoder)
+std::optional<TextManipulationController::ExclusionRule> TextManipulationController::ExclusionRule::decode(Decoder& decoder)
 {
     ExclusionRule result;
     if (!decoder.decode(result.type))
@@ -289,7 +289,7 @@ void TextManipulationController::ExclusionRule::ElementRule::encode(Encoder& enc
 }
 
 template<class Decoder>
-Optional<TextManipulationController::ExclusionRule::ElementRule> TextManipulationController::ExclusionRule::ElementRule::decode(Decoder& decoder)
+std::optional<TextManipulationController::ExclusionRule::ElementRule> TextManipulationController::ExclusionRule::ElementRule::decode(Decoder& decoder)
 {
     ElementRule result;
     if (!decoder.decode(result.localName))
@@ -304,7 +304,7 @@ void TextManipulationController::ExclusionRule::AttributeRule::encode(Encoder& e
 }
 
 template<class Decoder>
-Optional<TextManipulationController::ExclusionRule::AttributeRule> TextManipulationController::ExclusionRule::AttributeRule::decode(Decoder& decoder)
+std::optional<TextManipulationController::ExclusionRule::AttributeRule> TextManipulationController::ExclusionRule::AttributeRule::decode(Decoder& decoder)
 {
     AttributeRule result;
     if (!decoder.decode(result.name))
@@ -321,7 +321,7 @@ void TextManipulationController::ExclusionRule::ClassRule::encode(Encoder& encod
 }
 
 template<class Decoder>
-Optional<TextManipulationController::ExclusionRule::ClassRule> TextManipulationController::ExclusionRule::ClassRule::decode(Decoder& decoder)
+std::optional<TextManipulationController::ExclusionRule::ClassRule> TextManipulationController::ExclusionRule::ClassRule::decode(Decoder& decoder)
 {
     ClassRule result;
     if (!decoder.decode(result.className))
@@ -336,7 +336,7 @@ void TextManipulationController::ManipulationFailure::encode(Encoder& encoder) c
 }
 
 template<class Decoder>
-Optional<TextManipulationController::ManipulationFailure> TextManipulationController::ManipulationFailure::decode(Decoder& decoder)
+std::optional<TextManipulationController::ManipulationFailure> TextManipulationController::ManipulationFailure::decode(Decoder& decoder)
 {
     ManipulationFailure result;
     if (!decoder.decode(result.identifier))

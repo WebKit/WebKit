@@ -58,7 +58,7 @@ public:
     Plan(
         CodeBlock* codeBlockToCompile, CodeBlock* profiledDFGCodeBlock,
         JITCompilationMode, BytecodeIndex osrEntryBytecodeIndex,
-        const Operands<Optional<JSValue>>& mustHandleValues);
+        const Operands<std::optional<JSValue>>& mustHandleValues);
     ~Plan();
 
     size_t codeSize() const final;
@@ -79,7 +79,7 @@ public:
     void cleanMustHandleValuesIfNecessary();
 
     BytecodeIndex osrEntryBytecodeIndex() const { return m_osrEntryBytecodeIndex; }
-    const Operands<Optional<JSValue>>& mustHandleValues() const { return m_mustHandleValues; }
+    const Operands<std::optional<JSValue>>& mustHandleValues() const { return m_mustHandleValues; }
     Profiler::Compilation* compilation() const { return m_compilation.get(); }
 
     Finalizer* finalizer() const { return m_finalizer.get(); }
@@ -111,7 +111,7 @@ private:
     // These can be raw pointers because we visit them during every GC in checkLivenessAndVisitChildren.
     CodeBlock* m_profiledDFGCodeBlock;
 
-    Operands<Optional<JSValue>> m_mustHandleValues;
+    Operands<std::optional<JSValue>> m_mustHandleValues;
     bool m_mustHandleValuesMayIncludeGarbage WTF_GUARDED_BY_LOCK(m_mustHandleValueCleaningLock) { true };
     Lock m_mustHandleValueCleaningLock;
 

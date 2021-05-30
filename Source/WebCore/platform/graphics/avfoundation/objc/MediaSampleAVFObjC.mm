@@ -464,7 +464,7 @@ static CFStringRef byteRangeOffsetAttachmentKey()
     return key;
 }
 
-Optional<MediaSample::ByteRange> MediaSampleAVFObjC::byteRange() const
+std::optional<MediaSample::ByteRange> MediaSampleAVFObjC::byteRange() const
 {
     return byteRangeForAttachment(byteRangeOffsetAttachmentKey());
 }
@@ -476,7 +476,7 @@ void MediaSampleAVFObjC::setByteRangeOffset(size_t byteOffset)
     PAL::CMSetAttachment(m_sample.get(), byteRangeOffsetAttachmentKey(), offsetNumber.get(), kCMAttachmentMode_ShouldPropagate);
 }
 
-Optional<MediaSample::ByteRange> MediaSampleAVFObjC::byteRangeForAttachment(CFStringRef key) const
+std::optional<MediaSample::ByteRange> MediaSampleAVFObjC::byteRangeForAttachment(CFStringRef key) const
 {
     auto byteOffsetCF = dynamic_cf_cast<CFNumberRef>(PAL::CMGetAttachment(m_sample.get(), key, nullptr));
     if (!byteOffsetCF)

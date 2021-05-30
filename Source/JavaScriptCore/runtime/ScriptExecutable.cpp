@@ -497,7 +497,7 @@ CodeBlockHash ScriptExecutable::hashFor(CodeSpecializationKind kind) const
     return CodeBlockHash(source(), kind);
 }
 
-Optional<int> ScriptExecutable::overrideLineNumber(VM& vm) const
+std::optional<int> ScriptExecutable::overrideLineNumber(VM& vm) const
 {
     if (inherits<FunctionExecutable>(vm))
         return jsCast<const FunctionExecutable*>(this)->overrideLineNumber();

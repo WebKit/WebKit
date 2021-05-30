@@ -79,7 +79,7 @@ AutofillElements::AutofillElements(RefPtr<HTMLInputElement>&& username, RefPtr<H
 {
 }
 
-Optional<AutofillElements> AutofillElements::computeAutofillElements(Ref<HTMLInputElement> start)
+std::optional<AutofillElements> AutofillElements::computeAutofillElements(Ref<HTMLInputElement> start)
 {
     if (!start->document().page())
         return std::nullopt;

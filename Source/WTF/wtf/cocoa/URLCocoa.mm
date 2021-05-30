@@ -92,7 +92,7 @@ RetainPtr<id> makeNSArrayElement(const URL& vectorElement)
     return adoptNS((__bridge_transfer id)vectorElement.createCFURL().leakRef());
 }
 
-Optional<URL> makeVectorElement(const URL*, id arrayElement)
+std::optional<URL> makeVectorElement(const URL*, id arrayElement)
 {
     if (![arrayElement isKindOfClass:NSURL.class])
         return std::nullopt;

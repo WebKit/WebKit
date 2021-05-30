@@ -867,7 +867,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncCopyDataProperties, (JSGlobalObject* globalOb
 
     UnlinkedCodeBlock* unlinkedCodeBlock = nullptr;
     const IdentifierSet* excludedSet = nullptr;
-    Optional<IdentifierSet> newlyCreatedSet;
+    std::optional<IdentifierSet> newlyCreatedSet;
     if (callFrame->argumentCount() > 1) {
         int32_t setIndex = callFrame->uncheckedArgument(1).asUInt32AsAnyInt();
         CodeBlock* codeBlock = getCallerCodeBlock(callFrame);

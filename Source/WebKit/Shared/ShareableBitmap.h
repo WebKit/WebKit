@@ -52,7 +52,7 @@ namespace WebKit {
 class ShareableBitmap : public ThreadSafeRefCounted<ShareableBitmap> {
 public:
     struct Configuration {
-        Optional<WebCore::DestinationColorSpace> colorSpace;
+        std::optional<WebCore::DestinationColorSpace> colorSpace;
         bool isOpaque { false };
 #if USE(DIRECT2D)
         mutable HANDLE sharedResourceHandle { nullptr };

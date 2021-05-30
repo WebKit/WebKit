@@ -50,7 +50,7 @@ bool MediaDeviceSandboxExtensions::decode(IPC::Decoder& decoder, MediaDeviceSand
     if (!decoder.decode(result.m_ids))
         return false;
 
-    Optional<SandboxExtension::HandleArray> handles;
+    std::optional<SandboxExtension::HandleArray> handles;
     decoder >> handles;
     if (!handles)
         return false;

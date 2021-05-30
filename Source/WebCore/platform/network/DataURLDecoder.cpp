@@ -69,7 +69,7 @@ static WorkQueue& decodeQueue()
 
 static Result parseMediaType(const String& mediaType)
 {
-    if (Optional<ParsedContentType> parsedContentType = ParsedContentType::create(mediaType))
+    if (std::optional<ParsedContentType> parsedContentType = ParsedContentType::create(mediaType))
         return { parsedContentType->mimeType(), parsedContentType->charset(), parsedContentType->serialize(), { } };
     return { "text/plain"_s, "US-ASCII"_s, "text/plain;charset=US-ASCII"_s, { } };
 }
@@ -148,7 +148,7 @@ static std::unique_ptr<DecodeTask> createDecodeTask(const URL& url, const Schedu
     );
 }
 
-static Optional<Vector<uint8_t>> decodeBase64(const DecodeTask& task, Mode mode)
+static std::optional<Vector<uint8_t>> decodeBase64(const DecodeTask& task, Mode mode)
 {
     switch (mode) {
     case Mode::ForgivingBase64:
@@ -172,7 +172,7 @@ static Vector<uint8_t> decodeEscaped(const DecodeTask& task)
     return decodeURLEscapeSequencesAsData(task.encodedData, encoding);
 }
 
-static Optional<Result> decodeSynchronously(DecodeTask& task, Mode mode)
+static std::optional<Result> decodeSynchronously(DecodeTask& task, Mode mode)
 {
     if (!task.process())
         return std::nullopt;
@@ -212,7 +212,7 @@ void decode(const URL& url, const ScheduleContext& scheduleContext, Mode mode, D
     });
 }
 
-Optional<Result> decode(const URL& url, Mode mode)
+std::optional<Result> decode(const URL& url, Mode mode)
 {
     ASSERT(url.protocolIsData());
 

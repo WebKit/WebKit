@@ -47,7 +47,7 @@ uint16_t parseMessageLength(const Vector<uint8_t>& message, size_t offset)
 
 } // namespace
 
-Optional<ApduCommand> ApduCommand::createFromMessage(const Vector<uint8_t>& message)
+std::optional<ApduCommand> ApduCommand::createFromMessage(const Vector<uint8_t>& message)
 {
     if (message.size() < kApduMinHeader || message.size() > kApduMaxLength)
         return std::nullopt;

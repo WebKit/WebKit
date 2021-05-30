@@ -508,7 +508,7 @@ void IDBConnectionProxy::handleMainThreadTasks()
         task->performTask();
 }
 
-void IDBConnectionProxy::getAllDatabaseNamesAndVersions(ScriptExecutionContext& context, Function<void(Optional<Vector<IDBDatabaseNameAndVersion>>&&)>&& callback)
+void IDBConnectionProxy::getAllDatabaseNamesAndVersions(ScriptExecutionContext& context, Function<void(std::optional<Vector<IDBDatabaseNameAndVersion>>&&)>&& callback)
 {
     ClientOrigin origin { context.securityOrigin()->data(), context.topOrigin().data() };
 
@@ -524,7 +524,7 @@ void IDBConnectionProxy::getAllDatabaseNamesAndVersions(ScriptExecutionContext& 
     callConnectionOnMainThread(&IDBConnectionToServer::getAllDatabaseNamesAndVersions, request->resourceIdentifier(), origin);
 }
 
-void IDBConnectionProxy::didGetAllDatabaseNamesAndVersions(const IDBResourceIdentifier& requestIdentifier, Optional<Vector<IDBDatabaseNameAndVersion>>&& databases)
+void IDBConnectionProxy::didGetAllDatabaseNamesAndVersions(const IDBResourceIdentifier& requestIdentifier, std::optional<Vector<IDBDatabaseNameAndVersion>>&& databases)
 {
     RefPtr<IDBDatabaseNameAndVersionRequest> request;
     {

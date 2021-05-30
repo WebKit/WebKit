@@ -58,7 +58,7 @@ RTCRtpSFrameTransform::~RTCRtpSFrameTransform()
 {
 }
 
-void RTCRtpSFrameTransform::setEncryptionKey(CryptoKey& key, Optional<uint64_t> keyId, DOMPromiseDeferred<void>&& promise)
+void RTCRtpSFrameTransform::setEncryptionKey(CryptoKey& key, std::optional<uint64_t> keyId, DOMPromiseDeferred<void>&& promise)
 {
     auto algorithm = key.algorithm();
     if (!WTF::holds_alternative<CryptoKeyAlgorithm>(algorithm)) {

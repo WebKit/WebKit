@@ -57,7 +57,7 @@ static void printUsageStatement(const char* programName)
 int WebDriverService::run(int argc, char** argv)
 {
     String portString;
-    Optional<String> host;
+    std::optional<String> host;
 #if USE(INSPECTOR_SOCKET_SERVER)
     String targetString;
     if (const char* targetEnvVar = getenv("WEBDRIVER_TARGET_ADDR"))
@@ -213,7 +213,7 @@ const WebDriverService::Command WebDriverService::s_commands[] = {
     { HTTPMethod::Get, "/session/$sessionId/element/$elementId/displayed", &WebDriverService::isElementDisplayed },
 };
 
-Optional<WebDriverService::HTTPMethod> WebDriverService::toCommandHTTPMethod(const String& method)
+std::optional<WebDriverService::HTTPMethod> WebDriverService::toCommandHTTPMethod(const String& method)
 {
     auto lowerCaseMethod = method.convertToASCIILowercase();
     if (lowerCaseMethod == "get")
@@ -324,7 +324,7 @@ void WebDriverService::sendResponse(Function<void (HTTPRequestHandler::Response&
     replyHandler({ result.httpStatusCode(), responseObject->toJSONString().utf8(), "application/json; charset=utf-8"_s });
 }
 
-static Optional<double> valueAsNumberInRange(const JSON::Value& value, double minAllowed = 0, double maxAllowed = std::numeric_limits<int>::max())
+static std::optional<double> valueAsNumberInRange(const JSON::Value& value, double minAllowed = 0, double maxAllowed = std::numeric_limits<int>::max())
 {
     auto number = value.asDouble();
     if (!number)
@@ -339,7 +339,7 @@ static Optional<double> valueAsNumberInRange(const JSON::Value& value, double mi
     return *number;
 }
 
-static Optional<uint64_t> unsignedValue(JSON::Value& value)
+static std::optional<uint64_t> unsignedValue(JSON::Value& value)
 {
     auto number = valueAsNumberInRange(value, 0, maxSafeInteger);
     if (!number)
@@ -357,7 +357,7 @@ static Optional<uint64_t> unsignedValue(JSON::Value& value)
 
 enum class IgnoreUnknownTimeout { No, Yes };
 
-static Optional<Timeouts> deserializeTimeouts(JSON::Object& timeoutsObject, IgnoreUnknownTimeout ignoreUnknownTimeout)
+static std::optional<Timeouts> deserializeTimeouts(JSON::Object& timeoutsObject, IgnoreUnknownTimeout ignoreUnknownTimeout)
 {
     // §8.5 Set Timeouts.
     // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-deserialize-as-a-timeout
@@ -389,7 +389,7 @@ static Optional<Timeouts> deserializeTimeouts(JSON::Object& timeoutsObject, Igno
     return timeouts;
 }
 
-static Optional<Proxy> deserializeProxy(JSON::Object& proxyObject)
+static std::optional<Proxy> deserializeProxy(JSON::Object& proxyObject)
 {
     // §7.1 Proxy.
     // https://w3c.github.io/webdriver/#proxy
@@ -476,7 +476,7 @@ static Optional<Proxy> deserializeProxy(JSON::Object& proxyObject)
     return std::nullopt;
 }
 
-static Optional<PageLoadStrategy> deserializePageLoadStrategy(const String& pageLoadStrategy)
+static std::optional<PageLoadStrategy> deserializePageLoadStrategy(const String& pageLoadStrategy)
 {
     if (pageLoadStrategy == "none")
         return PageLoadStrategy::None;
@@ -487,7 +487,7 @@ static Optional<PageLoadStrategy> deserializePageLoadStrategy(const String& page
     return std::nullopt;
 }
 
-static Optional<UnhandledPromptBehavior> deserializeUnhandledPromptBehavior(const String& unhandledPromptBehavior)
+static std::optional<UnhandledPromptBehavior> deserializeUnhandledPromptBehavior(const String& unhandledPromptBehavior)
 {
     if (unhandledPromptBehavior == "dismiss")
         return UnhandledPromptBehavior::Dismiss;
@@ -825,7 +825,7 @@ void WebDriverService::connectToBrowser(Vector<Capabilities>&& capabilitiesList,
 #if USE(INSPECTOR_SOCKET_SERVER)
     sessionHostPtr->setHostAddress(m_targetAddress, m_targetPort);
 #endif
-    sessionHostPtr->connectToBrowser([this, capabilitiesList = WTFMove(capabilitiesList), sessionHost = WTFMove(sessionHost), completionHandler = WTFMove(completionHandler)](Optional<String> error) mutable {
+    sessionHostPtr->connectToBrowser([this, capabilitiesList = WTFMove(capabilitiesList), sessionHost = WTFMove(sessionHost), completionHandler = WTFMove(completionHandler)](std::optional<String> error) mutable {
         if (error) {
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, makeString("Failed to connect to browser: ", error.value())));
             return;
@@ -838,7 +838,7 @@ void WebDriverService::connectToBrowser(Vector<Capabilities>&& capabilitiesList,
 void WebDriverService::createSession(Vector<Capabilities>&& capabilitiesList, std::unique_ptr<SessionHost>&& sessionHost, Function<void (CommandResult&&)>&& completionHandler)
 {
     auto* sessionHostPtr = sessionHost.get();
-    sessionHostPtr->startAutomationSession([this, capabilitiesList = WTFMove(capabilitiesList), sessionHost = WTFMove(sessionHost), completionHandler = WTFMove(completionHandler)](bool capabilitiesDidMatch, Optional<String> errorMessage) mutable {
+    sessionHostPtr->startAutomationSession([this, capabilitiesList = WTFMove(capabilitiesList), sessionHost = WTFMove(sessionHost), completionHandler = WTFMove(completionHandler)](bool capabilitiesDidMatch, std::optional<String> errorMessage) mutable {
         if (errorMessage) {
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError, errorMessage.value()));
             return;
@@ -1095,7 +1095,7 @@ void WebDriverService::setWindowRect(RefPtr<JSON::Object>&& parameters, Function
 {
     // §10.7.2 Set Window Rect.
     // https://w3c.github.io/webdriver/webdriver-spec.html#set-window-rect
-    Optional<double> width;
+    std::optional<double> width;
     if (auto value = parameters->getValue("width"_s)) {
         if (auto number = valueAsNumberInRange(*value))
             width = number;
@@ -1104,7 +1104,7 @@ void WebDriverService::setWindowRect(RefPtr<JSON::Object>&& parameters, Function
             return;
         }
     }
-    Optional<double> height;
+    std::optional<double> height;
     if (auto value = parameters->getValue("height"_s)) {
         if (auto number = valueAsNumberInRange(*value))
             height = number;
@@ -1113,7 +1113,7 @@ void WebDriverService::setWindowRect(RefPtr<JSON::Object>&& parameters, Function
             return;
         }
     }
-    Optional<double> x;
+    std::optional<double> x;
     if (auto value = parameters->getValue("x"_s)) {
         if (auto number = valueAsNumberInRange(*value, INT_MIN))
             x = number;
@@ -1122,7 +1122,7 @@ void WebDriverService::setWindowRect(RefPtr<JSON::Object>&& parameters, Function
             return;
         }
     }
-    Optional<double> y;
+    std::optional<double> y;
     if (auto value = parameters->getValue("y"_s)) {
         if (auto number = valueAsNumberInRange(*value, INT_MIN))
             y = number;
@@ -1215,7 +1215,7 @@ void WebDriverService::newWindow(RefPtr<JSON::Object>&& parameters, Function<voi
     if (!findSessionOrCompleteWithError(*parameters, completionHandler))
         return;
 
-    Optional<String> typeHint;
+    std::optional<String> typeHint;
     if (auto value = parameters->getValue("type"_s)) {
         auto valueString = value->asString();
         if (!!valueString) {
@@ -1293,7 +1293,7 @@ void WebDriverService::switchToParentFrame(RefPtr<JSON::Object>&& parameters, Fu
     });
 }
 
-static Optional<String> findElementOrCompleteWithError(JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler)
+static std::optional<String> findElementOrCompleteWithError(JSON::Object& parameters, Function<void (CommandResult&&)>& completionHandler)
 {
     auto elementID = parameters.getString("elementId"_s);
     if (elementID.isEmpty()) {
@@ -1718,7 +1718,7 @@ void WebDriverService::getNamedCookie(RefPtr<JSON::Object>&& parameters, Functio
     });
 }
 
-static Optional<Session::Cookie> deserializeCookie(JSON::Object& cookieObject)
+static std::optional<Session::Cookie> deserializeCookie(JSON::Object& cookieObject)
 {
     Session::Cookie cookie;
 
@@ -1836,7 +1836,7 @@ void WebDriverService::deleteAllCookies(RefPtr<JSON::Object>&& parameters, Funct
     });
 }
 
-static bool processPauseAction(JSON::Object& actionItem, Action& action, Optional<String>& errorMessage)
+static bool processPauseAction(JSON::Object& actionItem, Action& action, std::optional<String>& errorMessage)
 {
     auto durationValue = actionItem.getValue("duration"_s);
     if (!durationValue)
@@ -1852,7 +1852,7 @@ static bool processPauseAction(JSON::Object& actionItem, Action& action, Optiona
     return true;
 }
 
-static Optional<Action> processNullAction(const String& id, JSON::Object& actionItem, Optional<String>& errorMessage)
+static std::optional<Action> processNullAction(const String& id, JSON::Object& actionItem, std::optional<String>& errorMessage)
 {
     auto subtype = actionItem.getString("type"_s);
     if (subtype != "pause") {
@@ -1867,7 +1867,7 @@ static Optional<Action> processNullAction(const String& id, JSON::Object& action
     return action;
 }
 
-static Optional<Action> processKeyAction(const String& id, JSON::Object& actionItem, Optional<String>& errorMessage)
+static std::optional<Action> processKeyAction(const String& id, JSON::Object& actionItem, std::optional<String>& errorMessage)
 {
     Action::Subtype actionSubtype;
     auto subtype = actionItem.getString("type"_s);
@@ -1932,7 +1932,7 @@ static MouseButton actionMouseButton(unsigned button)
     return MouseButton::None;
 }
 
-static bool processPointerMoveAction(JSON::Object& actionItem, Action& action, Optional<String>& errorMessage)
+static bool processPointerMoveAction(JSON::Object& actionItem, Action& action, std::optional<String>& errorMessage)
 {
     if (auto durationValue = actionItem.getValue("duration"_s)) {
         auto duration = unsignedValue(*durationValue);
@@ -1986,7 +1986,7 @@ static bool processPointerMoveAction(JSON::Object& actionItem, Action& action, O
     return true;
 }
 
-static Optional<Action> processPointerAction(const String& id, PointerParameters& parameters, JSON::Object& actionItem, Optional<String>& errorMessage)
+static std::optional<Action> processPointerAction(const String& id, PointerParameters& parameters, JSON::Object& actionItem, std::optional<String>& errorMessage)
 {
     Action::Subtype actionSubtype;
     auto subtype = actionItem.getString("type"_s);
@@ -2043,7 +2043,7 @@ static Optional<Action> processPointerAction(const String& id, PointerParameters
     return action;
 }
 
-static Optional<Action> processWheelAction(const String& id, JSON::Object& actionItem, Optional<String>& errorMessage)
+static std::optional<Action> processWheelAction(const String& id, JSON::Object& actionItem, std::optional<String>& errorMessage)
 {
     Action::Subtype actionSubtype;
     auto subtype = actionItem.getString("type"_s);
@@ -2097,7 +2097,7 @@ static Optional<Action> processWheelAction(const String& id, JSON::Object& actio
     return action;
 }
 
-static Optional<PointerParameters> processPointerParameters(JSON::Object& actionSequence, Optional<String>& errorMessage)
+static std::optional<PointerParameters> processPointerParameters(JSON::Object& actionSequence, std::optional<String>& errorMessage)
 {
     PointerParameters parameters;
 
@@ -2129,7 +2129,7 @@ static Optional<PointerParameters> processPointerParameters(JSON::Object& action
     return parameters;
 }
 
-static Optional<Vector<Action>> processInputActionSequence(Session& session, JSON::Value& actionSequenceValue, Optional<String>& errorMessage)
+static std::optional<Vector<Action>> processInputActionSequence(Session& session, JSON::Value& actionSequenceValue, std::optional<String>& errorMessage)
 {
     auto actionSequence = actionSequenceValue.asObject();
     if (!actionSequence) {
@@ -2158,8 +2158,8 @@ static Optional<Vector<Action>> processInputActionSequence(Session& session, JSO
         return std::nullopt;
     }
 
-    Optional<PointerParameters> parameters;
-    Optional<PointerType> pointerType;
+    std::optional<PointerParameters> parameters;
+    std::optional<PointerType> pointerType;
     if (inputSourceType == InputSource::Type::Pointer) {
         parameters = processPointerParameters(*actionSequence, errorMessage);
         if (!parameters)
@@ -2194,7 +2194,7 @@ static Optional<Vector<Action>> processInputActionSequence(Session& session, JSO
             return std::nullopt;
         }
 
-        Optional<Action> action;
+        std::optional<Action> action;
         if (inputSourceType == InputSource::Type::None)
             action = processNullAction(id, *actionItem, errorMessage);
         else if (inputSourceType == InputSource::Type::Key)
@@ -2225,7 +2225,7 @@ void WebDriverService::performActions(RefPtr<JSON::Object>&& parameters, Functio
         return;
     }
 
-    Optional<String> errorMessage;
+    std::optional<String> errorMessage;
     Vector<Vector<Action>> actionsByTick;
     unsigned actionsArrayLength = actionsArray->length();
     for (unsigned i = 0; i < actionsArrayLength; ++i) {

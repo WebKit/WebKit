@@ -84,7 +84,7 @@ void DOMFormData::remove(const String& name)
     });
 }
 
-auto DOMFormData::get(const String& name) -> Optional<FormDataEntryValue>
+auto DOMFormData::get(const String& name) -> std::optional<FormDataEntryValue>
 {
     for (auto& item : m_items) {
         if (item.name == name)
@@ -128,7 +128,7 @@ void DOMFormData::set(const String& name, Blob& blob, const String& filename)
 
 void DOMFormData::set(const String& name, Item&& item)
 {
-    Optional<size_t> initialMatchLocation;
+    std::optional<size_t> initialMatchLocation;
 
     // Find location of the first item with a matching name.
     for (size_t i = 0; i < m_items.size(); ++i) {
@@ -155,7 +155,7 @@ DOMFormData::Iterator::Iterator(DOMFormData& target)
 {
 }
 
-Optional<KeyValuePair<String, DOMFormData::FormDataEntryValue>> DOMFormData::Iterator::next()
+std::optional<KeyValuePair<String, DOMFormData::FormDataEntryValue>> DOMFormData::Iterator::next()
 {
     auto& items = m_target->items();
     if (m_index >= items.size())

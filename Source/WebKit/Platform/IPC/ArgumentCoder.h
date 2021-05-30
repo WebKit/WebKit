@@ -49,7 +49,7 @@ template<typename T, typename = void> struct ArgumentCoder {
         t.encode(encoder);
     }
 
-    static Optional<T> decode(Decoder& decoder)
+    static std::optional<T> decode(Decoder& decoder)
     {
         if constexpr(HasModernDecoderV<T>)
             return T::decode(decoder);
@@ -66,7 +66,7 @@ template<typename T, typename = void> struct ArgumentCoder {
         if constexpr(HasLegacyDecoderV<T>)
             return T::decode(decoder, t);
         else {
-            Optional<T> optional = T::decode(decoder);
+            std::optional<T> optional = T::decode(decoder);
             if (!optional)
                 return false;
             t = WTFMove(*optional);
@@ -83,7 +83,7 @@ struct ArgumentCoder<T, typename std::enable_if_t<std::is_arithmetic_v<T>>> {
         encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(&value), sizeof(T), alignof(T));
     }
 
-    static Optional<T> decode(Decoder& decoder)
+    static std::optional<T> decode(Decoder& decoder)
     {
         T result;
         if (decoder.decodeFixedLengthData(reinterpret_cast<uint8_t*>(&result), sizeof(T), alignof(T)))
@@ -101,9 +101,9 @@ struct ArgumentCoder<T, typename std::enable_if_t<std::is_enum_v<T>>> {
         encoder << WTF::enumToUnderlyingType<T>(value);
     }
 
-    static Optional<T> decode(Decoder& decoder)
+    static std::optional<T> decode(Decoder& decoder)
     {
-        Optional<std::underlying_type_t<T>> value;
+        std::optional<std::underlying_type_t<T>> value;
         decoder >> value;
         if (value && WTF::isValidEnum<T>(*value))
             return static_cast<T>(*value);

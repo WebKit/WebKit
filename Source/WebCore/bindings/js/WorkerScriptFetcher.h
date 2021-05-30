@@ -67,7 +67,7 @@ public:
     }
 
     bool isLoaded() const { return m_isLoaded; }
-    Optional<LoadableScript::Error> error() const { return m_error; }
+    std::optional<LoadableScript::Error> error() const { return m_error; }
     bool wasCanceled() const { return m_wasCanceled; }
     UniquedStringImpl* moduleKey() const { return m_moduleKey.get(); }
     ModuleFetchParameters& parameters() { return m_parameters.get(); }
@@ -92,7 +92,7 @@ private:
     ReferrerPolicy m_referrerPolicy { ReferrerPolicy::EmptyString };
     RefPtr<UniquedStringImpl> m_moduleKey;
     Ref<ModuleFetchParameters> m_parameters;
-    Optional<LoadableScript::Error> m_error;
+    std::optional<LoadableScript::Error> m_error;
     bool m_wasCanceled { false };
     bool m_isLoaded { false };
 };

@@ -34,7 +34,7 @@ namespace WebCore {
 class AnimationPlaybackEvent final : public AnimationEventBase {
     WTF_MAKE_ISO_ALLOCATED(AnimationPlaybackEvent);
 public:
-    static Ref<AnimationPlaybackEvent> create(const AtomString& type, Optional<Seconds> currentTime, Optional<Seconds> timelineTime, WebAnimation* animation)
+    static Ref<AnimationPlaybackEvent> create(const AtomString& type, std::optional<Seconds> currentTime, std::optional<Seconds> timelineTime, WebAnimation* animation)
     {
         return adoptRef(*new AnimationPlaybackEvent(type, currentTime, timelineTime, animation));
     }
@@ -48,14 +48,14 @@ public:
 
     bool isAnimationPlaybackEvent() const final { return true; }
 
-    Optional<double> bindingsCurrentTime() const;
-    Optional<Seconds> currentTime() const { return m_currentTime; }
-    Optional<double> bindingsTimelineTime() const;
+    std::optional<double> bindingsCurrentTime() const;
+    std::optional<Seconds> currentTime() const { return m_currentTime; }
+    std::optional<double> bindingsTimelineTime() const;
 
     EventInterface eventInterface() const override { return AnimationPlaybackEventInterfaceType; }
 
 private:
-    AnimationPlaybackEvent(const AtomString&, Optional<Seconds>, Optional<Seconds>, WebAnimation*);
+    AnimationPlaybackEvent(const AtomString&, std::optional<Seconds>, std::optional<Seconds>, WebAnimation*);
     AnimationPlaybackEvent(const AtomString&, const AnimationPlaybackEventInit&, IsTrusted);
 
     Markable<Seconds, Seconds::MarkableTraits> m_currentTime;

@@ -39,7 +39,7 @@ struct ContactsRequestData {
     String url;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ContactsRequestData> decode(Decoder&);
+    template<class Decoder> static std::optional<ContactsRequestData> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -51,19 +51,19 @@ void ContactsRequestData::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ContactsRequestData> ContactsRequestData::decode(Decoder& decoder)
+std::optional<ContactsRequestData> ContactsRequestData::decode(Decoder& decoder)
 {
-    Optional<Vector<ContactProperty>> properties;
+    std::optional<Vector<ContactProperty>> properties;
     decoder >> properties;
     if (!properties)
         return std::nullopt;
 
-    Optional<bool> multiple;
+    std::optional<bool> multiple;
     decoder >> multiple;
     if (!multiple)
         return std::nullopt;
 
-    Optional<String> url;
+    std::optional<String> url;
     decoder >> url;
     if (!url)
         return std::nullopt;

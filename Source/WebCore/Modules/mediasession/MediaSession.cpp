@@ -79,7 +79,7 @@ static PlatformMediaSession::RemoteControlCommandType platformCommandForMediaSes
     return PlatformMediaSession::NoCommand;
 }
 
-static Optional<std::pair<PlatformMediaSession::RemoteControlCommandType, PlatformMediaSession::RemoteCommandArgument>> platformCommandForMediaSessionAction(const MediaSessionActionDetails& actionDetails)
+static std::optional<std::pair<PlatformMediaSession::RemoteControlCommandType, PlatformMediaSession::RemoteCommandArgument>> platformCommandForMediaSessionAction(const MediaSessionActionDetails& actionDetails)
 {
     PlatformMediaSession::RemoteControlCommandType command = PlatformMediaSession::NoCommand;
     PlatformMediaSession::RemoteCommandArgument argument;
@@ -288,7 +288,7 @@ void MediaSession::callActionHandler(const MediaSessionActionDetails& actionDeta
 bool MediaSession::callActionHandler(const MediaSessionActionDetails& actionDetails, TriggerGestureIndicator triggerGestureIndicator)
 {
     if (auto handler = m_actionHandlers.get(actionDetails.action)) {
-        Optional<UserGestureIndicator> maybeGestureIndicator;
+        std::optional<UserGestureIndicator> maybeGestureIndicator;
         if (triggerGestureIndicator == TriggerGestureIndicator::Yes)
             maybeGestureIndicator.emplace(ProcessingUserGesture, document());
         handler->handleEvent(actionDetails);
@@ -305,7 +305,7 @@ bool MediaSession::callActionHandler(const MediaSessionActionDetails& actionDeta
     return true;
 }
 
-ExceptionOr<void> MediaSession::setPositionState(Optional<MediaPositionState>&& state)
+ExceptionOr<void> MediaSession::setPositionState(std::optional<MediaPositionState>&& state)
 {
     if (state)
         ALWAYS_LOG(LOGIDENTIFIER, state.value());
@@ -333,7 +333,7 @@ ExceptionOr<void> MediaSession::setPositionState(Optional<MediaPositionState>&& 
     return { };
 }
 
-Optional<double> MediaSession::currentPosition() const
+std::optional<double> MediaSession::currentPosition() const
 {
     if (!m_positionState || !m_lastReportedPosition)
         return std::nullopt;

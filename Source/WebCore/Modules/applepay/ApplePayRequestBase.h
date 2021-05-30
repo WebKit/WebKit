@@ -46,17 +46,17 @@ struct ApplePayRequestBase {
     Vector<String> supportedNetworks;
     String countryCode;
 
-    Optional<Vector<ApplePayContactField>> requiredBillingContactFields;
-    Optional<ApplePayPaymentContact> billingContact;
+    std::optional<Vector<ApplePayContactField>> requiredBillingContactFields;
+    std::optional<ApplePayPaymentContact> billingContact;
 
-    Optional<Vector<ApplePayContactField>> requiredShippingContactFields;
-    Optional<ApplePayPaymentContact> shippingContact;
+    std::optional<Vector<ApplePayContactField>> requiredShippingContactFields;
+    std::optional<ApplePayPaymentContact> shippingContact;
 
     String applicationData;
     Vector<String> supportedCountries;
 
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
-    Optional<ApplePayInstallmentConfiguration> installmentConfiguration;
+    std::optional<ApplePayInstallmentConfiguration> installmentConfiguration;
 #endif
 
 #if defined(ApplePayRequestBaseAdditions_members)

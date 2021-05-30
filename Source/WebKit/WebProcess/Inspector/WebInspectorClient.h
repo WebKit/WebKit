@@ -73,7 +73,7 @@ private:
     bool overridesShowPaintRects() const override { return true; }
     void showPaintRect(const WebCore::FloatRect&) override;
 
-    void setDeveloperPreferenceOverride(WebCore::InspectorClient::DeveloperPreference, Optional<bool>) final;
+    void setDeveloperPreferenceOverride(WebCore::InspectorClient::DeveloperPreference, std::optional<bool>) final;
 
     // PageOverlay::Client
     void willMoveToPage(WebCore::PageOverlay&, WebCore::Page*) override;

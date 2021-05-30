@@ -137,7 +137,7 @@ public:
         if (m_session)
             m_session->metadataChanged(metadata);
     }
-    void positionStateChanged(const Optional<MediaPositionState>& state) final
+    void positionStateChanged(const std::optional<MediaPositionState>& state) final
     {
         if (m_session)
             m_session->positionStateChanged(state);
@@ -1140,7 +1140,7 @@ void MediaElementSession::didReceiveRemoteControlCommand(RemoteControlCommandTyp
 }
 #endif
 
-Optional<NowPlayingInfo> MediaElementSession::nowPlayingInfo() const
+std::optional<NowPlayingInfo> MediaElementSession::nowPlayingInfo() const
 {
     auto* page = m_element.document().page();
     bool allowsNowPlayingControlsVisibility = page && !page->isVisibleAndActive();
@@ -1155,7 +1155,7 @@ Optional<NowPlayingInfo> MediaElementSession::nowPlayingInfo() const
     auto* session = mediaSession();
     auto* sessionMetadata = session ? session->metadata() : nullptr;
     if (sessionMetadata) {
-        Optional<NowPlayingInfoArtwork> artwork;
+        std::optional<NowPlayingInfoArtwork> artwork;
         if (sessionMetadata->artworkImage()) {
             ASSERT(sessionMetadata->artworkImage()->data(), "An image must always have associated data");
             artwork = NowPlayingInfoArtwork { sessionMetadata->artworkSrc(), sessionMetadata->artworkImage()->mimeType(), sessionMetadata->artworkImage()->data() };
@@ -1272,7 +1272,7 @@ void MediaElementSession::metadataChanged(const RefPtr<MediaMetadata>&)
     clientCharacteristicsChanged();
 }
 
-void MediaElementSession::positionStateChanged(const Optional<MediaPositionState>&) { }
+void MediaElementSession::positionStateChanged(const std::optional<MediaPositionState>&) { }
 
 void MediaElementSession::playbackStateChanged(MediaSessionPlaybackState) { }
 

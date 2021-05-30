@@ -252,7 +252,7 @@ public:
         m_hasAlpha = alphaInfo != kCGImageAlphaNone && alphaInfo != kCGImageAlphaNoneSkipLast && alphaInfo != kCGImageAlphaNoneSkipFirst;
     }
 
-    Optional<ByteRange> byteRange() const final
+    std::optional<ByteRange> byteRange() const final
     {
         if (PAL::CMSampleBufferGetDataBuffer(m_sample.get())
             || PAL::CMSampleBufferGetImageBuffer(m_sample.get())

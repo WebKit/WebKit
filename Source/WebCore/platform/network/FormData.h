@@ -45,7 +45,7 @@ struct FormDataElement {
         : data(WTFMove(data)) { }
     explicit FormDataElement(Vector<char>&& array)
         : data(WTFMove(array)) { }
-    FormDataElement(const String& filename, int64_t fileStart, int64_t fileLength, Optional<WallTime> expectedFileModificationTime)
+    FormDataElement(const String& filename, int64_t fileStart, int64_t fileLength, std::optional<WallTime> expectedFileModificationTime)
         : data(EncodedFileData { filename, fileStart, fileLength, expectedFileModificationTime }) { }
     explicit FormDataElement(const URL& blobURL)
         : data(EncodedBlobData { blobURL }) { }
@@ -59,9 +59,9 @@ struct FormDataElement {
     {
         encoder << data;
     }
-    template<typename Decoder> static Optional<FormDataElement> decode(Decoder& decoder)
+    template<typename Decoder> static std::optional<FormDataElement> decode(Decoder& decoder)
     {
-        Optional<Data> data;
+        std::optional<Data> data;
         decoder >> data;
         if (!data)
             return std::nullopt;
@@ -72,7 +72,7 @@ struct FormDataElement {
         String filename;
         int64_t fileStart { 0 };
         int64_t fileLength { 0 };
-        Optional<WallTime> expectedFileModificationTime;
+        std::optional<WallTime> expectedFileModificationTime;
 
         bool fileModificationTimeMatchesExpectation() const;
 
@@ -92,24 +92,24 @@ struct FormDataElement {
         {
             encoder << filename << fileStart << fileLength << expectedFileModificationTime;
         }
-        template<typename Decoder> static Optional<EncodedFileData> decode(Decoder& decoder)
+        template<typename Decoder> static std::optional<EncodedFileData> decode(Decoder& decoder)
         {
-            Optional<String> filename;
+            std::optional<String> filename;
             decoder >> filename;
             if (!filename)
                 return std::nullopt;
             
-            Optional<int64_t> fileStart;
+            std::optional<int64_t> fileStart;
             decoder >> fileStart;
             if (!fileStart)
                 return std::nullopt;
             
-            Optional<int64_t> fileLength;
+            std::optional<int64_t> fileLength;
             decoder >> fileLength;
             if (!fileLength)
                 return std::nullopt;
             
-            Optional<Optional<WallTime>> expectedFileModificationTime;
+            std::optional<std::optional<WallTime>> expectedFileModificationTime;
             decoder >> expectedFileModificationTime;
             if (!expectedFileModificationTime)
                 return std::nullopt;
@@ -135,9 +135,9 @@ struct FormDataElement {
         {
             encoder << url;
         }
-        template<typename Decoder> static Optional<EncodedBlobData> decode(Decoder& decoder)
+        template<typename Decoder> static std::optional<EncodedBlobData> decode(Decoder& decoder)
         {
-            Optional<URL> url;
+            std::optional<URL> url;
             decoder >> url;
             if (!url)
                 return std::nullopt;
@@ -212,7 +212,7 @@ public:
 
     WEBCORE_EXPORT void appendData(const void* data, size_t);
     void appendFile(const String& filePath);
-    WEBCORE_EXPORT void appendFileRange(const String& filename, long long start, long long length, Optional<WallTime> expectedModificationTime);
+    WEBCORE_EXPORT void appendFileRange(const String& filename, long long start, long long length, std::optional<WallTime> expectedModificationTime);
     WEBCORE_EXPORT void appendBlob(const URL& blobURL);
 
     WEBCORE_EXPORT Vector<char> flatten() const; // omits files
@@ -271,7 +271,7 @@ private:
     bool m_alwaysStream { false };
     Vector<char> m_boundary;
     bool m_containsPasswordData { false };
-    mutable Optional<uint64_t> m_lengthInBytes;
+    mutable std::optional<uint64_t> m_lengthInBytes;
 };
 
 inline bool operator==(const FormData& a, const FormData& b)

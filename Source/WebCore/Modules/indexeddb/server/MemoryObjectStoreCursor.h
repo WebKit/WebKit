@@ -60,7 +60,7 @@ private:
 
     IDBKeyRangeData m_remainingRange;
 
-    Optional<IDBKeyDataSet::iterator> m_iterator;
+    std::optional<IDBKeyDataSet::iterator> m_iterator;
 
     IDBKeyData m_currentPositionKey;
 };

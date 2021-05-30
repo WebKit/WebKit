@@ -41,7 +41,7 @@ class RTCRtpTransform  {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     using Internal = Variant<RefPtr<RTCRtpSFrameTransform>, RefPtr<RTCRtpScriptTransform>>;
-    static std::unique_ptr<RTCRtpTransform> from(Optional<Internal>&&);
+    static std::unique_ptr<RTCRtpTransform> from(std::optional<Internal>&&);
 
     explicit RTCRtpTransform(Internal&&);
     ~RTCRtpTransform();

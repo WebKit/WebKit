@@ -48,7 +48,7 @@ struct UserContentControllerParameters {
 #endif
 
     void encode(IPC::Encoder&) const;
-    static Optional<UserContentControllerParameters> decode(IPC::Decoder&);
+    static std::optional<UserContentControllerParameters> decode(IPC::Decoder&);
 };
 
 } // namespace WebKit

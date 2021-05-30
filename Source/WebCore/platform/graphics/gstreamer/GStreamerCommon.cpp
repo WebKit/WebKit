@@ -126,7 +126,7 @@ bool getVideoSizeAndFormatFromCaps(const GstCaps* caps, WebCore::IntSize& size, 
     return true;
 }
 
-Optional<FloatSize> getVideoResolutionFromCaps(const GstCaps* caps)
+std::optional<FloatSize> getVideoResolutionFromCaps(const GstCaps* caps)
 {
     if (!doCapsHaveType(caps, GST_VIDEO_CAPS_TYPE_PREFIX)) {
         GST_WARNING("Failed to get the video resolution, these are not a video caps");
@@ -215,7 +215,7 @@ bool areEncryptedCaps(const GstCaps* caps)
 #endif
 }
 
-static Optional<Vector<String>> s_UIProcessCommandLineOptions;
+static std::optional<Vector<String>> s_UIProcessCommandLineOptions;
 void setGStreamerOptionsFromUIProcess(Vector<String>&& options)
 {
     s_UIProcessCommandLineOptions = WTFMove(options);

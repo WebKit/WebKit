@@ -28,11 +28,11 @@
 #if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
 
 messages -> RemoteImageDecoderAVFProxy NotRefCounted {
-    CreateDecoder(IPC::SharedBufferDataReference data, String mimeType) -> (Optional<WebCore::ImageDecoderIdentifier> identifier) Synchronous
+    CreateDecoder(IPC::SharedBufferDataReference data, String mimeType) -> (std::optional<WebCore::ImageDecoderIdentifier> identifier) Synchronous
     DeleteDecoder(WebCore::ImageDecoderIdentifier identifier)
     SetExpectedContentSize(WebCore::ImageDecoderIdentifier identifier, long long expectedContentSize)
-    SetData(WebCore::ImageDecoderIdentifier identifier, IPC::SharedBufferDataReference data, bool allDataReceived) -> (size_t frameCount, WebCore::IntSize size, bool hasTrack, Optional<Vector<WebCore::ImageDecoder::FrameInfo>> frameInfos) Synchronous
-    CreateFrameImageAtIndex(WebCore::ImageDecoderIdentifier identifier, size_t index) -> (Optional<MachSendRight> sendRight, Optional<WebCore::DestinationColorSpace> colorSpace) Synchronous
+    SetData(WebCore::ImageDecoderIdentifier identifier, IPC::SharedBufferDataReference data, bool allDataReceived) -> (size_t frameCount, WebCore::IntSize size, bool hasTrack, std::optional<Vector<WebCore::ImageDecoder::FrameInfo>> frameInfos) Synchronous
+    CreateFrameImageAtIndex(WebCore::ImageDecoderIdentifier identifier, size_t index) -> (std::optional<MachSendRight> sendRight, std::optional<WebCore::DestinationColorSpace> colorSpace) Synchronous
     ClearFrameBufferCache(WebCore::ImageDecoderIdentifier identifier, size_t index)
 }
 

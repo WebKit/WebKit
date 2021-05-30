@@ -117,7 +117,7 @@ enum class SampleType {
     SampleGrad
 };
 
-static Optional<SampleType> sampleType(const String& functionName)
+static std::optional<SampleType> sampleType(const String& functionName)
 {
     if (functionName == "Sample")
         return SampleType::Sample;
@@ -528,22 +528,22 @@ void inlineNativeFunction(StringBuilder& stringBuilder, AST::NativeFunctionDecla
             ++index;
         const MangledVariableName& widthName = args[index];
         ++index;
-        Optional<MangledVariableName> heightName;
+        std::optional<MangledVariableName> heightName;
         if (textureType.textureDimension() >= 2) {
             heightName = args[index];
             ++index;
         }
-        Optional<MangledVariableName> depthName;
+        std::optional<MangledVariableName> depthName;
         if (textureType.textureDimension() >= 3) {
             depthName = args[index];
             ++index;
         }
-        Optional<MangledVariableName> elementsName;
+        std::optional<MangledVariableName> elementsName;
         if (textureType.isTextureArray()) {
             elementsName = args[index];
             ++index;
         }
-        Optional<MangledVariableName> numberOfLevelsName;
+        std::optional<MangledVariableName> numberOfLevelsName;
         if (!textureType.isWritableTexture() && textureType.textureDimension() != 1) {
             numberOfLevelsName = args[index];
             ++index;

@@ -214,7 +214,7 @@ ReducedResolutionSeconds DocumentTimelinesController::liveCurrentTime() const
     return m_document.domWindow()->nowTimestamp();
 }
 
-Optional<Seconds> DocumentTimelinesController::currentTime()
+std::optional<Seconds> DocumentTimelinesController::currentTime()
 {
     if (!m_document.domWindow())
         return std::nullopt;

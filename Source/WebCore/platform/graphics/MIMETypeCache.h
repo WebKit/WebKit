@@ -60,8 +60,8 @@ private:
 
     bool shouldOverrideExtendedType(const ContentType&);
 
-    Optional<HashSet<String, ASCIICaseInsensitiveHash>> m_supportedTypes;
-    Optional<HashMap<String, MediaPlayerEnums::SupportsType, ASCIICaseInsensitiveHash>> m_cachedResults;
+    std::optional<HashSet<String, ASCIICaseInsensitiveHash>> m_supportedTypes;
+    std::optional<HashMap<String, MediaPlayerEnums::SupportsType, ASCIICaseInsensitiveHash>> m_cachedResults;
 };
 
 } // namespace WebCore

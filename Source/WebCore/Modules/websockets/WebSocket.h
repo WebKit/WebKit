@@ -79,7 +79,7 @@ public:
     ExceptionOr<void> send(JSC::ArrayBufferView&);
     ExceptionOr<void> send(Blob&);
 
-    ExceptionOr<void> close(Optional<unsigned short> code, const String& reason);
+    ExceptionOr<void> close(std::optional<unsigned short> code, const String& reason);
 
     RefPtr<ThreadableWebSocketChannel> channel() const;
 

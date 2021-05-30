@@ -177,7 +177,7 @@ TEST(DisplayListTests, ItemBufferClient)
         }
 
     private:
-        Optional<ItemHandle> WARN_UNUSED_RETURN decodeItem(const uint8_t* data, size_t dataLength, ItemType type, uint8_t* handleLocation) final
+        std::optional<ItemHandle> WARN_UNUSED_RETURN decodeItem(const uint8_t* data, size_t dataLength, ItemType type, uint8_t* handleLocation) final
         {
             EXPECT_EQ(type, ItemType::StrokePath);
             EXPECT_EQ(dataLength, sizeof(size_t));

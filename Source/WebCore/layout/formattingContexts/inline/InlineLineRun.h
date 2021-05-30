@@ -60,7 +60,7 @@ struct LineRun {
     };
 
     struct Expansion;
-    LineRun(size_t lineIndex, const Box&, const InlineRect&, Expansion, Optional<Text> = std::nullopt);
+    LineRun(size_t lineIndex, const Box&, const InlineRect&, Expansion, std::optional<Text> = std::nullopt);
 
     const InlineRect& logicalRect() const { return m_logicalRect; }
 
@@ -73,8 +73,8 @@ struct LineRun {
     InlineLayoutUnit logicalHeight() const { return logicalRect().height(); }
 
     void moveVertically(InlineLayoutUnit offset) { m_logicalRect.moveVertically(offset); }
-    Optional<Text>& text() { return m_text; }
-    const Optional<Text>& text() const { return m_text; }
+    std::optional<Text>& text() { return m_text; }
+    const std::optional<Text>& text() const { return m_text; }
 
     struct Expansion {
         ExpansionBehavior behavior { DefaultExpansion };
@@ -90,10 +90,10 @@ private:
     WeakPtr<const Layout::Box> m_layoutBox;
     InlineRect m_logicalRect;
     Expansion m_expansion;
-    Optional<Text> m_text;
+    std::optional<Text> m_text;
 };
 
-inline LineRun::LineRun(size_t lineIndex, const Layout::Box& layoutBox, const InlineRect& logicalRect, Expansion expansion, Optional<Text> text)
+inline LineRun::LineRun(size_t lineIndex, const Layout::Box& layoutBox, const InlineRect& logicalRect, Expansion expansion, std::optional<Text> text)
     : m_lineIndex(lineIndex)
     , m_layoutBox(makeWeakPtr(layoutBox))
     , m_logicalRect(logicalRect)

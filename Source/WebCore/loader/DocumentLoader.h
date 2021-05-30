@@ -439,7 +439,7 @@ private:
     Document* document() const;
 
 #if ENABLE(SERVICE_WORKER)
-    void matchRegistration(const URL&, CompletionHandler<void(Optional<ServiceWorkerRegistrationData>&&)>&&);
+    void matchRegistration(const URL&, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&&);
 #endif
     void unregisterTemporaryServiceWorkerClient();
 
@@ -507,7 +507,7 @@ private:
     void becomeMainResourceClient();
 
 #if ENABLE(APPLICATION_MANIFEST)
-    void notifyFinishedLoadingApplicationManifest(uint64_t callbackIdentifier, Optional<ApplicationManifest>);
+    void notifyFinishedLoadingApplicationManifest(uint64_t callbackIdentifier, std::optional<ApplicationManifest>);
 #endif
 
     // ContentSecurityPolicyClient
@@ -650,8 +650,8 @@ private:
     MouseEventPolicy m_mouseEventPolicy { MouseEventPolicy::Default };
 
 #if ENABLE(SERVICE_WORKER)
-    Optional<ServiceWorkerRegistrationData> m_serviceWorkerRegistrationData;
-    Optional<DocumentIdentifier> m_temporaryServiceWorkerClient;
+    std::optional<ServiceWorkerRegistrationData> m_serviceWorkerRegistrationData;
+    std::optional<DocumentIdentifier> m_temporaryServiceWorkerClient;
 #endif
 
 #if ASSERT_ENABLED

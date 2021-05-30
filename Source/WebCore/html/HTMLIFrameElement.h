@@ -71,7 +71,7 @@ private:
     bool isLazyLoadObserverActive() const final;
 
     std::unique_ptr<DOMTokenList> m_sandbox;
-    mutable Optional<FeaturePolicy> m_featurePolicy;
+    mutable std::optional<FeaturePolicy> m_featurePolicy;
     std::unique_ptr<LazyLoadFrameObserver> m_lazyLoadFrameObserver;
 };
 

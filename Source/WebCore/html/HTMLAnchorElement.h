@@ -100,7 +100,7 @@ private:
 
     void sendPings(const URL& destinationURL);
 
-    Optional<PrivateClickMeasurement> parsePrivateClickMeasurement() const;
+    std::optional<PrivateClickMeasurement> parsePrivateClickMeasurement() const;
 
     void handleClick(Event&);
 

@@ -59,7 +59,7 @@ enum class Signal {
     Unknown = NumberOfSignals
 };
 
-inline std::tuple<int, Optional<int>> toSystemSignal(Signal signal)
+inline std::tuple<int, std::optional<int>> toSystemSignal(Signal signal)
 {
     switch (signal) {
     case Signal::AccessFault: return std::make_tuple(SIGSEGV, SIGBUS);

@@ -1567,7 +1567,7 @@ bool TransformationMatrix::isInvertible() const
     return fabs(type == Type::Affine ? (m11() * m22() - m12() * m21()) : WebCore::determinant4x4(m_matrix)) >= SMALL_NUMBER;
 }
 
-Optional<TransformationMatrix> TransformationMatrix::inverse() const
+std::optional<TransformationMatrix> TransformationMatrix::inverse() const
 {
     auto type = this->type();
     if (type == Type::IdentityOrTranslation) {

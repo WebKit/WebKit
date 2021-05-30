@@ -48,7 +48,7 @@ void GPUErrorScopes::pushErrorScope(GPUErrorFilter filter)
     m_errorScopes.append(ErrorScope { filter, std::nullopt });
 }
 
-Optional<GPUError> GPUErrorScopes::popErrorScope(String& failMessage)
+std::optional<GPUError> GPUErrorScopes::popErrorScope(String& failMessage)
 {
     if (m_errorScopes.isEmpty()) {
         failMessage = "No error scope exists!";

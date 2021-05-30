@@ -122,7 +122,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     setFileWrapper(fileWrapper);
 }
 
-Optional<uint64_t> Attachment::fileSizeForDisplay() const
+std::optional<uint64_t> Attachment::fileSizeForDisplay() const
 {
     auto fileWrapper = this->fileWrapper();
 

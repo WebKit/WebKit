@@ -178,7 +178,7 @@ ALWAYS_INLINE constexpr UCPUStrictInt32 toUCPUStrictInt32(int32_t value)
     return static_cast<UCPUStrictInt32>(static_cast<uint32_t>(value));
 }
 
-inline Optional<double> safeReciprocalForDivByConst(double constant)
+inline std::optional<double> safeReciprocalForDivByConst(double constant)
 {
     // No "weird" numbers (NaN, Denormal, etc).
     if (!constant || !std::isnormal(constant))

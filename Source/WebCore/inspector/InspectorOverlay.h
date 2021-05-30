@@ -115,7 +115,7 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
                 template<class Encoder> void encode(Encoder&) const;
-                template<class Decoder> static Optional<InspectorOverlay::Highlight::GridHighlightOverlay::Label> decode(Decoder&);
+                template<class Decoder> static std::optional<InspectorOverlay::Highlight::GridHighlightOverlay::Label> decode(Decoder&);
 #endif
             };
 
@@ -126,7 +126,7 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
                 template<class Encoder> void encode(Encoder&) const;
-                template<class Decoder> static Optional<InspectorOverlay::Highlight::GridHighlightOverlay::Area> decode(Decoder&);
+                template<class Decoder> static std::optional<InspectorOverlay::Highlight::GridHighlightOverlay::Area> decode(Decoder&);
 #endif
             };
 
@@ -138,7 +138,7 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
             template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static Optional<InspectorOverlay::Highlight::GridHighlightOverlay> decode(Decoder&);
+            template<class Decoder> static std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> decode(Decoder&);
 #endif
         };
 
@@ -240,7 +240,7 @@ private:
     void drawLayoutLabel(GraphicsContext&, String, FloatPoint, LabelArrowDirection, InspectorOverlay::LabelArrowEdgePosition, Color backgroundColor = Color::white, float maximumWidth = 0);
 
     void drawGridOverlay(GraphicsContext&, const InspectorOverlay::Highlight::GridHighlightOverlay&);
-    Optional<InspectorOverlay::Highlight::GridHighlightOverlay> buildGridOverlay(const InspectorOverlay::Grid&, bool offsetBoundsByScroll = false);
+    std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> buildGridOverlay(const InspectorOverlay::Grid&, bool offsetBoundsByScroll = false);
 
     void updatePaintRectsTimerFired();
 
@@ -278,7 +278,7 @@ template<class Encoder> void InspectorOverlay::Highlight::GridHighlightOverlay::
     encoder << labels;
 }
 
-template<class Decoder> Optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::Highlight::GridHighlightOverlay::decode(Decoder& decoder)
+template<class Decoder> std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverlay::Highlight::GridHighlightOverlay::decode(Decoder& decoder)
 {
     InspectorOverlay::Highlight::GridHighlightOverlay gridHighlightOverlay;
     if (!decoder.decode(gridHighlightOverlay.color))
@@ -303,7 +303,7 @@ template<class Encoder> void InspectorOverlay::Highlight::GridHighlightOverlay::
     encoder << static_cast<uint32_t>(arrowEdgePosition);
 }
 
-template<class Decoder> Optional<InspectorOverlay::Highlight::GridHighlightOverlay::Label> InspectorOverlay::Highlight::GridHighlightOverlay::Label::decode(Decoder& decoder)
+template<class Decoder> std::optional<InspectorOverlay::Highlight::GridHighlightOverlay::Label> InspectorOverlay::Highlight::GridHighlightOverlay::Label::decode(Decoder& decoder)
 {
     InspectorOverlay::Highlight::GridHighlightOverlay::Label label;
     if (!decoder.decode(label.text))
@@ -332,7 +332,7 @@ template<class Encoder> void InspectorOverlay::Highlight::GridHighlightOverlay::
     encoder << quad;
 }
 
-template<class Decoder> Optional<InspectorOverlay::Highlight::GridHighlightOverlay::Area> InspectorOverlay::Highlight::GridHighlightOverlay::Area::decode(Decoder& decoder)
+template<class Decoder> std::optional<InspectorOverlay::Highlight::GridHighlightOverlay::Area> InspectorOverlay::Highlight::GridHighlightOverlay::Area::decode(Decoder& decoder)
 {
     InspectorOverlay::Highlight::GridHighlightOverlay::Area area;
     if (!decoder.decode(area.name))

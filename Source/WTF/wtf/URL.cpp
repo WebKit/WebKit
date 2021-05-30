@@ -133,7 +133,7 @@ StringView URL::host() const
     return StringView(m_string).substring(start, m_hostEnd - start);
 }
 
-Optional<uint16_t> URL::port() const
+std::optional<uint16_t> URL::port() const
 {
     return m_portLength ? parseInteger<uint16_t>(StringView(m_string).substring(m_hostEnd + 1, m_portLength - 1)) : std::nullopt;
 }
@@ -156,7 +156,7 @@ String URL::protocolHostAndPort() const
     );
 }
 
-static Optional<LChar> decodeEscapeSequence(StringView input, unsigned index, unsigned length)
+static std::optional<LChar> decodeEscapeSequence(StringView input, unsigned index, unsigned length)
 {
     if (index + 3 > length || input[index] != '%')
         return std::nullopt;
@@ -298,7 +298,7 @@ void clearDefaultPortForProtocolMapForTesting()
         map->clear();
 }
 
-Optional<uint16_t> defaultPortForProtocol(StringView protocol)
+std::optional<uint16_t> defaultPortForProtocol(StringView protocol)
 {
     {
         Locker locker { defaultPortForProtocolMapForTestingLock };
@@ -474,7 +474,7 @@ void URL::setHost(StringView newHost)
     ));
 }
 
-void URL::setPort(Optional<uint16_t> port)
+void URL::setPort(std::optional<uint16_t> port)
 {
     if (!m_isValid)
         return;
@@ -887,7 +887,7 @@ bool URL::protocolIsAbout() const
 
 bool portAllowed(const URL& url)
 {
-    Optional<uint16_t> port = url.port();
+    std::optional<uint16_t> port = url.port();
 
     // Since most URLs don't have a port, return early for the "no port" case.
     if (!port)

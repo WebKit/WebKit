@@ -43,9 +43,9 @@ struct MockMicrophoneProperties {
     }
 
     template <class Decoder>
-    static Optional<MockMicrophoneProperties> decode(Decoder& decoder)
+    static std::optional<MockMicrophoneProperties> decode(Decoder& decoder)
     {
-        Optional<int32_t> defaultSampleRate;
+        std::optional<int32_t> defaultSampleRate;
         decoder >> defaultSampleRate;
         if (!defaultSampleRate)
             return std::nullopt;
@@ -63,14 +63,14 @@ struct MockSpeakerProperties {
     }
 
     template <class Decoder>
-    static Optional<MockSpeakerProperties> decode(Decoder& decoder)
+    static std::optional<MockSpeakerProperties> decode(Decoder& decoder)
     {
-        Optional<int32_t> defaultSampleRate;
+        std::optional<int32_t> defaultSampleRate;
         decoder >> defaultSampleRate;
         if (!defaultSampleRate)
             return std::nullopt;
 
-        Optional<String> relatedMicrophoneId;
+        std::optional<String> relatedMicrophoneId;
         decoder >> relatedMicrophoneId;
         if (!relatedMicrophoneId)
             return std::nullopt;
@@ -94,24 +94,24 @@ struct MockCameraProperties {
     }
 
     template <class Decoder>
-    static Optional<MockCameraProperties> decode(Decoder& decoder)
+    static std::optional<MockCameraProperties> decode(Decoder& decoder)
     {
-        Optional<double> defaultFrameRate;
+        std::optional<double> defaultFrameRate;
         decoder >> defaultFrameRate;
         if (!defaultFrameRate)
             return std::nullopt;
 
-        Optional<RealtimeMediaSourceSettings::VideoFacingMode> facingMode;
+        std::optional<RealtimeMediaSourceSettings::VideoFacingMode> facingMode;
         decoder >> facingMode;
         if (!facingMode)
             return std::nullopt;
 
-        Optional<Vector<VideoPresetData>> presets;
+        std::optional<Vector<VideoPresetData>> presets;
         decoder >> presets;
         if (!presets)
             return std::nullopt;
 
-        Optional<Color> fillColor;
+        std::optional<Color> fillColor;
         decoder >> fillColor;
         if (!fillColor)
             return std::nullopt;
@@ -135,18 +135,18 @@ struct MockDisplayProperties {
     }
 
     template <class Decoder>
-    static Optional<MockDisplayProperties> decode(Decoder& decoder)
+    static std::optional<MockDisplayProperties> decode(Decoder& decoder)
     {
-        Optional<CaptureDevice::DeviceType> type;
+        std::optional<CaptureDevice::DeviceType> type;
         decoder >> type;
             return std::nullopt;
 
-        Optional<Color> fillColor;
+        std::optional<Color> fillColor;
         decoder >> fillColor;
         if (!fillColor)
             return std::nullopt;
 
-        Optional<IntSize> defaultSize;
+        std::optional<IntSize> defaultSize;
         decoder >> defaultSize;
         if (!defaultSize)
             return std::nullopt;
@@ -217,9 +217,9 @@ struct MockMediaDevice {
     }
 
     template <typename Properties, typename Decoder>
-    static Optional<MockMediaDevice> decodeMockMediaDevice(Decoder& decoder, String&& persistentId, String&& label)
+    static std::optional<MockMediaDevice> decodeMockMediaDevice(Decoder& decoder, String&& persistentId, String&& label)
     {
-        Optional<Properties> properties;
+        std::optional<Properties> properties;
         decoder >> properties;
         if (!properties)
             return std::nullopt;
@@ -227,19 +227,19 @@ struct MockMediaDevice {
     }
 
     template <class Decoder>
-    static Optional<MockMediaDevice> decode(Decoder& decoder)
+    static std::optional<MockMediaDevice> decode(Decoder& decoder)
     {
-        Optional<String> persistentId;
+        std::optional<String> persistentId;
         decoder >> persistentId;
         if (!persistentId)
             return std::nullopt;
 
-        Optional<String> label;
+        std::optional<String> label;
         decoder >> label;
         if (!label)
             return std::nullopt;
 
-        Optional<uint8_t> index;
+        std::optional<uint8_t> index;
         decoder >> index;
         if (!index)
             return std::nullopt;

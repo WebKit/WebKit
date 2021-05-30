@@ -42,7 +42,7 @@ struct GlobalWindowIdentifier {
     unsigned hash() const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<GlobalWindowIdentifier> decode(Decoder&);
+    template<class Decoder> static std::optional<GlobalWindowIdentifier> decode(Decoder&);
 };
 
 inline bool operator==(const GlobalWindowIdentifier& a, const GlobalWindowIdentifier& b)
@@ -66,14 +66,14 @@ void GlobalWindowIdentifier::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<GlobalWindowIdentifier> GlobalWindowIdentifier::decode(Decoder& decoder)
+std::optional<GlobalWindowIdentifier> GlobalWindowIdentifier::decode(Decoder& decoder)
 {
-    Optional<ProcessIdentifier> processIdentifier;
+    std::optional<ProcessIdentifier> processIdentifier;
     decoder >> processIdentifier;
     if (!processIdentifier)
         return std::nullopt;
 
-    Optional<WindowIdentifier> windowIdentifier;
+    std::optional<WindowIdentifier> windowIdentifier;
     decoder >> windowIdentifier;
     if (!windowIdentifier)
         return std::nullopt;

@@ -68,7 +68,7 @@ void RemoteLayerTreeTransaction::LayerCreationProperties::encode(IPC::Encoder& e
 #endif
 }
 
-auto RemoteLayerTreeTransaction::LayerCreationProperties::decode(IPC::Decoder& decoder) -> Optional<LayerCreationProperties>
+auto RemoteLayerTreeTransaction::LayerCreationProperties::decode(IPC::Decoder& decoder) -> std::optional<LayerCreationProperties>
 {
     LayerCreationProperties result;
     if (!decoder.decode(result.layerID))
@@ -554,7 +554,7 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
     }
 
     if (result.changedProperties & EventRegionChanged) {
-        Optional<WebCore::EventRegion> eventRegion;
+        std::optional<WebCore::EventRegion> eventRegion;
         decoder >> eventRegion;
         if (!eventRegion)
             return false;
@@ -763,7 +763,7 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
     if (!decoder.decode(result.m_isInStableState))
         return false;
 
-    Optional<Vector<TransactionCallbackID>> callbackIDs;
+    std::optional<Vector<TransactionCallbackID>> callbackIDs;
     decoder >> callbackIDs;
     if (!callbackIDs)
         return false;

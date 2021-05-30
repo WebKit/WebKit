@@ -38,11 +38,11 @@ enum class PasteboardItemPresentationStyle {
 };
 
 struct PresentationSize {
-    Optional<double> width;
-    Optional<double> height;
+    std::optional<double> width;
+    std::optional<double> height;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<PresentationSize> decode(Decoder&);
+    template<class Decoder> static std::optional<PresentationSize> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -52,7 +52,7 @@ void PresentationSize::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<PresentationSize> PresentationSize::decode(Decoder& decoder)
+std::optional<PresentationSize> PresentationSize::decode(Decoder& decoder)
 {
     PresentationSize result;
     if (!decoder.decode(result.width))
@@ -120,7 +120,7 @@ struct PasteboardItemInfo {
     }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<PasteboardItemInfo> decode(Decoder&);
+    template<class Decoder> static std::optional<PasteboardItemInfo> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -131,7 +131,7 @@ void PasteboardItemInfo::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<PasteboardItemInfo> PasteboardItemInfo::decode(Decoder& decoder)
+std::optional<PasteboardItemInfo> PasteboardItemInfo::decode(Decoder& decoder)
 {
     PasteboardItemInfo result;
     if (!decoder.decode(result.pathsForFileUpload))

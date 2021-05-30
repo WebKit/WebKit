@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-static Optional<bool> hasAGXCompilerService;
+static std::optional<bool> hasAGXCompilerService;
 
 void setDeviceHasAGXCompilerServiceForTesting()
 {

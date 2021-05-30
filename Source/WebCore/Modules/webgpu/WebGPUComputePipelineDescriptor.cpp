@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-Optional<GPUComputePipelineDescriptor> WebGPUComputePipelineDescriptor::tryCreateGPUComputePipelineDescriptor(GPUErrorScopes& errorScopes) const
+std::optional<GPUComputePipelineDescriptor> WebGPUComputePipelineDescriptor::tryCreateGPUComputePipelineDescriptor(GPUErrorScopes& errorScopes) const
 {
     auto pipelineLayout = layout ? makeRefPtr(layout->pipelineLayout()) : nullptr;
 

@@ -82,7 +82,7 @@ inline bool isVerticalPiece(ImagePiece piece)
     return piece == LeftPiece || piece == RightPiece || piece == MiddlePiece;
 }
 
-inline Optional<BoxSide> imagePieceHorizontalSide(ImagePiece piece)
+inline std::optional<BoxSide> imagePieceHorizontalSide(ImagePiece piece)
 {
     if (piece == TopLeftPiece || piece == TopPiece || piece == TopRightPiece)
         return BoxSide::Top;
@@ -93,7 +93,7 @@ inline Optional<BoxSide> imagePieceHorizontalSide(ImagePiece piece)
     return std::nullopt;
 }
 
-inline Optional<BoxSide> imagePieceVerticalSide(ImagePiece piece)
+inline std::optional<BoxSide> imagePieceVerticalSide(ImagePiece piece)
 {
     if (piece == TopLeftPiece || piece == LeftPiece || piece == BottomLeftPiece)
         return BoxSide::Left;

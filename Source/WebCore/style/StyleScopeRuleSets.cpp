@@ -153,9 +153,9 @@ bool ScopeRuleSets::hasViewportDependentMediaQueries() const
     return false;
 }
 
-Optional<DynamicMediaQueryEvaluationChanges> ScopeRuleSets::evaluateDynamicMediaQueryRules(const MediaQueryEvaluator& evaluator)
+std::optional<DynamicMediaQueryEvaluationChanges> ScopeRuleSets::evaluateDynamicMediaQueryRules(const MediaQueryEvaluator& evaluator)
 {
-    Optional<DynamicMediaQueryEvaluationChanges> evaluationChanges;
+    std::optional<DynamicMediaQueryEvaluationChanges> evaluationChanges;
 
     auto evaluate = [&](auto* ruleSet) {
         if (!ruleSet)

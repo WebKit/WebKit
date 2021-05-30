@@ -84,10 +84,10 @@ public:
     void clearResultsRecursive();
 
     ImageBuffer* imageBufferResult();
-    RefPtr<Uint8ClampedArray> unmultipliedResult(const IntRect&, Optional<DestinationColorSpace> = std::nullopt);
-    RefPtr<Uint8ClampedArray> premultipliedResult(const IntRect&, Optional<DestinationColorSpace> = std::nullopt);
-    void copyUnmultipliedResult(Uint8ClampedArray& destination, const IntRect&, Optional<DestinationColorSpace> = std::nullopt);
-    void copyPremultipliedResult(Uint8ClampedArray& destination, const IntRect&, Optional<DestinationColorSpace> = std::nullopt);
+    RefPtr<Uint8ClampedArray> unmultipliedResult(const IntRect&, std::optional<DestinationColorSpace> = std::nullopt);
+    RefPtr<Uint8ClampedArray> premultipliedResult(const IntRect&, std::optional<DestinationColorSpace> = std::nullopt);
+    void copyUnmultipliedResult(Uint8ClampedArray& destination, const IntRect&, std::optional<DestinationColorSpace> = std::nullopt);
+    void copyPremultipliedResult(Uint8ClampedArray& destination, const IntRect&, std::optional<DestinationColorSpace> = std::nullopt);
     FilterEffectVector& inputEffects() { return m_inputEffects; }
     FilterEffect* inputEffect(unsigned) const;
     unsigned numberOfEffectInputs() const { return m_inputEffects.size(); }
@@ -187,8 +187,8 @@ protected:
     virtual const char* filterName() const = 0;
 
     ImageBuffer* createImageBufferResult();
-    Optional<PixelBuffer>& createUnmultipliedImageResult();
-    Optional<PixelBuffer>& createPremultipliedImageResult();
+    std::optional<PixelBuffer>& createUnmultipliedImageResult();
+    std::optional<PixelBuffer>& createPremultipliedImageResult();
 
     // Return true if the filter will only operate correctly on valid RGBA values, with
     // alpha in [0,255] and each color component in [0, alpha].
@@ -205,17 +205,17 @@ private:
     void copyImageBytes(const Uint8ClampedArray& source, Uint8ClampedArray& destination, const IntRect&) const;
     void copyConvertedImageBufferToDestination(Uint8ClampedArray&, const DestinationColorSpace&, AlphaPremultiplication, const IntRect&);
     void copyConvertedPixelBufferToDestination(Uint8ClampedArray&, PixelBuffer&, const DestinationColorSpace&, const IntRect&);
-    bool requiresPixelBufferColorSpaceConversion(Optional<DestinationColorSpace>);
-    Optional<PixelBuffer> convertImageBufferToColorSpace(const DestinationColorSpace&, ImageBuffer&, const IntRect&, AlphaPremultiplication);
-    Optional<PixelBuffer> convertPixelBufferToColorSpace(const DestinationColorSpace&, PixelBuffer&);
+    bool requiresPixelBufferColorSpaceConversion(std::optional<DestinationColorSpace>);
+    std::optional<PixelBuffer> convertImageBufferToColorSpace(const DestinationColorSpace&, ImageBuffer&, const IntRect&, AlphaPremultiplication);
+    std::optional<PixelBuffer> convertPixelBufferToColorSpace(const DestinationColorSpace&, PixelBuffer&);
     
 
     Filter& m_filter;
     FilterEffectVector m_inputEffects;
 
     RefPtr<ImageBuffer> m_imageBufferResult;
-    Optional<PixelBuffer> m_unmultipliedImageResult;
-    Optional<PixelBuffer> m_premultipliedImageResult;
+    std::optional<PixelBuffer> m_unmultipliedImageResult;
+    std::optional<PixelBuffer> m_premultipliedImageResult;
 
     IntRect m_absolutePaintRect;
     

@@ -94,7 +94,7 @@ public:
             instance->instanceStopAnimation(*this);
     }
 
-    Optional<float> calculateDistance(SVGElement* targetElement, const String& from, const String& to) const override
+    std::optional<float> calculateDistance(SVGElement* targetElement, const String& from, const String& to) const override
     {
         return m_function.calculateDistance(targetElement, from, to);
     }

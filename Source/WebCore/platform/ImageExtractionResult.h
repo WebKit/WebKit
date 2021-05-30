@@ -49,7 +49,7 @@ struct ImageExtractionTextData {
     FloatQuad normalizedQuad;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ImageExtractionTextData> decode(Decoder&);
+    template<class Decoder> static std::optional<ImageExtractionTextData> decode(Decoder&);
 };
 
 template<class Encoder> void ImageExtractionTextData::encode(Encoder& encoder) const
@@ -58,14 +58,14 @@ template<class Encoder> void ImageExtractionTextData::encode(Encoder& encoder) c
     encoder << normalizedQuad;
 }
 
-template<class Decoder> Optional<ImageExtractionTextData> ImageExtractionTextData::decode(Decoder& decoder)
+template<class Decoder> std::optional<ImageExtractionTextData> ImageExtractionTextData::decode(Decoder& decoder)
 {
-    Optional<String> text;
+    std::optional<String> text;
     decoder >> text;
     if (!text)
         return std::nullopt;
 
-    Optional<FloatQuad> normalizedQuad;
+    std::optional<FloatQuad> normalizedQuad;
     decoder >> normalizedQuad;
     if (!normalizedQuad)
         return std::nullopt;
@@ -84,7 +84,7 @@ struct ImageExtractionLineData {
     Vector<ImageExtractionTextData> children;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ImageExtractionLineData> decode(Decoder&);
+    template<class Decoder> static std::optional<ImageExtractionLineData> decode(Decoder&);
 };
 
 #if ENABLE(DATA_DETECTION)
@@ -109,14 +109,14 @@ template<class Encoder> void ImageExtractionLineData::encode(Encoder& encoder) c
     encoder << children;
 }
 
-template<class Decoder> Optional<ImageExtractionLineData> ImageExtractionLineData::decode(Decoder& decoder)
+template<class Decoder> std::optional<ImageExtractionLineData> ImageExtractionLineData::decode(Decoder& decoder)
 {
-    Optional<FloatQuad> normalizedQuad;
+    std::optional<FloatQuad> normalizedQuad;
     decoder >> normalizedQuad;
     if (!normalizedQuad)
         return std::nullopt;
 
-    Optional<Vector<ImageExtractionTextData>> children;
+    std::optional<Vector<ImageExtractionTextData>> children;
     decoder >> children;
     if (!children)
         return std::nullopt;
@@ -145,7 +145,7 @@ struct ImageExtractionResult {
     }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ImageExtractionResult> decode(Decoder&);
+    template<class Decoder> static std::optional<ImageExtractionResult> decode(Decoder&);
 };
 
 template<class Encoder> void ImageExtractionResult::encode(Encoder& encoder) const
@@ -156,15 +156,15 @@ template<class Encoder> void ImageExtractionResult::encode(Encoder& encoder) con
 #endif
 }
 
-template<class Decoder> Optional<ImageExtractionResult> ImageExtractionResult::decode(Decoder& decoder)
+template<class Decoder> std::optional<ImageExtractionResult> ImageExtractionResult::decode(Decoder& decoder)
 {
-    Optional<Vector<ImageExtractionLineData>> lines;
+    std::optional<Vector<ImageExtractionLineData>> lines;
     decoder >> lines;
     if (!lines)
         return std::nullopt;
 
 #if ENABLE(DATA_DETECTION)
-    Optional<Vector<ImageExtractionDataDetectorInfo>> dataDetectors;
+    std::optional<Vector<ImageExtractionDataDetectorInfo>> dataDetectors;
     decoder >> dataDetectors;
     if (!dataDetectors)
         return std::nullopt;

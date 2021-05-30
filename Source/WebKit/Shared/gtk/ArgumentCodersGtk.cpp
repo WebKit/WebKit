@@ -101,7 +101,7 @@ void ArgumentCoder<SelectionData>::encode(Encoder& encoder, const SelectionData&
     encoder << canSmartReplace;
 }
 
-Optional<SelectionData> ArgumentCoder<SelectionData>::decode(Decoder& decoder)
+std::optional<SelectionData> ArgumentCoder<SelectionData>::decode(Decoder& decoder)
 {
     SelectionData selection;
 

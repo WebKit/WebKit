@@ -48,7 +48,7 @@ namespace WebKit {
 struct HTTPBody {
     struct Element {
         void encode(IPC::Encoder&) const;
-        static Optional<Element> decode(IPC::Decoder&);
+        static std::optional<Element> decode(IPC::Decoder&);
 
         enum class Type {
             Data,
@@ -65,8 +65,8 @@ struct HTTPBody {
         // File.
         String filePath;
         int64_t fileStart;
-        Optional<int64_t> fileLength;
-        Optional<WallTime> expectedFileModificationTime;
+        std::optional<int64_t> fileLength;
+        std::optional<WallTime> expectedFileModificationTime;
 
         // Blob.
         String blobURLString;
@@ -82,7 +82,7 @@ struct HTTPBody {
 class FrameState {
 public:
     void encode(IPC::Encoder&) const;
-    static Optional<FrameState> decode(IPC::Decoder&);
+    static std::optional<FrameState> decode(IPC::Decoder&);
 
     // These are used to help debug <rdar://problem/48634553>.
     FrameState() { RELEASE_ASSERT(RunLoop::isMain()); }
@@ -97,7 +97,7 @@ public:
     String referrer;
     String target;
 
-    Optional<Vector<uint8_t>> stateObjectData;
+    std::optional<Vector<uint8_t>> stateObjectData;
 
     int64_t documentSequenceNumber { 0 };
     int64_t itemSequenceNumber { 0 };
@@ -106,7 +106,7 @@ public:
     bool shouldRestoreScrollPosition { true };
     float pageScaleFactor { 0 };
 
-    Optional<HTTPBody> httpBody;
+    std::optional<HTTPBody> httpBody;
 
     // FIXME: These should not be per frame.
 #if PLATFORM(IOS_FAMILY)
@@ -136,7 +136,7 @@ struct PageState {
 
 struct BackForwardListItemState {
     void encode(IPC::Encoder&) const;
-    static Optional<BackForwardListItemState> decode(IPC::Decoder&);
+    static std::optional<BackForwardListItemState> decode(IPC::Decoder&);
 
     WebCore::BackForwardItemIdentifier identifier;
 
@@ -149,10 +149,10 @@ struct BackForwardListItemState {
 
 struct BackForwardListState {
     void encode(IPC::Encoder&) const;
-    static Optional<BackForwardListState> decode(IPC::Decoder&);
+    static std::optional<BackForwardListState> decode(IPC::Decoder&);
 
     Vector<BackForwardListItemState> items;
-    Optional<uint32_t> currentIndex;
+    std::optional<uint32_t> currentIndex;
 };
 
 struct SessionState {

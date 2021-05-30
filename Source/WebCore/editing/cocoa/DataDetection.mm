@@ -72,7 +72,7 @@ using namespace HTMLNames;
 
 #if PLATFORM(MAC)
 
-static Optional<DetectedItem> detectItem(const VisiblePosition& position, const SimpleRange& contextRange)
+static std::optional<DetectedItem> detectItem(const VisiblePosition& position, const SimpleRange& contextRange)
 {
     if (position.isNull())
         return { };
@@ -89,7 +89,7 @@ static Optional<DetectedItem> detectItem(const VisiblePosition& position, const 
 
     // Find the DDResultRef that intersects the hitTestResult's VisiblePosition.
     DDResultRef mainResult = nullptr;
-    Optional<SimpleRange> mainResultRange;
+    std::optional<SimpleRange> mainResultRange;
     CFIndex resultCount = CFArrayGetCount(results.get());
     for (CFIndex i = 0; i < resultCount; i++) {
         auto result = checked_cf_cast<DDResultRef>(CFArrayGetValueAtIndex(results.get(), i));
@@ -119,7 +119,7 @@ static Optional<DetectedItem> detectItem(const VisiblePosition& position, const 
     } };
 }
 
-Optional<DetectedItem> DataDetection::detectItemAroundHitTestResult(const HitTestResult& hitTestResult)
+std::optional<DetectedItem> DataDetection::detectItemAroundHitTestResult(const HitTestResult& hitTestResult)
 {
     if (!DataDetectorsLibrary())
         return { };
@@ -132,7 +132,7 @@ Optional<DetectedItem> DataDetection::detectItemAroundHitTestResult(const HitTes
         return { };
 
     VisiblePosition position;
-    Optional<SimpleRange> contextRange;
+    std::optional<SimpleRange> contextRange;
 
     if (!is<HTMLTextFormControlElement>(*node)) {
         position = renderer->positionForPoint(hitTestResult.localPoint(), nullptr);

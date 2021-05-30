@@ -52,7 +52,7 @@ struct Property {
     // Default operator properties are all set to "false".
     unsigned short flags { 0 };
 };
-Optional<Property> search(UChar32, Form, bool explicitForm);
+std::optional<Property> search(UChar32, Form, bool explicitForm);
 bool isVertical(UChar32);
 }
 

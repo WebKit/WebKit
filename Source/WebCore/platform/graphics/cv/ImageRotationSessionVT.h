@@ -56,7 +56,7 @@ public:
     ImageRotationSessionVT(const RotationProperties&, FloatSize, IsCGImageCompatible);
     ImageRotationSessionVT() = default;
 
-    const Optional<AffineTransform>& transform() const { return m_transform; }
+    const std::optional<AffineTransform>& transform() const { return m_transform; }
     const RotationProperties& rotationProperties() const { return m_rotationProperties; }
     const FloatSize& size() { return m_size; }
     const FloatSize& rotatedSize() { return m_rotatedSize; }
@@ -69,7 +69,7 @@ private:
 
     RotationProperties m_rotationProperties;
     FloatSize m_size;
-    Optional<AffineTransform> m_transform;
+    std::optional<AffineTransform> m_transform;
     OSType m_pixelFormat;
     IsCGImageCompatible m_isCGImageCompatible;
     FloatSize m_rotatedSize;

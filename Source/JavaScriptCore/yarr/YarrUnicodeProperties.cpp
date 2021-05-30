@@ -72,7 +72,7 @@ struct HashTable {
 
 #include "UnicodePatternTables.h"
 
-Optional<BuiltInCharacterClassID> unicodeMatchPropertyValue(WTF::String unicodePropertyName, WTF::String unicodePropertyValue)
+std::optional<BuiltInCharacterClassID> unicodeMatchPropertyValue(WTF::String unicodePropertyName, WTF::String unicodePropertyValue)
 {
     int propertyIndex = -1;
 
@@ -86,10 +86,10 @@ Optional<BuiltInCharacterClassID> unicodeMatchPropertyValue(WTF::String unicodeP
     if (propertyIndex == -1)
         return std::nullopt;
 
-    return Optional<BuiltInCharacterClassID>(static_cast<BuiltInCharacterClassID>(static_cast<int>(BuiltInCharacterClassID::BaseUnicodePropertyID) + propertyIndex));
+    return std::optional<BuiltInCharacterClassID>(static_cast<BuiltInCharacterClassID>(static_cast<int>(BuiltInCharacterClassID::BaseUnicodePropertyID) + propertyIndex));
 }
 
-Optional<BuiltInCharacterClassID> unicodeMatchProperty(WTF::String unicodePropertyValue)
+std::optional<BuiltInCharacterClassID> unicodeMatchProperty(WTF::String unicodePropertyValue)
 {
     int propertyIndex = -1;
 
@@ -100,7 +100,7 @@ Optional<BuiltInCharacterClassID> unicodeMatchProperty(WTF::String unicodeProper
     if (propertyIndex == -1)
         return std::nullopt;
 
-    return Optional<BuiltInCharacterClassID>(static_cast<BuiltInCharacterClassID>(static_cast<int>(BuiltInCharacterClassID::BaseUnicodePropertyID) + propertyIndex));
+    return std::optional<BuiltInCharacterClassID>(static_cast<BuiltInCharacterClassID>(static_cast<int>(BuiltInCharacterClassID::BaseUnicodePropertyID) + propertyIndex));
 }
 
 std::unique_ptr<CharacterClass> createUnicodeCharacterClassFor(BuiltInCharacterClassID unicodeClassID)

@@ -57,7 +57,7 @@ struct Styleable {
         return Styleable(element, element.pseudoId());
     }
 
-    static const Optional<const Styleable> fromRenderer(const RenderElement& renderer)
+    static const std::optional<const Styleable> fromRenderer(const RenderElement& renderer)
     {
         if (auto* element = renderer.element())
             return fromElement(*element);

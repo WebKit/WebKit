@@ -33,4 +33,4 @@ struct SimpleRange;
 
 WebCore::Range* core(DOMRange *);
 DOMRange *kit(WebCore::Range*);
-DOMRange *kit(const Optional<WebCore::SimpleRange>&);
+DOMRange *kit(const std::optional<WebCore::SimpleRange>&);

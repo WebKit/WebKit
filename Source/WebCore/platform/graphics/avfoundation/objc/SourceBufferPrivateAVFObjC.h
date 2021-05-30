@@ -220,7 +220,7 @@ private:
     Vector<Ref<SharedBuffer>> m_keyIDs;
 #endif
 
-    Optional<FloatSize> m_cachedSize;
+    std::optional<FloatSize> m_cachedSize;
     FloatSize m_currentSize;
     bool m_parsingSucceeded { true };
     bool m_waitingForKey { true };

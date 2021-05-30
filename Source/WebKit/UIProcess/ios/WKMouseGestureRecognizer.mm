@@ -69,8 +69,8 @@ static OptionSet<WebKit::WebEvent::Modifier> webEventModifiersForUIKeyModifierFl
     BOOL _touching;
 
     std::unique_ptr<WebKit::NativeWebMouseEvent> _lastEvent;
-    Optional<CGPoint> _lastLocation;
-    Optional<UIEventButtonMask> _pressedButtonMask;
+    std::optional<CGPoint> _lastLocation;
+    std::optional<UIEventButtonMask> _pressedButtonMask;
 }
 
 - (void)setEnabled:(BOOL)enabled

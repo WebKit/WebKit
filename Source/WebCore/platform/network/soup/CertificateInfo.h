@@ -57,7 +57,7 @@ public:
 
     bool containsNonRootSHA1SignedCertificate() const { notImplemented(); return false; }
 
-    Optional<CertificateSummary> summary() const { notImplemented(); return std::nullopt; }
+    std::optional<CertificateSummary> summary() const { notImplemented(); return std::nullopt; }
 
     bool isEmpty() const { return !m_certificate; }
 
@@ -78,9 +78,9 @@ template<> struct Coder<GRefPtr<GByteArray>> {
         encoder.encodeFixedLengthData(byteArray->data, byteArray->len);
     }
 
-    static Optional<GRefPtr<GByteArray>> decode(Decoder& decoder)
+    static std::optional<GRefPtr<GByteArray>> decode(Decoder& decoder)
     {
-        Optional<uint32_t> size;
+        std::optional<uint32_t> size;
         decoder >> size;
         if (!size)
             return std::nullopt;
@@ -144,9 +144,9 @@ template<> struct Coder<WebCore::CertificateInfo> {
         encoder << static_cast<uint32_t>(certificateInfo.tlsErrors());
     }
 
-    static Optional<WebCore::CertificateInfo> decode(Decoder& decoder)
+    static std::optional<WebCore::CertificateInfo> decode(Decoder& decoder)
     {
-        Optional<Vector<GRefPtr<GByteArray>>> certificatesDataList;
+        std::optional<Vector<GRefPtr<GByteArray>>> certificatesDataList;
         decoder >> certificatesDataList;
         if (!certificatesDataList)
             return std::nullopt;
@@ -160,7 +160,7 @@ template<> struct Coder<WebCore::CertificateInfo> {
             return std::nullopt;
         certificateInfo.setCertificate(certificate.get());
 
-        Optional<uint32_t> tlsErrors;
+        std::optional<uint32_t> tlsErrors;
         decoder >> tlsErrors;
         if (!tlsErrors)
             return std::nullopt;

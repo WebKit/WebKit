@@ -94,7 +94,7 @@ public:
         JS_EXPORT_PRIVATE void computeLineAndColumn(unsigned& line, unsigned& column) const;
 
 #if ENABLE(ASSEMBLER)
-        Optional<RegisterAtOffsetList> calleeSaveRegistersForUnwinding();
+        std::optional<RegisterAtOffsetList> calleeSaveRegistersForUnwinding();
 #endif
 
         ClonedArguments* createArguments(VM&);

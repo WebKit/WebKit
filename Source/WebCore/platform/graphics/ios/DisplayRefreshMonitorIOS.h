@@ -51,7 +51,7 @@ private:
     void stop() final;
     bool startNotificationMechanism() final;
     void stopNotificationMechanism() final;
-    Optional<FramesPerSecond> displayNominalFramesPerSecond() final;
+    std::optional<FramesPerSecond> displayNominalFramesPerSecond() final;
 
     RetainPtr<WebDisplayLinkHandler> m_handler;
     DisplayUpdate m_currentUpdate;

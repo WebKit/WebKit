@@ -40,7 +40,7 @@ public:
 private:
     WebPluginInfoProvider();
 
-    Vector<WebCore::PluginInfo> pluginInfo(WebCore::Page&, Optional<Vector<WebCore::SupportedPluginIdentifier>>&) final;
+    Vector<WebCore::PluginInfo> pluginInfo(WebCore::Page&, std::optional<Vector<WebCore::SupportedPluginIdentifier>>&) final;
     Vector<WebCore::PluginInfo> webVisiblePluginInfo(WebCore::Page&, const URL&) final;
     void refreshPlugins() override;
 
@@ -53,7 +53,7 @@ private:
     bool m_shouldRefreshPlugins { false };
     Vector<WebCore::PluginInfo> m_cachedPlugins;
     Vector<WebCore::PluginInfo> m_cachedApplicationPlugins;
-    Optional<Vector<WebCore::SupportedPluginIdentifier>> m_cachedSupportedPluginIdentifiers;
+    std::optional<Vector<WebCore::SupportedPluginIdentifier>> m_cachedSupportedPluginIdentifiers;
 #endif
 };
 

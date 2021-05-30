@@ -35,7 +35,7 @@ namespace WebCore {
 class PagePasteboardContext final : public PasteboardContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PagePasteboardContext(Optional<PageIdentifier>&& pageID = std::nullopt)
+    PagePasteboardContext(std::optional<PageIdentifier>&& pageID = std::nullopt)
         : PasteboardContext()
         , m_pageID(WTFMove(pageID))
     {
@@ -43,16 +43,16 @@ public:
 
     ~PagePasteboardContext() { }
 
-    static std::unique_ptr<PasteboardContext> create(Optional<PageIdentifier>&& pageID = std::nullopt)
+    static std::unique_ptr<PasteboardContext> create(std::optional<PageIdentifier>&& pageID = std::nullopt)
     {
         return makeUnique<PagePasteboardContext>(WTFMove(pageID));
     }
 
-    Optional<PageIdentifier> pageID() const { return m_pageID; }
+    std::optional<PageIdentifier> pageID() const { return m_pageID; }
     bool isPagePasteboardContext() const override { return true; }
 
 private:
-    Optional<PageIdentifier> m_pageID;
+    std::optional<PageIdentifier> m_pageID;
 };
 
 } // namespace WebCore

@@ -94,7 +94,7 @@ public:
         animated = makeFromComponentsClamping<SRGBA<uint8_t>>(std::lround(red), std::lround(green), std::lround(blue), std::lround(alpha));
     }
 
-    Optional<float> calculateDistance(SVGElement*, const String& from, const String& to) const override
+    std::optional<float> calculateDistance(SVGElement*, const String& from, const String& to) const override
     {
         Color fromColor = CSSParser::parseColor(from.stripWhiteSpace());
         if (!fromColor.isValid())
@@ -149,7 +149,7 @@ public:
         animated = static_cast<int>(roundf(Base::animate(progress, repeatCount, m_from, m_to, toAtEndOfDuration(), animated)));
     }
 
-    Optional<float> calculateDistance(SVGElement*, const String&, const String&) const final;
+    std::optional<float> calculateDistance(SVGElement*, const String&, const String&) const final;
 
 private:
     void addFromAndToValues(SVGElement*) final
@@ -193,7 +193,7 @@ public:
         animated = { lengthContext, value, lengthType, m_lengthMode };
     }
 
-    Optional<float> calculateDistance(SVGElement* targetElement, const String& from, const String& to) const override
+    std::optional<float> calculateDistance(SVGElement* targetElement, const String& from, const String& to) const override
     {
         SVGLengthContext lengthContext(targetElement);
         auto fromLength = SVGLengthValue(m_lengthMode, from);
@@ -235,7 +235,7 @@ public:
         animated = Base::animate(progress, repeatCount, from, m_to, toAtEndOfDuration(), animated);
     }
 
-    Optional<float> calculateDistance(SVGElement*, const String& from, const String& to) const override
+    std::optional<float> calculateDistance(SVGElement*, const String& from, const String& to) const override
     {
         return std::abs(parseNumber(to).value_or(0) - parseNumber(from).value_or(0));
     }

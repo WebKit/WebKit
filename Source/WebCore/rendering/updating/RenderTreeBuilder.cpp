@@ -780,7 +780,7 @@ void RenderTreeBuilder::removeAnonymousWrappersForInlineChildrenIfNeeded(RenderE
     // otherwise we can proceed to stripping solitary anonymous wrappers from the inlines.
     // FIXME: We should also handle split inlines here - we exclude them at the moment by returning
     // if we find a continuation.
-    Optional<bool> shouldAllChildrenBeInline;
+    std::optional<bool> shouldAllChildrenBeInline;
     for (auto* current = blockParent.firstChild(); current; current = current->nextSibling()) {
         if (current->style().isFloating() || current->style().hasOutOfFlowPosition())
             continue;
@@ -1004,7 +1004,7 @@ void RenderTreeBuilder::reportVisuallyNonEmptyContent(const RenderElement& paren
         return;
     }
     if (is<RenderSVGRoot>(child)) {
-        auto fixedSize = [] (const auto& renderer) -> Optional<IntSize> {
+        auto fixedSize = [] (const auto& renderer) -> std::optional<IntSize> {
             auto& style = renderer.style();
             if (!style.width().isFixed() || !style.height().isFixed())
                 return { };

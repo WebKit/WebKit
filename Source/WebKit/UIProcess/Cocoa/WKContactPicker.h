@@ -41,7 +41,7 @@ struct ContactsRequestData;
 
 - (instancetype)initWithView:(WKWebView *)view;
 
-- (void)presentWithRequestData:(const WebCore::ContactsRequestData&)requestData completionHandler:(WTF::CompletionHandler<void(Optional<Vector<WebCore::ContactInfo>>&&)>&&)completionHandler;
+- (void)presentWithRequestData:(const WebCore::ContactsRequestData&)requestData completionHandler:(WTF::CompletionHandler<void(std::optional<Vector<WebCore::ContactInfo>>&&)>&&)completionHandler;
 
 @property (nonatomic, weak) id<WKContactPickerDelegate> delegate;
 

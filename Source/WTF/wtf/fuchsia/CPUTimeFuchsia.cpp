@@ -36,7 +36,7 @@ static Seconds timeToSeconds(zx_time_t t)
     return Seconds(t / static_cast<double>(ZX_SEC(1)));
 }
 
-Optional<CPUTime> CPUTime::get()
+std::optional<CPUTime> CPUTime::get()
 {
     // Fuchsia issue ZX-2318 tracks being able to get the monotonic and thread
     // times atomically and being able to separate ZX_CLOCK_THREAD into user and

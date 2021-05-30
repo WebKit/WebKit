@@ -189,8 +189,8 @@ LayoutUnit BlockFormattingContext::usedContentHeight() const
     // In addition, if the element has any floating descendants whose bottom margin edge is below the element's bottom content edge,
     // then the height is increased to include those edges. Only floats that participate in this block formatting context are taken
     // into account, e.g., floats inside absolutely positioned descendants or other floats are not.
-    auto top = Optional<LayoutUnit> { };
-    auto bottom = Optional<LayoutUnit> { };
+    auto top = std::optional<LayoutUnit> { };
+    auto bottom = std::optional<LayoutUnit> { };
     if (root().hasInFlowChild()) {
         top = BoxGeometry::marginBoxRect(geometryForBox(*root().firstInFlowChild())).top();
         bottom = BoxGeometry::marginBoxRect(geometryForBox(*root().lastInFlowChild())).bottom();
@@ -205,7 +205,7 @@ LayoutUnit BlockFormattingContext::usedContentHeight() const
     return *bottom - *top;
 }
 
-Optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoider(const FloatingContext& floatingContext, const Box& layoutBox, const ConstraintsPair& constraintsPair)
+std::optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoider(const FloatingContext& floatingContext, const Box& layoutBox, const ConstraintsPair& constraintsPair)
 {
     // Normally the available width for an in-flow block level box is the width of the containing block's content box.
     // However (and can't find it anywhere in the spec) non-floating positioned float avoider block level boxes are constrained by existing floats.
@@ -358,7 +358,7 @@ void BlockFormattingContext::computeVerticalPositionForFloatClear(const Floating
 
 void BlockFormattingContext::computeWidthAndMargin(const FloatingContext& floatingContext, const Box& layoutBox, const ConstraintsPair& constraintsPair)
 {
-    auto availableWidthFloatAvoider = Optional<LayoutUnit> { };
+    auto availableWidthFloatAvoider = std::optional<LayoutUnit> { };
     if (layoutBox.isFloatAvoider()) {
         // Float avoiders' available width might be shrunk by existing floats in the context.
         availableWidthFloatAvoider = usedAvailableWidthForFloatAvoider(floatingContext, layoutBox, constraintsPair);
@@ -371,7 +371,7 @@ void BlockFormattingContext::computeWidthAndMargin(const FloatingContext& floati
 
 void BlockFormattingContext::computeHeightAndMargin(const Box& layoutBox, const ConstraintsForInFlowContent& constraints)
 {
-    auto compute = [&](Optional<LayoutUnit> usedHeight) -> ContentHeightAndMargin {
+    auto compute = [&](std::optional<LayoutUnit> usedHeight) -> ContentHeightAndMargin {
         if (layoutBox.isInFlow())
             return formattingGeometry().inFlowContentHeightAndMargin(layoutBox, constraints.horizontal, { usedHeight });
 

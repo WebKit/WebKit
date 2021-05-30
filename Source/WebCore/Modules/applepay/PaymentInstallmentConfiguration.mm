@@ -153,7 +153,7 @@ static RetainPtr<id> makeNSArrayElement(const ApplePayInstallmentItem& item)
     return installmentItem;
 }
 
-static Optional<ApplePayInstallmentItem> makeVectorElement(const ApplePayInstallmentItem*, id arrayElement)
+static std::optional<ApplePayInstallmentItem> makeVectorElement(const ApplePayInstallmentItem*, id arrayElement)
 {
     if (![arrayElement isKindOfClass:PAL::getPKPaymentInstallmentItemClass()])
         return std::nullopt;

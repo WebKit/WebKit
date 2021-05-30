@@ -1645,7 +1645,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
 
             // Get the accessor; if there ain't one then the result is jsUndefined().
             // Note that GetterSetter always has cells for both. If it is not set (like, getter exits, but setter is not set), Null{Getter,Setter}Function is stored.
-            Optional<CCallHelpers::Jump> returnUndefined;
+            std::optional<CCallHelpers::Jump> returnUndefined;
             if (m_type == Setter) {
                 jit.loadPtr(
                     CCallHelpers::Address(loadedValueGPR, GetterSetter::offsetOfSetter()),

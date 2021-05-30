@@ -99,7 +99,7 @@ public:
     // Managing the relationship with the owner.
     void setDirty() override { m_state = SVGPropertyState::Dirty; }
     bool isDirty() const override { return m_state == SVGPropertyState::Dirty; }
-    Optional<String> synchronize() override
+    std::optional<String> synchronize() override
     {
         if (m_state == SVGPropertyState::Clean)
             return std::nullopt;

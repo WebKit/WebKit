@@ -47,7 +47,7 @@ struct ElementContext {
     }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<ElementContext> decode(Decoder&);
+    template<class Decoder> static std::optional<ElementContext> decode(Decoder&);
 };
 
 inline bool operator==(const ElementContext& a, const ElementContext& b)
@@ -65,7 +65,7 @@ void ElementContext::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<ElementContext> ElementContext::decode(Decoder& decoder)
+std::optional<ElementContext> ElementContext::decode(Decoder& decoder)
 {
     ElementContext context;
 

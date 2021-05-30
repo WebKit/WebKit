@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-static Optional<MTLPixelFormat> tryGetSupportedPixelFormat(GPUTextureFormat format)
+static std::optional<MTLPixelFormat> tryGetSupportedPixelFormat(GPUTextureFormat format)
 {
     auto mtlFormat = static_cast<MTLPixelFormat>(platformTextureFormatForGPUTextureFormat(format));
 

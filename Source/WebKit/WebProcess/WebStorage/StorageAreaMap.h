@@ -66,7 +66,7 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     const WebCore::SecurityOrigin& securityOrigin() const { return m_securityOrigin.get(); }
-    const Optional<StorageAreaIdentifier>& identifier() const { return m_mapID; }
+    const std::optional<StorageAreaIdentifier>& identifier() const { return m_mapID; }
 
     void disconnect();
 
@@ -78,7 +78,7 @@ private:
     void didRemoveItem(uint64_t mapSeed, const String& key);
     void didClear(uint64_t mapSeed);
 
-    void dispatchStorageEvent(const Optional<StorageAreaImplIdentifier>& sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString);
+    void dispatchStorageEvent(const std::optional<StorageAreaImplIdentifier>& sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString);
     void clearCache();
 
     void resetValues();
@@ -87,15 +87,15 @@ private:
     bool shouldApplyChangeForKey(const String& key) const;
     void applyChange(const String& key, const String& newValue);
 
-    void dispatchSessionStorageEvent(const Optional<StorageAreaImplIdentifier>&, const String& key, const String& oldValue, const String& newValue, const String& urlString);
-    void dispatchLocalStorageEvent(const Optional<StorageAreaImplIdentifier>&, const String& key, const String& oldValue, const String& newValue, const String& urlString);
+    void dispatchSessionStorageEvent(const std::optional<StorageAreaImplIdentifier>&, const String& key, const String& oldValue, const String& newValue, const String& urlString);
+    void dispatchLocalStorageEvent(const std::optional<StorageAreaImplIdentifier>&, const String& key, const String& oldValue, const String& newValue, const String& urlString);
 
     void connect();
 
     StorageNamespaceImpl& m_namespace;
     Ref<WebCore::SecurityOrigin> m_securityOrigin;
     std::unique_ptr<WebCore::StorageMap> m_map;
-    Optional<StorageAreaIdentifier> m_mapID;
+    std::optional<StorageAreaIdentifier> m_mapID;
     HashCountedSet<String> m_pendingValueChanges;
     uint64_t m_currentSeed { 0 };
     unsigned m_quotaInBytes;

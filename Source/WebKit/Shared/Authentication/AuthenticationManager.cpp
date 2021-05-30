@@ -121,7 +121,7 @@ void AuthenticationManager::didReceiveAuthenticationChallenge(PAL::SessionID ses
     if (shouldCoalesceChallenge(pageID, challengeID, authenticationChallenge))
         return;
 
-    Optional<SecurityOriginData> topOriginData;
+    std::optional<SecurityOriginData> topOriginData;
     if (topOrigin)
         topOriginData = *topOrigin;
     m_process.send(Messages::NetworkProcessProxy::DidReceiveAuthenticationChallenge(sessionID, pageID, topOriginData, authenticationChallenge, negotiatedLegacyTLS == NegotiatedLegacyTLS::Yes, challengeID));

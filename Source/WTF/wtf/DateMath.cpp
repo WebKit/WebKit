@@ -734,7 +734,7 @@ double parseDateFromNullTerminatedCharacters(const char* dateString, bool& isLoc
     if (day < 0)
         return std::numeric_limits<double>::quiet_NaN();
 
-    Optional<int> year;
+    std::optional<int> year;
     if (day > 31) {
         // ### where is the boundary and what happens below?
         if (*dateString != '/')

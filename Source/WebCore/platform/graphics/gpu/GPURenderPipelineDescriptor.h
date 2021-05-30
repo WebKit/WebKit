@@ -48,12 +48,12 @@ enum class GPUPrimitiveTopology {
 struct GPURenderPipelineDescriptorBase {
     GPUPrimitiveTopology primitiveTopology;
     Vector<GPUColorStateDescriptor> colorStates;
-    Optional<GPUDepthStencilStateDescriptor> depthStencilState;
+    std::optional<GPUDepthStencilStateDescriptor> depthStencilState;
     GPUVertexInputDescriptor vertexInput;
 };
 
 struct GPURenderPipelineDescriptor : GPUPipelineDescriptorBase, GPURenderPipelineDescriptorBase {
-    GPURenderPipelineDescriptor(RefPtr<GPUPipelineLayout>&& layout, GPUProgrammableStageDescriptor&& vertex, Optional<GPUProgrammableStageDescriptor>&& fragment, const GPURenderPipelineDescriptorBase& base)
+    GPURenderPipelineDescriptor(RefPtr<GPUPipelineLayout>&& layout, GPUProgrammableStageDescriptor&& vertex, std::optional<GPUProgrammableStageDescriptor>&& fragment, const GPURenderPipelineDescriptorBase& base)
         : GPUPipelineDescriptorBase { WTFMove(layout) }
         , GPURenderPipelineDescriptorBase(base)
         , vertexStage(WTFMove(vertex))
@@ -62,7 +62,7 @@ struct GPURenderPipelineDescriptor : GPUPipelineDescriptorBase, GPURenderPipelin
     }
 
     GPUProgrammableStageDescriptor vertexStage;
-    Optional<GPUProgrammableStageDescriptor> fragmentStage;
+    std::optional<GPUProgrammableStageDescriptor> fragmentStage;
 };
 
 } // namespace WebCore

@@ -33,7 +33,7 @@
 #include "TestTwoStateEnum.h"
 #endif
 #include "TestWithSuperclassMessages.h"
-#include <wtf/Optional.h>
+#include <optional>
 #include <wtf/text/WTFString.h>
 
 namespace Messages {
@@ -44,7 +44,7 @@ namespace TestWithSuperclass {
 
 void TestAsyncMessage::callReply(IPC::Decoder& decoder, CompletionHandler<void(uint64_t&&)>&& completionHandler)
 {
-    Optional<uint64_t> result;
+    std::optional<uint64_t> result;
     decoder >> result;
     if (!result) {
         ASSERT_NOT_REACHED();
@@ -90,14 +90,14 @@ void TestAsyncMessageWithNoArguments::send(UniqueRef<IPC::Encoder>&& encoder, IP
 
 void TestAsyncMessageWithMultipleArguments::callReply(IPC::Decoder& decoder, CompletionHandler<void(bool&&, uint64_t&&)>&& completionHandler)
 {
-    Optional<bool> flag;
+    std::optional<bool> flag;
     decoder >> flag;
     if (!flag) {
         ASSERT_NOT_REACHED();
         cancelReply(WTFMove(completionHandler));
         return;
     }
-    Optional<uint64_t> value;
+    std::optional<uint64_t> value;
     decoder >> value;
     if (!value) {
         ASSERT_NOT_REACHED();
@@ -125,7 +125,7 @@ void TestAsyncMessageWithMultipleArguments::send(UniqueRef<IPC::Encoder>&& encod
 
 void TestAsyncMessageWithConnection::callReply(IPC::Decoder& decoder, CompletionHandler<void(bool&&)>&& completionHandler)
 {
-    Optional<bool> flag;
+    std::optional<bool> flag;
     decoder >> flag;
     if (!flag) {
         ASSERT_NOT_REACHED();
@@ -154,7 +154,7 @@ void TestSyncMessage::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& c
     connection.sendSyncReply(WTFMove(encoder));
 }
 
-void TestSynchronousMessage::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, const Optional<WebKit::TestClassName>& optionalReply)
+void TestSynchronousMessage::send(UniqueRef<IPC::Encoder>&& encoder, IPC::Connection& connection, const std::optional<WebKit::TestClassName>& optionalReply)
 {
     encoder.get() << optionalReply;
     connection.sendSyncReply(WTFMove(encoder));

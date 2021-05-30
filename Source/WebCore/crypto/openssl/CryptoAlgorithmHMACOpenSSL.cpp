@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-static Optional<Vector<uint8_t>> calculateSignature(const EVP_MD* algorithm, const Vector<uint8_t>& key, const uint8_t* data, size_t dataLength)
+static std::optional<Vector<uint8_t>> calculateSignature(const EVP_MD* algorithm, const Vector<uint8_t>& key, const uint8_t* data, size_t dataLength)
 {
     // Create the Message Digest Context
     EvpDigestCtxPtr ctx;

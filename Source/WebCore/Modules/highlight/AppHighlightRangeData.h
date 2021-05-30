@@ -39,7 +39,7 @@ class SharedBuffer;
 class AppHighlightRangeData {
 WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT static Optional<AppHighlightRangeData> create(const SharedBuffer&);
+    WEBCORE_EXPORT static std::optional<AppHighlightRangeData> create(const SharedBuffer&);
     struct NodePathComponent {
         String identifier;
         String nodeName;
@@ -73,7 +73,7 @@ public:
         }
 
         template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static Optional<NodePathComponent> decode(Decoder&);
+        template<class Decoder> static std::optional<NodePathComponent> decode(Decoder&);
     };
 
     using NodePath = Vector<NodePathComponent>;
@@ -105,7 +105,7 @@ public:
     unsigned endOffset() const { return m_endOffset; }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<AppHighlightRangeData> decode(Decoder&);
+    template<class Decoder> static std::optional<AppHighlightRangeData> decode(Decoder&);
 
     Ref<SharedBuffer> toSharedBuffer() const;
 

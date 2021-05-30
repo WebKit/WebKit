@@ -33,9 +33,9 @@
 
 namespace WebCore {
 
-static Optional<String>& cachedLocalizedDeviceModel()
+static std::optional<String>& cachedLocalizedDeviceModel()
 {
-    static NeverDestroyed<Optional<String>> deviceModel;
+    static NeverDestroyed<std::optional<String>> deviceModel;
     return deviceModel;
 }
 

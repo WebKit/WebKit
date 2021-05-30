@@ -41,7 +41,7 @@ struct MediaMetadataInit {
     Vector<MediaImage> artwork;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<MediaMetadataInit> decode(Decoder&);
+    template<class Decoder> static std::optional<MediaMetadataInit> decode(Decoder&);
 };
 
 template<class Encoder> inline void MediaMetadataInit::encode(Encoder& encoder) const
@@ -53,31 +53,31 @@ template<class Encoder> inline void MediaMetadataInit::encode(Encoder& encoder) 
     << artwork;
 }
 
-template<class Decoder> inline Optional<MediaMetadataInit> MediaMetadataInit::decode(Decoder& decoder)
+template<class Decoder> inline std::optional<MediaMetadataInit> MediaMetadataInit::decode(Decoder& decoder)
 {
-    Optional<String> title;
+    std::optional<String> title;
     decoder >> title;
     if (!title)
         return { };
 
-    Optional<String> artist;
+    std::optional<String> artist;
     decoder >> artist;
     if (!artist)
         return { };
 
-    Optional<String> album;
+    std::optional<String> album;
     decoder >> album;
     if (!album)
         return { };
 
 #if ENABLE(MEDIA_SESSION_PLAYLIST)
-    Optional<String> trackIdentifier;
+    std::optional<String> trackIdentifier;
     decoder >> trackIdentifier;
     if (!trackIdentifier)
         return { };
 #endif
 
-    Optional<Vector<MediaImage>> artwork;
+    std::optional<Vector<MediaImage>> artwork;
     decoder >> artwork;
     if (!artwork)
         return { };

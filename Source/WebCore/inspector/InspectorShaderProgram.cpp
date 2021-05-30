@@ -231,7 +231,7 @@ Ref<Inspector::Protocol::Canvas::ShaderProgram> InspectorShaderProgram::buildObj
 {
     bool sharesVertexFragmentShader = false;
 
-    using ProgramTypeType = Optional<Inspector::Protocol::Canvas::ProgramType>;
+    using ProgramTypeType = std::optional<Inspector::Protocol::Canvas::ProgramType>;
     auto programType = WTF::switchOn(m_program,
 #if ENABLE(WEBGL)
         [&] (std::reference_wrapper<WebGLProgram>) -> ProgramTypeType {

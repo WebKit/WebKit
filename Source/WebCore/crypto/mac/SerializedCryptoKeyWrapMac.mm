@@ -75,7 +75,7 @@ static NSString* masterKeyAccountNameForCurrentApplication()
     return [NSString stringWithFormat:@"com.apple.WebKit.WebCrypto.master+%@", bundleIdentifier];
 }
 
-static Optional<Vector<uint8_t>> createAndStoreMasterKey()
+static std::optional<Vector<uint8_t>> createAndStoreMasterKey()
 {
     RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessCredentials));
 
@@ -150,7 +150,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return masterKeyData;
 }
 
-static Optional<Vector<uint8_t>> findMasterKey()
+static std::optional<Vector<uint8_t>> findMasterKey()
 {
     RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessCredentials));
 
@@ -171,7 +171,7 @@ static Optional<Vector<uint8_t>> findMasterKey()
     return base64Decode(reinterpret_cast<const char*>(CFDataGetBytePtr(keyData.get())), CFDataGetLength(keyData.get()));
 }
 
-Optional<Vector<uint8_t>> defaultWebCryptoMasterKey()
+std::optional<Vector<uint8_t>> defaultWebCryptoMasterKey()
 {
     if (auto masterKey = findMasterKey()) {
         RELEASE_ASSERT(masterKey->size() == masterKeySizeInBytes);

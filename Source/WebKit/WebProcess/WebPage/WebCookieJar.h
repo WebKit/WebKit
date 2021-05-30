@@ -43,7 +43,7 @@ public:
     String cookies(WebCore::Document&, const URL&) const final;
     void setCookies(WebCore::Document&, const URL&, const String& cookieString) final;
     bool cookiesEnabled(const WebCore::Document&) const final;
-    std::pair<String, WebCore::SecureCookiesAccessed> cookieRequestHeaderFieldValue(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, Optional<WebCore::FrameIdentifier>, Optional<WebCore::PageIdentifier>, WebCore::IncludeSecureCookies) const final;
+    std::pair<String, WebCore::SecureCookiesAccessed> cookieRequestHeaderFieldValue(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, WebCore::IncludeSecureCookies) const final;
     bool getRawCookies(const WebCore::Document&, const URL&, Vector<WebCore::Cookie>&) const final;
     void setRawCookie(const WebCore::Document&, const WebCore::Cookie&) final;
     void deleteCookie(const WebCore::Document&, const URL&, const String& cookieName) final;

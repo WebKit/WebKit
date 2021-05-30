@@ -114,7 +114,7 @@ TEST(WebCore, ParsedRequestRange)
     for (const auto& input : failureCases)
         EXPECT_EQ(std::nullopt, ParsedRequestRange::parse(input));
 
-    auto compare = [] (const String& input, Optional<size_t> begin, Optional<size_t> end) {
+    auto compare = [] (const String& input, std::optional<size_t> begin, std::optional<size_t> end) {
         auto range = ParsedRequestRange::parse(input);
         EXPECT_NE(std::nullopt, range);
         

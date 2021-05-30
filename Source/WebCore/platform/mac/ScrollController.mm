@@ -319,7 +319,7 @@ FloatSize ScrollController::wheelDeltaBiasingTowardsVertical(const PlatformWheel
     return { deltaX, deltaY };
 }
 
-Optional<ScrollDirection> ScrollController::directionFromEvent(const PlatformWheelEvent& wheelEvent, Optional<ScrollEventAxis> axis, WheelAxisBias bias)
+std::optional<ScrollDirection> ScrollController::directionFromEvent(const PlatformWheelEvent& wheelEvent, std::optional<ScrollEventAxis> axis, WheelAxisBias bias)
 {
     // FIXME: It's impossible to infer direction from a single event, since the start of a gesture is either zero or
     // has small deltas on both axes.

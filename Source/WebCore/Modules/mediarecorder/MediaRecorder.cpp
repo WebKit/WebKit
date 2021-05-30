@@ -146,7 +146,7 @@ const char* MediaRecorder::activeDOMObjectName() const
     return "MediaRecorder";
 }
 
-ExceptionOr<void> MediaRecorder::startRecording(Optional<unsigned> timeSlice)
+ExceptionOr<void> MediaRecorder::startRecording(std::optional<unsigned> timeSlice)
 {
     if (!m_isActive)
         return Exception { InvalidStateError, "The MediaRecorder is not active"_s };

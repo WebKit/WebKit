@@ -420,7 +420,7 @@
                 callback(false);
         }
 
-        void playSession(Optional<double> atTime, Optional<double> hostTime, CompletionHandler<void(bool)>&& callback) final
+        void playSession(std::optional<double> atTime, std::optional<double> hostTime, CompletionHandler<void(bool)>&& callback) final
         {
             if (auto coordinatorClient = client())
                 coordinatorClient->playSession(WTFMove(atTime), WTFMove(hostTime), WTFMove(callback));
@@ -444,7 +444,7 @@
                 callback(false);
         }
 
-        Optional<WebCore::ExceptionData> result(bool success) const
+        std::optional<WebCore::ExceptionData> result(bool success) const
         {
             if (!success)
                 return { WebCore::ExceptionData { WebCore::InvalidStateError } };
@@ -522,7 +522,7 @@
             }).get()];
         }
 
-        void positionStateChanged(const Optional<WebCore::MediaPositionState>& state) final
+        void positionStateChanged(const std::optional<WebCore::MediaPositionState>& state) final
         {
             if (!state) {
                 [m_clientCoordinator positionStateChanged:nil];

@@ -79,9 +79,9 @@ const uint64_t ActionFlagMask = 0x0000FFFF00000000;
 const uint64_t IfConditionFlag = 0x0001000000000000;
 
 OptionSet<ResourceType> toResourceType(CachedResource::Type, ResourceRequestBase::Requester);
-Optional<OptionSet<ResourceType>> readResourceType(StringView);
-Optional<OptionSet<LoadType>> readLoadType(StringView);
-Optional<OptionSet<LoadContext>> readLoadContext(StringView);
+std::optional<OptionSet<ResourceType>> readResourceType(StringView);
+std::optional<OptionSet<LoadType>> readLoadType(StringView);
+std::optional<OptionSet<LoadContext>> readLoadContext(StringView);
 
 struct ResourceLoadInfo {
     URL resourceURL;

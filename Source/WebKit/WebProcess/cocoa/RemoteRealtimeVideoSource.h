@@ -103,7 +103,7 @@ private:
     RemoteRealtimeMediaSourceProxy m_proxy;
     UserMediaCaptureManager& m_manager;
 
-    Optional<WebCore::MediaConstraints> m_sizeConstraints;
+    std::optional<WebCore::MediaConstraints> m_sizeConstraints;
     WebCore::RealtimeMediaSourceCapabilities m_capabilities;
     WebCore::RealtimeMediaSourceSettings m_settings;
     WebCore::MediaSample::VideoRotation m_sampleRotation { WebCore::MediaSample::VideoRotation::None };

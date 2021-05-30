@@ -68,7 +68,7 @@ private:
     struct Parent {
         Element* element { nullptr };
         const Style::ElementUpdates* updates { nullptr };
-        Optional<RenderTreePosition> renderTreePosition;
+        std::optional<RenderTreePosition> renderTreePosition;
 
         bool didCreateOrDestroyChildRenderer { false };
         RenderObject* previousChildRenderer { nullptr };

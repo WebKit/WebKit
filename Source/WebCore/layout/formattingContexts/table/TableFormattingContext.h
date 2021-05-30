@@ -63,7 +63,7 @@ private:
 
         using DistributedSpaces = Vector<LayoutUnit>;
         DistributedSpaces distributedHorizontalSpace(LayoutUnit availableHorizontalSpace);
-        DistributedSpaces distributedVerticalSpace(Optional<LayoutUnit> availableVerticalSpace);
+        DistributedSpaces distributedVerticalSpace(std::optional<LayoutUnit> availableVerticalSpace);
 
     private:
         const TableFormattingContext& formattingContext() const { return m_formattingContext; }
@@ -75,13 +75,13 @@ private:
     TableFormattingContext::TableLayout tableLayout() const { return TableLayout(*this, formattingState().tableGrid()); }
 
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
-    void layoutCell(const TableGrid::Cell&, LayoutUnit availableHorizontalSpace, Optional<LayoutUnit> availableVerticalSpaceForContent = std::nullopt);
+    void layoutCell(const TableGrid::Cell&, LayoutUnit availableHorizontalSpace, std::optional<LayoutUnit> availableVerticalSpaceForContent = std::nullopt);
     void setUsedGeometryForCells(LayoutUnit availableHorizontalSpace);
     void setUsedGeometryForRows(LayoutUnit availableHorizontalSpace);
     void setUsedGeometryForSections(const ConstraintsForInFlowContent&);
 
     IntrinsicWidthConstraints computedPreferredWidthForColumns();
-    void computeAndDistributeExtraSpace(LayoutUnit availableHorizontalSpace, Optional<LayoutUnit> availableVerticalSpace);
+    void computeAndDistributeExtraSpace(LayoutUnit availableHorizontalSpace, std::optional<LayoutUnit> availableVerticalSpace);
 
     TableFormattingState& formattingState() { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
 

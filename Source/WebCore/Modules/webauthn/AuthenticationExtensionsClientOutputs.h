@@ -32,7 +32,7 @@
 namespace WebCore {
 
 struct AuthenticationExtensionsClientOutputs {
-    Optional<bool> appid;
+    std::optional<bool> appid;
 };
 
 } // namespace WebCore

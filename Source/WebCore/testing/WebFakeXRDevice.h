@@ -49,7 +49,7 @@ public:
     XREye eye() const { return m_eye; }
     const Pose& offset() const { return m_offset; }
     const std::array<float, 16>& projection() const { return m_projection; }
-    const Optional<Fov>& fieldOfView() const { return m_fov;}
+    const std::optional<Fov>& fieldOfView() const { return m_fov;}
 
     void setResolution(FakeXRViewInit::DeviceResolution resolution) { m_resolution = resolution; }
     void setOffset(Pose&& offset) { m_offset = WTFMove(offset); }
@@ -64,7 +64,7 @@ private:
     FakeXRViewInit::DeviceResolution m_resolution;
     Pose m_offset;
     std::array<float, 16> m_projection;
-    Optional<Fov> m_fov;
+    std::optional<Fov> m_fov;
 };
 
 class SimulatedXRDevice final : public PlatformXR::Device {
@@ -74,8 +74,8 @@ public:
     ~SimulatedXRDevice();
     void setViews(Vector<FrameData::View>&&);
     void setNativeBoundsGeometry(const Vector<FakeXRBoundsPoint>&);
-    void setViewerOrigin(const Optional<FrameData::Pose>&);
-    void setFloorOrigin(Optional<FrameData::Pose>&& origin) { m_frameData.floorTransform = WTFMove(origin); }
+    void setViewerOrigin(const std::optional<FrameData::Pose>&);
+    void setFloorOrigin(std::optional<FrameData::Pose>&& origin) { m_frameData.floorTransform = WTFMove(origin); }
     void setEmulatedPosition(bool emulated) { m_frameData.isPositionEmulated = emulated; }
     void setSupportsShutdownNotification(bool supportsShutdownNotification) { m_supportsShutdownNotification = supportsShutdownNotification; }
     void simulateShutdownCompleted();
@@ -89,7 +89,7 @@ private:
     void initializeReferenceSpace(PlatformXR::ReferenceSpaceType) final { }
     Vector<PlatformXR::Device::ViewData> views(PlatformXR::SessionMode) const final;
     void requestFrame(RequestFrameCallback&&) final;
-    Optional<PlatformXR::LayerHandle> createLayerProjection(uint32_t width, uint32_t height, bool alpha) final;
+    std::optional<PlatformXR::LayerHandle> createLayerProjection(uint32_t width, uint32_t height, bool alpha) final;
     void deleteLayer(PlatformXR::LayerHandle) final;
 
     void stopTimer();

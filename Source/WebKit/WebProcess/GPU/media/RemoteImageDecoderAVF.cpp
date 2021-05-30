@@ -166,8 +166,8 @@ PlatformImagePtr RemoteImageDecoderAVF::createFrameImageAtIndex(size_t index, Su
         if (!m_gpuProcessConnection)
             return;
 
-        Optional<MachSendRight> sendRight;
-        Optional<DestinationColorSpace> colorSpace;
+        std::optional<MachSendRight> sendRight;
+        std::optional<DestinationColorSpace> colorSpace;
         if (!m_gpuProcessConnection->connection().sendSync(Messages::RemoteImageDecoderAVFProxy::CreateFrameImageAtIndex(m_identifier, index), Messages::RemoteImageDecoderAVFProxy::CreateFrameImageAtIndex::Reply(sendRight, colorSpace), 0))
             return;
 
@@ -210,7 +210,7 @@ void RemoteImageDecoderAVF::setData(SharedBuffer& data, bool allDataReceived)
     size_t frameCount;
     IntSize size;
     bool hasTrack;
-    Optional<Vector<ImageDecoder::FrameInfo>> frameInfos;
+    std::optional<Vector<ImageDecoder::FrameInfo>> frameInfos;
     if (!m_gpuProcessConnection->connection().sendSync(Messages::RemoteImageDecoderAVFProxy::SetData(m_identifier, dataReference, allDataReceived), Messages::RemoteImageDecoderAVFProxy::SetData::Reply(frameCount, size, hasTrack, frameInfos), 0))
         return;
 

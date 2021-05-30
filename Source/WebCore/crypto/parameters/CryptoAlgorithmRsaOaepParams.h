@@ -36,7 +36,7 @@ namespace WebCore {
 class CryptoAlgorithmRsaOaepParams final : public CryptoAlgorithmParameters {
 public:
     // Use labelVector() instead of label. The label will be gone once labelVector() is called.
-    mutable Optional<BufferSource::VariantType> label;
+    mutable std::optional<BufferSource::VariantType> label;
 
     Class parametersClass() const final { return Class::RsaOaepParams; }
 

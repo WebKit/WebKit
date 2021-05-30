@@ -108,8 +108,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         def generate_conversion_method_body(enum_type, cpp_protocol_type):
             body_lines = []
             body_lines.extend([
-                'template<>',
-                'Optional<%s> parseEnumValueFromString<%s>(const String& protocolString)' % (cpp_protocol_type, cpp_protocol_type),
+                'template<> std::optional<%s> parseEnumValueFromString<%s>(const String& protocolString)' % (cpp_protocol_type, cpp_protocol_type),
                 '{',
                 '    static const size_t constantValues[] = {',
             ])

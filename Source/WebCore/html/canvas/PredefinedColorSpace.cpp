@@ -46,7 +46,7 @@ DestinationColorSpace toDestinationColorSpace(PredefinedColorSpace colorSpace)
     return DestinationColorSpace::SRGB();
 }
 
-Optional<PredefinedColorSpace> toPredefinedColorSpace(const DestinationColorSpace& colorSpace)
+std::optional<PredefinedColorSpace> toPredefinedColorSpace(const DestinationColorSpace& colorSpace)
 {
     if (colorSpace == DestinationColorSpace::SRGB())
         return PredefinedColorSpace::SRGB;

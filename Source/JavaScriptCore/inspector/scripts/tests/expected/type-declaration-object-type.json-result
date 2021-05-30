@@ -936,19 +936,19 @@ public:
 namespace TestHelpers {
 
 template<typename ProtocolEnumType>
-Optional<ProtocolEnumType> parseEnumValueFromString(const String&);
+std::optional<ProtocolEnumType> parseEnumValueFromString(const String&);
 
 // Enums in the 'Database' Domain
 template<>
-Optional<Protocol::Database::MouseButton> parseEnumValueFromString<Protocol::Database::MouseButton>(const String&);
+std::optional<Protocol::Database::MouseButton> parseEnumValueFromString<Protocol::Database::MouseButton>(const String&);
 template<>
-Optional<Protocol::Database::OptionalParameterBundle::Directionality> parseEnumValueFromString<Protocol::Database::OptionalParameterBundle::Directionality>(const String&);
+std::optional<Protocol::Database::OptionalParameterBundle::Directionality> parseEnumValueFromString<Protocol::Database::OptionalParameterBundle::Directionality>(const String&);
 template<>
-Optional<Protocol::Database::ParameterBundle::Directionality> parseEnumValueFromString<Protocol::Database::ParameterBundle::Directionality>(const String&);
+std::optional<Protocol::Database::ParameterBundle::Directionality> parseEnumValueFromString<Protocol::Database::ParameterBundle::Directionality>(const String&);
 
 // Enums in the 'Test' Domain
 template<>
-Optional<Protocol::Test::ParameterBundle::Directionality> parseEnumValueFromString<Protocol::Test::ParameterBundle::Directionality>(const String&);
+std::optional<Protocol::Test::ParameterBundle::Directionality> parseEnumValueFromString<Protocol::Test::ParameterBundle::Directionality>(const String&);
 
 } // namespace TestHelpers
 
@@ -1023,8 +1023,7 @@ String getEnumConstantValue(int code) {
 
 // Enums in the 'Database' Domain
 
-template<>
-Optional<Protocol::Database::MouseButton> parseEnumValueFromString<Protocol::Database::MouseButton>(const String& protocolString)
+template<> std::optional<Protocol::Database::MouseButton> parseEnumValueFromString<Protocol::Database::MouseButton>(const String& protocolString)
 {
     static const size_t constantValues[] = {
         (size_t)Protocol::Database::MouseButton::None,
@@ -1039,8 +1038,7 @@ Optional<Protocol::Database::MouseButton> parseEnumValueFromString<Protocol::Dat
     return std::nullopt;
 }
 
-template<>
-Optional<Protocol::Database::OptionalParameterBundle::Directionality> parseEnumValueFromString<Protocol::Database::OptionalParameterBundle::Directionality>(const String& protocolString)
+template<> std::optional<Protocol::Database::OptionalParameterBundle::Directionality> parseEnumValueFromString<Protocol::Database::OptionalParameterBundle::Directionality>(const String& protocolString)
 {
     static const size_t constantValues[] = {
         (size_t)Protocol::Database::OptionalParameterBundle::Directionality::LTR,
@@ -1053,8 +1051,7 @@ Optional<Protocol::Database::OptionalParameterBundle::Directionality> parseEnumV
     return std::nullopt;
 }
 
-template<>
-Optional<Protocol::Database::ParameterBundle::Directionality> parseEnumValueFromString<Protocol::Database::ParameterBundle::Directionality>(const String& protocolString)
+template<> std::optional<Protocol::Database::ParameterBundle::Directionality> parseEnumValueFromString<Protocol::Database::ParameterBundle::Directionality>(const String& protocolString)
 {
     static const size_t constantValues[] = {
         (size_t)Protocol::Database::ParameterBundle::Directionality::LTR,
@@ -1069,8 +1066,7 @@ Optional<Protocol::Database::ParameterBundle::Directionality> parseEnumValueFrom
 
 // Enums in the 'Test' Domain
 
-template<>
-Optional<Protocol::Test::ParameterBundle::Directionality> parseEnumValueFromString<Protocol::Test::ParameterBundle::Directionality>(const String& protocolString)
+template<> std::optional<Protocol::Test::ParameterBundle::Directionality> parseEnumValueFromString<Protocol::Test::ParameterBundle::Directionality>(const String& protocolString)
 {
     static const size_t constantValues[] = {
         (size_t)Protocol::Test::ParameterBundle::Directionality::LTR,
@@ -1538,7 +1534,7 @@ __attribute__((visibility ("default")))
 namespace Inspector {
 
 template<typename ObjCEnumType>
-Optional<ObjCEnumType> fromProtocolString(const String& value);
+std::optional<ObjCEnumType> fromProtocolString(const String& value);
 
 inline String toProtocolString(TestProtocolDatabaseMouseButton value)
 {
@@ -1555,7 +1551,7 @@ inline String toProtocolString(TestProtocolDatabaseMouseButton value)
 }
 
 template<>
-inline Optional<TestProtocolDatabaseMouseButton> fromProtocolString(const String& value)
+inline std::optional<TestProtocolDatabaseMouseButton> fromProtocolString(const String& value)
 {
     if (value == "None")
         return TestProtocolDatabaseMouseButtonNone;
@@ -1579,7 +1575,7 @@ inline String toProtocolString(TestProtocolDatabaseOptionalParameterBundleDirect
 }
 
 template<>
-inline Optional<TestProtocolDatabaseOptionalParameterBundleDirectionality> fromProtocolString(const String& value)
+inline std::optional<TestProtocolDatabaseOptionalParameterBundleDirectionality> fromProtocolString(const String& value)
 {
     if (value == "LTR")
         return TestProtocolDatabaseOptionalParameterBundleDirectionalityLTR;
@@ -1599,7 +1595,7 @@ inline String toProtocolString(TestProtocolDatabaseParameterBundleDirectionality
 }
 
 template<>
-inline Optional<TestProtocolDatabaseParameterBundleDirectionality> fromProtocolString(const String& value)
+inline std::optional<TestProtocolDatabaseParameterBundleDirectionality> fromProtocolString(const String& value)
 {
     if (value == "LTR")
         return TestProtocolDatabaseParameterBundleDirectionalityLTR;
@@ -1619,7 +1615,7 @@ inline String toProtocolString(TestProtocolTestParameterBundleDirectionality val
 }
 
 template<>
-inline Optional<TestProtocolTestParameterBundleDirectionality> fromProtocolString(const String& value)
+inline std::optional<TestProtocolTestParameterBundleDirectionality> fromProtocolString(const String& value)
 {
     if (value == "LTR")
         return TestProtocolTestParameterBundleDirectionalityLTR;
@@ -1704,7 +1700,7 @@ using namespace Inspector;
 + (void)_parseMouseButton:(NSNumber **)outValue fromPayload:(id)payload
 {
     THROW_EXCEPTION_FOR_BAD_TYPE(payload, [NSString class]);
-    Optional<TestProtocolDatabaseMouseButton> result = Inspector::fromProtocolString<TestProtocolDatabaseMouseButton>((__bridge CFStringRef)payload);
+    auto result = Inspector::fromProtocolString<TestProtocolDatabaseMouseButton>((__bridge CFStringRef)payload);
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(result, @"MouseButton");
     *outValue = @(result.value());
 }
@@ -1855,9 +1851,8 @@ using namespace Inspector;
 
     self.buttons = payload[@"buttons"];
 
-    Optional<TestProtocolDatabaseOptionalParameterBundleDirectionality> directionality = fromProtocolString<TestProtocolDatabaseOptionalParameterBundleDirectionality>((__bridge CFStringRef)payload[@"directionality"]);
-    if (directionality)
-        self.directionality = directionality.value();
+    if (auto directionality = fromProtocolString<TestProtocolDatabaseOptionalParameterBundleDirectionality>((__bridge CFStringRef)payload[@"directionality"]))
+        self.directionality = *directionality;
 
     self.notes = payload[@"notes"];
 
@@ -1997,9 +1992,9 @@ using namespace Inspector;
     self.buttons = payload[@"buttons"];
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"directionality"], @"directionality");
-    Optional<TestProtocolDatabaseParameterBundleDirectionality> directionality = fromProtocolString<TestProtocolDatabaseParameterBundleDirectionality>((__bridge CFStringRef)payload[@"directionality"]);
+    auto directionality = fromProtocolString<TestProtocolDatabaseParameterBundleDirectionality>((__bridge CFStringRef)payload[@"directionality"]);
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(directionality, @"directionality");
-    self.directionality = directionality.value();
+    self.directionality = *directionality;
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"notes"], @"notes");
     self.notes = payload[@"notes"];
@@ -2289,9 +2284,9 @@ using namespace Inspector;
         return nil;
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"directionality"], @"directionality");
-    Optional<TestProtocolTestParameterBundleDirectionality> directionality = fromProtocolString<TestProtocolTestParameterBundleDirectionality>((__bridge CFStringRef)payload[@"directionality"]);
+    auto directionality = fromProtocolString<TestProtocolTestParameterBundleDirectionality>((__bridge CFStringRef)payload[@"directionality"]);
     THROW_EXCEPTION_FOR_BAD_ENUM_VALUE(directionality, @"directionality");
-    self.directionality = directionality.value();
+    self.directionality = *directionality;
 
     THROW_EXCEPTION_FOR_REQUIRED_PROPERTY(payload[@"buttons"], @"buttons");
     self.buttons = payload[@"buttons"];

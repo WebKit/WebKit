@@ -686,7 +686,7 @@ TypedArrayType typedArrayTypeFromSpeculation(SpeculatedType type)
     return NotTypedArray;
 }
 
-Optional<SpeculatedType> speculationFromJSType(JSType type)
+std::optional<SpeculatedType> speculationFromJSType(JSType type)
 {
     switch (type) {
     case StringType:

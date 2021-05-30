@@ -59,7 +59,7 @@ String CachedApplicationManifest::encoding() const
     return m_decoder->encoding().name();
 }
 
-Optional<ApplicationManifest> CachedApplicationManifest::process(const URL& manifestURL, const URL& documentURL, Document* document)
+std::optional<ApplicationManifest> CachedApplicationManifest::process(const URL& manifestURL, const URL& documentURL, Document* document)
 {
     if (!m_text)
         return std::nullopt;

@@ -76,7 +76,7 @@ OpenXRSwapchain::~OpenXRSwapchain()
         xrDestroySwapchain(m_swapchain);
 }
 
-Optional<PlatformGLObject> OpenXRSwapchain::acquireImage()
+std::optional<PlatformGLObject> OpenXRSwapchain::acquireImage()
 {
     RELEASE_ASSERT_WITH_MESSAGE(!m_acquiredTexture , "Expected no acquired images. ReleaseImage not called?");
 

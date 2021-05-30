@@ -48,7 +48,7 @@ TEST(AnimationFrameRate, framesPerSecondNearestFullSpeed)
 TEST(AnimationFrameRate, preferredFrameIntervalWithUnspecifiedNominalFramesPerSecond)
 {
     OptionSet<ThrottlingReason> noThrottling;
-    Optional<FramesPerSecond> unspecifiedNominalFramesPerSecond;
+    std::optional<FramesPerSecond> unspecifiedNominalFramesPerSecond;
     
     bool preferredFramesPerSecondNear60FPS = preferredFramesPerSecondMatchNominalFrameRateSetting;
     ASSERT_EQ(preferredFrameInterval(noThrottling, unspecifiedNominalFramesPerSecond, preferredFramesPerSecondNear60FPS), FullSpeedAnimationInterval);

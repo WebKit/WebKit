@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-Optional<MediaCapabilitiesInfo> validateHEVCParameters(const HEVCParameters& parameters, bool hasAlphaChannel, bool hdrSupport)
+std::optional<MediaCapabilitiesInfo> validateHEVCParameters(const HEVCParameters& parameters, bool hasAlphaChannel, bool hdrSupport)
 {
     CMVideoCodecType codec = kCMVideoCodecType_HEVC;
     if (hasAlphaChannel) {
@@ -137,7 +137,7 @@ static CMVideoCodecType codecType(DoViParameters::Codec codec)
     }
 }
 
-static Optional<Vector<uint16_t>> parseStringArrayFromDictionaryToUInt16Vector(CFDictionaryRef dictionary, const void* key)
+static std::optional<Vector<uint16_t>> parseStringArrayFromDictionaryToUInt16Vector(CFDictionaryRef dictionary, const void* key)
 {
     auto value = CFDictionaryGetValue(dictionary, key);
     if (!value || CFGetTypeID(value) != CFArrayGetTypeID())
@@ -156,7 +156,7 @@ static Optional<Vector<uint16_t>> parseStringArrayFromDictionaryToUInt16Vector(C
     return vector;
 }
 
-Optional<MediaCapabilitiesInfo> validateDoViParameters(const DoViParameters& parameters, bool hasAlphaChannel, bool hdrSupport)
+std::optional<MediaCapabilitiesInfo> validateDoViParameters(const DoViParameters& parameters, bool hasAlphaChannel, bool hdrSupport)
 {
     if (hasAlphaChannel)
         return std::nullopt;

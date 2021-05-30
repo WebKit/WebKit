@@ -692,7 +692,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     return result;
 }
 
-Optional<ASCIILiteral> FontCache::platformAlternateFamilyName(const String& familyName)
+std::optional<ASCIILiteral> FontCache::platformAlternateFamilyName(const String& familyName)
 {
     switch (familyName.length()) {
     // On Windows, we don't support bitmap fonts, but legacy content expects support.

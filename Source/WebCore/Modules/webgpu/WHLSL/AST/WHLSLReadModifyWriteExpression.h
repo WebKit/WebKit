@@ -128,8 +128,8 @@ private:
     UniqueRef<Expression> m_leftValue;
     UniqueRef<VariableDeclaration> m_oldValue;
     UniqueRef<VariableDeclaration> m_newValue;
-    Optional<UniqueRef<Expression>> m_newValueExpression;
-    Optional<UniqueRef<Expression>> m_resultExpression;
+    std::optional<UniqueRef<Expression>> m_newValueExpression;
+    std::optional<UniqueRef<Expression>> m_resultExpression;
 };
 
 } // namespace AST

@@ -426,7 +426,7 @@ struct MarkupAndArchive {
     Ref<Archive> archive;
 };
 
-static Optional<MarkupAndArchive> extractMarkupAndArchive(SharedBuffer& buffer, const std::function<bool(const String)>& canShowMIMETypeAsHTML)
+static std::optional<MarkupAndArchive> extractMarkupAndArchive(SharedBuffer& buffer, const std::function<bool(const String)>& canShowMIMETypeAsHTML)
 {
     auto archive = LegacyWebArchive::create(URL(), buffer);
     if (!archive)
@@ -726,7 +726,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
-    Optional<uint64_t> fileSizeForDisplay;
+    std::optional<uint64_t> fileSizeForDisplay;
     if (!isDirectory)
         fileSizeForDisplay = FileSystem::fileSize(path).value_or(0);
 

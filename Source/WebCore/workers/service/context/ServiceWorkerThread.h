@@ -62,13 +62,13 @@ public:
     void willPostTaskToFireActivateEvent();
     void willPostTaskToFireMessageEvent();
 
-    void queueTaskToFireFetchEvent(Ref<ServiceWorkerFetch::Client>&&, Optional<ServiceWorkerClientIdentifier>&&, ResourceRequest&&, String&& referrer, FetchOptions&&);
+    void queueTaskToFireFetchEvent(Ref<ServiceWorkerFetch::Client>&&, std::optional<ServiceWorkerClientIdentifier>&&, ResourceRequest&&, String&& referrer, FetchOptions&&);
     void queueTaskToPostMessage(MessageWithMessagePorts&&, ServiceWorkerOrClientData&& sourceData);
     void queueTaskToFireInstallEvent();
     void queueTaskToFireActivateEvent();
 
     ServiceWorkerIdentifier identifier() const { return m_serviceWorkerIdentifier; }
-    Optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier() const { return m_jobDataIdentifier; }
+    std::optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier() const { return m_jobDataIdentifier; }
     bool doesHandleFetch() const { return m_doesHandleFetch; }
 
     void startFetchEventMonitoring();
@@ -94,8 +94,8 @@ private:
     void installEventTimerFired();
 
     ServiceWorkerIdentifier m_serviceWorkerIdentifier;
-    Optional<ServiceWorkerJobDataIdentifier> m_jobDataIdentifier;
-    Optional<ServiceWorkerContextData> m_data; // Becomes std::nullopt after the ServiceWorkerGlobalScope has been created.
+    std::optional<ServiceWorkerJobDataIdentifier> m_jobDataIdentifier;
+    std::optional<ServiceWorkerContextData> m_data; // Becomes std::nullopt after the ServiceWorkerGlobalScope has been created.
     WorkerObjectProxy& m_workerObjectProxy;
     bool m_doesHandleFetch { false };
 

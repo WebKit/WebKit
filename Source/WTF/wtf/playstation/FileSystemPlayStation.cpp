@@ -44,7 +44,7 @@ namespace WTF {
 namespace FileSystemImpl {
 
 enum class ShouldFollowSymbolicLinks { No, Yes };
-static Optional<FileType> fileTypePotentiallyFollowingSymLinks(const String& path, ShouldFollowSymbolicLinks shouldFollowSymbolicLinks)
+static std::optional<FileType> fileTypePotentiallyFollowingSymLinks(const String& path, ShouldFollowSymbolicLinks shouldFollowSymbolicLinks)
 {
     CString fsRep = fileSystemRepresentation(path);
 
@@ -117,7 +117,7 @@ bool moveFile(const String& oldPath, const String& newPath)
     return rename(oldFilename.data(), newFilename.data()) != -1;
 }
 
-Optional<uint64_t> fileSize(const String& path)
+std::optional<uint64_t> fileSize(const String& path)
 {
     CString fsRep = fileSystemRepresentation(path);
 
@@ -161,7 +161,7 @@ bool makeAllDirectories(const String& path)
     return true;
 }
 
-Optional<uint64_t> volumeFreeSpace(const String& path)
+std::optional<uint64_t> volumeFreeSpace(const String& path)
 {
     struct statvfs fileSystemStat;
     if (!statvfs(fileSystemRepresentation(path).data(), &fileSystemStat))
@@ -229,7 +229,7 @@ bool hardLinkOrCopyFile(const String& source, const String& destination)
     return appendResult;
 }
 
-Optional<uint64_t> hardLinkCount(const String& path)
+std::optional<uint64_t> hardLinkCount(const String& path)
 {
     auto linkPath = fileSystemRepresentation(path);
     struct stat stat;
@@ -252,7 +252,7 @@ bool deleteNonEmptyDirectory(const String& path)
     return deleteEmptyDirectory(path);
 }
 
-Optional<WallTime> fileModificationTime(const String& path)
+std::optional<WallTime> fileModificationTime(const String& path)
 {
     CString fsRep = fileSystemRepresentation(path);
 
@@ -285,12 +285,12 @@ bool isHiddenFile(const String& path)
     return !filename.isEmpty() && filename[0] == '.';
 }
 
-Optional<FileType> fileType(const String& path)
+std::optional<FileType> fileType(const String& path)
 {
     return fileTypePotentiallyFollowingSymLinks(path, ShouldFollowSymbolicLinks::No);
 }
 
-Optional<FileType> fileTypeFollowingSymlinks(const String& path)
+std::optional<FileType> fileTypeFollowingSymlinks(const String& path)
 {
     return fileTypePotentiallyFollowingSymLinks(path, ShouldFollowSymbolicLinks::Yes);
 }

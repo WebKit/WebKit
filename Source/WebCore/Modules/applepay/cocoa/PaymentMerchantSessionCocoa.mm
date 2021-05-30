@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-Optional<PaymentMerchantSession> PaymentMerchantSession::fromJS(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, String&)
+std::optional<PaymentMerchantSession> PaymentMerchantSession::fromJS(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value, String&)
 {
     // FIXME: Don't round-trip using NSString.
     auto jsonString = JSONStringify(&lexicalGlobalObject, value, 0);

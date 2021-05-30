@@ -136,7 +136,7 @@ void MathMLOperatorElement::computeOperatorFlag(MathMLOperatorDictionary::Flag f
 {
     ASSERT(m_properties.dirtyFlags & flag);
 
-    Optional<BooleanValue> property;
+    std::optional<BooleanValue> property;
     const auto& name = propertyFlagToAttributeName(flag);
     const BooleanValue& value = cachedBooleanAttribute(name, property);
     switch (value) {
@@ -209,7 +209,7 @@ void MathMLOperatorElement::childrenChanged(const ChildChange& change)
     MathMLTokenElement::childrenChanged(change);
 }
 
-static Optional<MathMLOperatorDictionary::Flag> attributeNameToPropertyFlag(const QualifiedName& name)
+static std::optional<MathMLOperatorDictionary::Flag> attributeNameToPropertyFlag(const QualifiedName& name)
 {
     if (name == accentAttr)
         return Accent;

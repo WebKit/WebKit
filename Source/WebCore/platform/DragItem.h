@@ -41,7 +41,7 @@ struct DragItem final {
     // Where the image should be positioned relative to the cursor.
     FloatPoint imageAnchorPoint;
 
-    Optional<DragSourceAction> sourceAction;
+    std::optional<DragSourceAction> sourceAction;
     IntPoint eventPositionInContentCoordinates;
     IntPoint dragLocationInContentCoordinates;
     IntPoint dragLocationInWindowCoordinates;
@@ -97,7 +97,7 @@ bool DragItem::decode(Decoder& decoder, DragItem& result)
     if (!decoder.decode(hasIndicatorData))
         return false;
     if (hasIndicatorData) {
-        Optional<TextIndicatorData> indicatorData;
+        std::optional<TextIndicatorData> indicatorData;
         decoder >> indicatorData;
         if (!indicatorData)
             return false;
@@ -107,7 +107,7 @@ bool DragItem::decode(Decoder& decoder, DragItem& result)
     if (!decoder.decode(hasVisiblePath))
         return false;
     if (hasVisiblePath) {
-        Optional<Path> visiblePath;
+        std::optional<Path> visiblePath;
         decoder >> visiblePath;
         if (!visiblePath)
             return false;

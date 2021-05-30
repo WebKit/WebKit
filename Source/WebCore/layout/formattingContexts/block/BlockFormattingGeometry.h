@@ -50,7 +50,7 @@ public:
 
     IntrinsicWidthConstraints intrinsicWidthConstraints(const Box&) const;
 
-    ContentWidthAndMargin computedContentWidthAndMargin(const Box&, const HorizontalConstraints&, Optional<LayoutUnit> availableWidthFloatAvoider) const;
+    ContentWidthAndMargin computedContentWidthAndMargin(const Box&, const HorizontalConstraints&, std::optional<LayoutUnit> availableWidthFloatAvoider) const;
 
 private:
     ContentHeightAndMargin inFlowNonReplacedContentHeightAndMargin(const Box&, const HorizontalConstraints&, const OverriddenVerticalValues&) const;

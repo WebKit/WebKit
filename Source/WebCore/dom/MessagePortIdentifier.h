@@ -39,7 +39,7 @@ struct MessagePortIdentifier {
     unsigned hash() const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<MessagePortIdentifier> decode(Decoder&);
+    template<class Decoder> static std::optional<MessagePortIdentifier> decode(Decoder&);
 
 #if !LOG_DISABLED
     String logString() const;
@@ -58,14 +58,14 @@ void MessagePortIdentifier::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<MessagePortIdentifier> MessagePortIdentifier::decode(Decoder& decoder)
+std::optional<MessagePortIdentifier> MessagePortIdentifier::decode(Decoder& decoder)
 {
-    Optional<ProcessIdentifier> processIdentifier;
+    std::optional<ProcessIdentifier> processIdentifier;
     decoder >> processIdentifier;
     if (!processIdentifier)
         return std::nullopt;
 
-    Optional<ObjectIdentifier<PortIdentifierType>> portIdentifier;
+    std::optional<ObjectIdentifier<PortIdentifierType>> portIdentifier;
     decoder >> portIdentifier;
     if (!portIdentifier)
         return std::nullopt;

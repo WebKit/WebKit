@@ -166,7 +166,7 @@ FontCache::FontCache()
 
 FontCache::~FontCache() = default;
 
-Optional<ASCIILiteral> FontCache::alternateFamilyName(const String& familyName)
+std::optional<ASCIILiteral> FontCache::alternateFamilyName(const String& familyName)
 {
     if (auto platformSpecificAlternate = platformAlternateFamilyName(familyName))
         return platformSpecificAlternate;

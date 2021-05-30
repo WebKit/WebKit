@@ -103,7 +103,7 @@ public:
     bool initialCapitalizationEnabled() { return m_initialCapitalizationEnabled; }
     void setInitialCapitalizationEnabled(bool initialCapitalizationEnabled) { m_initialCapitalizationEnabled = initialCapitalizationEnabled; }
 
-    Optional<double> cpuLimit() const { return m_cpuLimit; }
+    std::optional<double> cpuLimit() const { return m_cpuLimit; }
     void setCPULimit(double cpuLimit) { m_cpuLimit = cpuLimit; }
 
     bool waitsForPaintAfterViewDidMoveToWindow() const { return m_waitsForPaintAfterViewDidMoveToWindow; }
@@ -147,8 +147,8 @@ public:
     bool loadsSubresources() const { return m_loadsSubresources; }
     void setLoadsSubresources(bool loads) { m_loadsSubresources = loads; }
 
-    const Optional<HashSet<WTF::String>>& allowedNetworkHosts() const { return m_allowedNetworkHosts; }
-    void setAllowedNetworkHosts(Optional<HashSet<WTF::String>>&& hosts) { m_allowedNetworkHosts = WTFMove(hosts); }
+    const std::optional<HashSet<WTF::String>>& allowedNetworkHosts() const { return m_allowedNetworkHosts; }
+    void setAllowedNetworkHosts(std::optional<HashSet<WTF::String>>&& hosts) { m_allowedNetworkHosts = WTFMove(hosts); }
 
 #if ENABLE(APP_BOUND_DOMAINS)
     bool ignoresAppBoundDomains() const { return m_ignoresAppBoundDomains; }
@@ -188,7 +188,7 @@ private:
     bool m_waitsForPaintAfterViewDidMoveToWindow { true };
     bool m_drawsBackground { true };
     bool m_controlledByAutomation { false };
-    Optional<double> m_cpuLimit;
+    std::optional<double> m_cpuLimit;
 
     WTF::String m_overrideContentSecurityPolicy;
 
@@ -206,7 +206,7 @@ private:
     bool m_crossOriginAccessControlCheckEnabled { true };
     WTF::String m_processDisplayName;
     bool m_loadsSubresources { true };
-    Optional<HashSet<WTF::String>> m_allowedNetworkHosts;
+    std::optional<HashSet<WTF::String>> m_allowedNetworkHosts;
     
 #if ENABLE(APP_BOUND_DOMAINS)
     bool m_ignoresAppBoundDomains { false };

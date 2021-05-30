@@ -112,6 +112,7 @@ my %renames = (
     "WTF::Optional" => "std::optional",
     "WTF::makeOptional" => "std::make_optional",
     "makeOptional" => "std::make_optional",
+    "Optional<" => "std::optional<",
 );
 
 my %renamesContemplatedForTheFuture = (

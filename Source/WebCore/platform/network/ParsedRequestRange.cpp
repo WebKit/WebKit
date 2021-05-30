@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-Optional<ParsedRequestRange> ParsedRequestRange::parse(StringView input)
+std::optional<ParsedRequestRange> ParsedRequestRange::parse(StringView input)
 {
     // https://tools.ietf.org/html/rfc7233#section-2.1 but assuming there will always be a begin and an end or parsing will fail
     if (!input.startsWith(StringView("bytes="_s)))

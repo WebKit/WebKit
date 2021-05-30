@@ -40,7 +40,7 @@ struct NetworkTransactionInformation {
     NetworkLoadMetrics metrics;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<NetworkTransactionInformation> decode(Decoder&);
+    template<class Decoder> static std::optional<NetworkTransactionInformation> decode(Decoder&);
 };
 
 struct NetworkLoadInformation {
@@ -59,7 +59,7 @@ template<class Encoder> inline void NetworkTransactionInformation::encode(Encode
     encoder << metrics;
 }
 
-template<class Decoder> inline Optional<NetworkTransactionInformation> NetworkTransactionInformation::decode(Decoder& decoder)
+template<class Decoder> inline std::optional<NetworkTransactionInformation> NetworkTransactionInformation::decode(Decoder& decoder)
 {
     NetworkTransactionInformation information;
 

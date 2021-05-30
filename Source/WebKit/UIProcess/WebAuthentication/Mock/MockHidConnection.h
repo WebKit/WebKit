@@ -63,7 +63,7 @@ private:
     void continueFeedReports();
 
     WebCore::MockWebAuthenticationConfiguration m_configuration;
-    Optional<fido::FidoHidMessage> m_requestMessage;
+    std::optional<fido::FidoHidMessage> m_requestMessage;
     WebCore::MockWebAuthenticationConfiguration::HidStage m_stage { WebCore::MockWebAuthenticationConfiguration::HidStage::Info };
     WebCore::MockWebAuthenticationConfiguration::HidSubStage m_subStage { WebCore::MockWebAuthenticationConfiguration::HidSubStage::Init };
     uint32_t m_currentChannel { fido::kHidBroadcastChannel };

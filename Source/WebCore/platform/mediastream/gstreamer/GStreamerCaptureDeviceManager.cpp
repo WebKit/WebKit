@@ -75,7 +75,7 @@ GStreamerCaptureDeviceManager::~GStreamerCaptureDeviceManager()
         gst_device_monitor_stop(m_deviceMonitor.get());
 }
 
-Optional<GStreamerCaptureDevice> GStreamerCaptureDeviceManager::gstreamerDeviceWithUID(const String& deviceID)
+std::optional<GStreamerCaptureDevice> GStreamerCaptureDeviceManager::gstreamerDeviceWithUID(const String& deviceID)
 {
     captureDevices();
 

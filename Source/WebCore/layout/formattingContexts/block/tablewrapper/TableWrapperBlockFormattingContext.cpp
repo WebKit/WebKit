@@ -221,7 +221,7 @@ void TableWrapperBlockFormattingContext::computeHeightAndMarginForTableBox(const
     ASSERT(tableBox.isTableBox());
     // Table is a special BFC content. Its height is mainly driven by the content. Computed height, min-height and max-height are all
     // already been taken into account during the TFC layout.
-    auto overriddenTableHeight = [&]() -> Optional<LayoutUnit> {
+    auto overriddenTableHeight = [&]() -> std::optional<LayoutUnit> {
         if (layoutState().inQuirksMode())
             return formattingQuirks().overriddenTableHeight(tableBox);
         if (tableBox.hasInFlowOrFloatingChild())

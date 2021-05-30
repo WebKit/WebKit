@@ -42,7 +42,7 @@ void RemoteScrollingUIState::encode(IPC::Encoder& encoder) const
         encoder << m_nodesWithActiveUserScrolls;
 }
 
-Optional<RemoteScrollingUIState> RemoteScrollingUIState::decode(IPC::Decoder& decoder)
+std::optional<RemoteScrollingUIState> RemoteScrollingUIState::decode(IPC::Decoder& decoder)
 {
     RemoteScrollingUIState uiState;
 

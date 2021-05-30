@@ -58,9 +58,9 @@ public:
     bool removeClient(DisplayRefreshMonitorClient&);
 
     void clientPreferredFramesPerSecondChanged(DisplayRefreshMonitorClient&);
-    Optional<FramesPerSecond> maxClientPreferredFramesPerSecond() const { return m_maxClientPreferredFramesPerSecond; }
+    std::optional<FramesPerSecond> maxClientPreferredFramesPerSecond() const { return m_maxClientPreferredFramesPerSecond; }
 
-    virtual Optional<FramesPerSecond> displayNominalFramesPerSecond() { return std::nullopt; }
+    virtual std::optional<FramesPerSecond> displayNominalFramesPerSecond() { return std::nullopt; }
 
     PlatformDisplayID displayID() const { return m_displayID; }
 
@@ -92,14 +92,14 @@ private:
 
     virtual void adjustPreferredFramesPerSecond(FramesPerSecond) { }
 
-    Optional<FramesPerSecond> maximumClientPreferredFramesPerSecond() const;
+    std::optional<FramesPerSecond> maximumClientPreferredFramesPerSecond() const;
     void computeMaxPreferredFramesPerSecond();
 
     HashSet<DisplayRefreshMonitorClient*> m_clients;
     HashSet<DisplayRefreshMonitorClient*>* m_clientsToBeNotified { nullptr };
 
     PlatformDisplayID m_displayID { 0 };
-    Optional<FramesPerSecond> m_maxClientPreferredFramesPerSecond;
+    std::optional<FramesPerSecond> m_maxClientPreferredFramesPerSecond;
 
     Lock m_lock;
     bool m_scheduled { false };

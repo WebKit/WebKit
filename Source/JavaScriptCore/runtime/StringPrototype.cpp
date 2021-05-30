@@ -761,7 +761,7 @@ static ALWAYS_INLINE JSString* replaceUsingStringSearch(VM& vm, JSGlobalObject* 
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     auto callData = getCallData(vm, replaceValue);
-    Optional<CachedCall> cachedCall;
+    std::optional<CachedCall> cachedCall;
     String replaceString;
     if (callData.type == CallData::Type::None) {
         replaceString = replaceValue.toWTFString(globalObject);

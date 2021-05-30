@@ -233,7 +233,7 @@ static void generateWithAlreadyAllocatedRegisters(Code& code, CCallHelpers& jit)
         if (disassembler)
             disassembler->startBlock(block, jit); 
 
-        if (Optional<unsigned> entrypointIndex = code.entrypointIndex(block)) {
+        if (std::optional<unsigned> entrypointIndex = code.entrypointIndex(block)) {
             ASSERT(code.isEntrypoint(block));
 
             if (disassembler)

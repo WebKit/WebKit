@@ -129,7 +129,7 @@ private:
 #endif
     CachedResource* m_resource;
     SubresourceLoaderState m_state;
-    Optional<RequestCountTracker> m_requestCountTracker;
+    std::optional<RequestCountTracker> m_requestCountTracker;
     RefPtr<SecurityOrigin> m_origin;
     CompletionHandler<void()> m_policyForResponseCompletionHandler;
     unsigned m_redirectCount { 0 };

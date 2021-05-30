@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-static Optional<std::pair<ChangeListTypeCommand::Type, Ref<HTMLElement>>> listConversionTypeForSelection(const VisibleSelection& selection)
+static std::optional<std::pair<ChangeListTypeCommand::Type, Ref<HTMLElement>>> listConversionTypeForSelection(const VisibleSelection& selection)
 {
     auto startNode = selection.start().containerNode();
     auto endNode = selection.end().containerNode();
@@ -61,7 +61,7 @@ static Optional<std::pair<ChangeListTypeCommand::Type, Ref<HTMLElement>>> listCo
     return std::nullopt;
 }
 
-Optional<ChangeListTypeCommand::Type> ChangeListTypeCommand::listConversionType(Document& document)
+std::optional<ChangeListTypeCommand::Type> ChangeListTypeCommand::listConversionType(Document& document)
 {
     if (auto frame = makeRefPtr(document.frame())) {
         if (auto typeAndElement = listConversionTypeForSelection(frame->selection().selection()))

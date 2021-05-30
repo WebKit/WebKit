@@ -176,7 +176,7 @@ String base64EncodeToString(const void* inputDataBuffer, unsigned inputLength, B
     return makeString(base64Encoded(inputDataBuffer, inputLength, policy, map));
 }
 
-template<typename T> static Optional<Vector<uint8_t>> base64DecodeInternal(const T* inputDataBuffer, unsigned inputLength, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
+template<typename T> static std::optional<Vector<uint8_t>> base64DecodeInternal(const T* inputDataBuffer, unsigned inputLength, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
 {
     if (!inputLength)
         return Vector<uint8_t> { };
@@ -255,7 +255,7 @@ template<typename T> static Optional<Vector<uint8_t>> base64DecodeInternal(const
     return destination;
 }
 
-Optional<Vector<uint8_t>> base64Decode(const String& input, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
+std::optional<Vector<uint8_t>> base64Decode(const String& input, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
 {
     unsigned length = input.length();
     if (!length || input.is8Bit())
@@ -263,7 +263,7 @@ Optional<Vector<uint8_t>> base64Decode(const String& input, OptionSet<Base64Deco
     return base64DecodeInternal(input.characters16(), length, options, map);
 }
 
-Optional<Vector<uint8_t>> base64Decode(StringView input, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
+std::optional<Vector<uint8_t>> base64Decode(StringView input, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
 {
     unsigned length = input.length();
     if (!length || input.is8Bit())
@@ -271,31 +271,31 @@ Optional<Vector<uint8_t>> base64Decode(StringView input, OptionSet<Base64DecodeO
     return base64DecodeInternal(input.characters16(), length, options, map);
 }
 
-Optional<Vector<uint8_t>> base64Decode(const Vector<uint8_t>& input, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
+std::optional<Vector<uint8_t>> base64Decode(const Vector<uint8_t>& input, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
 {
     if (input.size() > std::numeric_limits<unsigned>::max())
         return std::nullopt;
     return base64DecodeInternal(input.data(), input.size(), options, map);
 }
 
-Optional<Vector<uint8_t>> base64Decode(const Vector<char>& input, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
+std::optional<Vector<uint8_t>> base64Decode(const Vector<char>& input, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
 {
     if (input.size() > std::numeric_limits<unsigned>::max())
         return std::nullopt;
     return base64DecodeInternal(reinterpret_cast<const uint8_t*>(input.data()), input.size(), options, map);
 }
 
-Optional<Vector<uint8_t>> base64Decode(const uint8_t* data, unsigned length, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
+std::optional<Vector<uint8_t>> base64Decode(const uint8_t* data, unsigned length, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
 {
     return base64DecodeInternal(data, length, options, map);
 }
 
-Optional<Vector<uint8_t>> base64Decode(const char* data, unsigned length, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
+std::optional<Vector<uint8_t>> base64Decode(const char* data, unsigned length, OptionSet<Base64DecodeOptions> options, Base64DecodeMap map)
 {
     return base64DecodeInternal(reinterpret_cast<const LChar*>(data), length, options, map);
 }
 
-Optional<Vector<uint8_t>> base64URLDecode(const String& input)
+std::optional<Vector<uint8_t>> base64URLDecode(const String& input)
 {
     unsigned length = input.length();
     if (!length || input.is8Bit())
@@ -303,7 +303,7 @@ Optional<Vector<uint8_t>> base64URLDecode(const String& input)
     return base64DecodeInternal(input.characters16(), length, { }, Base64DecodeMap::URL);
 }
 
-Optional<Vector<uint8_t>> base64URLDecode(StringView input)
+std::optional<Vector<uint8_t>> base64URLDecode(StringView input)
 {
     unsigned length = input.length();
     if (!length || input.is8Bit())
@@ -311,26 +311,26 @@ Optional<Vector<uint8_t>> base64URLDecode(StringView input)
     return base64DecodeInternal(input.characters16(), length, { }, Base64DecodeMap::URL);
 }
 
-Optional<Vector<uint8_t>> base64URLDecode(const Vector<uint8_t>& input)
+std::optional<Vector<uint8_t>> base64URLDecode(const Vector<uint8_t>& input)
 {
     if (input.size() > std::numeric_limits<unsigned>::max())
         return std::nullopt;
     return base64DecodeInternal(input.data(), input.size(), { }, Base64DecodeMap::URL);
 }
 
-Optional<Vector<uint8_t>> base64URLDecode(const Vector<char>& input)
+std::optional<Vector<uint8_t>> base64URLDecode(const Vector<char>& input)
 {
     if (input.size() > std::numeric_limits<unsigned>::max())
         return std::nullopt;
     return base64DecodeInternal(reinterpret_cast<const uint8_t*>(input.data()), input.size(), { }, Base64DecodeMap::URL);
 }
 
-Optional<Vector<uint8_t>> base64URLDecode(const uint8_t* data, unsigned length)
+std::optional<Vector<uint8_t>> base64URLDecode(const uint8_t* data, unsigned length)
 {
     return base64DecodeInternal(data, length, { }, Base64DecodeMap::URL);
 }
 
-Optional<Vector<uint8_t>> base64URLDecode(const char* data, unsigned length)
+std::optional<Vector<uint8_t>> base64URLDecode(const char* data, unsigned length)
 {
     return base64DecodeInternal(reinterpret_cast<const uint8_t*>(data), length, { }, Base64DecodeMap::URL);
 }

@@ -71,7 +71,7 @@ static OptionSet<DocumentMarker::MarkerType> relevantMarkerTypes()
     return { DocumentMarker::PlatformTextChecking, DocumentMarker::Spelling, DocumentMarker::Grammar };
 }
 
-Optional<TextCheckingControllerProxy::RangeAndOffset> TextCheckingControllerProxy::rangeAndOffsetRelativeToSelection(int64_t offset, uint64_t length)
+std::optional<TextCheckingControllerProxy::RangeAndOffset> TextCheckingControllerProxy::rangeAndOffsetRelativeToSelection(int64_t offset, uint64_t length)
 {
     auto& frameSelection = m_page.corePage()->focusController().focusedOrMainFrame().selection();
     auto& selection = frameSelection.selection();

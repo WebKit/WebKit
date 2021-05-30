@@ -106,8 +106,8 @@ private:
     void applyAutocorrection(JSStringRef newString, JSStringRef oldString, JSValueRef) override;
     double minimumZoomScale() const override;
     double maximumZoomScale() const override;
-    Optional<bool> stableStateOverride() const override;
-    void setStableStateOverride(Optional<bool> overrideValue) override;
+    std::optional<bool> stableStateOverride() const override;
+    void setStableStateOverride(std::optional<bool> overrideValue) override;
     JSObjectRef contentVisibleRect() const override;
     JSObjectRef textSelectionRangeRects() const override;
     JSObjectRef textSelectionCaretRect() const override;

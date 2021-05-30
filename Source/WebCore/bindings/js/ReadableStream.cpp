@@ -61,7 +61,7 @@ ExceptionOr<Ref<ReadableStream>> ReadableStream::create(JSC::JSGlobalObject& lex
     return create(globalObject, *jsCast<JSReadableStream*>(object));
 }
 
-static inline Optional<JSC::JSValue> invokeReadableStreamFunction(JSC::JSGlobalObject& lexicalGlobalObject, const JSC::Identifier& identifier, JSC::JSValue thisValue, const JSC::MarkedArgumentBuffer& arguments)
+static inline std::optional<JSC::JSValue> invokeReadableStreamFunction(JSC::JSGlobalObject& lexicalGlobalObject, const JSC::Identifier& identifier, JSC::JSValue thisValue, const JSC::MarkedArgumentBuffer& arguments)
 {
     JSC::VM& vm = lexicalGlobalObject.vm();
     JSC::JSLockHolder lock(vm);
@@ -91,7 +91,7 @@ void ReadableStream::pipeTo(ReadableStreamSink& sink)
     invokeReadableStreamFunction(lexicalGlobalObject, privateName, JSC::jsUndefined(), arguments);
 }
 
-Optional<std::pair<Ref<ReadableStream>, Ref<ReadableStream>>> ReadableStream::tee()
+std::optional<std::pair<Ref<ReadableStream>, Ref<ReadableStream>>> ReadableStream::tee()
 {
     auto& lexicalGlobalObject = *m_globalObject;
     auto* clientData = static_cast<JSVMClientData*>(lexicalGlobalObject.vm().clientData);

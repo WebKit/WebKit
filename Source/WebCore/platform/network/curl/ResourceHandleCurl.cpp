@@ -325,7 +325,7 @@ void ResourceHandle::receivedChallengeRejection(const AuthenticationChallenge&)
     ASSERT_NOT_REACHED();
 }
 
-Optional<Credential> ResourceHandle::getCredential(const ResourceRequest& request, bool redirect)
+std::optional<Credential> ResourceHandle::getCredential(const ResourceRequest& request, bool redirect)
 {
     // m_user/m_pass are credentials given manually, for instance, by the arguments passed to XMLHttpRequest.open().
     Credential credential { d->m_user, d->m_password, CredentialPersistenceNone };

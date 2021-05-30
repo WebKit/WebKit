@@ -81,7 +81,7 @@ static bool isExtensionParameter(LinkHeader::LinkParameterName name)
 // <cat.jpg>; rel=preload
 //          ^            ^
 //          position     end
-template<typename CharacterType> static Optional<String> findURLBoundaries(StringParsingBuffer<CharacterType>& buffer)
+template<typename CharacterType> static std::optional<String> findURLBoundaries(StringParsingBuffer<CharacterType>& buffer)
 {
     skipWhile<isSpaceOrTab>(buffer);
     if (!skipExactly(buffer, '<'))
@@ -171,7 +171,7 @@ static LinkHeader::LinkParameterName paramterNameFromString(StringView name)
 // <cat.jpg>; rel=preload
 //                ^      ^
 //            position  end
-template<typename CharacterType> static Optional<LinkHeader::LinkParameterName> parseParameterName(StringParsingBuffer<CharacterType>& buffer)
+template<typename CharacterType> static std::optional<LinkHeader::LinkParameterName> parseParameterName(StringParsingBuffer<CharacterType>& buffer)
 {
     auto nameStart = buffer.position();
     skipWhile<isValidParameterNameChar>(buffer);

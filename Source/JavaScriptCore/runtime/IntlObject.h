@@ -102,7 +102,7 @@ Vector<char, 32> localeIDBufferForLanguageTagWithNullTerminator(const CString&);
 String languageTagForLocaleID(const char*, bool isImmortal = false);
 Vector<String> canonicalizeLocaleList(JSGlobalObject*, JSValue locales);
 
-using ResolveLocaleOptions = std::array<Optional<String>, numberOfRelevantExtensionKeys>;
+using ResolveLocaleOptions = std::array<std::optional<String>, numberOfRelevantExtensionKeys>;
 using RelevantExtensions = std::array<String, numberOfRelevantExtensionKeys>;
 struct ResolvedLocale {
     String locale;
@@ -130,7 +130,7 @@ bool isStructurallyValidLanguageTag(StringView);
 
 bool isWellFormedCurrencyCode(StringView);
 
-Optional<Vector<char, 32>> canonicalizeLocaleIDWithoutNullTerminator(const char* localeID);
+std::optional<Vector<char, 32>> canonicalizeLocaleIDWithoutNullTerminator(const char* localeID);
 
 struct UFieldPositionIteratorDeleter {
     void operator()(UFieldPositionIterator*) const;

@@ -26,19 +26,19 @@
 
 messages -> RemoteMediaSessionCoordinatorProxy NotRefCounted {
 
-    Join() -> (Optional<WebCore::ExceptionData> error) Async
+    Join() -> (std::optional<WebCore::ExceptionData> error) Async
 
     Leave()
 
-    CoordinateSeekTo(double time) -> (Optional<WebCore::ExceptionData> error) Async
+    CoordinateSeekTo(double time) -> (std::optional<WebCore::ExceptionData> error) Async
 
-    CoordinatePlay() -> (Optional<WebCore::ExceptionData> error) Async
+    CoordinatePlay() -> (std::optional<WebCore::ExceptionData> error) Async
 
-    CoordinatePause() -> (Optional<WebCore::ExceptionData> error) Async
+    CoordinatePause() -> (std::optional<WebCore::ExceptionData> error) Async
 
-    CoordinateSetTrack(String trackIdentifier) -> (Optional<WebCore::ExceptionData> error) Async
+    CoordinateSetTrack(String trackIdentifier) -> (std::optional<WebCore::ExceptionData> error) Async
 
-    PositionStateChanged(Optional<WebCore::MediaPositionState> state);
+    PositionStateChanged(std::optional<WebCore::MediaPositionState> state);
 
     ReadyStateChanged(enum:uint8_t WebCore::MediaSessionReadyState state);
 

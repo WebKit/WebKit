@@ -111,7 +111,7 @@ static String processAppIdExtension(const SecurityOrigin& facetId, const String&
 }
 
 // The default behaviour for google.com is to always turn on the legacy AppID support.
-static bool processGoogleLegacyAppIdSupportExtension(const Optional<AuthenticationExtensionsClientInputs>& extensions, const String& rpId)
+static bool processGoogleLegacyAppIdSupportExtension(const std::optional<AuthenticationExtensionsClientInputs>& extensions, const String& rpId)
 {
     if (rpId != "google.com"_s)
         return false;

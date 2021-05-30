@@ -35,12 +35,12 @@ namespace IPC {
 
 template<> struct ArgumentCoder<GRefPtr<GVariant>> {
     static void encode(Encoder&, GRefPtr<GVariant>);
-    static Optional<GRefPtr<GVariant>> decode(Decoder&);
+    static std::optional<GRefPtr<GVariant>> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<GRefPtr<GTlsCertificate>> {
     static void encode(Encoder&, GRefPtr<GTlsCertificate>);
-    static Optional<GRefPtr<GTlsCertificate>> decode(Decoder&);
+    static std::optional<GRefPtr<GTlsCertificate>> decode(Decoder&);
 };
 
 } // namespace IPC

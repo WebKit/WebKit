@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-Optional<const char*> hashAlgorithmName(CryptoAlgorithmIdentifier identifier)
+std::optional<const char*> hashAlgorithmName(CryptoAlgorithmIdentifier identifier)
 {
     switch (identifier) {
     case CryptoAlgorithmIdentifier::SHA_1:
@@ -50,7 +50,7 @@ Optional<const char*> hashAlgorithmName(CryptoAlgorithmIdentifier identifier)
     }
 }
 
-Optional<int> hmacAlgorithm(CryptoAlgorithmIdentifier identifier)
+std::optional<int> hmacAlgorithm(CryptoAlgorithmIdentifier identifier)
 {
     switch (identifier) {
     case CryptoAlgorithmIdentifier::SHA_1:
@@ -68,7 +68,7 @@ Optional<int> hmacAlgorithm(CryptoAlgorithmIdentifier identifier)
     }
 }
 
-Optional<int> digestAlgorithm(CryptoAlgorithmIdentifier identifier)
+std::optional<int> digestAlgorithm(CryptoAlgorithmIdentifier identifier)
 {
     switch (identifier) {
     case CryptoAlgorithmIdentifier::SHA_1:
@@ -86,7 +86,7 @@ Optional<int> digestAlgorithm(CryptoAlgorithmIdentifier identifier)
     }
 }
 
-Optional<PAL::CryptoDigest::Algorithm> hashCryptoDigestAlgorithm(CryptoAlgorithmIdentifier identifier)
+std::optional<PAL::CryptoDigest::Algorithm> hashCryptoDigestAlgorithm(CryptoAlgorithmIdentifier identifier)
 {
     switch (identifier) {
     case CryptoAlgorithmIdentifier::SHA_1:
@@ -104,7 +104,7 @@ Optional<PAL::CryptoDigest::Algorithm> hashCryptoDigestAlgorithm(CryptoAlgorithm
     }
 }
 
-Optional<size_t> mpiLength(gcry_mpi_t paramMPI)
+std::optional<size_t> mpiLength(gcry_mpi_t paramMPI)
 {
     // Retrieve the MPI length for the unsigned format.
     size_t dataLength = 0;
@@ -117,7 +117,7 @@ Optional<size_t> mpiLength(gcry_mpi_t paramMPI)
     return dataLength;
 }
 
-Optional<size_t> mpiLength(gcry_sexp_t paramSexp)
+std::optional<size_t> mpiLength(gcry_sexp_t paramSexp)
 {
     // Retrieve the MPI value stored in the s-expression: (name mpi-data)
     PAL::GCrypt::Handle<gcry_mpi_t> paramMPI(gcry_sexp_nth_mpi(paramSexp, 1, GCRYMPI_FMT_USG));
@@ -127,7 +127,7 @@ Optional<size_t> mpiLength(gcry_sexp_t paramSexp)
     return mpiLength(paramMPI);
 }
 
-Optional<Vector<uint8_t>> mpiData(gcry_mpi_t paramMPI)
+std::optional<Vector<uint8_t>> mpiData(gcry_mpi_t paramMPI)
 {
     // Retrieve the MPI length.
     auto length = mpiLength(paramMPI);
@@ -145,7 +145,7 @@ Optional<Vector<uint8_t>> mpiData(gcry_mpi_t paramMPI)
     return output;
 }
 
-Optional<Vector<uint8_t>> mpiZeroPrefixedData(gcry_mpi_t paramMPI, size_t targetLength)
+std::optional<Vector<uint8_t>> mpiZeroPrefixedData(gcry_mpi_t paramMPI, size_t targetLength)
 {
     // Retrieve the MPI length. Bail if the retrieved length is longer than target length.
     auto length = mpiLength(paramMPI);
@@ -165,7 +165,7 @@ Optional<Vector<uint8_t>> mpiZeroPrefixedData(gcry_mpi_t paramMPI, size_t target
     return output;
 }
 
-Optional<Vector<uint8_t>> mpiData(gcry_sexp_t paramSexp)
+std::optional<Vector<uint8_t>> mpiData(gcry_sexp_t paramSexp)
 {
     // Retrieve the MPI value stored in the s-expression: (name mpi-data)
     PAL::GCrypt::Handle<gcry_mpi_t> paramMPI(gcry_sexp_nth_mpi(paramSexp, 1, GCRYMPI_FMT_USG));
@@ -175,7 +175,7 @@ Optional<Vector<uint8_t>> mpiData(gcry_sexp_t paramSexp)
     return mpiData(paramMPI);
 }
 
-Optional<Vector<uint8_t>> mpiZeroPrefixedData(gcry_sexp_t paramSexp, size_t targetLength)
+std::optional<Vector<uint8_t>> mpiZeroPrefixedData(gcry_sexp_t paramSexp, size_t targetLength)
 {
     // Retrieve the MPI value stored in the s-expression: (name mpi-data)
     PAL::GCrypt::Handle<gcry_mpi_t> paramMPI(gcry_sexp_nth_mpi(paramSexp, 1, GCRYMPI_FMT_USG));
@@ -185,7 +185,7 @@ Optional<Vector<uint8_t>> mpiZeroPrefixedData(gcry_sexp_t paramSexp, size_t targ
     return mpiZeroPrefixedData(paramMPI, targetLength);
 }
 
-Optional<Vector<uint8_t>> mpiSignedData(gcry_mpi_t mpi)
+std::optional<Vector<uint8_t>> mpiSignedData(gcry_mpi_t mpi)
 {
     auto data = mpiData(mpi);
     if (!data)
@@ -197,7 +197,7 @@ Optional<Vector<uint8_t>> mpiSignedData(gcry_mpi_t mpi)
     return data;
 }
 
-Optional<Vector<uint8_t>> mpiSignedData(gcry_sexp_t paramSexp)
+std::optional<Vector<uint8_t>> mpiSignedData(gcry_sexp_t paramSexp)
 {
     auto data = mpiData(paramSexp);
     if (!data)

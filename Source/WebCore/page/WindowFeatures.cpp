@@ -38,8 +38,8 @@ typedef HashMap<String, String, ASCIICaseInsensitiveHash> DialogFeaturesMap;
 static void setWindowFeature(WindowFeatures&, StringView key, StringView value);
 
 static DialogFeaturesMap parseDialogFeaturesMap(const String&);
-static Optional<bool> boolFeature(const DialogFeaturesMap&, const char* key);
-static Optional<float> floatFeature(const DialogFeaturesMap&, const char* key, float min, float max);
+static std::optional<bool> boolFeature(const DialogFeaturesMap&, const char* key);
+static std::optional<float> floatFeature(const DialogFeaturesMap&, const char* key, float min, float max);
 
 // https://html.spec.whatwg.org/#feature-separator
 static bool isSeparator(UChar character, FeatureMode mode)
@@ -208,7 +208,7 @@ WindowFeatures parseDialogFeatures(const String& dialogFeaturesString, const Flo
     return features;
 }
 
-static Optional<bool> boolFeature(const DialogFeaturesMap& features, const char* key)
+static std::optional<bool> boolFeature(const DialogFeaturesMap& features, const char* key)
 {
     auto it = features.find(key);
     if (it == features.end())
@@ -221,7 +221,7 @@ static Optional<bool> boolFeature(const DialogFeaturesMap& features, const char*
         || equalLettersIgnoringASCIICase(value, "on");
 }
 
-static Optional<float> floatFeature(const DialogFeaturesMap& features, const char* key, float min, float max)
+static std::optional<float> floatFeature(const DialogFeaturesMap& features, const char* key, float min, float max)
 {
     auto it = features.find(key);
     if (it == features.end())

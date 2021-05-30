@@ -125,7 +125,7 @@ private:
     static void updateSelectionIfDifferentFromCurrentSelection(TypingCommand*, Document&);
 
     void updatePreservesTypingStyle(ETypingCommand);
-    bool willAddTypingToOpenCommand(ETypingCommand, TextGranularity, const String& = emptyString(), const Optional<SimpleRange>& = { });
+    bool willAddTypingToOpenCommand(ETypingCommand, TextGranularity, const String& = emptyString(), const std::optional<SimpleRange>& = { });
     void markMisspellingsAfterTyping(ETypingCommand);
     void typingAddedToOpenCommand(ETypingCommand);
     bool makeEditableRootEmpty();

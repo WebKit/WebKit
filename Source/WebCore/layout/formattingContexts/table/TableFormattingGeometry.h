@@ -41,7 +41,7 @@ public:
 
     LayoutUnit cellBoxContentHeight(const ContainerBox&) const;
     Edges computedCellBorder(const TableGrid::Cell&) const;
-    Optional<LayoutUnit> computedColumnWidth(const ContainerBox& columnBox) const;
+    std::optional<LayoutUnit> computedColumnWidth(const ContainerBox& columnBox) const;
     IntrinsicWidthConstraints intrinsicWidthConstraintsForCell(const TableGrid::Cell&) const;
     InlineLayoutUnit usedBaselineForCell(const ContainerBox& cellBox) const;
 

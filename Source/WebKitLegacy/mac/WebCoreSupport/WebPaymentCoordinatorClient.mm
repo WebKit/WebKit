@@ -39,7 +39,7 @@ WebPaymentCoordinatorClient::~WebPaymentCoordinatorClient()
 {
 }
 
-Optional<String> WebPaymentCoordinatorClient::validatedPaymentNetwork(const String&)
+std::optional<String> WebPaymentCoordinatorClient::validatedPaymentNetwork(const String&)
 {
     return std::nullopt;
 }
@@ -72,27 +72,27 @@ void WebPaymentCoordinatorClient::completeMerchantValidation(const WebCore::Paym
 {
 }
 
-void WebPaymentCoordinatorClient::completeShippingMethodSelection(Optional<WebCore::ApplePayShippingMethodUpdate>&&)
+void WebPaymentCoordinatorClient::completeShippingMethodSelection(std::optional<WebCore::ApplePayShippingMethodUpdate>&&)
 {
 }
 
-void WebPaymentCoordinatorClient::completeShippingContactSelection(Optional<WebCore::ApplePayShippingContactUpdate>&&)
+void WebPaymentCoordinatorClient::completeShippingContactSelection(std::optional<WebCore::ApplePayShippingContactUpdate>&&)
 {
 }
 
-void WebPaymentCoordinatorClient::completePaymentMethodSelection(Optional<WebCore::ApplePayPaymentMethodUpdate>&&)
+void WebPaymentCoordinatorClient::completePaymentMethodSelection(std::optional<WebCore::ApplePayPaymentMethodUpdate>&&)
 {
 }
 
 #if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
 
-void WebPaymentCoordinatorClient::completePaymentMethodModeChange(Optional<WebCore::ApplePayPaymentMethodModeUpdate>&&)
+void WebPaymentCoordinatorClient::completePaymentMethodModeChange(std::optional<WebCore::ApplePayPaymentMethodModeUpdate>&&)
 {
 }
 
 #endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
 
-void WebPaymentCoordinatorClient::completePaymentSession(Optional<WebCore::PaymentAuthorizationResult>&&)
+void WebPaymentCoordinatorClient::completePaymentSession(std::optional<WebCore::PaymentAuthorizationResult>&&)
 {
 }
 

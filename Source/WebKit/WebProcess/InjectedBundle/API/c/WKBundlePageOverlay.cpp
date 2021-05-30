@@ -129,7 +129,7 @@ private:
     }
 
 #if PLATFORM(MAC)
-    Optional<WebKit::WebPageOverlay::ActionContext> actionContextForResultAtPoint(WebKit::WebPageOverlay& pageOverlay, WebCore::FloatPoint location) final
+    std::optional<WebKit::WebPageOverlay::ActionContext> actionContextForResultAtPoint(WebKit::WebPageOverlay& pageOverlay, WebCore::FloatPoint location) final
     {
         if (!m_client.actionContextForResultAtPoint)
             return std::nullopt;

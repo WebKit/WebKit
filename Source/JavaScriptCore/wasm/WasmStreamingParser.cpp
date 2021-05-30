@@ -51,7 +51,7 @@ static constexpr bool verbose = false;
         } \
     } while (0)
 
-ALWAYS_INLINE Optional<uint8_t> parseUInt7(const uint8_t* data, size_t& offset, size_t size)
+ALWAYS_INLINE std::optional<uint8_t> parseUInt7(const uint8_t* data, size_t& offset, size_t size)
 {
     if (offset >= size)
         return false;
@@ -188,7 +188,7 @@ auto StreamingParser::parseSectionPayload(Vector<uint8_t>&& data) -> State
     return State::SectionID;
 }
 
-auto StreamingParser::consume(const uint8_t* bytes, size_t bytesSize, size_t& offsetInBytes, size_t requiredSize) -> Optional<Vector<uint8_t>>
+auto StreamingParser::consume(const uint8_t* bytes, size_t bytesSize, size_t& offsetInBytes, size_t requiredSize) -> std::optional<Vector<uint8_t>>
 {
     if (m_remaining.size() == requiredSize) {
         Vector<uint8_t> result = WTFMove(m_remaining);

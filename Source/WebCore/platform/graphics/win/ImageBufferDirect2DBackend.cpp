@@ -294,19 +294,19 @@ void ImageBufferDirect2DBackend::clipToMask(GraphicsContext&, const FloatRect&)
     notImplemented();
 }
 
-String ImageBufferDirect2DBackend::toDataURL(const String&, Optional<double>, PreserveResolution) const
+String ImageBufferDirect2DBackend::toDataURL(const String&, std::optional<double>, PreserveResolution) const
 {
     notImplemented();
     return "data:,"_s;
 }
 
-Vector<uint8_t> ImageBufferDirect2DBackend::toData(const String& mimeType, Optional<double> quality) const
+Vector<uint8_t> ImageBufferDirect2DBackend::toData(const String& mimeType, std::optional<double> quality) const
 {
     notImplemented();
     return { };
 }
 
-Optional<PixelBuffer> ImageBufferDirect2DBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const
+std::optional<PixelBuffer> ImageBufferDirect2DBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const
 {
     notImplemented();
     return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, nullptr);

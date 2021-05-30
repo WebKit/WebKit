@@ -352,7 +352,7 @@ void SamplingProfiler::takeSample(Seconds& stackTraceProcessingTime)
         Locker machineThreadsLocker { m_vm.heap.machineThreads().getLock() };
         Locker codeBlockSetLocker { m_vm.heap.codeBlockSet().getLock() };
         Locker executableAllocatorLocker { ExecutableAllocator::singleton().getLock() };
-        Optional<LockHolder> wasmCalleesLocker;
+        std::optional<LockHolder> wasmCalleesLocker;
 #if ENABLE(WEBASSEMBLY)
         if (Wasm::isSupported())
             wasmCalleesLocker.emplace(Wasm::CalleeRegistry::singleton().getLock());
@@ -614,7 +614,7 @@ void SamplingProfiler::processUnverifiedStackTraces()
                 }
             } else {
 #if ENABLE(JIT)
-                if (Optional<CodeOrigin> codeOrigin = topCodeBlock->findPC(unprocessedStackTrace.topPC)) {
+                if (std::optional<CodeOrigin> codeOrigin = topCodeBlock->findPC(unprocessedStackTrace.topPC)) {
                     appendCodeOrigin(topCodeBlock, *codeOrigin);
                     storeCalleeIntoLastFrame(unprocessedStackTrace.frames[0]);
                     startIndex = 1;
@@ -1131,7 +1131,7 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
         if (!stackTrace.frames.size())
             continue;
 
-        auto descriptionForLocation = [&] (StackFrame::CodeLocation location, Optional<Wasm::CompilationMode> wasmCompilationMode) -> String {
+        auto descriptionForLocation = [&] (StackFrame::CodeLocation location, std::optional<Wasm::CompilationMode> wasmCompilationMode) -> String {
             String bytecodeIndex;
             String codeBlockHash;
             String jitType;
@@ -1157,7 +1157,7 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
 
         StackFrame& frame = stackTrace.frames.first();
         auto frameDescription = makeString(frame.displayName(m_vm), descriptionForLocation(frame.semanticLocation, frame.wasmCompilationMode));
-        if (Optional<std::pair<StackFrame::CodeLocation, CodeBlock*>> machineLocation = frame.machineLocation) {
+        if (std::optional<std::pair<StackFrame::CodeLocation, CodeBlock*>> machineLocation = frame.machineLocation) {
             frameDescription = makeString(frameDescription, " <-- ",
                 machineLocation->second->inferredName().data(), descriptionForLocation(machineLocation->first, std::nullopt));
         }

@@ -69,7 +69,7 @@ bool HTMLMetaElement::mediaAttributeMatches()
     if (!m_media)
         m_media = MediaQuerySet::create(attributeWithoutSynchronization(mediaAttr).convertToASCIILowercase(), MediaQueryParserContext(document));
 
-    Optional<RenderStyle> documentStyle;
+    std::optional<RenderStyle> documentStyle;
     if (document.hasLivingRenderTree())
         documentStyle = Style::resolveForDocument(document);
 

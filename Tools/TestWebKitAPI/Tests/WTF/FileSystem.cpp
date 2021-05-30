@@ -626,7 +626,7 @@ TEST_F(FileSystemTest, hardLinkCount)
     EXPECT_TRUE(!linkCount);
 }
 
-static void runGetFileModificationTimeTest(const String& path, Function<Optional<WallTime>(const String&)>&& fileModificationTime)
+static void runGetFileModificationTimeTest(const String& path, Function<std::optional<WallTime>(const String&)>&& fileModificationTime)
 {
     auto modificationTime = fileModificationTime(path);
     EXPECT_TRUE(!!modificationTime);

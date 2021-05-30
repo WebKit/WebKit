@@ -95,7 +95,7 @@ String ServiceWorkerRegistrationKey::toDatabaseKey() const
     return makeString(m_topOrigin.protocol, separatorCharacter, m_topOrigin.host, separatorCharacter, separatorCharacter, m_scope.string());
 }
 
-Optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::fromDatabaseKey(const String& key)
+std::optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::fromDatabaseKey(const String& key)
 {
     auto first = key.find(separatorCharacter, 0);
     auto second = key.find(separatorCharacter, first + 1);
@@ -104,7 +104,7 @@ Optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::fromDatabas
     if (first == second || second == third)
         return std::nullopt;
 
-    Optional<uint16_t> shortPort;
+    std::optional<uint16_t> shortPort;
 
     // If there's a gap between third and second, we expect to have a port to decode
     if (third - second > 1) {

@@ -117,7 +117,7 @@ void MixedContentChecker::checkFormForMixedContent(Frame& frame, SecurityOrigin&
     frame.loader().client().didDisplayInsecureContent();
 }
 
-Optional<String> MixedContentChecker::checkForMixedContentInFrameTree(const Frame& frame, const URL& url)
+std::optional<String> MixedContentChecker::checkForMixedContentInFrameTree(const Frame& frame, const URL& url)
 {
     auto* document = frame.document();
 

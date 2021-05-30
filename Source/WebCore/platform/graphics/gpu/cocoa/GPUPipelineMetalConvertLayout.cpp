@@ -45,24 +45,24 @@ static OptionSet<WHLSL::ShaderStage> convertShaderStageFlags(GPUShaderStageFlags
     return result;
 }
 
-static Optional<WHLSL::Binding::BindingDetails> convertBindingType(GPUBindGroupLayout::InternalBindingDetails internalBindingDetails)
+static std::optional<WHLSL::Binding::BindingDetails> convertBindingType(GPUBindGroupLayout::InternalBindingDetails internalBindingDetails)
 {
-    return WTF::visit(WTF::makeVisitor([&](GPUBindGroupLayout::UniformBuffer uniformBuffer) -> Optional<WHLSL::Binding::BindingDetails> {
+    return WTF::visit(WTF::makeVisitor([&](GPUBindGroupLayout::UniformBuffer uniformBuffer) -> std::optional<WHLSL::Binding::BindingDetails> {
         return { WHLSL::UniformBufferBinding { uniformBuffer.internalLengthName } };
-    }, [&](GPUBindGroupLayout::DynamicUniformBuffer) -> Optional<WHLSL::Binding::BindingDetails> {
+    }, [&](GPUBindGroupLayout::DynamicUniformBuffer) -> std::optional<WHLSL::Binding::BindingDetails> {
         return std::nullopt;
-    }, [&](GPUBindGroupLayout::Sampler) -> Optional<WHLSL::Binding::BindingDetails> {
+    }, [&](GPUBindGroupLayout::Sampler) -> std::optional<WHLSL::Binding::BindingDetails> {
         return { WHLSL::SamplerBinding { } };
-    }, [&](GPUBindGroupLayout::SampledTexture) -> Optional<WHLSL::Binding::BindingDetails> {
+    }, [&](GPUBindGroupLayout::SampledTexture) -> std::optional<WHLSL::Binding::BindingDetails> {
         return { WHLSL::TextureBinding { } };
-    }, [&](GPUBindGroupLayout::StorageBuffer storageBuffer) -> Optional<WHLSL::Binding::BindingDetails> {
+    }, [&](GPUBindGroupLayout::StorageBuffer storageBuffer) -> std::optional<WHLSL::Binding::BindingDetails> {
         return { WHLSL::StorageBufferBinding { storageBuffer.internalLengthName } };
-    }, [&](GPUBindGroupLayout::DynamicStorageBuffer) -> Optional<WHLSL::Binding::BindingDetails> {
+    }, [&](GPUBindGroupLayout::DynamicStorageBuffer) -> std::optional<WHLSL::Binding::BindingDetails> {
         return std::nullopt;
     }), internalBindingDetails);
 }
 
-Optional<WHLSL::Layout> convertLayout(const GPUPipelineLayout& layout)
+std::optional<WHLSL::Layout> convertLayout(const GPUPipelineLayout& layout)
 {
     WHLSL::Layout result;
     if (layout.bindGroupLayouts().size() > std::numeric_limits<unsigned>::max())

@@ -487,7 +487,7 @@ private:
         { }
 
         String animationIdentifier() const { return makeString(m_name, '_', static_cast<unsigned>(m_property), '_', m_index, '_', m_subIndex); }
-        Optional<Seconds> computedBeginTime() const
+        std::optional<Seconds> computedBeginTime() const
         {
             if (m_beginTime)
                 return *m_beginTime - m_timeOffset;
@@ -500,7 +500,7 @@ private:
         int m_index;
         int m_subIndex;
         Seconds m_timeOffset { 0_s };
-        Optional<Seconds> m_beginTime;
+        std::optional<Seconds> m_beginTime;
         PlayState m_playState { PlayState::PlayPending };
         bool m_pendingRemoval { false };
     };

@@ -66,7 +66,7 @@ private:
     void switchClientsToRevalidatedResource() override;
     bool mayTryReplaceEncodedData() const override { return m_allowEncodedDataReplacement; }
 
-    Optional<SharedBufferDataView> calculateIncrementalDataChunk(const SharedBuffer*) const;
+    std::optional<SharedBufferDataView> calculateIncrementalDataChunk(const SharedBuffer*) const;
     void notifyClientsDataWasReceived(const char* data, unsigned length);
     
 #if USE(QUICK_LOOK)
@@ -94,7 +94,7 @@ private:
     struct DelayedFinishLoading {
         RefPtr<SharedBuffer> buffer;
     };
-    Optional<DelayedFinishLoading> m_delayedFinishLoading;
+    std::optional<DelayedFinishLoading> m_delayedFinishLoading;
 };
 
 } // namespace WebCore

@@ -56,8 +56,8 @@ public:
     ContentHeightAndMargin floatingContentHeightAndMargin(const Box&, const HorizontalConstraints&, const OverriddenVerticalValues&) const;
     ContentWidthAndMargin floatingContentWidthAndMargin(const Box&, const HorizontalConstraints&, const OverriddenHorizontalValues&) const;
 
-    ContentHeightAndMargin inlineReplacedContentHeightAndMargin(const ReplacedBox&, const HorizontalConstraints&, Optional<VerticalConstraints>, const OverriddenVerticalValues&) const;
-    ContentWidthAndMargin inlineReplacedContentWidthAndMargin(const ReplacedBox&, const HorizontalConstraints&, Optional<VerticalConstraints>, const OverriddenHorizontalValues&) const;
+    ContentHeightAndMargin inlineReplacedContentHeightAndMargin(const ReplacedBox&, const HorizontalConstraints&, std::optional<VerticalConstraints>, const OverriddenVerticalValues&) const;
+    ContentWidthAndMargin inlineReplacedContentWidthAndMargin(const ReplacedBox&, const HorizontalConstraints&, std::optional<VerticalConstraints>, const OverriddenHorizontalValues&) const;
 
     LayoutSize inFlowPositionedPositionOffset(const Box&, const HorizontalConstraints&) const;
 
@@ -65,29 +65,29 @@ public:
     LayoutUnit shrinkToFitWidth(const Box&, LayoutUnit availableWidth) const;
 
     Edges computedBorder(const Box&) const;
-    Optional<Edges> computedPadding(const Box&, LayoutUnit containingBlockWidth) const;
+    std::optional<Edges> computedPadding(const Box&, LayoutUnit containingBlockWidth) const;
 
     ComputedHorizontalMargin computedHorizontalMargin(const Box&, const HorizontalConstraints&) const;
     ComputedVerticalMargin computedVerticalMargin(const Box&, const HorizontalConstraints&) const;
 
-    Optional<LayoutUnit> computedValue(const Length& geometryProperty, LayoutUnit containingBlockWidth) const;
-    Optional<LayoutUnit> fixedValue(const Length& geometryProperty) const;
+    std::optional<LayoutUnit> computedValue(const Length& geometryProperty, LayoutUnit containingBlockWidth) const;
+    std::optional<LayoutUnit> fixedValue(const Length& geometryProperty) const;
 
-    Optional<LayoutUnit> computedMinHeight(const Box&, Optional<LayoutUnit> containingBlockHeight = std::nullopt) const;
-    Optional<LayoutUnit> computedMaxHeight(const Box&, Optional<LayoutUnit> containingBlockHeight = std::nullopt) const;
+    std::optional<LayoutUnit> computedMinHeight(const Box&, std::optional<LayoutUnit> containingBlockHeight = std::nullopt) const;
+    std::optional<LayoutUnit> computedMaxHeight(const Box&, std::optional<LayoutUnit> containingBlockHeight = std::nullopt) const;
 
-    Optional<LayoutUnit> computedMinWidth(const Box&, LayoutUnit containingBlockWidth) const;
-    Optional<LayoutUnit> computedMaxWidth(const Box&, LayoutUnit containingBlockWidth) const;
+    std::optional<LayoutUnit> computedMinWidth(const Box&, LayoutUnit containingBlockWidth) const;
+    std::optional<LayoutUnit> computedMaxWidth(const Box&, LayoutUnit containingBlockWidth) const;
 
     IntrinsicWidthConstraints constrainByMinMaxWidth(const Box&, IntrinsicWidthConstraints) const;
 
     LayoutUnit contentHeightForFormattingContextRoot(const ContainerBox&) const;
 
     ConstraintsForOutOfFlowContent constraintsForOutOfFlowContent(const ContainerBox&) const;
-    ConstraintsForInFlowContent constraintsForInFlowContent(const ContainerBox&, Optional<FormattingContext::EscapeReason> = std::nullopt) const;
+    ConstraintsForInFlowContent constraintsForInFlowContent(const ContainerBox&, std::optional<FormattingContext::EscapeReason> = std::nullopt) const;
 
-    Optional<LayoutUnit> computedHeight(const Box&, Optional<LayoutUnit> containingBlockHeight = std::nullopt) const;
-    Optional<LayoutUnit> computedWidth(const Box&, LayoutUnit containingBlockWidth) const;
+    std::optional<LayoutUnit> computedHeight(const Box&, std::optional<LayoutUnit> containingBlockHeight = std::nullopt) const;
+    std::optional<LayoutUnit> computedWidth(const Box&, LayoutUnit containingBlockWidth) const;
 
     bool isBlockFormattingGeometry() const { return formattingContext().isBlockFormattingContext(); }
     bool isInlineFormattingGeometry() const { return formattingContext().isInlineFormattingContext(); }
@@ -114,10 +114,10 @@ private:
     LayoutUnit staticHorizontalPositionForOutOfFlowPositioned(const Box&, const HorizontalConstraints&) const;
 
     enum class HeightType { Min, Max, Normal };
-    Optional<LayoutUnit> computedHeightValue(const Box&, HeightType, Optional<LayoutUnit> containingBlockHeight) const;
+    std::optional<LayoutUnit> computedHeightValue(const Box&, HeightType, std::optional<LayoutUnit> containingBlockHeight) const;
 
     enum class WidthType { Min, Max, Normal };
-    Optional<LayoutUnit> computedWidthValue(const Box&, WidthType, LayoutUnit containingBlockWidth) const;
+    std::optional<LayoutUnit> computedWidthValue(const Box&, WidthType, LayoutUnit containingBlockWidth) const;
 
     const FormattingContext& m_formattingContext;
 };

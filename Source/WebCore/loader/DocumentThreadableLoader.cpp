@@ -654,7 +654,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
         didReceiveData(identifier, data->data(), data->size());
 
     const auto* timing = response.deprecatedNetworkLoadMetricsOrNull();
-    Optional<NetworkLoadMetrics> empty;
+    std::optional<NetworkLoadMetrics> empty;
     if (!timing) {
         empty.emplace();
         timing = &empty.value();

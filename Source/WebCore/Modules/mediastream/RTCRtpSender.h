@@ -60,7 +60,7 @@ public:
     static Ref<RTCRtpSender> create(RTCPeerConnection&, String&& trackKind, std::unique_ptr<RTCRtpSenderBackend>&&);
     ~RTCRtpSender();
 
-    static Optional<RTCRtpCapabilities> getCapabilities(ScriptExecutionContext&, const String& kind);
+    static std::optional<RTCRtpCapabilities> getCapabilities(ScriptExecutionContext&, const String& kind);
 
     MediaStreamTrack* track() { return m_track.get(); }
 
@@ -87,9 +87,9 @@ public:
     bool isCreatedBy(const RTCPeerConnection&) const;
 
     RTCDTMFSender* dtmf();
-    Optional<RTCRtpTransceiverDirection> currentTransceiverDirection() const;
+    std::optional<RTCRtpTransceiverDirection> currentTransceiverDirection() const;
 
-    Optional<RTCRtpTransform::Internal> transform();
+    std::optional<RTCRtpTransform::Internal> transform();
     ExceptionOr<void> setTransform(std::unique_ptr<RTCRtpTransform>&&);
 
 private:

@@ -64,7 +64,7 @@ private:
     void requestFrame(RequestFrameCallback&&) final;
     void submitFrame(Vector<Device::Layer>&&) final;
     Vector<ViewData> views(SessionMode) const final;
-    Optional<LayerHandle> createLayerProjection(uint32_t width, uint32_t height, bool alpha) final;
+    std::optional<LayerHandle> createLayerProjection(uint32_t width, uint32_t height, bool alpha) final;
     void deleteLayer(LayerHandle) final;
 
     // Custom methods

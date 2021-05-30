@@ -40,7 +40,7 @@ class WebCompiledContentRuleListData;
 struct ServiceWorkerInitializationData {
 
     void encode(IPC::Encoder&) const;
-    static Optional<ServiceWorkerInitializationData> decode(IPC::Decoder&);
+    static std::optional<ServiceWorkerInitializationData> decode(IPC::Decoder&);
 
     UserContentControllerIdentifier userContentControllerIdentifier;
 #if ENABLE(CONTENT_EXTENSIONS)

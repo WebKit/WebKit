@@ -98,7 +98,7 @@ public:
         RTCEncoderIdentifier identifier;
         webrtc::VideoCodecType codecType { webrtc::kVideoCodecGeneric };
         Vector<std::pair<String, String>> parameters;
-        Optional<EncoderInitializationData> initializationData;
+        std::optional<EncoderInitializationData> initializationData;
         void* encodedImageCallback WTF_GUARDED_BY_LOCK(encodedImageCallbackLock) { nullptr };
         Lock encodedImageCallbackLock;
         RefPtr<IPC::Connection> connection;
@@ -155,7 +155,7 @@ private:
     size_t m_pixelBufferPoolWidth { 0 };
     size_t m_pixelBufferPoolHeight { 0 };
     bool m_supportVP9VTB { false };
-    Optional<WTFLogLevel> m_loggingLevel;
+    std::optional<WTFLogLevel> m_loggingLevel;
 };
 
 } // namespace WebKit

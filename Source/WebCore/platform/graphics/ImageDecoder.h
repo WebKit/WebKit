@@ -53,7 +53,7 @@ public:
 
     struct FrameMetadata {
         ImageOrientation orientation;
-        Optional<IntSize> densityCorrectedSize;
+        std::optional<IntSize> densityCorrectedSize;
     };
 
     struct FrameInfo {
@@ -68,14 +68,14 @@ public:
         }
 
         template<class Decoder>
-        static Optional<FrameInfo> decode(Decoder& decoder)
+        static std::optional<FrameInfo> decode(Decoder& decoder)
         {
-            Optional<bool> hasAlpha;
+            std::optional<bool> hasAlpha;
             decoder >> hasAlpha;
             if (!hasAlpha)
                 return std::nullopt;
 
-            Optional<Seconds> duration;
+            std::optional<Seconds> duration;
             decoder >> duration;
             if (!duration)
                 return std::nullopt;
@@ -116,7 +116,7 @@ public:
     virtual String uti() const { return emptyString(); }
     virtual String filenameExtension() const = 0;
     virtual String accessibilityDescription() const { return emptyString(); };
-    virtual Optional<IntPoint> hotSpot() const = 0;
+    virtual std::optional<IntPoint> hotSpot() const = 0;
 
     virtual IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const = 0;
     virtual bool frameIsCompleteAtIndex(size_t) const = 0;

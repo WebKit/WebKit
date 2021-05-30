@@ -56,7 +56,7 @@ using namespace WebCore;
 
 @implementation WebGeolocationPosition
 
-Optional<GeolocationPositionData> core(WebGeolocationPosition *position)
+std::optional<GeolocationPositionData> core(WebGeolocationPosition *position)
 {
     if (!position)
         return std::nullopt;

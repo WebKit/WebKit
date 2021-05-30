@@ -47,7 +47,7 @@ void Table::setLength(uint32_t length)
     ASSERT(m_mask == WTF::maskForSize(allocatedLength(length)));
 }
 
-Table::Table(uint32_t initial, Optional<uint32_t> maximum, TableElementType type)
+Table::Table(uint32_t initial, std::optional<uint32_t> maximum, TableElementType type)
     : m_type(type)
     , m_maximum(maximum)
     , m_owner(nullptr)
@@ -65,7 +65,7 @@ Table::Table(uint32_t initial, Optional<uint32_t> maximum, TableElementType type
     }
 }
 
-RefPtr<Table> Table::tryCreate(uint32_t initial, Optional<uint32_t> maximum, TableElementType type)
+RefPtr<Table> Table::tryCreate(uint32_t initial, std::optional<uint32_t> maximum, TableElementType type)
 {
     if (!isValidLength(initial))
         return nullptr;
@@ -79,7 +79,7 @@ RefPtr<Table> Table::tryCreate(uint32_t initial, Optional<uint32_t> maximum, Tab
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-Optional<uint32_t> Table::grow(uint32_t delta, JSValue defaultValue)
+std::optional<uint32_t> Table::grow(uint32_t delta, JSValue defaultValue)
 {
     RELEASE_ASSERT(m_owner);
     if (delta == 0)
@@ -190,7 +190,7 @@ FuncRefTable* Table::asFuncrefTable()
     return m_type == TableElementType::Funcref ? static_cast<FuncRefTable*>(this) : nullptr;
 }
 
-FuncRefTable::FuncRefTable(uint32_t initial, Optional<uint32_t> maximum)
+FuncRefTable::FuncRefTable(uint32_t initial, std::optional<uint32_t> maximum)
     : Table(initial, maximum, TableElementType::Funcref)
 {
     // FIXME: It might be worth trying to pre-allocate maximum here. The spec recommends doing so.

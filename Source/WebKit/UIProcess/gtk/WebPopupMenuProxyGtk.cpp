@@ -67,7 +67,7 @@ void WebPopupMenuProxyGtk::selectItem(unsigned itemIndex)
     m_selectedItem = itemIndex;
 }
 
-void WebPopupMenuProxyGtk::activateItem(Optional<unsigned> itemIndex)
+void WebPopupMenuProxyGtk::activateItem(std::optional<unsigned> itemIndex)
 {
     if (m_client)
         m_client->valueChangedForPopupMenu(this, itemIndex.value_or(m_selectedItem.value_or(-1)));
@@ -428,7 +428,7 @@ void WebPopupMenuProxyGtk::cancelTracking()
     hidePopupMenu();
 }
 
-Optional<unsigned> WebPopupMenuProxyGtk::typeAheadFindIndex(unsigned keyval, uint32_t time)
+std::optional<unsigned> WebPopupMenuProxyGtk::typeAheadFindIndex(unsigned keyval, uint32_t time)
 {
     gunichar keychar = gdk_keyval_to_unicode(keyval);
     if (!g_unichar_isprint(keychar))

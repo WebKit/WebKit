@@ -561,8 +561,8 @@ uint64_t PlaybackSessionModelMediaElement::legibleMediaSelectedIndex() const
     TextTrack& offItem = TextTrack::captionMenuOffItem();
     TextTrack& automaticItem = TextTrack::captionMenuAutomaticItem();
 
-    Optional<uint64_t> selectedIndex;
-    Optional<uint64_t> offIndex;
+    std::optional<uint64_t> selectedIndex;
+    std::optional<uint64_t> offIndex;
 
     for (size_t index = 0; index < m_legibleTracksForMenu.size(); index++) {
         auto& track = m_legibleTracksForMenu[index];

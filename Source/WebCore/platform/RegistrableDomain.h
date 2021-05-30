@@ -97,7 +97,7 @@ public:
     }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<RegistrableDomain> decode(Decoder&);
+    template<class Decoder> static std::optional<RegistrableDomain> decode(Decoder&);
 
 protected:
 
@@ -142,9 +142,9 @@ void RegistrableDomain::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<RegistrableDomain> RegistrableDomain::decode(Decoder& decoder)
+std::optional<RegistrableDomain> RegistrableDomain::decode(Decoder& decoder)
 {
-    Optional<String> domain;
+    std::optional<String> domain;
     decoder >> domain;
     if (!domain)
         return std::nullopt;

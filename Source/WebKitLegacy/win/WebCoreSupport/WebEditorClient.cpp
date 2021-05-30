@@ -257,16 +257,16 @@ void WebEditorClient::didWriteSelectionToPasteboard()
 {
 }
 
-void WebEditorClient::willWriteSelectionToPasteboard(const Optional<WebCore::SimpleRange>&)
+void WebEditorClient::willWriteSelectionToPasteboard(const std::optional<WebCore::SimpleRange>&)
 {
 }
 
-void WebEditorClient::getClientPasteboardData(const Optional<WebCore::SimpleRange>&, Vector<String>&, Vector<RefPtr<WebCore::SharedBuffer> >&)
+void WebEditorClient::getClientPasteboardData(const std::optional<WebCore::SimpleRange>&, Vector<String>&, Vector<RefPtr<WebCore::SharedBuffer> >&)
 {
     notImplemented();
 }
 
-bool WebEditorClient::shouldDeleteRange(const Optional<WebCore::SimpleRange>& range)
+bool WebEditorClient::shouldDeleteRange(const std::optional<WebCore::SimpleRange>& range)
 {
     COMPtr<IWebEditingDelegate> ed;
     if (FAILED(m_webView->editingDelegate(&ed)) || !ed.get())
@@ -296,7 +296,7 @@ static WebViewInsertAction kit(EditorInsertAction action)
     return WebViewInsertActionTyped;
 }
 
-bool WebEditorClient::shouldInsertNode(Node& node, const Optional<WebCore::SimpleRange>& insertingRange, EditorInsertAction givenAction)
+bool WebEditorClient::shouldInsertNode(Node& node, const std::optional<WebCore::SimpleRange>& insertingRange, EditorInsertAction givenAction)
 { 
     COMPtr<IWebEditingDelegate> editingDelegate;
     if (FAILED(m_webView->editingDelegate(&editingDelegate)) || !editingDelegate.get())
@@ -320,7 +320,7 @@ bool WebEditorClient::shouldInsertNode(Node& node, const Optional<WebCore::Simpl
     return shouldInsert;
 }
 
-bool WebEditorClient::shouldInsertText(const String& str, const Optional<WebCore::SimpleRange>& insertingRange, EditorInsertAction givenAction)
+bool WebEditorClient::shouldInsertText(const String& str, const std::optional<WebCore::SimpleRange>& insertingRange, EditorInsertAction givenAction)
 {
     COMPtr<IWebEditingDelegate> editingDelegate;
     if (FAILED(m_webView->editingDelegate(&editingDelegate)) || !editingDelegate.get())
@@ -345,7 +345,7 @@ static WebSelectionAffinity toWebSelectionAffinity(WebCore::Affinity affinity)
     return WebSelectionAffinityDownstream;
 }
 
-bool WebEditorClient::shouldChangeSelectedRange(const Optional<WebCore::SimpleRange>& currentRange, const Optional<WebCore::SimpleRange>& proposedRange, WebCore::Affinity selectionAffinity, bool flag)
+bool WebEditorClient::shouldChangeSelectedRange(const std::optional<WebCore::SimpleRange>& currentRange, const std::optional<WebCore::SimpleRange>& proposedRange, WebCore::Affinity selectionAffinity, bool flag)
 {
     COMPtr<IWebEditingDelegate> ed;
     if (FAILED(m_webView->editingDelegate(&ed)) || !ed.get())
@@ -361,7 +361,7 @@ bool WebEditorClient::shouldChangeSelectedRange(const Optional<WebCore::SimpleRa
     return shouldChange;
 }
 
-bool WebEditorClient::shouldApplyStyle(const StyleProperties&, const Optional<SimpleRange>&)
+bool WebEditorClient::shouldApplyStyle(const StyleProperties&, const std::optional<SimpleRange>&)
 {
     return true;
 }

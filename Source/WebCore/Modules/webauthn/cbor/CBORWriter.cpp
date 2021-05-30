@@ -41,7 +41,7 @@ CBORWriter::~CBORWriter()
 }
 
 // static
-Optional<Vector<uint8_t>> CBORWriter::write(const CBORValue& node, size_t maxNestingLevel)
+std::optional<Vector<uint8_t>> CBORWriter::write(const CBORValue& node, size_t maxNestingLevel)
 {
     Vector<uint8_t> cbor;
     CBORWriter writer(&cbor);

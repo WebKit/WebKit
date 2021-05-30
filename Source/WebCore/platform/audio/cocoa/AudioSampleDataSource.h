@@ -87,8 +87,8 @@ private:
 
     void pushSamplesInternal(const AudioBufferList&, const MediaTime&, size_t frameCount);
 
-    Optional<CAAudioStreamDescription> m_inputDescription;
-    Optional<CAAudioStreamDescription> m_outputDescription;
+    std::optional<CAAudioStreamDescription> m_inputDescription;
+    std::optional<CAAudioStreamDescription> m_outputDescription;
 
     MediaTime hostTime() const;
 

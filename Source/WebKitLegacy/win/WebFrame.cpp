@@ -2062,7 +2062,7 @@ void WebFrame::updateBackground()
     if (!coreFrame || !coreFrame->view())
         return;
 
-    Optional<Color> backgroundColor;
+    std::optional<Color> backgroundColor;
     if (webView()->transparent())
         backgroundColor = Color(Color::transparentBlack);
     coreFrame->view()->updateBackgroundRecursively(backgroundColor);

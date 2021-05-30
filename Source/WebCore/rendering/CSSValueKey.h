@@ -34,7 +34,7 @@ struct CSSValueKey {
     unsigned hash() const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<CSSValueKey> decode(Decoder&);
+    template<class Decoder> static std::optional<CSSValueKey> decode(Decoder&);
 
     unsigned cssValueID;
     bool useDarkAppearance;
@@ -55,17 +55,17 @@ void CSSValueKey::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<CSSValueKey> CSSValueKey::decode(Decoder& decoder)
+std::optional<CSSValueKey> CSSValueKey::decode(Decoder& decoder)
 {
-    Optional<unsigned> cssValueID;
+    std::optional<unsigned> cssValueID;
     decoder >> cssValueID;
     if (!cssValueID)
         return std::nullopt;
-    Optional<bool> useDarkAppearance;
+    std::optional<bool> useDarkAppearance;
     decoder >> useDarkAppearance;
     if (!useDarkAppearance)
         return std::nullopt;
-    Optional<bool> useElevatedUserInterfaceLevel;
+    std::optional<bool> useElevatedUserInterfaceLevel;
     decoder >> useElevatedUserInterfaceLevel;
     if (!useElevatedUserInterfaceLevel)
         return std::nullopt;

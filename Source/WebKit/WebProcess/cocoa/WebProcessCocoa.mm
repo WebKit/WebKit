@@ -704,7 +704,7 @@ RetainPtr<CFDataRef> WebProcess::sourceApplicationAuditData() const
     ASSERT(parentProcessConnection());
     if (!parentProcessConnection())
         return nullptr;
-    Optional<audit_token_t> auditToken = parentProcessConnection()->getAuditToken();
+    std::optional<audit_token_t> auditToken = parentProcessConnection()->getAuditToken();
     if (!auditToken)
         return nullptr;
     return adoptCF(CFDataCreate(nullptr, (const UInt8*)&*auditToken, sizeof(*auditToken)));
@@ -811,7 +811,7 @@ void WebProcess::getActivePagesOriginsForTesting(CompletionHandler<void(Vector<S
 void WebProcess::updateCPULimit()
 {
 #if PLATFORM(MAC)
-    Optional<double> cpuLimit;
+    std::optional<double> cpuLimit;
     if (m_processType == ProcessType::ServiceWorker)
         cpuLimit = serviceWorkerCPULimit;
     else {
@@ -1140,7 +1140,7 @@ static void setPreferenceValue(const String& domain, const String& key, id value
 #endif
 }
 
-void WebProcess::notifyPreferencesChanged(const String& domain, const String& key, const Optional<String>& encodedValue)
+void WebProcess::notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue)
 {
     if (!encodedValue) {
         setPreferenceValue(domain, key, nil);

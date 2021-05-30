@@ -68,7 +68,7 @@ public:
         return bitwise_cast<uint32_t>(structureID) + impl->hash();
     }
 
-    ALWAYS_INLINE Optional<bool> get(Structure* structure, PropertyName propName)
+    ALWAYS_INLINE std::optional<bool> get(Structure* structure, PropertyName propName)
     {
         UniquedStringImpl* impl = propName.uid();
         StructureID id = structure->id();

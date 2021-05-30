@@ -74,7 +74,7 @@ LayoutState& FormattingContext::layoutState() const
 void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox, const ConstraintsForOutOfFlowContent& constraints)
 {
     ASSERT(layoutBox.isOutOfFlowPositioned());
-    auto compute = [&](Optional<LayoutUnit> usedWidth) {
+    auto compute = [&](std::optional<LayoutUnit> usedWidth) {
         return formattingGeometry().outOfFlowHorizontalGeometry(layoutBox, constraints.horizontal, constraints.vertical, { usedWidth, { } });
     };
 
@@ -102,7 +102,7 @@ void FormattingContext::computeOutOfFlowHorizontalGeometry(const Box& layoutBox,
 void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox, const ConstraintsForOutOfFlowContent& constraints)
 {
     ASSERT(layoutBox.isOutOfFlowPositioned());
-    auto compute = [&](Optional<LayoutUnit> usedHeight) {
+    auto compute = [&](std::optional<LayoutUnit> usedHeight) {
         return formattingGeometry().outOfFlowVerticalGeometry(layoutBox, constraints.horizontal, constraints.vertical, { usedHeight });
     };
 
@@ -170,7 +170,7 @@ void FormattingContext::layoutOutOfFlowContent(InvalidationState& invalidationSt
     LOG_WITH_STREAM(FormattingContextLayout, stream << "End: layout out-of-flow content -> context: " << &layoutState() << " root: " << &root());
 }
 
-const BoxGeometry& FormattingContext::geometryForBox(const Box& layoutBox, Optional<EscapeReason> escapeReason) const
+const BoxGeometry& FormattingContext::geometryForBox(const Box& layoutBox, std::optional<EscapeReason> escapeReason) const
 {
     UNUSED_PARAM(escapeReason);
 #if ASSERT_ENABLED

@@ -170,7 +170,7 @@ struct PaymentAuthorizationResult {
     Vector<RefPtr<ApplePayError>> errors;
 };
 
-WEBCORE_EXPORT bool isFinalStateResult(const Optional<PaymentAuthorizationResult>&);
+WEBCORE_EXPORT bool isFinalStateResult(const std::optional<PaymentAuthorizationResult>&);
 
 } // namespace WebCore
 

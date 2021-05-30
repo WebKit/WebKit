@@ -46,7 +46,7 @@ public:
     explicit ScreenDisplayCapturerMac(uint32_t);
     ~ScreenDisplayCapturerMac();
 
-    static Optional<CaptureDevice> screenCaptureDeviceWithPersistentID(const String&);
+    static std::optional<CaptureDevice> screenCaptureDeviceWithPersistentID(const String&);
     static void screenCaptureDevices(Vector<CaptureDevice>&);
 
 private:

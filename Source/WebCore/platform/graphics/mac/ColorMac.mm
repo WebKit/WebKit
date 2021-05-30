@@ -64,7 +64,7 @@ bool usesTestModeFocusRingColor()
     return useOldAquaFocusRingColor;
 }
 
-static Optional<SRGBA<uint8_t>> makeSimpleColorFromNSColor(NSColor *color)
+static std::optional<SRGBA<uint8_t>> makeSimpleColorFromNSColor(NSColor *color)
 {
     // FIXME: ExtendedColor - needs to handle color spaces.
 

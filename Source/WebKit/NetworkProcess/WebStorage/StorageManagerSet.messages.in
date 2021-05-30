@@ -21,9 +21,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> StorageManagerSet {
-    ConnectToLocalStorageArea(PAL::SessionID sessionID, WebKit::StorageNamespaceIdentifier storageNamespaceID, struct WebCore::SecurityOriginData securityOriginData) -> (Optional<WebKit::StorageAreaIdentifier> storageAreaID) Synchronous WantsConnection
-    ConnectToTransientLocalStorageArea(PAL::SessionID sessionID, WebKit::StorageNamespaceIdentifier storageNamespaceID, struct WebCore::SecurityOriginData topLevelSecurityOriginData, struct WebCore::SecurityOriginData securityOriginData) -> (Optional<WebKit::StorageAreaIdentifier> storageAreaID) Synchronous WantsConnection
-    ConnectToSessionStorageArea(PAL::SessionID sessionID, WebKit::StorageNamespaceIdentifier storageNamespaceID, struct WebCore::SecurityOriginData securityOriginData) -> (Optional<WebKit::StorageAreaIdentifier> storageAreaID) Synchronous WantsConnection
+    ConnectToLocalStorageArea(PAL::SessionID sessionID, WebKit::StorageNamespaceIdentifier storageNamespaceID, struct WebCore::SecurityOriginData securityOriginData) -> (std::optional<WebKit::StorageAreaIdentifier> storageAreaID) Synchronous WantsConnection
+    ConnectToTransientLocalStorageArea(PAL::SessionID sessionID, WebKit::StorageNamespaceIdentifier storageNamespaceID, struct WebCore::SecurityOriginData topLevelSecurityOriginData, struct WebCore::SecurityOriginData securityOriginData) -> (std::optional<WebKit::StorageAreaIdentifier> storageAreaID) Synchronous WantsConnection
+    ConnectToSessionStorageArea(PAL::SessionID sessionID, WebKit::StorageNamespaceIdentifier storageNamespaceID, struct WebCore::SecurityOriginData securityOriginData) -> (std::optional<WebKit::StorageAreaIdentifier> storageAreaID) Synchronous WantsConnection
     DisconnectFromStorageArea(WebKit::StorageAreaIdentifier storageAreaID) WantsConnection
     GetValues(WebKit::StorageAreaIdentifier storageAreaID) -> (HashMap<String, String> values) Synchronous WantsConnection
     CloneSessionStorageNamespace(PAL::SessionID sessionID, WebKit::StorageNamespaceIdentifier fromStorageNamespaceID, WebKit::StorageNamespaceIdentifier toStorageNamespaceID) WantsConnection

@@ -44,7 +44,7 @@ public:
     static Ref<GPUErrorScopes> create(UncapturedErrorCallback&&);
 
     void pushErrorScope(GPUErrorFilter);
-    Optional<GPUError> popErrorScope(String& failMessage);
+    std::optional<GPUError> popErrorScope(String& failMessage);
 
     void generateError(const String&, GPUErrorFilter = GPUErrorFilter::Validation);
     void generatePrefixedError(const String&);
@@ -53,7 +53,7 @@ public:
 private:
     struct ErrorScope {
         const GPUErrorFilter filter;
-        Optional<GPUError> error;
+        std::optional<GPUError> error;
     };
 
     GPUErrorScopes(UncapturedErrorCallback&&);

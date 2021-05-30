@@ -57,7 +57,7 @@ OpenXRLayerProjection::OpenXRLayerProjection(UniqueRef<OpenXRSwapchain>&& swapch
 {
 }
 
-Optional<Device::FrameData::LayerData> OpenXRLayerProjection::startFrame()
+std::optional<Device::FrameData::LayerData> OpenXRLayerProjection::startFrame()
 {
     auto texture = m_swapchain->acquireImage();
     if (!texture)

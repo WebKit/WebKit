@@ -50,7 +50,7 @@ struct FakeXRViewInit {
     Vector<float> projectionMatrix;
     DeviceResolution resolution;
     FakeXRRigidTransformInit viewOffset;
-    Optional<FieldOfViewInit> fieldOfView;
+    std::optional<FieldOfViewInit> fieldOfView;
 };
 
 } // namespace WebCore

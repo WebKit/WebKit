@@ -68,8 +68,8 @@ public:
 private:
     TestPDFPage(PDFPage *);
     RetainPtr<PDFPage> m_page;
-    Optional<Vector<TestPDFAnnotation>> m_annotations;
-    mutable Optional<String> m_textWithoutSurroundingWhitespace;
+    std::optional<Vector<TestPDFAnnotation>> m_annotations;
+    mutable std::optional<String> m_textWithoutSurroundingWhitespace;
 };
 
 class TestPDFDocument : public RefCounted<TestPDFDocument> {

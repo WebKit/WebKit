@@ -192,7 +192,7 @@ void EntryPlan::compileFunctions(CompilationEffort effort)
     if (!hasWork())
         return;
 
-    Optional<TraceScope> traceScope;
+    std::optional<TraceScope> traceScope;
     if (Options::useTracePoints())
         traceScope.emplace(WebAssemblyCompileStart, WebAssemblyCompileEnd);
     ThreadCountHolder holder(*this);

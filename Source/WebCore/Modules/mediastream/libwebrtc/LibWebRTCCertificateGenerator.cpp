@@ -89,7 +89,7 @@ private:
     }
 
     RefPtr<SecurityOrigin> m_origin;
-    Optional<DOMPromiseDeferred<IDLInterface<RTCCertificate>>> m_promise;
+    std::optional<DOMPromiseDeferred<IDLInterface<RTCCertificate>>> m_promise;
 };
 
 static inline rtc::KeyParams keyParamsFromCertificateType(const PeerConnectionBackend::CertificateInformation& info)

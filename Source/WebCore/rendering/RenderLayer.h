@@ -219,7 +219,7 @@ public:
 
     RenderLayer* paintOrderParent() const;
 
-    Optional<LayerRepaintRects> repaintRects() const
+    std::optional<LayerRepaintRects> repaintRects() const
     {
         if (m_repaintRectsValid)
             return m_repaintRects;
@@ -672,7 +672,7 @@ public:
     bool clipCrossesPaintingBoundary() const;
 
     // Pass offsetFromRoot if known.
-    bool intersectsDamageRect(const LayoutRect& layerBounds, const LayoutRect& damageRect, const RenderLayer* rootLayer, const LayoutSize& offsetFromRoot, const Optional<LayoutRect>& cachedBoundingBox = std::nullopt) const;
+    bool intersectsDamageRect(const LayoutRect& layerBounds, const LayoutRect& damageRect, const RenderLayer* rootLayer, const LayoutSize& offsetFromRoot, const std::optional<LayoutRect>& cachedBoundingBox = std::nullopt) const;
 
     enum CalculateLayerBoundsFlag {
         IncludeSelfTransform                    = 1 << 0,
@@ -796,8 +796,8 @@ public:
     bool usesCompositedScrolling() const;
 
     // Layers with the same ScrollingScope are scrolled by some common ancestor scroller. Used for async scrolling.
-    Optional<ScrollingScope> boxScrollingScope() const { return m_boxScrollingScope; }
-    Optional<ScrollingScope> contentsScrollingScope() const { return m_contentsScrollingScope; }
+    std::optional<ScrollingScope> boxScrollingScope() const { return m_boxScrollingScope; }
+    std::optional<ScrollingScope> contentsScrollingScope() const { return m_contentsScrollingScope; }
 
     bool paintsWithTransparency(OptionSet<PaintBehavior> paintBehavior) const
     {
@@ -1168,7 +1168,7 @@ private:
     // This list contains child layers that cannot create stacking contexts and appear in normal flow order.
     std::unique_ptr<Vector<RenderLayer*>> m_normalFlowList;
 
-    // Only valid if m_repaintRectsValid is set (Optional<> not used to avoid padding).
+    // Only valid if m_repaintRectsValid is set (std::optional<> not used to avoid padding).
     LayerRepaintRects m_repaintRects;
 
     // Our current relative position offset.

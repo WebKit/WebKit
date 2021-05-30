@@ -146,7 +146,7 @@ void SpeechRecognitionServer::invalidate(WebCore::SpeechRecognitionConnectionCli
         m_recognizer->abort();
 }
 
-void SpeechRecognitionServer::sendUpdate(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier, WebCore::SpeechRecognitionUpdateType type, Optional<WebCore::SpeechRecognitionError> error, Optional<Vector<WebCore::SpeechRecognitionResultData>> result)
+void SpeechRecognitionServer::sendUpdate(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier, WebCore::SpeechRecognitionUpdateType type, std::optional<WebCore::SpeechRecognitionError> error, std::optional<Vector<WebCore::SpeechRecognitionResultData>> result)
 {
     auto update = WebCore::SpeechRecognitionUpdate::create(clientIdentifier, type);
     if (type == WebCore::SpeechRecognitionUpdateType::Error)

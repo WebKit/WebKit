@@ -65,7 +65,7 @@ void WebPlatformTouchPoint::encode(IPC::Encoder& encoder) const
     encoder << m_force;
 }
 
-Optional<WebPlatformTouchPoint> WebPlatformTouchPoint::decode(IPC::Decoder& decoder)
+std::optional<WebPlatformTouchPoint> WebPlatformTouchPoint::decode(IPC::Decoder& decoder)
 {
     WebPlatformTouchPoint result;
     if (!decoder.decode(result.m_id))

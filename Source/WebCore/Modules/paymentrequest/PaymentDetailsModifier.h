@@ -37,7 +37,7 @@ namespace WebCore {
 
 struct PaymentDetailsModifier {
     String supportedMethods;
-    Optional<PaymentItem> total;
+    std::optional<PaymentItem> total;
     Vector<PaymentItem> additionalDisplayItems;
     JSC::Strong<JSC::JSObject> data;
 };

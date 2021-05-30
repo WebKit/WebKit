@@ -75,7 +75,7 @@ void WebKitPopupMenu::selectItem(unsigned itemIndex)
     m_selectedItem = itemIndex;
 }
 
-void WebKitPopupMenu::activateItem(Optional<unsigned> itemIndex)
+void WebKitPopupMenu::activateItem(std::optional<unsigned> itemIndex)
 {
     if (m_client)
         m_client->valueChangedForPopupMenu(this, itemIndex.value_or(m_selectedItem.value_or(-1)));

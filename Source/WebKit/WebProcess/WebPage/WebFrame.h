@@ -190,9 +190,9 @@ public:
 
 #if ENABLE(APP_BOUND_DOMAINS)
     bool shouldEnableInAppBrowserPrivacyProtections();
-    void setIsNavigatingToAppBoundDomain(Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain) { m_isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain; };
-    Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain() const { return m_isNavigatingToAppBoundDomain; }
-    Optional<NavigatingToAppBoundDomain> isTopFrameNavigatingToAppBoundDomain() const;
+    void setIsNavigatingToAppBoundDomain(std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain) { m_isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain; };
+    std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain() const { return m_isNavigatingToAppBoundDomain; }
+    std::optional<NavigatingToAppBoundDomain> isTopFrameNavigatingToAppBoundDomain() const;
 #endif
 
 private:
@@ -201,11 +201,11 @@ private:
     WeakPtr<WebCore::Frame> m_coreFrame;
 
     uint64_t m_policyListenerID { 0 };
-    Optional<WebCore::PolicyCheckIdentifier> m_policyIdentifier;
+    std::optional<WebCore::PolicyCheckIdentifier> m_policyIdentifier;
     WebCore::FramePolicyFunction m_policyFunction;
     ForNavigationAction m_policyFunctionForNavigationAction { ForNavigationAction::No };
     HashMap<uint64_t, CompletionHandler<void()>> m_willSubmitFormCompletionHandlers;
-    Optional<DownloadID> m_policyDownloadID;
+    std::optional<DownloadID> m_policyDownloadID;
 
     WeakPtr<LoadListener> m_loadListener;
     
@@ -214,7 +214,7 @@ private:
 #if PLATFORM(IOS_FAMILY)
     TransactionID m_firstLayerTreeTransactionIDAfterDidCommitLoad;
 #endif
-    Optional<NavigatingToAppBoundDomain> m_isNavigatingToAppBoundDomain;
+    std::optional<NavigatingToAppBoundDomain> m_isNavigatingToAppBoundDomain;
 
 };
 

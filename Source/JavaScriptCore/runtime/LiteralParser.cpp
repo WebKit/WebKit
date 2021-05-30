@@ -1202,7 +1202,7 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
                     PutPropertySlot slot(object, m_nullOrCodeBlock ? m_nullOrCodeBlock->ownerExecutable()->isInStrictContext() : false);
                     objectStack.last().put(m_globalObject, ident, lastValue, slot);
                 } else {
-                    if (Optional<uint32_t> index = parseIndex(ident))
+                    if (std::optional<uint32_t> index = parseIndex(ident))
                         object->putDirectIndex(m_globalObject, index.value(), lastValue);
                     else
                         object->putDirect(vm, ident, lastValue);

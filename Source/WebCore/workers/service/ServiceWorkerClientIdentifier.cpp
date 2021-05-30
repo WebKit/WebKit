@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-Optional<ServiceWorkerClientIdentifier> ServiceWorkerClientIdentifier::fromString(StringView string)
+std::optional<ServiceWorkerClientIdentifier> ServiceWorkerClientIdentifier::fromString(StringView string)
 {
     ServiceWorkerClientIdentifier clientIdentifier;
     unsigned counter = 0;

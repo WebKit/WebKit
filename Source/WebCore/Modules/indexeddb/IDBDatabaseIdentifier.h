@@ -85,7 +85,7 @@ public:
     static String databaseDirectoryRelativeToRoot(const SecurityOriginData& topLevelOrigin, const SecurityOriginData& openingOrigin, const String& rootDirectory, const String& versionString);
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<IDBDatabaseIdentifier> decode(Decoder&);
+    template<class Decoder> static std::optional<IDBDatabaseIdentifier> decode(Decoder&);
 
 #if !LOG_DISABLED
     String loggingString() const;
@@ -118,19 +118,19 @@ void IDBDatabaseIdentifier::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-Optional<IDBDatabaseIdentifier> IDBDatabaseIdentifier::decode(Decoder& decoder)
+std::optional<IDBDatabaseIdentifier> IDBDatabaseIdentifier::decode(Decoder& decoder)
 {
-    Optional<String> databaseName;
+    std::optional<String> databaseName;
     decoder >> databaseName;
     if (!databaseName)
         return std::nullopt;
 
-    Optional<ClientOrigin> origin;
+    std::optional<ClientOrigin> origin;
     decoder >> origin;
     if (!origin)
         return std::nullopt;
 
-    Optional<bool> isTransient;
+    std::optional<bool> isTransient;
     decoder >> isTransient;
     if (!isTransient)
         return std::nullopt;

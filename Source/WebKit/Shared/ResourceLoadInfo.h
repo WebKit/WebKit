@@ -54,8 +54,8 @@ struct ResourceLoadInfo {
     };
     
     NetworkResourceLoadIdentifier resourceLoadID;
-    Optional<WebCore::FrameIdentifier> frameID;
-    Optional<WebCore::FrameIdentifier> parentFrameID;
+    std::optional<WebCore::FrameIdentifier> frameID;
+    std::optional<WebCore::FrameIdentifier> parentFrameID;
     URL originalURL;
     String originalHTTPMethod;
     WallTime eventTimestamp;
@@ -74,44 +74,44 @@ struct ResourceLoadInfo {
         encoder << type;
     }
 
-    static Optional<ResourceLoadInfo> decode(IPC::Decoder& decoder)
+    static std::optional<ResourceLoadInfo> decode(IPC::Decoder& decoder)
     {
-        Optional<NetworkResourceLoadIdentifier> resourceLoadID;
+        std::optional<NetworkResourceLoadIdentifier> resourceLoadID;
         decoder >> resourceLoadID;
         if (!resourceLoadID)
             return std::nullopt;
 
-        Optional<Optional<WebCore::FrameIdentifier>> frameID;
+        std::optional<std::optional<WebCore::FrameIdentifier>> frameID;
         decoder >> frameID;
         if (!frameID)
             return std::nullopt;
 
-        Optional<Optional<WebCore::FrameIdentifier>> parentFrameID;
+        std::optional<std::optional<WebCore::FrameIdentifier>> parentFrameID;
         decoder >> parentFrameID;
         if (!parentFrameID)
             return std::nullopt;
 
-        Optional<URL> originalURL;
+        std::optional<URL> originalURL;
         decoder >> originalURL;
         if (!originalURL)
             return std::nullopt;
 
-        Optional<String> originalHTTPMethod;
+        std::optional<String> originalHTTPMethod;
         decoder >> originalHTTPMethod;
         if (!originalHTTPMethod)
             return std::nullopt;
 
-        Optional<WallTime> eventTimestamp;
+        std::optional<WallTime> eventTimestamp;
         decoder >> eventTimestamp;
         if (!eventTimestamp)
             return std::nullopt;
 
-        Optional<bool> loadedFromCache;
+        std::optional<bool> loadedFromCache;
         decoder >> loadedFromCache;
         if (!loadedFromCache)
             return std::nullopt;
 
-        Optional<Type> type;
+        std::optional<Type> type;
         decoder >> type;
         if (!type)
             return std::nullopt;

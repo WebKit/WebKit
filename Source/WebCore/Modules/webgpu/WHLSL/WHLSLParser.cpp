@@ -202,7 +202,7 @@ bool Parser::peekTypes()
     return Types<types...>::includes(token.type);
 }
 
-Optional<Token> Parser::tryType(Token::Type type)
+std::optional<Token> Parser::tryType(Token::Type type)
 {
     auto token = m_lexer.peek();
     if (token.type == type)
@@ -211,7 +211,7 @@ Optional<Token> Parser::tryType(Token::Type type)
 }
 
 template <Token::Type... types>
-Optional<Token> Parser::tryTypes()
+std::optional<Token> Parser::tryTypes()
 {
     auto token = m_lexer.peek();
     if (Types<types...>::includes(token.type))
@@ -343,11 +343,11 @@ auto Parser::consumeNonNegativeIntegralLiteral() -> Expected<unsigned, Error>
     auto integralLiteral = consumeIntegralLiteral();
     if (!integralLiteral)
         return makeUnexpected(integralLiteral.error());
-    auto result = WTF::visit(WTF::makeVisitor([](int x) -> Optional<unsigned> {
+    auto result = WTF::visit(WTF::makeVisitor([](int x) -> std::optional<unsigned> {
         if (x < 0)
             return std::nullopt;
         return x;
-    }, [](unsigned x) -> Optional<unsigned> {
+    }, [](unsigned x) -> std::optional<unsigned> {
         return x;
     }), *integralLiteral);
     if (result)
@@ -869,7 +869,7 @@ auto Parser::parseEnumerationMember(int64_t defaultValue) -> Expected<AST::Enume
     if (tryType(Token::Type::EqualsSign)) {
         PARSE(constantExpression, ConstantExpression);
 
-        Optional<int64_t> value;
+        std::optional<int64_t> value;
         constantExpression->visit(WTF::makeVisitor([&](AST::IntegerLiteral& integerLiteral) {
             value = integerLiteral.value();
         }, [&](AST::UnsignedIntegerLiteral& unsignedIntegerLiteral) {

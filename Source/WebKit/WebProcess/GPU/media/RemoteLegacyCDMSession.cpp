@@ -82,7 +82,7 @@ RefPtr<Uint8Array> RemoteLegacyCDMSession::generateKeyRequest(const String& mime
         return nullptr;
 
     auto ipcInitData = convertToSharedBufferCopy(initData);
-    Optional<IPC::SharedBufferCopy> ipcNextMessage;
+    std::optional<IPC::SharedBufferCopy> ipcNextMessage;
     m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMSessionProxy::GenerateKeyRequest(mimeType, ipcInitData), Messages::RemoteLegacyCDMSessionProxy::GenerateKeyRequest::Reply(ipcNextMessage, destinationURL, errorCode, systemCode), m_identifier);
 
     if (!ipcNextMessage)
@@ -107,7 +107,7 @@ bool RemoteLegacyCDMSession::update(Uint8Array* keyData, RefPtr<Uint8Array>& nex
 
     auto ipcKeyData = convertToSharedBufferCopy(WTFMove(keyData));
     bool succeeded { false };
-    Optional<IPC::SharedBufferCopy> ipcNextMessage;
+    std::optional<IPC::SharedBufferCopy> ipcNextMessage;
     m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMSessionProxy::Update(ipcKeyData), Messages::RemoteLegacyCDMSessionProxy::Update::Reply(succeeded, ipcNextMessage, errorCode, systemCode), m_identifier);
 
     if (ipcNextMessage)
@@ -125,7 +125,7 @@ RefPtr<ArrayBuffer> RemoteLegacyCDMSession::cachedKeyForKeyID(const String& keyI
     if (foundInCache != m_cachedKeyCache.end())
         return foundInCache->value;
 
-    Optional<IPC::SharedBufferCopy> ipcKey;
+    std::optional<IPC::SharedBufferCopy> ipcKey;
     m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMSessionProxy::CachedKeyForKeyID(keyId), Messages::RemoteLegacyCDMSessionProxy::CachedKeyForKeyID::Reply(ipcKey), m_identifier);
 
     if (!ipcKey)
@@ -136,7 +136,7 @@ RefPtr<ArrayBuffer> RemoteLegacyCDMSession::cachedKeyForKeyID(const String& keyI
     return ipcKeyBuffer;
 }
 
-void RemoteLegacyCDMSession::sendMessage(Optional<IPC::SharedBufferCopy>&& message, const String& destinationURL)
+void RemoteLegacyCDMSession::sendMessage(std::optional<IPC::SharedBufferCopy>&& message, const String& destinationURL)
 {
     if (!m_client)
         return;

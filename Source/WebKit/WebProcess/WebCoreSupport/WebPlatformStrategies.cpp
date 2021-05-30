@@ -110,7 +110,7 @@ BlobRegistry* WebPlatformStrategies::createBlobRegistry()
     return new BlobRegistryProxy;
 }
 
-static Optional<PageIdentifier> pageIdentifier(const PasteboardContext* context)
+static std::optional<PageIdentifier> pageIdentifier(const PasteboardContext* context)
 {
     if (!is<PagePasteboardContext>(context))
         return std::nullopt;
@@ -393,16 +393,16 @@ int WebPlatformStrategies::getPasteboardItemsCount(const String& pasteboardName,
     return itemsCount;
 }
 
-Optional<Vector<PasteboardItemInfo>> WebPlatformStrategies::allPasteboardItemInfo(const String& pasteboardName, int64_t changeCount, const PasteboardContext* context)
+std::optional<Vector<PasteboardItemInfo>> WebPlatformStrategies::allPasteboardItemInfo(const String& pasteboardName, int64_t changeCount, const PasteboardContext* context)
 {
-    Optional<Vector<PasteboardItemInfo>> allInfo;
+    std::optional<Vector<PasteboardItemInfo>> allInfo;
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::AllPasteboardItemInfo(pasteboardName, changeCount, pageIdentifier(context)), Messages::WebPasteboardProxy::AllPasteboardItemInfo::Reply(allInfo), 0);
     return allInfo;
 }
 
-Optional<PasteboardItemInfo> WebPlatformStrategies::informationForItemAtIndex(size_t index, const String& pasteboardName, int64_t changeCount, const PasteboardContext* context)
+std::optional<PasteboardItemInfo> WebPlatformStrategies::informationForItemAtIndex(size_t index, const String& pasteboardName, int64_t changeCount, const PasteboardContext* context)
 {
-    Optional<PasteboardItemInfo> info;
+    std::optional<PasteboardItemInfo> info;
     WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::InformationForItemAtIndex(index, pasteboardName, changeCount, pageIdentifier(context)), Messages::WebPasteboardProxy::InformationForItemAtIndex::Reply(info), 0);
     return info;
 }

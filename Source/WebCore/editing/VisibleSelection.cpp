@@ -106,7 +106,7 @@ Position VisibleSelection::uncanonicalizedEnd() const
     return m_anchorIsFirst ? m_focus : m_anchor;
 }
 
-Optional<SimpleRange> VisibleSelection::range() const
+std::optional<SimpleRange> VisibleSelection::range() const
 {
     return makeSimpleRange(uncanonicalizedStart().parentAnchoredEquivalent(), uncanonicalizedEnd().parentAnchoredEquivalent());
 }
@@ -159,7 +159,7 @@ RefPtr<Document> VisibleSelection::document() const
     return baseDocument;
 }
 
-Optional<SimpleRange> VisibleSelection::firstRange() const
+std::optional<SimpleRange> VisibleSelection::firstRange() const
 {
     if (isNoneOrOrphaned())
         return std::nullopt;
@@ -167,7 +167,7 @@ Optional<SimpleRange> VisibleSelection::firstRange() const
     return makeSimpleRange(m_start.parentAnchoredEquivalent(), m_end.parentAnchoredEquivalent());
 }
 
-Optional<SimpleRange> VisibleSelection::toNormalizedRange() const
+std::optional<SimpleRange> VisibleSelection::toNormalizedRange() const
 {
     if (isNoneOrOrphaned())
         return std::nullopt;

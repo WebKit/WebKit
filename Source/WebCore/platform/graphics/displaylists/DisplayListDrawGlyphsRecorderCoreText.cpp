@@ -370,7 +370,7 @@ struct GlyphsAndAdvances {
     const GlyphBufferAdvance* advances;
     unsigned numGlyphs;
     GlyphBufferAdvance initialAdvance;
-    Optional<GlyphsAndAdvancesStorage> storage;
+    std::optional<GlyphsAndAdvancesStorage> storage;
 };
 
 static GlyphsAndAdvances filterOutOTSVGGlyphs(const Font& font, const GlyphBufferGlyph* glyphs, const GlyphBufferAdvance* advances, unsigned numGlyphs)

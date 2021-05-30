@@ -290,7 +290,7 @@ _expected_model_test_with_superclass = {
                 ('bool', 'value'),
             ),
             'reply_parameters': (
-                ('Optional<WebKit::TestClassName>', 'optionalReply'),
+                ('std::optional<WebKit::TestClassName>', 'optionalReply'),
             ),
             'conditions': (None),
         },

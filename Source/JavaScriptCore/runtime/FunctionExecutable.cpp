@@ -91,7 +91,7 @@ DEFINE_VISIT_CHILDREN(FunctionExecutable);
 
 FunctionExecutable* FunctionExecutable::fromGlobalCode(
     const Identifier& name, JSGlobalObject* globalObject, const SourceCode& source, 
-    JSObject*& exception, int overrideLineNumber, Optional<int> functionConstructorParametersEndPosition)
+    JSObject*& exception, int overrideLineNumber, std::optional<int> functionConstructorParametersEndPosition)
 {
     UnlinkedFunctionExecutable* unlinkedExecutable = 
         UnlinkedFunctionExecutable::fromGlobalCode(

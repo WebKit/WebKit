@@ -139,7 +139,7 @@ private:
         return &tag;
     }
 
-    Optional<CallbackFunction> m_callback;
+    std::optional<CallbackFunction> m_callback;
 
 #if ASSERT_ENABLED
     Ref<Thread> m_originThread { Thread::current() };

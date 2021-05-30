@@ -382,7 +382,7 @@ void WorkerOrWorkletScriptController::linkAndEvaluateModule(WorkerScriptFetcher&
     }
 }
 
-void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL, FetchOptions::Credentials credentials, CompletionHandler<void(Optional<Exception>&&)>&& completionHandler)
+void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL, FetchOptions::Credentials credentials, CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)
 {
     if (isExecutionForbidden()) {
         completionHandler(Exception { NotAllowedError });
@@ -399,7 +399,7 @@ void WorkerOrWorkletScriptController::loadAndEvaluateModule(const URL& moduleURL
     {
         auto& promise = JSExecState::loadModule(globalObject, moduleURL.string(), JSC::JSScriptFetchParameters::create(vm, makeRef(scriptFetcher->parameters())), JSC::JSScriptFetcher::create(vm, { scriptFetcher.ptr() }));
 
-        auto task = createSharedTask<void(Optional<Exception>&&)>([completionHandler = WTFMove(completionHandler)](Optional<Exception>&& exception) mutable {
+        auto task = createSharedTask<void(std::optional<Exception>&&)>([completionHandler = WTFMove(completionHandler)](std::optional<Exception>&& exception) mutable {
             completionHandler(WTFMove(exception));
         });
 

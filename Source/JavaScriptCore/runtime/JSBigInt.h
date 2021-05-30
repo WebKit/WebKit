@@ -454,7 +454,7 @@ public:
     JS_EXPORT_PRIVATE JSBigInt* rightTrim(JSGlobalObject*);
     JS_EXPORT_PRIVATE JSBigInt* tryRightTrim(VM&);
 
-    JS_EXPORT_PRIVATE Optional<unsigned> concurrentHash();
+    JS_EXPORT_PRIVATE std::optional<unsigned> concurrentHash();
     unsigned hash()
     {
         if (m_hash)
@@ -592,7 +592,7 @@ private:
     static ImplResult rightShiftByMaximum(JSGlobalObject*, bool sign);
 
     template <typename BigIntImpl>
-    static Optional<Digit> toShiftAmount(BigIntImpl x);
+    static std::optional<Digit> toShiftAmount(BigIntImpl x);
 
     template <typename BigIntImpl>
     static ImplResult asIntNImpl(JSGlobalObject*, uint64_t, BigIntImpl);
@@ -605,7 +605,7 @@ private:
 
     JS_EXPORT_PRIVATE static uint64_t toBigUInt64Heap(JSBigInt*);
 
-    JS_EXPORT_PRIVATE static Optional<uint64_t> toUint64Heap(JSBigInt*);
+    JS_EXPORT_PRIVATE static std::optional<uint64_t> toUint64Heap(JSBigInt*);
 
     inline static size_t offsetOfData()
     {

@@ -44,8 +44,8 @@ public:
     void finalize();
 
     bool isEmpty() const { return m_nodes.isEmpty(); }
-    Optional<HeapSnapshotNode> nodeForCell(JSCell*);
-    Optional<HeapSnapshotNode> nodeForObjectIdentifier(unsigned objectIdentifier);
+    std::optional<HeapSnapshotNode> nodeForCell(JSCell*);
+    std::optional<HeapSnapshotNode> nodeForObjectIdentifier(unsigned objectIdentifier);
 
 private:
     friend class HeapSnapshotBuilder;

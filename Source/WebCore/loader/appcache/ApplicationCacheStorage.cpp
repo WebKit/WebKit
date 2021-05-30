@@ -1303,7 +1303,7 @@ bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(SharedBuffer& dat
     return true;
 }
 
-Optional<Vector<URL>> ApplicationCacheStorage::manifestURLs()
+std::optional<Vector<URL>> ApplicationCacheStorage::manifestURLs()
 {
     SQLiteTransactionInProgressAutoCounter transactionCounter;
 

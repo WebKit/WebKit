@@ -64,7 +64,7 @@ static bool trySetMetalFunctions(MTLLibrary *computeMetalLibrary, MTLComputePipe
     return true;
 }
 
-static Optional<WHLSL::ComputeDimensions> trySetFunctions(const GPUProgrammableStageDescriptor& computeStage, const GPUDevice& device, MTLComputePipelineDescriptor* mtlDescriptor, Optional<WHLSL::ComputePipelineDescriptor>& whlslDescriptor, GPUErrorScopes& errorScopes)
+static std::optional<WHLSL::ComputeDimensions> trySetFunctions(const GPUProgrammableStageDescriptor& computeStage, const GPUDevice& device, MTLComputePipelineDescriptor* mtlDescriptor, std::optional<WHLSL::ComputePipelineDescriptor>& whlslDescriptor, GPUErrorScopes& errorScopes)
 {
     RetainPtr<MTLLibrary> computeLibrary;
     String computeEntryPoint;
@@ -119,7 +119,7 @@ struct ConvertResult {
     WHLSL::ComputeDimensions computeDimensions;
 };
 
-static Optional<ConvertResult> convertComputePipelineDescriptor(const GPUComputePipelineDescriptor& descriptor, const GPUDevice& device, GPUErrorScopes& errorScopes)
+static std::optional<ConvertResult> convertComputePipelineDescriptor(const GPUComputePipelineDescriptor& descriptor, const GPUDevice& device, GPUErrorScopes& errorScopes)
 {
     RetainPtr<MTLComputePipelineDescriptor> mtlDescriptor;
 
@@ -136,7 +136,7 @@ static Optional<ConvertResult> convertComputePipelineDescriptor(const GPUCompute
 
     bool isWhlsl = computeStage.module->whlslModule();
 
-    Optional<WHLSL::ComputePipelineDescriptor> whlslDescriptor;
+    std::optional<WHLSL::ComputePipelineDescriptor> whlslDescriptor;
     if (isWhlsl)
         whlslDescriptor = WHLSL::ComputePipelineDescriptor();
 
@@ -160,7 +160,7 @@ struct CreateResult {
     WHLSL::ComputeDimensions computeDimensions;
 };
 
-static Optional<CreateResult> tryCreateMTLComputePipelineState(const GPUDevice& device, const GPUComputePipelineDescriptor& descriptor, GPUErrorScopes& errorScopes)
+static std::optional<CreateResult> tryCreateMTLComputePipelineState(const GPUDevice& device, const GPUComputePipelineDescriptor& descriptor, GPUErrorScopes& errorScopes)
 {
     if (!device.platformDevice()) {
         errorScopes.generatePrefixedError("Invalid GPUDevice!");

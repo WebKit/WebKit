@@ -77,13 +77,13 @@ void StreamConnectionBuffer::encode(Encoder& encoder) const
     encoder << m_clientWaitSemaphore;
 }
 
-Optional<StreamConnectionBuffer> StreamConnectionBuffer::decode(Decoder& decoder)
+std::optional<StreamConnectionBuffer> StreamConnectionBuffer::decode(Decoder& decoder)
 {
-    Optional<WebKit::SharedMemory::IPCHandle> ipcHandle;
+    std::optional<WebKit::SharedMemory::IPCHandle> ipcHandle;
     decoder >> ipcHandle;
     if (!ipcHandle)
         return std::nullopt;
-    Optional<Semaphore> semaphore;
+    std::optional<Semaphore> semaphore;
     decoder >> semaphore;
     if (!semaphore)
         return std::nullopt;

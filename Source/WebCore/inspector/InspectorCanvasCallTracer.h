@@ -106,8 +106,8 @@ enum ImageSmoothingQuality;
 
 #if ENABLE(WEBGL)
 #define FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_WEBGL_ARGUMENT(macro) \
-    macro(Optional<WebGLRenderingContextBase::BufferDataSource>&) \
-    macro(Optional<WebGLRenderingContextBase::TexImageSource>&) \
+    macro(std::optional<WebGLRenderingContextBase::BufferDataSource>&) \
+    macro(std::optional<WebGLRenderingContextBase::TexImageSource>&) \
     macro(WebGLBuffer*) \
     macro(WebGLFramebuffer*) \
     macro(WebGLProgram*) \
@@ -153,7 +153,7 @@ enum ImageSmoothingQuality;
     macro(ImageData*) \
     macro(ImageDataSettings&) \
     macro(ImageSmoothingQuality) \
-    macro(Optional<float>&) \
+    macro(std::optional<float>&) \
     macro(Path2D*) \
     macro(RefPtr<CanvasGradient>&) \
     macro(RefPtr<CanvasPattern>&) \
@@ -193,17 +193,17 @@ public:
         RecordingSwizzleType swizzleType;
     };
 
-    using ProcessedArguments = std::initializer_list<Optional<ProcessedArgument>>;
+    using ProcessedArguments = std::initializer_list<std::optional<ProcessedArgument>>;
 
 #define PROCESS_ARGUMENT_DECLARATION(ArgumentType) \
-    static Optional<ProcessedArgument> processArgument(CanvasRenderingContext&, ArgumentType); \
+    static std::optional<ProcessedArgument> processArgument(CanvasRenderingContext&, ArgumentType); \
 // end of PROCESS_ARGUMENT_DECLARATION
     FOR_EACH_INSPECTOR_CANVAS_CALL_TRACER_ARGUMENT(PROCESS_ARGUMENT_DECLARATION)
 #undef PROCESS_ARGUMENT_DECLARATION
 
     static void recordAction(CanvasRenderingContext&, String&&, ProcessedArguments&& = { });
 
-    static Optional<ProcessedArgument> processArgument(const HTMLCanvasElement&, uint32_t);
+    static std::optional<ProcessedArgument> processArgument(const HTMLCanvasElement&, uint32_t);
     static void recordAction(const HTMLCanvasElement&, String&&, ProcessedArguments&& = { });
 };
 

@@ -55,7 +55,7 @@ static bool useFixedDefaultSize(const FontCascadeDescription& fontDescription)
     return fontDescription.familyCount() == 1 && fontDescription.firstFamily() == familyNamesData->at(FamilyNamesIndex::MonospaceFamily);
 }
 
-Optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascadeDescription&& fontDescription, ScriptExecutionContext& context)
+std::optional<FontCascade> resolveForFontRaw(const FontRaw& fontRaw, FontCascadeDescription&& fontDescription, ScriptExecutionContext& context)
 {
     ASSERT(context.cssFontSelector());
 

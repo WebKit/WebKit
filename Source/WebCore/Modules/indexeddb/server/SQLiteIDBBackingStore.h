@@ -100,7 +100,7 @@ public:
 
     String databaseDirectory() const { return m_databaseDirectory; };
     static String fullDatabasePathForDirectory(const String&);
-    static Optional<IDBDatabaseNameAndVersion> databaseNameAndVersionFromFile(const String&);
+    static std::optional<IDBDatabaseNameAndVersion> databaseNameAndVersionFromFile(const String&);
 
     PAL::SessionID sessionID() const { return m_sessionID; }
 
@@ -114,7 +114,7 @@ private:
     IDBError ensureValidIndexRecordsIndex();
     IDBError ensureValidIndexRecordsRecordIndex();
     IDBError ensureValidBlobTables();
-    Optional<IsSchemaUpgraded> ensureValidObjectStoreInfoTable();
+    std::optional<IsSchemaUpgraded> ensureValidObjectStoreInfoTable();
     std::unique_ptr<IDBDatabaseInfo> createAndPopulateInitialDatabaseInfo();
     std::unique_ptr<IDBDatabaseInfo> extractExistingDatabaseInfo();
 

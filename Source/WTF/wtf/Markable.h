@@ -106,11 +106,11 @@ public:
         : m_value(std::forward<Args>(args)...)
     { }
 
-    constexpr Markable(const Optional<T>& value)
+    constexpr Markable(const std::optional<T>& value)
         : m_value(bool(value) ? *value : Traits::emptyValue())
     { }
 
-    constexpr Markable(Optional<T>&& value)
+    constexpr Markable(std::optional<T>&& value)
         : m_value(bool(value) ? WTFMove(*value) : Traits::emptyValue())
     { }
 
@@ -128,23 +128,23 @@ public:
     constexpr const T& operator*() const& { return m_value; }
     constexpr T& operator*() & { return m_value; }
 
-    operator Optional<T>() &&
+    operator std::optional<T>() &&
     {
         if (bool(*this))
             return WTFMove(m_value);
         return std::nullopt;
     }
 
-    operator Optional<T>() const&
+    operator std::optional<T>() const&
     {
         if (bool(*this))
             return m_value;
         return std::nullopt;
     }
 
-    Optional<T> asOptional() const
+    std::optional<T> asOptional() const
     {
-        return Optional<T>(*this);
+        return std::optional<T>(*this);
     }
 
 private:

@@ -142,7 +142,7 @@ XrResult OpenXRInputSource::suggestBindings(SuggestedBindings& bindings) const
     return XR_SUCCESS;
 }
 
-Optional<Device::FrameData::InputSource> OpenXRInputSource::getInputSource(XrSpace localSpace, const XrFrameState& frameState) const
+std::optional<Device::FrameData::InputSource> OpenXRInputSource::getInputSource(XrSpace localSpace, const XrFrameState& frameState) const
 {
     Device::FrameData::InputSource data;
     data.handeness = m_handeness;
@@ -157,7 +157,7 @@ Optional<Device::FrameData::InputSource> OpenXRInputSource::getInputSource(XrSpa
         data.gripOrigin = gripPose;
 
     // Buttons.
-    Vector<Optional<Device::FrameData::InputSourceButton>> buttons;
+    Vector<std::optional<Device::FrameData::InputSourceButton>> buttons;
     for (auto& type : openXRButtonTypes) 
         buttons.append(getButton(type));
 
@@ -180,7 +180,7 @@ Optional<Device::FrameData::InputSource> OpenXRInputSource::getInputSource(XrSpa
     }
 
     // Axes.
-    Vector<Optional<XrVector2f>> axes;
+    Vector<std::optional<XrVector2f>> axes;
     for (auto& type : openXRAxisTypes) 
         axes.append(getAxis(type));
 
@@ -289,7 +289,7 @@ XrResult OpenXRInputSource::getPose(XrSpace space, XrSpace baseSpace, const XrFr
     return XR_SUCCESS;
 }
 
-Optional<Device::FrameData::InputSourceButton> OpenXRInputSource::getButton(OpenXRButtonType buttonType) const
+std::optional<Device::FrameData::InputSourceButton> OpenXRInputSource::getButton(OpenXRButtonType buttonType) const
 {
     auto it = m_buttonActions.find(buttonType);
     if (it == m_buttonActions.end())
@@ -313,7 +313,7 @@ Optional<Device::FrameData::InputSourceButton> OpenXRInputSource::getButton(Open
     return hasValue ?  std::make_optional(result) : std::nullopt;
 }
 
-Optional<XrVector2f> OpenXRInputSource::getAxis(OpenXRAxisType axisType) const
+std::optional<XrVector2f> OpenXRInputSource::getAxis(OpenXRAxisType axisType) const
 {
     auto it = m_axisActions.find(axisType);
     if (it == m_axisActions.end())

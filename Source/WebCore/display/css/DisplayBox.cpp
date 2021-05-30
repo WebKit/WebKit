@@ -59,7 +59,7 @@ bool Box::participatesInZOrderSorting() const
     return !isLineBreakBox() && style().participatesInZOrderSorting();
 }
 
-void Box::setNeedsDisplay(Optional<AbsoluteFloatRect> subrect)
+void Box::setNeedsDisplay(std::optional<AbsoluteFloatRect> subrect)
 {
     m_tree.setBoxNeedsDisplay(*this, subrect);
 }

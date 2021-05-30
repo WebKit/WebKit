@@ -52,19 +52,19 @@ bool decodeLegacySessionState(const uint8_t* data, size_t dataSize, SessionState
     if (!decoder)
         return false;
 
-    Optional<BackForwardListState> backForwardListState;
+    std::optional<BackForwardListState> backForwardListState;
     *decoder >> backForwardListState;
     if (!backForwardListState)
         return false;
     sessionState.backForwardListState = WTFMove(*backForwardListState);
 
-    Optional<uint64_t> renderTreeSize;
+    std::optional<uint64_t> renderTreeSize;
     *decoder >> renderTreeSize;
     if (!renderTreeSize)
         return false;
     sessionState.renderTreeSize = *renderTreeSize;
 
-    Optional<URL> provisionalURL;
+    std::optional<URL> provisionalURL;
     *decoder >> provisionalURL;
     if (!provisionalURL)
         return false;

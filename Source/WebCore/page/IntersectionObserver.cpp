@@ -237,7 +237,7 @@ void IntersectionObserver::rootDestroyed()
     m_root = nullptr;
 }
 
-Optional<ReducedResolutionSeconds> IntersectionObserver::nowTimestamp() const
+std::optional<ReducedResolutionSeconds> IntersectionObserver::nowTimestamp() const
 {
     if (!m_callback)
         return std::nullopt;

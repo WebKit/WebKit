@@ -130,7 +130,7 @@ void RenderListBox::updateFromElement()
     if (m_optionsChanged) {
         float width = 0;
         auto& normalFont = style().fontCascade();
-        Optional<FontCascade> boldFont;
+        std::optional<FontCascade> boldFont;
         for (auto* element : selectElement().listItems()) {
             String text;
             WTF::Function<const FontCascade&()> selectFont = [&normalFont] () -> const FontCascade& {

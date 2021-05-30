@@ -57,7 +57,7 @@ public:
     bool isEmpty() const { return m_buffer ? m_buffer->isEmpty() : true; }
 
     void encode(Encoder&) const;
-    static WARN_UNUSED_RETURN Optional<SharedBufferCopy> decode(Decoder&);
+    static WARN_UNUSED_RETURN std::optional<SharedBufferCopy> decode(Decoder&);
 
 private:
     RefPtr<WebCore::SharedBuffer> m_buffer;

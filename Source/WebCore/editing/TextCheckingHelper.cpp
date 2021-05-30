@@ -119,7 +119,7 @@ TextCheckingParagraph::TextCheckingParagraph(const SimpleRange& range)
 {
 }
 
-TextCheckingParagraph::TextCheckingParagraph(const SimpleRange& checkingRange, const SimpleRange& replacementRange, const Optional<SimpleRange>& paragraphRange)
+TextCheckingParagraph::TextCheckingParagraph(const SimpleRange& checkingRange, const SimpleRange& replacementRange, const std::optional<SimpleRange>& paragraphRange)
     : m_checkingRange(checkingRange)
     , m_automaticReplacementRange(replacementRange)
     , m_paragraphRange(paragraphRange)
@@ -228,9 +228,9 @@ TextCheckingHelper::TextCheckingHelper(EditorClient& client, const SimpleRange& 
 {
 }
 
-auto TextCheckingHelper::findMisspelledWords(Operation operation) const -> std::pair<MisspelledWord, Optional<SimpleRange>>
+auto TextCheckingHelper::findMisspelledWords(Operation operation) const -> std::pair<MisspelledWord, std::optional<SimpleRange>>
 {
-    std::pair<MisspelledWord, Optional<SimpleRange>> first;
+    std::pair<MisspelledWord, std::optional<SimpleRange>> first;
 
     uint64_t currentChunkOffset = 0;
 
@@ -297,7 +297,7 @@ auto TextCheckingHelper::findFirstMisspelledWordOrUngrammaticalPhrase(bool check
     GrammarDetail grammarDetail;
 
     String misspelledWord;
-    Optional<SimpleRange> misspelledWordRange;
+    std::optional<SimpleRange> misspelledWordRange;
     String badGrammarPhrase;
     
     // Expand the search range to encompass entire paragraphs, since text checking needs that much context.
@@ -551,7 +551,7 @@ TextCheckingGuesses TextCheckingHelper::guessesForMisspelledWordOrUngrammaticalP
     return { };
 }
 
-Optional<SimpleRange> TextCheckingHelper::markAllMisspelledWords() const
+std::optional<SimpleRange> TextCheckingHelper::markAllMisspelledWords() const
 {
     return findMisspelledWords(Operation::MarkAll).second;
 }

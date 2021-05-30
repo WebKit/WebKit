@@ -131,7 +131,7 @@ void HeapSnapshot::finalize()
 #endif
 }
 
-Optional<HeapSnapshotNode> HeapSnapshot::nodeForCell(JSCell* cell)
+std::optional<HeapSnapshotNode> HeapSnapshot::nodeForCell(JSCell* cell)
 {
     ASSERT(m_finalized);
 
@@ -143,7 +143,7 @@ Optional<HeapSnapshotNode> HeapSnapshot::nodeForCell(JSCell* cell)
             unsigned middle = start + ((end - start) / 2);
             HeapSnapshotNode& node = m_nodes[middle];
             if (cell == node.cell)
-                return Optional<HeapSnapshotNode>(node);
+                return std::optional<HeapSnapshotNode>(node);
             if (cell < node.cell)
                 end = middle;
             else
@@ -157,7 +157,7 @@ Optional<HeapSnapshotNode> HeapSnapshot::nodeForCell(JSCell* cell)
     return std::nullopt;
 }
 
-Optional<HeapSnapshotNode> HeapSnapshot::nodeForObjectIdentifier(unsigned objectIdentifier)
+std::optional<HeapSnapshotNode> HeapSnapshot::nodeForObjectIdentifier(unsigned objectIdentifier)
 {
     if (isEmpty()) {
         if (m_previous)
@@ -176,7 +176,7 @@ Optional<HeapSnapshotNode> HeapSnapshot::nodeForObjectIdentifier(unsigned object
 
     for (auto& node : m_nodes) {
         if (node.identifier == objectIdentifier)
-            return Optional<HeapSnapshotNode>(node);
+            return std::optional<HeapSnapshotNode>(node);
     }
 
     return std::nullopt;

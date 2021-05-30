@@ -55,7 +55,7 @@ GraphicsContext& Replayer::context() const
 }
 
 template<class T>
-inline static Optional<RenderingResourceIdentifier> applyImageBufferItem(GraphicsContext& context, const ImageBufferHashMap& imageBuffers, ItemHandle item)
+inline static std::optional<RenderingResourceIdentifier> applyImageBufferItem(GraphicsContext& context, const ImageBufferHashMap& imageBuffers, ItemHandle item)
 {
     auto& imageBufferItem = item.get<T>();
     auto resourceIdentifier = imageBufferItem.imageBufferIdentifier();
@@ -67,7 +67,7 @@ inline static Optional<RenderingResourceIdentifier> applyImageBufferItem(Graphic
 }
 
 template<class T>
-inline static Optional<RenderingResourceIdentifier> applyNativeImageItem(GraphicsContext& context, const NativeImageHashMap& nativeImages, ItemHandle item)
+inline static std::optional<RenderingResourceIdentifier> applyNativeImageItem(GraphicsContext& context, const NativeImageHashMap& nativeImages, ItemHandle item)
 {
     auto& nativeImageItem = item.get<T>();
     auto resourceIdentifier = nativeImageItem.imageIdentifier();
@@ -78,7 +78,7 @@ inline static Optional<RenderingResourceIdentifier> applyNativeImageItem(Graphic
     return resourceIdentifier;
 }
 
-inline static Optional<RenderingResourceIdentifier> applySetStateItem(GraphicsContext& context, const NativeImageHashMap& nativeImages, ItemHandle item)
+inline static std::optional<RenderingResourceIdentifier> applySetStateItem(GraphicsContext& context, const NativeImageHashMap& nativeImages, ItemHandle item)
 {
     auto& setStateItem = item.get<SetState>();
 
@@ -102,7 +102,7 @@ inline static Optional<RenderingResourceIdentifier> applySetStateItem(GraphicsCo
 }
 
 template<class T>
-inline static Optional<RenderingResourceIdentifier> applyFontItem(GraphicsContext& context, const FontRenderingResourceMap& fonts, ItemHandle item)
+inline static std::optional<RenderingResourceIdentifier> applyFontItem(GraphicsContext& context, const FontRenderingResourceMap& fonts, ItemHandle item)
 {
     auto& fontItem = item.get<T>();
     auto resourceIdentifier = fontItem.fontIdentifier();
@@ -113,7 +113,7 @@ inline static Optional<RenderingResourceIdentifier> applyFontItem(GraphicsContex
     return resourceIdentifier;
 }
 
-std::pair<Optional<StopReplayReason>, Optional<RenderingResourceIdentifier>> Replayer::applyItem(ItemHandle item)
+std::pair<std::optional<StopReplayReason>, std::optional<RenderingResourceIdentifier>> Replayer::applyItem(ItemHandle item)
 {
     if (m_delegate && m_delegate->apply(item, context()))
         return { std::nullopt, std::nullopt };

@@ -30,5 +30,5 @@ namespace WebCore {
 class GeolocationPositionData;
 }
 
-Optional<WebCore::GeolocationPositionData> core(WebGeolocationPosition *);
+std::optional<WebCore::GeolocationPositionData> core(WebGeolocationPosition *);
 

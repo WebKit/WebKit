@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-Optional<HEVCParameters> parseHEVCCodecParameters(StringView codecString)
+std::optional<HEVCParameters> parseHEVCCodecParameters(StringView codecString)
 {
     // The format of the 'hevc' codec string is specified in ISO/IEC 14496-15:2014, Annex E.3.
     StringView codecView(codecString);
@@ -106,14 +106,14 @@ Optional<HEVCParameters> parseHEVCCodecParameters(StringView codecString)
     return parameters;
 }
 
-template<typename ValueType> inline Optional<ValueType> makeOptionalFromPointer(const ValueType* pointer)
+template<typename ValueType> inline std::optional<ValueType> makeOptionalFromPointer(const ValueType* pointer)
 {
     if (!pointer)
         return std::nullopt;
     return *pointer;
 }
 
-static Optional<DoViParameters::Codec> parseDoViCodecType(StringView string)
+static std::optional<DoViParameters::Codec> parseDoViCodecType(StringView string)
 {
     static constexpr std::pair<PackedASCIILowerCodes<uint32_t>, DoViParameters::Codec> typesArray[] = {
         { "dva1", DoViParameters::Codec::AVC1 },
@@ -125,7 +125,7 @@ static Optional<DoViParameters::Codec> parseDoViCodecType(StringView string)
     return makeOptionalFromPointer(typesMap.tryGet(string));
 }
 
-static Optional<uint16_t> profileIDForAlphabeticDoViProfile(StringView profile)
+static std::optional<uint16_t> profileIDForAlphabeticDoViProfile(StringView profile)
 {
     // See Table 7 of "Dolby Vision Profiles and Levels Version 1.3.2"
     static constexpr std::pair<PackedASCIILowerCodes<uint64_t>, uint16_t> profilesArray[] = {
@@ -153,7 +153,7 @@ static bool isValidDoViProfileID(uint16_t profileID)
     }
 }
 
-static Optional<uint16_t> maximumLevelIDForDoViProfileID(uint16_t profileID)
+static std::optional<uint16_t> maximumLevelIDForDoViProfileID(uint16_t profileID)
 {
     // See Section 4.1 of "Dolby Vision Profiles and Levels Version 1.3.2"
     switch (profileID) {
@@ -173,7 +173,7 @@ static bool isValidProfileIDForCodec(uint16_t profileID, DoViParameters::Codec c
     return codec == DoViParameters::Codec::HVC1 || codec == DoViParameters::Codec::HEV1;
 }
 
-Optional<DoViParameters> parseDoViCodecParameters(StringView codecView)
+std::optional<DoViParameters> parseDoViCodecParameters(StringView codecView)
 {
     // The format of the DoVi codec string is specified in "Dolby Vision Profiles and Levels Version 1.3.2"
     auto codecSplit = codecView.split('.');

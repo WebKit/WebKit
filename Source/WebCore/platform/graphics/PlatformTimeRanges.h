@@ -69,7 +69,7 @@ public:
     void dump(WTF::PrintStream&) const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static Optional<PlatformTimeRanges> decode(Decoder&);
+    template<class Decoder> static std::optional<PlatformTimeRanges> decode(Decoder&);
 
 private:
     // We consider all the Ranges to be semi-bounded as follow: [start, end[
@@ -92,14 +92,14 @@ private:
         }
 
         template <class Decoder>
-        static Optional<Range> decode(Decoder& decoder)
+        static std::optional<Range> decode(Decoder& decoder)
         {
-            Optional<MediaTime> start;
+            std::optional<MediaTime> start;
             decoder >> start;
             if (!start)
                 return std::nullopt;
 
-            Optional<MediaTime> end;
+            std::optional<MediaTime> end;
             decoder >> end;
             if (!end)
                 return std::nullopt;
@@ -150,9 +150,9 @@ void PlatformTimeRanges::encode(Encoder& encoder) const
 }
 
 template <class Decoder>
-Optional<PlatformTimeRanges> PlatformTimeRanges::decode(Decoder& decoder)
+std::optional<PlatformTimeRanges> PlatformTimeRanges::decode(Decoder& decoder)
 {
-    Optional<Vector<Range>> buffered;
+    std::optional<Vector<Range>> buffered;
     decoder >> buffered;
     if (!buffered)
         return std::nullopt;

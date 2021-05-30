@@ -174,7 +174,7 @@ void ScrollingStateFrameScrollingNode::setMaxLayoutViewportOrigin(const FloatPoi
     setPropertyChanged(Property::MaxLayoutViewportOrigin);
 }
 
-void ScrollingStateFrameScrollingNode::setOverrideVisualViewportSize(Optional<FloatSize> viewportSize)
+void ScrollingStateFrameScrollingNode::setOverrideVisualViewportSize(std::optional<FloatSize> viewportSize)
 {
     if (viewportSize == m_overrideVisualViewportSize)
         return;

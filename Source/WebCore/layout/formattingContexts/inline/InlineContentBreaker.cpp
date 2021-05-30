@@ -102,7 +102,7 @@ static inline bool isNonContentRunsOnly(const InlineContentBreaker::ContinuousCo
     return true;
 }
 
-static inline Optional<size_t> firstTextRunIndex(const InlineContentBreaker::ContinuousContent& continuousContent)
+static inline std::optional<size_t> firstTextRunIndex(const InlineContentBreaker::ContinuousContent& continuousContent)
 {
     auto& runs = continuousContent.runs();
     for (size_t index = 0; index < runs.size(); ++index) {
@@ -162,11 +162,11 @@ struct OverflowingTextContent {
             // Trailing content is either the run's left side (when we break the run somewhere in the middle) or the previous run.
             // Sometimes the breaking position is at the very beginning of the first run, so there's no trailing run at all.
             bool overflows { false };
-            Optional<InlineContentBreaker::PartialRun> partialRun { };
+            std::optional<InlineContentBreaker::PartialRun> partialRun { };
         };
-        Optional<TrailingContent> trailingContent { };
+        std::optional<TrailingContent> trailingContent { };
     };
-    Optional<BreakingPosition> breakingPosition { }; // Where we actually break this overflowing content.
+    std::optional<BreakingPosition> breakingPosition { }; // Where we actually break this overflowing content.
 };
 
 InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(const ContinuousContent& overflowContent, const LineStatus& lineStatus) const
@@ -199,7 +199,7 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
 
     size_t overflowingRunIndex = 0;
     if (hasTextRun(continuousContent)) {
-        auto tryBreakingContentWithText = [&]() -> Optional<Result> {
+        auto tryBreakingContentWithText = [&]() -> std::optional<Result> {
             // 1. This text content is not breakable.
             // 2. This breakable text content does not fit at all. Not even the first glyph. This is a very special case.
             // 3. We can break the content but it still overflows.
@@ -278,7 +278,7 @@ OverflowingTextContent InlineContentBreaker::processOverflowingContentWithText(c
         return isWrappingAllowed(run.inlineItem);
     };
 
-    auto findTrailingRunIndex = [&] (auto breakableRunIndex) -> Optional<size_t> {
+    auto findTrailingRunIndex = [&] (auto breakableRunIndex) -> std::optional<size_t> {
         // When the breaking position is at the beginning of the run, the trailing run is the previous one.
         if (!breakableRunIndex)
             return { };
@@ -308,7 +308,7 @@ OverflowingTextContent InlineContentBreaker::processOverflowingContentWithText(c
     // We have to have an overflowing run.
     RELEASE_ASSERT(overflowingRunIndex < runs.size());
 
-    auto tryBreakingOverflowingRun = [&]() -> Optional<OverflowingTextContent::BreakingPosition> {
+    auto tryBreakingOverflowingRun = [&]() -> std::optional<OverflowingTextContent::BreakingPosition> {
         auto overflowingRun = runs[overflowingRunIndex];
         if (!isBreakableRun(overflowingRun))
             return { };
@@ -328,7 +328,7 @@ OverflowingTextContent InlineContentBreaker::processOverflowingContentWithText(c
     if (auto breakingPosition = tryBreakingOverflowingRun())
         return { overflowingRunIndex, breakingPosition };
 
-    auto tryBreakingPreviousNonOverflowingRuns = [&]() -> Optional<OverflowingTextContent::BreakingPosition> {
+    auto tryBreakingPreviousNonOverflowingRuns = [&]() -> std::optional<OverflowingTextContent::BreakingPosition> {
         auto previousContentWidth = accumulatedContentWidth;
         for (auto index = overflowingRunIndex; index--;) {
             auto& run = runs[index];
@@ -351,7 +351,7 @@ OverflowingTextContent InlineContentBreaker::processOverflowingContentWithText(c
     if (auto breakingPosition = tryBreakingPreviousNonOverflowingRuns())
         return { overflowingRunIndex, breakingPosition };
 
-    auto tryBreakingNextOverflowingRuns = [&]() -> Optional<OverflowingTextContent::BreakingPosition> {
+    auto tryBreakingNextOverflowingRuns = [&]() -> std::optional<OverflowingTextContent::BreakingPosition> {
         auto nextContentWidth = accumulatedContentWidth + runs[overflowingRunIndex].logicalWidth;
         for (auto index = overflowingRunIndex + 1; index < runs.size(); ++index) {
             auto& run = runs[index];
@@ -423,7 +423,7 @@ OptionSet<InlineContentBreaker::WordBreakRule> InlineContentBreaker::wordBreakBe
     return breakRules;
 }
 
-Optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakingTextRun(const ContinuousContent::Run& overflowingRun, InlineLayoutUnit logicalLeft, Optional<InlineLayoutUnit> availableWidth, bool hasWrapOpportunityAtPreviousPosition) const
+std::optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakingTextRun(const ContinuousContent::Run& overflowingRun, InlineLayoutUnit logicalLeft, std::optional<InlineLayoutUnit> availableWidth, bool hasWrapOpportunityAtPreviousPosition) const
 {
     ASSERT(overflowingRun.inlineItem.isText());
     auto& inlineTextItem = downcast<InlineTextItem>(overflowingRun.inlineItem);
@@ -435,7 +435,7 @@ Optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakingText
         return { };
 
     if (breakRules.contains(WordBreakRule::AtHyphenationOpportunities)) {
-        auto tryBreakingAtHyphenationOpportunity = [&]() -> Optional<PartialRun> {
+        auto tryBreakingAtHyphenationOpportunity = [&]() -> std::optional<PartialRun> {
             // Find the hyphen position as follows:
             // 1. Split the text by taking the hyphen width into account
             // 2. Find the last hyphen position before the split position
@@ -500,7 +500,7 @@ Optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakingText
     return { };
 }
 
-void InlineContentBreaker::ContinuousContent::append(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth, Optional<InlineLayoutUnit> collapsibleWidth)
+void InlineContentBreaker::ContinuousContent::append(const InlineItem& inlineItem, InlineLayoutUnit logicalWidth, std::optional<InlineLayoutUnit> collapsibleWidth)
 {
     m_runs.append({ inlineItem, logicalWidth });
     m_logicalWidth = clampTo<InlineLayoutUnit>(m_logicalWidth + logicalWidth);

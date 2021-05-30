@@ -68,24 +68,24 @@ struct MediaDescriptionInfo {
     }
 
     template <class Decoder>
-    static Optional<MediaDescriptionInfo> decode(Decoder& decoder)
+    static std::optional<MediaDescriptionInfo> decode(Decoder& decoder)
     {
-        Optional<String> codec;
+        std::optional<String> codec;
         decoder >> codec;
         if (!codec)
             return std::nullopt;
 
-        Optional<bool> isVideo;
+        std::optional<bool> isVideo;
         decoder >> isVideo;
         if (!isVideo)
             return std::nullopt;
 
-        Optional<bool> isAudio;
+        std::optional<bool> isAudio;
         decoder >> isAudio;
         if (!isAudio)
             return std::nullopt;
 
-        Optional<bool> isText;
+        std::optional<bool> isText;
         decoder >> isText;
         if (!isText)
             return std::nullopt;

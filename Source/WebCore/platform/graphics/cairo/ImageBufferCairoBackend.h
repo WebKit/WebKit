@@ -46,8 +46,8 @@ public:
 
     void transformToColorSpace(const DestinationColorSpace&) override;
 
-    String toDataURL(const String& mimeType, Optional<double> quality, PreserveResolution) const override;
-    Vector<uint8_t> toData(const String& mimeType, Optional<double> quality) const override;
+    String toDataURL(const String& mimeType, std::optional<double> quality, PreserveResolution) const override;
+    Vector<uint8_t> toData(const String& mimeType, std::optional<double> quality) const override;
 
 protected:
     using ImageBufferBackend::ImageBufferBackend;

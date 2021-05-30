@@ -98,7 +98,7 @@ static LSAppLink *appLinkForURL(NSURL *url)
     WeakObjCPtr<id <WKActionSheetAssistantDelegate>> _delegate;
     RetainPtr<WKActionSheet> _interactionSheet;
     RetainPtr<_WKActivatedElementInfo> _elementInfo;
-    Optional<WebKit::InteractionInformationAtPosition> _positionInformation;
+    std::optional<WebKit::InteractionInformationAtPosition> _positionInformation;
 #if USE(UICONTEXTMENU)
 #if ENABLE(DATA_DETECTION)
     RetainPtr<UIContextMenuInteraction> _dataDetectorContextMenuInteraction;
@@ -333,7 +333,7 @@ static const CGFloat presentationElementRectPadding = 15;
 #endif
 }
 
-- (Optional<WebKit::InteractionInformationAtPosition>)currentPositionInformation
+- (std::optional<WebKit::InteractionInformationAtPosition>)currentPositionInformation
 {
     return _positionInformation;
 }

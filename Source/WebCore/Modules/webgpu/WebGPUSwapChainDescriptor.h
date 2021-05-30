@@ -35,7 +35,7 @@
 namespace WebCore {
 
 struct WebGPUSwapChainDescriptor : GPUSwapChainDescriptorBase {
-    Optional<GPUSwapChainDescriptor> asGPUSwapChainDescriptor() const;
+    std::optional<GPUSwapChainDescriptor> asGPUSwapChainDescriptor() const;
 
     RefPtr<WebGPUDevice> device;
 };

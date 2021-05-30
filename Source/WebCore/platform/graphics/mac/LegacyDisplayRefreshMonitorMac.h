@@ -54,7 +54,7 @@ private:
 
     bool startNotificationMechanism() final;
     void stopNotificationMechanism() final;
-    Optional<FramesPerSecond> displayNominalFramesPerSecond() final;
+    std::optional<FramesPerSecond> displayNominalFramesPerSecond() final;
     
     bool ensureDisplayLink();
 

@@ -38,7 +38,7 @@ class TemplateObjectDescriptorTable;
 class TemplateObjectDescriptor : public RefCounted<TemplateObjectDescriptor> {
 public:
     typedef Vector<String, 4> StringVector;
-    typedef Vector<Optional<String>, 4> OptionalStringVector;
+    typedef Vector<std::optional<String>, 4> OptionalStringVector;
 
     enum DeletedValueTag { DeletedValue };
     TemplateObjectDescriptor(DeletedValueTag);

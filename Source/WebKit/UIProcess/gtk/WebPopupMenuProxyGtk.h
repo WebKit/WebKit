@@ -56,7 +56,7 @@ public:
     void cancelTracking() override;
 
     virtual void selectItem(unsigned itemIndex);
-    virtual void activateItem(Optional<unsigned> itemIndex);
+    virtual void activateItem(std::optional<unsigned> itemIndex);
 
     bool handleKeyPress(unsigned keyval, uint32_t timestamp);
     void activateSelectedItem();
@@ -70,7 +70,7 @@ private:
     void createPopupMenu(const Vector<WebPopupItem>&, int32_t selectedIndex);
     void show();
     bool activateItemAtPath(GtkTreePath*);
-    Optional<unsigned> typeAheadFindIndex(unsigned keyval, uint32_t timestamp);
+    std::optional<unsigned> typeAheadFindIndex(unsigned keyval, uint32_t timestamp);
     bool typeAheadFind(unsigned keyval, uint32_t timestamp);
 
 #if !USE(GTK4)
@@ -86,7 +86,7 @@ private:
 #endif
 
     Vector<GUniquePtr<GtkTreePath>> m_paths;
-    Optional<unsigned> m_selectedItem;
+    std::optional<unsigned> m_selectedItem;
 
     // Typeahead find.
     gunichar m_repeatingCharacter { '\0' };

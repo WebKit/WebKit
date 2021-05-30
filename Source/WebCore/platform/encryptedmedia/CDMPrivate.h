@@ -58,7 +58,7 @@ public:
         Allowed,
     };
 
-    using SupportedConfigurationCallback = WTF::Function<void(Optional<CDMKeySystemConfiguration>)>;
+    using SupportedConfigurationCallback = WTF::Function<void(std::optional<CDMKeySystemConfiguration>)>;
     WEBCORE_EXPORT virtual void getSupportedConfiguration(CDMKeySystemConfiguration&& candidateConfiguration, LocalStorageAccess, SupportedConfigurationCallback&&);
 
     virtual Vector<AtomString> supportedInitDataTypes() const = 0;
@@ -76,7 +76,7 @@ public:
     virtual bool supportsInitData(const AtomString&, const SharedBuffer&) const = 0;
     WEBCORE_EXPORT virtual RefPtr<SharedBuffer> sanitizeInitData(const AtomString& initDataType, const SharedBuffer& initData) const;
     virtual RefPtr<SharedBuffer> sanitizeResponse(const SharedBuffer&) const = 0;
-    virtual Optional<String> sanitizeSessionId(const String&) const = 0;
+    virtual std::optional<String> sanitizeSessionId(const String&) const = 0;
 
 protected:
     WEBCORE_EXPORT CDMPrivate();
@@ -100,8 +100,8 @@ protected:
     };
 
     void doSupportedConfigurationStep(CDMKeySystemConfiguration&& candidateConfiguration, CDMRestrictions&&, LocalStorageAccess, SupportedConfigurationCallback&&);
-    Optional<CDMKeySystemConfiguration> getSupportedConfiguration(const CDMKeySystemConfiguration& candidateConfiguration, CDMRestrictions&, LocalStorageAccess);
-    Optional<Vector<CDMMediaCapability>> getSupportedCapabilitiesForAudioVideoType(AudioVideoType, const Vector<CDMMediaCapability>& requestedCapabilities, const CDMKeySystemConfiguration& partialConfiguration, CDMRestrictions&);
+    std::optional<CDMKeySystemConfiguration> getSupportedConfiguration(const CDMKeySystemConfiguration& candidateConfiguration, CDMRestrictions&, LocalStorageAccess);
+    std::optional<Vector<CDMMediaCapability>> getSupportedCapabilitiesForAudioVideoType(AudioVideoType, const Vector<CDMMediaCapability>& requestedCapabilities, const CDMKeySystemConfiguration& partialConfiguration, CDMRestrictions&);
 
     using ConsentStatusCallback = WTF::Function<void(ConsentStatus, CDMKeySystemConfiguration&&, CDMRestrictions&&)>;
     void getConsentStatus(CDMKeySystemConfiguration&& accumulatedConfiguration, CDMRestrictions&&, LocalStorageAccess, ConsentStatusCallback&&);

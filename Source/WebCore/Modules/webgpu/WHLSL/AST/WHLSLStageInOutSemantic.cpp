@@ -58,7 +58,7 @@ bool StageInOutSemantic::isAcceptableType(const UnnamedType& unnamedType, const 
         || nativeTypeDeclaration.isMatrix();
 }
 
-bool StageInOutSemantic::isAcceptableForShaderItemDirection(ShaderItemDirection direction, const Optional<EntryPointType>& entryPointType) const
+bool StageInOutSemantic::isAcceptableForShaderItemDirection(ShaderItemDirection direction, const std::optional<EntryPointType>& entryPointType) const
 {
     switch (*entryPointType) {
     case EntryPointType::Vertex:

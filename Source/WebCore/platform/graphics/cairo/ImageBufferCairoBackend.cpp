@@ -126,7 +126,7 @@ void ImageBufferCairoBackend::transformToColorSpace(const DestinationColorSpace&
     }
 }
 
-String ImageBufferCairoBackend::toDataURL(const String& mimeType, Optional<double> quality, PreserveResolution) const
+String ImageBufferCairoBackend::toDataURL(const String& mimeType, std::optional<double> quality, PreserveResolution) const
 {
     Vector<uint8_t> encodedImage = toData(mimeType, quality);
     if (encodedImage.isEmpty())
@@ -135,7 +135,7 @@ String ImageBufferCairoBackend::toDataURL(const String& mimeType, Optional<doubl
     return makeString("data:", mimeType, ";base64,", base64Encoded(encodedImage.data(), encodedImage.size()));
 }
 
-Vector<uint8_t> ImageBufferCairoBackend::toData(const String& mimeType, Optional<double> quality) const
+Vector<uint8_t> ImageBufferCairoBackend::toData(const String& mimeType, std::optional<double> quality) const
 {
     ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
     cairo_surface_t* image = cairo_get_target(context().platformContext()->cr());

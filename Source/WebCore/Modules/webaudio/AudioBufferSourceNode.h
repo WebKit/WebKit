@@ -58,7 +58,7 @@ public:
     unsigned numberOfChannels();
 
     // Play-state
-    ExceptionOr<void> startLater(double when, double grainOffset, Optional<double> grainDuration);
+    ExceptionOr<void> startLater(double when, double grainOffset, std::optional<double> grainDuration);
 
     // Note: the attribute was originally exposed as .looping, but to be more consistent in naming with <audio>
     // and with how it's described in the specification, the proper attribute name is .loop
@@ -87,7 +87,7 @@ private:
     double tailTime() const final { return 0; }
     double latencyTime() const final { return 0; }
 
-    ExceptionOr<void> startPlaying(double when, double grainOffset, Optional<double> grainDuration);
+    ExceptionOr<void> startPlaying(double when, double grainOffset, std::optional<double> grainDuration);
     void adjustGrainParameters();
 
     // Returns true on success.

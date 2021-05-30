@@ -64,20 +64,20 @@ private:
 
 class CSSStepsTimingFunctionValue final : public CSSValue {
 public:
-    static Ref<CSSStepsTimingFunctionValue> create(int steps, Optional<StepsTimingFunction::StepPosition> stepPosition)
+    static Ref<CSSStepsTimingFunctionValue> create(int steps, std::optional<StepsTimingFunction::StepPosition> stepPosition)
     {
         return adoptRef(*new CSSStepsTimingFunctionValue(steps, stepPosition));
     }
 
     int numberOfSteps() const { return m_steps; }
-    Optional<StepsTimingFunction::StepPosition> stepPosition() const { return m_stepPosition; }
+    std::optional<StepsTimingFunction::StepPosition> stepPosition() const { return m_stepPosition; }
 
     String customCSSText() const;
 
     bool equals(const CSSStepsTimingFunctionValue&) const;
 
 private:
-    CSSStepsTimingFunctionValue(int steps, Optional<StepsTimingFunction::StepPosition> stepPosition)
+    CSSStepsTimingFunctionValue(int steps, std::optional<StepsTimingFunction::StepPosition> stepPosition)
         : CSSValue(StepsTimingFunctionClass)
         , m_steps(steps)
         , m_stepPosition(stepPosition)
@@ -85,7 +85,7 @@ private:
     }
 
     int m_steps;
-    Optional<StepsTimingFunction::StepPosition> m_stepPosition;
+    std::optional<StepsTimingFunction::StepPosition> m_stepPosition;
 };
 
 class CSSSpringTimingFunctionValue final : public CSSValue {

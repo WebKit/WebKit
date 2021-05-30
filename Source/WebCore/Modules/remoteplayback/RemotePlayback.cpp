@@ -114,7 +114,7 @@ void RemotePlayback::watchAvailability(Ref<RemotePlaybackAvailabilityCallback>&&
     });
 }
 
-void RemotePlayback::cancelWatchAvailability(Optional<int32_t> id, Ref<DeferredPromise>&& promise)
+void RemotePlayback::cancelWatchAvailability(std::optional<int32_t> id, Ref<DeferredPromise>&& promise)
 {
     // 6.2.1.5 Stop observing remote playback devices availability
     // https://w3c.github.io/remote-playback/#stop-observing-remote-playback-devices-availability

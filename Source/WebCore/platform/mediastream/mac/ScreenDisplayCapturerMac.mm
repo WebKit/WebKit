@@ -49,7 +49,7 @@ size_t CGDisplayModeGetPixelsHigh(CGDisplayModeRef);
 
 namespace WebCore {
 
-static Optional<CGDirectDisplayID> updateDisplayID(CGDirectDisplayID displayID)
+static std::optional<CGDirectDisplayID> updateDisplayID(CGDirectDisplayID displayID)
 {
     uint32_t displayCount = 0;
     auto err = CGGetActiveDisplayList(0, nullptr, &displayCount);
@@ -263,7 +263,7 @@ void ScreenDisplayCapturerMac::newFrame(CGDisplayStreamFrameStatus status, Displ
     m_currentFrame = WTFMove(newFrame);
 }
 
-Optional<CaptureDevice> ScreenDisplayCapturerMac::screenCaptureDeviceWithPersistentID(const String& deviceID)
+std::optional<CaptureDevice> ScreenDisplayCapturerMac::screenCaptureDeviceWithPersistentID(const String& deviceID)
 {
     auto displayID = parseInteger<uint32_t>(deviceID);
     if (!displayID) {

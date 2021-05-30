@@ -47,7 +47,7 @@ private:
 
     int baselinePositionAdjustment(ControlPart) const final;
 
-    Optional<FontCascadeDescription> controlFont(ControlPart, const FontCascade&, float zoomFactor) const final;
+    std::optional<FontCascadeDescription> controlFont(ControlPart, const FontCascade&, float zoomFactor) const final;
 
     LengthSize controlSize(ControlPart, const FontCascade&, const LengthSize&, float zoomFactor) const final;
     LengthSize minimumControlSize(ControlPart, const FontCascade&, const LengthSize&, float zoomFactor) const final;

@@ -37,7 +37,7 @@ enum class GPUPowerPreference {
 };
 
 struct GPURequestAdapterOptions {
-    Optional<GPUPowerPreference> powerPreference;
+    std::optional<GPUPowerPreference> powerPreference;
 };
     
 } // namespace WebCore

@@ -50,7 +50,7 @@ IDBDatabaseNameAndVersionRequest::IDBDatabaseNameAndVersionRequest(ScriptExecuti
     suspendIfNeeded();
 }
 
-void IDBDatabaseNameAndVersionRequest::complete(Optional<Vector<IDBDatabaseNameAndVersion>>&& databases)
+void IDBDatabaseNameAndVersionRequest::complete(std::optional<Vector<IDBDatabaseNameAndVersion>>&& databases)
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 

@@ -56,7 +56,7 @@ void ScrollingTreeLatchingController::receivedWheelEvent(const PlatformWheelEven
     }
 }
 
-Optional<ScrollingTreeLatchingController::ScrollingNodeAndProcessingSteps> ScrollingTreeLatchingController::latchingDataForEvent(const PlatformWheelEvent& wheelEvent, bool allowLatching) const
+std::optional<ScrollingTreeLatchingController::ScrollingNodeAndProcessingSteps> ScrollingTreeLatchingController::latchingDataForEvent(const PlatformWheelEvent& wheelEvent, bool allowLatching) const
 {
     if (!allowLatching)
         return std::nullopt;
@@ -72,7 +72,7 @@ Optional<ScrollingTreeLatchingController::ScrollingNodeAndProcessingSteps> Scrol
     return std::nullopt;
 }
 
-Optional<ScrollingNodeID> ScrollingTreeLatchingController::latchedNodeID() const
+std::optional<ScrollingNodeID> ScrollingTreeLatchingController::latchedNodeID() const
 {
     Locker locker { m_latchedNodeLock };
     if (m_latchedNodeAndSteps)
@@ -81,7 +81,7 @@ Optional<ScrollingNodeID> ScrollingTreeLatchingController::latchedNodeID() const
     return std::nullopt;
 }
 
-Optional<ScrollingTreeLatchingController::ScrollingNodeAndProcessingSteps> ScrollingTreeLatchingController::latchedNodeAndSteps() const
+std::optional<ScrollingTreeLatchingController::ScrollingNodeAndProcessingSteps> ScrollingTreeLatchingController::latchedNodeAndSteps() const
 {
     Locker locker { m_latchedNodeLock };
     return m_latchedNodeAndSteps;

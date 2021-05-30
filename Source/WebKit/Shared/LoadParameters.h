@@ -62,7 +62,7 @@ struct LoadParameters {
     String unreachableURLString;
     String provisionalLoadErrorURLString;
 
-    Optional<WebsitePoliciesData> websitePolicies;
+    std::optional<WebsitePoliciesData> websitePolicies;
 
     WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy { WebCore::ShouldOpenExternalURLsPolicy::ShouldNotAllow };
     bool shouldTreatAsContinuingLoad { false };
@@ -70,15 +70,15 @@ struct LoadParameters {
     WebCore::LockHistory lockHistory { WebCore::LockHistory::No };
     WebCore::LockBackForwardList lockBackForwardList { WebCore::LockBackForwardList::No };
     String clientRedirectSourceForHistory;
-    Optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain;
+    std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain;
 
 #if PLATFORM(COCOA)
     RetainPtr<NSDictionary> dataDetectionContext;
     SandboxExtension::HandleArray networkExtensionSandboxExtensionHandles;
 #endif
 #if PLATFORM(IOS)
-    Optional<SandboxExtension::Handle> contentFilterExtensionHandle;
-    Optional<SandboxExtension::Handle> frontboardServiceExtensionHandle;
+    std::optional<SandboxExtension::Handle> contentFilterExtensionHandle;
+    std::optional<SandboxExtension::Handle> frontboardServiceExtensionHandle;
 #endif
 };
 
