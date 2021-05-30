@@ -528,6 +528,14 @@ public:
 
     static void paintToCanvas(const GraphicsContextGLAttributes&, PixelBuffer&&, const IntSize& canvasSize, GraphicsContext&);
 
+#if PLATFORM(COCOA)
+    enum class PbufferAttachmentUsage { Read, Write, ReadWrite };
+    // Returns a handle which, if non-null, must be released via the
+    // detach call below.
+    void* createPbufferAndAttachIOSurface(GCGLenum target, PbufferAttachmentUsage, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type, IOSurfaceRef, GCGLuint plane);
+    void destroyPbufferAndDetachIOSurface(void* handle);
+#endif
+
 private:
 #if PLATFORM(COCOA)
     GraphicsContextGLOpenGL(GraphicsContextGLAttributes, HostWindow*, GraphicsContextGLOpenGL* sharedContext = nullptr, GraphicsContextGLIOSurfaceSwapChain* = nullptr);
@@ -551,7 +559,6 @@ private:
 
     // Did the most recent drawing operation leave the GPU in an acceptable state?
     void checkGPUStatus();
-
 
     std::optional<PixelBuffer> readRenderingResults();
     std::optional<PixelBuffer> readCompositedResults();

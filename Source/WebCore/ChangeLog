@@ -1,5 +1,25 @@
 2021-05-30  Dean Jackson  <dino@apple.com>
 
+        [WebXR] Provide a way to bind and unbind IOSurfaces to ANGLE Pbuffers
+        https://bugs.webkit.org/show_bug.cgi?id=226423
+        <rdar://problem/78652783>
+
+        Reviewed by Sam Weinig.
+
+        WebXR on Cocoa platforms gets framebuffer texture targets via
+        IOSurfaces. Those must be attached to ANGLE Pbuffers, which are
+        then bound to GL textures. There is already some code in
+        GraphicsContextGL (and in the CoreVideo classes) to do this, but
+        this is an attempt to make a generic function that will handle all
+        cases.
+
+        * platform/graphics/cocoa/GraphicsContextGLOpenGLCocoa.mm:
+        (WebCore::GraphicsContextGLOpenGL::createPbufferAndAttachIOSurface):
+        (WebCore::GraphicsContextGLOpenGL::destroyPbufferAndDetachIOSurface):
+        * platform/graphics/opengl/GraphicsContextGLOpenGL.h:
+
+2021-05-30  Dean Jackson  <dino@apple.com>
+
         [WebXR] No need for opaqueTexture when USE(IOSURFACE_FOR_XR_LAYER_DATA)
         https://bugs.webkit.org/show_bug.cgi?id=226405
         <rdar://problem/78636950>

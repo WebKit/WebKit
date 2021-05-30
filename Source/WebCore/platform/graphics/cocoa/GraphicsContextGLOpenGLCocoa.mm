@@ -611,6 +611,69 @@ bool GraphicsContextGLOpenGL::bindDisplayBufferBacking(std::unique_ptr<IOSurface
     return true;
 }
 
+void* GraphicsContextGLOpenGL::createPbufferAndAttachIOSurface(GCGLenum target, PbufferAttachmentUsage usage, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type, IOSurfaceRef surface, GCGLuint plane)
+{
+    if (target != GraphicsContextGL::TEXTURE_RECTANGLE_ARB && target != GraphicsContextGL::TEXTURE_2D) {
+        LOG(WebGL, "Unknown texture target %d.", static_cast<int>(target));
+        return nullptr;
+    }
+
+    auto eglTextureTarget = [&] () -> EGLint {
+        if (target == GraphicsContextGL::TEXTURE_RECTANGLE_ARB)
+            return EGL_TEXTURE_RECTANGLE_ANGLE;
+        return EGL_TEXTURE_2D;
+    }();
+
+    if (eglTextureTarget != GraphicsContextGLOpenGL::EGLDrawingBufferTextureTarget()) {
+        LOG(WebGL, "Mismatch in EGL texture target: %d should be %d.", static_cast<int>(target), GraphicsContextGLOpenGL::EGLDrawingBufferTextureTarget());
+        return nullptr;
+    }
+
+    auto usageHintAngle = [&] () -> EGLint {
+        if (usage == PbufferAttachmentUsage::Read)
+            return EGL_IOSURFACE_READ_HINT_ANGLE;
+        if (usage == PbufferAttachmentUsage::Write)
+            return EGL_IOSURFACE_WRITE_HINT_ANGLE;
+        return EGL_IOSURFACE_READ_HINT_ANGLE | EGL_IOSURFACE_WRITE_HINT_ANGLE;
+    }();
+
+    const EGLint surfaceAttributes[] = {
+        EGL_WIDTH, width,
+        EGL_HEIGHT, height,
+        EGL_IOSURFACE_PLANE_ANGLE, static_cast<EGLint>(plane),
+        EGL_TEXTURE_TARGET, static_cast<EGLint>(eglTextureTarget),
+        EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, static_cast<EGLint>(internalFormat),
+        EGL_TEXTURE_FORMAT, EGL_TEXTURE_RGBA,
+        EGL_TEXTURE_TYPE_ANGLE, static_cast<EGLint>(type),
+        // Only has an effect on the iOS Simulator.
+        EGL_IOSURFACE_USAGE_HINT_ANGLE, usageHintAngle,
+        EGL_NONE, EGL_NONE
+    };
+
+    auto display = platformDisplay();
+    EGLSurface pbuffer = EGL_CreatePbufferFromClientBuffer(display, EGL_IOSURFACE_ANGLE, surface, platformConfig(), surfaceAttributes);
+    if (!pbuffer) {
+        LOG(WebGL, "EGL_CreatePbufferFromClientBuffer failed.");
+        return nullptr;
+    }
+
+    if (!EGL_BindTexImage(display, pbuffer, EGL_BACK_BUFFER)) {
+        LOG(WebGL, "EGL_BindTexImage failed.");
+        EGL_DestroySurface(display, pbuffer);
+        return nullptr;
+    }
+
+    return pbuffer;
+}
+
+void GraphicsContextGLOpenGL::destroyPbufferAndDetachIOSurface(void* handle)
+{
+    auto display = platformDisplay();
+    EGL_ReleaseTexImage(display, handle, EGL_BACK_BUFFER);
+    EGL_DestroySurface(display, handle);
+}
+
+
 bool GraphicsContextGLOpenGL::isGLES2Compliant() const
 {
     return m_isForWebGL2;
