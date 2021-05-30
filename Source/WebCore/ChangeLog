@@ -1,3 +1,204 @@
+2021-05-29  Sam Weinig  <weinig@apple.com>
+
+        Split calc() related files into 1-class per file structure
+        https://bugs.webkit.org/show_bug.cgi?id=226421
+
+        Reviewed by Chris Dumez.
+
+        It's bothered me for a while that the calc related classes (both in css/
+        and in platform/) were bundled all in two big files. This change splits
+        them all out into their own header and implementation files that match
+        their name, and puts them in new calc/ subdirectories (css/calc/... and
+        platform/calc/...). This should hopefully make the modifications I need
+        to make to calc() to support relative color syntax a little easier.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSCalculationValue.cpp: Removed.
+        * css/CSSCalculationValue.h: Removed.
+        * css/CSSGradientValue.cpp:
+        * css/CSSPrimitiveValue.cpp:
+        * css/CSSPrimitiveValueMappings.h:
+        * css/CSSValue.cpp:
+        * css/calc: Added.
+        * css/calc/CSSCalcCategoryMapping.cpp: Added.
+        (WebCore::calcUnitCategory):
+        (WebCore::calculationCategoryForCombination):
+        (WebCore::canonicalUnitTypeForCalculationCategory):
+        (WebCore::hasDoubleValue):
+        * css/calc/CSSCalcCategoryMapping.h: Added.
+        * css/calc/CSSCalcExpressionNode.cpp: Added.
+        (WebCore::operator<<):
+        (WebCore::prettyPrintNode):
+        (WebCore::prettyPrintNodes):
+        * css/calc/CSSCalcExpressionNode.h: Added.
+        (WebCore::CSSCalcExpressionNode::equals const):
+        (WebCore::CSSCalcExpressionNode::category const):
+        (WebCore::CSSCalcExpressionNode::CSSCalcExpressionNode):
+        * css/calc/CSSCalcExpressionNodeParser.cpp: Added.
+        (WebCore::CSSCalcExpressionNodeParser::parseCalc):
+        (WebCore::CSSCalcExpressionNodeParser::operatorValue):
+        (WebCore::checkDepthAndIndex):
+        (WebCore::CSSCalcExpressionNodeParser::parseCalcFunction):
+        (WebCore::CSSCalcExpressionNodeParser::parseValue):
+        (WebCore::CSSCalcExpressionNodeParser::parseCalcValue):
+        (WebCore::CSSCalcExpressionNodeParser::parseCalcProduct):
+        (WebCore::CSSCalcExpressionNodeParser::parseCalcSum):
+        * css/calc/CSSCalcExpressionNodeParser.h: Added.
+        (WebCore::CSSCalcExpressionNodeParser::CSSCalcExpressionNodeParser):
+        * css/calc/CSSCalcInvertNode.cpp: Added.
+        (WebCore::CSSCalcInvertNode::createCalcExpression const):
+        (WebCore::CSSCalcInvertNode::doubleValue const):
+        (WebCore::CSSCalcInvertNode::computeLengthPx const):
+        (WebCore::CSSCalcInvertNode::dump const):
+        * css/calc/CSSCalcInvertNode.h: Added.
+        * css/calc/CSSCalcNegateNode.cpp: Added.
+        (WebCore::CSSCalcNegateNode::createCalcExpression const):
+        (WebCore::CSSCalcNegateNode::dump const):
+        * css/calc/CSSCalcNegateNode.h: Added.
+        * css/calc/CSSCalcOperationNode.cpp: Added.
+        (WebCore::determineCategory):
+        (WebCore::categoryForInvert):
+        (WebCore::resolvedTypeForMinOrMaxOrClamp):
+        (WebCore::isSamePair):
+        (WebCore::sortingCategoryForType):
+        (WebCore::sortingCategory):
+        (WebCore::primitiveTypeForCombination):
+        (WebCore::conversionToAddValuesWithTypes):
+        (WebCore::functionFromOperator):
+        (WebCore::CSSCalcOperationNode::create):
+        (WebCore::CSSCalcOperationNode::createSum):
+        (WebCore::CSSCalcOperationNode::createProduct):
+        (WebCore::CSSCalcOperationNode::createMinOrMaxOrClamp):
+        (WebCore::CSSCalcOperationNode::hoistChildrenWithOperator):
+        (WebCore::CSSCalcOperationNode::canCombineAllChildren const):
+        (WebCore::CSSCalcOperationNode::combineChildren):
+        (WebCore::CSSCalcOperationNode::simplify):
+        (WebCore::CSSCalcOperationNode::simplifyRecursive):
+        (WebCore::CSSCalcOperationNode::simplifyNode):
+        (WebCore::CSSCalcOperationNode::primitiveType const):
+        (WebCore::CSSCalcOperationNode::createCalcExpression const):
+        (WebCore::CSSCalcOperationNode::doubleValue const):
+        (WebCore::CSSCalcOperationNode::computeLengthPx const):
+        (WebCore::CSSCalcOperationNode::collectDirectComputationalDependencies const):
+        (WebCore::CSSCalcOperationNode::collectDirectRootComputationalDependencies const):
+        (WebCore::CSSCalcOperationNode::buildCSSText):
+        (WebCore::functionPrefixForOperator):
+        (WebCore::CSSCalcOperationNode::buildCSSTextRecursive):
+        (WebCore::CSSCalcOperationNode::dump const):
+        (WebCore::CSSCalcOperationNode::equals const):
+        (WebCore::CSSCalcOperationNode::evaluateOperator):
+        * css/calc/CSSCalcOperationNode.h: Added.
+        * css/calc/CSSCalcPrimitiveValueNode.cpp: Added.
+        (WebCore::CSSCalcPrimitiveValueNode::create):
+        (WebCore::CSSCalcPrimitiveValueNode::customCSSText const):
+        (WebCore::CSSCalcPrimitiveValueNode::primitiveType const):
+        (WebCore::CSSCalcPrimitiveValueNode::CSSCalcPrimitiveValueNode):
+        (WebCore::CSSCalcPrimitiveValueNode::isNumericValue const):
+        (WebCore::CSSCalcPrimitiveValueNode::isNegative const):
+        (WebCore::CSSCalcPrimitiveValueNode::negate):
+        (WebCore::CSSCalcPrimitiveValueNode::invert):
+        (WebCore::CSSCalcPrimitiveValueNode::add):
+        (WebCore::CSSCalcPrimitiveValueNode::multiply):
+        (WebCore::CSSCalcPrimitiveValueNode::convertToUnitType):
+        (WebCore::CSSCalcPrimitiveValueNode::canonicalizeUnit):
+        (WebCore::CSSCalcPrimitiveValueNode::createCalcExpression const):
+        (WebCore::CSSCalcPrimitiveValueNode::doubleValue const):
+        (WebCore::CSSCalcPrimitiveValueNode::computeLengthPx const):
+        (WebCore::CSSCalcPrimitiveValueNode::collectDirectComputationalDependencies const):
+        (WebCore::CSSCalcPrimitiveValueNode::collectDirectRootComputationalDependencies const):
+        (WebCore::CSSCalcPrimitiveValueNode::isZero const):
+        (WebCore::CSSCalcPrimitiveValueNode::equals const):
+        (WebCore::CSSCalcPrimitiveValueNode::dump const):
+        * css/calc/CSSCalcPrimitiveValueNode.h: Added.
+        * css/calc/CSSCalcValue.cpp: Added.
+        (WebCore::createBlendHalf):
+        (WebCore::createCSS):
+        (WebCore::CSSCalcValue::CSSCalcValue):
+        (WebCore::CSSCalcValue::category const):
+        (WebCore::CSSCalcValue::primitiveType const):
+        (WebCore::CSSCalcValue::createCalculationValue const):
+        (WebCore::CSSCalcValue::setPermittedValueRange):
+        (WebCore::CSSCalcValue::collectDirectComputationalDependencies const):
+        (WebCore::CSSCalcValue::collectDirectRootComputationalDependencies const):
+        (WebCore::CSSCalcValue::customCSSText const):
+        (WebCore::CSSCalcValue::equals const):
+        (WebCore::CSSCalcValue::clampToPermittedRange const):
+        (WebCore::CSSCalcValue::doubleValue const):
+        (WebCore::CSSCalcValue::computeLengthPx const):
+        (WebCore::CSSCalcValue::isCalcFunction):
+        (WebCore::CSSCalcValue::dump const):
+        (WebCore::CSSCalcValue::create):
+        (WebCore::operator<<):
+        * css/calc/CSSCalcValue.h: Added.
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        * platform/CalculationValue.cpp: Removed.
+        * platform/CalculationValue.h: Removed.
+        * platform/Length.cpp:
+        * platform/calc: Added.
+        * platform/calc/CalcExpressionBlendLength.cpp: Added.
+        (WebCore::CalcExpressionBlendLength::CalcExpressionBlendLength):
+        (WebCore::CalcExpressionBlendLength::evaluate const):
+        (WebCore::CalcExpressionBlendLength::operator== const):
+        (WebCore::CalcExpressionBlendLength::dump const):
+        * platform/calc/CalcExpressionBlendLength.h: Added.
+        (WebCore::operator==):
+        * platform/calc/CalcExpressionInversion.cpp: Added.
+        (WebCore::CalcExpressionInversion::evaluate const):
+        (WebCore::CalcExpressionInversion::dump const):
+        (WebCore::CalcExpressionInversion::operator== const):
+        (WebCore::operator==):
+        * platform/calc/CalcExpressionInversion.h: Added.
+        * platform/calc/CalcExpressionLength.cpp: Added.
+        (WebCore::CalcExpressionLength::evaluate const):
+        (WebCore::CalcExpressionLength::operator== const):
+        (WebCore::CalcExpressionLength::dump const):
+        * platform/calc/CalcExpressionLength.h: Added.
+        (WebCore::CalcExpressionLength::CalcExpressionLength):
+        (WebCore::operator==):
+        * platform/calc/CalcExpressionNegation.cpp: Added.
+        (WebCore::CalcExpressionNegation::evaluate const):
+        (WebCore::CalcExpressionNegation::operator== const):
+        (WebCore::CalcExpressionNegation::dump const):
+        (WebCore::operator==):
+        * platform/calc/CalcExpressionNegation.h: Added.
+        * platform/calc/CalcExpressionNode.cpp: Added.
+        (WebCore::operator<<):
+        * platform/calc/CalcExpressionNode.h: Added.
+        (WebCore::CalcExpressionNode::type const):
+        (WebCore::CalcExpressionNode::CalcExpressionNode):
+        * platform/calc/CalcExpressionNumber.cpp: Added.
+        (WebCore::CalcExpressionNumber::evaluate const):
+        (WebCore::CalcExpressionNumber::dump const):
+        (WebCore::CalcExpressionNumber::operator== const):
+        * platform/calc/CalcExpressionNumber.h: Added.
+        (WebCore::CalcExpressionNumber::CalcExpressionNumber):
+        (WebCore::operator==):
+        * platform/calc/CalcExpressionOperation.cpp: Added.
+        (WebCore::CalcExpressionOperation::evaluate const):
+        (WebCore::CalcExpressionOperation::operator== const):
+        (WebCore::operator==):
+        (WebCore::CalcExpressionOperation::dump const):
+        * platform/calc/CalcExpressionOperation.h: Added.
+        (WebCore::CalcExpressionOperation::CalcExpressionOperation):
+        * platform/calc/CalcOperator.cpp: Added.
+        (WebCore::operator<<):
+        * platform/calc/CalcOperator.h: Added.
+        * platform/calc/CalculationCategory.cpp: Added.
+        (WebCore::operator<<):
+        * platform/calc/CalculationCategory.h: Added.
+        * platform/calc/CalculationValue.cpp: Added.
+        (WebCore::CalculationValue::create):
+        (WebCore::CalculationValue::CalculationValue):
+        (WebCore::CalculationValue::evaluate const):
+        (WebCore::operator==):
+        (WebCore::operator<<):
+        * platform/calc/CalculationValue.h: Added.
+        (WebCore::CalculationValue::shouldClampToNonNegative const):
+        (WebCore::CalculationValue::expression const):
+        * style/StyleBuilderConverter.h:
+
 2021-05-29  Cameron McCormack  <heycam@apple.com>
 
         Rename Internals.mainThreadScrollingReasons to synchronousScrollingReasons

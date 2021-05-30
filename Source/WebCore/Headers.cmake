@@ -341,7 +341,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     crypto/SerializedCryptoKeyWrap.h
 
-    css/CSSCalculationValue.h
     css/CSSConditionRule.h
     css/CSSCustomPropertyValue.h
     css/CSSFontFaceRule.h
@@ -388,6 +387,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/StyleSheet.h
     css/StyleSheetContents.h
     css/StyleSheetList.h
+
+    css/calc/CSSCalcValue.h
 
     css/parser/CSSParser.h
     css/parser/CSSParserContext.h
@@ -1003,7 +1004,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/AbortableTaskQueue.h
     platform/CPUMonitor.h
-    platform/CalculationValue.h
     platform/ColorChooser.h
     platform/ColorChooserClient.h
     platform/ContentFilterUnblockHandler.h
@@ -1155,6 +1155,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/audio/PushPullFIFO.h
 
     platform/audio/gstreamer/AudioDestinationGStreamer.h
+
+    platform/calc/CalcExpressionNode.h
+    platform/calc/CalculationValue.h
 
     platform/encryptedmedia/CDMEncryptionScheme.h
     platform/encryptedmedia/CDMFactory.h

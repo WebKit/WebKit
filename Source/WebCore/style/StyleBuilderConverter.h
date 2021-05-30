@@ -27,7 +27,7 @@
 #pragma once
 
 #include "BasicShapeFunctions.h"
-#include "CSSCalculationValue.h"
+#include "CSSCalcValue.h"
 #include "CSSContentDistributionValue.h"
 #include "CSSFontFeatureValue.h"
 #include "CSSFontStyleValue.h"
@@ -42,6 +42,8 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSReflectValue.h"
+#include "CalcExpressionLength.h"
+#include "CalcExpressionOperation.h"
 #include "FontSelectionValueInlines.h"
 #include "Frame.h"
 #include "GridPositionsResolver.h"

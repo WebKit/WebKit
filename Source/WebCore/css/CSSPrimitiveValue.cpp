@@ -22,7 +22,7 @@
 #include "CSSPrimitiveValue.h"
 
 #include "CSSBasicShapes.h"
-#include "CSSCalculationValue.h"
+#include "CSSCalcValue.h"
 #include "CSSFontFamily.h"
 #include "CSSHelper.h"
 #include "CSSMarkup.h"
@@ -30,6 +30,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSToLengthConversionData.h"
 #include "CSSValueKeywords.h"
+#include "CalculationCategory.h"
 #include "CalculationValue.h"
 #include "Color.h"
 #include "ColorSerialization.h"

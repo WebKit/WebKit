@@ -1,3 +1,13 @@
+2021-05-29  Sam Weinig  <weinig@apple.com>
+
+        Split calc() related files into 1-class per file structure
+        https://bugs.webkit.org/show_bug.cgi?id=226421
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebCore/CalculationValue.cpp:
+        Update test to include additonal header now needed.
+
 2021-05-28  Darin Adler  <darin@apple.com>
 
         Clients of optional should use has_value instead of relying on hasValue macro

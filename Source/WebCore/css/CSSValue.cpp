@@ -30,7 +30,7 @@
 
 #include "CSSAspectRatioValue.h"
 #include "CSSBorderImageSliceValue.h"
-#include "CSSCalculationValue.h"
+#include "CSSCalcValue.h"
 #include "CSSCanvasValue.h"
 #include "CSSContentDistributionValue.h"
 #include "CSSCrossfadeValue.h"

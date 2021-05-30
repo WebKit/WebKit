@@ -27,7 +27,7 @@
 #include "CSSGradientValue.h"
 
 #include "AnimationUtilities.h"
-#include "CSSCalculationValue.h"
+#include "CSSCalcValue.h"
 #include "CSSToLengthConversionData.h"
 #include "CSSValueKeywords.h"
 #include "ColorBlending.h"

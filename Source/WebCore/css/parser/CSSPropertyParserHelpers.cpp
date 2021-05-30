@@ -30,7 +30,7 @@
 #include "config.h"
 #include "CSSPropertyParserHelpers.h"
 
-#include "CSSCalculationValue.h"
+#include "CSSCalcValue.h"
 #include "CSSCanvasValue.h"
 #include "CSSCrossfadeValue.h"
 #include "CSSFilterImageValue.h"
@@ -41,6 +41,7 @@
 #include "CSSPaintImageValue.h"
 #include "CSSParserIdioms.h"
 #include "CSSValuePool.h"
+#include "CalculationCategory.h"
 #include "ColorConversion.h"
 #include "ColorLuminance.h"
 #include "Pair.h"
@@ -94,7 +95,7 @@ static Optional<double> consumeNumberOrPercentDividedBy100Raw(CSSParserTokenRang
     return std::nullopt;
 }
 
-// FIXME: consider pulling in the parsing logic from CSSCalculationValue.cpp.
+// FIXME: consider pulling in the parsing logic from CSSCalcExpressionNodeParser.
 class CalcParser {
 public:
     explicit CalcParser(CSSParserTokenRange& range, CalculationCategory destinationCategory, ValueRange valueRange = ValueRange::All, CSSValuePool& cssValuePool = CSSValuePool::singleton())

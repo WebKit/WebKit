@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller ( mueller@kde.org )
- * Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2021 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  *
  * This library is free software; you can redistribute it and/or
@@ -26,6 +26,9 @@
 #include "Length.h"
 
 #include "AnimationUtilities.h"
+#include "CalcExpressionBlendLength.h"
+#include "CalcExpressionLength.h"
+#include "CalcExpressionOperation.h"
 #include "CalculationValue.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/HashMap.h>
