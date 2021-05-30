@@ -3118,7 +3118,11 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
         if (isTouchEnd)
             ++m_handlingPreventableTouchEndCount;
 
-        sendWithAsyncReply(Messages::EventDispatcher::TouchEvent(m_webPageID, event), [this, protectedThis = makeRef(*this), event] (bool handled) {
+        sendWithAsyncReply(Messages::EventDispatcher::TouchEvent(m_webPageID, event), [this, weakThis = makeWeakPtr(*this), event] (bool handled) {
+            auto protectedThis = makeRefPtr(weakThis.get());
+            if (!protectedThis)
+                return;
+
             bool didFinishDeferringTouchStart = false;
             ASSERT_IMPLIES(event.type() == WebEvent::TouchStart, m_handlingPreventableTouchStartCount);
             if (event.type() == WebEvent::TouchStart && m_handlingPreventableTouchStartCount)
@@ -3134,6 +3138,9 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
                 m_handledSynchronousTouchEventWhileDispatchingPreventableTouchStart = false;
 
             didReceiveEvent(event.type(), handledOrFailedWithError);
+            if (!m_pageClient)
+                return;
+
             pageClient().doneWithTouchEvent(event, handledOrFailedWithError);
 
             if (didFinishDeferringTouchStart)

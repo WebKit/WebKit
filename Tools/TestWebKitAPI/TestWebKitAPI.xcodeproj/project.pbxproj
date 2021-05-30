@@ -1229,6 +1229,8 @@
 		F49992C6248DABFD00034167 /* overflow-hidden.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F49992C5248DABE400034167 /* overflow-hidden.html */; };
 		F4A32EC41F05F3850047C544 /* dragstart-change-selection-offscreen.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4A32EC31F05F3780047C544 /* dragstart-change-selection-offscreen.html */; };
 		F4A32ECB1F0643370047C544 /* contenteditable-in-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4A32ECA1F0642F40047C544 /* contenteditable-in-iframe.html */; };
+		F4A7CE782662D6E800228685 /* TouchEventTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4A7CE772662D6E800228685 /* TouchEventTests.mm */; };
+		F4A7CE7A2662D86C00228685 /* active-touch-events.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4A7CE792662D83E00228685 /* active-touch-events.html */; };
 		F4A9202F1FEE34E900F59590 /* apple-data-url.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4A9202E1FEE34C800F59590 /* apple-data-url.html */; };
 		F4AB578A1F65165400DB0DA1 /* custom-draggable-div.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4AB57891F65164B00DB0DA1 /* custom-draggable-div.html */; };
 		F4AD183825ED791500B1A19F /* FloatQuadTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4AD183725ED791500B1A19F /* FloatQuadTests.cpp */; };
@@ -1353,6 +1355,7 @@
 				1A9E52C913E65EF4006917F5 /* 18-characters.html in Copy Resources */,
 				55A81800218102210004A39A /* 400x400-green.png in Copy Resources */,
 				379028B914FAC24C007E6B43 /* acceptsFirstMouse.html in Copy Resources */,
+				F4A7CE7A2662D86C00228685 /* active-touch-events.html in Copy Resources */,
 				725C3EF322058A5B007C36FC /* AdditionalSupportedImageTypes.html in Copy Resources */,
 				1C2B81871C8925A000A5529F /* Ahem.ttf in Copy Resources */,
 				46C1EA9825758820005E409E /* alert.html in Copy Resources */,
@@ -3069,6 +3072,8 @@
 		F49992C5248DABE400034167 /* overflow-hidden.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "overflow-hidden.html"; sourceTree = "<group>"; };
 		F4A32EC31F05F3780047C544 /* dragstart-change-selection-offscreen.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "dragstart-change-selection-offscreen.html"; sourceTree = "<group>"; };
 		F4A32ECA1F0642F40047C544 /* contenteditable-in-iframe.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "contenteditable-in-iframe.html"; sourceTree = "<group>"; };
+		F4A7CE772662D6E800228685 /* TouchEventTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TouchEventTests.mm; sourceTree = "<group>"; };
+		F4A7CE792662D83E00228685 /* active-touch-events.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "active-touch-events.html"; sourceTree = "<group>"; };
 		F4A9202E1FEE34C800F59590 /* apple-data-url.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "apple-data-url.html"; sourceTree = "<group>"; };
 		F4AB57891F65164B00DB0DA1 /* custom-draggable-div.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "custom-draggable-div.html"; sourceTree = "<group>"; };
 		F4AD183725ED791500B1A19F /* FloatQuadTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FloatQuadTests.cpp; sourceTree = "<group>"; };
@@ -3831,6 +3836,7 @@
 				F45033F4206BEC95009351CE /* TextAutosizingBoost.mm */,
 				F494B369263120780060A310 /* TextServicesTests.mm */,
 				1C24DEEC263001DE00450D07 /* TextStyleFontSize.mm */,
+				F4A7CE772662D6E800228685 /* TouchEventTests.mm */,
 				F460F6742614DE2F0064F2B6 /* UIFocusTests.mm */,
 				F46849BD1EEF58E400B937FE /* UIPasteboardTests.mm */,
 				F402F56B23ECC2FB00865549 /* UIWKInteractionViewProtocol.mm */,
@@ -4184,6 +4190,7 @@
 		A1C4FB6F1BACCEFA003742D0 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				F4A7CE792662D83E00228685 /* active-touch-events.html */,
 				0F16BED72304A1D100B4A167 /* composited.html */,
 				CEDA12402437C9EA00C28A9E /* editable-region-composited-and-non-composited-overlap.html */,
 				71E88C4324B533EC00665160 /* img-with-base64-url.html */,
@@ -5761,6 +5768,7 @@
 				C22FA32B228F8708009D7988 /* TextWidth.mm in Sources */,
 				7CCE7EDD1A411A9200447C4C /* TimeRanges.cpp in Sources */,
 				7C83E0BD1D0A650C00FEBCF3 /* TopContentInset.mm in Sources */,
+				F4A7CE782662D6E800228685 /* TouchEventTests.mm in Sources */,
 				7CCE7ED31A411A7E00447C4C /* TypingStyleCrash.mm in Sources */,
 				57152B7821DD4E8D000C37CA /* U2fCommandConstructorTest.cpp in Sources */,
 				5CB40B4E1F4B98D3007DC7B9 /* UIDelegate.mm in Sources */,

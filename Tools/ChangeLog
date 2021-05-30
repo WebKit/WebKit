@@ -1,3 +1,27 @@
+2021-05-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] UI process crashes when deallocating WKWebView in a script message handler during an active touch event
+        https://bugs.webkit.org/show_bug.cgi?id=226426
+        rdar://75425319
+
+        Reviewed by Darin Adler.
+
+        Add a new API test that exercises the crash.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/TouchEventTests.mm: Added.
+        (-[TouchEventScriptMessageHandler userContentController:didReceiveScriptMessage:]):
+        (-[WKWebView touchEventGestureRecognizer]):
+        (TestWebKitAPI::updateSimulatedTouchEvent):
+        (TestWebKitAPI::simulatedTouchEvent):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/ios/active-touch-events.html: Added.
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[WKWebView textInputContentView]):
+        (-[TestWKWebView textInputContentView]): Deleted.
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2021-05-30  Darin Adler  <darin@apple.com>
 
         Remove WTF::Optional synonym for std::optional, using that class template directly instead

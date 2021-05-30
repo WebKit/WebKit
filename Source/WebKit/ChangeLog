@@ -1,3 +1,31 @@
+2021-05-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] UI process crashes when deallocating WKWebView in a script message handler during an active touch event
+        https://bugs.webkit.org/show_bug.cgi?id=226426
+        rdar://75425319
+
+        Reviewed by Darin Adler.
+
+        It's possible for the UI process to crash upon being notified that asynchronous, active touch events have been
+        handled in the web process via the async IPC replay block in `WebPageProxy::handlePreventableTouchEvent()`. This
+        happens if the client posts a message from the web process to UI process while handling an active touch event
+        and deallocates the WKWebView currently handling the touch event in the script message handler.
+
+        This is because the async replay block inside `WebPageProxy::handlePreventableTouchEvent()` strongly captures a
+        reference to the `WebPageProxy`, thus keeping it alive; however, the `WebPageProxy`'s weak pointer to the page
+        client is nulled out, which causes `WebPageProxy::pageClient()` to crash with a null dereference.
+
+        To fix this, we weakly capture `WebPageProxy` instead and return early if it has already been destroyed by the
+        time we process the completion handler, and also add a null check for `m_pageClient` before attempting to call
+        into it. Note that it's unnecessary to call into `doneDeferringTouch(Start|End)` to unblock any deferred
+        gestures here, because the process of destroying the content view will call `-cleanUpInteraction` and remove all
+        deferring gestures from the view, regardless of whether they're still in Possible state.
+
+        Test: TouchEventTests.DestroyWebViewWhileHandlingTouchEnd
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handlePreventableTouchEvent):
+
 2021-05-30  Darin Adler  <darin@apple.com>
 
         Remove WTF::Optional synonym for std::optional, using that class template directly instead
