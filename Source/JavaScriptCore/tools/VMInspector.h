@@ -48,22 +48,26 @@ public:
     void add(VM*);
     void remove(VM*);
 
-    UncheckedLock& getLock() { return m_lock; }
+    Lock& getLock() WTF_RETURNS_LOCK(m_lock) { return m_lock; }
 
     enum class FunctorStatus {
         Continue,
         Done
     };
 
-    template <typename Functor>
-    void iterate(const UncheckedLockHolder&, const Functor& functor) { iterate(functor); }
+    template <typename Functor> void iterate(const Functor& functor) WTF_REQUIRES_LOCK(m_lock)
+    {
+        for (VM* vm = m_vmList.head(); vm; vm = vm->next()) {
+            FunctorStatus status = functor(*vm);
+            if (status == FunctorStatus::Done)
+                return;
+        }
+    }
 
     JS_EXPORT_PRIVATE static void forEachVM(Function<FunctorStatus(VM&)>&&);
 
-    Expected<UncheckedLockHolder, Error> lock(Seconds timeout = Seconds::infinity());
-
-    Expected<bool, Error> isValidExecutableMemory(const UncheckedLockHolder&, void*);
-    Expected<CodeBlock*, Error> codeBlockForMachinePC(const UncheckedLockHolder&, void*);
+    Expected<bool, Error> isValidExecutableMemory(void*) WTF_REQUIRES_LOCK(m_lock);
+    Expected<CodeBlock*, Error> codeBlockForMachinePC(void*) WTF_REQUIRES_LOCK(m_lock);
 
     JS_EXPORT_PRIVATE static bool currentThreadOwnsJSLock(VM*);
     JS_EXPORT_PRIVATE static void gc(VM*);
@@ -92,17 +96,8 @@ public:
     static bool verifyCell(VM&, JSCell*);
 
 private:
-    template <typename Functor> void iterate(const Functor& functor)
-    {
-        for (VM* vm = m_vmList.head(); vm; vm = vm->next()) {
-            FunctorStatus status = functor(*vm);
-            if (status == FunctorStatus::Done)
-                return;
-        }
-    }
-
-    UncheckedLock m_lock;
-    DoublyLinkedList<VM> m_vmList;
+    Lock m_lock;
+    DoublyLinkedList<VM> m_vmList WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 } // namespace JSC

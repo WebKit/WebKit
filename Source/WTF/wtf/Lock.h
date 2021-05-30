@@ -29,6 +29,7 @@
 #include <wtf/LockAlgorithm.h>
 #include <wtf/Locker.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Seconds.h>
 #include <wtf/ThreadSafetyAnalysis.h>
 
 namespace TestWebKitAPI {
@@ -162,6 +163,7 @@ public:
     void lock() WTF_ACQUIRES_LOCK() { UncheckedLock::lock(); }
     bool tryLock() WTF_ACQUIRES_LOCK_IF(true) { return UncheckedLock::tryLock(); }
     bool try_lock() WTF_ACQUIRES_LOCK_IF(true) { return UncheckedLock::try_lock(); } // NOLINT: Intentional deviation to support std::scoped_lock.
+    WTF_EXPORT_PRIVATE bool tryLockWithTimeout(Seconds timeout) WTF_ACQUIRES_LOCK_IF(true);
     void unlock() WTF_RELEASES_LOCK() { UncheckedLock::unlock(); }
     void unlockFairly() WTF_RELEASES_LOCK() { UncheckedLock::unlockFairly(); }
     void safepoint() { UncheckedLock::safepoint(); }

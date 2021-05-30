@@ -442,16 +442,13 @@ void HeapVerifier::checkIfRecorded(uintptr_t candidateCell)
 {
     HeapCell* candidateHeapCell = reinterpret_cast<HeapCell*>(candidateCell);
     
-    VMInspector& inspector = VMInspector::instance();
-    auto expectedLocker = inspector.lock(Seconds(2));
-    if (!expectedLocker) {
-        ASSERT(expectedLocker.error() == VMInspector::Error::TimedOut);
+    auto& inspector = VMInspector::instance();
+    if (!inspector.getLock().tryLockWithTimeout(2_s)) {
         dataLog("ERROR: Timed out while waiting to iterate VMs.");
         return;
     }
-
-    auto& locker = expectedLocker.value();
-    inspector.iterate(locker, [&] (VM& vm) {
+    Locker locker { AdoptLock, inspector.getLock() };
+    inspector.iterate([&] (VM& vm) {
         if (!vm.heap.m_verifier)
             return VMInspector::FunctorStatus::Continue;
         

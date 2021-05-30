@@ -1,5 +1,20 @@
 2021-05-29  Chris Dumez  <cdumez@apple.com>
 
+        Stop using UncheckedLock in JSC::VMInspector
+        https://bugs.webkit.org/show_bug.cgi?id=226427
+
+        Reviewed by Mark Lam.
+
+        Add Lock::tryLockWithTimeout(), similar to tryLock() but gives up after a
+        specified timeout. This used to be implemented in VMInspector but I think
+        Lock is a better place for it.
+
+        * wtf/Lock.cpp:
+        (WTF::Lock::tryLockWithTimeout):
+        * wtf/Lock.h:
+
+2021-05-29  Chris Dumez  <cdumez@apple.com>
+
         Adopt clang thread safety annotations in WTF::DataMutex
         https://bugs.webkit.org/show_bug.cgi?id=226431
 
