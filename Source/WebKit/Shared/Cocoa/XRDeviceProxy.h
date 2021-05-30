@@ -50,6 +50,7 @@ public:
 private:
     XRDeviceProxy(XRDeviceInfo&&, PlatformXRSystemProxy&);
 
+    WebCore::IntSize recommendedResolution(PlatformXR::SessionMode) final { return m_recommendedResolution; }
     void initializeTrackingAndRendering(PlatformXR::SessionMode) final;
     void shutDownTrackingAndRendering() final;
     bool supportsSessionShutdownNotification() const final { return true; }
@@ -63,6 +64,7 @@ private:
     XRDeviceIdentifier m_identifier;
     WeakPtr<PlatformXRSystemProxy> m_xrSystem;
     bool m_supportsStereoRendering { false };
+    WebCore::IntSize m_recommendedResolution { 0, 0 };
 };
 
 } // namespace WebKit

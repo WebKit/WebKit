@@ -46,6 +46,7 @@ XRDeviceProxy::XRDeviceProxy(XRDeviceInfo&& deviceInfo, PlatformXRSystemProxy& x
     m_identifier = deviceInfo.identifier;
     m_supportsStereoRendering = deviceInfo.supportsStereoRendering;
     m_supportsOrientationTracking = deviceInfo.supportsOrientationTracking;
+    m_recommendedResolution = deviceInfo.recommendedResolution;
     if (!deviceInfo.features.isEmpty())
         setEnabledFeatures(SessionMode::ImmersiveVr, deviceInfo.features);
 }

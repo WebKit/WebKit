@@ -42,6 +42,7 @@ struct XRDeviceInfo {
     bool supportsOrientationTracking { false };
     bool supportsStereoRendering { false };
     PlatformXR::Device::FeatureList features;
+    WebCore::IntSize recommendedResolution { 0, 0 };
 
     void encode(IPC::Encoder&) const;
     static std::optional<XRDeviceInfo> decode(IPC::Decoder&);

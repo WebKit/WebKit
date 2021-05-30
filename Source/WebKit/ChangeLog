@@ -1,3 +1,22 @@
+2021-05-30  Dean Jackson  <dino@apple.com>
+
+        [WebXR] Send recommendedResolution using DeviceProxy
+        https://bugs.webkit.org/show_bug.cgi?id=226402
+        <rdar://problem/78635475>
+
+        Reviewed by Tim Horton.
+
+        Add a recommendedResolution field to DeviceInfo and send
+        it across processes using the XRDeviceProxy.
+
+        * Shared/Cocoa/XRDeviceInfo.h:
+        * Shared/Cocoa/XRDeviceInfo.mm:
+        (WebKit::XRDeviceInfo::encode const):
+        (WebKit::XRDeviceInfo::decode):
+        * Shared/Cocoa/XRDeviceProxy.h:
+        * Shared/Cocoa/XRDeviceProxy.mm:
+        (WebKit::XRDeviceProxy::XRDeviceProxy):
+
 2021-05-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] UI process crashes when deallocating WKWebView in a script message handler during an active touch event
