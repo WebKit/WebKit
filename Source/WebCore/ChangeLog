@@ -1,3 +1,26 @@
+2021-05-30  Dean Jackson  <dino@apple.com>
+
+        [WebXR] Recommended framebuffer width incorrectly scaled
+        https://bugs.webkit.org/show_bug.cgi?id=226408
+        <rdar://problem/78638309>
+
+        Reviewed by Tim Horton.
+
+        When WebXRWebGLLayer creates the WebXROpaqueFramebuffer, it asks
+        the session for the recommended framebuffer size. It then
+        multiplies the width by 2 - I assume because there are two eyes.
+        However, the specification [1] says that it is a "best estimate of
+        the WebGL framebuffer resolution large enough to contain all of the
+        session’s XRViews". So it should be the session that makes account
+        for the multiple views, not the framebuffer.
+
+        Since this would almost certainly break existing content using the OpenXR
+        backend, I edited the implementation to include the 2x width scale.
+
+        * Modules/webxr/WebXRWebGLLayer.cpp:
+        (WebCore::createOpaqueFramebuffer): Remove the "* 2".
+        * platform/xr/openxr/PlatformXROpenXR.cpp: Add a "* 2" to not break content.
+
 2021-05-30  Darin Adler  <darin@apple.com>
 
         Remove WTF::Optional synonym for std::optional, using that class template directly instead

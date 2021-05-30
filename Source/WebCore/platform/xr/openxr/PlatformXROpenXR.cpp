@@ -80,7 +80,7 @@ WebCore::IntSize OpenXRDevice::recommendedResolution(SessionMode mode)
     auto configType = toXrViewConfigurationType(mode);
     auto viewsIterator = m_configurationViews.find(configType);
     if (viewsIterator != m_configurationViews.end())
-        return { static_cast<int>(viewsIterator->value[0].recommendedImageRectWidth), static_cast<int>(viewsIterator->value[0].recommendedImageRectHeight) };
+        return { static_cast<int>(2 * viewsIterator->value[0].recommendedImageRectWidth), static_cast<int>(viewsIterator->value[0].recommendedImageRectHeight) };
     return Device::recommendedResolution(mode);
 }
 

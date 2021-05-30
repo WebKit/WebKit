@@ -72,7 +72,7 @@ static ExceptionOr<std::unique_ptr<WebXROpaqueFramebuffer>> createOpaqueFramebuf
     float scaleFactor = std::clamp(init.framebufferScaleFactor, MinFramebufferScalingFactor, device->maxFramebufferScalingFactor());
 
     IntSize recommendedSize = session.recommendedWebGLFramebufferResolution();
-    auto width = static_cast<uint32_t>(std::ceil(2 * recommendedSize.width() * scaleFactor));
+    auto width = static_cast<uint32_t>(std::ceil(recommendedSize.width() * scaleFactor));
     auto height = static_cast<uint32_t>(std::ceil(recommendedSize.height() * scaleFactor));
 
     // 9.3. Initialize layer’s framebuffer to a new opaque framebuffer with the dimensions framebufferSize
