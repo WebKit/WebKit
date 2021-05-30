@@ -90,7 +90,6 @@ WebXROpaqueFramebuffer::~WebXROpaqueFramebuffer()
 
 void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::LayerData& data)
 {
-    m_opaqueTexture = data.opaqueTexture;
     if (!m_context.graphicsContextGL())
         return;
     auto& gl = *m_context.graphicsContextGL();
@@ -110,6 +109,12 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
     // or prior to the processing of each XR animation frame.
     // FIXME: Actually do the clearing (not using invalidateFramebuffer). This will have to be done after we've attached
     // the textures/renderbuffers.
+
+#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
+    UNUSED_PARAM(data);
+#else
+    m_opaqueTexture = data.opaqueTexture;
+#endif
 
 #if USE(OPENGL_ES)
     auto& extensions = reinterpret_cast<ExtensionsGLOpenGLES&>(gl.getExtensions());

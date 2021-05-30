@@ -171,9 +171,10 @@ public:
         };
 
         struct LayerData {
-            PlatformGLObject opaqueTexture { 0 };
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
             std::unique_ptr<WebCore::IOSurface> surface;
+#else
+            PlatformGLObject opaqueTexture { 0 };
 #endif
 
             template<class Encoder> void encode(Encoder&) const;
@@ -429,10 +430,11 @@ std::optional<Device::FrameData::StageParameters> Device::FrameData::StageParame
 template<class Encoder>
 void Device::FrameData::LayerData::encode(Encoder& encoder) const
 {
-    encoder << opaqueTexture;
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
     WTF::MachSendRight surfaceSendRight = surface ? surface->createSendRight() : WTF::MachSendRight();
     encoder << surfaceSendRight;
+#else
+    encoder << opaqueTexture;
 #endif
 }
 
@@ -440,13 +442,14 @@ template<class Decoder>
 std::optional<Device::FrameData::LayerData> Device::FrameData::LayerData::decode(Decoder& decoder)
 {
     PlatformXR::Device::FrameData::LayerData layerData;
-    if (!decoder.decode(layerData.opaqueTexture))
-        return std::nullopt;
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
     WTF::MachSendRight surfaceSendRight;
     if (!decoder.decode(surfaceSendRight))
         return std::nullopt;
     layerData.surface = WebCore::IOSurface::createFromSendRight(WTFMove(surfaceSendRight), WebCore::DestinationColorSpace::SRGB());
+#else
+    if (!decoder.decode(layerData.opaqueTexture))
+        return std::nullopt;
 #endif
     return layerData;
 }

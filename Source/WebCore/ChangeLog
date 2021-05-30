@@ -1,5 +1,26 @@
 2021-05-30  Dean Jackson  <dino@apple.com>
 
+        [WebXR] No need for opaqueTexture when USE(IOSURFACE_FOR_XR_LAYER_DATA)
+        https://bugs.webkit.org/show_bug.cgi?id=226405
+        <rdar://problem/78636950>
+
+        Reviewed by Tim Horton.
+
+        When USE(IOSURFACE_FOR_XR_LAYER_DATA) is true, we'll get our
+        textures via a different method - we'll create them based on an
+        IOSurface we receive. This means that when we're in a
+        USE(IOSURFACE_FOR_XR_LAYER_DATA) configuration, we don't need the
+        opaqueTexture property on FrameData.
+
+        * platform/xr/PlatformXR.h: Put opaqueTexture in the #else clause.
+        (PlatformXR::Device::FrameData::LayerData::encode const):
+        (PlatformXR::Device::FrameData::LayerData::decode):
+        * testing/WebFakeXRDevice.cpp:
+        (WebCore::SimulatedXRDevice::frameTimerFired):
+        * Modules/webxr/WebXROpaqueFramebuffer.cpp: Guard use of opaqueTexture.
+
+2021-05-30  Dean Jackson  <dino@apple.com>
+
         [WebXR] invalidateFramebuffer is not the same as clearing contents
         https://bugs.webkit.org/show_bug.cgi?id=226422
         <rdar://problem/78652351>

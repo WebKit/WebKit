@@ -144,8 +144,13 @@ void SimulatedXRDevice::frameTimerFired()
     FrameData data = m_frameData.copy();
     data.shouldRender = true;
 
-    for (auto& layer : m_layers)
+    for (auto& layer : m_layers) {
+#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
+        data.layers.add(layer.key, FrameData::LayerData { });
+#else
         data.layers.add(layer.key, FrameData::LayerData { .opaqueTexture = layer.value });
+#endif
+    }
 
     for (auto& input : m_inputConnections) {
         if (input->isConnected())
