@@ -43,11 +43,6 @@ static bool receivedDidEnterFullscreenMessage;
 static bool receivedWillExitFullscreenMessage;
 static bool receivedDidExitFullscreenMessage;
 
-static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void*)
-{
-    receivedLoadedMessage = true;
-}
-
 @interface FullscreenDelegateMessageHandler : NSObject <WKScriptMessageHandler, _WKFullscreenDelegate>
 @end
 
@@ -112,52 +107,6 @@ TEST(Fullscreen, Delegate)
     TestWebKitAPI::Util::run(&receivedDidExitFullscreenMessage);
 
     ASSERT_FALSE([webView _isInFullscreen]);
-}
-
-TEST(Fullscreen, WKViewDelegate)
-{
-    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
-    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("FullscreenDelegate").get()));
-    WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
-    WKPreferencesSetFullScreenEnabled(preferences, true);
-
-    WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageConfigurationCreate());
-    WKPageConfigurationSetContext(configuration.get(), context.get());
-    WKPageConfigurationSetPageGroup(configuration.get(), pageGroup.get());
-
-    NSRect rect = NSMakeRect(0, 0, 800, 600);
-    auto webView = adoptNS([[WKView alloc] initWithFrame:rect configurationRef:configuration.get()]);
-    [webView setWindowOcclusionDetectionEnabled:NO];
-
-    auto window = adoptNS([[NSWindow alloc] initWithContentRect:rect styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:NO]);
-    [[window contentView] addSubview:webView.get()];
-    [window makeKeyAndOrderFront:nil];
-
-    RetainPtr<FullscreenDelegateMessageHandler> handler = adoptNS([[FullscreenDelegateMessageHandler alloc] init]);
-    WKPageSetFullscreenDelegate([webView pageRef], handler.get());
-
-    WKPageNavigationClientV0 loaderClient;
-    memset(&loaderClient, 0 , sizeof(loaderClient));
-
-    loaderClient.base.version = 0;
-    loaderClient.didFinishNavigation = didFinishNavigation;
-    WKPageSetPageNavigationClient([webView pageRef], &loaderClient.base);
-
-    receivedLoadedMessage = false;
-    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("FullscreenDelegate", "html"));
-    WKPageLoadURL([webView pageRef], url.get());
-
-    TestWebKitAPI::Util::run(&receivedLoadedMessage);
-
-    NSEvent *event = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:NSMakePoint(5, 5) modifierFlags:0 timestamp:0 windowNumber:window.get().windowNumber context:0 eventNumber:0 clickCount:0 pressure:0];
-
-    [webView mouseDown:event];
-    TestWebKitAPI::Util::run(&receivedWillEnterFullscreenMessage);
-    TestWebKitAPI::Util::run(&receivedDidEnterFullscreenMessage);
-
-    [webView mouseDown:event];
-    TestWebKitAPI::Util::run(&receivedWillExitFullscreenMessage);
-    TestWebKitAPI::Util::run(&receivedDidExitFullscreenMessage);
 }
 
 } // namespace TestWebKitAPI
