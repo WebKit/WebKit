@@ -73,7 +73,7 @@ void Safepoint::add(Scannable* scannable)
     m_scannables.append(scannable);
 }
 
-void Safepoint::begin()
+void Safepoint::begin() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     RELEASE_ASSERT(!m_didCallBegin);
     m_didCallBegin = true;

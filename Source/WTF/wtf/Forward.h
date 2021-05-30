@@ -49,7 +49,6 @@ class TextPosition;
 class TextStream;
 class UniquedStringImpl;
 class URL;
-class UncheckedLock;
 class WallTime;
 
 struct AnyThreadsAccessTraits;
@@ -154,7 +153,6 @@ using WTF::StringView;
 using WTF::TextPosition;
 using WTF::TextStream;
 using WTF::URL;
-using WTF::UncheckedLock;
 using WTF::UniqueRef;
 using WTF::Variant;
 using WTF::Vector;

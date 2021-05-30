@@ -55,7 +55,7 @@ private:
 
     void threadIsStopping(const AbstractLocker&) final;
 
-    UncheckedLock m_rightToRun;
+    Lock m_rightToRun;
     JITWorklist& m_worklist;
     RefPtr<JITPlan> m_plan { nullptr };
     Safepoint* m_safepoint { nullptr };

@@ -1,3 +1,24 @@
+2021-05-30  Chris Dumez  <cdumez@apple.com>
+
+        Drop UncheckedCondition / UncheckedLock
+        https://bugs.webkit.org/show_bug.cgi?id=226432
+
+        Reviewed by Darin Adler.
+
+        Drop UncheckedCondition / UncheckedLock now that the whole codebase has been ported to
+        Condition / Lock, which support Clang thread safety analysis.
+
+        * wtf/Condition.h:
+        * wtf/Forward.h:
+        * wtf/Lock.cpp:
+        (WTF::Lock::lockSlow):
+        (WTF::Lock::unlockSlow):
+        (WTF::Lock::unlockFairlySlow):
+        (WTF::Lock::safepointSlow):
+        * wtf/Lock.h:
+        (WTF::assertIsHeld):
+        (WTF::WTF_ASSERTS_ACQUIRED_LOCK):
+
 2021-05-30  Darin Adler  <darin@apple.com>
 
         Remove WTF::Optional synonym for std::optional, using that class template directly instead
