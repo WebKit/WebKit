@@ -1,3 +1,18 @@
+2021-05-29  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [webkitpy] Add a delay between successive iOS simulator boots
+        https://bugs.webkit.org/show_bug.cgi?id=226376
+
+        Reviewed by Darin Adler.
+
+        In certain configurations, rapidly attempting to boot multiple
+        iOS simulators can cause them to fail to boot. Add a 10 second
+        delay to ensure that each one has a chance to initialize before
+        moving to the next one.
+
+        * Scripts/webkitpy/xcode/simulated_device.py:
+        (SimulatedDeviceManager._boot_device):
+
 2021-05-29  Chris Dumez  <cdumez@apple.com>
 
         Adopt clang thread safety annotations in WTF::DataMutex
