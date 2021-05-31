@@ -1,5 +1,64 @@
 2021-05-30  Darin Adler  <darin@apple.com>
 
+        Remove some of the unneeded WebKitLegacy Windows-specific plug-in code
+        https://bugs.webkit.org/show_bug.cgi?id=226410
+
+        Reviewed by Chris Dumez.
+
+        * Plugins/PaintHooks.asm: Removed.
+        * Plugins/PlatformModule.h: Removed.
+        * Plugins/PluginDatabase.cpp: Removed.
+        * Plugins/PluginDatabase.h: Removed.
+        * Plugins/PluginDatabaseWin.cpp: Removed.
+        * Plugins/PluginDebug.cpp: Removed.
+        * Plugins/PluginDebug.h: Removed.
+        * Plugins/PluginMainThreadScheduler.cpp: Removed.
+        * Plugins/PluginMainThreadScheduler.h: Removed.
+        * Plugins/PluginMessageThrottlerWin.cpp: Removed.
+        * Plugins/PluginMessageThrottlerWin.h: Removed.
+        * Plugins/PluginPackage.cpp: Removed.
+        * Plugins/PluginPackage.h: Removed.
+        * Plugins/PluginPackageWin.cpp: Removed.
+        * Plugins/PluginQuirkSet.h: Removed.
+        * Plugins/PluginStream.cpp: Removed.
+        * Plugins/PluginStream.h: Removed.
+        * Plugins/PluginView.cpp: Removed.
+        * Plugins/PluginView.h: Removed.
+        * Plugins/PluginViewWin.cpp: Removed.
+        * Plugins/npapi.cpp: Removed.
+        * WebCoreSupport/EmbeddedWidget.cpp: Removed.
+        * WebCoreSupport/EmbeddedWidget.h: Removed.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp: Removed includes of
+        PluginDatabase.h, PluginPackage.h, PluginView.h.
+        (WebFrameLoaderClient::WebFrameLoaderClient): Removed m_manualLoader and
+        m_hasSetnResponseToPlugin.
+        (WebFrameLoaderClient::setMainDocumentError): Removed all the code here,
+        which was only used for m_manualLoader.
+        (WebFrameLoaderClient::committedLoad): Removed code that runs only if
+        m_manualLoader is non-null.
+        (WebFrameLoaderClient::finishedLoading): Removed all the code here, which
+        was only used for m_manualLoader.
+        (WebFrameLoaderClient::objectContentType): Removed call to plug-in database
+        to figure out MIME type and select a plug-in to load.
+        (WebFrameLoaderClient::dispatchDidFailToStartPlugin const): Deleted.
+        (WebFrameLoaderClient::createPlugin): Return nullptr. No longer support
+        Netscape-style plug-ins, nor call the embeddedViewWithArguments function.
+        (WebFrameLoaderClient::redirectDataToPlugin): Removed all the code here.
+        * WebCoreSupport/WebFrameLoaderClient.h: Removed dispatchDidFailToStartPlugin,
+        m_manualLoader, and m_hasSentResponseToPlugin.
+        * WebCoreSupport/WebPluginInfoProvider.cpp: Removed include of PluginDatabase.h.
+        (WebPluginInfoProvider::refreshPlugins): Removed all the code here.
+        (WebPluginInfoProvider::pluginInfo): Ditto.
+        (WebPluginInfoProvider::webVisiblePluginInfo): Ditto.
+        * WebFrame.cpp: Removed includes of PluginDatabase.h and PluginView.h.
+        * WebView.cpp: Ditto.
+        (WebView::WebViewWndProc): Removed workaround specifically for the
+        Windows Media Player plug-in.
+        (WebView::addAdditionalPluginDirectory): Removed all the code here.
+
+2021-05-30  Darin Adler  <darin@apple.com>
+
         Remove WTF::Optional synonym for std::optional, using that class template directly instead
         https://bugs.webkit.org/show_bug.cgi?id=226433
 

@@ -32,11 +32,6 @@
 #include <WebCore/FrameLoaderClient.h>
 #include <WebCore/ProgressTrackerClient.h>
 
-namespace WebCore {
-    class PluginManualLoader;
-    class PluginView;
-}
-
 class WebFrame;
 class WebFramePolicyListener;
 class WebHistory;
@@ -48,8 +43,6 @@ public:
 
     void setWebFrame(WebFrame* webFrame) { m_webFrame = webFrame; }
     WebFrame* webFrame() const { return m_webFrame; }
-
-    void dispatchDidFailToStartPlugin(const WebCore::PluginView&) const;
 
     std::optional<WebCore::PageIdentifier> pageID() const final;
     std::optional<WebCore::FrameIdentifier> frameID() const final;
@@ -199,9 +192,4 @@ private:
     std::unique_ptr<WebFramePolicyListenerPrivate> m_policyListenerPrivate;
 
     WebFrame* m_webFrame;
-
-    // Points to the manual loader that data should be redirected to.
-    WebCore::PluginManualLoader* m_manualLoader;
-
-    bool m_hasSentResponseToPlugin;
 };

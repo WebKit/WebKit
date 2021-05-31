@@ -1,3 +1,14 @@
+2021-05-30  Darin Adler  <darin@apple.com>
+
+        Remove some of the unneeded WebKitLegacy Windows-specific plug-in code
+        https://bugs.webkit.org/show_bug.cgi?id=226410
+
+        Reviewed by Chris Dumez.
+
+        * PlatformFTW.cmake: Removed all the code in the win/Plugins directory,
+        and EmbeddedWidget.h/cpp.
+        * PlatformWin.cmake: Ditto.
+
 2021-05-27  Darin Adler  <darin@apple.com>
 
         Next step toward using std::optional directly instead of through WTF::Optional typedef

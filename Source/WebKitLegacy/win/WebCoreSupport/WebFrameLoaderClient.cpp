@@ -32,11 +32,7 @@
 #include "COMPropertyBag.h"
 #include "DOMHTMLClasses.h"
 #include "DefaultPolicyDelegate.h"
-#include "EmbeddedWidget.h"
 #include "MarshallingHelpers.h"
-#include "PluginDatabase.h"
-#include "PluginPackage.h"
-#include "PluginView.h"
 #include "WebActionPropertyBag.h"
 #include "WebCachedFramePlatformData.h"
 #include "WebChromeClient.h"
@@ -109,8 +105,6 @@ public:
 WebFrameLoaderClient::WebFrameLoaderClient(WebFrame* webFrame)
     : m_policyListenerPrivate(makeUnique<WebFramePolicyListenerPrivate>())
     , m_webFrame(webFrame)
-    , m_manualLoader(0)
-    , m_hasSentResponseToPlugin(false) 
 {
 }
 
@@ -628,14 +622,8 @@ void WebFrameLoaderClient::dispatchWillSubmitForm(FormState& formState, Completi
     completionHandler();
 }
 
-void WebFrameLoaderClient::setMainDocumentError(DocumentLoader*, const ResourceError& error)
+void WebFrameLoaderClient::setMainDocumentError(DocumentLoader*, const ResourceError&)
 {
-    if (!m_manualLoader)
-        return;
-
-    m_manualLoader->didFail(error);
-    m_manualLoader = 0;
-    m_hasSentResponseToPlugin = false;
 }
 
 void WebFrameLoaderClient::startDownload(const ResourceRequest& request, const String& /* suggestedName */)
@@ -655,38 +643,17 @@ void WebFrameLoaderClient::didChangeTitle(DocumentLoader*)
 
 void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const char* data, int length)
 {
-    if (!m_manualLoader)
-        loader->commitData(data, length);
+    loader->commitData(data, length);
 
     // If the document is a stand-alone media document, now is the right time to cancel the WebKit load.
     // FIXME: This code should be shared across all ports. <http://webkit.org/b/48762>.
     Frame* coreFrame = core(m_webFrame);
     if (coreFrame->document()->isMediaDocument())
         loader->cancelMainResourceLoad(pluginWillHandleLoadError(loader->response()));
-
-    if (!m_manualLoader)
-        return;
-
-    if (!m_hasSentResponseToPlugin) {
-        m_manualLoader->didReceiveResponse(loader->response());
-        // didReceiveResponse sets up a new stream to the plug-in. on a full-page plug-in, a failure in
-        // setting up this stream can cause the main document load to be cancelled, setting m_manualLoader
-        // to null
-        if (!m_manualLoader)
-            return;
-        m_hasSentResponseToPlugin = true;
-    }
-    m_manualLoader->didReceiveData(data, length);
 }
 
 void WebFrameLoaderClient::finishedLoading(DocumentLoader*)
 {
-    if (!m_manualLoader)
-        return;
-
-    m_manualLoader->didFinishLoading();
-    m_manualLoader = 0;
-    m_hasSentResponseToPlugin = false;
 }
 
 void WebFrameLoaderClient::updateGlobalHistory()
@@ -999,21 +966,11 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const URL& url, const 
 {
     String mimeType = mimeTypeIn;
 
-    if (mimeType.isEmpty()) {
-        String decodedPath = decodeURLEscapeSequences(url.path());
-        mimeType = PluginDatabase::installedPlugins()->MIMETypeForExtension(StringView { decodedPath }.substring(decodedPath.reverseFind('.') + 1));
-    }
-
     if (mimeType.isEmpty())
         return ObjectContentType::Frame; // Go ahead and hope that we can display the content.
 
-    bool plugInSupportsMIMEType = PluginDatabase::installedPlugins()->isMIMETypeRegistered(mimeType);
-
     if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
         return WebCore::ObjectContentType::Image;
-
-    if (plugInSupportsMIMEType)
-        return WebCore::ObjectContentType::PlugIn;
 
     if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType))
         return WebCore::ObjectContentType::Frame;
@@ -1021,124 +978,13 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const URL& url, const 
     return WebCore::ObjectContentType::None;
 }
 
-void WebFrameLoaderClient::dispatchDidFailToStartPlugin(const PluginView& pluginView) const
+RefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugInElement&, const URL&, const Vector<String>&, const Vector<String>&, const String&, bool)
 {
-#if USE(CF)
-    WebView* webView = m_webFrame->webView();
-
-    COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
-    if (FAILED(webView->resourceLoadDelegate(&resourceLoadDelegate)))
-        return;
-
-    RetainPtr<CFMutableDictionaryRef> userInfo = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-
-    Frame* frame = core(m_webFrame);
-    ASSERT(frame == pluginView.parentFrame());
-
-    if (!pluginView.pluginsPage().isNull()) {
-        URL pluginPageURL = frame->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(pluginView.pluginsPage()));
-        if (pluginPageURL.protocolIsInHTTPFamily()) {
-            static NeverDestroyed<RetainPtr<CFStringRef>> key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInPageURLStringKey);
-            CFDictionarySetValue(userInfo.get(), key.get().get(), pluginPageURL.string().createCFString().get());
-        }
-    }
-
-    if (!pluginView.mimeType().isNull()) {
-        static NeverDestroyed<RetainPtr<CFStringRef>> key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorMIMETypeKey);
-        CFDictionarySetValue(userInfo.get(), key.get().get(), pluginView.mimeType().createCFString().get());
-    }
-
-    if (pluginView.plugin()) {
-        String pluginName = pluginView.plugin()->name();
-        if (!pluginName.isNull()) {
-            static NeverDestroyed<RetainPtr<CFStringRef>> key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInNameKey);
-            CFDictionarySetValue(userInfo.get(), key.get().get(), pluginName.createCFString().get());
-        }
-    }
-
-    COMPtr<CFDictionaryPropertyBag> userInfoBag = CFDictionaryPropertyBag::createInstance();
-    userInfoBag->setDictionary(userInfo.get());
- 
-    int errorCode = 0;
-    String description;
-    switch (pluginView.status()) {
-        case PluginStatusCanNotFindPlugin:
-            errorCode = WebKitErrorCannotFindPlugIn;
-            description = WEB_UI_STRING("The plug-in can\xE2\x80\x99t be found", "WebKitErrorCannotFindPlugin description");
-            break;
-        case PluginStatusCanNotLoadPlugin:
-            errorCode = WebKitErrorCannotLoadPlugIn;
-            description = WEB_UI_STRING("The plug-in can\xE2\x80\x99t be loaded", "WebKitErrorCannotLoadPlugin description");
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-    }
-
-    ResourceError resourceError(String(WebKitErrorDomain), errorCode, pluginView.url(), String());
-    COMPtr<IWebError> error(AdoptCOM, WebError::createInstance(resourceError, userInfoBag.get()));
-     
-    resourceLoadDelegate->plugInFailedWithError(webView, error.get(), getWebDataSource(frame->loader().documentLoader()));
-#else
-    ASSERT(0);
-#endif
-}
-
-RefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& pluginSize, HTMLPlugInElement& element, const URL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
-{
-    WebView* webView = m_webFrame->webView();
-
-    COMPtr<IWebUIDelegate> ui;
-    if (SUCCEEDED(webView->uiDelegate(&ui)) && ui) {
-        COMPtr<IWebUIDelegatePrivate> uiPrivate(Query, ui);
-
-        if (uiPrivate) {
-            // Assemble the view arguments in a property bag.
-            HashMap<String, String> viewArguments;
-            for (unsigned i = 0; i < paramNames.size(); i++) 
-                viewArguments.set(paramNames[i], paramValues[i]);
-            COMPtr<IPropertyBag> viewArgumentsBag(AdoptCOM, COMPropertyBag<String>::adopt(viewArguments));
-            COMPtr<IDOMElement> containingElement(AdoptCOM, DOMElement::createInstance(&element));
-
-            HashMap<String, COMVariant> arguments;
-
-            arguments.set(WebEmbeddedViewAttributesKey, viewArgumentsBag);
-            arguments.set(WebEmbeddedViewBaseURLKey, url.string());
-            arguments.set(WebEmbeddedViewContainingElementKey, containingElement);
-            arguments.set(WebEmbeddedViewMIMETypeKey, mimeType);
-
-            COMPtr<IPropertyBag> argumentsBag(AdoptCOM, COMPropertyBag<COMVariant>::adopt(arguments));
-
-            COMPtr<IWebEmbeddedView> view;
-            HRESULT result = uiPrivate->embeddedViewWithArguments(webView, m_webFrame, argumentsBag.get(), &view);
-            if (SUCCEEDED(result)) {
-                HWND parentWindow;
-                HRESULT hr = webView->viewWindow(&parentWindow);
-                ASSERT(SUCCEEDED(hr));
-
-                return EmbeddedWidget::create(view.get(), &element, parentWindow, pluginSize);
-            }
-        }
-    }
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    Frame* frame = core(m_webFrame);
-    auto pluginView = PluginView::create(frame, pluginSize, &element, url, paramNames, paramValues, mimeType, loadManually);
-
-    if (pluginView->status() == PluginStatusLoadedSuccessfully)
-        return pluginView;
-
-    dispatchDidFailToStartPlugin(pluginView.get());
-#endif
     return nullptr;
 }
 
-void WebFrameLoaderClient::redirectDataToPlugin(Widget& pluginWidget)
+void WebFrameLoaderClient::redirectDataToPlugin(Widget&)
 {
-    // Ideally, this function shouldn't be necessary, see <rdar://problem/4852889>
-    if (pluginWidget.isPluginView())
-        m_manualLoader = toPluginView(&pluginWidget);
-    else 
-        m_manualLoader = static_cast<EmbeddedWidget*>(&pluginWidget);
 }
 
 WebHistory* WebFrameLoaderClient::webHistory() const

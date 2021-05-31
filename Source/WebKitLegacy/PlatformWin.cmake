@@ -45,7 +45,6 @@ list(APPEND WebKitLegacy_PRIVATE_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}/../include/private/JavaScriptCore"
     "${CMAKE_BINARY_DIR}/../include/private/WebCore"
     "${WEBKITLEGACY_DIR}/win"
-    "${WEBKITLEGACY_DIR}/win/plugins"
     "${WEBKITLEGACY_DIR}/win/WebCoreSupport"
     "${WebKitLegacy_DERIVED_SOURCES_DIR}/include"
     "${WebKitLegacy_DERIVED_SOURCES_DIR}/Interfaces"
@@ -189,25 +188,11 @@ list(APPEND WebKitLegacy_SOURCES_Classes
     win/WebView.cpp
     win/WebWorkersPrivate.cpp
 
-    win/plugins/PluginDatabase.cpp
-    win/plugins/PluginDatabaseWin.cpp
-    win/plugins/PluginDebug.cpp
-    win/plugins/PluginMainThreadScheduler.cpp
-    win/plugins/PluginMessageThrottlerWin.cpp
-    win/plugins/PluginPackage.cpp
-    win/plugins/PluginPackageWin.cpp
-    win/plugins/PluginStream.cpp
-    win/plugins/PluginView.cpp
-    win/plugins/PluginViewWin.cpp
-    win/plugins/npapi.cpp
-
     win/storage/WebDatabaseProvider.cpp
 )
 
 list(APPEND WebKitLegacy_SOURCES_WebCoreSupport
     win/WebCoreSupport/AcceleratedCompositingContext.cpp
-    win/WebCoreSupport/EmbeddedWidget.cpp
-    win/WebCoreSupport/EmbeddedWidget.h
     win/WebCoreSupport/WebChromeClient.cpp
     win/WebCoreSupport/WebChromeClient.h
     win/WebCoreSupport/WebContextMenuClient.cpp
@@ -273,29 +258,6 @@ list(APPEND WebKitLegacy_SOURCES
     ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebPreferencesDefinitions.h
     ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebViewPreferencesChangedGenerated.cpp
 )
-
-
-if (CMAKE_SIZEOF_VOID_P EQUAL 8)
-    enable_language(ASM_MASM)
-    if (MSVC)
-        set(MASM_EXECUTABLE ml64)
-        set(MASM_FLAGS /c /Fo)
-        add_custom_command(
-            OUTPUT ${WebKitLegacy_DERIVED_SOURCES_DIR}/PaintHooks.obj
-            MAIN_DEPENDENCY win/plugins/PaintHooks.asm
-            COMMAND ${MASM_EXECUTABLE} ${MASM_FLAGS}
-                ${WebKitLegacy_DERIVED_SOURCES_DIR}/PaintHooks.obj
-                ${CMAKE_CURRENT_SOURCE_DIR}/win/plugins/PaintHooks.asm
-            VERBATIM)
-        list(APPEND WebKitLegacy_SOURCES
-            ${WebKitLegacy_DERIVED_SOURCES_DIR}/PaintHooks.obj
-        )
-    else ()
-        list(APPEND WebKitLegacy_SOURCES
-            win/plugins/PaintHooks.asm
-        )
-    endif ()
-endif ()
 
 list(APPEND WebKitLegacy_SOURCES ${WebKitLegacy_INCLUDES} ${WebKitLegacy_SOURCES_Classes} ${WebKitLegacy_SOURCES_WebCoreSupport})
 

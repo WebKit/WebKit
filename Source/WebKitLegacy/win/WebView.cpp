@@ -33,8 +33,6 @@
 #include "FullscreenVideoController.h"
 #include "MarshallingHelpers.h"
 #include "PageStorageSessionProvider.h"
-#include "PluginDatabase.h"
-#include "PluginView.h"
 #include "WebApplicationCache.h"
 #include "WebBackForwardList.h"
 #include "WebChromeClient.h"
@@ -2576,19 +2574,6 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
     // hold a ref, since the WebView could go away in an event handler.
     COMPtr<WebView> protector(webView);
     ASSERT(webView);
-
-    // Windows Media Player has a modal message loop that will deliver messages
-    // to us at inappropriate times and we will crash if we handle them when:
-    // they are delivered. We repost paint messages so that we eventually get
-    // a chance to paint once the modal loop has exited, but other messages
-    // aren't safe to repost, so we just drop them.
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    if (PluginView::isCallingPlugin()) {
-        if (message == WM_PAINT)
-            PostMessage(hWnd, message, wParam, lParam);
-        return 0;
-    }
-#endif
 
     bool handled = true;
 
@@ -6021,9 +6006,8 @@ HRESULT WebView::setAllowSiteSpecificHacks(BOOL allow)
     return S_OK;
 }
 
-HRESULT WebView::addAdditionalPluginDirectory(_In_ BSTR directory)
+HRESULT WebView::addAdditionalPluginDirectory(_In_ BSTR)
 {
-    PluginDatabase::installedPlugins()->addExtraPluginDirectory(toString(directory));
     return S_OK;
 }
 

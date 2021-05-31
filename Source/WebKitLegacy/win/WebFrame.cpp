@@ -31,8 +31,6 @@
 #include "COMPropertyBag.h"
 #include "DOMCoreClasses.h"
 #include "MarshallingHelpers.h"
-#include "PluginDatabase.h"
-#include "PluginView.h"
 #include "WebActionPropertyBag.h"
 #include "WebChromeClient.h"
 #include "WebDataSource.h"
