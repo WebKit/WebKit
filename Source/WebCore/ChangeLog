@@ -1,3 +1,20 @@
+2021-04-29  Sergio Villar Senin  <svillar@igalia.com>
+
+        Enable <summary> to be a flex container
+        https://bugs.webkit.org/show_bug.cgi?id=190065
+
+        Reviewed by Antti Koivisto.
+
+        Create grid or flex renderers for <summary> elements whenever display: {inline}-{grid|flex}
+        is specified. All vendors but WebKit allowed it so it should be good for interoperability.
+
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::HTMLSummaryElement::createElementRenderer): create the renderer specifying
+        RenderElement::OnlyCreateBlockAndFlexboxRenderers.
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::createFor): do not create a RenderListItem for <summary> if display:list-item
+        is used because they're already list items. Let it fallthrough to RenderBlockFlow creation.
+
 2021-05-31  Alan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Move ensureTableGrid to TableFormattingState
