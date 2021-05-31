@@ -1,3 +1,19 @@
+2021-05-31  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Move ensureTableGrid to TableFormattingState
+        https://bugs.webkit.org/show_bug.cgi?id=226424
+
+        Reviewed by Antti Koivisto.
+
+        We can certainly have this much logic in a formatting state class.
+
+        * layout/formattingContexts/table/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::ensureTableGrid): Deleted.
+        * layout/formattingContexts/table/TableFormattingContext.h:
+        * layout/formattingContexts/table/TableFormattingState.cpp:
+        (WebCore::Layout::ensureTableGrid):
+        (WebCore::Layout::TableFormattingState::TableFormattingState):
+
 2021-05-31  Antti Koivisto  <antti@apple.com>
 
         Rename presentationAttributeStyle to presentationalHintStyle to match spec language

@@ -339,57 +339,6 @@ IntrinsicWidthConstraints TableFormattingContext::computedIntrinsicWidthConstrai
     return computedWidthConstraints;
 }
 
-UniqueRef<TableGrid> TableFormattingContext::ensureTableGrid(const ContainerBox& tableBox)
-{
-    auto tableGrid = makeUniqueRef<TableGrid>();
-    auto& tableStyle = tableBox.style();
-    auto shouldApplyBorderSpacing = tableStyle.borderCollapse() == BorderCollapse::Separate;
-    tableGrid->setHorizontalSpacing(LayoutUnit { shouldApplyBorderSpacing ? tableStyle.horizontalBorderSpacing() : 0 });
-    tableGrid->setVerticalSpacing(LayoutUnit { shouldApplyBorderSpacing ? tableStyle.verticalBorderSpacing() : 0 });
-
-    auto* firstChild = tableBox.firstChild();
-    if (!firstChild) {
-        // The rare case of empty table.
-        return tableGrid;
-    }
-
-    const Box* tableCaption = nullptr;
-    const Box* colgroup = nullptr;
-    // Table caption is an optional element; if used, it is always the first child of a <table>.
-    if (firstChild->isTableCaption())
-        tableCaption = firstChild;
-    // The <colgroup> must appear after any optional <caption> element but before any <thead>, <th>, <tbody>, <tfoot> and <tr> element.
-    auto* colgroupCandidate = firstChild;
-    if (tableCaption)
-        colgroupCandidate = tableCaption->nextSibling();
-    if (colgroupCandidate->isTableColumnGroup())
-        colgroup = colgroupCandidate;
-
-    if (colgroup) {
-        auto& columns = tableGrid->columns();
-        for (auto* column = downcast<ContainerBox>(*colgroup).firstChild(); column; column = column->nextSibling()) {
-            ASSERT(column->isTableColumn());
-            auto columnSpanCount = column->columnSpan();
-            ASSERT(columnSpanCount > 0);
-            while (columnSpanCount--)
-                columns.addColumn(downcast<ContainerBox>(*column));
-        }
-    }
-
-    auto* firstSection = colgroup ? colgroup->nextSibling() : tableCaption ? tableCaption->nextSibling() : firstChild;
-    for (auto* section = firstSection; section; section = section->nextSibling()) {
-        ASSERT(section->isTableHeader() || section->isTableBody() || section->isTableFooter());
-        for (auto* row = downcast<ContainerBox>(*section).firstChild(); row; row = row->nextSibling()) {
-            ASSERT(row->isTableRow());
-            for (auto* cell = downcast<ContainerBox>(*row).firstChild(); cell; cell = cell->nextSibling()) {
-                ASSERT(cell->isTableCell());
-                tableGrid->appendCell(downcast<ContainerBox>(*cell));
-            }
-        }
-    }
-    return tableGrid;
-}
-
 IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColumns()
 {
     auto& formattingState = this->formattingState();

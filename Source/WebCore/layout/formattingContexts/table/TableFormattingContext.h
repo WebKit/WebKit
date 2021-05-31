@@ -51,9 +51,6 @@ public:
 
     const TableFormattingGeometry& formattingGeometry() const final { return m_tableFormattingGeometry; }
     const TableFormattingQuirks& formattingQuirks() const final { return m_tableFormattingQuirks; }
-
-    static UniqueRef<TableGrid> ensureTableGrid(const ContainerBox& tableBox);
-
     const TableFormattingState& formattingState() const { return downcast<TableFormattingState>(FormattingContext::formattingState()); }
 
 private:
