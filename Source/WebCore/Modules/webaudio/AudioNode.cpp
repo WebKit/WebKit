@@ -630,7 +630,6 @@ void AudioNode::markNodeForDeletionIfNecessary()
     // Mark for deletion at end of each render quantum or when context shuts down.
     context().markForDeletion(*this);
     m_isMarkedForDeletion = true;
-    didBecomeMarkedForDeletion();
 }
 
 void AudioNode::ref()

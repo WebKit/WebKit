@@ -1,5 +1,26 @@
 2021-05-30  Chris Dumez  <cdumez@apple.com>
 
+        Drop PendingActivity from ScriptProcessorNode
+        https://bugs.webkit.org/show_bug.cgi?id=226442
+
+        Reviewed by Darin Adler.
+
+        ScriptProcessorNode already has a virtualHasPendingActivity() implementation that keeps
+        the JS wrapper alive as long has the audio context is running and there is an "audioprocess"
+        event listener registered on the node. Therefore, there is no need for an additional
+        PendingActivity data member.
+
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::markNodeForDeletionIfNecessary):
+        * Modules/webaudio/AudioNode.h:
+        (WebCore::AudioNode::didBecomeMarkedForDeletion): Deleted.
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::ScriptProcessorNode):
+        (WebCore::ScriptProcessorNode::didBecomeMarkedForDeletion): Deleted.
+        * Modules/webaudio/ScriptProcessorNode.h:
+
+2021-05-30  Chris Dumez  <cdumez@apple.com>
+
         Remove some dead code from BaseAudioContext / AudioContext
         https://bugs.webkit.org/show_bug.cgi?id=226441
 

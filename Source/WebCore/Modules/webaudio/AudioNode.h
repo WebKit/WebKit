@@ -99,7 +99,6 @@ public:
 
     // Can be called from main thread or context's audio thread.  It must be called while the context's graph lock is held.
     void decrementConnectionCountWithLock();
-    virtual void didBecomeMarkedForDeletion() { }
 
     // The AudioNodeInput(s) (if any) will already have their input data available when process() is called.
     // Subclasses will take this input data and put the results in the AudioBus(s) of its AudioNodeOutput(s) (if any).
