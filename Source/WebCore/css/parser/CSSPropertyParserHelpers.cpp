@@ -1736,12 +1736,23 @@ static Color parseColorContrastFunctionParameters(CSSParserTokenRange& range, co
     if (colorsToCompareAgainst.size() == 1)
         return { };
 
+    constexpr std::pair<CSSValueID, double> targetLuminanceMappings[] {
+        { CSSValueAA, 4.5 },
+        { CSSValueAALarge, 3.0 },
+        { CSSValueAAA, 7.0 },
+        { CSSValueAAALarge, 4.5 },
+    };
+
     if (consumedTo) {
         auto targetContrast = [&] () -> std::optional<double> {
-            if (consumeIdentRaw<CSSValueAA>(args))
-                return 4.5;
-            if (consumeIdentRaw<CSSValueAALarge>(args))
-                return 3.0;
+            if (args.peek().type() == IdentToken) {
+                auto id = args.consumeIncludingWhitespace().id();
+                for (auto& [identifier, luminance] : targetLuminanceMappings) {
+                    if (identifier == id)
+                        return luminance;
+                }
+                return std::nullopt;
+            }
             return consumeNumberRaw(args);
         }();
 

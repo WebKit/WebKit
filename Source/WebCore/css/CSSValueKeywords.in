@@ -1448,6 +1448,8 @@ color-contrast
 vs
 AA
 AA-large
+AAA
+AAA-large
 
 // color-mix()
 color-mix

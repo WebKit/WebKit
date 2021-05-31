@@ -20,6 +20,8 @@ PASS computedStyle("background-color", "color-contrast(red vs blue, rgb(255, 255
 Test with specified target contrast
 PASS computedStyle("background-color", "color-contrast(wheat vs bisque, darkgoldenrod, olive, sienna, darkgreen, maroon to AA)") is "rgb(0, 100, 0)"
 PASS computedStyle("background-color", "color-contrast(wheat vs bisque, darkgoldenrod, olive, sienna, darkgreen, maroon to AA-large)") is "rgb(128, 128, 0)"
+PASS computedStyle("background-color", "color-contrast(wheat vs bisque, darkgoldenrod, olive, sienna, darkgreen, maroon to AAA)") is "rgb(128, 0, 0)"
+PASS computedStyle("background-color", "color-contrast(wheat vs bisque, darkgoldenrod, olive, sienna, darkgreen, maroon to AAA-large)") is "rgb(0, 100, 0)"
 PASS computedStyle("background-color", "color-contrast(wheat vs bisque, darkgoldenrod, olive, sienna, darkgreen, maroon to 5.8)") is "rgb(128, 0, 0)"
 
 Test with specified target contrast that none meet

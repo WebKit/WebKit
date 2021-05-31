@@ -47,7 +47,9 @@
 
     testComputed(`color-contrast(wheat vs bisque, darkgoldenrod, olive, sienna, darkgreen, maroon to AA)`, `rgb(0, 100, 0)`); // darkgreen
     testComputed(`color-contrast(wheat vs bisque, darkgoldenrod, olive, sienna, darkgreen, maroon to AA-large)`, `rgb(128, 128, 0)`); // olive
-    testComputed(`color-contrast(wheat vs bisque, darkgoldenrod, olive, sienna, darkgreen, maroon to 5.8)`, `rgb(128, 0, 0)`); // olive maroon
+    testComputed(`color-contrast(wheat vs bisque, darkgoldenrod, olive, sienna, darkgreen, maroon to AAA)`, `rgb(128, 0, 0)`); // maroon
+    testComputed(`color-contrast(wheat vs bisque, darkgoldenrod, olive, sienna, darkgreen, maroon to AAA-large)`, `rgb(0, 100, 0)`); // darkgreen
+    testComputed(`color-contrast(wheat vs bisque, darkgoldenrod, olive, sienna, darkgreen, maroon to 5.8)`, `rgb(128, 0, 0)`); // maroon
     
     debug('');
     debug('Test with specified target contrast that none meet')

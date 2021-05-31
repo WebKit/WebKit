@@ -1,5 +1,17 @@
 2021-05-30  Sam Weinig  <weinig@apple.com>
 
+        Add additional target luminance keywords for color-contrast() added for https://github.com/w3c/csswg-drafts/issues/6311
+        https://bugs.webkit.org/show_bug.cgi?id=226438
+
+        Reviewed by Chris Dumez.
+
+        Update test and results for new AAA and AAA-large target luminance keywords.
+
+        * fast/css/parsing-color-contrast-expected.txt:
+        * fast/css/parsing-color-contrast.html:
+
+2021-05-30  Sam Weinig  <weinig@apple.com>
+
         Support calc() on components inside relative color syntax colors
         https://bugs.webkit.org/show_bug.cgi?id=226272
 
