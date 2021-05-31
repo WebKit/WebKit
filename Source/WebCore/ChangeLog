@@ -1,3 +1,12 @@
+2021-05-30  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, tweak slightly incorrect assertion added in r278233.
+
+        The assertion was hitting flakily on the bots.
+
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::addTailProcessingNode):
+
 2021-05-30  Sam Weinig  <weinig@apple.com>
 
         Add additional target luminance keywords for color-contrast() added for https://github.com/w3c/csswg-drafts/issues/6311

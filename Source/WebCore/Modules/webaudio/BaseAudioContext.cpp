@@ -621,7 +621,7 @@ void BaseAudioContext::addTailProcessingNode(AudioNode& node)
 {
     ASSERT(isGraphOwner());
     if (node.isTailProcessing()) {
-        ASSERT(m_tailProcessingNodes.contains(node));
+        ASSERT(m_tailProcessingNodes.contains(node) || m_finishedTailProcessingNodes.contains(node));
         return;
     }
 
