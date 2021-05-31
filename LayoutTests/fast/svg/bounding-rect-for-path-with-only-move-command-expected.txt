@@ -1,0 +1,8 @@
+PASS rect.top is 108
+PASS rect.left is 108
+PASS rect.width is 0
+PASS rect.height is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

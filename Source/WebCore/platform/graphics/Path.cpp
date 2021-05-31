@@ -490,7 +490,7 @@ std::optional<FloatRect> Path::boundingRectFromInlineData() const
     }
 
     if (hasInlineData<MoveData>())
-        return FloatRect { };
+        return {{ inlineData<MoveData>().location, FloatSize { } }};
 
     if (hasInlineData<LineData>()) {
         FloatRect result;

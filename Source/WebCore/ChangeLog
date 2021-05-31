@@ -1,3 +1,28 @@
+2021-05-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r258118): SVG paths that contain a single move command incorrect client bounding rects
+        https://bugs.webkit.org/show_bug.cgi?id=226447
+        rdar://72112744
+
+        Reviewed by Alan Bujtas.
+
+        r258118 introduced a fast path for computing the bounding rect of a `WebCore::Path` without having to
+        materialize a platform path object (e.g. `CGPathRef` on platforms that use CoreGraphics). To do this, we
+        introduce `InlinePathData` -- a variant capable of representing several types of simple `Path` objects without
+        allocating a platform path.
+
+        However, in the case where a `Path` only consists of a single `moveTo` command, this fast path for computing the
+        bounding rect currently returns the zero rect (an empty rect at the origin), rather than an empty rect at the
+        location we've moved to. This causes the offset of the bounding rect of an SVG path element that contains only a
+        single `M` drawing command to be incorrect.
+
+        Simply fix this by returning an empty rect that is offset by the `moveTo` location, rather than the origin.
+
+        Test: fast/svg/bounding-rect-for-path-with-only-move-command.html
+
+        * platform/graphics/Path.cpp:
+        (WebCore::Path::boundingRectFromInlineData const):
+
 2021-05-30  Youenn Fablet  <youenn@apple.com>
 
         Add logging to allow relating a HTMLMediaElement to a MediaStream

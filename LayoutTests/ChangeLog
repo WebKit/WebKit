@@ -1,3 +1,16 @@
+2021-05-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION (r258118): SVG paths that contain a single move command incorrect client bounding rects
+        https://bugs.webkit.org/show_bug.cgi?id=226447
+        rdar://72112744
+
+        Reviewed by Alan Bujtas.
+
+        Add a layout test to exercise the bug.
+
+        * fast/svg/bounding-rect-for-path-with-only-move-command-expected.txt: Added.
+        * fast/svg/bounding-rect-for-path-with-only-move-command.html: Added.
+
 2021-05-30  Sam Weinig  <weinig@apple.com>
 
         Remove support for no longer specific color(lab ...) syntax
