@@ -1,3 +1,16 @@
+2021-05-30  Sam Weinig  <weinig@apple.com>
+
+        Support calc() on components inside relative color syntax colors
+        https://bugs.webkit.org/show_bug.cgi?id=226272
+
+        Reviewed by Darin Adler.
+
+        Updated test and results for update support including calc() 
+        and compoment permutation.
+
+        * fast/css/parsing-relative-color-syntax-expected.txt:
+        * fast/css/parsing-relative-color-syntax.html:
+
 2021-05-29  Cameron McCormack  <heycam@apple.com>
 
         Rename Internals.mainThreadScrollingReasons to synchronousScrollingReasons

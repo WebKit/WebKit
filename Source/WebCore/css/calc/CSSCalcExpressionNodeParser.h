@@ -25,20 +25,23 @@
 
 #pragma once
 
-#include "CSSValueKeywords.h"
 #include "CalcOperator.h"
 #include "CalculationCategory.h"
 
 namespace WebCore {
 
 class CSSCalcExpressionNode;
+class CSSCalcSymbolTable;
 class CSSParserToken;
 class CSSParserTokenRange;
 
+enum CSSValueID : uint16_t;
+
 class CSSCalcExpressionNodeParser {
 public:
-    explicit CSSCalcExpressionNodeParser(CalculationCategory destinationCategory)
+    explicit CSSCalcExpressionNodeParser(CalculationCategory destinationCategory, const CSSCalcSymbolTable& symbolTable)
         : m_destinationCategory(destinationCategory)
+        , m_symbolTable(symbolTable)
     {
     }
 
@@ -55,6 +58,7 @@ private:
     bool parseCalcValue(CSSParserTokenRange&, int depth, RefPtr<CSSCalcExpressionNode>&);
 
     CalculationCategory m_destinationCategory;
+    const CSSCalcSymbolTable& m_symbolTable;
 };
 
 }
