@@ -35,6 +35,7 @@
 #include "modules/video_coding/include/video_error_codes.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/system/arch.h"
 #include "rtc_base/time_utils.h"
 #include "sdk/objc/components/video_codec/nalu_rewriter.h"
 #include "third_party/libyuv/include/libyuv/convert_from.h"
@@ -60,7 +61,7 @@ VT_EXPORT const CFStringRef kVTCompressionPropertyKey_Usage;
               timestamp:(uint32_t)timestamp
                rotation:(RTCVideoRotation)rotation
      isKeyFrameRequired:(bool)isKeyFrameRequired;
-
+- (void)updateBitRateAccordingActualFrameRate;
 @end
 
 namespace {  // anonymous namespace
@@ -75,6 +76,9 @@ const int kLowH264QpThreshold = 28;
 const int kHighH264QpThreshold = 39;
 
 const OSType kNV12PixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
+
+const int kBelowFrameRateThreshold = 2;
+const int kBelowFrameRateBitRateDecrease = 3;
 
 // Struct that we pass to the encoder per frame to encode. We receive it again
 // in the encoder callback.
@@ -349,6 +353,10 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
   bool _disableEncoding;
   bool _isKeyFrameRequired;
   bool _isH264LowLatencyEncoderEnabled;
+  bool _isUsingSoftwareEncoder;
+  bool _isBelowExpectedFrameRate;
+  uint32_t _frameCount;
+  int64_t _lastFrameRateEstimationTime;
 }
 
 // .5 is set as a mininum to prevent overcompensating for large temporary
@@ -377,7 +385,10 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
   }
   _isKeyFrameRequired = false;
   _isH264LowLatencyEncoderEnabled = true;
-
+  _isUsingSoftwareEncoder = false;
+  _isBelowExpectedFrameRate = false;
+  _frameCount = 0;
+  _lastFrameRateEstimationTime = 0;
   return self;
 }
 
@@ -441,6 +452,9 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
 
   if (_disableEncoding) {
     return WEBRTC_VIDEO_CODEC_ERROR;
+  }
+  if (_isUsingSoftwareEncoder) {
+    [self updateBitRateAccordingActualFrameRate];
   }
 
   CVPixelBufferRef pixelBuffer = nullptr;
@@ -751,6 +765,12 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
                                nullptr,
                                &_vcpCompressionSession);
   }
+#elif defined(WEBRTC_MAC) && !defined(WEBRTC_IOS) && !(ENABLE_VCP_FOR_H264_BASELINE) && defined(WEBRTC_ARCH_X86_FAMILY)
+  CFBooleanRef hwaccl_enabled = nullptr;
+  if (status == noErr) {
+    auto result = VTSessionCopyProperty(_vtCompressionSession, kVTCompressionPropertyKey_UsingHardwareAcceleratedVideoEncoder, nullptr, &hwaccl_enabled);
+    _isUsingSoftwareEncoder = result == noErr ? !CFBooleanGetValue(hwaccl_enabled) : _width <= 480 && _height <= 480;
+  }
 #else
   // Provided encoder should be good enough.
 #endif // defined(WEBRTC_MAC) && !defined(WEBRTC_IOS) && ENABLE_VCP_ENCODER
@@ -839,7 +859,8 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
 
 - (void)setEncoderBitrateBps:(uint32_t)bitrateBps frameRate:(uint32_t)frameRate {
   if ([self hasCompressionSession]) {
-    SetVTSessionProperty(_vtCompressionSession, _vcpCompressionSession, kVTCompressionPropertyKey_AverageBitRate, bitrateBps);
+    auto actualTarget = _isBelowExpectedFrameRate ? bitrateBps / kBelowFrameRateBitRateDecrease : bitrateBps;
+    SetVTSessionProperty(_vtCompressionSession, _vcpCompressionSession, kVTCompressionPropertyKey_AverageBitRate, actualTarget);
 
     // With zero |_maxAllowedFrameRate|, we fall back to automatic frame rate detection.
     if (_maxAllowedFrameRate > 0) {
@@ -849,7 +870,7 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
 
     // TODO(tkchin): Add a helper method to set array value.
     int64_t dataLimitBytesPerSecondValue =
-        static_cast<int64_t>(bitrateBps * kLimitToAverageBitRateFactor / 8);
+        static_cast<int64_t>(_isBelowExpectedFrameRate ? actualTarget / 8 : actualTarget * kLimitToAverageBitRateFactor / 8);
     CFNumberRef bytesPerSecond =
         CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &dataLimitBytesPerSecondValue);
     int64_t oneSecondValue = 1;
@@ -873,6 +894,34 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
     _encoderBitrateBps = bitrateBps;
     _encoderFrameRate = frameRate;
   }
+}
+
+- (void)updateBitRateAccordingActualFrameRate {
+  _frameCount++;
+  auto currentTime = rtc::TimeMillis();
+  if (!_lastFrameRateEstimationTime) {
+    _lastFrameRateEstimationTime = currentTime;
+    return;
+  }
+
+  auto timeDifference = currentTime - _lastFrameRateEstimationTime;
+
+  // Let's not check too often.
+  if (timeDifference < 1000) {
+    return;
+  }
+
+  auto frameRate = _frameCount * 1000 / timeDifference;
+  _lastFrameRateEstimationTime = currentTime;
+  _frameCount = 0;
+
+  bool isBelow = frameRate * kBelowFrameRateThreshold < _encoderFrameRate;
+  if (isBelow == _isBelowExpectedFrameRate) {
+    return;
+  }
+
+  _isBelowExpectedFrameRate = isBelow;
+  [self setEncoderBitrateBps:_encoderBitrateBps frameRate:_encoderFrameRate];
 }
 
 - (void)frameWasEncoded:(OSStatus)status
