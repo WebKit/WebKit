@@ -4883,3 +4883,6 @@ imported/w3c/web-platform-tests/webstorage/document-domain.html [ Skip ]
 # Skip WebXR while flakey
 imported/w3c/web-platform-tests/webxr [ Skip ]
 http/wpt/webxr [ Skip ]
+
+# Invalid test. Tests color(lab ...) which has been removed from the standard.
+imported/w3c/web-platform-tests/css/css-color/predefined-013.html [ Skip ]

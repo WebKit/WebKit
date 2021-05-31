@@ -235,7 +235,7 @@ PASS computedStyle("background-color", "lch(from lch(70% 45 30) l c h / alpha)")
 PASS computedStyle("background-color", "lch(from lch(70% 45 30 / 40%) l c h/ alpha)") is "lch(70% 45 30 / 0.4)"
 PASS computedStyle("background-color", "lch(from lch(from lch(70% 45 30) l c h) l c h)") is "lch(70% 45 30)"
 PASS computedStyle("background-color", "lch(from color(display-p3 0 0 0) l c h / alpha)") is "lch(0% 0 0)"
-PASS computedStyle("background-color", "lch(from color(lab 70% 45 30) l c h / alpha)") is "lch(70% 54.08327 33.690067)"
+PASS computedStyle("background-color", "lch(from lab(70% 45 30) l c h / alpha)") is "lch(70% 54.08327 33.690067)"
 PASS computedStyle("background-color", "lch(from lch(70% 45 30) 0% 0 0)") is "lch(0% 0 0)"
 PASS computedStyle("background-color", "lch(from lch(70% 45 30) 0% 0 0deg)") is "lch(0% 0 0)"
 PASS computedStyle("background-color", "lch(from lch(70% 45 30) 0% 0 0 / 0)") is "lch(0% 0 0 / 0)"

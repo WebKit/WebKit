@@ -377,7 +377,7 @@
 
     // Testing non-sRGB origin colors to see gamut clipping.
     testComputed(`lch(from color(display-p3 0 0 0) l c h / alpha)`, `lch(0% 0 0)`);
-    testComputed(`lch(from color(lab 70% 45 30) l c h / alpha)`, `lch(70% 54.08327 33.690067)`);
+    testComputed(`lch(from lab(70% 45 30) l c h / alpha)`, `lch(70% 54.08327 33.690067)`);
 
     // Testing replacement with 0.
     testComputed(`lch(from lch(70% 45 30) 0% 0 0)`, `lch(0% 0 0)`);

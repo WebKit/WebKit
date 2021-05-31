@@ -1,3 +1,16 @@
+2021-05-30  Sam Weinig  <weinig@apple.com>
+
+        Remove support for no longer specific color(lab ...) syntax
+        https://bugs.webkit.org/show_bug.cgi?id=226439
+
+        Reviewed by Darin Adler.
+
+        Remove support for parsing the color(lab ...) syntax.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::parseColorFunctionParameters):
+        (WebCore::CSSPropertyParserHelpers::parseColorFunctionForLabParameters): Deleted.
+
 2021-05-30  Cameron McCormack  <heycam@apple.com>
 
         Fix some comment typos

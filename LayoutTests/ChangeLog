@@ -1,5 +1,21 @@
 2021-05-30  Sam Weinig  <weinig@apple.com>
 
+        Remove support for no longer specific color(lab ...) syntax
+        https://bugs.webkit.org/show_bug.cgi?id=226439
+
+        Reviewed by Darin Adler.
+
+        Remove test cases for color(lab) (keeping one to ensure it doesn't
+        work) and update uses of color(lab ...) to use lab(...) instead. 
+
+        * fast/css/parsing-lab-colors-expected.txt:
+        * fast/css/parsing-lab-colors.html:
+        * fast/css/parsing-relative-color-syntax-expected.txt:
+        * fast/css/parsing-relative-color-syntax.html:
+        * TestExpectations:
+
+2021-05-30  Sam Weinig  <weinig@apple.com>
+
         Add additional target luminance keywords for color-contrast() added for https://github.com/w3c/csswg-drafts/issues/6311
         https://bugs.webkit.org/show_bug.cgi?id=226438
 

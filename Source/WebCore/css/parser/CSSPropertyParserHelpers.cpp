@@ -1557,42 +1557,6 @@ template<typename ColorType> static Color parseColorFunctionForRGBTypes(CSSParse
     return { ColorType { clampTo<float>(channels[0], 0.0, 1.0), clampTo<float>(channels[1], 0.0, 1.0), clampTo<float>(channels[2], 0.0, 1.0), static_cast<float>(*alpha) }, Color::Flags::UseColorFunctionSerialization };
 }
 
-static Color parseColorFunctionForLabParameters(CSSParserTokenRange& args, const CSSParserContext& context)
-{
-    ASSERT(args.peek().id() == CSSValueLab);
-
-    if (!context.cssColor4)
-        return { };
-
-    consumeIdentRaw(args);
-
-    double channels[3] = { 0, 0, 0 };
-    [&] {
-        auto lightness = consumePercentRaw(args);
-        if (!lightness)
-            return;
-        channels[0] = *lightness;
-
-        auto aValue = consumeNumberRaw(args);
-        if (!aValue)
-            return;
-        channels[1] = *aValue;
-
-        auto bValue = consumeNumberRaw(args);
-        if (!bValue)
-            return;
-        channels[2] = *bValue;
-    }();
-
-    auto alpha = consumeOptionalAlpha(args);
-    if (!alpha)
-        return { };
-
-    auto normalizedLightness = std::max(0.0, channels[0]);
-
-    return { Lab<float> { static_cast<float>(normalizedLightness), static_cast<float>(channels[1]), static_cast<float>(channels[2]), static_cast<float>(*alpha) }, Color::Flags::UseColorFunctionSerialization };
-}
-
 static Color parseColorFunctionForXYZParameters(CSSParserTokenRange& args, const CSSParserContext& context)
 {
     ASSERT(args.peek().id() == CSSValueXyz);
@@ -1639,9 +1603,6 @@ static Color parseColorFunctionParameters(CSSParserTokenRange& range, const CSSP
         break;
     case CSSValueDisplayP3:
         color = parseColorFunctionForRGBTypes<DisplayP3<float>>(args, context);
-        break;
-    case CSSValueLab:
-        color = parseColorFunctionForLabParameters(args, context);
         break;
     case CSSValueProphotoRgb:
         color = parseColorFunctionForRGBTypes<ProPhotoRGB<float>>(args, context);
