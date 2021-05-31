@@ -1,3 +1,16 @@
+2021-05-30  Youenn Fablet  <youenn@apple.com>
+
+        Add logging to allow relating a HTMLMediaElement to a MediaStream
+        https://bugs.webkit.org/show_bug.cgi?id=226373
+
+        Reviewed by Eric Carlson.
+
+        Update logging to print the ID of the MediaStream being played by the HTMLMediaElement.
+
+        * Modules/mediastream/MediaStream.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::loadResource):
+
 2021-05-30  Sam Weinig  <weinig@apple.com>
 
         Use SortedArrayMap in parseColorContrastFunctionParameters

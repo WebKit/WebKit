@@ -1536,7 +1536,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, ContentType& contentT
 #if ENABLE(MEDIA_STREAM)
     if (!loadAttempted && m_mediaStreamSrcObject) {
         loadAttempted = true;
-        ALWAYS_LOG(LOGIDENTIFIER, "loading media stream blob");
+        ALWAYS_LOG(LOGIDENTIFIER, "loading media stream blob ", m_mediaStreamSrcObject->logIdentifier());
         if (!m_player->load(m_mediaStreamSrcObject->privateStream()))
             mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
     }
