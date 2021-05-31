@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CSSCalcExpressionNode.h"
+#include "CalcOperator.h"
 
 namespace WebCore {
 

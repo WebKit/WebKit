@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CalcExpressionNode.h"
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 

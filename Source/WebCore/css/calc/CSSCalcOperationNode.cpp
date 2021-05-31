@@ -30,7 +30,11 @@
 #include "CSSCalcInvertNode.h"
 #include "CSSCalcNegateNode.h"
 #include "CSSCalcPrimitiveValueNode.h"
+#include "CSSCalcValue.h"
+#include "CSSPrimitiveValue.h"
+#include "CSSUnits.h"
 #include "CalcExpressionOperation.h"
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

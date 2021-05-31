@@ -1,3 +1,22 @@
+2021-05-31  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, very early June 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=226471
+
+        Unreviewed non-unified build fixes.
+
+        No new tests needed.
+
+        * css/calc/CSSCalcOperationNode.cpp: Add missing CSSCalcValua.h, CSSPrimitiveValue.h,
+        CSSUnits.h, and wtf/text/TextStream.h headers.
+        * css/calc/CSSCalcOperationNode.h: Add missing CalcOperator.h header.
+        * css/calc/CSSCalcValue.cpp: Add missing CSSCalcSymbolTable.h, CalcExpressionInversion.h,
+        CalcExpressionNumber.h, and CalcExpressionOperation.h headers.
+        * platform/calc/CalcExpressionInversion.h: Add missing wtf/TypeCasts.h header, remove
+        unneeded <memory> header.
+        * platform/calc/CalcExpressionNegation.h: Ditto.
+        * platform/calc/CalcExpressionNumber.h: Add missing wtf/TypeCasts.h header.
+
 2021-04-29  Sergio Villar Senin  <svillar@igalia.com>
 
         Enable <summary> to be a flex container
