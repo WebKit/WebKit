@@ -1,5 +1,30 @@
 2021-05-30  Chris Dumez  <cdumez@apple.com>
 
+        Remove some dead code from BaseAudioContext / AudioContext
+        https://bugs.webkit.org/show_bug.cgi?id=226441
+
+        Reviewed by Sam Weinig.
+
+        * Modules/webaudio/AudioContext.h:
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::connect):
+        * Modules/webaudio/AudioScheduledSourceNode.cpp:
+        (WebCore::AudioScheduledSourceNode::updateSchedulingInfo):
+        (WebCore::AudioScheduledSourceNode::finish):
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::sourceNodeWillBeginPlayback):
+        (WebCore::BaseAudioContext::refSourceNode): Deleted.
+        (WebCore::BaseAudioContext::derefSourceNode): Deleted.
+        (WebCore::BaseAudioContext::incrementActiveSourceCount): Deleted.
+        (WebCore::BaseAudioContext::decrementActiveSourceCount): Deleted.
+        * Modules/webaudio/BaseAudioContext.h:
+        (WebCore::BaseAudioContext::sampleRate const):
+        (WebCore::BaseAudioContext::activeSourceCount const): Deleted.
+        (WebCore::BaseAudioContext::incrementConnectionCount): Deleted.
+        (WebCore::BaseAudioContext::connectionCount const): Deleted.
+
+2021-05-30  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, tweak slightly incorrect assertion added in r278233.
 
         The assertion was hitting flakily on the bots.

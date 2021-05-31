@@ -110,10 +110,6 @@ public:
     size_t currentSampleFrame() const { return destination().currentSampleFrame(); }
     double currentTime() const { return destination().currentTime(); }
     float sampleRate() const { return destination().sampleRate(); }
-    unsigned long activeSourceCount() const { return static_cast<unsigned long>(m_activeSourceCount); }
-
-    void incrementActiveSourceCount();
-    void decrementActiveSourceCount();
 
     // Asynchronous audio file data decoding.
     void decodeAudioData(Ref<ArrayBuffer>&&, RefPtr<AudioBufferCallback>&&, RefPtr<AudioBufferCallback>&&, std::optional<Ref<DeferredPromise>>&& = std::nullopt);
@@ -170,15 +166,6 @@ public:
 
     // Called right before handlePostRenderTasks() to handle nodes which need to be pulled even when they are not connected to anything.
     void processAutomaticPullNodes(size_t framesToProcess);
-
-    // Keeps track of the number of connections made.
-    void incrementConnectionCount()
-    {
-        ASSERT(isMainThread());
-        ++m_connectionCount;
-    }
-
-    unsigned connectionCount() const { return m_connectionCount; }
 
     //
     // Thread Safety and Graph Locking:
@@ -258,13 +245,6 @@ protected:
 private:
     void scheduleNodeDeletion();
     void workletIsReady();
-
-    // When source nodes begin playing, the BaseAudioContext keeps them alive inside m_referencedSourceNodes.
-    // When the nodes stop playing, a flag gets set on the AudioNode accordingly. After each rendering quantum,
-    // we call derefFinishedSourceNodes() to remove those nodes from m_referencedSourceNodes since we no longer
-    // need to keep them alive.
-    void refSourceNode(AudioNode&);
-    void derefSourceNode(AudioNode&);
 
     // Called periodically at the end of each render quantum to dereference finished source nodes.
     void derefFinishedSourceNodes();
@@ -379,10 +359,6 @@ private:
     RefPtr<PeriodicWave> m_cachedPeriodicWaveSawtooth;
     RefPtr<PeriodicWave> m_cachedPeriodicWaveTriangle;
 
-    // Number of AudioBufferSourceNodes that are active (playing).
-    std::atomic<int> m_activeSourceCount;
-
-    unsigned m_connectionCount { 0 };
     State m_state { State::Suspended };
     bool m_isDeletionScheduled { false };
     bool m_disableOutputsForTailProcessingScheduled { false };

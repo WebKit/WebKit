@@ -203,9 +203,6 @@ ExceptionOr<void> AudioNode::connect(AudioNode& destination, unsigned outputInde
 
     input->connect(output);
 
-    // Let context know that a connection has been made.
-    context().incrementConnectionCount();
-
     updatePullStatus();
 
     return { };

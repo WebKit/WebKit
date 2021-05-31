@@ -523,24 +523,6 @@ void BaseAudioContext::derefFinishedSourceNodes()
     m_hasFinishedAudioSourceNodes = false;
 }
 
-void BaseAudioContext::refSourceNode(AudioNode& node)
-{
-    ASSERT(isMainThread());
-    Locker locker { graphLock() };
-
-    ASSERT(!m_referencedSourceNodes.contains(&node));
-    // Reference source node to keep it alive and playing even if its JS wrapper gets garbage collected.
-    m_referencedSourceNodes.append(&node);
-}
-
-void BaseAudioContext::derefSourceNode(AudioNode& node)
-{
-    ASSERT(isGraphOwner());
-    
-    ASSERT(m_referencedSourceNodes.contains(&node));
-    m_referencedSourceNodes.removeFirst(&node);
-}
-
 void BaseAudioContext::derefUnfinishedSourceNodes()
 {
     ASSERT(isMainThread() && isAudioThreadFinished());
@@ -877,16 +859,6 @@ ScriptExecutionContext* BaseAudioContext::scriptExecutionContext() const
     return ActiveDOMObject::scriptExecutionContext();
 }
 
-void BaseAudioContext::incrementActiveSourceCount()
-{
-    ++m_activeSourceCount;
-}
-
-void BaseAudioContext::decrementActiveSourceCount()
-{
-    --m_activeSourceCount;
-}
-
 void BaseAudioContext::postTask(Function<void()>&& task)
 {
     ASSERT(isMainThread());
@@ -952,7 +924,12 @@ void BaseAudioContext::addAudioParamDescriptors(const String& processorName, Vec
 
 void BaseAudioContext::sourceNodeWillBeginPlayback(AudioNode& node)
 {
-    refSourceNode(node);
+    ASSERT(isMainThread());
+    Locker locker { graphLock() };
+
+    ASSERT(!m_referencedSourceNodes.contains(&node));
+    // Reference source node to keep it alive and playing even if its JS wrapper gets garbage collected.
+    m_referencedSourceNodes.append(&node);
 }
 
 void BaseAudioContext::sourceNodeDidFinishPlayback(AudioNode& node)

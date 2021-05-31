@@ -100,7 +100,6 @@ void AudioScheduledSourceNode::updateSchedulingInfo(size_t quantumFrameSize, Aud
         // NOTE: startFrameOffset is usually negative, but may not be because of
         // the rounding that may happen in computing |startFrame| above.
         startFrameOffset = m_startTime * sampleRate - startFrame;
-        context().incrementActiveSourceCount();
     }
 
     quantumFrameOffset = startFrame > quantumStartFrame ? startFrame - quantumStartFrame : 0;
@@ -197,7 +196,6 @@ void AudioScheduledSourceNode::finish()
     // Let the context dereference this AudioNode.
     context().sourceNodeDidFinishPlayback(*this);
     m_playbackState = FINISHED_STATE;
-    context().decrementActiveSourceCount();
 
     // Heap allocations are forbidden on the audio thread for performance reasons so we need to
     // explicitly allow the following allocation(s).
