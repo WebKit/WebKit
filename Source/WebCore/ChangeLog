@@ -1,3 +1,21 @@
+2021-05-30  Cameron McCormack  <heycam@apple.com>
+
+        Fix some comment typos
+        https://bugs.webkit.org/show_bug.cgi?id=226443
+
+        Reviewed by Sam Weinig.
+
+        Trivial fixes for comment typos I noticed over the past couple of
+        months.
+
+        * page/scrolling/ScrollingStateTree.h:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawPlatformImage):
+        (WebCore::GraphicsContext::drawPlatformPattern):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestList):
+        * rendering/RenderLayer.h:
+
 2021-05-30  Chris Dumez  <cdumez@apple.com>
 
         Drop PendingActivity from ScriptProcessorNode

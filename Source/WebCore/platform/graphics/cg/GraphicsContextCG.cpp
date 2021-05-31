@@ -329,7 +329,7 @@ void GraphicsContextCG::drawNativeImage(NativeImage& nativeImage, const FloatSiz
     if (options.orientation() != ImageOrientation::None) {
         CGContextConcatCTM(context, options.orientation().transformFromDefault(adjustedDestRect.size()));
         if (options.orientation().usesWidthAsHeight()) {
-            // The destination rect will have it's width and height already reversed for the orientation of
+            // The destination rect will have its width and height already reversed for the orientation of
             // the image, as it was needed for page layout, so we need to reverse it back here.
             adjustedDestRect = FloatRect(adjustedDestRect.x(), adjustedDestRect.y(), adjustedDestRect.height(), adjustedDestRect.width());
         }
@@ -411,7 +411,7 @@ void GraphicsContextCG::drawPattern(NativeImage& nativeImage, const FloatSize& i
     float w = CGImageGetWidth(image.get());
     if (w == imageSize.width() && h == imageSize.height() && !spacing.width() && !spacing.height()) {
         // FIXME: CG seems to snap the images to integral sizes. When we care (e.g. with border-image-repeat: round),
-        // we should tile all but the last, and stetch the last image to fit.
+        // we should tile all but the last, and stretch the last image to fit.
         CGContextDrawTiledImage(context, FloatRect(adjustedX, adjustedY, scaledTileWidth, scaledTileHeight), subImage.get());
     } else {
         static const CGPatternCallbacks patternCallbacks = { 0, drawPatternCallback, patternReleaseCallback };

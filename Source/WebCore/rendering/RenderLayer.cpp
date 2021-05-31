@@ -1939,7 +1939,7 @@ RenderLayer* RenderLayer::enclosingFilterRepaintLayer() const
     return nullptr;
 }
 
-// FIXME: This neeeds a better name.
+// FIXME: This needs a better name.
 void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect)
 {
     ASSERT(requiresFullLayerImageForFilters());
@@ -4328,7 +4328,7 @@ RenderLayer* RenderLayer::hitTestList(LayerList layerIterator, RenderLayer* root
         auto* hitLayer = childLayer->hitTestLayer(rootLayer, this, request, tempResult, hitTestRect, hitTestLocation, false, transformState, zOffsetForDescendants);
 
         // If it is a list-based test, we can safely append the temporary result since it might had hit
-        // nodes but not necesserily had hitLayer set.
+        // nodes but not necessarily had hitLayer set.
         ASSERT(!result.isRectBasedTest() || request.resultIsElementList());
         if (request.resultIsElementList())
             result.append(tempResult, request);

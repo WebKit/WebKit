@@ -653,7 +653,7 @@ public:
     };
 
     // This method figures out our layerBounds in coordinates relative to
-    // |rootLayer}.  It also computes our background and foreground clip rects
+    // |rootLayer|. It also computes our background and foreground clip rects
     // for painting/event handling.
     // Pass offsetFromRoot if known.
     void calculateRects(const ClipRectsContext&, const LayoutRect& paintDirtyRect, LayoutRect& layerBounds,
