@@ -1,3 +1,18 @@
+2021-05-31  Rob Buis  <rbuis@igalia.com>
+
+        Treat width: intrinsic as non definite
+        https://bugs.webkit.org/show_bug.cgi?id=226367
+
+        Reviewed by Darin Adler.
+
+        Treat width: intrinsic as non definite in
+        childMainSizeIsDefinite.
+
+        Test: fast/css/flex-box-intrinsic-width-crash.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::childMainSizeIsDefinite):
+
 2021-05-31  Youenn Fablet  <youenn@apple.com>
 
         Go to network in case fetch event is not yet responded when being destroyed instead of failing the load

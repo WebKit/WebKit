@@ -875,7 +875,7 @@ bool RenderFlexibleBox::childMainSizeIsDefinite(const RenderBox& child, const Le
 {
     if (flexBasis.isAuto())
         return false;
-    if (isColumnFlow() && flexBasis.isIntrinsic())
+    if (isColumnFlow() && (flexBasis.isIntrinsic() || flexBasis.type() == LengthType::Intrinsic))
         return false;
     if (flexBasis.isPercentOrCalculated())
         return canComputePercentageFlexBasis(child, flexBasis, UpdatePercentageHeightDescendants::No);
