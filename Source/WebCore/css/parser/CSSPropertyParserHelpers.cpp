@@ -49,6 +49,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "StyleColor.h"
 #include "WebKitFontFamilyNames.h"
+#include <wtf/SortedArrayMap.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
@@ -1697,22 +1698,18 @@ static Color parseColorContrastFunctionParameters(CSSParserTokenRange& range, co
     if (colorsToCompareAgainst.size() == 1)
         return { };
 
-    constexpr std::pair<CSSValueID, double> targetLuminanceMappings[] {
-        { CSSValueAA, 4.5 },
-        { CSSValueAALarge, 3.0 },
-        { CSSValueAAA, 7.0 },
-        { CSSValueAAALarge, 4.5 },
-    };
-
     if (consumedTo) {
         auto targetContrast = [&] () -> std::optional<double> {
             if (args.peek().type() == IdentToken) {
-                auto id = args.consumeIncludingWhitespace().id();
-                for (auto& [identifier, luminance] : targetLuminanceMappings) {
-                    if (identifier == id)
-                        return luminance;
-                }
-                return std::nullopt;
+                static constexpr std::pair<CSSValueID, double> targetContrastMappings[] {
+                    { CSSValueAA, 4.5 },
+                    { CSSValueAALarge, 3.0 },
+                    { CSSValueAAA, 7.0 },
+                    { CSSValueAAALarge, 4.5 },
+                };
+                static constexpr SortedArrayMap targetContrastMap { targetContrastMappings };
+                auto value = targetContrastMap.tryGet(args.consumeIncludingWhitespace().id());
+                return value ? std::make_optional(*value) : std::nullopt;
             }
             return consumeNumberRaw(args);
         }();
