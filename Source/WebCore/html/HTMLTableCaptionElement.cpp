@@ -46,13 +46,13 @@ Ref<HTMLTableCaptionElement> HTMLTableCaptionElement::create(const QualifiedName
     return adoptRef(*new HTMLTableCaptionElement(tagName, document));
 }
 
-void HTMLTableCaptionElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLTableCaptionElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == alignAttr) {
         if (!value.isEmpty())
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyCaptionSide, value);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyCaptionSide, value);
     } else
-        HTMLElement::collectStyleForPresentationAttribute(name, value, style);
+        HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
 }

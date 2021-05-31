@@ -69,14 +69,14 @@ DOMTokenList& HTMLIFrameElement::sandbox()
     return *m_sandbox;
 }
 
-bool HTMLIFrameElement::isPresentationAttribute(const QualifiedName& name) const
+bool HTMLIFrameElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     if (name == widthAttr || name == heightAttr || name == frameborderAttr)
         return true;
-    return HTMLFrameElementBase::isPresentationAttribute(name);
+    return HTMLFrameElementBase::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLIFrameElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLIFrameElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == widthAttr)
         addHTMLLengthToStyle(style, CSSPropertyWidth, value);
@@ -89,10 +89,10 @@ void HTMLIFrameElement::collectStyleForPresentationAttribute(const QualifiedName
         // a presentational hint that the border should be off if set to zero.
         if (!parseHTMLInteger(value).value_or(0)) {
             // Add a rule that nulls out our border width.
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderWidth, 0, CSSUnitType::CSS_PX);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyBorderWidth, 0, CSSUnitType::CSS_PX);
         }
     } else
-        HTMLFrameElementBase::collectStyleForPresentationAttribute(name, value, style);
+        HTMLFrameElementBase::collectPresentationalHintsForAttribute(name, value, style);
 }
 
 void HTMLIFrameElement::parseAttribute(const QualifiedName& name, const AtomString& value)

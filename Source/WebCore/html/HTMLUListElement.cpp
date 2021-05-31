@@ -49,19 +49,19 @@ Ref<HTMLUListElement> HTMLUListElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new HTMLUListElement(tagName, document));
 }
 
-bool HTMLUListElement::isPresentationAttribute(const QualifiedName& name) const
+bool HTMLUListElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     if (name == typeAttr)
         return true;
-    return HTMLElement::isPresentationAttribute(name);
+    return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLUListElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLUListElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == typeAttr)
-        addPropertyToPresentationAttributeStyle(style, CSSPropertyListStyleType, value);
+        addPropertyToPresentationalHintStyle(style, CSSPropertyListStyleType, value);
     else
-        HTMLElement::collectStyleForPresentationAttribute(name, value, style);
+        HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
 }

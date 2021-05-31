@@ -80,18 +80,18 @@ void SVGTextPositioningElement::parseAttribute(const QualifiedName& name, const 
     SVGTextContentElement::parseAttribute(name, value);
 }
 
-void SVGTextPositioningElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void SVGTextPositioningElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == SVGNames::xAttr || name == SVGNames::yAttr)
         return;
-    SVGTextContentElement::collectStyleForPresentationAttribute(name, value, style);
+    SVGTextContentElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-bool SVGTextPositioningElement::isPresentationAttribute(const QualifiedName& name) const
+bool SVGTextPositioningElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     if (name == SVGNames::xAttr || name == SVGNames::yAttr)
         return false;
-    return SVGTextContentElement::isPresentationAttribute(name);
+    return SVGTextContentElement::hasPresentationalHintsForAttribute(name);
 }
 
 void SVGTextPositioningElement::svgAttributeChanged(const QualifiedName& attrName)

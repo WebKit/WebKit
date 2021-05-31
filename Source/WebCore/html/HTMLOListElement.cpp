@@ -59,28 +59,28 @@ Ref<HTMLOListElement> HTMLOListElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new HTMLOListElement(tagName, document));
 }
 
-bool HTMLOListElement::isPresentationAttribute(const QualifiedName& name) const
+bool HTMLOListElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     if (name == typeAttr)
         return true;
-    return HTMLElement::isPresentationAttribute(name);
+    return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLOListElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLOListElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == typeAttr) {
         if (value == "a")
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyListStyleType, CSSValueLowerAlpha);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyListStyleType, CSSValueLowerAlpha);
         else if (value == "A")
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyListStyleType, CSSValueUpperAlpha);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyListStyleType, CSSValueUpperAlpha);
         else if (value == "i")
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyListStyleType, CSSValueLowerRoman);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyListStyleType, CSSValueLowerRoman);
         else if (value == "I")
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyListStyleType, CSSValueUpperRoman);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyListStyleType, CSSValueUpperRoman);
         else if (value == "1")
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyListStyleType, CSSValueDecimal);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyListStyleType, CSSValueDecimal);
     } else
-        HTMLElement::collectStyleForPresentationAttribute(name, value, style);
+        HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
 void HTMLOListElement::parseAttribute(const QualifiedName& name, const AtomString& value)

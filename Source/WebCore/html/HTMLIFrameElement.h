@@ -59,8 +59,8 @@ private:
 
     int defaultTabIndex() const final;
     void parseAttribute(const QualifiedName&, const AtomString&) final;
-    bool isPresentationAttribute(const QualifiedName&) const final;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
+    bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
 
     bool isInteractiveContent() const final { return true; }
 

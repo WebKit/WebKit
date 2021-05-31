@@ -686,14 +686,14 @@ bool HTMLInputElement::accessKeyAction(bool sendMouseEvents)
     return protectedInputType->accessKeyAction(sendMouseEvents);
 }
 
-bool HTMLInputElement::isPresentationAttribute(const QualifiedName& name) const
+bool HTMLInputElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     if (name == vspaceAttr || name == hspaceAttr || name == widthAttr || name == heightAttr || (name == borderAttr && isImageButton()))
         return true;
-    return HTMLTextFormControlElement::isPresentationAttribute(name);
+    return HTMLTextFormControlElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLInputElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLInputElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == vspaceAttr) {
         addHTMLLengthToStyle(style, CSSPropertyMarginTop, value);
@@ -717,7 +717,7 @@ void HTMLInputElement::collectStyleForPresentationAttribute(const QualifiedName&
     } else if (name == borderAttr && isImageButton())
         applyBorderAttributeToStyle(value, style);
     else
-        HTMLTextFormControlElement::collectStyleForPresentationAttribute(name, value, style);
+        HTMLTextFormControlElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
 inline void HTMLInputElement::initializeInputType()

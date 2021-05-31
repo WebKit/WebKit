@@ -74,7 +74,7 @@ void SVGForeignObjectElement::parseAttribute(const QualifiedName& name, const At
 void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr) {
-        invalidateSVGPresentationAttributeStyle();
+        invalidateSVGPresentationalHintStyle();
         return;
     }
 

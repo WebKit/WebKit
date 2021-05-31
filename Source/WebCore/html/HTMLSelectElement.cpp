@@ -277,7 +277,7 @@ void HTMLSelectElement::setValue(const String& value)
     setSelectedIndex(-1);
 }
 
-bool HTMLSelectElement::isPresentationAttribute(const QualifiedName& name) const
+bool HTMLSelectElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     if (name == alignAttr) {
         // Don't map 'align' attribute. This matches what Firefox, Opera and IE do.
@@ -285,7 +285,7 @@ bool HTMLSelectElement::isPresentationAttribute(const QualifiedName& name) const
         return false;
     }
 
-    return HTMLFormControlElementWithState::isPresentationAttribute(name);
+    return HTMLFormControlElementWithState::hasPresentationalHintsForAttribute(name);
 }
 
 void HTMLSelectElement::parseAttribute(const QualifiedName& name, const AtomString& value)

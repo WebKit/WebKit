@@ -81,9 +81,9 @@ public:
     virtual AffineTransform* supplementalTransform() { return nullptr; }
 
     void invalidateSVGAttributes() { ensureUniqueElementData().setAnimatedSVGAttributesAreDirty(true); }
-    void invalidateSVGPresentationAttributeStyle()
+    void invalidateSVGPresentationalHintStyle()
     {
-        ensureUniqueElementData().setPresentationAttributeStyleIsDirty(true);
+        ensureUniqueElementData().setPresentationalHintStyleIsDirty(true);
         // Trigger style recalculation for "elements as resource" (e.g. referenced by feImage).
         invalidateStyle();
     }
@@ -167,8 +167,8 @@ protected:
     void reportAttributeParsingError(SVGParsingError, const QualifiedName&, const AtomString&);
     static CSSPropertyID cssPropertyIdForSVGAttributeName(const QualifiedName&);
 
-    bool isPresentationAttribute(const QualifiedName&) const override;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
+    bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
     void didFinishInsertingNode() override;
     void removedFromAncestor(RemovalType, ContainerNode&) override;

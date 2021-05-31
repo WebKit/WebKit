@@ -111,7 +111,7 @@ void HTMLVideoElement::didAttachRenderers()
     }
 }
 
-void HTMLVideoElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLVideoElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == widthAttr) {
         addHTMLLengthToStyle(style, CSSPropertyWidth, value);
@@ -120,14 +120,14 @@ void HTMLVideoElement::collectStyleForPresentationAttribute(const QualifiedName&
         addHTMLLengthToStyle(style, CSSPropertyHeight, value);
         applyAspectRatioFromWidthAndHeightAttributesToStyle(style);
     } else
-        HTMLMediaElement::collectStyleForPresentationAttribute(name, value, style);
+        HTMLMediaElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
-bool HTMLVideoElement::isPresentationAttribute(const QualifiedName& name) const
+bool HTMLVideoElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     if (name == widthAttr || name == heightAttr)
         return true;
-    return HTMLMediaElement::isPresentationAttribute(name);
+    return HTMLMediaElement::hasPresentationalHintsForAttribute(name);
 }
 
 void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomString& value)

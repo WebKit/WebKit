@@ -62,14 +62,14 @@ int HTMLMarqueeElement::minimumDelay() const
     return 16; // Don't allow timers at < 16ms intervals to avoid CPU hogging: webkit.org/b/160609
 }
 
-bool HTMLMarqueeElement::isPresentationAttribute(const QualifiedName& name) const
+bool HTMLMarqueeElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     if (name == widthAttr || name == heightAttr || name == bgcolorAttr || name == vspaceAttr || name == hspaceAttr || name == scrollamountAttr || name == scrolldelayAttr || name == loopAttr || name == behaviorAttr || name == directionAttr)
         return true;
-    return HTMLElement::isPresentationAttribute(name);
+    return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLMarqueeElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLMarqueeElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == widthAttr) {
         if (!value.isEmpty())
@@ -99,18 +99,18 @@ void HTMLMarqueeElement::collectStyleForPresentationAttribute(const QualifiedNam
     } else if (name == loopAttr) {
         if (!value.isEmpty()) {
             if (value == "-1" || equalLettersIgnoringASCIICase(value, "infinite"))
-                addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitMarqueeRepetition, CSSValueInfinite);
+                addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitMarqueeRepetition, CSSValueInfinite);
             else
                 addHTMLLengthToStyle(style, CSSPropertyWebkitMarqueeRepetition, value);
         }
     } else if (name == behaviorAttr) {
         if (!value.isEmpty())
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitMarqueeStyle, value);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitMarqueeStyle, value);
     } else if (name == directionAttr) {
         if (!value.isEmpty())
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitMarqueeDirection, value);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitMarqueeDirection, value);
     } else
-        HTMLElement::collectStyleForPresentationAttribute(name, value, style);
+        HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
 void HTMLMarqueeElement::start()

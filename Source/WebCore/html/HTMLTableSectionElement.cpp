@@ -50,7 +50,7 @@ Ref<HTMLTableSectionElement> HTMLTableSectionElement::create(const QualifiedName
     return adoptRef(*new HTMLTableSectionElement(tagName, document));
 }
 
-const StyleProperties* HTMLTableSectionElement::additionalPresentationAttributeStyle() const
+const StyleProperties* HTMLTableSectionElement::additionalPresentationalHintStyle() const
 {
     auto table = findParentTable();
     if (!table)

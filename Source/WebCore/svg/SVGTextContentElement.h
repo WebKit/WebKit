@@ -97,8 +97,8 @@ protected:
     bool isValid() const override { return SVGTests::isValid(); }
 
     void parseAttribute(const QualifiedName&, const AtomString&) override;
-    bool isPresentationAttribute(const QualifiedName&) const override;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
+    bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
     bool selfHasRelativeLengths() const override;

@@ -88,8 +88,8 @@ protected:
 
     bool canContainRangeEndPoint() const override { return false; }
     void willDetachRenderers() override;
-    bool isPresentationAttribute(const QualifiedName&) const override;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
+    bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
 
     virtual bool useFallbackContent() const { return false; }
 

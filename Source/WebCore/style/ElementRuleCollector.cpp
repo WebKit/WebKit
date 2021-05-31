@@ -563,15 +563,14 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
     if (matchAuthorAndUserStyles)
         matchUserRules();
 
-    // Now check author rules, beginning first with presentational attributes mapped from HTML.
     if (is<StyledElement>(element())) {
         auto& styledElement = downcast<StyledElement>(element());
-        addElementStyleProperties(styledElement.presentationAttributeStyle());
+        // https://html.spec.whatwg.org/#presentational-hints
+        addElementStyleProperties(styledElement.presentationalHintStyle());
 
-        // Now we check additional mapped declarations.
-        // Tables and table cells share an additional mapped rule that must be applied
-        // after all attributes, since their mapped style depends on the values of multiple attributes.
-        addElementStyleProperties(styledElement.additionalPresentationAttributeStyle());
+        // Tables and table cells share an additional presentation style that must be applied
+        // after all attributes, since their style depends on the values of multiple attributes.
+        addElementStyleProperties(styledElement.additionalPresentationalHintStyle());
 
         if (is<HTMLElement>(styledElement)) {
             bool isAuto;

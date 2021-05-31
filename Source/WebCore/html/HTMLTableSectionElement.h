@@ -45,7 +45,7 @@ public:
 private:
     HTMLTableSectionElement(const QualifiedName& tagName, Document&);
 
-    const StyleProperties* additionalPresentationAttributeStyle() const final;
+    const StyleProperties* additionalPresentationalHintStyle() const final;
 };
 
 } // namespace WebCore

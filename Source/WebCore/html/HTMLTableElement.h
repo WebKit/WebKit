@@ -72,12 +72,12 @@ private:
     HTMLTableElement(const QualifiedName&, Document&);
 
     void parseAttribute(const QualifiedName&, const AtomString&) final;
-    bool isPresentationAttribute(const QualifiedName&) const final;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
+    bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) final;
     bool isURLAttribute(const Attribute&) const final;
 
     // Used to obtain either a solid or outset border decl and to deal with the frame and rules attributes.
-    const StyleProperties* additionalPresentationAttributeStyle() const final;
+    const StyleProperties* additionalPresentationalHintStyle() const final;
 
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
 

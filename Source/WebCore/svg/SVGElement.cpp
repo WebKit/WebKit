@@ -821,18 +821,18 @@ CSSPropertyID SVGElement::cssPropertyIdForSVGAttributeName(const QualifiedName& 
     return properties.get().get(attrName.localName());
 }
 
-bool SVGElement::isPresentationAttribute(const QualifiedName& name) const
+bool SVGElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     if (cssPropertyIdForSVGAttributeName(name) > 0)
         return true;
-    return StyledElement::isPresentationAttribute(name);
+    return StyledElement::hasPresentationalHintsForAttribute(name);
 }
 
-void SVGElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void SVGElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     CSSPropertyID propertyID = cssPropertyIdForSVGAttributeName(name);
     if (propertyID > 0)
-        addPropertyToPresentationAttributeStyle(style, propertyID, value);
+        addPropertyToPresentationalHintStyle(style, propertyID, value);
 }
 
 void SVGElement::svgAttributeChanged(const QualifiedName& attrName)

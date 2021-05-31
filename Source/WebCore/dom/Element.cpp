@@ -4387,7 +4387,7 @@ void Element::cloneAttributesFromElement(const Element& other)
     // If 'other' has a mutable ElementData, convert it to an immutable one so we can share it between both elements.
     // We can only do this if there is no CSSOM wrapper for other's inline style, and there are no presentation attributes.
     if (is<UniqueElementData>(*other.m_elementData)
-        && !other.m_elementData->presentationAttributeStyle()
+        && !other.m_elementData->presentationalHintStyle()
         && (!other.m_elementData->inlineStyle() || !other.m_elementData->inlineStyle()->hasCSSOMWrapper()))
         const_cast<Element&>(other).m_elementData = downcast<UniqueElementData>(*other.m_elementData).makeShareableCopy();
 

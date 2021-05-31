@@ -69,19 +69,19 @@ Ref<HTMLFrameSetElement> HTMLFrameSetElement::create(const QualifiedName& tagNam
     return adoptRef(*new HTMLFrameSetElement(tagName, document));
 }
 
-bool HTMLFrameSetElement::isPresentationAttribute(const QualifiedName& name) const
+bool HTMLFrameSetElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     if (name == bordercolorAttr)
         return true;
-    return HTMLElement::isPresentationAttribute(name);
+    return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLFrameSetElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLFrameSetElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == bordercolorAttr)
         addHTMLColorToStyle(style, CSSPropertyBorderColor, value);
     else
-        HTMLElement::collectStyleForPresentationAttribute(name, value, style);
+        HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
 void HTMLFrameSetElement::parseAttribute(const QualifiedName& name, const AtomString& value)

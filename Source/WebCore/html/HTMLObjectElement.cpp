@@ -85,19 +85,19 @@ int HTMLObjectElement::defaultTabIndex() const
     return 0;
 }
 
-bool HTMLObjectElement::isPresentationAttribute(const QualifiedName& name) const
+bool HTMLObjectElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     if (name == borderAttr)
         return true;
-    return HTMLPlugInImageElement::isPresentationAttribute(name);
+    return HTMLPlugInImageElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLObjectElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLObjectElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == borderAttr)
         applyBorderAttributeToStyle(value, style);
     else
-        HTMLPlugInImageElement::collectStyleForPresentationAttribute(name, value, style);
+        HTMLPlugInImageElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
 void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomString& value)

@@ -161,8 +161,8 @@ protected:
 
     bool matchesReadWritePseudoClass() const override;
     void parseAttribute(const QualifiedName&, const AtomString&) override;
-    bool isPresentationAttribute(const QualifiedName&) const override;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
+    bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
     unsigned parseBorderWidthAttribute(const AtomString&) const;
 
     void childrenChanged(const ChildChange&) override;

@@ -95,7 +95,7 @@ ShareableElementData::~ShareableElementData()
 ShareableElementData::ShareableElementData(const UniqueElementData& other)
     : ElementData(other, false)
 {
-    ASSERT(!other.m_presentationAttributeStyle);
+    ASSERT(!other.m_presentationalHintStyle);
 
     if (other.m_inlineStyle) {
         ASSERT(!other.m_inlineStyle->hasCSSOMWrapper());
@@ -131,7 +131,7 @@ UniqueElementData::UniqueElementData()
 
 UniqueElementData::UniqueElementData(const UniqueElementData& other)
     : ElementData(other, true)
-    , m_presentationAttributeStyle(other.m_presentationAttributeStyle)
+    , m_presentationalHintStyle(other.m_presentationalHintStyle)
     , m_attributeVector(other.m_attributeVector)
 {
     if (other.m_inlineStyle)

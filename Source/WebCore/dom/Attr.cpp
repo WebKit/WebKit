@@ -112,7 +112,7 @@ CSSStyleDeclaration* Attr::style()
     if (!is<StyledElement>(m_element))
         return nullptr;
     m_style = MutableStyleProperties::create();
-    downcast<StyledElement>(*m_element).collectStyleForPresentationAttribute(qualifiedName(), value(), *m_style);
+    downcast<StyledElement>(*m_element).collectPresentationalHintsForAttribute(qualifiedName(), value(), *m_style);
     return &m_style->ensureCSSStyleDeclaration();
 }
 

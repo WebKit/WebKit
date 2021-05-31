@@ -79,15 +79,15 @@ RenderWidget* HTMLEmbedElement::renderWidgetLoadingPlugin() const
     return widget ? widget : findWidgetRenderer(this);
 }
 
-void HTMLEmbedElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLEmbedElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == hiddenAttr) {
         if (equalLettersIgnoringASCIICase(value, "yes") || equalLettersIgnoringASCIICase(value, "true")) {
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyWidth, 0, CSSUnitType::CSS_PX);
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyHeight, 0, CSSUnitType::CSS_PX);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyWidth, 0, CSSUnitType::CSS_PX);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyHeight, 0, CSSUnitType::CSS_PX);
         }
     } else
-        HTMLPlugInImageElement::collectStyleForPresentationAttribute(name, value, style);
+        HTMLPlugInImageElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
 static bool hasTypeOrSrc(const HTMLEmbedElement& embed)

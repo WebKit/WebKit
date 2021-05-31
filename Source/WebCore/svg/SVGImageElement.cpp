@@ -105,7 +105,7 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
 
     if (attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr) {
         InstanceInvalidationGuard guard(*this);
-        invalidateSVGPresentationAttributeStyle();
+        invalidateSVGPresentationalHintStyle();
         return;
     }
 

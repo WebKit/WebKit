@@ -51,26 +51,26 @@ Ref<HTMLBRElement> HTMLBRElement::create(const QualifiedName& tagName, Document&
     return adoptRef(*new HTMLBRElement(tagName, document));
 }
 
-bool HTMLBRElement::isPresentationAttribute(const QualifiedName& name) const
+bool HTMLBRElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     if (name == clearAttr)
         return true;
-    return HTMLElement::isPresentationAttribute(name);
+    return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLBRElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLBRElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == clearAttr) {
         // If the string is empty, then don't add the clear property.
         // <br clear> and <br clear=""> are just treated like <br> by Gecko, Mac IE, etc. -dwh
         if (!value.isEmpty()) {
             if (equalLettersIgnoringASCIICase(value, "all"))
-                addPropertyToPresentationAttributeStyle(style, CSSPropertyClear, CSSValueBoth);
+                addPropertyToPresentationalHintStyle(style, CSSPropertyClear, CSSValueBoth);
             else
-                addPropertyToPresentationAttributeStyle(style, CSSPropertyClear, value);
+                addPropertyToPresentationalHintStyle(style, CSSPropertyClear, value);
         }
     } else
-        HTMLElement::collectStyleForPresentationAttribute(name, value, style);
+        HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
 RenderPtr<RenderElement> HTMLBRElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)

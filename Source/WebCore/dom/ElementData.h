@@ -94,7 +94,7 @@ public:
     void setIdForStyleResolution(const AtomString& newId) const { m_idForStyleResolution = newId; }
 
     const StyleProperties* inlineStyle() const { return m_inlineStyle.get(); }
-    const StyleProperties* presentationAttributeStyle() const;
+    const StyleProperties* presentationalHintStyle() const;
 
     unsigned length() const;
     bool isEmpty() const { return !length(); }
@@ -128,7 +128,7 @@ private:
     static const uint32_t s_flagCount = 5;
     static const uint32_t s_flagIsUnique = 1;
     static const uint32_t s_flagHasNameAttribute = 1 << 1;
-    static const uint32_t s_flagPresentationAttributeStyleIsDirty = 1 << 2;
+    static const uint32_t s_flagPresentationalHintStyleIsDirty = 1 << 2;
     static const uint32_t s_flagStyleAttributeIsDirty = 1 << 3;
     static const uint32_t s_flagAnimatedSVGAttributesAreDirty = 1 << 4;
     static const uint32_t s_flagsMask = (1 << s_flagCount) - 1;
@@ -154,8 +154,8 @@ protected:
     bool styleAttributeIsDirty() const { return m_arraySizeAndFlags & s_flagStyleAttributeIsDirty; }
     void setStyleAttributeIsDirty(bool isDirty) const { updateFlag(s_flagStyleAttributeIsDirty, isDirty); }
 
-    bool presentationAttributeStyleIsDirty() const { return m_arraySizeAndFlags & s_flagPresentationAttributeStyleIsDirty; }
-    void setPresentationAttributeStyleIsDirty(bool isDirty) const { updateFlag(s_flagPresentationAttributeStyleIsDirty, isDirty); }
+    bool presentationalHintStyleIsDirty() const { return m_arraySizeAndFlags & s_flagPresentationalHintStyleIsDirty; }
+    void setPresentationalHintStyleIsDirty(bool isDirty) const { updateFlag(s_flagPresentationalHintStyleIsDirty, isDirty); }
 
     bool animatedSVGAttributesAreDirty() const { return m_arraySizeAndFlags & s_flagAnimatedSVGAttributesAreDirty; }
     void setAnimatedSVGAttributesAreDirty(bool dirty) const { updateFlag(s_flagAnimatedSVGAttributesAreDirty, dirty); }
@@ -221,7 +221,7 @@ public:
 
     static ptrdiff_t attributeVectorMemoryOffset() { return OBJECT_OFFSETOF(UniqueElementData, m_attributeVector); }
 
-    mutable RefPtr<StyleProperties> m_presentationAttributeStyle;
+    mutable RefPtr<StyleProperties> m_presentationalHintStyle;
     typedef Vector<Attribute, 4> AttributeVector;
     AttributeVector m_attributeVector;
 };
@@ -247,11 +247,11 @@ inline const Attribute* ElementData::attributeBase() const
     return downcast<ShareableElementData>(*this).m_attributeArray;
 }
 
-inline const StyleProperties* ElementData::presentationAttributeStyle() const
+inline const StyleProperties* ElementData::presentationalHintStyle() const
 {
     if (!is<UniqueElementData>(*this))
         return nullptr;
-    return downcast<UniqueElementData>(*this).m_presentationAttributeStyle.get();
+    return downcast<UniqueElementData>(*this).m_presentationalHintStyle.get();
 }
 
 inline AttributeIteratorAccessor ElementData::attributesIterator() const

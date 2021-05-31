@@ -803,7 +803,7 @@ void HTMLTextFormControlElement::adjustInnerTextStyle(const RenderStyle& parentS
     textBlockStyle.setUnicodeBidi(parentStyle.unicodeBidi());
 
     if (auto innerText = innerTextElement()) {
-        if (const StyleProperties* properties = innerText->presentationAttributeStyle()) {
+        if (const StyleProperties* properties = innerText->presentationalHintStyle()) {
             RefPtr<CSSValue> value = properties->getPropertyCSSValue(CSSPropertyWebkitUserModify);
             if (is<CSSPrimitiveValue>(value))
                 textBlockStyle.setUserModify(downcast<CSSPrimitiveValue>(*value));

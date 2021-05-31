@@ -42,14 +42,14 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLTablePartElement);
 
 using namespace HTMLNames;
 
-bool HTMLTablePartElement::isPresentationAttribute(const QualifiedName& name) const
+bool HTMLTablePartElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     if (name == bgcolorAttr || name == backgroundAttr || name == valignAttr || name == heightAttr)
         return true;
-    return HTMLElement::isPresentationAttribute(name);
+    return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLTablePartElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLTablePartElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == bgcolorAttr)
         addHTMLColorToStyle(style, CSSPropertyBackgroundColor, value);
@@ -59,31 +59,31 @@ void HTMLTablePartElement::collectStyleForPresentationAttribute(const QualifiedN
             style.setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(document().completeURL(url), LoadedFromOpaqueSource::No)));
     } else if (name == valignAttr) {
         if (equalLettersIgnoringASCIICase(value, "top"))
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyVerticalAlign, CSSValueTop);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyVerticalAlign, CSSValueTop);
         else if (equalLettersIgnoringASCIICase(value, "middle"))
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyVerticalAlign, CSSValueMiddle);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyVerticalAlign, CSSValueMiddle);
         else if (equalLettersIgnoringASCIICase(value, "bottom"))
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyVerticalAlign, CSSValueBottom);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyVerticalAlign, CSSValueBottom);
         else if (equalLettersIgnoringASCIICase(value, "baseline"))
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyVerticalAlign, CSSValueBaseline);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyVerticalAlign, CSSValueBaseline);
         else
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyVerticalAlign, value);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyVerticalAlign, value);
     } else if (name == alignAttr) {
         if (equalLettersIgnoringASCIICase(value, "middle") || equalLettersIgnoringASCIICase(value, "center"))
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyTextAlign, CSSValueWebkitCenter);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyTextAlign, CSSValueWebkitCenter);
         else if (equalLettersIgnoringASCIICase(value, "absmiddle"))
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyTextAlign, CSSValueCenter);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyTextAlign, CSSValueCenter);
         else if (equalLettersIgnoringASCIICase(value, "left"))
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyTextAlign, CSSValueWebkitLeft);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyTextAlign, CSSValueWebkitLeft);
         else if (equalLettersIgnoringASCIICase(value, "right"))
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyTextAlign, CSSValueWebkitRight);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyTextAlign, CSSValueWebkitRight);
         else
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyTextAlign, value);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyTextAlign, value);
     } else if (name == heightAttr) {
         if (!value.isEmpty())
             addHTMLLengthToStyle(style, CSSPropertyHeight, value);
     } else
-        HTMLElement::collectStyleForPresentationAttribute(name, value, style);
+        HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
 RefPtr<const HTMLTableElement> HTMLTablePartElement::findParentTable() const

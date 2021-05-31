@@ -95,8 +95,8 @@ protected:
     void parseAttribute(const QualifiedName&, const AtomString&) override;
     bool childShouldCreateRenderer(const Node&) const override;
 
-    bool isPresentationAttribute(const QualifiedName&) const override;
-    void collectStyleForPresentationAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
+    bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
+    void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
 
     bool willRespondToMouseClickEvents() override;
     void defaultEventHandler(Event&) override;

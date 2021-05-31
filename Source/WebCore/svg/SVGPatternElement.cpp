@@ -112,7 +112,7 @@ void SVGPatternElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (PropertyRegistry::isAnimatedLengthAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
-        invalidateSVGPresentationAttributeStyle();
+        invalidateSVGPresentationalHintStyle();
         return;
     }
 

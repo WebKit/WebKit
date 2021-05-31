@@ -134,26 +134,26 @@ unsigned HTMLElement::parseBorderWidthAttribute(const AtomString& value) const
 
 void HTMLElement::applyBorderAttributeToStyle(const AtomString& value, MutableStyleProperties& style)
 {
-    addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderWidth, parseBorderWidthAttribute(value), CSSUnitType::CSS_PX);
-    addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderStyle, CSSValueSolid);
+    addPropertyToPresentationalHintStyle(style, CSSPropertyBorderWidth, parseBorderWidthAttribute(value), CSSUnitType::CSS_PX);
+    addPropertyToPresentationalHintStyle(style, CSSPropertyBorderStyle, CSSValueSolid);
 }
 
 void HTMLElement::mapLanguageAttributeToLocale(const AtomString& value, MutableStyleProperties& style)
 {
     if (!value.isEmpty()) {
         // Have to quote so the locale id is treated as a string instead of as a CSS keyword.
-        addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitLocale, serializeString(value));
+        addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitLocale, serializeString(value));
     } else {
         // The empty string means the language is explicitly unknown.
-        addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitLocale, CSSValueAuto);
+        addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitLocale, CSSValueAuto);
     }
 }
 
-bool HTMLElement::isPresentationAttribute(const QualifiedName& name) const
+bool HTMLElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     if (name == alignAttr || name == contenteditableAttr || name == hiddenAttr || name == langAttr || name.matches(XMLNames::langAttr) || name == draggableAttr || name == dirAttr)
         return true;
-    return StyledElement::isPresentationAttribute(name);
+    return StyledElement::hasPresentationalHintsForAttribute(name);
 }
 
 static bool isLTROrRTLIgnoringCase(const AtomString& dirAttributeValue)
@@ -187,13 +187,13 @@ static ContentEditableType contentEditableType(const HTMLElement& element)
     return contentEditableType(element.attributeWithoutSynchronization(contenteditableAttr));
 }
 
-void HTMLElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == alignAttr) {
         if (equalLettersIgnoringASCIICase(value, "middle"))
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyTextAlign, CSSValueCenter);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyTextAlign, CSSValueCenter);
         else
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyTextAlign, value);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyTextAlign, value);
     } else if (name == contenteditableAttr) {
         CSSValueID userModifyValue = CSSValueReadWrite;
         switch (contentEditableType(value)) {
@@ -206,37 +206,37 @@ void HTMLElement::collectStyleForPresentationAttribute(const QualifiedName& name
             userModifyValue = CSSValueReadWritePlaintextOnly;
             FALLTHROUGH;
         case ContentEditableType::True:
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyWordWrap, CSSValueBreakWord);
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitNbspMode, CSSValueSpace);
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyLineBreak, CSSValueAfterWhiteSpace);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyWordWrap, CSSValueBreakWord);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitNbspMode, CSSValueSpace);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyLineBreak, CSSValueAfterWhiteSpace);
 #if PLATFORM(IOS_FAMILY)
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitTextSizeAdjust, CSSValueNone);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitTextSizeAdjust, CSSValueNone);
 #endif
             break;
         }
-        addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitUserModify, userModifyValue);
+        addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitUserModify, userModifyValue);
     } else if (name == hiddenAttr) {
-        addPropertyToPresentationAttributeStyle(style, CSSPropertyDisplay, CSSValueNone);
+        addPropertyToPresentationalHintStyle(style, CSSPropertyDisplay, CSSValueNone);
     } else if (name == draggableAttr) {
         if (equalLettersIgnoringASCIICase(value, "true")) {
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitUserDrag, CSSValueElement);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitUserDrag, CSSValueElement);
             if (!isDraggableIgnoringAttributes())
-                addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitUserSelect, CSSValueNone);
+                addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitUserSelect, CSSValueNone);
         } else if (equalLettersIgnoringASCIICase(value, "false"))
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitUserDrag, CSSValueNone);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitUserDrag, CSSValueNone);
     } else if (name == dirAttr) {
         if (equalLettersIgnoringASCIICase(value, "auto"))
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyUnicodeBidi, unicodeBidiAttributeForDirAuto(*this));
+            addPropertyToPresentationalHintStyle(style, CSSPropertyUnicodeBidi, unicodeBidiAttributeForDirAuto(*this));
         else {
             auto unicodeBidiValue = CSSValueEmbed;
 
             if (isLTROrRTLIgnoringCase(value)) {
-                addPropertyToPresentationAttributeStyle(style, CSSPropertyDirection, value);
+                addPropertyToPresentationalHintStyle(style, CSSPropertyDirection, value);
                 unicodeBidiValue = CSSValueIsolate;
             } 
 
             if (!hasTagName(bdiTag) && !hasTagName(bdoTag) && !hasTagName(outputTag))
-                addPropertyToPresentationAttributeStyle(style, CSSPropertyUnicodeBidi, unicodeBidiValue);
+                addPropertyToPresentationalHintStyle(style, CSSPropertyUnicodeBidi, unicodeBidiValue);
         }
     } else if (name.matches(XMLNames::langAttr))
         mapLanguageAttributeToLocale(value, style);
@@ -245,7 +245,7 @@ void HTMLElement::collectStyleForPresentationAttribute(const QualifiedName& name
         if (!hasAttributeWithoutSynchronization(XMLNames::langAttr))
             mapLanguageAttributeToLocale(value, style);
     } else
-        StyledElement::collectStyleForPresentationAttribute(name, value, style);
+        StyledElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
 HTMLElement::EventHandlerNameMap HTMLElement::createEventHandlerNameMap()
@@ -676,10 +676,10 @@ void HTMLElement::applyAlignmentAttributeToStyle(const AtomString& alignment, Mu
         verticalAlignValue = CSSValueTextTop;
 
     if (floatValue != CSSValueInvalid)
-        addPropertyToPresentationAttributeStyle(style, CSSPropertyFloat, floatValue);
+        addPropertyToPresentationalHintStyle(style, CSSPropertyFloat, floatValue);
 
     if (verticalAlignValue != CSSValueInvalid)
-        addPropertyToPresentationAttributeStyle(style, CSSPropertyVerticalAlign, verticalAlignValue);
+        addPropertyToPresentationalHintStyle(style, CSSPropertyVerticalAlign, verticalAlignValue);
 }
 
 bool HTMLElement::hasCustomFocusLogic() const
@@ -1040,12 +1040,12 @@ void HTMLElement::addHTMLLengthToStyle(MutableStyleProperties& style, CSSPropert
         }
 
         if (parsedLength != string->length()) {
-            addPropertyToPresentationAttributeStyle(style, propertyID, string->substring(0, parsedLength));
+            addPropertyToPresentationalHintStyle(style, propertyID, string->substring(0, parsedLength));
             return;
         }
     }
 
-    addPropertyToPresentationAttributeStyle(style, propertyID, value);
+    addPropertyToPresentationalHintStyle(style, propertyID, value);
 }
 
 // Color parsing that matches HTML's "rules for parsing a legacy color value"

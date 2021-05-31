@@ -1149,7 +1149,7 @@ Ref<JSON::ArrayOf<Protocol::CSS::RuleMatch>> InspectorCSSAgent::buildArrayForMat
 RefPtr<Protocol::CSS::CSSStyle> InspectorCSSAgent::buildObjectForAttributesStyle(StyledElement& element)
 {
     // FIXME: Ugliness below.
-    auto* attributeStyle = const_cast<StyleProperties*>(element.presentationAttributeStyle());
+    auto* attributeStyle = const_cast<StyleProperties*>(element.presentationalHintStyle());
     if (!attributeStyle)
         return nullptr;
 

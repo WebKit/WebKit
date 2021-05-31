@@ -54,19 +54,19 @@ Ref<HTMLTableColElement> HTMLTableColElement::create(const QualifiedName& tagNam
     return adoptRef(*new HTMLTableColElement(tagName, document));
 }
 
-bool HTMLTableColElement::isPresentationAttribute(const QualifiedName& name) const
+bool HTMLTableColElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     if (name == widthAttr)
         return true;
-    return HTMLTablePartElement::isPresentationAttribute(name);
+    return HTMLTablePartElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLTableColElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLTableColElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == widthAttr)
         addHTMLLengthToStyle(style, CSSPropertyWidth, value);
     else
-        HTMLTablePartElement::collectStyleForPresentationAttribute(name, value, style);
+        HTMLTablePartElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
 void HTMLTableColElement::parseAttribute(const QualifiedName& name, const AtomString& value)
@@ -88,7 +88,7 @@ void HTMLTableColElement::parseAttribute(const QualifiedName& name, const AtomSt
         HTMLTablePartElement::parseAttribute(name, value);
 }
 
-const StyleProperties* HTMLTableColElement::additionalPresentationAttributeStyle() const
+const StyleProperties* HTMLTableColElement::additionalPresentationalHintStyle() const
 {
     if (!hasTagName(colgroupTag))
         return nullptr;

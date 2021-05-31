@@ -1,3 +1,269 @@
+2021-05-31  Antti Koivisto  <antti@apple.com>
+
+        Rename presentationAttributeStyle to presentationalHintStyle to match spec language
+        https://bugs.webkit.org/show_bug.cgi?id=226467
+
+        Reviewed by Sam Weinig.
+
+        The HTML specification calls these "presentational hints", https://html.spec.whatwg.org/#presentational-hints.
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::style):
+        * dom/Element.cpp:
+        (WebCore::Element::cloneAttributesFromElement):
+        * dom/ElementData.cpp:
+        (WebCore::ShareableElementData::ShareableElementData):
+        (WebCore::UniqueElementData::UniqueElementData):
+        * dom/ElementData.h:
+        (WebCore::ElementData::presentationalHintStyleIsDirty const):
+        (WebCore::ElementData::setPresentationalHintStyleIsDirty const):
+        (WebCore::ElementData::presentationalHintStyle const):
+        (WebCore::ElementData::presentationAttributeStyleIsDirty const): Deleted.
+        (WebCore::ElementData::setPresentationAttributeStyleIsDirty const): Deleted.
+        (WebCore::ElementData::presentationAttributeStyle const): Deleted.
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::attributeChanged):
+        (WebCore::StyledElement::rebuildPresentationalHintStyle):
+        (WebCore::StyledElement::addPropertyToPresentationalHintStyle):
+        (WebCore::StyledElement::rebuildPresentationAttributeStyle): Deleted.
+        (WebCore::StyledElement::addPropertyToPresentationAttributeStyle): Deleted.
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::collectPresentationalHintsForAttribute):
+        (WebCore::StyledElement::additionalPresentationalHintStyle const):
+        (WebCore::StyledElement::hasPresentationalHintsForAttribute const):
+        (WebCore::StyledElement::presentationalHintStyle const):
+        (WebCore::StyledElement::additionalPresentationAttributeStyle const): Deleted.
+        (WebCore::StyledElement::collectStyleForPresentationAttribute): Deleted.
+        (WebCore::StyledElement::isPresentationAttribute const): Deleted.
+        (WebCore::StyledElement::presentationAttributeStyle const): Deleted.
+        * html/HTMLBRElement.cpp:
+        (WebCore::HTMLBRElement::hasPresentationalHintsForAttribute const):
+        (WebCore::HTMLBRElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLBRElement::isPresentationAttribute const): Deleted.
+        (WebCore::HTMLBRElement::collectStyleForPresentationAttribute): Deleted.
+        * html/HTMLBRElement.h:
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::hasPresentationalHintsForAttribute const):
+        (WebCore::HTMLBodyElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLBodyElement::isPresentationAttribute const): Deleted.
+        (WebCore::HTMLBodyElement::collectStyleForPresentationAttribute): Deleted.
+        * html/HTMLBodyElement.h:
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::hasPresentationalHintsForAttribute const):
+        (WebCore::HTMLButtonElement::isPresentationAttribute const): Deleted.
+        * html/HTMLButtonElement.h:
+        * html/HTMLDivElement.cpp:
+        (WebCore::HTMLDivElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLDivElement::collectStyleForPresentationAttribute): Deleted.
+        * html/HTMLDivElement.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::applyBorderAttributeToStyle):
+        (WebCore::HTMLElement::mapLanguageAttributeToLocale):
+        (WebCore::HTMLElement::hasPresentationalHintsForAttribute const):
+        (WebCore::HTMLElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLElement::applyAlignmentAttributeToStyle):
+        (WebCore::HTMLElement::addHTMLLengthToStyle):
+        (WebCore::HTMLElement::isPresentationAttribute const): Deleted.
+        (WebCore::HTMLElement::collectStyleForPresentationAttribute): Deleted.
+        * html/HTMLElement.h:
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLEmbedElement::collectStyleForPresentationAttribute): Deleted.
+        * html/HTMLEmbedElement.h:
+        * html/HTMLFontElement.cpp:
+        (WebCore::HTMLFontElement::hasPresentationalHintsForAttribute const):
+        (WebCore::HTMLFontElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLFontElement::isPresentationAttribute const): Deleted.
+        (WebCore::HTMLFontElement::collectStyleForPresentationAttribute): Deleted.
+        * html/HTMLFontElement.h:
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::hasPresentationalHintsForAttribute const):
+        (WebCore::HTMLFrameSetElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLFrameSetElement::isPresentationAttribute const): Deleted.
+        (WebCore::HTMLFrameSetElement::collectStyleForPresentationAttribute): Deleted.
+        * html/HTMLFrameSetElement.h:
+        * html/HTMLHRElement.cpp:
+        (WebCore::HTMLHRElement::hasPresentationalHintsForAttribute const):
+        (WebCore::HTMLHRElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLHRElement::isPresentationAttribute const): Deleted.
+        (WebCore::HTMLHRElement::collectStyleForPresentationAttribute): Deleted.
+        * html/HTMLHRElement.h:
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::hasPresentationalHintsForAttribute const):
+        (WebCore::HTMLIFrameElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLIFrameElement::isPresentationAttribute const): Deleted.
+        (WebCore::HTMLIFrameElement::collectStyleForPresentationAttribute): Deleted.
+        * html/HTMLIFrameElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::hasPresentationalHintsForAttribute const):
+        (WebCore::HTMLImageElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLImageElement::isPresentationAttribute const): Deleted.
+        (WebCore::HTMLImageElement::collectStyleForPresentationAttribute): Deleted.
+        * html/HTMLImageElement.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::hasPresentationalHintsForAttribute const):
+        (WebCore::HTMLInputElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLInputElement::isPresentationAttribute const): Deleted.
+        (WebCore::HTMLInputElement::collectStyleForPresentationAttribute): Deleted.
+        * html/HTMLInputElement.h:
+        * html/HTMLLIElement.cpp:
+        (WebCore::HTMLLIElement::hasPresentationalHintsForAttribute const):
+        (WebCore::HTMLLIElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLLIElement::isPresentationAttribute const): Deleted.
+        (WebCore::HTMLLIElement::collectStyleForPresentationAttribute): Deleted.
+        * html/HTMLLIElement.h:
+        * html/HTMLMarqueeElement.cpp:
+        (WebCore::HTMLMarqueeElement::hasPresentationalHintsForAttribute const):
+        (WebCore::HTMLMarqueeElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLMarqueeElement::isPresentationAttribute const): Deleted.
+        (WebCore::HTMLMarqueeElement::collectStyleForPresentationAttribute): Deleted.
+        * html/HTMLMarqueeElement.h:
+        * html/HTMLOListElement.cpp:
+        (WebCore::HTMLOListElement::hasPresentationalHintsForAttribute const):
+        (WebCore::HTMLOListElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLOListElement::isPresentationAttribute const): Deleted.
+        (WebCore::HTMLOListElement::collectStyleForPresentationAttribute): Deleted.
+        * html/HTMLOListElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::hasPresentationalHintsForAttribute const):
+        (WebCore::HTMLObjectElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLObjectElement::isPresentationAttribute const): Deleted.
+        (WebCore::HTMLObjectElement::collectStyleForPresentationAttribute): Deleted.
+        * html/HTMLObjectElement.h:
+        * html/HTMLParagraphElement.cpp:
+        (WebCore::HTMLParagraphElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLParagraphElement::collectStyleForPresentationAttribute): Deleted.
+        * html/HTMLParagraphElement.h:
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::hasPresentationalHintsForAttribute const):
+        (WebCore::HTMLPlugInElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLPlugInElement::isPresentationAttribute const): Deleted.
+        (WebCore::HTMLPlugInElement::collectStyleForPresentationAttribute): Deleted.
+        * html/HTMLPlugInElement.h:
+        * html/HTMLPreElement.cpp:
+        (WebCore::HTMLPreElement::hasPresentationalHintsForAttribute const):
+        (WebCore::HTMLPreElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLPreElement::isPresentationAttribute const): Deleted.
+        (WebCore::HTMLPreElement::collectStyleForPresentationAttribute): Deleted.
+        * html/HTMLPreElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::hasPresentationalHintsForAttribute const):
+        (WebCore::HTMLSelectElement::isPresentationAttribute const): Deleted.
+        * html/HTMLSelectElement.h:
+        * html/HTMLTableCaptionElement.cpp:
+        (WebCore::HTMLTableCaptionElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLTableCaptionElement::collectStyleForPresentationAttribute): Deleted.
+        * html/HTMLTableCaptionElement.h:
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::hasPresentationalHintsForAttribute const):
+        (WebCore::HTMLTableCellElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLTableCellElement::additionalPresentationalHintStyle const):
+        (WebCore::HTMLTableCellElement::isPresentationAttribute const): Deleted.
+        (WebCore::HTMLTableCellElement::collectStyleForPresentationAttribute): Deleted.
+        (WebCore::HTMLTableCellElement::additionalPresentationAttributeStyle const): Deleted.
+        * html/HTMLTableCellElement.h:
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::hasPresentationalHintsForAttribute const):
+        (WebCore::HTMLTableColElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLTableColElement::additionalPresentationalHintStyle const):
+        (WebCore::HTMLTableColElement::isPresentationAttribute const): Deleted.
+        (WebCore::HTMLTableColElement::collectStyleForPresentationAttribute): Deleted.
+        (WebCore::HTMLTableColElement::additionalPresentationAttributeStyle const): Deleted.
+        * html/HTMLTableColElement.h:
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLTableElement::hasPresentationalHintsForAttribute const):
+        (WebCore::HTMLTableElement::additionalPresentationalHintStyle const):
+        (WebCore::HTMLTableElement::collectStyleForPresentationAttribute): Deleted.
+        (WebCore::HTMLTableElement::isPresentationAttribute const): Deleted.
+        (WebCore::HTMLTableElement::additionalPresentationAttributeStyle const): Deleted.
+        * html/HTMLTableElement.h:
+        * html/HTMLTablePartElement.cpp:
+        (WebCore::HTMLTablePartElement::hasPresentationalHintsForAttribute const):
+        (WebCore::HTMLTablePartElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLTablePartElement::isPresentationAttribute const): Deleted.
+        (WebCore::HTMLTablePartElement::collectStyleForPresentationAttribute): Deleted.
+        * html/HTMLTablePartElement.h:
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::additionalPresentationalHintStyle const):
+        (WebCore::HTMLTableSectionElement::additionalPresentationAttributeStyle const): Deleted.
+        * html/HTMLTableSectionElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::hasPresentationalHintsForAttribute const):
+        (WebCore::HTMLTextAreaElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLTextAreaElement::isPresentationAttribute const): Deleted.
+        (WebCore::HTMLTextAreaElement::collectStyleForPresentationAttribute): Deleted.
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::adjustInnerTextStyle const):
+        * html/HTMLUListElement.cpp:
+        (WebCore::HTMLUListElement::hasPresentationalHintsForAttribute const):
+        (WebCore::HTMLUListElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLUListElement::isPresentationAttribute const): Deleted.
+        (WebCore::HTMLUListElement::collectStyleForPresentationAttribute): Deleted.
+        * html/HTMLUListElement.h:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::collectPresentationalHintsForAttribute):
+        (WebCore::HTMLVideoElement::hasPresentationalHintsForAttribute const):
+        (WebCore::HTMLVideoElement::collectStyleForPresentationAttribute): Deleted.
+        (WebCore::HTMLVideoElement::isPresentationAttribute const): Deleted.
+        * html/HTMLVideoElement.h:
+        * inspector/agents/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::buildObjectForAttributesStyle):
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::hasPresentationalHintsForAttribute const):
+        (WebCore::MathMLElement::collectPresentationalHintsForAttribute):
+        (WebCore::MathMLElement::isPresentationAttribute const): Deleted.
+        (WebCore::MathMLElement::collectStyleForPresentationAttribute): Deleted.
+        * mathml/MathMLElement.h:
+        * style/ElementRuleCollector.cpp:
+        (WebCore::Style::ElementRuleCollector::matchAllRules):
+        * style/MatchedDeclarationsCache.cpp:
+        (WebCore::Style::MatchedDeclarationsCache::sweep):
+        * style/StyleSharingResolver.cpp:
+        (WebCore::Style::SharingResolver::canShareStyleWithElement const):
+        (WebCore::Style::SharingResolver::sharingCandidateHasIdenticalStyleAffectingAttributes const):
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::svgAttributeChanged):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::hasPresentationalHintsForAttribute const):
+        (WebCore::SVGElement::collectPresentationalHintsForAttribute):
+        (WebCore::SVGElement::isPresentationAttribute const): Deleted.
+        (WebCore::SVGElement::collectStyleForPresentationAttribute): Deleted.
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::invalidateSVGPresentationalHintStyle):
+        (WebCore::SVGElement::invalidateSVGPresentationAttributeStyle): Deleted.
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::svgAttributeChanged):
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::svgAttributeChanged):
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::svgAttributeChanged):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::svgAttributeChanged):
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::svgAttributeChanged):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::svgAttributeChanged):
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::svgAttributeChanged):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::svgAttributeChanged):
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::hasPresentationalHintsForAttribute const):
+        (WebCore::SVGTextContentElement::collectPresentationalHintsForAttribute):
+        (WebCore::SVGTextContentElement::isPresentationAttribute const): Deleted.
+        (WebCore::SVGTextContentElement::collectStyleForPresentationAttribute): Deleted.
+        * svg/SVGTextContentElement.h:
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::collectPresentationalHintsForAttribute):
+        (WebCore::SVGTextPositioningElement::hasPresentationalHintsForAttribute const):
+        (WebCore::SVGTextPositioningElement::collectStyleForPresentationAttribute): Deleted.
+        (WebCore::SVGTextPositioningElement::isPresentationAttribute const): Deleted.
+        * svg/SVGTextPositioningElement.h:
+        * svg/properties/SVGAttributeAnimator.cpp:
+        (WebCore::SVGAttributeAnimator::invalidateStyle):
+
 2021-05-31  Miguel Gomez  <magomez@igalia.com>
 
         [GStreamer] Incorrect rendering of VP9 with transparency

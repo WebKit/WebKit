@@ -207,7 +207,7 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (PropertyRegistry::isKnownAttribute(attrName)) {
         InstanceInvalidationGuard guard(*this);
-        invalidateSVGPresentationAttributeStyle();
+        invalidateSVGPresentationalHintStyle();
 
         if (auto renderer = this->renderer())
             RenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);

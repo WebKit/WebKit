@@ -106,14 +106,14 @@ Ref<HTMLImageElement> HTMLImageElement::createForLegacyFactoryFunction(Document&
     return image;
 }
 
-bool HTMLImageElement::isPresentationAttribute(const QualifiedName& name) const
+bool HTMLImageElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
 {
     if (name == widthAttr || name == heightAttr || name == borderAttr || name == vspaceAttr || name == hspaceAttr || name == valignAttr)
         return true;
-    return HTMLElement::isPresentationAttribute(name);
+    return HTMLElement::hasPresentationalHintsForAttribute(name);
 }
 
-void HTMLImageElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
+void HTMLImageElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name == widthAttr) {
         addHTMLLengthToStyle(style, CSSPropertyWidth, value);
@@ -132,9 +132,9 @@ void HTMLImageElement::collectStyleForPresentationAttribute(const QualifiedName&
     } else if (name == alignAttr)
         applyAlignmentAttributeToStyle(value, style);
     else if (name == valignAttr)
-        addPropertyToPresentationAttributeStyle(style, CSSPropertyVerticalAlign, value);
+        addPropertyToPresentationalHintStyle(style, CSSPropertyVerticalAlign, value);
     else
-        HTMLElement::collectStyleForPresentationAttribute(name, value, style);
+        HTMLElement::collectPresentationalHintsForAttribute(name, value, style);
 }
 
 const AtomString& HTMLImageElement::imageSourceURL() const
