@@ -57,7 +57,8 @@ public:
         ShouldConvertTextureBGRAToRGBA = 0x80,
         ShouldConvertTextureARGBToRGBA = 0x100,
         ShouldNotBlend = 0x200,
-        ShouldUseExternalOESTextureRect = 0x400
+        ShouldUseExternalOESTextureRect = 0x400,
+        ShouldPremultiply = 0x800
     };
 
     typedef int Flags;

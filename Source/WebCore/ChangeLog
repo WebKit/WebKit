@@ -1,3 +1,44 @@
+2021-05-31  Miguel Gomez  <magomez@igalia.com>
+
+        [GStreamer] Incorrect rendering of VP9 with transparency
+        https://bugs.webkit.org/show_bug.cgi?id=225961
+
+        Reviewed by Žan Doberšek.
+
+        Fix the rendering of videos with transparency. This is done both AC and non AC modes and
+        with and without GSTREAMER_GL enabled.
+
+        On AC mode and using GSTREAMER_GL, a new option is added to TextureMapperGL and TextureMapperShaderProgram
+        to support premultiplying the components of a pixel. This is required because GStreamer uses straight alpha,
+        and we need it premultiplied in order to perform the correct blending blending of the video frames. Then we
+        use that new option to render video frames. This new option is also used when copying the video frame into
+        an external texture if premultiplyAlpha is requested.
+
+        On non AC mode, or when GStreamer-gl is disabled, add support to ImageGStreamerCairo to premultiply the alpha
+        of the video frame before creating the cairo surface to paint, and pass the appropriate composite operator when
+        drawing with alpha.
+
+        Test: media/video-with-alpha.html
+
+        * platform/graphics/gstreamer/GStreamerVideoFrameHolder.cpp:
+        (WebCore::GstVideoFrameHolder::GstVideoFrameHolder):
+        * platform/graphics/gstreamer/ImageGStreamerCairo.cpp:
+        (WebCore::ImageGStreamer::ImageGStreamer):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::pushTextureToCompositor):
+        (WebCore::MediaPlayerPrivateGStreamer::paint): update the caps of the conversion to make them match the format
+        expected by cairo, so we can avoid a component swap.
+        (WebCore::MediaPlayerPrivateGStreamer::copyVideoTextureToPlatformTexture):
+        * platform/graphics/gstreamer/VideoTextureCopierGStreamer.cpp:
+        (WebCore::VideoTextureCopierGStreamer::copyVideoTextureToPlatformTexture):
+        * platform/graphics/gstreamer/VideoTextureCopierGStreamer.h:
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::drawTexture):
+        * platform/graphics/texmap/TextureMapperGL.h:
+        * platform/graphics/texmap/TextureMapperShaderProgram.cpp:
+        (WebCore::TextureMapperShaderProgram::create):
+        * platform/graphics/texmap/TextureMapperShaderProgram.h:
+
 2021-05-31  Rob Buis  <rbuis@igalia.com>
 
         Treat width: intrinsic as non definite

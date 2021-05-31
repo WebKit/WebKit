@@ -46,7 +46,7 @@ GstVideoFrameHolder::GstVideoFrameHolder(GstSample* sample, std::optional<GstVid
         return;
 
 #if USE(GSTREAMER_GL)
-    m_flags = flags | (m_hasAlphaChannel ? TextureMapperGL::ShouldBlend : 0);
+    m_flags = flags | (m_hasAlphaChannel ? TextureMapperGL::ShouldBlend | TextureMapperGL::ShouldPremultiply : 0);
 
     GstMemory* memory = gst_buffer_peek_memory(m_buffer.get(), 0);
     if (gst_is_gl_memory(memory))

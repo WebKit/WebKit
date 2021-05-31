@@ -504,6 +504,9 @@ void TextureMapperGL::drawTexture(GLuint texture, Flags flags, const IntSize& te
         flags |= ShouldBlend;
     }
 
+    if (flags & ShouldPremultiply)
+        options |= TextureMapperShaderProgram::Premultiply;
+
     Ref<TextureMapperShaderProgram> program = data().getShaderProgram(options);
 
     if (filter)

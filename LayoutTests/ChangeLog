@@ -1,3 +1,18 @@
+2021-05-31  Miguel Gomez  <magomez@igalia.com>
+
+        [GStreamer] Incorrect rendering of VP9 with transparency
+        https://bugs.webkit.org/show_bug.cgi?id=225961
+
+        Reviewed by Žan Doberšek.
+
+        Add a test for the playback of transparent videos. This is initially skipped because it's not supported
+        on Apple ports and won't be working on GTK and WPE until GStreamer is bumped to 1.20.
+
+        * TestExpectations:
+        * media/content/video-with-alpha.webm: Added.
+        * media/video-with-alpha-expected.html: Added.
+        * media/video-with-alpha.html: Added.
+
 2021-05-31  Rob Buis  <rbuis@igalia.com>
 
         Release assert in RenderFlexibleBox::computeInnerFlexBaseSizeForChild via RenderFlexibleBox::layoutFlexItems

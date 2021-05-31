@@ -2946,7 +2946,7 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor()
                 layerBuffer = makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(texture));
             }
             frameHolder->updateTexture(layerBuffer->textureGL());
-            layerBuffer->setExtraFlags(m_textureMapperFlags | (frameHolder->hasAlphaChannel() ? TextureMapperGL::ShouldBlend : 0));
+            layerBuffer->setExtraFlags(m_textureMapperFlags | (frameHolder->hasAlphaChannel() ? TextureMapperGL::ShouldBlend | TextureMapperGL::ShouldPremultiply : 0));
         }
         proxy.pushNextBuffer(WTFMove(layerBuffer));
     };
@@ -3298,10 +3298,13 @@ void MediaPlayerPrivateGStreamer::paint(GraphicsContext& context, const FloatRec
         if (!m_colorConvertInputCaps || !gst_caps_is_equal(m_colorConvertInputCaps.get(), caps)) {
             m_colorConvertInputCaps = caps;
             m_colorConvertOutputCaps = adoptGRef(gst_caps_copy(caps));
+
+            // These caps must match the internal format of a cairo surface with CAIRO_FORMAT_ARGB32,
+            // so we don't need to perform color conversions when painting the video frame.
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
-            const char* formatString = GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? "RGBA" : "BGRx";
+            const char* formatString = GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? "BGRA" : "BGRx";
 #else
-            const char* formatString = GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? "RGBA" : "RGBx";
+            const char* formatString = GST_VIDEO_INFO_HAS_ALPHA(&videoInfo) ? "ARGB" : "xRGB";
 #endif
             gst_caps_set_simple(m_colorConvertOutputCaps.get(), "format", G_TYPE_STRING, formatString,
                 "texture-target", G_TYPE_STRING, GST_GL_TEXTURE_TARGET_2D_STR, nullptr);
@@ -3323,7 +3326,7 @@ void MediaPlayerPrivateGStreamer::paint(GraphicsContext& context, const FloatRec
     if (!gstImage)
         return;
 
-    context.drawImage(gstImage->image(), rect, gstImage->rect(), { CompositeOperator::Copy, m_shouldHandleOrientationTags ? m_videoSourceOrientation : ImageOrientation() });
+    context.drawImage(gstImage->image(), rect, gstImage->rect(), { gstImage->hasAlpha() ? CompositeOperator::SourceOver : CompositeOperator::Copy, m_shouldHandleOrientationTags ? m_videoSourceOrientation : ImageOrientation() });
 }
 
 #if USE(GSTREAMER_GL)
@@ -3332,9 +3335,6 @@ bool MediaPlayerPrivateGStreamer::copyVideoTextureToPlatformTexture(GraphicsCont
     UNUSED_PARAM(context);
 
     if (m_isUsingFallbackVideoSink)
-        return false;
-
-    if (premultiplyAlpha)
         return false;
 
     Locker sampleLocker { m_sampleMutex };
@@ -3357,7 +3357,7 @@ bool MediaPlayerPrivateGStreamer::copyVideoTextureToPlatformTexture(GraphicsCont
 
     frameHolder->waitForCPUSync();
 
-    return m_videoTextureCopier->copyVideoTextureToPlatformTexture(*layerBuffer.get(), size, outputTexture, outputTarget, level, internalFormat, format, type, flipY, m_videoSourceOrientation);
+    return m_videoTextureCopier->copyVideoTextureToPlatformTexture(*layerBuffer.get(), size, outputTexture, outputTarget, level, internalFormat, format, type, flipY, m_videoSourceOrientation, premultiplyAlpha);
 }
 
 RefPtr<NativeImage> MediaPlayerPrivateGStreamer::nativeImageForCurrentTime()

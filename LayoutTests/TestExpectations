@@ -1034,6 +1034,9 @@ webkit.org/b/203146 imported/w3c/web-platform-tests/html/canvas/offscreen [ Skip
 # Tests a setting behind the ENABLE_FULLSCREEN_API flag, which is WK2-only
 media/video-supports-fullscreen.html [ Skip ]
 
+# Support for VP9 encoded videos with transparency is only available on ports that use GStreamer.
+media/video-with-alpha.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////

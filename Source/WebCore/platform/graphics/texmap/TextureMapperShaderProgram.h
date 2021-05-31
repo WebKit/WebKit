@@ -103,6 +103,7 @@ public:
         TexturePackedYUV = 1L << 21,
         TextureExternalOES = 1L << 22,
         RoundedRectClip  = 1L << 23,
+        Premultiply      = 1L << 24,
     };
 
     enum class VariableID {
