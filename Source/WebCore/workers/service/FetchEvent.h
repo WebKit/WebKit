@@ -59,7 +59,7 @@ public:
 
     ExceptionOr<void> respondWith(Ref<DOMPromise>&&);
 
-    using ResponseCallback = CompletionHandler<void(Expected<Ref<FetchResponse>, ResourceError>&&)>;
+    using ResponseCallback = CompletionHandler<void(Expected<Ref<FetchResponse>, std::optional<ResourceError>>&&)>;
     WEBCORE_EXPORT void onResponse(ResponseCallback&&);
 
     FetchRequest& request() { return m_request.get(); }
@@ -75,7 +75,7 @@ private:
     WEBCORE_EXPORT FetchEvent(const AtomString&, Init&&, IsTrusted);
 
     void promiseIsSettled();
-    void processResponse(Expected<Ref<FetchResponse>, ResourceError>&&);
+    void processResponse(Expected<Ref<FetchResponse>, std::optional<ResourceError>>&&);
     void respondWithError(ResourceError&&);
 
     Ref<FetchRequest> m_request;

@@ -65,10 +65,15 @@ static inline std::optional<ResourceError> validateResponse(const ResourceRespon
     return { };
 }
 
-static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, ResourceError>&& result, FetchOptions::Mode mode, FetchOptions::Redirect redirect, const URL& requestURL, CertificateInfo&& certificateInfo)
+static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, std::optional<ResourceError>>&& result, FetchOptions::Mode mode, FetchOptions::Redirect redirect, const URL& requestURL, CertificateInfo&& certificateInfo)
 {
     if (!result.has_value()) {
-        client->didFail(result.error());
+        auto& error = result.error();
+        if (!error) {
+            client->didNotHandle();
+            return;
+        }
+        client->didFail(*error);
         return;
     }
     auto response = WTFMove(result.value());

@@ -1,3 +1,35 @@
+2021-05-31  Youenn Fablet  <youenn@apple.com>
+
+        Go to network in case fetch event is not yet responded when being destroyed instead of failing the load
+        https://bugs.webkit.org/show_bug.cgi?id=226374
+        <rdar://78298472>
+
+        Reviewed by Alex Christensen.
+
+        In case worker is terminated, instead of failing fetch events that are pending a response, we should go to the network.
+        This mirrors what is already done in ServiceWorkerFetchTask.
+
+        This can for instance happen in case a lot of fetches are done in parallel on the same service worker.
+        The service worker will do the fetch itself but given there are lots of fetches, some fetch might not start until other loads are complete.
+        This may trigger the fetch timeout which might then trigger terminating the worker.
+        We should probably revisit our fetch timeout policy now that we have added worker spin detection.
+
+        Test: http/wpt/service-workers/fetch-worker-terminate.https.html
+
+        * testing/ServiceWorkerInternals.cpp:
+        (WebCore::ServiceWorkerInternals::terminate):
+        (WebCore::ServiceWorkerInternals::waitForFetchEventToFinish):
+        * testing/ServiceWorkerInternals.h:
+        * testing/ServiceWorkerInternals.idl:
+        * workers/service/FetchEvent.cpp:
+        (WebCore::FetchEvent::~FetchEvent):
+        Update logging to only log the case where respondWith is called but fetch event is destroyed before processing the response.
+        Otherwise, we would log the case of respondWith being never called, which is happening often and leads to go to the network.
+        (WebCore::FetchEvent::processResponse):
+        * workers/service/FetchEvent.h:
+        * workers/service/context/ServiceWorkerFetch.cpp:
+        (WebCore::ServiceWorkerFetch::processResponse):
+
 2021-05-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r258118): SVG paths that contain a single move command incorrect client bounding rects

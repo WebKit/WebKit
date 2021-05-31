@@ -30,6 +30,8 @@
     LegacyNoInterfaceObject,
 ] interface ServiceWorkerInternals {
     undefined setOnline(boolean isOnline);
+    undefined terminate();
+
     Promise<FetchResponse> waitForFetchEventToFinish(FetchEvent event);
     [CallWith=ScriptExecutionContext] FetchEvent createBeingDispatchedFetchEvent();
     [CallWith=ScriptExecutionContext] FetchResponse createOpaqueWithBlobBodyResponse();
