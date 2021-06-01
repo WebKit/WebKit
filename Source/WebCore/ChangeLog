@@ -1,5 +1,43 @@
 2021-06-01  Chris Dumez  <cdumez@apple.com>
 
+        Fix thread safety issues in WaveShaperProcessor
+        https://bugs.webkit.org/show_bug.cgi?id=226478
+
+        Reviewed by Youenn Fablet.
+
+        Adopt thread safety analysis annotations in WaveShaperProcessor and fix bugs
+        found by clang. In particular, the following issues were fixed:
+        - WaveShaperDSPKernel::latencyTime() was failing to grab the lock before accessing
+          the WaveShaperProcessor's oversample on the rendering thread, even though
+          oversample gets modified on the main thread.
+        - WaveShaperNode::propagatesSilence() was failing to grab the lock before accessing
+          the WaveShaperProcessor's curve on the rendering thread, even though the curve
+          gets modified on the main thread.
+
+        * Modules/webaudio/AudioBasicProcessorNode.h:
+        (WebCore::AudioBasicProcessorNode::processor const):
+        * Modules/webaudio/WaveShaperDSPKernel.cpp:
+        (WebCore::WaveShaperDSPKernel::process):
+        (WebCore::WaveShaperDSPKernel::processCurve):
+        (WebCore::WaveShaperDSPKernel::latencyTime const):
+        * Modules/webaudio/WaveShaperDSPKernel.h:
+        * Modules/webaudio/WaveShaperNode.cpp:
+        (WebCore::WaveShaperNode::create):
+        (WebCore::WaveShaperNode::setCurveForBindings):
+        (WebCore::WaveShaperNode::curveForBindings):
+        (WebCore::WaveShaperNode::setOversampleForBindings):
+        (WebCore::WaveShaperNode::oversampleForBindings const):
+        (WebCore::WaveShaperNode::propagatesSilence const):
+        * Modules/webaudio/WaveShaperNode.h:
+        * Modules/webaudio/WaveShaperNode.idl:
+        * Modules/webaudio/WaveShaperProcessor.cpp:
+        (WebCore::WaveShaperProcessor::setCurveForBindings):
+        (WebCore::WaveShaperProcessor::setOversampleForBindings):
+        (WebCore::WaveShaperProcessor::process):
+        * Modules/webaudio/WaveShaperProcessor.h:
+
+2021-06-01  Chris Dumez  <cdumez@apple.com>
+
         Fix thread safety issues in MediaElementAudioSourceNode
         https://bugs.webkit.org/show_bug.cgi?id=226475
 

@@ -58,6 +58,8 @@ protected:
     bool requiresTailProcessing() const override;
 
     AudioProcessor* processor() { return m_processor.get(); }
+    const AudioProcessor* processor() const { return m_processor.get(); }
+
     std::unique_ptr<AudioProcessor> m_processor;
 };
 

@@ -40,10 +40,10 @@ public:
     explicit WaveShaperDSPKernel(WaveShaperProcessor*);
 
     // AudioDSPKernel
-    void process(const float* source, float* dest, size_t framesToProcess) override;
-    void reset() override;
-    double tailTime() const override { return 0; }
-    double latencyTime() const override;
+    void process(const float* source, float* dest, size_t framesToProcess) final;
+    void reset() final;
+    double tailTime() const final { return 0; }
+    double latencyTime() const final;
 
     // Oversampling requires more resources, so let's only allocate them if needed.
     void lazyInitializeOversampling();
@@ -59,6 +59,7 @@ private:
     bool requiresTailProcessing() const final;
 
     WaveShaperProcessor* waveShaperProcessor() { return static_cast<WaveShaperProcessor*>(processor()); }
+    const WaveShaperProcessor* waveShaperProcessor() const { return static_cast<const WaveShaperProcessor*>(processor()); }
 
     // Oversampling.
     std::unique_ptr<AudioFloatArray> m_tempBuffer;

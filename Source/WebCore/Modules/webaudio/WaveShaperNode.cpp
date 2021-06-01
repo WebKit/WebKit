@@ -53,12 +53,12 @@ ExceptionOr<Ref<WaveShaperNode>> WaveShaperNode::create(BaseAudioContext& contex
         return result.releaseException();
 
     if (curve) {
-        result = node->setCurve(WTFMove(curve));
+        result = node->setCurveForBindings(WTFMove(curve));
         if (result.hasException())
             return result.releaseException();
     }
 
-    node->setOversample(options.oversample);
+    node->setOversampleForBindings(options.oversample);
 
     return node;
 }
@@ -71,7 +71,7 @@ WaveShaperNode::WaveShaperNode(BaseAudioContext& context)
     initialize();
 }
 
-ExceptionOr<void> WaveShaperNode::setCurve(RefPtr<Float32Array>&& curve)
+ExceptionOr<void> WaveShaperNode::setCurveForBindings(RefPtr<Float32Array>&& curve)
 {
     ASSERT(isMainThread()); 
     DEBUG_LOG(LOGIDENTIFIER);
@@ -85,13 +85,14 @@ ExceptionOr<void> WaveShaperNode::setCurve(RefPtr<Float32Array>&& curve)
         curve = WTFMove(clonedCurve);
     }
 
-    waveShaperProcessor()->setCurve(curve.get());
+    waveShaperProcessor()->setCurveForBindings(curve.get());
     return { };
 }
 
-Float32Array* WaveShaperNode::curve()
+Float32Array* WaveShaperNode::curveForBindings()
 {
-    return waveShaperProcessor()->curve();
+    ASSERT(isMainThread());
+    return waveShaperProcessor()->curveForBindings();
 }
 
 static inline WaveShaperProcessor::OverSampleType processorType(OverSampleType type)
@@ -108,19 +109,20 @@ static inline WaveShaperProcessor::OverSampleType processorType(OverSampleType t
     return WaveShaperProcessor::OverSampleNone;
 }
 
-void WaveShaperNode::setOversample(OverSampleType type)
+void WaveShaperNode::setOversampleForBindings(OverSampleType type)
 {
     ASSERT(isMainThread());
     INFO_LOG(LOGIDENTIFIER, type);
 
     // Synchronize with any graph changes or changes to channel configuration.
     Locker contextLocker { context().graphLock() };
-    waveShaperProcessor()->setOversample(processorType(type));
+    waveShaperProcessor()->setOversampleForBindings(processorType(type));
 }
 
-auto WaveShaperNode::oversample() const -> OverSampleType
+auto WaveShaperNode::oversampleForBindings() const -> OverSampleType
 {
-    switch (const_cast<WaveShaperNode*>(this)->waveShaperProcessor()->oversample()) {
+    ASSERT(isMainThread());
+    switch (waveShaperProcessor()->oversampleForBindings()) {
     case WaveShaperProcessor::OverSampleNone:
         return OverSampleType::None;
     case WaveShaperProcessor::OverSample2x:
@@ -134,7 +136,11 @@ auto WaveShaperNode::oversample() const -> OverSampleType
 
 bool WaveShaperNode::propagatesSilence() const
 {
-    auto curve = const_cast<WaveShaperNode*>(this)->curve();
+    if (!waveShaperProcessor()->processLock().tryLock())
+        return false;
+
+    Locker locker { AdoptLock, waveShaperProcessor()->processLock() };
+    auto curve = waveShaperProcessor()->curve();
     return !curve || !curve->length();
 }
 
