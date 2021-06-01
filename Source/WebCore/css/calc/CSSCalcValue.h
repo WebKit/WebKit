@@ -39,6 +39,7 @@
 namespace WebCore {
 
 class CSSCalcExpressionNode;
+class CSSCalcSymbolTable;
 class CSSParserTokenRange;
 class CSSToLengthConversionData;
 class RenderStyle;
@@ -49,6 +50,7 @@ enum class ValueRange : uint8_t;
 
 class CSSCalcValue final : public CSSValue {
 public:
+    static RefPtr<CSSCalcValue> create(CSSValueID function, const CSSParserTokenRange&, CalculationCategory destinationCategory, ValueRange, const CSSCalcSymbolTable&);
     static RefPtr<CSSCalcValue> create(CSSValueID function, const CSSParserTokenRange&, CalculationCategory destinationCategory, ValueRange);
     static RefPtr<CSSCalcValue> create(const CalculationValue&, const RenderStyle&);
     ~CSSCalcValue();

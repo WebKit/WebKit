@@ -26,38 +26,27 @@
 #pragma once
 
 #include "CSSValueKeywords.h"
-#include "CalcOperator.h"
-#include "CalculationCategory.h"
+#include <wtf/HashMap.h>
+#include <wtf/Optional.h>
 
 namespace WebCore {
 
-class CSSCalcExpressionNode;
-class CSSCalcSymbolTable;
-class CSSParserToken;
-class CSSParserTokenRange;
+enum class CSSUnitType : uint8_t;
 
-class CSSCalcExpressionNodeParser {
+class CSSCalcSymbolTable {
 public:
-    explicit CSSCalcExpressionNodeParser(CalculationCategory destinationCategory, const CSSCalcSymbolTable& symbolTable)
-        : m_destinationCategory(destinationCategory)
-        , m_symbolTable(symbolTable)
-    {
-    }
+    struct Value {
+        CSSUnitType type;
+        double value;
+    };
 
-    RefPtr<CSSCalcExpressionNode> parseCalc(CSSParserTokenRange, CSSValueID function);
-    
+    CSSCalcSymbolTable() = default;
+    CSSCalcSymbolTable(std::initializer_list<std::tuple<CSSValueID, CSSUnitType, double>>);
+
+    std::optional<Value> get(CSSValueID) const;
+
 private:
-    char operatorValue(const CSSParserToken&);
-
-    bool parseValue(CSSParserTokenRange&, RefPtr<CSSCalcExpressionNode>&);
-    bool parseValueTerm(CSSParserTokenRange&, int depth, RefPtr<CSSCalcExpressionNode>&);
-    bool parseCalcFunction(CSSParserTokenRange&, CSSValueID, int depth, RefPtr<CSSCalcExpressionNode>&);
-    bool parseCalcSum(CSSParserTokenRange&, int depth, RefPtr<CSSCalcExpressionNode>&);
-    bool parseCalcProduct(CSSParserTokenRange&, int depth, RefPtr<CSSCalcExpressionNode>&);
-    bool parseCalcValue(CSSParserTokenRange&, int depth, RefPtr<CSSCalcExpressionNode>&);
-
-    CalculationCategory m_destinationCategory;
-    const CSSCalcSymbolTable& m_symbolTable;
+    HashMap<CSSValueID, std::pair<CSSUnitType, double>> m_table;
 };
 
-}
+};

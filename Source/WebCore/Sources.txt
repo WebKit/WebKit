@@ -831,6 +831,7 @@ css/calc/CSSCalcInvertNode.cpp
 css/calc/CSSCalcNegateNode.cpp
 css/calc/CSSCalcOperationNode.cpp
 css/calc/CSSCalcPrimitiveValueNode.cpp
+css/calc/CSSCalcSymbolTable.cpp
 css/calc/CSSCalcValue.cpp
 css/parser/CSSAtRuleID.cpp
 css/parser/CSSDeferredParser.cpp

@@ -1,3 +1,85 @@
+2021-06-01  Sam Weinig  <weinig@apple.com>
+
+        Support calc() on components inside relative color syntax colors
+        https://bugs.webkit.org/show_bug.cgi?id=226272
+
+        Reviewed by Darin Adler.
+
+        Added new and updated test cases to fast/css/parsing-relative-color-syntax.html.
+
+        Updates support for the CSS Color 5 "Relative Color Syntax" to support
+        both calc() on components and component permutations within the syntax.
+
+        This allows for things like:
+        
+            background: lch(from var(--primary-color) 60% calc(c * 0.8) h);
+
+            or
+
+            background: lch(from rebeccapurple g b r);
+
+        To make this work, the calc() infrastructure now supports passing a CSSCalcSymbolTable
+        which allows the logic in the parser to lookup unknown identifiers when parsing a value.
+        The relative color syntax parsers can then build an appropriate CSSCalcSymbolTable filled
+        with the components of the origin color.
+
+        Since these calc() values are not serialized, this can all happen in the parser, but if
+        we to be able serialize them in the future, CSSCalcPrimitiveValueNode could be updated
+        to store the symbol name in addition to storing the value and type (or we could we could
+        add a new node for it).
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/calc/CSSCalcSymbolTable.cpp: Added.
+        * css/calc/CSSCalcSymbolTable.h: Added.
+        Add CSSCalcSymbolTable which contains a mapping from CSSValueID to CSSUnitType/double pairs.
+
+        * css/calc/CSSCalcExpressionNodeParser.cpp:
+        (WebCore::CSSCalcExpressionNodeParser::parseValue):
+        When trying to construct a value node, if the token is a identifier, use the new
+        symbol table to look up a type/value to use instead. Use a switch to make things
+        a bit more clear that differentiation is being done based on token type.
+
+        * css/calc/CSSCalcExpressionNodeParser.h:
+        Add reference to a CSSCalcSymbolTable to the parser. The parser should only ever be used
+        on the stack, so this works well and allows us to avoid copying the table.
+
+        * css/calc/CSSCalcValue.cpp:
+        (WebCore::CSSCalcValue::create):
+        * css/calc/CSSCalcValue.h:
+        Pass the CSSCalcSymbolTable to the parser if one is provided. An overload was used
+        to avoid #including CSSCalcSymbolTable.h in the header just to add a default value.
+
+        * css/makevalues.pl:
+        Give a concrete base of uint16_t to allow it to be forward declared and add DefaultHash
+        and HashTraits to allow it to be used with HashTable. These match the definition of
+        CSSPropertyID.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::CalcParser::CalcParser):
+        (WebCore::CSSPropertyParserHelpers::consumeNumberRaw):
+        (WebCore::CSSPropertyParserHelpers::consumePercentWorkerSafe):
+        (WebCore::CSSPropertyParserHelpers::consumeAngleRaw):
+        (WebCore::CSSPropertyParserHelpers::consumeAngleWorkerSafe):
+        (WebCore::CSSPropertyParserHelpers::consumeAngleOrPercent):
+        (WebCore::CSSPropertyParserHelpers::consumeOptionalAlphaOrIdent):
+        (WebCore::CSSPropertyParserHelpers::consumeHueOrIdent):
+        (WebCore::CSSPropertyParserHelpers::consumeNumberOrIdent):
+        (WebCore::CSSPropertyParserHelpers::consumePercentOrIdent):
+        (WebCore::CSSPropertyParserHelpers::consumeNumberOrPercentOrIdentNormalizedForRelativeRGB):
+        (WebCore::CSSPropertyParserHelpers::parseRelativeRGBParameters):
+        (WebCore::CSSPropertyParserHelpers::parseRelativeHSLParameters):
+        (WebCore::CSSPropertyParserHelpers::parseRelativeHWBParameters):
+        (WebCore::CSSPropertyParserHelpers::parseRelativeLabParameters):
+        (WebCore::CSSPropertyParserHelpers::parseRelativeLCHParameters):
+        (WebCore::CSSPropertyParserHelpers::extractChannelValue): Deleted.
+        (WebCore::CSSPropertyParserHelpers::resolveRelativeColorChannel): Deleted.
+        Rework relative color syntax parsing to allow permutation of channel symbols
+        and use of the calc() symbol table support to allow passing in the channels.
+        This makes the relatative color syntax variants much closer to the normal
+        variants (with the exception of passing the symbol table) and a subsequent
+        change will attempt to merge them further.
+
 2021-06-01  Alan Bujtas  <zalan@apple.com>
 
         [LFC][TFC][Quirks] heightValueOfNearestContainingBlockWithFixedHeight should not need to cross formatting context boundary

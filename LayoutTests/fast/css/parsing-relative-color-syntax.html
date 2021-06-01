@@ -1,6 +1,15 @@
 <!DOCTYPE html><!-- webkit-test-runner [ CSSRelativeColorSyntaxEnabled=true ] -->
 <html>
     <script src="../../resources/js-test-pre.js"></script>
+    <style>
+        html { 
+            --bg-color: blue;
+            --color: green;
+            --accent: lightseagreen;
+            --mycolor: orchid;
+            --mygray: lch(from var(--mycolor) l 0 h);
+        }
+    </style>
 </head>
 <body>
 <script>
@@ -95,23 +104,32 @@
     testComputed(`rgb(from rgb(10%, 20%, 30%, 40%) r 25 b / 25%)`, `rgba(26, 25, 77, 0.25)`);
     testComputed(`rgb(from rgb(10%, 20%, 30%, 40%) r g 25 / 25%)`, `rgba(26, 51, 25, 0.25)`);
 
-    // Testing permutation (unclear if this is allowed per-spec, we disallow it).
-    testComputed(`rgb(from rebeccapurple g b r)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`rgb(from rebeccapurple b alpha r / g)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`rgb(from rebeccapurple r r r / r)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`rgb(from rebeccapurple alpha alpha alpha / alpha)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`rgb(from rgb(10%, 20%, 30%, 40%) g b r)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`rgb(from rgb(10%, 20%, 30%, 40%) b alpha r / g)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`rgb(from rgb(10%, 20%, 30%, 40%) r r r / r)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`rgb(from rgb(10%, 20%, 30%, 40%) alpha alpha alpha / alpha)`, `rgba(0, 0, 0, 0)`);
+    // Testing permutation.
+    testComputed(`rgb(from rebeccapurple g b r)`, `rgb(51, 153, 102)`);
+    testComputed(`rgb(from rebeccapurple b alpha r / g)`, `rgba(153, 255, 102, 0.2)`);
+    testComputed(`rgb(from rebeccapurple r r r / r)`, `rgba(102, 102, 102, 0.4)`);
+    testComputed(`rgb(from rebeccapurple alpha alpha alpha / alpha)`, `rgb(255, 255, 255)`);
+    testComputed(`rgb(from rgb(10%, 20%, 30%, 40%) g b r)`, `rgb(51, 77, 26)`);
+    testComputed(`rgb(from rgb(10%, 20%, 30%, 40%) b alpha r / g)`, `rgba(77, 102, 26, 0.2)`);
+    testComputed(`rgb(from rgb(10%, 20%, 30%, 40%) r r r / r)`, `rgba(26, 26, 26, 0.1)`);
+    testComputed(`rgb(from rgb(10%, 20%, 30%, 40%) alpha alpha alpha / alpha)`, `rgba(102, 102, 102, 0.4)`);
 
-    // Testing invalid mixes of number and percentage
-    testComputed(`rgb(from rebeccapurple r 10% 10)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`rgb(from rebeccapurple r 10 10%)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`rgb(from rebeccapurple 0% 10 10)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`rgb(from rgb(10%, 20%, 30%, 40%) r 10% 10)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`rgb(from rgb(10%, 20%, 30%, 40%) r 10 10%)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`rgb(from rgb(10%, 20%, 30%, 40%) 0% 10 10)`, `rgba(0, 0, 0, 0)`);
+    // Testing mixes of number and percentage. (These would not be allowed in the non-relative syntax).
+    testComputed(`rgb(from rebeccapurple r 10% 10)`, `rgb(102, 26, 10)`);
+    testComputed(`rgb(from rebeccapurple r 10 10%)`, `rgb(102, 10, 26)`);
+    testComputed(`rgb(from rebeccapurple 0% 10 10)`, `rgb(0, 10, 10)`);
+    testComputed(`rgb(from rgb(10%, 20%, 30%, 40%) r 10% 10)`, `rgb(26, 26, 10)`);
+    testComputed(`rgb(from rgb(10%, 20%, 30%, 40%) r 10 10%)`, `rgb(26, 10, 26)`);
+    testComputed(`rgb(from rgb(10%, 20%, 30%, 40%) 0% 10 10)`, `rgb(0, 10, 10)`);
+
+    // Testing with calc().
+    testComputed(`rgb(from rebeccapurple calc(r) calc(g) calc(b))`, `rgb(102, 51, 153)`);
+    testComputed(`rgb(from rebeccapurple r calc(g * .5) 10)`, `rgb(102, 26, 10)`);
+    testComputed(`rgb(from rebeccapurple r calc(b * .5) 10)`, `rgb(102, 77, 10)`);
+    testComputed(`rgb(from rebeccapurple r calc(b * .5 + g * .5) 10)`, `rgb(102, 102, 10)`);
+    testComputed(`rgb(from rebeccapurple r calc(b * .5 - g * .5) 10)`, `rgb(102, 51, 10)`);
+    testComputed(`rgb(from rebeccapurple r calc(b * .5 - g * .5) 10)`, `rgb(102, 51, 10)`);
+    testComputed(`rgb(from rgb(10%, 20%, 30%, 40%) calc(r) calc(g) calc(b) / calc(alpha))`, `rgba(26, 51, 77, 0.4)`);
 
     // Testing invalid component names
     testComputed(`rgb(from rebeccapurple red g b)`, `rgba(0, 0, 0, 0)`);
@@ -161,15 +179,29 @@
     testComputed(`hsl(from rgb(10%, 20%, 30%, 40%) h s 25% / alpha)`, `rgba(32, 63, 95, 0.4)`);
     testComputed(`hsl(from rgb(10%, 20%, 30%, 40%) h s l / .25)`, `rgba(26, 51, 77, 0.25)`);
 
-    // Testing permutation (unclear if this is allowed per-spec, we disallow it).
-    testComputed(`hsl(from rebeccapurple h l s)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`hsl(from rebeccapurple h alpha l / s)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`hsl(from rebeccapurple h l l / l)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`hsl(from rebeccapurple h alpha alpha / alpha)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`hsl(from rgb(10%, 20%, 30%, 40%) h l s)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`hsl(from rgb(10%, 20%, 30%, 40%) h alpha l / s)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`hsl(from rgb(10%, 20%, 30%, 40%) h l l / l)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`hsl(from rgb(10%, 20%, 30%, 40%) h alpha alpha / alpha)`, `rgba(0, 0, 0, 0)`);
+    // Testing valid permutation (types match).
+    testComputed(`hsl(from rebeccapurple h l s)`, `rgb(128, 77, 179)`);
+    testComputed(`hsl(from rebeccapurple h alpha l / s)`, `rgba(102, 0, 204, 0.5)`);
+    testComputed(`hsl(from rebeccapurple h l l / l)`, `rgba(102, 61, 143, 0.4)`);
+    testComputed(`hsl(from rebeccapurple h alpha alpha / alpha)`, `rgb(255, 255, 255)`);
+    testComputed(`hsl(from rgb(10%, 20%, 30%, 40%) h l s)`, `rgb(101, 126, 152)`);
+    testComputed(`hsl(from rgb(10%, 20%, 30%, 40%) h alpha l / s)`, `rgba(31, 51, 72, 0.494)`);
+    testComputed(`hsl(from rgb(10%, 20%, 30%, 40%) h l l / l)`, `rgba(41, 51, 62, 0.204)`);
+    testComputed(`hsl(from rgb(10%, 20%, 30%, 40%) h alpha alpha / alpha)`, `rgba(61, 101, 143, 0.4)`);
+
+    // Testing invalid permutation (types don't match).
+    testComputed(`hsl(from rebeccapurple s h l)`, `rgba(0, 0, 0, 0)`);
+    testComputed(`hsl(from rebeccapurple s s s / s)`, `rgba(0, 0, 0, 0)`);
+    testComputed(`hsl(from rebeccapurple h h h / h)`, `rgba(0, 0, 0, 0)`);
+    testComputed(`hsl(from rebeccapurple alpha alpha alpha / alpha)`, `rgba(0, 0, 0, 0)`);
+    testComputed(`hsl(from rgb(10%, 20%, 30%, 40%) s h l)`, `rgba(0, 0, 0, 0)`);
+    testComputed(`hsl(from rgb(10%, 20%, 30%, 40%) s s s / s)`, `rgba(0, 0, 0, 0)`);
+    testComputed(`hsl(from rgb(10%, 20%, 30%, 40%) h h h / h)`, `rgba(0, 0, 0, 0)`);
+    testComputed(`hsl(from rgb(10%, 20%, 30%, 40%) alpha alpha alpha / alpha)`, `rgba(0, 0, 0, 0)`);
+
+    // Testing with calc().
+    testComputed(`hsl(from rebeccapurple calc(h) calc(s) calc(l))`, `rgb(102, 51, 153)`);
+    testComputed(`hsl(from rgb(10%, 20%, 30%, 40%) calc(h) calc(s) calc(l) / calc(alpha))`, `rgba(26, 51, 77, 0.4)`);
 
     // Testing invalid values.
     testComputed(`hsl(from rebeccapurple h 10% 10)`, `rgba(0, 0, 0, 0)`);
@@ -228,15 +260,29 @@
     testComputed(`hwb(from rgb(10%, 20%, 30%, 40%) h w 25% / alpha)`, `rgba(26, 107, 191, 0.4)`);
     testComputed(`hwb(from rgb(10%, 20%, 30%, 40%) h w b / .25)`, `rgba(26, 51, 77, 0.25)`);
 
-    // Testing permutation (unclear if this is allowed per-spec, we disallow it).
-    testComputed(`hwb(from rebeccapurple h b w)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`hwb(from rebeccapurple h alpha w / b)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`hwb(from rebeccapurple h w w / w)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`hwb(from rebeccapurple h alpha alpha / alpha)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`hwb(from rgb(10%, 20%, 30%, 40%) h b w)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`hwb(from rgb(10%, 20%, 30%, 40%) h alpha w / b)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`hwb(from rgb(10%, 20%, 30%, 40%) h w w / w)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`hwb(from rgb(10%, 20%, 30%, 40%) h alpha alpha / alpha)`, `rgba(0, 0, 0, 0)`);
+    // Testing valid permutation (types match).
+    testComputed(`hwb(from rebeccapurple h b w)`, `rgb(153, 102, 204)`);
+    testComputed(`hwb(from rebeccapurple h alpha w / b)`, `rgba(213, 213, 213, 0.4)`);
+    testComputed(`hwb(from rebeccapurple h w w / w)`, `rgba(128, 51, 204, 0.2)`);
+    testComputed(`hwb(from rebeccapurple h alpha alpha / alpha)`, `rgb(128, 128, 128)`);
+    testComputed(`hwb(from rgb(10%, 20%, 30%, 40%) h b w)`, `rgb(178, 203, 229)`);
+    testComputed(`hwb(from rgb(10%, 20%, 30%, 40%) h alpha w / b)`, `rgba(102, 164, 229, 0.698)`);
+    testComputed(`hwb(from rgb(10%, 20%, 30%, 40%) h w w / w)`, `rgba(26, 126, 229, 0.1)`);
+    testComputed(`hwb(from rgb(10%, 20%, 30%, 40%) h alpha alpha / alpha)`, `rgba(102, 127, 153, 0.4)`);
+
+    // Testing invalid permutation (types don't match).
+    testComputed(`hwb(from rebeccapurple w h b)`, `rgba(0, 0, 0, 0)`);
+    testComputed(`hwb(from rebeccapurple b b b / b)`, `rgba(0, 0, 0, 0)`);
+    testComputed(`hwb(from rebeccapurple h h h / h)`, `rgba(0, 0, 0, 0)`);
+    testComputed(`hwb(from rebeccapurple alpha alpha alpha / alpha)`, `rgba(0, 0, 0, 0)`);
+    testComputed(`hwb(from rgb(10%, 20%, 30%, 40%) w b h)`, `rgba(0, 0, 0, 0)`);
+    testComputed(`hwb(from rgb(10%, 20%, 30%, 40%) b b b / b)`, `rgba(0, 0, 0, 0)`);
+    testComputed(`hwb(from rgb(10%, 20%, 30%, 40%) h h h / h)`, `rgba(0, 0, 0, 0)`);
+    testComputed(`hwb(from rgb(10%, 20%, 30%, 40%) alpha alpha alpha / alpha)`, `rgba(0, 0, 0, 0)`);
+
+    // Testing with calc().
+    testComputed(`hwb(from rebeccapurple calc(h) calc(w) calc(b))`, `rgb(102, 51, 153)`);
+    testComputed(`hwb(from rgb(10%, 20%, 30%, 40%) calc(h) calc(w) calc(b) / calc(alpha))`, `rgba(26, 51, 77, 0.4)`);
 
     // Testing invalid values.
     testComputed(`hwb(from rebeccapurple h 10% 10)`, `rgba(0, 0, 0, 0)`);
@@ -288,15 +334,21 @@
     testComputed(`lab(from lab(25% 20 50 / 40%) l a 35 / alpha)`, `lab(25% 20 35 / 0.4)`);
     testComputed(`lab(from lab(25% 20 50 / 40%) l a b / .35)`, `lab(25% 20 50 / 0.35)`);
 
-    // Testing permutation (unclear if this is allowed per-spec, we disallow it).
-    testComputed(`lab(from lab(25% 20 50) l b a)`, `rgba(0, 0, 0, 0)`);
+    // Testing valid permutation (types match).
+    testComputed(`lab(from lab(25% 20 50) l b a)`, `lab(25% 50 20)`);
+    testComputed(`lab(from lab(25% 20 50) l a a / a)`, `lab(25% 20 20)`);
+    testComputed(`lab(from lab(25% 20 50 / 40%) l b a)`, `lab(25% 50 20)`);
+    testComputed(`lab(from lab(25% 20 50 / 40%) l a a / a)`, `lab(25% 20 20)`);
+
+    // Testing invalid permutation (types don't match).
     testComputed(`lab(from lab(25% 20 50) l alpha a / b)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`lab(from lab(25% 20 50) l a a / a)`, `rgba(0, 0, 0, 0)`);
     testComputed(`lab(from lab(25% 20 50) l alpha alpha / alpha)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`lab(from lab(25% 20 50 / 40%) l b a)`, `rgba(0, 0, 0, 0)`);
     testComputed(`lab(from lab(25% 20 50 / 40%) l alpha a / b)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`lab(from lab(25% 20 50 / 40%) l a a / a)`, `rgba(0, 0, 0, 0)`);
     testComputed(`lab(from lab(25% 20 50 / 40%) l alpha alpha / alpha)`, `rgba(0, 0, 0, 0)`);
+
+    // Testing with calc().
+    testComputed(`lab(from lab(25% 20 50) calc(l) calc(a) calc(b))`, `lab(25% 20 50)`);
+    testComputed(`lab(from lab(25% 20 50 / 40%) calc(l) calc(a) calc(b) / calc(alpha))`, `lab(25% 20 50 / 0.4)`);
 
     // Testing invalid values.
     testComputed(`lab(from lab(25% 20 50) l 10% 10)`, `rgba(0, 0, 0, 0)`);
@@ -355,11 +407,28 @@
     testComputed(`lch(from lch(70% 45 30 / 40%) l c 25deg / alpha)`, `lch(70% 45 25 / 0.4)`);
     testComputed(`lch(from lch(70% 45 30 / 40%) l c h / .25)`, `lch(70% 45 30 / 0.25)`);
 
-    // Testing permutation (unclear if this is allowed per-spec, we disallow it).
-    testComputed(`lch(from lch(70% 45 30) alpha c h / l)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`lch(from lch(70% 45 30) alpha c h / alpha)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`lch(from lch(70% 45 30 / 40%) alpha c h / l)`, `rgba(0, 0, 0, 0)`);
-    testComputed(`lch(from lch(70% 45 30 / 40%) alpha c h / alpha)`, `rgba(0, 0, 0, 0)`);
+    // Testing valid permutation (types match).
+    // NOTE: 'c' is a vaild hue, as hue is <angle>|<number>.
+    testComputed(`lch(from lch(70% 45 30) alpha c h / l)`, `lch(100% 45 30 / 0.7)`);
+    testComputed(`lch(from lch(70% 45 30) l c c / alpha)`, `lch(70% 45 45)`);
+    testComputed(`lch(from lch(70% 45 30) alpha c h / alpha)`, `lch(100% 45 30)`);
+    testComputed(`lch(from lch(70% 45 30) alpha c c / alpha)`, `lch(100% 45 45)`);
+    testComputed(`lch(from lch(70% 45 30 / 40%) alpha c h / l)`, `lch(40% 45 30 / 0.7)`);
+    testComputed(`lch(from lch(70% 45 30 / 40%) l c c / alpha)`, `lch(70% 45 45 / 0.4)`);
+    testComputed(`lch(from lch(70% 45 30 / 40%) alpha c h / alpha)`, `lch(40% 45 30 / 0.4)`);
+    testComputed(`lch(from lch(70% 45 30 / 40%) alpha c c / alpha)`, `lch(40% 45 45 / 0.4)`);
+
+    // Testing invalid permutation (types don't match).
+    testComputed(`lch(from lch(70% 45 30) h l c / alpha)`, `rgba(0, 0, 0, 0)`);
+    testComputed(`lch(from lch(70% 45 30) c c c / c)`, `rgba(0, 0, 0, 0)`);
+    testComputed(`lch(from lch(70% 45 30) alpha alpha alpha / alpha)`, `rgba(0, 0, 0, 0)`);
+    testComputed(`lch(from lch(70% 45 30 / 40%) h l c / alpha)`, `rgba(0, 0, 0, 0)`);
+    testComputed(`lch(from lch(70% 45 30 / 40%) c c c / c)`, `rgba(0, 0, 0, 0)`);
+    testComputed(`lch(from lch(70% 45 30 / 40%) alpha alpha alpha / alpha)`, `rgba(0, 0, 0, 0)`);
+
+    // Testing with calc().
+    testComputed(`lch(from lch(70% 45 30) calc(l) calc(c) calc(h))`, `lch(70% 45 30)`);
+    testComputed(`lch(from lch(70% 45 30 / 40%) calc(l) calc(c) calc(h) / calc(alpha))`, `lch(70% 45 30 / 0.4)`);
 
     // Testing invalid values.
     testComputed(`lch(from lch(70% 45 30) l 10% h)`, `rgba(0, 0, 0, 0)`);
@@ -373,6 +442,44 @@
     testComputed(`lch(from lch(70% 45 30) lightness c h)`, `rgba(0, 0, 0, 0)`);
     testComputed(`lch(from lch(70% 45 30) x c h)`, `rgba(0, 0, 0, 0)`);
     testComputed(`lch(from lch(70% 45 30) l g b)`, `rgba(0, 0, 0, 0)`);
+
+
+    // Spec examples:
+    // Example 11.
+    testComputed(`rgb(from var(--bg-color) r g b / 80%)`, `rgba(0, 0, 255, 0.8)`);
+    
+    // Example 12.
+    testComputed(`lch(from var(--color) calc(l / 2) c h)`, `lch(23.138971% 67.989716 134.39125)`);
+    
+    // Example 13.
+    testComputed(`rgb(from var(--color) calc(r * .3 + g * .59 + b * .11) calc(r * .3 + g * .59 + b * .11) calc(r * .3 + g * .59 + b * .11))`, `rgb(76, 76, 76)`)
+    testComputed(`lch(from var(--color) l 0 h)`, `lch(46.277943% 0 134.39125)`)
+
+    // Example 14.
+    testComputed(`rgb(from indianred 255 g b)`, `rgb(255, 92, 92)`);
+
+    // Example 15.
+    testComputed(`hsl(from var(--accent) calc(h + 180deg) s l)`, `rgb(178, 32, 40)`);
+
+    // Example 16.
+    testComputed(`lab(from var(--mycolor) l a b / 100%)`, `lab(62.751923% 52.45802 -34.117283)`);
+    testComputed(`lab(from var(--mycolor) l a b / calc(alpha * 0.8))`, `lab(62.751923% 52.45802 -34.117283 / 0.8)`);
+    testComputed(`lab(from var(--mycolor) l a b / calc(alpha - 20%))`, `lab(62.751923% 52.45802 -34.117283 / 0.8)`);
+    
+    // Example 17.
+    testComputed(`lab(from var(--mycolor) l 0 0)`, `lab(62.751923% 0 0)`);
+
+    // Example 18.
+    testComputed(`lch(from peru calc(l * 0.8) c h)`, `lch(49.80138% 54.003296 63.680317)`);
+
+    // Example 19.
+    testComputed(`LCH(from var(--accent) l c calc(h + 180deg))`, `lch(65.49473% 39.446903 10.114471)`);
+
+    // Example 20.
+    testComputed(`lch(from var(--mycolor) l 0 h)`, `lch(62.751923% 0 326.96112)`);
+    testComputed(`var(--mygray)`, `lch(62.751923% 0 326.96112)`);
+    testComputed(`lch(from var(--mygray) l 30 h)`, `lch(62.751923% 30 326.96112)`);
+    
 </script>
     
 <script src="../../resources/js-test-post.js"></script>

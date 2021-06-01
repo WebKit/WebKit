@@ -23,41 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "CSSCalcSymbolTable.h"
 
-#include "CSSValueKeywords.h"
-#include "CalcOperator.h"
-#include "CalculationCategory.h"
+#include "CSSUnits.h"
 
 namespace WebCore {
 
-class CSSCalcExpressionNode;
-class CSSCalcSymbolTable;
-class CSSParserToken;
-class CSSParserTokenRange;
+CSSCalcSymbolTable::CSSCalcSymbolTable(std::initializer_list<std::tuple<CSSValueID, CSSUnitType, double>> initializer)
+{
+    for (auto& [identifier, type, value] : initializer)
+        m_table.add(identifier, std::make_pair(type, value));
+}
 
-class CSSCalcExpressionNodeParser {
-public:
-    explicit CSSCalcExpressionNodeParser(CalculationCategory destinationCategory, const CSSCalcSymbolTable& symbolTable)
-        : m_destinationCategory(destinationCategory)
-        , m_symbolTable(symbolTable)
-    {
-    }
+std::optional<CSSCalcSymbolTable::Value> CSSCalcSymbolTable::get(CSSValueID valueID) const
+{
+    auto it = m_table.find(valueID);
+    if (it == m_table.end())
+        return std::nullopt;
 
-    RefPtr<CSSCalcExpressionNode> parseCalc(CSSParserTokenRange, CSSValueID function);
-    
-private:
-    char operatorValue(const CSSParserToken&);
-
-    bool parseValue(CSSParserTokenRange&, RefPtr<CSSCalcExpressionNode>&);
-    bool parseValueTerm(CSSParserTokenRange&, int depth, RefPtr<CSSCalcExpressionNode>&);
-    bool parseCalcFunction(CSSParserTokenRange&, CSSValueID, int depth, RefPtr<CSSCalcExpressionNode>&);
-    bool parseCalcSum(CSSParserTokenRange&, int depth, RefPtr<CSSCalcExpressionNode>&);
-    bool parseCalcProduct(CSSParserTokenRange&, int depth, RefPtr<CSSCalcExpressionNode>&);
-    bool parseCalcValue(CSSParserTokenRange&, int depth, RefPtr<CSSCalcExpressionNode>&);
-
-    CalculationCategory m_destinationCategory;
-    const CSSCalcSymbolTable& m_symbolTable;
-};
+    return {{ it->value.first, it->value.second }};
+}
 
 }

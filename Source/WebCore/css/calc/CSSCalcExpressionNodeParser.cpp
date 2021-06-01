@@ -31,6 +31,7 @@
 #include "CSSCalcNegateNode.h"
 #include "CSSCalcOperationNode.h"
 #include "CSSCalcPrimitiveValueNode.h"
+#include "CSSCalcSymbolTable.h"
 #include "CSSCalcValue.h"
 #include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
@@ -180,19 +181,35 @@ bool CSSCalcExpressionNodeParser::parseCalcFunction(CSSParserTokenRange& tokens,
 
 bool CSSCalcExpressionNodeParser::parseValue(CSSParserTokenRange& tokens, RefPtr<CSSCalcExpressionNode>& result)
 {
-    // FIXME: Add code here to parse CSSValidID for named constants.
+    auto makeCSSCalcPrimitiveValueNode = [&] (CSSUnitType type, double value) -> bool {
+        if (calcUnitCategory(type) == CalculationCategory::Other)
+            return false;
+        
+        result = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(value, type));
+        return true;
+    };
 
-    CSSParserToken token = tokens.consumeIncludingWhitespace();
-    if (!(token.type() == NumberToken || token.type() == PercentageToken || token.type() == DimensionToken))
+    auto token = tokens.consumeIncludingWhitespace();
+
+    switch (token.type()) {
+    case IdentToken: {
+        auto value = m_symbolTable.get(token.id());
+        if (!value)
+            return false;
+        return makeCSSCalcPrimitiveValueNode(value->type, value->value);
+    }
+
+    case NumberToken:
+    case PercentageToken:
+    case DimensionToken:
+        return makeCSSCalcPrimitiveValueNode(token.unitType(), token.numericValue());
+
+    default:
         return false;
-    
-    auto type = token.unitType();
-    if (calcUnitCategory(type) == CalculationCategory::Other)
-        return false;
-    
-    result = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(token.numericValue(), type));
-    
-    return true;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 bool CSSCalcExpressionNodeParser::parseCalcValue(CSSParserTokenRange& tokens, int depth, RefPtr<CSSCalcExpressionNode>& result)
