@@ -35,72 +35,70 @@
 #include <vector>
 #include <windows.h>
 
-using namespace std;
-
 static void enableTerminationOnHeapCorruption()
 {
     HEAP_INFORMATION_CLASS heapEnableTerminationOnCorruption = static_cast<HEAP_INFORMATION_CLASS>(1);
     HeapSetInformation(0, heapEnableTerminationOnCorruption, 0, 0);
 }
 
-static wstring copyEnvironmentVariable(const wstring& variable)
+static std::wstring copyEnvironmentVariable(const std::wstring& variable)
 {
     DWORD length = ::GetEnvironmentVariableW(variable.c_str(), 0, 0);
     if (!length)
-        return wstring();
-    vector<wchar_t> buffer(length);
+        return std::wstring();
+    std::vector<wchar_t> buffer(length);
     if (!GetEnvironmentVariable(variable.c_str(), &buffer[0], buffer.size()) || !buffer[0])
-        return wstring();
+        return std::wstring();
     return &buffer[0];
 }
 
 #if !defined(WIN_CAIRO)
-static wstring getStringValue(HKEY key, const wstring& valueName)
+static std::wstring getStringValue(HKEY key, const std::wstring& valueName)
 {
     DWORD type = 0;
     DWORD bufferSize = 0;
     if (::RegQueryValueExW(key, valueName.c_str(), 0, &type, 0, &bufferSize) != ERROR_SUCCESS || type != REG_SZ)
-        return wstring();
+        return std::wstring();
 
-    vector<wchar_t> buffer(bufferSize / sizeof(wchar_t));
+    std::vector<wchar_t> buffer(bufferSize / sizeof(wchar_t));
     if (::RegQueryValueExW(key, valueName.c_str(), 0, &type, reinterpret_cast<LPBYTE>(&buffer[0]), &bufferSize) != ERROR_SUCCESS)
-        return wstring();
+        return std::wstring();
 
     return &buffer[0];
 }
 
-static wstring applePathFromRegistry(const wstring& key, const wstring& value)
+static std::wstring applePathFromRegistry(const std::wstring& key, const std::wstring& value)
 {
     HKEY applePathKey = 0;
     if (::RegOpenKeyExW(HKEY_LOCAL_MACHINE, key.c_str(), 0, KEY_READ, &applePathKey) != ERROR_SUCCESS)
-        return wstring();
-    wstring path = getStringValue(applePathKey, value);
+        return std::wstring();
+    std::wstring path = getStringValue(applePathKey, value);
     ::RegCloseKey(applePathKey);
     return path;
 }
 
-static wstring appleApplicationSupportDirectory()
+static std::wstring appleApplicationSupportDirectory()
 {
     return applePathFromRegistry(L"SOFTWARE\\Apple Inc.\\Apple Application Support", L"InstallDir");
 }
 
-static wstring iTunesDirectory()
+static std::wstring iTunesDirectory()
 {
     return applePathFromRegistry(L"SOFTWARE\\Apple Computer, Inc.\\iTunes\\", L"InstallDir");
 }
 
-static bool prependPath(const wstring& directoryToPrepend)
+static bool prependPath(const std::wstring& directoryToPrepend)
 {
-    wstring pathVariable = L"PATH";
-    wstring oldPath = copyEnvironmentVariable(pathVariable);
-    wstring newPath = directoryToPrepend + L';' + oldPath;
+    std::wstring pathVariable = L"PATH";
+    std::wstring oldPath = copyEnvironmentVariable(pathVariable);
+    std::wstring newPath = directoryToPrepend + L';' + oldPath;
     return ::SetEnvironmentVariableW(pathVariable.c_str(), newPath.c_str());
 }
 #endif
 
-static int fatalError(const wstring& programName, const wstring& message)
+static int fatalError(const std::wstring& programName, const std::wstring& message)
 {
-    wstring caption = programName + L" can't open.";
+    std::wstring caption = programName + L" can't open.";
 #if USE_CONSOLE_ENTRY_POINT
     fwprintf(stderr, L"%s\n%s\n", caption.c_str(), message.c_str());
 #else
@@ -109,18 +107,18 @@ static int fatalError(const wstring& programName, const wstring& message)
     return 1;
 }
 
-static bool directoryExists(const wstring& path)
+static bool directoryExists(const std::wstring& path)
 {
     DWORD attrib = ::GetFileAttributes(path.c_str());
 
     return ((attrib != INVALID_FILE_ATTRIBUTES) && (attrib & FILE_ATTRIBUTE_DIRECTORY));
 }
 
-static bool modifyPath(const wstring& programName)
+static bool modifyPath(const std::wstring& programName)
 {
 #ifdef WIN_CAIRO
 
-    wstring pathWinCairo = copyEnvironmentVariable(L"WEBKIT_LIBRARIES");
+    std::wstring pathWinCairo = copyEnvironmentVariable(L"WEBKIT_LIBRARIES");
     if (!directoryExists(pathWinCairo))
         return true;
 #if defined(_M_X64)
@@ -135,7 +133,7 @@ static bool modifyPath(const wstring& programName)
     return true;
 
 #else
-    auto modifyPathWith = [&] (const wstring& pathPrefix) {
+    auto modifyPathWith = [&] (const std::wstring& pathPrefix) {
         if (!prependPath(pathPrefix)) {
             fatalError(programName, L"Failed to modify PATH environment variable.");
             return false;
@@ -143,11 +141,11 @@ static bool modifyPath(const wstring& programName)
         return true;
     };
 
-    const wstring& applicationSupportPathPrefix = appleApplicationSupportDirectory();
+    const std::wstring& applicationSupportPathPrefix = appleApplicationSupportDirectory();
     if (directoryExists(applicationSupportPathPrefix))
         return modifyPathWith(applicationSupportPathPrefix);
 
-    const wstring& iTunesPathPrefix = iTunesDirectory();
+    const std::wstring& iTunesPathPrefix = iTunesDirectory();
     if (directoryExists(iTunesPathPrefix))
         return modifyPathWith(iTunesPathPrefix);
 
@@ -156,7 +154,7 @@ static bool modifyPath(const wstring& programName)
 #endif
 }
 
-static wstring getLastErrorString(HRESULT hr)
+static std::wstring getLastErrorString(HRESULT hr)
 {
     static const DWORD kFlags = FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS;
     static const size_t bufSize = 4096;
@@ -174,16 +172,9 @@ static wstring getLastErrorString(HRESULT hr)
 #if USE_CONSOLE_ENTRY_POINT
 int main(int argc, const char* argv[])
 #else
-int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpstrCmdLine, _In_ int nCmdShow)
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpstrCmdLine, int nCmdShow)
 #endif
 {
-#ifdef _CRTDBG_MAP_ALLOC
-    _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDERR);
-    _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
-#endif
-
-    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_DELAY_FREE_MEM_DF | _CRTDBG_CHECK_ALWAYS_DF);
-
     enableTerminationOnHeapCorruption();
 
     // Get the path of our executable.
@@ -193,20 +184,20 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     ::PathRemoveExtensionW(exePath);
 
-    wstring programName = ::PathFindFileNameW(exePath);
+    std::wstring programName = ::PathFindFileNameW(exePath);
 
     if (!modifyPath(programName))
         return 1;
 
     // Load our corresponding DLL.
-    wstring dllName = programName + L"Lib.dll";
+    std::wstring dllName = programName + L"Lib.dll";
     if (!::PathRemoveFileSpecW(exePath))
         return fatalError(programName, L"::PathRemoveFileSpecW failed: " + getLastErrorString(::GetLastError()));
     if (!::PathAppendW(exePath, dllName.c_str()))
         return fatalError(programName, L"::PathAppendW failed: " + getLastErrorString(::GetLastError()));
     HMODULE module = ::LoadLibraryW(exePath);
     if (!module)
-        return fatalError(programName, L"::LoadLibraryW failed: \npath=" + wstring(exePath) + L"\n" + getLastErrorString(::GetLastError()));
+        return fatalError(programName, L"::LoadLibraryW failed: \npath=" + std::wstring(exePath) + L"\n" + getLastErrorString(::GetLastError()));
 
 #if USE_CONSOLE_ENTRY_POINT
     typedef int (WINAPI*EntryPoint)(int, const char*[]);

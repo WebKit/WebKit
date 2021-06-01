@@ -1,3 +1,34 @@
+2021-06-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Sync Tools/win/DLLLauncher/DLLLauncherMain.cpp with Source/JavaScriptCore/shell/DLLLauncherMain.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=226451
+
+        Reviewed by Don Olmstead.
+
+        Tools/win/DLLLauncher/DLLLauncherMain.cpp and
+        Source/JavaScriptCore/shell/DLLLauncherMain.cpp should be same.
+        But, r231403 changed only JavaScriptCore's one. r178530 changed
+        only Tools's one.
+
+        r178530 added flags for Debug CRT Heap. However, WebKit isn't
+        using Debug CRT Heap nowadays. And, using _CRTDBG_CHECK_ALWAYS_DF
+        flag makes WebKit unbearably slow.
+
+        Just copied JavaScriptCore's one to overwrite Tools's one.
+
+        * win/DLLLauncher/DLLLauncherMain.cpp:
+        (copyEnvironmentVariable):
+        (getStringValue):
+        (applePathFromRegistry):
+        (appleApplicationSupportDirectory):
+        (iTunesDirectory):
+        (prependPath):
+        (fatalError):
+        (directoryExists):
+        (modifyPath):
+        (getLastErrorString):
+        (wWinMain):
+
 2021-06-01  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (iOS 14.5): Can't go back and render previous page properly after "location.href"
