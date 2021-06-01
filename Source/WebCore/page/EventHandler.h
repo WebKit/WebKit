@@ -519,6 +519,7 @@ private:
 #endif
 
     void clearLatchedState();
+    void clearElementUnderMouse();
 
     bool shouldSendMouseEventsToInactiveWindows() const;
 

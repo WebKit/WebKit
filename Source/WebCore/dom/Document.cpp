@@ -2621,7 +2621,8 @@ void Document::willBeRemovedFromFrame()
 #if ENABLE(POINTER_LOCK)
         page->pointerLockController().documentDetached(*this);
 #endif
-        page->imageOverlayController().documentDetached(*this);
+        if (auto* imageOverlayController = page->imageOverlayControllerIfExists())
+            imageOverlayController->documentDetached(*this);
         if (auto* validationMessageClient = page->validationMessageClient())
             validationMessageClient->documentDetached(*this);
     }

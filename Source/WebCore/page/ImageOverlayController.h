@@ -38,6 +38,7 @@
 namespace WebCore {
 
 class Document;
+class Element;
 class Frame;
 class GraphicsContext;
 class HTMLElement;
@@ -57,6 +58,8 @@ public:
     explicit ImageOverlayController(Page&);
 
     void selectionQuadsDidChange(Frame&, const Vector<FloatQuad>&);
+    void elementUnderMouseDidChange(Frame&, Element*);
+
     void documentDetached(const Document&);
 
 private:
@@ -69,6 +72,7 @@ private:
 
     PageOverlay& installPageOverlayIfNeeded();
     void uninstallPageOverlayIfNeeded();
+    void uninstallPageOverlay();
 
 #if PLATFORM(MAC)
     void updateDataDetectorHighlights(const HTMLElement&);
@@ -78,19 +82,21 @@ private:
     DataDetectorHighlight* activeHighlight() const final { return m_activeDataDetectorHighlight.get(); }
 #endif
 
+    void platformUpdateElementUnderMouse(Frame&, Element* elementUnderMouse);
     bool platformHandleMouseEvent(const PlatformMouseEvent&);
 
     WeakPtr<Page> m_page;
     RefPtr<PageOverlay> m_overlay;
-    WeakPtr<Document> m_currentOverlayDocument;
-    Vector<FloatQuad> m_overlaySelectionQuads;
-    LayoutRect m_imageOverlayBounds;
+    WeakPtr<HTMLElement> m_hostElementForSelection;
+    Vector<FloatQuad> m_selectionQuads;
+    LayoutRect m_selectionClipRect;
     Color m_selectionBackgroundColor { Color::transparentBlack };
 
 #if PLATFORM(MAC)
     using ContainerAndHighlight = std::pair<WeakPtr<HTMLElement>, Ref<DataDetectorHighlight>>;
     Vector<ContainerAndHighlight> m_dataDetectorContainersAndHighlights;
     RefPtr<DataDetectorHighlight> m_activeDataDetectorHighlight;
+    WeakPtr<HTMLElement> m_hostElementForDataDetectors;
 #endif
 };
 

@@ -65,6 +65,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "Image.h"
+#include "ImageOverlayController.h"
 #include "InspectorInstrumentation.h"
 #include "KeyboardEvent.h"
 #include "Logging.h"
@@ -370,7 +371,7 @@ void EventHandler::clear()
     m_imageExtractionTimer.stop();
 #endif
     m_resizeLayer = nullptr;
-    m_elementUnderMouse = nullptr;
+    clearElementUnderMouse();
     m_lastElementUnderMouse = nullptr;
     m_lastMouseMoveEventSubframe = nullptr;
     m_lastScrollbarUnderMouse = nullptr;
@@ -2547,6 +2548,9 @@ void EventHandler::updateMouseEventTargetNode(const AtomString& eventType, Node*
     }
 #endif
 
+    if (auto* page = m_frame.page())
+        page->imageOverlayController().elementUnderMouseDidChange(m_frame, m_elementUnderMouse.get());
+
     ASSERT_IMPLIES(m_elementUnderMouse, &m_elementUnderMouse->document() == m_frame.document());
     ASSERT_IMPLIES(m_lastElementUnderMouse, &m_lastElementUnderMouse->document() == m_frame.document());
 
@@ -2606,11 +2610,29 @@ void EventHandler::updateMouseEventTargetNode(const AtomString& eventType, Node*
 #if ENABLE(IMAGE_EXTRACTION)
             m_imageExtractionTimer.stop();
 #endif
-            m_elementUnderMouse = nullptr;
+            clearElementUnderMouse();
         }
 
         m_lastElementUnderMouse = m_elementUnderMouse;
     }
+}
+
+void EventHandler::clearElementUnderMouse()
+{
+    if (!m_elementUnderMouse)
+        return;
+
+    m_elementUnderMouse = nullptr;
+
+    auto* page = m_frame.page();
+    if (!page)
+        return;
+
+    auto* imageOverlayController = page->imageOverlayControllerIfExists();
+    if (!imageOverlayController)
+        return;
+
+    imageOverlayController->elementUnderMouseDidChange(m_frame, nullptr);
 }
 
 void EventHandler::notifyScrollableAreasOfMouseEvents(const AtomString& eventType, Element* lastElementUnderMouse, Element* elementUnderMouse)

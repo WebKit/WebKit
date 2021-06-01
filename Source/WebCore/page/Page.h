@@ -508,6 +508,7 @@ public:
     ServicesOverlayController& servicesOverlayController() { return *m_servicesOverlayController; }
 #endif
     ImageOverlayController& imageOverlayController() { return *m_imageOverlayController; }
+    ImageOverlayController* imageOverlayControllerIfExists() { return m_imageOverlayController.get(); }
 
 #if ENABLE(WHEEL_EVENT_LATCHING)
     ScrollLatchingController& scrollLatchingController();

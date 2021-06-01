@@ -1,3 +1,81 @@
+2021-06-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Data detector highlights should appear when hovering inside image overlays
+        https://bugs.webkit.org/show_bug.cgi?id=226507
+
+        Reviewed by Tim Horton.
+
+        Refactor some logic in ImageOverlayController, such that the overlay is installed if _either_ selection painting
+        is required, or data detector highlights for the image overlay host element exist; additionally, add plumbing to
+        allow the ImageOverlayController to install a page overlay when the element under the mouse is inside an image
+        overlay.
+
+        * dom/Document.cpp:
+        (WebCore::Document::willBeRemovedFromFrame):
+
+        Drive-by fix: use `imageOverlayControllerIfExists` instead of `imageOverlayController` to avoid unnecessarily
+        creating a new ImageOverlayController when detaching a Document.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::clear):
+
+        Refactor logic for clearing out `m_elementUnderMouse` into a separate helper, and call it from these two places.
+        This new helper clears out `m_elementUnderMouse` and additionally notifies the page's image overlay controller
+        (only if it has already been constructed).
+
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+
+        Call out to the page's image overlay controller when changing `m_elementUnderMouse`.
+
+        (WebCore::EventHandler::clearElementUnderMouse):
+        * page/EventHandler.h:
+        * page/ImageOverlayController.cpp:
+        (WebCore::ImageOverlayController::selectionQuadsDidChange):
+
+        Refactor ImageOverlayController so that it only installs its page overlay if either:
+        1. Selection painting is needed for selected text inside an image overlay, or...
+        2. The cursor is over an image overlay host element with data detection results.
+
+        To achieve this, we maintain a weak pointer to the image overlay host that contains the selection separately
+        from the weak pointer to the image overlay host that contains data detectors, and is the element currently under
+        the mouse cursor.
+
+        Drive-by fix: also ignore selection updates due to temporary selections triggered as a result of gathering
+        dictionary popup info.
+
+        (WebCore::ImageOverlayController::documentDetached):
+        (WebCore::ImageOverlayController::uninstallPageOverlay):
+        (WebCore::ImageOverlayController::uninstallPageOverlayIfNeeded):
+
+        Split this into two functions: `uninstallPageOverlayIfNeeded`, which removes and destroys the PageOverlay if
+        it is no longer needed (i.e. the overlay is required for neither selection painting nor data detectors).
+
+        (WebCore::ImageOverlayController::willMoveToPage):
+        (WebCore::ImageOverlayController::drawRect):
+        (WebCore::ImageOverlayController::elementUnderMouseDidChange):
+        * page/ImageOverlayController.h:
+
+        Rename `m_imageOverlayBounds` to `m_selectionClipRect` to make it clear that this is only used during selection
+        painting, and rename `m_overlaySelectionQuads` to just `m_selectionQuads` for conciseness.
+
+        * page/Page.h:
+        (WebCore::Page::imageOverlayControllerIfExists):
+
+        Add a version of this getter that does not initialize the ImageOverlayController if it didn't already exist. See
+        call sites in EventHandler and Document.
+
+        * page/mac/ImageOverlayControllerMac.mm:
+        (WebCore::ImageOverlayController::clearDataDetectorHighlights):
+
+        Additionally clear out `m_hostElementForDataDetectors`.
+
+        (WebCore::ImageOverlayController::elementUnderMouseDidChange):
+
+        Update data detector highlights whenever the element under the mouse is over content inside an image overlay.
+        Note that we effectively ignore this method call in the case where we're clearing out `m_elementUnderMouse` for
+        a different Document than the one containing `m_hostElementForDataDetectors`, which prevents us from erroneously
+        hiding data detectors when `m_elementUnderMouse` is removed or otherwise cleared out in a different Document.
+
 2021-06-01  Chris Dumez  <cdumez@apple.com>
 
         Fix unsafe access to m_upload in XMLHttpRequest::virtualHasPendingActivity()

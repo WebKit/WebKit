@@ -176,8 +176,54 @@ bool ImageOverlayController::handleDataDetectorAction(const HTMLElement& element
 
 void ImageOverlayController::clearDataDetectorHighlights()
 {
+    m_hostElementForDataDetectors = nullptr;
     m_dataDetectorContainersAndHighlights.clear();
     m_activeDataDetectorHighlight = nullptr;
+}
+
+void ImageOverlayController::elementUnderMouseDidChange(Frame& frame, Element* elementUnderMouse)
+{
+    if (m_activeDataDetectorHighlight)
+        return;
+
+    if (!elementUnderMouse && m_hostElementForDataDetectors && frame.document() != &m_hostElementForDataDetectors->document())
+        return;
+
+    if (!elementUnderMouse || !HTMLElement::isInsideImageOverlay(*elementUnderMouse)) {
+        m_hostElementForDataDetectors = nullptr;
+        uninstallPageOverlayIfNeeded();
+        return;
+    }
+
+    auto shadowHost = elementUnderMouse->shadowHost();
+    if (!is<HTMLElement>(shadowHost)) {
+        ASSERT_NOT_REACHED();
+        m_hostElementForDataDetectors = nullptr;
+        uninstallPageOverlayIfNeeded();
+        return;
+    }
+
+    auto imageOverlayHost = makeRef(downcast<HTMLElement>(*shadowHost));
+    if (!imageOverlayHost->hasImageOverlay()) {
+        ASSERT_NOT_REACHED();
+        m_hostElementForDataDetectors = nullptr;
+        uninstallPageOverlayIfNeeded();
+        return;
+    }
+
+    if (m_hostElementForDataDetectors == imageOverlayHost.ptr())
+        return;
+
+    updateDataDetectorHighlights(imageOverlayHost.get());
+
+    if (m_dataDetectorContainersAndHighlights.isEmpty()) {
+        m_hostElementForDataDetectors = nullptr;
+        uninstallPageOverlayIfNeeded();
+        return;
+    }
+
+    m_hostElementForDataDetectors = makeWeakPtr(imageOverlayHost.get());
+    installPageOverlayIfNeeded();
 }
 
 } // namespace WebCore
