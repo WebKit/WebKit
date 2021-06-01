@@ -675,7 +675,8 @@ void CDMInstanceSessionThunder::storeRecordOfKeyUsage(const String&)
 
 CDMInstanceThunder* CDMInstanceSessionThunder::cdmInstanceThunder() const
 {
-    return static_cast<CDMInstanceThunder*>(cdmInstanceProxy());
+    auto proxy = cdmInstanceProxy();
+    return static_cast<CDMInstanceThunder*>(proxy.get());
 }
 
 } // namespace WebCore

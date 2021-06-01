@@ -1,3 +1,14 @@
+2021-06-01  Philippe Normand  <pnormand@igalia.com>
+
+        [EME][Thunder] Build broken since r278244
+        https://bugs.webkit.org/show_bug.cgi?id=226498
+
+        Reviewed by Alex Christensen.
+
+        * platform/graphics/gstreamer/eme/CDMThunder.cpp:
+        (WebCore::CDMInstanceSessionThunder::cdmInstanceThunder const): Cast raw pointer instead of
+        its smart pointer container.
+
 2021-06-01  Antti Koivisto  <antti@apple.com>
 
         Rename InlineBox to LegacyInlineBox
