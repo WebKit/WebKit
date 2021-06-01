@@ -1,3 +1,14 @@
+2021-06-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] GraphicsContextCairo::GraphicsContextCairo(HDC, bool) leaks cairo_t
+        https://bugs.webkit.org/show_bug.cgi?id=226317
+
+        Reviewed by Don Olmstead.
+
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+        (WebCore::createCairoContextWithHDC): Changed the return type from cairo_t* to RefPtr<cairo_t>.
+        (WebCore::GraphicsContextCairo::GraphicsContextCairo):
+
 2021-06-01  Philippe Normand  <pnormand@igalia.com>
 
         [EME][Thunder] Build broken since r278244

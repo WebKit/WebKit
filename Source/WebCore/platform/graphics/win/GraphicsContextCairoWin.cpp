@@ -30,6 +30,7 @@
 #include "DIBPixelData.h"
 #include "GraphicsContextCairo.h"
 #include "Path.h"
+#include "RefPtrCairo.h"
 
 #include <cairo-win32.h>
 #include "GraphicsContextPlatformPrivateCairo.h"
@@ -38,7 +39,7 @@
 namespace WebCore {
 
 #if PLATFORM(WIN)
-static cairo_t* createCairoContextWithHDC(HDC hdc, bool hasAlpha)
+static RefPtr<cairo_t> createCairoContextWithHDC(HDC hdc, bool hasAlpha)
 {
     // Put the HDC In advanced mode so it will honor affine transforms.
     SetGraphicsMode(hdc, GM_ADVANCED);
@@ -60,14 +61,14 @@ static cairo_t* createCairoContextWithHDC(HDC hdc, bool hasAlpha)
                                                info.bmWidthBytes);
     }
 
-    cairo_t* context = cairo_create(surface);
+    auto context = adoptRef(cairo_create(surface));
     cairo_surface_destroy(surface);
 
     return context;
 }
 
 GraphicsContextCairo::GraphicsContextCairo(HDC dc, bool hasAlpha)
-    : GraphicsContextCairo(createCairoContextWithHDC(dc, hasAlpha))
+    : GraphicsContextCairo(createCairoContextWithHDC(dc, hasAlpha).get())
 {
 }
 #endif
