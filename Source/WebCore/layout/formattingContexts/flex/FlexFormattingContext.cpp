@@ -70,15 +70,15 @@ void FlexFormattingContext::sizeAndPlaceFlexItems(const ConstraintsForInFlowCont
 {
     auto& formattingState = this->formattingState();
     auto& formattingGeometry = this->formattingGeometry();
-    auto flexItemMainAxisStart = constraints.horizontal.logicalLeft;
+    auto flexItemMainAxisStart = constraints.horizontal().logicalLeft;
     auto flexItemMainAxisEnd = flexItemMainAxisStart;
-    auto flexItemCrosAxisStart = constraints.vertical.logicalTop;
+    auto flexItemCrosAxisStart = constraints.logicalTop();
     auto flexItemCrosAxisEnd = flexItemCrosAxisStart;
     for (auto& flexItem : childrenOfType<ContainerBox>(root())) {
         ASSERT(flexItem.establishesFormattingContext());
         // FIXME: This is just a simple, let's layout the flex items and place them next to each other setup.
         auto intrinsicWidths = formattingState.intrinsicWidthConstraintsForBox(flexItem);
-        auto flexItemLogicalWidth = std::min(std::max(intrinsicWidths->minimum, constraints.horizontal.logicalWidth), intrinsicWidths->maximum);
+        auto flexItemLogicalWidth = std::min(std::max(intrinsicWidths->minimum, constraints.horizontal().logicalWidth), intrinsicWidths->maximum);
         auto flexItemConstraints = ConstraintsForInFlowContent { { { }, flexItemLogicalWidth }, { } };
 
         auto invalidationState = InvalidationState { };
@@ -90,12 +90,12 @@ void FlexFormattingContext::sizeAndPlaceFlexItems(const ConstraintsForInFlowCont
             flexItemGeometry.setLogicalTopLeft(LayoutPoint { flexItemMainAxisEnd, flexItemCrosAxisStart });
 
             flexItemGeometry.setBorder(formattingGeometry.computedBorder(flexItem));
-            flexItemGeometry.setPadding(formattingGeometry.computedPadding(flexItem, constraints.horizontal.logicalWidth));
+            flexItemGeometry.setPadding(formattingGeometry.computedPadding(flexItem, constraints.horizontal().logicalWidth));
 
-            auto computedHorizontalMargin = formattingGeometry.computedHorizontalMargin(flexItem, constraints.horizontal);
+            auto computedHorizontalMargin = formattingGeometry.computedHorizontalMargin(flexItem, constraints.horizontal());
             flexItemGeometry.setHorizontalMargin({ computedHorizontalMargin.start.value_or(0_lu), computedHorizontalMargin.end.value_or(0_lu) });
 
-            auto computedVerticalMargin = formattingGeometry.computedVerticalMargin(flexItem, constraints.horizontal);
+            auto computedVerticalMargin = formattingGeometry.computedVerticalMargin(flexItem, constraints.horizontal());
             flexItemGeometry.setVerticalMargin({ computedVerticalMargin.before.value_or(0_lu), computedVerticalMargin.after.value_or(0_lu) });
 
             flexItemGeometry.setContentBoxHeight(formattingGeometry.contentHeightForFormattingContextRoot(flexItem));

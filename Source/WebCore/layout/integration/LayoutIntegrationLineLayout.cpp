@@ -216,9 +216,8 @@ void LineLayout::layout()
 
     auto invalidationState = Layout::InvalidationState { };
     auto horizontalConstraints = Layout::HorizontalConstraints { flow().borderAndPaddingStart(), flow().contentSize().width() };
-    auto verticalConstraints = Layout::VerticalConstraints { flow().borderAndPaddingBefore(), { } };
 
-    inlineFormattingContext.lineLayoutForIntergration(invalidationState, { horizontalConstraints, verticalConstraints });
+    inlineFormattingContext.lineLayoutForIntergration(invalidationState, { horizontalConstraints, flow().borderAndPaddingBefore() });
 
     constructContent();
 }

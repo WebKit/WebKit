@@ -36,6 +36,7 @@
 #include "LayoutChildIterator.h"
 #include "LayoutContext.h"
 #include "LayoutInitialContainingBlock.h"
+#include "TableFormattingConstraints.h"
 #include "TableFormattingContext.h"
 #include "TableFormattingState.h"
 #include "TableWrapperBlockFormattingQuirks.h"
@@ -72,14 +73,16 @@ void TableWrapperBlockFormattingContext::layoutTableBox(const ContainerBox& tabl
 {
     layoutState().ensureTableFormattingState(tableBox);
 
-    computeBorderAndPaddingForTableBox(tableBox, constraints.horizontal);
-    computeStaticVerticalPosition(tableBox, constraints.vertical);
-    computeWidthAndMarginForTableBox(tableBox, constraints.horizontal);
-    computeStaticHorizontalPosition(tableBox, constraints.horizontal);
+    computeBorderAndPaddingForTableBox(tableBox, constraints.horizontal());
+    computeStaticVerticalPosition(tableBox, constraints.logicalTop());
+    computeWidthAndMarginForTableBox(tableBox, constraints.horizontal());
+    computeStaticHorizontalPosition(tableBox, constraints.horizontal());
 
     if (tableBox.hasChild()) {
+        auto& formattingGeometry = this->formattingGeometry();
         auto invalidationState = InvalidationState { };
-        LayoutContext::createFormattingContext(tableBox, layoutState())->layoutInFlowContent(invalidationState, formattingGeometry().constraintsForInFlowContent(tableBox));
+        auto constraints = ConstraintsForTableContent { formattingGeometry.constraintsForInFlowContent(tableBox), formattingGeometry.computedHeight(tableBox) };
+        LayoutContext::createFormattingContext(tableBox, layoutState())->layoutInFlowContent(invalidationState, constraints);
     }
 
     computeHeightAndMarginForTableBox(tableBox, constraints);
@@ -229,13 +232,13 @@ void TableWrapperBlockFormattingContext::computeHeightAndMarginForTableBox(const
         return { };
     }();
 
-    auto heightAndMargin = formattingGeometry().inFlowContentHeightAndMargin(tableBox, constraints.horizontal, { overriddenTableHeight });
+    auto heightAndMargin = formattingGeometry().inFlowContentHeightAndMargin(tableBox, constraints.horizontal(), { overriddenTableHeight });
     auto verticalMargin = marginCollapse().collapsedVerticalValues(tableBox, heightAndMargin.nonCollapsedMargin);
     // Cache the computed positive and negative margin value pair.
     formattingState().setUsedVerticalMargin(tableBox, verticalMargin);
 
     auto& boxGeometry = formattingState().boxGeometry(tableBox);
-    boxGeometry.setLogicalTop(verticalPositionWithMargin(tableBox, verticalMargin, constraints.vertical));
+    boxGeometry.setLogicalTop(verticalPositionWithMargin(tableBox, verticalMargin, constraints.logicalTop()));
     boxGeometry.setContentBoxHeight(heightAndMargin.contentHeight);
     boxGeometry.setVerticalMargin({ marginBefore(verticalMargin), marginAfter(verticalMargin) });
     // Adjust the previous sibling's margin bottom now that this box's vertical margin is computed.

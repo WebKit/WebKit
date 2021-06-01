@@ -106,7 +106,7 @@ void FormattingContext::computeOutOfFlowVerticalGeometry(const Box& layoutBox, c
         return formattingGeometry().outOfFlowVerticalGeometry(layoutBox, constraints.horizontal, constraints.vertical, { usedHeight });
     };
 
-    auto containingBlockHeight = *constraints.vertical.logicalHeight;
+    auto containingBlockHeight = constraints.vertical.logicalHeight;
     auto verticalGeometry = compute({ });
     if (auto maxHeight = formattingGeometry().computedMaxHeight(layoutBox, containingBlockHeight)) {
         auto maxVerticalGeometry = compute(maxHeight);

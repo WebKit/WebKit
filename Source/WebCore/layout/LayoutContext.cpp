@@ -100,7 +100,7 @@ void LayoutContext::layoutFormattingContextSubtree(const ContainerBox& formattin
     auto& boxGeometry = layoutState().geometryForBox(formattingContextRoot);
 
     if (formattingContextRoot.hasInFlowOrFloatingChild()) {
-        auto constraintsForInFlowContent = ConstraintsForInFlowContent { { boxGeometry.contentBoxLeft(), boxGeometry.contentBoxWidth() }, { boxGeometry.contentBoxTop(), { } } };
+        auto constraintsForInFlowContent = ConstraintsForInFlowContent { { boxGeometry.contentBoxLeft(), boxGeometry.contentBoxWidth() }, boxGeometry.contentBoxTop() };
         formattingContext->layoutInFlowContent(invalidationState, constraintsForInFlowContent);
     }
 

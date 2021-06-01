@@ -69,7 +69,7 @@ protected:
     void computeHeightAndMargin(const Box&, const ConstraintsForInFlowContent&);
 
     void computeStaticHorizontalPosition(const Box&, const HorizontalConstraints&);
-    void computeStaticVerticalPosition(const Box&, const VerticalConstraints&);
+    void computeStaticVerticalPosition(const Box&, LayoutUnit containingBlockContentBoxTop);
     void computePositionToAvoidFloats(const FloatingContext&, const Box&, const ConstraintsPair&);
     void computeVerticalPositionForFloatClear(const FloatingContext&, const Box&);
 
@@ -77,7 +77,7 @@ protected:
 
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
 
-    LayoutUnit verticalPositionWithMargin(const Box&, const UsedVerticalMargin&, const VerticalConstraints&) const;
+    LayoutUnit verticalPositionWithMargin(const Box&, const UsedVerticalMargin&, LayoutUnit containingBlockContentBoxTop) const;
 
     std::optional<LayoutUnit> usedAvailableWidthForFloatAvoider(const FloatingContext&, const Box&, const ConstraintsPair&);
     void updateMarginAfterForPreviousSibling(const Box&);

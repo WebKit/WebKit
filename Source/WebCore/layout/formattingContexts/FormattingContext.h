@@ -27,6 +27,7 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
+#include "FormattingConstraints.h"
 #include "LayoutContainerBox.h"
 #include "LayoutUnit.h"
 #include "LayoutUnits.h"
@@ -42,9 +43,13 @@ namespace Layout {
 
 class BoxGeometry;
 class ContainerBox;
+struct ConstraintsForInFlowContent;
+struct ConstraintsForOutOfFlowContent;
+struct HorizontalConstraints;
 class FormattingGeometry;
 class FormattingState;
 class FormattingQuirks;
+struct IntrinsicWidthConstraints;
 class InvalidationState;
 class LayoutState;
 

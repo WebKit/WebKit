@@ -324,7 +324,6 @@ LayoutUnit FormattingGeometry::shrinkToFitWidth(const Box& formattingContextRoot
 VerticalGeometry FormattingGeometry::outOfFlowNonReplacedVerticalGeometry(const ContainerBox& layoutBox, const HorizontalConstraints& horizontalConstraints, const VerticalConstraints& verticalConstraints, const OverriddenVerticalValues& overriddenVerticalValues) const
 {
     ASSERT(layoutBox.isOutOfFlowPositioned() && !layoutBox.isReplacedBox());
-    ASSERT(verticalConstraints.logicalHeight);
 
     // 10.6.4 Absolutely positioned, non-replaced elements
     //
@@ -353,7 +352,7 @@ VerticalGeometry FormattingGeometry::outOfFlowNonReplacedVerticalGeometry(const 
     auto& formattingContext = this->formattingContext();
     auto& style = layoutBox.style();
     auto& boxGeometry = formattingContext.geometryForBox(layoutBox);
-    auto containingBlockHeight = *verticalConstraints.logicalHeight;
+    auto containingBlockHeight = verticalConstraints.logicalHeight;
     auto containingBlockWidth = horizontalConstraints.logicalWidth;
 
     auto top = computedValue(style.logicalTop(), containingBlockWidth);
@@ -586,7 +585,6 @@ HorizontalGeometry FormattingGeometry::outOfFlowNonReplacedHorizontalGeometry(co
 VerticalGeometry FormattingGeometry::outOfFlowReplacedVerticalGeometry(const ReplacedBox& replacedBox, const HorizontalConstraints& horizontalConstraints, const VerticalConstraints& verticalConstraints, const OverriddenVerticalValues& overriddenVerticalValues) const
 {
     ASSERT(replacedBox.isOutOfFlowPositioned());
-    ASSERT(verticalConstraints.logicalHeight);
 
     // 10.6.5 Absolutely positioned, replaced elements
     //
@@ -601,7 +599,7 @@ VerticalGeometry FormattingGeometry::outOfFlowReplacedVerticalGeometry(const Rep
     auto& formattingContext = this->formattingContext();
     auto& style = replacedBox.style();
     auto& boxGeometry = formattingContext.geometryForBox(replacedBox);
-    auto containingBlockHeight = *verticalConstraints.logicalHeight;
+    auto containingBlockHeight = verticalConstraints.logicalHeight;
     auto containingBlockWidth = horizontalConstraints.logicalWidth;
 
     auto top = computedValue(style.logicalTop(), containingBlockWidth);
@@ -921,7 +919,7 @@ ContentHeightAndMargin FormattingGeometry::inlineReplacedContentHeightAndMargin(
     auto usedVerticalMargin = UsedVerticalMargin::NonCollapsedValues { computedVerticalMargin.before.value_or(0), computedVerticalMargin.after.value_or(0) };
     auto& style = replacedBox.style();
 
-    auto height = overriddenVerticalValues.height ? overriddenVerticalValues.height.value() : computedHeight(replacedBox, verticalConstraints ? verticalConstraints->logicalHeight : std::nullopt);
+    auto height = overriddenVerticalValues.height ? overriddenVerticalValues.height.value() : computedHeight(replacedBox, verticalConstraints ? std::optional<LayoutUnit>(verticalConstraints->logicalHeight) : std::nullopt);
     auto heightIsAuto = !overriddenVerticalValues.height && isHeightAuto(replacedBox);
     auto widthIsAuto = style.logicalWidth().isAuto();
 
@@ -983,7 +981,7 @@ ContentWidthAndMargin FormattingGeometry::inlineReplacedContentWidthAndMargin(co
 
     auto width = overriddenHorizontalValues.width ? overriddenHorizontalValues.width : computedWidth(replacedBox, horizontalConstraints.logicalWidth);
     auto heightIsAuto = isHeightAuto(replacedBox);
-    auto height = computedHeight(replacedBox, verticalConstraints ? verticalConstraints->logicalHeight : std::nullopt);
+    auto height = computedHeight(replacedBox, verticalConstraints ? std::optional<LayoutUnit>(verticalConstraints->logicalHeight) : std::nullopt);
 
     if (!width && heightIsAuto && replacedBox.hasIntrinsicWidth()) {
         // #1
@@ -1168,7 +1166,7 @@ ConstraintsForOutOfFlowContent FormattingGeometry::constraintsForOutOfFlowConten
 ConstraintsForInFlowContent FormattingGeometry::constraintsForInFlowContent(const ContainerBox& containerBox, std::optional<FormattingContext::EscapeReason> escapeReason) const
 {
     auto& boxGeometry = formattingContext().geometryForBox(containerBox, escapeReason);
-    return { { boxGeometry.contentBoxLeft(), boxGeometry.contentBoxWidth() }, { boxGeometry.contentBoxTop(), computedHeight(containerBox) } };
+    return { { boxGeometry.contentBoxLeft(), boxGeometry.contentBoxWidth() }, boxGeometry.contentBoxTop() };
 }
 
 }

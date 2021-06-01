@@ -44,8 +44,7 @@ public:
     ContentHeightAndMargin inFlowContentHeightAndMargin(const Box&, const HorizontalConstraints&, const OverriddenVerticalValues&) const;
     ContentWidthAndMargin inFlowContentWidthAndMargin(const Box&, const HorizontalConstraints&, const OverriddenHorizontalValues&) const;
 
-    Point staticPosition(const Box&, const HorizontalConstraints&, const VerticalConstraints&) const;
-    LayoutUnit staticVerticalPosition(const Box&, const VerticalConstraints&) const;
+    LayoutUnit staticVerticalPosition(const Box&, LayoutUnit containingBlockContentBoxTop) const;
     LayoutUnit staticHorizontalPosition(const Box&, const HorizontalConstraints&) const;
 
     IntrinsicWidthConstraints intrinsicWidthConstraints(const Box&) const;

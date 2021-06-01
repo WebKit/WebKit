@@ -237,7 +237,7 @@ ContentWidthAndMargin BlockFormattingGeometry::inFlowReplacedContentWidthAndMarg
     return { usedWidth, nonReplacedWidthAndMargin.usedMargin };
 }
 
-LayoutUnit BlockFormattingGeometry::staticVerticalPosition(const Box& layoutBox, const VerticalConstraints& verticalConstraints) const
+LayoutUnit BlockFormattingGeometry::staticVerticalPosition(const Box& layoutBox, LayoutUnit containingBlockContentBoxTop) const
 {
     // https://www.w3.org/TR/CSS22/visuren.html#block-formatting
     // In a block formatting context, boxes are laid out one after the other, vertically, beginning at the top of a containing block.
@@ -247,7 +247,7 @@ LayoutUnit BlockFormattingGeometry::staticVerticalPosition(const Box& layoutBox,
         auto& previousInFlowBoxGeometry = formattingContext().geometryForBox(*previousInFlowSibling);
         return BoxGeometry::borderBoxRect(previousInFlowBoxGeometry).bottom() + previousInFlowBoxGeometry.marginAfter();
     }
-    return verticalConstraints.logicalTop;
+    return containingBlockContentBoxTop;
 }
 
 LayoutUnit BlockFormattingGeometry::staticHorizontalPosition(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints) const
@@ -255,11 +255,6 @@ LayoutUnit BlockFormattingGeometry::staticHorizontalPosition(const Box& layoutBo
     // https://www.w3.org/TR/CSS22/visuren.html#block-formatting
     // In a block formatting context, each box's left outer edge touches the left edge of the containing block (for right-to-left formatting, right edges touch).
     return horizontalConstraints.logicalLeft + formattingContext().geometryForBox(layoutBox).marginStart();
-}
-
-Point BlockFormattingGeometry::staticPosition(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const VerticalConstraints& verticalConstraints) const
-{
-    return { staticHorizontalPosition(layoutBox, horizontalConstraints), staticVerticalPosition(layoutBox, verticalConstraints) };
 }
 
 ContentHeightAndMargin BlockFormattingGeometry::inFlowContentHeightAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const OverriddenVerticalValues& overriddenVerticalValues) const

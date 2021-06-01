@@ -1,3 +1,51 @@
+2021-05-31  Alan Bujtas  <zalan@apple.com>
+
+        [LFC] Tighten the constraint classes (ConstraintsForInFlowContent/ConstraintsForOutOfFlowContent)
+        https://bugs.webkit.org/show_bug.cgi?id=226435
+
+        Reviewed by Antti Koivisto.
+
+        While logical height should always be available for out of flow content by design,
+        the base inflow layout can't necessarily provide it. This height constraint is not even required/used in most of the layout systems,
+        so let's move it to the derived class(es).
+
+        * layout/LayoutContext.cpp:
+        (WebCore::Layout::LayoutContext::layoutFormattingContextSubtree):
+        * layout/LayoutUnits.h:
+        * layout/formattingContexts/FormattingContext.cpp:
+        (WebCore::Layout::FormattingContext::computeOutOfFlowVerticalGeometry):
+        * layout/formattingContexts/FormattingGeometry.cpp:
+        (WebCore::Layout::FormattingGeometry::outOfFlowNonReplacedVerticalGeometry const):
+        (WebCore::Layout::FormattingGeometry::outOfFlowReplacedVerticalGeometry const):
+        (WebCore::Layout::FormattingGeometry::inlineReplacedContentHeightAndMargin const):
+        (WebCore::Layout::FormattingGeometry::inlineReplacedContentWidthAndMargin const):
+        (WebCore::Layout::FormattingGeometry::constraintsForInFlowContent const):
+        * layout/formattingContexts/block/BlockFormattingContext.cpp:
+        (WebCore::Layout::BlockFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::BlockFormattingContext::computeStaticVerticalPosition):
+        (WebCore::Layout::BlockFormattingContext::precomputeVerticalPositionForBoxAndAncestors):
+        (WebCore::Layout::BlockFormattingContext::verticalPositionWithMargin const):
+        * layout/formattingContexts/block/BlockFormattingContext.h:
+        * layout/formattingContexts/block/BlockFormattingGeometry.cpp:
+        (WebCore::Layout::BlockFormattingGeometry::staticVerticalPosition const):
+        (WebCore::Layout::BlockFormattingGeometry::staticPosition const): Deleted.
+        * layout/formattingContexts/block/BlockFormattingGeometry.h:
+        * layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingContext.cpp:
+        (WebCore::Layout::TableWrapperBlockFormattingContext::layoutTableBox):
+        (WebCore::Layout::TableWrapperBlockFormattingContext::computeHeightAndMarginForTableBox):
+        * layout/formattingContexts/flex/FlexFormattingContext.cpp:
+        (WebCore::Layout::FlexFormattingContext::sizeAndPlaceFlexItems):
+        * layout/formattingContexts/inline/InlineFormattingContext.cpp:
+        (WebCore::Layout::InlineFormattingContext::lineLayout):
+        * layout/formattingContexts/table/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::layoutInFlowContent):
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForCells):
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForSections):
+        (WebCore::Layout::TableFormattingContext::layoutCell):
+        * layout/formattingContexts/table/TableFormattingContext.h:
+        * layout/integration/LayoutIntegrationLineLayout.cpp:
+        (WebCore::LayoutIntegration::LineLayout::layout):
+
 2021-05-31  Aakash Jain  <aakash_jain@apple.com>
 
         REGRESSION(r278261): Broke windows build - follow-up fix

@@ -37,6 +37,7 @@
 #include "LayoutChildIterator.h"
 #include "LayoutContext.h"
 #include "LayoutInitialContainingBlock.h"
+#include "TableFormattingConstraints.h"
 #include "TableFormattingState.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -55,8 +56,8 @@ TableFormattingContext::TableFormattingContext(const ContainerBox& formattingCon
 
 void TableFormattingContext::layoutInFlowContent(InvalidationState&, const ConstraintsForInFlowContent& constraints)
 {
-    auto availableHorizontalSpace = constraints.horizontal.logicalWidth;
-    auto availableVerticalSpace = constraints.vertical.logicalHeight;
+    auto availableHorizontalSpace = constraints.horizontal().logicalWidth;
+    auto availableVerticalSpace = downcast<ConstraintsForTableContent>(constraints).availableVerticalSpaceForContent();
     // 1. Compute width and height for the grid.
     computeAndDistributeExtraSpace(availableHorizontalSpace, availableVerticalSpace);
     // 2. Finalize cells.
@@ -99,7 +100,7 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
         for (size_t rowIndex = cell->startRow() + 1; rowIndex < cell->endRow(); ++rowIndex)
             availableVerticalSpace += rowList[rowIndex].logicalHeight();
         availableVerticalSpace += (cell->rowSpan() - 1) * grid.verticalSpacing();
-        layoutCell(*cell, availableHorizontalSpace, availableVerticalSpace);
+        layoutCell(*cell, availableHorizontalSpace);
 
         auto computeIntrinsicVerticalPaddingForCell = [&] {
             // Intrinsic padding is the extra padding for the cell box when it is shorter than the row. Cell boxes have to
@@ -246,7 +247,7 @@ void TableFormattingContext::setUsedGeometryForSections(const ConstraintsForInFl
     auto& grid = formattingState().tableGrid();
     auto& tableBox = root();
     auto sectionWidth = grid.columns().logicalWidth() + 2 * grid.horizontalSpacing();
-    auto logicalTop = constraints.vertical.logicalTop;
+    auto logicalTop = constraints.logicalTop();
     auto verticalSpacing = grid.verticalSpacing();
     auto paddingBefore = std::optional<LayoutUnit> { verticalSpacing };
     auto paddingAfter = verticalSpacing;
@@ -270,14 +271,14 @@ void TableFormattingContext::setUsedGeometryForSections(const ConstraintsForInFl
         }
         sectionContentHeight += verticalSpacing * (rowCount - 1);
         sectionBoxGeometry.setContentBoxHeight(sectionContentHeight);
-        sectionBoxGeometry.setLogicalLeft(constraints.horizontal.logicalLeft);
+        sectionBoxGeometry.setLogicalLeft(constraints.horizontal().logicalLeft);
         sectionBoxGeometry.setLogicalTop(logicalTop);
 
         logicalTop += sectionBoxGeometry.borderBoxHeight();
     }
 }
 
-void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, LayoutUnit availableHorizontalSpace, std::optional<LayoutUnit> availableVerticalSpaceForContent)
+void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, LayoutUnit availableHorizontalSpace)
 {
     ASSERT(cell.box().establishesBlockFormattingContext());
 
@@ -305,10 +306,8 @@ void TableFormattingContext::layoutCell(const TableGrid::Cell& cell, LayoutUnit 
 
     if (cellBox.hasInFlowOrFloatingChild()) {
         auto constraintsForCellContent = formattingGeometry.constraintsForInFlowContent(cellBox);
-        constraintsForCellContent.vertical.logicalHeight = availableVerticalSpaceForContent;
         auto invalidationState = InvalidationState { };
-        // FIXME: This should probably be part of the invalidation state to indicate when we re-layout the cell
-        // multiple times as part of the multi-pass table algorithm.
+        // FIXME: This should probably be part of the invalidation state to indicate when we re-layout the cell multiple times as part of the multi-pass table algorithm.
         auto& floatingStateForCellContent = layoutState().ensureBlockFormattingState(cellBox).floatingState();
         floatingStateForCellContent.clear();
         LayoutContext::createFormattingContext(cellBox, layoutState())->layoutInFlowContent(invalidationState, constraintsForCellContent);

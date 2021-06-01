@@ -98,22 +98,22 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
             if (is<ContainerBox>(layoutBox) && layoutBox->establishesFormattingContext()) {
                 ASSERT(layoutBox->isInlineBlockBox() || layoutBox->isInlineTableBox() || layoutBox->isFloatingPositioned());
                 auto& formattingRoot = downcast<ContainerBox>(*layoutBox);
-                computeBorderAndPadding(formattingRoot, constraints.horizontal);
-                computeWidthAndMargin(formattingRoot, constraints.horizontal);
+                computeBorderAndPadding(formattingRoot, constraints.horizontal());
+                computeWidthAndMargin(formattingRoot, constraints.horizontal());
 
                 if (formattingRoot.hasChild()) {
                     auto formattingContext = LayoutContext::createFormattingContext(formattingRoot, layoutState());
                     if (formattingRoot.hasInFlowOrFloatingChild())
                         formattingContext->layoutInFlowContent(invalidationState, formattingGeometry().constraintsForInFlowContent(formattingRoot));
-                    computeHeightAndMargin(formattingRoot, constraints.horizontal);
+                    computeHeightAndMargin(formattingRoot, constraints.horizontal());
                     formattingContext->layoutOutOfFlowContent(invalidationState, formattingGeometry().constraintsForOutOfFlowContent(formattingRoot));
                 } else
-                    computeHeightAndMargin(formattingRoot, constraints.horizontal);
+                    computeHeightAndMargin(formattingRoot, constraints.horizontal());
             } else {
                 // Replaced and other type of leaf atomic inline boxes.
-                computeBorderAndPadding(*layoutBox, constraints.horizontal);
-                computeWidthAndMargin(*layoutBox, constraints.horizontal);
-                computeHeightAndMargin(*layoutBox, constraints.horizontal);
+                computeBorderAndPadding(*layoutBox, constraints.horizontal());
+                computeWidthAndMargin(*layoutBox, constraints.horizontal());
+                computeHeightAndMargin(*layoutBox, constraints.horizontal());
             }
         } else if (layoutBox->isLineBreakBox()) {
             auto& boxGeometry = formattingState().boxGeometry(*layoutBox);
@@ -126,8 +126,8 @@ void InlineFormattingContext::layoutInFlowContent(InvalidationState& invalidatio
             // Text wrapper boxes (anonymous inline level boxes) don't have box geometries (they only generate runs).
             if (!layoutBox->isInlineTextBox()) {
                 // Inline boxes (<span>) can't get sized/positioned yet. At this point we can only compute their margins, borders and padding.
-                computeBorderAndPadding(*layoutBox, constraints.horizontal);
-                computeHorizontalMargin(*layoutBox, constraints.horizontal);
+                computeBorderAndPadding(*layoutBox, constraints.horizontal());
+                computeHorizontalMargin(*layoutBox, constraints.horizontal());
                 formattingState().boxGeometry(*layoutBox).setVerticalMargin({ });
             }
         } else
@@ -178,7 +178,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
 {
     auto& formattingState = this->formattingState();
     formattingState.lineRuns().reserveInitialCapacity(formattingState.inlineItems().size());
-    InlineLayoutUnit lineLogicalTop = constraints.vertical.logicalTop;
+    InlineLayoutUnit lineLogicalTop = constraints.logicalTop();
     struct PreviousLine {
         LineBuilder::InlineItemRange range;
         size_t overflowContentLength { 0 };
@@ -189,7 +189,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
     auto floatingContext = FloatingContext { *this, floatingState };
     auto isFirstLine = formattingState.lines().isEmpty();
 
-    auto lineBuilder = LineBuilder { *this, floatingState, constraints.horizontal, inlineItems };
+    auto lineBuilder = LineBuilder { *this, floatingState, constraints.horizontal(), inlineItems };
     while (!needsLayoutRange.isEmpty()) {
         // Turn previous line's overflow content length into the next line's leading content partial length.
         // "sp[<-line break->]lit_content" -> overflow length: 11 -> leading partial content length: 11.
@@ -200,9 +200,9 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, LineBuilder::
                 return root().style().computedLineHeight();
             return formattingQuirks().initialLineHeight();
         }();
-        auto initialLineConstraints = InlineRect { lineLogicalTop, constraints.horizontal.logicalLeft, constraints.horizontal.logicalWidth, initialLineHeight };
+        auto initialLineConstraints = InlineRect { lineLogicalTop, constraints.horizontal().logicalLeft, constraints.horizontal().logicalWidth, initialLineHeight };
         auto lineContent = lineBuilder.layoutInlineContent(needsLayoutRange, partialLeadingContentLength, leadingLogicalWidth, initialLineConstraints, isFirstLine);
-        auto lineLogicalRect = computeGeometryForLineContent(lineContent, constraints.horizontal);
+        auto lineLogicalRect = computeGeometryForLineContent(lineContent, constraints.horizontal());
 
         auto lineContentRange = lineContent.inlineItemRange;
         if (!lineContentRange.isEmpty()) {
