@@ -49,6 +49,7 @@
 @interface RVItem : NSObject <NSSecureCoding>
 - (instancetype)initWithText:(NSString *)text selectedRange:(NSRange)selectedRange NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithDDResult:(DDScannerResult *)result NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithURL:(NSURL *)url rangeInContext:(NSRange)rangeInContext;
 @property (readonly, nonatomic) NSRange highlightRange;
 @end
 

@@ -1,3 +1,15 @@
+2021-06-01  Dana Estra  <destra@apple.com>
+
+        Adopt Reveal for phone numbers
+        https://bugs.webkit.org/show_bug.cgi?id=226383
+        rdar://78482517
+        
+        Reviewed by Tim Horton.
+        
+        Add declaration for RVItem method initWithURL.
+
+        * pal/spi/cocoa/RevealSPI.h:
+
 2021-05-30  Darin Adler  <darin@apple.com>
 
         Remove WTF::Optional synonym for std::optional, using that class template directly instead

@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "MenuUtilities.h"
+#import <pal/cocoa/RevealSoftLink.h>
 
 #if PLATFORM(MAC)
 
@@ -39,6 +40,18 @@
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(TelephonyUtilities)
 SOFT_LINK_CLASS(TelephonyUtilities, TUCall)
 #endif
+
+@interface WKEmptyPresenterHighlightDelegate : NSObject <RVPresenterHighlightDelegate>
+@end
+
+@implementation WKEmptyPresenterHighlightDelegate
+
+- (NSArray <NSValue *> *)revealContext:(RVPresentingContext *)context rectsForItem:(RVItem *)item
+{
+    return @[ ];
+}
+
+@end
 
 namespace WebKit {
 
@@ -94,34 +107,21 @@ NSMenuItem *menuItemForTelephoneNumber(const String& telephoneNumber)
 
 RetainPtr<NSMenu> menuForTelephoneNumber(const String& telephoneNumber)
 {
-    if (!DataDetectorsLibrary())
+    if (!PAL::isRevealFrameworkAvailable() || !PAL::isRevealCoreFrameworkAvailable())
         return nil;
 
     RetainPtr<NSMenu> menu = adoptNS([[NSMenu alloc] init]);
-    NSMutableArray *faceTimeItems = [NSMutableArray array];
-    NSMenuItem *dialItem = nil;
-
-    RetainPtr<DDActionContext> actionContext = adoptNS([allocDDActionContextInstance() init]);
-    [actionContext setAllowedActionUTIs:@[ @"com.apple.dial", @"com.apple.facetime", @"com.apple.facetimeaudio" ]];
-
-    NSArray *proposedMenuItems = [[getDDActionsManagerClass() sharedManager] menuItemsForValue:(NSString *)telephoneNumber type:getDDBinderPhoneNumberKey() service:nil context:actionContext.get()];
-    for (NSMenuItem *item in proposedMenuItems) {
-        auto action = actionForMenuItem(item);
-        if ([action.actionUTI hasPrefix:@"com.apple.dial"])
-            dialItem = item;
-        else if ([action.actionUTI hasPrefix:@"com.apple.facetime"])
-            [faceTimeItems addObject:item];
-    }
-
-    if (dialItem)
-        [menu addItem:dialItem];
-
-    if (faceTimeItems.count) {
-        if ([menu numberOfItems])
-            [menu addItem:[NSMenuItem separatorItem]];
-        for (NSMenuItem *item in faceTimeItems)
-            [menu addItem:item];
-    }
+    auto viewForPresenter = adoptNS([[NSView alloc] init]);
+    auto urlComponents = adoptNS([[NSURLComponents alloc] init]);
+    [urlComponents setScheme:@"tel"];
+    [urlComponents setPath:telephoneNumber];
+    auto item = adoptNS([PAL::allocRVItemInstance() initWithURL:[urlComponents URL] rangeInContext:NSMakeRange(0, telephoneNumber.length())]);
+    auto presenter = adoptNS([PAL::allocRVPresenterInstance() init]);
+    auto delegate = adoptNS([[WKEmptyPresenterHighlightDelegate alloc] init]);
+    auto context = adoptNS([PAL::allocRVPresentingContextInstance() initWithPointerLocationInView:NSZeroPoint inView:viewForPresenter.get() highlightDelegate:delegate.get()]);
+    NSArray *proposedMenuItems = [presenter menuItemsForItem:item.get() documentContext:nil presentingContext:context.get() options:nil];
+    
+    [menu setItemArray:proposedMenuItems];
 
     return menu;
 }
