@@ -2,6 +2,15 @@
 
         Unreviewed build fix after r278253.
 
+        Revert changes to WebKitTests.swift as this is Swift's Optional<> not WTF's.
+
+        * SwiftOverlay/Tests/WebKitTests.swift:
+        (WebKitTests.testWKPDFConfigurationRect):
+
+2021-06-01  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix after r278253.
+
         Revert changes to ObjectiveCBlockConversions.swift and this is Swift's Optional<> not WTF's.
 
         * SwiftOverlay/SwiftOverlay/ObjectiveCBlockConversions.swift:
