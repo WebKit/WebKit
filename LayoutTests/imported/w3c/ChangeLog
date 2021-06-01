@@ -1,3 +1,20 @@
+2021-06-01  Cathie Chen  <cathiechen@igalia.com>
+
+        Update tests of mapping width and height attributes to aspect-ratio from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=226472
+
+        Reviewed by Rob Buis.
+
+        Base commit: https://github.com/web-platform-tests/wpt/commit/da6406b38dae07a8a69c384b72ddd89b48d5194a
+
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/canvas-aspect-ratio-expected.txt:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/canvas-aspect-ratio.html:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio-expected.txt:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/img-aspect-ratio.html:
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/resources/aspect-ratio.js:
+        (test_computed_style_aspect_ratio):
+        * web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-aspect-ratio.html:
+
 2021-05-31  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/active-processing.https.html after r278233.
