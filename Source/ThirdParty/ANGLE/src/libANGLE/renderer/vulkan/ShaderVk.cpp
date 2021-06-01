@@ -37,6 +37,10 @@ std::shared_ptr<WaitableCompileEvent> ShaderVk::compile(const gl::Context *conte
         // Extra initialization in spirv shader may affect performance.
         compileOptions |= SH_INITIALIZE_UNINITIALIZED_LOCALS;
 
+        // WebGL shaders may contain OOB array accesses which in turn cause undefined behavior,
+        // which may result in security issues. See https://crbug.com/1189110.
+        compileOptions |= SH_CLAMP_INDIRECT_ARRAY_BOUNDS;
+
         if (mState.getShaderType() != gl::ShaderType::Compute)
         {
             compileOptions |= SH_INIT_OUTPUT_VARIABLES;
