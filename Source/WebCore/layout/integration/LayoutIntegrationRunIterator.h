@@ -81,7 +81,7 @@ public:
     const RenderObject& renderer() const;
 
     // For intermediate porting steps only.
-    InlineBox* legacyInlineBox() const;
+    LegacyInlineBox* legacyInlineBox() const;
 
 protected:
     friend class RunIterator;
@@ -269,7 +269,7 @@ inline const RenderObject& PathRun::renderer() const
     });
 }
 
-inline InlineBox* PathRun::legacyInlineBox() const
+inline LegacyInlineBox* PathRun::legacyInlineBox() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
         return path.legacyInlineBox();

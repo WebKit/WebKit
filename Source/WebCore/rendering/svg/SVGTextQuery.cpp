@@ -88,7 +88,7 @@ void SVGTextQuery::collectTextBoxesInFlowBox(InlineFlowBox* flowBox)
     if (!flowBox)
         return;
 
-    for (InlineBox* child = flowBox->firstChild(); child; child = child->nextOnLine()) {
+    for (auto* child = flowBox->firstChild(); child; child = child->nextOnLine()) {
         if (is<InlineFlowBox>(*child)) {
             // Skip generated content.
             if (!child->renderer().node())

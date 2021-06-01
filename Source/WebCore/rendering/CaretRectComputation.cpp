@@ -284,7 +284,7 @@ static LayoutRect computeCaretRectForInline(const RenderInline& renderer)
 
     LayoutRect caretRect = computeCaretRectForEmptyElement(renderer, renderer.horizontalBorderAndPaddingExtent(), 0, CaretRectMode::Normal);
 
-    if (InlineBox* firstBox = renderer.firstLineBox())
+    if (LegacyInlineBox* firstBox = renderer.firstLineBox())
         caretRect.moveBy(LayoutPoint(firstBox->topLeft()));
 
     return caretRect;

@@ -158,7 +158,7 @@ RootInlineBox* LegacyLineLayout::createAndAppendRootInlineBox()
     return rootBox;
 }
 
-InlineBox* LegacyLineLayout::createInlineBoxForRenderer(RenderObject* renderer, bool isOnlyRun)
+LegacyInlineBox* LegacyLineLayout::createInlineBoxForRenderer(RenderObject* renderer, bool isOnlyRun)
 {
     if (renderer == &m_flow)
         return createAndAppendRootInlineBox();
@@ -205,7 +205,7 @@ static bool parentIsConstructedOrHaveNext(InlineFlowBox* parentBox)
     return false;
 }
 
-InlineFlowBox* LegacyLineLayout::createLineBoxes(RenderObject* obj, const LineInfo& lineInfo, InlineBox* childBox)
+InlineFlowBox* LegacyLineLayout::createLineBoxes(RenderObject* obj, const LineInfo& lineInfo, LegacyInlineBox* childBox)
 {
     // See if we have an unconstructed line box for this object that is also
     // the last item on the line.
@@ -232,7 +232,7 @@ InlineFlowBox* LegacyLineLayout::createLineBoxes(RenderObject* obj, const LineIn
         if (allowedToConstructNewBox && !canUseExistingParentBox) {
             // We need to make a new box for this render object. Once
             // made, we need to place it at the end of the current line.
-            InlineBox* newBox = createInlineBoxForRenderer(obj);
+            LegacyInlineBox* newBox = createInlineBoxForRenderer(obj);
             parentBox = downcast<InlineFlowBox>(newBox);
             parentBox->setIsFirstLine(lineInfo.isFirstLine());
             parentBox->setIsHorizontal(m_flow.isHorizontalWritingMode());
@@ -306,7 +306,7 @@ RootInlineBox* LegacyLineLayout::constructLine(BidiRunList<BidiRun>& bidiRuns, c
         if (lineInfo.isEmpty())
             continue;
 
-        InlineBox* box = createInlineBoxForRenderer(&r->renderer(), isOnlyRun);
+        LegacyInlineBox* box = createInlineBoxForRenderer(&r->renderer(), isOnlyRun);
         r->setBox(box);
 
         // If we have no parent box yet, or if the run is not simply a sibling,
@@ -809,7 +809,7 @@ static inline void applyExpansionBehavior(InlineTextBox& textBox, ExpansionBehav
     }
 }
 
-static bool inlineAncestorHasStartBorderPaddingOrMargin(const RenderBlockFlow& block, const InlineBox& box)
+static bool inlineAncestorHasStartBorderPaddingOrMargin(const RenderBlockFlow& block, const LegacyInlineBox& box)
 {
     bool isLTR = block.style().isLeftToRightDirection();
     for (auto* currentBox = box.parent(); currentBox; currentBox = currentBox->parent()) {
@@ -820,7 +820,7 @@ static bool inlineAncestorHasStartBorderPaddingOrMargin(const RenderBlockFlow& b
     return false;
 }
 
-static bool inlineAncestorHasEndBorderPaddingOrMargin(const RenderBlockFlow& block, const InlineBox& box)
+static bool inlineAncestorHasEndBorderPaddingOrMargin(const RenderBlockFlow& block, const LegacyInlineBox& box)
 {
     bool isLTR = block.style().isLeftToRightDirection();
     for (auto* currentBox = box.parent(); currentBox; currentBox = currentBox->parent()) {
@@ -858,7 +858,7 @@ BidiRun* LegacyLineLayout::computeInlineDirectionPositionsForSegment(RootInlineB
     auto collectSpacingLogicalWidths = [&] () {
         auto totalSpacingWidth = LayoutUnit { };
         // Collect the spacing positions (margin, border padding) for the textboxes by traversing the inline tree of the current line.
-        Vector<InlineBox*> queue;
+        Vector<LegacyInlineBox*> queue;
         queue.append(lineBox);
         // 1. Visit each inline box in a preorder fashion
         // 2. Accumulate the spacing when we find an InlineFlowBox (inline container e.g. span)
@@ -1351,7 +1351,7 @@ void LegacyLineLayout::layoutRunsAndFloats(LineLayoutState& layoutState, bool ha
         // If the last line before the start line ends with a line break that clear floats,
         // adjust the height accordingly.
         // A line break can be either the first or the last object on a line, depending on its direction.
-        if (InlineBox* lastLeafDescendant = lastRootBox()->lastLeafDescendant()) {
+        if (LegacyInlineBox* lastLeafDescendant = lastRootBox()->lastLeafDescendant()) {
             RenderObject* lastObject = &lastLeafDescendant->renderer();
             if (!lastObject->isBR())
                 lastObject = &lastRootBox()->firstLeafDescendant()->renderer();

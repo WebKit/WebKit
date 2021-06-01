@@ -66,7 +66,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InlineTextBox);
 
-struct SameSizeAsInlineTextBox : public InlineBox {
+struct SameSizeAsInlineTextBox : public LegacyInlineBox {
     unsigned variables[1];
     unsigned short variables2[2];
     void* pointers[2];
@@ -101,7 +101,7 @@ void InlineTextBox::markDirty(bool dirty)
         m_len = 0;
         m_start = 0;
     }
-    InlineBox::markDirty(dirty);
+    LegacyInlineBox::markDirty(dirty);
 }
 
 LayoutRect InlineTextBox::logicalOverflowRect() const

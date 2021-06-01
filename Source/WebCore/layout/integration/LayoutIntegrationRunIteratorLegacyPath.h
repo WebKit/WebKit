@@ -36,7 +36,7 @@ namespace LayoutIntegration {
 
 class RunIteratorLegacyPath {
 public:
-    RunIteratorLegacyPath(const InlineBox* inlineBox, Vector<const InlineBox*>&& sortedInlineBoxes = { }, size_t sortedInlineBoxIndex = 0)
+    RunIteratorLegacyPath(const LegacyInlineBox* inlineBox, Vector<const LegacyInlineBox*>&& sortedInlineBoxes = { }, size_t sortedInlineBoxIndex = 0)
         : m_inlineBox(inlineBox)
         , m_logicalOrderCache(WTFMove(sortedInlineBoxes))
         , m_logicalOrderCacheIndex(sortedInlineBoxIndex)
@@ -119,17 +119,17 @@ public:
 
     bool atEnd() const { return !m_inlineBox; }
 
-    InlineBox* legacyInlineBox() const { return const_cast<InlineBox*>(m_inlineBox); }
+    LegacyInlineBox* legacyInlineBox() const { return const_cast<LegacyInlineBox*>(m_inlineBox); }
     const RootInlineBox& rootInlineBox() const { return m_inlineBox->root(); }
 
 private:
     const InlineTextBox* inlineTextBox() const { return downcast<InlineTextBox>(m_inlineBox); }
 
-    static Vector<const InlineBox*> inlineBoxesInLogicalOrder(const RootInlineBox& root)
+    static Vector<const LegacyInlineBox*> inlineBoxesInLogicalOrder(const RootInlineBox& root)
     {
-        Vector<InlineBox*> inlineBoxes;
+        Vector<LegacyInlineBox*> inlineBoxes;
         root.collectLeafBoxesInLogicalOrder(inlineBoxes);
-        return reinterpret_cast<Vector<const InlineBox*>&>(inlineBoxes);
+        return reinterpret_cast<Vector<const LegacyInlineBox*>&>(inlineBoxes);
     }
     void initializeLogicalOrderCacheForLine()
     {
@@ -146,8 +146,8 @@ private:
     void traverseNextInlineBoxInCacheOrder();
     void traversePreviousInlineBoxInCacheOrder();
 
-    const InlineBox* m_inlineBox { nullptr };
-    RefCountedArray<const InlineBox*> m_logicalOrderCache;
+    const LegacyInlineBox* m_inlineBox { nullptr };
+    RefCountedArray<const LegacyInlineBox*> m_logicalOrderCache;
     size_t m_logicalOrderCacheIndex { 0 };
 };
 

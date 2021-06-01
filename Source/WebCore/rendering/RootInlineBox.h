@@ -97,18 +97,18 @@ public:
     unsigned lineBreakPos() const { return m_lineBreakPos; }
     void setLineBreakPos(unsigned p) { m_lineBreakPos = p; }
 
-    using InlineBox::endsWithBreak;
-    using InlineBox::setEndsWithBreak;
+    using LegacyInlineBox::endsWithBreak;
+    using LegacyInlineBox::setEndsWithBreak;
 
-    void childRemoved(InlineBox* box);
+    void childRemoved(LegacyInlineBox*);
 
     bool lineCanAccommodateEllipsis(bool ltr, int blockEdge, int lineBoxEdge, int ellipsisWidth);
     // Return the truncatedWidth, the width of the truncated text + ellipsis.
-    float placeEllipsis(const AtomString& ellipsisStr, bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, InlineBox* markupBox = nullptr);
+    float placeEllipsis(const AtomString& ellipsisStr, bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, LegacyInlineBox* markupBox = nullptr);
     // Return the position of the EllipsisBox or -1.
     float placeEllipsisBox(bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox) final;
 
-    using InlineBox::hasEllipsisBox;
+    using LegacyInlineBox::hasEllipsisBox;
     EllipsisBox* ellipsisBox() const;
 
     void paintEllipsisBox(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) const;
@@ -124,8 +124,8 @@ public:
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override;
 
     RenderObject::HighlightState selectionState() final;
-    InlineBox* firstSelectedBox();
-    InlineBox* lastSelectedBox();
+    LegacyInlineBox* firstSelectedBox();
+    LegacyInlineBox* lastSelectedBox();
 
     GapRects lineSelectionGap(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
         LayoutUnit selTop, LayoutUnit selHeight, const LogicalSelectionOffsetCaches&, const PaintInfo*);
@@ -160,8 +160,8 @@ public:
 
     LayoutRect paddedLayoutOverflowRect(LayoutUnit endPadding) const;
 
-    void ascentAndDescentForBox(InlineBox&, GlyphOverflowAndFallbackFontsMap&, LayoutUnit& ascent, LayoutUnit& descent, bool& affectsAscent, bool& affectsDescent) const;
-    LayoutUnit verticalPositionForBox(InlineBox*, VerticalPositionCache&);
+    void ascentAndDescentForBox(LegacyInlineBox&, GlyphOverflowAndFallbackFontsMap&, LayoutUnit& ascent, LayoutUnit& descent, bool& affectsAscent, bool& affectsDescent) const;
+    LayoutUnit verticalPositionForBox(LegacyInlineBox*, VerticalPositionCache&);
     bool fitsToGlyphs() const;
     bool includesRootLineBoxFontOrLeading() const;
     
@@ -191,11 +191,11 @@ public:
 private:
     bool isRootInlineBox() const final { return true; }
 
-    bool includeLeadingForBox(InlineBox&) const;
-    bool includeFontForBox(InlineBox&) const;
-    bool includeGlyphsForBox(InlineBox&) const;
-    bool includeInitialLetterForBox(InlineBox&) const;
-    bool includeMarginForBox(InlineBox&) const;
+    bool includeLeadingForBox(LegacyInlineBox&) const;
+    bool includeFontForBox(LegacyInlineBox&) const;
+    bool includeGlyphsForBox(LegacyInlineBox&) const;
+    bool includeInitialLetterForBox(LegacyInlineBox&) const;
+    bool includeMarginForBox(LegacyInlineBox&) const;
 
     LayoutUnit lineSnapAdjustment(LayoutUnit delta = 0_lu) const;
 

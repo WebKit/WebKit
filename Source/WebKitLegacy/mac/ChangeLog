@@ -1,3 +1,12 @@
+2021-06-01  Antti Koivisto  <antti@apple.com>
+
+        Rename InlineBox to LegacyInlineBox
+        https://bugs.webkit.org/show_bug.cgi?id=226501
+
+        Reviewed by Alan Bujtas.
+
+        * DOM/DOMUIKitExtensions.mm:
+
 2021-05-30  Darin Adler  <darin@apple.com>
 
         Remove WTF::Optional synonym for std::optional, using that class template directly instead

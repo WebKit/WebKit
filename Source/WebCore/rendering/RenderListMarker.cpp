@@ -1123,7 +1123,7 @@ bool RenderListMarker::isImage() const
 
 LayoutRect RenderListMarker::localSelectionRect()
 {
-    InlineBox* box = inlineBoxWrapper();
+    LegacyInlineBox* box = inlineBoxWrapper();
     if (!box)
         return LayoutRect(LayoutPoint(), size());
     const RootInlineBox& rootBox = m_inlineBoxWrapper->root();

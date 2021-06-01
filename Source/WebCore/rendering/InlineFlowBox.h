@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "InlineBox.h"
+#include "LegacyInlineBox.h"
 #include "RenderOverflow.h"
 #include "ShadowData.h"
 
@@ -37,11 +37,11 @@ struct GlyphOverflow;
 
 typedef HashMap<const InlineTextBox*, std::pair<Vector<const Font*>, GlyphOverflow>> GlyphOverflowAndFallbackFontsMap;
 
-class InlineFlowBox : public InlineBox {
+class InlineFlowBox : public LegacyInlineBox {
     WTF_MAKE_ISO_ALLOCATED(InlineFlowBox);
 public:
     explicit InlineFlowBox(RenderBoxModelObject& renderer)
-        : InlineBox(renderer)
+        : LegacyInlineBox(renderer)
         , m_includeLogicalLeftEdge(false)
         , m_includeLogicalRightEdge(false)
         , m_hasHardLinebreak(false)
@@ -72,11 +72,11 @@ public:
 #endif
 
 #if ENABLE(TREE_DEBUGGING)
-    void outputLineTreeAndMark(WTF::TextStream&, const InlineBox* markedBox, int depth) const override;
+    void outputLineTreeAndMark(WTF::TextStream&, const LegacyInlineBox* markedBox, int depth) const override;
     const char* boxName() const override;
 #endif
 
-    RenderBoxModelObject& renderer() const { return downcast<RenderBoxModelObject>(InlineBox::renderer()); }
+    RenderBoxModelObject& renderer() const { return downcast<RenderBoxModelObject>(LegacyInlineBox::renderer()); }
     const RenderStyle& lineStyle() const { return isFirstLine() ? renderer().firstLineStyle() : renderer().style(); }
 
     InlineFlowBox* prevLineBox() const { return m_prevLineBox; }
@@ -84,25 +84,25 @@ public:
     void setNextLineBox(InlineFlowBox* n) { m_nextLineBox = n; }
     void setPreviousLineBox(InlineFlowBox* p) { m_prevLineBox = p; }
 
-    InlineBox* firstChild() const { checkConsistency(); return m_firstChild; }
-    InlineBox* lastChild() const { checkConsistency(); return m_lastChild; }
+    LegacyInlineBox* firstChild() const { checkConsistency(); return m_firstChild; }
+    LegacyInlineBox* lastChild() const { checkConsistency(); return m_lastChild; }
 
     bool isLeaf() const final { return false; }
     
-    InlineBox* firstLeafDescendant() const;
-    InlineBox* lastLeafDescendant() const;
+    LegacyInlineBox* firstLeafDescendant() const;
+    LegacyInlineBox* lastLeafDescendant() const;
 
-    typedef void (*CustomInlineBoxRangeReverse)(void* userData, Vector<InlineBox*>::iterator first, Vector<InlineBox*>::iterator last);
-    void collectLeafBoxesInLogicalOrder(Vector<InlineBox*>&, CustomInlineBoxRangeReverse customReverseImplementation = nullptr, void* userData = nullptr) const;
+    typedef void (*CustomInlineBoxRangeReverse)(void* userData, Vector<LegacyInlineBox*>::iterator first, Vector<LegacyInlineBox*>::iterator last);
+    void collectLeafBoxesInLogicalOrder(Vector<LegacyInlineBox*>&, CustomInlineBoxRangeReverse customReverseImplementation = nullptr, void* userData = nullptr) const;
 
     void setConstructed() final
     {
-        InlineBox::setConstructed();
-        for (InlineBox* child = firstChild(); child; child = child->nextOnLine())
+        LegacyInlineBox::setConstructed();
+        for (auto* child = firstChild(); child; child = child->nextOnLine())
             child->setConstructed();
     }
 
-    void addToLine(InlineBox* child);
+    void addToLine(LegacyInlineBox* child);
     void deleteLine() final;
     void extractLine() final;
     void attachLine() final;
@@ -176,7 +176,7 @@ public:
     void determineSpacingForFlowBoxes(bool lastLine, bool isLogicallyLastRunWrapped, RenderObject* logicallyLastRunRenderer);
     LayoutUnit getFlowSpacingLogicalWidth();
     float placeBoxesInInlineDirection(float logicalLeft, bool& needsWordSpacing);
-    float placeBoxRangeInInlineDirection(InlineBox* firstChild, InlineBox* lastChild, float& logicalLeft, float& minLogicalLeft, float& maxLogicalRight, bool& needsWordSpacing);
+    float placeBoxRangeInInlineDirection(LegacyInlineBox* firstChild, LegacyInlineBox* lastChild, float& logicalLeft, float& minLogicalLeft, float& maxLogicalRight, bool& needsWordSpacing);
     void beginPlacingBoxRangesInInlineDirection(float logicalLeft) { setLogicalLeft(logicalLeft); }
     void endPlacingBoxRangesInInlineDirection(float logicalLeft, float logicalRight, float minLogicalLeft, float maxLogicalRight)
     {
@@ -200,7 +200,7 @@ public:
 
     void computeOverflow(LayoutUnit lineTop, LayoutUnit lineBottom, GlyphOverflowAndFallbackFontsMap&);
     
-    void removeChild(InlineBox* child);
+    void removeChild(LegacyInlineBox* child);
 
     RenderObject::HighlightState selectionState() override;
 
@@ -306,7 +306,7 @@ private:
     void addBorderOutsetVisualOverflow(LayoutRect& logicalVisualOverflow);
     void addTextBoxVisualOverflow(InlineTextBox&, GlyphOverflowAndFallbackFontsMap&, LayoutRect& logicalVisualOverflow);
     void addOutlineVisualOverflow(LayoutRect& logicalVisualOverflow);
-    void addReplacedChildOverflow(const InlineBox*, LayoutRect& logicalLayoutOverflow, LayoutRect& logicalVisualOverflow);
+    void addReplacedChildOverflow(const LegacyInlineBox*, LayoutRect& logicalLayoutOverflow, LayoutRect& logicalVisualOverflow);
     void constrainToLineTopAndBottomIfNeeded(LayoutRect&) const;
 
 private:
@@ -343,8 +343,8 @@ private:
 protected:
     RefPtr<RenderOverflow> m_overflow;
 
-    InlineBox* m_firstChild;
-    InlineBox* m_lastChild;
+    LegacyInlineBox* m_firstChild;
+    LegacyInlineBox* m_lastChild;
     
     InlineFlowBox* m_prevLineBox; // The previous box that also uses our RenderObject
     InlineFlowBox* m_nextLineBox; // The next box that also uses our RenderObject

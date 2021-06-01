@@ -50,7 +50,6 @@
 #import <WebCore/HTMLSelectElement.h>
 #import <WebCore/HTMLTextAreaElement.h>
 #import <WebCore/Image.h>
-#import <WebCore/InlineBox.h>
 #import <WebCore/NodeTraversal.h>
 #import <WebCore/Range.h>
 #import <WebCore/RenderBlock.h>

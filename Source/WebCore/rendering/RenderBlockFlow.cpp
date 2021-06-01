@@ -3816,7 +3816,7 @@ void RenderBlockFlow::outputFloatingObjects(WTF::TextStream& stream, int depth) 
     }
 }
 
-void RenderBlockFlow::outputLineTreeAndMark(WTF::TextStream& stream, const InlineBox* markedBox, int depth) const
+void RenderBlockFlow::outputLineTreeAndMark(WTF::TextStream& stream, const LegacyInlineBox* markedBox, int depth) const
 {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     if (auto* modernLineLayout = this->modernLineLayout()) {

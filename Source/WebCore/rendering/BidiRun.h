@@ -29,7 +29,7 @@
 namespace WebCore {
 
 class BidiContext;
-class InlineBox;
+class LegacyInlineBox;
 class RenderObject;
 
 struct BidiRun : BidiCharacterRun {
@@ -39,12 +39,12 @@ struct BidiRun : BidiCharacterRun {
     BidiRun* next() { return static_cast<BidiRun*>(BidiCharacterRun::next()); }
     std::unique_ptr<BidiRun> takeNext();
     RenderObject& renderer() { return m_renderer; }
-    InlineBox* box() { return m_box; }
-    void setBox(InlineBox* box) { m_box = box; }
+    LegacyInlineBox* box() { return m_box; }
+    void setBox(LegacyInlineBox* box) { m_box = box; }
 
 private:
     RenderObject& m_renderer;
-    InlineBox* m_box;
+    LegacyInlineBox* m_box;
 };
 
 } // namespace WebCore

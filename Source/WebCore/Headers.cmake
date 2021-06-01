@@ -1524,12 +1524,12 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/HitTestLocation.h
     rendering/HitTestRequest.h
     rendering/HitTestResult.h
-    rendering/InlineBox.h
     rendering/InlineElementBox.h
     rendering/InlineFlowBox.h
     rendering/InlineTextBox.h
     rendering/LayerAncestorClippingStack.h
     rendering/LayerFragment.h
+    rendering/LegacyInlineBox.h
     rendering/LegacyLineLayout.h
     rendering/MarkedText.h
     rendering/OrderIterator.h

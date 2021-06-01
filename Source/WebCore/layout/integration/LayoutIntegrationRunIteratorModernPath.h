@@ -196,7 +196,7 @@ public:
 
     bool atEnd() const { return m_runIndex == runs().size() || !run().hasUnderlyingLayout(); }
 
-    InlineBox* legacyInlineBox() const
+    LegacyInlineBox* legacyInlineBox() const
     {
         return nullptr;
     }

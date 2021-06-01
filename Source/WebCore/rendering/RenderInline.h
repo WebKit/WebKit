@@ -70,8 +70,8 @@ public:
 
     InlineFlowBox* firstLineBox() const { return m_lineBoxes.firstLineBox(); }
     InlineFlowBox* lastLineBox() const { return m_lineBoxes.lastLineBox(); }
-    InlineBox* firstLineBoxIncludingCulling() const { return alwaysCreateLineBoxes() ? firstLineBox() : culledInlineFirstLineBox(); }
-    InlineBox* lastLineBoxIncludingCulling() const { return alwaysCreateLineBoxes() ? lastLineBox() : culledInlineLastLineBox(); }
+    LegacyInlineBox* firstLineBoxIncludingCulling() const { return alwaysCreateLineBoxes() ? firstLineBox() : culledInlineFirstLineBox(); }
+    LegacyInlineBox* lastLineBoxIncludingCulling() const { return alwaysCreateLineBoxes() ? lastLineBox() : culledInlineLastLineBox(); }
 
 #if PLATFORM(IOS_FAMILY)
     void absoluteQuadsForSelection(Vector<FloatQuad>& quads) const override;
@@ -105,8 +105,8 @@ private:
     bool canHaveChildren() const final { return true; }
 
     LayoutRect culledInlineVisualOverflowBoundingBox() const;
-    InlineBox* culledInlineFirstLineBox() const;
-    InlineBox* culledInlineLastLineBox() const;
+    LegacyInlineBox* culledInlineFirstLineBox() const;
+    LegacyInlineBox* culledInlineLastLineBox() const;
 
     void absoluteQuadsIgnoringContinuation(const FloatRect&, Vector<FloatQuad>&, bool* wasFixed) const override;
 

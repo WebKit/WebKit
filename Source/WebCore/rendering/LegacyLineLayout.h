@@ -37,7 +37,7 @@ class BidiContext;
 class FloatingObject;
 class FloatWithRect;
 class FrameViewLayoutContext;
-class InlineBox;
+class LegacyInlineBox;
 class InlineIterator;
 class LineInfo;
 class LineLayoutState;
@@ -79,8 +79,8 @@ public:
 private:
     std::unique_ptr<RootInlineBox> createRootInlineBox();
     RootInlineBox* createAndAppendRootInlineBox();
-    InlineBox* createInlineBoxForRenderer(RenderObject*, bool isOnlyRun = false);
-    InlineFlowBox* createLineBoxes(RenderObject*, const LineInfo&, InlineBox*);
+    LegacyInlineBox* createInlineBoxForRenderer(RenderObject*, bool isOnlyRun = false);
+    InlineFlowBox* createLineBoxes(RenderObject*, const LineInfo&, LegacyInlineBox*);
     TextAlignMode textAlignmentForLine(bool endsWithSoftBreak) const;
     void setMarginsForRubyRun(BidiRun*, RenderRubyRun&, RenderObject* previousObject, const LineInfo&);
     void updateRubyForJustifiedText(RenderRubyRun&, BidiRun&, const Vector<unsigned, 16>& expansionOpportunities, unsigned& expansionOpportunityCount, float& totalLogicalWidth, float availableLogicalWidth, size_t&);

@@ -167,7 +167,7 @@ TextRunIterator firstTextRunFor(const RenderText& text)
 TextRunIterator firstTextRunInTextOrderFor(const RenderText& text)
 {
     if (text.firstTextBox() && text.containsReversedText()) {
-        Vector<const InlineBox*> sortedTextBoxes;
+        Vector<const LegacyInlineBox*> sortedTextBoxes;
         for (auto* textBox = text.firstTextBox(); textBox; textBox = textBox->nextTextBox())
             sortedTextBoxes.append(textBox);
         std::sort(sortedTextBoxes.begin(), sortedTextBoxes.end(), [](auto* a, auto* b) {

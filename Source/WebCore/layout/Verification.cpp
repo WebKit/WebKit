@@ -70,7 +70,7 @@ static bool areEssentiallyEqual(LayoutRect a, LayoutRect b)
         && areEssentiallyEqual(a.height(), b.height());
 }
 
-static bool checkForMatchingNonTextRuns(const LineRun& lineRun, const WebCore::InlineBox& inlineBox)
+static bool checkForMatchingNonTextRuns(const LineRun& lineRun, const WebCore::LegacyInlineBox& inlineBox)
 {
     return areEssentiallyEqual(inlineBox.left(), lineRun.logicalLeft())
         && areEssentiallyEqual(inlineBox.right(), lineRun.logicalRight())
@@ -90,7 +90,7 @@ static bool checkForMatchingTextRuns(const LineRun& lineRun, const WebCore::Inli
         && (inlineTextBox.isLineBreak() || (inlineTextBox.start() == lineRun.text()->start() && inlineTextBox.end() == lineRun.text()->end()));
 }
 
-static void collectFlowBoxSubtree(const InlineFlowBox& flowbox, Vector<WebCore::InlineBox*>& inlineBoxes)
+static void collectFlowBoxSubtree(const InlineFlowBox& flowbox, Vector<WebCore::LegacyInlineBox*>& inlineBoxes)
 {
     auto* inlineBox = flowbox.firstLeafDescendant();
     auto* lastLeafDescendant = flowbox.lastLeafDescendant();
@@ -102,7 +102,7 @@ static void collectFlowBoxSubtree(const InlineFlowBox& flowbox, Vector<WebCore::
     }
 }
 
-static void collectInlineBoxes(const RenderBlockFlow& root, Vector<WebCore::InlineBox*>& inlineBoxes)
+static void collectInlineBoxes(const RenderBlockFlow& root, Vector<WebCore::LegacyInlineBox*>& inlineBoxes)
 {
     for (auto* rootLine = root.firstRootBox(); rootLine; rootLine = rootLine->nextRootBox()) {
         for (auto* inlineBox = rootLine->firstChild(); inlineBox; inlineBox = inlineBox->nextOnLine()) {
@@ -120,7 +120,7 @@ static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, 
     auto& inlineFormattingState = layoutState.establishedFormattingState(inlineFormattingRoot);
     auto& lineRuns = downcast<InlineFormattingState>(inlineFormattingState).lineRuns();
     // Collect inlineboxes.
-    Vector<WebCore::InlineBox*> inlineBoxes;
+    Vector<WebCore::LegacyInlineBox*> inlineBoxes;
     collectInlineBoxes(blockFlow, inlineBoxes);
 
     auto mismatched = false;

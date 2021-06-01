@@ -53,7 +53,7 @@ class DocumentTimeline;
 class HitTestLocation;
 class HitTestRequest;
 class HitTestResult;
-class InlineBox;
+class LegacyInlineBox;
 class Path;
 class Position;
 class RenderBoxModelObject;

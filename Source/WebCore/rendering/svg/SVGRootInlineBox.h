@@ -44,7 +44,7 @@ public:
 
     void computePerCharacterLayoutInformation();
 
-    InlineBox* closestLeafChildForPosition(const LayoutPoint&);
+    LegacyInlineBox* closestLeafChildForPosition(const LayoutPoint&);
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) final;
 

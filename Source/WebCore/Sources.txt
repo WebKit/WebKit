@@ -2256,7 +2256,6 @@ rendering/HitTestLocation.cpp
 rendering/HitTestResult.cpp
 rendering/HitTestingTransformState.cpp
 rendering/ImageQualityController.cpp
-rendering/InlineBox.cpp
 rendering/InlineElementBox.cpp
 rendering/InlineFlowBox.cpp
 rendering/InlineIterator.cpp
@@ -2265,6 +2264,7 @@ rendering/LayerAncestorClippingStack.cpp
 rendering/LayerOverlapMap.cpp
 rendering/LayoutDisallowedScope.cpp
 rendering/LayoutRepainter.cpp
+rendering/LegacyInlineBox.cpp
 rendering/LegacyLineLayout.cpp
 rendering/MarkedText.cpp
 rendering/MarkedTextStyle.cpp

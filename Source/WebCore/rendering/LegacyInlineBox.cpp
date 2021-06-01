@@ -18,7 +18,7 @@
  */
 
 #include "config.h"
-#include "InlineBox.h"
+#include "LegacyInlineBox.h"
 
 #include "FontMetrics.h"
 #include "Frame.h"
@@ -36,10 +36,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(InlineBox);
+WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyInlineBox);
 
-struct SameSizeAsInlineBox {
-    virtual ~SameSizeAsInlineBox() = default;
+struct SameSizeAsLegacyInlineBox {
+    virtual ~SameSizeAsLegacyInlineBox() = default;
     void* a[3];
     WeakPtr<RenderObject> r;
     FloatPoint b;
@@ -52,28 +52,28 @@ struct SameSizeAsInlineBox {
 #endif
 };
 
-COMPILE_ASSERT(sizeof(InlineBox) == sizeof(SameSizeAsInlineBox), InlineBox_size_guard);
+COMPILE_ASSERT(sizeof(LegacyInlineBox) == sizeof(SameSizeAsLegacyInlineBox), LegacyInlineBox_size_guard);
 
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
 
-void InlineBox::assertNotDeleted() const
+void LegacyInlineBox::assertNotDeleted() const
 {
     ASSERT(m_deletionSentinel == deletionSentinelNotDeletedValue);
 }
 
-InlineBox::~InlineBox()
+LegacyInlineBox::~LegacyInlineBox()
 {
     invalidateParentChildList();
     m_deletionSentinel = deletionSentinelDeletedValue;
 }
 
-void InlineBox::setHasBadParent()
+void LegacyInlineBox::setHasBadParent()
 {
     assertNotDeleted();
     m_hasBadParent = true;
 }
 
-void InlineBox::invalidateParentChildList()
+void LegacyInlineBox::invalidateParentChildList()
 {
     assertNotDeleted();
     if (!m_hasBadParent && m_parent && m_isEverInChildList)
@@ -82,7 +82,7 @@ void InlineBox::invalidateParentChildList()
 
 #endif
 
-void InlineBox::removeFromParent()
+void LegacyInlineBox::removeFromParent()
 { 
     if (parent())
         parent()->removeChild(this);
@@ -90,27 +90,27 @@ void InlineBox::removeFromParent()
 
 #if ENABLE(TREE_DEBUGGING)
 
-const char* InlineBox::boxName() const
+const char* LegacyInlineBox::boxName() const
 {
     return "InlineBox";
 }
 
-void InlineBox::showNodeTreeForThis() const
+void LegacyInlineBox::showNodeTreeForThis() const
 {
     renderer().showNodeTreeForThis();
 }
 
-void InlineBox::showLineTreeForThis() const
+void LegacyInlineBox::showLineTreeForThis() const
 {
     renderer().containingBlock()->showLineTreeForThis();
 }
 
-void InlineBox::outputLineTreeAndMark(TextStream& stream, const InlineBox* markedBox, int depth) const
+void LegacyInlineBox::outputLineTreeAndMark(TextStream& stream, const LegacyInlineBox* markedBox, int depth) const
 {
     outputLineBox(stream, markedBox == this, depth);
 }
 
-void InlineBox::outputLineBox(TextStream& stream, bool mark, int depth) const
+void LegacyInlineBox::outputLineBox(TextStream& stream, bool mark, int depth) const
 {
     stream << "-------- " << (isDirty() ? "D" : "-") << "-";
     int printedCharacters = 0;
@@ -126,7 +126,7 @@ void InlineBox::outputLineBox(TextStream& stream, bool mark, int depth) const
 
 #endif // ENABLE(TREE_DEBUGGING)
 
-float InlineBox::logicalHeight() const
+float LegacyInlineBox::logicalHeight() const
 {
     if (hasVirtualLogicalHeight())
         return virtualLogicalHeight();
@@ -146,34 +146,34 @@ float InlineBox::logicalHeight() const
     return result;
 }
 
-LayoutUnit InlineBox::baselinePosition(FontBaseline baselineType) const
+LayoutUnit LegacyInlineBox::baselinePosition(FontBaseline baselineType) const
 {
     return boxModelObject()->baselinePosition(baselineType, m_bitfields.firstLine(), isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine);
 }
 
-LayoutUnit InlineBox::lineHeight() const
+LayoutUnit LegacyInlineBox::lineHeight() const
 {
     return boxModelObject()->lineHeight(m_bitfields.firstLine(), isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine);
 }
 
-int InlineBox::caretMinOffset() const 
+int LegacyInlineBox::caretMinOffset() const
 { 
     return renderer().caretMinOffset();
 }
 
-int InlineBox::caretMaxOffset() const 
+int LegacyInlineBox::caretMaxOffset() const
 { 
     return renderer().caretMaxOffset();
 }
 
-void InlineBox::dirtyLineBoxes()
+void LegacyInlineBox::dirtyLineBoxes()
 {
     markDirty();
     for (InlineFlowBox* curr = parent(); curr && !curr->isDirty(); curr = curr->parent())
         curr->markDirty();
 }
 
-void InlineBox::adjustPosition(float dx, float dy)
+void LegacyInlineBox::adjustPosition(float dx, float dy)
 {
     m_topLeft.move(dx, dy);
 
@@ -184,21 +184,21 @@ void InlineBox::adjustPosition(float dx, float dy)
         downcast<RenderBox>(renderer()).move(LayoutUnit(dx), LayoutUnit(dy));
 }
 
-const RootInlineBox& InlineBox::root() const
+const RootInlineBox& LegacyInlineBox::root() const
 { 
     if (parent())
         return parent()->root();
     return downcast<RootInlineBox>(*this);
 }
 
-RootInlineBox& InlineBox::root()
+RootInlineBox& LegacyInlineBox::root()
 { 
     if (parent())
         return parent()->root();
     return downcast<RootInlineBox>(*this);
 }
 
-bool InlineBox::nextOnLineExists() const
+bool LegacyInlineBox::nextOnLineExists() const
 {
     if (!m_bitfields.determinedIfNextOnLineExists()) {
         m_bitfields.setDeterminedIfNextOnLineExists(true);
@@ -213,7 +213,7 @@ bool InlineBox::nextOnLineExists() const
     return m_bitfields.nextOnLineExists();
 }
 
-bool InlineBox::previousOnLineExists() const
+bool LegacyInlineBox::previousOnLineExists() const
 {
     if (!parent())
         return false;
@@ -222,32 +222,32 @@ bool InlineBox::previousOnLineExists() const
     return parent()->previousOnLineExists();
 }
 
-InlineBox* InlineBox::nextLeafOnLine() const
+LegacyInlineBox* LegacyInlineBox::nextLeafOnLine() const
 {
-    InlineBox* leaf = nullptr;
-    for (InlineBox* box = nextOnLine(); box && !leaf; box = box->nextOnLine())
+    LegacyInlineBox* leaf = nullptr;
+    for (auto* box = nextOnLine(); box && !leaf; box = box->nextOnLine())
         leaf = box->isLeaf() ? box : downcast<InlineFlowBox>(*box).firstLeafDescendant();
     if (!leaf && parent())
         leaf = parent()->nextLeafOnLine();
     return leaf;
 }
     
-InlineBox* InlineBox::previousLeafOnLine() const
+LegacyInlineBox* LegacyInlineBox::previousLeafOnLine() const
 {
-    InlineBox* leaf = nullptr;
-    for (InlineBox* box = previousOnLine(); box && !leaf; box = box->previousOnLine())
+    LegacyInlineBox* leaf = nullptr;
+    for (auto* box = previousOnLine(); box && !leaf; box = box->previousOnLine())
         leaf = box->isLeaf() ? box : downcast<InlineFlowBox>(*box).lastLeafDescendant();
     if (!leaf && parent())
         leaf = parent()->previousLeafOnLine();
     return leaf;
 }
 
-RenderObject::HighlightState InlineBox::selectionState()
+RenderObject::HighlightState LegacyInlineBox::selectionState()
 {
     return renderer().selectionState();
 }
 
-bool InlineBox::canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth) const
+bool LegacyInlineBox::canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth) const
 {
     // Non-replaced elements can always accommodate an ellipsis.
     if (!renderer().isReplaced())
@@ -258,21 +258,21 @@ bool InlineBox::canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidt
     return !(boxRect.intersects(ellipsisRect));
 }
 
-float InlineBox::placeEllipsisBox(bool, float, float, float, float& truncatedWidth, bool&)
+float LegacyInlineBox::placeEllipsisBox(bool, float, float, float, float& truncatedWidth, bool&)
 {
     // Use -1 to mean "we didn't set the position."
     truncatedWidth += logicalWidth();
     return -1;
 }
 
-void InlineBox::clearKnownToHaveNoOverflow()
+void LegacyInlineBox::clearKnownToHaveNoOverflow()
 { 
     m_bitfields.setKnownToHaveNoOverflow(false);
     if (parent() && parent()->knownToHaveNoOverflow())
         parent()->clearKnownToHaveNoOverflow();
 }
 
-FloatPoint InlineBox::locationIncludingFlipping() const
+FloatPoint LegacyInlineBox::locationIncludingFlipping() const
 {
     if (!renderer().style().isFlippedBlocksWritingMode())
         return topLeft();
@@ -282,28 +282,28 @@ FloatPoint InlineBox::locationIncludingFlipping() const
     return { block.width() - width() - x(), y() };
 }
 
-void InlineBox::flipForWritingMode(FloatRect& rect) const
+void LegacyInlineBox::flipForWritingMode(FloatRect& rect) const
 {
     if (!renderer().style().isFlippedBlocksWritingMode())
         return;
     root().blockFlow().flipForWritingMode(rect);
 }
 
-FloatPoint InlineBox::flipForWritingMode(const FloatPoint& point) const
+FloatPoint LegacyInlineBox::flipForWritingMode(const FloatPoint& point) const
 {
     if (!renderer().style().isFlippedBlocksWritingMode())
         return point;
     return root().blockFlow().flipForWritingMode(point);
 }
 
-void InlineBox::flipForWritingMode(LayoutRect& rect) const
+void LegacyInlineBox::flipForWritingMode(LayoutRect& rect) const
 {
     if (!renderer().style().isFlippedBlocksWritingMode())
         return;
     root().blockFlow().flipForWritingMode(rect);
 }
 
-LayoutPoint InlineBox::flipForWritingMode(const LayoutPoint& point) const
+LayoutPoint LegacyInlineBox::flipForWritingMode(const LayoutPoint& point) const
 {
     if (!renderer().style().isFlippedBlocksWritingMode())
         return point;
@@ -314,14 +314,14 @@ LayoutPoint InlineBox::flipForWritingMode(const LayoutPoint& point) const
 
 #if ENABLE(TREE_DEBUGGING)
 
-void showNodeTree(const WebCore::InlineBox* inlineBox)
+void showNodeTree(const WebCore::LegacyInlineBox* inlineBox)
 {
     if (!inlineBox)
         return;
     inlineBox->showNodeTreeForThis();
 }
 
-void showLineTree(const WebCore::InlineBox* inlineBox)
+void showLineTree(const WebCore::LegacyInlineBox* inlineBox)
 {
     if (!inlineBox)
         return;

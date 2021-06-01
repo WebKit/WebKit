@@ -30,20 +30,20 @@ class HitTestResult;
 class EllipsisBox final : public InlineElementBox {
     WTF_MAKE_ISO_ALLOCATED(EllipsisBox);
 public:
-    EllipsisBox(RenderBlockFlow&, const AtomString& ellipsisStr, InlineFlowBox* parent, int width, int height, int y, bool firstLine, bool isHorizontal, InlineBox* markupBox);
+    EllipsisBox(RenderBlockFlow&, const AtomString& ellipsisStr, InlineFlowBox* parent, int width, int height, int y, bool firstLine, bool isHorizontal, LegacyInlineBox* markupBox);
     void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) final;
     void setSelectionState(RenderObject::HighlightState s) { m_selectionState = s; }
     IntRect selectionRect();
 
-    RenderBlockFlow& blockFlow() const { return downcast<RenderBlockFlow>(InlineBox::renderer()); }
+    RenderBlockFlow& blockFlow() const { return downcast<RenderBlockFlow>(LegacyInlineBox::renderer()); }
 
 private:
     void paintMarkupBox(PaintInfo&, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom, const RenderStyle&);
     int height() const { return m_height; }
     RenderObject::HighlightState selectionState() override { return m_selectionState; }
     void paintSelection(GraphicsContext&, const LayoutPoint&, const RenderStyle&, const FontCascade&);
-    InlineBox* markupBox() const;
+    LegacyInlineBox* markupBox() const;
 
     bool m_shouldPaintMarkupBox;
     RenderObject::HighlightState m_selectionState { RenderObject::HighlightState::None };

@@ -311,7 +311,7 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& contain
         return;
 
     RenderInline* inlineContainer = is<RenderInline>(container) ? &downcast<RenderInline>(container) : nullptr;
-    InlineBox* firstBox = inlineContainer ? inlineContainer->firstLineBoxIncludingCulling() : firstLineBox();
+    LegacyInlineBox* firstBox = inlineContainer ? inlineContainer->firstLineBoxIncludingCulling() : firstLineBox();
 
     // If we have no first line box, then just bail early.
     if (!firstBox) {
@@ -342,7 +342,7 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& contain
             if (InlineTextBox* textBox = downcast<RenderText>(*current).lastTextBox())
                 box = &textBox->root();
         } else if (is<RenderInline>(*current)) {
-            InlineBox* lastSiblingBox = downcast<RenderInline>(*current).lastLineBoxIncludingCulling();
+            LegacyInlineBox* lastSiblingBox = downcast<RenderInline>(*current).lastLineBoxIncludingCulling();
             if (lastSiblingBox)
                 box = &lastSiblingBox->root();
         }

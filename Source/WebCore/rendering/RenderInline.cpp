@@ -449,7 +449,7 @@ LayoutUnit RenderInline::offsetLeft() const
         lineLayout->flow().ensureLineBoxes();
 #endif
     LayoutPoint topLeft;
-    if (InlineBox* firstBox = firstLineBoxIncludingCulling())
+    if (LegacyInlineBox* firstBox = firstLineBoxIncludingCulling())
         topLeft = flooredLayoutPoint(firstBox->topLeft());
     return adjustedPositionRelativeToOffsetParent(topLeft).x();
 }
@@ -461,7 +461,7 @@ LayoutUnit RenderInline::offsetTop() const
         lineLayout->flow().ensureLineBoxes();
 #endif
     LayoutPoint topLeft;
-    if (InlineBox* firstBox = firstLineBoxIncludingCulling())
+    if (LegacyInlineBox* firstBox = firstLineBoxIncludingCulling())
         topLeft = flooredLayoutPoint(firstBox->topLeft());
     return adjustedPositionRelativeToOffsetParent(topLeft).y();
 }
@@ -672,7 +672,7 @@ IntRect RenderInline::linesBoundingBox() const
     return result;
 }
 
-InlineBox* RenderInline::culledInlineFirstLineBox() const
+LegacyInlineBox* RenderInline::culledInlineFirstLineBox() const
 {
     for (auto& current : childrenOfType<RenderObject>(*this)) {
         if (current.isFloatingOrOutOfFlowPositioned())
@@ -690,7 +690,7 @@ InlineBox* RenderInline::culledInlineFirstLineBox() const
                 return renderBR.inlineBoxWrapper();
         } else if (is<RenderInline>(current)) {
             auto& renderInline = downcast<RenderInline>(current);
-            if (InlineBox* result = renderInline.firstLineBoxIncludingCulling())
+            if (LegacyInlineBox* result = renderInline.firstLineBoxIncludingCulling())
                 return result;
         } else if (is<RenderText>(current)) {
             auto& renderText = downcast<RenderText>(current);
@@ -701,7 +701,7 @@ InlineBox* RenderInline::culledInlineFirstLineBox() const
     return nullptr;
 }
 
-InlineBox* RenderInline::culledInlineLastLineBox() const
+LegacyInlineBox* RenderInline::culledInlineLastLineBox() const
 {
     for (RenderObject* current = lastChild(); current; current = current->previousSibling()) {
         if (current->isFloatingOrOutOfFlowPositioned())
@@ -719,7 +719,7 @@ InlineBox* RenderInline::culledInlineLastLineBox() const
                 return renderBR.inlineBoxWrapper();
         } else if (is<RenderInline>(*current)) {
             RenderInline& renderInline = downcast<RenderInline>(*current);
-            if (InlineBox* result = renderInline.lastLineBoxIncludingCulling())
+            if (LegacyInlineBox* result = renderInline.lastLineBoxIncludingCulling())
                 return result;
         } else if (is<RenderText>(*current)) {
             RenderText& renderText = downcast<RenderText>(*current);

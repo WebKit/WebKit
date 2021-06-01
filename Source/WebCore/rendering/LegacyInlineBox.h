@@ -33,12 +33,12 @@ namespace WebCore {
 class HitTestResult;
 class RootInlineBox;
 
-// InlineBox represents a rectangle that occurs on a line.  It corresponds to
+// LegacyInlineBox represents a rectangle that occurs on a line. It corresponds to
 // some RenderObject (i.e., it represents a portion of that RenderObject).
-class InlineBox {
-    WTF_MAKE_ISO_ALLOCATED(InlineBox);
+class LegacyInlineBox {
+    WTF_MAKE_ISO_ALLOCATED(LegacyInlineBox);
 public:
-    virtual ~InlineBox();
+    virtual ~LegacyInlineBox();
 
     void assertNotDeleted() const;
 
@@ -78,7 +78,7 @@ public:
     void showNodeTreeForThis() const;
     void showLineTreeForThis() const;
     
-    WEBCORE_EXPORT virtual void outputLineTreeAndMark(WTF::TextStream&, const InlineBox* markedBox, int depth) const;
+    WEBCORE_EXPORT virtual void outputLineTreeAndMark(WTF::TextStream&, const LegacyInlineBox* markedBox, int depth) const;
     WEBCORE_EXPORT virtual void outputLineBox(WTF::TextStream&, bool mark, int depth) const;
     WEBCORE_EXPORT virtual const char* boxName() const;
 #endif
@@ -115,14 +115,14 @@ public:
 
     void removeFromParent();
 
-    InlineBox* nextOnLine() const { return m_nextOnLine; }
-    InlineBox* previousOnLine() const { return m_previousOnLine; }
-    void setNextOnLine(InlineBox* next)
+    LegacyInlineBox* nextOnLine() const { return m_nextOnLine; }
+    LegacyInlineBox* previousOnLine() const { return m_previousOnLine; }
+    void setNextOnLine(LegacyInlineBox* next)
     {
         ASSERT(m_parent || !next);
         m_nextOnLine = next;
     }
-    void setPreviousOnLine(InlineBox* previous)
+    void setPreviousOnLine(LegacyInlineBox* previous)
     {
         ASSERT(m_parent || !previous);
         m_previousOnLine = previous;
@@ -132,8 +132,8 @@ public:
 
     virtual bool isLeaf() const { return true; }
     
-    InlineBox* nextLeafOnLine() const;
-    InlineBox* previousLeafOnLine() const;
+    LegacyInlineBox* nextLeafOnLine() const;
+    LegacyInlineBox* previousLeafOnLine() const;
 
     // FIXME: Hide this once all callers are using tighter types.
     RenderObject& renderer() const { return *m_renderer; }
@@ -285,8 +285,8 @@ public:
     void setForceLeftExpansion() { m_bitfields.setForceLeftExpansion(true); }
 
 private:
-    InlineBox* m_nextOnLine { nullptr }; // The next element on the same line as us.
-    InlineBox* m_previousOnLine { nullptr }; // The previous element on the same line as us.
+    LegacyInlineBox* m_nextOnLine { nullptr }; // The next element on the same line as us.
+    LegacyInlineBox* m_previousOnLine { nullptr }; // The previous element on the same line as us.
 
     InlineFlowBox* m_parent { nullptr }; // The box that contains us.
 
@@ -376,12 +376,12 @@ private:
     InlineBoxBitfields m_bitfields;
 
 protected:
-    explicit InlineBox(RenderObject& renderer)
+    explicit LegacyInlineBox(RenderObject& renderer)
         : m_renderer(makeWeakPtr(renderer))
     {
     }
 
-    InlineBox(RenderObject& renderer, FloatPoint topLeft, float logicalWidth, bool firstLine, bool constructed, bool dirty, bool extracted, bool isHorizontal, InlineBox* next, InlineBox* previous, InlineFlowBox* parent)
+    LegacyInlineBox(RenderObject& renderer, FloatPoint topLeft, float logicalWidth, bool firstLine, bool constructed, bool dirty, bool extracted, bool isHorizontal, LegacyInlineBox* next, LegacyInlineBox* previous, InlineFlowBox* parent)
         : m_nextOnLine(next)
         , m_previousOnLine(previous)
         , m_parent(parent)
@@ -423,11 +423,11 @@ protected:
 
 #if ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
 
-inline InlineBox::~InlineBox()
+inline LegacyInlineBox::~LegacyInlineBox()
 {
 }
 
-inline void InlineBox::assertNotDeleted() const
+inline void LegacyInlineBox::assertNotDeleted() const
 {
 }
 
@@ -437,11 +437,11 @@ inline void InlineBox::assertNotDeleted() const
 
 #define SPECIALIZE_TYPE_TRAITS_INLINE_BOX(ToValueTypeName, predicate) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
-    static bool isType(const WebCore::InlineBox& box) { return box.predicate; } \
+    static bool isType(const WebCore::LegacyInlineBox& box) { return box.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()
 
 #if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from the debugger.
-void showNodeTree(const WebCore::InlineBox*);
-void showLineTree(const WebCore::InlineBox*);
+void showNodeTree(const WebCore::LegacyInlineBox*);
+void showLineTree(const WebCore::LegacyInlineBox*);
 #endif

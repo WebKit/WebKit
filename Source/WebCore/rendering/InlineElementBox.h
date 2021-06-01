@@ -25,24 +25,24 @@
 
 #pragma once
 
-#include "InlineBox.h"
+#include "LegacyInlineBox.h"
 
 namespace WebCore {
 
-class InlineElementBox : public InlineBox {
+class InlineElementBox : public LegacyInlineBox {
     WTF_MAKE_ISO_ALLOCATED(InlineElementBox);
 public:
     explicit InlineElementBox(RenderBoxModelObject& renderer)
-        : InlineBox(renderer)
+        : LegacyInlineBox(renderer)
     {
     }
 
-    InlineElementBox(RenderObject& renderer, FloatPoint topLeft, float logicalWidth, bool firstLine, bool constructed, bool dirty, bool extracted, bool isHorizontal, InlineBox* next, InlineBox* prev, InlineFlowBox* parent)
-        : InlineBox(renderer, topLeft, logicalWidth, firstLine, constructed, dirty, extracted, isHorizontal, next, prev, parent)
+    InlineElementBox(RenderObject& renderer, FloatPoint topLeft, float logicalWidth, bool firstLine, bool constructed, bool dirty, bool extracted, bool isHorizontal, LegacyInlineBox* next, LegacyInlineBox* prev, InlineFlowBox* parent)
+        : LegacyInlineBox(renderer, topLeft, logicalWidth, firstLine, constructed, dirty, extracted, isHorizontal, next, prev, parent)
     {
     }
 
-    RenderBoxModelObject& renderer() const { return downcast<RenderBoxModelObject>(InlineBox::renderer()); }
+    RenderBoxModelObject& renderer() const { return downcast<RenderBoxModelObject>(LegacyInlineBox::renderer()); }
 
     void deleteLine() final;
     void extractLine() final;

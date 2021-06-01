@@ -34,7 +34,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(EllipsisBox);
 
-EllipsisBox::EllipsisBox(RenderBlockFlow& renderer, const AtomString& ellipsisStr, InlineFlowBox* parent, int width, int height, int y, bool firstLine, bool isHorizontal, InlineBox* markupBox)
+EllipsisBox::EllipsisBox(RenderBlockFlow& renderer, const AtomString& ellipsisStr, InlineFlowBox* parent, int width, int height, int y, bool firstLine, bool isHorizontal, LegacyInlineBox* markupBox)
     : InlineElementBox(renderer, FloatPoint(0, y), width, firstLine, true, false, false, isHorizontal, 0, 0, parent)
     , m_shouldPaintMarkupBox(markupBox)
     , m_height(height)
@@ -82,7 +82,7 @@ void EllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, La
     paintMarkupBox(paintInfo, paintOffset, lineTop, lineBottom, lineStyle);
 }
 
-InlineBox* EllipsisBox::markupBox() const
+LegacyInlineBox* EllipsisBox::markupBox() const
 {
     if (!m_shouldPaintMarkupBox)
         return 0;
@@ -93,7 +93,7 @@ InlineBox* EllipsisBox::markupBox() const
 
     // If the last line-box on the last line of a block is a link, -webkit-line-clamp paints that box after the ellipsis.
     // It does not actually move the link.
-    InlineBox* anchorBox = lastLine->lastChild();
+    LegacyInlineBox* anchorBox = lastLine->lastChild();
     if (!anchorBox || !anchorBox->renderer().style().isLink())
         return 0;
 
@@ -102,7 +102,7 @@ InlineBox* EllipsisBox::markupBox() const
 
 void EllipsisBox::paintMarkupBox(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom, const RenderStyle& style)
 {
-    InlineBox* markupBox = this->markupBox();
+    LegacyInlineBox* markupBox = this->markupBox();
     if (!markupBox)
         return;
 
@@ -150,7 +150,7 @@ bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     LayoutPoint adjustedLocation = accumulatedOffset + LayoutPoint(topLeft());
 
     // Hit test the markup box.
-    if (InlineBox* markupBox = this->markupBox()) {
+    if (LegacyInlineBox* markupBox = this->markupBox()) {
         const RenderStyle& lineStyle = this->lineStyle();
         LayoutUnit mtx { adjustedLocation.x() + logicalWidth() - markupBox->x() };
         LayoutUnit mty { adjustedLocation.y() + lineStyle.fontMetrics().ascent() - (markupBox->y() + markupBox->lineStyle().fontMetrics().ascent()) };

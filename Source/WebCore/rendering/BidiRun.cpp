@@ -23,7 +23,7 @@
 
 #include "config.h"
 #include "BidiRun.h"
-#include "InlineBox.h"
+#include "LegacyInlineBox.h"
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 

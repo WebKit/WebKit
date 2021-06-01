@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "InlineBox.h"
+#include "LegacyInlineBox.h"
 #include "RenderText.h"
 #include "TextRun.h"
 
@@ -39,18 +39,18 @@ struct TextPaintStyle;
 const unsigned short cNoTruncation = USHRT_MAX;
 const unsigned short cFullTruncation = USHRT_MAX - 1;
 
-class InlineTextBox : public InlineBox {
+class InlineTextBox : public LegacyInlineBox {
     WTF_MAKE_ISO_ALLOCATED(InlineTextBox);
 public:
     explicit InlineTextBox(RenderText& renderer)
-        : InlineBox(renderer)
+        : LegacyInlineBox(renderer)
     {
         setBehavesLikeText(true);
     }
 
     virtual ~InlineTextBox();
 
-    RenderText& renderer() const { return downcast<RenderText>(InlineBox::renderer()); }
+    RenderText& renderer() const { return downcast<RenderText>(LegacyInlineBox::renderer()); }
     const RenderStyle& lineStyle() const { return isFirstLine() ? renderer().firstLineStyle() : renderer().style(); }
 
     InlineTextBox* prevTextBox() const { return m_prevTextBox; }
@@ -79,16 +79,16 @@ public:
 
     void markDirty(bool dirty = true) final;
 
-    using InlineBox::hasHyphen;
-    using InlineBox::setHasHyphen;
-    using InlineBox::canHaveLeftExpansion;
-    using InlineBox::setCanHaveLeftExpansion;
-    using InlineBox::canHaveRightExpansion;
-    using InlineBox::setCanHaveRightExpansion;
-    using InlineBox::forceRightExpansion;
-    using InlineBox::setForceRightExpansion;
-    using InlineBox::forceLeftExpansion;
-    using InlineBox::setForceLeftExpansion;
+    using LegacyInlineBox::hasHyphen;
+    using LegacyInlineBox::setHasHyphen;
+    using LegacyInlineBox::canHaveLeftExpansion;
+    using LegacyInlineBox::setCanHaveLeftExpansion;
+    using LegacyInlineBox::canHaveRightExpansion;
+    using LegacyInlineBox::setCanHaveRightExpansion;
+    using LegacyInlineBox::forceRightExpansion;
+    using LegacyInlineBox::setForceRightExpansion;
+    using LegacyInlineBox::forceLeftExpansion;
+    using LegacyInlineBox::setForceLeftExpansion;
 
     static inline bool compareByStart(const InlineTextBox* first, const InlineTextBox* second) { return first->start() < second->start(); }
 

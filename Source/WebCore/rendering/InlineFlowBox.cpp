@@ -48,7 +48,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InlineFlowBox);
 
-struct SameSizeAsInlineFlowBox : public InlineBox {
+struct SameSizeAsInlineFlowBox : public LegacyInlineBox {
     uint32_t bitfields : 23;
     void* pointers[5];
 };
@@ -67,7 +67,7 @@ void InlineFlowBox::setHasBadChildList()
     assertNotDeleted();
     if (m_hasBadChildList)
         return;
-    for (InlineBox* child = firstChild(); child; child = child->nextOnLine())
+    for (auto* child = firstChild(); child; child = child->nextOnLine())
         child->setHasBadParent();
     m_hasBadChildList = true;
 }
@@ -77,7 +77,7 @@ void InlineFlowBox::setHasBadChildList()
 LayoutUnit InlineFlowBox::getFlowSpacingLogicalWidth()
 {
     LayoutUnit totalWidth = marginBorderPaddingLogicalLeft() + marginBorderPaddingLogicalRight();
-    for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
+    for (auto* child = firstChild(); child; child = child->nextOnLine()) {
         if (is<InlineFlowBox>(*child))
             totalWidth += downcast<InlineFlowBox>(*child).getFlowSpacingLogicalWidth();
     }
@@ -92,7 +92,7 @@ static void setHasTextDescendantsOnAncestors(InlineFlowBox* box)
     }
 }
 
-void InlineFlowBox::addToLine(InlineBox* child) 
+void InlineFlowBox::addToLine(LegacyInlineBox* child) 
 {
     ASSERT(!child->parent());
     ASSERT(!child->nextOnLine());
@@ -188,7 +188,7 @@ void InlineFlowBox::addToLine(InlineBox* child)
     checkConsistency();
 }
 
-void InlineFlowBox::removeChild(InlineBox* child)
+void InlineFlowBox::removeChild(LegacyInlineBox* child)
 {
     checkConsistency();
 
@@ -213,8 +213,8 @@ void InlineFlowBox::removeChild(InlineBox* child)
 
 void InlineFlowBox::deleteLine()
 {
-    InlineBox* child = firstChild();
-    InlineBox* next = nullptr;
+    LegacyInlineBox* child = firstChild();
+    LegacyInlineBox* next = nullptr;
     while (child) {
         ASSERT(this == child->parent());
         next = child->nextOnLine();
@@ -242,7 +242,7 @@ void InlineFlowBox::extractLine()
 {
     if (!extracted())
         extractLineBoxFromRenderObject();
-    for (InlineBox* child = firstChild(); child; child = child->nextOnLine())
+    for (auto* child = firstChild(); child; child = child->nextOnLine())
         child->extractLine();
 }
 
@@ -255,7 +255,7 @@ void InlineFlowBox::attachLine()
 {
     if (extracted())
         attachLineBoxToRenderObject();
-    for (InlineBox* child = firstChild(); child; child = child->nextOnLine())
+    for (auto* child = firstChild(); child; child = child->nextOnLine())
         child->attachLine();
 }
 
@@ -266,8 +266,8 @@ void InlineFlowBox::attachLineBoxToRenderObject()
 
 void InlineFlowBox::adjustPosition(float dx, float dy)
 {
-    InlineBox::adjustPosition(dx, dy);
-    for (InlineBox* child = firstChild(); child; child = child->nextOnLine())
+    LegacyInlineBox::adjustPosition(dx, dy);
+    for (auto* child = firstChild(); child; child = child->nextOnLine())
         child->adjustPosition(dx, dy);
     if (m_overflow)
         m_overflow->move(LayoutUnit(dx), LayoutUnit(dy)); // FIXME: Rounding error here since overflow was pixel snapped, but nobody other than list markers passes non-integral values here.
@@ -363,7 +363,7 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, bool isLogically
     setEdges(includeLeftEdge, includeRightEdge);
 
     // Recur into our children.
-    for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
+    for (auto* child = firstChild(); child; child = child->nextOnLine()) {
         if (is<InlineFlowBox>(*child))
             downcast<InlineFlowBox>(*child).determineSpacingForFlowBoxes(lastLine, isLogicallyLastRunWrapped, logicallyLastRunRenderer);
     }
@@ -387,10 +387,10 @@ float InlineFlowBox::placeBoxesInInlineDirection(float logicalLeft, bool& needsW
     return logicalLeft;
 }
 
-float InlineFlowBox::placeBoxRangeInInlineDirection(InlineBox* firstChild, InlineBox* lastChild, float& logicalLeft, float& minLogicalLeft, float& maxLogicalRight, bool& needsWordSpacing)
+float InlineFlowBox::placeBoxRangeInInlineDirection(LegacyInlineBox* firstChild, LegacyInlineBox* lastChild, float& logicalLeft, float& minLogicalLeft, float& maxLogicalRight, bool& needsWordSpacing)
 {
     float totalExpansion = 0;
-    for (InlineBox* child = firstChild; child && child != lastChild; child = child->nextOnLine()) {
+    for (auto* child = firstChild; child && child != lastChild; child = child->nextOnLine()) {
         if (is<RenderText>(child->renderer())) {
             auto& textBox = downcast<InlineTextBox>(*child);
             RenderText& renderText = textBox.renderer();
@@ -460,7 +460,7 @@ bool InlineFlowBox::requiresIdeographicBaseline(const GlyphOverflowAndFallbackFo
         || lineStyle.fontCascade().primaryFont().hasVerticalGlyphs())
         return true;
 
-    for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
+    for (auto* child = firstChild(); child; child = child->nextOnLine()) {
         if (child->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
         
@@ -501,7 +501,7 @@ static bool verticalAlignApplies(const RenderObject& renderer)
 
 void InlineFlowBox::adjustMaxAscentAndDescent(LayoutUnit& maxAscent, LayoutUnit& maxDescent, LayoutUnit maxPositionTop, LayoutUnit maxPositionBottom)
 {
-    for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
+    for (auto* child = firstChild(); child; child = child->nextOnLine()) {
         // The computed lineheight needs to be extended for the
         // positioned elements
         if (child->renderer().isOutOfFlowPositioned())
@@ -571,8 +571,8 @@ void InlineFlowBox::computeLogicalBoxHeights(RootInlineBox& rootBox, LayoutUnit&
     if (!checkChildren)
         return;
 
-    Vector<InlineBox*> maxAscentInlineBoxList;
-    for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
+    Vector<LegacyInlineBox*> maxAscentInlineBoxList;
+    for (auto* child = firstChild(); child; child = child->nextOnLine()) {
         if (child->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
         
@@ -665,7 +665,7 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
             adjustmentForChildrenWithSameLineHeightAndBaseline += renderer().borderAndPaddingBefore();
     }
 
-    for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
+    for (auto* child = firstChild(); child; child = child->nextOnLine()) {
         if (child->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
 
@@ -784,7 +784,7 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
 
 void InlineFlowBox::maxLogicalBottomForTextDecorationLine(float& maxLogicalBottom, const RenderElement* decorationRenderer, OptionSet<TextDecoration> textDecoration) const
 {
-    for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
+    for (auto* child = firstChild(); child; child = child->nextOnLine()) {
         if (child->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
         
@@ -805,7 +805,7 @@ void InlineFlowBox::maxLogicalBottomForTextDecorationLine(float& maxLogicalBotto
 
 void InlineFlowBox::minLogicalTopForTextDecorationLine(float& minLogicalTop, const RenderElement* decorationRenderer, OptionSet<TextDecoration> textDecoration) const
 {
-    for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
+    for (auto* child = firstChild(); child; child = child->nextOnLine()) {
         if (child->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
         
@@ -829,7 +829,7 @@ void InlineFlowBox::flipLinesInBlockDirection(LayoutUnit lineTop, LayoutUnit lin
     // Flip the box on the line such that the top is now relative to the lineBottom instead of the lineTop.
     setLogicalTop(lineBottom - (logicalTop() - lineTop) - logicalHeight());
     
-    for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
+    for (auto* child = firstChild(); child; child = child->nextOnLine()) {
         if (child->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders aren't affected here.
         
@@ -986,7 +986,7 @@ inline void InlineFlowBox::addOutlineVisualOverflow(LayoutRect& logicalVisualOve
         logicalRightVisualOverflow - logicalLeftVisualOverflow, logicalBottomVisualOverflow - logicalTopVisualOverflow);
 }
 
-inline void InlineFlowBox::addReplacedChildOverflow(const InlineBox* inlineBox, LayoutRect& logicalLayoutOverflow, LayoutRect& logicalVisualOverflow)
+inline void InlineFlowBox::addReplacedChildOverflow(const LegacyInlineBox* inlineBox, LayoutRect& logicalLayoutOverflow, LayoutRect& logicalVisualOverflow)
 {
     const RenderBox& box = downcast<RenderBox>(inlineBox->renderer());
     
@@ -1026,7 +1026,7 @@ void InlineFlowBox::computeOverflow(LayoutUnit lineTop, LayoutUnit lineBottom, G
     addOutlineVisualOverflow(logicalVisualOverflow);
     addBorderOutsetVisualOverflow(logicalVisualOverflow);
 
-    for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
+    for (auto* child = firstChild(); child; child = child->nextOnLine()) {
         if (child->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
 
@@ -1099,7 +1099,7 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     // Check children first.
     // We need to account for culled inline parents of the hit-tested nodes, so that they may also get included in area-based hit-tests.
     RenderElement* culledParent = nullptr;
-    for (InlineBox* child = lastChild(); child; child = child->previousOnLine()) {
+    for (auto* child = lastChild(); child; child = child->previousOnLine()) {
         if (is<RenderText>(child->renderer()) || !child->boxModelObject()->hasSelfPaintingLayer()) {
             RenderElement* newParent = nullptr;
             // Culled parents are only relevant for area-based hit-tests, so ignore it in point-based ones.
@@ -1243,7 +1243,7 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     
     // Paint our children.
     if (paintPhase != PaintPhase::SelfOutline) {
-        for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
+        for (auto* curr = firstChild(); curr; curr = curr->nextOnLine()) {
             if (curr->renderer().isText() || !curr->boxModelObject()->hasSelfPaintingLayer())
                 curr->paint(childInfo, paintOffset, lineTop, lineBottom);
         }
@@ -1520,18 +1520,18 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         paintInfo.context().endTransparencyLayer();
 }
 
-InlineBox* InlineFlowBox::firstLeafDescendant() const
+LegacyInlineBox* InlineFlowBox::firstLeafDescendant() const
 {
-    InlineBox* leaf = nullptr;
-    for (InlineBox* child = firstChild(); child && !leaf; child = child->nextOnLine())
+    LegacyInlineBox* leaf = nullptr;
+    for (auto* child = firstChild(); child && !leaf; child = child->nextOnLine())
         leaf = child->isLeaf() ? child : downcast<InlineFlowBox>(*child).firstLeafDescendant();
     return leaf;
 }
 
-InlineBox* InlineFlowBox::lastLeafDescendant() const
+LegacyInlineBox* InlineFlowBox::lastLeafDescendant() const
 {
-    InlineBox* leaf = nullptr;
-    for (InlineBox* child = lastChild(); child && !leaf; child = child->previousOnLine())
+    LegacyInlineBox* leaf = nullptr;
+    for (auto* child = lastChild(); child && !leaf; child = child->previousOnLine())
         leaf = child->isLeaf() ? child : downcast<InlineFlowBox>(*child).lastLeafDescendant();
     return leaf;
 }
@@ -1543,7 +1543,7 @@ RenderObject::HighlightState InlineFlowBox::selectionState()
 
 bool InlineFlowBox::canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth) const
 {
-    for (InlineBox *box = firstChild(); box; box = box->nextOnLine()) {
+    for (auto* box = firstChild(); box; box = box->nextOnLine()) {
         if (!box->canAccommodateEllipsis(ltr, blockEdge, ellipsisWidth))
             return false;
     }
@@ -1557,7 +1557,7 @@ float InlineFlowBox::placeEllipsisBox(bool ltr, float blockLeftEdge, float block
     // box containing the ellipsis.  All boxes after that one in the flow are hidden.
     // If our flow is ltr then iterate over the boxes from left to right, otherwise iterate
     // from right to left. Varying the order allows us to correctly hide the boxes following the ellipsis.
-    InlineBox* box = ltr ? firstChild() : lastChild();
+    LegacyInlineBox* box = ltr ? firstChild() : lastChild();
 
     // NOTE: these will cross after foundBox = true.
     int visibleLeftEdge = blockLeftEdge;
@@ -1582,14 +1582,14 @@ float InlineFlowBox::placeEllipsisBox(bool ltr, float blockLeftEdge, float block
 
 void InlineFlowBox::clearTruncation()
 {
-    for (InlineBox *box = firstChild(); box; box = box->nextOnLine())
+    for (auto* box = firstChild(); box; box = box->nextOnLine())
         box->clearTruncation();
 }
 
 LayoutUnit InlineFlowBox::computeOverAnnotationAdjustment(LayoutUnit allowedPosition) const
 {
     LayoutUnit result;
-    for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
+    for (auto* child = firstChild(); child; child = child->nextOnLine()) {
         if (child->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
         
@@ -1637,7 +1637,7 @@ LayoutUnit InlineFlowBox::computeOverAnnotationAdjustment(LayoutUnit allowedPosi
 LayoutUnit InlineFlowBox::computeUnderAnnotationAdjustment(LayoutUnit allowedPosition) const
 {
     LayoutUnit result;
-    for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
+    for (auto* child = firstChild(); child; child = child->nextOnLine()) {
         if (child->renderer().isOutOfFlowPositioned())
             continue; // Positioned placeholders don't affect calculations.
 
@@ -1682,9 +1682,9 @@ LayoutUnit InlineFlowBox::computeUnderAnnotationAdjustment(LayoutUnit allowedPos
     return result;
 }
 
-void InlineFlowBox::collectLeafBoxesInLogicalOrder(Vector<InlineBox*>& leafBoxesInLogicalOrder, CustomInlineBoxRangeReverse customReverseImplementation, void* userData) const
+void InlineFlowBox::collectLeafBoxesInLogicalOrder(Vector<LegacyInlineBox*>& leafBoxesInLogicalOrder, CustomInlineBoxRangeReverse customReverseImplementation, void* userData) const
 {
-    InlineBox* leaf = firstLeafDescendant();
+    LegacyInlineBox* leaf = firstLeafDescendant();
 
     // FIXME: The reordering code is a copy of parts from BidiResolver::createBidiRunsForLine, operating directly on InlineBoxes, instead of BidiRuns.
     // Investigate on how this code could possibly be shared.
@@ -1709,22 +1709,22 @@ void InlineFlowBox::collectLeafBoxesInLogicalOrder(Vector<InlineBox*>& leafBoxes
     if (!(minLevel % 2))
         ++minLevel;
 
-    Vector<InlineBox*>::iterator end = leafBoxesInLogicalOrder.end();
+    Vector<LegacyInlineBox*>::iterator end = leafBoxesInLogicalOrder.end();
     while (minLevel <= maxLevel) {
-        Vector<InlineBox*>::iterator it = leafBoxesInLogicalOrder.begin();
+        Vector<LegacyInlineBox*>::iterator it = leafBoxesInLogicalOrder.begin();
         while (it != end) {
             while (it != end) {
                 if ((*it)->bidiLevel() >= minLevel)
                     break;
                 ++it;
             }
-            Vector<InlineBox*>::iterator first = it;
+            Vector<LegacyInlineBox*>::iterator first = it;
             while (it != end) {
                 if ((*it)->bidiLevel() < minLevel)
                     break;
                 ++it;
             }
-            Vector<InlineBox*>::iterator last = it;
+            Vector<LegacyInlineBox*>::iterator last = it;
             if (customReverseImplementation) {
                 ASSERT(userData);
                 (*customReverseImplementation)(userData, first, last);
@@ -1756,10 +1756,10 @@ const char* InlineFlowBox::boxName() const
     return "InlineFlowBox";
 }
 
-void InlineFlowBox::outputLineTreeAndMark(WTF::TextStream& stream, const InlineBox* markedBox, int depth) const
+void InlineFlowBox::outputLineTreeAndMark(WTF::TextStream& stream, const LegacyInlineBox* markedBox, int depth) const
 {
-    InlineBox::outputLineTreeAndMark(stream, markedBox, depth);
-    for (const InlineBox* box = firstChild(); box; box = box->nextOnLine())
+    LegacyInlineBox::outputLineTreeAndMark(stream, markedBox, depth);
+    for (const LegacyInlineBox* box = firstChild(); box; box = box->nextOnLine())
         box->outputLineTreeAndMark(stream, markedBox, depth + 1);
 }
 
@@ -1772,8 +1772,8 @@ void InlineFlowBox::checkConsistency() const
     assertNotDeleted();
     ASSERT_WITH_SECURITY_IMPLICATION(!m_hasBadChildList);
 #ifdef CHECK_CONSISTENCY
-    const InlineBox* previousChild = nullptr;
-    for (const InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
+    const LegacyInlineBox* previousChild = nullptr;
+    for (const LegacyInlineBox* child = firstChild(); child; child = child->nextOnLine()) {
         ASSERT(child->parent() == this);
         ASSERT(child->previousOnLine() == previousChild);
         previousChild = child;

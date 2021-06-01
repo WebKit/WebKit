@@ -1,3 +1,189 @@
+2021-06-01  Antti Koivisto  <antti@apple.com>
+
+        Rename InlineBox to LegacyInlineBox
+        https://bugs.webkit.org/show_bug.cgi?id=226501
+
+        Reviewed by Alan Bujtas.
+
+        More legacy line layout path renaming.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Position.h:
+        * layout/Verification.cpp:
+        (WebCore::Layout::checkForMatchingNonTextRuns):
+        (WebCore::Layout::collectFlowBoxSubtree):
+        (WebCore::Layout::collectInlineBoxes):
+        (WebCore::Layout::outputMismatchingComplexLineInformationIfNeeded):
+        * layout/integration/LayoutIntegrationRunIterator.cpp:
+        (WebCore::LayoutIntegration::firstTextRunInTextOrderFor):
+        * layout/integration/LayoutIntegrationRunIterator.h:
+        (WebCore::LayoutIntegration::PathRun::legacyInlineBox const):
+        * layout/integration/LayoutIntegrationRunIteratorLegacyPath.h:
+        (WebCore::LayoutIntegration::RunIteratorLegacyPath::RunIteratorLegacyPath):
+        (WebCore::LayoutIntegration::RunIteratorLegacyPath::legacyInlineBox const):
+        * layout/integration/LayoutIntegrationRunIteratorModernPath.h:
+        (WebCore::LayoutIntegration::RunIteratorModernPath::legacyInlineBox const):
+        * rendering/BidiRun.cpp:
+        * rendering/BidiRun.h:
+        (WebCore::BidiRun::box):
+        (WebCore::BidiRun::setBox):
+        * rendering/CaretRectComputation.cpp:
+        (WebCore::computeCaretRectForInline):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::EllipsisBox):
+        (WebCore::EllipsisBox::markupBox const):
+        (WebCore::EllipsisBox::paintMarkupBox):
+        (WebCore::EllipsisBox::nodeAtPoint):
+        * rendering/EllipsisBox.h:
+        * rendering/InlineElementBox.h:
+        (WebCore::InlineElementBox::InlineElementBox):
+        (WebCore::InlineElementBox::renderer const):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::setHasBadChildList):
+        (WebCore::InlineFlowBox::getFlowSpacingLogicalWidth):
+        (WebCore::InlineFlowBox::addToLine):
+        (WebCore::InlineFlowBox::removeChild):
+        (WebCore::InlineFlowBox::deleteLine):
+        (WebCore::InlineFlowBox::extractLine):
+        (WebCore::InlineFlowBox::attachLine):
+        (WebCore::InlineFlowBox::adjustPosition):
+        (WebCore::InlineFlowBox::determineSpacingForFlowBoxes):
+        (WebCore::InlineFlowBox::placeBoxRangeInInlineDirection):
+        (WebCore::InlineFlowBox::requiresIdeographicBaseline const):
+        (WebCore::InlineFlowBox::adjustMaxAscentAndDescent):
+        (WebCore::InlineFlowBox::computeLogicalBoxHeights):
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        (WebCore::InlineFlowBox::maxLogicalBottomForTextDecorationLine const):
+        (WebCore::InlineFlowBox::minLogicalTopForTextDecorationLine const):
+        (WebCore::InlineFlowBox::flipLinesInBlockDirection):
+        (WebCore::InlineFlowBox::addReplacedChildOverflow):
+        (WebCore::InlineFlowBox::computeOverflow):
+        (WebCore::InlineFlowBox::nodeAtPoint):
+        (WebCore::InlineFlowBox::paint):
+        (WebCore::InlineFlowBox::firstLeafDescendant const):
+        (WebCore::InlineFlowBox::lastLeafDescendant const):
+        (WebCore::InlineFlowBox::canAccommodateEllipsis const):
+        (WebCore::InlineFlowBox::placeEllipsisBox):
+        (WebCore::InlineFlowBox::clearTruncation):
+        (WebCore::InlineFlowBox::computeOverAnnotationAdjustment const):
+        (WebCore::InlineFlowBox::computeUnderAnnotationAdjustment const):
+        (WebCore::InlineFlowBox::collectLeafBoxesInLogicalOrder const):
+        (WebCore::InlineFlowBox::outputLineTreeAndMark const):
+        (WebCore::InlineFlowBox::checkConsistency const):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::InlineFlowBox):
+        (WebCore::InlineFlowBox::renderer const):
+        (WebCore::InlineFlowBox::firstChild const):
+        (WebCore::InlineFlowBox::lastChild const):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::markDirty):
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::InlineTextBox):
+        (WebCore::InlineTextBox::renderer const):
+        * rendering/LegacyInlineBox.cpp: Renamed from Source/WebCore/rendering/InlineBox.cpp.
+        (WebCore::LegacyInlineBox::assertNotDeleted const):
+        (WebCore::LegacyInlineBox::~LegacyInlineBox):
+        (WebCore::LegacyInlineBox::setHasBadParent):
+        (WebCore::LegacyInlineBox::invalidateParentChildList):
+        (WebCore::LegacyInlineBox::removeFromParent):
+        (WebCore::LegacyInlineBox::boxName const):
+        (WebCore::LegacyInlineBox::showNodeTreeForThis const):
+        (WebCore::LegacyInlineBox::showLineTreeForThis const):
+        (WebCore::LegacyInlineBox::outputLineTreeAndMark const):
+        (WebCore::LegacyInlineBox::outputLineBox const):
+        (WebCore::LegacyInlineBox::logicalHeight const):
+        (WebCore::LegacyInlineBox::baselinePosition const):
+        (WebCore::LegacyInlineBox::lineHeight const):
+        (WebCore::LegacyInlineBox::caretMinOffset const):
+        (WebCore::LegacyInlineBox::caretMaxOffset const):
+        (WebCore::LegacyInlineBox::dirtyLineBoxes):
+        (WebCore::LegacyInlineBox::adjustPosition):
+        (WebCore::LegacyInlineBox::root const):
+        (WebCore::LegacyInlineBox::root):
+        (WebCore::LegacyInlineBox::nextOnLineExists const):
+        (WebCore::LegacyInlineBox::previousOnLineExists const):
+        (WebCore::LegacyInlineBox::nextLeafOnLine const):
+        (WebCore::LegacyInlineBox::previousLeafOnLine const):
+        (WebCore::LegacyInlineBox::selectionState):
+        (WebCore::LegacyInlineBox::canAccommodateEllipsis const):
+        (WebCore::LegacyInlineBox::placeEllipsisBox):
+        (WebCore::LegacyInlineBox::clearKnownToHaveNoOverflow):
+        (WebCore::LegacyInlineBox::locationIncludingFlipping const):
+        (WebCore::LegacyInlineBox::flipForWritingMode const):
+        (showNodeTree):
+        (showLineTree):
+        * rendering/LegacyInlineBox.h: Renamed from Source/WebCore/rendering/InlineBox.h.
+        (WebCore::LegacyInlineBox::nextOnLine const):
+        (WebCore::LegacyInlineBox::previousOnLine const):
+        (WebCore::LegacyInlineBox::setNextOnLine):
+        (WebCore::LegacyInlineBox::setPreviousOnLine):
+        (WebCore::LegacyInlineBox::LegacyInlineBox):
+        (WebCore::LegacyInlineBox::~LegacyInlineBox):
+        (WebCore::LegacyInlineBox::assertNotDeleted const):
+        * rendering/LegacyLineLayout.cpp:
+        (WebCore::LegacyLineLayout::createInlineBoxForRenderer):
+        (WebCore::LegacyLineLayout::createLineBoxes):
+        (WebCore::LegacyLineLayout::constructLine):
+        (WebCore::inlineAncestorHasStartBorderPaddingOrMargin):
+        (WebCore::inlineAncestorHasEndBorderPaddingOrMargin):
+        (WebCore::LegacyLineLayout::computeInlineDirectionPositionsForSegment):
+        (WebCore::LegacyLineLayout::layoutRunsAndFloats):
+        * rendering/LegacyLineLayout.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::outputLineTreeAndMark const):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::offsetLeft const):
+        (WebCore::RenderInline::offsetTop const):
+        (WebCore::RenderInline::culledInlineFirstLineBox const):
+        (WebCore::RenderInline::culledInlineLastLineBox const):
+        * rendering/RenderInline.h:
+        (WebCore::RenderInline::firstLineBoxIncludingCulling const):
+        (WebCore::RenderInline::lastLineBoxIncludingCulling const):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::dirtyLinesFromChangedChild):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::localSelectionRect):
+        * rendering/RenderObject.h:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::isHyphenated const):
+        (WebCore::RootInlineBox::placeEllipsis):
+        (WebCore::RootInlineBox::childRemoved):
+        (WebCore::RootInlineBox::lineSelectionGap):
+        (WebCore::RootInlineBox::selectionState):
+        (WebCore::RootInlineBox::firstSelectedBox):
+        (WebCore::RootInlineBox::lastSelectedBox):
+        (WebCore::RootInlineBox::ascentAndDescentForBox const):
+        (WebCore::RootInlineBox::verticalPositionForBox):
+        (WebCore::RootInlineBox::includeLeadingForBox const):
+        (WebCore::RootInlineBox::includeFontForBox const):
+        (WebCore::RootInlineBox::includeGlyphsForBox const):
+        (WebCore::RootInlineBox::includeInitialLetterForBox const):
+        (WebCore::RootInlineBox::includeMarginForBox const):
+        (WebCore::RootInlineBox::outputLineBox const):
+        * rendering/RootInlineBox.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::positionForPoint):
+        * rendering/svg/SVGInlineFlowBox.cpp:
+        (WebCore::SVGInlineFlowBox::paintSelectionBackground):
+        (WebCore::SVGInlineFlowBox::paint):
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::paint):
+        (WebCore::SVGRootInlineBox::layoutCharactersInTextBoxes):
+        (WebCore::SVGRootInlineBox::layoutChildBoxes):
+        (WebCore::SVGRootInlineBox::layoutRootBox):
+        (WebCore::SVGRootInlineBox::closestLeafChildForPosition):
+        (WebCore::SVGRootInlineBox::nodeAtPoint):
+        (WebCore::reverseInlineBoxRangeAndValueListsIfNeeded):
+        (WebCore::SVGRootInlineBox::reorderValueLists):
+        * rendering/svg/SVGRootInlineBox.h:
+        * rendering/svg/SVGTextQuery.cpp:
+        (WebCore::SVGTextQuery::collectTextBoxesInFlowBox):
+
 2021-06-01  Dean Jackson  <dino@apple.com>
 
         [WebXR] Attach IOSurface to WebXROpaqueFramebuffer

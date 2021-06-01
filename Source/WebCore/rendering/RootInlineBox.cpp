@@ -98,7 +98,7 @@ void RootInlineBox::clearTruncation()
 
 bool RootInlineBox::isHyphenated() const
 {
-    for (InlineBox* box = firstLeafDescendant(); box; box = box->nextLeafOnLine()) {
+    for (auto* box = firstLeafDescendant(); box; box = box->nextLeafOnLine()) {
         if (is<InlineTextBox>(*box) && downcast<InlineTextBox>(*box).hasHyphen())
             return true;
     }
@@ -127,7 +127,7 @@ bool RootInlineBox::lineCanAccommodateEllipsis(bool ltr, int blockEdge, int line
     return InlineFlowBox::canAccommodateEllipsis(ltr, blockEdge, ellipsisWidth);
 }
 
-float RootInlineBox::placeEllipsis(const AtomString& ellipsisStr,  bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, InlineBox* markupBox)
+float RootInlineBox::placeEllipsis(const AtomString& ellipsisStr,  bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, LegacyInlineBox* markupBox)
 {
     if (!gEllipsisBoxMap)
         gEllipsisBoxMap = new EllipsisBoxMap();
@@ -196,7 +196,7 @@ void RootInlineBox::adjustPosition(float dx, float dy)
         ellipsisBox()->adjustPosition(dx, dy);
 }
 
-void RootInlineBox::childRemoved(InlineBox* box)
+void RootInlineBox::childRemoved(LegacyInlineBox* box)
 {
     if (&box->renderer() == m_lineBreakObj)
         setLineBreakInfo(nullptr, 0, BidiStatus());
@@ -438,8 +438,8 @@ GapRects RootInlineBox::lineSelectionGap(RenderBlock& rootBlock, const LayoutPoi
 
     GapRects result;
 
-    InlineBox* firstBox = firstSelectedBox();
-    InlineBox* lastBox = lastSelectedBox();
+    LegacyInlineBox* firstBox = firstSelectedBox();
+    LegacyInlineBox* lastBox = lastSelectedBox();
     if (leftGap) {
         result.uniteLeft(blockFlow().logicalLeftSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, &firstBox->parent()->renderer(), LayoutUnit(firstBox->logicalLeft()),
             selTop, selHeight, cache, paintInfo));
@@ -460,7 +460,7 @@ GapRects RootInlineBox::lineSelectionGap(RenderBlock& rootBlock, const LayoutPoi
         // Now fill in any gaps on the line that occurred between two selected elements.
         LayoutUnit lastLogicalLeft { firstBox->logicalRight() };
         bool isPreviousBoxSelected = firstBox->selectionState() != RenderObject::HighlightState::None;
-        for (InlineBox* box = firstBox->nextLeafOnLine(); box; box = box->nextLeafOnLine()) {
+        for (auto* box = firstBox->nextLeafOnLine(); box; box = box->nextLeafOnLine()) {
             if (box->selectionState() != RenderObject::HighlightState::None) {
                 LayoutRect logicalRect { lastLogicalLeft, selTop, LayoutUnit(box->logicalLeft() - lastLogicalLeft), selHeight };
                 logicalRect.move(renderer().isHorizontalWritingMode() ? offsetFromRootBlock : LayoutSize(offsetFromRootBlock.height(), offsetFromRootBlock.width()));
@@ -486,7 +486,7 @@ RenderObject::HighlightState RootInlineBox::selectionState()
 {
     // Walk over all of the selected boxes.
     RenderObject::HighlightState state = RenderObject::HighlightState::None;
-    for (InlineBox* box = firstLeafDescendant(); box; box = box->nextLeafOnLine()) {
+    for (auto* box = firstLeafDescendant(); box; box = box->nextLeafOnLine()) {
         RenderObject::HighlightState boxState = box->selectionState();
         if ((boxState == RenderObject::HighlightState::Start && state == RenderObject::HighlightState::End)
             || (boxState == RenderObject::HighlightState::End && state == RenderObject::HighlightState::Start))
@@ -505,7 +505,7 @@ RenderObject::HighlightState RootInlineBox::selectionState()
     return state;
 }
 
-InlineBox* RootInlineBox::firstSelectedBox()
+LegacyInlineBox* RootInlineBox::firstSelectedBox()
 {
     for (auto* box = firstLeafDescendant(); box; box = box->nextLeafOnLine()) {
         if (box->selectionState() != RenderObject::HighlightState::None)
@@ -514,7 +514,7 @@ InlineBox* RootInlineBox::firstSelectedBox()
     return nullptr;
 }
 
-InlineBox* RootInlineBox::lastSelectedBox()
+LegacyInlineBox* RootInlineBox::lastSelectedBox()
 {
     for (auto* box = lastLeafDescendant(); box; box = box->previousLeafOnLine()) {
         if (box->selectionState() != RenderObject::HighlightState::None)
@@ -782,7 +782,7 @@ static void setAscentAndDescent(LayoutUnit& ascent, LayoutUnit& descent, LayoutU
     }
 }
 
-void RootInlineBox::ascentAndDescentForBox(InlineBox& box, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, LayoutUnit& ascent, LayoutUnit& descent,
+void RootInlineBox::ascentAndDescentForBox(LegacyInlineBox& box, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, LayoutUnit& ascent, LayoutUnit& descent,
                                            bool& affectsAscent, bool& affectsDescent) const
 {
     bool ascentDescentSet = false;
@@ -898,7 +898,7 @@ void RootInlineBox::ascentAndDescentForBox(InlineBox& box, GlyphOverflowAndFallb
     }
 }
 
-LayoutUnit RootInlineBox::verticalPositionForBox(InlineBox* box, VerticalPositionCache& verticalPositionCache)
+LayoutUnit RootInlineBox::verticalPositionForBox(LegacyInlineBox* box, VerticalPositionCache& verticalPositionCache)
 {
     if (box->renderer().isTextOrLineBreak())
         return LayoutUnit(box->parent()->logicalTop());
@@ -971,7 +971,7 @@ LayoutUnit RootInlineBox::verticalPositionForBox(InlineBox* box, VerticalPositio
     return verticalPosition;
 }
 
-bool RootInlineBox::includeLeadingForBox(InlineBox& box) const
+bool RootInlineBox::includeLeadingForBox(LegacyInlineBox& box) const
 {
     if (box.renderer().isReplaced() || (box.renderer().isTextOrLineBreak() && !box.behavesLikeText()))
         return false;
@@ -980,7 +980,7 @@ bool RootInlineBox::includeLeadingForBox(InlineBox& box) const
     return lineBoxContain.contains(LineBoxContain::Inline) || (&box == this && lineBoxContain.contains(LineBoxContain::Block));
 }
 
-bool RootInlineBox::includeFontForBox(InlineBox& box) const
+bool RootInlineBox::includeFontForBox(LegacyInlineBox& box) const
 {
     if (box.renderer().isReplaced() || (box.renderer().isTextOrLineBreak() && !box.behavesLikeText()))
         return false;
@@ -991,7 +991,7 @@ bool RootInlineBox::includeFontForBox(InlineBox& box) const
     return renderer().style().lineBoxContain().contains(LineBoxContain::Font);
 }
 
-bool RootInlineBox::includeGlyphsForBox(InlineBox& box) const
+bool RootInlineBox::includeGlyphsForBox(LegacyInlineBox& box) const
 {
     if (box.renderer().isReplaced() || (box.renderer().isTextOrLineBreak() && !box.behavesLikeText()))
         return false;
@@ -1002,7 +1002,7 @@ bool RootInlineBox::includeGlyphsForBox(InlineBox& box) const
     return renderer().style().lineBoxContain().contains(LineBoxContain::Glyphs);
 }
 
-bool RootInlineBox::includeInitialLetterForBox(InlineBox& box) const
+bool RootInlineBox::includeInitialLetterForBox(LegacyInlineBox& box) const
 {
     if (box.renderer().isReplaced() || (box.renderer().isTextOrLineBreak() && !box.behavesLikeText()))
         return false;
@@ -1013,7 +1013,7 @@ bool RootInlineBox::includeInitialLetterForBox(InlineBox& box) const
     return renderer().style().lineBoxContain().contains(LineBoxContain::InitialLetter);
 }
 
-bool RootInlineBox::includeMarginForBox(InlineBox& box) const
+bool RootInlineBox::includeMarginForBox(LegacyInlineBox& box) const
 {
     if (box.renderer().isReplaced() || (box.renderer().isTextOrLineBreak() && !box.behavesLikeText()))
         return false;
@@ -1041,7 +1041,7 @@ void RootInlineBox::outputLineBox(WTF::TextStream& stream, bool mark, int depth)
         stream << " ";
     stream << "Line: (top: " << lineTop() << " bottom: " << lineBottom() << ") with leading (top: " << lineBoxTop() << " bottom: " << lineBoxBottom() << ")";
     stream.nextLine();
-    InlineBox::outputLineBox(stream, mark, depth);
+    LegacyInlineBox::outputLineBox(stream, mark, depth);
 }
 
 const char* RootInlineBox::boxName() const
