@@ -533,7 +533,6 @@ public:
 #if OS(WINDOWS)
     HDC getWindowsContext(const IntRect&, bool supportAlphaBlend); // The passed in rect is used to create a bitmap for compositing inside transparency layers.
     void releaseWindowsContext(HDC, const IntRect&, bool supportAlphaBlend); // The passed in HDC should be the one handed back by getWindowsContext.
-    HDC hdc() const;
 
     // FIXME: This should not exist; we need a different place to
     // put code shared between Windows CG and Windows Cairo backends.

@@ -104,14 +104,6 @@ HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlpha
     return deprecatedPrivateContext()->m_hdc;
 }
 
-HDC GraphicsContext::hdc() const
-{
-    if (!deprecatedPrivateContext())
-        return nullptr;
-
-    return deprecatedPrivateContext()->m_hdc;
-}
-
 #if PLATFORM(WIN) && !USE(DIRECT2D)
 void GraphicsContextPlatformPrivate::save()
 {
