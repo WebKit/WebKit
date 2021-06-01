@@ -142,6 +142,7 @@ private:
     const char* activeDOMObjectName() const final;
     void suspend(ReasonForSuspension) final;
     void resume() final;
+    bool virtualHasPendingActivity() const final;
 
     UniqueRef<DefaultAudioDestinationNode> m_destinationNode;
     std::unique_ptr<PlatformMediaSession> m_mediaSession;

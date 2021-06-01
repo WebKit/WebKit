@@ -1,5 +1,37 @@
 2021-05-31  Chris Dumez  <cdumez@apple.com>
 
+        Drop PendingActivity data member from BaseAudioContext
+        https://bugs.webkit.org/show_bug.cgi?id=226445
+
+        Reviewed by Darin Adler.
+
+        Drop PendingActivity data member from BaseAudioContext and instead have AudioContext / OfflineAudioContext
+        override virtualHasPendingActivity() to keep their JS wrapper alive. I find that PendingActivity data members
+        are too error prone and a frequent cause of leaks.
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::AudioContext):
+        (WebCore::AudioContext::startRendering):
+        (WebCore::AudioContext::mayResumePlayback):
+        (WebCore::AudioContext::suspendPlayback):
+        (WebCore::AudioContext::virtualHasPendingActivity const):
+        * Modules/webaudio/AudioContext.h:
+        * Modules/webaudio/BaseAudioContext.cpp:
+        (WebCore::BaseAudioContext::clear):
+        (WebCore::BaseAudioContext::clearPendingActivity): Deleted.
+        (WebCore::BaseAudioContext::setPendingActivity): Deleted.
+        * Modules/webaudio/BaseAudioContext.h:
+        * Modules/webaudio/OfflineAudioContext.cpp:
+        (WebCore::OfflineAudioContext::startRendering):
+        (WebCore::OfflineAudioContext::resumeRendering):
+        (WebCore::OfflineAudioContext::didSuspendRendering):
+        (WebCore::OfflineAudioContext::finishedRendering):
+        (WebCore::OfflineAudioContext::virtualHasPendingActivity const):
+        (WebCore::OfflineAudioContext::dispatchEvent): Deleted.
+        * Modules/webaudio/OfflineAudioContext.h:
+
+2021-05-31  Chris Dumez  <cdumez@apple.com>
+
         Fix thread safety issues in AudioBufferSourceNode
         https://bugs.webkit.org/show_bug.cgi?id=226448
 

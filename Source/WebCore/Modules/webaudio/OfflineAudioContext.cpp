@@ -113,7 +113,6 @@ void OfflineAudioContext::startRendering(Ref<DeferredPromise>&& promise)
             return;
         }
 
-        setPendingActivity();
         m_pendingRenderingPromise = WTFMove(promise);
         m_didStartRendering = true;
         setState(State::Running);
@@ -175,7 +174,6 @@ void OfflineAudioContext::resumeRendering(Ref<DeferredPromise>&& promise)
             return;
         }
 
-        setPendingActivity();
         setState(State::Running);
         promise->resolve();
     });
@@ -194,8 +192,6 @@ bool OfflineAudioContext::shouldSuspend()
 void OfflineAudioContext::didSuspendRendering(size_t frame)
 {
     setState(State::Suspended);
-
-    clearPendingActivity();
 
     RefPtr<DeferredPromise> promise;
     {
@@ -217,6 +213,9 @@ void OfflineAudioContext::finishedRendering(bool didRendering)
         clear();
     });
 
+    // Make sure our JSwrapper stays alive long enough to resolve the promise and queue the completion event.
+    // Otherwise, setting the state to Closed may cause our JS wrapper to get collected early.
+    auto protectedJSWrapper = makePendingActivity(*this);
     setState(State::Closed);
 
     // Avoid firing the event if the document has already gone away.
@@ -246,11 +245,9 @@ void OfflineAudioContext::settleRenderingPromise(ExceptionOr<Ref<AudioBuffer>>&&
     promise->resolve<IDLInterface<AudioBuffer>>(result.releaseReturnValue());
 }
 
-void OfflineAudioContext::dispatchEvent(Event& event)
+bool OfflineAudioContext::virtualHasPendingActivity() const
 {
-    BaseAudioContext::dispatchEvent(event);
-    if (event.eventInterface() == OfflineAudioCompletionEventInterfaceType)
-        clearPendingActivity();
+    return state() == State::Running;
 }
 
 } // namespace WebCore

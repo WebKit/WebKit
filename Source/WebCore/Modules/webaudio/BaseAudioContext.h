@@ -227,9 +227,6 @@ public:
 
 protected:
     explicit BaseAudioContext(Document&);
-    
-    void clearPendingActivity();
-    void setPendingActivity();
 
     virtual void uninitialize();
 
@@ -345,8 +342,6 @@ private:
     RecursiveLock m_graphLock;
 
     std::unique_ptr<AsyncAudioDecoder> m_audioDecoder;
-
-    RefPtr<PendingActivity<BaseAudioContext>> m_pendingActivity;
 
     AudioIOPosition m_outputPosition;
 

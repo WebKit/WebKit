@@ -179,8 +179,6 @@ void BaseAudioContext::clear()
         deleteMarkedNodes();
         m_nodesToDelete = std::exchange(m_nodesMarkedForDeletion, { });
     } while (!m_nodesToDelete.isEmpty());
-
-    clearPendingActivity();
 }
 
 void BaseAudioContext::uninitialize()
@@ -875,17 +873,6 @@ void BaseAudioContext::addConsoleMessage(MessageSource source, MessageLevel leve
 {
     if (m_scriptExecutionContext)
         m_scriptExecutionContext->addConsoleMessage(source, level, message);
-}
-
-void BaseAudioContext::clearPendingActivity()
-{
-    m_pendingActivity = nullptr;
-}
-
-void BaseAudioContext::setPendingActivity()
-{
-    if (!m_pendingActivity)
-        m_pendingActivity = makePendingActivity(*this);
 }
 
 PeriodicWave& BaseAudioContext::periodicWave(OscillatorType type)
