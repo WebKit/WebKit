@@ -1,3 +1,14 @@
+2021-06-01  Dean Jackson  <dino@apple.com>
+
+        [WebXR] Attach IOSurface to WebXROpaqueFramebuffer
+        https://bugs.webkit.org/show_bug.cgi?id=225896
+        <rdar://problem/78128289>
+
+        Add a null check to fix a test crash.
+
+        * Modules/webxr/WebXROpaqueFramebuffer.cpp:
+        (WebCore::WebXROpaqueFramebuffer::startFrame):
+
 2021-06-01  Sam Weinig  <weinig@apple.com>
 
         Factor out token-type dependent CSS property parsing functions to allow more code sharing
