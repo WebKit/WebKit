@@ -133,7 +133,10 @@ public:
     void dispatchEvent(Event&) override;
 
 private:
+    friend class XMLHttpRequestUpload;
     explicit XMLHttpRequest(ScriptExecutionContext&);
+
+    void updateHasRelevantEventListener();
 
     // EventTarget.
     void eventListenersDidChange() final;
@@ -247,7 +250,7 @@ private:
 
     std::optional<ExceptionCode> m_exceptionCode;
     RefPtr<UserGestureToken> m_userGestureToken;
-    bool m_hasRelevantEventListener { false };
+    std::atomic<bool> m_hasRelevantEventListener;
 };
 
 inline auto XMLHttpRequest::responseType() const -> ResponseType

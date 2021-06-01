@@ -1,3 +1,19 @@
+2021-06-01  Chris Dumez  <cdumez@apple.com>
+
+        Fix unsafe access to m_upload in XMLHttpRequest::virtualHasPendingActivity()
+        https://bugs.webkit.org/show_bug.cgi?id=226508
+
+        Reviewed by Geoffrey Garen.
+
+        Improve layout test coverage to make sure that XMLHttpRequest.upload always returns
+        the same object and that progress events on XMLHttpRequest.upload still get fired
+        after GC.
+
+        * fast/xmlhttprequest/xmlhttprequest-upload-sameobject-expected.txt: Added.
+        * fast/xmlhttprequest/xmlhttprequest-upload-sameobject.html: Added.
+        * http/tests/xmlhttprequest/upload-progress-events-gc-expected.txt: Added.
+        * http/tests/xmlhttprequest/upload-progress-events-gc.html: Added.
+
 2021-06-01  Sam Weinig  <weinig@apple.com>
 
         Support calc() on components inside relative color syntax colors

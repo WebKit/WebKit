@@ -1,3 +1,27 @@
+2021-06-01  Chris Dumez  <cdumez@apple.com>
+
+        Fix unsafe access to m_upload in XMLHttpRequest::virtualHasPendingActivity()
+        https://bugs.webkit.org/show_bug.cgi?id=226508
+
+        Reviewed by Geoffrey Garen.
+
+        Fix unsafe access to m_upload in XMLHttpRequest::virtualHasPendingActivity() as virtualHasPendingActivity()
+        may get called off the main thread and m_upload gets initialized lazily on the main thread.
+
+        Tests: fast/xmlhttprequest/xmlhttprequest-upload-sameobject.html
+               http/tests/xmlhttprequest/upload-progress-events-gc.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::updateHasRelevantEventListener):
+        (WebCore::XMLHttpRequest::eventListenersDidChange):
+        (WebCore::XMLHttpRequest::virtualHasPendingActivity const):
+        * xml/XMLHttpRequest.h:
+        * xml/XMLHttpRequest.idl:
+        * xml/XMLHttpRequestUpload.cpp:
+        (WebCore::XMLHttpRequestUpload::eventListenersDidChange):
+        (WebCore::XMLHttpRequestUpload::hasRelevantEventListener const):
+        * xml/XMLHttpRequestUpload.h:
+
 2021-06-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Remove unused GraphicsContext::hdc()
