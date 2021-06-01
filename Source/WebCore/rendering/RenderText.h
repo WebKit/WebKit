@@ -167,7 +167,7 @@ public:
     void setCandidateComputedTextSize(float size) { m_candidateComputedTextSize = size; }
 #endif
 
-    bool usesComplexLineLayoutPath() const;
+    bool usesLegacyLineLayoutPath() const;
 
     StringView stringView(unsigned start = 0, std::optional<unsigned> stop = std::nullopt) const;
     

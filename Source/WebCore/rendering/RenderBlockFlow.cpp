@@ -24,7 +24,6 @@
 #include "config.h"
 #include "RenderBlockFlow.h"
 
-#include "ComplexLineLayout.h"
 #include "Editor.h"
 #include "FloatingObjects.h"
 #include "Frame.h"
@@ -40,6 +39,7 @@
 #include "LayoutIntegrationLineLayout.h"
 #include "LayoutIntegrationRunIterator.h"
 #include "LayoutRepainter.h"
+#include "LegacyLineLayout.h"
 #include "Logging.h"
 #include "RenderCombineText.h"
 #include "RenderFlexibleBox.h"
@@ -154,8 +154,8 @@ void RenderBlockFlow::willBeDestroyed()
             parent()->dirtyLinesFromChangedChild(*this);
     }
 
-    if (complexLineLayout())
-        complexLineLayout()->lineBoxes().deleteLineBoxes();
+    if (legacyLineLayout())
+        legacyLineLayout()->lineBoxes().deleteLineBoxes();
 
     blockWillBeDestroyed();
 
@@ -700,10 +700,10 @@ void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& re
     }
 #endif
 
-    if (!complexLineLayout())
-        m_lineLayout = makeUnique<ComplexLineLayout>(*this);
+    if (!legacyLineLayout())
+        m_lineLayout = makeUnique<LegacyLineLayout>(*this);
 
-    complexLineLayout()->layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
+    legacyLineLayout()->layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
 }
 
 void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo, LayoutUnit& previousFloatLogicalBottom, LayoutUnit& maxFloatLogicalBottom)
@@ -970,7 +970,7 @@ LayoutUnit RenderBlockFlow::startAlignedOffsetForLine(LayoutUnit position, Inden
     float logicalLeft = logicalLeftOffsetForLine(logicalHeight(), DoNotIndentText);
     float availableLogicalWidth = logicalRightOffsetForLine(logicalHeight(), DoNotIndentText) - logicalLeft;
 
-    ComplexLineLayout::updateLogicalWidthForAlignment(*this, textAlign, nullptr, nullptr, logicalLeft, totalLogicalWidth, availableLogicalWidth, 0);
+    LegacyLineLayout::updateLogicalWidthForAlignment(*this, textAlign, nullptr, nullptr, logicalLeft, totalLogicalWidth, availableLogicalWidth, 0);
 
     if (!style().isLeftToRightDirection())
         return LayoutUnit(logicalWidth() - logicalLeft);
@@ -1802,7 +1802,7 @@ void RenderBlockFlow::adjustLinePositionForPagination(RootInlineBox* lineBox, La
     LayoutUnit remainingLogicalHeight = pageRemainingLogicalHeightForOffset(logicalOffset, ExcludePageBoundary);
     overflowsFragment = (lineHeight > remainingLogicalHeight);
 
-    int lineIndex = complexLineLayout()->lineCountUntil(lineBox);
+    int lineIndex = legacyLineLayout()->lineCountUntil(lineBox);
     if (remainingLogicalHeight < lineHeight || (shouldBreakAtLineToAvoidWidow() && lineBreakToAvoidWidow() == lineIndex)) {
         if (lineBreakToAvoidWidow() == lineIndex)
             clearShouldBreakAtLineToAvoidWidowIfNeeded(*this);
@@ -2131,7 +2131,7 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
 
     if (diff >= StyleDifference::Repaint) {
         auto shouldInvalidateLineLayoutPath = [&] {
-            if (selfNeedsLayout() || complexLineLayout())
+            if (selfNeedsLayout() || legacyLineLayout())
                 return true;
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
             if (modernLineLayout() && !LayoutIntegration::LineLayout::canUseForAfterStyleChange(*this, diff))
@@ -3017,7 +3017,7 @@ bool RenderBlockFlow::hitTestInlineChildren(const HitTestRequest& request, HitTe
         return modernLineLayout()->hitTest(request, result, locationInContainer, accumulatedOffset, hitTestAction);
 #endif
 
-    return complexLineLayout() && complexLineLayout()->lineBoxes().hitTest(this, request, result, locationInContainer, accumulatedOffset, hitTestAction);
+    return legacyLineLayout() && legacyLineLayout()->lineBoxes().hitTest(this, request, result, locationInContainer, accumulatedOffset, hitTestAction);
 }
 
 void RenderBlockFlow::addOverflowFromInlineChildren()
@@ -3029,8 +3029,8 @@ void RenderBlockFlow::addOverflowFromInlineChildren()
     }
 #endif
     
-    if (complexLineLayout())
-        complexLineLayout()->addOverflowFromInlineChildren();
+    if (legacyLineLayout())
+        legacyLineLayout()->addOverflowFromInlineChildren();
 }
 
 void RenderBlockFlow::adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutUnit& right) const
@@ -3188,7 +3188,7 @@ std::optional<LayoutUnit> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode
                 + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight())).toInt() };
         }
 
-        if (complexLineLayout()) {
+        if (legacyLineLayout()) {
             bool isFirstLine = lastRootBox() == firstRootBox();
             const auto& style = isFirstLine ? firstLineStyle() : this->style();
             // InlineFlowBox::placeBoxesInBlockDirection will flip lines in case of verticalLR mode, so we can assume verticalRL for now.
@@ -3341,8 +3341,8 @@ int RenderBlockFlow::lineCount() const
         if (modernLineLayout())
             return modernLineLayout()->lineCount();
 #endif
-        if (complexLineLayout())
-            return complexLineLayout()->lineCount();
+        if (legacyLineLayout())
+            return legacyLineLayout()->lineCount();
 
         return 0;
     }
@@ -3593,8 +3593,8 @@ void RenderBlockFlow::paintInlineChildren(PaintInfo& paintInfo, const LayoutPoin
     }
 #endif
 
-    if (complexLineLayout())
-        complexLineLayout()->lineBoxes().paint(this, paintInfo, paintOffset);
+    if (legacyLineLayout())
+        legacyLineLayout()->lineBoxes().paint(this, paintInfo, paintOffset);
 }
 
 bool RenderBlockFlow::relayoutForPagination()
@@ -3651,7 +3651,7 @@ bool RenderBlockFlow::hasLines() const
         return modernLineLayout()->lineCount();
 #endif
 
-    return complexLineLayout() && complexLineLayout()->lineBoxes().firstLineBox();
+    return legacyLineLayout() && legacyLineLayout()->lineBoxes().firstLineBox();
 }
 
 void RenderBlockFlow::invalidateLineLayoutPath()
@@ -3758,7 +3758,7 @@ void RenderBlockFlow::ensureLineBoxes()
 
     setLineLayoutPath(ForceLineBoxesPath);
 
-    if (complexLineLayout() || !hasLineLayout())
+    if (legacyLineLayout() || !hasLineLayout())
         return;
 
     bool needsToPaginateComplexLines = [&] {
@@ -3769,9 +3769,9 @@ void RenderBlockFlow::ensureLineBoxes()
         return false;
     }();
 
-    m_lineLayout = makeUnique<ComplexLineLayout>(*this);
+    m_lineLayout = makeUnique<LegacyLineLayout>(*this);
 
-    auto& complexLineLayout = *this->complexLineLayout();
+    auto& legacyLineLayout = *this->legacyLineLayout();
 
 #if ASSERT_ENABLED
     LayoutUnit oldHeight = logicalHeight();
@@ -3783,14 +3783,14 @@ void RenderBlockFlow::ensureLineBoxes()
     LayoutUnit repaintLogicalBottom;
     if (needsToPaginateComplexLines) {
         PaginatedLayoutStateMaintainer state(*this);
-        complexLineLayout.layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
+        legacyLineLayout.layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
         // This matches relayoutToAvoidWidows.
         if (shouldBreakAtLineToAvoidWidow())
-            complexLineLayout.layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
+            legacyLineLayout.layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
         // FIXME: This is needed as long as simple and normal line layout produce different line breakings.
         repaint();
     } else
-        complexLineLayout.layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
+        legacyLineLayout.layoutLineBoxes(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
 
     updateLogicalHeight();
     ASSERT(didNeedLayout || ceilf(logicalHeight()) == ceilf(oldHeight));

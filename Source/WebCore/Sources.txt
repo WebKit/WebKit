@@ -2240,7 +2240,6 @@ rendering/BreakLines.cpp
 rendering/CSSFilter.cpp
 rendering/CaretRectComputation.cpp
 rendering/ClipRect.cpp
-rendering/ComplexLineLayout.cpp
 rendering/ContentfulPaintChecker.cpp
 rendering/CounterNode.cpp
 rendering/EllipsisBox.cpp
@@ -2266,6 +2265,7 @@ rendering/LayerAncestorClippingStack.cpp
 rendering/LayerOverlapMap.cpp
 rendering/LayoutDisallowedScope.cpp
 rendering/LayoutRepainter.cpp
+rendering/LegacyLineLayout.cpp
 rendering/MarkedText.cpp
 rendering/MarkedTextStyle.cpp
 rendering/OrderIterator.cpp

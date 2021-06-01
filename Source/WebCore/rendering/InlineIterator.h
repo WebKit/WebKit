@@ -537,7 +537,7 @@ public:
             addPlaceholderRunForIsolatedInline(resolver, obj, pos, root);
         }
         m_haveAddedFakeRunForRootIsolate = true;
-        ComplexLineLayout::appendRunsForObject(nullptr, pos, end, obj, resolver);
+        LegacyLineLayout::appendRunsForObject(nullptr, pos, end, obj, resolver);
     }
 
 private:
@@ -559,7 +559,7 @@ inline void InlineBidiResolver::appendRunInternal()
             if (isolateTracker.inIsolate())
                 isolateTracker.addFakeRunIfNecessary(*obj, start, obj->length(), *m_sor.root(), *this);
             else
-                ComplexLineLayout::appendRunsForObject(&m_runs, start, obj->length(), *obj, *this);
+                LegacyLineLayout::appendRunsForObject(&m_runs, start, obj->length(), *obj, *this);
             // FIXME: start/obj should be an InlineIterator instead of two separate variables.
             start = 0;
             obj = bidiNextSkippingEmptyInlines(*m_sor.root(), obj, &isolateTracker);
@@ -575,7 +575,7 @@ inline void InlineBidiResolver::appendRunInternal()
             if (isolateTracker.inIsolate())
                 isolateTracker.addFakeRunIfNecessary(*obj, start, obj->length(), *m_sor.root(), *this);
             else
-                ComplexLineLayout::appendRunsForObject(&m_runs, start, end, *obj, *this);
+                LegacyLineLayout::appendRunsForObject(&m_runs, start, end, *obj, *this);
         }
 
         m_eor.increment();

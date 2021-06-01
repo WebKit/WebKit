@@ -52,11 +52,11 @@ struct WordMeasurement;
 template <class Run> class BidiRunList;
 typedef Vector<WordMeasurement, 64> WordMeasurements;
 
-class ComplexLineLayout {
+class LegacyLineLayout {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ComplexLineLayout(RenderBlockFlow&);
-    ~ComplexLineLayout();
+    LegacyLineLayout(RenderBlockFlow&);
+    ~LegacyLineLayout();
 
     RenderLineBoxList& lineBoxes() { return m_lineBoxes; }
     const RenderLineBoxList& lineBoxes() const { return m_lineBoxes; }

@@ -59,7 +59,7 @@ inline Layout::InlineLineGeometry::EnclosingTopAndBottom operator+(const Layout:
 
 inline static float lineOverflowWidth(const RenderBlockFlow& flow, InlineLayoutUnit lineBoxLogicalWidth, InlineLayoutUnit lineContentLogicalWidth)
 {
-    // FIXME: It's the copy of the lets-adjust-overflow-for-the-caret behavior from ComplexLineLayout::addOverflowFromInlineChildren.
+    // FIXME: It's the copy of the lets-adjust-overflow-for-the-caret behavior from LegacyLineLayout::addOverflowFromInlineChildren.
     auto endPadding = flow.hasOverflowClip() ? flow.paddingEnd() : 0_lu;
     if (!endPadding)
         endPadding = flow.endPaddingWidthForCaret();

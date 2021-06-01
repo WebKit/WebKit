@@ -734,19 +734,19 @@ EllipsisBox* RootInlineBox::ellipsisBox() const
 
 void RootInlineBox::removeLineBoxFromRenderObject()
 {
-    // Null if we are destroying ComplexLineLayout.
-    if (auto* complexLineLayout = blockFlow().complexLineLayout())
-        complexLineLayout->lineBoxes().removeLineBox(this);
+    // Null if we are destroying LegacyLineLayout.
+    if (auto* legacyLineLayout = blockFlow().legacyLineLayout())
+        legacyLineLayout->lineBoxes().removeLineBox(this);
 }
 
 void RootInlineBox::extractLineBoxFromRenderObject()
 {
-    blockFlow().complexLineLayout()->lineBoxes().extractLineBox(this);
+    blockFlow().legacyLineLayout()->lineBoxes().extractLineBox(this);
 }
 
 void RootInlineBox::attachLineBoxToRenderObject()
 {
-    blockFlow().complexLineLayout()->lineBoxes().attachLineBox(this);
+    blockFlow().legacyLineLayout()->lineBoxes().attachLineBox(this);
 }
 
 LayoutRect RootInlineBox::paddedLayoutOverflowRect(LayoutUnit endPadding) const

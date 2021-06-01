@@ -1,3 +1,125 @@
+2021-06-01  Antti Koivisto  <antti@apple.com>
+
+        Rename ComplexLineLayout to LegacyLineLayout
+        https://bugs.webkit.org/show_bug.cgi?id=226482
+
+        Reviewed by Alan Bujtas.
+
+        Since we now handle most inline content with LFC, rename the legacy path as "legacy".
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/integration/LayoutIntegrationInlineContentBuilder.cpp:
+        (WebCore::LayoutIntegration::lineOverflowWidth):
+        * rendering/InlineIterator.h:
+        (WebCore::IsolateTracker::addFakeRunIfNecessary):
+        (WebCore::InlineBidiResolver::appendRunInternal):
+        * rendering/LegacyLineLayout.cpp: Renamed from Source/WebCore/rendering/ComplexLineLayout.cpp.
+        (WebCore::LegacyLineLayout::LegacyLineLayout):
+        (WebCore::LegacyLineLayout::~LegacyLineLayout):
+        (WebCore::determineDirectionality):
+        (WebCore::createRun):
+        (WebCore::LegacyLineLayout::appendRunsForObject):
+        (WebCore::LegacyLineLayout::createRootInlineBox):
+        (WebCore::LegacyLineLayout::createAndAppendRootInlineBox):
+        (WebCore::LegacyLineLayout::createInlineBoxForRenderer):
+        (WebCore::dirtyLineBoxesForRenderer):
+        (WebCore::parentIsConstructedOrHaveNext):
+        (WebCore::LegacyLineLayout::createLineBoxes):
+        (WebCore::endsWithHTMLSpaces):
+        (WebCore::reachedEndOfTextRenderer):
+        (WebCore::LegacyLineLayout::constructLine):
+        (WebCore::LegacyLineLayout::textAlignmentForLine const):
+        (WebCore::updateLogicalWidthForLeftAlignedBlock):
+        (WebCore::updateLogicalWidthForRightAlignedBlock):
+        (WebCore::updateLogicalWidthForCenterAlignedBlock):
+        (WebCore::LegacyLineLayout::setMarginsForRubyRun):
+        (WebCore::setLogicalWidthForTextRun):
+        (WebCore::LegacyLineLayout::updateRubyForJustifiedText):
+        (WebCore::LegacyLineLayout::computeExpansionForJustifiedText):
+        (WebCore::LegacyLineLayout::updateLogicalWidthForAlignment):
+        (WebCore::updateLogicalInlinePositions):
+        (WebCore::LegacyLineLayout::computeInlineDirectionPositionsForLine):
+        (WebCore::expansionBehaviorForInlineTextBox):
+        (WebCore::applyExpansionBehavior):
+        (WebCore::inlineAncestorHasStartBorderPaddingOrMargin):
+        (WebCore::inlineAncestorHasEndBorderPaddingOrMargin):
+        (WebCore::isLastInFlowRun):
+        (WebCore::LegacyLineLayout::computeInlineDirectionPositionsForSegment):
+        (WebCore::LegacyLineLayout::removeInlineBox const):
+        (WebCore::LegacyLineLayout::computeBlockDirectionPositionsForLine):
+        (WebCore::isCollapsibleSpace):
+        (WebCore::findFirstTrailingSpace):
+        (WebCore::LegacyLineLayout::handleTrailingSpaces):
+        (WebCore::LegacyLineLayout::appendFloatingObjectToLastLine):
+        (WebCore::notifyResolverToResumeInIsolate):
+        (WebCore::setUpResolverToResumeInIsolate):
+        (WebCore::constructBidiRunsForSegment):
+        (WebCore::LegacyLineLayout::createLineBoxesFromBidiRuns):
+        (WebCore::deleteLineRange):
+        (WebCore::repaintDirtyFloats):
+        (WebCore::LegacyLineLayout::layoutRunsAndFloats):
+        (WebCore::LegacyLineLayout::restartLayoutRunsAndFloatsInRange):
+        (WebCore::LegacyLineLayout::layoutRunsAndFloatsInRange):
+        (WebCore::LegacyLineLayout::reattachCleanLineFloats):
+        (WebCore::LegacyLineLayout::linkToEndLineIfNeeded):
+        (WebCore::LegacyLineLayout::layoutLineBoxes):
+        (WebCore::LegacyLineLayout::checkFloatInCleanLine):
+        (WebCore::LegacyLineLayout::determineStartPosition):
+        (WebCore::LegacyLineLayout::determineEndPosition):
+        (WebCore::LegacyLineLayout::checkPaginationAndFloatsAtEndLine):
+        (WebCore::LegacyLineLayout::lineWidthForPaginatedLineChanged const):
+        (WebCore::LegacyLineLayout::matchedEndLine):
+        (WebCore::LegacyLineLayout::addOverflowFromInlineChildren):
+        (WebCore::LegacyLineLayout::lineCount const):
+        (WebCore::LegacyLineLayout::lineCountUntil const):
+        (WebCore::LegacyLineLayout::deleteEllipsisLineBoxes):
+        (WebCore::LegacyLineLayout::checkLinesForTextOverflow):
+        (WebCore::LegacyLineLayout::positionNewFloatOnLine):
+        (WebCore::LegacyLineLayout::updateFragmentForLine const):
+        (WebCore::LegacyLineLayout::style const):
+        (WebCore::LegacyLineLayout::layoutContext const):
+        * rendering/LegacyLineLayout.h: Renamed from Source/WebCore/rendering/ComplexLineLayout.h.
+        (WebCore::LegacyLineLayout::lineBoxes):
+        (WebCore::LegacyLineLayout::lineBoxes const):
+        (WebCore::LegacyLineLayout::firstRootBox const):
+        (WebCore::LegacyLineLayout::lastRootBox const):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::willBeDestroyed):
+        (WebCore::RenderBlockFlow::layoutInlineChildren):
+        (WebCore::RenderBlockFlow::startAlignedOffsetForLine):
+        (WebCore::RenderBlockFlow::adjustLinePositionForPagination):
+        (WebCore::RenderBlockFlow::styleDidChange):
+        (WebCore::RenderBlockFlow::hitTestInlineChildren):
+        (WebCore::RenderBlockFlow::addOverflowFromInlineChildren):
+        (WebCore::RenderBlockFlow::inlineBlockBaseline const):
+        (WebCore::RenderBlockFlow::lineCount const):
+        (WebCore::RenderBlockFlow::paintInlineChildren):
+        (WebCore::RenderBlockFlow::hasLines const):
+        (WebCore::RenderBlockFlow::ensureLineBoxes):
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::firstRootBox const):
+        (WebCore::RenderBlockFlow::lastRootBox const):
+        (WebCore::RenderBlockFlow::hasLegacyLineLayout const):
+        (WebCore::RenderBlockFlow::legacyLineLayout const):
+        (WebCore::RenderBlockFlow::legacyLineLayout):
+        (WebCore::RenderBlockFlow::hasComplexLineLayout const): Deleted.
+        (WebCore::RenderBlockFlow::complexLineLayout const): Deleted.
+        (WebCore::RenderBlockFlow::complexLineLayout): Deleted.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::usesLegacyLineLayoutPath const):
+        (WebCore::RenderText::usesComplexLineLayoutPath const): Deleted.
+        * rendering/RenderText.h:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::removeLineBoxFromRenderObject):
+        (WebCore::RootInlineBox::extractLineBoxFromRenderObject):
+        (WebCore::RootInlineBox::attachLineBoxToRenderObject):
+        * rendering/line/LineBreaker.cpp:
+        (WebCore::LineBreaker::skipLeadingWhitespace):
+        * rendering/line/LineBreaker.h:
+        (WebCore::LineBreaker::positionNewFloatOnLine):
+
 2021-06-01  Sam Weinig  <weinig@apple.com>
 
         Support calc() on components inside relative color syntax colors

@@ -22,8 +22,8 @@
 
 #pragma once
 
-#include "ComplexLineLayout.h"
 #include "FloatingObjects.h"
+#include "LegacyLineLayout.h"
 #include "LineWidth.h"
 #include "RenderBlock.h"
 #include "RenderLineBoxList.h"
@@ -77,8 +77,8 @@ protected:
 
     void dirtyLinesFromChangedChild(RenderObject& child) final
     {
-        if (complexLineLayout())
-            complexLineLayout()->lineBoxes().dirtyLinesFromChangedChild(*this, child);
+        if (legacyLineLayout())
+            legacyLineLayout()->lineBoxes().dirtyLinesFromChangedChild(*this, child);
     }
 
     void paintColumnRules(PaintInfo&, const LayoutPoint&) override;
@@ -337,8 +337,8 @@ public:
 
     LayoutPoint flipFloatForWritingModeForChild(const FloatingObject&, const LayoutPoint&) const;
 
-    RootInlineBox* firstRootBox() const { return complexLineLayout() ? complexLineLayout()->firstRootBox() : nullptr; }
-    RootInlineBox* lastRootBox() const { return complexLineLayout() ? complexLineLayout()->lastRootBox() : nullptr; }
+    RootInlineBox* firstRootBox() const { return legacyLineLayout() ? legacyLineLayout()->firstRootBox() : nullptr; }
+    RootInlineBox* lastRootBox() const { return legacyLineLayout() ? legacyLineLayout()->lastRootBox() : nullptr; }
 
     void setChildrenInline(bool) final;
 
@@ -357,8 +357,8 @@ public:
 
     bool containsNonZeroBidiLevel() const;
 
-    const ComplexLineLayout* complexLineLayout() const;
-    ComplexLineLayout* complexLineLayout();
+    const LegacyLineLayout* legacyLineLayout() const;
+    LegacyLineLayout* legacyLineLayout();
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     const LayoutIntegration::LineLayout* modernLineLayout() const;
     LayoutIntegration::LineLayout* modernLineLayout();
@@ -541,7 +541,7 @@ public:
 
 private:
     bool hasLineLayout() const;
-    bool hasComplexLineLayout() const;
+    bool hasLegacyLineLayout() const;
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     bool hasModernLineLayout() const;
@@ -590,12 +590,12 @@ private:
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
         std::unique_ptr<LayoutIntegration::LineLayout>,
 #endif
-        std::unique_ptr<ComplexLineLayout>
+        std::unique_ptr<LegacyLineLayout>
     > m_lineLayout;
 
     friend class LineBreaker;
     friend class LineWidth; // Needs to know FloatingObject
-    friend class ComplexLineLayout;
+    friend class LegacyLineLayout;
 };
 
 inline bool RenderBlockFlow::hasLineLayout() const
@@ -603,19 +603,19 @@ inline bool RenderBlockFlow::hasLineLayout() const
     return !WTF::holds_alternative<WTF::Monostate>(m_lineLayout);
 }
 
-inline bool RenderBlockFlow::hasComplexLineLayout() const
+inline bool RenderBlockFlow::hasLegacyLineLayout() const
 {
-    return WTF::holds_alternative<std::unique_ptr<ComplexLineLayout>>(m_lineLayout);
+    return WTF::holds_alternative<std::unique_ptr<LegacyLineLayout>>(m_lineLayout);
 }
 
-inline const ComplexLineLayout* RenderBlockFlow::complexLineLayout() const
+inline const LegacyLineLayout* RenderBlockFlow::legacyLineLayout() const
 {
-    return hasComplexLineLayout() ? WTF::get<std::unique_ptr<ComplexLineLayout>>(m_lineLayout).get() : nullptr;
+    return hasLegacyLineLayout() ? WTF::get<std::unique_ptr<LegacyLineLayout>>(m_lineLayout).get() : nullptr;
 }
 
-inline ComplexLineLayout* RenderBlockFlow::complexLineLayout()
+inline LegacyLineLayout* RenderBlockFlow::legacyLineLayout()
 {
-    return hasComplexLineLayout() ? WTF::get<std::unique_ptr<ComplexLineLayout>>(m_lineLayout).get() : nullptr;
+    return hasLegacyLineLayout() ? WTF::get<std::unique_ptr<LegacyLineLayout>>(m_lineLayout).get() : nullptr;
 }
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)

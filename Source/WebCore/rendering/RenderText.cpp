@@ -1504,7 +1504,7 @@ void RenderText::positionLineBox(InlineTextBox& textBox)
     m_containsReversedText |= !textBox.isLeftToRightDirection();
 }
 
-bool RenderText::usesComplexLineLayoutPath() const
+bool RenderText::usesLegacyLineLayoutPath() const
 {
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
     return !LayoutIntegration::LineLayout::containing(*this);
