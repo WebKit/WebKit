@@ -170,6 +170,8 @@ bool setAllowsMaterializingDatalessFiles(bool allow, PolicyScope scope)
     }
     return true;
 #else
+    UNUSED_PARAM(allow);
+    UNUSED_PARAM(scope);
     return false;
 #endif
 }
@@ -185,6 +187,7 @@ std::optional<bool> allowsMaterializingDatalessFiles(PolicyScope scope)
     LOG_ERROR("FileSystem::allowsMaterializingDatalessFiles(): getiopolicy_np call failed, errno: %d", errno);
     return std::nullopt;
 #else
+    UNUSED_PARAM(scope);
     return std::nullopt;
 #endif
 }
