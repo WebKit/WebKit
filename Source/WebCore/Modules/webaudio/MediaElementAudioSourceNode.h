@@ -72,11 +72,11 @@ private:
     Ref<HTMLMediaElement> m_mediaElement;
     Lock m_processLock;
 
-    unsigned m_sourceNumberOfChannels { 0 };
-    double m_sourceSampleRate { 0 };
-    bool m_muted { false };
+    unsigned m_sourceNumberOfChannels WTF_GUARDED_BY_LOCK(m_processLock) { 0 };
+    double m_sourceSampleRate WTF_GUARDED_BY_LOCK(m_processLock) { 0 };
+    bool m_muted WTF_GUARDED_BY_LOCK(m_processLock) { false };
 
-    std::unique_ptr<MultiChannelResampler> m_multiChannelResampler;
+    std::unique_ptr<MultiChannelResampler> m_multiChannelResampler WTF_GUARDED_BY_LOCK(m_processLock);
 };
 
 } // namespace WebCore
