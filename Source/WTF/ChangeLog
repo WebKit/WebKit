@@ -1,3 +1,31 @@
+2021-06-01  Alan Coon  <alancoon@apple.com>
+
+        Cherry-pick r278321. rdar://problem/78718570
+
+    Unreviewed build fix after r277881.
+    
+    Silence unused parameter warnings.
+    
+    * wtf/cocoa/FileSystemCocoa.mm:
+    (WTF::FileSystemImpl::setAllowsMaterializingDatalessFiles):
+    (WTF::FileSystemImpl::allowsMaterializingDatalessFiles): Deleted.
+    (WTF::FileSystemImpl::isSafeToUseMemoryMapForPath): Deleted.
+    (WTF::FileSystemImpl::makeSafeToUseMemoryMapForPath): Deleted.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@278321 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-06-01  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed build fix after r277881.
+
+            Silence unused parameter warnings.
+
+            * wtf/cocoa/FileSystemCocoa.mm:
+            (WTF::FileSystemImpl::setAllowsMaterializingDatalessFiles):
+            (WTF::FileSystemImpl::allowsMaterializingDatalessFiles): Deleted.
+            (WTF::FileSystemImpl::isSafeToUseMemoryMapForPath): Deleted.
+            (WTF::FileSystemImpl::makeSafeToUseMemoryMapForPath): Deleted.
+
 2021-05-28  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r278209. rdar://problem/78595584
