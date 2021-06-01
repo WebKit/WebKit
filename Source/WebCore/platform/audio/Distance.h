@@ -48,7 +48,7 @@ public:
     // Returns scalar gain for the given distance the current distance model is used
     double gain(double distance);
 
-    DistanceModelType model() { return m_model; }
+    DistanceModelType model() const { return m_model; }
 
     void setModel(DistanceModelType model, bool clamped)
     {

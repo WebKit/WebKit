@@ -31,23 +31,23 @@
     constructor (BaseAudioContext context, optional PannerOptions options);
 
     // Default model for stereo is equalpower
-    attribute PanningModelType panningModel;
+    [ImplementedAs=panningModelForBindings] attribute PanningModelType panningModel;
 
     // Uses a 3D cartesian coordinate system 
     undefined setPosition(float x, float y, float z);
     undefined setOrientation(float x, float y, float z);
     
     // Default distance model is inverse
-    attribute DistanceModelType distanceModel;
+    [ImplementedAs=distanceModelForBindings] attribute DistanceModelType distanceModel;
 
-    attribute double refDistance;
-    attribute double maxDistance;
-    attribute double rolloffFactor;
+    [ImplementedAs=refDistanceForBindings] attribute double refDistance;
+    [ImplementedAs=maxDistanceForBindings] attribute double maxDistance;
+    [ImplementedAs=rolloffFactorForBindings] attribute double rolloffFactor;
 
     // Directional sound cone
-    attribute double coneInnerAngle;
-    attribute double coneOuterAngle;
-    attribute double coneOuterGain;
+    [ImplementedAs=coneInnerAngleForBindings] attribute double coneInnerAngle;
+    [ImplementedAs=coneOuterAngleForBindings] attribute double coneOuterAngle;
+    [ImplementedAs=coneOuterGainForBindings] attribute double coneOuterGain;
     
     // Position of audio source in 3D Cartesian system
     readonly attribute AudioParam positionX;

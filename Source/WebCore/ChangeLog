@@ -1,3 +1,40 @@
+2021-05-31  Chris Dumez  <cdumez@apple.com>
+
+        Fix thread safety issues in PannerNode
+        https://bugs.webkit.org/show_bug.cgi?id=226455
+
+        Reviewed by Darin Adler.
+
+        Adopt thread safety annotations in PannerNode and fix bugs found by clang.
+        In particular, the following issues were fixed:
+        - tailTime() / latencyTime() were accessing m_panner on the audio thread without locking
+          even though m_panner gets modified on the main thread.
+        - process() was accessing panningModel and m_panner before locking, on the audio thread,
+          even though those get modified on the main thread.
+        - processOnlyAudioParams() was failing to grab the process lock.
+        - requiresTailProcessing() may get called on the audio thread and was failing to grab
+          the processLock before accessing m_panner, which gets modified on the main thread.
+
+        * Modules/webaudio/PannerNode.cpp:
+        (WebCore::PannerNode::create):
+        (WebCore::PannerNode::PannerNode):
+        (WebCore::PannerNode::process):
+        (WebCore::PannerNode::processOnlyAudioParams):
+        (WebCore::PannerNode::setPanningModelForBindings):
+        (WebCore::PannerNode::setDistanceModelForBindings):
+        (WebCore::PannerNode::setRefDistanceForBindings):
+        (WebCore::PannerNode::setMaxDistanceForBindings):
+        (WebCore::PannerNode::setRolloffFactorForBindings):
+        (WebCore::PannerNode::setConeOuterGainForBindings):
+        (WebCore::PannerNode::setConeOuterAngleForBindings):
+        (WebCore::PannerNode::setConeInnerAngleForBindings):
+        (WebCore::PannerNode::requiresTailProcessing const):
+        (WebCore::PannerNode::tailTime const):
+        (WebCore::PannerNode::latencyTime const):
+        * Modules/webaudio/PannerNode.h:
+        * Modules/webaudio/PannerNode.idl:
+        * platform/audio/Distance.h:
+
 2021-05-31  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, very early June 2021 edition
