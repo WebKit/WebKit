@@ -1,3 +1,29 @@
+2021-06-01  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (iOS 14.5): Can't go back and render previous page properly after "location.href"
+        https://bugs.webkit.org/show_bug.cgi?id=226323
+        <rdar://problem/78623536>
+
+        Reviewed by Alex Christensen.
+
+        A while back, we did an optimization to allow several WebPage objects associated with the
+        same WebPageProxy to live in the same WebProcess. This allowed us to reuse a process from
+        a SuspendedPageProxy for a forward navigation, without destroying the SuspendedPageProxy.
+        However, this added quite a bit of complexity and this broke some same-process back/forward
+        navigations like in this bug. In particular, it is really hard to get do our history
+        management right (with the current model) if there is more than more WebPage in a process
+        for the same WebPageProxy.
+
+        To address issues, we go back to the older model with one WebPage per WebProcess for a
+        given WebPageProxy. To achieve this, we make sure to destroy of SuspendedPageProxy objects
+        for the current page and destination process before we process-swap (like we used to do).
+
+        * UIProcess/WebBackForwardCache.cpp:
+        (WebKit::WebBackForwardCache::removeEntriesForPageAndProcess):
+        * UIProcess/WebBackForwardCache.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedNavigationPolicyDecision):
+
 2021-06-01  Sihui Liu  <sihui_liu@apple.com>
 
         Resume WebIDBServer when it is about to be closed

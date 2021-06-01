@@ -1,3 +1,15 @@
+2021-06-01  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION (iOS 14.5): Can't go back and render previous page properly after "location.href"
+        https://bugs.webkit.org/show_bug.cgi?id=226323
+        <rdar://problem/78623536>
+
+        Reviewed by Alex Christensen.
+
+        New API test written by Alex Christensen to cover this case.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ProcessSwapOnNavigation.mm:
+
 2021-06-01  Aakash Jain  <aakash_jain@apple.com>
 
         Print bot configuration in build.webkit.org builds

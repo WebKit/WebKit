@@ -145,6 +145,14 @@ void WebBackForwardCache::removeEntriesForPage(WebPageProxy& page)
     });
 }
 
+void WebBackForwardCache::removeEntriesForPageAndProcess(WebPageProxy& page, WebProcessProxy& process)
+{
+    removeEntriesMatching([pageID = page.identifier(), processIdentifier = process.coreProcessIdentifier()](auto& item) {
+        ASSERT(item.backForwardCacheEntry());
+        return item.pageID() == pageID && item.backForwardCacheEntry()->processIdentifier() == processIdentifier;
+    });
+}
+
 void WebBackForwardCache::removeEntriesMatching(const Function<bool(WebBackForwardListItem&)>& matches)
 {
     Vector<Ref<WebBackForwardListItem>> itemsWithEntriesToClear;

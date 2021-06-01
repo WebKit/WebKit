@@ -3351,6 +3351,33 @@ TEST(ProcessSwap, PageCache1)
     EXPECT_EQ(2u, seenPIDs.size());
 }
 
+TEST(ProcessSwap, NavigateBackAfterCrossOriginClientRedirect)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://webkit.org/navigated_from" toData:"<a href='pson://apple.com/'>hello</a>"];
+    [handler addMappingFromURLString:@"pson://apple.com/" toData:"<script>window.location.href='pson://webkit.org/redirected_to'</script>redirecting..."];
+    [handler addMappingFromURLString:@"pson://webkit.org/redirected_to" toData:"<p>hello again</p>"];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://webkit.org/navigated_from"]]];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView evaluateJavaScript:@"document.querySelector('a').click()" completionHandler:nil];
+    [webView _test_waitForDidFinishNavigation];
+    [webView _test_waitForDidFinishNavigation];
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"window.location.href"], "pson://webkit.org/redirected_to");
+    [webView goBack];
+    [webView _test_waitForDidFinishNavigation];
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"window.location.href"], "pson://webkit.org/navigated_from");
+}
+
 TEST(ProcessSwap, BackForwardCacheSkipBackForwardListItem)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();
