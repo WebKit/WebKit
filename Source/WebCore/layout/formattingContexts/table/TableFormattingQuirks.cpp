@@ -62,21 +62,10 @@ LayoutUnit TableFormattingQuirks::heightValueOfNearestContainingBlockWithFixedHe
     // The "let's find the nearest ancestor with fixed height to resolve percent height" quirk is limited to the table formatting
     // context. If we can't resolve it within the table subtree, we default it to 0.
     // e.g <div style="height: 100px"><table><tr><td style="height: 100%"></td></tr></table></div> is resolved to 0px.
-    auto& tableBox = formattingContext().root();
-    auto fixedLogicalHeight = [&](const auto& ancestorBox) -> std::optional<LayoutUnit> {
-        auto height = ancestorBox.style().logicalHeight();
-        if (!height.isFixed())
-            return { };
-        if (&ancestorBox != &tableBox)
+    for (auto& ancestor : containingBlockChainWithinFormattingContext(layoutBox)) {
+        auto height = ancestor.style().logicalHeight();
+        if (height.isFixed())
             return LayoutUnit { height.value() };
-        auto& grid = formattingContext().formattingState().tableGrid();
-        auto verticalSpacing = grid.verticalSpacing();
-        return LayoutUnit { height.value() - ((grid.rows().size() + 1) * verticalSpacing) };
-    };
-
-    for (auto& ancestor : containingBlockChain(layoutBox, tableBox.containingBlock())) {
-        if (auto fixedHeight = fixedLogicalHeight(ancestor))
-            return *fixedHeight;
     }
     return { };
 }

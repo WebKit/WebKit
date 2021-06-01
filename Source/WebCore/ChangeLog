@@ -1,3 +1,17 @@
+2021-06-01  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC][Quirks] heightValueOfNearestContainingBlockWithFixedHeight should not need to cross formatting context boundary
+        https://bugs.webkit.org/show_bug.cgi?id=226470
+
+        Reviewed by Antti Koivisto.
+
+        Now that the incoming vertical constraint is applied properly for the cell layout, we don't need to cross
+        the formatting context boundary in heightValueOfNearestContainingBlockWithFixedHeight to check if the table
+        box has fixed height value.
+
+        * layout/formattingContexts/table/TableFormattingQuirks.cpp:
+        (WebCore::Layout::TableFormattingQuirks::heightValueOfNearestContainingBlockWithFixedHeight const):
+
 2021-05-27  Sergio Villar Senin  <svillar@igalia.com>
 
         Improve if condition in RenderReplaced::computeReplacedLogicalWidth
