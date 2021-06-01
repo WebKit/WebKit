@@ -1,3 +1,22 @@
+2021-06-01  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        ANGLE Metal translator pre-rotation code is unused and it asserts when used
+        https://bugs.webkit.org/show_bug.cgi?id=226262
+
+        Reviewed by Dean Jackson.
+
+        Remove the pre-rotation code. It is Android specific and most likely it is useful
+        only when ANGLE is used as the drawing mechanism for the primary app window picture.
+        Thus most likely it is not useful in WebKit on Cocoa platforms where the window
+        server does the compositing.
+
+        * src/compiler/translator/TranslatorMetalDirect.cpp:
+        (sh::TranslatorMetalDirect::translateImpl):
+        * src/compiler/translator/TranslatorMetalDirect.h:
+        * src/libANGLE/renderer/metal/ContextMtl.h:
+        * src/libANGLE/renderer/metal/ContextMtl.mm:
+        (rx::ContextMtl::handleDirtyDriverUniforms):
+
 2021-05-31  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         Cherry-pick ANGLE: Add array bounds checks for WebGL shaders

@@ -2298,8 +2298,6 @@ angle::Result ContextMtl::handleDirtyDriverUniforms(const gl::Context *context,
     mDriverUniforms.depthRange[2] = depthRangeDiff;
     mDriverUniforms.depthRange[3] = NeedToInvertDepthRange(depthRangeNear, depthRangeFar) ? -1 : 1;
 
-    // NOTE(hqle): preRotation & fragRotation are unused.
-
     // Sample coverage mask
     uint32_t sampleBitCount = mDrawFramebuffer->getSamples();
     uint32_t coverageSampleBitCount =

@@ -78,12 +78,11 @@ constexpr const TVariable kgl_VertexIDMetal(
     TExtension::UNDEFINED,
     StaticType::Get<EbtUInt, EbpHigh, EvqVertexID, 1, 1>());
 
-
-constexpr size_t kNumGraphicsDriverUniforms                                                = 12;
+// Keep this list in sync with ContextMtl::DriverUniforms.
+constexpr size_t kNumGraphicsDriverUniforms                                                = 10;
 constexpr std::array<const char *, kNumGraphicsDriverUniforms> kGraphicsDriverUniformNames = {
     {kViewport, kHalfRenderArea, kFlipXY, kNegFlipXY, kClipDistancesEnabled, kXfbActiveUnpaused,
-     kXfbVerticesPerDraw, kXfbBufferOffsets, kAcbBufferOffsets, kDepthRange, kPreRotation,
-     kFragRotation}};
+     kXfbVerticesPerDraw, kXfbBufferOffsets, kAcbBufferOffsets, kDepthRange}};
 
 constexpr size_t kNumComputeDriverUniforms                                               = 1;
 constexpr std::array<const char *, kNumComputeDriverUniforms> kComputeDriverUniformNames = {
@@ -344,7 +343,7 @@ const TVariable *AddGraphicsDriverUniformsToShader(TIntermBlock &root,
             .first->getType()
             .getStruct();
 
-    // This field list mirrors the structure of GraphicsDriverUniforms in ContextVk.cpp.
+    // This field list mirrors the structure of GraphicsDriverUniforms in ContextMtl.cpp.
     TFieldList *driverFieldList = new TFieldList;
 
     const std::array<TType *, kNumGraphicsDriverUniforms> kDriverUniformTypes = {{
@@ -359,8 +358,6 @@ const TVariable *AddGraphicsDriverUniformsToShader(TIntermBlock &root,
         new TType(EbtInt, 4),
         new TType(EbtUInt, 4),
         new TType(emulatedDepthRangeParams, false),
-        new TType(EbtFloat, 2, 4),
-        new TType(EbtFloat, 2, 4),
     }};
 
     for (size_t uniformIndex = 0; uniformIndex < kNumGraphicsDriverUniforms; ++uniformIndex)
@@ -454,35 +451,6 @@ ANGLE_NO_DISCARD bool AppendVertexShaderDepthCorrectionToMain(TCompiler &compile
     return RunAtTheEndOfShader(&compiler, &root, assignment, &symbolTable);
 }
 
-// This operation performs Android pre-rotation and y-flip.  For Android (and potentially other
-// platforms), the device may rotate, such that the orientation of the application is rotated
-// relative to the native orientation of the device.  This is corrected in part by multiplying
-// gl_Position by a mat2.
-// The equations reduce to an expression:
-//
-//     gl_Position.xy = gl_Position.xy * preRotation
-ANGLE_NO_DISCARD bool AppendPreRotation(TCompiler &compiler,
-                                        TIntermBlock &root,
-                                        const TVariable &driverUniforms)
-{
-    TSymbolTable &symbolTable     = compiler.getSymbolTable();
-    TIntermBinary *preRotationRef = CreateDriverUniformRef(driverUniforms, kPreRotation);
-    TIntermSymbol *glPos          = new TIntermSymbol(BuiltInVariable::gl_Position());
-    TVector<int> swizzleOffsetXY  = {0, 1};
-    TIntermSwizzle *glPosXY       = new TIntermSwizzle(glPos, swizzleOffsetXY);
-
-    // Create the expression "(gl_Position.xy * preRotation)"
-    TIntermBinary *zRotated =
-        new TIntermBinary(EOpMatrixTimesVector, preRotationRef->deepCopy(), glPosXY->deepCopy());
-
-    // Create the assignment "gl_Position.xy = (gl_Position.xy * preRotation)"
-    TIntermBinary *assignment =
-        new TIntermBinary(TOperator::EOpAssign, glPosXY->deepCopy(), zRotated);
-
-    // Append the assignment as a statement at the end of the shader.
-    return RunAtTheEndOfShader(&compiler, &root, assignment, &symbolTable);
-}
-
 ANGLE_NO_DISCARD bool RotateAndFlipBuiltinVariable(TCompiler &compiler,
                                                    TIntermBlock &root,
                                                    TIntermSequence &insertSequence,
@@ -561,9 +529,7 @@ ANGLE_NO_DISCARD bool InsertFragCoordCorrection(TCompiler &compiler,
 {
     TIntermBinary &flipXY       = *CreateDriverUniformRef(driverUniforms, kFlipXY);
     TIntermBinary &pivot        = *CreateDriverUniformRef(driverUniforms, kHalfRenderArea);
-    TIntermBinary *fragRotation = (compileOptions & SH_ADD_PRE_ROTATION)
-                                      ? CreateDriverUniformRef(driverUniforms, kFragRotation)
-                                      : nullptr;
+    TIntermBinary *fragRotation = nullptr;
     return RotateAndFlipBuiltinVariable(compiler, root, insertSequence, flipXY,
                                         *BuiltInVariable::gl_FragCoord(), kFlippedFragCoordName,
                                         pivot, fragRotation);
@@ -1263,14 +1229,11 @@ bool TranslatorMetalDirect::translateImpl(TIntermBlock &root, ShCompileOptions c
         }
 #endif
 
-        bool usePreRotation = compileOptions & SH_ADD_PRE_ROTATION;
-
         if (usesPointCoord)
         {
             TIntermBinary &flipXY       = *CreateDriverUniformRef(driverUniforms, kNegFlipXY);
             TIntermConstantUnion &pivot = *CreateFloatNode(0.5f);
-            TIntermBinary *fragRotation =
-                usePreRotation ? CreateDriverUniformRef(driverUniforms, kFragRotation) : nullptr;
+            TIntermBinary *fragRotation = nullptr;
             if (!RotateAndFlipBuiltinVariable(*this, root, *GetMainSequence(root), flipXY,
                                               *BuiltInVariable::gl_PointCoord(),
                                               kFlippedPointCoordName, pivot, fragRotation))
@@ -1292,8 +1255,7 @@ bool TranslatorMetalDirect::translateImpl(TIntermBlock &root, ShCompileOptions c
 
         {
             TIntermBinary *flipXY = CreateDriverUniformRef(driverUniforms, kFlipXY);
-            TIntermBinary *fragRotation =
-                usePreRotation ? CreateDriverUniformRef(driverUniforms, kFragRotation) : nullptr;
+            TIntermBinary *fragRotation = nullptr;
             if (!RewriteDfdy(this, &root, symbolTable, getShaderVersion(), flipXY, fragRotation))
             {
                 return false;
@@ -1364,14 +1326,6 @@ bool TranslatorMetalDirect::translateImpl(TIntermBlock &root, ShCompileOptions c
         }
 
         if (!AppendVertexShaderDepthCorrectionToMain(*this, root))
-        {
-            return false;
-        }
-
-
-
-        if ((compileOptions & SH_ADD_PRE_ROTATION) != 0 &&
-            !AppendPreRotation(*this, root, driverUniforms))
         {
             return false;
         }

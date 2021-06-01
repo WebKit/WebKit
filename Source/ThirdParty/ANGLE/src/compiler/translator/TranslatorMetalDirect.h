@@ -23,8 +23,6 @@ constexpr const char kXfbVerticesPerDraw[]        = "xfbVerticesPerDraw";
 constexpr const char kXfbBufferOffsets[]          = "xfbBufferOffsets";
 constexpr const char kAcbBufferOffsets[]          = "acbBufferOffsets";
 constexpr const char kDepthRange[]                = "depthRange";
-constexpr const char kPreRotation[]               = "preRotation";
-constexpr const char kFragRotation[]              = "fragRotation";
 constexpr const char kUnassignedAttributeString[] = " __unassigned_attribute__";
 
 class TOutputMSL;
