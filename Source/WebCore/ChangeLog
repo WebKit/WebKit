@@ -1,5 +1,24 @@
 2021-06-01  Chris Dumez  <cdumez@apple.com>
 
+        Fix thread safety issues in MediaStreamAudioSourceNode
+        https://bugs.webkit.org/show_bug.cgi?id=226476
+
+        Reviewed by Youenn Fablet.
+
+        Adopt thread safety analysis annotations in MediaStreamAudioSourceNode and fix
+        bugs found by clang. In particular, the following issues were fixed:
+        - setFormat() could modify m_sourceNumberOfChannels before locking on the main
+          thread.
+        - process() was accessing m_sourceNumberOfChannels / m_sourceSampleRate
+          on the rendering thread *before* locking.
+
+        * Modules/webaudio/MediaStreamAudioSourceNode.cpp:
+        (WebCore::MediaStreamAudioSourceNode::setFormat):
+        (WebCore::MediaStreamAudioSourceNode::process):
+        * Modules/webaudio/MediaStreamAudioSourceNode.h:
+
+2021-06-01  Chris Dumez  <cdumez@apple.com>
+
         Fix thread safety issues in WaveShaperProcessor
         https://bugs.webkit.org/show_bug.cgi?id=226478
 

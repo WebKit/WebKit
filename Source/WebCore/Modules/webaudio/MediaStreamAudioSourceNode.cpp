@@ -89,7 +89,9 @@ MediaStreamAudioSourceNode::~MediaStreamAudioSourceNode()
 
 void MediaStreamAudioSourceNode::setFormat(size_t numberOfChannels, float sourceSampleRate)
 {
-    float sampleRate = this->sampleRate();
+    // Synchronize with process().
+    Locker locker { m_processLock };
+
     if (numberOfChannels == m_sourceNumberOfChannels && sourceSampleRate == m_sourceSampleRate)
         return;
 
@@ -101,12 +103,10 @@ void MediaStreamAudioSourceNode::setFormat(size_t numberOfChannels, float source
         return;
     }
 
-    // Synchronize with process().
-    Locker locker { m_processLock };
-
     m_sourceNumberOfChannels = numberOfChannels;
     m_sourceSampleRate = sourceSampleRate;
 
+    float sampleRate = this->sampleRate();
     if (sourceSampleRate == sampleRate)
         m_multiChannelResampler = nullptr;
     else {
@@ -134,11 +134,6 @@ void MediaStreamAudioSourceNode::process(size_t numberOfFrames)
 {
     AudioBus* outputBus = output(0)->bus();
 
-    if (!mediaStream() || !m_sourceNumberOfChannels || !m_sourceSampleRate) {
-        outputBus->zero();
-        return;
-    }
-
     // Use tryLock() to avoid contention in the real-time audio thread.
     // If we fail to acquire the lock then the MediaStream must be in the middle of
     // a format change, so we output silence in this case.
@@ -148,7 +143,8 @@ void MediaStreamAudioSourceNode::process(size_t numberOfFrames)
         return;
     }
     Locker locker { AdoptLock, m_processLock };
-    if (m_sourceNumberOfChannels != outputBus->numberOfChannels()) {
+
+    if (!m_sourceNumberOfChannels || !m_sourceSampleRate || m_sourceNumberOfChannels != outputBus->numberOfChannels()) {
         outputBus->zero();
         return;
     }

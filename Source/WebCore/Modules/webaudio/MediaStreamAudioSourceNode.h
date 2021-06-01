@@ -46,7 +46,7 @@ public:
 
     ~MediaStreamAudioSourceNode();
 
-    MediaStream* mediaStream() { return &m_mediaStream.get(); }
+    MediaStream& mediaStream() { return m_mediaStream; }
 
 private:
     MediaStreamAudioSourceNode(BaseAudioContext&, MediaStream&, Ref<WebAudioSourceProvider>&&);
@@ -67,12 +67,12 @@ private:
 
     Ref<MediaStream> m_mediaStream;
     Ref<WebAudioSourceProvider> m_provider;
-    std::unique_ptr<MultiChannelResampler> m_multiChannelResampler;
+    std::unique_ptr<MultiChannelResampler> m_multiChannelResampler WTF_GUARDED_BY_LOCK(m_processLock);
 
     Lock m_processLock;
 
-    unsigned m_sourceNumberOfChannels { 0 };
-    double m_sourceSampleRate { 0 };
+    unsigned m_sourceNumberOfChannels WTF_GUARDED_BY_LOCK(m_processLock) { 0 };
+    double m_sourceSampleRate WTF_GUARDED_BY_LOCK(m_processLock) { 0 };
 };
 
 } // namespace WebCore
