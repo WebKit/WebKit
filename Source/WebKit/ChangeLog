@@ -1,3 +1,20 @@
+2021-06-01  Per Arne  <pvollan@apple.com>
+
+        [iOS] Preprocess the WebContent sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=226301
+        <rdar://problem/78575178>
+
+        Reviewed by Geoffrey Garen.
+
+        Run the WebContent sandbox through the preprocessor on iOS.
+
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb: Removed.
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in: Copied from Source/WebKit/Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-06-01  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK] Try harder to find initial WebKitWebView size
