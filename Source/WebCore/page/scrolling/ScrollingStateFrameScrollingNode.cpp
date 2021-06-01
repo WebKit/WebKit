@@ -345,9 +345,6 @@ void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, ScrollingS
     if (m_overrideVisualViewportSize)
         ts.dumpProperty("override visual viewport size", m_overrideVisualViewportSize.value());
 
-    if (m_behaviorForFixed == StickToViewportBounds)
-        ts.dumpProperty("behavior for fixed", m_behaviorForFixed);
-
     if (!m_eventTrackingRegions.asynchronousDispatchRegion.isEmpty()) {
         TextStream::GroupScope scope(ts);
         ts << "asynchronous event dispatch region";

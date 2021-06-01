@@ -1,3 +1,13 @@
+2021-06-01  Cameron McCormack  <heycam@apple.com>
+
+        Remove duplicate "behavior for fixed" entry from scrolling state tree logging
+        https://bugs.webkit.org/show_bug.cgi?id=226479
+
+        Reviewed by Frédéric Wang.
+
+        * page/scrolling/ScrollingStateFrameScrollingNode.cpp:
+        (WebCore::ScrollingStateFrameScrollingNode::dumpProperties const):
+
 2021-06-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] GraphicsContextCairo::GraphicsContextCairo(HDC, bool) leaks cairo_t
