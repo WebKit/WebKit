@@ -1,3 +1,11 @@
+2021-05-31  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/active-processing.https.html after r278233.
+
+        The test progressed slightly even though it still isn't fully passing.
+
+        * web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/active-processing.https-expected.txt:
+
 2021-04-29  Sergio Villar Senin  <svillar@igalia.com>
 
         Enable <summary> to be a flex container
