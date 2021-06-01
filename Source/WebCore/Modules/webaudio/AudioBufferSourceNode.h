@@ -49,9 +49,11 @@ public:
     // AudioNode
     void process(size_t framesToProcess) final;
 
-    // setBuffer() is called on the main thread.  This is the buffer we use for playback.
-    ExceptionOr<void> setBuffer(RefPtr<AudioBuffer>&&);
-    AudioBuffer* buffer() { return m_buffer.get(); }
+    // setBufferForBindings() is called on the main thread. This is the buffer we use for playback.
+    ExceptionOr<void> setBufferForBindings(RefPtr<AudioBuffer>&&);
+
+    // This function does not lock before accessing the buffer and should therefore only be called on the main thread.
+    AudioBuffer* bufferForBindings() WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_buffer.get(); }
 
     // numberOfChannels() returns the number of output channels.  This value equals the number of channels from the buffer.
     // If a new buffer is set with a different number of channels, then this value will dynamically change.
@@ -60,17 +62,15 @@ public:
     // Play-state
     ExceptionOr<void> startLater(double when, double grainOffset, std::optional<double> grainDuration);
 
-    // Note: the attribute was originally exposed as .looping, but to be more consistent in naming with <audio>
-    // and with how it's described in the specification, the proper attribute name is .loop
-    // The old attribute is kept for backwards compatibility.
-    bool loop() const { return m_isLooping; }
-    void setLoop(bool looping) { m_isLooping = looping; }
+    // This function doesn't grab the lock before accessing m_isLooping and is thus only safe to call on the main thread.
+    bool loopForBindings() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_isLooping; }
+    void setLoopForBindings(bool);
 
     // Loop times in seconds.
-    double loopStart() const { return m_loopStart; }
-    double loopEnd() const { return m_loopEnd; }
-    void setLoopStart(double loopStart) { m_loopStart = loopStart; }
-    void setLoopEnd(double loopEnd) { m_loopEnd = loopEnd; }
+    double loopStartForBindings() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_loopStart; } // This function doesn't grab the lock and is thus only safe to call on the main thread.
+    double loopEndForBindings() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS { ASSERT(isMainThread()); return m_loopEnd; } // This function doesn't grab the lock and is thus only safe to call on the main thread.
+    void setLoopStartForBindings(double);
+    void setLoopEndForBindings(double);
 
     AudioParam& detune() { return m_detune.get(); }
     AudioParam& playbackRate() { return m_playbackRate.get(); }
@@ -88,16 +88,16 @@ private:
     double latencyTime() const final { return 0; }
 
     ExceptionOr<void> startPlaying(double when, double grainOffset, std::optional<double> grainDuration);
-    void adjustGrainParameters();
+    void adjustGrainParameters() WTF_REQUIRES_LOCK(m_processLock);
 
     // Returns true on success.
-    bool renderFromBuffer(AudioBus*, unsigned destinationFrameOffset, size_t numberOfFrames, double startFrameOffset);
+    bool renderFromBuffer(AudioBus*, unsigned destinationFrameOffset, size_t numberOfFrames, double startFrameOffset) WTF_REQUIRES_LOCK(m_processLock);
 
     // Render silence starting from "index" frame in AudioBus.
-    inline bool renderSilenceAndFinishIfNotLooping(AudioBus*, unsigned index, size_t framesToProcess);
+    inline bool renderSilenceAndFinishIfNotLooping(AudioBus*, unsigned index, size_t framesToProcess) WTF_REQUIRES_LOCK(m_processLock);
 
     // m_buffer holds the sample data which this node outputs.
-    RefPtr<AudioBuffer> m_buffer;
+    RefPtr<AudioBuffer> m_buffer WTF_GUARDED_BY_LOCK(m_processLock); // Only modified on the main thread but used on the audio thread.
 
     // Pointers for the buffer and destination.
     UniqueArray<const float*> m_sourceChannels;
@@ -108,26 +108,26 @@ private:
 
     // If m_isLooping is false, then this node will be done playing and become inactive after it reaches the end of the sample data in the buffer.
     // If true, it will wrap around to the start of the buffer each time it reaches the end.
-    bool m_isLooping { false };
+    bool m_isLooping WTF_GUARDED_BY_LOCK(m_processLock) { false }; // Only modified on the main thread but queried on the audio thread.
 
     bool m_wasBufferSet { false };
 
-    double m_loopStart { 0 };
-    double m_loopEnd { 0 };
+    double m_loopStart WTF_GUARDED_BY_LOCK(m_processLock) { 0 }; // Only modified on the main thread but queried on the audio thread.
+    double m_loopEnd WTF_GUARDED_BY_LOCK(m_processLock) { 0 }; // Only modified on the main thread but queried on the audio thread.
 
     // m_virtualReadIndex is a sample-frame index into our buffer representing the current playback position.
     // Since it's floating-point, it has sub-sample accuracy.
     double m_virtualReadIndex { 0 };
 
     // Granular playback
-    bool m_isGrain { false };
-    double m_grainOffset { 0 }; // in seconds
-    double m_grainDuration; // in seconds
-    double m_wasGrainDurationGiven { false };
+    bool m_isGrain WTF_GUARDED_BY_LOCK(m_processLock) { false };
+    double m_grainOffset WTF_GUARDED_BY_LOCK(m_processLock) { 0 }; // in seconds
+    double m_grainDuration WTF_GUARDED_BY_LOCK(m_processLock); // in seconds
+    double m_wasGrainDurationGiven WTF_GUARDED_BY_LOCK(m_processLock) { false };
 
     // totalPitchRate() returns the instantaneous pitch rate (non-time preserving).
     // It incorporates the base pitch rate, any sample-rate conversion factor from the buffer.
-    double totalPitchRate();
+    double totalPitchRate() WTF_REQUIRES_LOCK(m_processLock);
 
     // This synchronizes process() with setBuffer() which can cause dynamic channel count changes.
     mutable Lock m_processLock;
