@@ -1,3 +1,20 @@
+2021-05-27  Sergio Villar Senin  <svillar@igalia.com>
+
+        Improve if condition in RenderReplaced::computeReplacedLogicalWidth
+        https://bugs.webkit.org/show_bug.cgi?id=226325
+
+        Reviewed by Darin Adler.
+
+        Removed the check for intrinsicRatio as we're already inside a block in which intrinsicRatio
+        is true. Also switched the position of the two conditions in the OR clause as it allows us
+        to remove the check for computedHeightIsAuto. Last but not least, used a ternary operator
+        to initialize the value of boxSizing instead of the if clause.
+
+        No new tests as there is no change in functionality.
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeReplacedLogicalWidth const):
+
 2021-05-31  Dean Jackson  <dino@apple.com>
 
         [WebXR] Attach IOSurface to WebXROpaqueFramebuffer

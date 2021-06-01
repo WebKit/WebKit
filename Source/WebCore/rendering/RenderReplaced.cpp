@@ -561,16 +561,13 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred sh
             // If 'height' and 'width' both have computed values of 'auto' and the element has no intrinsic width, but does have an intrinsic height and intrinsic ratio;
             // or if 'width' has a computed value of 'auto', 'height' has some other computed value, and the element does have an intrinsic ratio; then the used value
             // of 'width' is: (used height) * (intrinsic ratio)
-            if (intrinsicRatio && ((computedHeightIsAuto && !hasIntrinsicWidth && hasIntrinsicHeight) || !computedHeightIsAuto)) {
+            if (!computedHeightIsAuto || (!hasIntrinsicWidth && hasIntrinsicHeight)) {
                 LayoutUnit estimatedUsedWidth = hasIntrinsicWidth ? LayoutUnit(constrainedSize.width()) : computeConstrainedLogicalWidth(shouldComputePreferred);
                 LayoutUnit logicalHeight = computeReplacedLogicalHeight(std::optional<LayoutUnit>(estimatedUsedWidth));
-                BoxSizing boxSizing = BoxSizing::ContentBox;
-                if (style().hasAspectRatio())
-                    boxSizing = style().boxSizingForAspectRatio();
+                BoxSizing boxSizing = style().hasAspectRatio() ? style().boxSizingForAspectRatio() : BoxSizing::ContentBox;
                 return computeReplacedLogicalWidthRespectingMinMaxWidth(resolveWidthForRatio(borderAndPaddingLogicalHeight(), borderAndPaddingLogicalWidth(), logicalHeight, intrinsicRatio, boxSizing), shouldComputePreferred);
             }
 
-            
             // If 'height' and 'width' both have computed values of 'auto' and the
             // element has an intrinsic ratio but no intrinsic height or width, then
             // the used value of 'width' is undefined in CSS 2.1. However, it is
