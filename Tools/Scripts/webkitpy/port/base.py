@@ -81,6 +81,8 @@ class Port(object):
     DEVICE_TYPE = None
     DEFAULT_DEVICE_TYPES = []
 
+    helper = None
+
     @classmethod
     def determine_full_port_name(cls, host, options, port_name):
         """Return a fully-specified port name that can be used to construct objects."""
@@ -115,7 +117,6 @@ class Port(object):
         self._config = port_config.Config(self._executive, self._filesystem, self.port_name)
         self.pretty_patch = PrettyPatch(self._executive, self.path_from_webkit_base(), self._filesystem)
 
-        self._helper = None
         self._http_server = None
         self._websocket_server = None
         self._websocket_secure_server = None
@@ -958,9 +959,16 @@ class Port(object):
 
     def stop_helper(self):
         """Shut down the test helper if it is running. Do nothing if
-        it isn't, or it isn't available. If a port overrides start_helper()
-        it must override this routine as well."""
-        pass
+        it isn't, or it isn't available."""
+        if Port.helper:
+            _log.debug("Stopping LayoutTestHelper")
+            try:
+                Port.helper.stdin.write(b"x\n")
+                Port.helper.stdin.close()
+                Port.helper.wait()
+            except IOError as e:
+                _log.debug("IOError raised while stopping helper: %s" % str(e))
+            Port.helper = None
 
     def stop_http_server(self):
         """Shut down the http server if it is running. Do nothing if it isn't."""

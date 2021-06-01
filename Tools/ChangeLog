@@ -1,3 +1,22 @@
+2021-06-01  Jonathan Bedard  <jbedard@apple.com>
+
+        [run-webkit-tests] Move helper out of Port instance
+        https://bugs.webkit.org/show_bug.cgi?id=226344
+        <rdar://problem/78575542>
+
+        Reviewed by Dewei Zhu.
+
+        The "helper" is a popen object, which are not pickleable, and cannot
+        belong to an instantiated port object.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port): Make helper class variable.
+        (Port.__init__):
+        (Port.stop_helper): All classes should share the same code to stop the helper process.
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.start_helper): Use class variable.
+        (MacPort.stop_helper): Moved to base class..
+
 2021-06-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Sync Tools/win/DLLLauncher/DLLLauncherMain.cpp with Source/JavaScriptCore/shell/DLLLauncherMain.cpp

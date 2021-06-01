@@ -575,7 +575,6 @@ class Manager(object):
             return False
 
         _log.debug("Restarting helper")
-        self._port.stop_helper()
         self._options.pixel_tests = True
         return self._port.start_helper(prefer_integrated_gpu=self._options.prefer_integrated_gpu)
 
