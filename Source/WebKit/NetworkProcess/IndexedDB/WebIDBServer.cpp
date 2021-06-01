@@ -58,6 +58,7 @@ WebIDBServer::~WebIDBServer()
     ASSERT(RunLoop::isMain());
     // close() has to be called to make sure thread exits.
     ASSERT(!m_closeCallback);
+    ASSERT(!m_isSuspended);
 }
 
 void WebIDBServer::getOrigins(CompletionHandler<void(HashSet<WebCore::SecurityOriginData>&&)>&& callback)
@@ -426,6 +427,11 @@ void WebIDBServer::close()
 
         callOnMainRunLoop([protectedThis = WTFMove(protectedThis)] { });
     });
+
+#if PLATFORM(IOS_FAMILY)
+    // Network process may become active and close WebIDBServer before receiving resume message.
+    resume();
+#endif
 
     {
         Locker locker { m_serverLock };
