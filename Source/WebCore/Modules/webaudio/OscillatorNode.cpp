@@ -72,7 +72,7 @@ ExceptionOr<Ref<OscillatorNode>> OscillatorNode::create(BaseAudioContext& contex
     if (options.periodicWave)
         oscillator->setPeriodicWave(*options.periodicWave);
     else {
-        result = oscillator->setType(options.type);
+        result = oscillator->setTypeForBindings(options.type);
         if (result.hasException())
             return result.releaseException();
     }
@@ -97,9 +97,10 @@ OscillatorNode::~OscillatorNode()
     uninitialize();
 }
 
-ExceptionOr<void> OscillatorNode::setType(OscillatorType type)
+ExceptionOr<void> OscillatorNode::setTypeForBindings(OscillatorType type)
 {
     ALWAYS_LOG(LOGIDENTIFIER, type);
+    ASSERT(isMainThread());
 
     if (type == OscillatorType::Custom) {
         if (m_type != OscillatorType::Custom)
@@ -438,7 +439,13 @@ void OscillatorNode::setPeriodicWave(PeriodicWave& periodicWave)
 
 bool OscillatorNode::propagatesSilence() const
 {
-    return !isPlayingOrScheduled() || hasFinished() || !m_periodicWave.get();
+    ASSERT(context().isAudioThread());
+    if (!isPlayingOrScheduled() || hasFinished())
+        return true;
+    if (!m_processLock.tryLock())
+        return false; // Assume we have a periodic wave if we are unable to grab the lock.
+    Locker locker { AdoptLock, m_processLock };
+    return !m_periodicWave.get();
 }
 
 } // namespace WebCore

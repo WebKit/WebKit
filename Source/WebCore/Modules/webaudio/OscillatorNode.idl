@@ -31,7 +31,7 @@
 ] interface OscillatorNode : AudioScheduledSourceNode {
     [EnabledBySetting=WebAudio] constructor (BaseAudioContext context, optional OscillatorOptions options);
 
-    attribute OscillatorType type;
+    [ImplementedAs=typeForBindings] attribute OscillatorType type;
 
     readonly attribute AudioParam frequency; // in Hertz
     readonly attribute AudioParam detune; // in Cents

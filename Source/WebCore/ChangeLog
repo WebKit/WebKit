@@ -1,5 +1,23 @@
 2021-05-31  Chris Dumez  <cdumez@apple.com>
 
+        Fix thread safety issues in OscillatorNode
+        https://bugs.webkit.org/show_bug.cgi?id=226450
+
+        Reviewed by Darin Adler.
+
+        Adopt thread safety annotations in OscillatorNode and fix bugs found by clang.
+        In particular, propagatesSilence() was failing to grab the lock before accessing
+        m_periodicWave, which gets modified on the main thread.
+
+        * Modules/webaudio/OscillatorNode.cpp:
+        (WebCore::OscillatorNode::create):
+        (WebCore::OscillatorNode::setTypeForBindings):
+        (WebCore::OscillatorNode::propagatesSilence const):
+        * Modules/webaudio/OscillatorNode.h:
+        * Modules/webaudio/OscillatorNode.idl:
+
+2021-05-31  Chris Dumez  <cdumez@apple.com>
+
         Fix thread safety issues in PannerNode
         https://bugs.webkit.org/show_bug.cgi?id=226455
 
