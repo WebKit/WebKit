@@ -44,7 +44,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/Vector.h>
 
-#define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(m_page && m_page->isAlwaysOnLoggingAllowed(), AppSSO, "%p - [InitiatingAction=%s] SOAuthorizationSession::" fmt, this, toString(m_action), ##__VA_ARGS__)
+#define AUTHORIZATIONSESSION_RELEASE_LOG(fmt, ...) RELEASE_LOG(AppSSO, "%p - [InitiatingAction=%s] SOAuthorizationSession::" fmt, this, toString(m_action), ##__VA_ARGS__)
 
 namespace WebKit {
 
@@ -117,7 +117,7 @@ void SOAuthorizationSession::becomeCompleted()
 
 void SOAuthorizationSession::shouldStart()
 {
-    RELEASE_LOG_IF_ALLOWED("shouldStart:");
+    AUTHORIZATIONSESSION_RELEASE_LOG("shouldStart:");
 
     ASSERT(m_state == State::Idle);
     if (!m_page)
@@ -127,12 +127,12 @@ void SOAuthorizationSession::shouldStart()
 
 void SOAuthorizationSession::start()
 {
-    RELEASE_LOG_IF_ALLOWED("start:");
+    AUTHORIZATIONSESSION_RELEASE_LOG("start:");
 
     ASSERT((m_state == State::Idle || m_state == State::Waiting) && m_navigationAction);
     m_state = State::Active;
     [m_soAuthorization getAuthorizationHintsWithURL:m_navigationAction->request().url() responseCode:0 completion:makeBlockPtr([this, weakThis = makeWeakPtr(*this)] (SOAuthorizationHints *authorizationHints, NSError *error) {
-        RELEASE_LOG_IF_ALLOWED("start: Receive SOAuthorizationHints (error=%ld)", error ? error.code : 0);
+        AUTHORIZATIONSESSION_RELEASE_LOG("start: Receive SOAuthorizationHints (error=%ld)", error ? error.code : 0);
 
         if (!weakThis || error || !authorizationHints)
             return;
@@ -142,7 +142,7 @@ void SOAuthorizationSession::start()
 
 void SOAuthorizationSession::continueStartAfterGetAuthorizationHints(const String& hints)
 {
-    RELEASE_LOG_IF_ALLOWED("continueStartAfterGetAuthorizationHints: (hints=%s)", hints.utf8().data());
+    AUTHORIZATIONSESSION_RELEASE_LOG("continueStartAfterGetAuthorizationHints: (hints=%s)", hints.utf8().data());
 
     ASSERT(m_state == State::Active);
     if (!m_page)
@@ -158,13 +158,13 @@ void SOAuthorizationSession::continueStartAfterGetAuthorizationHints(const Strin
 void SOAuthorizationSession::continueStartAfterDecidePolicy(const SOAuthorizationLoadPolicy& policy)
 {
     if (policy == SOAuthorizationLoadPolicy::Ignore) {
-        RELEASE_LOG_IF_ALLOWED("continueStartAfterDecidePolicy: Receive SOAuthorizationLoadPolicy::Ignore");
+        AUTHORIZATIONSESSION_RELEASE_LOG("continueStartAfterDecidePolicy: Receive SOAuthorizationLoadPolicy::Ignore");
 
         fallBackToWebPath();
         return;
     }
 
-    RELEASE_LOG_IF_ALLOWED("continueStartAfterDecidePolicy: Receive SOAuthorizationLoadPolicy::Allow");
+    AUTHORIZATIONSESSION_RELEASE_LOG("continueStartAfterDecidePolicy: Receive SOAuthorizationLoadPolicy::Allow");
 
     if (!m_soAuthorization || !m_page || !m_navigationAction)
         return;
@@ -192,7 +192,7 @@ void SOAuthorizationSession::continueStartAfterDecidePolicy(const SOAuthorizatio
 
 void SOAuthorizationSession::fallBackToWebPath()
 {
-    RELEASE_LOG_IF_ALLOWED("fallBackToWebPath:");
+    AUTHORIZATIONSESSION_RELEASE_LOG("fallBackToWebPath:");
 
     if (m_state != State::Active)
         return;
@@ -202,7 +202,7 @@ void SOAuthorizationSession::fallBackToWebPath()
 
 void SOAuthorizationSession::abort()
 {
-    RELEASE_LOG_IF_ALLOWED("abort:");
+    AUTHORIZATIONSESSION_RELEASE_LOG("abort:");
 
     if (m_state == State::Idle || m_state == State::Completed)
         return;
@@ -226,7 +226,7 @@ void SOAuthorizationSession::complete(NSHTTPURLResponse *httpResponse, NSData *d
     // Set cookies.
     auto cookies = toCookieVector([NSHTTPCookie cookiesWithResponseHeaderFields:httpResponse.allHeaderFields forURL:response.url()]);
 
-    RELEASE_LOG_IF_ALLOWED("complete: (httpStatusCode=%d, hasCookies=%d, hasData=%d)", response.httpStatusCode(), !cookies.isEmpty(), !!data.length);
+    AUTHORIZATIONSESSION_RELEASE_LOG("complete: (httpStatusCode=%d, hasCookies=%d, hasData=%d)", response.httpStatusCode(), !cookies.isEmpty(), !!data.length);
 
     if (cookies.isEmpty()) {
         completeInternal(response, data);
@@ -239,7 +239,7 @@ void SOAuthorizationSession::complete(NSHTTPURLResponse *httpResponse, NSData *d
         if (!weakThis)
             return;
 
-        RELEASE_LOG_IF_ALLOWED("complete: Cookies are set.");
+        AUTHORIZATIONSESSION_RELEASE_LOG("complete: Cookies are set.");
 
         completeInternal(response, data.get());
     });
@@ -247,7 +247,7 @@ void SOAuthorizationSession::complete(NSHTTPURLResponse *httpResponse, NSData *d
 
 void SOAuthorizationSession::presentViewController(SOAuthorizationViewController viewController, UICallback uiCallback)
 {
-    RELEASE_LOG_IF_ALLOWED("presentViewController:");
+    AUTHORIZATIONSESSION_RELEASE_LOG("presentViewController:");
 
     ASSERT(m_state == State::Active);
     // Only expect at most one UI session for the whole authorization session.
@@ -275,7 +275,7 @@ void SOAuthorizationSession::presentViewController(SOAuthorizationViewController
         return;
     }
 
-    RELEASE_LOG_IF_ALLOWED("presentViewController: Calling beginSheet on %p for sheet %p.", presentingWindow, m_sheetWindow.get());
+    AUTHORIZATIONSESSION_RELEASE_LOG("presentViewController: Calling beginSheet on %p for sheet %p.", presentingWindow, m_sheetWindow.get());
     [presentingWindow beginSheet:m_sheetWindow.get() completionHandler:nil];
 #elif PLATFORM(IOS)
     UIViewController *presentingViewController = m_page->uiClient().presentingViewController();
@@ -292,7 +292,7 @@ void SOAuthorizationSession::presentViewController(SOAuthorizationViewController
 
 void SOAuthorizationSession::dismissViewController()
 {
-    RELEASE_LOG_IF_ALLOWED("dismissViewController:");
+    AUTHORIZATIONSESSION_RELEASE_LOG("dismissViewController:");
 
     ASSERT(m_viewController);
 #if PLATFORM(MAC)
@@ -303,13 +303,13 @@ void SOAuthorizationSession::dismissViewController()
     if (m_page && m_page->platformWindow()) {
         auto *presentingWindow = m_page->platformWindow();
         if (presentingWindow.miniaturized) {
-            RELEASE_LOG_IF_ALLOWED("dismissViewController: Page's window is miniaturized. Waiting to dismiss until active.");
+            AUTHORIZATIONSESSION_RELEASE_LOG("dismissViewController: Page's window is miniaturized. Waiting to dismiss until active.");
             if (m_presentingWindowDidDeminiaturizeObserver) {
-                RELEASE_LOG_IF_ALLOWED("dismissViewController: [Miniaturized] Already has a deminiaturized observer (%p). Hidden observer is %p", m_presentingWindowDidDeminiaturizeObserver.get(), m_applicationDidUnhideObserver.get());
+                AUTHORIZATIONSESSION_RELEASE_LOG("dismissViewController: [Miniaturized] Already has a deminiaturized observer (%p). Hidden observer is %p", m_presentingWindowDidDeminiaturizeObserver.get(), m_applicationDidUnhideObserver.get());
                 return;
             }
             m_presentingWindowDidDeminiaturizeObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSWindowDidDeminiaturizeNotification object:presentingWindow queue:nil usingBlock:[protectedThis = makeRefPtr(this), this] (NSNotification *) {
-                RELEASE_LOG_IF_ALLOWED("dismissViewController: Window has deminiaturized. Completing the dismissal.");
+                AUTHORIZATIONSESSION_RELEASE_LOG("dismissViewController: Window has deminiaturized. Completing the dismissal.");
                 dismissViewController();
                 [[NSNotificationCenter defaultCenter] removeObserver:m_presentingWindowDidDeminiaturizeObserver.get()];
                 m_presentingWindowDidDeminiaturizeObserver = nullptr;
@@ -319,13 +319,13 @@ void SOAuthorizationSession::dismissViewController()
     }
 
     if (NSApp.hidden) {
-        RELEASE_LOG_IF_ALLOWED("dismissViewController: Application is hidden. Waiting to dismiss until active.");
+        AUTHORIZATIONSESSION_RELEASE_LOG("dismissViewController: Application is hidden. Waiting to dismiss until active.");
         if (m_applicationDidUnhideObserver) {
-            RELEASE_LOG_IF_ALLOWED("dismissViewController: [Hidden] Already has an Unhide observer (%p). Deminiaturized observer is %p", m_presentingWindowDidDeminiaturizeObserver.get(), m_applicationDidUnhideObserver.get());
+            AUTHORIZATIONSESSION_RELEASE_LOG("dismissViewController: [Hidden] Already has an Unhide observer (%p). Deminiaturized observer is %p", m_presentingWindowDidDeminiaturizeObserver.get(), m_applicationDidUnhideObserver.get());
             return;
         }
         m_applicationDidUnhideObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSApplicationDidUnhideNotification object:NSApp queue:nil usingBlock:[protectedThis = makeRefPtr(this), this] (NSNotification *) {
-            RELEASE_LOG_IF_ALLOWED("dismissViewController: Application is no longer hidden. Completing the dismissal.");
+            AUTHORIZATIONSESSION_RELEASE_LOG("dismissViewController: Application is no longer hidden. Completing the dismissal.");
             dismissViewController();
             [[NSNotificationCenter defaultCenter] removeObserver:m_applicationDidUnhideObserver.get()];
             m_applicationDidUnhideObserver = nullptr;
@@ -337,10 +337,10 @@ void SOAuthorizationSession::dismissViewController()
     m_sheetWindowWillCloseObserver = nullptr;
 
     auto *presentingWindow = m_sheetWindow.get().sheetParent;
-    RELEASE_LOG_IF_ALLOWED("dismissViewController: Calling endSheet on %p for sheet %p.", presentingWindow, m_sheetWindow.get());
+    AUTHORIZATIONSESSION_RELEASE_LOG("dismissViewController: Calling endSheet on %p for sheet %p.", presentingWindow, m_sheetWindow.get());
     [presentingWindow endSheet:m_sheetWindow.get()];
     m_sheetWindow = nullptr;
-    RELEASE_LOG_IF_ALLOWED("dismissViewController: Finished call with deminiaturized observer (%p) and Hidden observer (%p)", m_presentingWindowDidDeminiaturizeObserver.get(), m_applicationDidUnhideObserver.get());
+    AUTHORIZATIONSESSION_RELEASE_LOG("dismissViewController: Finished call with deminiaturized observer (%p) and Hidden observer (%p)", m_presentingWindowDidDeminiaturizeObserver.get(), m_applicationDidUnhideObserver.get());
 #elif PLATFORM(IOS)
     [[m_viewController presentingViewController] dismissViewControllerAnimated:YES completion:nil];
 #endif
@@ -350,6 +350,6 @@ void SOAuthorizationSession::dismissViewController()
 
 } // namespace WebKit
 
-#undef RELEASE_LOG_IF_ALLOWED
+#undef AUTHORIZATIONSESSION_RELEASE_LOG
 
 #endif // HAVE(APP_SSO)

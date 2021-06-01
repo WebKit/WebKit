@@ -504,7 +504,7 @@ bool RemoteLayerTreeDrawingAreaProxy::hasVisibleContent() const
 
 bool RemoteLayerTreeDrawingAreaProxy::isAlwaysOnLoggingAllowed() const
 {
-    return m_webPageProxy.isAlwaysOnLoggingAllowed();
+    return m_webPageProxy.sessionID().isAlwaysOnLoggingAllowed();
 }
 
 CALayer *RemoteLayerTreeDrawingAreaProxy::layerWithIDForTesting(uint64_t layerID) const

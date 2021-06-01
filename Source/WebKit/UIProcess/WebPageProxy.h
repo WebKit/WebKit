@@ -1590,7 +1590,7 @@ public:
     void externalOutputDeviceAvailableDidChange(WebCore::PlaybackTargetClientContextIdentifier, bool) final;
     void setShouldPlayToPlaybackTarget(WebCore::PlaybackTargetClientContextIdentifier, bool) final;
     void playbackTargetPickerWasDismissed(WebCore::PlaybackTargetClientContextIdentifier) final;
-    bool alwaysOnLoggingAllowed() const final { return isAlwaysOnLoggingAllowed(); }
+    bool alwaysOnLoggingAllowed() const final { return sessionID().isAlwaysOnLoggingAllowed(); }
     bool useiTunesAVOutputContext() const final;
     PlatformView* platformView() const final;
 
@@ -1623,8 +1623,6 @@ public:
     bool isTouchBarUpdateSupressedForHiddenContentEditable() const { return m_isTouchBarUpdateSupressedForHiddenContentEditable; }
     bool isNeverRichlyEditableForTouchBar() const { return m_isNeverRichlyEditableForTouchBar; }
 #endif
-
-    bool isAlwaysOnLoggingAllowed() const;
 
 #if ENABLE(GAMEPAD)
     void gamepadActivity(const Vector<GamepadData>&, WebCore::EventMakesGamepadsVisible);
