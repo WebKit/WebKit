@@ -77,6 +77,9 @@ private:
     PlatformGLObject m_resolvedFBO { 0 };
     GCGLint m_sampleCount { 0 };
     PlatformGLObject m_opaqueTexture { 0 };
+#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
+    void* m_ioSurfaceTextureHandle { nullptr };
+#endif
 };
 
 } // namespace WebCore

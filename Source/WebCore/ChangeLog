@@ -1,3 +1,25 @@
+2021-05-31  Dean Jackson  <dino@apple.com>
+
+        [WebXR] Attach IOSurface to WebXROpaqueFramebuffer
+        https://bugs.webkit.org/show_bug.cgi?id=225896
+        <rdar://problem/78128289>
+
+        Reviewed by Sam Weinig.
+
+        Implement binding of incoming IOSurfaces (via FrameData)
+        into the WebGL framebuffer that the page will use as
+        a rendering target.
+
+        Currently only single-sample (non-antialiased) buffers
+        are supported and the canvas context must be WebGL 2.
+
+        * Modules/webxr/WebXROpaqueFramebuffer.cpp:
+        (WebCore::WebXROpaqueFramebuffer::startFrame): Create a texture if necessary, then
+        bind its backing store to the incoming IOSurface, then hook it up to the framebuffer.
+        (WebCore::WebXROpaqueFramebuffer::endFrame): Release the Pbuffer we used in startFrame.
+        (WebCore::WebXROpaqueFramebuffer::setupFramebuffer): Add Cocoa+ANGLE specific implementation.
+        * Modules/webxr/WebXROpaqueFramebuffer.h: Keep a member variable for the Pbuffer.
+
 2021-05-31  Alan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Decouple stretching and final cell layouts

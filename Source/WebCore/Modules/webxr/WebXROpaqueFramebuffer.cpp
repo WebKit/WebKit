@@ -50,6 +50,11 @@
 #include "WebGLRenderingContextBase.h"
 #include <wtf/Scope.h>
 
+#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
+#include "ANGLEHeaders.h"
+#include "GraphicsContextGLOpenGL.h"
+#endif
+
 namespace WebCore {
 
 using GL = GraphicsContextGL;
@@ -111,10 +116,41 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
     // the textures/renderbuffers.
 
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
-    UNUSED_PARAM(data);
+    auto gCGL = static_cast<GraphicsContextGLOpenGL*>(m_context.graphicsContextGL());
+    GCGLenum textureTarget = GraphicsContextGLOpenGL::drawingBufferTextureTarget();
+
+    auto size = data.surface->size();
+
+    if (!m_opaqueTexture)
+        m_opaqueTexture = gCGL->createTexture();
+
+    gCGL->bindTexture(textureTarget, m_opaqueTexture);
+    gCGL->texParameteri(textureTarget, GL::TEXTURE_MAG_FILTER, GL::LINEAR);
+    gCGL->texParameteri(textureTarget, GL::TEXTURE_MIN_FILTER, GL::LINEAR);
+    gCGL->texParameteri(textureTarget, GL::TEXTURE_WRAP_S, GL::CLAMP_TO_EDGE);
+    gCGL->texParameteri(textureTarget, GL::TEXTURE_WRAP_T, GL::CLAMP_TO_EDGE);
+
+    // Tell the GraphicsContextGL to use the IOSurface as the backing store for m_opaqueTexture.
+    m_ioSurfaceTextureHandle = gCGL->createPbufferAndAttachIOSurface(textureTarget, GraphicsContextGLOpenGL::PbufferAttachmentUsage::Write, GL::BGRA, size.width(), size.height(), GL::UNSIGNED_BYTE, data.surface->surface(), 0);
+    if (!m_ioSurfaceTextureHandle && m_opaqueTexture) {
+        gCGL->deleteTexture(m_opaqueTexture);
+        return;
+    }
+
+    // FIXME: This is assuming multisampling is turned off and we're rendering directly into the framebuffer.
+
+    // Now set up the framebuffer to use the textures/renderbuffers we have created.
+    gl.framebufferTexture2D(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::TEXTURE_2D, m_opaqueTexture, 0);
+
+    if (m_attributes.stencil)
+        gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::STENCIL_ATTACHMENT, GL::RENDERBUFFER, m_depthStencilBuffer);
+    if (m_attributes.depth)
+        gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::DEPTH_ATTACHMENT, GL::RENDERBUFFER, m_depthStencilBuffer);
+
+    // At this point the framebuffer should be "complete".
+    ASSERT(gl.checkFramebufferStatus(GL::FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE);
 #else
     m_opaqueTexture = data.opaqueTexture;
-#endif
 
 #if USE(OPENGL_ES)
     auto& extensions = reinterpret_cast<ExtensionsGLOpenGLES&>(gl.getExtensions());
@@ -126,6 +162,7 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
 
     if (!m_multisampleColorBuffer)
         gl.framebufferTexture2D(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::TEXTURE_2D, m_opaqueTexture, 0);
+#endif
 }
 
 void WebXROpaqueFramebuffer::endFrame()
@@ -134,7 +171,21 @@ void WebXROpaqueFramebuffer::endFrame()
 
     if (!m_context.graphicsContextGL())
         return;
+
     auto& gl = *m_context.graphicsContextGL();
+
+#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
+    // FIXME: We have to call finish rather than flush because we only want to disconnect
+    // the IOSurface and signal the DeviceProxy when we know the content has been rendered.
+    // It might be possible to set this up so the completion of the rendering triggers
+    // the endFrame call.
+    gl.finish();
+
+    if (m_ioSurfaceTextureHandle) {
+        auto gCGL = static_cast<GraphicsContextGLOpenGL*>(&gl);
+        gCGL->destroyPbufferAndDetachIOSurface(m_ioSurfaceTextureHandle);
+    }
+#else
 
     if (m_multisampleColorBuffer) {
 #if !USE(ANGLE)
@@ -162,8 +213,9 @@ void WebXROpaqueFramebuffer::endFrame()
         gl.bindFramebuffer(GL::READ_FRAMEBUFFER, m_framebuffer->object());
         gl.blitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL::COLOR_BUFFER_BIT, GL::LINEAR);
     }
-    
+
     gl.flush();
+#endif
 }
 
 bool WebXROpaqueFramebuffer::setupFramebuffer()
@@ -184,16 +236,14 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
 
     // Set up color, depth and stencil formats
     bool useDepthStencil = m_attributes.stencil || m_attributes.depth;
-    auto colorFormat = m_attributes.alpha ? GraphicsContextGL::RGBA8 : GraphicsContextGL::RGB8;
+    auto colorFormat = m_attributes.alpha ? GL::RGBA8 : GL::RGB8;
 #if USE(OPENGL_ES)
     auto& extensions = reinterpret_cast<ExtensionsGLOpenGLES&>(gl.getExtensions());
     bool supportsPackedDepthStencil = useDepthStencil && extensions.supports("GL_OES_packed_depth_stencil");
     auto depthFormat = supportsPackedDepthStencil ? GL::DEPTH24_STENCIL8 : GL::DEPTH_COMPONENT16;
     auto stencilFormat = GL::STENCIL_INDEX8;
 #elif USE(ANGLE)
-    // FIXME: These values were chosen just to get this to compile successfully.
-    // Make sure they are correct.
-    bool supportsPackedDepthStencil = false;
+    bool supportsPackedDepthStencil = true;
     auto depthFormat = supportsPackedDepthStencil ? GL::DEPTH24_STENCIL8 : GL::DEPTH_COMPONENT;
     auto stencilFormat = GL::STENCIL_INDEX8;
 #else
@@ -208,12 +258,11 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
     if (m_attributes.antialias) {
         GCGLint maxSampleCount;
 #if USE(ANGLE)
-        // FIXME: This probably is not correct.
-        maxSampleCount = 0;
+        gl.getIntegerv(GL::MAX_SAMPLES, makeGCGLSpan(&maxSampleCount, 1));
 #else
         gl.getIntegerv(ExtensionsGL::MAX_SAMPLES, makeGCGLSpan(&maxSampleCount, 1));
 #endif
-        // Using more than 4 samples might be overhead.
+        // Cap the maxiumum multisample count at 4. Any more than this is likely overkill and will impact performance.
         m_sampleCount = std::min(4, maxSampleCount);
     }
 
@@ -251,7 +300,6 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
 #endif // USE(OPENGL_ES)
 
     if (m_attributes.antialias && m_context.isWebGL2()) {
-        // Use an extra FBO for multisample if multisampled_render_to_texture is not supported.
         m_resolvedFBO = gl.createFramebuffer();
         m_multisampleColorBuffer = gl.createRenderbuffer();
         gl.bindFramebuffer(GL::FRAMEBUFFER, m_framebuffer->object());
