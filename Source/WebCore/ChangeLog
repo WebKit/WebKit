@@ -1,3 +1,121 @@
+2021-06-01  Sam Weinig  <weinig@apple.com>
+
+        Factor out token-type dependent CSS property parsing functions to allow more code sharing
+        https://bugs.webkit.org/show_bug.cgi?id=226473
+
+        Reviewed by Darin Adler.
+
+        As a step toward reducing duplicate code and making CSSPropertyParserHelpers a bit
+        easier to follow, this change extracts the token type specific parts of the primitive
+        consume functions (e.g. the part of consumeNumberRaw where the token is known to be
+        a FunctionToken) into their own functions. This allows sharing between functions that
+        both need that logic (e.g. consumeNumberRaw and consumeNumberRawOrPercentRaw can share)
+        without extra branches, rechecking the token type, or duplication. It also has the
+        benefit of creating a strict pattern for primitive consumers going forward.
+
+        The new names are rather long to make it very clear what they do, but they are unlikely
+        to stay for very long. Future changes will try to generalize through templates to allow
+        programatic combinations of the consumers without always haveing to write the boilerplate.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::shouldAcceptUnitlessValue):
+        (WebCore::CSSPropertyParserHelpers::consumeIntegerTypeRawWithKnownTokenTypeFunction):
+        (WebCore::CSSPropertyParserHelpers::consumeIntegerTypeRawWithKnownTokenTypeNumber):
+        (WebCore::CSSPropertyParserHelpers::consumeIntegerTypeCSSPrimitiveValueWithCalcWithKnownTokenTypeFunction):
+        (WebCore::CSSPropertyParserHelpers::consumeIntegerTypeCSSPrimitiveValueWithCalcWithKnownTokenTypeNumber):
+        (WebCore::CSSPropertyParserHelpers::validatedNumberRaw):
+        (WebCore::CSSPropertyParserHelpers::consumeNumberRawWithKnownTokenTypeFunction):
+        (WebCore::CSSPropertyParserHelpers::consumeNumberRawWithKnownTokenTypeNumber):
+        (WebCore::CSSPropertyParserHelpers::consumeNumberRawWithKnownTokenTypeIdent):
+        (WebCore::CSSPropertyParserHelpers::consumeNumberCSSPrimitiveValueWithCalcWithKnownTokenTypeFunction):
+        (WebCore::CSSPropertyParserHelpers::consumeNumberCSSPrimitiveValueWithCalcWithKnownTokenTypeNumber):
+        (WebCore::CSSPropertyParserHelpers::validatedPercentRaw):
+        (WebCore::CSSPropertyParserHelpers::consumePercentRawWithKnownTokenTypeFunction):
+        (WebCore::CSSPropertyParserHelpers::consumePercentRawWithKnownTokenTypePercentage):
+        (WebCore::CSSPropertyParserHelpers::consumePercentRawWithKnownTokenTypeIdent):
+        (WebCore::CSSPropertyParserHelpers::consumePercentCSSPrimitiveValueWithCalcWithKnownTokenTypeFunction):
+        (WebCore::CSSPropertyParserHelpers::consumePercentCSSPrimitiveValueWithCalcWithKnownTokenTypePercentage):
+        (WebCore::CSSPropertyParserHelpers::validatedLengthRaw):
+        (WebCore::CSSPropertyParserHelpers::consumeLengthRawWithKnownTokenTypeFunction):
+        (WebCore::CSSPropertyParserHelpers::consumeLengthRawWithKnownTokenTypeDimension):
+        (WebCore::CSSPropertyParserHelpers::consumeLengthRawWithKnownTokenTypeNumber):
+        (WebCore::CSSPropertyParserHelpers::consumeLengthCSSPrimitiveValueWithCalcWithKnownTokenTypeFunction):
+        (WebCore::CSSPropertyParserHelpers::consumeLengthCSSPrimitiveValueWithCalcWithKnownTokenTypeDimension):
+        (WebCore::CSSPropertyParserHelpers::consumeLengthCSSPrimitiveValueWithCalcWithKnownTokenTypeNumber):
+        (WebCore::CSSPropertyParserHelpers::consumeAngleRawWithKnownTokenTypeFunction):
+        (WebCore::CSSPropertyParserHelpers::consumeAngleRawWithKnownTokenTypeDimension):
+        (WebCore::CSSPropertyParserHelpers::consumeAngleRawWithKnownTokenTypeNumber):
+        (WebCore::CSSPropertyParserHelpers::consumeAngleCSSPrimitiveValueWithCalcWithKnownTokenTypeFunction):
+        (WebCore::CSSPropertyParserHelpers::consumeAngleCSSPrimitiveValueWithCalcWithKnownTokenTypeDimension):
+        (WebCore::CSSPropertyParserHelpers::consumeAngleCSSPrimitiveValueWithCalcWithKnownTokenTypeNumber):
+        (WebCore::CSSPropertyParserHelpers::consumeTimeCSSPrimitiveValueWithCalcWithKnownTokenTypeFunction):
+        (WebCore::CSSPropertyParserHelpers::consumeTimeCSSPrimitiveValueWithCalcWithKnownTokenTypeDimension):
+        (WebCore::CSSPropertyParserHelpers::consumeTimeCSSPrimitiveValueWithCalcWithKnownTokenTypeNumber):
+        (WebCore::CSSPropertyParserHelpers::consumeResolutionCSSPrimitiveValueWithKnownTokenTypeDimension):
+        (WebCore::CSSPropertyParserHelpers::consumeIntegerTypeRaw):
+        (WebCore::CSSPropertyParserHelpers::consumeIntegerType):
+        (WebCore::CSSPropertyParserHelpers::consumeIntegerRaw):
+        (WebCore::CSSPropertyParserHelpers::consumeInteger):
+        (WebCore::CSSPropertyParserHelpers::consumePositiveIntegerRaw):
+        (WebCore::CSSPropertyParserHelpers::consumePositiveInteger):
+        (WebCore::CSSPropertyParserHelpers::consumeNumberRaw):
+        (WebCore::CSSPropertyParserHelpers::consumeNumber):
+        (WebCore::CSSPropertyParserHelpers::consumeLengthRaw):
+        (WebCore::CSSPropertyParserHelpers::consumeLength):
+        (WebCore::CSSPropertyParserHelpers::consumePercentRaw):
+        (WebCore::CSSPropertyParserHelpers::consumePercent):
+        (WebCore::CSSPropertyParserHelpers::consumePercentWorkerSafe):
+        (WebCore::CSSPropertyParserHelpers::canConsumeCalcValue):
+        (WebCore::CSSPropertyParserHelpers::consumeAngleRaw):
+        (WebCore::CSSPropertyParserHelpers::consumeAngle):
+        (WebCore::CSSPropertyParserHelpers::consumeAngleWorkerSafe):
+        (WebCore::CSSPropertyParserHelpers::consumeTime):
+        (WebCore::CSSPropertyParserHelpers::consumeResolution):
+        (WebCore::CSSPropertyParserHelpers::consumeAngleOrPercent):
+        (WebCore::CSSPropertyParserHelpers::consumeLengthOrPercentRaw):
+        (WebCore::CSSPropertyParserHelpers::consumeLengthOrPercent):
+        (WebCore::CSSPropertyParserHelpers::consumeNumberAllowingSymbolTableIdent):
+        (WebCore::CSSPropertyParserHelpers::consumePercentAllowingSymbolTableIdent):
+        (WebCore::CSSPropertyParserHelpers::consumeAngleRawOrNumberRaw):
+        (WebCore::CSSPropertyParserHelpers::consumeAngleRawOrNumberRawAllowingSymbolTableIdent):
+        (WebCore::CSSPropertyParserHelpers::consumeNumberRawOrPercentRaw):
+        (WebCore::CSSPropertyParserHelpers::consumeNumberRawOrPercentDividedBy100Raw):
+        (WebCore::CSSPropertyParserHelpers::consumeNumberRawOrPercentRawAllowingSymbolTableIdent):
+        (WebCore::CSSPropertyParserHelpers::consumeNumberRawOrPercentDividedBy100RawAllowingSymbolTableIdent):
+        (WebCore::CSSPropertyParserHelpers::divisibleBy100):
+        (WebCore::CSSPropertyParserHelpers::consumeFontWeightNumberRaw):
+        (WebCore::CSSPropertyParserHelpers::consumeFontWeightNumber):
+        (WebCore::CSSPropertyParserHelpers::consumeFontWeightNumberWorkerSafe):
+        (WebCore::CSSPropertyParserHelpers::consumeIdentRaw):
+        (WebCore::CSSPropertyParserHelpers::consumeIdent):
+        (WebCore::CSSPropertyParserHelpers::consumeIdentWorkerSafe):
+        (WebCore::CSSPropertyParserHelpers::consumeUrlAsStringView):
+        (WebCore::CSSPropertyParserHelpers::consumeOptionalAlpha):
+        (WebCore::CSSPropertyParserHelpers::consumeOptionalAlphaAllowingSymbolTableIdent):
+        (WebCore::CSSPropertyParserHelpers::normalizeRGBComponentNumber):
+        (WebCore::CSSPropertyParserHelpers::normalizeRGBComponentPercentage):
+        (WebCore::CSSPropertyParserHelpers::consumeRelativeRGBComponent):
+        (WebCore::CSSPropertyParserHelpers::clampRGBComponent):
+        (WebCore::CSSPropertyParserHelpers::consumeRGBOrHSLOptionalAlpha):
+        (WebCore::CSSPropertyParserHelpers::parseRelativeRGBParameters):
+        (WebCore::CSSPropertyParserHelpers::parseRelativeHSLParameters):
+        (WebCore::CSSPropertyParserHelpers::parseHSLParameters):
+        (WebCore::CSSPropertyParserHelpers::parseRelativeHWBParameters):
+        (WebCore::CSSPropertyParserHelpers::parseHWBParameters):
+        (WebCore::CSSPropertyParserHelpers::parseRelativeLabParameters):
+        (WebCore::CSSPropertyParserHelpers::parseRelativeLCHParameters):
+        (WebCore::CSSPropertyParserHelpers::parseLCHParameters):
+        (WebCore::CSSPropertyParserHelpers::parseColorFunctionForRGBTypes):
+        (WebCore::CSSPropertyParserHelpers::consumeDeprecatedGradientColorStop):
+        (WebCore::CSSPropertyParserHelpers::consumeCrossFade):
+        (WebCore::CSSPropertyParserHelpers::consumeNumberOrPercentDividedBy100Raw): Deleted.
+        (WebCore::CSSPropertyParserHelpers::consumeOptionalAlphaOrIdent): Deleted.
+        (WebCore::CSSPropertyParserHelpers::consumeHue): Deleted.
+        (WebCore::CSSPropertyParserHelpers::consumeHueOrIdent): Deleted.
+        (WebCore::CSSPropertyParserHelpers::consumeNumberOrIdent): Deleted.
+        (WebCore::CSSPropertyParserHelpers::consumePercentOrIdent): Deleted.
+        (WebCore::CSSPropertyParserHelpers::consumeNumberOrPercentOrIdentNormalizedForRelativeRGB): Deleted.
+
 2021-06-01  Chris Dumez  <cdumez@apple.com>
 
         Fix thread safety issues in MediaStreamAudioSourceNode
