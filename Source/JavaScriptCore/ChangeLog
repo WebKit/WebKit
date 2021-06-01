@@ -1,3 +1,15 @@
+2021-06-01  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Support building against uClibc
+        https://bugs.webkit.org/show_bug.cgi?id=226244
+
+        Reviewed by Michael Catanzaro.
+
+        * assembler/MacroAssemblerARM64.cpp:
+        (getauxval): Provide a fallback implementation of getauxval() for
+        systems which do not provide <sys/auxv.h>, like those using uClibc
+        as their C library.
+
 2021-05-30  Chris Dumez  <cdumez@apple.com>
 
         Drop UncheckedCondition / UncheckedLock

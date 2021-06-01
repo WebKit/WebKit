@@ -1,3 +1,16 @@
+2021-06-01  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][GTK] Support building against uClibc
+        https://bugs.webkit.org/show_bug.cgi?id=226244
+
+        Reviewed by Michael Catanzaro.
+
+        * wtf/PlatformRegisters.h: Use the <sys/ucontext.h> header instead of
+        <ucontext.h>, which is enough to gain access to the type definitions
+        for CPU registers and is available on every libc. On the other hand,
+        uClibc does not have <ucontext.h>, so this fixes the build in that
+        case.
+
 2021-05-30  Chris Dumez  <cdumez@apple.com>
 
         Drop UncheckedCondition / UncheckedLock
