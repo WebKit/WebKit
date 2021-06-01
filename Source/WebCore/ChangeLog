@@ -1,5 +1,21 @@
 2021-05-31  Chris Dumez  <cdumez@apple.com>
 
+        Stop using WTF_IGNORES_THREAD_SAFETY_ANALYSIS in MediaRecorderPrivateWriter code
+        https://bugs.webkit.org/show_bug.cgi?id=226446
+
+        Reviewed by Darin Adler.
+
+        Fold MediaRecorderPrivateWriter::clear() into the destructor since this is the
+        only place it is called. This allows us to stop using WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+        since thread safety checks do not apply to destructors.
+
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.h:
+        * platform/mediarecorder/cocoa/MediaRecorderPrivateWriterCocoa.mm:
+        (WebCore::MediaRecorderPrivateWriter::~MediaRecorderPrivateWriter):
+        (): Deleted.
+
+2021-05-31  Chris Dumez  <cdumez@apple.com>
+
         Fix thread safety issues in OscillatorNode
         https://bugs.webkit.org/show_bug.cgi?id=226450
 

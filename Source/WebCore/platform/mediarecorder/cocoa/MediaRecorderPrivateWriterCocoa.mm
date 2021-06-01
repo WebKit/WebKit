@@ -127,7 +127,20 @@ MediaRecorderPrivateWriter::MediaRecorderPrivateWriter(bool hasAudio, bool hasVi
 
 MediaRecorderPrivateWriter::~MediaRecorderPrivateWriter()
 {
-    clear();
+    m_pendingAudioSampleQueue.clear();
+    m_pendingVideoSampleQueue.clear();
+    if (m_writer) {
+        [m_writer cancelWriting];
+        m_writer.clear();
+    }
+
+    // At this pointer, we should no longer be writing any data, so it should be safe to close and nullify m_data without locking.
+    if (m_writerDelegate)
+        [m_writerDelegate close];
+    m_data = nullptr;
+
+    if (auto completionHandler = WTFMove(m_fetchDataCompletionHandler))
+        completionHandler(nullptr, 0);
 }
 
 bool MediaRecorderPrivateWriter::initialize(const MediaRecorderPrivateOptions& options)
@@ -365,26 +378,6 @@ void MediaRecorderPrivateWriter::flushCompressedSampleBuffers(Function<void()>&&
     if (hasPendingVideoSamples)
         [m_videoAssetWriterInput requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:block.get()];
 }
-
-// FIXME: This modifies m_data without grabbing m_dataLock.
-void MediaRecorderPrivateWriter::clear() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
-{
-    m_pendingAudioSampleQueue.clear();
-    m_pendingVideoSampleQueue.clear();
-    if (m_writer) {
-        [m_writer cancelWriting];
-        m_writer.clear();
-    }
-
-    // At this pointer, we should no longer be writing any data, so it should be safe to close and nullify m_data without locking.
-    if (m_writerDelegate)
-        [m_writerDelegate close];
-    m_data = nullptr;
-
-    if (auto completionHandler = WTFMove(m_fetchDataCompletionHandler))
-        completionHandler(nullptr, 0);
-}
-
 
 static inline RetainPtr<CMSampleBufferRef> copySampleBufferWithCurrentTimeStamp(CMSampleBufferRef originalBuffer, CMTime startTime)
 {

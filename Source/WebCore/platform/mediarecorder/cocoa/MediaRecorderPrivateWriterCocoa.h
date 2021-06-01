@@ -83,7 +83,6 @@ public:
 
 private:
     MediaRecorderPrivateWriter(bool hasAudio, bool hasVideo);
-    void clear();
 
     bool initialize(const MediaRecorderPrivateOptions&);
 
