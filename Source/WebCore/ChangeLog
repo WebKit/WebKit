@@ -1,5 +1,24 @@
 2021-05-31  Alan Bujtas  <zalan@apple.com>
 
+        [LFC][TFC] Decouple stretching and final cell layouts
+        https://bugs.webkit.org/show_bug.cgi?id=226452
+
+        Reviewed by Antti Koivisto.
+
+        Stretching layout is slightly different from the final cell layout.
+
+        * layout/formattingContexts/table/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::setUsedGeometryForCells):
+        (WebCore::Layout::TableFormattingContext::computeAndDistributeExtraSpace):
+        (WebCore::Layout::TableFormattingContext::layoutCell): Deleted.
+        * layout/formattingContexts/table/TableFormattingContext.h:
+        * layout/formattingContexts/table/TableFormattingGeometry.cpp:
+        (WebCore::Layout::TableFormattingGeometry::horizontalSpaceForCellContent const):
+        (WebCore::Layout::TableFormattingGeometry::verticalSpaceForCellContent const):
+        * layout/formattingContexts/table/TableFormattingGeometry.h:
+
+2021-05-31  Alan Bujtas  <zalan@apple.com>
+
         [LFC] Tighten the constraint classes (ConstraintsForInFlowContent/ConstraintsForOutOfFlowContent)
         https://bugs.webkit.org/show_bug.cgi?id=226435
 

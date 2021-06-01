@@ -166,6 +166,35 @@ InlineLayoutUnit TableFormattingGeometry::usedBaselineForCell(const ContainerBox
     return formattingContext().geometryForBox(cellBox).contentBoxBottom();
 }
 
+LayoutUnit TableFormattingGeometry::horizontalSpaceForCellContent(const TableGrid::Cell& cell) const
+{
+    auto& grid = formattingContext().formattingState().tableGrid();
+    auto& columnList = grid.columns().list();
+    auto logicalWidth = LayoutUnit { };
+    for (auto columnIndex = cell.startColumn(); columnIndex < cell.endColumn(); ++columnIndex)
+        logicalWidth += columnList.at(columnIndex).logicalWidth();
+    // No column spacing when spanning.
+    logicalWidth += (cell.columnSpan() - 1) * grid.horizontalSpacing();
+    auto& cellBoxGeometry = formattingContext().geometryForBox(cell.box());
+    logicalWidth -= (cellBoxGeometry.horizontalBorder() + cellBoxGeometry.horizontalPadding().value_or(0));
+    return logicalWidth;
+}
+
+LayoutUnit TableFormattingGeometry::verticalSpaceForCellContent(const TableGrid::Cell& cell) const
+{
+    auto& cellBox = cell.box();
+    auto contentHeight = cellBoxContentHeight(cellBox);
+    auto computedHeight = this->computedHeight(cellBox);
+    if (!computedHeight)
+        return contentHeight;
+    auto heightUsesBorderBox = layoutState().inQuirksMode() || cellBox.style().boxSizing() == BoxSizing::BorderBox;
+    if (heightUsesBorderBox) {
+        auto& cellBoxGeometry = formattingContext().geometryForBox(cell.box());
+        *computedHeight -= (cellBoxGeometry.verticalBorder() + cellBoxGeometry.verticalPadding().value_or(0));
+    }
+    return std::max(contentHeight, *computedHeight);
+}
+
 }
 }
 

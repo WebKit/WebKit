@@ -44,6 +44,8 @@ public:
     std::optional<LayoutUnit> computedColumnWidth(const ContainerBox& columnBox) const;
     IntrinsicWidthConstraints intrinsicWidthConstraintsForCell(const TableGrid::Cell&) const;
     InlineLayoutUnit usedBaselineForCell(const ContainerBox& cellBox) const;
+    LayoutUnit horizontalSpaceForCellContent(const TableGrid::Cell&) const;
+    LayoutUnit verticalSpaceForCellContent(const TableGrid::Cell&) const;
 
 private:
     const TableFormattingContext& formattingContext() const { return downcast<TableFormattingContext>(FormattingGeometry::formattingContext()); }
