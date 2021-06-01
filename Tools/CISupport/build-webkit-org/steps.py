@@ -20,18 +20,18 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from buildbot.plugins import steps, util
 from buildbot.process import buildstep, factory, logobserver, properties
 from buildbot.process.results import Results, SUCCESS, FAILURE, WARNINGS, SKIPPED, EXCEPTION, RETRY
 from buildbot.steps import master, shell, transfer, trigger
 from buildbot.steps.source.svn import SVN
-
 from twisted.internet import defer
 
+import json
 import os
 import re
 import socket
 import sys
-import json
 import urllib
 
 if sys.version_info < (3, 5):
@@ -1153,6 +1153,84 @@ class ExtractTestResults(master.MasterShellCommand):
     def finished(self, result):
         self.addCustomURLs()
         return master.MasterShellCommand.finished(self, result)
+
+
+class PrintConfiguration(steps.ShellSequence):
+    name = 'configuration'
+    description = ['configuration']
+    haltOnFailure = False
+    flunkOnFailure = False
+    warnOnFailure = False
+    logEnviron = False
+    command_list_generic = [['hostname']]
+    command_list_apple = [['df', '-hl'], ['date'], ['sw_vers'], ['xcodebuild', '-sdk', '-version'], ['uptime']]
+    command_list_linux = [['df', '-hl'], ['date'], ['uname', '-a'], ['uptime']]
+    command_list_win = [['df', '-hl']]
+
+    def __init__(self, **kwargs):
+        super(PrintConfiguration, self).__init__(timeout=60, **kwargs)
+        self.commands = []
+        self.log_observer = logobserver.BufferLogObserver(wantStderr=True)
+        self.addLogObserver('stdio', self.log_observer)
+
+    def run(self):
+        command_list = list(self.command_list_generic)
+        platform = self.getProperty('platform', '*')
+        if platform != 'jsc-only':
+            platform = platform.split('-')[0]
+        if platform in ('mac', 'ios', 'tvos', 'watchos', '*'):
+            command_list.extend(self.command_list_apple)
+        elif platform in ('gtk', 'wpe', 'jsc-only'):
+            command_list.extend(self.command_list_linux)
+        elif platform in ('win'):
+            command_list.extend(self.command_list_win)
+
+        for command in command_list:
+            self.commands.append(util.ShellArg(command=command, logname='stdio'))
+        return super(PrintConfiguration, self).run()
+
+    def convert_build_to_os_name(self, build):
+        if not build:
+            return 'Unknown'
+
+        build_to_name_mapping = {
+            '11': 'Big Sur',
+            '10.15': 'Catalina',
+            '10.14': 'Mojave',
+            '10.13': 'High Sierra',
+            '10.12': 'Sierra',
+            '10.11': 'El Capitan',
+            '10.10': 'Yosemite',
+            '10.9': 'Maverick',
+            '10.8': 'Mountain Lion',
+            '10.7': 'Lion',
+            '10.6': 'Snow Leopard',
+            '10.5': 'Leopard',
+        }
+
+        for key, value in build_to_name_mapping.items():
+            if build.startswith(key):
+                return value
+        return 'Unknown'
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return {'step': 'Failed to print configuration'}
+        logText = self.log_observer.getStdout() + self.log_observer.getStderr()
+        configuration = 'Printed configuration'
+        match = re.search('ProductVersion:[ \t]*(.+?)\n', logText)
+        if match:
+            os_version = match.group(1).strip()
+            os_name = self.convert_build_to_os_name(os_version)
+            configuration = 'OS: {} ({})'.format(os_name, os_version)
+
+        xcode_re = sdk_re = 'Xcode[ \t]+?([0-9.]+?)\n'
+        match = re.search(xcode_re, logText)
+        if match:
+            xcode_version = match.group(1).strip()
+            configuration += ', Xcode: {}'.format(xcode_version)
+        return {'step': configuration}
+
 
 
 class SetPermissions(master.MasterShellCommand):

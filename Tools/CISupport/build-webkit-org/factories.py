@@ -30,6 +30,7 @@ class Factory(factory.BuildFactory):
     def __init__(self, platform, configuration, architectures, buildOnly, additionalArguments, device_model):
         factory.BuildFactory.__init__(self)
         self.addStep(ConfigureBuild(platform=platform, configuration=configuration, architecture=" ".join(architectures), buildOnly=buildOnly, additionalArguments=additionalArguments, device_model=device_model))
+        self.addStep(PrintConfiguration())
         self.addStep(CheckOutSource())
         self.addStep(ShowIdentifier())
         if not (platform == "jsc-only"):
