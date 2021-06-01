@@ -1,5 +1,29 @@
 2021-05-31  Chris Dumez  <cdumez@apple.com>
 
+        Fix thread safety issues in ConvolverNode
+        https://bugs.webkit.org/show_bug.cgi?id=226449
+
+        Reviewed by Darin Adler.
+
+        Adopt thread safety annotations in ConvolverNode and fix bugs found by clang.
+        In particular, the following issues were found and fixed:
+        - tailTime() / latencyTime() were accessing m_reverb on the audio thread without
+          locking even though m_reverb gets modified on the main thread.
+        - checkNumberOfChannelsForInput() was accessing m_buffer on the audio thread
+          without locking even though m_buffer gets modified on the main thread.
+
+        * Modules/webaudio/ConvolverNode.cpp:
+        (WebCore::ConvolverNode::create):
+        (WebCore::ConvolverNode::setBufferForBindings):
+        (WebCore::ConvolverNode::setNormalizeForBindings):
+        (WebCore::ConvolverNode::tailTime const):
+        (WebCore::ConvolverNode::latencyTime const):
+        (WebCore::ConvolverNode::checkNumberOfChannelsForInput):
+        * Modules/webaudio/ConvolverNode.h:
+        * Modules/webaudio/ConvolverNode.idl:
+
+2021-05-31  Chris Dumez  <cdumez@apple.com>
+
         Drop PendingActivity data member from BaseAudioContext
         https://bugs.webkit.org/show_bug.cgi?id=226445
 

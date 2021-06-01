@@ -63,9 +63,9 @@ ExceptionOr<Ref<ConvolverNode>> ConvolverNode::create(BaseAudioContext& context,
     if (result.hasException())
         return result.releaseException();
 
-    node->setNormalize(!options.disableNormalization);
+    node->setNormalizeForBindings(!options.disableNormalization);
 
-    result = node->setBuffer(WTFMove(options.buffer));
+    result = node->setBufferForBindings(WTFMove(options.buffer));
     if (result.hasException())
         return result.releaseException();
 
@@ -110,7 +110,7 @@ void ConvolverNode::process(size_t framesToProcess)
     }
 }
 
-ExceptionOr<void> ConvolverNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
+ExceptionOr<void> ConvolverNode::setBufferForBindings(RefPtr<AudioBuffer>&& buffer)
 {
     ASSERT(isMainThread());
     
@@ -160,19 +160,33 @@ ExceptionOr<void> ConvolverNode::setBuffer(RefPtr<AudioBuffer>&& buffer)
     return { };
 }
 
-AudioBuffer* ConvolverNode::buffer()
+AudioBuffer* ConvolverNode::bufferForBindings() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     ASSERT(isMainThread());
     return m_buffer.get();
 }
 
+void ConvolverNode::setNormalizeForBindings(bool normalize)
+{
+    ASSERT(isMainThread());
+    m_normalize = normalize;
+}
+
 double ConvolverNode::tailTime() const
 {
+    ASSERT(context().isAudioThread());
+    if (!m_processLock.tryLock())
+        return std::numeric_limits<double>::infinity();
+    Locker locker { AdoptLock, m_processLock };
     return m_reverb ? m_reverb->impulseResponseLength() / static_cast<double>(sampleRate()) : 0;
 }
 
 double ConvolverNode::latencyTime() const
 {
+    ASSERT(context().isAudioThread());
+    if (!m_processLock.tryLock())
+        return std::numeric_limits<double>::infinity();
+    Locker locker { AdoptLock, m_processLock };
     return m_reverb ? m_reverb->latencyFrames() / static_cast<double>(sampleRate()) : 0;
 }
 
@@ -199,9 +213,15 @@ ExceptionOr<void> ConvolverNode::setChannelCountMode(ChannelCountMode mode)
 void ConvolverNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
 {
     ASSERT(context().isAudioThread() && context().isGraphOwner());
+    std::optional<unsigned> numberOfBufferChannels;
+    if (m_processLock.tryLock()) {
+        Locker locker { AdoptLock, m_processLock };
+        if (m_buffer)
+            numberOfBufferChannels = m_buffer->numberOfChannels();
+    }
 
-    if (m_buffer) {
-        unsigned numberOfOutputChannels = computeNumberOfOutputChannels(input->numberOfChannels(), m_buffer->numberOfChannels());
+    if (numberOfBufferChannels) {
+        unsigned numberOfOutputChannels = computeNumberOfOutputChannels(input->numberOfChannels(), *numberOfBufferChannels);
 
         if (isInitialized() && numberOfOutputChannels != output(0)->numberOfChannels()) {
             // We're already initialized but the channel count has changed.
