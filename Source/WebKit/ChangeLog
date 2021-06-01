@@ -1,3 +1,40 @@
+2021-06-01  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK] Try harder to find initial WebKitWebView size
+        https://bugs.webkit.org/show_bug.cgi?id=226320
+
+        Reviewed by Michael Catanzaro.
+
+        Currently we base the viewport size on the drawing area size. The
+        drawing area is created with an initial size based on the viewport
+        size, which will be (0, 0) because the drawing area is still null
+        by that point.
+
+        Then, later, during the widget allocation, the drawing area receives
+        its proper size.
+
+        There are 2 issues here. First, this approach guarantees that the
+        initial viewport size will always be (0, 0), and then there's no
+        guarantee the widget will be allocated any time soon - for example,
+        while GtkNotebook in GTK3 does allocate children that aren't currently
+        visible, GtkStack doesn't (and that means that GtkNotebook in GTK4 and
+        HdyTabView don't either). This leads to a situation where a page opened
+        in background will load with 0, 0 size and if a page depends on that,
+        it won't load correctly.
+
+        The first issue can be fixed by basing the viewport size on the view
+        allocation as well, and then if the widget isn't allocated, we instead
+        try to use the size of a parent as an estimation, so that the initial
+        size is at least not 0 even if not fully accurate.
+
+        See https://gitlab.gnome.org/GNOME/epiphany/-/issues/1532
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::viewSize):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseGetViewSize):
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+
 2021-05-30  Dean Jackson  <dino@apple.com>
 
         [WebXR] Send recommendedResolution using DeviceProxy
