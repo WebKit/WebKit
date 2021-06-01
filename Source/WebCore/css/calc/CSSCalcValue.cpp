@@ -41,7 +41,6 @@
 #include "CSSParser.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValueMappings.h"
-#include "CSSValueKeywords.h"
 #include "CalcExpressionBlendLength.h"
 #include "CalcExpressionInversion.h"
 #include "CalcExpressionLength.h"
@@ -305,9 +304,9 @@ void CSSCalcValue::dump(TextStream& ts) const
     ts << ")\n";
 }
 
-RefPtr<CSSCalcValue> CSSCalcValue::create(CSSValueID function, const CSSParserTokenRange& tokens, CalculationCategory destinationCategory, ValueRange range, const CSSCalcSymbolTable& symbolTable)
+RefPtr<CSSCalcValue> CSSCalcValue::create(CSSValueID function, const CSSParserTokenRange& tokens, CalculationCategory destinationCategory, ValueRange range)
 {
-    CSSCalcExpressionNodeParser parser(destinationCategory, symbolTable);
+    CSSCalcExpressionNodeParser parser(destinationCategory);
     auto expression = parser.parseCalc(tokens, function);
     if (!expression)
         return nullptr;
@@ -315,12 +314,7 @@ RefPtr<CSSCalcValue> CSSCalcValue::create(CSSValueID function, const CSSParserTo
     LOG_WITH_STREAM(Calc, stream << "CSSCalcValue::create " << *result);
     return result;
 }
-
-RefPtr<CSSCalcValue> CSSCalcValue::create(CSSValueID function, const CSSParserTokenRange& tokens, CalculationCategory destinationCategory, ValueRange range)
-{
-    return create(function, tokens, destinationCategory, range, { });
-}
-
+    
 RefPtr<CSSCalcValue> CSSCalcValue::create(const CalculationValue& value, const RenderStyle& style)
 {
     auto expression = createCSS(value.expression(), style);

@@ -1,3 +1,17 @@
+2021-05-31  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r278261.
+        https://bugs.webkit.org/show_bug.cgi?id=226477
+
+        Broke windows build
+
+        Reverted changeset:
+
+        "Support calc() on components inside relative color syntax
+        colors"
+        https://bugs.webkit.org/show_bug.cgi?id=226272
+        https://trac.webkit.org/changeset/278261
+
 2021-05-31  Chris Dumez  <cdumez@apple.com>
 
         Fix thread safety issues in ConvolverNode
