@@ -1,5 +1,15 @@
 2021-06-02  Youenn Fablet  <youenn@apple.com>
 
+        Update to rnnoise to M92
+        https://bugs.webkit.org/show_bug.cgi?id=226492
+
+        Reviewed by Alex Christensen.
+
+        * Source/third_party/rnnoise/DIR_METADATA: Added.
+        * Source/third_party/rnnoise/OWNERS:
+
+2021-06-02  Youenn Fablet  <youenn@apple.com>
+
         Update abseil-cpp to M92
         https://bugs.webkit.org/show_bug.cgi?id=226485
 
