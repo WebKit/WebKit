@@ -30,7 +30,6 @@
 #include "Styleable.h"
 #include <wtf/Markable.h>
 #include <wtf/MonotonicTime.h>
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/Seconds.h>
 

@@ -29,7 +29,6 @@
 #include "PlatformStrategies.h"
 #include "SharedBuffer.h"
 #include <wtf/NeverDestroyed.h>
-#include <wtf/Optional.h>
 #include <wtf/URL.h>
 
 namespace WebCore {

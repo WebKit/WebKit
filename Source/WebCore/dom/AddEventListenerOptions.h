@@ -27,7 +27,7 @@
 
 #include "AbortSignal.h"
 #include "EventListenerOptions.h"
-#include <wtf/Optional.h>
+#include <optional>
 
 namespace WebCore {
 

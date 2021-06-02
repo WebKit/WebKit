@@ -53,7 +53,6 @@
 #include "SuspendableTimer.h"
 #include "TypedOMCSSImageValue.h"
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/Optional.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Variant.h>

@@ -28,7 +28,6 @@
 #include "PageIdentifier.h"
 #include "UserContentTypes.h"
 #include "UserStyleSheetTypes.h"
-#include <wtf/Optional.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 

@@ -27,7 +27,6 @@
 
 #include "Decoder.h"
 #include "Encoder.h"
-#include <wtf/Optional.h>
 
 namespace WebKit {
 

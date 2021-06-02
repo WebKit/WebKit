@@ -1,3 +1,14 @@
+2021-06-01  Darin Adler  <darin@apple.com>
+
+        Remove <wtf/Optional.h>
+        https://bugs.webkit.org/show_bug.cgi?id=226437
+
+        Reviewed by Chris Dumez.
+
+        * pal/SessionID.h: Include <optional>.
+        * pal/crypto/gcrypt/Utilities.h: Ditto.
+        * pal/crypto/tasn1/Utilities.cpp: Removed include of <wtf/Optional.h>.
+
 2021-06-01  Dana Estra  <destra@apple.com>
 
         Adopt Reveal for phone numbers

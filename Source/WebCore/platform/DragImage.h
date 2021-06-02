@@ -33,7 +33,6 @@
 #include "TextFlags.h"
 #include "TextIndicator.h"
 #include <wtf/Forward.h>
-#include <wtf/Optional.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include <wtf/RetainPtr.h>

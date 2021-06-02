@@ -32,7 +32,6 @@
 #include "RectEdges.h"
 #include <utility>
 #include <wtf/IsoMalloc.h>
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

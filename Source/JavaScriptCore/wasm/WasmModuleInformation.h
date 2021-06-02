@@ -30,7 +30,6 @@
 #include "WasmFormat.h"
 
 #include <wtf/BitVector.h>
-#include <wtf/Optional.h>
 
 namespace JSC { namespace Wasm {
 

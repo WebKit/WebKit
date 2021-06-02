@@ -28,7 +28,6 @@
 #include <JavaScriptCore/JSBase.h>
 #include <JavaScriptCore/Strong.h>
 #include <wtf/Forward.h>
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/TextPosition.h>

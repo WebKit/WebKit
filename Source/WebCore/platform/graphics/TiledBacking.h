@@ -26,14 +26,8 @@
 #pragma once
 
 #include <wtf/MonotonicTime.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
-
-enum TileSizeMode {
-    StandardTileSizeMode,
-    GiantTileSizeMode
-};
 
 class FloatPoint;
 class FloatRect;
@@ -41,7 +35,13 @@ class FloatSize;
 class IntRect;
 class IntSize;
 class PlatformCALayer;
+
 struct VelocityData;
+
+enum TileSizeMode {
+    StandardTileSizeMode,
+    GiantTileSizeMode
+};
 
 enum ScrollingModeIndication {
     SynchronousScrollingBecauseOfLackOfScrollingCoordinatorIndication,

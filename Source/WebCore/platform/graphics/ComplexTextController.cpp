@@ -32,7 +32,6 @@
 #include "RenderText.h"
 #include "TextRun.h"
 #include <unicode/ubrk.h>
-#include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/CharacterNames.h>

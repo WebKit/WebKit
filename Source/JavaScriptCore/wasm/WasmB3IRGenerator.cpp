@@ -61,7 +61,6 @@
 #include "WasmSignatureInlines.h"
 #include "WasmThunks.h"
 #include <limits>
-#include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
 
 #if !ENABLE(WEBASSEMBLY)

@@ -27,7 +27,6 @@
 
 #import "WebGeolocationPositionInternal.h"
 #import <WebCore/GeolocationPositionData.h>
-#import <wtf/Optional.h>
 #import <wtf/RefPtr.h>
 
 using namespace WebCore;

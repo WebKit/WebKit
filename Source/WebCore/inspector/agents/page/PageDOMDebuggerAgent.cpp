@@ -31,7 +31,6 @@
 #include "InspectorDOMAgent.h"
 #include "InstrumentingAgents.h"
 #include "Node.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

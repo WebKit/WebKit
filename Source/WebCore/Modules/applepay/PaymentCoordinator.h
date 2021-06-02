@@ -30,7 +30,6 @@
 #include "ApplePaySessionPaymentRequest.h"
 #include <wtf/Expected.h>
 #include <wtf/Function.h>
-#include <wtf/Optional.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

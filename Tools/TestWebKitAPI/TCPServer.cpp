@@ -29,7 +29,6 @@
 #include <netinet/in.h>
 #include <thread>
 #include <unistd.h>
-#include <wtf/Optional.h>
 #include <wtf/text/Base64.h>
 
 #if HAVE(SSL)

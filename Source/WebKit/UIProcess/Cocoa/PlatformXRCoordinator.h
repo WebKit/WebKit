@@ -31,7 +31,6 @@
 #include "XRDeviceInfo.h"
 #include <WebCore/PlatformXR.h>
 #include <wtf/Function.h>
-#include <wtf/Optional.h>
 
 namespace WebKit {
 

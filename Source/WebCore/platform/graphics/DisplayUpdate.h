@@ -26,7 +26,6 @@
 #pragma once
 
 #include "AnimationFrameRate.h"
-#include <wtf/Optional.h>
 
 namespace WTF {
 class TextStream;

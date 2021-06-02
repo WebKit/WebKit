@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <wtf/Optional.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 

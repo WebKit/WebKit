@@ -32,7 +32,6 @@
 #include <gst/app/gstappsink.h>
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
-#include <wtf/Optional.h>
 #include <wtf/Scope.h>
 #include <wtf/Threading.h>
 

@@ -143,7 +143,6 @@ public:
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <tuple>
 #include <wtf/Expected.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -334,7 +333,6 @@ void CommandDomainBackendDispatcher::command(long protocol_requestId, RefPtr<JSO
 
 #include "TestProtocolObjects.h"
 #include <wtf/JSONValues.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -456,7 +454,6 @@ void EventDomainFrontendDispatcher::event(Protocol::TypeDomain::Enum enumRequire
 
 #include <JavaScriptCore/InspectorProtocolTypes.h>
 #include <wtf/JSONValues.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {

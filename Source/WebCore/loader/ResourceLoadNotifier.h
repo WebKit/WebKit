@@ -29,8 +29,8 @@
 
 #pragma once
 
+#include <optional>
 #include <wtf/Noncopyable.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

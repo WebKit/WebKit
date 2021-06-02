@@ -34,7 +34,6 @@
 #include <mutex>
 #include <unicode/uidna.h>
 #include <unicode/uscript.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {

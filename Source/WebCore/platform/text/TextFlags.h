@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include <optional>
 #include <wtf/EnumTraits.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
@@ -75,20 +75,12 @@ enum FontSynthesisValues {
     FontSynthesisStyle = 0x2,
     FontSynthesisSmallCaps = 0x4
 };
+// FIXME: Use OptionSet.
 typedef unsigned FontSynthesis;
 const unsigned FontSynthesisWidth = 3;
 
-enum class FontVariantLigatures : uint8_t {
-    Normal,
-    Yes,
-    No
-};
-
-enum class FontVariantPosition : uint8_t {
-    Normal,
-    Subscript,
-    Superscript
-};
+enum class FontVariantLigatures : uint8_t { Normal, Yes, No };
+enum class FontVariantPosition : uint8_t { Normal, Subscript, Superscript };
 
 enum class FontVariantCaps : uint8_t {
     Normal,
@@ -118,20 +110,9 @@ enum class FontVariantNumericFraction : uint8_t {
     StackedFractions
 };
 
-enum class FontVariantNumericOrdinal : uint8_t {
-    Normal,
-    Yes
-};
-
-enum class FontVariantNumericSlashedZero : uint8_t {
-    Normal,
-    Yes
-};
-
-enum class FontVariantAlternates : uint8_t {
-    Normal,
-    HistoricalForms
-};
+enum class FontVariantNumericOrdinal : bool { Normal, Yes };
+enum class FontVariantNumericSlashedZero : bool { Normal, Yes };
+enum class FontVariantAlternates : bool { Normal, HistoricalForms };
 
 enum class FontVariantEastAsianVariant : uint8_t {
     Normal,

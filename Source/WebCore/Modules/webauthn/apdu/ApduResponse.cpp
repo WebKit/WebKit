@@ -30,8 +30,6 @@
 #include "config.h"
 #include "ApduResponse.h"
 
-#include <wtf/Optional.h>
-
 #if ENABLE(WEB_AUTHN)
 
 namespace apdu {

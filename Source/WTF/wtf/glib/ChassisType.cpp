@@ -27,7 +27,7 @@
 #include <wtf/glib/ChassisType.h>
 
 #include <mutex>
-#include <wtf/Optional.h>
+#include <optional>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WTF {
@@ -129,7 +129,7 @@ ChassisType chassisType()
     static ChassisType chassisType;
     static std::once_flag initializeChassis;
     std::call_once(initializeChassis, [] {
-        std::optional<ChassisType> optionalChassisType = readMachineInfoChassisType();
+        auto optionalChassisType = readMachineInfoChassisType();
         if (!optionalChassisType)
             optionalChassisType = readDMIChassisType();
         if (!optionalChassisType)

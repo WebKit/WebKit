@@ -30,7 +30,6 @@
 #include "ARM64Assembler.h"
 #include "AbstractMacroAssembler.h"
 #include <wtf/MathExtras.h>
-#include <wtf/Optional.h>
 
 namespace JSC {
 

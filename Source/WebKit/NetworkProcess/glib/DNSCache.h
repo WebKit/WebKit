@@ -28,7 +28,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/MonotonicTime.h>
-#include <wtf/Optional.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>

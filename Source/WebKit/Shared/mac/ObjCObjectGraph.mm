@@ -34,7 +34,6 @@
 #import "WKBrowsingContextHandleInternal.h"
 #import "WKTypeRefWrapper.h"
 #import <wtf/EnumTraits.h>
-#import <wtf/Optional.h>
 
 namespace WebKit {
 

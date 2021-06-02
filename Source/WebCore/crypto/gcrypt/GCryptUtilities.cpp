@@ -28,7 +28,6 @@
 #include "config.h"
 #include "GCryptUtilities.h"
 
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

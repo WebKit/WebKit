@@ -27,7 +27,6 @@
 
 #include "Blob.h"
 #include <wtf/IsoMalloc.h>
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>

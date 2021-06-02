@@ -38,7 +38,6 @@
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/Heap.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
 

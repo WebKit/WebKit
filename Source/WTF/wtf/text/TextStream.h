@@ -28,7 +28,6 @@
 #include <wtf/Forward.h>
 #include <wtf/Markable.h>
 #include <wtf/OptionSet.h>
-#include <wtf/Optional.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/StringBuilder.h>
 

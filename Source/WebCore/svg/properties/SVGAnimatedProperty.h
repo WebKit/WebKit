@@ -27,7 +27,6 @@
 
 #include "SVGAttributeAnimator.h"
 #include "SVGPropertyOwner.h"
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>

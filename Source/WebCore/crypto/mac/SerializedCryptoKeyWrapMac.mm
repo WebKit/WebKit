@@ -33,7 +33,6 @@
 #import <CommonCrypto/CommonSymmetricKeywrap.h>
 #import <crt_externs.h>
 #import <wtf/CryptographicUtilities.h>
-#import <wtf/Optional.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>

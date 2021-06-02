@@ -30,7 +30,6 @@
 #include "WHLSLCodeLocation.h"
 #include "WHLSLError.h"
 #include "WHLSLNameSpace.h"
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringConcatenate.h>
 #include <wtf/text/StringConcatenateNumbers.h>

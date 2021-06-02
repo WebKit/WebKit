@@ -36,7 +36,6 @@
 #include "SharedBuffer.h"
 #include <gcrypt.h>
 #include <wtf/Condition.h>
-#include <wtf/Optional.h>
 #include <wtf/VectorHash.h>
 
 namespace WebCore {

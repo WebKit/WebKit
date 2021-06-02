@@ -32,7 +32,6 @@
 #include "RemoteMediaDescription.h"
 #include "TrackPrivateRemoteIdentifier.h"
 #include <wtf/MediaTime.h>
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {

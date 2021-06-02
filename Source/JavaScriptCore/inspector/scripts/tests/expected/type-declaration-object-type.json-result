@@ -128,7 +128,6 @@ private:
 #include <JavaScriptCore/InspectorBackendDispatcher.h>
 #include <tuple>
 #include <wtf/Expected.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -222,7 +221,6 @@ namespace Inspector {
 
 #include "TestProtocolObjects.h"
 #include <wtf/JSONValues.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -307,7 +305,6 @@ namespace Inspector {
 
 #include <JavaScriptCore/InspectorProtocolTypes.h>
 #include <wtf/JSONValues.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {

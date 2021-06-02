@@ -29,7 +29,6 @@
 #include <sys/resource.h>
 #include <sys/time.h>
 #include <time.h>
-#include <wtf/Optional.h>
 
 namespace WTF {
 

@@ -30,7 +30,6 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/ObjectIdentifier.h>
-#include <wtf/Optional.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 

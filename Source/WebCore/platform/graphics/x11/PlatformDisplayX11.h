@@ -28,7 +28,7 @@
 #if PLATFORM(X11)
 
 #include "PlatformDisplay.h"
-#include <wtf/Optional.h>
+#include <optional>
 
 typedef struct _XDisplay Display;
 

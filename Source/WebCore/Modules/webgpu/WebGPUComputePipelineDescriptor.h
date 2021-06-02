@@ -29,7 +29,6 @@
 
 #include "WebGPUPipelineDescriptorBase.h"
 #include "WebGPUProgrammableStageDescriptor.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

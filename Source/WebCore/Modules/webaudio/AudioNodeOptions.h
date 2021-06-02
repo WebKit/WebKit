@@ -29,7 +29,6 @@
 
 #include "ChannelCountMode.h"
 #include "ChannelInterpretation.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

@@ -46,7 +46,6 @@
 #include "VisibilityChangeClient.h"
 #include <wtf/Function.h>
 #include <wtf/LoggerHelper.h>
-#include <wtf/Optional.h>
 #include <wtf/WeakPtr.h>
 
 #if USE(AUDIO_SESSION) && PLATFORM(MAC)

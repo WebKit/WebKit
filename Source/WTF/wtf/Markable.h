@@ -34,8 +34,8 @@
 
 #pragma once
 
+#include <optional>
 #include <type_traits>
-#include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {

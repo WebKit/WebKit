@@ -28,7 +28,6 @@
 #if ENABLE(WEBGPU)
 
 #include "WebGPUBindGroupLayout.h"
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 

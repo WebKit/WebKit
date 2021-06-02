@@ -27,7 +27,6 @@
 
 #include "ContactProperty.h"
 #include <wtf/Forward.h>
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

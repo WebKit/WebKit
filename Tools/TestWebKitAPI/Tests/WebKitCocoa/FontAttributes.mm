@@ -34,7 +34,6 @@
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <cmath>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
-#import <wtf/Optional.h>
 #import <wtf/Vector.h>
 
 #if PLATFORM(IOS_FAMILY)

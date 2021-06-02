@@ -32,7 +32,6 @@
 #include "RemoteCDMInstanceSessionProxyMessages.h"
 #include "SharedBufferCopy.h"
 #include <WebCore/SharedBuffer.h>
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 
 namespace WebKit {

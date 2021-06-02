@@ -31,7 +31,6 @@
 #include "JSCJSValue.h"
 #include "MacroAssemblerCodeRef.h"
 #include "RegisterSet.h"
-#include <wtf/Optional.h>
 
 namespace JSC {
 

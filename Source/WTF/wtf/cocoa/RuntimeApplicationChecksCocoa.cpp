@@ -27,7 +27,6 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 #include <wtf/NeverDestroyed.h>
-#include <wtf/Optional.h>
 
 namespace WTF {
 

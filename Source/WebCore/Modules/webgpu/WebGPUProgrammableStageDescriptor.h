@@ -29,7 +29,6 @@
 
 #include "GPUProgrammableStageDescriptor.h"
 #include "WebGPUShaderModule.h"
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

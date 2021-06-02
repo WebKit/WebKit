@@ -30,7 +30,6 @@
 
 #include "InspectorCanvas.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>

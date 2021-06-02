@@ -32,7 +32,6 @@
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <initializer_list>
 #include <wtf/HashSet.h>
-#include <wtf/Optional.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

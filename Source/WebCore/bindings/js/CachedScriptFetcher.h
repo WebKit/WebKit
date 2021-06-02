@@ -29,7 +29,6 @@
 #include "ReferrerPolicy.h"
 #include "ResourceLoadPriority.h"
 #include <JavaScriptCore/ScriptFetcher.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

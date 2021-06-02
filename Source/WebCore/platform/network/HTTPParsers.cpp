@@ -38,7 +38,6 @@
 #include "ParsedContentType.h"
 #include <wtf/DateMath.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/Optional.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/unicode/CharacterNames.h>
 

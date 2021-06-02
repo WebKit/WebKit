@@ -49,7 +49,6 @@
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

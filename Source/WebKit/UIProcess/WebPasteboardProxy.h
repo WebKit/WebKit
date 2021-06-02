@@ -30,7 +30,6 @@
 #include "SharedMemory.h"
 #include <WebCore/PageIdentifier.h>
 #include <wtf/HashMap.h>
-#include <wtf/Optional.h>
 #include <wtf/WeakHashSet.h>
 
 namespace IPC {

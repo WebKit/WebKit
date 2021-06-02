@@ -28,7 +28,6 @@
 #include "Decoder.h"
 #include "EditingRange.h"
 #include "Encoder.h"
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {

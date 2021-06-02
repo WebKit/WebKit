@@ -49,7 +49,6 @@
 #include <algorithm>
 #include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
-#include <wtf/Optional.h>
 #include <wtf/URL.h>
 #include <wtf/UUID.h>
 #include <wtf/text/StringConcatenate.h>

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ScrollBehavior.h"
+#include <optional>
 
 namespace WebCore {
 

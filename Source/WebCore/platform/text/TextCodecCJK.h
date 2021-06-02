@@ -26,7 +26,7 @@
 #pragma once
 
 #include "TextCodec.h"
-#include <wtf/Optional.h>
+#include <optional>
 
 namespace WebCore {
 

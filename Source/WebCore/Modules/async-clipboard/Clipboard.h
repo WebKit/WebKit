@@ -27,7 +27,6 @@
 
 #include "EventTarget.h"
 #include <wtf/IsoMalloc.h>
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 

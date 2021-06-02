@@ -21,7 +21,6 @@
 #pragma once
 
 #include <stddef.h>
-#include <wtf/Optional.h>
 #include <wtf/Platform.h>
 
 namespace WTF {

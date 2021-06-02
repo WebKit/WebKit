@@ -29,7 +29,6 @@
 #include "GPRInfo.h"
 #include "LLIntPCRanges.h"
 #include "MacroAssemblerCodeRef.h"
-#include <wtf/Optional.h>
 #include <wtf/PlatformRegisters.h>
 #include <wtf/PointerPreparations.h>
 #include <wtf/StdLibExtras.h>

@@ -37,7 +37,6 @@
 #include "SecurityOrigin.h"
 #include "UserGestureIndicator.h"
 #include <wtf/Forward.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

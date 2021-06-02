@@ -30,7 +30,6 @@
 #include "PixelBuffer.h"
 #include <JavaScriptCore/Uint8ClampedArray.h>
 #include <wtf/MathExtras.h>
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>

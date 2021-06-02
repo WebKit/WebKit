@@ -29,7 +29,6 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/JSONValues.h>
-#include <wtf/Optional.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/Base64.h>

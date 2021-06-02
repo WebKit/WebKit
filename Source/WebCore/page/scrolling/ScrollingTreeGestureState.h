@@ -29,7 +29,6 @@
 
 #include "ScrollTypes.h"
 #include <wtf/Markable.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

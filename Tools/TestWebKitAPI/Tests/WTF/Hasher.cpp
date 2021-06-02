@@ -28,7 +28,6 @@
 #include <array>
 #include <limits>
 #include <wtf/Hasher.h>
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace TestWebKitAPI {

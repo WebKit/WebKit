@@ -37,7 +37,6 @@
 #include "XRSessionMode.h"
 #include <wtf/HashSet.h>
 #include <wtf/IsoMalloc.h>
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>

@@ -27,7 +27,6 @@
 
 #include "CertificateInfo.h"
 #include <openssl/ssl.h>
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace OpenSSL {

@@ -35,7 +35,6 @@
 #include <cmath>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
-#include <wtf/Optional.h>
 #include <wtf/text/TextStream.h>
 
 #if CPU(X86_64)

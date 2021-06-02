@@ -29,7 +29,6 @@
 #if ENABLE(WEB_CRYPTO)
 
 #include "NotImplemented.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

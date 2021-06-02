@@ -52,7 +52,6 @@
 #import <wtf/MainThread.h>
 #import <wtf/MediaTime.h>
 #import <wtf/NeverDestroyed.h>
-#import <wtf/Optional.h>
 #import <wtf/Vector.h>
 
 #import "CoreVideoSoftLink.h"

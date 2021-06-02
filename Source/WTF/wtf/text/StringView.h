@@ -28,7 +28,6 @@
 #include <limits.h>
 #include <unicode/utypes.h>
 #include <wtf/Forward.h>
-#include <wtf/Optional.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/ASCIILiteral.h>

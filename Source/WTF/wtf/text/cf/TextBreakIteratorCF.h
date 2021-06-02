@@ -20,7 +20,6 @@
 
 #pragma once
 
-#include <wtf/Optional.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/spi/cf/CFStringSPI.h>
 #include <wtf/text/StringView.h>

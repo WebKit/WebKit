@@ -27,7 +27,6 @@
 
 #include "FrameIdentifier.h"
 #include "PageIdentifier.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

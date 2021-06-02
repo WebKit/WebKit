@@ -26,7 +26,6 @@
 #pragma once
 
 #include "PredefinedColorSpace.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

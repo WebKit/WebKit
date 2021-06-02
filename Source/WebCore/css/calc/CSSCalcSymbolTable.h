@@ -26,8 +26,8 @@
 #pragma once
 
 #include "CSSValueKeywords.h"
+#include <optional>
 #include <wtf/HashMap.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

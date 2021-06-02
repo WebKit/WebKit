@@ -33,7 +33,6 @@
 #include "HTMLElement.h"
 #include "HTMLOListElement.h"
 #include "HTMLUListElement.h"
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

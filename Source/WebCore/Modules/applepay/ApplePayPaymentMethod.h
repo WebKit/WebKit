@@ -29,7 +29,6 @@
 
 #include "ApplePayPaymentContact.h"
 #include "ApplePayPaymentPass.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

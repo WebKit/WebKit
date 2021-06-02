@@ -32,7 +32,6 @@
 #include "XRSessionMode.h"
 #include "XRSimulateUserActivationFunction.h"
 #include <JavaScriptCore/JSCJSValue.h>
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

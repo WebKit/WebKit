@@ -49,7 +49,6 @@
 #include "WebAnimationUtilities.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/Optional.h>
 #include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 

@@ -1,3 +1,26 @@
+2021-06-01  Darin Adler  <darin@apple.com>
+
+        Remove <wtf/Optional.h>
+        https://bugs.webkit.org/show_bug.cgi?id=226437
+
+        Reviewed by Chris Dumez.
+
+        * <many files>: Remove include of <wtf/Optional.h>.
+
+        * inspector/scripts/codegen/generate_cpp_backend_dispatcher_header.py:
+        (CppBackendDispatcherHeaderGenerator._generate_secondary_header_includes): Don't generate
+        an include of wtf/Optional.h; including WTFString.h takes care of this anyway.
+        * inspector/scripts/codegen/generate_cpp_frontend_dispatcher_header.py:
+        (CppFrontendDispatcherHeaderGenerator._generate_secondary_header_includes): Ditto.
+        * inspector/scripts/codegen/generate_cpp_protocol_types_header.py:
+        (CppProtocolTypesHeaderGenerator._generate_secondary_header_includes): Ditto.
+
+        * inspector/scripts/codegen/generate_cpp_protocol_types_implementation.py:
+        (CppProtocolTypesImplementationGenerator.generate_output): Generate an include of <optional>
+        instead of <wtf/Optional.h>.
+
+        * inspector/scripts/tests/expected/*: Regenerate.
+
 2021-06-01  Chris Dumez  <cdumez@apple.com>
 
         Rename Checked::unsafeGet() to Checked::value()

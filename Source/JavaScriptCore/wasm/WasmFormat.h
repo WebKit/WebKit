@@ -40,7 +40,6 @@
 #include <cstdint>
 #include <limits>
 #include <memory>
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace JSC {

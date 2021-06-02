@@ -28,7 +28,6 @@
 #include "ClipboardItemDataSource.h"
 #include "ExceptionCode.h"
 #include "FileReaderLoaderClient.h"
-#include <wtf/Optional.h>
 #include <wtf/Variant.h>
 #include <wtf/WeakPtr.h>
 

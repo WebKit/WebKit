@@ -32,7 +32,6 @@
 #include "Timer.h"
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/Optional.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>

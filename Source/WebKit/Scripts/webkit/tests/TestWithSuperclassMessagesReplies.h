@@ -27,7 +27,6 @@
 #include "MessageNames.h"
 #include "TestClassName.h"
 #include <wtf/Forward.h>
-#include <wtf/Optional.h>
 
 
 namespace Messages {

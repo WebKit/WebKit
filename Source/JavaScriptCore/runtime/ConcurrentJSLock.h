@@ -28,7 +28,6 @@
 #include "DeferGC.h"
 #include <wtf/Lock.h>
 #include <wtf/NoLock.h>
-#include <wtf/Optional.h>
 
 namespace JSC {
 

@@ -37,7 +37,6 @@
 #include "Timer.h"
 #include <wtf/Deque.h>
 #include <wtf/MonotonicTime.h>
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>

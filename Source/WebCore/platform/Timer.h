@@ -30,7 +30,6 @@
 #include <wtf/Function.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/Optional.h>
 #include <wtf/Seconds.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>

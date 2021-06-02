@@ -39,7 +39,6 @@
 #include <wtf/Compiler.h>
 #include <wtf/DataLog.h>
 #include <wtf/NumberOfCores.h>
-#include <wtf/Optional.h>
 #include <wtf/OSLogPrintStream.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TranslatedProcess.h>

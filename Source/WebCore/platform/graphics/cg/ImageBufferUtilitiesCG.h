@@ -27,6 +27,7 @@
 
 #if USE(CG)
 
+#include <optional>
 #include <wtf/Forward.h>
 
 namespace WebCore {

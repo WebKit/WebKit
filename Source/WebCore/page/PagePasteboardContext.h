@@ -27,7 +27,6 @@
 
 #include "PageIdentifier.h"
 #include "PasteboardContext.h"
-#include <wtf/Optional.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {

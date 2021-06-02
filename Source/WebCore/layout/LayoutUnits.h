@@ -33,7 +33,6 @@
 #include "MarginTypes.h"
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

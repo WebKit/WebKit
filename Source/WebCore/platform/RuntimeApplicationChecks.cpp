@@ -27,7 +27,6 @@
 #include "RuntimeApplicationChecks.h"
 
 #include <wtf/NeverDestroyed.h>
-#include <wtf/Optional.h>
 #include <wtf/ProcessID.h>
 #include <wtf/RunLoop.h>
 

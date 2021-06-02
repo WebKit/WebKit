@@ -31,7 +31,6 @@
 #include <JavaScriptCore/TypedArrays.h>
 #include <initializer_list>
 #include <wtf/JSONValues.h>
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

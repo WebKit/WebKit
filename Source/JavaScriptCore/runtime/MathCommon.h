@@ -27,7 +27,6 @@
 
 #include "CPU.h"
 #include <cmath>
-#include <wtf/Optional.h>
 
 namespace JSC {
 

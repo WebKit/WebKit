@@ -34,7 +34,6 @@
 #include "FetchOptions.h"
 #include "FetchRequestInit.h"
 #include "ResourceRequest.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

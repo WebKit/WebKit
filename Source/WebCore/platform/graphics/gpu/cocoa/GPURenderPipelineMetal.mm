@@ -43,7 +43,6 @@
 #import <wtf/HashSet.h>
 #import <wtf/MonotonicTime.h>
 #import <wtf/OptionSet.h>
-#import <wtf/Optional.h>
 #import <wtf/text/StringConcatenate.h>
 
 namespace WebCore {

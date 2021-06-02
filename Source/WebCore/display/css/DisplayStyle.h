@@ -36,7 +36,6 @@
 #include "TransformOperations.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/OptionSet.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

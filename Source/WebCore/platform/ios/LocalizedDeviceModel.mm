@@ -29,7 +29,6 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import <pal/ios/UIKitSoftLink.h>
-#import <wtf/Optional.h>
 
 namespace WebCore {
 

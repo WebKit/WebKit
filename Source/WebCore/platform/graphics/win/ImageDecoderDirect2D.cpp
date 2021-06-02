@@ -38,7 +38,6 @@
 #include <WinCodec.h>
 #include <d2d1.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

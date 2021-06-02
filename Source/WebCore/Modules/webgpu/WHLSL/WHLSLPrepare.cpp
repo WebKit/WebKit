@@ -53,7 +53,6 @@
 #include "WHLSLSynthesizeConstructors.h"
 #include "WHLSLSynthesizeEnumerationFunctions.h"
 #include <wtf/MonotonicTime.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

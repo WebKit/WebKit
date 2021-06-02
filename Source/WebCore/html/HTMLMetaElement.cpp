@@ -38,7 +38,6 @@
 #include "Settings.h"
 #include "StyleResolveForDocument.h"
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

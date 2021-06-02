@@ -34,7 +34,6 @@
 #include <mach/mach_port.h>
 #include <mach/vm_map.h>
 #include <wtf/MachSendRight.h>
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/spi/cocoa/MachVMSPI.h>
 

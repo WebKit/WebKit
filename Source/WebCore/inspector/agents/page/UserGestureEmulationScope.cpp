@@ -35,7 +35,6 @@
 #include "ChromeClient.h"
 #include "Page.h"
 #include "UserGestureIndicator.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

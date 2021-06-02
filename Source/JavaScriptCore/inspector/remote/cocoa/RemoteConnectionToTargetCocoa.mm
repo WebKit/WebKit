@@ -33,7 +33,6 @@
 #import "RemoteInspectionTarget.h"
 #import "RemoteInspector.h"
 #import <dispatch/dispatch.h>
-#import <wtf/Optional.h>
 #import <wtf/RunLoop.h>
 
 #if USE(WEB_THREAD)

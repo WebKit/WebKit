@@ -30,7 +30,6 @@
 #include "FontCascadeFonts.h"
 #include "Path.h"
 #include <wtf/HashSet.h>
-#include <wtf/Optional.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/unicode/CharacterNames.h>
 

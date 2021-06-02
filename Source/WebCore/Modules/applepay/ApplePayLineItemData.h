@@ -27,8 +27,6 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include <wtf/Optional.h>
-
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/ApplePayLineItemDataAdditions.h>
 #endif

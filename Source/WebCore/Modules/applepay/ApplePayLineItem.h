@@ -29,7 +29,6 @@
 
 #include "ApplePayLineItemData.h"
 #include <wtf/Forward.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

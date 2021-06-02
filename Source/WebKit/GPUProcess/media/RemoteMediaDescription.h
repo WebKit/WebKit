@@ -30,7 +30,6 @@
 #include "Decoder.h"
 #include "Encoder.h"
 #include <WebCore/MediaDescription.h>
-#include <wtf/Optional.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/WTFString.h>
 

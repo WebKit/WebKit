@@ -31,7 +31,6 @@
 #include "YarrUnicodeProperties.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/HashSet.h>
-#include <wtf/Optional.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 

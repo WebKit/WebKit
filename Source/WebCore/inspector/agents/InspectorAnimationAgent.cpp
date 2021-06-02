@@ -54,7 +54,6 @@
 #include <JavaScriptCore/InspectorEnvironment.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <wtf/HashMap.h>
-#include <wtf/Optional.h>
 #include <wtf/Seconds.h>
 #include <wtf/Stopwatch.h>
 #include <wtf/Vector.h>

@@ -30,7 +30,6 @@
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>

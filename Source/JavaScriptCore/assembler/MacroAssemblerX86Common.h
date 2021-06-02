@@ -30,7 +30,6 @@
 #include "X86Assembler.h"
 #include "AbstractMacroAssembler.h"
 #include <array>
-#include <wtf/Optional.h>
 
 namespace JSC {
 

@@ -22,6 +22,7 @@
 
 #include <initializer_list>
 #include <limits>
+#include <optional>
 #include <string.h>
 #include <type_traits>
 #include <utility>

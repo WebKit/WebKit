@@ -28,7 +28,6 @@
 #include "Identifier.h"
 #include "JSGlobalObjectFunctions.h"
 #include "PrivateName.h"
-#include <wtf/Optional.h>
 #include <wtf/dtoa.h>
 
 namespace JSC {

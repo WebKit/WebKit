@@ -38,7 +38,6 @@
 #include "WheelEventTestMonitor.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
-#include <wtf/Optional.h>
 
 #if ENABLE(RUBBER_BANDING) || ENABLE(CSS_SCROLL_SNAP)
 #include "ScrollController.h"

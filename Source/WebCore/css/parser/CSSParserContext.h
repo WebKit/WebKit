@@ -31,7 +31,6 @@
 #include "TextEncoding.h"
 #include <wtf/HashFunctions.h>
 #include <wtf/Hasher.h>
-#include <wtf/Optional.h>
 #include <wtf/URL.h>
 
 namespace WebCore {

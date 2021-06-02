@@ -25,9 +25,9 @@
 
 #pragma once
 
+#include <optional>
 #include <wtf/FastMalloc.h>
 #include <wtf/MathExtras.h>
-#include <wtf/Optional.h>
 
 namespace WTF {
 

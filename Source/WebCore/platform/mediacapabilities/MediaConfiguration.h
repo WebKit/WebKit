@@ -27,7 +27,6 @@
 
 #include "AudioConfiguration.h"
 #include "VideoConfiguration.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

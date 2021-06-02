@@ -29,7 +29,6 @@
 #include "ShadowData.h"
 #include "TextDecorationPainter.h"
 #include "TextPaintStyle.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

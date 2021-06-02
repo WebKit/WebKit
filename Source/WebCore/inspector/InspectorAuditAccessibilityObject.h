@@ -28,7 +28,6 @@
 #include "ExceptionOr.h"
 #include <JavaScriptCore/InspectorAuditAgent.h>
 #include <wtf/Forward.h>
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 

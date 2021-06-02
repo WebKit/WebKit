@@ -32,7 +32,6 @@
 #include "YarrCanonicalize.h"
 #include "YarrParser.h"
 #include <wtf/DataLog.h>
-#include <wtf/Optional.h>
 #include <wtf/StackCheck.h>
 #include <wtf/Vector.h>
 

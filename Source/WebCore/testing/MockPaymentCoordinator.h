@@ -36,7 +36,6 @@
 #include "MockPaymentError.h"
 #include "PaymentCoordinatorClient.h"
 #include <wtf/HashSet.h>
-#include <wtf/Optional.h>
 #include <wtf/text/StringHash.h>
 
 #if USE(APPLE_INTERNAL_SDK)

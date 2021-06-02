@@ -27,7 +27,6 @@
 
 #include "Debugger.h"
 #include "JSGlobalObject.h"
-#include <wtf/Optional.h>
 
 namespace JSC {
 

@@ -29,8 +29,8 @@
 #include <wtf/RetainPtr.h>
 typedef struct CGColorSpace* CGColorSpaceRef;
 #else
+#include <optional>
 #include <wtf/EnumTraits.h>
-#include <wtf/Optional.h>
 #endif
 
 namespace WebCore {
@@ -89,9 +89,9 @@ template<class Decoder> std::optional<PlatformColorSpace> PlatformColorSpace::de
 
 }
 
-namespace WTF {
-
 #if !USE(CG)
+
+namespace WTF {
 
 template<> struct EnumTraits<WebCore::PlatformColorSpace::Name> {
     using values = EnumValues<
@@ -106,7 +106,6 @@ template<> struct EnumTraits<WebCore::PlatformColorSpace::Name> {
     >;
 };
 
-#endif
-
 } // namespace WTF
 
+#endif // !USE(CG)

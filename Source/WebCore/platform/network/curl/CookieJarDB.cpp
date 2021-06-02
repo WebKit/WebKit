@@ -34,7 +34,6 @@
 #include <wtf/DateMath.h>
 #include <wtf/FileSystem.h>
 #include <wtf/MonotonicTime.h>
-#include <wtf/Optional.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/WallTime.h>

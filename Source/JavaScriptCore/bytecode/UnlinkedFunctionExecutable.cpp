@@ -39,7 +39,6 @@
 #include "SourceProvider.h"
 #include "Structure.h"
 #include "UnlinkedFunctionCodeBlock.h"
-#include <wtf/Optional.h>
 
 namespace JSC {
 

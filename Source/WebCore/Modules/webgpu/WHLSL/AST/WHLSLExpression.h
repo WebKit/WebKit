@@ -32,7 +32,6 @@
 #include "WHLSLDefaultDelete.h"
 #include "WHLSLUnnamedType.h"
 #include <wtf/FastMalloc.h>
-#include <wtf/Optional.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {

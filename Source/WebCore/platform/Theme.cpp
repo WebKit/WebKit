@@ -29,7 +29,6 @@
 #include "GraphicsContext.h"
 #include "LengthBox.h"
 #include "LengthSize.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

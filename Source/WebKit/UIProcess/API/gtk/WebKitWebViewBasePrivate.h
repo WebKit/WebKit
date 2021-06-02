@@ -41,7 +41,6 @@
 #include "WebPageProxy.h"
 #include <WebCore/DragActions.h>
 #include <WebCore/SelectionData.h>
-#include <wtf/Optional.h>
 
 WebKitWebViewBase* webkitWebViewBaseCreate(const API::PageConfiguration&);
 WebKit::WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase*);

@@ -29,7 +29,6 @@
 
 #include "Color.h"
 #include <wtf/EnumTraits.h>
-#include <wtf/Optional.h>
 #include <wtf/URL.h>
 
 namespace WebCore {

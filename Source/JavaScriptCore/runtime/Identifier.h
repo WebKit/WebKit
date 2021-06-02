@@ -23,7 +23,6 @@
 #include "ArrayConventions.h"
 #include "PrivateName.h"
 #include "VM.h"
-#include <wtf/Optional.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/UniquedStringImpl.h>
 #include <wtf/text/WTFString.h>

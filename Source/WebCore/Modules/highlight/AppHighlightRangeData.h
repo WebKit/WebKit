@@ -27,7 +27,6 @@
 
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

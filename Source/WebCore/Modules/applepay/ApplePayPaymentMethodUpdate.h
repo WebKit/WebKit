@@ -28,7 +28,6 @@
 #if ENABLE(APPLE_PAY)
 
 #include "ApplePayDetailsUpdateBase.h"
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

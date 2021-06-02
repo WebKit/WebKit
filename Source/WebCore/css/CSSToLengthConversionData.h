@@ -31,8 +31,8 @@
 #pragma once
 
 #include "CSSPropertyNames.h"
+#include <optional>
 #include <wtf/Assertions.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

@@ -27,11 +27,11 @@
 
 #include <initializer_list>
 #include <iterator>
+#include <optional>
 #include <type_traits>
 #include <wtf/Assertions.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/MathExtras.h>
-#include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WTF {

@@ -30,7 +30,6 @@
 #include "WHLSLCodeLocation.h"
 #include "WHLSLEntryPointType.h"
 #include <wtf/FastMalloc.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

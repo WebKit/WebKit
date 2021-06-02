@@ -33,7 +33,6 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/TextGranularity.h>
 #include <wtf/OptionSet.h>
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 OBJC_CLASS UIWKDocumentContext;

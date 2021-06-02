@@ -27,7 +27,7 @@
 
 #if USE(APPKIT)
 
-#include <wtf/Optional.h>
+#include <optional>
 
 enum NSScrollerStyle : long;
 

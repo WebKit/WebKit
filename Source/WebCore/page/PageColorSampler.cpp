@@ -53,7 +53,6 @@
 #include "WebAnimation.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/OptionSet.h>
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <wtf/URL.h>

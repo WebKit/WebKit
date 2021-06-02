@@ -28,7 +28,6 @@
 #include "Decoder.h"
 #include "Encoder.h"
 #include <wtf/EnumTraits.h>
-#include <wtf/Optional.h>
 
 namespace IPC {
 namespace Detail {

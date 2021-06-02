@@ -31,7 +31,6 @@
 #include "NotImplemented.h"
 #include "PasteboardStrategy.h"
 #include "PlatformStrategies.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

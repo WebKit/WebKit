@@ -39,7 +39,6 @@
 #include "TextIndicator.h"
 #include "VP9Utilities.h"
 #include <JavaScriptCore/Float32Array.h>
-#include <wtf/Optional.h>
 
 #if ENABLE(VIDEO)
 #include "MediaElementSession.h"

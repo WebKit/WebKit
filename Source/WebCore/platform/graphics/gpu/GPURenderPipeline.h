@@ -31,7 +31,6 @@
 #include "GPUPlatformTypes.h"
 #include "GPUProgrammableStageDescriptor.h"
 #include "GPURenderPipelineDescriptor.h"
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 

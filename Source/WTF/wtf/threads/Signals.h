@@ -31,7 +31,6 @@
 #include <tuple>
 #include <wtf/Function.h>
 #include <wtf/Lock.h>
-#include <wtf/Optional.h>
 #include <wtf/PlatformRegisters.h>
 
 #if HAVE(MACH_EXCEPTIONS)

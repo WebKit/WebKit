@@ -28,7 +28,6 @@
 #include "ImageFrame.h"
 
 #include <wtf/Forward.h>
-#include <wtf/Optional.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SynchronizedFixedQueue.h>
 #include <wtf/WeakPtr.h>

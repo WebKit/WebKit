@@ -28,7 +28,6 @@
 #if ENABLE(WEBXR)
 
 #include "WebXRWebGLLayer.h"
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 

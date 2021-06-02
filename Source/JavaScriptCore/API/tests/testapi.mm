@@ -50,7 +50,6 @@
 #import <pthread.h>
 #import <vector>
 #import <wtf/MemoryFootprint.h>
-#import <wtf/Optional.h>
 #import <wtf/DataLog.h>
 #import <wtf/RetainPtr.h>
 

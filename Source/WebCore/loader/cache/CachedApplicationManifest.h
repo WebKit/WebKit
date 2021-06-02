@@ -29,7 +29,6 @@
 
 #include "ApplicationManifest.h"
 #include "CachedResource.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

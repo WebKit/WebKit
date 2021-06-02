@@ -28,7 +28,6 @@
 #include "NowPlayingInfo.h"
 #include "PlatformMediaSession.h"
 #include "RemoteCommandListener.h"
-#include <wtf/Optional.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

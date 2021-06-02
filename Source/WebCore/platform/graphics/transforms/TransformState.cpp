@@ -26,7 +26,6 @@
 #include "config.h"
 #include "TransformState.h"
 
-#include <wtf/Optional.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

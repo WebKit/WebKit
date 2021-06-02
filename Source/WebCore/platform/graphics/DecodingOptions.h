@@ -26,8 +26,8 @@
 #pragma once
 
 #include "IntSize.h"
+#include <optional>
 #include <wtf/EnumTraits.h>
-#include <wtf/Optional.h>
 #include <wtf/Variant.h>
 
 namespace WebCore {

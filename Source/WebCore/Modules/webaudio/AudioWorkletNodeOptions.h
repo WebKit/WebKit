@@ -35,7 +35,6 @@
 #include <JavaScriptCore/Strong.h>
 #include <wtf/Forward.h>
 #include <wtf/KeyValuePair.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

@@ -27,7 +27,6 @@
 
 #include <thread>
 #include <wtf/Function.h>
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 #if HAVE(SSL)

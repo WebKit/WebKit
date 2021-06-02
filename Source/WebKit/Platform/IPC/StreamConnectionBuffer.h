@@ -29,7 +29,6 @@
 #include "IPCSemaphore.h"
 #include "SharedMemory.h"
 #include <wtf/Atomics.h>
-#include <wtf/Optional.h>
 
 namespace IPC {
 

@@ -30,7 +30,6 @@
 #include <JavaScriptCore/JSBase.h>
 #include <WebCore/ActiveDOMObject.h>
 #include <wtf/Forward.h>
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

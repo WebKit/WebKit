@@ -29,7 +29,6 @@
 
 #include "JSExportMacros.h"
 #include <array>
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 #if OS(WINDOWS)

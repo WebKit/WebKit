@@ -29,7 +29,6 @@
 
 #include "GPUSwapChainDescriptor.h"
 #include "WebGPUDevice.h"
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

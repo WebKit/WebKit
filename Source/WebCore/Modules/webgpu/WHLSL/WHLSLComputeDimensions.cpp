@@ -32,7 +32,6 @@
 #include "WHLSLPrepare.h"
 #include "WHLSLProgram.h"
 #include "WHLSLVisitor.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

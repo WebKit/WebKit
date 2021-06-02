@@ -29,7 +29,6 @@
 
 #include "PlatformWheelEvent.h"
 #include "ScrollTypes.h"
-#include <wtf/Optional.h>
 #include <wtf/Seconds.h>
 
 namespace WebCore {

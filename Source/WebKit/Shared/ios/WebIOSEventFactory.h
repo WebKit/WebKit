@@ -32,7 +32,6 @@
 #import "WebWheelEvent.h"
 #import <UIKit/UIKit.h>
 #import <WebCore/WebEvent.h>
-#import <wtf/Optional.h>
 
 OBJC_CLASS UIScrollEvent;
 

@@ -30,7 +30,6 @@
 #include "FetchHeaders.h"
 #include "FetchOptions.h"
 #include <JavaScriptCore/JSCJSValue.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

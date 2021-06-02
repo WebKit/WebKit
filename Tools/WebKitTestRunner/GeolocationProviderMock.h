@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GeolocationProviderMock_h
-#define GeolocationProviderMock_h
+#pragma once
 
 #include <WebKit/WKRetainPtr.h>
+#include <optional>
 #include <wtf/FastMalloc.h>
 
 namespace WTR {
@@ -60,5 +60,3 @@ private:
 };
 
 } // namespace WTR
-
-#endif // GeolocationProviderMock_h

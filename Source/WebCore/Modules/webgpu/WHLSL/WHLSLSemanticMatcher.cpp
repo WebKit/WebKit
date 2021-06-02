@@ -38,7 +38,6 @@
 #include "WHLSLStageInOutSemantic.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

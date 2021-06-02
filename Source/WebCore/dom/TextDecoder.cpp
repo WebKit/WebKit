@@ -28,7 +28,6 @@
 #include "HTMLParserIdioms.h"
 #include "TextCodec.h"
 #include "TextEncodingRegistry.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

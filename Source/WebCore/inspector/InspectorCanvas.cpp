@@ -92,7 +92,6 @@
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <JavaScriptCore/TypedArrays.h>
 #include <wtf/Function.h>
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>

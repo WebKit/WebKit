@@ -30,7 +30,6 @@
 #include "InspectorProtocolTypes.h"
 #include <functional>
 #include <wtf/Function.h>
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>

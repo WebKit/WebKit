@@ -29,7 +29,6 @@
 #include <algorithm>
 #include <tuple>
 #include <wtf/Hasher.h>
-#include <wtf/Optional.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

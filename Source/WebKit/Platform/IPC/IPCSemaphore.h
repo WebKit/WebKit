@@ -27,7 +27,6 @@
 
 #include "Timeout.h"
 #include <wtf/Noncopyable.h>
-#include <wtf/Optional.h>
 #include <wtf/Seconds.h>
 
 #if OS(DARWIN)

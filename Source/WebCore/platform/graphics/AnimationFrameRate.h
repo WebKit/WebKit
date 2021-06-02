@@ -26,7 +26,6 @@
 #pragma once
 
 #include <wtf/OptionSet.h>
-#include <wtf/Optional.h>
 #include <wtf/Seconds.h>
 
 namespace WTF {

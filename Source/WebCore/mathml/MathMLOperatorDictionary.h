@@ -27,6 +27,7 @@
 
 #if ENABLE(MATHML)
 
+#include <optional>
 #include <unicode/utypes.h>
 #include <wtf/Forward.h>
 

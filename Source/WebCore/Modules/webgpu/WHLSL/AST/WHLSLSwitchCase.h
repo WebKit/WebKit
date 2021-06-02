@@ -32,7 +32,6 @@
 #include "WHLSLConstantExpression.h"
 #include "WHLSLStatement.h"
 #include <wtf/FastMalloc.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

@@ -34,7 +34,6 @@
 #include "MediaSessionCoordinatorPrivate.h"
 #include "MediaSessionCoordinatorState.h"
 #include <wtf/Logger.h>
-#include <wtf/Optional.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {

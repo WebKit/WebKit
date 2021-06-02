@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include <wtf/Optional.h>
+#include <optional>
 #include <wtf/SystemFree.h>
 
 namespace WTF {

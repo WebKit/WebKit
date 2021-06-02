@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef Font_h
-#define Font_h
+#pragma once
 
 #include "FloatRect.h"
 #include "FontMetrics.h"
@@ -31,19 +30,19 @@
 #include "GlyphMetricsMap.h"
 #include "GlyphPage.h"
 #include "OpenTypeMathData.h"
-#if ENABLE(OPENTYPE_VERTICAL)
-#include "OpenTypeVerticalData.h"
-#endif
 #include "RenderingResourceIdentifier.h"
 #include <wtf/BitVector.h>
 #include <wtf/Hasher.h>
-#include <wtf/Optional.h>
 #include <wtf/text/StringHash.h>
 
 #if PLATFORM(COCOA)
 #include <CoreFoundation/CoreFoundation.h>
 #include <pal/cf/OTSVGTable.h>
 #include <wtf/RetainPtr.h>
+#endif
+
+#if ENABLE(OPENTYPE_VERTICAL)
+#include "OpenTypeVerticalData.h"
 #endif
 
 #if PLATFORM(WIN)
@@ -58,9 +57,10 @@ interface IDWriteGdiInterop;
 namespace WebCore {
 
 class FontCache;
-class GlyphPage;
 class FontDescription;
+class GlyphPage;
 class SharedBuffer;
+
 struct GlyphData;
 
 enum FontVariant { AutoVariant, NormalVariant, SmallCapsVariant, EmphasisMarkVariant, BrokenIdeographVariant };
@@ -77,22 +77,10 @@ class Font : public RefCounted<Font> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Font);
 public:
     // Used to create platform fonts.
-    enum class Origin : uint8_t {
-        Remote,
-        Local
-    };
-    enum class Interstitial : uint8_t {
-        Yes,
-        No
-    };
-    enum class Visibility : uint8_t {
-        Visible,
-        Invisible
-    };
-    enum class OrientationFallback : uint8_t {
-        Yes,
-        No
-    };
+    enum class Origin : bool { Remote, Local };
+    enum class Interstitial : bool { No, Yes };
+    enum class Visibility : bool { Visible, Invisible };
+    enum class OrientationFallback : bool { No, Yes };
     WEBCORE_EXPORT static Ref<Font> create(const FontPlatformData&, Origin = Origin::Local, Interstitial = Interstitial::No,
         Visibility = Visibility::Visible, OrientationFallback = OrientationFallback::No, std::optional<RenderingResourceIdentifier> = std::nullopt);
     static Ref<Font> create(const FontPlatformData&, Origin, FontCache* fontCacheForVerticalData, Interstitial = Interstitial::No,
@@ -459,5 +447,3 @@ template<> struct EnumTraits<WebCore::Font::OrientationFallback> {
 };
 
 }
-
-#endif // Font_h

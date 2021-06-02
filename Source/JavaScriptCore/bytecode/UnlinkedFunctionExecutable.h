@@ -39,7 +39,6 @@
 #include "SourceCode.h"
 #include "VariableEnvironment.h"
 #include <wtf/FixedVector.h>
-#include <wtf/Optional.h>
 
 namespace JSC {
 

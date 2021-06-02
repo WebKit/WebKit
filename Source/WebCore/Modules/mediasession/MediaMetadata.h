@@ -32,7 +32,6 @@
 #include "MediaMetadataInit.h"
 #include "MediaSession.h"
 #include <wtf/Function.h>
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 

@@ -36,7 +36,6 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SecurityOriginData.h>
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {

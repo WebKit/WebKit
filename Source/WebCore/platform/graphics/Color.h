@@ -34,7 +34,6 @@
 #include <wtf/HashFunctions.h>
 #include <wtf/Hasher.h>
 #include <wtf/OptionSet.h>
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/ThreadSafeRefCounted.h>

@@ -31,7 +31,6 @@
 #include "IntPoint.h"
 #include "IntSize.h"
 #include "PlatformImage.h"
-#include <wtf/Optional.h>
 #include <wtf/Seconds.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/ThreadSafeRefCounted.h>

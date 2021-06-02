@@ -53,7 +53,6 @@
 #include <functional>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/HashFunctions.h>
-#include <wtf/Optional.h>
 #include <wtf/SegmentedVector.h>
 #include <wtf/SetForScope.h>
 #include <wtf/Vector.h>

@@ -33,7 +33,6 @@
 #include "SharedBuffer.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/CompletionHandler.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

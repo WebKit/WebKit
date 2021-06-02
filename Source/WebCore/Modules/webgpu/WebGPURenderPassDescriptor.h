@@ -29,7 +29,6 @@
 
 #include "GPURenderPassDescriptor.h"
 #include "WebGPUTextureView.h"
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 

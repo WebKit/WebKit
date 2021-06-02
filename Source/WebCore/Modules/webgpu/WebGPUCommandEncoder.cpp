@@ -37,7 +37,6 @@
 #include "WebGPURenderPassDescriptor.h"
 #include "WebGPURenderPassEncoder.h"
 #include "WebGPUTexture.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

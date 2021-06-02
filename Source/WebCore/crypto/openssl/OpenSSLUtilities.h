@@ -28,7 +28,6 @@
 #include "CryptoAlgorithmIdentifier.h"
 #include <openssl/evp.h>
 #include <stdint.h>
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(WEB_CRYPTO)

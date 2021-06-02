@@ -38,7 +38,6 @@
 #include "StrongInlines.h"
 #include "UnlinkedCodeBlockGenerator.h"
 #include "UnlinkedMetadataTableInlines.h"
-#include <wtf/Optional.h>
 
 namespace JSC {
 

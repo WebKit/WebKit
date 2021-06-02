@@ -44,7 +44,7 @@ struct ImageExtractionResult;
 enum class EnterKeyHint : uint8_t;
 
 #if PLATFORM(IOS_FAMILY)
-enum class SelectionRenderingBehavior : uint8_t;
+enum class SelectionRenderingBehavior : bool;
 #endif
 
 class HTMLElement : public StyledElement {

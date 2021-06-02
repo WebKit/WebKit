@@ -26,7 +26,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include <wtf/Optional.h>
+#include <optional>
 
 namespace WebCore {
 

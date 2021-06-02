@@ -29,7 +29,6 @@
 
 #include "WebGPUBindGroupBinding.h"
 #include "WebGPUBindGroupLayout.h"
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 

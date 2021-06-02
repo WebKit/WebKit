@@ -27,7 +27,6 @@
 #include "PredefinedColorSpace.h"
 
 #include "DestinationColorSpace.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

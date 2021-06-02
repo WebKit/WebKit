@@ -37,7 +37,6 @@
 #import <Metal/Metal.h>
 #import <QuartzCore/QuartzCore.h>
 #import <wtf/BlockObjCExceptions.h>
-#import <wtf/Optional.h>
 
 namespace WebCore {
 

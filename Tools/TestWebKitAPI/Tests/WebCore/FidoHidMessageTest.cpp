@@ -35,7 +35,6 @@
 #include <WebCore/FidoHidMessage.h>
 #include <WebCore/FidoHidPacket.h>
 #include <wtf/Deque.h>
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace TestWebKitAPI {

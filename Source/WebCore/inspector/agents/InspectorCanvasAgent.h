@@ -34,7 +34,6 @@
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <initializer_list>
 #include <wtf/Forward.h>
-#include <wtf/Optional.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 

@@ -29,7 +29,6 @@
 #include <WebCore/InputMode.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/OptionSet.h>
-#include <wtf/Optional.h>
 
 namespace IPC {
 class Decoder;

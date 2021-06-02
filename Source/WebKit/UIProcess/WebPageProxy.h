@@ -118,7 +118,6 @@
 #include <wtf/HashSet.h>
 #include <wtf/Logger.h>
 #include <wtf/MonotonicTime.h>
-#include <wtf/Optional.h>
 #include <wtf/ProcessID.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>

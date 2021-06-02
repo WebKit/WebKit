@@ -32,7 +32,6 @@
 #import "GraphicsLayerCA.h"
 #import "PlatformCALayer.h"
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
-#import <wtf/Optional.h>
 
 class WebGLLayerSwapChain final : public WebCore::GraphicsContextGLIOSurfaceSwapChain {
 public:

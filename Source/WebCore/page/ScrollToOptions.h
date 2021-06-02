@@ -30,7 +30,6 @@
 
 #include "ScrollOptions.h"
 #include <cmath>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

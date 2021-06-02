@@ -28,15 +28,12 @@
 #include "FloatQuad.h"
 #include "IntRect.h"
 #include "WritingMode.h"
+#include <optional>
 #include <wtf/FastMalloc.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
-enum class SelectionRenderingBehavior : uint8_t {
-    CoalesceBoundingRects,
-    UseIndividualQuads,
-};
+enum class SelectionRenderingBehavior : bool { CoalesceBoundingRects, UseIndividualQuads };
 
 class SelectionGeometry {
     WTF_MAKE_FAST_ALLOCATED;

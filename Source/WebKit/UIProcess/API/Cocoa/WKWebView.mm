@@ -146,7 +146,6 @@
 #import <wtf/HashMap.h>
 #import <wtf/MathExtras.h>
 #import <wtf/NeverDestroyed.h>
-#import <wtf/Optional.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SystemTracing.h>
 #import <wtf/UUID.h>

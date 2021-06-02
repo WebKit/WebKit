@@ -117,7 +117,6 @@
 #include <JavaScriptCore/JSCInlines.h>
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/Function.h>
-#include <wtf/Optional.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringToIntegerConversion.h>

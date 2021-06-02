@@ -32,7 +32,6 @@
 #include <wtf/Markable.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/OptionSet.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

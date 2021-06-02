@@ -27,7 +27,6 @@
 #include "DebuggerParseData.h"
 
 #include "Parser.h"
-#include <wtf/Optional.h>
 
 namespace JSC {
 

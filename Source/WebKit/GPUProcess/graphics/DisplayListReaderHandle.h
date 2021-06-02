@@ -28,7 +28,6 @@
 #include "SharedDisplayListHandle.h"
 #include <wtf/Expected.h>
 #include <wtf/FastMalloc.h>
-#include <wtf/Optional.h>
 
 namespace WebKit {
 

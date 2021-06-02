@@ -30,7 +30,6 @@
 
 #include "DataReference.h"
 #include "WebCoreArgumentCoders.h"
-#include <wtf/Optional.h>
 
 namespace WebKit {
 

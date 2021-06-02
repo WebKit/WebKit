@@ -35,7 +35,6 @@
 #include "WasmOps.h"
 #include "WasmSignatureInlines.h"
 #include <wtf/HexNumber.h>
-#include <wtf/Optional.h>
 
 namespace JSC { namespace Wasm {
 

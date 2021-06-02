@@ -31,7 +31,7 @@
 #include "FloatPoint.h"
 #include "FloatQuad.h"
 #include "FloatRect.h"
-#include <wtf/Optional.h>
+#include <optional>
 
 namespace WebCore {
 

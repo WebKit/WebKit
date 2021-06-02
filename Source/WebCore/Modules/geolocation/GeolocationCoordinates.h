@@ -26,7 +26,6 @@
 #pragma once
 
 #include "GeolocationPositionData.h"
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 

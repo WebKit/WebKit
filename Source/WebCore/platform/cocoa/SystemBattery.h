@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include <optional>
 #include <wtf/Function.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

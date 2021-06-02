@@ -28,9 +28,9 @@
 #include <algorithm>
 #include <array>
 #include <iterator>
+#include <optional>
 #include <unicode/umachine.h>
 #include <utility>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

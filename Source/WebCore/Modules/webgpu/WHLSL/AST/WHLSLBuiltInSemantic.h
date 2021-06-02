@@ -30,7 +30,6 @@
 #include "WHLSLBaseSemantic.h"
 #include "WHLSLCodeLocation.h"
 #include <wtf/FastMalloc.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

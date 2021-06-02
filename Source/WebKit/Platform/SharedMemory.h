@@ -32,7 +32,6 @@
 
 #if USE(UNIX_DOMAIN_SOCKETS)
 #include "Attachment.h"
-#include <wtf/Optional.h>
 #endif
 
 #if OS(WINDOWS)

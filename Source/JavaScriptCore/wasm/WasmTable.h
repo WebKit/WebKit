@@ -32,7 +32,6 @@
 #include "WasmLimits.h"
 #include "WriteBarrier.h"
 #include <wtf/MallocPtr.h>
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
 

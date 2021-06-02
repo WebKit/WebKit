@@ -27,7 +27,6 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

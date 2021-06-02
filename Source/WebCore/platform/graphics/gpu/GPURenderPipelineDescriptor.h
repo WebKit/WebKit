@@ -32,7 +32,6 @@
 #include "GPUPipelineDescriptorBase.h"
 #include "GPUProgrammableStageDescriptor.h"
 #include "GPUVertexInputDescriptor.h"
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

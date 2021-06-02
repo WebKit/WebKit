@@ -58,7 +58,6 @@
 #include "TabSize.h"
 #include "TouchAction.h"
 #include "TransformFunctions.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 namespace Style {

@@ -29,7 +29,6 @@
 #include "LoadableScript.h"
 #include "ModuleFetchParameters.h"
 #include <JavaScriptCore/ScriptFetcher.h>
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

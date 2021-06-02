@@ -34,7 +34,6 @@
 #include "MiniBrowserReplace.h"
 #include <dbghelp.h>
 #include <shlobj.h>
-#include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
 
 // Global Variables:

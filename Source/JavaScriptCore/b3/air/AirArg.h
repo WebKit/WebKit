@@ -33,7 +33,6 @@
 #include "B3Type.h"
 #include "B3Value.h"
 #include "B3Width.h"
-#include <wtf/Optional.h>
 
 #if !ASSERT_ENABLED
 IGNORE_RETURN_TYPE_WARNINGS_BEGIN

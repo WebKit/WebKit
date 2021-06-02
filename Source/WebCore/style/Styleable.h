@@ -31,7 +31,6 @@
 #include "RenderElement.h"
 #include "RenderStyleConstants.h"
 #include "WebAnimationTypes.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

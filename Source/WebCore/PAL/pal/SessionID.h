@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <optional>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
 

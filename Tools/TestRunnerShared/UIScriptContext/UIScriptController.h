@@ -27,7 +27,6 @@
 
 #include "JSWrappable.h"
 #include <JavaScriptCore/JSRetainPtr.h>
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 
 OBJC_CLASS NSUndoManager;

@@ -27,8 +27,6 @@
 
 #include "FloatPoint.h"
 #include "ScrollAnimation.h"
-
-#include <wtf/Optional.h>
 #include <wtf/RunLoop.h>
 
 namespace WebCore {

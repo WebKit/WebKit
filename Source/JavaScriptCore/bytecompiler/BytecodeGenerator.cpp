@@ -58,7 +58,6 @@
 #include "VMTrapsInlines.h"
 #include <wtf/BitVector.h>
 #include <wtf/HashSet.h>
-#include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 

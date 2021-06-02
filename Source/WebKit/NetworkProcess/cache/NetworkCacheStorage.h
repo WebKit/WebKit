@@ -35,7 +35,6 @@
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/MonotonicTime.h>
-#include <wtf/Optional.h>
 #include <wtf/PriorityQueue.h>
 #include <wtf/WallTime.h>
 #include <wtf/WorkQueue.h>

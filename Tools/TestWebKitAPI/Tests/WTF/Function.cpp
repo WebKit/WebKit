@@ -26,11 +26,12 @@
 #include "config.h"
 
 #include "MoveOnly.h"
+#include <optional>
 #include <wtf/Function.h>
 
 namespace TestWebKitAPI {
 
-static WTF::Function<int()> function_for_reentrancy_test;
+static Function<int()> function_for_reentrancy_test;
 static unsigned testObjectDestructorCalls = 0;
 
 enum class AssignmentMode { Null, Lambda, None };

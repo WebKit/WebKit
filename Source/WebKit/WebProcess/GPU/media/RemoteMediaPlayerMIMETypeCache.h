@@ -30,7 +30,6 @@
 #include <WebCore/MediaPlayerEnums.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/Optional.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {

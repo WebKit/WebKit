@@ -26,7 +26,6 @@
 #pragma once
 
 #include "CollectionScope.h"
-#include <wtf/Optional.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RefPtr.h>
 #include <wtf/SharedTask.h>

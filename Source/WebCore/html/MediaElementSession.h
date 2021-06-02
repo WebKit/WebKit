@@ -33,7 +33,6 @@
 #include "PlatformMediaSession.h"
 #include "SuccessOr.h"
 #include "Timer.h"
-#include <wtf/Optional.h>
 #include <wtf/TypeCasts.h>
 
 #if ENABLE(MEDIA_SESSION)

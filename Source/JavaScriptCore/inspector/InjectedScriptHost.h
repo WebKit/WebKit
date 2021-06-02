@@ -27,7 +27,6 @@
 
 #include "JSCJSValueInlines.h"
 #include "PerGlobalObjectWrapperWorld.h"
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 
 namespace Inspector {

@@ -36,7 +36,6 @@
 #include "TextEncoding.h"
 #include "ThreadableLoaderClient.h"
 #include <wtf/Forward.h>
-#include <wtf/Optional.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 

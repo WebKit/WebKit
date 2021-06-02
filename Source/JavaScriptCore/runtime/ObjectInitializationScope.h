@@ -28,7 +28,6 @@
 #include "DeferGC.h"
 #include "DisallowVMEntry.h"
 #include "VM.h"
-#include <wtf/Optional.h>
 
 namespace JSC {
 

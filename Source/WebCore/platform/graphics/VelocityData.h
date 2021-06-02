@@ -27,7 +27,6 @@
 
 #include "FloatPoint.h"
 #include <wtf/MonotonicTime.h>
-#include <wtf/Optional.h>
 
 namespace WTF {
 class TextStream;

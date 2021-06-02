@@ -24,7 +24,7 @@
  */
 
 #import "DOMRange.h"
-#import <wtf/Forward.h>
+#import <optional>
 
 namespace WebCore {
 class Range;

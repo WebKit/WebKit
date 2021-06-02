@@ -28,7 +28,6 @@
 
 #include "PODInterval.h"
 #include "PODRedBlackTree.h"
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 // FIXME: The prefix "POD" here isn't correct; this tree works with non-POD types.

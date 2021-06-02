@@ -28,7 +28,6 @@
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
 
 #include "AudioSession.h"
-#include <wtf/Optional.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {

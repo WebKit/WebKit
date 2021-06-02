@@ -26,7 +26,6 @@
 #pragma once
 
 #include <JavaScriptCore/JSCJSValue.h>
-#include <wtf/Optional.h>
 #include <wtf/Variant.h>
 #include <wtf/text/WTFString.h>
 

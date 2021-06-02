@@ -28,7 +28,6 @@
 #include "IDBCursorInfo.h"
 #include "IDBKeyData.h"
 #include "MemoryCursor.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 namespace IDBServer {

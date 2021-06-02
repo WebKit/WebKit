@@ -34,7 +34,6 @@
 #include "PlatformXR.h"
 #include "WebXRLayer.h"
 #include <wtf/IsoMalloc.h>
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Variant.h>

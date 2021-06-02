@@ -27,7 +27,6 @@
 #include "OpenXRInputSource.h"
 
 #include <wtf/NeverDestroyed.h>
-#include <wtf/Optional.h>
 #include <wtf/threads/BinarySemaphore.h>
 
 using namespace WebCore;

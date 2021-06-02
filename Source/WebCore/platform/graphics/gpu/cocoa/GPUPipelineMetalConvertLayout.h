@@ -28,7 +28,6 @@
 #if ENABLE(WEBGPU)
 
 #include "WHLSLPipelineDescriptor.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

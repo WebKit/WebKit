@@ -27,7 +27,6 @@
 #include <wtf/CrossThreadCopier.h>
 
 #include "Test.h"
-#include <wtf/Optional.h>
 #include <wtf/text/WTFString.h>
 
 namespace TestWebKitAPI {

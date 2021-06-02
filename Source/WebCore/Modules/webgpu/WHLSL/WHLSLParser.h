@@ -32,7 +32,6 @@
 #include "WHLSLLexer.h"
 #include "WHLSLParsingMode.h"
 #include <wtf/Expected.h>
-#include <wtf/Optional.h>
 #include <wtf/PrintStream.h>
 
 namespace WebCore {

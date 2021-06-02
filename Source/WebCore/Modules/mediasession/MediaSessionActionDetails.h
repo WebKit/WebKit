@@ -28,7 +28,6 @@
 #if ENABLE(MEDIA_SESSION)
 
 #include "MediaSessionAction.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

@@ -25,11 +25,8 @@
 
 #pragma once
 
-#if USE(GLIB)
-#include <wtf/Function.h>
-#endif
-
 #include <wtf/EnumTraits.h>
+#include <wtf/Forward.h>
 
 #if PLATFORM(MAC)
 OBJC_CLASS NSScreen;

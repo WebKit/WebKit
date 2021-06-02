@@ -1,3 +1,33 @@
+2021-06-01  Darin Adler  <darin@apple.com>
+
+        Remove <wtf/Optional.h>
+        https://bugs.webkit.org/show_bug.cgi?id=226437
+
+        Reviewed by Chris Dumez.
+
+        * <many files>: Removed include of <wtf/Optional.h>.
+
+        * WTF.xcodeproj/project.pbxproj: Removed Optional.h.
+
+        * wtf/Markable.h: Added include of <optional>.
+        * wtf/OptionSet.h: Ditto.
+
+        * wtf/Optional.h: Emptied this file. On the Windows build system, we can't
+        seem to build successfully without an empty file here. The copied forwarding
+        header seems to linger even if we remove the original. Until we fix the
+        Windows build system, if we want to support incremental builds, we need
+        to keep this empty file around.
+
+        * wtf/PrintStream.h: Added include of <optional>.
+        * wtf/Seconds.h: Ditto.
+        * wtf/StackTrace.h: Ditto.
+
+        * wtf/StdLibExtras.h: Moved the valueOrCompute function here from Optional.h.
+        Re-sorted the "using" at the bottom of the file.
+
+        * wtf/URLHelpers.h: Added include of <optional>.
+        * wtf/Vector.h: Ditto.
+
 2021-06-01  Chris Dumez  <cdumez@apple.com>
 
         Rename Checked::unsafeGet() to Checked::value()

@@ -27,7 +27,6 @@
 #define Region_h
 
 #include "IntRect.h"
-#include <wtf/Optional.h>
 #include <wtf/PointerComparison.h>
 #include <wtf/Vector.h>
 

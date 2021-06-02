@@ -32,7 +32,6 @@
 #include <WebCore/IntSize.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/ListHashSet.h>
-#include <wtf/Optional.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
 #include <wtf/Vector.h>

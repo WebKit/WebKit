@@ -27,13 +27,13 @@
 
 #include "AnimationFrameRate.h"
 #include "PlatformScreen.h"
-#include <wtf/Forward.h>
-#include <wtf/Optional.h>
+#include <optional>
 
 namespace WebCore {
 
 class DisplayRefreshMonitor;
 class DisplayRefreshMonitorFactory;
+
 struct DisplayUpdate;
 
 class DisplayRefreshMonitorClient {

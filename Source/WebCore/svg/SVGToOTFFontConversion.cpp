@@ -38,7 +38,6 @@
 #include "SVGPathParser.h"
 #include "SVGPathStringSource.h"
 #include "SVGVKernElement.h"
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/StringView.h>

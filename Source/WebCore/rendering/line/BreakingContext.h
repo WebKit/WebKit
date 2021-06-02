@@ -40,7 +40,6 @@
 #include "RenderSVGInlineText.h"
 #include "TrailingObjects.h"
 #include <wtf/Function.h>
-#include <wtf/Optional.h>
 #include <wtf/text/StringView.h>
 #include <wtf/unicode/CharacterNames.h>
 

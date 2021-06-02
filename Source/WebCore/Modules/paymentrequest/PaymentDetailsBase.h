@@ -30,7 +30,6 @@
 #include "PaymentDetailsModifier.h"
 #include "PaymentItem.h"
 #include "PaymentShippingOption.h"
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

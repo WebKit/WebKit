@@ -36,7 +36,6 @@
 #include "GPUShaderModuleDescriptor.h"
 #include "WebGPUDevice.h"
 #include "WebGPUShaderModule.h"
-#include <wtf/Optional.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {

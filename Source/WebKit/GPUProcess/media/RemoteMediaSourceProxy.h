@@ -33,7 +33,6 @@
 #include <WebCore/MediaSourcePrivate.h>
 #include <WebCore/MediaSourcePrivateClient.h>
 #include <wtf/MediaTime.h>
-#include <wtf/Optional.h>
 #include <wtf/WeakPtr.h>
 
 namespace IPC {

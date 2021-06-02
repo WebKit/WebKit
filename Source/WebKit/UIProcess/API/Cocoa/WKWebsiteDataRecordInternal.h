@@ -28,7 +28,6 @@
 #import "APIWebsiteDataRecord.h"
 #import "WKObject.h"
 #import <wtf/OptionSet.h>
-#import <wtf/Optional.h>
 
 namespace WebKit {
 

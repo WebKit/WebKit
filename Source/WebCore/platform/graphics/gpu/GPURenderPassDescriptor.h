@@ -31,7 +31,6 @@
 #include "GPULoadOp.h"
 #include "GPUStoreOp.h"
 #include "GPUTexture.h"
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

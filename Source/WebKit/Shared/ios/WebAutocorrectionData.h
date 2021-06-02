@@ -27,7 +27,6 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#include <wtf/Optional.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 

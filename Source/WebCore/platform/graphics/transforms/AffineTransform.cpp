@@ -34,7 +34,6 @@
 #include "Region.h"
 #include "TransformationMatrix.h"
 #include <wtf/MathExtras.h>
-#include <wtf/Optional.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

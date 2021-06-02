@@ -30,7 +30,6 @@
 #include "Cookie.h"
 
 #include <wtf/DateMath.h>
-#include <wtf/Optional.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/WTFString.h>

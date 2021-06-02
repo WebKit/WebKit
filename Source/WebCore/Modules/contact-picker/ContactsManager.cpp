@@ -40,7 +40,6 @@
 #include "UserGestureIndicator.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/Optional.h>
 #include <wtf/URL.h>
 
 namespace WebCore {

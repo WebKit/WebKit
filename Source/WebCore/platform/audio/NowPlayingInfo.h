@@ -27,7 +27,6 @@
 
 #include "MediaUniqueIdentifier.h"
 #include "SharedBuffer.h"
-#include <wtf/Optional.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>

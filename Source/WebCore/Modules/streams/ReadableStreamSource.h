@@ -30,7 +30,6 @@
 
 #include "JSDOMPromiseDeferred.h"
 #include "ReadableStreamDefaultController.h"
-#include <wtf/Optional.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

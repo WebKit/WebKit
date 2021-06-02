@@ -31,7 +31,6 @@
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/Optional.h>
 
 namespace WTF {
 

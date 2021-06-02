@@ -26,12 +26,12 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 #include <stdarg.h>
 #include <tuple>
 #include <wtf/Forward.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/Optional.h>
 #include <wtf/RawPointer.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>

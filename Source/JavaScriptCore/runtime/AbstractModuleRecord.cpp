@@ -34,7 +34,6 @@
 #include "JSModuleNamespaceObject.h"
 #include "JSModuleRecord.h"
 #include "WebAssemblyModuleRecord.h"
-#include <wtf/Optional.h>
 
 namespace JSC {
 namespace AbstractModuleRecordInternal {

@@ -27,6 +27,7 @@
 
 #include <memory>
 #include <wtf/FastMalloc.h>
+#include <wtf/Forward.h>
 
 namespace WTF {
 
@@ -55,8 +56,6 @@ private:
 };
 
 } // namespace Detail
-
-template<typename> class Function;
 
 template<typename Out, typename... In> Function<Out(In...)> adopt(Detail::CallableWrapperBase<Out, In...>*);
 
@@ -128,5 +127,3 @@ template<typename Out, typename... In> Function<Out(In...)> adopt(Detail::Callab
 }
 
 } // namespace WTF
-
-using WTF::Function;

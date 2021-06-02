@@ -56,7 +56,7 @@ class CppProtocolTypesImplementationGenerator(CppGenerator):
         self.calculate_types_requiring_shape_assertions(domains)
 
         secondary_headers = [
-            '<wtf/Optional.h>',
+            '<optional>',
             '<wtf/text/CString.h>',
         ]
 

@@ -35,7 +35,6 @@
 #include "RemoteSourceBufferIdentifier.h"
 #include "SourceBufferPrivateRemote.h"
 #include <WebCore/NotImplemented.h>
-#include <wtf/Optional.h>
 
 namespace WebCore {
 #if !RELEASE_LOG_DISABLED

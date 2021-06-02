@@ -26,7 +26,6 @@
 #pragma once
 
 #include "DisplayList.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 namespace DisplayList {

@@ -26,7 +26,6 @@
 #pragma once
 
 #include "MessageNames.h"
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace JSC {

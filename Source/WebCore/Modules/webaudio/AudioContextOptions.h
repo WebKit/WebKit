@@ -28,7 +28,6 @@
 #if ENABLE(WEB_AUDIO)
 
 #include "AudioContextLatencyCategory.h"
-#include <wtf/Optional.h>
 #include <wtf/Variant.h>
 
 namespace WebCore {

@@ -32,7 +32,6 @@
 
 #include "RenderBlockFlow.h"
 #include "ScrollableArea.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

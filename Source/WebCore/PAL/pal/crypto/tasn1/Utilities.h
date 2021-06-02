@@ -27,6 +27,7 @@
 #pragma once
 
 #include <libtasn1.h>
+#include <optional>
 #include <wtf/Forward.h>
 
 namespace PAL {

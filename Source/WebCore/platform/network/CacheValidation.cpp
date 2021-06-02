@@ -32,7 +32,6 @@
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "SameSiteInfo.h"
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>

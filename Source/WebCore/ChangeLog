@@ -1,3 +1,48 @@
+2021-06-01  Darin Adler  <darin@apple.com>
+
+        Remove <wtf/Optional.h>
+        https://bugs.webkit.org/show_bug.cgi?id=226437
+
+        Reviewed by Chris Dumez.
+
+        * <many files>: Removed include of <wtf/Optional.h>.
+
+        * platform/graphics/Font.h: Tweaked style a bit.
+
+        * Modules/geolocation/GeolocationClient.h: Added include of <optional>.
+        * Modules/mediastream/DoubleRange.h: Ditto.
+        * Modules/mediastream/LongRange.h: Ditto.
+        * Modules/webauthn/AuthenticationExtensionsClientOutputs.h: Ditto.
+        * css/CSSToLengthConversionData.h: Ditto.
+        * css/DOMMatrix2DInit.h: Ditto.
+        * dom/AddEventListenerOptions.h: Ditto.
+        * dom/DeviceMotionData.h: Ditto.
+        * dom/DeviceOrientationData.h: Ditto.
+        * dom/SuccessOr.h: Ditto.
+        * html/DateTimeFieldsState.h: Ditto.
+        * html/ImageBitmapOptions.h: Ditto.
+        * html/canvas/PredefinedColorSpace.h: Ditto.
+        * layout/LayoutPhase.h: Ditto.
+        * layout/MarginTypes.h: Ditto.
+        * loader/ResourceLoadNotifier.h: Ditto.
+        * page/RuntimeEnabledFeatures.h: Ditto.
+        * page/ScrollOptions.h: Ditto.
+        * platform/MediaCapabilitiesInfo.h: Ditto.
+        * platform/cocoa/SystemBattery.h: Ditto.
+        * platform/graphics/DecodingOptions.h: Ditto.
+        * platform/graphics/DestinationColorSpace.h: Ditto.
+        * platform/graphics/DisplayRefreshMonitorClient.h: Ditto.
+        * platform/graphics/FloatLine.h: Ditto.
+        * platform/graphics/gpu/GPURequestAdapterOptions.h: Ditto.
+        * platform/graphics/x11/PlatformDisplayX11.h: Ditto.
+        * platform/ios/SelectionGeometry.h: Ditto.
+        * platform/mac/NSScrollerImpDetails.h: Ditto.
+        * platform/network/DNS.h: Ditto.
+        * platform/text/EncodingTables.h: Ditto.
+        * platform/text/TextCodecCJK.h: Ditto.
+        * platform/text/TextCodecUTF16.h: Ditto.
+        * platform/text/TextFlags.h: Ditto.
+
 2021-06-01  Chris Dumez  <cdumez@apple.com>
 
         Rename Checked::unsafeGet() to Checked::value()

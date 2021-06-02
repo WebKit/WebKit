@@ -32,7 +32,6 @@
 #if USE(CAIRO)
 
 #include <cairo.h>
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 

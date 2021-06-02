@@ -37,7 +37,6 @@
 #include "NativeImage.h"
 #include "Timer.h"
 #include <wtf/EnumTraits.h>
-#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>

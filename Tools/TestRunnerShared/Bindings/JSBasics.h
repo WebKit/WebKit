@@ -28,7 +28,7 @@
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JavaScript.h>
 #include <initializer_list>
-#include <wtf/Optional.h>
+#include <optional>
 
 namespace WTR {
 

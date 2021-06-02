@@ -29,7 +29,6 @@
 #include "JSDOMGlobalObject.h"
 #include "JSDOMPromiseDeferred.h"
 #include <wtf/Function.h>
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

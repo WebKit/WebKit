@@ -29,7 +29,6 @@
 
 #include "RegistrableDomain.h"
 #include "Supplementable.h"
-#include <wtf/Optional.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

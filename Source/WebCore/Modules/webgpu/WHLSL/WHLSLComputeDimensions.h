@@ -28,7 +28,6 @@
 #if ENABLE(WHLSL_COMPILER)
 
 #include "WHLSLPrepare.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

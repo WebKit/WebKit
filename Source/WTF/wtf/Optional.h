@@ -20,15 +20,5 @@
 
 #pragma once
 
-#include <optional>
-
-namespace WTF {
-
-template<typename OptionalType, class Callback> auto valueOrCompute(OptionalType optional, Callback callback) -> typename OptionalType::value_type
-{
-    return optional ? *optional : callback();
-}
-
-} // namespace WTF
-
-using WTF::valueOrCompute;
+// This file intentionally left blank to make incremental builds on Windows work.
+// Some day later we can remove it.

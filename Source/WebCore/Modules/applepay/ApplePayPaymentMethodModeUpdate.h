@@ -30,7 +30,6 @@
 #include "ApplePayDetailsUpdateBase.h"
 #include "ApplePayError.h"
 #include "ApplePayShippingMethod.h"
-#include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 

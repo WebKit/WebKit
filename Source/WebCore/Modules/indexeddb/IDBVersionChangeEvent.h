@@ -27,7 +27,6 @@
 
 #include "Event.h"
 #include "IDBResourceIdentifier.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

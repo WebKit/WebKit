@@ -28,7 +28,7 @@
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
 #include "LayoutUnit.h"
-#include <wtf/Optional.h>
+#include <optional>
 
 namespace WebCore {
 namespace Layout {

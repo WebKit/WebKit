@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <wtf/Optional.h>
+#include <optional>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 

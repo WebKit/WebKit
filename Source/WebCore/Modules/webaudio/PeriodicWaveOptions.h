@@ -28,7 +28,6 @@
 #if ENABLE(WEB_AUDIO)
 
 #include "PeriodicWaveConstraints.h"
-#include <wtf/Optional.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

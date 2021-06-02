@@ -40,7 +40,6 @@
 #include <wtf/DataLog.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/Optional.h>
 
 namespace JSC {
 

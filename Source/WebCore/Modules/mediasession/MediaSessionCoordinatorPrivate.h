@@ -32,7 +32,6 @@
 #include "MediaSessionCoordinatorState.h"
 #include "MediaSessionPlaybackState.h"
 #include "MediaSessionReadyState.h"
-#include <wtf/Optional.h>
 #include <wtf/WeakPtr.h>
 
 namespace WTF {

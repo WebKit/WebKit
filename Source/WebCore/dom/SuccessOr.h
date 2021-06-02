@@ -25,12 +25,12 @@
 
 #pragma once
 
-#include <wtf/Optional.h>
+#include <optional>
 
 namespace WebCore {
 
-template <typename T>
-class SuccessOr : public std::optional<T> {
+// FIXME: This is used in two places. We should switch them to WTF::Expected and delete this.
+template<typename T> class SuccessOr : public std::optional<T> {
 public:
     SuccessOr() : std::optional<T>() { }
     SuccessOr(T&& error) : std::optional<T>(error) { }

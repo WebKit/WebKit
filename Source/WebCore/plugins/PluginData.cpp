@@ -29,7 +29,6 @@
 #include "LocalizedStrings.h"
 #include "Page.h"
 #include "PluginInfoProvider.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 

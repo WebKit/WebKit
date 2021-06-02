@@ -32,7 +32,6 @@ OBJC_CLASS DDScannerResult;
 #endif
 
 #include "FloatQuad.h"
-#include <wtf/Optional.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 

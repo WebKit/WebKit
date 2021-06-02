@@ -34,7 +34,6 @@
 #import "Logging.h"
 #import <Metal/Metal.h>
 #import <wtf/BlockObjCExceptions.h>
-#import <wtf/Optional.h>
 
 namespace WebCore {
 

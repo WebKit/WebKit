@@ -27,7 +27,6 @@
 
 #include "MediaCapabilitiesInfo.h"
 #include "MediaDecodingConfiguration.h"
-#include <wtf/Optional.h>
 
 namespace WebCore {
 
