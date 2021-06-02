@@ -329,7 +329,7 @@ void MediaElementSession::removeBehaviorRestriction(BehaviorRestrictions restric
 
 SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackStateChangePermitted(MediaPlaybackState state) const
 {
-    ALWAYS_LOG(LOGIDENTIFIER, "state = ", state);
+    INFO_LOG(LOGIDENTIFIER, "state = ", state);
     if (m_element.isSuspended()) {
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because element is suspended");
         return MediaPlaybackDenialReason::InvalidState;
