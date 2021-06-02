@@ -1,3 +1,13 @@
+2021-06-02  Kyle Piddington  <kpiddington@apple.com>
+
+        Add 'mix' override with bool-vectors to MSL translator
+        https://bugs.webkit.org/show_bug.cgi?id=226366
+
+        Add a short test to ensure bool-vectors can be used in mix.  
+        Reviewed by Dean Jackson.
+
+        * fast/canvas/webgl/shader-mix-with-bool-expected.txt: Added.
+
 2021-06-02  Youenn Fablet  <youenn@apple.com>
 
         HTMLMediaElement::virtualHasPendingActivity may keep objects alive unnecessarily

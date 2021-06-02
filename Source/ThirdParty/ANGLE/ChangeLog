@@ -1,3 +1,17 @@
+2021-06-02  Kyle Piddington  <kpiddington@apple.com>
+
+        Add 'mix' override with bool-vectors to MSL translator
+        https://bugs.webkit.org/show_bug.cgi?id=226366
+
+        Reviewed by Dean Jackson.
+
+        Add in 'mix' overrides, and logic for selecting mix with bool when necessary.
+
+        * src/compiler/translator/TranslatorMetalDirect/EmitMetal.cpp:
+        (GetOperatorString):
+        (GenMetalTraverser::visitAggregate):
+        * src/compiler/translator/TranslatorMetalDirect/ProgramPrelude.cpp:
+
 2021-06-01  Kyle Piddington  <kpiddington@apple.com>
 
         [Metal ANGLE] transformFeedback samples on webglsamples.org do not render correctly
