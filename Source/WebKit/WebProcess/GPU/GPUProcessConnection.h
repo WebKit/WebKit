@@ -33,6 +33,7 @@
 #include "MessageReceiverMap.h"
 #include "SampleBufferDisplayLayerManager.h"
 #include "SharedMemory.h"
+#include <WebCore/AudioSession.h>
 #include <WebCore/PlatformMediaSession.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakHashSet.h>
@@ -119,6 +120,11 @@ private:
     bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
     void didReceiveRemoteCommand(WebCore::PlatformMediaSession::RemoteControlCommandType, const WebCore::PlatformMediaSession::RemoteCommandArgument&);
+
+#if ENABLE(ROUTING_ARBITRATION)
+    void beginRoutingArbitrationWithCategory(WebCore::AudioSession::CategoryType, WebCore::AudioSessionRoutingArbitrationClient::ArbitrationCallback&&);
+    void endRoutingArbitration();
+#endif
 
     // The connection from the web process to the GPU process.
     Ref<IPC::Connection> m_connection;

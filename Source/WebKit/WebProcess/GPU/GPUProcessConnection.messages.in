@@ -24,6 +24,11 @@
 
 messages -> GPUProcessConnection WantsDispatchMessage {
     DidReceiveRemoteCommand(enum:uint8_t WebCore::PlatformMediaSession::RemoteControlCommandType type, struct WebCore::PlatformMediaSession::RemoteCommandArgument argument)
+
+#if ENABLE(ROUTING_ARBITRATION)
+    BeginRoutingArbitrationWithCategory(enum:uint8_t WebCore::AudioSession::CategoryType category) -> (enum:uint8_t WebKit::AudioSessionRoutingArbitratorProxy::RoutingArbitrationError error, enum:bool WebKit::AudioSessionRoutingArbitratorProxy::DefaultRouteChanged defaultRouteChanged) Async
+    EndRoutingArbitration();
+#endif
 }
 
 #endif // ENABLE(GPU_PROCESS)

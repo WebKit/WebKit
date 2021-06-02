@@ -206,10 +206,14 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
     , m_sampleBufferDisplayLayerManager(RemoteSampleBufferDisplayLayerManager::create(*this))
 #endif
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
-    , m_routingArbitrator(LocalAudioSessionRoutingArbitrator::create())
+    , m_routingArbitrator(LocalAudioSessionRoutingArbitrator::create(*this))
 #endif
 {
     RELEASE_ASSERT(RunLoop::isMain());
+
+#if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
+    gpuProcess.audioSessionManager().session().setRoutingArbitrationClient(makeWeakPtr(m_routingArbitrator.get()));
+#endif
 
     if (!parameters.overrideLanguages.isEmpty())
         overrideUserPreferredLanguages(parameters.overrideLanguages);

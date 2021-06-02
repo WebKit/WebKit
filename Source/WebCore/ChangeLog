@@ -1,3 +1,21 @@
+2021-06-02  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r276993): 5 TestWebKitAPI.AudioRoutingArbitration (api-tests) are constant failures
+        https://bugs.webkit.org/show_bug.cgi?id=226104
+        <rdar://77998049>
+
+        Reviewed by Eric Carlson.
+
+        Add a mechanism for a client to wait until an AudioSession is created or changed before taking
+        an action.
+
+        * platform/audio/AudioSession.cpp:
+        (WebCore::audioSessionChangedObservers):
+        (WebCore::AudioSession::sharedSession):
+        (WebCore::AudioSession::setSharedSession):
+        (WebCore::AudioSession::addAudioSessionChangedObserver):
+        * platform/audio/AudioSession.h:
+
 2021-06-02  Chris Dumez  <cdumez@apple.com>
 
         Drop legacy ActiveDOMObject::setPendingActivity() / unsetPendingActivity()

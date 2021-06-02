@@ -27,7 +27,7 @@
 
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
 
-#include <WebCore/SharedRoutingArbitrator.h>
+#include "AudioSessionRoutingArbitratorProxy.h"
 
 namespace WebKit {
 
@@ -36,34 +36,23 @@ class LocalAudioSessionRoutingArbitrator final
     , public CanMakeWeakPtr<LocalAudioSessionRoutingArbitrator> {
     WTF_MAKE_FAST_ALLOCATED;
 
-    friend UniqueRef<LocalAudioSessionRoutingArbitrator> WTF::makeUniqueRefWithoutFastMallocCheck<LocalAudioSessionRoutingArbitrator>();
+    friend UniqueRef<LocalAudioSessionRoutingArbitrator> WTF::makeUniqueRefWithoutFastMallocCheck<LocalAudioSessionRoutingArbitrator>(GPUConnectionToWebProcess&);
 public:
-    static UniqueRef<LocalAudioSessionRoutingArbitrator> create();
+    static UniqueRef<LocalAudioSessionRoutingArbitrator> create(GPUConnectionToWebProcess&);
     virtual ~LocalAudioSessionRoutingArbitrator();
 
     using WeakValueType = WebCore::AudioSessionRoutingArbitrationClient;
 
-    enum class ArbitrationStatus : uint8_t {
-        None,
-        Pending,
-        Active,
-    };
-
     void processDidTerminate();
-    ArbitrationStatus arbitrationStatus() const { return m_arbitrationStatus; }
-    WallTime arbitrationUpdateTime() const { return m_arbitrationUpdateTime; }
 
 private:
-    LocalAudioSessionRoutingArbitrator();
+    LocalAudioSessionRoutingArbitrator(GPUConnectionToWebProcess&);
 
     // AudioSessionRoutingArbitrationClient
     void beginRoutingArbitrationWithCategory(WebCore::AudioSession::CategoryType, ArbitrationCallback&&) final;
     void leaveRoutingAbritration() final;
 
-    UniqueRef<WebCore::SharedRoutingArbitrator::Token> m_token;
-    WebCore::AudioSession::CategoryType m_category { WebCore::AudioSession::CategoryType::None };
-    ArbitrationStatus m_arbitrationStatus { ArbitrationStatus::None };
-    WallTime m_arbitrationUpdateTime;
+    GPUConnectionToWebProcess& m_connectionToWebProcess;
 };
 
 }

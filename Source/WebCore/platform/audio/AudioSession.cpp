@@ -47,6 +47,12 @@ static std::optional<UniqueRef<AudioSession>>& sharedAudioSession()
     return session.get();
 }
 
+static WeakHashSet<AudioSession::ChangedObserver>& audioSessionChangedObservers()
+{
+    static NeverDestroyed<WeakHashSet<AudioSession::ChangedObserver>> observers;
+    return observers;
+}
+
 UniqueRef<AudioSession> AudioSession::create()
 {
 #if PLATFORM(MAC)
@@ -64,13 +70,26 @@ AudioSession::~AudioSession() = default;
 AudioSession& AudioSession::sharedSession()
 {
     if (!sharedAudioSession())
-        sharedAudioSession() = AudioSession::create();
+        setSharedSession(AudioSession::create());
     return *sharedAudioSession();
 }
 
 void AudioSession::setSharedSession(UniqueRef<AudioSession>&& session)
 {
     sharedAudioSession() = WTFMove(session);
+
+    audioSessionChangedObservers().forEach([] (auto& observer) {
+        observer(*sharedAudioSession());
+    });
+}
+
+void AudioSession::addAudioSessionChangedObserver(const ChangedObserver& observer)
+{
+    ASSERT(!audioSessionChangedObservers().contains(observer));
+    audioSessionChangedObservers().add(observer);
+
+    if (sharedAudioSession())
+        observer(*sharedAudioSession());
 }
 
 bool AudioSession::tryToSetActive(bool active)

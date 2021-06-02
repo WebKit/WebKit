@@ -51,6 +51,7 @@ public:
 
     bool tryToSetActiveForProcess(RemoteAudioSessionProxy&, bool);
 
+    WebCore::AudioSession& session() { return m_session; }
     const WebCore::AudioSession& session() const { return m_session; }
 
 private:

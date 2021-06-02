@@ -1,5 +1,54 @@
 2021-06-02  Jer Noble  <jer.noble@apple.com>
 
+        REGRESSION(r276993): 5 TestWebKitAPI.AudioRoutingArbitration (api-tests) are constant failures
+        https://bugs.webkit.org/show_bug.cgi?id=226104
+        <rdar://77998049>
+
+        Reviewed by Eric Carlson.
+
+        In r276993, AudioSessionRoutingArbitration was moved from being initiated in the WebContent process
+        and dispatched to the UIProcess, to being dispatched to the GPU process. However two problems occurred:
+
+        1) The UIProcess no longer knows about routing arbitration, which is reasonable for the feature, but
+           breaks an API test that queries arbitration status in the UIProcess.
+
+        2) A sandbox violation causes routing arbitration to fail in the GPU process regardless.
+
+        We could open up the sandbox to allow routing arbitration to succeed (and come up with a way to push
+        state changes up to the UIProcess for testing purposes), but it's not technically necessary for
+        arbitration to occur there. Instead, just revert to the status-quo-ante behavior of having arbitration
+        take place in the UIProcess, and just add a new set of messages from the GPUConnoctionToWebProcess to
+        the GPUProcessConnection to facilitate arbitration.
+
+        Drive-by fix: AudioSessionRoutingArbitrator is a supplement to WebProcess, and as such it's created
+        at WebProcess creation time. However, it also causes an AudioSession to be created by attempting to
+        add itself as a client. This is bad on iOS, where it could cause hangs due to AVAudioSession calls.
+        So, add a mechanism to be notified when an AudioSession eventually does get created, and add the
+        arbitrator as a client then.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::GPUConnectionToWebProcess):
+        * GPUProcess/mac/LocalAudioSessionRoutingArbitrator.cpp:
+        (WebKit::LocalAudioSessionRoutingArbitrator::create):
+        (WebKit::LocalAudioSessionRoutingArbitrator::LocalAudioSessionRoutingArbitrator):
+        (WebKit::LocalAudioSessionRoutingArbitrator::processDidTerminate):
+        (WebKit::LocalAudioSessionRoutingArbitrator::beginRoutingArbitrationWithCategory):
+        (WebKit::LocalAudioSessionRoutingArbitrator::leaveRoutingAbritration):
+        * GPUProcess/mac/LocalAudioSessionRoutingArbitrator.h:
+        * GPUProcess/media/RemoteAudioSessionProxyManager.h:
+        (WebKit::RemoteAudioSessionProxyManager::session):
+        * UIProcess/GPU/GPUProcessProxy.h:
+        * WebProcess/GPU/GPUProcessConnection.cpp:
+        (WebKit::GPUProcessConnection::beginRoutingArbitrationWithCategory):
+        (WebKit::GPUProcessConnection::endRoutingArbitration):
+        * WebProcess/GPU/GPUProcessConnection.h:
+        * WebProcess/GPU/GPUProcessConnection.messages.in:
+        * WebProcess/cocoa/AudioSessionRoutingArbitrator.cpp:
+        (WebKit::AudioSessionRoutingArbitrator::AudioSessionRoutingArbitrator):
+        * WebProcess/cocoa/AudioSessionRoutingArbitrator.h:
+
+2021-06-02  Jer Noble  <jer.noble@apple.com>
+
         REGRESSION(r277217?): ASSERTION FAILED: Unhandled message RemoteLegacyCDMSession_SendError to 10 assertionFailureDueToUnreachableCode
         https://bugs.webkit.org/show_bug.cgi?id=226545
         <rdar://78001450>
