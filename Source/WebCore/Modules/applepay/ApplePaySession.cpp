@@ -442,8 +442,6 @@ ExceptionOr<void> ApplePaySession::begin(Document& document)
 
     m_state = State::Active;
 
-    setPendingActivity(*this);
-
     return { };
 }
 
@@ -454,8 +452,6 @@ ExceptionOr<void> ApplePaySession::abort()
 
     m_state = State::Aborted;
     paymentCoordinator().abortPaymentSession();
-
-    didReachFinalState();
 
     return { };
 }
@@ -549,7 +545,6 @@ ExceptionOr<void> ApplePaySession::completePayment(ApplePayPaymentAuthorizationR
     }
 
     m_state = State::Completed;
-    unsetPendingActivity(*this);
 
     return { };
 }
@@ -747,8 +742,6 @@ void ApplePaySession::didCancelPaymentSession(PaymentSessionError&& error)
 
     auto event = ApplePayCancelEvent::create(eventNames().cancelEvent, WTFMove(error));
     dispatchEvent(event.get());
-
-    didReachFinalState();
 }
 
 const char* ApplePaySession::activeDOMObjectName() const
@@ -785,8 +778,6 @@ void ApplePaySession::stop()
 
     m_state = State::Aborted;
     paymentCoordinator().abortPaymentSession();
-
-    didReachFinalState();
 }
 
 void ApplePaySession::suspend(ReasonForSuspension reason)
@@ -797,11 +788,10 @@ void ApplePaySession::suspend(ReasonForSuspension reason)
     if (canSuspendWithoutCanceling())
         return;
 
+    auto jsWrapperProtector = makePendingActivity(*this);
     m_state = State::Canceled;
     paymentCoordinator().abortPaymentSession();
     queueTaskToDispatchEvent(*this, TaskSource::UserInteraction, ApplePayCancelEvent::create(eventNames().cancelEvent, { }));
-
-    didReachFinalState();
 }
 
 PaymentCoordinator& ApplePaySession::paymentCoordinator() const
@@ -1020,10 +1010,9 @@ bool ApplePaySession::isFinalState() const
     }
 }
 
-void ApplePaySession::didReachFinalState()
+bool ApplePaySession::virtualHasPendingActivity() const
 {
-    ASSERT(isFinalState());
-    unsetPendingActivity(*this);
+    return m_state != State::Idle && !isFinalState();
 }
 
 #if defined(ApplePaySessionAdditions_definitions)

@@ -107,6 +107,7 @@ private:
     // ActiveDOMObject API
     void stop() final;
     const char* activeDOMObjectName() const final { return "RTCDataChannel"; }
+    bool virtualHasPendingActivity() const final;
 
     // RTCDataChannelHandlerClient API
     void didChangeReadyState(RTCDataChannelState) final;

@@ -155,13 +155,14 @@ void MediaSource::setPrivateAndOpen(Ref<MediaSourcePrivate>&& mediaSourcePrivate
 void MediaSource::addedToRegistry()
 {
     DEBUG_LOG(LOGIDENTIFIER);
-    setPendingActivity(*this);
+    ++m_associatedRegistryCount;
 }
 
 void MediaSource::removedFromRegistry()
 {
     DEBUG_LOG(LOGIDENTIFIER);
-    unsetPendingActivity(*this);
+    ASSERT(m_associatedRegistryCount);
+    --m_associatedRegistryCount;
 }
 
 MediaTime MediaSource::duration() const
@@ -997,7 +998,7 @@ void MediaSource::openIfInEndedState()
 
 bool MediaSource::virtualHasPendingActivity() const
 {
-    return m_private || m_asyncEventQueue->hasPendingActivity();
+    return m_private || m_asyncEventQueue->hasPendingActivity() || m_associatedRegistryCount;
 }
 
 void MediaSource::stop()

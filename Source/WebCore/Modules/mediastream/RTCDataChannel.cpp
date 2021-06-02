@@ -62,7 +62,6 @@ Ref<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext& context, std:
     ASSERT(handler);
     auto channel = adoptRef(*new RTCDataChannel(context, WTFMove(handler), WTFMove(label), WTFMove(options)));
     channel->suspendIfNeeded();
-    channel->setPendingActivity(channel.get());
     queueTaskKeepingObjectAlive(channel.get(), TaskSource::Networking, [channel = channel.ptr()] {
         if (!channel->m_isDetachable)
             return;
@@ -184,7 +183,11 @@ void RTCDataChannel::close()
     if (m_handler)
         m_handler->close();
     m_handler = nullptr;
-    unsetPendingActivity(*this);
+}
+
+bool RTCDataChannel::virtualHasPendingActivity() const
+{
+    return !m_stopped;
 }
 
 void RTCDataChannel::didChangeReadyState(RTCDataChannelState newState)

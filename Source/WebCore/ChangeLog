@@ -1,3 +1,47 @@
+2021-06-02  Chris Dumez  <cdumez@apple.com>
+
+        Drop legacy ActiveDOMObject::setPendingActivity() / unsetPendingActivity()
+        https://bugs.webkit.org/show_bug.cgi?id=226544
+
+        Reviewed by Darin Adler.
+
+        Drop legacy ActiveDOMObject::setPendingActivity() / unsetPendingActivity(). They are too leak-prone. The modern
+        way to do this is to either override ActiveDOMObject::virtualHasPendingActivity() or use
+        ActiveDOMObject::makePendingActivity().
+
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::ApplePaySession::begin):
+        (WebCore::ApplePaySession::abort):
+        (WebCore::ApplePaySession::completePayment):
+        (WebCore::ApplePaySession::didCancelPaymentSession):
+        (WebCore::ApplePaySession::stop):
+        (WebCore::ApplePaySession::suspend):
+        (WebCore::ApplePaySession::virtualHasPendingActivity const):
+        (WebCore::ApplePaySession::didReachFinalState): Deleted.
+        * Modules/applepay/ApplePaySession.h:
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::addedToRegistry):
+        (WebCore::MediaSource::removedFromRegistry):
+        (WebCore::MediaSource::virtualHasPendingActivity const):
+        * Modules/mediasource/MediaSource.h:
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::create):
+        (WebCore::RTCDataChannel::close):
+        (WebCore::RTCDataChannel::virtualHasPendingActivity const):
+        * Modules/mediastream/RTCDataChannel.h:
+        * dom/ActiveDOMObject.h:
+        * page/EventSource.cpp:
+        (WebCore::EventSource::create):
+        (WebCore::EventSource::networkRequestEnded):
+        (WebCore::EventSource::close):
+        (WebCore::EventSource::abortConnectionAttempt):
+        (WebCore::EventSource::virtualHasPendingActivity const):
+        * page/EventSource.h:
+        * workers/Worker.cpp:
+        (WebCore::Worker::create):
+        (WebCore::Worker::virtualHasPendingActivity const):
+        (WebCore::Worker::notifyFinished):
+
 2021-06-02  Sam Weinig  <weinig@apple.com>
 
         Add support for "relative color syntax" for color()

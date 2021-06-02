@@ -74,24 +74,6 @@ public:
     // It can, however, have a side effect of deleting an ActiveDOMObject.
     virtual void stop();
 
-    // FIXME: Drop this function.
-    // Call sites should be using makePendingActivity() or overriding virtualHasPendingActivity() instead.
-    template<typename T> void setPendingActivity(T& thisObject)
-    {
-        ASSERT(&thisObject == this);
-        thisObject.ref();
-        ++m_pendingActivityInstanceCount;
-    }
-
-    // FIXME: Drop this function.
-    // Call sites should be using makePendingActivity() or overriding virtualHasPendingActivity() instead.
-    template<typename T> void unsetPendingActivity(T& thisObject)
-    {
-        ASSERT(m_pendingActivityInstanceCount > 0);
-        --m_pendingActivityInstanceCount;
-        thisObject.deref();
-    }
-
     template<class T>
     class PendingActivity : public RefCounted<PendingActivity<T>> {
     public:
@@ -151,7 +133,7 @@ private:
     void queueTaskInEventLoop(TaskSource, Function<void ()>&&);
     void queueTaskToDispatchEventInternal(EventTarget&, TaskSource, Ref<Event>&&);
 
-    unsigned m_pendingActivityInstanceCount { 0 };
+    uint64_t m_pendingActivityInstanceCount { 0 };
 #if ASSERT_ENABLED
     bool m_suspendIfNeededWasCalled { false };
     Ref<Thread> m_creationThread { Thread::current() };

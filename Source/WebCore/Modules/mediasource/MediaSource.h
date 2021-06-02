@@ -179,6 +179,7 @@ private:
     Ref<const Logger> m_logger;
     const void* m_logIdentifier { nullptr };
 #endif
+    uint64_t m_associatedRegistryCount { 0 };
 };
 
 String convertEnumerationToString(MediaSource::EndOfStreamError);

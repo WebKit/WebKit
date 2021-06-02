@@ -93,6 +93,7 @@ private:
     const char* activeDOMObjectName() const final;
     void suspend(ReasonForSuspension) final;
     void resume() final;
+    bool virtualHasPendingActivity() const final;
 
     void connect();
     void networkRequestEnded();

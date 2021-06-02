@@ -80,7 +80,6 @@ ExceptionOr<Ref<EventSource>> EventSource::create(ScriptExecutionContext& contex
     }
 
     auto source = adoptRef(*new EventSource(context, fullURL, eventSourceInit));
-    source->setPendingActivity(source.get());
     source->scheduleInitialConnect();
     source->suspendIfNeeded();
     return source;
@@ -130,8 +129,6 @@ void EventSource::networkRequestEnded()
 
     if (m_state != CLOSED)
         scheduleReconnect();
-    else
-        unsetPendingActivity(*this);
 }
 
 void EventSource::scheduleInitialConnect()
@@ -163,10 +160,8 @@ void EventSource::close()
 
     if (m_requestInFlight)
         doExplicitLoadCancellation();
-    else {
+    else
         m_state = CLOSED;
-        unsetPendingActivity(*this);
-    }
 }
 
 bool EventSource::responseIsValid(const ResourceResponse& response) const
@@ -280,15 +275,19 @@ void EventSource::abortConnectionAttempt()
     ASSERT(m_state == CONNECTING);
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_isSuspendedForBackForwardCache);
 
+    auto jsWrapperProtector = makePendingActivity(*this);
     if (m_requestInFlight)
         doExplicitLoadCancellation();
-    else {
+    else
         m_state = CLOSED;
-        unsetPendingActivity(*this);
-    }
 
     ASSERT(m_state == CLOSED);
     dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
+}
+
+bool EventSource::virtualHasPendingActivity() const
+{
+    return m_state != CLOSED;
 }
 
 void EventSource::doExplicitLoadCancellation()
