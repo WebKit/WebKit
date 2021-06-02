@@ -1,3 +1,16 @@
+2021-06-02  Chris Dumez  <cdumez@apple.com>
+
+        Drop Checked::safeGet()
+        https://bugs.webkit.org/show_bug.cgi?id=226537
+
+        Reviewed by Geoffrey Garen.
+
+        Drop Checked::safeGet() and replace with uses of Checked::operator T() or Checked::value().
+        safeGet() is a bit akward, having both a return value and an out-parameter.
+
+        * TestWebKitAPI/Tests/WTF/CheckedArithmeticOperations.cpp:
+        (TestWebKitAPI::CheckedArithmeticTester::run):
+
 2021-06-02  Jean-Yves Avenard  <jya@apple.com>
 
         MediaSessionCoordinator API test is failing,

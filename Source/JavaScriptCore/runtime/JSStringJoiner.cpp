@@ -91,13 +91,11 @@ inline unsigned JSStringJoiner::joinedLength(JSGlobalObject* globalObject) const
     CheckedInt32 separatorLength = m_separator.length();
     CheckedInt32 totalSeparatorsLength = separatorLength * (numberOfStrings - 1);
     CheckedInt32 totalLength = totalSeparatorsLength + m_accumulatedStringsLength;
-
-    int32_t result;
-    if (totalLength.safeGet(result) == CheckedState::DidOverflow) {
+    if (totalLength.hasOverflowed()) {
         throwOutOfMemoryError(globalObject, scope);
         return 0;
     }
-    return result;
+    return totalLength;
 }
 
 JSValue JSStringJoiner::join(JSGlobalObject* globalObject)

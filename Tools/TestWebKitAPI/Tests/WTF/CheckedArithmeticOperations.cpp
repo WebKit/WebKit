@@ -129,41 +129,26 @@ public:
         EXPECT_EQ(true, value.hasOverflowed());
 
         value = 10;
-        type _value = 0;
-        EXPECT_EQ(true, CheckedState::DidNotOverflow == (value * Checked<type, RecordOverflow>(0)).safeGet(_value));
-        _value = 0;
-        EXPECT_EQ(true, CheckedState::DidNotOverflow == (Checked<type, RecordOverflow>(0) * value).safeGet(_value));
-        _value = 0;
-        EXPECT_EQ(true, CheckedState::DidOverflow == (value * Checked<type, RecordOverflow>(std::numeric_limits<type>::max())).safeGet(_value));
-        _value = 0;
-        EXPECT_EQ(true, CheckedState::DidOverflow == (Checked<type, RecordOverflow>(std::numeric_limits<type>::max()) * value).safeGet(_value));
+        EXPECT_FALSE((value * Checked<type, RecordOverflow>(0)).hasOverflowed());
+        EXPECT_FALSE((Checked<type, RecordOverflow>(0) * value).hasOverflowed());
+        EXPECT_TRUE((value * Checked<type, RecordOverflow>(std::numeric_limits<type>::max())).hasOverflowed());
+        EXPECT_TRUE((Checked<type, RecordOverflow>(std::numeric_limits<type>::max()) * value).hasOverflowed());
         value = 0;
-        _value = 0;
-        EXPECT_EQ(true, CheckedState::DidNotOverflow == (value * Checked<type, RecordOverflow>(std::numeric_limits<type>::max())).safeGet(_value));
-        _value = 0;
-        EXPECT_EQ(true, CheckedState::DidNotOverflow == (Checked<type, RecordOverflow>(std::numeric_limits<type>::max()) * value).safeGet(_value));
+        EXPECT_FALSE((value * Checked<type, RecordOverflow>(std::numeric_limits<type>::max())).hasOverflowed());
+        EXPECT_FALSE((Checked<type, RecordOverflow>(std::numeric_limits<type>::max()) * value).hasOverflowed());
         value = 1;
-        _value = 0;
-        EXPECT_EQ(true, CheckedState::DidNotOverflow == (value * Checked<type, RecordOverflow>(std::numeric_limits<type>::max())).safeGet(_value));
-        _value = 0;
-        EXPECT_EQ(true, CheckedState::DidNotOverflow == (Checked<type, RecordOverflow>(std::numeric_limits<type>::max()) * value).safeGet(_value));
-        _value = 0;
-        value = 0;
-        EXPECT_EQ(true, CheckedState::DidNotOverflow == (value * Checked<type, RecordOverflow>(std::numeric_limits<type>::max())).safeGet(_value));
-        _value = 0;
-        EXPECT_EQ(true, CheckedState::DidNotOverflow == (Checked<type, RecordOverflow>(std::numeric_limits<type>::max()) * (type)0).safeGet(_value));
-        _value = 0;
+        EXPECT_FALSE((value * Checked<type, RecordOverflow>(std::numeric_limits<type>::max())).hasOverflowed());
+        EXPECT_FALSE((Checked<type, RecordOverflow>(std::numeric_limits<type>::max()) * value).hasOverflowed());
+        EXPECT_FALSE((value * Checked<type, RecordOverflow>(std::numeric_limits<type>::max())).hasOverflowed());
+        EXPECT_FALSE((Checked<type, RecordOverflow>(std::numeric_limits<type>::max()) * (type)0).hasOverflowed());
         value = 1;
-        EXPECT_EQ(true, CheckedState::DidNotOverflow == (value * Checked<type, RecordOverflow>(std::numeric_limits<type>::max())).safeGet(_value));
-        _value = 0;
-        EXPECT_EQ(true, CheckedState::DidNotOverflow == (Checked<type, RecordOverflow>(std::numeric_limits<type>::max()) * (type)1).safeGet(_value));
-        _value = 0;
+        EXPECT_FALSE((value * Checked<type, RecordOverflow>(std::numeric_limits<type>::max())).hasOverflowed());
+        EXPECT_FALSE((Checked<type, RecordOverflow>(std::numeric_limits<type>::max()) * (type)1).hasOverflowed());
         value = 2;
-        EXPECT_EQ(true, CheckedState::DidOverflow == (value * Checked<type, RecordOverflow>(std::numeric_limits<type>::max())).safeGet(_value));
-        _value = 0;
-        EXPECT_EQ(true, CheckedState::DidOverflow == (Checked<type, RecordOverflow>(std::numeric_limits<type>::max()) * (type)2).safeGet(_value));
+        EXPECT_TRUE((value * Checked<type, RecordOverflow>(std::numeric_limits<type>::max())).hasOverflowed());
+        EXPECT_TRUE((Checked<type, RecordOverflow>(std::numeric_limits<type>::max()) * (type)2).hasOverflowed());
         value = 10;
-        EXPECT_EQ(true, (value * Checked<type, RecordOverflow>(std::numeric_limits<type>::max())).hasOverflowed());
+        EXPECT_TRUE((value * Checked<type, RecordOverflow>(std::numeric_limits<type>::max())).hasOverflowed());
 
 
         Checked<type, OverflowCrashLogger> nvalue; // to hold a not overflowed value.
@@ -172,7 +157,7 @@ public:
         bool unused;
         UNUSED_PARAM(unused);
 
-        _value = 75;
+        type _value = 75;
         type _largeValue = 100;
         type _smallValue = 50;
 

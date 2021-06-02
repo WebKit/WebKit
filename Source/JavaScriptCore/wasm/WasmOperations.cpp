@@ -791,21 +791,19 @@ JSC_DEFINE_JIT_OPERATION(operationWasmTableCopy, bool, (Instance* instance, unsi
     CheckedUint32 lastDstElementIndexChecked = static_cast<uint32_t>(dstOffset);
     lastDstElementIndexChecked += static_cast<uint32_t>(length);
 
-    uint32_t lastDstElementIndex;
-    if (lastDstElementIndexChecked.safeGet(lastDstElementIndex) == CheckedState::DidOverflow)
+    if (lastDstElementIndexChecked.hasOverflowed())
         return false;
 
-    if (lastDstElementIndex > dstTable->length())
+    if (lastDstElementIndexChecked > dstTable->length())
         return false;
 
     CheckedUint32 lastSrcElementIndexChecked = static_cast<uint32_t>(srcOffset);
     lastSrcElementIndexChecked += static_cast<uint32_t>(length);
 
-    uint32_t lastSrcElementIndex;
-    if (lastSrcElementIndexChecked.safeGet(lastSrcElementIndex) == CheckedState::DidOverflow)
+    if (lastSrcElementIndexChecked.hasOverflowed())
         return false;
 
-    if (lastSrcElementIndex > srcTable->length())
+    if (lastSrcElementIndexChecked > srcTable->length())
         return false;
 
     instance->tableCopy(dstOffset, srcOffset, length, dstTableIndex, srcTableIndex);

@@ -754,14 +754,6 @@ public:
             this->crash();
         return static_cast<U>(m_value);
     }
-    
-    inline CheckedState safeGet(T& value) const WARN_UNUSED_RETURN
-    {
-        value = m_value;
-        if (this->hasOverflowed())
-            return CheckedState::DidOverflow;
-        return CheckedState::DidNotOverflow;
-    }
 
     // Mutating assignment
     template <typename U> Checked& operator+=(U rhs)
@@ -872,48 +864,40 @@ private:
 
 template <typename U, typename V, typename OverflowHandler> static inline Checked<typename Result<U, V>::ResultType, OverflowHandler> operator+(Checked<U, OverflowHandler> lhs, Checked<V, OverflowHandler> rhs)
 {
-    U x = 0;
-    V y = 0;
-    bool overflowed = lhs.safeGet(x) == CheckedState::DidOverflow || rhs.safeGet(y) == CheckedState::DidOverflow;
+    if (UNLIKELY(lhs.hasOverflowed() || rhs.hasOverflowed()))
+        return ResultOverflowed;
     typename Result<U, V>::ResultType result = 0;
-    overflowed |= !safeAdd<OverflowHandler>(x, y, result);
-    if (overflowed)
+    if (UNLIKELY(!safeAdd<OverflowHandler>(lhs.value(), rhs.value(), result)))
         return ResultOverflowed;
     return result;
 }
 
 template <typename U, typename V, typename OverflowHandler> static inline Checked<typename Result<U, V>::ResultType, OverflowHandler> operator-(Checked<U, OverflowHandler> lhs, Checked<V, OverflowHandler> rhs)
 {
-    U x = 0;
-    V y = 0;
-    bool overflowed = lhs.safeGet(x) == CheckedState::DidOverflow || rhs.safeGet(y) == CheckedState::DidOverflow;
+    if (UNLIKELY(lhs.hasOverflowed() || rhs.hasOverflowed()))
+        return ResultOverflowed;
     typename Result<U, V>::ResultType result = 0;
-    overflowed |= !safeSub<OverflowHandler>(x, y, result);
-    if (overflowed)
+    if (UNLIKELY(!safeSub<OverflowHandler>(lhs.value(), rhs.value(), result)))
         return ResultOverflowed;
     return result;
 }
 
 template <typename U, typename V, typename OverflowHandler> static inline Checked<typename Result<U, V>::ResultType, OverflowHandler> operator*(Checked<U, OverflowHandler> lhs, Checked<V, OverflowHandler> rhs)
 {
-    U x = 0;
-    V y = 0;
-    bool overflowed = lhs.safeGet(x) == CheckedState::DidOverflow || rhs.safeGet(y) == CheckedState::DidOverflow;
+    if (UNLIKELY(lhs.hasOverflowed() || rhs.hasOverflowed()))
+        return ResultOverflowed;
     typename Result<U, V>::ResultType result = 0;
-    overflowed |= !safeMultiply<OverflowHandler>(x, y, result);
-    if (overflowed)
+    if (UNLIKELY(!safeMultiply<OverflowHandler>(lhs.value(), rhs.value(), result)))
         return ResultOverflowed;
     return result;
 }
 
 template <typename U, typename V, typename OverflowHandler> static inline Checked<typename Result<U, V>::ResultType, OverflowHandler> operator/(Checked<U, OverflowHandler> lhs, Checked<V, OverflowHandler> rhs)
 {
-    U x = 0;
-    V y = 0;
-    bool overflowed = lhs.safeGet(x) == CheckedState::DidOverflow || rhs.safeGet(y) == CheckedState::DidOverflow;
+    if (UNLIKELY(lhs.hasOverflowed() || rhs.hasOverflowed()))
+        return ResultOverflowed;
     typename Result<U, V>::ResultType result = 0;
-    overflowed |= !safeDivide<OverflowHandler>(x, y, result);
-    if (overflowed)
+    if (UNLIKELY(!safeDivide<OverflowHandler>(lhs.value(), rhs.value(), result)))
         return ResultOverflowed;
     return result;
 }

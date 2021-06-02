@@ -2553,8 +2553,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
             CheckedUint32 argumentIndexChecked = index.asUInt32();
             argumentIndexChecked += node->numberOfArgumentsToSkip();
-            unsigned argumentIndex;
-            if (argumentIndexChecked.safeGet(argumentIndex) != CheckedState::DidOverflow) {
+            if (!argumentIndexChecked.hasOverflowed()) {
+                unsigned argumentIndex = argumentIndexChecked;
                 if (inlineCallFrame) {
                     if (argumentIndex < static_cast<unsigned>(inlineCallFrame->argumentCountIncludingThis - 1)) {
                         setForNode(node, m_state.operand(

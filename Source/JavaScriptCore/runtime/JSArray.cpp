@@ -507,11 +507,11 @@ bool JSArray::appendMemcpy(JSGlobalObject* globalObject, VM& vm, unsigned startI
     CheckedUint32 checkedNewLength = startIndex;
     checkedNewLength += otherLength;
 
-    unsigned newLength;
-    if (checkedNewLength.safeGet(newLength) == CheckedState::DidOverflow) {
+    if (checkedNewLength.hasOverflowed()) {
         throwException(globalObject, scope, createRangeError(globalObject, LengthExceededTheMaximumArrayLengthError));
         return false;
     }
+    unsigned newLength = checkedNewLength;
 
     if (newLength >= MIN_SPARSE_ARRAY_INDEX)
         return false;
@@ -1043,11 +1043,11 @@ bool JSArray::unshiftCountWithAnyIndexingType(JSGlobalObject* globalObject, unsi
 
         CheckedUint32 checkedLength(oldLength);
         checkedLength += count;
-        unsigned newLength;
-        if (CheckedState::DidOverflow == checkedLength.safeGet(newLength)) {
+        if (checkedLength.hasOverflowed()) {
             throwOutOfMemoryError(globalObject, scope);
             return true;
         }
+        unsigned newLength = checkedLength;
         if (newLength > MAX_STORAGE_VECTOR_LENGTH)
             return false;
         if (!ensureLength(vm, newLength)) {
@@ -1092,11 +1092,11 @@ bool JSArray::unshiftCountWithAnyIndexingType(JSGlobalObject* globalObject, unsi
 
         CheckedUint32 checkedLength(oldLength);
         checkedLength += count;
-        unsigned newLength;
-        if (CheckedState::DidOverflow == checkedLength.safeGet(newLength)) {
+        if (checkedLength.hasOverflowed()) {
             throwOutOfMemoryError(globalObject, scope);
             return true;
         }
+        unsigned newLength = checkedLength;
         if (newLength > MAX_STORAGE_VECTOR_LENGTH)
             return false;
         if (!ensureLength(vm, newLength)) {

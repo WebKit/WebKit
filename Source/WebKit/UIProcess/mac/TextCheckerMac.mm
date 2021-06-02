@@ -440,8 +440,7 @@ void TextChecker::updateSpellingUIWithGrammarString(SpellDocumentTag, const Stri
     CheckedUint64 endOfRangeChecked = grammarDetail.range.location;
     endOfRangeChecked += grammarDetail.range.length;
 
-    uint64_t endOfRange;
-    if (endOfRangeChecked.safeGet(endOfRange) == CheckedState::DidOverflow || endOfRange >= badGrammarPhrase.length())
+    if (endOfRangeChecked.hasOverflowed() || endOfRangeChecked >= badGrammarPhrase.length())
         return;
 
     NSDictionary *detail = @{

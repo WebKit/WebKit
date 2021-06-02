@@ -89,10 +89,10 @@ std::optional<uint32_t> Table::grow(uint32_t delta, JSValue defaultValue)
 
     CheckedUint32 newLengthChecked = length();
     newLengthChecked += delta;
-    uint32_t newLength;
-    if (newLengthChecked.safeGet(newLength) == CheckedState::DidOverflow)
+    if (newLengthChecked.hasOverflowed())
         return std::nullopt;
 
+    uint32_t newLength = newLengthChecked;
     if (maximum() && newLength > *maximum())
         return std::nullopt;
     if (!isValidLength(newLength))
@@ -102,11 +102,10 @@ std::optional<uint32_t> Table::grow(uint32_t delta, JSValue defaultValue)
         if (newLengthChecked > allocatedLength(m_length)) {
             CheckedUint32 reallocSizeChecked = allocatedLength(newLengthChecked);
             reallocSizeChecked *= sizeof(*container.get());
-            uint32_t reallocSize;
-            if (reallocSizeChecked.safeGet(reallocSize) == CheckedState::DidOverflow)
+            if (reallocSizeChecked.hasOverflowed())
                 return false;
             // FIXME this over-allocates and could be smarter about not committing all of that memory https://bugs.webkit.org/show_bug.cgi?id=181425
-            container.realloc(reallocSize);
+            container.realloc(reallocSizeChecked);
         }
         for (uint32_t i = m_length; i < allocatedLength(newLength); ++i) {
             new (&container.get()[i]) std::remove_reference_t<decltype(*container.get())>();
