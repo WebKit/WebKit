@@ -1,3 +1,17 @@
+2021-06-02  Sam Weinig  <weinig@apple.com>
+
+        Add support for "relative color syntax" for color()
+        https://bugs.webkit.org/show_bug.cgi?id=226513
+
+        Reviewed by Darin Adler.
+
+        Updated test and results now that we support relative color syntax
+        for color(srgb ...), color(a98-rgb ...), color(rec2020 ...),
+        color(prophoto-rgb ...) and color(xyz ...).
+
+        * fast/css/parsing-relative-color-syntax-expected.txt:
+        * fast/css/parsing-relative-color-syntax.html:
+
 2021-06-02  Kyle Piddington  <kpiddington@apple.com>
 
         Add 'mix' override with bool-vectors to MSL translator

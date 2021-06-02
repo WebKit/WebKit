@@ -1,3 +1,44 @@
+2021-06-02  Sam Weinig  <weinig@apple.com>
+
+        Add support for "relative color syntax" for color()
+        https://bugs.webkit.org/show_bug.cgi?id=226513
+
+        Reviewed by Darin Adler.
+
+        CSS Color 5 has recently been update to support relative color syntax for
+        the color() function in addition to the existing rgb(), hsl(), hwb(), lab()
+        and lch().
+
+        Took the opertunity to refactor other relative color syntax parsing to share
+        more code between relative and non-relative parsers using a shared function
+        with lambdas to differentiate the component consumers. This was done for all
+        the color types except rgb() and hsl(), which have notable differences in 
+        parsing between the relative and non-relative version.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::parseNonRelativeRGBParameters):
+        (WebCore::CSSPropertyParserHelpers::parseRGBParameters):
+        (WebCore::CSSPropertyParserHelpers::colorByNormalizingHSLComponents):
+        (WebCore::CSSPropertyParserHelpers::parseRelativeHSLParameters):
+        (WebCore::CSSPropertyParserHelpers::parseNonRelativeHSLParameters):
+        (WebCore::CSSPropertyParserHelpers::parseHSLParameters):
+        (WebCore::CSSPropertyParserHelpers::parseHWBParameters):
+        (WebCore::CSSPropertyParserHelpers::parseRelativeHWBParameters):
+        (WebCore::CSSPropertyParserHelpers::parseNonRelativeHWBParameters):
+        (WebCore::CSSPropertyParserHelpers::parseLabParameters):
+        (WebCore::CSSPropertyParserHelpers::parseRelativeLabParameters):
+        (WebCore::CSSPropertyParserHelpers::parseNonRelativeLabParameters):
+        (WebCore::CSSPropertyParserHelpers::parseLCHParameters):
+        (WebCore::CSSPropertyParserHelpers::parseRelativeLCHParameters):
+        (WebCore::CSSPropertyParserHelpers::parseNonRelativeLCHParameters):
+        (WebCore::CSSPropertyParserHelpers::parseColorFunctionForRGBTypes):
+        (WebCore::CSSPropertyParserHelpers::parseRelativeColorFunctionForRGBTypes):
+        (WebCore::CSSPropertyParserHelpers::parseColorFunctionForXYZParameters):
+        (WebCore::CSSPropertyParserHelpers::parseRelativeColorFunctionForXYZParameters):
+        (WebCore::CSSPropertyParserHelpers::parseRelativeColorFunctionParameters):
+        (WebCore::CSSPropertyParserHelpers::parseNonRelativeColorFunctionParameters):
+        (WebCore::CSSPropertyParserHelpers::parseColorFunctionParameters):
+
 2021-06-02  Youenn Fablet  <youenn@apple.com>
 
         HTMLMediaElement::virtualHasPendingActivity may keep objects alive unnecessarily
