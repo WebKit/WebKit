@@ -507,6 +507,7 @@
 		996B17841EBA441C007E10EB /* DebugUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugUtilities.h; sourceTree = "<group>"; };
 		9B67F3F12228D5310030DE9C /* WeakHashSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WeakHashSet.h; sourceTree = "<group>"; };
 		9B96E9B324FF77B8001756C3 /* CompactUniquePtrTuple.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompactUniquePtrTuple.h; sourceTree = "<group>"; };
+		9BB91F512648EA4D00A56217 /* CheckedPtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CheckedPtr.h; sourceTree = "<group>"; };
 		9BC70F04176C379D00101DEC /* AtomStringTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AtomStringTable.cpp; sourceTree = "<group>"; };
 		9BD8F40A176C2AD80002D865 /* AtomStringTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AtomStringTable.h; sourceTree = "<group>"; };
 		9C67C542589348E285B49699 /* IndexedContainerIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexedContainerIterator.h; sourceTree = "<group>"; };
@@ -983,6 +984,7 @@
 				413FE8F51F8D2EAB00F6D7D7 /* CallbackAggregator.h */,
 				A8A4726A151A825A004123FF /* CheckedArithmetic.h */,
 				A8A4726B151A825A004123FF /* CheckedBoolean.h */,
+				9BB91F512648EA4D00A56217 /* CheckedPtr.h */,
 				0F66B2801DC97BAB004A1D3F /* ClockType.cpp */,
 				0F66B2811DC97BAB004A1D3F /* ClockType.h */,
 				0FC4EDE51696149600F65041 /* CommaPrinter.h */,

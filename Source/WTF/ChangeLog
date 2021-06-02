@@ -1,3 +1,47 @@
+2021-05-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add CheckedPtr
+        https://bugs.webkit.org/show_bug.cgi?id=226158
+
+        Reviewed by Antti Koivisto.
+
+        This patch introduces a new type of smart pointer, CheckedPtr, which behaves like RefPtr and
+        let each object keep track of pointers pointing to the object. Unlike CheckedPtr, the purpose of
+        this internal counter is to release assert that there is no outstanding pointer at the time
+        of destruction instead of keeping the object alive when there is one.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CheckedPtr.h: Added.
+        (WTF::CheckedPtr): Added.
+        (WTF::CheckedPtr::CheckedPtr): Added.
+        (WTF::CheckedPtr::~CheckedPtr): Added.
+        (WTF::CheckedPtr::isHashTableDeletedValue const): Added.
+        (WTF::CheckedPtr::operator UnspecifiedBoolType const): Added.
+        (WTF::CheckedPtr::operator! const): Added.
+        (WTF::CheckedPtr::get const): Added.
+        (WTF::CheckedPtr::get): Added.
+        (WTF::CheckedPtr::operator* const): Added.
+        (WTF::CheckedPtr::operator*): Added.
+        (WTF::CheckedPtr::operator-> const): Added.
+        (WTF::CheckedPtr::operator->): Added.
+        (WTF::CheckedPtr::operator== const): Added.
+        (WTF::CheckedPtr::operator=): Added.
+        (WTF::CheckedPtr::unspecifiedBoolTypeInstance const): Added.
+        (WTF::CheckedPtr::refIfNotNull): Added.
+        (WTF::CheckedPtr::derefIfNotNull): Added.
+        (WTF::makeCheckedPtr): Added.
+        (WTF::is): Added.
+        (WTF::CanMakeCheckedPtr): Added.
+        (WTF::CanMakeCheckedPtr::~CanMakeCheckedPtr): Added. Release assert that m_ptrCount is 0.
+        (WTF::CanMakeCheckedPtr::ptrCount const): Added.
+        (WTF::CanMakeCheckedPtr::incrementPtrCount): Added.
+        (WTF::CanMakeCheckedPtr::decrementPtrCount): Added. Note that we don't do anything when m_ptrCount
+        becomes 0 unlike RefPtr.
+        (WTF::HashTraits<CheckedPtr<P>>): Added.
+        (WTF::HashTraits<CheckedPtr<P>>::emptyValue): Added.
+        (WTF::HashTraits<CheckedPtr<P>>::peek): Added.
+        (WTF::HashTraits<CheckedPtr<P>>::customDeleteBucket): Added.
+
 2021-06-01  Darin Adler  <darin@apple.com>
 
         Remove <wtf/Optional.h>

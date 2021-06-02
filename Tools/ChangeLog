@@ -1,3 +1,20 @@
+2021-05-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add CheckedPtr
+        https://bugs.webkit.org/show_bug.cgi?id=226158
+
+        Reviewed by Antti Koivisto.
+
+        Added basic tests.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/CheckedPtr.cpp: Added.
+        (TestWebKitAPI::CheckedObject): Added.
+        (TestWebKitAPI::DerivedCheckedObject): Added.
+        (WTF_CheckedPtr.Basic):
+        (WTF_CheckedPtr.DerivedClass):
+        (WTF_CheckedPtr.HashSet):
+
 2021-06-01  Darin Adler  <darin@apple.com>
 
         Remove <wtf/Optional.h>
