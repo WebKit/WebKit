@@ -660,6 +660,7 @@ public:
     void audioOutputDeviceChanged();
 
     MediaPlayerIdentifier identifier() const;
+    bool hasMediaEngine() const;
 
 private:
     MediaPlayer(MediaPlayerClient&);
@@ -744,6 +745,11 @@ inline String MediaPlayer::audioOutputDeviceId() const
 inline String MediaPlayer::audioOutputDeviceIdOverride() const
 {
     return m_client ? m_client->audioOutputDeviceIdOverride() : String { };
+}
+
+inline bool MediaPlayer::hasMediaEngine() const
+{
+    return m_currentMediaEngine;
 }
 
 } // namespace WebCore

@@ -153,7 +153,7 @@ public:
     bool hasAudio() const override;
     bool hasRenderer() const { return static_cast<bool>(renderer()); }
 
-    static HashSet<HTMLMediaElement*>& allMediaElements();
+    WEBCORE_EXPORT static HashSet<HTMLMediaElement*>& allMediaElements();
 
     WEBCORE_EXPORT static RefPtr<HTMLMediaElement> bestMediaElementForRemoteControls(MediaElementSession::PlaybackControlsPurpose, const Document* = nullptr);
 
@@ -929,6 +929,7 @@ private:
     void setInActiveDocument(bool);
 
     void checkForAudioAndVideo();
+    bool hasLiveSource() const;
 
 #if !RELEASE_LOG_DISABLED
     const void* mediaPlayerLogIdentifier() final { return logIdentifier(); }

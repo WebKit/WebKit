@@ -929,6 +929,7 @@ enum TreeType {
 
     [Conditional=VIDEO] MediaUsageState mediaUsageState(HTMLMediaElement element);
     [Conditional=VIDEO] boolean elementShouldDisplayPosterImage(HTMLVideoElement element);
+    [Conditional=VIDEO] readonly attribute unsigned long mediaElementCount;
 
     DOMString ongoingLoadsDescriptions();
     undefined setCaptureExtraNetworkLoadMetricsEnabled(boolean value);

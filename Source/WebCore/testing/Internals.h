@@ -958,6 +958,8 @@ public:
 
     using MediaSessionState = PlatformMediaSession::State;
     MediaSessionState mediaSessionState(HTMLMediaElement&);
+
+    size_t mediaElementCount() const;
 #endif
 
     void setCaptureExtraNetworkLoadMetricsEnabled(bool);

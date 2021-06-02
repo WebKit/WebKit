@@ -5720,12 +5720,20 @@ void HTMLMediaElement::resume()
     updateRenderer();
 }
 
+bool HTMLMediaElement::hasLiveSource() const
+{
+    // FIXME: Handle the case of an ended media stream as srcObject.
+    return m_player && m_player->hasMediaEngine() && (!ended() || seeking() || m_networkState >= NETWORK_IDLE);
+}
+
 bool HTMLMediaElement::virtualHasPendingActivity() const
 {
     return m_creatingControls
-        || (m_asyncEventQueue->hasPendingActivity() || m_playbackTargetIsWirelessQueue.hasPendingTasks())
+        || m_asyncEventQueue->hasPendingActivity()
+        || m_playbackTargetIsWirelessQueue.hasPendingTasks()
+        || m_resourceSelectionTaskQueue.hasPendingTasks()
         || (hasAudio() && isPlaying())
-        || (m_player && (!ended() || seeking() || m_networkState >= NETWORK_IDLE) && hasEventListeners());
+        || (hasLiveSource() && hasEventListeners());
 }
 
 void HTMLMediaElement::mediaVolumeDidChange()

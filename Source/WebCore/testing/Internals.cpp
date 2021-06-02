@@ -4507,6 +4507,13 @@ ExceptionOr<bool> Internals::elementShouldDisplayPosterImage(HTMLVideoElement& e
 #endif
 }
 
+#if ENABLE(VIDEO)
+size_t Internals::mediaElementCount() const
+{
+    return HTMLMediaElement::allMediaElements().size();
+}
+#endif
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 void Internals::setMockMediaPlaybackTargetPickerEnabled(bool enabled)

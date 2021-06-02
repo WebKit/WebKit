@@ -1,3 +1,28 @@
+2021-06-02  Youenn Fablet  <youenn@apple.com>
+
+        HTMLMediaElement::virtualHasPendingActivity may keep objects alive unnecessarily
+        https://bugs.webkit.org/show_bug.cgi?id=226529
+        <rdar://78726921>
+
+        Reviewed by Eric Carlson.
+
+        In case a media element srcObject is set, its media player is no longer null, even if its srcObject is set back to null later on.
+        Its ended state is set to false so the media element is kept alive if an event listener is set on the element.
+        To prevent this, add a check to:
+        - keep the media element alive if its resource selection queue is not empty
+        - allow GC of a media element if its media player has no engine
+        A follow-up patch should allow GC a media element with an ended MediaStream.
+
+        Test: fast/mediastream/mediaElement-gc.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::virtualHasPendingActivity const):
+        * html/HTMLMediaElement.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::mediaElementCount const):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2021-06-02  Garrett Davidson  <garrett_davidson@apple.com>
 
         [Cocoa] _WKAuthenticatorAssertionResponse should specify the attachment type used
