@@ -4111,6 +4111,9 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     LayerListMutationDetector mutationChecker(*this);
 #endif
 
+    if (renderer().hasClipPath() && !downcast<RenderBox>(renderer()).hitTestClipPath(hitTestLocation, toLayoutPoint(location() - renderBoxLocation())))
+        return nullptr;
+
     // Begin by walking our list of positive layers from highest z-index down to the lowest z-index.
     auto* hitLayer = hitTestList(positiveZOrderLayers(), rootLayer, request, result, hitTestRect, hitTestLocation,
                                         localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);

@@ -1,5 +1,23 @@
 2021-06-02  Antoine Quint  <graouts@webkit.org>
 
+        Hit-testing does not account for clip-path set on parent of <iframe>
+        https://bugs.webkit.org/show_bug.cgi?id=226499
+        <rdar://problem/77317612>
+
+        Reviewed by Simon Fraser.
+
+        Add new tests checking that we don't hit-tests elements when the location is
+        part of an <iframe> clipped by the clip-path property set on a parent element.
+        We test the case where the <iframe> has `position: absolute` as well as the
+        default `position`.or https://bugs.webkit.org/show_bug.cgi?id=226499
+
+        * css3/masking/clip-path-hit-test-on-absolute-position-iframe-parent-expected.txt: Added.
+        * css3/masking/clip-path-hit-test-on-absolute-position-iframe-parent.html: Added.
+        * css3/masking/clip-path-hit-test-on-iframe-parent-expected.txt: Added.
+        * css3/masking/clip-path-hit-test-on-iframe-parent.html: Added.
+
+2021-06-02  Antoine Quint  <graouts@webkit.org>
+
         REGRESSION (r275227): Check boxes on V-Safe site flicker when selected
         https://bugs.webkit.org/show_bug.cgi?id=226549
         <rdar://problem/77722651>
