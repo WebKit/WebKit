@@ -1,3 +1,19 @@
+2021-06-02  Jean-Yves Avenard  <jya@apple.com>
+
+        MediaSessionCoordinator API test is failing,
+        https://bugs.webkit.org/show_bug.cgi?id=226460
+        rdar://78680005
+
+        Reviewed by Eric Carlson.
+
+        When leaving a MediaSessionCoordinator from the JS side; there's no callback
+        occurring from the MediaSessionCoordinatorPrivate to the MediaSessionCoordinator
+        (which is what this test was about). A state change callback should only occur
+        when it's the MediaSessionCoordinatorPrivate that leaves.
+
+        * TestWebKitAPI/Tests/WebKit/MediaSessionCoordinatorTest.mm:
+        (TestWebKitAPI::TEST_F):
+
 2021-06-02  Garrett Davidson  <davidson.garrettm@gmail.com>
 
 

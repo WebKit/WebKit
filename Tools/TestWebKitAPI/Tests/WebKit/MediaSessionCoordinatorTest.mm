@@ -462,10 +462,13 @@ TEST_F(MediaSessionCoordinatorTest, StateChanges)
     [webView() objectByEvaluatingJavaScript:@"navigator.mediaSession.coordinator.leave()"];
     String lastMethodCalled;
     executeUntil([&] {
-        lastStateChange = coordinator().lastStateChange;
-        return lastStateChange == "coordinatorStateChanged";
+        lastMethodCalled = coordinator().lastMethodCalled;
+        return lastMethodCalled == "leave";
     });
-    EXPECT_STREQ("coordinatorStateChanged", lastStateChange.utf8().data());
+    EXPECT_STREQ("leave", lastMethodCalled.utf8().data());
+
+    RetainPtr<NSString> state = [webView() stringByEvaluatingJavaScript:@"navigator.mediaSession.coordinator.state"];
+    EXPECT_STREQ("closed", [state UTF8String]);
 }
 
 TEST_F(MediaSessionCoordinatorTest, CoordinatorMethodCallbacks)
