@@ -35,6 +35,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -54,7 +55,7 @@ namespace Style {
 
 class Resolver;
 
-class Scope {
+class Scope : public CanMakeWeakPtr<Scope> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit Scope(Document&);
@@ -133,6 +134,8 @@ private:
     void updateActiveStyleSheets(UpdateType);
     void scheduleUpdate(UpdateType);
 
+    using ResolverScopes = HashMap<Ref<Resolver>, Vector<WeakPtr<Scope>>>;
+    ResolverScopes collectResolverScopes();
     template <typename TestFunction> void evaluateMediaQueries(TestFunction&&);
 
     WEBCORE_EXPORT void flushPendingSelfUpdate();

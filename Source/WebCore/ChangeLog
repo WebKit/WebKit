@@ -1,3 +1,26 @@
+2021-06-02  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r276882): Style not invalidated correctly for media queries in shadow trees that share style
+        https://bugs.webkit.org/show_bug.cgi?id=226369
+        <rdar://problem/78684562>
+
+        Reviewed by Sam Weinig.
+
+        Style resolvers are stateful in respect to media queries. We would only invalidate in the first shadow tree
+        because that evaluation flipped the state and the second evaluation would see nothing changing in media query
+        state.
+
+        * style/StyleScope.cpp:
+        (WebCore::Style::Scope::collectResolverScopes):
+
+        Add a helper to collect all scopes associated with a resolver.
+
+        (WebCore::Style::Scope::evaluateMediaQueries):
+
+        Only evaluate each resolver once, then invalidate all associated scopes if needed.
+
+        * style/StyleScope.h:
+
 2021-05-28  Antoine Quint  <graouts@webkit.org>
 
         Hit-testing does not account for clip-path on <iframe>

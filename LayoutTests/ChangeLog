@@ -1,3 +1,17 @@
+2021-06-02  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r276882): Style not invalidated correctly for media queries in shadow trees that share style
+        https://bugs.webkit.org/show_bug.cgi?id=226369
+        <rdar://problem/78684562>
+
+        Reviewed by Sam Weinig.
+
+        Expand the existing test to have multiple shadow trees sharing style.
+
+        * fast/shadow-dom/media-query-in-shadow-style-expected.html:
+        * fast/shadow-dom/media-query-in-shadow-style.html:
+        * fast/shadow-dom/resources/media-query-in-shadow-style-frame.html:
+
 2021-06-02  Youenn Fablet  <youenn@apple.com>
 
         Fix race condition in binary_wsh.py
