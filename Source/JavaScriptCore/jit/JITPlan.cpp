@@ -156,8 +156,10 @@ void JITPlan::compileInThread(JITWorklistThread* thread)
 
     CompilationScope compilationScope;
 
+#if ENABLE(DFG_JIT)
     if (DFG::logCompilationChanges(m_mode) || Options::logPhaseTimes())
         dataLog("DFG(Plan) compiling ", *m_codeBlock, " with ", m_mode, ", instructions size = ", m_codeBlock->instructionsSize(), "\n");
+#endif // ENABLE(DFG_JIT)
 
     CompilationPath path = compileInThreadImpl();
 

@@ -1,3 +1,13 @@
+2021-06-02  Pablo Saavedra  <psaavedra@igalia.com>
+
+        Fix build error with ENABLE_DFG_JIT=OFF
+        https://bugs.webkit.org/show_bug.cgi?id=226550
+
+        Reviewed by Mark Lam.
+
+        * jit/JITPlan.cpp:
+        (JSC::JITPlan::compileInThread):
+
 2021-06-02  Robin Morisset  <rmorisset@apple.com>
 
         We should drop B3 values while running Air
