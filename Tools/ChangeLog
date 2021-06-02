@@ -1,3 +1,35 @@
+2021-06-02  W.D. Xiong  <w_xiong@apple.com>
+        
+        [resultsdbpy] "legend" is misspelled as "lengend"
+        https://bugs.webkit.org/show_bug.cgi?id=226436
+
+        Reviewed by Darin Adler.
+
+        Corrected said misspelling in resultsdbpy
+
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/js/timeline.js:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/library/css/docs.yaml:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/library/css/index.html:
+        * Scripts/libraries/resultsdbpy/resultsdbpy/view/static/library/css/webkit.css:
+        (.legend, .timeline>.content .legend):
+        (.legend.horizontal, .timeline>.header .legend):
+        (.legend>.item):
+        (.legend>.item .dot):
+        (.legend>.item .dot img, .legend>.item .dot .text):
+        (.legend>.item .dot>img, .legend>.item .dot>.text):
+        (.timeline.legend>.item .dot::before):
+        (.timeline.legend>.item .dot::after):
+        (.legend>.item .label):
+        (.lengend, .timeline>.content .lengend): Deleted.
+        (.lengend.horizontal, .timeline>.header .lengend): Deleted.
+        (.lengend>.item): Deleted.
+        (.lengend>.item .dot): Deleted.
+        (.lengend>.item .dot img, .lengend>.item .dot .text): Deleted.
+        (.lengend>.item .dot>img, .lengend>.item .dot>.text): Deleted.
+        (.timeline.lengend>.item .dot::before): Deleted.
+        (.timeline.lengend>.item .dot::after): Deleted.
+        (.lengend>.item .label): Deleted.
+
 2021-06-02  Chris Dumez  <cdumez@apple.com>
 
         Drop Checked::safeGet()

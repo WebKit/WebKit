@@ -1404,12 +1404,12 @@
                                 </div>
                             </div>
         -
-            title: Lengend
+            title: legend
             examples:
                 -
                     description: ~
                     html: |-
-                        <div class="lengend">
+                        <div class="legend">
                             <div class="item">
                                 <div class="dot success">
                                     <div class="text">✓</div>
@@ -1428,7 +1428,7 @@
                 -
                     description: With horizontal mixin
                     html: |-
-                        <div class="lengend horizontal">
+                        <div class="legend horizontal">
                             <div class="item">
                                 <div class="dot success">
                                     <div class="text">✓</div>
@@ -1447,7 +1447,7 @@
                 -
                     description: With timeline mixin
                     html: |-
-                        <div class="lengend timeline">
+                        <div class="legend timeline">
                             <div class="item">
                                 <div class="dot success">
                                     <div class="text">✓</div>
