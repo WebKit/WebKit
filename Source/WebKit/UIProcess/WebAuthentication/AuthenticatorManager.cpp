@@ -38,6 +38,7 @@
 #include "WebPreferencesKeys.h"
 #include "WebProcessProxy.h"
 #include <WebCore/AuthenticatorAssertionResponse.h>
+#include <WebCore/AuthenticatorAttachment.h>
 #include <WebCore/AuthenticatorTransport.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>
 #include <WebCore/WebAuthenticationConstants.h>

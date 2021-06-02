@@ -33,6 +33,7 @@
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <LocalAuthentication/LocalAuthentication.h>
+#import <WebCore/AuthenticatorAttachment.h>
 #import <WebCore/PublicKeyCredentialCreationOptions.h>
 #import <WebCore/PublicKeyCredentialRequestOptions.h>
 #import <WebKit/WKPreferencesPrivate.h>

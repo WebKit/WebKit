@@ -32,6 +32,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "FidoTestData.h"
+#include <WebCore/AuthenticatorAttachment.h>
 #include <WebCore/CBORReader.h>
 #include <WebCore/CBORValue.h>
 #include <WebCore/CBORWriter.h>
@@ -353,7 +354,7 @@ Vector<uint8_t> getTestU2fRegisterResponse(size_t prefixSize, const uint8_t appe
 // https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html#commands
 TEST(CTAPResponseTest, TestReadMakeCredentialResponse)
 {
-    auto makeCredentialResponse = readCTAPMakeCredentialResponse(convertBytesToVector(TestData::kTestMakeCredentialResponse, sizeof(TestData::kTestMakeCredentialResponse)));
+    auto makeCredentialResponse = readCTAPMakeCredentialResponse(convertBytesToVector(TestData::kTestMakeCredentialResponse, sizeof(TestData::kTestMakeCredentialResponse)), AuthenticatorAttachment::CrossPlatform);
     ASSERT_TRUE(makeCredentialResponse);
     auto cborAttestationObject = cbor::CBORReader::read(convertBytesToVector(reinterpret_cast<uint8_t*>(makeCredentialResponse->attestationObject()->data()), makeCredentialResponse->attestationObject()->byteLength()));
     ASSERT_TRUE(cborAttestationObject);
@@ -401,7 +402,7 @@ TEST(CTAPResponseTest, TestReadMakeCredentialResponse)
 // https://fidoalliance.org/specs/fido-v2.0-ps-20170927/fido-client-to-authenticator-protocol-v2.0-ps-20170927.html
 TEST(CTAPResponseTest, TestReadGetAssertionResponse1)
 {
-    auto getAssertionResponse = readCTAPGetAssertionResponse(convertBytesToVector(TestData::kDeviceGetAssertionResponseShort, sizeof(TestData::kDeviceGetAssertionResponseShort)));
+    auto getAssertionResponse = readCTAPGetAssertionResponse(convertBytesToVector(TestData::kDeviceGetAssertionResponseShort, sizeof(TestData::kDeviceGetAssertionResponseShort)), AuthenticatorAttachment::CrossPlatform);
     ASSERT_TRUE(getAssertionResponse);
 
     EXPECT_EQ(getAssertionResponse->authenticatorData()->byteLength(), sizeof(TestData::kCtap2GetAssertionAuthData));
@@ -412,7 +413,7 @@ TEST(CTAPResponseTest, TestReadGetAssertionResponse1)
 
 TEST(CTAPResponseTest, TestReadGetAssertionResponse2)
 {
-    auto getAssertionResponse = readCTAPGetAssertionResponse(convertBytesToVector(TestData::kDeviceGetAssertionResponse, sizeof(TestData::kDeviceGetAssertionResponse)));
+    auto getAssertionResponse = readCTAPGetAssertionResponse(convertBytesToVector(TestData::kDeviceGetAssertionResponse, sizeof(TestData::kDeviceGetAssertionResponse)), AuthenticatorAttachment::CrossPlatform);
     ASSERT_TRUE(getAssertionResponse);
 
     EXPECT_EQ(getAssertionResponse->authenticatorData()->byteLength(), sizeof(TestData::kCtap2GetAssertionAuthData));
@@ -425,7 +426,7 @@ TEST(CTAPResponseTest, TestReadGetAssertionResponse2)
 
 TEST(CTAPResponseTest, TestReadGetAssertionResponse3)
 {
-    auto getAssertionResponse = readCTAPGetAssertionResponse(convertBytesToVector(TestData::kDeviceGetAssertionResponseLong, sizeof(TestData::kDeviceGetAssertionResponseLong)));
+    auto getAssertionResponse = readCTAPGetAssertionResponse(convertBytesToVector(TestData::kDeviceGetAssertionResponseLong, sizeof(TestData::kDeviceGetAssertionResponseLong)), AuthenticatorAttachment::CrossPlatform);
     ASSERT_TRUE(getAssertionResponse);
 
     EXPECT_EQ(getAssertionResponse->authenticatorData()->byteLength(), sizeof(TestData::kCtap2GetAssertionAuthData));
@@ -442,7 +443,7 @@ TEST(CTAPResponseTest, TestReadGetAssertionResponse3)
 // Test that U2F register response is properly parsed.
 TEST(CTAPResponseTest, TestParseRegisterResponseData)
 {
-    auto response = readU2fRegisterResponse(TestData::kRelyingPartyId, convertBytesToVector(TestData::kTestU2fRegisterResponse, sizeof(TestData::kTestU2fRegisterResponse)));
+    auto response = readU2fRegisterResponse(TestData::kRelyingPartyId, convertBytesToVector(TestData::kTestU2fRegisterResponse, sizeof(TestData::kTestU2fRegisterResponse)), AuthenticatorAttachment::CrossPlatform);
     ASSERT_TRUE(response);
     EXPECT_EQ(response->rawId()->byteLength(), sizeof(TestData::kU2fSignKeyHandle));
     EXPECT_EQ(memcmp(response->rawId()->data(), TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle)), 0);
@@ -455,26 +456,26 @@ TEST(CTAPResponseTest, TestParseRegisterResponseData)
 TEST(CTAPResponseTest, TestParseIncorrectRegisterResponseData1)
 {
     const uint8_t testData1[] = { 0x05 };
-    auto response = readU2fRegisterResponse(TestData::kRelyingPartyId, convertBytesToVector(testData1, sizeof(testData1)));
+    auto response = readU2fRegisterResponse(TestData::kRelyingPartyId, convertBytesToVector(testData1, sizeof(testData1)), AuthenticatorAttachment::CrossPlatform);
     EXPECT_FALSE(response);
 
     const uint8_t testData2[] = { 0x05, 0x00 };
-    response = readU2fRegisterResponse(TestData::kRelyingPartyId, convertBytesToVector(testData2, sizeof(testData2)));
+    response = readU2fRegisterResponse(TestData::kRelyingPartyId, convertBytesToVector(testData2, sizeof(testData2)), AuthenticatorAttachment::CrossPlatform);
     EXPECT_FALSE(response);
 
     const uint8_t testData3[] = { 0x05, 0x04, 0x00 };
-    response = readU2fRegisterResponse(TestData::kRelyingPartyId, convertBytesToVector(testData3, sizeof(testData3)));
+    response = readU2fRegisterResponse(TestData::kRelyingPartyId, convertBytesToVector(testData3, sizeof(testData3)), AuthenticatorAttachment::CrossPlatform);
     EXPECT_FALSE(response);
 }
 
 // Test malformed key handle.
 TEST(CTAPResponseTest, TestParseIncorrectRegisterResponseData2)
 {
-    auto response = readU2fRegisterResponse(TestData::kRelyingPartyId, getTestU2fRegisterResponse(kU2fKeyHandleLengthOffset, nullptr, 0));
+    auto response = readU2fRegisterResponse(TestData::kRelyingPartyId, getTestU2fRegisterResponse(kU2fKeyHandleLengthOffset, nullptr, 0), AuthenticatorAttachment::CrossPlatform);
     EXPECT_FALSE(response);
 
     const uint8_t testData[] = { 0x40 };
-    response = readU2fRegisterResponse(TestData::kRelyingPartyId, getTestU2fRegisterResponse(kU2fKeyHandleLengthOffset, testData, sizeof(testData)));
+    response = readU2fRegisterResponse(TestData::kRelyingPartyId, getTestU2fRegisterResponse(kU2fKeyHandleLengthOffset, testData, sizeof(testData)), AuthenticatorAttachment::CrossPlatform);
     EXPECT_FALSE(response);
 }
 
@@ -482,27 +483,27 @@ TEST(CTAPResponseTest, TestParseIncorrectRegisterResponseData2)
 TEST(CTAPResponseTest, TestParseIncorrectRegisterResponseData3)
 {
     const auto prefix = kU2fKeyHandleOffset + 64;
-    auto response = readU2fRegisterResponse(TestData::kRelyingPartyId, getTestU2fRegisterResponse(prefix, nullptr, 0));
+    auto response = readU2fRegisterResponse(TestData::kRelyingPartyId, getTestU2fRegisterResponse(prefix, nullptr, 0), AuthenticatorAttachment::CrossPlatform);
     EXPECT_FALSE(response);
 
     const uint8_t testData1[] = { 0x40 };
-    response = readU2fRegisterResponse(TestData::kRelyingPartyId, getTestU2fRegisterResponse(prefix, testData1, sizeof(testData1)));
+    response = readU2fRegisterResponse(TestData::kRelyingPartyId, getTestU2fRegisterResponse(prefix, testData1, sizeof(testData1)), AuthenticatorAttachment::CrossPlatform);
     EXPECT_FALSE(response);
 
     const uint8_t testData2[] = { 0x30 };
-    response = readU2fRegisterResponse(TestData::kRelyingPartyId, getTestU2fRegisterResponse(prefix, testData2, sizeof(testData2)));
+    response = readU2fRegisterResponse(TestData::kRelyingPartyId, getTestU2fRegisterResponse(prefix, testData2, sizeof(testData2)), AuthenticatorAttachment::CrossPlatform);
     EXPECT_FALSE(response);
 
     const uint8_t testData3[] = { 0x30, 0x82 };
-    response = readU2fRegisterResponse(TestData::kRelyingPartyId, getTestU2fRegisterResponse(prefix, testData3, sizeof(testData3)));
+    response = readU2fRegisterResponse(TestData::kRelyingPartyId, getTestU2fRegisterResponse(prefix, testData3, sizeof(testData3)), AuthenticatorAttachment::CrossPlatform);
     EXPECT_FALSE(response);
 
     const uint8_t testData4[] = { 0x30, 0xC1 };
-    response = readU2fRegisterResponse(TestData::kRelyingPartyId, getTestU2fRegisterResponse(prefix, testData4, sizeof(testData4)));
+    response = readU2fRegisterResponse(TestData::kRelyingPartyId, getTestU2fRegisterResponse(prefix, testData4, sizeof(testData4)), AuthenticatorAttachment::CrossPlatform);
     EXPECT_FALSE(response);
 
     const uint8_t testData5[] = { 0x30, 0x82, 0x02, 0x4A };
-    response = readU2fRegisterResponse(TestData::kRelyingPartyId, getTestU2fRegisterResponse(prefix, testData5, sizeof(testData5)));
+    response = readU2fRegisterResponse(TestData::kRelyingPartyId, getTestU2fRegisterResponse(prefix, testData5, sizeof(testData5)), AuthenticatorAttachment::CrossPlatform);
     EXPECT_FALSE(response);
 }
 
@@ -510,7 +511,7 @@ TEST(CTAPResponseTest, TestParseIncorrectRegisterResponseData3)
 TEST(CTAPResponseTest, TestParseIncorrectRegisterResponseData4)
 {
     const auto prefix = sizeof(TestData::kTestU2fRegisterResponse);
-    auto response = readU2fRegisterResponse(TestData::kRelyingPartyId, getTestU2fRegisterResponse(prefix - 71, nullptr, 0));
+    auto response = readU2fRegisterResponse(TestData::kRelyingPartyId, getTestU2fRegisterResponse(prefix - 71, nullptr, 0), AuthenticatorAttachment::CrossPlatform);
     EXPECT_FALSE(response);
 }
 
@@ -527,7 +528,7 @@ TEST(CTAPResponseTest, TestParseIncorrectRegisterResponseData5)
     testData1.append(0x01);
     testData1.append(0x00);
     testData1.append(TestData::kTestU2fRegisterResponse + suffix, signatureSize);
-    auto response = readU2fRegisterResponse(TestData::kRelyingPartyId, testData1);
+    auto response = readU2fRegisterResponse(TestData::kRelyingPartyId, testData1, AuthenticatorAttachment::CrossPlatform);
     EXPECT_TRUE(response);
 
     Vector<uint8_t> testData2;
@@ -537,14 +538,14 @@ TEST(CTAPResponseTest, TestParseIncorrectRegisterResponseData5)
     testData2.append(0x01);
     testData2.append(0x00);
     testData2.append(TestData::kTestU2fRegisterResponse + suffix, signatureSize);
-    response = readU2fRegisterResponse(TestData::kRelyingPartyId, testData2);
+    response = readU2fRegisterResponse(TestData::kRelyingPartyId, testData2, AuthenticatorAttachment::CrossPlatform);
     EXPECT_TRUE(response);
 }
 
 // Tests that U2F authenticator data is properly serialized.
 TEST(CTAPResponseTest, TestParseSignResponseData)
 {
-    auto response = readU2fSignResponse(TestData::kRelyingPartyId, getTestCredentialRawIdBytes(), getTestSignResponse());
+    auto response = readU2fSignResponse(TestData::kRelyingPartyId, getTestCredentialRawIdBytes(), getTestSignResponse(), AuthenticatorAttachment::CrossPlatform);
     ASSERT_TRUE(response);
     EXPECT_EQ(response->rawId()->byteLength(), sizeof(TestData::kU2fSignKeyHandle));
     EXPECT_EQ(memcmp(response->rawId()->data(), TestData::kU2fSignKeyHandle, sizeof(TestData::kU2fSignKeyHandle)), 0);
@@ -556,27 +557,27 @@ TEST(CTAPResponseTest, TestParseSignResponseData)
 
 TEST(CTAPResponseTest, TestParseU2fSignWithNullKeyHandle)
 {
-    auto response = readU2fSignResponse(TestData::kRelyingPartyId, Vector<uint8_t>(), getTestSignResponse());
+    auto response = readU2fSignResponse(TestData::kRelyingPartyId, Vector<uint8_t>(), getTestSignResponse(), AuthenticatorAttachment::CrossPlatform);
     EXPECT_FALSE(response);
 }
 
 TEST(CTAPResponseTest, TestParseU2fSignWithNullResponse)
 {
-    auto response = readU2fSignResponse(TestData::kRelyingPartyId, getTestCredentialRawIdBytes(), Vector<uint8_t>());
+    auto response = readU2fSignResponse(TestData::kRelyingPartyId, getTestCredentialRawIdBytes(), Vector<uint8_t>(), AuthenticatorAttachment::CrossPlatform);
     EXPECT_FALSE(response);
 }
 
 TEST(CTAPResponseTest, TestParseU2fSignWithCorruptedCounter)
 {
     // A sign response of less than 5 bytes.
-    auto response = readU2fSignResponse(TestData::kRelyingPartyId, getTestCredentialRawIdBytes(), getTestCorruptedSignResponse(3));
+    auto response = readU2fSignResponse(TestData::kRelyingPartyId, getTestCredentialRawIdBytes(), getTestCorruptedSignResponse(3), AuthenticatorAttachment::CrossPlatform);
     EXPECT_FALSE(response);
 }
 
 TEST(CTAPResponseTest, TestParseU2fSignWithCorruptedSignature)
 {
     // A sign response no more than 5 bytes.
-    auto response = readU2fSignResponse(TestData::kRelyingPartyId, getTestCredentialRawIdBytes(), getTestCorruptedSignResponse(5));
+    auto response = readU2fSignResponse(TestData::kRelyingPartyId, getTestCredentialRawIdBytes(), getTestCorruptedSignResponse(5), AuthenticatorAttachment::CrossPlatform);
     EXPECT_FALSE(response);
 }
 

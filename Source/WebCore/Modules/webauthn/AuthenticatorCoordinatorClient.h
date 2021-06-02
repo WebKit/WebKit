@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,11 +37,13 @@ class DeferredPromise;
 class Frame;
 class SecurityOrigin;
 
+enum class AuthenticatorAttachment;
+
 struct AuthenticatorResponseData;
 struct PublicKeyCredentialCreationOptions;
 struct PublicKeyCredentialRequestOptions;
 
-using RequestCompletionHandler = CompletionHandler<void(WebCore::AuthenticatorResponseData&&, WebCore::ExceptionData&&)>;
+using RequestCompletionHandler = CompletionHandler<void(WebCore::AuthenticatorResponseData&&, WebCore::AuthenticatorAttachment, WebCore::ExceptionData&&)>;
 using QueryCompletionHandler = CompletionHandler<void(bool)>;
 
 class WEBCORE_EXPORT AuthenticatorCoordinatorClient : public CanMakeWeakPtr<AuthenticatorCoordinatorClient> {

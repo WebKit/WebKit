@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -185,13 +185,13 @@ void AuthenticatorCoordinator::create(const Document& document, const PublicKeyC
         return;
     }
 
-    auto callback = [clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), abortSignal = WTFMove(abortSignal)] (AuthenticatorResponseData&& data, ExceptionData&& exception) mutable {
+    auto callback = [clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), abortSignal = WTFMove(abortSignal)] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
         if (abortSignal && abortSignal->aborted()) {
             promise.reject(Exception { AbortError, "Aborted by AbortSignal."_s });
             return;
         }
 
-        if (auto response = AuthenticatorResponse::tryCreate(WTFMove(data))) {
+        if (auto response = AuthenticatorResponse::tryCreate(WTFMove(data), attachment)) {
             response->setClientDataJSON(WTFMove(clientDataJson));
             promise.resolve(PublicKeyCredential::create(response.releaseNonNull()).ptr());
             return;
@@ -256,13 +256,13 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
         return;
     }
 
-    auto callback = [clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), abortSignal = WTFMove(abortSignal)] (AuthenticatorResponseData&& data, ExceptionData&& exception) mutable {
+    auto callback = [clientDataJson = WTFMove(clientDataJson), promise = WTFMove(promise), abortSignal = WTFMove(abortSignal)] (AuthenticatorResponseData&& data, AuthenticatorAttachment attachment, ExceptionData&& exception) mutable {
         if (abortSignal && abortSignal->aborted()) {
             promise.reject(Exception { AbortError, "Aborted by AbortSignal."_s });
             return;
         }
 
-        if (auto response = AuthenticatorResponse::tryCreate(WTFMove(data))) {
+        if (auto response = AuthenticatorResponse::tryCreate(WTFMove(data), attachment)) {
             response->setClientDataJSON(WTFMove(clientDataJson));
             promise.resolve(PublicKeyCredential::create(response.releaseNonNull()).ptr());
             return;

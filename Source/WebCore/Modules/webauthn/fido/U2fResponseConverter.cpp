@@ -1,5 +1,5 @@
 // Copyright 2018 The Chromium Authors. All rights reserved.
-// Copyright (C) 2019 Apple Inc. All rights reserved.
+// Copyright (C) 2019-2021 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -137,7 +137,7 @@ static cbor::CBORValue::MapValue createFidoAttestationStatementFromU2fRegisterRe
 
 } // namespace
 
-RefPtr<AuthenticatorAttestationResponse> readU2fRegisterResponse(const String& rpId, const Vector<uint8_t>& u2fData, const AttestationConveyancePreference& attestation)
+RefPtr<AuthenticatorAttestationResponse> readU2fRegisterResponse(const String& rpId, const Vector<uint8_t>& u2fData, AuthenticatorAttachment attachment, const AttestationConveyancePreference& attestation)
 {
     auto publicKey = extractECPublicKeyFromU2fRegistrationResponse(u2fData);
     if (publicKey.isEmpty())
@@ -160,10 +160,10 @@ RefPtr<AuthenticatorAttestationResponse> readU2fRegisterResponse(const String& r
 
     auto attestationObject = buildAttestationObject(WTFMove(authData), "fido-u2f", WTFMove(fidoAttestationStatement), attestation);
 
-    return AuthenticatorAttestationResponse::create(credentialId, attestationObject);
+    return AuthenticatorAttestationResponse::create(credentialId, attestationObject, attachment);
 }
 
-RefPtr<AuthenticatorAssertionResponse> readU2fSignResponse(const String& rpId, const Vector<uint8_t>& keyHandle, const Vector<uint8_t>& u2fData)
+RefPtr<AuthenticatorAssertionResponse> readU2fSignResponse(const String& rpId, const Vector<uint8_t>& keyHandle, const Vector<uint8_t>& u2fData, AuthenticatorAttachment attachment)
 {
     if (keyHandle.isEmpty() || u2fData.size() <= signatureIndex)
         return nullptr;
@@ -178,7 +178,7 @@ RefPtr<AuthenticatorAssertionResponse> readU2fSignResponse(const String& rpId, c
 
     // FIXME: Find a way to remove the need of constructing a vector here.
     Vector<uint8_t> signature { u2fData.data() + signatureIndex, u2fData.size() - signatureIndex };
-    return AuthenticatorAssertionResponse::create(keyHandle, authData, signature, { });
+    return AuthenticatorAssertionResponse::create(keyHandle, authData, signature, { }, attachment);
 }
 
 } // namespace fido

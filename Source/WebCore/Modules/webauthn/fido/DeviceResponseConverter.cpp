@@ -1,5 +1,5 @@
 // Copyright 2018 The Chromium Authors. All rights reserved.
-// Copyright (C) 2018 Apple Inc. All rights reserved.
+// Copyright (C) 2018-2021 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -95,7 +95,7 @@ static Vector<uint8_t> getCredentialId(const Vector<uint8_t>& authenticatorData)
 
 // Decodes byte array response from authenticator to CBOR value object and
 // checks for correct encoding format.
-RefPtr<AuthenticatorAttestationResponse> readCTAPMakeCredentialResponse(const Vector<uint8_t>& inBuffer, const AttestationConveyancePreference& attestation)
+RefPtr<AuthenticatorAttestationResponse> readCTAPMakeCredentialResponse(const Vector<uint8_t>& inBuffer, WebCore::AuthenticatorAttachment attachment, const AttestationConveyancePreference& attestation)
 {
     auto decodedMap = decodeResponseMap(inBuffer);
     if (!decodedMap)
@@ -135,10 +135,10 @@ RefPtr<AuthenticatorAttestationResponse> readCTAPMakeCredentialResponse(const Ve
         attestationObject = cbor::CBORWriter::write(CBOR(WTFMove(attestationObjectMap)));
     }
 
-    return AuthenticatorAttestationResponse::create(credentialId, *attestationObject);
+    return AuthenticatorAttestationResponse::create(credentialId, *attestationObject, attachment);
 }
 
-RefPtr<AuthenticatorAssertionResponse> readCTAPGetAssertionResponse(const Vector<uint8_t>& inBuffer)
+RefPtr<AuthenticatorAssertionResponse> readCTAPGetAssertionResponse(const Vector<uint8_t>& inBuffer, WebCore::AuthenticatorAttachment attachment)
 {
     auto decodedMap = decodeResponseMap(inBuffer);
     if (!decodedMap)
@@ -172,7 +172,7 @@ RefPtr<AuthenticatorAssertionResponse> readCTAPGetAssertionResponse(const Vector
         if (itr == user.end() || !itr->second.isByteString())
             return nullptr;
         auto& userHandle = itr->second.getByteString();
-        response = AuthenticatorAssertionResponse::create(credentialId, authData, signature, userHandle);
+        response = AuthenticatorAssertionResponse::create(credentialId, authData, signature, userHandle, attachment);
 
         itr = user.find(CBOR(kEntityNameMapKey));
         if (itr != user.end()) {
@@ -188,7 +188,7 @@ RefPtr<AuthenticatorAssertionResponse> readCTAPGetAssertionResponse(const Vector
             response->setDisplayName(itr->second.getString());
         }
     } else {
-        response = AuthenticatorAssertionResponse::create(credentialId, authData, signature, { });
+        response = AuthenticatorAssertionResponse::create(credentialId, authData, signature, { }, attachment);
     }
 
     it = responseMap.find(CBOR(5));

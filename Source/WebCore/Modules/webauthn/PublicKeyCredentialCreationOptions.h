@@ -28,7 +28,6 @@
 #if ENABLE(WEB_AUTHN)
 #include "AttestationConveyancePreference.h"
 #include "AuthenticationExtensionsClientInputs.h"
-#include "AuthenticatorAttachment.h"
 #include "BufferSource.h"
 #include "PublicKeyCredentialDescriptor.h"
 #include "PublicKeyCredentialType.h"
@@ -37,6 +36,8 @@
 #endif // ENABLE(WEB_AUTHN)
 
 namespace WebCore {
+
+enum class AuthenticatorAttachment;
 
 struct PublicKeyCredentialCreationOptions {
 #if ENABLE(WEB_AUTHN)

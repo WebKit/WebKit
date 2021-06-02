@@ -1,3 +1,18 @@
+2021-06-02  Garrett Davidson  <davidson.garrettm@gmail.com>
+
+
+        [Cocoa] _WKAuthenticatorAssertionResponse should specify the attachment type used
+        https://bugs.webkit.org/show_bug.cgi?id=225519
+        <rdar://problem/76554090>
+
+        Reviewed by Brent Fulgham.
+
+        Update the CTAP tests to specify the new attachment parameter. All of these tests
+        assume a cross platform authenticator.
+
+        * TestWebKitAPI/Tests/WebCore/CtapResponseTest.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-06-02  Keith Miller  <keith_miller@apple.com>
 
         Convert small JIT pool tests into executable fuzzing

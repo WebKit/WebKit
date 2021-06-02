@@ -1,3 +1,42 @@
+2021-06-02  Garrett Davidson  <garrett_davidson@apple.com>
+
+        [Cocoa] _WKAuthenticatorAssertionResponse should specify the attachment type used
+        https://bugs.webkit.org/show_bug.cgi?id=225519
+        <rdar://problem/76554090>
+
+        Reviewed by Brent Fulgham.
+
+        Allow WebAuthn authenticators to pass back their attachment type and continue
+        plumbing through up to the authenticator coordinator.
+
+        Covered by manual tests.
+
+        * Modules/webauthn/AuthenticatorAssertionResponse.cpp:
+        (WebCore::AuthenticatorAssertionResponse::create):
+        (WebCore::AuthenticatorAssertionResponse::AuthenticatorAssertionResponse):
+        * Modules/webauthn/AuthenticatorAssertionResponse.h:
+        * Modules/webauthn/AuthenticatorAttestationResponse.cpp:
+        (WebCore::AuthenticatorAttestationResponse::create):
+        (WebCore::AuthenticatorAttestationResponse::AuthenticatorAttestationResponse):
+        * Modules/webauthn/AuthenticatorAttestationResponse.h:
+        * Modules/webauthn/AuthenticatorCoordinator.cpp:
+        (WebCore::AuthenticatorCoordinator::create const):
+        (WebCore::AuthenticatorCoordinator::discoverFromExternalSource const):
+        * Modules/webauthn/AuthenticatorCoordinatorClient.h:
+        * Modules/webauthn/AuthenticatorResponse.cpp:
+        (WebCore::AuthenticatorResponse::tryCreate):
+        (WebCore::AuthenticatorResponse::attachment const):
+        (WebCore::AuthenticatorResponse::AuthenticatorResponse):
+        * Modules/webauthn/AuthenticatorResponse.h:
+        * Modules/webauthn/fido/DeviceResponseConverter.cpp:
+        (fido::readCTAPMakeCredentialResponse):
+        (fido::readCTAPGetAssertionResponse):
+        * Modules/webauthn/fido/DeviceResponseConverter.h:
+        * Modules/webauthn/fido/U2fResponseConverter.cpp:
+        (fido::readU2fRegisterResponse):
+        (fido::readU2fSignResponse):
+        * Modules/webauthn/fido/U2fResponseConverter.h:
+
 2021-06-02  Youenn Fablet  <youenn@apple.com>
 
         Reduce logging in MediaElementSession::playbackStateChangePermitted

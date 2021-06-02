@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,18 +32,18 @@
 
 namespace WebCore {
 
-Ref<AuthenticatorAttestationResponse> AuthenticatorAttestationResponse::create(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& attestationObject)
+Ref<AuthenticatorAttestationResponse> AuthenticatorAttestationResponse::create(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& attestationObject, AuthenticatorAttachment attachment)
 {
-    return adoptRef(*new AuthenticatorAttestationResponse(WTFMove(rawId), WTFMove(attestationObject)));
+    return adoptRef(*new AuthenticatorAttestationResponse(WTFMove(rawId), WTFMove(attestationObject), attachment));
 }
 
-Ref<AuthenticatorAttestationResponse> AuthenticatorAttestationResponse::create(const Vector<uint8_t>& rawId, const Vector<uint8_t>& attestationObject)
+Ref<AuthenticatorAttestationResponse> AuthenticatorAttestationResponse::create(const Vector<uint8_t>& rawId, const Vector<uint8_t>& attestationObject, AuthenticatorAttachment attachment)
 {
-    return create(ArrayBuffer::create(rawId.data(), rawId.size()), ArrayBuffer::create(attestationObject.data(), attestationObject.size()));
+    return create(ArrayBuffer::create(rawId.data(), rawId.size()), ArrayBuffer::create(attestationObject.data(), attestationObject.size()), attachment);
 }
 
-AuthenticatorAttestationResponse::AuthenticatorAttestationResponse(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& attestationObject)
-    : AuthenticatorResponse(WTFMove(rawId))
+AuthenticatorAttestationResponse::AuthenticatorAttestationResponse(Ref<ArrayBuffer>&& rawId, Ref<ArrayBuffer>&& attestationObject, AuthenticatorAttachment attachment)
+    : AuthenticatorResponse(WTFMove(rawId), attachment)
     , m_attestationObject(WTFMove(attestationObject))
 {
 }

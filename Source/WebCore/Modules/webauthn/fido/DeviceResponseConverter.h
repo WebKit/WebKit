@@ -1,5 +1,5 @@
 // Copyright 2018 The Chromium Authors. All rights reserved.
-// Copyright (C) 2018 Apple Inc. All rights reserved.
+// Copyright (C) 2018-2021 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -52,12 +52,12 @@ WEBCORE_EXPORT CtapDeviceResponseCode getResponseCode(const Vector<uint8_t>&);
 // and converts response to AuthenticatorMakeCredentialResponse object with
 // CBOR map keys that conform to format of attestation object defined by the
 // WebAuthN spec : https://w3c.github.io/webauthn/#fig-attStructs
-WEBCORE_EXPORT RefPtr<WebCore::AuthenticatorAttestationResponse> readCTAPMakeCredentialResponse(const Vector<uint8_t>&, const WebCore::AttestationConveyancePreference& attestation = WebCore::AttestationConveyancePreference::Direct);
+WEBCORE_EXPORT RefPtr<WebCore::AuthenticatorAttestationResponse> readCTAPMakeCredentialResponse(const Vector<uint8_t>&, WebCore::AuthenticatorAttachment, const WebCore::AttestationConveyancePreference& = WebCore::AttestationConveyancePreference::Direct);
 
 // De-serializes CBOR encoded response to AuthenticatorGetAssertion /
 // AuthenticatorGetNextAssertion request to AuthenticatorGetAssertionResponse
 // object.
-WEBCORE_EXPORT RefPtr<WebCore::AuthenticatorAssertionResponse> readCTAPGetAssertionResponse(const Vector<uint8_t>&);
+WEBCORE_EXPORT RefPtr<WebCore::AuthenticatorAssertionResponse> readCTAPGetAssertionResponse(const Vector<uint8_t>&, WebCore::AuthenticatorAttachment);
 
 // De-serializes CBOR encoded response to AuthenticatorGetInfo request to
 // AuthenticatorGetInfoResponse object.

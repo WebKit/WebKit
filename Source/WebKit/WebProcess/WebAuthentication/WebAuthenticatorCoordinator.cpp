@@ -37,6 +37,7 @@
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <JavaScriptCore/ConsoleTypes.h>
+#include <WebCore/AuthenticatorAttachment.h>
 #include <WebCore/AuthenticatorResponseData.h>
 #include <WebCore/Frame.h>
 #include <WebCore/PublicKeyCredentialCreationOptions.h>

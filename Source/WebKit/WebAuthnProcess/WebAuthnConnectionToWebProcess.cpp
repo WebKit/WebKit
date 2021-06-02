@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,9 +82,9 @@ void WebAuthnConnectionToWebProcess::handleRequest(WebAuthenticationRequestData&
     auto callback = [handler = WTFMove(handler)] (Variant<Ref<AuthenticatorResponse>, ExceptionData>&& result) mutable {
         ASSERT(RunLoop::isMain());
         WTF::switchOn(result, [&](const Ref<AuthenticatorResponse>& response) {
-            handler(response->data(), { });
+            handler(response->data(), response->attachment(), { });
         }, [&](const ExceptionData& exception) {
-            handler({ }, exception);
+            handler({ }, static_cast<AuthenticatorAttachment>(0), exception);
         });
     };
     m_WebAuthnProcess->authenticatorManager().handleRequest(WTFMove(data), WTFMove(callback));

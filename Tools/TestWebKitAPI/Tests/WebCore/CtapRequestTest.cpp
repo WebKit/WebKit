@@ -33,6 +33,7 @@
 
 #include "FidoTestData.h"
 #include "PlatformUtilities.h"
+#include <WebCore/AuthenticatorAttachment.h>
 #include <WebCore/DeviceRequestConverter.h>
 #include <WebCore/FidoConstants.h>
 #include <WebCore/Pin.h>

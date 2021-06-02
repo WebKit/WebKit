@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 
 #import <Security/SecItem.h>
 #import <WebCore/AuthenticatorAssertionResponse.h>
+#import <WebCore/AuthenticatorAttachment.h>
 #import <WebCore/AuthenticatorAttestationResponse.h>
 #import <WebCore/CBORReader.h>
 #import <WebCore/CBORWriter.h>
@@ -167,7 +168,7 @@ static std::optional<Vector<Ref<AuthenticatorAssertionResponse>>> getExistingCre
         }
         auto& username = it->second.getString();
 
-        result.uncheckedAppend(AuthenticatorAssertionResponse::create(toArrayBuffer(attributes[(id)kSecAttrApplicationLabel]), toArrayBuffer(userHandle), String(username), (__bridge SecAccessControlRef)attributes[(id)kSecAttrAccessControl]));
+        result.uncheckedAppend(AuthenticatorAssertionResponse::create(toArrayBuffer(attributes[(id)kSecAttrApplicationLabel]), toArrayBuffer(userHandle), String(username), (__bridge SecAccessControlRef)attributes[(id)kSecAttrAccessControl], AuthenticatorAttachment::Platform));
     }
     return result;
 }
@@ -426,7 +427,7 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
 
         auto authData = buildAuthData(creationOptions.rp.id, flags, counter, buildAttestedCredentialData(Vector<uint8_t>(aaguidLength, 0), credentialId, cosePublicKey));
         auto attestationObject = buildAttestationObject(WTFMove(authData), "", { }, AttestationConveyancePreference::None);
-        receiveRespond(AuthenticatorAttestationResponse::create(credentialId, attestationObject));
+        receiveRespond(AuthenticatorAttestationResponse::create(credentialId, attestationObject, AuthenticatorAttachment::Platform));
         return;
     }
 
@@ -470,7 +471,7 @@ void LocalAuthenticator::continueMakeCredentialAfterAttested(Vector<uint8_t>&& c
     auto attestationObject = buildAttestationObject(WTFMove(authData), "apple", WTFMove(attestationStatementMap), creationOptions.attestation);
 
     deleteDuplicateCredential();
-    receiveRespond(AuthenticatorAttestationResponse::create(credentialId, attestationObject));
+    receiveRespond(AuthenticatorAttestationResponse::create(credentialId, attestationObject, AuthenticatorAttachment::Platform));
 }
 
 void LocalAuthenticator::getAssertion()

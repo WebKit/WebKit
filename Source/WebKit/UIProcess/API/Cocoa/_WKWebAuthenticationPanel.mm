@@ -42,6 +42,7 @@
 #import "_WKPublicKeyCredentialRequestOptions.h"
 #import "_WKPublicKeyCredentialRelyingPartyEntity.h"
 #import "_WKPublicKeyCredentialUserEntity.h"
+#import <WebCore/AuthenticatorAttachment.h>
 #import <WebCore/AuthenticatorResponse.h>
 #import <WebCore/AuthenticatorResponseData.h>
 #import <WebCore/CBORReader.h>
@@ -453,9 +454,19 @@ static WebCore::AuthenticationExtensionsClientInputs authenticationExtensionsCli
 }
 
 #if ENABLE(WEB_AUTHN)
-static RetainPtr<_WKAuthenticatorAttestationResponse> wkAuthenticatorAttestationResponse(const WebCore::AuthenticatorResponseData& data, NSData *clientDataJSON)
+static _WKAuthenticatorAttachment authenticatorAttachmentToWKAuthenticatorAttachment(WebCore::AuthenticatorAttachment attachment)
 {
-    return adoptNS([[_WKAuthenticatorAttestationResponse alloc] initWithClientDataJSON:clientDataJSON rawId:[NSData dataWithBytes:data.rawId->data() length:data.rawId->byteLength()] extensions:nil attestationObject:[NSData dataWithBytes:data.attestationObject->data() length:data.attestationObject->byteLength()]]);
+    switch (attachment) {
+    case WebCore::AuthenticatorAttachment::Platform:
+        return _WKAuthenticatorAttachmentPlatform;
+    case WebCore::AuthenticatorAttachment::CrossPlatform:
+        return _WKAuthenticatorAttachmentCrossPlatform;
+    }
+}
+
+static RetainPtr<_WKAuthenticatorAttestationResponse> wkAuthenticatorAttestationResponse(const WebCore::AuthenticatorResponseData& data, NSData *clientDataJSON, WebCore::AuthenticatorAttachment attachment)
+{
+    return adoptNS([[_WKAuthenticatorAttestationResponse alloc] initWithClientDataJSON:clientDataJSON rawId:[NSData dataWithBytes:data.rawId->data() length:data.rawId->byteLength()] extensions:nil attestationObject:[NSData dataWithBytes:data.attestationObject->data() length:data.attestationObject->byteLength()] attachment: authenticatorAttachmentToWKAuthenticatorAttachment(attachment)]);
 }
 #endif
 
@@ -466,7 +477,7 @@ static RetainPtr<_WKAuthenticatorAttestationResponse> wkAuthenticatorAttestation
     auto hash = produceClientDataJsonHash(clientDataJSON.get());
     auto callback = [handler = makeBlockPtr(handler), clientDataJSON = WTFMove(clientDataJSON)] (Variant<Ref<WebCore::AuthenticatorResponse>, WebCore::ExceptionData>&& result) mutable {
         WTF::switchOn(result, [&](const Ref<WebCore::AuthenticatorResponse>& response) {
-            handler(wkAuthenticatorAttestationResponse(response->data(), clientDataJSON.get()).get(), nil);
+            handler(wkAuthenticatorAttestationResponse(response->data(), clientDataJSON.get(), response->attachment()).get(), nil);
         }, [&](const WebCore::ExceptionData& exception) {
             handler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]);
         });
@@ -495,7 +506,7 @@ static RetainPtr<_WKAuthenticatorAttestationResponse> wkAuthenticatorAttestation
 }
 
 #if ENABLE(WEB_AUTHN)
-static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResponse(const WebCore::AuthenticatorResponseData& data, NSData *clientDataJSON)
+static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResponse(const WebCore::AuthenticatorResponseData& data, NSData *clientDataJSON, WebCore::AuthenticatorAttachment attachment)
 {
     RetainPtr<_WKAuthenticationExtensionsClientOutputs> extensions;
     if (data.appid)
@@ -505,7 +516,7 @@ static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResp
     if (data.userHandle)
         userHandle = [NSData dataWithBytes:data.userHandle->data() length:data.userHandle->byteLength()];
 
-    return adoptNS([[_WKAuthenticatorAssertionResponse alloc] initWithClientDataJSON:clientDataJSON rawId:[NSData dataWithBytes:data.rawId->data() length:data.rawId->byteLength()] extensions:WTFMove(extensions) authenticatorData:[NSData dataWithBytes:data.authenticatorData->data() length:data.authenticatorData->byteLength()] signature:[NSData dataWithBytes:data.signature->data() length:data.signature->byteLength()] userHandle:userHandle]);
+    return adoptNS([[_WKAuthenticatorAssertionResponse alloc] initWithClientDataJSON:clientDataJSON rawId:[NSData dataWithBytes:data.rawId->data() length:data.rawId->byteLength()] extensions:WTFMove(extensions) authenticatorData:[NSData dataWithBytes:data.authenticatorData->data() length:data.authenticatorData->byteLength()] signature:[NSData dataWithBytes:data.signature->data() length:data.signature->byteLength()] userHandle:userHandle attachment:authenticatorAttachmentToWKAuthenticatorAttachment(attachment)]);
 }
 #endif
 
@@ -516,7 +527,7 @@ static RetainPtr<_WKAuthenticatorAssertionResponse> wkAuthenticatorAssertionResp
     auto hash = produceClientDataJsonHash(clientDataJSON.get());
     auto callback = [handler = makeBlockPtr(handler), clientDataJSON = WTFMove(clientDataJSON)] (Variant<Ref<WebCore::AuthenticatorResponse>, WebCore::ExceptionData>&& result) mutable {
         WTF::switchOn(result, [&](const Ref<WebCore::AuthenticatorResponse>& response) {
-            handler(wkAuthenticatorAssertionResponse(response->data(), clientDataJSON.get()).get(), nil);
+            handler(wkAuthenticatorAssertionResponse(response->data(), clientDataJSON.get(), response->attachment()).get(), nil);
         }, [&](const WebCore::ExceptionData& exception) {
             handler(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:nil]);
         });
