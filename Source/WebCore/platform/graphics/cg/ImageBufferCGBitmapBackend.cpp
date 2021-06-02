@@ -45,11 +45,11 @@ IntSize ImageBufferCGBitmapBackend::calculateSafeBackendSize(const Parameters& p
     if (backendSize.isEmpty())
         return backendSize;
     
-    Checked<unsigned, RecordOverflow> bytesPerRow = 4 * Checked<unsigned, RecordOverflow>(backendSize.width());
+    auto bytesPerRow = 4 * CheckedUint32(backendSize.width());
     if (bytesPerRow.hasOverflowed())
         return { };
 
-    CheckedSize numBytes = Checked<unsigned, RecordOverflow>(backendSize.height()) * bytesPerRow;
+    CheckedSize numBytes = CheckedUint32(backendSize.height()) * bytesPerRow;
     if (numBytes.hasOverflowed())
         return { };
 

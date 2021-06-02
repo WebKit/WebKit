@@ -612,7 +612,7 @@ JSC_DEFINE_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSGlobalObje
         JSGlobalObject* globalObject = codeBlock->globalObject();
         Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
 
-        Checked<unsigned, RecordOverflow> checkedArraySize = 0;
+        CheckedUint32 checkedArraySize = 0;
         unsigned numProperties = 0;
         for (unsigned i = materialization->properties().size(); i--;) {
             const ExitPropertyValue& property = materialization->properties()[i];

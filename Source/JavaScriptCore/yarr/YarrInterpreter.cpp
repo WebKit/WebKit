@@ -2059,7 +2059,7 @@ public:
         m_currentAlternativeIndex = newAlternativeIndex;
     }
 
-    std::optional<ErrorCode> WARN_UNUSED_RETURN emitDisjunction(PatternDisjunction* disjunction, Checked<unsigned, RecordOverflow> inputCountAlreadyChecked, unsigned parenthesesInputCountAlreadyChecked)
+    std::optional<ErrorCode> WARN_UNUSED_RETURN emitDisjunction(PatternDisjunction* disjunction, CheckedUint32 inputCountAlreadyChecked, unsigned parenthesesInputCountAlreadyChecked)
     {
         if (UNLIKELY(!isSafeToRecurse()))
             return ErrorCode::TooManyDisjunctions;

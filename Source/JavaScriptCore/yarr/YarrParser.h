@@ -1079,7 +1079,7 @@ private:
 
     unsigned consumeNumber()
     {
-        Checked<unsigned, RecordOverflow> n = consumeDigit();
+        CheckedUint32 n = consumeDigit();
         while (peekIsDigit())
             n = n * 10 + consumeDigit();
         return n.hasOverflowed() ? quantifyInfinite : n.value();

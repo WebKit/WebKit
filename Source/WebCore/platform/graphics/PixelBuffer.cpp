@@ -47,7 +47,7 @@ bool PixelBuffer::supportedPixelFormat(PixelFormat pixelFormat)
     return false;
 }
 
-Checked<unsigned, RecordOverflow> PixelBuffer::computeBufferSize(const PixelBufferFormat& format, const IntSize& size)
+CheckedUint32 PixelBuffer::computeBufferSize(const PixelBufferFormat& format, const IntSize& size)
 {
     ASSERT_UNUSED(format, supportedPixelFormat(format.pixelFormat));
 

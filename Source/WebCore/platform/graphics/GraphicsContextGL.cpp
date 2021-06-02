@@ -670,14 +670,14 @@ GCGLenum GraphicsContextGL::computeImageSizeInBytes(GCGLenum format, GCGLenum ty
     if (!computeFormatAndTypeParameters(format, type, &componentsPerPixel, &bytesPerComponent))
         return GraphicsContextGL::INVALID_ENUM;
     unsigned bytesPerGroup = bytesPerComponent * componentsPerPixel;
-    Checked<uint32_t, RecordOverflow> checkedValue = static_cast<uint32_t>(rowLength);
+    CheckedUint32 checkedValue = static_cast<uint32_t>(rowLength);
     checkedValue *= bytesPerGroup;
     if (checkedValue.hasOverflowed())
         return GraphicsContextGL::INVALID_VALUE;
 
     unsigned lastRowSize;
     if (params.rowLength > 0 && params.rowLength != width) {
-        Checked<uint32_t, RecordOverflow> tmp = width;
+        CheckedUint32 tmp = width;
         tmp *= bytesPerGroup;
         if (tmp.hasOverflowed())
             return GraphicsContextGL::INVALID_VALUE;
@@ -695,7 +695,7 @@ GCGLenum GraphicsContextGL::computeImageSizeInBytes(GCGLenum format, GCGLenum ty
         return GraphicsContextGL::INVALID_VALUE;
     unsigned paddedRowSize = checkedValue;
 
-    Checked<uint32_t, RecordOverflow> rows = imageHeight;
+    CheckedUint32 rows = imageHeight;
     rows *= (depth - 1);
     // Last image is not affected by IMAGE_HEIGHT parameter.
     rows += height;
@@ -710,9 +710,9 @@ GCGLenum GraphicsContextGL::computeImageSizeInBytes(GCGLenum format, GCGLenum ty
     if (paddingInBytes)
         *paddingInBytes = padding;
 
-    Checked<uint32_t, RecordOverflow> skipSize = 0;
+    CheckedUint32 skipSize = 0;
     if (params.skipImages > 0) {
-        Checked<uint32_t, RecordOverflow> tmp = paddedRowSize;
+        CheckedUint32 tmp = paddedRowSize;
         tmp *= imageHeight;
         tmp *= params.skipImages;
         if (tmp.hasOverflowed())
@@ -720,14 +720,14 @@ GCGLenum GraphicsContextGL::computeImageSizeInBytes(GCGLenum format, GCGLenum ty
         skipSize += tmp;
     }
     if (params.skipRows > 0) {
-        Checked<uint32_t, RecordOverflow> tmp = paddedRowSize;
+        CheckedUint32 tmp = paddedRowSize;
         tmp *= params.skipRows;
         if (tmp.hasOverflowed())
             return GraphicsContextGL::INVALID_VALUE;
         skipSize += tmp;
     }
     if (params.skipPixels > 0) {
-        Checked<uint32_t, RecordOverflow> tmp = bytesPerGroup;
+        CheckedUint32 tmp = bytesPerGroup;
         tmp *= params.skipPixels;
         if (tmp.hasOverflowed())
             return GraphicsContextGL::INVALID_VALUE;

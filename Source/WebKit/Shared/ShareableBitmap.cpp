@@ -207,7 +207,7 @@ void* ShareableBitmap::data() const
     return m_data;
 }
 
-Checked<unsigned, RecordOverflow> ShareableBitmap::numBytesForSize(WebCore::IntSize size, const ShareableBitmap::Configuration& configuration)
+CheckedUint32 ShareableBitmap::numBytesForSize(WebCore::IntSize size, const ShareableBitmap::Configuration& configuration)
 {
 #if USE(DIRECT2D)
     // We pass references to GPU textures, so no need to allocate frame buffers here. Just send a small bit of data.

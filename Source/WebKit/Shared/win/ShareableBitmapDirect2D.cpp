@@ -53,12 +53,12 @@ static unsigned strideForWidth(unsigned width)
     return bitsPerPixel * width / 8;
 }
 
-Checked<unsigned, RecordOverflow> ShareableBitmap::calculateBytesPerRow(WebCore::IntSize size, const Configuration& configuration)
+CheckedUint32 ShareableBitmap::calculateBytesPerRow(WebCore::IntSize size, const Configuration& configuration)
 {
     return calculateBytesPerPixel(configuration) * size.width();
 }
 
-Checked<unsigned, RecordOverflow> ShareableBitmap::calculateBytesPerPixel(const Configuration&)
+CheckedUint32 ShareableBitmap::calculateBytesPerPixel(const Configuration&)
 {
     return 4;
 }

@@ -84,9 +84,9 @@ public:
         Configuration m_configuration;
     };
 
-    static Checked<unsigned, RecordOverflow> numBytesForSize(WebCore::IntSize, const ShareableBitmap::Configuration&);
-    static Checked<unsigned, RecordOverflow> calculateBytesPerRow(WebCore::IntSize, const Configuration&);
-    static Checked<unsigned, RecordOverflow> calculateBytesPerPixel(const Configuration&);
+    static CheckedUint32 numBytesForSize(WebCore::IntSize, const ShareableBitmap::Configuration&);
+    static CheckedUint32 calculateBytesPerRow(WebCore::IntSize, const Configuration&);
+    static CheckedUint32 calculateBytesPerPixel(const Configuration&);
 
     // Create a shareable bitmap that uses malloced memory.
     static RefPtr<ShareableBitmap> create(const WebCore::IntSize&, Configuration);

@@ -791,7 +791,7 @@ public:
 
         ErrorCode error = ErrorCode::NoError;
         alternative->m_hasFixedSize = true;
-        Checked<unsigned, RecordOverflow> currentInputPosition = initialInputPosition;
+        CheckedUint32 currentInputPosition = initialInputPosition;
 
         for (unsigned i = 0; i < alternative->m_terms.size(); ++i) {
             PatternTerm& term = alternative->m_terms[i];
@@ -820,7 +820,7 @@ public:
                     currentCallFrameSize += YarrStackSpaceForBackTrackInfoPatternCharacter;
                     alternative->m_hasFixedSize = false;
                 } else if (m_pattern.unicode()) {
-                    Checked<unsigned, RecordOverflow> tempCount = term.quantityMaxCount;
+                    CheckedUint32 tempCount = term.quantityMaxCount;
                     tempCount *= U16_LENGTH(term.patternCharacter);
                     if (tempCount.hasOverflowed())
                         return ErrorCode::OffsetTooLarge;
@@ -839,7 +839,7 @@ public:
                     term.frameLocation = currentCallFrameSize;
                     currentCallFrameSize += YarrStackSpaceForBackTrackInfoCharacterClass;
                     if (term.characterClass->hasOneCharacterSize() && !term.invert()) {
-                        Checked<unsigned, RecordOverflow> tempCount = term.quantityMaxCount;
+                        CheckedUint32 tempCount = term.quantityMaxCount;
                         tempCount *= term.characterClass->hasNonBMPCharacters() ? 2 : 1;
                         if (tempCount.hasOverflowed())
                             return ErrorCode::OffsetTooLarge;

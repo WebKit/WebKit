@@ -1,3 +1,27 @@
+2021-06-02  Chris Dumez  <cdumez@apple.com>
+
+        Use Checked aliases instead of Checked<T, RecordOverflow>
+        https://bugs.webkit.org/show_bug.cgi?id=226535
+
+        Reviewed by Keith Miller.
+
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::numBytesForSize):
+        * Shared/ShareableBitmap.h:
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit::ShareableBitmap::calculateBytesPerRow):
+        (WebKit::ShareableBitmap::calculateBytesPerPixel):
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::ShareableBitmap::calculateBytesPerRow):
+        (WebKit::ShareableBitmap::calculateBytesPerPixel):
+        * Shared/win/ShareableBitmapDirect2D.cpp:
+        (WebKit::ShareableBitmap::calculateBytesPerRow):
+        (WebKit::ShareableBitmap::calculateBytesPerPixel):
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::TextChecker::updateSpellingUIWithGrammarString):
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp:
+        (WebKit::ImageBufferShareableBitmapBackend::calculateSafeBackendSize):
+
 2021-06-01  Darin Adler  <darin@apple.com>
 
         Remove <wtf/Optional.h>

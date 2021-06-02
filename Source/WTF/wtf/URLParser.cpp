@@ -2154,7 +2154,7 @@ Expected<uint32_t, URLParser::IPv4PieceParsingError> URLParser::parseIPv4Piece(C
         Hex,
     };
     State state = State::UnknownBase;
-    Checked<uint32_t, RecordOverflow> value = 0;
+    CheckedUint32 value = 0;
     if (!iterator.atEnd() && *iterator == '.')
         return makeUnexpected(IPv4PieceParsingError::Failure);
     while (!iterator.atEnd()) {

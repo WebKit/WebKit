@@ -70,9 +70,9 @@ static CGBitmapInfo bitmapInfo(const ShareableBitmap::Configuration& configurati
     return info;
 }
 
-Checked<unsigned, RecordOverflow> ShareableBitmap::calculateBytesPerRow(WebCore::IntSize size, const Configuration& configuration)
+CheckedUint32 ShareableBitmap::calculateBytesPerRow(WebCore::IntSize size, const Configuration& configuration)
 {
-    Checked<unsigned, RecordOverflow> bytesPerRow = calculateBytesPerPixel(configuration) * size.width();
+    CheckedUint32 bytesPerRow = calculateBytesPerPixel(configuration) * size.width();
 #if HAVE(IOSURFACE)
     if (bytesPerRow.hasOverflowed())
         return bytesPerRow;
@@ -82,7 +82,7 @@ Checked<unsigned, RecordOverflow> ShareableBitmap::calculateBytesPerRow(WebCore:
 #endif
 }
 
-Checked<unsigned, RecordOverflow> ShareableBitmap::calculateBytesPerPixel(const Configuration& configuration)
+CheckedUint32 ShareableBitmap::calculateBytesPerPixel(const Configuration& configuration)
 {
     return wantsExtendedRange(configuration) ? 8 : 4;
 }

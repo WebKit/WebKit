@@ -35,9 +35,9 @@
 
 namespace WebCore {
 
-static Checked<unsigned, RecordOverflow> computeDataSize(const IntSize& size)
+static CheckedUint32 computeDataSize(const IntSize& size)
 {
-    Checked<unsigned, RecordOverflow> checkedDataSize = 4;
+    CheckedUint32 checkedDataSize = 4;
     checkedDataSize *= static_cast<unsigned>(size.width());
     checkedDataSize *= static_cast<unsigned>(size.height());
     return checkedDataSize;

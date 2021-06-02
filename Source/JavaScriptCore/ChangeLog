@@ -1,3 +1,34 @@
+2021-06-02  Chris Dumez  <cdumez@apple.com>
+
+        Use Checked aliases instead of Checked<T, RecordOverflow>
+        https://bugs.webkit.org/show_bug.cgi?id=226535
+
+        Reviewed by Keith Miller.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::JSC_DEFINE_JIT_OPERATION):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::appendMemcpy):
+        (JSC::JSArray::unshiftCountWithAnyIndexingType):
+        * runtime/JSStringJoiner.cpp:
+        (JSC::JSStringJoiner::joinedLength const):
+        * runtime/JSStringJoiner.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::jsSpliceSubstringsWithSeparators):
+        * wasm/WasmFormat.cpp:
+        (JSC::Wasm::Segment::create):
+        * wasm/WasmOperations.cpp:
+        (JSC::Wasm::JSC_DEFINE_JIT_OPERATION):
+        * wasm/WasmTable.cpp:
+        (JSC::Wasm::Table::grow):
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::ByteCompiler::emitDisjunction):
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::consumeNumber):
+        * yarr/YarrPattern.cpp:
+
 2021-06-01  Darin Adler  <darin@apple.com>
 
         Remove <wtf/Optional.h>

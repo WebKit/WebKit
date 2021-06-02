@@ -504,7 +504,7 @@ bool JSArray::appendMemcpy(JSGlobalObject* globalObject, VM& vm, unsigned startI
         return false;
 
     unsigned otherLength = otherArray->length();
-    Checked<unsigned, RecordOverflow> checkedNewLength = startIndex;
+    CheckedUint32 checkedNewLength = startIndex;
     checkedNewLength += otherLength;
 
     unsigned newLength;
@@ -1041,7 +1041,7 @@ bool JSArray::unshiftCountWithAnyIndexingType(JSGlobalObject* globalObject, unsi
         if (oldLength - startIndex >= MIN_SPARSE_ARRAY_INDEX)
             RELEASE_AND_RETURN(scope, unshiftCountWithArrayStorage(globalObject, startIndex, count, ensureArrayStorage(vm)));
 
-        Checked<unsigned, RecordOverflow> checkedLength(oldLength);
+        CheckedUint32 checkedLength(oldLength);
         checkedLength += count;
         unsigned newLength;
         if (CheckedState::DidOverflow == checkedLength.safeGet(newLength)) {
@@ -1090,7 +1090,7 @@ bool JSArray::unshiftCountWithAnyIndexingType(JSGlobalObject* globalObject, unsi
         if (oldLength - startIndex >= MIN_SPARSE_ARRAY_INDEX)
             RELEASE_AND_RETURN(scope, unshiftCountWithArrayStorage(globalObject, startIndex, count, ensureArrayStorage(vm)));
 
-        Checked<unsigned, RecordOverflow> checkedLength(oldLength);
+        CheckedUint32 checkedLength(oldLength);
         checkedLength += count;
         unsigned newLength;
         if (CheckedState::DidOverflow == checkedLength.safeGet(newLength)) {

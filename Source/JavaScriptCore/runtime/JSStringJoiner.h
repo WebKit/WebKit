@@ -53,7 +53,7 @@ private:
     LChar m_singleCharacterSeparator;
     StringView m_separator;
     Vector<StringViewWithUnderlyingString> m_strings;
-    Checked<unsigned, RecordOverflow> m_accumulatedStringsLength;
+    CheckedUint32 m_accumulatedStringsLength;
     bool m_isAll8Bit { true };
 };
 

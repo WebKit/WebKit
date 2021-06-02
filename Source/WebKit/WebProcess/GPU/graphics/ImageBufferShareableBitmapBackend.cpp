@@ -54,11 +54,11 @@ IntSize ImageBufferShareableBitmapBackend::calculateSafeBackendSize(const Parame
     if (backendSize.isEmpty())
         return { };
 
-    Checked<unsigned, RecordOverflow> bytesPerRow = ShareableBitmap::calculateBytesPerRow(backendSize, configuration(parameters));
+    CheckedUint32 bytesPerRow = ShareableBitmap::calculateBytesPerRow(backendSize, configuration(parameters));
     if (bytesPerRow.hasOverflowed())
         return { };
 
-    CheckedSize numBytes = Checked<unsigned, RecordOverflow>(backendSize.height()) * bytesPerRow;
+    CheckedSize numBytes = CheckedUint32(backendSize.height()) * bytesPerRow;
     if (numBytes.hasOverflowed())
         return { };
 

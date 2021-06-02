@@ -187,7 +187,7 @@ static NSData *dataWithUserTypedString(NSString *string)
     if (!inLength)
         return nil;
 
-    Checked<int, RecordOverflow> mallocLength = inLength;
+    CheckedInt32 mallocLength = inLength;
     mallocLength *= 3; // large enough to %-escape every character
     if (mallocLength.hasOverflowed())
         return nil;

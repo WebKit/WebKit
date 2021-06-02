@@ -67,7 +67,7 @@ public:
 private:
     WEBCORE_EXPORT static std::optional<PixelBuffer> tryCreateForDecoding(const PixelBufferFormat&, const IntSize&, unsigned dataByteLength);
 
-    WEBCORE_EXPORT static Checked<unsigned, RecordOverflow> computeBufferSize(const PixelBufferFormat&, const IntSize&);
+    WEBCORE_EXPORT static CheckedUint32 computeBufferSize(const PixelBufferFormat&, const IntSize&);
 
     PixelBufferFormat m_format;
     IntSize m_size;

@@ -5323,7 +5323,7 @@ bool WebGLRenderingContextBase::validateTexFuncData(const char* functionName, Te
         synthesizeGLError(error, functionName, "invalid texture dimensions");
         return false;
     }
-    Checked<uint32_t, RecordOverflow> total = srcOffset;
+    CheckedUint32 total = srcOffset;
     total *= JSC::elementSize(pixels->getType());
     total += totalBytesRequired;
     total += skipBytes;
@@ -6812,7 +6812,7 @@ bool WebGLRenderingContextBase::validateCompressedTexFuncData(const char* functi
     case ExtensionsGL::COMPRESSED_SRGB8_ETC2:
     case ExtensionsGL::COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2:
     case ExtensionsGL::COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2: {
-        Checked<unsigned, RecordOverflow> checkedBytesRequired = (width + kEACAndETC2BlockSize - 1) / kEACAndETC2BlockSize;
+        CheckedUint32 checkedBytesRequired = (width + kEACAndETC2BlockSize - 1) / kEACAndETC2BlockSize;
         checkedBytesRequired *= (height + kEACAndETC2BlockSize - 1) / kEACAndETC2BlockSize;
         checkedBytesRequired *= 8;
         if (checkedBytesRequired.hasOverflowed()) {
@@ -6826,7 +6826,7 @@ bool WebGLRenderingContextBase::validateCompressedTexFuncData(const char* functi
     case ExtensionsGL::COMPRESSED_SIGNED_RG11_EAC:
     case ExtensionsGL::COMPRESSED_RGBA8_ETC2_EAC:
     case ExtensionsGL::COMPRESSED_SRGB8_ALPHA8_ETC2_EAC: {
-        Checked<unsigned, RecordOverflow> checkedBytesRequired = (width + kEACAndETC2BlockSize - 1) / kEACAndETC2BlockSize;
+        CheckedUint32 checkedBytesRequired = (width + kEACAndETC2BlockSize - 1) / kEACAndETC2BlockSize;
         checkedBytesRequired *= (height + kEACAndETC2BlockSize - 1) / kEACAndETC2BlockSize;
         checkedBytesRequired *= 16;
         if (checkedBytesRequired.hasOverflowed()) {

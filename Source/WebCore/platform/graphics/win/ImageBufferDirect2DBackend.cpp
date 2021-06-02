@@ -123,7 +123,7 @@ RefPtr<NativeImage> ImageBufferDirect2DBackend::copyNativeImage(BackingStoreCopy
     if (copyBehavior == CopyBackingStore && m_data.data.isEmpty())
         copyBehavior = DontCopyBackingStore;
 
-    CheckedSize numBytes = Checked<unsigned, RecordOverflow>(m_data.backingStoreSize.height()) * m_data.bytesPerRow;
+    CheckedSize numBytes = CheckedUint32(m_data.backingStoreSize.height()) * m_data.bytesPerRow;
     if (numBytes.hasOverflowed())
         return nullptr;
 
@@ -219,7 +219,7 @@ PlatformImagePtr ImageBufferDirect2DBackend::compatibleBitmap(ID2D1RenderTarget*
     auto size = m_bitmap->GetPixelSize();
     ASSERT(size.height && size.width);
 
-    Checked<unsigned, RecordOverflow> numBytes = size.width * size.height * 4;
+    CheckedUint32 numBytes = size.width * size.height * 4;
     if (numBytes.hasOverflowed())
         return nullptr;
 

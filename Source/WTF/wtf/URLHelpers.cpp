@@ -830,7 +830,7 @@ String userVisibleURL(const CString& url)
 
     bool mayNeedHostNameDecoding = false;
 
-    Checked<int, RecordOverflow> bufferLength = length;
+    CheckedInt32 bufferLength = length;
     bufferLength = bufferLength * 3 + 1; // The buffer should be large enough to %-escape every character.
     if (bufferLength.hasOverflowed())
         return { };

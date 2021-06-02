@@ -2340,17 +2340,14 @@ void GraphicsLayerCA::updateFilters()
 
 void GraphicsLayerCA::updateBackdropFilters(CommitState& commitState)
 {
-    using CheckedUnsigned = Checked<unsigned, RecordOverflow>;
-
     bool canHaveBackdropFilters = needsBackdrop();
-
     if (canHaveBackdropFilters) {
         canHaveBackdropFilters = false;
         IntRect backdropFilterRect = enclosingIntRect(m_backdropFiltersRect.rect());
         if (backdropFilterRect.width() > 0 && backdropFilterRect.height() > 0) {
-            CheckedUnsigned backdropFilterArea = CheckedUnsigned(backdropFilterRect.width()) * CheckedUnsigned(backdropFilterRect.height());
+            CheckedUint32 backdropFilterArea = CheckedUint32(backdropFilterRect.width()) * CheckedUint32(backdropFilterRect.height());
             if (!backdropFilterArea.hasOverflowed()) {
-                CheckedUnsigned newTotalBackdropFilterArea = CheckedUnsigned(commitState.totalBackdropFilterArea) + backdropFilterArea;
+                CheckedUint32 newTotalBackdropFilterArea = CheckedUint32(commitState.totalBackdropFilterArea) + backdropFilterArea;
                 if (!newTotalBackdropFilterArea.hasOverflowed() && newTotalBackdropFilterArea <= cMaxTotalBackdropFilterArea) {
                     commitState.totalBackdropFilterArea = newTotalBackdropFilterArea;
                     canHaveBackdropFilters = true;

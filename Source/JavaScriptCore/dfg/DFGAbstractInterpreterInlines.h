@@ -2551,7 +2551,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             // that's the conservative thing to do. Otherwise we'd need to write more code to mark such
             // paths as unreachable, or to return undefined. We could implement that eventually.
 
-            Checked<unsigned, RecordOverflow> argumentIndexChecked = index.asUInt32();
+            CheckedUint32 argumentIndexChecked = index.asUInt32();
             argumentIndexChecked += node->numberOfArgumentsToSkip();
             unsigned argumentIndex;
             if (argumentIndexChecked.safeGet(argumentIndex) != CheckedState::DidOverflow) {

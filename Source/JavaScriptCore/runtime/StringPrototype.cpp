@@ -378,7 +378,7 @@ static ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* 
         RELEASE_AND_RETURN(scope, jsString(globalObject, leftPart, separators[0], rightPart));
     }
 
-    Checked<int, RecordOverflow> totalLength = 0;
+    CheckedInt32 totalLength = 0;
     bool allSeparators8Bit = true;
     for (int i = 0; i < rangeCount; i++)
         totalLength += substringRanges[i].length;

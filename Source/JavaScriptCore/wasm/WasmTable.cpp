@@ -87,8 +87,7 @@ std::optional<uint32_t> Table::grow(uint32_t delta, JSValue defaultValue)
 
     Locker locker { m_owner->cellLock() };
 
-    using Checked = Checked<uint32_t, RecordOverflow>;
-    Checked newLengthChecked = length();
+    CheckedUint32 newLengthChecked = length();
     newLengthChecked += delta;
     uint32_t newLength;
     if (newLengthChecked.safeGet(newLength) == CheckedState::DidOverflow)
@@ -101,7 +100,7 @@ std::optional<uint32_t> Table::grow(uint32_t delta, JSValue defaultValue)
 
     auto checkedGrow = [&] (auto& container, auto initializer) {
         if (newLengthChecked > allocatedLength(m_length)) {
-            Checked reallocSizeChecked = allocatedLength(newLengthChecked);
+            CheckedUint32 reallocSizeChecked = allocatedLength(newLengthChecked);
             reallocSizeChecked *= sizeof(*container.get());
             uint32_t reallocSize;
             if (reallocSizeChecked.safeGet(reallocSize) == CheckedState::DidOverflow)

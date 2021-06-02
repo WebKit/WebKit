@@ -36,7 +36,7 @@ namespace JSC { namespace Wasm {
 
 Segment::Ptr Segment::create(std::optional<I32InitExpr> offset, uint32_t sizeInBytes, Kind kind)
 {
-    Checked<uint32_t, RecordOverflow> totalBytesChecked = sizeInBytes;
+    CheckedUint32 totalBytesChecked = sizeInBytes;
     totalBytesChecked += sizeof(Segment);
     uint32_t totalBytes;
     if (totalBytesChecked.safeGet(totalBytes) == CheckedState::DidOverflow)
