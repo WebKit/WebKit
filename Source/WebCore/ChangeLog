@@ -1,3 +1,28 @@
+2021-05-28  Antoine Quint  <graouts@webkit.org>
+
+        Hit-testing does not account for clip-path on <iframe>
+        https://bugs.webkit.org/show_bug.cgi?id=226380
+        <rdar://problem/78621486>
+
+        Reviewed by Antti Koivisto.
+
+        The logic to account for the clip-path property during hit-testing was only found in RenderBlock::nodeAtPoint()
+        although other types of RenderBox objects may need this, such as RenderIFrame. So we move some of the logic
+        from RenderBlock::nodeAtPoint() to dedicated methods on RenderBox such that RenderBox::nodeAtPoint() may call them
+        but also allow for RenderBlock::nodeAtPoint() to call them.
+
+        Test: css3/masking/clip-path-hit-test-iframe.html
+              css3/masking/clip-path-hit-test-img.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::hitTestVisualOverflow const):
+        (WebCore::RenderBox::hitTestClipPath const):
+        (WebCore::RenderBox::hitTestBorderRadius const):
+        (WebCore::RenderBox::nodeAtPoint):
+        * rendering/RenderBox.h:
+
 2021-06-02  Youenn Fablet  <youenn@apple.com>
 
         Improve AudioMediaStreamTrackRendererUnit logging to know which source is being played

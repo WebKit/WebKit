@@ -63,7 +63,6 @@
 #include "RenderLayoutState.h"
 #include "RenderListMarker.h"
 #include "RenderMenuList.h"
-#include "RenderSVGResourceClipper.h"
 #include "RenderSVGRoot.h"
 #include "RenderTableCell.h"
 #include "RenderTextControl.h"
@@ -2062,14 +2061,9 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     const LayoutPoint adjustedLocation(accumulatedOffset + location());
     const LayoutSize localOffset = toLayoutSize(adjustedLocation);
 
-    if (!isRenderView()) {
-        // Check if we need to do anything at all.
-        LayoutRect overflowBox = visualOverflowRect();
-        flipForWritingMode(overflowBox);
-        overflowBox.moveBy(adjustedLocation);
-        if (!locationInContainer.intersects(overflowBox))
-            return false;
-    }
+    // Check if we need to do anything at all.
+    if (!hitTestVisualOverflow(locationInContainer, accumulatedOffset))
+        return false;
 
     if ((hitTestAction == HitTestBlockBackground || hitTestAction == HitTestChildBlockBackground) && isPointInOverflowControl(result, locationInContainer.point(), adjustedLocation)) {
         updateHitTestResult(result, locationInContainer.point() - localOffset);
@@ -2078,31 +2072,8 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
            return true;
     }
 
-    if (style().clipPath()) {
-        switch (style().clipPath()->type()) {
-        case ClipPathOperation::Shape: {
-            auto& clipPath = downcast<ShapeClipPathOperation>(*style().clipPath());
-            auto referenceBoxRect = referenceBox(clipPath.referenceBox());
-            if (!clipPath.pathForReferenceRect(referenceBoxRect).contains(locationInContainer.point() - localOffset, clipPath.windRule()))
-                return false;
-            break;
-        }
-        case ClipPathOperation::Reference: {
-            const auto& referenceClipPathOperation = downcast<ReferenceClipPathOperation>(*style().clipPath());
-            auto* element = document().getElementById(referenceClipPathOperation.fragment());
-            if (!element || !element->renderer())
-                break;
-            if (!is<SVGClipPathElement>(*element))
-                break;
-            auto& clipper = downcast<RenderSVGResourceClipper>(*element->renderer());
-            if (!clipper.hitTestClipContent(FloatRect(borderBoxRect()), FloatPoint(locationInContainer.point() - localOffset)))
-                return false;
-            break;
-        }
-        case ClipPathOperation::Box:
-            break;
-        }
-    }
+    if (!hitTestClipPath(locationInContainer, accumulatedOffset))
+        return false;
 
     // If we have clipping, then we can't have any spillout.
     bool useClip = (hasControlClip() || hasOverflowClip());
@@ -2113,14 +2084,8 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     if (!checkChildren && hitTestExcludedChildrenInBorder(request, result, locationInContainer, adjustedLocation, hitTestAction))
         return true;
 
-    // Check if the point is outside radii.
-    if (!isRenderView() && style().hasBorderRadius()) {
-        LayoutRect borderRect = borderBoxRect();
-        borderRect.moveBy(adjustedLocation);
-        RoundedRect border = style().getRoundedBorderFor(borderRect);
-        if (!locationInContainer.intersects(border))
-            return false;
-    }
+    if (!hitTestBorderRadius(locationInContainer, accumulatedOffset))
+        return false;
 
     // Now hit test our background
     if (hitTestAction == HitTestBlockBackground || hitTestAction == HitTestChildBlockBackground) {

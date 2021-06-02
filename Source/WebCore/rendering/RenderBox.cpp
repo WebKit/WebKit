@@ -26,6 +26,7 @@
 #include "RenderBox.h"
 
 #include "CSSFontSelector.h"
+#include "ClipPathOperation.h"
 #include "ControlStates.h"
 #include "Document.h"
 #include "Editing.h"
@@ -66,10 +67,12 @@
 #include "RenderLayerScrollableArea.h"
 #include "RenderLayoutState.h"
 #include "RenderMultiColumnFlow.h"
+#include "RenderSVGResourceClipper.h"
 #include "RenderTableCell.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RuntimeApplicationChecks.h"
+#include "SVGClipPathElement.h"
 #include "ScrollAnimator.h"
 #include "ScrollbarTheme.h"
 #include "Settings.h"
@@ -1339,6 +1342,65 @@ LayoutUnit RenderBox::adjustContentBoxLogicalHeightForBoxSizing(std::optional<La
 }
 
 // Hit Testing
+bool RenderBox::hitTestVisualOverflow(const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset) const
+{
+    if (isRenderView())
+        return true;
+
+    LayoutPoint adjustedLocation = accumulatedOffset + location();
+    LayoutRect overflowBox = visualOverflowRect();
+    flipForWritingMode(overflowBox);
+    overflowBox.moveBy(adjustedLocation);
+    return locationInContainer.intersects(overflowBox);
+}
+
+bool RenderBox::hitTestClipPath(const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset) const
+{
+    if (!style().clipPath())
+        return true;
+
+    LayoutPoint adjustedLocation = accumulatedOffset + location();
+    const LayoutSize localOffset = toLayoutSize(adjustedLocation);
+
+    switch (style().clipPath()->type()) {
+    case ClipPathOperation::Shape: {
+        auto& clipPath = downcast<ShapeClipPathOperation>(*style().clipPath());
+        auto referenceBoxRect = referenceBox(clipPath.referenceBox());
+        if (!clipPath.pathForReferenceRect(referenceBoxRect).contains(locationInContainer.point() - localOffset, clipPath.windRule()))
+            return false;
+        break;
+    }
+    case ClipPathOperation::Reference: {
+        const auto& referenceClipPathOperation = downcast<ReferenceClipPathOperation>(*style().clipPath());
+        auto* element = document().getElementById(referenceClipPathOperation.fragment());
+        if (!element || !element->renderer())
+            break;
+        if (!is<SVGClipPathElement>(*element))
+            break;
+        auto& clipper = downcast<RenderSVGResourceClipper>(*element->renderer());
+        if (!clipper.hitTestClipContent(FloatRect(borderBoxRect()), FloatPoint(locationInContainer.point() - localOffset)))
+            return false;
+        break;
+    }
+    case ClipPathOperation::Box:
+        break;
+    }
+
+    return true;
+}
+
+bool RenderBox::hitTestBorderRadius(const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset) const
+{
+    if (isRenderView() || !style().hasBorderRadius())
+        return true;
+
+    LayoutPoint adjustedLocation = accumulatedOffset + location();
+    LayoutRect borderRect = borderBoxRect();
+    borderRect.moveBy(adjustedLocation);
+    RoundedRect border = style().getRoundedBorderFor(borderRect);
+    return locationInContainer.intersects(border);
+}
+
 bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
 {
     LayoutPoint adjustedLocation = accumulatedOffset + location();
@@ -1356,12 +1418,21 @@ bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result
     LayoutRect boundsRect = borderBoxRectInFragment(nullptr);
     boundsRect.moveBy(adjustedLocation);
     if (visibleToHitTesting(request) && action == HitTestForeground && locationInContainer.intersects(boundsRect)) {
+        if (!hitTestVisualOverflow(locationInContainer, accumulatedOffset))
+            return false;
+
+        if (!hitTestClipPath(locationInContainer, accumulatedOffset))
+            return false;
+
+        if (!hitTestBorderRadius(locationInContainer, accumulatedOffset))
+            return false;
+
         updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedLocation));
         if (result.addNodeToListBasedTestResult(nodeForHitTest(), request, locationInContainer, boundsRect) == HitTestProgress::Stop)
             return true;
     }
 
-    return false;
+    return RenderBoxModelObject::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, action);
 }
 
 // --------------------- painting stuff -------------------------------
