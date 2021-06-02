@@ -1,3 +1,28 @@
+2021-06-02  Jonathan Bedard  <jbedard@apple.com>
+
+        [webkitcorepy] TaskPool shouldn't fork when 1 process is needed
+        https://bugs.webkit.org/show_bug.cgi?id=226506
+        <rdar://problem/78724554>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/libraries/webkitcorepy/setup.py: Bump version.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/__init__.py: Ditto.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/task_pool.py:
+        (TaskPool.__init__): Allow user to force fork, even with a single process.
+        (TaskPool.__enter__): If only a single worker is needed and the caller is not forcing
+        a fork, run the setup function in the parent process.
+        (TaskPool.do): If no queue has been constructed, we're running in the parent process.
+        (TaskPool.wait): Nothing to wait for if we're running in the parent process.
+        (TaskPool.__exit__): If no queue has been constructed, we're running in the parent process,
+        so run the teardown in this process and reset the process name.
+        * Scripts/libraries/webkitcorepy/webkitcorepy/tests/task_pool_unittest.py:
+        (TaskPoolUnittest.test_single): Force fork.
+        (TaskPoolUnittest.test_single_no_fork):
+        (TaskPoolUnittest.test_exception): Force fork.
+        (TaskPoolUnittest.test_exception_no_fork):
+        (TaskPoolUnittest.test_invalid_shutdown): Force fork.
+
 2021-06-02  W.D. Xiong  <w_xiong@apple.com>
         
         [resultsdbpy] "legend" is misspelled as "lengend"
