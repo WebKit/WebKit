@@ -1,3 +1,27 @@
+2021-06-02  Keith Miller  <keith_miller@apple.com>
+
+        Convert small JIT pool tests into executable fuzzing
+        https://bugs.webkit.org/show_bug.cgi?id=226279
+
+        Right now, we try to test our engine on a small JIT pool. This isn't a known configuration for any
+        actual ports and causes issues if we run out of JIT memory when we need to compile an OSR exit.
+        Instead of testing such a small pool we should just fuzz each executable allocation that says it
+        can fail.
+
+        The current fuzzing doesn't do a good job tracking the number of DFG/FTL compiles when allocations
+        fail, so when enabled those tests will just exit early. Also, right now we use a random seed picked
+        by the engine for these tests, which makes it hard to reproduce crashes on the bots. If we see
+        flakiness on the bots we can have the harness pass in a number so it gets logged in the repro command.
+
+        Reviewed by Michael Saboff.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::numberOfDFGCompiles):
+        * jit/ExecutableAllocationFuzz.cpp:
+        (JSC::doExecutableAllocationFuzzing):
+        * jsc.cpp:
+        (runJSC):
+
 2021-06-02  Chris Dumez  <cdumez@apple.com>
 
         Use Checked aliases instead of Checked<T, RecordOverflow>

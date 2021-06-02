@@ -3489,9 +3489,7 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
         JSLockHolder locker(vm);
         if (Options::useExceptionFuzz())
             printf("JSC EXCEPTION FUZZ: encountered %u checks.\n", numberOfExceptionFuzzChecks());
-        bool fireAtEnabled =
-        Options::fireExecutableAllocationFuzzAt() || Options::fireExecutableAllocationFuzzAtOrAfter();
-        if (Options::useExecutableAllocationFuzz() && (!fireAtEnabled || Options::verboseExecutableAllocationFuzz()))
+        if (Options::useExecutableAllocationFuzz() && Options::verboseExecutableAllocationFuzz())
             printf("JSC EXECUTABLE ALLOCATION FUZZ: encountered %u checks.\n", numberOfExecutableAllocationFuzzChecks());
         if (Options::useOSRExitFuzz() && Options::verboseOSRExitFuzz()) {
             printf("JSC OSR EXIT FUZZ: encountered %u static checks.\n", numberOfStaticOSRExitFuzzChecks());
