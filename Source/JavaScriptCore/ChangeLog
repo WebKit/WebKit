@@ -1,3 +1,49 @@
+2021-06-02  Robin Morisset  <rmorisset@apple.com>
+
+        We should drop B3 values while running Air
+        https://bugs.webkit.org/show_bug.cgi?id=226187
+
+        Reviewed by Saam Barati.
+
+        We must keep the following values:
+        - WasmBoundsCheck, to know whether it is Pinned or Maximum, and if it is pinned find its argument.
+        - CCall/Patch/Check/CheckAdd/CheckSub/CheckMul and all of their children, because all of these are lowered to Air::Patchpoint, which needs to know the type of its arguments, and does so by looking at the children of its        origin.
+        I intend to fix these in later patches if possible.
+
+        Finally we must preserve all B3 values in the following cases:
+        - if we dump the disassembly or the Air graph: because otherwise we cannot print the origins
+        - if we are using the sampling profiler, because it relies on PCToCodeOriginMap which we cannot accurately fill without these origins.
+
+        We must also keep m_tuples alive, as it is used by Patchpoints in Air to understand the types of their arguments.
+        We also don't touch StackSlots (in this patch), because one of them is captured by FTL::State.
+
+        Also now PCToOriginMap has a Vector with no inline capacity, since it is either quite large (if needed) or empty (otherwise).
+
+        The performance impact of this is a progression on various RAMification subtests on Mac, but is more mitigated on iPhone7, with various regressions.
+        I suspect these to be noise, and will monitor the performance bots post-landing to make sure of it.
+
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::lowerToAir):
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::freeUnneededB3ValuesAfterLowering):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::releasePCToOriginMap):
+        (JSC::B3::Procedure::setNeedsPCToOriginMap):
+        (JSC::B3::Procedure::needsPCToOriginMap):
+        * b3/B3SparseCollection.h:
+        (JSC::B3::SparseCollection::clearAll):
+        (JSC::B3::SparseCollection::filterAndTransfer):
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::Code):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::shouldPreserveB3Origins const):
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::generateWithAlreadyAllocatedRegisters):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLState.cpp:
+        (JSC::FTL::State::State):
+
 2021-06-02  Chris Dumez  <cdumez@apple.com>
 
         Drop Checked::safeGet()

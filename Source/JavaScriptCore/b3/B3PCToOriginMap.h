@@ -61,7 +61,7 @@ public:
     const Vector<OriginRange>& ranges() const  { return m_ranges; }
 
 private:
-    Vector<OriginRange> m_ranges;
+    Vector<OriginRange, 0> m_ranges;
 };
 
 } } // namespace JSC::B3

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -356,6 +356,10 @@ public:
     void emitEpilogue(CCallHelpers&);
 
     std::unique_ptr<GenerateAndAllocateRegisters> m_generateAndAllocateRegisters;
+
+    bool shouldPreserveB3Origins() const { return m_preserveB3Origins; }
+
+    void forcePreservationOfB3Origins() { m_preserveB3Origins = true; }
     
 private:
     friend class ::JSC::B3::Procedure;
@@ -392,7 +396,9 @@ private:
     unsigned m_numFPTmps { 0 };
     unsigned m_frameSize { 0 };
     unsigned m_callArgAreaSize { 0 };
+    unsigned m_optLevel { defaultOptLevel() };
     bool m_stackIsAllocated { false };
+    bool m_preserveB3Origins { true };
     RegisterAtOffsetList m_uncorrectedCalleeSaveRegisterAtOffsetList;
     RegisterSet m_calleeSaveRegisters;
     StackSlot* m_calleeSaveStackSlot { nullptr };
@@ -402,7 +408,6 @@ private:
     RefPtr<WasmBoundsCheckGenerator> m_wasmBoundsCheckGenerator;
     const char* m_lastPhaseName;
     std::unique_ptr<Disassembler> m_disassembler;
-    unsigned m_optLevel { defaultOptLevel() };
     Ref<PrologueGenerator> m_defaultPrologueGenerator;
 };
 

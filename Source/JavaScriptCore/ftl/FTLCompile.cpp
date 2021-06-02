@@ -150,10 +150,11 @@ void compile(State& state, Safepoint::Result& safepointResult)
         state.allocationFailed = true;
         return;
     }
-    
-    B3::PCToOriginMap originMap = state.proc->releasePCToOriginMap();
-    if (vm.shouldBuilderPCToCodeOriginMapping())
+
+    if (vm.shouldBuilderPCToCodeOriginMapping()) {
+        B3::PCToOriginMap originMap = state.proc->releasePCToOriginMap();
         codeBlock->setPCToCodeOriginMap(makeUnique<PCToCodeOriginMap>(PCToCodeOriginMapBuilder(vm, WTFMove(originMap)), *state.finalizer->b3CodeLinkBuffer));
+    }
 
     CodeLocationLabel<JSEntryPtrTag> label = state.finalizer->b3CodeLinkBuffer->locationOf<JSEntryPtrTag>(state.proc->code().entrypointLabel(0));
     state.generatedFunction = label;
