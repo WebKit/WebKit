@@ -1,3 +1,21 @@
+2021-06-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [Cocoa] Clean up notification_center message filters
+        https://bugs.webkit.org/show_bug.cgi?id=226555
+        <rdar://problem/77164076>
+
+        Reviewed by Per Arne Vollan.
+
+        We initially had two groups of mach-message-send filter rules for 'com.apple.system.notification_center' so we could
+        collect telemetry on a group of messages. Now that we have removed all the messages we do not need, there is no reason
+        to maintain two separate sets.
+
+        This patch just combines the two sets into a single list so we can easily conditionalize it for different OS releases
+        if needed.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2021-06-02  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION(r276993): 5 TestWebKitAPI.AudioRoutingArbitration (api-tests) are constant failures
