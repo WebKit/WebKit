@@ -1,3 +1,17 @@
+2021-06-02  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r277217?): ASSERTION FAILED: Unhandled message RemoteLegacyCDMSession_SendError to 10 assertionFailureDueToUnreachableCode
+        https://bugs.webkit.org/show_bug.cgi?id=226545
+        <rdar://78001450>
+
+        Reviewed by Eric Carlson.
+
+        Add message handlers for RemoteLegacyCDMProxy and RemoteLegacyCDMSessionProxy.
+
+        * GPUProcess/GPUConnectionToWebProcess.cpp:
+        (WebKit::GPUConnectionToWebProcess::dispatchMessage):
+        (WebKit::GPUConnectionToWebProcess::dispatchSyncMessage):
+
 2021-06-02  Per Arne  <pvollan@apple.com>
 
         [iOS] Fix IOKit sandbox violations

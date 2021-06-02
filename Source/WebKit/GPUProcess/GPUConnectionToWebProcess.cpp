@@ -687,6 +687,16 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
         legacyCdmFactoryProxy().didReceiveMessageFromWebProcess(connection, decoder);
         return true;
     }
+
+    if (decoder.messageReceiverName() == Messages::RemoteLegacyCDMProxy::messageReceiverName()) {
+        legacyCdmFactoryProxy().didReceiveCDMMessage(connection, decoder);
+        return true;
+    }
+
+    if (decoder.messageReceiverName() == Messages::RemoteLegacyCDMSessionProxy::messageReceiverName()) {
+        legacyCdmFactoryProxy().didReceiveCDMSessionMessage(connection, decoder);
+        return true;
+    }
 #endif
     if (decoder.messageReceiverName() == Messages::RemoteMediaEngineConfigurationFactoryProxy::messageReceiverName()) {
         mediaEngineConfigurationFactoryProxy().didReceiveMessageFromWebProcess(connection, decoder);
@@ -760,6 +770,16 @@ bool GPUConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connection,
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     if (decoder.messageReceiverName() == Messages::RemoteLegacyCDMFactoryProxy::messageReceiverName()) {
         legacyCdmFactoryProxy().didReceiveSyncMessageFromWebProcess(connection, decoder, replyEncoder);
+        return true;
+    }
+
+    if (decoder.messageReceiverName() == Messages::RemoteLegacyCDMProxy::messageReceiverName()) {
+        legacyCdmFactoryProxy().didReceiveSyncCDMMessage(connection, decoder, replyEncoder);
+        return true;
+    }
+
+    if (decoder.messageReceiverName() == Messages::RemoteLegacyCDMSessionProxy::messageReceiverName()) {
+        legacyCdmFactoryProxy().didReceiveSyncCDMSessionMessage(connection, decoder, replyEncoder);
         return true;
     }
 #endif
