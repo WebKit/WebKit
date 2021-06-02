@@ -280,7 +280,7 @@ class ContextMtl : public ContextImpl, public mtl::Context
     void invalidateCurrentTextures();
     void invalidateDriverUniforms();
     void invalidateRenderPipeline();
-
+    void prepareForTransformFeedbackPassTwo();
     // Call this to notify ContextMtl whenever FramebufferMtl's state changed
     void onDrawFrameBufferChangedState(const gl::Context *context,
                                        FramebufferMtl *framebuffer,

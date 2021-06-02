@@ -1,3 +1,28 @@
+2021-06-01  Kyle Piddington  <kpiddington@apple.com>
+
+        [Metal ANGLE] transformFeedback samples on webglsamples.org do not render correctly
+        https://bugs.webkit.org/show_bug.cgi?id=226285
+        <rdar://78524773>
+
+        Reviewed by Dean Jackson.
+
+        Metal ANGLE does not render these samples correctly, for a number of reasons. 
+        For transform_feedback_interleaved and seperated, We need to start a new renderEncoder to get the results from the transform feedback. 
+        for transform_feedback-seperated_2, we need to invalidate the current render pass descriptor in order to switch to the rasterizer-enabled version of the shader.
+        Testing: Ran all transform feedback tests from deqp suite to ensure no regressions are present.
+
+        * src/libANGLE/renderer/metal/ContextMtl.h:
+        * src/libANGLE/renderer/metal/ContextMtl.mm:
+        (rx::ContextMtl::drawTriFanArraysWithBaseVertex):
+        (rx::ContextMtl::drawArraysImpl):
+        (rx::ContextMtl::drawTriFanElements):
+        (rx::ContextMtl::prepareForTransformFeedbackPassTwo):
+        (rx::ContextMtl::drawLineLoopElements):
+        (rx::ContextMtl::drawElementsImpl):
+        (rx::ContextMtl::onEndTransformFeedback):
+        * src/libANGLE/renderer/metal/TransformFeedbackMtl.mm:
+        (rx::TransformFeedbackMtl::end):
+
 2021-06-01  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         ANGLE Metal translator pre-rotation code is unused and it asserts when used
