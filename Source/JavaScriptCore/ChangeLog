@@ -1,5 +1,17 @@
 2021-06-02  Keith Miller  <keith_miller@apple.com>
 
+        Add globalObject API set property test
+        https://bugs.webkit.org/show_bug.cgi?id=226542
+        <rdar://78287979>
+
+        Reviewed by Alexey Shvayka.
+
+        * API/tests/testapi.cpp:
+        (TestAPI::testJSObjectSetOnGlobalObjectSubclassDefinition):
+        (testCAPIViaCpp):
+
+2021-06-02  Keith Miller  <keith_miller@apple.com>
+
         Convert small JIT pool tests into executable fuzzing
         https://bugs.webkit.org/show_bug.cgi?id=226279
 
