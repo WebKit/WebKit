@@ -144,7 +144,7 @@ public:
         
         MarginValues m_margins;
         int m_lineBreakToAvoidWidow;
-        std::unique_ptr<RootInlineBox> m_lineGridBox;
+        std::unique_ptr<LegacyRootInlineBox> m_lineGridBox;
 
         WeakPtr<RenderMultiColumnFlow> m_multiColumnFlow;
         
@@ -262,8 +262,8 @@ public:
     bool didBreakAtLineToAvoidWidow() const { return hasRareBlockFlowData() && rareBlockFlowData()->m_didBreakAtLineToAvoidWidow; }
     bool relayoutToAvoidWidows();
 
-    RootInlineBox* lineGridBox() const { return hasRareBlockFlowData() ? rareBlockFlowData()->m_lineGridBox.get() : nullptr; }
-    void setLineGridBox(std::unique_ptr<RootInlineBox> box)
+    LegacyRootInlineBox* lineGridBox() const { return hasRareBlockFlowData() ? rareBlockFlowData()->m_lineGridBox.get() : nullptr; }
+    void setLineGridBox(std::unique_ptr<LegacyRootInlineBox> box)
     {
         ensureRareBlockFlowData().m_lineGridBox = WTFMove(box);
     }
@@ -337,8 +337,8 @@ public:
 
     LayoutPoint flipFloatForWritingModeForChild(const FloatingObject&, const LayoutPoint&) const;
 
-    RootInlineBox* firstRootBox() const { return legacyLineLayout() ? legacyLineLayout()->firstRootBox() : nullptr; }
-    RootInlineBox* lastRootBox() const { return legacyLineLayout() ? legacyLineLayout()->lastRootBox() : nullptr; }
+    LegacyRootInlineBox* firstRootBox() const { return legacyLineLayout() ? legacyLineLayout()->firstRootBox() : nullptr; }
+    LegacyRootInlineBox* lastRootBox() const { return legacyLineLayout() ? legacyLineLayout()->lastRootBox() : nullptr; }
 
     void setChildrenInline(bool) final;
 
@@ -527,7 +527,7 @@ private:
     void fitBorderToLinesIfNeeded(); // Shrink the box in which the border paints if border-fit is set.
     void adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutUnit& right) const;
 
-    void markLinesDirtyInBlockRange(LayoutUnit logicalTop, LayoutUnit logicalBottom, RootInlineBox* highest = 0);
+    void markLinesDirtyInBlockRange(LayoutUnit logicalTop, LayoutUnit logicalBottom, LegacyRootInlineBox* highest = 0);
 
     GapRects inlineSelectionGaps(RenderBlock& rootBlock, const LayoutPoint& rootBlockPhysicalPosition, const LayoutSize& offsetFromRootBlock,
         LayoutUnit& lastLogicalTop, LayoutUnit& lastLogicalLeft, LayoutUnit& lastLogicalRight, const LogicalSelectionOffsetCaches&, const PaintInfo*) override;
@@ -560,7 +560,7 @@ private:
 
 public:
     // FIXME-BLOCKFLOW: These can be made protected again once all callers have been moved here.
-    void adjustLinePositionForPagination(RootInlineBox*, LayoutUnit& deltaOffset, bool& overflowsFragment, RenderFragmentedFlow*); // Computes a deltaOffset value that put a line at the top of the next page if it doesn't fit on the current page.
+    void adjustLinePositionForPagination(LegacyRootInlineBox*, LayoutUnit& deltaOffset, bool& overflowsFragment, RenderFragmentedFlow*); // Computes a deltaOffset value that put a line at the top of the next page if it doesn't fit on the current page.
 
     // Pagination routines.
     bool relayoutForPagination();
@@ -641,6 +641,8 @@ inline LayoutUnit RenderBlockFlow::endPaddingWidthForCaret() const
         return caretWidth;
     return { };
 }
+
+bool shouldIncludeLinesForParentLineCount(const RenderBlockFlow&);
 
 } // namespace WebCore
 

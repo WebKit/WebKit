@@ -2266,6 +2266,7 @@ rendering/LayoutDisallowedScope.cpp
 rendering/LayoutRepainter.cpp
 rendering/LegacyInlineBox.cpp
 rendering/LegacyLineLayout.cpp
+rendering/LegacyRootInlineBox.cpp
 rendering/MarkedText.cpp
 rendering/MarkedTextStyle.cpp
 rendering/OrderIterator.cpp
@@ -2353,7 +2354,6 @@ rendering/RenderVTTCue.cpp
 rendering/RenderVideo.cpp
 rendering/RenderView.cpp
 rendering/RenderWidget.cpp
-rendering/RootInlineBox.cpp
 rendering/ScrollAlignment.cpp
 rendering/SelectionRangeData.cpp
 rendering/TableLayout.cpp

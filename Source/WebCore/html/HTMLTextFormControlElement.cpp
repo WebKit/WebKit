@@ -681,9 +681,9 @@ unsigned HTMLTextFormControlElement::indexForPosition(const Position& passedPosi
     return index;
 }
 
-static void getNextSoftBreak(RootInlineBox*& line, Node*& breakNode, unsigned& breakOffset)
+static void getNextSoftBreak(LegacyRootInlineBox*& line, Node*& breakNode, unsigned& breakOffset)
 {
-    RootInlineBox* next;
+    LegacyRootInlineBox* next;
     for (; line; line = next) {
         next = line->nextRootBox();
         if (next && !line->endsWithBreak()) {
@@ -715,7 +715,7 @@ String HTMLTextFormControlElement::valueWithHardLineBreaks() const
 
     Node* breakNode;
     unsigned breakOffset;
-    RootInlineBox* line = renderer->firstRootBox();
+    LegacyRootInlineBox* line = renderer->firstRootBox();
     if (!line)
         return value();
 

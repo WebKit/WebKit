@@ -25,8 +25,8 @@
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "InlineTextBox.h"
+#include "LegacyRootInlineBox.h"
 #include "PaintInfo.h"
-#include "RootInlineBox.h"
 #include "TextRun.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -87,7 +87,7 @@ LegacyInlineBox* EllipsisBox::markupBox() const
     if (!m_shouldPaintMarkupBox)
         return 0;
 
-    RootInlineBox* lastLine = blockFlow().lastRootBox();
+    LegacyRootInlineBox* lastLine = blockFlow().lastRootBox();
     if (!lastLine)
         return 0;
 
@@ -116,7 +116,7 @@ IntRect EllipsisBox::selectionRect()
 {
     const RenderStyle& lineStyle = this->lineStyle();
     const FontCascade& font = lineStyle.fontCascade();
-    const RootInlineBox& rootBox = root();
+    const LegacyRootInlineBox& rootBox = root();
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
     LayoutRect selectionRect { LayoutUnit(x()), LayoutUnit(y() + rootBox.selectionTopAdjustedForPrecedingBlock()), 0_lu, rootBox.selectionHeightAdjustedForPrecedingBlock() };
     font.adjustSelectionRectForText(RenderBlock::constructTextRun(m_str, lineStyle, AllowRightExpansion), selectionRect);
@@ -136,7 +136,7 @@ void EllipsisBox::paintSelection(GraphicsContext& context, const LayoutPoint& pa
     if (textColor == c)
         c = c.invertedColorWithAlpha(1.0);
 
-    const RootInlineBox& rootBox = root();
+    const LegacyRootInlineBox& rootBox = root();
     GraphicsContextStateSaver stateSaver(context);
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
     LayoutRect selectionRect { LayoutUnit(x() + paintOffset.x()), LayoutUnit(y() + paintOffset.y() + rootBox.selectionTop()), 0_lu, rootBox.selectionHeight() };

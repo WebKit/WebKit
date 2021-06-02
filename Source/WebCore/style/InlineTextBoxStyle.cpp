@@ -28,7 +28,7 @@
 
 #include "FontCascade.h"
 #include "InlineTextBox.h"
-#include "RootInlineBox.h"
+#include "LegacyRootInlineBox.h"
 #include "TextUnderlineOffset.h"
 
 namespace WebCore {
@@ -66,7 +66,7 @@ float computeUnderlineOffset(TextUnderlinePosition underlinePosition, TextUnderl
     case TextUnderlinePosition::Under: {
         ASSERT(inlineTextBox);
         // Position underline relative to the bottom edge of the lowest element's content box.
-        const RootInlineBox& rootBox = inlineTextBox->root();
+        const LegacyRootInlineBox& rootBox = inlineTextBox->root();
         const RenderElement* decorationRenderer = inlineTextBox->parent()->renderer().enclosingRendererWithTextDecoration(TextDecoration::Underline, inlineTextBox->isFirstLine());
         
         float offset;

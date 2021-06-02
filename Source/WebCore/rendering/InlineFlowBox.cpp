@@ -27,6 +27,7 @@
 #include "GraphicsContext.h"
 #include "InlineTextBox.h"
 #include "HitTestResult.h"
+#include "LegacyRootInlineBox.h"
 #include "RenderBlock.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
@@ -38,7 +39,6 @@
 #include "RenderTableCell.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
-#include "RootInlineBox.h"
 #include "Settings.h"
 #include "Text.h"
 #include <math.h>
@@ -527,7 +527,7 @@ void InlineFlowBox::adjustMaxAscentAndDescent(LayoutUnit& maxAscent, LayoutUnit&
     }
 }
 
-void InlineFlowBox::computeLogicalBoxHeights(RootInlineBox& rootBox, LayoutUnit& maxPositionTop, LayoutUnit& maxPositionBottom,
+void InlineFlowBox::computeLogicalBoxHeights(LegacyRootInlineBox& rootBox, LayoutUnit& maxPositionTop, LayoutUnit& maxPositionBottom,
     LayoutUnit& maxAscent, LayoutUnit& maxDescent, bool& setMaxAscent, bool& setMaxDescent,
     bool strictMode, GlyphOverflowAndFallbackFontsMap& textBoxDataMap,
     FontBaseline baselineType, VerticalPositionCache& verticalPositionCache)
@@ -1157,7 +1157,7 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     // Constrain our hit testing to the line top and bottom if necessary.
     bool noQuirksMode = renderer().document().inNoQuirksMode();
     if (!noQuirksMode && !hasTextChildren() && !(descendantsHaveSameLineHeightAndBaseline() && hasTextDescendants())) {
-        RootInlineBox& rootBox = root();
+        LegacyRootInlineBox& rootBox = root();
         LayoutUnit top { isHorizontal() ? y() : x()};
         LayoutUnit logicalHeight { isHorizontal() ? height() : width() };
         LayoutUnit bottom = std::min(rootBox.lineBottom(), top + logicalHeight);
@@ -1330,7 +1330,7 @@ void InlineFlowBox::constrainToLineTopAndBottomIfNeeded(LayoutRect& rect) const
 {
     bool noQuirksMode = renderer().document().inNoQuirksMode();
     if (!noQuirksMode && !hasTextChildren() && !(descendantsHaveSameLineHeightAndBaseline() && hasTextDescendants())) {
-        const RootInlineBox& rootBox = root();
+        const LegacyRootInlineBox& rootBox = root();
         LayoutUnit logicalTop = isHorizontal() ? rect.y() : rect.x();
         LayoutUnit logicalHeight = isHorizontal() ? rect.height() : rect.width();
         LayoutUnit bottom = std::min(rootBox.lineBottom(), logicalTop + logicalHeight);

@@ -71,7 +71,7 @@ public:
     bool isHorizontal() const;
 
     const RenderBlockFlow& containingBlock() const;
-    const RootInlineBox* legacyRootInlineBox() const;
+    const LegacyRootInlineBox* legacyRootInlineBox() const;
 
 protected:
     friend class LineIterator;
@@ -82,7 +82,7 @@ protected:
 class LineIterator {
 public:
     LineIterator() : m_line(LineIteratorLegacyPath { nullptr }) { };
-    LineIterator(const RootInlineBox* rootInlineBox) : m_line(LineIteratorLegacyPath { rootInlineBox }) { };
+    LineIterator(const LegacyRootInlineBox* rootInlineBox) : m_line(LineIteratorLegacyPath { rootInlineBox }) { };
     LineIterator(PathLine::PathVariant&&);
 
     LineIterator& operator++() { return traverseNext(); }
@@ -231,7 +231,7 @@ inline const RenderBlockFlow& PathLine::containingBlock() const
     });
 }
 
-inline const RootInlineBox* PathLine::legacyRootInlineBox() const
+inline const LegacyRootInlineBox* PathLine::legacyRootInlineBox() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.legacyRootInlineBox();

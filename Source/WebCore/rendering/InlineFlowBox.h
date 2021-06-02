@@ -185,7 +185,7 @@ public:
             clearKnownToHaveNoOverflow();
     }
 
-    void computeLogicalBoxHeights(RootInlineBox&, LayoutUnit& maxPositionTop, LayoutUnit& maxPositionBottom,
+    void computeLogicalBoxHeights(LegacyRootInlineBox&, LayoutUnit& maxPositionTop, LayoutUnit& maxPositionBottom,
         LayoutUnit& maxAscent, LayoutUnit& maxDescent, bool& setMaxAscent, bool& setMaxDescent,
         bool strictMode, GlyphOverflowAndFallbackFontsMap&, FontBaseline, VerticalPositionCache&);
     void adjustMaxAscentAndDescent(LayoutUnit& maxAscent, LayoutUnit& maxDescent,

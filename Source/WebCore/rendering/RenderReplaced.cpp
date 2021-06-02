@@ -302,7 +302,7 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
     LayoutUnit top = adjustedPaintOffset.y() + visualOverflowRect().y();
     LayoutUnit bottom = adjustedPaintOffset.y() + visualOverflowRect().maxY();
     if (isSelected() && m_inlineBoxWrapper) {
-        const RootInlineBox& rootBox = m_inlineBoxWrapper->root();
+        const LegacyRootInlineBox& rootBox = m_inlineBoxWrapper->root();
         LayoutUnit selTop = paintOffset.y() + rootBox.selectionTop();
         LayoutUnit selBottom = paintOffset.y() + selTop + rootBox.selectionHeight();
         top = std::min(selTop, top);
@@ -733,7 +733,7 @@ LayoutRect RenderReplaced::localSelectionRect(bool checkWhetherSelected) const
         // We're a block-level replaced element.  Just return our own dimensions.
         return LayoutRect(LayoutPoint(), size());
     
-    const RootInlineBox& rootBox = m_inlineBoxWrapper->root();
+    const LegacyRootInlineBox& rootBox = m_inlineBoxWrapper->root();
     LayoutUnit newLogicalTop { rootBox.blockFlow().style().isFlippedBlocksWritingMode() ? m_inlineBoxWrapper->logicalBottom() - rootBox.selectionBottom() : rootBox.selectionTop() - m_inlineBoxWrapper->logicalTop() };
     if (rootBox.blockFlow().style().isHorizontalWritingMode())
         return LayoutRect(0_lu, newLogicalTop, width(), rootBox.selectionHeight());

@@ -28,10 +28,10 @@
 
 #include "EllipsisBox.h"
 #include "InlineTextBox.h"
+#include "LegacyRootInlineBox.h"
 #include "RenderBlock.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
-#include "RootInlineBox.h"
 #include "VisiblePosition.h"
 
 namespace WebCore {
@@ -178,8 +178,8 @@ void RenderTextLineBoxes::dirtyAll()
 
 bool RenderTextLineBoxes::dirtyRange(RenderText& renderer, unsigned start, unsigned end, int lengthDelta)
 {
-    RootInlineBox* firstRootBox = nullptr;
-    RootInlineBox* lastRootBox = nullptr;
+    LegacyRootInlineBox* firstRootBox = nullptr;
+    LegacyRootInlineBox* lastRootBox = nullptr;
 
     // Dirty all text boxes that include characters in between offset and offset+len.
     bool dirtiedLines = false;

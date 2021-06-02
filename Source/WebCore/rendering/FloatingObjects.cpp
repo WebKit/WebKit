@@ -35,7 +35,7 @@ namespace WebCore {
 
 struct SameSizeAsFloatingObject {
     WeakPtr<RenderBox> renderer;
-    WeakPtr<RootInlineBox> originatingLine;
+    WeakPtr<LegacyRootInlineBox> originatingLine;
     LayoutRect rect;
     int paginationStrut;
     LayoutSize size;
@@ -45,7 +45,7 @@ struct SameSizeAsFloatingObject {
 COMPILE_ASSERT(sizeof(FloatingObject) == sizeof(SameSizeAsFloatingObject), FloatingObject_should_stay_small);
 #if !ASSERT_ENABLED
 COMPILE_ASSERT(sizeof(WeakPtr<RenderBox>) == sizeof(void*), WeakPtr_should_be_same_size_as_raw_pointer);
-COMPILE_ASSERT(sizeof(WeakPtr<RootInlineBox>) == sizeof(void*), WeakPtr_should_be_same_size_as_raw_pointer);
+COMPILE_ASSERT(sizeof(WeakPtr<LegacyRootInlineBox>) == sizeof(void*), WeakPtr_should_be_same_size_as_raw_pointer);
 #endif
 
 FloatingObject::FloatingObject(RenderBox& renderer)

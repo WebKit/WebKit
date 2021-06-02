@@ -31,7 +31,7 @@
 namespace WebCore {
 
 class HitTestResult;
-class RootInlineBox;
+class LegacyRootInlineBox;
 
 // LegacyInlineBox represents a rectangle that occurs on a line. It corresponds to
 // some RenderObject (i.e., it represents a portion of that RenderObject).
@@ -146,8 +146,8 @@ public:
     }
     void setParent(InlineFlowBox* par) { m_parent = par; }
 
-    const RootInlineBox& root() const;
-    RootInlineBox& root();
+    const LegacyRootInlineBox& root() const;
+    LegacyRootInlineBox& root();
 
     // x() is the left side of the box in the containing block's coordinate system.
     void setX(float x) { m_topLeft.setX(x); }

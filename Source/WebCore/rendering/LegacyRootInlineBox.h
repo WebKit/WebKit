@@ -36,18 +36,18 @@ class RenderFragmentContainer;
 struct BidiStatus;
 struct GapRects;
 
-class RootInlineBox : public InlineFlowBox, public CanMakeWeakPtr<RootInlineBox> {
-    WTF_MAKE_ISO_ALLOCATED(RootInlineBox);
+class LegacyRootInlineBox : public InlineFlowBox, public CanMakeWeakPtr<LegacyRootInlineBox> {
+    WTF_MAKE_ISO_ALLOCATED(LegacyRootInlineBox);
 public:
-    explicit RootInlineBox(RenderBlockFlow&);
-    virtual ~RootInlineBox();
+    explicit LegacyRootInlineBox(RenderBlockFlow&);
+    virtual ~LegacyRootInlineBox();
 
     RenderBlockFlow& blockFlow() const;
 
     void detachEllipsisBox();
 
-    RootInlineBox* nextRootBox() const;
-    RootInlineBox* prevRootBox() const;
+    LegacyRootInlineBox* nextRootBox() const;
+    LegacyRootInlineBox* prevRootBox() const;
 
     void adjustPosition(float dx, float dy) final;
 
@@ -201,7 +201,7 @@ private:
 
     LayoutUnit beforeAnnotationsAdjustment() const;
 
-    // Where this line ended.  The exact object and the position within that object are stored so that
+    // Where this line ended. The exact object and the position within that object are stored so that
     // we can create an InlineIterator beginning just after the end of this line.
     WeakPtr<RenderObject> m_lineBreakObj;
     RefPtr<BidiContext> m_lineBreakContext;
@@ -222,16 +222,16 @@ private:
     unsigned m_lineBreakPos { 0 };
 };
 
-inline RootInlineBox* RootInlineBox::nextRootBox() const
+inline LegacyRootInlineBox* LegacyRootInlineBox::nextRootBox() const
 {
-    return downcast<RootInlineBox>(m_nextLineBox);
+    return downcast<LegacyRootInlineBox>(m_nextLineBox);
 }
 
-inline RootInlineBox* RootInlineBox::prevRootBox() const
+inline LegacyRootInlineBox* LegacyRootInlineBox::prevRootBox() const
 {
-    return downcast<RootInlineBox>(m_prevLineBox);
+    return downcast<LegacyRootInlineBox>(m_prevLineBox);
 }
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_INLINE_BOX(RootInlineBox, isRootInlineBox())
+SPECIALIZE_TYPE_TRAITS_INLINE_BOX(LegacyRootInlineBox, isRootInlineBox())

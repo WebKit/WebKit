@@ -24,9 +24,9 @@
 #include "Frame.h"
 #include "HitTestResult.h"
 #include "InlineFlowBox.h"
+#include "LegacyRootInlineBox.h"
 #include "RenderBlockFlow.h"
 #include "RenderLineBreak.h"
-#include "RootInlineBox.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
@@ -184,18 +184,18 @@ void LegacyInlineBox::adjustPosition(float dx, float dy)
         downcast<RenderBox>(renderer()).move(LayoutUnit(dx), LayoutUnit(dy));
 }
 
-const RootInlineBox& LegacyInlineBox::root() const
+const LegacyRootInlineBox& LegacyInlineBox::root() const
 { 
     if (parent())
         return parent()->root();
-    return downcast<RootInlineBox>(*this);
+    return downcast<LegacyRootInlineBox>(*this);
 }
 
-RootInlineBox& LegacyInlineBox::root()
+LegacyRootInlineBox& LegacyInlineBox::root()
 { 
     if (parent())
         return parent()->root();
-    return downcast<RootInlineBox>(*this);
+    return downcast<LegacyRootInlineBox>(*this);
 }
 
 bool LegacyInlineBox::nextOnLineExists() const

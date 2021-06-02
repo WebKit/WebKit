@@ -1531,6 +1531,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/LayerFragment.h
     rendering/LegacyInlineBox.h
     rendering/LegacyLineLayout.h
+    rendering/LegacyRootInlineBox.h
     rendering/MarkedText.h
     rendering/OrderIterator.h
     rendering/OverlapTestRequestClient.h
@@ -1576,7 +1577,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderVideo.h
     rendering/RenderView.h
     rendering/RenderWidget.h
-    rendering/RootInlineBox.h
     rendering/ScrollAlignment.h
     rendering/SelectionRangeData.h
 

@@ -973,7 +973,7 @@ void InlineTextBox::paintMarkedTextBackground(PaintInfo& paintInfo, const FloatP
     // draw its own highlight.
     TextRun textRun = createTextRun();
 
-    const RootInlineBox& rootBox = root();
+    const LegacyRootInlineBox& rootBox = root();
     LayoutUnit selectionBottom = rootBox.selectionBottom();
     LayoutUnit selectionTop = rootBox.selectionTopAdjustedForPrecedingBlock();
 

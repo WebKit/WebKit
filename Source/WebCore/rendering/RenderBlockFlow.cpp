@@ -1699,13 +1699,13 @@ LayoutUnit RenderBlockFlow::adjustBlockChildForPagination(LayoutUnit logicalTopA
     return result;
 }
 
-static inline LayoutUnit calculateMinimumPageHeight(const RenderStyle& renderStyle, RootInlineBox& lastLine, LayoutUnit lineTop, LayoutUnit lineBottom)
+static inline LayoutUnit calculateMinimumPageHeight(const RenderStyle& renderStyle, LegacyRootInlineBox& lastLine, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
     // We may require a certain minimum number of lines per page in order to satisfy
     // orphans and widows, and that may affect the minimum page height.
     unsigned lineCount = std::max<unsigned>(renderStyle.hasAutoOrphans() ? 1 : renderStyle.orphans(), renderStyle.hasAutoWidows() ? 1 : renderStyle.widows());
     if (lineCount > 1) {
-        RootInlineBox* line = &lastLine;
+        LegacyRootInlineBox* line = &lastLine;
         for (unsigned i = 1; i < lineCount && line->prevRootBox(); i++)
             line = line->prevRootBox();
 
@@ -1717,7 +1717,7 @@ static inline LayoutUnit calculateMinimumPageHeight(const RenderStyle& renderSty
     return lineBottom - lineTop;
 }
 
-static inline bool needsAppleMailPaginationQuirk(RootInlineBox& lineBox)
+static inline bool needsAppleMailPaginationQuirk(LegacyRootInlineBox& lineBox)
 {
     auto& renderer = lineBox.renderer();
 
@@ -1738,7 +1738,7 @@ static void clearShouldBreakAtLineToAvoidWidowIfNeeded(RenderBlockFlow& blockFlo
     blockFlow.setDidBreakAtLineToAvoidWidow();
 }
 
-void RenderBlockFlow::adjustLinePositionForPagination(RootInlineBox* lineBox, LayoutUnit& delta, bool& overflowsFragment, RenderFragmentedFlow* fragmentedFlow)
+void RenderBlockFlow::adjustLinePositionForPagination(LegacyRootInlineBox* lineBox, LayoutUnit& delta, bool& overflowsFragment, RenderFragmentedFlow* fragmentedFlow)
 {
     // FIXME: For now we paginate using line overflow. This ensures that lines don't overlap at all when we
     // put a strut between them for pagination purposes. However, this really isn't the desired rendering, since
@@ -2079,7 +2079,7 @@ void RenderBlockFlow::layoutLineGridBox()
     
     setLineGridBox(0);
 
-    auto lineGridBox = makeUnique<RootInlineBox>(*this);
+    auto lineGridBox = makeUnique<LegacyRootInlineBox>(*this);
     lineGridBox->setHasTextChildren(); // Needed to make the line ascent/descent actually be honored in quirks mode.
     lineGridBox->setConstructed();
     GlyphOverflowAndFallbackFontsMap textBoxDataMap;
@@ -3104,7 +3104,7 @@ void RenderBlockFlow::fitBorderToLinesIfNeeded()
     clearOverridingLogicalWidth();
 }
 
-void RenderBlockFlow::markLinesDirtyInBlockRange(LayoutUnit logicalTop, LayoutUnit logicalBottom, RootInlineBox* highest)
+void RenderBlockFlow::markLinesDirtyInBlockRange(LayoutUnit logicalTop, LayoutUnit logicalBottom, LegacyRootInlineBox* highest)
 {
     if (logicalTop >= logicalBottom)
         return;
@@ -3117,8 +3117,8 @@ void RenderBlockFlow::markLinesDirtyInBlockRange(LayoutUnit logicalTop, LayoutUn
     }
 #endif
 
-    RootInlineBox* lowestDirtyLine = lastRootBox();
-    RootInlineBox* afterLowest = lowestDirtyLine;
+    LegacyRootInlineBox* lowestDirtyLine = lastRootBox();
+    LegacyRootInlineBox* afterLowest = lowestDirtyLine;
     while (lowestDirtyLine && lowestDirtyLine->lineBoxBottom() >= logicalBottom && logicalBottom < LayoutUnit::max()) {
         afterLowest = lowestDirtyLine;
         lowestDirtyLine = lowestDirtyLine->prevRootBox();
@@ -3230,7 +3230,7 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
         return result;
     }
 
-    auto hasSelectedChildren = [&](const RootInlineBox& root) {
+    auto hasSelectedChildren = [&](const LegacyRootInlineBox& root) {
         for (auto* box = root.firstLeafDescendant(); box; box = box->nextLeafOnLine()) {
             if (!is<InlineTextBox>(*box)) {
                 if (box->selectionState() != HighlightState::None)
@@ -3265,8 +3265,8 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
         return false;
     };
 
-    RootInlineBox* lastSelectedLine = 0;
-    RootInlineBox* curr;
+    LegacyRootInlineBox* lastSelectedLine = 0;
+    LegacyRootInlineBox* curr;
     for (curr = firstRootBox(); curr && !hasSelectedChildren(*curr); curr = curr->nextRootBox()) { }
 
     // Now paint the gaps for the lines.
@@ -3325,8 +3325,9 @@ void RenderBlockFlow::clearMultiColumnFlow()
     rareBlockFlowData()->m_multiColumnFlow.clear();
 }
 
-static bool shouldCheckLines(const RenderBlockFlow& blockFlow)
+bool shouldIncludeLinesForParentLineCount(const RenderBlockFlow& blockFlow)
 {
+    // FIXME: This test does not make much sense.
     return !blockFlow.isFloatingOrOutOfFlowPositioned() && blockFlow.style().height().isAuto();
 }
 
@@ -3349,7 +3350,7 @@ int RenderBlockFlow::lineCount() const
 
     int count = 0;
     for (auto& blockFlow : childrenOfType<RenderBlockFlow>(*this)) {
-        if (!shouldCheckLines(blockFlow))
+        if (!shouldIncludeLinesForParentLineCount(blockFlow))
             continue;
         count += blockFlow.lineCount();
     }
@@ -3372,7 +3373,7 @@ void RenderBlockFlow::clearTruncation()
     }
 
     for (auto& blockFlow : childrenOfType<RenderBlockFlow>(*this)) {
-        if (shouldCheckLines(blockFlow))
+        if (shouldIncludeLinesForParentLineCount(blockFlow))
             blockFlow.clearTruncation();
     }
 }
@@ -3573,7 +3574,7 @@ VisiblePosition RenderBlockFlow::positionForPoint(const LayoutPoint& point, cons
 void RenderBlockFlow::addFocusRingRectsForInlineChildren(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject*)
 {
     ASSERT(childrenInline());
-    for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
+    for (auto* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
         LayoutUnit top = std::max(curr->lineTop(), LayoutUnit(curr->top()));
         LayoutUnit bottom = std::min(curr->lineBottom(), LayoutUnit(curr->top() + curr->height()));
         LayoutRect rect { LayoutUnit(additionalOffset.x() + curr->x()), additionalOffset.y() + top, LayoutUnit(curr->width()), bottom - top };
@@ -3824,7 +3825,7 @@ void RenderBlockFlow::outputLineTreeAndMark(WTF::TextStream& stream, const Legac
         return;
     }
 #endif
-    for (const RootInlineBox* root = firstRootBox(); root; root = root->nextRootBox())
+    for (const LegacyRootInlineBox* root = firstRootBox(); root; root = root->nextRootBox())
         root->outputLineTreeAndMark(stream, markedBox, depth);
 }
 #endif

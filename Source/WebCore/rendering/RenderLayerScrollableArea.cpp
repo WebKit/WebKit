@@ -46,6 +46,7 @@
 #include "config.h"
 #include "RenderLayerScrollableArea.h"
 
+#include "Chrome.h"
 #include "DebugPageOverlays.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Editor.h"

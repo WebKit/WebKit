@@ -458,7 +458,7 @@ bool RenderSVGText::nodeAtPoint(const HitTestRequest&, HitTestResult&, const Hit
 
 VisiblePosition RenderSVGText::positionForPoint(const LayoutPoint& pointInContents, const RenderFragmentContainer* fragment)
 {
-    RootInlineBox* rootBox = firstRootBox();
+    LegacyRootInlineBox* rootBox = firstRootBox();
     if (!rootBox)
         return createVisiblePosition(0, Affinity::Downstream);
 

@@ -884,7 +884,7 @@ void RenderBlock::dirtyForLayoutFromPercentageHeightDescendants()
 void RenderBlock::simplifiedNormalFlowLayout()
 {
     if (childrenInline()) {
-        ListHashSet<RootInlineBox*> lineBoxes;
+        ListHashSet<LegacyRootInlineBox*> lineBoxes;
         for (InlineWalker walker(*this); !walker.atEnd(); walker.advance()) {
             RenderObject& renderer = *walker.current();
             if (!renderer.isOutOfFlowPositioned() && (renderer.isReplaced() || renderer.isFloating())) {
@@ -900,7 +900,7 @@ void RenderBlock::simplifiedNormalFlowLayout()
         // FIXME: Find a way to invalidate the knownToHaveNoOverflow flag on the InlineBoxes.
         GlyphOverflowAndFallbackFontsMap textBoxDataMap;                  
         for (auto it = lineBoxes.begin(), end = lineBoxes.end(); it != end; ++it) {
-            RootInlineBox* box = *it;
+            LegacyRootInlineBox* box = *it;
             box->computeOverflow(box->lineTop(), box->lineBottom(), textBoxDataMap);
         }
     } else {

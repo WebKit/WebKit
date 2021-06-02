@@ -937,12 +937,7 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
         setHeight(oldHeight);
 }
 
-static bool shouldCheckLines(const RenderBlockFlow& blockFlow)
-{
-    return !blockFlow.isFloatingOrOutOfFlowPositioned() && blockFlow.style().height().isAuto();
-}
-
-static RootInlineBox* lineAtIndex(const RenderBlockFlow& flow, int i)
+static LegacyRootInlineBox* lineAtIndex(const RenderBlockFlow& flow, int i)
 {
     ASSERT(i >= 0);
 
@@ -958,9 +953,9 @@ static RootInlineBox* lineAtIndex(const RenderBlockFlow& flow, int i)
     }
 
     for (auto& blockFlow : childrenOfType<RenderBlockFlow>(flow)) {
-        if (!shouldCheckLines(blockFlow))
+        if (!shouldIncludeLinesForParentLineCount(blockFlow))
             continue;
-        if (RootInlineBox* box = lineAtIndex(blockFlow, i))
+        if (LegacyRootInlineBox* box = lineAtIndex(blockFlow, i))
             return box;
     }
 
@@ -980,7 +975,7 @@ static int getHeightForLineCount(const RenderBlockFlow& block, int lineCount, bo
     } else {
         RenderBox* normalFlowChildWithoutLines = nullptr;
         for (auto* obj = block.firstChildBox(); obj; obj = obj->nextSiblingBox()) {
-            if (is<RenderBlockFlow>(*obj) && shouldCheckLines(downcast<RenderBlockFlow>(*obj))) {
+            if (is<RenderBlockFlow>(*obj) && shouldIncludeLinesForParentLineCount(downcast<RenderBlockFlow>(*obj))) {
                 int result = getHeightForLineCount(downcast<RenderBlockFlow>(*obj), lineCount, false, count);
                 if (result != -1)
                     return result + obj->y() + (includeBottom ? (block.borderBottom() + block.paddingBottom()) : 0_lu);
@@ -1052,11 +1047,11 @@ void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool
             continue;
 
         // Get the last line
-        RootInlineBox* lastLine = lineAtIndex(blockChild, lineCount - 1);
+        LegacyRootInlineBox* lastLine = lineAtIndex(blockChild, lineCount - 1);
         if (!lastLine)
             continue;
 
-        RootInlineBox* lastVisibleLine = lineAtIndex(blockChild, numVisibleLines - 1);
+        LegacyRootInlineBox* lastVisibleLine = lineAtIndex(blockChild, numVisibleLines - 1);
         if (!lastVisibleLine || !lastVisibleLine->firstChild())
             continue;
 

@@ -32,12 +32,12 @@
 #include "HitTestResult.h"
 #include "InlineElementBox.h"
 #include "InlineTextBox.h"
+#include "LegacyRootInlineBox.h"
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
 #include "RenderView.h"
-#include "RootInlineBox.h"
 
 namespace WebCore {
 
@@ -186,8 +186,8 @@ bool RenderLineBoxList::anyLineIntersectsRect(RenderBoxModelObject* renderer, co
     // intersect.  This is a quick short-circuit that we can take to avoid walking any lines.
     // FIXME: This check is flawed in the following extremely obscure way:
     // if some line in the middle has a huge overflow, it might actually extend below the last line.
-    const RootInlineBox& firstRootBox = firstLineBox()->root();
-    const RootInlineBox& lastRootBox = lastLineBox()->root();
+    const LegacyRootInlineBox& firstRootBox = firstLineBox()->root();
+    const LegacyRootInlineBox& lastRootBox = lastLineBox()->root();
     LayoutUnit firstLineTop = firstLineBox()->logicalTopVisualOverflow(firstRootBox.lineTop());
     if (usePrintRect && !firstLineBox()->parent())
         firstLineTop = std::min(firstLineTop, firstRootBox.lineTop());
@@ -199,7 +199,7 @@ bool RenderLineBoxList::anyLineIntersectsRect(RenderBoxModelObject* renderer, co
 
 bool RenderLineBoxList::lineIntersectsDirtyRect(RenderBoxModelObject* renderer, InlineFlowBox* box, const PaintInfo& paintInfo, const LayoutPoint& offset) const
 {
-    const RootInlineBox& rootBox = box->root();
+    const LegacyRootInlineBox& rootBox = box->root();
     LayoutUnit logicalTop = std::min(box->logicalTopVisualOverflow(rootBox.lineTop()), rootBox.selectionTop());
     LayoutUnit logicalBottom = box->logicalBottomVisualOverflow(rootBox.lineBottom());
     return rangeIntersectsRect(renderer, logicalTop, logicalBottom, paintInfo.rect, offset);
@@ -232,7 +232,7 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
             // FIXME: This is the deprecated pagination model that is still needed
             // for embedded views inside AppKit.  AppKit is incapable of paginating vertical
             // text pages, so we don't have to deal with vertical lines at all here.
-            const RootInlineBox& rootBox = curr->root();
+            const LegacyRootInlineBox& rootBox = curr->root();
             LayoutUnit topForPaginationCheck = curr->logicalTopVisualOverflow(rootBox.lineTop());
             LayoutUnit bottomForPaginationCheck = curr->logicalLeftVisualOverflow();
             if (!curr->parent()) {
@@ -242,7 +242,7 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
             }
             if (bottomForPaginationCheck - topForPaginationCheck <= v.printRect().height()) {
                 if (paintOffset.y() + bottomForPaginationCheck > v.printRect().maxY()) {
-                    if (RootInlineBox* nextRootBox = rootBox.nextRootBox())
+                    if (LegacyRootInlineBox* nextRootBox = rootBox.nextRootBox())
                         bottomForPaginationCheck = std::min(bottomForPaginationCheck, std::min<LayoutUnit>(nextRootBox->logicalTopVisualOverflow(), nextRootBox->lineTop()));
                 }
                 if (paintOffset.y() + bottomForPaginationCheck > v.printRect().maxY()) {
@@ -256,7 +256,7 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
         }
 
         if (lineIntersectsDirtyRect(renderer, curr, info, paintOffset)) {
-            const RootInlineBox& rootBox = curr->root();
+            const LegacyRootInlineBox& rootBox = curr->root();
             curr->paint(info, paintOffset, rootBox.lineTop(), rootBox.lineBottom());
         }
     }
@@ -291,7 +291,7 @@ bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestReq
     // them further.  Note that boxes can easily overlap, so we can't make any assumptions
     // based off positions of our first line box or our last line box.
     for (InlineFlowBox* curr = lastLineBox(); curr; curr = curr->prevLineBox()) {
-        const RootInlineBox& rootBox = curr->root();
+        const LegacyRootInlineBox& rootBox = curr->root();
         if (rangeIntersectsRect(renderer, curr->logicalTopVisualOverflow(rootBox.lineTop()), curr->logicalBottomVisualOverflow(rootBox.lineBottom()), rect, accumulatedOffset)) {
             bool inside = curr->nodeAtPoint(request, result, locationInContainer, accumulatedOffset, rootBox.lineTop(), rootBox.lineBottom(), hitTestAction);
             if (inside) {
@@ -326,7 +326,7 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& contain
     // Try to figure out which line box we belong in. First try to find a previous
     // line box by examining our siblings. If we didn't find a line box, then use our
     // parent's first line box.
-    RootInlineBox* box = nullptr;
+    LegacyRootInlineBox* box = nullptr;
     RenderObject* current;
     for (current = child.previousSibling(); current; current = current->previousSibling()) {
         if (current->isFloatingOrOutOfFlowPositioned())
@@ -377,12 +377,12 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& contain
         // calls setLineBreakInfo with the result of findNextLineBreak. findNextLineBreak,
         // despite the name, actually returns the first RenderObject after the BR.
         // <rdar://problem/3849947> "Typing after pasting line does not appear until after window resize."
-        if (RootInlineBox* prevBox = box->prevRootBox())
+        if (LegacyRootInlineBox* prevBox = box->prevRootBox())
             prevBox->markDirty();
 
         // FIXME: We shouldn't need to always dirty the next line. This is only strictly 
         // necessary some of the time, in situations involving BRs.
-        if (RootInlineBox* nextBox = box->nextRootBox()) {
+        if (LegacyRootInlineBox* nextBox = box->nextRootBox()) {
             nextBox->markDirty();
             // Dedicated linebox for floats may be added as the last rootbox. If this occurs with BRs inside inlines that propagte their lineboxes to
             // the parent flow, we need to invalidate it explicitly.

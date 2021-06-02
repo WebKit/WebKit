@@ -30,10 +30,10 @@
 #include "InlineRunAndOffset.h"
 #include "LayoutIntegrationLineIterator.h"
 #include "LayoutIntegrationRunIterator.h"
+#include "LegacyRootInlineBox.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "RenderBlock.h"
 #include "RenderView.h"
-#include "RootInlineBox.h"
 #include "SVGInlineTextBox.h"
 #include "VisiblePosition.h"
 #include <wtf/IsoMallocInlines.h>

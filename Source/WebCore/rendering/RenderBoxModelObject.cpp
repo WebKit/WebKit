@@ -707,7 +707,7 @@ void RenderBoxModelObject::paintMaskForTextFillBox(ImageBuffer* maskImage, const
     // InlineTextBoxes that they should just add their contents to the clip.
     PaintInfo info(maskImageContext, maskRect, PaintPhase::TextClip, PaintBehavior::ForceBlackText);
     if (box) {
-        const RootInlineBox& rootBox = box->root();
+        const LegacyRootInlineBox& rootBox = box->root();
         box->paint(info, LayoutPoint(scrolledPaintRect.x() - box->x(), scrolledPaintRect.y() - box->y()), rootBox.lineTop(), rootBox.lineBottom());
     } else {
         LayoutSize localOffset = is<RenderBox>(*this) ? downcast<RenderBox>(*this).locationOffset() : LayoutSize();

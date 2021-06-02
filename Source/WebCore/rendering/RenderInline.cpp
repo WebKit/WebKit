@@ -283,7 +283,7 @@ void RenderInline::generateCulledLineBoxRects(GeneratorContext& context, const R
         if (is<RenderBox>(current)) {
             auto& renderBox = downcast<RenderBox>(current);
             if (renderBox.inlineBoxWrapper()) {
-                const RootInlineBox& rootBox = renderBox.inlineBoxWrapper()->root();
+                const LegacyRootInlineBox& rootBox = renderBox.inlineBoxWrapper()->root();
                 const RenderStyle& containerStyle = rootBox.isFirstLine() ? container->firstLineStyle() : container->style();
                 int logicalTop = rootBox.logicalTop() + (rootBox.lineStyle().fontCascade().fontMetrics().ascent() - containerStyle.fontCascade().fontMetrics().ascent());
                 int logicalHeight = containerStyle.fontCascade().fontMetrics().height();
@@ -299,7 +299,7 @@ void RenderInline::generateCulledLineBoxRects(GeneratorContext& context, const R
                 renderInline.generateCulledLineBoxRects(context, container);
             else {
                 for (InlineFlowBox* childLine = renderInline.firstLineBox(); childLine; childLine = childLine->nextLineBox()) {
-                    const RootInlineBox& rootBox = childLine->root();
+                    const LegacyRootInlineBox& rootBox = childLine->root();
                     const RenderStyle& containerStyle = rootBox.isFirstLine() ? container->firstLineStyle() : container->style();
                     int logicalTop = rootBox.logicalTop() + (rootBox.lineStyle().fontCascade().fontMetrics().ascent() - containerStyle.fontCascade().fontMetrics().ascent());
                     int logicalHeight = containerStyle.fontMetrics().height();
@@ -319,7 +319,7 @@ void RenderInline::generateCulledLineBoxRects(GeneratorContext& context, const R
         } else if (is<RenderText>(current)) {
             auto& currText = downcast<RenderText>(current);
             for (InlineTextBox* childText = currText.firstTextBox(); childText; childText = childText->nextTextBox()) {
-                const RootInlineBox& rootBox = childText->root();
+                const LegacyRootInlineBox& rootBox = childText->root();
                 const RenderStyle& containerStyle = rootBox.isFirstLine() ? container->firstLineStyle() : container->style();
                 int logicalTop = rootBox.logicalTop() + (rootBox.lineStyle().fontCascade().fontMetrics().ascent() - containerStyle.fontCascade().fontMetrics().ascent());
                 int logicalHeight = containerStyle.fontCascade().fontMetrics().height();
@@ -331,7 +331,7 @@ void RenderInline::generateCulledLineBoxRects(GeneratorContext& context, const R
         } else if (is<RenderLineBreak>(current)) {
             if (auto* inlineBox = downcast<RenderLineBreak>(current).inlineBoxWrapper()) {
                 // FIXME: This could use a helper to share these with text path.
-                const RootInlineBox& rootBox = inlineBox->root();
+                const LegacyRootInlineBox& rootBox = inlineBox->root();
                 const RenderStyle& containerStyle = rootBox.isFirstLine() ? container->firstLineStyle() : container->style();
                 int logicalTop = rootBox.logicalTop() + (rootBox.lineStyle().fontCascade().fontMetrics().ascent() - containerStyle.fontCascade().fontMetrics().ascent());
                 int logicalHeight = containerStyle.fontMetrics().height();
@@ -792,8 +792,8 @@ LayoutRect RenderInline::linesVisualOverflowBoundingBox() const
         logicalRightSide = std::max(logicalRightSide, curr->logicalRightVisualOverflow());
     }
 
-    const RootInlineBox& firstRootBox = firstLineBox()->root();
-    const RootInlineBox& lastRootBox = lastLineBox()->root();
+    const LegacyRootInlineBox& firstRootBox = firstLineBox()->root();
+    const LegacyRootInlineBox& lastRootBox = lastLineBox()->root();
     
     LayoutUnit logicalTop = firstLineBox()->logicalTopVisualOverflow(firstRootBox.lineTop());
     LayoutUnit logicalWidth = logicalRightSide - logicalLeftSide;
@@ -820,7 +820,7 @@ LayoutRect RenderInline::linesVisualOverflowBoundingBoxInFragment(const RenderFr
     LayoutUnit logicalHeight;
     InlineFlowBox* lastInlineInFragment = 0;
     for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
-        const RootInlineBox& root = curr->root();
+        const LegacyRootInlineBox& root = curr->root();
         if (root.containingFragment() != fragment) {
             if (lastInlineInFragment)
                 break;
@@ -1273,7 +1273,7 @@ void RenderInline::paintOutline(PaintInfo& paintInfo, const LayoutPoint& paintOf
     Vector<LayoutRect> rects;
     rects.append(LayoutRect());
     for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
-        const RootInlineBox& rootBox = curr->root();
+        const LegacyRootInlineBox& rootBox = curr->root();
         LayoutUnit top = std::max(rootBox.lineTop(), LayoutUnit(curr->logicalTop()));
         LayoutUnit bottom = std::min(rootBox.lineBottom(), LayoutUnit(curr->logicalBottom()));
         rects.append({ LayoutUnit(curr->x()), top, LayoutUnit(curr->logicalWidth()), bottom - top });

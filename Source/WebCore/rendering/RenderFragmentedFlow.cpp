@@ -764,7 +764,7 @@ bool RenderFragmentedFlow::checkLinesConsistency(const RenderBlockFlow& removedB
         return true;
 
     for (auto& linePair : *m_lineToFragmentMap.get()) {
-        const RootInlineBox* line = linePair.key;
+        const LegacyRootInlineBox* line = linePair.key;
         RenderFragmentContainer* fragment = linePair.value;
         if (&line->blockFlow() == &removedBlock)
             return false;

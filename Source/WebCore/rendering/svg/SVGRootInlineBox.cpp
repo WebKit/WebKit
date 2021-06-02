@@ -39,7 +39,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGRootInlineBox);
 
 SVGRootInlineBox::SVGRootInlineBox(RenderSVGText& renderSVGText)
-    : RootInlineBox(renderSVGText)
+    : LegacyRootInlineBox(renderSVGText)
     , m_logicalHeight(0)
 {
 }

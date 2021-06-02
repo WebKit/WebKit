@@ -26,8 +26,8 @@
 #pragma once
 
 #include "InlineTextBox.h"
+#include "LegacyRootInlineBox.h"
 #include "RenderText.h"
-#include "RootInlineBox.h"
 #include <wtf/RefCountedArray.h>
 #include <wtf/Vector.h>
 
@@ -43,7 +43,7 @@ public:
     { }
 
     enum class LogicalOrder { Start, End };
-    RunIteratorLegacyPath(const RootInlineBox& root, LogicalOrder order)
+    RunIteratorLegacyPath(const LegacyRootInlineBox& root, LogicalOrder order)
         : m_logicalOrderCache(inlineBoxesInLogicalOrder(root))
     {
         if (!m_logicalOrderCache.isEmpty()) {
@@ -120,12 +120,12 @@ public:
     bool atEnd() const { return !m_inlineBox; }
 
     LegacyInlineBox* legacyInlineBox() const { return const_cast<LegacyInlineBox*>(m_inlineBox); }
-    const RootInlineBox& rootInlineBox() const { return m_inlineBox->root(); }
+    const LegacyRootInlineBox& rootInlineBox() const { return m_inlineBox->root(); }
 
 private:
     const InlineTextBox* inlineTextBox() const { return downcast<InlineTextBox>(m_inlineBox); }
 
-    static Vector<const LegacyInlineBox*> inlineBoxesInLogicalOrder(const RootInlineBox& root)
+    static Vector<const LegacyInlineBox*> inlineBoxesInLogicalOrder(const LegacyRootInlineBox& root)
     {
         Vector<LegacyInlineBox*> inlineBoxes;
         root.collectLeafBoxesInLogicalOrder(inlineBoxes);
