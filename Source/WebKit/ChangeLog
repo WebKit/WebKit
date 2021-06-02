@@ -1,5 +1,38 @@
 2021-06-02  Russell Epstein  <repstein@apple.com>
 
+        Cherry-pick r278370. rdar://problem/78787261
+
+    [iOS] Fix IOKit sandbox violations
+    https://bugs.webkit.org/show_bug.cgi?id=226546
+    <rdar://78523469>
+    
+    Reviewed by Tim Horton.
+    
+    Fix IOKit sandbox violations in the WebContent process on iOS.
+    
+    * Configurations/SandboxProfiles.xcconfig:
+    * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+    * WebKit.xcodeproj/project.pbxproj:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@278370 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-06-02  Per Arne  <pvollan@apple.com>
+
+            [iOS] Fix IOKit sandbox violations
+            https://bugs.webkit.org/show_bug.cgi?id=226546
+            <rdar://78523469>
+
+            Reviewed by Tim Horton.
+
+            Fix IOKit sandbox violations in the WebContent process on iOS.
+
+            * Configurations/SandboxProfiles.xcconfig:
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in:
+            * WebKit.xcodeproj/project.pbxproj:
+
+2021-06-02  Russell Epstein  <repstein@apple.com>
+
         Cherry-pick r278308. rdar://problem/78789128
 
     [iOS] Preprocess the WebContent sandbox
