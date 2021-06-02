@@ -1,5 +1,15 @@
 2021-06-02  Youenn Fablet  <youenn@apple.com>
 
+        Update pffft to M92
+        https://bugs.webkit.org/show_bug.cgi?id=226491
+
+        Reviewed by Alex Christensen.
+
+        * Source/third_party/pffft/BUILD.gn:
+        * Source/third_party/pffft/DIR_METADATA: Added.
+
+2021-06-02  Youenn Fablet  <youenn@apple.com>
+
         Update opus to M92
         https://bugs.webkit.org/show_bug.cgi?id=226490
 
