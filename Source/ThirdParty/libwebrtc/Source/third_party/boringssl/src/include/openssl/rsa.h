@@ -283,120 +283,155 @@ OPENSSL_EXPORT int RSA_private_decrypt(size_t flen, const uint8_t *from,
 // These functions are considered non-mutating for thread-safety purposes and
 // may be used concurrently.
 
-// RSA_sign signs |in_len| bytes of digest from |in| with |rsa| using
+// RSA_sign signs |digest_len| bytes of digest from |digest| with |rsa| using
 // RSASSA-PKCS1-v1_5. It writes, at most, |RSA_size(rsa)| bytes to |out|. On
 // successful return, the actual number of bytes written is written to
 // |*out_len|.
 //
-// The |hash_nid| argument identifies the hash function used to calculate |in|
-// and is embedded in the resulting signature. For example, it might be
+// The |hash_nid| argument identifies the hash function used to calculate
+// |digest| and is embedded in the resulting signature. For example, it might be
 // |NID_sha256|.
 //
 // It returns 1 on success and zero on error.
-OPENSSL_EXPORT int RSA_sign(int hash_nid, const uint8_t *in,
-                            unsigned int in_len, uint8_t *out,
-                            unsigned int *out_len, RSA *rsa);
-
-// RSA_sign_pss_mgf1 signs |in_len| bytes from |in| with the public key from
-// |rsa| using RSASSA-PSS with MGF1 as the mask generation function. It writes,
-// at most, |max_out| bytes of signature data to |out|. The |max_out| argument
-// must be, at least, |RSA_size| in order to ensure success. It returns 1 on
-// success or zero on error.
 //
-// The |md| and |mgf1_md| arguments identify the hash used to calculate |msg|
+// WARNING: |digest| must be the result of hashing the data to be signed with
+// |hash_nid|. Passing unhashed inputs will not result in a secure signature
+// scheme.
+OPENSSL_EXPORT int RSA_sign(int hash_nid, const uint8_t *digest,
+                            unsigned digest_len, uint8_t *out,
+                            unsigned *out_len, RSA *rsa);
+
+// RSA_sign_pss_mgf1 signs |digest_len| bytes from |digest| with the public key
+// from |rsa| using RSASSA-PSS with MGF1 as the mask generation function. It
+// writes, at most, |max_out| bytes of signature data to |out|. The |max_out|
+// argument must be, at least, |RSA_size| in order to ensure success. It returns
+// 1 on success or zero on error.
+//
+// The |md| and |mgf1_md| arguments identify the hash used to calculate |digest|
 // and the MGF1 hash, respectively. If |mgf1_md| is NULL, |md| is
 // used.
 //
 // |salt_len| specifies the expected salt length in bytes. If |salt_len| is -1,
 // then the salt length is the same as the hash length. If -2, then the salt
 // length is maximal given the size of |rsa|. If unsure, use -1.
+//
+// WARNING: |digest| must be the result of hashing the data to be signed with
+// |md|. Passing unhashed inputs will not result in a secure signature scheme.
 OPENSSL_EXPORT int RSA_sign_pss_mgf1(RSA *rsa, size_t *out_len, uint8_t *out,
-                                     size_t max_out, const uint8_t *in,
-                                     size_t in_len, const EVP_MD *md,
+                                     size_t max_out, const uint8_t *digest,
+                                     size_t digest_len, const EVP_MD *md,
                                      const EVP_MD *mgf1_md, int salt_len);
 
-// RSA_sign_raw signs |in_len| bytes from |in| with the public key from |rsa|
-// and writes, at most, |max_out| bytes of signature data to |out|. The
-// |max_out| argument must be, at least, |RSA_size| in order to ensure success.
+// RSA_sign_raw performs the private key portion of computing a signature with
+// |rsa|. It writes, at most, |max_out| bytes of signature data to |out|. The
+// |max_out| argument must be, at least, |RSA_size| in order to ensure the
+// output fits. It returns 1 on success or zero on error.
 //
-// It returns 1 on success or zero on error.
+// If |padding| is |RSA_PKCS1_PADDING|, this function wraps |in| with the
+// padding portion of RSASSA-PKCS1-v1_5 and then performs the raw private key
+// operation. The caller is responsible for hashing the input and wrapping it in
+// a DigestInfo structure.
 //
-// The |padding| argument must be one of the |RSA_*_PADDING| values. If in
-// doubt, |RSA_PKCS1_PADDING| is the most common but |RSA_PKCS1_PSS_PADDING|
-// (via |RSA_sign_pss_mgf1| or the |EVP_PKEY| interface) is preferred for new
-// protocols.
+// If |padding| is |RSA_NO_PADDING|, this function only performs the raw private
+// key operation, interpreting |in| as a integer modulo n. The caller is
+// responsible for hashing the input and encoding it for the signature scheme
+// being implemented.
+//
+// WARNING: This function is a building block for a signature scheme, not a
+// complete one. |in| must be the result of hashing and encoding the data as
+// needed for the scheme being implemented. Passing in arbitrary inputs will not
+// result in a secure signature scheme.
 OPENSSL_EXPORT int RSA_sign_raw(RSA *rsa, size_t *out_len, uint8_t *out,
                                 size_t max_out, const uint8_t *in,
                                 size_t in_len, int padding);
 
 // RSA_verify verifies that |sig_len| bytes from |sig| are a valid,
-// RSASSA-PKCS1-v1_5 signature of |msg_len| bytes at |msg| by |rsa|.
+// RSASSA-PKCS1-v1_5 signature of |digest_len| bytes at |digest| by |rsa|.
 //
-// The |hash_nid| argument identifies the hash function used to calculate |msg|
-// and is embedded in the resulting signature in order to prevent hash
+// The |hash_nid| argument identifies the hash function used to calculate
+// |digest| and is embedded in the resulting signature in order to prevent hash
 // confusion attacks. For example, it might be |NID_sha256|.
 //
 // It returns one if the signature is valid and zero otherwise.
 //
 // WARNING: this differs from the original, OpenSSL function which additionally
 // returned -1 on error.
-OPENSSL_EXPORT int RSA_verify(int hash_nid, const uint8_t *msg, size_t msg_len,
-                              const uint8_t *sig, size_t sig_len, RSA *rsa);
+//
+// WARNING: |digest| must be the result of hashing the data to be verified with
+// |hash_nid|. Passing unhashed input will not result in a secure signature
+// scheme.
+OPENSSL_EXPORT int RSA_verify(int hash_nid, const uint8_t *digest,
+                              size_t digest_len, const uint8_t *sig,
+                              size_t sig_len, RSA *rsa);
 
 // RSA_verify_pss_mgf1 verifies that |sig_len| bytes from |sig| are a valid,
-// RSASSA-PSS signature of |msg_len| bytes at |msg| by |rsa|. It returns one if
-// the signature is valid and zero otherwise. MGF1 is used as the mask
+// RSASSA-PSS signature of |digest_len| bytes at |digest| by |rsa|. It returns
+// one if the signature is valid and zero otherwise. MGF1 is used as the mask
 // generation function.
 //
-// The |md| and |mgf1_md| arguments identify the hash used to calculate |msg|
+// The |md| and |mgf1_md| arguments identify the hash used to calculate |digest|
 // and the MGF1 hash, respectively. If |mgf1_md| is NULL, |md| is
 // used. |salt_len| specifies the expected salt length in bytes.
 //
 // If |salt_len| is -1, then the salt length is the same as the hash length. If
 // -2, then the salt length is recovered and all values accepted. If unsure, use
 // -1.
-OPENSSL_EXPORT int RSA_verify_pss_mgf1(RSA *rsa, const uint8_t *msg,
-                                       size_t msg_len, const EVP_MD *md,
+//
+// WARNING: |digest| must be the result of hashing the data to be verified with
+// |md|. Passing unhashed input will not result in a secure signature scheme.
+OPENSSL_EXPORT int RSA_verify_pss_mgf1(RSA *rsa, const uint8_t *digest,
+                                       size_t digest_len, const EVP_MD *md,
                                        const EVP_MD *mgf1_md, int salt_len,
                                        const uint8_t *sig, size_t sig_len);
 
-// RSA_verify_raw verifies |in_len| bytes of signature from |in| using the
-// public key from |rsa| and writes, at most, |max_out| bytes of plaintext to
-// |out|. The |max_out| argument must be, at least, |RSA_size| in order to
-// ensure success.
+// RSA_verify_raw performs the public key portion of verifying |in_len| bytes of
+// signature from |in| using the public key from |rsa|. On success, it returns
+// one and writes, at most, |max_out| bytes of output to |out|. The |max_out|
+// argument must be, at least, |RSA_size| in order to ensure the output fits. On
+// failure or invalid input, it returns zero.
 //
-// It returns 1 on success or zero on error.
+// If |padding| is |RSA_PKCS1_PADDING|, this function checks the padding portion
+// of RSASSA-PKCS1-v1_5 and outputs the remainder of the encoded digest. The
+// caller is responsible for checking the output is a DigestInfo-wrapped digest
+// of the message.
 //
-// The |padding| argument must be one of the |RSA_*_PADDING| values. If in
-// doubt, |RSA_PKCS1_PADDING| is the most common but |RSA_PKCS1_PSS_PADDING|
-// (via |RSA_verify_pss_mgf1| or the |EVP_PKEY| interface) is preferred for new
-// protocols.
+// If |padding| is |RSA_NO_PADDING|, this function only performs the raw public
+// key operation. The caller is responsible for checking the output is a valid
+// result for the signature scheme being implemented.
+//
+// WARNING: This function is a building block for a signature scheme, not a
+// complete one. Checking for arbitary strings in |out| will not result in a
+// secure signature scheme.
 OPENSSL_EXPORT int RSA_verify_raw(RSA *rsa, size_t *out_len, uint8_t *out,
                                   size_t max_out, const uint8_t *in,
                                   size_t in_len, int padding);
 
-// RSA_private_encrypt encrypts |flen| bytes from |from| with the private key in
-// |rsa| and writes the encrypted data to |to|. The |to| buffer must have at
-// least |RSA_size| bytes of space. It returns the number of bytes written, or
-// -1 on error. The |padding| argument must be one of the |RSA_*_PADDING|
-// values. If in doubt, |RSA_PKCS1_PADDING| is the most common but
-// |RSA_PKCS1_PSS_PADDING| (via the |EVP_PKEY| interface) is preferred for new
-// protocols.
+// RSA_private_encrypt performs the private key portion of computing a signature
+// with |rsa|. It takes |flen| bytes from |from| as input and writes the result
+// to |to|. The |to| buffer must have at least |RSA_size| bytes of space. It
+// returns the number of bytes written, or -1 on error.
 //
-// WARNING: this function is dangerous because it breaks the usual return value
+// For the interpretation of |padding| and the input, see |RSA_sign_raw|.
+//
+// WARNING: This function is a building block for a signature scheme, not a
+// complete one. See |RSA_sign_raw| for details.
+//
+// WARNING: This function is dangerous because it breaks the usual return value
 // convention. Use |RSA_sign_raw| instead.
 OPENSSL_EXPORT int RSA_private_encrypt(size_t flen, const uint8_t *from,
                                        uint8_t *to, RSA *rsa, int padding);
 
-// RSA_public_decrypt verifies |flen| bytes of signature from |from| using the
-// public key in |rsa| and writes the plaintext to |to|. The |to| buffer must
-// have at least |RSA_size| bytes of space. It returns the number of bytes
-// written, or -1 on error. The |padding| argument must be one of the
-// |RSA_*_PADDING| values. If in doubt, |RSA_PKCS1_PADDING| is the most common
-// but |RSA_PKCS1_PSS_PADDING| (via the |EVP_PKEY| interface) is preferred for
-// new protocols.
+// RSA_public_decrypt performs the public key portion of verifying |flen| bytes
+// of signature from |from| using the public key from |rsa|. It writes the
+// result to |to|, which must have at least |RSA_size| bytes of space. It
+// returns the number of bytes written, or -1 on error.
 //
-// WARNING: this function is dangerous because it breaks the usual return value
+// For the interpretation of |padding| and the result, see |RSA_verify_raw|.
+//
+// WARNING: This function is a building block for a signature scheme, not a
+// complete one. See |RSA_verify_raw| for details.
+//
+// WARNING: This function is dangerous because it breaks the usual return value
 // convention. Use |RSA_verify_raw| instead.
 OPENSSL_EXPORT int RSA_public_decrypt(size_t flen, const uint8_t *from,
                                       uint8_t *to, RSA *rsa, int padding);
@@ -479,13 +514,14 @@ OPENSSL_EXPORT int RSA_padding_add_PKCS1_OAEP_mgf1(
     const uint8_t *param, size_t param_len, const EVP_MD *md,
     const EVP_MD *mgf1md);
 
-// RSA_add_pkcs1_prefix builds a version of |msg| prefixed with the DigestInfo
-// header for the given hash function and sets |out_msg| to point to it. On
-// successful return, if |*is_alloced| is one, the caller must release
+// RSA_add_pkcs1_prefix builds a version of |digest| prefixed with the
+// DigestInfo header for the given hash function and sets |out_msg| to point to
+// it. On successful return, if |*is_alloced| is one, the caller must release
 // |*out_msg| with |OPENSSL_free|.
 OPENSSL_EXPORT int RSA_add_pkcs1_prefix(uint8_t **out_msg, size_t *out_msg_len,
                                         int *is_alloced, int hash_nid,
-                                        const uint8_t *msg, size_t msg_len);
+                                        const uint8_t *digest,
+                                        size_t digest_len);
 
 
 // ASN.1 functions.

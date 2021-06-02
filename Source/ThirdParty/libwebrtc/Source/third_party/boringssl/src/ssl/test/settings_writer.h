@@ -20,7 +20,6 @@
 #include <openssl/bytestring.h>
 #include <openssl/ssl.h>
 
-#include "../internal.h"
 #include "test_config.h"
 
 struct SettingsWriter {
@@ -35,10 +34,12 @@ struct SettingsWriter {
   bool Commit();
 
   bool WriteHandoff(bssl::Span<const uint8_t> handoff);
-
   bool WriteHandback(bssl::Span<const uint8_t> handback);
+  bool WriteHints(bssl::Span<const uint8_t> hints);
 
  private:
+  bool WriteData(uint16_t tag, bssl::Span<const uint8_t> data);
+
   std::string path_;
   bssl::ScopedCBB cbb_;
 };

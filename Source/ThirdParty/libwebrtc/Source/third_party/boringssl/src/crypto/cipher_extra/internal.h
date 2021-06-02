@@ -57,7 +57,11 @@
 #ifndef OPENSSL_HEADER_CIPHER_EXTRA_INTERNAL_H
 #define OPENSSL_HEADER_CIPHER_EXTRA_INTERNAL_H
 
+#include <stdlib.h>
+
 #include <openssl/base.h>
+#include <openssl/cpu.h>
+#include <openssl/type_check.h>
 
 #include "../internal.h"
 
@@ -95,6 +99,17 @@ void EVP_tls_cbc_copy_mac(uint8_t *out, size_t md_size, const uint8_t *in,
 // which EVP_tls_cbc_digest_record supports.
 int EVP_tls_cbc_record_digest_supported(const EVP_MD *md);
 
+// EVP_sha1_final_with_secret_suffix computes the result of hashing |len| bytes
+// from |in| to |ctx| and writes the resulting hash to |out|. |len| is treated
+// as secret and must be at most |max_len|, which is treated as public. |in|
+// must point to a buffer of at least |max_len| bytes. It returns one on success
+// and zero if inputs are too long.
+//
+// This function is exported for unit tests.
+OPENSSL_EXPORT int EVP_sha1_final_with_secret_suffix(
+    SHA_CTX *ctx, uint8_t out[SHA_DIGEST_LENGTH], const uint8_t *in, size_t len,
+    size_t max_len);
+
 // EVP_tls_cbc_digest_record computes the MAC of a decrypted, padded TLS
 // record.
 //
@@ -104,8 +119,8 @@ int EVP_tls_cbc_record_digest_supported(const EVP_MD *md);
 //   md_out_size: the number of output bytes is written here.
 //   header: the 13-byte, TLS record header.
 //   data: the record data itself
-//   data_plus_mac_size: the secret, reported length of the data and MAC
-//     once the padding has been removed.
+//   data_size: the secret, reported length of the data once the padding and MAC
+//     have been removed.
 //   data_plus_mac_plus_padding_size: the public length of the whole
 //     record, including padding.
 //
@@ -115,10 +130,93 @@ int EVP_tls_cbc_record_digest_supported(const EVP_MD *md);
 // padding too. )
 int EVP_tls_cbc_digest_record(const EVP_MD *md, uint8_t *md_out,
                               size_t *md_out_size, const uint8_t header[13],
-                              const uint8_t *data, size_t data_plus_mac_size,
+                              const uint8_t *data, size_t data_size,
                               size_t data_plus_mac_plus_padding_size,
                               const uint8_t *mac_secret,
                               unsigned mac_secret_length);
+
+#define POLY1305_TAG_LEN 16
+
+// For convenience (the x86_64 calling convention allows only six parameters in
+// registers), the final parameter for the assembly functions is both an input
+// and output parameter.
+union chacha20_poly1305_open_data {
+  struct {
+    alignas(16) uint8_t key[32];
+    uint32_t counter;
+    uint8_t nonce[12];
+  } in;
+  struct {
+    uint8_t tag[POLY1305_TAG_LEN];
+  } out;
+};
+
+union chacha20_poly1305_seal_data {
+  struct {
+    alignas(16) uint8_t key[32];
+    uint32_t counter;
+    uint8_t nonce[12];
+    const uint8_t *extra_ciphertext;
+    size_t extra_ciphertext_len;
+  } in;
+  struct {
+    uint8_t tag[POLY1305_TAG_LEN];
+  } out;
+};
+
+#if defined(OPENSSL_X86_64) && !defined(OPENSSL_NO_ASM)
+
+OPENSSL_STATIC_ASSERT(sizeof(union chacha20_poly1305_open_data) == 48,
+                      "wrong chacha20_poly1305_open_data size");
+OPENSSL_STATIC_ASSERT(sizeof(union chacha20_poly1305_seal_data) == 48 + 8 + 8,
+                      "wrong chacha20_poly1305_seal_data size");
+
+OPENSSL_INLINE int chacha20_poly1305_asm_capable(void) {
+  const int sse41_capable = (OPENSSL_ia32cap_P[1] & (1 << 19)) != 0;
+  return sse41_capable;
+}
+
+// chacha20_poly1305_open is defined in chacha20_poly1305_x86_64.pl. It decrypts
+// |plaintext_len| bytes from |ciphertext| and writes them to |out_plaintext|.
+// Additional input parameters are passed in |aead_data->in|. On exit, it will
+// write calculated tag value to |aead_data->out.tag|, which the caller must
+// check.
+extern void chacha20_poly1305_open(uint8_t *out_plaintext,
+                                   const uint8_t *ciphertext,
+                                   size_t plaintext_len, const uint8_t *ad,
+                                   size_t ad_len,
+                                   union chacha20_poly1305_open_data *data);
+
+// chacha20_poly1305_open is defined in chacha20_poly1305_x86_64.pl. It encrypts
+// |plaintext_len| bytes from |plaintext| and writes them to |out_ciphertext|.
+// Additional input parameters are passed in |aead_data->in|. The calculated tag
+// value is over the computed ciphertext concatenated with |extra_ciphertext|
+// and written to |aead_data->out.tag|.
+extern void chacha20_poly1305_seal(uint8_t *out_ciphertext,
+                                   const uint8_t *plaintext,
+                                   size_t plaintext_len, const uint8_t *ad,
+                                   size_t ad_len,
+                                   union chacha20_poly1305_seal_data *data);
+#else
+
+OPENSSL_INLINE int chacha20_poly1305_asm_capable(void) { return 0; }
+
+OPENSSL_INLINE void chacha20_poly1305_open(uint8_t *out_plaintext,
+                                   const uint8_t *ciphertext,
+                                   size_t plaintext_len, const uint8_t *ad,
+                                   size_t ad_len,
+                                   union chacha20_poly1305_open_data *data) {
+  abort();
+}
+
+OPENSSL_INLINE void chacha20_poly1305_seal(uint8_t *out_ciphertext,
+                                   const uint8_t *plaintext,
+                                   size_t plaintext_len, const uint8_t *ad,
+                                   size_t ad_len,
+                                   union chacha20_poly1305_seal_data *data) {
+  abort();
+}
+#endif
 
 
 #if defined(__cplusplus)

@@ -17,6 +17,7 @@
 #include <openssl/bytestring.h>
 #include <openssl/crypto.h>
 #include <openssl/mem.h>
+#include <openssl/pem.h>
 #include <openssl/pkcs7.h>
 #include <openssl/stack.h>
 #include <openssl/x509.h>
@@ -492,6 +493,9 @@ static void TestCertReparse(const uint8_t *der_bytes, size_t der_len) {
   ASSERT_TRUE(PKCS7_get_certificates(certs2.get(), &pkcs7));
   EXPECT_EQ(0u, CBS_len(&pkcs7));
 
+  // PKCS#7 stores certificates in a SET OF, so |PKCS7_bundle_certificates| may
+  // not preserve the original order. All of our test inputs are already sorted,
+  // but this check should be relaxed if we add others.
   ASSERT_EQ(sk_X509_num(certs.get()), sk_X509_num(certs2.get()));
   for (size_t i = 0; i < sk_X509_num(certs.get()); i++) {
     X509 *a = sk_X509_value(certs.get(), i);
@@ -574,6 +578,9 @@ static void TestCRLReparse(const uint8_t *der_bytes, size_t der_len) {
   ASSERT_TRUE(PKCS7_get_CRLs(crls2.get(), &pkcs7));
   EXPECT_EQ(0u, CBS_len(&pkcs7));
 
+  // PKCS#7 stores CRLs in a SET OF, so |PKCS7_bundle_CRLs| may not preserve the
+  // original order. All of our test inputs are already sorted, but this check
+  // should be relaxed if we add others.
   ASSERT_EQ(sk_X509_CRL_num(crls.get()), sk_X509_CRL_num(crls.get()));
   for (size_t i = 0; i < sk_X509_CRL_num(crls.get()); i++) {
     X509_CRL *a = sk_X509_CRL_value(crls.get(), i);
@@ -655,4 +662,116 @@ TEST(PKCS7Test, PEMCerts) {
 
 TEST(PKCS7Test, PEMCRLs) {
   TestPEMCRLs(kPEMCRL);
+}
+
+// Test that we output certificates in the canonical DER order.
+TEST(PKCS7Test, SortCerts) {
+  // kPKCS7NSS contains three certificates in the canonical DER order.
+  CBS pkcs7;
+  CBS_init(&pkcs7, kPKCS7NSS, sizeof(kPKCS7NSS));
+  bssl::UniquePtr<STACK_OF(X509)> certs(sk_X509_new_null());
+  ASSERT_TRUE(certs);
+  ASSERT_TRUE(PKCS7_get_certificates(certs.get(), &pkcs7));
+  ASSERT_EQ(3u, sk_X509_num(certs.get()));
+
+  X509 *cert1 = sk_X509_value(certs.get(), 0);
+  X509 *cert2 = sk_X509_value(certs.get(), 1);
+  X509 *cert3 = sk_X509_value(certs.get(), 2);
+
+  auto check_order = [&](X509 *new_cert1, X509 *new_cert2, X509 *new_cert3) {
+    // Bundle the certificates in the new order.
+    bssl::UniquePtr<STACK_OF(X509)> new_certs(sk_X509_new_null());
+    ASSERT_TRUE(new_certs);
+    ASSERT_TRUE(bssl::PushToStack(new_certs.get(), bssl::UpRef(new_cert1)));
+    ASSERT_TRUE(bssl::PushToStack(new_certs.get(), bssl::UpRef(new_cert2)));
+    ASSERT_TRUE(bssl::PushToStack(new_certs.get(), bssl::UpRef(new_cert3)));
+    bssl::ScopedCBB cbb;
+    ASSERT_TRUE(CBB_init(cbb.get(), sizeof(kPKCS7NSS)));
+    ASSERT_TRUE(PKCS7_bundle_certificates(cbb.get(), new_certs.get()));
+
+    // The bundle should be sorted back to the original order.
+    CBS cbs;
+    CBS_init(&cbs, CBB_data(cbb.get()), CBB_len(cbb.get()));
+    bssl::UniquePtr<STACK_OF(X509)> result(sk_X509_new_null());
+    ASSERT_TRUE(result);
+    ASSERT_TRUE(PKCS7_get_certificates(result.get(), &cbs));
+    ASSERT_EQ(sk_X509_num(certs.get()), sk_X509_num(result.get()));
+    for (size_t i = 0; i < sk_X509_num(certs.get()); i++) {
+      X509 *a = sk_X509_value(certs.get(), i);
+      X509 *b = sk_X509_value(result.get(), i);
+      EXPECT_EQ(0, X509_cmp(a, b));
+    }
+  };
+
+  check_order(cert1, cert2, cert3);
+  check_order(cert3, cert2, cert1);
+  check_order(cert2, cert3, cert1);
+}
+
+// Test that we output CRLs in the canonical DER order.
+TEST(PKCS7Test, SortCRLs) {
+  static const char kCRL1[] = R"(
+-----BEGIN X509 CRL-----
+MIIBpzCBkAIBATANBgkqhkiG9w0BAQsFADBOMQswCQYDVQQGEwJVUzETMBEGA1UE
+CAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNTW91bnRhaW4gVmlldzESMBAGA1UECgwJ
+Qm9yaW5nU1NMFw0xNjA5MjYxNTEwNTVaFw0xNjEwMjYxNTEwNTVaoA4wDDAKBgNV
+HRQEAwIBATANBgkqhkiG9w0BAQsFAAOCAQEAnrBKKgvd9x9zwK9rtUvVeFeJ7+LN
+ZEAc+a5oxpPNEsJx6hXoApYEbzXMxuWBQoCs5iEBycSGudct21L+MVf27M38KrWo
+eOkq0a2siqViQZO2Fb/SUFR0k9zb8xl86Zf65lgPplALun0bV/HT7MJcl04Tc4os
+dsAReBs5nqTGNEd5AlC1iKHvQZkM//MD51DspKnDpsDiUVi54h9C1SpfZmX8H2Vv
+diyu0fZ/bPAM3VAGawatf/SyWfBMyKpoPXEG39oAzmjjOj8en82psn7m474IGaho
+/vBbhl1ms5qQiLYPjm4YELtnXQoFyC72tBjbdFd/ZE9k4CNKDbxFUXFbkw==
+-----END X509 CRL-----
+)";
+  static const char kCRL2[] = R"(
+-----BEGIN X509 CRL-----
+MIIBvjCBpwIBATANBgkqhkiG9w0BAQsFADBOMQswCQYDVQQGEwJVUzETMBEGA1UE
+CAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNTW91bnRhaW4gVmlldzESMBAGA1UECgwJ
+Qm9yaW5nU1NMFw0xNjA5MjYxNTEyNDRaFw0xNjEwMjYxNTEyNDRaMBUwEwICEAAX
+DTE2MDkyNjE1MTIyNlqgDjAMMAoGA1UdFAQDAgECMA0GCSqGSIb3DQEBCwUAA4IB
+AQCUGaM4DcWzlQKrcZvI8TMeR8BpsvQeo5BoI/XZu2a8h//PyRyMwYeaOM+3zl0d
+sjgCT8b3C1FPgT+P2Lkowv7rJ+FHJRNQkogr+RuqCSPTq65ha4WKlRGWkMFybzVH
+NloxC+aU3lgp/NlX9yUtfqYmJek1CDrOOGPrAEAwj1l/BUeYKNGqfBWYJQtPJu+5
+OaSvIYGpETCZJscUWODmLEb/O3DM438vLvxonwGqXqS0KX37+CHpUlyhnSovxXxp
+Pz4aF+L7OtczxL0GYtD2fR9B7TDMqsNmHXgQrixvvOY7MUdLGbd4RfJL3yA53hyO
+xzfKY2TzxLiOmctG0hXFkH5J
+-----END X509 CRL-----
+)";
+
+  bssl::UniquePtr<BIO> bio(BIO_new_mem_buf(kCRL1, strlen(kCRL1)));
+  ASSERT_TRUE(bio);
+  bssl::UniquePtr<X509_CRL> crl1(
+      PEM_read_bio_X509_CRL(bio.get(), nullptr, nullptr, nullptr));
+  ASSERT_TRUE(crl1);
+  bio.reset(BIO_new_mem_buf(kCRL2, strlen(kCRL2)));
+  ASSERT_TRUE(bio);
+  bssl::UniquePtr<X509_CRL> crl2(
+      PEM_read_bio_X509_CRL(bio.get(), nullptr, nullptr, nullptr));
+  ASSERT_TRUE(crl2);
+
+  // DER's SET OF ordering sorts by tag, then length, so |crl1| comes before
+  // |crl2|.
+  auto check_order = [&](X509_CRL *new_crl1, X509_CRL *new_crl2) {
+    // Bundle the CRLs in the new order.
+    bssl::UniquePtr<STACK_OF(X509_CRL)> new_crls(sk_X509_CRL_new_null());
+    ASSERT_TRUE(new_crls);
+    ASSERT_TRUE(bssl::PushToStack(new_crls.get(), bssl::UpRef(new_crl1)));
+    ASSERT_TRUE(bssl::PushToStack(new_crls.get(), bssl::UpRef(new_crl2)));
+    bssl::ScopedCBB cbb;
+    ASSERT_TRUE(CBB_init(cbb.get(), 64));
+    ASSERT_TRUE(PKCS7_bundle_CRLs(cbb.get(), new_crls.get()));
+
+    // The bundle should be sorted back to the original order.
+    CBS cbs;
+    CBS_init(&cbs, CBB_data(cbb.get()), CBB_len(cbb.get()));
+    bssl::UniquePtr<STACK_OF(X509_CRL)> result(sk_X509_CRL_new_null());
+    ASSERT_TRUE(result);
+    ASSERT_TRUE(PKCS7_get_CRLs(result.get(), &cbs));
+    ASSERT_EQ(2u, sk_X509_CRL_num(result.get()));
+    EXPECT_EQ(0, X509_CRL_cmp(crl1.get(), sk_X509_CRL_value(result.get(), 0)));
+    EXPECT_EQ(0, X509_CRL_cmp(crl2.get(), sk_X509_CRL_value(result.get(), 1)));
+  };
+
+  check_order(crl1.get(), crl2.get());
+  check_order(crl2.get(), crl1.get());
 }

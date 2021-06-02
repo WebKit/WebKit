@@ -54,12 +54,15 @@ type processorType int
 const (
 	ppc64le processorType = iota + 1
 	x86_64
+	aarch64
 )
 
 // delocation holds the state needed during a delocation operation.
 type delocation struct {
 	processor processorType
 	output    stringWriter
+	// commentIndicator starts a comment, e.g. "//" or "#"
+	commentIndicator string
 
 	// symbols is the set of symbols defined in the module.
 	symbols map[string]struct{}
@@ -104,7 +107,7 @@ func (d *delocation) writeNode(node *node32) {
 
 func (d *delocation) writeCommentedNode(node *node32) {
 	line := d.contents(node)
-	if _, err := d.output.WriteString("# WAS " + strings.TrimSpace(line) + "\n"); err != nil {
+	if _, err := d.output.WriteString(d.commentIndicator + " WAS " + strings.TrimSpace(line) + "\n"); err != nil {
 		panic(err)
 	}
 }
@@ -154,6 +157,8 @@ func (d *delocation) processInput(input inputFile) (err error) {
 				statement, err = d.processIntelInstruction(statement, node.up)
 			case ppc64le:
 				statement, err = d.processPPCInstruction(statement, node.up)
+			case aarch64:
+				statement, err = d.processAarch64Instruction(statement, node.up)
 			default:
 				panic("unknown processor")
 			}
@@ -343,6 +348,276 @@ func instructionArgs(node *node32) (argNodes []*node32) {
 	}
 
 	return argNodes
+}
+
+// Aarch64 support
+
+// gotHelperName returns the name of a synthesised function that returns an
+// address from the GOT.
+func gotHelperName(symbol string) string {
+	return ".Lboringssl_loadgot_" + symbol
+}
+
+// loadAarch64Address emits instructions to put the address of |symbol|
+// (optionally adjusted by |offsetStr|) into |targetReg|.
+func (d *delocation) loadAarch64Address(statement *node32, targetReg string, symbol string, offsetStr string) (*node32, error) {
+	// There are two paths here: either the symbol is known to be local in which
+	// case adr is used to get the address (within 1MiB), or a GOT reference is
+	// really needed in which case the code needs to jump to a helper function.
+	//
+	// A helper function is needed because using code appears to be the only way
+	// to load a GOT value. On other platforms we have ".quad foo@GOT" outside of
+	// the module, but on Aarch64 that results in a "COPY" relocation and linker
+	// comments suggest it's a weird hack. So, for each GOT symbol needed, we emit
+	// a function outside of the module that returns the address from the GOT in
+	// x0.
+
+	d.writeCommentedNode(statement)
+
+	_, isKnown := d.symbols[symbol]
+	isLocal := strings.HasPrefix(symbol, ".L")
+	if isKnown || isLocal || isSynthesized(symbol) {
+		if isLocal {
+			symbol = d.mapLocalSymbol(symbol)
+		} else if isKnown {
+			symbol = localTargetName(symbol)
+		}
+
+		d.output.WriteString("\tadr " + targetReg + ", " + symbol + offsetStr + "\n")
+
+		return statement, nil
+	}
+
+	if len(offsetStr) != 0 {
+		panic("non-zero offset for helper-based reference")
+	}
+
+	var helperFunc string
+	if symbol == "OPENSSL_armcap_P" {
+		helperFunc = ".LOPENSSL_armcap_P_addr"
+	} else {
+		// GOT helpers also dereference the GOT entry, thus the subsequent ldr
+		// instruction, which would normally do the dereferencing, needs to be
+		// dropped. GOT helpers have to include the dereference because the
+		// assembler doesn't support ":got_lo12:foo" offsets except in an ldr
+		// instruction.
+		d.gotExternalsNeeded[symbol] = struct{}{}
+		helperFunc = gotHelperName(symbol)
+	}
+
+	// Clear the red-zone. I can't find a definitive answer about whether Linux
+	// Aarch64 includes a red-zone, but Microsoft has a 16-byte one and Apple a
+	// 128-byte one. Thus conservatively clear a 128-byte red-zone.
+	d.output.WriteString("\tsub sp, sp, 128\n")
+
+	// Save x0 (which will be stomped by the return value) and the link register
+	// to the stack. Then save the program counter into the link register and
+	// jump to the helper function.
+	d.output.WriteString("\tstp x0, lr, [sp, #-16]!\n")
+	d.output.WriteString("\tbl " + helperFunc + "\n")
+
+	if targetReg == "x0" {
+		// If the target happens to be x0 then restore the link register from the
+		// stack and send the saved value of x0 to the zero register.
+		d.output.WriteString("\tldp xzr, lr, [sp], #16\n")
+	} else {
+		// Otherwise move the result into place and restore registers.
+		d.output.WriteString("\tmov " + targetReg + ", x0\n")
+		d.output.WriteString("\tldp x0, lr, [sp], #16\n")
+	}
+
+	// Revert the red-zone adjustment.
+	d.output.WriteString("\tadd sp, sp, 128\n")
+
+	return statement, nil
+}
+
+func (d *delocation) processAarch64Instruction(statement, instruction *node32) (*node32, error) {
+	assertNodeType(instruction, ruleInstructionName)
+	instructionName := d.contents(instruction)
+
+	argNodes := instructionArgs(instruction.next)
+
+	switch instructionName {
+	case "cset", "csel", "csetm", "cneg", "csinv", "cinc", "csinc", "csneg":
+		// These functions are special because they take a condition-code name as
+		// an argument and that looks like a symbol reference.
+		d.writeNode(statement)
+		return statement, nil
+
+	case "mrs":
+		// Functions that take special register names also look like a symbol
+		// reference to the parser.
+		d.writeNode(statement)
+		return statement, nil
+
+	case "adrp":
+		// adrp always generates a relocation, even when the target symbol is in the
+		// same segment, because the page-offset of the code isn't known until link
+		// time. Thus adrp instructions are turned into either adr instructions
+		// (limiting the module to 1MiB offsets) or calls to helper functions, both of
+		// which load the full address. Later instructions, which add the low 12 bits
+		// of offset, are tweaked to remove the offset since it's already included.
+		// Loads of GOT symbols are slightly more complex because it's not possible to
+		// avoid dereferencing a GOT entry with Clang's assembler. Thus the later ldr
+		// instruction, which would normally do the dereferencing, is dropped
+		// completely. (Or turned into a mov if it targets a different register.)
+		assertNodeType(argNodes[0], ruleRegisterOrConstant)
+		targetReg := d.contents(argNodes[0])
+		if !strings.HasPrefix(targetReg, "x") {
+			panic("adrp targetting register " + targetReg + ", which has the wrong size")
+		}
+
+		var symbol, offset string
+		switch argNodes[1].pegRule {
+		case ruleGOTSymbolOffset:
+			symbol = d.contents(argNodes[1].up)
+		case ruleMemoryRef:
+			assertNodeType(argNodes[1].up, ruleSymbolRef)
+			node, empty := d.gatherOffsets(argNodes[1].up.up, "")
+			if len(empty) != 0 {
+				panic("prefix offsets found for adrp")
+			}
+			symbol = d.contents(node)
+			_, offset = d.gatherOffsets(node.next, "")
+		default:
+			panic("Unhandled adrp argument type " + rul3s[argNodes[1].pegRule])
+		}
+
+		return d.loadAarch64Address(statement, targetReg, symbol, offset)
+	}
+
+	var args []string
+	changed := false
+
+	for _, arg := range argNodes {
+		fullArg := arg
+
+		switch arg.pegRule {
+		case ruleRegisterOrConstant, ruleLocalLabelRef, ruleARMConstantTweak:
+			args = append(args, d.contents(fullArg))
+
+		case ruleGOTSymbolOffset:
+			// These should only be arguments to adrp and thus unreachable.
+			panic("unreachable")
+
+		case ruleMemoryRef:
+			ref := arg.up
+
+			switch ref.pegRule {
+			case ruleSymbolRef:
+				// This is a branch. Either the target needs to be written to a local
+				// version of the symbol to ensure that no relocations are emitted, or
+				// it needs to jump to a redirector function.
+				symbol, _, _, didChange, symbolIsLocal, _ := d.parseMemRef(arg.up)
+				changed = didChange
+
+				if _, knownSymbol := d.symbols[symbol]; knownSymbol {
+					symbol = localTargetName(symbol)
+					changed = true
+				} else if !symbolIsLocal && !isSynthesized(symbol) {
+					redirector := redirectorName(symbol)
+					d.redirectors[symbol] = redirector
+					symbol = redirector
+					changed = true
+				}
+
+				args = append(args, symbol)
+
+			case ruleARMBaseIndexScale:
+				parts := ref.up
+				assertNodeType(parts, ruleARMRegister)
+				baseAddrReg := d.contents(parts)
+				parts = skipWS(parts.next)
+
+				// Only two forms need special handling. First there's memory references
+				// like "[x*, :got_lo12:foo]". The base register here will have been the
+				// target of an adrp instruction to load the page address, but the adrp
+				// will have turned into loading the full address *and dereferencing it*,
+				// above. Thus this instruction needs to be dropped otherwise we'll be
+				// dereferencing twice.
+				//
+				// Second there are forms like "[x*, :lo12:foo]" where the code has used
+				// adrp to load the page address into x*. That adrp will have been turned
+				// into loading the full address so just the offset needs to be dropped.
+
+				if parts != nil {
+					if parts.pegRule == ruleARMGOTLow12 {
+						if instructionName != "ldr" {
+							panic("Symbol reference outside of ldr instruction")
+						}
+
+						if skipWS(parts.next) != nil || parts.up.next != nil {
+							panic("can't handle tweak or post-increment with symbol references")
+						}
+
+						// The GOT helper already dereferenced the entry so, at most, just a mov
+						// is needed to put things in the right register.
+						d.writeCommentedNode(statement)
+						if baseAddrReg != args[0] {
+							d.output.WriteString("\tmov " + args[0] + ", " + baseAddrReg + "\n")
+						}
+						return statement, nil
+					} else if parts.pegRule == ruleLow12BitsSymbolRef {
+						if instructionName != "ldr" {
+							panic("Symbol reference outside of ldr instruction")
+						}
+
+						if skipWS(parts.next) != nil || parts.up.next != nil {
+							panic("can't handle tweak or post-increment with symbol references")
+						}
+
+						// Suppress the offset; adrp loaded the full address.
+						args = append(args, "["+baseAddrReg+"]")
+						changed = true
+						continue
+					}
+				}
+
+				args = append(args, d.contents(fullArg))
+
+			case ruleLow12BitsSymbolRef:
+				// These are the second instruction in a pair:
+				//   adrp x0, symbol           // Load the page address into x0
+				//   add x1, x0, :lo12:symbol  // Adds the page offset.
+				//
+				// The adrp instruction will have been turned into a sequence that loads
+				// the full address, above, thus the offset is turned into zero. If that
+				// results in the instruction being a nop, then it is deleted.
+				if instructionName != "add" {
+					panic(fmt.Sprintf("unsure how to handle %q instruction using lo12", instructionName))
+				}
+
+				if !strings.HasPrefix(args[0], "x") || !strings.HasPrefix(args[1], "x") {
+					panic("address arithmetic with incorrectly sized register")
+				}
+
+				if args[0] == args[1] {
+					d.writeCommentedNode(statement)
+					return statement, nil
+				}
+
+				args = append(args, "#0")
+				changed = true
+
+			default:
+				panic(fmt.Sprintf("unhandled MemoryRef type %s", rul3s[ref.pegRule]))
+			}
+
+		default:
+			panic(fmt.Sprintf("unknown instruction argument type %q", rul3s[arg.pegRule]))
+		}
+	}
+
+	if changed {
+		d.writeCommentedNode(statement)
+		replacement := "\t" + instructionName + "\t" + strings.Join(args, ", ") + "\n"
+		d.output.WriteString(replacement)
+	} else {
+		d.writeNode(statement)
+	}
+
+	return statement, nil
 }
 
 /* ppc64le
@@ -808,6 +1083,10 @@ const (
 	// instrCombine merges the source and destination in some fashion, for example
 	// a 2-operand bitwise operation.
 	instrCombine
+	// instrMemoryVectorCombine is similer to instrCombine, but the source
+	// register must be a memory reference and the destination register
+	// must be a vector register.
+	instrMemoryVectorCombine
 	// instrThreeArg merges two sources into a destination in some fashion.
 	instrThreeArg
 	// instrCompare takes two arguments and writes outputs to the flags register.
@@ -855,6 +1134,11 @@ func classifyInstruction(instr string, args []*node32) instructionType {
 	case "vpbroadcastq":
 		if len(args) == 2 {
 			return instrTransformingMove
+		}
+
+	case "movlps", "movhps":
+		if len(args) == 2 {
+			return instrMemoryVectorCombine
 		}
 	}
 
@@ -964,6 +1248,18 @@ func threeArgCombineOp(w stringWriter, instructionName, source1, source2, dest s
 	return func(k func()) {
 		k()
 		w.WriteString("\t" + instructionName + " " + source1 + ", " + source2 + ", " + dest + "\n")
+	}
+}
+
+func memoryVectorCombineOp(w stringWriter, instructionName, source, dest string) wrapperFunc {
+	return func(k func()) {
+		k()
+		// These instructions can only read from memory, so push
+		// tempReg and read from the stack. Note we assume the red zone
+		// was previously cleared by saveRegister().
+		w.WriteString("\tpushq " + source + "\n")
+		w.WriteString("\t" + instructionName + " (%rsp), " + dest + "\n")
+		w.WriteString("\tleaq 8(%rsp), %rsp\n")
 	}
 }
 
@@ -1140,6 +1436,17 @@ Args:
 					wrappers = append(wrappers, saveRegWrapper)
 
 					wrappers = append(wrappers, combineOp(d.output, instructionName, tempReg, targetReg))
+					targetReg = tempReg
+				case instrMemoryVectorCombine:
+					assertNodeType(argNodes[1], ruleRegisterOrConstant)
+					targetReg = d.contents(argNodes[1])
+					if isValidLEATarget(targetReg) {
+						return nil, errors.New("target register must be an XMM register")
+					}
+					saveRegWrapper, tempReg := saveRegister(d.output, nil)
+					wrappers = append(wrappers, saveRegWrapper)
+					redzoneCleared = true
+					wrappers = append(wrappers, memoryVectorCombineOp(d.output, instructionName, tempReg, targetReg))
 					targetReg = tempReg
 				case instrThreeArg:
 					if n := len(argNodes); n != 3 {
@@ -1344,6 +1651,17 @@ func (d *delocation) handleBSS(statement *node32) (*node32, error) {
 	return lastStatement, nil
 }
 
+func writeAarch64Function(w stringWriter, funcName string, writeContents func(stringWriter)) {
+	w.WriteString(".p2align 2\n")
+	w.WriteString(".hidden " + funcName + "\n")
+	w.WriteString(".type " + funcName + ", @function\n")
+	w.WriteString(funcName + ":\n")
+	w.WriteString(".cfi_startproc\n")
+	writeContents(w)
+	w.WriteString(".cfi_endproc\n")
+	w.WriteString(".size " + funcName + ", .-" + funcName + "\n")
+}
+
 func transform(w stringWriter, inputs []inputFile) error {
 	// symbols contains all defined symbols.
 	symbols := make(map[string]struct{})
@@ -1431,10 +1749,16 @@ func transform(w stringWriter, inputs []inputFile) error {
 		processor = detectProcessor(inputs[0])
 	}
 
+	commentIndicator := "#"
+	if processor == aarch64 {
+		commentIndicator = "//"
+	}
+
 	d := &delocation{
 		symbols:             symbols,
 		localEntrySymbols:   localEntrySymbols,
 		processor:           processor,
+		commentIndicator:    commentIndicator,
 		output:              w,
 		redirectors:         make(map[string]string),
 		bssAccessorsNeeded:  make(map[string]string),
@@ -1472,7 +1796,8 @@ func transform(w stringWriter, inputs []inputFile) error {
 
 	for _, name := range redirectorNames {
 		redirector := d.redirectors[name]
-		if d.processor == ppc64le {
+		switch d.processor {
+		case ppc64le:
 			w.WriteString(".section \".toc\", \"aw\"\n")
 			w.WriteString(".Lredirector_toc_" + name + ":\n")
 			w.WriteString(".quad " + name + "\n")
@@ -1487,7 +1812,13 @@ func transform(w stringWriter, inputs []inputFile) error {
 			w.WriteString("\tld 12, .Lredirector_toc_" + name + "@toc@l(12)\n")
 			w.WriteString("\tmtctr 12\n")
 			w.WriteString("\tbctr\n")
-		} else {
+
+		case aarch64:
+			writeAarch64Function(w, redirector, func(w stringWriter) {
+				w.WriteString("\tb " + name + "\n")
+			})
+
+		case x86_64:
 			w.WriteString(".type " + redirector + ", @function\n")
 			w.WriteString(redirector + ":\n")
 			w.WriteString("\tjmp\t" + name + "\n")
@@ -1503,20 +1834,32 @@ func transform(w stringWriter, inputs []inputFile) error {
 	// Emit BSS accessor functions. Each is a single LEA followed by RET.
 	for _, name := range accessorNames {
 		funcName := accessorName(name)
-		w.WriteString(".type " + funcName + ", @function\n")
-		w.WriteString(funcName + ":\n")
 		target := d.bssAccessorsNeeded[name]
 
-		if d.processor == ppc64le {
+		switch d.processor {
+		case ppc64le:
+			w.WriteString(".type " + funcName + ", @function\n")
+			w.WriteString(funcName + ":\n")
 			w.WriteString("\taddis 3, 2, " + target + "@toc@ha\n")
 			w.WriteString("\taddi 3, 3, " + target + "@toc@l\n")
 			w.WriteString("\tblr\n")
-		} else {
+
+		case x86_64:
+			w.WriteString(".type " + funcName + ", @function\n")
+			w.WriteString(funcName + ":\n")
 			w.WriteString("\tleaq\t" + target + "(%rip), %rax\n\tret\n")
+
+		case aarch64:
+			writeAarch64Function(w, funcName, func(w stringWriter) {
+				w.WriteString("\tadrp x0, " + target + "\n")
+				w.WriteString("\tadd x0, x0, :lo12:" + target + "\n")
+				w.WriteString("\tret\n")
+			})
 		}
 	}
 
-	if d.processor == ppc64le {
+	switch d.processor {
+	case ppc64le:
 		loadTOCNames := sortedSet(d.tocLoaders)
 		for _, symbolAndOffset := range loadTOCNames {
 			parts := strings.SplitN(symbolAndOffset, "\x00", 2)
@@ -1535,7 +1878,24 @@ func transform(w stringWriter, inputs []inputFile) error {
 
 		w.WriteString(".LBORINGSSL_external_toc:\n")
 		w.WriteString(".quad .TOC.-.LBORINGSSL_external_toc\n")
-	} else {
+
+	case aarch64:
+		externalNames := sortedSet(d.gotExternalsNeeded)
+		for _, symbol := range externalNames {
+			writeAarch64Function(w, gotHelperName(symbol), func(w stringWriter) {
+				w.WriteString("\tadrp x0, :got:" + symbol + "\n")
+				w.WriteString("\tldr x0, [x0, :got_lo12:" + symbol + "]\n")
+				w.WriteString("\tret\n")
+			})
+		}
+
+		writeAarch64Function(w, ".LOPENSSL_armcap_P_addr", func(w stringWriter) {
+			w.WriteString("\tadrp x0, OPENSSL_armcap_P\n")
+			w.WriteString("\tadd x0, x0, :lo12:OPENSSL_armcap_P\n")
+			w.WriteString("\tret\n")
+		})
+
+	case x86_64:
 		externalNames := sortedSet(d.gotExternalsNeeded)
 		for _, name := range externalNames {
 			parts := strings.SplitN(name, "@", 2)
@@ -1810,6 +2170,8 @@ func detectProcessor(input inputFile) processorType {
 			return x86_64
 		case "addis", "addi", "mflr":
 			return ppc64le
+		case "str", "bl", "ldr", "st1":
+			return aarch64
 		}
 	}
 

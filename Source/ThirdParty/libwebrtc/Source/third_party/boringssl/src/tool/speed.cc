@@ -28,6 +28,7 @@
 #include <openssl/aes.h>
 #include <openssl/bn.h>
 #include <openssl/curve25519.h>
+#include <openssl/crypto.h>
 #include <openssl/digest.h>
 #include <openssl/err.h>
 #include <openssl/ec.h>
@@ -984,11 +985,12 @@ static bool SpeedHashToCurve(const std::string &selected) {
   return true;
 }
 
-static PMBTOKEN_PRETOKEN *pmbtoken_pretoken_dup(PMBTOKEN_PRETOKEN *in) {
-  PMBTOKEN_PRETOKEN *out =
-      (PMBTOKEN_PRETOKEN *)OPENSSL_malloc(sizeof(PMBTOKEN_PRETOKEN));
+static TRUST_TOKEN_PRETOKEN *trust_token_pretoken_dup(
+    TRUST_TOKEN_PRETOKEN *in) {
+  TRUST_TOKEN_PRETOKEN *out =
+      (TRUST_TOKEN_PRETOKEN *)OPENSSL_malloc(sizeof(TRUST_TOKEN_PRETOKEN));
   if (out) {
-    OPENSSL_memcpy(out, in, sizeof(PMBTOKEN_PRETOKEN));
+    OPENSSL_memcpy(out, in, sizeof(TRUST_TOKEN_PRETOKEN));
   }
   return out;
 }
@@ -1059,9 +1061,9 @@ static bool SpeedTrustToken(std::string name, const TRUST_TOKEN_METHOD *method,
                                                    &msg_len, batchsize);
         OPENSSL_free(issue_msg);
         // Clear pretokens.
-        sk_PMBTOKEN_PRETOKEN_pop_free(client->pretokens,
-                                      PMBTOKEN_PRETOKEN_free);
-        client->pretokens = sk_PMBTOKEN_PRETOKEN_new_null();
+        sk_TRUST_TOKEN_PRETOKEN_pop_free(client->pretokens,
+                                         TRUST_TOKEN_PRETOKEN_free);
+        client->pretokens = sk_TRUST_TOKEN_PRETOKEN_new_null();
         return ok;
       })) {
     fprintf(stderr, "TRUST_TOKEN_CLIENT_begin_issuance failed.\n");
@@ -1078,9 +1080,10 @@ static bool SpeedTrustToken(std::string name, const TRUST_TOKEN_METHOD *method,
   }
   bssl::UniquePtr<uint8_t> free_issue_msg(issue_msg);
 
-  bssl::UniquePtr<STACK_OF(PMBTOKEN_PRETOKEN)> pretokens(
-      sk_PMBTOKEN_PRETOKEN_deep_copy(client->pretokens, pmbtoken_pretoken_dup,
-                                     PMBTOKEN_PRETOKEN_free));
+  bssl::UniquePtr<STACK_OF(TRUST_TOKEN_PRETOKEN)> pretokens(
+      sk_TRUST_TOKEN_PRETOKEN_deep_copy(client->pretokens,
+                                        trust_token_pretoken_dup,
+                                        TRUST_TOKEN_PRETOKEN_free));
 
   if (!TimeFunction(&results, [&]() -> bool {
         uint8_t *issue_resp = NULL;
@@ -1116,8 +1119,9 @@ static bool SpeedTrustToken(std::string name, const TRUST_TOKEN_METHOD *method,
                                                issue_resp, resp_len));
 
         // Reset pretokens.
-        client->pretokens = sk_PMBTOKEN_PRETOKEN_deep_copy(
-            pretokens.get(), pmbtoken_pretoken_dup, PMBTOKEN_PRETOKEN_free);
+        client->pretokens = sk_TRUST_TOKEN_PRETOKEN_deep_copy(
+            pretokens.get(), trust_token_pretoken_dup,
+            TRUST_TOKEN_PRETOKEN_free);
         return !!tokens;
       })) {
     fprintf(stderr, "TRUST_TOKEN_CLIENT_finish_issuance failed.\n");
@@ -1203,9 +1207,9 @@ static bool SpeedTrustToken(std::string name, const TRUST_TOKEN_METHOD *method,
   if (!TimeFunction(&results, [&]() -> bool {
         uint8_t *srr = NULL, *sig = NULL;
         size_t srr_len, sig_len;
-        int ok = TRUST_TOKEN_CLIENT_finish_redemption(client.get(), &srr,
-                                                      &srr_len, &sig, &sig_len,
-                                                      redeem_resp, resp_len);
+        int ok = TRUST_TOKEN_CLIENT_finish_redemption(
+            client.get(), &srr, &srr_len, &sig, &sig_len, redeem_resp,
+            redeem_resp_len);
         OPENSSL_free(srr);
         OPENSSL_free(sig);
         return ok;
@@ -1217,6 +1221,24 @@ static bool SpeedTrustToken(std::string name, const TRUST_TOKEN_METHOD *method,
 
   return true;
 }
+
+#if defined(BORINGSSL_FIPS)
+static bool SpeedSelfTest(const std::string &selected) {
+  if (!selected.empty() && selected.find("self-test") == std::string::npos) {
+    return true;
+  }
+
+  TimeResults results;
+  if (!TimeFunction(&results, []() -> bool { return BORINGSSL_self_test(); })) {
+    fprintf(stderr, "BORINGSSL_self_test faileid.\n");
+    ERR_print_errors_fp(stderr);
+    return false;
+  }
+
+  results.Print("self-test");
+  return true;
+}
+#endif
 
 static const struct argument kArguments[] = {
     {
@@ -1340,6 +1362,7 @@ bool Speed(const std::vector<std::string> &args) {
       !SpeedHash(EVP_sha1(), "SHA-1", selected) ||
       !SpeedHash(EVP_sha256(), "SHA-256", selected) ||
       !SpeedHash(EVP_sha512(), "SHA-512", selected) ||
+      !SpeedHash(EVP_blake2b256(), "BLAKE2b-256", selected) ||
       !SpeedRandom(selected) ||
       !SpeedECDH(selected) ||
       !SpeedECDSA(selected) ||
@@ -1352,9 +1375,22 @@ bool Speed(const std::vector<std::string> &args) {
       !SpeedTrustToken("TrustToken-Exp1-Batch1", TRUST_TOKEN_experiment_v1(), 1,
                        selected) ||
       !SpeedTrustToken("TrustToken-Exp1-Batch10", TRUST_TOKEN_experiment_v1(),
-                       10, selected)) {
+                       10, selected) ||
+      !SpeedTrustToken("TrustToken-Exp2VOPRF-Batch1",
+                       TRUST_TOKEN_experiment_v2_voprf(), 1, selected) ||
+      !SpeedTrustToken("TrustToken-Exp2VOPRF-Batch10",
+                       TRUST_TOKEN_experiment_v2_voprf(), 10, selected) ||
+      !SpeedTrustToken("TrustToken-Exp2PMB-Batch1",
+                       TRUST_TOKEN_experiment_v2_pmb(), 1, selected) ||
+      !SpeedTrustToken("TrustToken-Exp2PMB-Batch10",
+                       TRUST_TOKEN_experiment_v2_pmb(), 10, selected)) {
     return false;
   }
+#if defined(BORINGSSL_FIPS)
+  if (!SpeedSelfTest(selected)) {
+    return false;
+  }
+#endif
   if (g_print_json) {
     puts("\n]");
   }

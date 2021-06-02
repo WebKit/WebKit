@@ -199,11 +199,15 @@ int x509_rsa_ctx_to_pss(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
   if (saltlen == -1) {
     saltlen = EVP_MD_size(sigmd);
   } else if (saltlen == -2) {
+    // TODO(davidben): Forbid this mode. The world has largely standardized on
+    // salt length matching hash length.
     saltlen = EVP_PKEY_size(pk) - EVP_MD_size(sigmd) - 2;
     if (((EVP_PKEY_bits(pk) - 1) & 0x7) == 0) {
       saltlen--;
     }
-  } else {
+  } else if (saltlen != (int)EVP_MD_size(sigmd)) {
+    // We only allow salt length matching hash length and, for now, the -2 case.
+    OPENSSL_PUT_ERROR(X509, X509_R_INVALID_PSS_PARAMETERS);
     return 0;
   }
 

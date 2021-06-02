@@ -89,6 +89,12 @@ bar:
 # WAS .sleb128 .L2-.L1
 	.sleb128	.L2_BCM_1-.L1_BCM_1
 
+# .byte was not parsed as a symbol-containing directive on the
+# assumption that it's too small to hold a pointer. But Clang
+# will store offsets in it.
+# WAS .byte   (.LBB231_40-.LBB231_19)>>2, 4, .Lfoo, (.Lfoo), .Lfoo<<400, (   .Lfoo ) <<  66
+	.byte	(.LBB231_40_BCM_1-.LBB231_19_BCM_1)>>2, 4, .Lfoo_BCM_1, (.Lfoo_BCM_1), .Lfoo_BCM_1<<400, (   .Lfoo_BCM_1 ) <<  66
+.byte   421
 .text
 .loc 1 2 0
 BORINGSSL_bcm_text_end:

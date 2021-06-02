@@ -78,7 +78,7 @@ int i2d_ASN1_BOOLEAN(int a, unsigned char **pp)
     }
 
     ASN1_put_object(&p, 0, 1, V_ASN1_BOOLEAN, V_ASN1_UNIVERSAL);
-    *p = (unsigned char)a;
+    *p = a ? 0xff : 0x00;
 
     /*
      * If a new buffer was allocated, just return it back.

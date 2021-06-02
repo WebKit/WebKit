@@ -124,6 +124,22 @@ perlasm(x86_64-mont5.${ASM_EXT} bn/asm/x86_64-mont5.pl)
 perlasm(x86_64-mont.${ASM_EXT} bn/asm/x86_64-mont.pl)
 perlasm(x86-mont.${ASM_EXT} bn/asm/x86-mont.pl)
 
+function(cpreprocess dest src)
+  set(TARGET "")
+  if(CMAKE_ASM_COMPILER_TARGET)
+    set(TARGET "--target=${CMAKE_ASM_COMPILER_TARGET}")
+  endif()
+
+  add_custom_command(
+    OUTPUT ${dest}
+    COMMAND ${CMAKE_ASM_COMPILER} ${TARGET} $CMAKE_ASM_FLAGS -E ${src} -I${PROJECT_SOURCE_DIR}/include > ${dest}
+    DEPENDS
+    ${src}
+    ${PROJECT_SOURCE_DIR}/include/openssl/arm_arch.h
+    WORKING_DIRECTORY .
+  )
+endfunction()
+
 if(FIPS_DELOCATE)
   if(FIPS_SHARED)
     error("Can't set both delocate and shared mode for FIPS build")
@@ -144,6 +160,18 @@ if(FIPS_DELOCATE)
     bcm.c
   )
 
+  if(${ARCH} STREQUAL "aarch64")
+    # Perlasm output on Aarch64 needs to pass through the C preprocessor before
+    # it can be parsed by delocate.
+    foreach(asm ${BCM_ASM_SOURCES})
+      cpreprocess(${asm}.s ${asm})
+      list(APPEND BCM_ASM_PROCESSED_SOURCES "${asm}.s")
+    endforeach()
+  else()
+    # No preprocessing is required on other platforms.
+    set(BCM_ASM_PROCESSED_SOURCES ${BCM_ASM_SOURCES})
+  endif()
+
   add_dependencies(bcm_c_generated_asm global_target)
 
   set_target_properties(bcm_c_generated_asm PROPERTIES COMPILE_OPTIONS "-S")
@@ -152,8 +180,8 @@ if(FIPS_DELOCATE)
   go_executable(delocate boringssl.googlesource.com/boringssl/util/fipstools/delocate)
   add_custom_command(
     OUTPUT bcm-delocated.S
-    COMMAND ./delocate -a $<TARGET_FILE:bcm_c_generated_asm> -o bcm-delocated.S ${BCM_ASM_SOURCES}
-    DEPENDS bcm_c_generated_asm delocate ${BCM_ASM_SOURCES}
+    COMMAND ./delocate -a $<TARGET_FILE:bcm_c_generated_asm> -o bcm-delocated.S ${BCM_ASM_PROCESSED_SOURCES}
+    DEPENDS bcm_c_generated_asm delocate ${BCM_ASM_PROCESSED_SOURCES}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
 
@@ -170,11 +198,16 @@ if(FIPS_DELOCATE)
   set_target_properties(bcm_hashunset PROPERTIES POSITION_INDEPENDENT_CODE ON)
   set_target_properties(bcm_hashunset PROPERTIES LINKER_LANGUAGE C)
 
+  set(MAYBE_INJECT_HASH_SHA256_FLAG "")
+  if (ARCH STREQUAL "aarch64")
+    set(MAYBE_INJECT_HASH_SHA256_FLAG "-sha256")
+  endif()
+
   go_executable(inject_hash
 	        boringssl.googlesource.com/boringssl/util/fipstools/inject_hash)
   add_custom_command(
     OUTPUT bcm.o
-    COMMAND ./inject_hash -o bcm.o -in-archive $<TARGET_FILE:bcm_hashunset>
+    COMMAND ./inject_hash -o bcm.o -in-archive $<TARGET_FILE:bcm_hashunset> ${MAYBE_INJECT_HASH_SHA256_FLAG}
     DEPENDS bcm_hashunset inject_hash
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
@@ -190,7 +223,6 @@ if(FIPS_DELOCATE)
     OBJECT
 
     fips_shared_support.c
-    is_fips.c
   )
 
   add_dependencies(fipsmodule global_target)
@@ -207,7 +239,6 @@ elseif(FIPS_SHARED)
     OBJECT
 
     fips_shared_support.c
-    is_fips.c
   )
 
   add_dependencies(fipsmodule global_target)
@@ -240,7 +271,6 @@ else()
 
     bcm.c
     fips_shared_support.c
-    is_fips.c
 
     ${BCM_ASM_SOURCES}
   )

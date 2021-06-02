@@ -89,7 +89,7 @@ func NewServer(prefix string, logFile string, derCertificates [][]byte, privateK
 				return conn, err
 			},
 		},
-		Timeout: 10 * time.Second,
+		Timeout: 30 * time.Second,
 	}
 
 	return &Server{client: client, prefix: prefix, totpFunc: totp, PrefixTokens: make(map[string]string)}
@@ -422,7 +422,7 @@ func (server *Server) write(method string, reply interface{}, endPoint string, c
 	buf.Write(contents)
 	buf.WriteString(requestSuffix)
 
-	req, err := server.newRequestWithToken("POST", endPoint, &buf)
+	req, err := server.newRequestWithToken(method, endPoint, &buf)
 	if err != nil {
 		return err
 	}
@@ -479,7 +479,7 @@ var (
 )
 
 // GetPaged returns an array of records of some type using one or more requests to the server. See
-// https://usnistgov.github.io/ACVP/artifacts/draft-fussell-acvp-spec-00.html#paging_response
+// https://pages.nist.gov/ACVP/draft-fussell-acvp-spec.html#paging_response
 func (server *Server) GetPaged(out interface{}, endPoint string, condition Query) error {
 	output := reflect.ValueOf(out)
 	if output.Kind() != reflect.Ptr {
@@ -555,7 +555,7 @@ func (server *Server) GetPaged(out interface{}, endPoint string, condition Query
 	return nil
 }
 
-// https://usnistgov.github.io/ACVP/artifacts/draft-fussell-acvp-spec-00.html#rfc.section.11.8.3.1
+// https://pages.nist.gov/ACVP/draft-fussell-acvp-spec.html#rfc.section.11.8.3.1
 type Vendor struct {
 	URL         string    `json:"url,omitempty"`
 	Name        string    `json:"name,omitempty"`
@@ -566,7 +566,7 @@ type Vendor struct {
 	Addresses   []Address `json:"addresses,omitempty"`
 }
 
-// https://usnistgov.github.io/ACVP/artifacts/draft-fussell-acvp-spec-00.html#rfc.section.11.9
+// https://pages.nist.gov/ACVP/draft-fussell-acvp-spec.html#rfc.section.11.9
 type Address struct {
 	URL        string `json:"url,omitempty"`
 	Street1    string `json:"street1,omitempty"`
@@ -578,7 +578,7 @@ type Address struct {
 	PostalCode string `json:"postalCode,omitempty"`
 }
 
-// https://usnistgov.github.io/ACVP/artifacts/draft-fussell-acvp-spec-00.html#rfc.section.11.10
+// https://pages.nist.gov/ACVP/draft-fussell-acvp-spec.html#rfc.section.11.10
 type Person struct {
 	URL          string   `json:"url,omitempty"`
 	FullName     string   `json:"fullName,omitempty"`
@@ -590,7 +590,7 @@ type Person struct {
 	} `json:"phoneNumbers,omitempty"`
 }
 
-// https://usnistgov.github.io/ACVP/artifacts/draft-fussell-acvp-spec-00.html#rfc.section.11.11
+// https://pages.nist.gov/ACVP/draft-fussell-acvp-spec.html#rfc.section.11.11
 type Module struct {
 	URL         string   `json:"url,omitempty"`
 	Name        string   `json:"name,omitempty"`

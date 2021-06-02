@@ -22,7 +22,7 @@ import (
 )
 
 // The following structures reflect the JSON of ACVP hash tests. See
-// https://usnistgov.github.io/ACVP/artifacts/acvp_sub_ecdsa.html#test_vectors
+// https://pages.nist.gov/ACVP/draft-fussell-acvp-ecdsa.html#name-test-vectors
 
 type ecdsaTestVectorSet struct {
 	Groups []ecdsaTestGroup `json:"testGroups"`
@@ -80,7 +80,7 @@ func (e *ecdsa) Process(vectorSet []byte, m Transactable) (interface{}, error) {
 
 	var ret []ecdsaTestGroupResponse
 	// See
-	// https://usnistgov.github.io/ACVP/artifacts/draft-celi-acvp-sha-00.html#rfc.section.3
+	// https://pages.nist.gov/ACVP/draft-fussell-acvp-ecdsa.html#name-test-vectors
 	// for details about the tests.
 	for _, group := range parsed.Groups {
 		if _, ok := e.curves[group.Curve]; !ok {

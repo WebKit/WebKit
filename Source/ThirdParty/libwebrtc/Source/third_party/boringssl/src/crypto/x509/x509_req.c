@@ -157,62 +157,31 @@ int X509_REQ_check_private_key(X509_REQ *x, EVP_PKEY *k)
     return (ok);
 }
 
-/*
- * It seems several organisations had the same idea of including a list of
- * extensions in a certificate request. There are at least two OIDs that are
- * used and there may be more: so the list is configurable.
- */
-
-static const int ext_nid_list[] = { NID_ext_req, NID_ms_ext_req, NID_undef };
-
-static const int *ext_nids = ext_nid_list;
-
 int X509_REQ_extension_nid(int req_nid)
 {
-    int i, nid;
-    for (i = 0;; i++) {
-        nid = ext_nids[i];
-        if (nid == NID_undef)
-            return 0;
-        else if (req_nid == nid)
-            return 1;
-    }
-}
-
-const int *X509_REQ_get_extension_nids(void)
-{
-    return ext_nids;
-}
-
-void X509_REQ_set_extension_nids(const int *nids)
-{
-    ext_nids = nids;
+    return req_nid == NID_ext_req || req_nid == NID_ms_ext_req;
 }
 
 STACK_OF(X509_EXTENSION) *X509_REQ_get_extensions(X509_REQ *req)
 {
-    X509_ATTRIBUTE *attr;
-    ASN1_TYPE *ext = NULL;
-    int idx;
-    const int *pnid;
-    const unsigned char *p;
-
-    if ((req == NULL) || (req->req_info == NULL) || !ext_nids)
-        return (NULL);
-    for (pnid = ext_nids; *pnid != NID_undef; pnid++) {
-        idx = X509_REQ_get_attr_by_NID(req, *pnid, -1);
-        if (idx == -1)
-            continue;
-        attr = X509_REQ_get_attr(req, idx);
-        if (attr->single)
-            ext = attr->value.single;
-        else if (sk_ASN1_TYPE_num(attr->value.set))
-            ext = sk_ASN1_TYPE_value(attr->value.set, 0);
-        break;
-    }
-    if (!ext || (ext->type != V_ASN1_SEQUENCE))
+    if (req == NULL || req->req_info == NULL) {
         return NULL;
-    p = ext->value.sequence->data;
+    }
+
+    int idx = X509_REQ_get_attr_by_NID(req, NID_ext_req, -1);
+    if (idx == -1) {
+        idx = X509_REQ_get_attr_by_NID(req, NID_ms_ext_req, -1);
+    }
+    if (idx == -1) {
+        return NULL;
+    }
+
+    X509_ATTRIBUTE *attr = X509_REQ_get_attr(req, idx);
+    ASN1_TYPE *ext = X509_ATTRIBUTE_get0_type(attr, 0);
+    if (!ext || ext->type != V_ASN1_SEQUENCE) {
+        return NULL;
+    }
+    const unsigned char *p = ext->value.sequence->data;
     return (STACK_OF(X509_EXTENSION) *)
         ASN1_item_d2i(NULL, &p, ext->value.sequence->length,
                       ASN1_ITEM_rptr(X509_EXTENSIONS));
@@ -223,44 +192,25 @@ STACK_OF(X509_EXTENSION) *X509_REQ_get_extensions(X509_REQ *req)
  * in case we want to create a non standard one.
  */
 
-int X509_REQ_add_extensions_nid(X509_REQ *req, STACK_OF(X509_EXTENSION) *exts,
-                                int nid)
+int X509_REQ_add_extensions_nid(X509_REQ *req,
+                                const STACK_OF(X509_EXTENSION) *exts, int nid)
 {
-    ASN1_TYPE *at = NULL;
-    X509_ATTRIBUTE *attr = NULL;
-    if (!(at = ASN1_TYPE_new()) || !(at->value.sequence = ASN1_STRING_new()))
-        goto err;
-
-    at->type = V_ASN1_SEQUENCE;
     /* Generate encoding of extensions */
-    at->value.sequence->length =
-        ASN1_item_i2d((ASN1_VALUE *)exts,
-                      &at->value.sequence->data,
-                      ASN1_ITEM_rptr(X509_EXTENSIONS));
-    if (!(attr = X509_ATTRIBUTE_new()))
-        goto err;
-    if (!(attr->value.set = sk_ASN1_TYPE_new_null()))
-        goto err;
-    if (!sk_ASN1_TYPE_push(attr->value.set, at))
-        goto err;
-    at = NULL;
-    attr->single = 0;
-    attr->object = (ASN1_OBJECT *)OBJ_nid2obj(nid);
-    if (!req->req_info->attributes) {
-        if (!(req->req_info->attributes = sk_X509_ATTRIBUTE_new_null()))
-            goto err;
+    unsigned char *ext = NULL;
+    int ext_len = ASN1_item_i2d((ASN1_VALUE *)exts, &ext,
+                                ASN1_ITEM_rptr(X509_EXTENSIONS));
+    if (ext_len <= 0) {
+        return 0;
     }
-    if (!sk_X509_ATTRIBUTE_push(req->req_info->attributes, attr))
-        goto err;
-    return 1;
- err:
-    X509_ATTRIBUTE_free(attr);
-    ASN1_TYPE_free(at);
-    return 0;
+    int ret = X509_REQ_add1_attr_by_NID(req, nid, V_ASN1_SEQUENCE, ext,
+                                        ext_len);
+    OPENSSL_free(ext);
+    return ret;
 }
 
 /* This is the normal usage: use the "official" OID */
-int X509_REQ_add_extensions(X509_REQ *req, STACK_OF(X509_EXTENSION) *exts)
+int X509_REQ_add_extensions(X509_REQ *req,
+                            const STACK_OF(X509_EXTENSION) *exts)
 {
     return X509_REQ_add_extensions_nid(req, exts, NID_ext_req);
 }
@@ -277,7 +227,7 @@ int X509_REQ_get_attr_by_NID(const X509_REQ *req, int nid, int lastpos)
     return X509at_get_attr_by_NID(req->req_info->attributes, nid, lastpos);
 }
 
-int X509_REQ_get_attr_by_OBJ(const X509_REQ *req, ASN1_OBJECT *obj,
+int X509_REQ_get_attr_by_OBJ(const X509_REQ *req, const ASN1_OBJECT *obj,
                              int lastpos)
 {
     return X509at_get_attr_by_OBJ(req->req_info->attributes, obj, lastpos);
@@ -301,31 +251,31 @@ int X509_REQ_add1_attr(X509_REQ *req, X509_ATTRIBUTE *attr)
 }
 
 int X509_REQ_add1_attr_by_OBJ(X509_REQ *req,
-                              const ASN1_OBJECT *obj, int type,
-                              const unsigned char *bytes, int len)
+                              const ASN1_OBJECT *obj, int attrtype,
+                              const unsigned char *data, int len)
 {
     if (X509at_add1_attr_by_OBJ(&req->req_info->attributes, obj,
-                                type, bytes, len))
+                                attrtype, data, len))
         return 1;
     return 0;
 }
 
 int X509_REQ_add1_attr_by_NID(X509_REQ *req,
-                              int nid, int type,
-                              const unsigned char *bytes, int len)
+                              int nid, int attrtype,
+                              const unsigned char *data, int len)
 {
     if (X509at_add1_attr_by_NID(&req->req_info->attributes, nid,
-                                type, bytes, len))
+                                attrtype, data, len))
         return 1;
     return 0;
 }
 
 int X509_REQ_add1_attr_by_txt(X509_REQ *req,
-                              const char *attrname, int type,
-                              const unsigned char *bytes, int len)
+                              const char *attrname, int attrtype,
+                              const unsigned char *data, int len)
 {
     if (X509at_add1_attr_by_txt(&req->req_info->attributes, attrname,
-                                type, bytes, len))
+                                attrtype, data, len))
         return 1;
     return 0;
 }

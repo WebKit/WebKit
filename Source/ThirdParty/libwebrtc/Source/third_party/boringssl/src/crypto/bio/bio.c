@@ -262,6 +262,8 @@ int BIO_should_io_special(const BIO *bio) {
 
 int BIO_get_retry_reason(const BIO *bio) { return bio->retry_reason; }
 
+void BIO_set_retry_reason(BIO *bio, int reason) { bio->retry_reason = reason; }
+
 void BIO_clear_flags(BIO *bio, int flags) {
   bio->flags &= ~flags;
 }

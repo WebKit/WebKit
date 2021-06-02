@@ -44,16 +44,17 @@ class MockQuicTransport {
  private:
   // Reads a record header from |bio_| and returns whether the record was read
   // successfully. As part of reading the header, this function checks that the
-  // cipher suite and secret in the header are correct. On success, the tag
-  // indicating the TLS record type is put in  |*out_tag|, the length of the TLS
-  // record is put in |*out_len|, and the next thing to be read from |bio_| is
-  // |*out_len| bytes of the TLS record.
-  bool ReadHeader(uint8_t *out_tag, size_t *out_len);
+  // cipher suite and secret in the header are correct. On success, the TLS
+  // record type is put in |*out_type|, the encryption level is put in
+  // |*out_level|, the length of the TLS record is put in |*out_len|, and the
+  // next thing to be read from |bio_| is |*out_len| bytes of the TLS record.
+  bool ReadHeader(uint8_t *out_type, enum ssl_encryption_level_t *out_level,
+                  size_t *out_len);
 
   // Writes a MockQuicTransport record to |bio_| at encryption level |level|
-  // with record type |tag| and a TLS record payload of length |len| from
+  // with record type |type| and a TLS record payload of length |len| from
   // |data|.
-  bool WriteRecord(enum ssl_encryption_level_t level, uint8_t tag,
+  bool WriteRecord(enum ssl_encryption_level_t level, uint8_t type,
                    const uint8_t *data, size_t len);
 
   bssl::UniquePtr<BIO> bio_;

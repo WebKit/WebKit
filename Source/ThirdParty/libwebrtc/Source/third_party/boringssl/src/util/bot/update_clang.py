@@ -1,9 +1,12 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Copyright (c) 2012 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 """This script is used to download prebuilt clang binaries."""
+
+from __future__ import division
+from __future__ import print_function
 
 import os
 import shutil
@@ -13,18 +16,22 @@ import sys
 import tarfile
 import tempfile
 import time
-import urllib2
+
+try:
+  # Python 3.0 or later
+  from urllib.error import HTTPError, URLError
+  from urllib.request import urlopen
+except ImportError:
+  from urllib2 import urlopen, HTTPError, URLError
 
 
 # CLANG_REVISION and CLANG_SUB_REVISION determine the build of clang
 # to use. These should be synced with tools/clang/scripts/update.py in
 # Chromium.
-CLANG_REVISION = '4e0d9925d6a3561449bdd8def27fd3f3f1b3fb9f'
-CLANG_SVN_REVISION = 'n346557'
+CLANG_REVISION = 'llvmorg-13-init-794-g83e2710e'
 CLANG_SUB_REVISION = 1
 
-PACKAGE_VERSION = '%s-%s-%s' % (CLANG_SVN_REVISION, CLANG_REVISION[:8],
-                                CLANG_SUB_REVISION)
+PACKAGE_VERSION = '%s-%s' % (CLANG_REVISION, CLANG_SUB_REVISION)
 
 # Path constants. (All of these should be absolute paths.)
 THIS_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -34,13 +41,6 @@ STAMP_FILE = os.path.join(LLVM_BUILD_DIR, 'cr_build_revision')
 # URL for pre-built binaries.
 CDS_URL = os.environ.get('CDS_CLANG_BUCKET_OVERRIDE',
     'https://commondatastorage.googleapis.com/chromium-browser-clang')
-
-# Bump after VC updates.
-DIA_DLL = {
-  '2013': 'msdia120.dll',
-  '2015': 'msdia140.dll',
-  '2017': 'msdia140.dll',
-}
 
 
 def DownloadUrl(url, output_file):
@@ -54,8 +54,8 @@ def DownloadUrl(url, output_file):
     try:
       sys.stdout.write('Downloading %s ' % url)
       sys.stdout.flush()
-      response = urllib2.urlopen(url)
-      total_size = int(response.info().getheader('Content-Length').strip())
+      response = urlopen(url)
+      total_size = int(response.headers.get('Content-Length').strip())
       bytes_done = 0
       dots_printed = 0
       while True:
@@ -64,29 +64,28 @@ def DownloadUrl(url, output_file):
           break
         output_file.write(chunk)
         bytes_done += len(chunk)
-        num_dots = TOTAL_DOTS * bytes_done / total_size
+        num_dots = TOTAL_DOTS * bytes_done // total_size
         sys.stdout.write('.' * (num_dots - dots_printed))
         sys.stdout.flush()
         dots_printed = num_dots
       if bytes_done != total_size:
-        raise urllib2.URLError("only got %d of %d bytes" %
-                               (bytes_done, total_size))
-      print ' Done.'
+        raise URLError("only got %d of %d bytes" % (bytes_done, total_size))
+      print(' Done.')
       return
-    except urllib2.URLError as e:
+    except URLError as e:
       sys.stdout.write('\n')
-      print e
-      if num_retries == 0 or isinstance(e, urllib2.HTTPError) and e.code == 404:
+      print(e)
+      if num_retries == 0 or isinstance(e, HTTPError) and e.code == 404:
         raise e
       num_retries -= 1
-      print 'Retrying in %d s ...' % retry_wait_s
+      print('Retrying in %d s ...' % retry_wait_s)
       time.sleep(retry_wait_s)
       retry_wait_s *= 2
 
 
 def EnsureDirExists(path):
   if not os.path.exists(path):
-    print "Creating directory %s" % path
+    print("Creating directory %s" % path)
     os.makedirs(path)
 
 
@@ -129,36 +128,8 @@ def RmTree(dir):
 
 def CopyFile(src, dst):
   """Copy a file from src to dst."""
-  print "Copying %s to %s" % (src, dst)
+  print("Copying %s to %s" % (src, dst))
   shutil.copy(src, dst)
-
-
-vs_version = None
-def GetVSVersion():
-  global vs_version
-  if vs_version:
-    return vs_version
-
-  # Try using the toolchain in depot_tools.
-  # This sets environment variables used by SelectVisualStudioVersion below.
-  sys.path.append(THIS_DIR)
-  import vs_toolchain
-  vs_toolchain.SetEnvironmentAndGetRuntimeDllDirs()
-
-  # Use gyp to find the MSVS installation, either in depot_tools as per above,
-  # or a system-wide installation otherwise.
-  sys.path.append(os.path.join(THIS_DIR, 'gyp', 'pylib'))
-  import gyp.MSVSVersion
-  vs_version = gyp.MSVSVersion.SelectVisualStudioVersion(
-      vs_toolchain.GetVisualStudioVersion())
-  return vs_version
-
-
-def CopyDiaDllTo(target_dir):
-  # This script always wants to use the 64-bit msdia*.dll.
-  dia_path = os.path.join(GetVSVersion().Path(), 'DIA SDK', 'bin', 'amd64')
-  dia_dll = os.path.join(dia_path, DIA_DLL[GetVSVersion().ShortName()])
-  CopyFile(dia_dll, target_dir)
 
 
 def UpdateClang():
@@ -170,34 +141,30 @@ def UpdateClang():
   else:
     return 0
 
-  print 'Updating Clang to %s...' % PACKAGE_VERSION
+  print('Updating Clang to %s...' % PACKAGE_VERSION)
 
   if ReadStampFile() == PACKAGE_VERSION:
-    print 'Clang is already up to date.'
+    print('Clang is already up to date.')
     return 0
 
   # Reset the stamp file in case the build is unsuccessful.
   WriteStampFile('')
 
-  print 'Downloading prebuilt clang'
+  print('Downloading prebuilt clang')
   if os.path.exists(LLVM_BUILD_DIR):
     RmTree(LLVM_BUILD_DIR)
   try:
     DownloadAndUnpack(cds_full_url, LLVM_BUILD_DIR)
-    print 'clang %s unpacked' % PACKAGE_VERSION
-    if sys.platform == 'win32':
-      CopyDiaDllTo(os.path.join(LLVM_BUILD_DIR, 'bin'))
+    print('clang %s unpacked' % PACKAGE_VERSION)
     WriteStampFile(PACKAGE_VERSION)
     return 0
-  except urllib2.URLError:
-    print 'Failed to download prebuilt clang %s' % cds_file
-    print 'Exiting.'
+  except URLError:
+    print('Failed to download prebuilt clang %s' % cds_file)
+    print('Exiting.')
     return 1
 
 
 def main():
-  # Don't buffer stdout, so that print statements are immediately flushed.
-  sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
   return UpdateClang()
 
 

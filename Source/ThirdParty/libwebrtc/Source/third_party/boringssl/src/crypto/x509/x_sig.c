@@ -61,6 +61,11 @@
 #include <openssl/x509.h>
 
 
+struct X509_sig_st {
+  X509_ALGOR *algor;
+  ASN1_OCTET_STRING *digest;
+} /* X509_SIG */;
+
 ASN1_SEQUENCE(X509_SIG) = {
         ASN1_SIMPLE(X509_SIG, algor, X509_ALGOR),
         ASN1_SIMPLE(X509_SIG, digest, ASN1_OCTET_STRING)

@@ -66,7 +66,7 @@ int X509_CRL_set_version(X509_CRL *x, long version)
     if (x == NULL)
         return (0);
     if (x->crl->version == NULL) {
-        if ((x->crl->version = M_ASN1_INTEGER_new()) == NULL)
+        if ((x->crl->version = ASN1_INTEGER_new()) == NULL)
             return (0);
     }
     return (ASN1_INTEGER_set(x->crl->version, version));
@@ -87,9 +87,9 @@ int X509_CRL_set1_lastUpdate(X509_CRL *x, const ASN1_TIME *tm)
         return (0);
     in = x->crl->lastUpdate;
     if (in != tm) {
-        in = M_ASN1_TIME_dup(tm);
+        in = ASN1_STRING_dup(tm);
         if (in != NULL) {
-            M_ASN1_TIME_free(x->crl->lastUpdate);
+            ASN1_TIME_free(x->crl->lastUpdate);
             x->crl->lastUpdate = in;
         }
     }
@@ -104,9 +104,9 @@ int X509_CRL_set1_nextUpdate(X509_CRL *x, const ASN1_TIME *tm)
         return (0);
     in = x->crl->nextUpdate;
     if (in != tm) {
-        in = M_ASN1_TIME_dup(tm);
+        in = ASN1_STRING_dup(tm);
         if (in != NULL) {
-            M_ASN1_TIME_free(x->crl->nextUpdate);
+            ASN1_TIME_free(x->crl->nextUpdate);
             x->crl->nextUpdate = in;
         }
     }
@@ -189,45 +189,46 @@ int X509_CRL_get_signature_nid(const X509_CRL *crl)
     return OBJ_obj2nid(crl->sig_alg->algorithm);
 }
 
-const ASN1_TIME *X509_REVOKED_get0_revocationDate(const X509_REVOKED *x)
+const ASN1_TIME *X509_REVOKED_get0_revocationDate(const X509_REVOKED *revoked)
 {
-    return x->revocationDate;
+    return revoked->revocationDate;
 }
 
-int X509_REVOKED_set_revocationDate(X509_REVOKED *x, ASN1_TIME *tm)
+int X509_REVOKED_set_revocationDate(X509_REVOKED *revoked, const ASN1_TIME *tm)
 {
     ASN1_TIME *in;
 
-    if (x == NULL)
+    if (revoked == NULL)
         return (0);
-    in = x->revocationDate;
+    in = revoked->revocationDate;
     if (in != tm) {
-        in = M_ASN1_TIME_dup(tm);
+        in = ASN1_STRING_dup(tm);
         if (in != NULL) {
-            M_ASN1_TIME_free(x->revocationDate);
-            x->revocationDate = in;
+            ASN1_TIME_free(revoked->revocationDate);
+            revoked->revocationDate = in;
         }
     }
     return (in != NULL);
 }
 
-const ASN1_INTEGER *X509_REVOKED_get0_serialNumber(const X509_REVOKED *x)
+const ASN1_INTEGER *X509_REVOKED_get0_serialNumber(const X509_REVOKED *revoked)
 {
-    return x->serialNumber;
+    return revoked->serialNumber;
 }
 
-int X509_REVOKED_set_serialNumber(X509_REVOKED *x, ASN1_INTEGER *serial)
+int X509_REVOKED_set_serialNumber(X509_REVOKED *revoked,
+                                  const ASN1_INTEGER *serial)
 {
     ASN1_INTEGER *in;
 
-    if (x == NULL)
+    if (revoked == NULL)
         return (0);
-    in = x->serialNumber;
+    in = revoked->serialNumber;
     if (in != serial) {
-        in = M_ASN1_INTEGER_dup(serial);
+        in = ASN1_INTEGER_dup(serial);
         if (in != NULL) {
-            M_ASN1_INTEGER_free(x->serialNumber);
-            x->serialNumber = in;
+            ASN1_INTEGER_free(revoked->serialNumber);
+            revoked->serialNumber = in;
         }
     }
     return (in != NULL);
@@ -239,8 +240,44 @@ const STACK_OF(X509_EXTENSION) *
     return r->extensions;
 }
 
-int i2d_re_X509_CRL_tbs(X509_CRL *crl, unsigned char **pp)
+int i2d_re_X509_CRL_tbs(X509_CRL *crl, unsigned char **outp)
 {
     crl->crl->enc.modified = 1;
-    return i2d_X509_CRL_INFO(crl->crl, pp);
+    return i2d_X509_CRL_INFO(crl->crl, outp);
+}
+
+int i2d_X509_CRL_tbs(X509_CRL *crl, unsigned char **outp)
+{
+    return i2d_X509_CRL_INFO(crl->crl, outp);
+}
+
+int X509_CRL_set1_signature_algo(X509_CRL *crl, const X509_ALGOR *algo)
+{
+    /* TODO(davidben): Const-correct generated ASN.1 dup functions.
+     * Alternatively, when the types are hidden and we can embed required fields
+     * directly in structs, import |X509_ALGOR_copy| from upstream. */
+    X509_ALGOR *copy1 = X509_ALGOR_dup((X509_ALGOR *)algo);
+    X509_ALGOR *copy2 = X509_ALGOR_dup((X509_ALGOR *)algo);
+    if (copy1 == NULL || copy2 == NULL) {
+        X509_ALGOR_free(copy1);
+        X509_ALGOR_free(copy2);
+        return 0;
+    }
+
+    X509_ALGOR_free(crl->sig_alg);
+    crl->sig_alg = copy1;
+    X509_ALGOR_free(crl->crl->sig_alg);
+    crl->crl->sig_alg = copy2;
+    return 1;
+}
+
+int X509_CRL_set1_signature_value(X509_CRL *crl, const uint8_t *sig,
+                                  size_t sig_len)
+{
+    if (!ASN1_STRING_set(crl->signature, sig, sig_len)) {
+      return 0;
+    }
+    crl->signature->flags &= ~(ASN1_STRING_FLAG_BITS_LEFT | 0x07);
+    crl->signature->flags |= ASN1_STRING_FLAG_BITS_LEFT;
+    return 1;
 }

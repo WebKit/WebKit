@@ -123,6 +123,7 @@ $code.=<<___;
 #include <openssl/arm_arch.h>
 
 .extern	OPENSSL_armcap_P
+.hidden	OPENSSL_armcap_P
 
 .section .rodata
 

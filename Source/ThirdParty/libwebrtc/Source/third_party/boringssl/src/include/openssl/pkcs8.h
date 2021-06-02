@@ -175,7 +175,9 @@ OPENSSL_EXPORT int i2d_PKCS12_fp(FILE *fp, const PKCS12 *p12);
 //
 // Note if |p12| does not contain a private key, both |*out_pkey| and
 // |*out_cert| will be set to NULL and all certificates will be returned via
-// |*out_ca_certs|.
+// |*out_ca_certs|. Also note this function differs from OpenSSL in that extra
+// certificates are returned in the order they appear in the file. OpenSSL 1.1.1
+// returns them in reverse order, but this will be fixed in OpenSSL 3.0.
 //
 // It returns one on success and zero on error.
 //
@@ -206,6 +208,12 @@ OPENSSL_EXPORT int PKCS12_verify_mac(const PKCS12 *p12, const char *password,
 // Each of |key_nid|, |cert_nid|, |iterations|, and |mac_iterations| may be zero
 // to use defaults, which are |NID_pbe_WithSHA1And3_Key_TripleDES_CBC|,
 // |NID_pbe_WithSHA1And40BitRC2_CBC|, 2048, and one, respectively.
+//
+// |key_nid| or |cert_nid| may also be -1 to disable encryption of the key or
+// certificate, respectively. This option is not recommended and is only
+// implemented for compatibility with external packages. Note the output still
+// requires a password for the MAC. Unencrypted keys in PKCS#12 are also not
+// widely supported and may not open in other implementations.
 OPENSSL_EXPORT PKCS12 *PKCS12_create(const char *password, const char *name,
                                      const EVP_PKEY *pkey, X509 *cert,
                                      const STACK_OF(X509) *chain, int key_nid,

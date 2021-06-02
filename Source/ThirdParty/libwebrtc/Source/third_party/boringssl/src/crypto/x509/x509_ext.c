@@ -93,9 +93,10 @@ X509_EXTENSION *X509_CRL_delete_ext(X509_CRL *x, int loc)
     return (X509v3_delete_ext(x->crl->extensions, loc));
 }
 
-void *X509_CRL_get_ext_d2i(const X509_CRL *x, int nid, int *crit, int *idx)
+void *X509_CRL_get_ext_d2i(const X509_CRL *crl, int nid, int *out_critical,
+                           int *out_idx)
 {
-    return X509V3_get_d2i(x->crl->extensions, nid, crit, idx);
+    return X509V3_get_d2i(crl->crl->extensions, nid, out_critical, out_idx);
 }
 
 int X509_CRL_add1_ext_i2d(X509_CRL *x, int nid, void *value, int crit,
@@ -145,9 +146,11 @@ int X509_add_ext(X509 *x, X509_EXTENSION *ex, int loc)
     return (X509v3_add_ext(&(x->cert_info->extensions), ex, loc) != NULL);
 }
 
-void *X509_get_ext_d2i(const X509 *x, int nid, int *crit, int *idx)
+void *X509_get_ext_d2i(const X509 *x509, int nid, int *out_critical,
+                       int *out_idx)
 {
-    return X509V3_get_d2i(x->cert_info->extensions, nid, crit, idx);
+    return X509V3_get_d2i(x509->cert_info->extensions, nid, out_critical,
+                          out_idx);
 }
 
 int X509_add1_ext_i2d(X509 *x, int nid, void *value, int crit,
@@ -194,10 +197,10 @@ int X509_REVOKED_add_ext(X509_REVOKED *x, X509_EXTENSION *ex, int loc)
     return (X509v3_add_ext(&(x->extensions), ex, loc) != NULL);
 }
 
-void *X509_REVOKED_get_ext_d2i(const X509_REVOKED *x, int nid, int *crit,
-                               int *idx)
+void *X509_REVOKED_get_ext_d2i(const X509_REVOKED *revoked, int nid,
+                               int *out_critical, int *out_idx)
 {
-    return X509V3_get_d2i(x->extensions, nid, crit, idx);
+    return X509V3_get_d2i(revoked->extensions, nid, out_critical, out_idx);
 }
 
 int X509_REVOKED_add1_ext_i2d(X509_REVOKED *x, int nid, void *value, int crit,

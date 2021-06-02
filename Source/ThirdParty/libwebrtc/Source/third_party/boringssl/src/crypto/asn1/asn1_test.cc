@@ -26,6 +26,7 @@
 #include <openssl/mem.h>
 #include <openssl/obj.h>
 #include <openssl/span.h>
+#include <openssl/x509v3.h>
 
 #include "../test/test_util.h"
 
@@ -70,9 +71,9 @@ TEST(ASN1Test, LargeTags) {
 }
 
 TEST(ASN1Test, IntegerSetting) {
-  bssl::UniquePtr<ASN1_INTEGER> by_bn(M_ASN1_INTEGER_new());
-  bssl::UniquePtr<ASN1_INTEGER> by_long(M_ASN1_INTEGER_new());
-  bssl::UniquePtr<ASN1_INTEGER> by_uint64(M_ASN1_INTEGER_new());
+  bssl::UniquePtr<ASN1_INTEGER> by_bn(ASN1_INTEGER_new());
+  bssl::UniquePtr<ASN1_INTEGER> by_long(ASN1_INTEGER_new());
+  bssl::UniquePtr<ASN1_INTEGER> by_uint64(ASN1_INTEGER_new());
   bssl::UniquePtr<BIGNUM> bn(BN_new());
 
   const std::vector<int64_t> kValues = {
@@ -95,6 +96,151 @@ TEST(ASN1Test, IntegerSetting) {
     }
   }
 }
+
+template <typename T>
+void TestSerialize(T obj, int (*i2d_func)(T a, uint8_t **pp),
+                   bssl::Span<const uint8_t> expected) {
+  int len = static_cast<int>(expected.size());
+  ASSERT_EQ(i2d_func(obj, nullptr), len);
+
+  std::vector<uint8_t> buf(expected.size());
+  uint8_t *ptr = buf.data();
+  ASSERT_EQ(i2d_func(obj, &ptr), len);
+  EXPECT_EQ(ptr, buf.data() + buf.size());
+  EXPECT_EQ(Bytes(expected), Bytes(buf));
+
+  // Test the allocating version.
+  ptr = nullptr;
+  ASSERT_EQ(i2d_func(obj, &ptr), len);
+  EXPECT_EQ(Bytes(expected), Bytes(ptr, expected.size()));
+  OPENSSL_free(ptr);
+}
+
+TEST(ASN1Test, SerializeObject) {
+  static const uint8_t kDER[] = {0x06, 0x09, 0x2a, 0x86, 0x48, 0x86,
+                                 0xf7, 0x0d, 0x01, 0x01, 0x01};
+  const ASN1_OBJECT *obj = OBJ_nid2obj(NID_rsaEncryption);
+  TestSerialize(obj, i2d_ASN1_OBJECT, kDER);
+}
+
+TEST(ASN1Test, SerializeBoolean) {
+  static const uint8_t kTrue[] = {0x01, 0x01, 0xff};
+  TestSerialize(0xff, i2d_ASN1_BOOLEAN, kTrue);
+  // Other constants are also correctly encoded as TRUE.
+  TestSerialize(1, i2d_ASN1_BOOLEAN, kTrue);
+  TestSerialize(0x100, i2d_ASN1_BOOLEAN, kTrue);
+
+  static const uint8_t kFalse[] = {0x01, 0x01, 0x00};
+  TestSerialize(0x00, i2d_ASN1_BOOLEAN, kFalse);
+}
+
+// The templates go through a different codepath, so test them separately.
+TEST(ASN1Test, SerializeEmbeddedBoolean) {
+  bssl::UniquePtr<BASIC_CONSTRAINTS> val(BASIC_CONSTRAINTS_new());
+  ASSERT_TRUE(val);
+
+  // BasicConstraints defaults to FALSE, so the encoding should be empty.
+  static const uint8_t kLeaf[] = {0x30, 0x00};
+  val->ca = 0;
+  TestSerialize(val.get(), i2d_BASIC_CONSTRAINTS, kLeaf);
+
+  // TRUE should always be encoded as 0xff, independent of what value the caller
+  // placed in the |ASN1_BOOLEAN|.
+  static const uint8_t kCA[] = {0x30, 0x03, 0x01, 0x01, 0xff};
+  val->ca = 0xff;
+  TestSerialize(val.get(), i2d_BASIC_CONSTRAINTS, kCA);
+  val->ca = 1;
+  TestSerialize(val.get(), i2d_BASIC_CONSTRAINTS, kCA);
+  val->ca = 0x100;
+  TestSerialize(val.get(), i2d_BASIC_CONSTRAINTS, kCA);
+}
+
+TEST(ASN1Test, ASN1Type) {
+  const struct {
+    int type;
+    std::vector<uint8_t> der;
+  } kTests[] = {
+      // BOOLEAN { TRUE }
+      {V_ASN1_BOOLEAN, {0x01, 0x01, 0xff}},
+      // BOOLEAN { FALSE }
+      {V_ASN1_BOOLEAN, {0x01, 0x01, 0x00}},
+      // OCTET_STRING { "a" }
+      {V_ASN1_OCTET_STRING, {0x04, 0x01, 0x61}},
+      // BIT_STRING { `01` `00` }
+      {V_ASN1_BIT_STRING, {0x03, 0x02, 0x01, 0x00}},
+      // INTEGER { -1 }
+      {V_ASN1_INTEGER, {0x02, 0x01, 0xff}},
+      // OBJECT_IDENTIFIER { 1.2.840.113554.4.1.72585.2 }
+      {V_ASN1_OBJECT,
+       {0x06, 0x0c, 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x12, 0x04, 0x01, 0x84, 0xb7,
+        0x09, 0x02}},
+      // NULL {}
+      {V_ASN1_NULL, {0x05, 0x00}},
+      // SEQUENCE {}
+      {V_ASN1_SEQUENCE, {0x30, 0x00}},
+      // SET {}
+      {V_ASN1_SET, {0x31, 0x00}},
+      // [0] { UTF8String { "a" } }
+      {V_ASN1_OTHER, {0xa0, 0x03, 0x0c, 0x01, 0x61}},
+  };
+  for (const auto &t : kTests) {
+    SCOPED_TRACE(Bytes(t.der));
+
+    // The input should successfully parse.
+    const uint8_t *ptr = t.der.data();
+    bssl::UniquePtr<ASN1_TYPE> val(d2i_ASN1_TYPE(nullptr, &ptr, t.der.size()));
+    ASSERT_TRUE(val);
+
+    EXPECT_EQ(ASN1_TYPE_get(val.get()), t.type);
+    EXPECT_EQ(val->type, t.type);
+    TestSerialize(val.get(), i2d_ASN1_TYPE, t.der);
+  }
+}
+
+// Test that reading |value.ptr| from a FALSE |ASN1_TYPE| behaves correctly. The
+// type historically supported this, so maintain the invariant in case external
+// code relies on it.
+TEST(ASN1Test, UnusedBooleanBits) {
+  // OCTET_STRING { "a" }
+  static const uint8_t kDER[] = {0x04, 0x01, 0x61};
+  const uint8_t *ptr = kDER;
+  bssl::UniquePtr<ASN1_TYPE> val(d2i_ASN1_TYPE(nullptr, &ptr, sizeof(kDER)));
+  ASSERT_TRUE(val);
+  EXPECT_EQ(V_ASN1_OCTET_STRING, val->type);
+  EXPECT_TRUE(val->value.ptr);
+
+  // Set |val| to a BOOLEAN containing FALSE.
+  ASN1_TYPE_set(val.get(), V_ASN1_BOOLEAN, NULL);
+  EXPECT_EQ(V_ASN1_BOOLEAN, val->type);
+  EXPECT_FALSE(val->value.ptr);
+}
+
+TEST(ASN1Test, ASN1ObjectReuse) {
+  // 1.2.840.113554.4.1.72585.2, an arbitrary unknown OID.
+  static const uint8_t kOID[] = {0x2a, 0x86, 0x48, 0x86, 0xf7, 0x12,
+                                 0x04, 0x01, 0x84, 0xb7, 0x09, 0x02};
+  ASN1_OBJECT *obj = ASN1_OBJECT_create(NID_undef, kOID, sizeof(kOID),
+                                        "short name", "long name");
+  ASSERT_TRUE(obj);
+
+  // OBJECT_IDENTIFIER { 1.3.101.112 }
+  static const uint8_t kDER[] = {0x06, 0x03, 0x2b, 0x65, 0x70};
+  const uint8_t *ptr = kDER;
+  EXPECT_TRUE(d2i_ASN1_OBJECT(&obj, &ptr, sizeof(kDER)));
+  EXPECT_EQ(NID_ED25519, OBJ_obj2nid(obj));
+  ASN1_OBJECT_free(obj);
+
+  // Repeat the test, this time overriding a static |ASN1_OBJECT|.
+  obj = OBJ_nid2obj(NID_rsaEncryption);
+  ptr = kDER;
+  EXPECT_TRUE(d2i_ASN1_OBJECT(&obj, &ptr, sizeof(kDER)));
+  EXPECT_EQ(NID_ED25519, OBJ_obj2nid(obj));
+  ASN1_OBJECT_free(obj);
+}
+
+// The ASN.1 macros do not work on Windows shared library builds, where usage of
+// |OPENSSL_EXPORT| is a bit stricter.
+#if !defined(OPENSSL_WINDOWS) || !defined(BORINGSSL_SHARED_LIBRARY)
 
 typedef struct asn1_linked_list_st {
   struct asn1_linked_list_st *next;
@@ -151,36 +297,41 @@ TEST(ASN1Test, Recursive) {
   ASN1_LINKED_LIST_free(list);
 }
 
-template <typename T>
-void TestSerialize(T obj, int (*i2d_func)(T a, uint8_t **pp),
-                   bssl::Span<const uint8_t> expected) {
-  int len = static_cast<int>(expected.size());
-  ASSERT_EQ(i2d_func(obj, nullptr), len);
+struct IMPLICIT_CHOICE {
+  ASN1_STRING *string;
+};
 
-  std::vector<uint8_t> buf(expected.size());
-  uint8_t *ptr = buf.data();
-  ASSERT_EQ(i2d_func(obj, &ptr), len);
-  EXPECT_EQ(ptr, buf.data() + buf.size());
-  EXPECT_EQ(Bytes(expected), Bytes(buf));
+// clang-format off
+DECLARE_ASN1_FUNCTIONS(IMPLICIT_CHOICE)
 
-  // Test the allocating version.
-  ptr = nullptr;
-  ASSERT_EQ(i2d_func(obj, &ptr), len);
-  EXPECT_EQ(Bytes(expected), Bytes(ptr, expected.size()));
-  OPENSSL_free(ptr);
+ASN1_SEQUENCE(IMPLICIT_CHOICE) = {
+  ASN1_IMP(IMPLICIT_CHOICE, string, DIRECTORYSTRING, 0)
+} ASN1_SEQUENCE_END(IMPLICIT_CHOICE)
+
+IMPLEMENT_ASN1_FUNCTIONS(IMPLICIT_CHOICE)
+// clang-format on
+
+// Test that the ASN.1 templates reject types with implicitly-tagged CHOICE
+// types.
+TEST(ASN1Test, ImplicitChoice) {
+  // Serializing a type with an implicitly tagged CHOICE should fail.
+  std::unique_ptr<IMPLICIT_CHOICE, decltype(&IMPLICIT_CHOICE_free)> obj(
+      IMPLICIT_CHOICE_new(), IMPLICIT_CHOICE_free);
+  EXPECT_EQ(-1, i2d_IMPLICIT_CHOICE(obj.get(), nullptr));
+
+  // An implicitly-tagged CHOICE is an error. Depending on the implementation,
+  // it may be misinterpreted as without the tag, or as clobbering the CHOICE
+  // tag. Test both inputs and ensure they fail.
+
+  // SEQUENCE { UTF8String {} }
+  static const uint8_t kInput1[] = {0x30, 0x02, 0x0c, 0x00};
+  const uint8_t *ptr = kInput1;
+  EXPECT_EQ(nullptr, d2i_IMPLICIT_CHOICE(nullptr, &ptr, sizeof(kInput1)));
+
+  // SEQUENCE { [0 PRIMITIVE] {} }
+  static const uint8_t kInput2[] = {0x30, 0x02, 0x80, 0x00};
+  ptr = kInput2;
+  EXPECT_EQ(nullptr, d2i_IMPLICIT_CHOICE(nullptr, &ptr, sizeof(kInput2)));
 }
 
-TEST(ASN1Test, SerializeObject) {
-  static const uint8_t kDER[] = {0x06, 0x09, 0x2a, 0x86, 0x48, 0x86,
-                                 0xf7, 0x0d, 0x01, 0x01, 0x01};
-  const ASN1_OBJECT *obj = OBJ_nid2obj(NID_rsaEncryption);
-  TestSerialize(obj, i2d_ASN1_OBJECT, kDER);
-}
-
-TEST(ASN1Test, SerializeBoolean) {
-  static const uint8_t kTrue[] = {0x01, 0x01, 0xff};
-  TestSerialize(0xff, i2d_ASN1_BOOLEAN, kTrue);
-
-  static const uint8_t kFalse[] = {0x01, 0x01, 0x00};
-  TestSerialize(0x00, i2d_ASN1_BOOLEAN, kFalse);
-}
+#endif  // !WINDOWS || !SHARED_LIBRARY

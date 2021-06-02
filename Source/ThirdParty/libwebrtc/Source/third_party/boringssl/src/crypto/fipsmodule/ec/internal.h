@@ -729,10 +729,6 @@ struct ec_key_st {
   EC_POINT *pub_key;
   EC_WRAPPED_SCALAR *priv_key;
 
-  // fixed_k may contain a specific value of 'k', to be used in ECDSA signing.
-  // This is only for the FIPS power-on tests.
-  BIGNUM *fixed_k;
-
   unsigned int enc_flag;
   point_conversion_form_t conv_form;
 

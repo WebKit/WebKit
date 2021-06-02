@@ -23,7 +23,7 @@ extern "C" {
 
 // ChaCha20.
 //
-// ChaCha20 is a stream cipher. See https://tools.ietf.org/html/rfc7539.
+// ChaCha20 is a stream cipher. See https://tools.ietf.org/html/rfc8439.
 
 
 // CRYPTO_chacha_20 encrypts |in_len| bytes from |in| with the given key and

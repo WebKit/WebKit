@@ -75,8 +75,8 @@ static GENERAL_NAMES *v2i_issuer_alt(X509V3_EXT_METHOD *method,
                                      STACK_OF(CONF_VALUE) *nval);
 static int copy_email(X509V3_CTX *ctx, GENERAL_NAMES *gens, int move_p);
 static int copy_issuer(X509V3_CTX *ctx, GENERAL_NAMES *gens);
-static int do_othername(GENERAL_NAME *gen, char *value, X509V3_CTX *ctx);
-static int do_dirname(GENERAL_NAME *gen, char *value, X509V3_CTX *ctx);
+static int do_othername(GENERAL_NAME *gen, const char *value, X509V3_CTX *ctx);
+static int do_dirname(GENERAL_NAME *gen, const char *value, X509V3_CTX *ctx);
 
 const X509V3_EXT_METHOD v3_alt[] = {
     {NID_subject_alt_name, 0, ASN1_ITEM_ref(GENERAL_NAMES),
@@ -288,40 +288,40 @@ static GENERAL_NAMES *v2i_issuer_alt(X509V3_EXT_METHOD *method,
 
 static int copy_issuer(X509V3_CTX *ctx, GENERAL_NAMES *gens)
 {
-    GENERAL_NAMES *ialt;
-    GENERAL_NAME *gen;
-    X509_EXTENSION *ext;
-    int i;
-    size_t j;
     if (ctx && (ctx->flags == CTX_TEST))
         return 1;
     if (!ctx || !ctx->issuer_cert) {
         OPENSSL_PUT_ERROR(X509V3, X509V3_R_NO_ISSUER_DETAILS);
-        goto err;
+        return 0;
     }
-    i = X509_get_ext_by_NID(ctx->issuer_cert, NID_subject_alt_name, -1);
+    int i = X509_get_ext_by_NID(ctx->issuer_cert, NID_subject_alt_name, -1);
     if (i < 0)
         return 1;
+
+    int ret = 0;
+    GENERAL_NAMES *ialt = NULL;
+    X509_EXTENSION *ext;
     if (!(ext = X509_get_ext(ctx->issuer_cert, i)) ||
         !(ialt = X509V3_EXT_d2i(ext))) {
         OPENSSL_PUT_ERROR(X509V3, X509V3_R_ISSUER_DECODE_ERROR);
         goto err;
     }
 
-    for (j = 0; j < sk_GENERAL_NAME_num(ialt); j++) {
-        gen = sk_GENERAL_NAME_value(ialt, j);
+    for (size_t j = 0; j < sk_GENERAL_NAME_num(ialt); j++) {
+        GENERAL_NAME *gen = sk_GENERAL_NAME_value(ialt, j);
         if (!sk_GENERAL_NAME_push(gens, gen)) {
             OPENSSL_PUT_ERROR(X509V3, ERR_R_MALLOC_FAILURE);
             goto err;
         }
+        /* Ownership of |gen| has moved from |ialt| to |gens|. */
+        sk_GENERAL_NAME_set(ialt, j, NULL);
     }
-    sk_GENERAL_NAME_free(ialt);
 
-    return 1;
+    ret = 1;
 
- err:
-    return 0;
-
+err:
+    GENERAL_NAMES_free(ialt);
+    return ret;
 }
 
 static GENERAL_NAMES *v2i_subject_alt(X509V3_EXT_METHOD *method,
@@ -386,7 +386,7 @@ static int copy_email(X509V3_CTX *ctx, GENERAL_NAMES *gens, int move_p)
     while ((i = X509_NAME_get_index_by_NID(nm,
                                            NID_pkcs9_emailAddress, i)) >= 0) {
         ne = X509_NAME_get_entry(nm, i);
-        email = M_ASN1_IA5STRING_dup(X509_NAME_ENTRY_get_data(ne));
+        email = ASN1_STRING_dup(X509_NAME_ENTRY_get_data(ne));
         if (move_p) {
             X509_NAME_delete_entry(nm, i);
             X509_NAME_ENTRY_free(ne);
@@ -410,7 +410,7 @@ static int copy_email(X509V3_CTX *ctx, GENERAL_NAMES *gens, int move_p)
 
  err:
     GENERAL_NAME_free(gen);
-    M_ASN1_IA5STRING_free(email);
+    ASN1_IA5STRING_free(email);
     return 0;
 
 }
@@ -446,8 +446,8 @@ GENERAL_NAME *v2i_GENERAL_NAME(const X509V3_EXT_METHOD *method,
 
 GENERAL_NAME *a2i_GENERAL_NAME(GENERAL_NAME *out,
                                const X509V3_EXT_METHOD *method,
-                               X509V3_CTX *ctx, int gen_type, char *value,
-                               int is_nc)
+                               X509V3_CTX *ctx, int gen_type,
+                               const char *value, int is_nc)
 {
     char is_string = 0;
     GENERAL_NAME *gen = NULL;
@@ -517,7 +517,7 @@ GENERAL_NAME *a2i_GENERAL_NAME(GENERAL_NAME *out,
     }
 
     if (is_string) {
-        if (!(gen->d.ia5 = M_ASN1_IA5STRING_new()) ||
+        if (!(gen->d.ia5 = ASN1_IA5STRING_new()) ||
             !ASN1_STRING_set(gen->d.ia5, (unsigned char *)value,
                              strlen(value))) {
             OPENSSL_PUT_ERROR(X509V3, ERR_R_MALLOC_FAILURE);
@@ -575,9 +575,10 @@ GENERAL_NAME *v2i_GENERAL_NAME_ex(GENERAL_NAME *out,
 
 }
 
-static int do_othername(GENERAL_NAME *gen, char *value, X509V3_CTX *ctx)
+static int do_othername(GENERAL_NAME *gen, const char *value, X509V3_CTX *ctx)
 {
-    char *objtmp = NULL, *p;
+    char *objtmp = NULL;
+    const char *p;
     int objlen;
     if (!(p = strchr(value, ';')))
         return 0;
@@ -602,7 +603,7 @@ static int do_othername(GENERAL_NAME *gen, char *value, X509V3_CTX *ctx)
     return 1;
 }
 
-static int do_dirname(GENERAL_NAME *gen, char *value, X509V3_CTX *ctx)
+static int do_dirname(GENERAL_NAME *gen, const char *value, X509V3_CTX *ctx)
 {
     int ret = 0;
     STACK_OF(CONF_VALUE) *sk = NULL;

@@ -60,7 +60,8 @@ OPENSSL_STATIC_ASSERT(16 % sizeof(size_t) == 0,
 void CRYPTO_ofb128_encrypt(const uint8_t *in, uint8_t *out, size_t len,
                            const AES_KEY *key, uint8_t ivec[16], unsigned *num,
                            block128_f block) {
-  assert(in && out && key && ivec && num);
+  assert(key != NULL && ivec != NULL && num != NULL);
+  assert(len == 0 || (in != NULL && out != NULL));
 
   unsigned n = *num;
 

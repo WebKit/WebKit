@@ -175,7 +175,13 @@ void OPENSSL_cpuid_setup(void) {
     hwcap = crypto_get_arm_hwcap_from_cpuinfo(&cpuinfo);
   }
 
-  // Clear NEON support if known broken.
+  // Clear NEON support if known broken. Note, if NEON is available statically,
+  // the non-NEON code is dropped and this workaround is a no-op.
+  //
+  // TODO(davidben): The Android NDK now builds with NEON statically available
+  // by default. Cronet still has some consumers that support NEON-less devices
+  // (b/150371744). Get metrics on whether they still see this CPU and, if not,
+  // remove this check entirely.
   g_has_broken_neon = crypto_cpuinfo_has_broken_neon(&cpuinfo);
   if (g_has_broken_neon) {
     hwcap &= ~HWCAP_NEON;
@@ -186,7 +192,10 @@ void OPENSSL_cpuid_setup(void) {
     OPENSSL_armcap_P |= ARMV7_NEON;
 
     // Some ARMv8 Android devices don't expose AT_HWCAP2. Fall back to
-    // /proc/cpuinfo. See https://crbug.com/596156.
+    // /proc/cpuinfo. See https://crbug.com/boringssl/46. As of February 2021,
+    // this is now rare (see Chrome's Net.NeedsHWCAP2Workaround metric), but AES
+    // and PMULL extensions are very useful, so we still carry the workaround
+    // for now.
     unsigned long hwcap2 = 0;
     if (getauxval != NULL) {
       hwcap2 = getauxval(AT_HWCAP2);

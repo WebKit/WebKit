@@ -34,9 +34,10 @@
 
     "SkipEarlyData*": "Trial decryption does not work with the NULL cipher.",
     "EarlyDataChannelID-OfferBoth-Server-*": "Trial decryption does not work with the NULL cipher.",
+    "EarlyDataChannelID-AcceptChannelID-Client-*": "Trial decryption does not work with the NULL cipher.",
     "EarlyData-NonZeroRTTSession-Server-*": "Trial decryption does not work with the NULL cipher.",
     "EarlyData-SkipEndOfEarlyData-*": "Trial decryption does not work with the NULL cipher.",
-    "EarlyData-ALPNMismatch-Server-*": "Trial decryption does not work with the NULL cipher.",
+    "EarlyData-ALPNMismatch-*": "Trial decryption does not work with the NULL cipher.",
     "EarlyData-ALPNOmitted1-Client-*": "Trial decryption does not work with the NULL cipher.",
     "EarlyData-ALPNOmitted2-Client-*": "Trial decryption does not work with the NULL cipher.",
     "EarlyData-ALPNOmitted1-Server-*": "Trial decryption does not work with the NULL cipher.",
@@ -45,6 +46,8 @@
     "EarlyData-Reject*-Client*": "Trial decryption does not work with the NULL cipher.",
     "CustomExtensions-Server-EarlyDataOffered": "Trial decryption does not work with the NULL cipher.",
     "*-TicketAgeSkew-*-Reject*": "Trial decryption does not work with the NULL cipher.",
+    "*EarlyDataRejected*": "Trial decryption does not work with the NULL cipher.",
+    "ALPS-EarlyData-Mismatch-*": "Trial decryption does not work with the NULL cipher.",
 
     "Renegotiate-Client-BadExt*": "Fuzzer mode does not check renegotiation_info.",
 

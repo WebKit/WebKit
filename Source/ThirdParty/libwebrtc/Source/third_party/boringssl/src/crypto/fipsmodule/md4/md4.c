@@ -92,17 +92,16 @@ void md4_block_data_order(uint32_t *state, const uint8_t *data, size_t num);
 #define HASH_UPDATE MD4_Update
 #define HASH_TRANSFORM MD4_Transform
 #define HASH_FINAL MD4_Final
-#define HASH_MAKE_STRING(c, s) \
-  do {                         \
-    uint32_t ll;               \
-    ll = (c)->h[0];            \
-    HOST_l2c(ll, (s));         \
-    ll = (c)->h[1];            \
-    HOST_l2c(ll, (s));         \
-    ll = (c)->h[2];            \
-    HOST_l2c(ll, (s));         \
-    ll = (c)->h[3];            \
-    HOST_l2c(ll, (s));         \
+#define HASH_MAKE_STRING(c, s)           \
+  do {                                   \
+    CRYPTO_store_u32_le((s), (c)->h[0]); \
+    (s) += 4;                            \
+    CRYPTO_store_u32_le((s), (c)->h[1]); \
+    (s) += 4;                            \
+    CRYPTO_store_u32_le((s), (c)->h[2]); \
+    (s) += 4;                            \
+    CRYPTO_store_u32_le((s), (c)->h[3]); \
+    (s) += 4;                            \
   } while (0)
 #define HASH_BLOCK_DATA_ORDER md4_block_data_order
 
@@ -136,7 +135,7 @@ void md4_block_data_order(uint32_t *state, const uint8_t *data, size_t num);
   } while (0)
 
 void md4_block_data_order(uint32_t *state, const uint8_t *data, size_t num) {
-  uint32_t A, B, C, D, l;
+  uint32_t A, B, C, D;
   uint32_t X0, X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15;
 
   A = state[0];
@@ -145,53 +144,53 @@ void md4_block_data_order(uint32_t *state, const uint8_t *data, size_t num) {
   D = state[3];
 
   for (; num--;) {
-    HOST_c2l(data, l);
-    X0 = l;
-    HOST_c2l(data, l);
-    X1 = l;
+    X0 = CRYPTO_load_u32_le(data);
+    data += 4;
+    X1 = CRYPTO_load_u32_le(data);
+    data += 4;
     // Round 0
     R0(A, B, C, D, X0, 3, 0);
-    HOST_c2l(data, l);
-    X2 = l;
+    X2 = CRYPTO_load_u32_le(data);
+    data += 4;
     R0(D, A, B, C, X1, 7, 0);
-    HOST_c2l(data, l);
-    X3 = l;
+    X3 = CRYPTO_load_u32_le(data);
+    data += 4;
     R0(C, D, A, B, X2, 11, 0);
-    HOST_c2l(data, l);
-    X4 = l;
+    X4 = CRYPTO_load_u32_le(data);
+    data += 4;
     R0(B, C, D, A, X3, 19, 0);
-    HOST_c2l(data, l);
-    X5 = l;
+    X5 = CRYPTO_load_u32_le(data);
+    data += 4;
     R0(A, B, C, D, X4, 3, 0);
-    HOST_c2l(data, l);
-    X6 = l;
+    X6 = CRYPTO_load_u32_le(data);
+    data += 4;
     R0(D, A, B, C, X5, 7, 0);
-    HOST_c2l(data, l);
-    X7 = l;
+    X7 = CRYPTO_load_u32_le(data);
+    data += 4;
     R0(C, D, A, B, X6, 11, 0);
-    HOST_c2l(data, l);
-    X8 = l;
+    X8 = CRYPTO_load_u32_le(data);
+    data += 4;
     R0(B, C, D, A, X7, 19, 0);
-    HOST_c2l(data, l);
-    X9 = l;
+    X9 = CRYPTO_load_u32_le(data);
+    data += 4;
     R0(A, B, C, D, X8, 3, 0);
-    HOST_c2l(data, l);
-    X10 = l;
+    X10 = CRYPTO_load_u32_le(data);
+    data += 4;
     R0(D, A, B, C, X9, 7, 0);
-    HOST_c2l(data, l);
-    X11 = l;
+    X11 = CRYPTO_load_u32_le(data);
+    data += 4;
     R0(C, D, A, B, X10, 11, 0);
-    HOST_c2l(data, l);
-    X12 = l;
+    X12 = CRYPTO_load_u32_le(data);
+    data += 4;
     R0(B, C, D, A, X11, 19, 0);
-    HOST_c2l(data, l);
-    X13 = l;
+    X13 = CRYPTO_load_u32_le(data);
+    data += 4;
     R0(A, B, C, D, X12, 3, 0);
-    HOST_c2l(data, l);
-    X14 = l;
+    X14 = CRYPTO_load_u32_le(data);
+    data += 4;
     R0(D, A, B, C, X13, 7, 0);
-    HOST_c2l(data, l);
-    X15 = l;
+    X15 = CRYPTO_load_u32_le(data);
+    data += 4;
     R0(C, D, A, B, X14, 11, 0);
     R0(B, C, D, A, X15, 19, 0);
     // Round 1
@@ -252,5 +251,3 @@ void md4_block_data_order(uint32_t *state, const uint8_t *data, size_t num) {
 #undef R0
 #undef R1
 #undef R2
-#undef HOST_c2l
-#undef HOST_l2c

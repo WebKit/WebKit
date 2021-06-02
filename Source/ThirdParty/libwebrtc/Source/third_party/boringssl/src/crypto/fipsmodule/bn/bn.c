@@ -101,26 +101,7 @@ void BN_free(BIGNUM *bn) {
 }
 
 void BN_clear_free(BIGNUM *bn) {
-  char should_free;
-
-  if (bn == NULL) {
-    return;
-  }
-
-  if (bn->d != NULL) {
-    if ((bn->flags & BN_FLG_STATIC_DATA) == 0) {
-      OPENSSL_free(bn->d);
-    } else {
-      OPENSSL_cleanse(bn->d, bn->dmax * sizeof(bn->d[0]));
-    }
-  }
-
-  should_free = (bn->flags & BN_FLG_MALLOCED) != 0;
-  if (should_free) {
-    OPENSSL_free(bn);
-  } else {
-    OPENSSL_cleanse(bn, sizeof(BIGNUM));
-  }
+  BN_free(bn);
 }
 
 BIGNUM *BN_dup(const BIGNUM *src) {
@@ -300,6 +281,18 @@ int bn_set_words(BIGNUM *bn, const BN_ULONG *words, size_t num) {
   bn->width = (int)num;
   bn->neg = 0;
   return 1;
+}
+
+void bn_set_static_words(BIGNUM *bn, const BN_ULONG *words, size_t num) {
+  if ((bn->flags & BN_FLG_STATIC_DATA) == 0) {
+    OPENSSL_free(bn->d);
+  }
+  bn->d = (BN_ULONG *)words;
+
+  bn->width = num;
+  bn->dmax = num;
+  bn->neg = 0;
+  bn->flags |= BN_FLG_STATIC_DATA;
 }
 
 int bn_fits_in_words(const BIGNUM *bn, size_t num) {

@@ -6,6 +6,7 @@ package main
 
 import (
 	"bytes"
+	"crypto/aes"
 	"crypto/hmac"
 	"crypto/rand"
 	"crypto/sha256"
@@ -14,11 +15,15 @@ import (
 	"fmt"
 	"io"
 	"os"
+
+	"golang.org/x/crypto/xts"
 )
 
 var handlers = map[string]func([][]byte) error{
-	"getConfig":   getConfig,
-	"KDF-counter": kdfCounter,
+	"getConfig":       getConfig,
+	"KDF-counter":     kdfCounter,
+	"AES-XTS/encrypt": xtsEncrypt,
+	"AES-XTS/decrypt": xtsDecrypt,
 }
 
 func getConfig(args [][]byte) error {
@@ -47,6 +52,23 @@ func getConfig(args [][]byte) error {
 				32
 			]
 		}]
+	}, {
+		"algorithm": "ACVP-AES-XTS",
+		"revision": "1.0",
+		"direction": [
+		  "encrypt",
+		  "decrypt"
+		],
+		"keyLen": [
+		  128,
+		  256
+		],
+		"payloadLen": [
+		  1024
+		],
+		"tweakMode": [
+		  "number"
+		]
 	}
 ]`))
 }
@@ -120,6 +142,50 @@ func reply(responses ...[]byte) error {
 	}
 
 	return nil
+}
+
+func xtsEncrypt(args [][]byte) error {
+	return doXTS(args, false)
+}
+
+func xtsDecrypt(args [][]byte) error {
+	return doXTS(args, true)
+}
+
+func doXTS(args [][]byte, decrypt bool) error {
+	if len(args) != 3 {
+		return fmt.Errorf("XTS received %d args, wanted 3", len(args))
+	}
+	key := args[0]
+	msg := args[1]
+	tweak := args[2]
+
+	if len(msg)%16 != 0 {
+		return fmt.Errorf("XTS received %d-byte msg, need multiple of 16", len(msg))
+	}
+	if len(tweak) != 16 {
+		return fmt.Errorf("XTS received %d-byte tweak, wanted 16", len(tweak))
+	}
+
+	var zeros [8]byte
+	if !bytes.Equal(tweak[8:], zeros[:]) {
+		return errors.New("XTS received tweak with invalid structure. Ensure that configuration specifies a 'number' tweak")
+	}
+
+	sectorNum := binary.LittleEndian.Uint64(tweak[:8])
+
+	c, err := xts.NewCipher(aes.NewCipher, key)
+	if err != nil {
+		return err
+	}
+
+	if decrypt {
+		c.Decrypt(msg, msg, sectorNum)
+	} else {
+		c.Encrypt(msg, msg, sectorNum)
+	}
+
+	return reply(msg)
 }
 
 const (

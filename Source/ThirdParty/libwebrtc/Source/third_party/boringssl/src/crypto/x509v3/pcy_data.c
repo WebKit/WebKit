@@ -98,13 +98,15 @@ X509_POLICY_DATA *policy_data_new(POLICYINFO *policy,
     } else
         id = NULL;
     ret = OPENSSL_malloc(sizeof(X509_POLICY_DATA));
-    if (!ret)
+    if (!ret) {
+        OPENSSL_PUT_ERROR(X509V3, ERR_R_MALLOC_FAILURE);
+        ASN1_OBJECT_free(id);
         return NULL;
+    }
     ret->expected_policy_set = sk_ASN1_OBJECT_new_null();
     if (!ret->expected_policy_set) {
         OPENSSL_free(ret);
-        if (id)
-            ASN1_OBJECT_free(id);
+        ASN1_OBJECT_free(id);
         return NULL;
     }
 

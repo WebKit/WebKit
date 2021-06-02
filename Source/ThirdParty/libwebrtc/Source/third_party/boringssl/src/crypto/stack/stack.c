@@ -57,7 +57,6 @@
 #include <openssl/stack.h>
 
 #include <assert.h>
-#include <string.h>
 
 #include <openssl/mem.h>
 
@@ -69,11 +68,9 @@
 static const size_t kMinSize = 4;
 
 _STACK *sk_new(stack_cmp_func comp) {
-  _STACK *ret;
-
-  ret = OPENSSL_malloc(sizeof(_STACK));
+  _STACK *ret = OPENSSL_malloc(sizeof(_STACK));
   if (ret == NULL) {
-    goto err;
+    return NULL;
   }
   OPENSSL_memset(ret, 0, sizeof(_STACK));
 
@@ -331,23 +328,20 @@ void *sk_pop(_STACK *sk) {
 }
 
 _STACK *sk_dup(const _STACK *sk) {
-  _STACK *ret;
-  void **s;
-
   if (sk == NULL) {
     return NULL;
   }
 
-  ret = sk_new(sk->comp);
+  _STACK *ret = OPENSSL_malloc(sizeof(_STACK));
   if (ret == NULL) {
-    goto err;
+    return NULL;
   }
+  OPENSSL_memset(ret, 0, sizeof(_STACK));
 
-  s = (void **)OPENSSL_realloc(ret->data, sizeof(void *) * sk->num_alloc);
-  if (s == NULL) {
+  ret->data = OPENSSL_malloc(sizeof(void *) * sk->num_alloc);
+  if (ret->data == NULL) {
     goto err;
   }
-  ret->data = s;
 
   ret->num = sk->num;
   OPENSSL_memcpy(ret->data, sk->data, sizeof(void *) * sk->num);

@@ -244,8 +244,7 @@ bool tls13_process_certificate(SSL_HANDSHAKE *hs, const SSLMessage &msg,
 
     uint8_t alert = SSL_AD_DECODE_ERROR;
     if (!ssl_parse_extensions(&extensions, &alert, ext_types,
-                              OPENSSL_ARRAY_SIZE(ext_types),
-                              0 /* reject unknown */)) {
+                              /*ignore_unknown=*/false)) {
       ssl_send_alert(ssl, SSL3_AL_FATAL, alert);
       return false;
     }
@@ -581,10 +580,40 @@ enum ssl_private_key_result_t tls13_add_certificate_verify(SSL_HANDSHAKE *hs) {
     return ssl_private_key_failure;
   }
 
-  enum ssl_private_key_result_t sign_result = ssl_private_key_sign(
-      hs, sig, &sig_len, max_sig_len, signature_algorithm, msg);
-  if (sign_result != ssl_private_key_success) {
-    return sign_result;
+  SSL_HANDSHAKE_HINTS *const hints = hs->hints.get();
+  Array<uint8_t> spki;
+  if (hints) {
+    ScopedCBB spki_cbb;
+    if (!CBB_init(spki_cbb.get(), 64) ||
+        !EVP_marshal_public_key(spki_cbb.get(), hs->local_pubkey.get()) ||
+        !CBBFinishArray(spki_cbb.get(), &spki)) {
+      ssl_send_alert(ssl, SSL3_AL_FATAL, SSL_AD_INTERNAL_ERROR);
+      return ssl_private_key_failure;
+    }
+  }
+
+  if (hints && !hs->hints_requested &&
+      signature_algorithm == hints->signature_algorithm &&
+      MakeConstSpan(msg) == hints->signature_input &&
+      MakeConstSpan(spki) == hints->signature_spki &&
+      !hints->signature.empty() && hints->signature.size() <= max_sig_len) {
+    // Signature algorithm and input both match. Reuse the signature from hints.
+    sig_len = hints->signature.size();
+    OPENSSL_memcpy(sig, hints->signature.data(), sig_len);
+  } else {
+    enum ssl_private_key_result_t sign_result = ssl_private_key_sign(
+        hs, sig, &sig_len, max_sig_len, signature_algorithm, msg);
+    if (sign_result != ssl_private_key_success) {
+      return sign_result;
+    }
+    if (hints && hs->hints_requested) {
+      hints->signature_algorithm = signature_algorithm;
+      hints->signature_input = std::move(msg);
+      hints->signature_spki = std::move(spki);
+      if (!hints->signature.CopyFrom(MakeSpan(sig, sig_len))) {
+        return ssl_private_key_failure;
+      }
+    }
   }
 
   if (!CBB_did_write(&child, sig_len) ||

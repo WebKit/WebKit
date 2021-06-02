@@ -60,6 +60,8 @@
 #include <openssl/x509v3.h>
 
 #include "../x509v3/internal.h"
+#include "internal.h"
+
 
 static int tr_cmp(const X509_TRUST **a, const X509_TRUST **b);
 static void trtable_free(X509_TRUST *p);

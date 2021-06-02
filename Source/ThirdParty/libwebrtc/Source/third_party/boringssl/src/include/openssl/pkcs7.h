@@ -38,7 +38,10 @@ DECLARE_STACK_OF(X509_CRL)
 // success and zero on error. |cbs| is advanced passed the structure.
 //
 // Note that a SignedData structure may contain no certificates, in which case
-// this function succeeds but does not append any certificates.
+// this function succeeds but does not append any certificates. Additionally,
+// certificates in SignedData structures are unordered. Callers should not
+// assume a particular order in |*out_certs| and may need to search for matches
+// or run path-building algorithms.
 OPENSSL_EXPORT int PKCS7_get_raw_certificates(
     STACK_OF(CRYPTO_BUFFER) *out_certs, CBS *cbs, CRYPTO_BUFFER_POOL *pool);
 
@@ -47,7 +50,9 @@ OPENSSL_EXPORT int PKCS7_get_raw_certificates(
 OPENSSL_EXPORT int PKCS7_get_certificates(STACK_OF(X509) *out_certs, CBS *cbs);
 
 // PKCS7_bundle_certificates appends a PKCS#7, SignedData structure containing
-// |certs| to |out|. It returns one on success and zero on error.
+// |certs| to |out|. It returns one on success and zero on error. Note that
+// certificates in SignedData structures are unordered. The order in |certs|
+// will not be preserved.
 OPENSSL_EXPORT int PKCS7_bundle_certificates(
     CBB *out, const STACK_OF(X509) *certs);
 
@@ -56,11 +61,15 @@ OPENSSL_EXPORT int PKCS7_bundle_certificates(
 // |cbs| is advanced passed the structure.
 //
 // Note that a SignedData structure may contain no CRLs, in which case this
-// function succeeds but does not append any CRLs.
+// function succeeds but does not append any CRLs. Additionally, CRLs in
+// SignedData structures are unordered. Callers should not assume an order in
+// |*out_crls| and may need to search for matches.
 OPENSSL_EXPORT int PKCS7_get_CRLs(STACK_OF(X509_CRL) *out_crls, CBS *cbs);
 
 // PKCS7_bundle_CRLs appends a PKCS#7, SignedData structure containing
-// |crls| to |out|. It returns one on success and zero on error.
+// |crls| to |out|. It returns one on success and zero on error. Note that CRLs
+// in SignedData structures are unordered. The order in |crls| will not be
+// preserved.
 OPENSSL_EXPORT int PKCS7_bundle_CRLs(CBB *out, const STACK_OF(X509_CRL) *crls);
 
 // PKCS7_get_PEM_certificates reads a PEM-encoded, PKCS#7, SignedData structure
@@ -68,7 +77,10 @@ OPENSSL_EXPORT int PKCS7_bundle_CRLs(CBB *out, const STACK_OF(X509_CRL) *crls);
 // returns one on success and zero on error.
 //
 // Note that a SignedData structure may contain no certificates, in which case
-// this function succeeds but does not append any certificates.
+// this function succeeds but does not append any certificates. Additionally,
+// certificates in SignedData structures are unordered. Callers should not
+// assume a particular order in |*out_certs| and may need to search for matches
+// or run path-building algorithms.
 OPENSSL_EXPORT int PKCS7_get_PEM_certificates(STACK_OF(X509) *out_certs,
                                               BIO *pem_bio);
 
@@ -77,7 +89,9 @@ OPENSSL_EXPORT int PKCS7_get_PEM_certificates(STACK_OF(X509) *out_certs,
 // success and zero on error.
 //
 // Note that a SignedData structure may contain no CRLs, in which case this
-// function succeeds but does not append any CRLs.
+// function succeeds but does not append any CRLs. Additionally, CRLs in
+// SignedData structures are unordered. Callers should not assume an order in
+// |*out_crls| and may need to search for matches.
 OPENSSL_EXPORT int PKCS7_get_PEM_CRLs(STACK_OF(X509_CRL) *out_crls,
                                       BIO *pem_bio);
 
@@ -101,6 +115,7 @@ typedef struct {
 typedef void PKCS7_ENVELOPE;
 typedef void PKCS7_DIGEST;
 typedef void PKCS7_ENCRYPT;
+typedef void PKCS7_SIGNER_INFO;
 
 typedef struct {
   uint8_t *ber_bytes;
@@ -183,6 +198,7 @@ OPENSSL_EXPORT int PKCS7_type_is_signedAndEnveloped(const PKCS7 *p7);
 #define PKCS7_NOATTR 0x100
 #define PKCS7_NOSMIMECAP 0x200
 #define PKCS7_STREAM 0x1000
+#define PKCS7_PARTIAL 0x4000
 
 // PKCS7_sign assembles |certs| into a PKCS#7 signed data ContentInfo with
 // external data and no signatures. It returns a newly-allocated |PKCS7| on
@@ -190,7 +206,9 @@ OPENSSL_EXPORT int PKCS7_type_is_signedAndEnveloped(const PKCS7 *p7);
 // ignored. |flags| must be equal to |PKCS7_DETACHED|.
 //
 // Note this function only implements a subset of the corresponding OpenSSL
-// function. It is provided for backwards compatibility only.
+// function. It is provided for backwards compatibility only. Additionally,
+// certificates in SignedData structures are unordered. The order of |certs|
+// will not be preserved.
 OPENSSL_EXPORT PKCS7 *PKCS7_sign(X509 *sign_cert, EVP_PKEY *pkey,
                                  STACK_OF(X509) *certs, BIO *data, int flags);
 

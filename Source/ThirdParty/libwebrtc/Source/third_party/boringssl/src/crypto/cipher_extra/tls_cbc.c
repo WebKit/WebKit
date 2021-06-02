@@ -62,15 +62,6 @@
 #include "../fipsmodule/cipher/internal.h"
 
 
-// MAX_HASH_BIT_COUNT_BYTES is the maximum number of bytes in the hash's length
-// field. (SHA-384/512 have 128-bit length.)
-#define MAX_HASH_BIT_COUNT_BYTES 16
-
-// MAX_HASH_BLOCK_SIZE is the maximum hash block size that we'll support.
-// Currently SHA-384/512 has a 128-byte block size and that's the largest
-// supported by TLS.)
-#define MAX_HASH_BLOCK_SIZE 128
-
 int EVP_tls_cbc_remove_padding(crypto_word_t *out_padding_ok, size_t *out_len,
                                const uint8_t *in, size_t in_len,
                                size_t block_size, size_t mac_size) {
@@ -183,134 +174,110 @@ void EVP_tls_cbc_copy_mac(uint8_t *out, size_t md_size, const uint8_t *in,
   OPENSSL_memcpy(out, rotated_mac, md_size);
 }
 
-// u32toBE serialises an unsigned, 32-bit number (n) as four bytes at (p) in
-// big-endian order. The value of p is advanced by four.
-#define u32toBE(n, p)                \
-  do {                               \
-    *((p)++) = (uint8_t)((n) >> 24); \
-    *((p)++) = (uint8_t)((n) >> 16); \
-    *((p)++) = (uint8_t)((n) >> 8);  \
-    *((p)++) = (uint8_t)((n));       \
-  } while (0)
-
-// u64toBE serialises an unsigned, 64-bit number (n) as eight bytes at (p) in
-// big-endian order. The value of p is advanced by eight.
-#define u64toBE(n, p)                \
-  do {                               \
-    *((p)++) = (uint8_t)((n) >> 56); \
-    *((p)++) = (uint8_t)((n) >> 48); \
-    *((p)++) = (uint8_t)((n) >> 40); \
-    *((p)++) = (uint8_t)((n) >> 32); \
-    *((p)++) = (uint8_t)((n) >> 24); \
-    *((p)++) = (uint8_t)((n) >> 16); \
-    *((p)++) = (uint8_t)((n) >> 8);  \
-    *((p)++) = (uint8_t)((n));       \
-  } while (0)
-
-typedef union {
-  SHA_CTX sha1;
-  SHA256_CTX sha256;
-  SHA512_CTX sha512;
-} HASH_CTX;
-
-static void tls1_sha1_transform(HASH_CTX *ctx, const uint8_t *block) {
-  SHA1_Transform(&ctx->sha1, block);
-}
-
-static void tls1_sha256_transform(HASH_CTX *ctx, const uint8_t *block) {
-  SHA256_Transform(&ctx->sha256, block);
-}
-
-static void tls1_sha512_transform(HASH_CTX *ctx, const uint8_t *block) {
-  SHA512_Transform(&ctx->sha512, block);
-}
-
-// These functions serialize the state of a hash and thus perform the standard
-// "final" operation without adding the padding and length that such a function
-// typically does.
-static void tls1_sha1_final_raw(HASH_CTX *ctx, uint8_t *md_out) {
-  SHA_CTX *sha1 = &ctx->sha1;
-  u32toBE(sha1->h[0], md_out);
-  u32toBE(sha1->h[1], md_out);
-  u32toBE(sha1->h[2], md_out);
-  u32toBE(sha1->h[3], md_out);
-  u32toBE(sha1->h[4], md_out);
-}
-
-static void tls1_sha256_final_raw(HASH_CTX *ctx, uint8_t *md_out) {
-  SHA256_CTX *sha256 = &ctx->sha256;
-  for (unsigned i = 0; i < 8; i++) {
-    u32toBE(sha256->h[i], md_out);
+int EVP_sha1_final_with_secret_suffix(SHA_CTX *ctx,
+                                      uint8_t out[SHA_DIGEST_LENGTH],
+                                      const uint8_t *in, size_t len,
+                                      size_t max_len) {
+  // Bound the input length so |total_bits| below fits in four bytes. This is
+  // redundant with TLS record size limits. This also ensures |input_idx| below
+  // does not overflow.
+  size_t max_len_bits = max_len << 3;
+  if (ctx->Nh != 0 ||
+      (max_len_bits >> 3) != max_len ||  // Overflow
+      ctx->Nl + max_len_bits < max_len_bits ||
+      ctx->Nl + max_len_bits > UINT32_MAX) {
+    return 0;
   }
-}
 
-static void tls1_sha512_final_raw(HASH_CTX *ctx, uint8_t *md_out) {
-  SHA512_CTX *sha512 = &ctx->sha512;
-  for (unsigned i = 0; i < 8; i++) {
-    u64toBE(sha512->h[i], md_out);
+  // We need to hash the following into |ctx|:
+  //
+  // - ctx->data[:ctx->num]
+  // - in[:len]
+  // - A 0x80 byte
+  // - However many zero bytes are needed to pad up to a block.
+  // - Eight bytes of length.
+  size_t num_blocks = (ctx->num + len + 1 + 8 + SHA_CBLOCK - 1) >> 6;
+  size_t last_block = num_blocks - 1;
+  size_t max_blocks = (ctx->num + max_len + 1 + 8 + SHA_CBLOCK - 1) >> 6;
+
+  // The bounds above imply |total_bits| fits in four bytes.
+  size_t total_bits = ctx->Nl + (len << 3);
+  uint8_t length_bytes[4];
+  length_bytes[0] = (uint8_t)(total_bits >> 24);
+  length_bytes[1] = (uint8_t)(total_bits >> 16);
+  length_bytes[2] = (uint8_t)(total_bits >> 8);
+  length_bytes[3] = (uint8_t)total_bits;
+
+  // We now construct and process each expected block in constant-time.
+  uint8_t block[SHA_CBLOCK] = {0};
+  uint32_t result[5] = {0};
+  // input_idx is the index into |in| corresponding to the current block.
+  // However, we allow this index to overflow beyond |max_len|, to simplify the
+  // 0x80 byte.
+  size_t input_idx = 0;
+  for (size_t i = 0; i < max_blocks; i++) {
+    // Fill |block| with data from the partial block in |ctx| and |in|. We copy
+    // as if we were hashing up to |max_len| and then zero the excess later.
+    size_t block_start = 0;
+    if (i == 0) {
+      OPENSSL_memcpy(block, ctx->data, ctx->num);
+      block_start = ctx->num;
+    }
+    if (input_idx < max_len) {
+      size_t to_copy = SHA_CBLOCK - block_start;
+      if (to_copy > max_len - input_idx) {
+        to_copy = max_len - input_idx;
+      }
+      OPENSSL_memcpy(block + block_start, in + input_idx, to_copy);
+    }
+
+    // Zero any bytes beyond |len| and add the 0x80 byte.
+    for (size_t j = block_start; j < SHA_CBLOCK; j++) {
+      // input[idx] corresponds to block[j].
+      size_t idx = input_idx + j - block_start;
+      // The barriers on |len| are not strictly necessary. However, without
+      // them, GCC compiles this code by incorporating |len| into the loop
+      // counter and subtracting it out later. This is still constant-time, but
+      // it frustrates attempts to validate this.
+      uint8_t is_in_bounds = constant_time_lt_8(idx, value_barrier_w(len));
+      uint8_t is_padding_byte = constant_time_eq_8(idx, value_barrier_w(len));
+      block[j] &= is_in_bounds;
+      block[j] |= 0x80 & is_padding_byte;
+    }
+
+    input_idx += SHA_CBLOCK - block_start;
+
+    // Fill in the length if this is the last block.
+    crypto_word_t is_last_block = constant_time_eq_w(i, last_block);
+    for (size_t j = 0; j < 4; j++) {
+      block[SHA_CBLOCK - 4 + j] |= is_last_block & length_bytes[j];
+    }
+
+    // Process the block and save the hash state if it is the final value.
+    SHA1_Transform(ctx, block);
+    for (size_t j = 0; j < 5; j++) {
+      result[j] |= is_last_block & ctx->h[j];
+    }
   }
+
+  // Write the output.
+  for (size_t i = 0; i < 5; i++) {
+    CRYPTO_store_u32_be(out + 4 * i, result[i]);
+  }
+  return 1;
 }
 
 int EVP_tls_cbc_record_digest_supported(const EVP_MD *md) {
-  switch (EVP_MD_type(md)) {
-    case NID_sha1:
-    case NID_sha256:
-    case NID_sha384:
-      return 1;
-
-    default:
-      return 0;
-  }
+  return EVP_MD_type(md) == NID_sha1;
 }
 
 int EVP_tls_cbc_digest_record(const EVP_MD *md, uint8_t *md_out,
                               size_t *md_out_size, const uint8_t header[13],
-                              const uint8_t *data, size_t data_plus_mac_size,
+                              const uint8_t *data, size_t data_size,
                               size_t data_plus_mac_plus_padding_size,
                               const uint8_t *mac_secret,
                               unsigned mac_secret_length) {
-  HASH_CTX md_state;
-  void (*md_final_raw)(HASH_CTX *ctx, uint8_t *md_out);
-  void (*md_transform)(HASH_CTX *ctx, const uint8_t *block);
-  unsigned md_size, md_block_size = 64, md_block_shift = 6;
-  // md_length_size is the number of bytes in the length field that terminates
-  // the hash.
-  unsigned md_length_size = 8;
-
-  // Bound the acceptable input so we can forget about many possible overflows
-  // later in this function. This is redundant with the record size limits in
-  // TLS.
-  if (data_plus_mac_plus_padding_size >= 1024 * 1024) {
-    assert(0);
-    return 0;
-  }
-
-  switch (EVP_MD_type(md)) {
-    case NID_sha1:
-      SHA1_Init(&md_state.sha1);
-      md_final_raw = tls1_sha1_final_raw;
-      md_transform = tls1_sha1_transform;
-      md_size = SHA_DIGEST_LENGTH;
-      break;
-
-    case NID_sha256:
-      SHA256_Init(&md_state.sha256);
-      md_final_raw = tls1_sha256_final_raw;
-      md_transform = tls1_sha256_transform;
-      md_size = SHA256_DIGEST_LENGTH;
-      break;
-
-    case NID_sha384:
-      SHA384_Init(&md_state.sha512);
-      md_final_raw = tls1_sha512_final_raw;
-      md_transform = tls1_sha512_transform;
-      md_size = SHA384_DIGEST_LENGTH;
-      md_block_size = 128;
-      md_block_shift = 7;
-      md_length_size = 16;
-      break;
-
-    default:
+  if (EVP_MD_type(md) != NID_sha1) {
       // EVP_tls_cbc_record_digest_supported should have been called first to
       // check that the hash function is supported.
       assert(0);
@@ -318,175 +285,54 @@ int EVP_tls_cbc_digest_record(const EVP_MD *md, uint8_t *md_out,
       return 0;
   }
 
-  assert(md_length_size <= MAX_HASH_BIT_COUNT_BYTES);
-  assert(md_block_size <= MAX_HASH_BLOCK_SIZE);
-  assert(md_block_size == (1u << md_block_shift));
-  assert(md_size <= EVP_MAX_MD_SIZE);
-
-  static const size_t kHeaderLength = 13;
-
-  // kVarianceBlocks is the number of blocks of the hash that we have to
-  // calculate in constant time because they could be altered by the
-  // padding value.
-  //
-  // TLSv1 has MACs up to 48 bytes long (SHA-384) and the padding is not
-  // required to be minimal. Therefore we say that the final |kVarianceBlocks|
-  // blocks can vary based on the padding and on the hash used. This value
-  // must be derived from public information.
-  const size_t kVarianceBlocks =
-     ( 255 + 1 + // maximum padding bytes + padding length
-       md_size + // length of hash's output
-       md_block_size - 1 // ceiling
-     ) / md_block_size
-     + 1; // the 0x80 marker and the encoded message length could or not
-          // require an extra block; since the exact value depends on the
-          // message length; thus, one extra block is always added to run
-          // in constant time.
-
-  // From now on we're dealing with the MAC, which conceptually has 13
-  // bytes of `header' before the start of the data.
-  size_t len = data_plus_mac_plus_padding_size + kHeaderLength;
-  // max_mac_bytes contains the maximum bytes of bytes in the MAC, including
-  // |header|, assuming that there's no padding.
-  size_t max_mac_bytes = len - md_size - 1;
-  // num_blocks is the maximum number of hash blocks.
-  size_t num_blocks =
-      (max_mac_bytes + 1 + md_length_size + md_block_size - 1) / md_block_size;
-  // In order to calculate the MAC in constant time we have to handle
-  // the final blocks specially because the padding value could cause the
-  // end to appear somewhere in the final |kVarianceBlocks| blocks and we
-  // can't leak where. However, |num_starting_blocks| worth of data can
-  // be hashed right away because no padding value can affect whether
-  // they are plaintext.
-  size_t num_starting_blocks = 0;
-  // k is the starting byte offset into the conceptual header||data where
-  // we start processing.
-  size_t k = 0;
-  // mac_end_offset is the index just past the end of the data to be MACed.
-  size_t mac_end_offset = data_plus_mac_size + kHeaderLength - md_size;
-  // c is the index of the 0x80 byte in the final hash block that contains
-  // application data.
-  size_t c = mac_end_offset & (md_block_size - 1);
-  // index_a is the hash block number that contains the 0x80 terminating value.
-  size_t index_a = mac_end_offset >> md_block_shift;
-  // index_b is the hash block number that contains the 64-bit hash length, in
-  // bits.
-  size_t index_b = (mac_end_offset + md_length_size) >> md_block_shift;
-
-  if (num_blocks > kVarianceBlocks) {
-    num_starting_blocks = num_blocks - kVarianceBlocks;
-    k = md_block_size * num_starting_blocks;
+  if (mac_secret_length > SHA_CBLOCK) {
+    // HMAC pads small keys with zeros and hashes large keys down. This function
+    // should never reach the large key case.
+    assert(0);
+    return 0;
   }
 
-  // bits is the hash-length in bits. It includes the additional hash
-  // block for the masked HMAC key.
-  size_t bits = 8 * mac_end_offset;  // at most 18 bits to represent
-
   // Compute the initial HMAC block.
-  bits += 8 * md_block_size;
-  // hmac_pad is the masked HMAC key.
-  uint8_t hmac_pad[MAX_HASH_BLOCK_SIZE];
-  OPENSSL_memset(hmac_pad, 0, md_block_size);
-  assert(mac_secret_length <= sizeof(hmac_pad));
+  uint8_t hmac_pad[SHA_CBLOCK];
+  OPENSSL_memset(hmac_pad, 0, sizeof(hmac_pad));
   OPENSSL_memcpy(hmac_pad, mac_secret, mac_secret_length);
-  for (size_t i = 0; i < md_block_size; i++) {
+  for (size_t i = 0; i < SHA_CBLOCK; i++) {
     hmac_pad[i] ^= 0x36;
   }
 
-  md_transform(&md_state, hmac_pad);
+  SHA_CTX ctx;
+  SHA1_Init(&ctx);
+  SHA1_Update(&ctx, hmac_pad, SHA_CBLOCK);
+  SHA1_Update(&ctx, header, 13);
 
-  // The length check means |bits| fits in four bytes.
-  uint8_t length_bytes[MAX_HASH_BIT_COUNT_BYTES];
-  OPENSSL_memset(length_bytes, 0, md_length_size - 4);
-  length_bytes[md_length_size - 4] = (uint8_t)(bits >> 24);
-  length_bytes[md_length_size - 3] = (uint8_t)(bits >> 16);
-  length_bytes[md_length_size - 2] = (uint8_t)(bits >> 8);
-  length_bytes[md_length_size - 1] = (uint8_t)bits;
-
-  if (k > 0) {
-    // k is a multiple of md_block_size.
-    uint8_t first_block[MAX_HASH_BLOCK_SIZE];
-    OPENSSL_memcpy(first_block, header, 13);
-    OPENSSL_memcpy(first_block + 13, data, md_block_size - 13);
-    md_transform(&md_state, first_block);
-    for (size_t i = 1; i < k / md_block_size; i++) {
-      md_transform(&md_state, data + md_block_size * i - 13);
-    }
+  // There are at most 256 bytes of padding, so we can compute the public
+  // minimum length for |data_size|.
+  size_t min_data_size = 0;
+  if (data_plus_mac_plus_padding_size > SHA_DIGEST_LENGTH + 256) {
+    min_data_size = data_plus_mac_plus_padding_size - SHA_DIGEST_LENGTH - 256;
   }
 
-  uint8_t mac_out[EVP_MAX_MD_SIZE];
-  OPENSSL_memset(mac_out, 0, sizeof(mac_out));
+  // Hash the public minimum length directly. This reduces the number of blocks
+  // that must be computed in constant-time.
+  SHA1_Update(&ctx, data, min_data_size);
 
-  // We now process the final hash blocks. For each block, we construct
-  // it in constant time. If the |i==index_a| then we'll include the 0x80
-  // bytes and zero pad etc. For each block we selectively copy it, in
-  // constant time, to |mac_out|.
-  for (size_t i = num_starting_blocks;
-       i <= num_starting_blocks + kVarianceBlocks; i++) {
-    uint8_t block[MAX_HASH_BLOCK_SIZE];
-    uint8_t is_block_a = constant_time_eq_8(i, index_a);
-    uint8_t is_block_b = constant_time_eq_8(i, index_b);
-    for (size_t j = 0; j < md_block_size; j++) {
-      uint8_t b = 0;
-      if (k < kHeaderLength) {
-        b = header[k];
-      } else if (k < data_plus_mac_plus_padding_size + kHeaderLength) {
-        b = data[k - kHeaderLength];
-      }
-      k++;
-
-      uint8_t is_past_c = is_block_a & constant_time_ge_8(j, c);
-      uint8_t is_past_cp1 = is_block_a & constant_time_ge_8(j, c + 1);
-      // If this is the block containing the end of the
-      // application data, and we are at the offset for the
-      // 0x80 value, then overwrite b with 0x80.
-      b = constant_time_select_8(is_past_c, 0x80, b);
-      // If this the the block containing the end of the
-      // application data and we're past the 0x80 value then
-      // just write zero.
-      b = b & ~is_past_cp1;
-      // If this is index_b (the final block), but not
-      // index_a (the end of the data), then the 64-bit
-      // length didn't fit into index_a and we're having to
-      // add an extra block of zeros.
-      b &= ~is_block_b | is_block_a;
-
-      // The final bytes of one of the blocks contains the
-      // length.
-      if (j >= md_block_size - md_length_size) {
-        // If this is index_b, write a length byte.
-        b = constant_time_select_8(
-            is_block_b, length_bytes[j - (md_block_size - md_length_size)], b);
-      }
-      block[j] = b;
-    }
-
-    md_transform(&md_state, block);
-    md_final_raw(&md_state, block);
-    // If this is index_b, copy the hash value to |mac_out|.
-    for (size_t j = 0; j < md_size; j++) {
-      mac_out[j] |= block[j] & is_block_b;
-    }
-  }
-
-  EVP_MD_CTX md_ctx;
-  EVP_MD_CTX_init(&md_ctx);
-  if (!EVP_DigestInit_ex(&md_ctx, md, NULL /* engine */)) {
-    EVP_MD_CTX_cleanup(&md_ctx);
+  // Hash the remaining data without leaking |data_size|.
+  uint8_t mac_out[SHA_DIGEST_LENGTH];
+  if (!EVP_sha1_final_with_secret_suffix(
+          &ctx, mac_out, data + min_data_size, data_size - min_data_size,
+          data_plus_mac_plus_padding_size - min_data_size)) {
     return 0;
   }
 
   // Complete the HMAC in the standard manner.
-  for (size_t i = 0; i < md_block_size; i++) {
+  SHA1_Init(&ctx);
+  for (size_t i = 0; i < SHA_CBLOCK; i++) {
     hmac_pad[i] ^= 0x6a;
   }
 
-  EVP_DigestUpdate(&md_ctx, hmac_pad, md_block_size);
-  EVP_DigestUpdate(&md_ctx, mac_out, md_size);
-  unsigned md_out_size_u;
-  EVP_DigestFinal(&md_ctx, md_out, &md_out_size_u);
-  *md_out_size = md_out_size_u;
-  EVP_MD_CTX_cleanup(&md_ctx);
-
+  SHA1_Update(&ctx, hmac_pad, SHA_CBLOCK);
+  SHA1_Update(&ctx, mac_out, SHA_DIGEST_LENGTH);
+  SHA1_Final(md_out, &ctx);
+  *md_out_size = SHA_DIGEST_LENGTH;
   return 1;
 }

@@ -107,6 +107,20 @@ WEAK_SYMBOL_FUNC(void, sdallocx, (void *ptr, size_t size, int flags));
 // allocation and freeing. If defined, it is the responsibility of
 // |OPENSSL_memory_free| to zero out the memory before returning it to the
 // system. |OPENSSL_memory_free| will not be passed NULL pointers.
+//
+// WARNING: These functions are called on every allocation and free in
+// BoringSSL across the entire process. They may be called by any code in the
+// process which calls BoringSSL, including in process initializers and thread
+// destructors. When called, BoringSSL may hold pthreads locks. Any other code
+// in the process which, directly or indirectly, calls BoringSSL may be on the
+// call stack and may itself be using arbitrary synchronization primitives.
+//
+// As a result, these functions may not have the usual programming environment
+// available to most C or C++ code. In particular, they may not call into
+// BoringSSL, or any library which depends on BoringSSL. Any synchronization
+// primitives used must tolerate every other synchronization primitive linked
+// into the process, including pthreads locks. Failing to meet these constraints
+// may result in deadlocks, crashes, or memory corruption.
 WEAK_SYMBOL_FUNC(void*, OPENSSL_memory_alloc, (size_t size));
 WEAK_SYMBOL_FUNC(void, OPENSSL_memory_free, (void *ptr));
 WEAK_SYMBOL_FUNC(size_t, OPENSSL_memory_get_size, (void *ptr));

@@ -37,12 +37,12 @@ static int ssl_read(BIO *bio, char *out, int outl) {
 
     case SSL_ERROR_WANT_ACCEPT:
       BIO_set_retry_special(bio);
-      bio->retry_reason = BIO_RR_ACCEPT;
+      BIO_set_retry_reason(bio, BIO_RR_ACCEPT);
       break;
 
     case SSL_ERROR_WANT_CONNECT:
       BIO_set_retry_special(bio);
-      bio->retry_reason = BIO_RR_CONNECT;
+      BIO_set_retry_reason(bio, BIO_RR_CONNECT);
       break;
 
     case SSL_ERROR_NONE:
@@ -77,7 +77,7 @@ static int ssl_write(BIO *bio, const char *out, int outl) {
 
     case SSL_ERROR_WANT_CONNECT:
       BIO_set_retry_special(bio);
-      bio->retry_reason = BIO_RR_CONNECT;
+      BIO_set_retry_reason(bio, BIO_RR_CONNECT);
       break;
 
     case SSL_ERROR_NONE:
@@ -98,6 +98,17 @@ static long ssl_ctrl(BIO *bio, int cmd, long num, void *ptr) {
 
   switch (cmd) {
     case BIO_C_SET_SSL:
+      if (ssl != NULL) {
+        // OpenSSL allows reusing an SSL BIO with a different SSL object. We do
+        // not support this.
+        OPENSSL_PUT_ERROR(SSL, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
+        return 0;
+      }
+
+      // Note this differs from upstream OpenSSL, which synchronizes
+      // |bio->next_bio| with |ssl|'s rbio here, and on |BIO_CTRL_PUSH|. We call
+      // into the corresponding |BIO| directly. (We can implement the upstream
+      // behavior if it ends up necessary.)
       bio->shutdown = num;
       bio->ptr = ptr;
       bio->init = 1;
@@ -117,9 +128,11 @@ static long ssl_ctrl(BIO *bio, int cmd, long num, void *ptr) {
       return SSL_pending(ssl);
 
     case BIO_CTRL_FLUSH: {
+      BIO *wbio = SSL_get_wbio(ssl);
       BIO_clear_retry_flags(bio);
-      long ret = BIO_ctrl(SSL_get_wbio(ssl), cmd, num, ptr);
-      BIO_copy_next_retry(bio);
+      long ret = BIO_ctrl(wbio, cmd, num, ptr);
+      BIO_set_flags(bio, BIO_get_retry_flags(wbio));
+      BIO_set_retry_reason(bio, BIO_get_retry_reason(wbio));
       return ret;
     }
 

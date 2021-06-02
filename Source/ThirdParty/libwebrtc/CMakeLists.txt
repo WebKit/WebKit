@@ -76,6 +76,7 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/crypto/bio/printf.c
     Source/third_party/boringssl/src/crypto/bio/socket.c
     Source/third_party/boringssl/src/crypto/bio/socket_helper.c
+    Source/third_party/boringssl/src/crypto/blake2/blake2.c
     Source/third_party/boringssl/src/crypto/bn_extra/bn_asn1.c
     Source/third_party/boringssl/src/crypto/bn_extra/convert.c
     Source/third_party/boringssl/src/crypto/buf/buf.c
@@ -101,10 +102,8 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/crypto/crypto.c
     Source/third_party/boringssl/src/crypto/curve25519/curve25519.c
     Source/third_party/boringssl/src/crypto/curve25519/spake25519.c
-    Source/third_party/boringssl/src/crypto/dh/check.c
-    Source/third_party/boringssl/src/crypto/dh/dh.c
-    Source/third_party/boringssl/src/crypto/dh/dh_asn1.c
-    Source/third_party/boringssl/src/crypto/dh/params.c
+    Source/third_party/boringssl/src/crypto/dh_extra/dh_asn1.c
+    Source/third_party/boringssl/src/crypto/dh_extra/params.c
     Source/third_party/boringssl/src/crypto/digest_extra/digest_extra.c
     Source/third_party/boringssl/src/crypto/dsa/dsa.c
     Source/third_party/boringssl/src/crypto/dsa/dsa_asn1.c
@@ -132,11 +131,13 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/crypto/evp/sign.c
     Source/third_party/boringssl/src/crypto/ex_data.c
     Source/third_party/boringssl/src/crypto/fipsmodule/bcm.c
-    Source/third_party/boringssl/src/crypto/fipsmodule/is_fips.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/dh/check.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/dh/dh.c
     Source/third_party/boringssl/src/crypto/fipsmodule/ecdh/ecdh.c
     Source/third_party/boringssl/src/crypto/fipsmodule/ec/p256.c
     Source/third_party/boringssl/src/crypto/fipsmodule/rand/fork_detect.c
     Source/third_party/boringssl/src/crypto/hkdf/hkdf.c
+    Source/third_party/boringssl/src/crypto/hpke/hpke.c
     Source/third_party/boringssl/src/crypto/hrss/hrss.c
     Source/third_party/boringssl/src/crypto/lhash/lhash.c
     Source/third_party/boringssl/src/crypto/mem.c
@@ -194,7 +195,6 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/crypto/x509/x509_ext.c
     Source/third_party/boringssl/src/crypto/x509/x509_lu.c
     Source/third_party/boringssl/src/crypto/x509/x509_obj.c
-    Source/third_party/boringssl/src/crypto/x509/x509_r2x.c
     Source/third_party/boringssl/src/crypto/x509/x509_req.c
     Source/third_party/boringssl/src/crypto/x509/x509_set.c
     Source/third_party/boringssl/src/crypto/x509/x509_trs.c
@@ -259,6 +259,8 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/ssl/d1_srtp.cc
     Source/third_party/boringssl/src/ssl/dtls_method.cc
     Source/third_party/boringssl/src/ssl/dtls_record.cc
+    Source/third_party/boringssl/src/ssl/encrypted_client_hello.cc
+    Source/third_party/boringssl/src/ssl/handoff.cc
     Source/third_party/boringssl/src/ssl/handshake.cc
     Source/third_party/boringssl/src/ssl/handshake_client.cc
     Source/third_party/boringssl/src/ssl/handshake_server.cc

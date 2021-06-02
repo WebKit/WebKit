@@ -10,6 +10,7 @@ add_library(
   d1_srtp.cc
   dtls_method.cc
   dtls_record.cc
+  encrypted_client_hello.cc
   handoff.cc
   handshake.cc
   handshake_client.cc

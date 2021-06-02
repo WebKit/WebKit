@@ -16,6 +16,7 @@
 #define HEADER_TEST_CONFIG
 
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <openssl/base.h>
@@ -38,6 +39,10 @@ struct TestConfig {
   std::string key_file;
   std::string cert_file;
   std::string expect_server_name;
+  bool enable_ech_grease = false;
+  std::vector<std::string> ech_server_configs;
+  std::vector<std::string> ech_server_keys;
+  std::vector<int> ech_is_retry_config;
   std::string expect_certificate_types;
   bool require_any_client_certificate = false;
   std::string advertise_npn;
@@ -66,9 +71,15 @@ struct TestConfig {
   std::string expect_advertised_alpn;
   std::string select_alpn;
   bool decline_alpn = false;
+  bool reject_alpn = false;
   bool select_empty_alpn = false;
+  bool defer_alps = false;
+  std::vector<std::pair<std::string, std::string>> application_settings;
+  std::unique_ptr<std::string> expect_peer_application_settings;
   std::string quic_transport_params;
   std::string expect_quic_transport_params;
+  // Set quic_use_legacy_codepoint to 0 or 1 to configure, -1 uses default.
+  int quic_use_legacy_codepoint = -1;
   bool expect_session_miss = false;
   bool expect_extended_master_secret = false;
   std::string psk;
@@ -123,7 +134,6 @@ struct TestConfig {
   bool renegotiate_explicit = false;
   bool forbid_renegotiation_after_handshake = false;
   int expect_peer_signature_algorithm = 0;
-  bool enable_all_curves = false;
   int expect_curve_id = 0;
   bool use_old_client_cert_callback = false;
   int initial_timeout_duration_ms = 0;
@@ -137,6 +147,7 @@ struct TestConfig {
   bool use_exporter_between_reads = false;
   int expect_cipher_aes = 0;
   int expect_cipher_no_aes = 0;
+  int expect_cipher = 0;
   std::string expect_peer_cert_file;
   int resumption_delay = 0;
   bool retain_only_sha256_client_cert = false;
@@ -155,9 +166,9 @@ struct TestConfig {
   bool use_custom_verify_callback = false;
   std::string expect_msg_callback;
   bool allow_false_start_without_alpn = false;
-  bool ignore_tls13_downgrade = false;
-  bool expect_tls13_downgrade = false;
   bool handoff = false;
+  bool handshake_hints = false;
+  bool allow_hint_mismatch = false;
   bool use_ocsp_callback = false;
   bool set_ocsp_in_callback = false;
   bool decline_ocsp_callback = false;
@@ -178,6 +189,8 @@ struct TestConfig {
   bool expect_hrr = false;
   bool expect_no_hrr = false;
   bool wait_for_debugger = false;
+  std::string quic_early_data_context;
+  int early_write_after_message = 0;
 
   int argc;
   char **argv;
@@ -185,11 +198,10 @@ struct TestConfig {
   bssl::UniquePtr<SSL_CTX> SetupCtx(SSL_CTX *old_ctx) const;
 
   bssl::UniquePtr<SSL> NewSSL(SSL_CTX *ssl_ctx, SSL_SESSION *session,
-                              bool is_resume,
                               std::unique_ptr<TestState> test_state) const;
 };
 
-bool ParseConfig(int argc, char **argv, TestConfig *out_initial,
+bool ParseConfig(int argc, char **argv, bool is_shim, TestConfig *out_initial,
                  TestConfig *out_resume, TestConfig *out_retry);
 
 bool SetTestConfig(SSL *ssl, const TestConfig *config);

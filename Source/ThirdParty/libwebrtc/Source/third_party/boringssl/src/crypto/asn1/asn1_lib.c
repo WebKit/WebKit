@@ -251,6 +251,8 @@ void ASN1_put_object(unsigned char **pp, int constructed, int length, int tag,
 
 int ASN1_put_eoc(unsigned char **pp)
 {
+    /* This function is no longer used in the library, but some external code
+     * uses it. */
     unsigned char *p = *pp;
     *p++ = 0;
     *p++ = 0;
@@ -311,9 +313,9 @@ int ASN1_STRING_copy(ASN1_STRING *dst, const ASN1_STRING *str)
 {
     if (str == NULL)
         return 0;
-    dst->type = str->type;
     if (!ASN1_STRING_set(dst, str->data, str->length))
         return 0;
+    dst->type = str->type;
     dst->flags = str->flags;
     return 1;
 }
@@ -368,8 +370,7 @@ int ASN1_STRING_set(ASN1_STRING *str, const void *_data, int len)
 
 void ASN1_STRING_set0(ASN1_STRING *str, void *data, int len)
 {
-    if (str->data)
-        OPENSSL_free(str->data);
+    OPENSSL_free(str->data);
     str->data = data;
     str->length = len;
 }
@@ -395,13 +396,12 @@ ASN1_STRING *ASN1_STRING_type_new(int type)
     return (ret);
 }
 
-void ASN1_STRING_free(ASN1_STRING *a)
+void ASN1_STRING_free(ASN1_STRING *str)
 {
-    if (a == NULL)
+    if (str == NULL)
         return;
-    if (a->data && !(a->flags & ASN1_STRING_FLAG_NDEF))
-        OPENSSL_free(a->data);
-    OPENSSL_free(a);
+    OPENSSL_free(str->data);
+    OPENSSL_free(str);
 }
 
 int ASN1_STRING_cmp(const ASN1_STRING *a, const ASN1_STRING *b)
@@ -419,22 +419,22 @@ int ASN1_STRING_cmp(const ASN1_STRING *a, const ASN1_STRING *b)
         return (i);
 }
 
-int ASN1_STRING_length(const ASN1_STRING *x)
+int ASN1_STRING_length(const ASN1_STRING *str)
 {
-    return M_ASN1_STRING_length(x);
+    return str->length;
 }
 
-int ASN1_STRING_type(const ASN1_STRING *x)
+int ASN1_STRING_type(const ASN1_STRING *str)
 {
-    return M_ASN1_STRING_type(x);
+    return str->type;
 }
 
-unsigned char *ASN1_STRING_data(ASN1_STRING *x)
+unsigned char *ASN1_STRING_data(ASN1_STRING *str)
 {
-    return M_ASN1_STRING_data(x);
+    return str->data;
 }
 
-const unsigned char *ASN1_STRING_get0_data(const ASN1_STRING *x)
+const unsigned char *ASN1_STRING_get0_data(const ASN1_STRING *str)
 {
-    return x->data;
+    return str->data;
 }

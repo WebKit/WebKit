@@ -22,6 +22,7 @@
 #include <openssl/bn.h>
 #include <openssl/crypto.h>
 #include <openssl/des.h>
+#include <openssl/dh.h>
 #include <openssl/ecdsa.h>
 #include <openssl/ec_key.h>
 #include <openssl/hmac.h>
@@ -30,6 +31,7 @@
 #include <openssl/sha.h>
 
 #include "../crypto/fipsmodule/rand/internal.h"
+#include "../crypto/fipsmodule/tls/internal.h"
 #include "../crypto/internal.h"
 
 
@@ -217,6 +219,24 @@ int main(int argc, char **argv) {
     goto err;
   }
 
+  /* Primitive Z Computation */
+  const EC_GROUP *const ec_group = EC_KEY_get0_group(ec_key);
+  EC_POINT *z_point = EC_POINT_new(ec_group);
+  uint8_t z_result[65];
+  printf("About to compute key-agreement Z with P-256:\n");
+  if (!EC_POINT_mul(ec_group, z_point, NULL, EC_KEY_get0_public_key(ec_key),
+                    EC_KEY_get0_private_key(ec_key), NULL) ||
+      EC_POINT_point2oct(ec_group, z_point, POINT_CONVERSION_UNCOMPRESSED,
+                         z_result, sizeof(z_result),
+                         NULL) != sizeof(z_result)) {
+    fprintf(stderr, "EC_POINT_mul failed.\n");
+    goto err;
+  }
+  EC_POINT_free(z_point);
+
+  printf("  got ");
+  hexdump(z_result, sizeof(z_result));
+
   /* ECDSA Sign/Verify PWCT */
   printf("About to ECDSA sign ");
   hexdump(kPlaintextSHA256, sizeof(kPlaintextSHA256));
@@ -249,6 +269,36 @@ int main(int argc, char **argv) {
   printf("  generated ");
   hexdump(output, sizeof(output));
   CTR_DRBG_clear(&drbg);
+
+  /* TLS KDF */
+  printf("About to run TLS KDF\n");
+  uint8_t tls_output[32];
+  if (!CRYPTO_tls1_prf(EVP_sha256(), tls_output, sizeof(tls_output), kAESKey,
+                       sizeof(kAESKey), "foo", 3, kPlaintextSHA256,
+                       sizeof(kPlaintextSHA256), kPlaintextSHA256,
+                       sizeof(kPlaintextSHA256))) {
+    fprintf(stderr, "TLS KDF failed.\n");
+    goto err;
+  }
+  printf("  got ");
+  hexdump(tls_output, sizeof(tls_output));
+
+  /* FFDH */
+  printf("About to compute FFDH key-agreement:\n");
+  DH *dh = DH_get_rfc7919_2048();
+  uint8_t dh_result[2048/8];
+  if (!dh ||
+      !DH_generate_key(dh) ||
+      sizeof(dh_result) != DH_size(dh) ||
+      DH_compute_key_padded(dh_result, DH_get0_pub_key(dh), dh) !=
+          sizeof(dh_result)) {
+    fprintf(stderr, "FFDH failed.\n");
+    goto err;
+  }
+  DH_free(dh);
+
+  printf("  got ");
+  hexdump(dh_result, sizeof(dh_result));
 
   printf("PASS\n");
   return 0;

@@ -68,6 +68,7 @@
 
 #include "../internal.h"
 #include "../x509v3/internal.h"
+#include "internal.h"
 
 
 int X509_issuer_and_serial_cmp(const X509 *a, const X509 *b)
@@ -77,40 +78,10 @@ int X509_issuer_and_serial_cmp(const X509 *a, const X509 *b)
 
     ai = a->cert_info;
     bi = b->cert_info;
-    i = M_ASN1_INTEGER_cmp(ai->serialNumber, bi->serialNumber);
+    i = ASN1_INTEGER_cmp(ai->serialNumber, bi->serialNumber);
     if (i)
         return (i);
     return (X509_NAME_cmp(ai->issuer, bi->issuer));
-}
-
-unsigned long X509_issuer_and_serial_hash(X509 *a)
-{
-    unsigned long ret = 0;
-    EVP_MD_CTX ctx;
-    unsigned char md[16];
-    char *f;
-
-    EVP_MD_CTX_init(&ctx);
-    f = X509_NAME_oneline(a->cert_info->issuer, NULL, 0);
-    if (f == NULL)
-        goto err;
-    if (!EVP_DigestInit_ex(&ctx, EVP_md5(), NULL))
-        goto err;
-    if (!EVP_DigestUpdate(&ctx, (unsigned char *)f, strlen(f)))
-        goto err;
-    OPENSSL_free(f);
-    if (!EVP_DigestUpdate
-        (&ctx, (unsigned char *)a->cert_info->serialNumber->data,
-         (unsigned long)a->cert_info->serialNumber->length))
-        goto err;
-    if (!EVP_DigestFinal_ex(&ctx, &(md[0]), NULL))
-        goto err;
-    ret = (((unsigned long)md[0]) | ((unsigned long)md[1] << 8L) |
-           ((unsigned long)md[2] << 16L) | ((unsigned long)md[3] << 24L)
-        ) & 0xffffffffL;
- err:
-    EVP_MD_CTX_cleanup(&ctx);
-    return (ret);
 }
 
 int X509_issuer_name_cmp(const X509 *a, const X509 *b)
@@ -413,7 +384,7 @@ int X509_chain_check_suiteb(int *perror_depth, X509 *x, STACK_OF(X509) *chain,
     } else
         i = 0;
 
-    if (X509_get_version(x) != 2) {
+    if (X509_get_version(x) != X509_VERSION_3) {
         rv = X509_V_ERR_SUITE_B_INVALID_VERSION;
         /* Correct error depth */
         i = 0;
@@ -431,7 +402,7 @@ int X509_chain_check_suiteb(int *perror_depth, X509 *x, STACK_OF(X509) *chain,
     for (; i < sk_X509_num(chain); i++) {
         sign_nid = X509_get_signature_nid(x);
         x = sk_X509_value(chain, i);
-        if (X509_get_version(x) != 2) {
+        if (X509_get_version(x) != X509_VERSION_3) {
             rv = X509_V_ERR_SUITE_B_INVALID_VERSION;
             goto end;
         }

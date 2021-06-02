@@ -223,11 +223,12 @@ OPENSSL_EXPORT char *ERR_error_string_n(uint32_t packed_error, char *buf,
                                         size_t len);
 
 // ERR_lib_error_string returns a string representation of the library that
-// generated |packed_error|.
+// generated |packed_error|, or a placeholder string is the library is
+// unrecognized.
 OPENSSL_EXPORT const char *ERR_lib_error_string(uint32_t packed_error);
 
 // ERR_reason_error_string returns a string representation of the reason for
-// |packed_error|.
+// |packed_error|, or a placeholder string if the reason is unrecognized.
 OPENSSL_EXPORT const char *ERR_reason_error_string(uint32_t packed_error);
 
 // ERR_print_errors_callback_t is the type of a function used by

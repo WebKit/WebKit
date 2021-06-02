@@ -241,21 +241,6 @@ int EC_KEY_marshal_private_key(CBB *cbb, const EC_KEY *key,
   return 1;
 }
 
-// is_unsigned_integer returns one if |cbs| is a valid unsigned DER INTEGER and
-// zero otherwise.
-static int is_unsigned_integer(const CBS *cbs) {
-  if (CBS_len(cbs) == 0) {
-    return 0;
-  }
-  uint8_t byte = CBS_data(cbs)[0];
-  if ((byte & 0x80) ||
-      (byte == 0 && CBS_len(cbs) > 1 && (CBS_data(cbs)[1] & 0x80) == 0)) {
-    // Negative or not minimally-encoded.
-    return 0;
-  }
-  return 1;
-}
-
 // kPrimeFieldOID is the encoding of 1.2.840.10045.1.1.
 static const uint8_t kPrimeField[] = {0x2a, 0x86, 0x48, 0xce, 0x3d, 0x01, 0x01};
 
@@ -276,7 +261,7 @@ static int parse_explicit_prime_curve(CBS *in, CBS *out_prime, CBS *out_a,
       OPENSSL_memcmp(CBS_data(&field_type), kPrimeField, sizeof(kPrimeField)) !=
           0 ||
       !CBS_get_asn1(&field_id, out_prime, CBS_ASN1_INTEGER) ||
-      !is_unsigned_integer(out_prime) ||
+      !CBS_is_unsigned_asn1_integer(out_prime) ||
       CBS_len(&field_id) != 0 ||
       !CBS_get_asn1(&params, &curve, CBS_ASN1_SEQUENCE) ||
       !CBS_get_asn1(&curve, out_a, CBS_ASN1_OCTETSTRING) ||
@@ -286,7 +271,7 @@ static int parse_explicit_prime_curve(CBS *in, CBS *out_prime, CBS *out_a,
       CBS_len(&curve) != 0 ||
       !CBS_get_asn1(&params, &base, CBS_ASN1_OCTETSTRING) ||
       !CBS_get_asn1(&params, out_order, CBS_ASN1_INTEGER) ||
-      !is_unsigned_integer(out_order) ||
+      !CBS_is_unsigned_asn1_integer(out_order) ||
       !CBS_get_optional_asn1(&params, &cofactor, &has_cofactor,
                              CBS_ASN1_INTEGER) ||
       CBS_len(&params) != 0) {

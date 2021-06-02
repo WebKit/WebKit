@@ -1,5 +1,16 @@
 2021-06-02  Youenn Fablet  <youenn@apple.com>
 
+        Update boringssl to M92
+        https://bugs.webkit.org/show_bug.cgi?id=226486
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+        * Source/third_party/boringssl/BUILD.generated.gni: Resynced.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
+2021-06-02  Youenn Fablet  <youenn@apple.com>
+
         Update pffft to M92
         https://bugs.webkit.org/show_bug.cgi?id=226491
 
