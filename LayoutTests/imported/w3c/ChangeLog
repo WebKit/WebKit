@@ -1,3 +1,13 @@
+2021-06-02  Martin Robinson  <mrobinson@igalia.com>
+
+        [css-scroll-snap] Scroll snap is broken with non-horizontal writing modes
+        https://bugs.webkit.org/show_bug.cgi?id=226010
+
+        Reviewed by Frédéric Wang.
+
+        * web-platform-tests/css/css-scroll-snap/scroll-snap-type-on-root-element-expected.txt: Update expectations to mark tests as passing.
+        * web-platform-tests/css/css-scroll-snap/snap-inline-block-expected.txt: Ditto.
+
 2021-06-01  Jean-Yves Avenard  <jya@apple.com>
 
         MediaSession.coordinator should not be optional, relying on coordinator state change instead

@@ -1,3 +1,42 @@
+2021-06-02  Martin Robinson  <mrobinson@igalia.com>
+
+        [css-scroll-snap] Scroll snap is broken with non-horizontal writing modes
+        https://bugs.webkit.org/show_bug.cgi?id=226010
+
+        Reviewed by Frédéric Wang.
+
+        Fix issues related to vertical writing modes and scroll snap.
+
+        This change fixes three existing WPT tests.
+            imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-type-on-root-element.html
+            imported/w3c/web-platform-tests/css/css-scroll-snap/snap-after-initial-layout/writing-mode-vertical-lr.html
+            imported/w3c/web-platform-tests/css/css-scroll-snap/snap-inline-block.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForScrollSnapAlignment): Update to reflect new member names of ScrollSnapAlign.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateSnapOffsets): Pass in the text direction and writing mode of the
+        container, allowing the values specified on the body to override those specified on the root
+        element.
+        * page/scrolling/ScrollSnapOffsetsInfo.cpp:
+        (WebCore::updateSnapOffsetsForScrollableArea): Properly handle the writing mode and the
+        text direction of the container.
+        * page/scrolling/ScrollSnapOffsetsInfo.h: Update function signature.
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::scrollSnapContainerRequiresUpdateForStyleUpdate): Pass in the writing mode and
+        text direction of the scrolling container.
+        * rendering/RenderLayerScrollableArea.cpp:
+        (WebCore::RenderLayerScrollableArea::updateSnapOffsets): Update to reflect new member names
+        of ScrollSnapAlign.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::hasSnapPosition const): Ditto.
+        * rendering/style/StyleScrollSnapPoints.h: Change the name of the members of ScrollSnapAlign
+        to match what is described in the specification. The values provided are for block and
+        inline directions, but depending on the scroll container.
+        (WebCore::operator==): Ditto.
+        * style/StyleBuilderConverter.h:
+        (WebCore::Style::BuilderConverter::convertScrollSnapAlign): Ditto.
+
 2021-06-02  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r276882): Style not invalidated correctly for media queries in shadow trees that share style

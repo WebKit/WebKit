@@ -2578,7 +2578,7 @@ void RenderStyle::setScrollSnapStop(const ScrollSnapStop stop)
 bool RenderStyle::hasSnapPosition() const
 {
     const ScrollSnapAlign& alignment = this->scrollSnapAlign();
-    return alignment.x != ScrollSnapAxisAlignType::None || alignment.y != ScrollSnapAxisAlignType::None;
+    return alignment.blockAlign != ScrollSnapAxisAlignType::None || alignment.inlineAlign != ScrollSnapAxisAlignType::None;
 }
 #endif
 

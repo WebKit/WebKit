@@ -1100,9 +1100,9 @@ static Ref<CSSValueList> valueForScrollSnapType(const ScrollSnapType& type)
 static Ref<CSSValueList> valueForScrollSnapAlignment(const ScrollSnapAlign& alignment)
 {
     auto value = CSSValueList::createSpaceSeparated();
-    value->append(CSSPrimitiveValue::create(alignment.y));
-    if (alignment.x != alignment.y)
-        value->append(CSSPrimitiveValue::create(alignment.x));
+    value->append(CSSPrimitiveValue::create(alignment.blockAlign));
+    if (alignment.inlineAlign != alignment.blockAlign)
+        value->append(CSSPrimitiveValue::create(alignment.inlineAlign));
     return value;
 }
 

@@ -921,11 +921,11 @@ inline ScrollSnapAlign BuilderConverter::convertScrollSnapAlign(BuilderState&, c
 {
     auto& values = downcast<CSSValueList>(value);
     ScrollSnapAlign alignment;
-    alignment.y = downcast<CSSPrimitiveValue>(*values.item(0));
+    alignment.blockAlign = downcast<CSSPrimitiveValue>(*values.item(0));
     if (values.length() == 1)
-        alignment.x = alignment.y;
+        alignment.inlineAlign = alignment.blockAlign;
     else
-        alignment.x = downcast<CSSPrimitiveValue>(*values.item(1));
+        alignment.inlineAlign = downcast<CSSPrimitiveValue>(*values.item(1));
     return alignment;
 }
 
