@@ -38,13 +38,6 @@
 
 namespace WebCore {
 
-void AudioChannel::resizeSmaller(size_t newLength)
-{
-    ASSERT(newLength <= m_length);
-    if (newLength <= m_length)
-        m_length = newLength;
-}
-
 void AudioChannel::scale(float scale)
 {
     if (isSilent())
