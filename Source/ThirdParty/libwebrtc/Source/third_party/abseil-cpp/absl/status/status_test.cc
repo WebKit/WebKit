@@ -36,7 +36,9 @@ TEST(StatusCode, InsertionOperator) {
 // its creator, and its classifier.
 struct ErrorTest {
   absl::StatusCode code;
-  using Creator = absl::Status (*)(absl::string_view);
+  using Creator = absl::Status (*)(
+      absl::string_view
+  );
   using Classifier = bool (*)(const absl::Status&);
   Creator creator;
   Classifier classifier;
@@ -78,7 +80,9 @@ TEST(Status, CreateAndClassify) {
     // expected error code and message.
     std::string message =
         absl::StrCat("error code ", test.code, " test message");
-    absl::Status status = test.creator(message);
+    absl::Status status = test.creator(
+        message
+    );
     EXPECT_EQ(test.code, status.code());
     EXPECT_EQ(message, status.message());
 
@@ -280,6 +284,27 @@ TEST(Status, ToString) {
                     HasSubstr("[bar='\\xff']")));
 }
 
+TEST(Status, ToStringMode) {
+  absl::Status s(absl::StatusCode::kInternal, "fail");
+  s.SetPayload("foo", absl::Cord("bar"));
+  s.SetPayload("bar", absl::Cord("\377"));
+
+  EXPECT_EQ("INTERNAL: fail",
+            s.ToString(absl::StatusToStringMode::kWithNoExtraData));
+
+  EXPECT_THAT(s.ToString(absl::StatusToStringMode::kWithPayload),
+              AllOf(HasSubstr("INTERNAL: fail"), HasSubstr("[foo='bar']"),
+                    HasSubstr("[bar='\\xff']")));
+
+  EXPECT_THAT(s.ToString(absl::StatusToStringMode::kWithEverything),
+              AllOf(HasSubstr("INTERNAL: fail"), HasSubstr("[foo='bar']"),
+                    HasSubstr("[bar='\\xff']")));
+
+  EXPECT_THAT(s.ToString(~absl::StatusToStringMode::kWithPayload),
+              AllOf(HasSubstr("INTERNAL: fail"), Not(HasSubstr("[foo='bar']")),
+                    Not(HasSubstr("[bar='\\xff']"))));
+}
+
 absl::Status EraseAndReturn(const absl::Status& base) {
   absl::Status copy = base;
   EXPECT_TRUE(copy.ErasePayload(kUrl1));
@@ -397,6 +422,12 @@ TEST(Status, MoveAssignment) {
     assignee = std::move(status);
     EXPECT_EQ(assignee, copy);
   }
+  {
+    absl::Status status(absl::StatusCode::kInvalidArgument, "message");
+    absl::Status copy(status);
+    status = static_cast<absl::Status&&>(status);
+    EXPECT_EQ(status, copy);
+  }
 }
 
 TEST(Status, Update) {
@@ -454,5 +485,4 @@ TEST(Status, Swap) {
   test_swap(no_payload, with_payload);
   test_swap(with_payload, no_payload);
 }
-
 }  // namespace

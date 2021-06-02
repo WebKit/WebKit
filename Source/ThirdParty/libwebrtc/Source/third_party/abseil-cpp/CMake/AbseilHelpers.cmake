@@ -17,7 +17,6 @@
 include(CMakeParseArguments)
 include(AbseilConfigureCopts)
 include(AbseilDll)
-include(AbseilInstallDirs)
 
 # The IDE folder for Abseil that will be used if Abseil is included in a CMake
 # project that sets
@@ -41,7 +40,7 @@ endif()
 # LINKOPTS: List of link options
 # PUBLIC: Add this so that this library will be exported under absl::
 # Also in IDE, target will appear in Abseil folder while non PUBLIC will be in Abseil/internal.
-# TESTONLY: When added, this target will only be built if user passes -DABSL_RUN_TESTS=ON to CMake.
+# TESTONLY: When added, this target will only be built if BUILD_TESTING=ON.
 #
 # Note:
 # By default, absl_cc_library will always create a library named absl_${NAME},
@@ -83,7 +82,7 @@ function(absl_cc_library)
     ${ARGN}
   )
 
-  if(ABSL_CC_LIB_TESTONLY AND NOT ABSL_RUN_TESTS)
+  if(ABSL_CC_LIB_TESTONLY AND NOT BUILD_TESTING)
     return()
   endif()
 
@@ -104,7 +103,7 @@ function(absl_cc_library)
     endif()
   endforeach()
 
-  if("${ABSL_CC_SRCS}" STREQUAL "")
+  if(ABSL_CC_SRCS STREQUAL "")
     set(ABSL_CC_LIB_IS_INTERFACE 1)
   else()
     set(ABSL_CC_LIB_IS_INTERFACE 0)
@@ -122,7 +121,11 @@ function(absl_cc_library)
   # 4. "static"  -- This target does not depend on the DLL and should be built
   #                 statically.
   if (${ABSL_BUILD_DLL})
-    absl_internal_dll_contains(TARGET ${_NAME} OUTPUT _in_dll)
+    if(ABSL_ENABLE_INSTALL)
+      absl_internal_dll_contains(TARGET ${_NAME} OUTPUT _in_dll)
+    else()
+      absl_internal_dll_contains(TARGET ${ABSL_CC_LIB_NAME} OUTPUT _in_dll)
+    endif()
     if (${_in_dll})
       # This target should be replaced by the DLL
       set(_build_type "dll")
@@ -137,8 +140,54 @@ function(absl_cc_library)
     set(_build_type "static")
   endif()
 
+  # Generate a pkg-config file for every library:
+  if((_build_type STREQUAL "static" OR _build_type STREQUAL "shared")
+     AND ABSL_ENABLE_INSTALL)
+    if(NOT ABSL_CC_LIB_TESTONLY)
+      if(absl_VERSION)
+        set(PC_VERSION "${absl_VERSION}")
+      else()
+        set(PC_VERSION "head")
+      endif()
+      foreach(dep ${ABSL_CC_LIB_DEPS})
+        if(${dep} MATCHES "^absl::(.*)")
+	  # Join deps with commas.
+          if(PC_DEPS)
+            set(PC_DEPS "${PC_DEPS},")
+          endif()
+          set(PC_DEPS "${PC_DEPS} absl_${CMAKE_MATCH_1} = ${PC_VERSION}")
+        endif()
+      endforeach()
+      foreach(cflag ${ABSL_CC_LIB_COPTS})
+        if(${cflag} MATCHES "^(-Wno|/wd)")
+          # These flags are needed to suppress warnings that might fire in our headers.
+          set(PC_CFLAGS "${PC_CFLAGS} ${cflag}")
+        elseif(${cflag} MATCHES "^(-W|/w[1234eo])")
+          # Don't impose our warnings on others.
+        else()
+          set(PC_CFLAGS "${PC_CFLAGS} ${cflag}")
+        endif()
+      endforeach()
+      FILE(GENERATE OUTPUT "${CMAKE_BINARY_DIR}/lib/pkgconfig/absl_${_NAME}.pc" CONTENT "\
+prefix=${CMAKE_INSTALL_PREFIX}\n\
+exec_prefix=\${prefix}\n\
+libdir=\${prefix}/${CMAKE_INSTALL_LIBDIR}\n\
+includedir=\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}\n\
+\n\
+Name: absl_${_NAME}\n\
+Description: Abseil ${_NAME} library\n\
+URL: https://abseil.io/\n\
+Version: ${PC_VERSION}\n\
+Requires:${PC_DEPS}\n\
+Libs: -L\${libdir} $<JOIN:${ABSL_CC_LIB_LINKOPTS}, > $<$<NOT:$<BOOL:${ABSL_CC_LIB_IS_INTERFACE}>>:-labsl_${_NAME}>\n\
+Cflags: -I\${includedir}${PC_CFLAGS}\n")
+      INSTALL(FILES "${CMAKE_BINARY_DIR}/lib/pkgconfig/absl_${_NAME}.pc"
+              DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+    endif()
+  endif()
+
   if(NOT ABSL_CC_LIB_IS_INTERFACE)
-    if(${_build_type} STREQUAL "dll_dep")
+    if(_build_type STREQUAL "dll_dep")
       # This target depends on the DLL. When adding dependencies to this target,
       # any depended-on-target which is contained inside the DLL is replaced
       # with a dependency on the DLL.
@@ -167,7 +216,7 @@ function(absl_cc_library)
           "${_gtest_link_define}"
       )
 
-    elseif(${_build_type} STREQUAL "static" OR ${_build_type} STREQUAL "shared")
+    elseif(_build_type STREQUAL "static" OR _build_type STREQUAL "shared")
       add_library(${_NAME} "")
       target_sources(${_NAME} PRIVATE ${ABSL_CC_LIB_SRCS} ${ABSL_CC_LIB_HDRS})
       target_link_libraries(${_NAME}
@@ -190,7 +239,7 @@ function(absl_cc_library)
     target_include_directories(${_NAME}
       PUBLIC
         "$<BUILD_INTERFACE:${ABSL_COMMON_INCLUDE_DIRS}>"
-        $<INSTALL_INTERFACE:${ABSL_INSTALL_INCLUDEDIR}>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
     )
     target_compile_options(${_NAME}
       PRIVATE ${ABSL_CC_LIB_COPTS})
@@ -215,6 +264,7 @@ function(absl_cc_library)
     if(ABSL_ENABLE_INSTALL)
       set_target_properties(${_NAME} PROPERTIES
         OUTPUT_NAME "absl_${_NAME}"
+        SOVERSION 0
       )
     endif()
   else()
@@ -223,10 +273,10 @@ function(absl_cc_library)
     target_include_directories(${_NAME}
       INTERFACE
         "$<BUILD_INTERFACE:${ABSL_COMMON_INCLUDE_DIRS}>"
-        $<INSTALL_INTERFACE:${ABSL_INSTALL_INCLUDEDIR}>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
       )
 
-    if (${_build_type} STREQUAL "dll")
+    if (_build_type STREQUAL "dll")
         set(ABSL_CC_LIB_DEPS abseil_dll)
     endif()
 
@@ -243,9 +293,9 @@ function(absl_cc_library)
   # installed abseil can't be tested.
   if(NOT ABSL_CC_LIB_TESTONLY AND ABSL_ENABLE_INSTALL)
     install(TARGETS ${_NAME} EXPORT ${PROJECT_NAME}Targets
-          RUNTIME DESTINATION ${ABSL_INSTALL_BINDIR}
-          LIBRARY DESTINATION ${ABSL_INSTALL_LIBDIR}
-          ARCHIVE DESTINATION ${ABSL_INSTALL_LIBDIR}
+          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+          ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     )
   endif()
 
@@ -290,7 +340,7 @@ endfunction()
 #     gtest_main
 # )
 function(absl_cc_test)
-  if(NOT ABSL_RUN_TESTS)
+  if(NOT BUILD_TESTING)
     return()
   endif()
 

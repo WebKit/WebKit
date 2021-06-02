@@ -25,6 +25,35 @@ package(default_visibility = ["//visibility:public"])
 licenses(["notice"])
 
 cc_library(
+    name = "bits",
+    hdrs = [
+        "bits.h",
+        "internal/bits.h",
+    ],
+    copts = ABSL_DEFAULT_COPTS,
+    linkopts = ABSL_DEFAULT_LINKOPTS,
+    deps = [
+        "//absl/base:config",
+        "//absl/base:core_headers",
+    ],
+)
+
+cc_test(
+    name = "bits_test",
+    size = "small",
+    srcs = [
+        "bits_test.cc",
+    ],
+    copts = ABSL_TEST_COPTS,
+    linkopts = ABSL_DEFAULT_LINKOPTS,
+    deps = [
+        ":bits",
+        "//absl/random",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
+
+cc_library(
     name = "int128",
     srcs = [
         "int128.cc",
@@ -35,7 +64,7 @@ cc_library(
     copts = ABSL_DEFAULT_COPTS,
     linkopts = ABSL_DEFAULT_LINKOPTS,
     deps = [
-        "//absl/base:bits",
+        ":bits",
         "//absl/base:config",
         "//absl/base:core_headers",
     ],
@@ -70,5 +99,17 @@ cc_test(
         ":int128",
         "//absl/base:config",
         "@com_github_google_benchmark//:benchmark_main",
+    ],
+)
+
+cc_library(
+    name = "representation",
+    hdrs = [
+        "internal/representation.h",
+    ],
+    copts = ABSL_DEFAULT_COPTS,
+    linkopts = ABSL_DEFAULT_LINKOPTS,
+    deps = [
+        "//absl/base:config",
     ],
 )

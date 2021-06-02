@@ -701,6 +701,16 @@ static ABSL_ATTRIBUTE_NOINLINE FindSymbolResult FindSymbol(
       const char *start_address =
           ComputeOffset(original_start_address, relocation);
 
+#ifdef __arm__
+      // ARM functions are always aligned to multiples of two bytes; the
+      // lowest-order bit in start_address is ignored by the CPU and indicates
+      // whether the function contains ARM (0) or Thumb (1) code. We don't care
+      // about what encoding is being used; we just want the real start address
+      // of the function.
+      start_address = reinterpret_cast<const char *>(
+          reinterpret_cast<uintptr_t>(start_address) & ~1);
+#endif
+
       if (deref_function_descriptor_pointer &&
           InSection(original_start_address, opd)) {
         // The opd section is mapped into memory.  Just dereference
@@ -1281,7 +1291,7 @@ static bool MaybeInitializeObjFile(ObjFile *obj) {
     const int phnum = obj->elf_header.e_phnum;
     const int phentsize = obj->elf_header.e_phentsize;
     size_t phoff = obj->elf_header.e_phoff;
-    int num_executable_load_segments = 0;
+    size_t num_executable_load_segments = 0;
     for (int j = 0; j < phnum; j++) {
       ElfW(Phdr) phdr;
       if (!ReadFromOffsetExact(obj->fd, &phdr, sizeof(phdr), phoff)) {
@@ -1342,7 +1352,7 @@ const char *Symbolizer::GetSymbol(const void *const pc) {
         // Note: some binaries have multiple "rx" LOAD segments. We must
         // find the right one.
         ElfW(Phdr) *phdr = nullptr;
-        for (int j = 0; j < obj->phdr.size(); j++) {
+        for (size_t j = 0; j < obj->phdr.size(); j++) {
           ElfW(Phdr) &p = obj->phdr[j];
           if (p.p_type != PT_LOAD) {
             // We only expect PT_LOADs. This must be PT_NULL that we didn't

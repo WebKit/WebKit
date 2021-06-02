@@ -1,3 +1,17 @@
+// Copyright 2020 The Abseil Authors.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #ifndef ABSL_STRINGS_INTERNAL_STR_FORMAT_ARG_H_
 #define ABSL_STRINGS_INTERNAL_STR_FORMAT_ARG_H_
 
@@ -108,6 +122,14 @@ StringConvertResult FormatConvertImpl(const std::string& v,
 StringConvertResult FormatConvertImpl(string_view v,
                                       FormatConversionSpecImpl conv,
                                       FormatSinkImpl* sink);
+#if defined(ABSL_HAVE_STD_STRING_VIEW) && !defined(ABSL_USES_STD_STRING_VIEW)
+inline StringConvertResult FormatConvertImpl(std::string_view v,
+                                             FormatConversionSpecImpl conv,
+                                             FormatSinkImpl* sink) {
+  return FormatConvertImpl(absl::string_view(v.data(), v.size()), conv, sink);
+}
+#endif  // ABSL_HAVE_STD_STRING_VIEW && !ABSL_USES_STD_STRING_VIEW
+
 ArgConvertResult<FormatConversionCharSetUnion(
     FormatConversionCharSetInternal::s, FormatConversionCharSetInternal::p)>
 FormatConvertImpl(const char* v, const FormatConversionSpecImpl conv,

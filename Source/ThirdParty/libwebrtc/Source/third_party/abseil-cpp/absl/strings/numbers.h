@@ -1,4 +1,3 @@
-//
 // Copyright 2017 The Abseil Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,7 +36,6 @@
 #include <type_traits>
 
 #include "absl/base/config.h"
-#include "absl/base/internal/bits.h"
 #ifdef __SSE4_2__
 // TODO(jorg): Remove this when we figure out the right way
 // to swap bytes on SSE 4.2 that works with the compilers
@@ -48,6 +46,7 @@
 #endif
 #include "absl/base/macros.h"
 #include "absl/base/port.h"
+#include "absl/numeric/bits.h"
 #include "absl/numeric/int128.h"
 #include "absl/strings/string_view.h"
 
@@ -125,8 +124,11 @@ inline void PutTwoDigits(size_t i, char* buf) {
 }
 
 // safe_strto?() functions for implementing SimpleAtoi()
+
 bool safe_strto32_base(absl::string_view text, int32_t* value, int base);
 bool safe_strto64_base(absl::string_view text, int64_t* value, int base);
+bool safe_strto128_base(absl::string_view text, absl::int128* value,
+                         int base);
 bool safe_strtou32_base(absl::string_view text, uint32_t* value, int base);
 bool safe_strtou64_base(absl::string_view text, uint64_t* value, int base);
 bool safe_strtou128_base(absl::string_view text, absl::uint128* value,
@@ -238,21 +240,19 @@ inline size_t FastHexToBufferZeroPad16(uint64_t val, char* out) {
   }
 #endif
   // | 0x1 so that even 0 has 1 digit.
-  return 16 - absl::base_internal::CountLeadingZeros64(val | 0x1) / 4;
+  return 16 - countl_zero(val | 0x1) / 4;
 }
 
 }  // namespace numbers_internal
 
-// SimpleAtoi()
-//
-// Converts a string to an integer, using `safe_strto?()` functions for actual
-// parsing, returning `true` if successful. The `safe_strto?()` functions apply
-// strict checking; the string must be a base-10 integer, optionally followed or
-// preceded by ASCII whitespace, with a value in the range of the corresponding
-// integer type.
 template <typename int_type>
 ABSL_MUST_USE_RESULT bool SimpleAtoi(absl::string_view str, int_type* out) {
   return numbers_internal::safe_strtoi_base(str, out, 10);
+}
+
+ABSL_MUST_USE_RESULT inline bool SimpleAtoi(absl::string_view str,
+                                            absl::int128* out) {
+  return numbers_internal::safe_strto128_base(str, out, 10);
 }
 
 ABSL_MUST_USE_RESULT inline bool SimpleAtoi(absl::string_view str,

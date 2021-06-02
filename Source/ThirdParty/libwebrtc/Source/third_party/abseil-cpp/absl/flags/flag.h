@@ -265,6 +265,8 @@ ABSL_NAMESPACE_END
 //
 //   ABSL_FLAG(T, name, default_value, help).OnUpdate(callback);
 //
+// `callback` should be convertible to `void (*)()`.
+//
 // After any setting of the flag value, the callback will be called at least
 // once. A rapid sequence of changes may be merged together into the same
 // callback. No concurrent calls to the callback will be made for the same
@@ -278,7 +280,6 @@ ABSL_NAMESPACE_END
 //
 // Note: ABSL_FLAG.OnUpdate() does not have a public definition. Hence, this
 // comment serves as its API documentation.
-
 
 // -----------------------------------------------------------------------------
 // Implementation details below this section
@@ -301,13 +302,15 @@ ABSL_NAMESPACE_END
 #if ABSL_FLAGS_STRIP_NAMES
 #define ABSL_FLAG_IMPL_FLAGNAME(txt) ""
 #define ABSL_FLAG_IMPL_FILENAME() ""
-#define ABSL_FLAG_IMPL_REGISTRAR(T, flag) \
-  absl::flags_internal::FlagRegistrar<T, false>(ABSL_FLAG_IMPL_FLAG_PTR(flag))
+#define ABSL_FLAG_IMPL_REGISTRAR(T, flag)                                      \
+  absl::flags_internal::FlagRegistrar<T, false>(ABSL_FLAG_IMPL_FLAG_PTR(flag), \
+                                                nullptr)
 #else
 #define ABSL_FLAG_IMPL_FLAGNAME(txt) txt
 #define ABSL_FLAG_IMPL_FILENAME() __FILE__
-#define ABSL_FLAG_IMPL_REGISTRAR(T, flag) \
-  absl::flags_internal::FlagRegistrar<T, true>(ABSL_FLAG_IMPL_FLAG_PTR(flag))
+#define ABSL_FLAG_IMPL_REGISTRAR(T, flag)                                     \
+  absl::flags_internal::FlagRegistrar<T, true>(ABSL_FLAG_IMPL_FLAG_PTR(flag), \
+                                               __FILE__)
 #endif
 
 // ABSL_FLAG_IMPL macro definition conditional on ABSL_FLAGS_STRIP_HELP

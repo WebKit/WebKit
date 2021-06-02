@@ -82,8 +82,8 @@ TYPED_TEST_P(HashValueIntTest, FastPath) {
 }
 
 REGISTER_TYPED_TEST_CASE_P(HashValueIntTest, BasicUsage, FastPath);
-using IntTypes = testing::Types<unsigned char, char, int, int32_t, int64_t, uint32_t,
-                                uint64_t, size_t>;
+using IntTypes = testing::Types<unsigned char, char, int, int32_t, int64_t,
+                                uint32_t, uint64_t, size_t>;
 INSTANTIATE_TYPED_TEST_CASE_P(My, HashValueIntTest, IntTypes);
 
 enum LegacyEnum { kValue1, kValue2, kValue3 };
@@ -819,8 +819,8 @@ TYPED_TEST_P(HashIntTest, BasicUsage) {
 }
 
 REGISTER_TYPED_TEST_CASE_P(HashIntTest, BasicUsage);
-using IntTypes = testing::Types<unsigned char, char, int, int32_t, int64_t, uint32_t,
-                                uint64_t, size_t>;
+using IntTypes = testing::Types<unsigned char, char, int, int32_t, int64_t,
+                                uint32_t, uint64_t, size_t>;
 INSTANTIATE_TYPED_TEST_CASE_P(My, HashIntTest, IntTypes);
 
 struct StructWithPadding {
@@ -971,6 +971,28 @@ namespace {
 TEST(HashTest, DoesNotUseImplicitConversionsToBool) {
   EXPECT_NE(absl::Hash<ValueWithBoolConversion>()(ValueWithBoolConversion{0}),
             absl::Hash<ValueWithBoolConversion>()(ValueWithBoolConversion{1}));
+}
+
+TEST(HashOf, MatchesHashForSingleArgument) {
+  std::string s = "forty two";
+  int i = 42;
+  double d = 42.0;
+  std::tuple<int, int> t{4, 2};
+
+  EXPECT_EQ(absl::HashOf(s), absl::Hash<std::string>{}(s));
+  EXPECT_EQ(absl::HashOf(i), absl::Hash<int>{}(i));
+  EXPECT_EQ(absl::HashOf(d), absl::Hash<double>{}(d));
+  EXPECT_EQ(absl::HashOf(t), (absl::Hash<std::tuple<int, int>>{}(t)));
+}
+
+TEST(HashOf, MatchesHashOfTupleForMultipleArguments) {
+  std::string hello = "hello";
+  std::string world = "world";
+
+  EXPECT_EQ(absl::HashOf(), absl::HashOf(std::make_tuple()));
+  EXPECT_EQ(absl::HashOf(hello), absl::HashOf(std::make_tuple(hello)));
+  EXPECT_EQ(absl::HashOf(hello, world),
+            absl::HashOf(std::make_tuple(hello, world)));
 }
 
 }  // namespace

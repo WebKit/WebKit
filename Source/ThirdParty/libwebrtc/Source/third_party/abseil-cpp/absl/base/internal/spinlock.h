@@ -15,11 +15,8 @@
 //
 
 //  Most users requiring mutual exclusion should use Mutex.
-//  SpinLock is provided for use in three situations:
+//  SpinLock is provided for use in two situations:
 //   - for use in code that Mutex itself depends on
-//   - to get a faster fast-path release under low contention (without an
-//     atomic read-modify-write) In return, SpinLock has worse behaviour under
-//     contention, which is why Mutex is preferred in most situations.
 //   - for async signal safety (see below)
 
 // SpinLock is async signal safe.  If a spinlock is used within a signal
@@ -140,8 +137,20 @@ class ABSL_LOCKABLE SpinLock {
   //
   // bit[0] encodes whether a lock is being held.
   // bit[1] encodes whether a lock uses cooperative scheduling.
-  // bit[2] encodes whether a lock disables scheduling.
+  // bit[2] encodes whether the current lock holder disabled scheduling when
+  //        acquiring the lock. Only set when kSpinLockHeld is also set.
   // bit[3:31] encodes time a lock spent on waiting as a 29-bit unsigned int.
+  //        This is set by the lock holder to indicate how long it waited on
+  //        the lock before eventually acquiring it. The number of cycles is
+  //        encoded as a 29-bit unsigned int, or in the case that the current
+  //        holder did not wait but another waiter is queued, the LSB
+  //        (kSpinLockSleeper) is set. The implementation does not explicitly
+  //        track the number of queued waiters beyond this. It must always be
+  //        assumed that waiters may exist if the current holder was required to
+  //        queue.
+  //
+  // Invariant: if the lock is not held, the value is either 0 or
+  // kSpinLockCooperative.
   static constexpr uint32_t kSpinLockHeld = 1;
   static constexpr uint32_t kSpinLockCooperative = 2;
   static constexpr uint32_t kSpinLockDisabledScheduling = 4;

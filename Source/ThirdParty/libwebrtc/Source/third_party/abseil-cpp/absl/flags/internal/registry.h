@@ -30,16 +30,15 @@ namespace absl {
 ABSL_NAMESPACE_BEGIN
 namespace flags_internal {
 
-// Executes specified visitor for each non-retired flag in the registry.
-// Requires the caller hold the registry lock.
-void ForEachFlagUnlocked(std::function<void(CommandLineFlag&)> visitor);
 // Executes specified visitor for each non-retired flag in the registry. While
 // callback are executed, the registry is locked and can't be changed.
 void ForEachFlag(std::function<void(CommandLineFlag&)> visitor);
 
 //-----------------------------------------------------------------------------
 
-bool RegisterCommandLineFlag(CommandLineFlag&);
+bool RegisterCommandLineFlag(CommandLineFlag&, const char* filename);
+
+void FinalizeRegistry();
 
 //-----------------------------------------------------------------------------
 // Retired registrations:

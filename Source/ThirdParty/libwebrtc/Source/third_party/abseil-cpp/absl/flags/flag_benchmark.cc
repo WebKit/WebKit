@@ -20,6 +20,8 @@
 
 #include "absl/flags/flag.h"
 #include "absl/flags/marshalling.h"
+#include "absl/flags/parse.h"
+#include "absl/flags/reflection.h"
 #include "absl/strings/string_view.h"
 #include "absl/time/time.h"
 #include "absl/types/optional.h"
@@ -101,7 +103,33 @@ std::string AbslUnparseFlag(const UDT&) { return ""; }
 
 #define FLAG_DEF(T) ABSL_FLAG(T, T##_flag, {}, "");
 
+#if defined(__clang__) && defined(__linux__)
+// Force the flags used for benchmarks into a separate ELF section.
+// This ensures that, even when other parts of the code might change size,
+// the layout of the flags across cachelines is kept constant. This makes
+// benchmark results more reproducible across unrelated code changes.
+#pragma clang section data = ".benchmark_flags"
+#endif
 BENCHMARKED_TYPES(FLAG_DEF)
+#if defined(__clang__) && defined(__linux__)
+#pragma clang section data = ""
+#endif
+// Register thousands of flags to bloat up the size of the registry.
+// This mimics real life production binaries.
+#define DEFINE_FLAG_0(name) ABSL_FLAG(int, name, 0, "");
+#define DEFINE_FLAG_1(name) DEFINE_FLAG_0(name##0) DEFINE_FLAG_0(name##1)
+#define DEFINE_FLAG_2(name) DEFINE_FLAG_1(name##0) DEFINE_FLAG_1(name##1)
+#define DEFINE_FLAG_3(name) DEFINE_FLAG_2(name##0) DEFINE_FLAG_2(name##1)
+#define DEFINE_FLAG_4(name) DEFINE_FLAG_3(name##0) DEFINE_FLAG_3(name##1)
+#define DEFINE_FLAG_5(name) DEFINE_FLAG_4(name##0) DEFINE_FLAG_4(name##1)
+#define DEFINE_FLAG_6(name) DEFINE_FLAG_5(name##0) DEFINE_FLAG_5(name##1)
+#define DEFINE_FLAG_7(name) DEFINE_FLAG_6(name##0) DEFINE_FLAG_6(name##1)
+#define DEFINE_FLAG_8(name) DEFINE_FLAG_7(name##0) DEFINE_FLAG_7(name##1)
+#define DEFINE_FLAG_9(name) DEFINE_FLAG_8(name##0) DEFINE_FLAG_8(name##1)
+#define DEFINE_FLAG_10(name) DEFINE_FLAG_9(name##0) DEFINE_FLAG_9(name##1)
+#define DEFINE_FLAG_11(name) DEFINE_FLAG_10(name##0) DEFINE_FLAG_10(name##1)
+#define DEFINE_FLAG_12(name) DEFINE_FLAG_11(name##0) DEFINE_FLAG_11(name##1)
+DEFINE_FLAG_12(bloat_flag_);
 
 namespace {
 
@@ -111,9 +139,23 @@ namespace {
       benchmark::DoNotOptimize(absl::GetFlag(FLAGS_##T##_flag)); \
     }                                                            \
   }                                                              \
-  BENCHMARK(BM_GetFlag_##T);
+  BENCHMARK(BM_GetFlag_##T)->ThreadRange(1, 16);
 
 BENCHMARKED_TYPES(BM_GetFlag)
+
+void BM_ThreadedFindCommandLineFlag(benchmark::State& state) {
+  char dummy[] = "dummy";
+  char* argv[] = {dummy};
+  // We need to ensure that flags have been parsed. That is where the registry
+  // is finalized.
+  absl::ParseCommandLine(1, argv);
+
+  for (auto s : state) {
+    benchmark::DoNotOptimize(
+        absl::FindCommandLineFlag("bloat_flag_010101010101"));
+  }
+}
+BENCHMARK(BM_ThreadedFindCommandLineFlag)->ThreadRange(1, 16);
 
 }  // namespace
 

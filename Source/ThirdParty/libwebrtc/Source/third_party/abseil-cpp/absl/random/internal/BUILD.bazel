@@ -75,7 +75,8 @@ cc_library(
     ],
     copts = ABSL_DEFAULT_COPTS,
     linkopts = ABSL_DEFAULT_LINKOPTS + select({
-        "//absl:windows": ["-DEFAULTLIB:bcrypt.lib"],
+        "//absl:msvc_compiler": ["-DEFAULTLIB:bcrypt.lib"],
+        "//absl:clang-cl_compiler": ["-DEFAULTLIB:bcrypt.lib"],
         "//conditions:default": [],
     }),
     deps = [
@@ -98,7 +99,8 @@ cc_library(
     ],
     copts = ABSL_DEFAULT_COPTS,
     linkopts = select({
-        "//absl:windows": [],
+        "//absl:msvc_compiler": [],
+        "//absl:clang-cl_compiler": [],
         "//absl:wasm": [],
         "//conditions:default": ["-pthread"],
     }) + ABSL_DEFAULT_LINKOPTS,
@@ -124,7 +126,10 @@ cc_library(
     ],
     copts = ABSL_DEFAULT_COPTS,
     linkopts = ABSL_DEFAULT_LINKOPTS,
-    deps = ["//absl/base:config"],
+    deps = [
+        "//absl/base:config",
+        "//absl/base:endian",
+    ],
 )
 
 cc_library(
@@ -175,8 +180,8 @@ cc_library(
     deps = [
         ":fastmath",
         ":traits",
-        "//absl/base:bits",
         "//absl/meta:type_traits",
+        "//absl/numeric:bits",
     ],
 )
 
@@ -187,7 +192,7 @@ cc_library(
     ],
     copts = ABSL_DEFAULT_COPTS,
     linkopts = ABSL_DEFAULT_LINKOPTS,
-    deps = ["//absl/base:bits"],
+    deps = ["//absl/numeric:bits"],
 )
 
 cc_library(
@@ -197,8 +202,8 @@ cc_library(
     linkopts = ABSL_DEFAULT_LINKOPTS,
     deps = [
         ":traits",
-        "//absl/base:bits",
         "//absl/base:config",
+        "//absl/numeric:bits",
         "//absl/numeric:int128",
     ],
 )
@@ -229,6 +234,7 @@ cc_library(
         ":iostream_state_saver",
         "//absl/base:config",
         "//absl/meta:type_traits",
+        "//absl/numeric:bits",
         "//absl/numeric:int128",
     ],
 )
@@ -241,6 +247,7 @@ cc_library(
     deps = [
         ":iostream_state_saver",
         ":randen",
+        "//absl/base:endian",
         "//absl/meta:type_traits",
     ],
 )
@@ -320,7 +327,8 @@ cc_library(
         "randen_hwaes.h",
     ],
     copts = ABSL_DEFAULT_COPTS + ABSL_RANDOM_RANDEN_COPTS + select({
-        "//absl:windows": [],
+        "//absl:msvc_compiler": [],
+        "//absl:clang-cl_compiler": [],
         "//conditions:default": ["-Wno-pass-failed"],
     }),
     linkopts = ABSL_DEFAULT_LINKOPTS,
@@ -400,8 +408,8 @@ cc_test(
     linkopts = ABSL_DEFAULT_LINKOPTS,
     deps = [
         ":generate_real",
-        "//absl/base:bits",
         "//absl/flags:flag",
+        "//absl/numeric:bits",
         "@com_google_googletest//:gtest_main",
     ],
 )
@@ -605,6 +613,7 @@ cc_test(
     deps = [
         ":platform",
         ":randen_slow",
+        "//absl/base:endian",
         "@com_google_googletest//:gtest_main",
     ],
 )
@@ -634,7 +643,7 @@ cc_test(
     linkopts = ABSL_DEFAULT_LINKOPTS,
     deps = [
         ":wide_multiply",
-        "//absl/base:bits",
+        "//absl/numeric:bits",
         "//absl/numeric:int128",
         "@com_google_googletest//:gtest_main",
     ],
@@ -708,7 +717,6 @@ cc_test(
 
 cc_test(
     name = "iostream_state_saver_test",
-    size = "small",
     srcs = ["iostream_state_saver_test.cc"],
     linkopts = ABSL_DEFAULT_LINKOPTS,
     deps = [

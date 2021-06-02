@@ -1,3 +1,12 @@
+2021-06-02  Youenn Fablet  <youenn@apple.com>
+
+        Update abseil-cpp to M92
+        https://bugs.webkit.org/show_bug.cgi?id=226485
+
+        Reviewed by Alex Christensen.
+
+        * Source/third_party/abseil-cpp: Resynced.
+
 2021-05-31  Youenn Fablet  <youenn@apple.com>
 
         Use tighter bitrate allocation rules for WebRTC H264 software encoder

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright 2019 The Abseil Authors.
+# Copyright 2020 The Abseil Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ if [[ -z ${EXCEPTIONS_MODE:-} ]]; then
 fi
 
 source "${ABSEIL_ROOT}/ci/linux_docker_containers.sh"
-readonly DOCKER_CONTAINER=${LINUX_GCC_49_CONTAINER}
+readonly DOCKER_CONTAINER=${LINUX_GCC_FLOOR_CONTAINER}
 
 # USE_BAZEL_CACHE=1 only works on Kokoro.
 # Without access to the credentials this won't work.
@@ -68,7 +68,7 @@ for std in ${STD}; do
         --workdir=/abseil-cpp \
         --cap-add=SYS_PTRACE \
         --rm \
-        -e CC="/usr/bin/gcc-4.9" \
+        -e CC="/usr/local/bin/gcc" \
         -e BAZEL_CXXOPTS="-std=${std}" \
         ${DOCKER_EXTRA_ARGS:-} \
         ${DOCKER_CONTAINER} \

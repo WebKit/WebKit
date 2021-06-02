@@ -1,4 +1,5 @@
 include(CMakeParseArguments)
+include(GNUInstallDirs)
 
 set(ABSL_INTERNAL_DLL_FILES
   "algorithm/algorithm.h"
@@ -10,7 +11,6 @@ set(ABSL_INTERNAL_DLL_FILES
   "base/const_init.h"
   "base/dynamic_annotations.h"
   "base/internal/atomic_hook.h"
-  "base/internal/bits.h"
   "base/internal/cycleclock.cc"
   "base/internal/cycleclock.h"
   "base/internal/direct_mmap.h"
@@ -61,6 +61,8 @@ set(ABSL_INTERNAL_DLL_FILES
   "base/policy_checks.h"
   "base/port.h"
   "base/thread_annotations.h"
+  "cleanup/cleanup.h"
+  "cleanup/internal/cleanup.h"
   "container/btree_map.h"
   "container/btree_set.h"
   "container/fixed_array.h"
@@ -122,10 +124,15 @@ set(ABSL_INTERNAL_DLL_FILES
   "hash/internal/hash.h"
   "hash/internal/hash.cc"
   "hash/internal/spy_hash_state.h"
+  "hash/internal/wyhash.h"
+  "hash/internal/wyhash.cc"
   "memory/memory.h"
   "meta/type_traits.h"
+  "numeric/bits.h"
   "numeric/int128.cc"
   "numeric/int128.h"
+  "numeric/internal/bits.h"
+  "numeric/internal/representation.h"
   "random/bernoulli_distribution.h"
   "random/beta_distribution.h"
   "random/bit_gen_ref.h"
@@ -190,12 +197,29 @@ set(ABSL_INTERNAL_DLL_FILES
   "strings/cord.h"
   "strings/escaping.cc"
   "strings/escaping.h"
-  "strings/internal/cord_internal.h"
   "strings/internal/charconv_bigint.cc"
   "strings/internal/charconv_bigint.h"
   "strings/internal/charconv_parse.cc"
   "strings/internal/charconv_parse.h"
+  "strings/internal/cord_internal.cc"
+  "strings/internal/cord_internal.h"
+  "strings/internal/cord_rep_flat.h"
+  "strings/internal/cord_rep_ring.cc"
+  "strings/internal/cord_rep_ring.h"
+  "strings/internal/cord_rep_ring_reader.h"
+  "strings/internal/cordz_functions.cc"
+  "strings/internal/cordz_functions.h"
+  "strings/internal/cordz_handle.cc"
+  "strings/internal/cordz_handle.h"
+  "strings/internal/cordz_info.cc"
+  "strings/internal/cordz_info.h"
+  "strings/internal/cordz_sample_token.cc"
+  "strings/internal/cordz_sample_token.h"
+  "strings/internal/cordz_statistics.h"
+  "strings/internal/cordz_update_scope.h"
+  "strings/internal/cordz_update_tracker.h"
   "strings/internal/stl_type_traits.h"
+  "strings/internal/string_constant.h"
   "strings/match.cc"
   "strings/match.h"
   "strings/numbers.cc"
@@ -250,6 +274,7 @@ set(ABSL_INTERNAL_DLL_FILES
   "synchronization/notification.h"
   "synchronization/internal/create_thread_identity.cc"
   "synchronization/internal/create_thread_identity.h"
+  "synchronization/internal/futex.h"
   "synchronization/internal/graphcycles.cc"
   "synchronization/internal/graphcycles.h"
   "synchronization/internal/kernel_timeout.h"
@@ -487,7 +512,7 @@ function(absl_make_dll)
     abseil_dll
     PUBLIC
       "$<BUILD_INTERFACE:${ABSL_COMMON_INCLUDE_DIRS}>"
-      $<INSTALL_INTERFACE:${ABSL_INSTALL_INCLUDEDIR}>
+      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
   )
 
   target_compile_options(
@@ -505,8 +530,8 @@ function(absl_make_dll)
       ${ABSL_CC_LIB_DEFINES}
   )
   install(TARGETS abseil_dll EXPORT ${PROJECT_NAME}Targets
-        RUNTIME DESTINATION ${ABSL_INSTALL_BINDIR}
-        LIBRARY DESTINATION ${ABSL_INSTALL_LIBDIR}
-        ARCHIVE DESTINATION ${ABSL_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   )
 endfunction()

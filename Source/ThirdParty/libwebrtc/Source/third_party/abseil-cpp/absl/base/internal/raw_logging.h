@@ -72,12 +72,14 @@
 //
 // The API is a subset of the above: each macro only takes two arguments.  Use
 // StrCat if you need to build a richer message.
-#define ABSL_INTERNAL_LOG(severity, message)                             \
-  do {                                                                   \
-    constexpr const char* absl_raw_logging_internal_filename = __FILE__; \
-    ::absl::raw_logging_internal::internal_log_function(                 \
-        ABSL_RAW_LOGGING_INTERNAL_##severity,                            \
-        absl_raw_logging_internal_filename, __LINE__, message);          \
+#define ABSL_INTERNAL_LOG(severity, message)                                 \
+  do {                                                                       \
+    constexpr const char* absl_raw_logging_internal_filename = __FILE__;     \
+    ::absl::raw_logging_internal::internal_log_function(                     \
+        ABSL_RAW_LOGGING_INTERNAL_##severity,                                \
+        absl_raw_logging_internal_filename, __LINE__, message);              \
+    if (ABSL_RAW_LOGGING_INTERNAL_##severity == ::absl::LogSeverity::kFatal) \
+      ABSL_INTERNAL_UNREACHABLE;                                             \
   } while (0)
 
 #define ABSL_INTERNAL_CHECK(condition, message)                    \
@@ -176,6 +178,14 @@ ABSL_INTERNAL_ATOMIC_HOOK_ATTRIBUTES ABSL_DLL extern base_internal::AtomicHook<
     InternalLogFunction>
     internal_log_function;
 
+// Registers hooks of the above types.  Only a single hook of each type may be
+// registered.  It is an error to call these functions multiple times with
+// different input arguments.
+//
+// These functions are safe to call at any point during initialization; they do
+// not block or malloc, and are async-signal safe.
+void RegisterLogPrefixHook(LogPrefixHook func);
+void RegisterAbortHook(AbortHook func);
 void RegisterInternalLogFunction(InternalLogFunction func);
 
 }  // namespace raw_logging_internal

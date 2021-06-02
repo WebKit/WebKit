@@ -57,6 +57,7 @@
 #include "absl/container/inlined_vector.h"
 #include "absl/status/internal/status_internal.h"
 #include "absl/strings/cord.h"
+#include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 
 namespace absl {
@@ -98,7 +99,7 @@ enum class StatusCode : int {
 
   // StatusCode::kCancelled
   //
-  // kCanelled (gRPC code "CANCELLED") indicates the operation was cancelled,
+  // kCancelled (gRPC code "CANCELLED") indicates the operation was cancelled,
   // typically by the caller.
   kCancelled = 1,
 
@@ -198,9 +199,9 @@ enum class StatusCode : int {
   // `kAborted`, and `kUnavailable`.
   kAborted = 10,
 
-  // StatusCode::kOutofRange
+  // StatusCode::kOutOfRange
   //
-  // kOutofRange (gRPC code "OUT_OF_RANGE") indicates the operation was
+  // kOutOfRange (gRPC code "OUT_OF_RANGE") indicates the operation was
   // attempted past the valid range, such as seeking or reading past an
   // end-of-file.
   //
@@ -278,6 +279,59 @@ std::string StatusCodeToString(StatusCode code);
 //
 // Streams StatusCodeToString(code) to `os`.
 std::ostream& operator<<(std::ostream& os, StatusCode code);
+
+// absl::StatusToStringMode
+//
+// An `absl::StatusToStringMode` is an enumerated type indicating how
+// `absl::Status::ToString()` should construct the output string for an non-ok
+// status.
+enum class StatusToStringMode : int {
+  // ToString will not contain any extra data (such as payloads). It will only
+  // contain the error code and message, if any.
+  kWithNoExtraData = 0,
+  // ToString will contain the payloads.
+  kWithPayload = 1 << 0,
+  // ToString will include all the extra data this Status has.
+  kWithEverything = ~kWithNoExtraData,
+  // Default mode used by ToString. Its exact value might change in the future.
+  kDefault = kWithPayload,
+};
+
+// absl::StatusToStringMode is specified as a bitmask type, which means the
+// following operations must be provided:
+inline constexpr StatusToStringMode operator&(StatusToStringMode lhs,
+                                              StatusToStringMode rhs) {
+  return static_cast<StatusToStringMode>(static_cast<int>(lhs) &
+                                         static_cast<int>(rhs));
+}
+inline constexpr StatusToStringMode operator|(StatusToStringMode lhs,
+                                              StatusToStringMode rhs) {
+  return static_cast<StatusToStringMode>(static_cast<int>(lhs) |
+                                         static_cast<int>(rhs));
+}
+inline constexpr StatusToStringMode operator^(StatusToStringMode lhs,
+                                              StatusToStringMode rhs) {
+  return static_cast<StatusToStringMode>(static_cast<int>(lhs) ^
+                                         static_cast<int>(rhs));
+}
+inline constexpr StatusToStringMode operator~(StatusToStringMode arg) {
+  return static_cast<StatusToStringMode>(~static_cast<int>(arg));
+}
+inline StatusToStringMode& operator&=(StatusToStringMode& lhs,
+                                      StatusToStringMode rhs) {
+  lhs = lhs & rhs;
+  return lhs;
+}
+inline StatusToStringMode& operator|=(StatusToStringMode& lhs,
+                                      StatusToStringMode rhs) {
+  lhs = lhs | rhs;
+  return lhs;
+}
+inline StatusToStringMode& operator^=(StatusToStringMode& lhs,
+                                      StatusToStringMode rhs) {
+  lhs = lhs ^ rhs;
+  return lhs;
+}
 
 // absl::Status
 //
@@ -360,7 +414,12 @@ std::ostream& operator<<(std::ostream& os, StatusCode code);
 //     return result;
 //   }
 //
-class ABSL_MUST_USE_RESULT Status final {
+// For documentation see https://abseil.io/docs/cpp/guides/status.
+//
+// Returned Status objects may not be ignored. status_internal.h has a forward
+// declaration of the form
+// class ABSL_MUST_USE_RESULT Status;
+class Status final {
  public:
   // Constructors
 
@@ -370,10 +429,10 @@ class ABSL_MUST_USE_RESULT Status final {
   Status();
 
   // Creates a status in the canonical error space with the specified
-  // `absl::StatusCode` and error message.  If `code == absl::StatusCode::kOk`,
+  // `absl::StatusCode` and error message.  If `code == absl::StatusCode::kOk`,  // NOLINT
   // `msg` is ignored and an object identical to an OK status is constructed.
   //
-  // The `msg` string must be in UTF-8. The implementation may complain (e.g.,
+  // The `msg` string must be in UTF-8. The implementation may complain (e.g.,  // NOLINT
   // by printing a warning) if it is not.
   Status(absl::StatusCode code, absl::string_view msg);
 
@@ -442,15 +501,17 @@ class ABSL_MUST_USE_RESULT Status final {
 
   // Status::ToString()
   //
-  // Returns a combination of the error code name, the message and any
-  // associated payload messages. This string is designed simply to be human
-  // readable and its exact format should not be load bearing. Do not depend on
-  // the exact format of the result of `ToString()` which is subject to change.
+  // Returns a string based on the `mode`. By default, it returns combination of
+  // the error code name, the message and any associated payload messages. This
+  // string is designed simply to be human readable and its exact format should
+  // not be load bearing. Do not depend on the exact format of the result of
+  // `ToString()` which is subject to change.
   //
   // The printed code name and the message are generally substrings of the
   // result, and the payloads to be printed use the status payload printer
   // mechanism (which is internal).
-  std::string ToString() const;
+  std::string ToString(
+      StatusToStringMode mode = StatusToStringMode::kDefault) const;
 
   // Status::IgnoreError()
   //
@@ -550,8 +611,9 @@ class ABSL_MUST_USE_RESULT Status final {
   status_internal::Payloads* GetPayloads();
 
   // Takes ownership of payload.
-  static uintptr_t NewRep(absl::StatusCode code, absl::string_view msg,
-                          std::unique_ptr<status_internal::Payloads> payload);
+  static uintptr_t NewRep(
+      absl::StatusCode code, absl::string_view msg,
+      std::unique_ptr<status_internal::Payloads> payload);
   static bool EqualsSlow(const absl::Status& a, const absl::Status& b);
 
   // MSVC 14.0 limitation requires the const.
@@ -580,8 +642,7 @@ class ABSL_MUST_USE_RESULT Status final {
   static uintptr_t PointerToRep(status_internal::StatusRep* r);
   static status_internal::StatusRep* RepToPointer(uintptr_t r);
 
-  // Returns string for non-ok Status.
-  std::string ToStringSlow() const;
+  std::string ToStringSlow(StatusToStringMode mode) const;
 
   // Status supports two different representations.
   //  - When the low bit is off it is an inlined representation.
@@ -704,9 +765,11 @@ inline Status::Status(Status&& x) noexcept : rep_(x.rep_) {
 
 inline Status& Status::operator=(Status&& x) {
   uintptr_t old_rep = rep_;
-  rep_ = x.rep_;
-  x.rep_ = MovedFromRep();
-  Unref(old_rep);
+  if (x.rep_ != old_rep) {
+    rep_ = x.rep_;
+    x.rep_ = MovedFromRep();
+    Unref(old_rep);
+  }
   return *this;
 }
 
@@ -743,8 +806,8 @@ inline bool operator!=(const Status& lhs, const Status& rhs) {
   return !(lhs == rhs);
 }
 
-inline std::string Status::ToString() const {
-  return ok() ? "OK" : ToStringSlow();
+inline std::string Status::ToString(StatusToStringMode mode) const {
+  return ok() ? "OK" : ToStringSlow(mode);
 }
 
 inline void Status::IgnoreError() const {
