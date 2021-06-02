@@ -2225,9 +2225,9 @@ VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point, const Re
         for (auto* childBox = firstChildBox(); childBox; childBox = childBox->nextSiblingBox()) {
             if (!isChildHitTestCandidate(*childBox, fragment, pointInLogicalContents))
                 continue;
-            LayoutUnit childLogicalBottom = logicalTopForChild(*childBox) + logicalHeightForChild(*childBox);
+            auto childLogicalBottom = logicalTopForChild(*childBox) + logicalHeightForChild(*childBox);
             if (is<RenderBlockFlow>(childBox))
-                childLogicalBottom += downcast<RenderBlockFlow>(childBox)->lowestFloatLogicalBottom();
+                childLogicalBottom = std::max(childLogicalBottom, downcast<RenderBlockFlow>(*childBox).lowestFloatLogicalBottom());
             // We hit child if our click is above the bottom of its padding box (like IE6/7 and FF3).
             if (isChildHitTestCandidate(*childBox, fragment, pointInLogicalContents) && (pointInLogicalContents.y() < childLogicalBottom
                 || (blocksAreFlipped && pointInLogicalContents.y() == childLogicalBottom)))
