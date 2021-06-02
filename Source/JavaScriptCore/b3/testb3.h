@@ -27,6 +27,7 @@
 
 #include "AirCode.h"
 #include "AirInstInlines.h"
+#include "AirStackSlot.h"
 #include "AirValidate.h"
 #include "AllowMacroScratchRegisterUsage.h"
 #include "B3ArgumentRegValue.h"
@@ -52,7 +53,6 @@
 #include "B3ReduceLoopStrength.h"
 #include "B3ReduceStrength.h"
 #include "B3SlotBaseValue.h"
-#include "B3StackSlot.h"
 #include "B3StackmapGenerationParams.h"
 #include "B3SwitchValue.h"
 #include "B3UpsilonValue.h"

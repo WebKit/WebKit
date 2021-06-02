@@ -153,8 +153,6 @@ public:
             }
         }
 
-        for (B3::StackSlot* stack : m_procedure.stackSlots())
-            m_stackToStack.add(stack, m_code.addStackSlot(stack));
         for (Variable* variable : m_procedure.variables()) {
             auto addResult = m_variableToTmps.add(variable, Vector<Tmp, 1>(m_procedure.resultCount(variable->type())));
             ASSERT(addResult.isNewEntry);
@@ -582,7 +580,7 @@ private:
             return Arg::addr(Tmp(GPRInfo::callFrameRegister), offset);
 
         case SlotBase:
-            return Arg::stack(m_stackToStack.get(address->as<SlotBaseValue>()->slot()), offset);
+            return Arg::stack(address->as<SlotBaseValue>()->slot(), offset);
 
         case WasmAddress: {
             WasmAddressValue* wasmAddress = address->as<WasmAddressValue>();
@@ -3017,7 +3015,7 @@ private:
         case SlotBase: {
             append(
                 pointerType() == Int64 ? Lea64 : Lea32,
-                Arg::stack(m_stackToStack.get(m_value->as<SlotBaseValue>()->slot())),
+                Arg::stack(m_value->as<SlotBaseValue>()->slot()),
                 tmp(m_value));
             return;
         }
@@ -3712,7 +3710,6 @@ private:
     HashMap<Value*, Vector<Tmp>> m_tupleValueToTmps; // This is the same as m_valueToTmp for Values that are Tuples.
     HashMap<Value*, Vector<Tmp>> m_tuplePhiToTmps; // This is the same as m_phiToTmp for Phis that are Tuples.
     IndexMap<B3::BasicBlock*, Air::BasicBlock*> m_blockToBlock;
-    HashMap<B3::StackSlot*, Air::StackSlot*> m_stackToStack;
     HashMap<Variable*, Vector<Tmp>> m_variableToTmps;
 
     UseCounts m_useCounts;

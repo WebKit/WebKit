@@ -466,7 +466,6 @@
 		0F9332A414CA7DD90085F3C6 /* PutByIdStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93329A14CA7DC10085F3C6 /* PutByIdStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F9332A514CA7DDD0085F3C6 /* StructureSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93329B14CA7DC10085F3C6 /* StructureSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F93B4AA18B92C4D00178A3F /* PutByIdVariant.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93B4A818B92C4D00178A3F /* PutByIdVariant.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F9495881C57F47500413A48 /* B3StackSlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9495861C57F47500413A48 /* B3StackSlot.h */; };
 		0F952AA11DF7860900E06FBD /* VisitRaceKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F952AA01DF7860700E06FBD /* VisitRaceKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F952ABD1B487A7700C367C5 /* TrackedReferences.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F952ABB1B487A7700C367C5 /* TrackedReferences.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F96303A1D4192C8005609D9 /* CellAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9630361D4192C3005609D9 /* CellAttributes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2854,8 +2853,6 @@
 		0F93329B14CA7DC10085F3C6 /* StructureSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureSet.h; sourceTree = "<group>"; };
 		0F93B4A718B92C4D00178A3F /* PutByIdVariant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PutByIdVariant.cpp; sourceTree = "<group>"; };
 		0F93B4A818B92C4D00178A3F /* PutByIdVariant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PutByIdVariant.h; sourceTree = "<group>"; };
-		0F9495851C57F47500413A48 /* B3StackSlot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3StackSlot.cpp; path = b3/B3StackSlot.cpp; sourceTree = "<group>"; };
-		0F9495861C57F47500413A48 /* B3StackSlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3StackSlot.h; path = b3/B3StackSlot.h; sourceTree = "<group>"; };
 		0F952A9F1DF7860700E06FBD /* VisitRaceKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitRaceKey.cpp; sourceTree = "<group>"; };
 		0F952AA01DF7860700E06FBD /* VisitRaceKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitRaceKey.h; sourceTree = "<group>"; };
 		0F952ABA1B487A7700C367C5 /* TrackedReferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TrackedReferences.cpp; sourceTree = "<group>"; };
@@ -5916,8 +5913,6 @@
 				0FEC84E71BDACDAC0080FF74 /* B3StackmapSpecial.h */,
 				0F338DEF1BE93AD10013C88F /* B3StackmapValue.cpp */,
 				0F338DF01BE93AD10013C88F /* B3StackmapValue.h */,
-				0F9495851C57F47500413A48 /* B3StackSlot.cpp */,
-				0F9495861C57F47500413A48 /* B3StackSlot.h */,
 				0FEC84EC1BDACDAC0080FF74 /* B3SuccessorCollection.h */,
 				0FEC84ED1BDACDAC0080FF74 /* B3SwitchCase.cpp */,
 				0FEC84EE1BDACDAC0080FF74 /* B3SwitchCase.h */,
@@ -9351,7 +9346,6 @@
 				0F33FCF81C136E2500323F67 /* B3StackmapGenerationParams.h in Headers */,
 				0FEC85311BDACDAC0080FF74 /* B3StackmapSpecial.h in Headers */,
 				0F338DF21BE93AD10013C88F /* B3StackmapValue.h in Headers */,
-				0F9495881C57F47500413A48 /* B3StackSlot.h in Headers */,
 				0FEC85361BDACDAC0080FF74 /* B3SuccessorCollection.h in Headers */,
 				0FEC85381BDACDAC0080FF74 /* B3SwitchCase.h in Headers */,
 				0FEC853A1BDACDAC0080FF74 /* B3SwitchValue.h in Headers */,

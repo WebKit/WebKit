@@ -38,7 +38,6 @@
 #include "B3OriginDump.h"
 #include "B3ProcedureInlines.h"
 #include "B3SlotBaseValue.h"
-#include "B3StackSlot.h"
 #include "B3ValueInlines.h"
 #include "B3ValueKeyInlines.h"
 #include "B3WasmBoundsCheckValue.h"

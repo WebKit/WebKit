@@ -1,3 +1,47 @@
+2021-06-02  Robin Morisset  <rmorisset@apple.com>
+
+        Merge B3::StackSlot and Air::StackSlot
+        https://bugs.webkit.org/show_bug.cgi?id=226362
+
+        Reviewed by Filip Pizlo.
+
+        This is a very simple and safe (although small) memory saving, since every B3StackSlot eventually becomes an AirStackSlot with an exact copy of all the same information.
+        Simply dropping the B3StackSlot past that point is tricky, because one of them might be retained by FTLState (and modified by Air).
+        It is much simpler to just use Air::StackSlot throughout. It saves us:
+        - 16 bytes per B3StackSlot (for the structure itself)
+        - another 8 bytes per B3StackSlot (for the pointer in the SparseCollection)
+        - 8 bytes per AirStackSlot (for the pointer to the B3::StackSlot)
+        I also took the opportunity to save an extra 8 bytes per AirStackSlot, by shrinking the bytesize field to a uint16_t (with a RELEASE_ASSERT that we never overflow it) and moving the StackSlotKind in the hole this creates.
+        Total savings: 16 bytes per spill slot and 40 bytes per locked (by B3) slot.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * b3/B3LowerToAir.cpp:
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::addStackSlot):
+        (JSC::B3::Procedure::dump const):
+        * b3/B3Procedure.h:
+        * b3/B3ProcedureInlines.h:
+        (JSC::B3::Procedure::stackSlots):
+        (JSC::B3::Procedure::stackSlots const):
+        * b3/B3SlotBaseValue.cpp:
+        * b3/B3SlotBaseValue.h:
+        * b3/B3StackSlot.cpp: Removed.
+        * b3/B3StackSlot.h: Removed.
+        * b3/B3Value.cpp:
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::addStackSlot):
+        * b3/air/AirCode.h:
+        * b3/air/AirStackSlot.cpp:
+        (JSC::B3::Air::StackSlot::setOffsetFromFP):
+        (JSC::B3::Air::StackSlot::deepDump const):
+        (JSC::B3::Air::StackSlot::StackSlot):
+        * b3/air/AirStackSlot.h:
+        (JSC::B3::Air::StackSlot::ensureSize):
+        * b3/testb3.h:
+        * ftl/FTLCompile.cpp:
+        * ftl/FTLState.h:
+
 2021-06-02  Pablo Saavedra  <psaavedra@igalia.com>
 
         Fix build error with ENABLE_DFG_JIT=OFF

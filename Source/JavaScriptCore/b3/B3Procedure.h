@@ -58,11 +58,13 @@ class BlockInsertionSet;
 class CFG;
 class Dominators;
 class NaturalLoops;
-class StackSlot;
 class Value;
 class Variable;
 
-namespace Air { class Code; }
+namespace Air {
+class Code;
+class StackSlot;
+} // namespace Air
 
 typedef void WasmBoundsCheckGeneratorFunction(CCallHelpers&, GPRReg);
 typedef SharedTask<WasmBoundsCheckGeneratorFunction> WasmBoundsCheckGenerator;
@@ -112,7 +114,7 @@ public:
         setBlockOrderImpl(blocks);
     }
 
-    JS_EXPORT_PRIVATE StackSlot* addStackSlot(unsigned byteSize);
+    JS_EXPORT_PRIVATE Air::StackSlot* addStackSlot(unsigned byteSize);
     JS_EXPORT_PRIVATE Variable* addVariable(Type);
 
     JS_EXPORT_PRIVATE Type addTuple(Vector<Type>&& types);
@@ -163,11 +165,8 @@ public:
     Vector<BasicBlock*> blocksInPreOrder();
     Vector<BasicBlock*> blocksInPostOrder();
 
-    SparseCollection<StackSlot>& stackSlots() { return m_stackSlots; }
-    const SparseCollection<StackSlot>& stackSlots() const { return m_stackSlots; }
-
-    // Short for stackSlots().remove(). It's better to call this method since it's out of line.
-    void deleteStackSlot(StackSlot*);
+    SparseCollection<Air::StackSlot>& stackSlots();
+    const SparseCollection<Air::StackSlot>& stackSlots() const;
 
     SparseCollection<Variable>& variables() { return m_variables; }
     const SparseCollection<Variable>& variables() const { return m_variables; }
@@ -287,7 +286,6 @@ private:
     JS_EXPORT_PRIVATE Value* addValueImpl(Value*);
     void setBlockOrderImpl(Vector<BasicBlock*>&);
 
-    SparseCollection<StackSlot> m_stackSlots;
     SparseCollection<Variable> m_variables;
     Vector<Vector<Type>> m_tuples;
     Vector<std::unique_ptr<BasicBlock>> m_blocks;

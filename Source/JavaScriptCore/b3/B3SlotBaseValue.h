@@ -31,7 +31,12 @@
 
 namespace JSC { namespace B3 {
 
+namespace Air {
+
 class StackSlot;
+
+} // namespace Air
+
 
 class JS_EXPORT_PRIVATE SlotBaseValue final : public Value {
 public:
@@ -39,7 +44,7 @@ public:
 
     ~SlotBaseValue() final;
 
-    StackSlot* slot() const { return m_slot; }
+    Air::StackSlot* slot() const { return m_slot; }
 
     B3_SPECIALIZE_VALUE_FOR_NO_CHILDREN
 
@@ -49,14 +54,14 @@ private:
 
     void dumpMeta(CommaPrinter&, PrintStream&) const final;
 
-    static Opcode opcodeFromConstructor(Origin, StackSlot*) { return SlotBase; }
-    SlotBaseValue(Origin origin, StackSlot* slot)
+    static Opcode opcodeFromConstructor(Origin, Air::StackSlot*) { return SlotBase; }
+    SlotBaseValue(Origin origin, Air::StackSlot* slot)
         : Value(CheckedOpcode, SlotBase, pointerType(), Zero, origin)
         , m_slot(slot)
     {
     }
 
-    StackSlot* m_slot;
+    Air::StackSlot* m_slot;
 };
 
 } } // namespace JSC::B3

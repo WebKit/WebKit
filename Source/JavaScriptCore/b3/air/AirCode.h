@@ -112,9 +112,7 @@ public:
     // Note that you can rely on stack slots always getting indices that are larger than the index
     // of any prior stack slot. In fact, all stack slots you create in the future will have an index
     // that is >= stackSlots().size().
-    JS_EXPORT_PRIVATE StackSlot* addStackSlot(
-        unsigned byteSize, StackSlotKind, B3::StackSlot* = nullptr);
-    StackSlot* addStackSlot(B3::StackSlot*);
+    JS_EXPORT_PRIVATE StackSlot* addStackSlot(unsigned byteSize, StackSlotKind);
 
     JS_EXPORT_PRIVATE Special* addSpecial(std::unique_ptr<Special>);
 

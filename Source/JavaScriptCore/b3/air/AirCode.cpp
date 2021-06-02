@@ -34,7 +34,6 @@
 #include "AllowMacroScratchRegisterUsageIf.h"
 #include "B3BasicBlockUtils.h"
 #include "B3Procedure.h"
-#include "B3StackSlot.h"
 #include "CCallHelpers.h"
 #include <wtf/ListDump.h>
 #include <wtf/MathExtras.h>
@@ -164,9 +163,9 @@ BasicBlock* Code::addBlock(double frequency)
     return result;
 }
 
-StackSlot* Code::addStackSlot(unsigned byteSize, StackSlotKind kind, B3::StackSlot* b3Slot)
+StackSlot* Code::addStackSlot(unsigned byteSize, StackSlotKind kind)
 {
-    StackSlot* result = m_stackSlots.addNew(byteSize, kind, b3Slot);
+    StackSlot* result = m_stackSlots.addNew(byteSize, kind);
     if (m_stackIsAllocated) {
         // FIXME: This is unnecessarily awful. Fortunately, it doesn't run often.
         unsigned extent = WTF::roundUpToMultipleOf(result->alignment(), frameSize() + byteSize);
@@ -174,11 +173,6 @@ StackSlot* Code::addStackSlot(unsigned byteSize, StackSlotKind kind, B3::StackSl
         setFrameSize(WTF::roundUpToMultipleOf(stackAlignmentBytes(), extent));
     }
     return result;
-}
-
-StackSlot* Code::addStackSlot(B3::StackSlot* b3Slot)
-{
-    return addStackSlot(b3Slot->byteSize(), StackSlotKind::Locked, b3Slot);
 }
 
 Special* Code::addSpecial(std::unique_ptr<Special> special)

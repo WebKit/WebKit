@@ -29,6 +29,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirCode.h"
+#include "AirStackSlotKind.h"
 #include "B3BackwardsCFG.h"
 #include "B3BackwardsDominators.h"
 #include "B3BasicBlockUtils.h"
@@ -37,7 +38,6 @@
 #include "B3Dominators.h"
 #include "B3NaturalLoops.h"
 #include "B3ProcedureInlines.h"
-#include "B3StackSlot.h"
 #include "B3ValueInlines.h"
 #include "B3Variable.h"
 #include "JITOpaqueByproducts.h"
@@ -73,9 +73,9 @@ BasicBlock* Procedure::addBlock(double frequency)
     return result;
 }
 
-StackSlot* Procedure::addStackSlot(unsigned byteSize)
+Air::StackSlot* Procedure::addStackSlot(unsigned byteSize)
 {
-    return m_stackSlots.addNew(byteSize);
+    return m_code->addStackSlot(byteSize, Air::StackSlotKind::Locked);
 }
 
 Variable* Procedure::addVariable(Type type)
@@ -253,7 +253,7 @@ void Procedure::dump(PrintStream& out) const
     }
     if (stackSlots().size()) {
         out.print(tierName, "Stack slots:\n");
-        for (StackSlot* slot : stackSlots())
+        for (Air::StackSlot* slot : stackSlots())
             out.print(tierName, "    ", pointerDump(slot), ": ", deepDump(slot), "\n");
     }
     if (m_byproducts->count())
@@ -268,11 +268,6 @@ Vector<BasicBlock*> Procedure::blocksInPreOrder()
 Vector<BasicBlock*> Procedure::blocksInPostOrder()
 {
     return B3::blocksInPostOrder(at(0));
-}
-
-void Procedure::deleteStackSlot(StackSlot* stackSlot)
-{
-    m_stackSlots.remove(stackSlot);
 }
 
 void Procedure::deleteVariable(Variable* variable)

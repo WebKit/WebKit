@@ -53,7 +53,8 @@ public:
     void ensureSize(unsigned requestedSize)
     {
         ASSERT(!m_offsetFromFP);
-        m_byteSize = std::max(m_byteSize, requestedSize);
+        RELEASE_ASSERT(requestedSize <= std::numeric_limits<uint16_t>::max());
+        m_byteSize = std::max(m_byteSize, static_cast<uint16_t>(requestedSize));
     }
 
     unsigned alignment() const
@@ -66,8 +67,6 @@ public:
             return 4;
         return 8;
     }
-
-    B3::StackSlot* b3Slot() const { return m_b3Slot; }
 
     // Zero means that it's not yet assigned.
     intptr_t offsetFromFP() const { return m_offsetFromFP; }
@@ -86,13 +85,12 @@ private:
     friend class Code;
     friend class SparseCollection<StackSlot>;
 
-    StackSlot(unsigned byteSize, StackSlotKind, B3::StackSlot*);
+    StackSlot(unsigned byteSize, StackSlotKind, intptr_t offsetFromFP = 0);
     
-    unsigned m_byteSize { 0 };
+    uint16_t m_byteSize { 0 };
+    StackSlotKind m_kind { StackSlotKind::Locked };
     unsigned m_index { UINT_MAX };
     intptr_t m_offsetFromFP { 0 };
-    StackSlotKind m_kind { StackSlotKind::Locked };
-    B3::StackSlot* m_b3Slot { nullptr };
 };
 
 class DeepStackSlotDump {
