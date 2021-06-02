@@ -53,21 +53,16 @@ std::unique_ptr<AudioMediaStreamTrackRenderer> AudioTrackPrivateMediaStream::cre
     auto renderer = AudioMediaStreamTrackRenderer::create();
     if (!renderer)
         return nullptr;
+#if !RELEASE_LOG_DISABLED
+    auto& track = stream.m_streamTrack.get();
+    renderer->setLogger(track.logger(), track.logIdentifier());
+#endif
     renderer->setCrashCallback([stream = makeWeakPtr(stream)] {
         if (stream)
             stream->createNewRenderer();
     });
     return renderer;
 }
-
-#if !RELEASE_LOG_DISABLED
-void AudioTrackPrivateMediaStream::setLogger(const Logger& logger, const void* identifier)
-{
-    TrackPrivateBase::setLogger(logger, identifier);
-    if (m_renderer)
-        m_renderer->setLogger(logger, identifier);
-}
-#endif
 
 void AudioTrackPrivateMediaStream::clear()
 {

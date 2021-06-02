@@ -65,7 +65,6 @@ public:
     bool muted() const { return m_muted; }
 
 #if !RELEASE_LOG_DISABLED
-    void setLogger(const Logger&, const void*) final;
     const char* logClassName() const final { return "AudioTrackPrivateMediaStream"; }
 #endif
 
