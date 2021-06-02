@@ -517,7 +517,7 @@ void Heap::deprecatedReportExtraMemorySlowCase(size_t size)
     // https://bugs.webkit.org/show_bug.cgi?id=170411
     CheckedSize checkedNewSize = m_deprecatedExtraMemorySize;
     checkedNewSize += size;
-    m_deprecatedExtraMemorySize = UNLIKELY(checkedNewSize.hasOverflowed()) ? std::numeric_limits<size_t>::max() : checkedNewSize.unsafeGet();
+    m_deprecatedExtraMemorySize = UNLIKELY(checkedNewSize.hasOverflowed()) ? std::numeric_limits<size_t>::max() : checkedNewSize.value();
     reportExtraMemoryAllocatedSlowCase(size);
 }
 
@@ -826,7 +826,7 @@ size_t Heap::extraMemorySize()
     CheckedSize checkedTotal = m_extraMemorySize;
     checkedTotal += m_deprecatedExtraMemorySize;
     checkedTotal += m_arrayBuffers.size();
-    size_t total = UNLIKELY(checkedTotal.hasOverflowed()) ? std::numeric_limits<size_t>::max() : checkedTotal.unsafeGet();
+    size_t total = UNLIKELY(checkedTotal.hasOverflowed()) ? std::numeric_limits<size_t>::max() : checkedTotal.value();
 
     ASSERT(m_objectSpace.capacity() >= m_objectSpace.size());
     return std::min(total, std::numeric_limits<size_t>::max() - m_objectSpace.capacity());
@@ -2255,7 +2255,7 @@ void Heap::updateAllocationLimits()
     if (ASSERT_ENABLED) {
         CheckedSize checkedCurrentHeapSize = m_totalBytesVisited;
         checkedCurrentHeapSize += extraMemorySize();
-        ASSERT(!checkedCurrentHeapSize.hasOverflowed() && checkedCurrentHeapSize.unsafeGet() == currentHeapSize);
+        ASSERT(!checkedCurrentHeapSize.hasOverflowed() && checkedCurrentHeapSize == currentHeapSize);
     }
 
     if (verbose)
@@ -2558,7 +2558,7 @@ void Heap::reportExtraMemoryVisited(size_t size)
         // https://bugs.webkit.org/show_bug.cgi?id=170411
         CheckedSize checkedNewSize = oldSize;
         checkedNewSize += size;
-        size_t newSize = UNLIKELY(checkedNewSize.hasOverflowed()) ? std::numeric_limits<size_t>::max() : checkedNewSize.unsafeGet();
+        size_t newSize = UNLIKELY(checkedNewSize.hasOverflowed()) ? std::numeric_limits<size_t>::max() : checkedNewSize.value();
         if (WTF::atomicCompareExchangeWeakRelaxed(counter, oldSize, newSize))
             return;
     }

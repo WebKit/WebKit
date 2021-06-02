@@ -62,10 +62,10 @@ public:
 
         fastAlignedFree(m_allocation);
 
-        m_allocation = static_cast<T*>(fastAlignedMalloc(alignment, initialSize.unsafeGet()));
+        m_allocation = static_cast<T*>(fastAlignedMalloc(alignment, initialSize));
         if (!m_allocation)
             CRASH();
-        m_size = n.unsafeGet();
+        m_size = n;
         zero();
     }
 

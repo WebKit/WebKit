@@ -75,7 +75,7 @@ Value* Const64Value::checkAddConstant(Procedure& proc, const Value* other) const
     CheckedInt64 result = CheckedInt64(m_value) + CheckedInt64(other->asInt64());
     if (result.hasOverflowed())
         return nullptr;
-    return proc.add<Const64Value>(origin(), result.unsafeGet());
+    return proc.add<Const64Value>(origin(), result);
 }
 
 Value* Const64Value::checkSubConstant(Procedure& proc, const Value* other) const
@@ -85,7 +85,7 @@ Value* Const64Value::checkSubConstant(Procedure& proc, const Value* other) const
     CheckedInt64 result = CheckedInt64(m_value) - CheckedInt64(other->asInt64());
     if (result.hasOverflowed())
         return nullptr;
-    return proc.add<Const64Value>(origin(), result.unsafeGet());
+    return proc.add<Const64Value>(origin(), result);
 }
 
 Value* Const64Value::checkMulConstant(Procedure& proc, const Value* other) const
@@ -95,7 +95,7 @@ Value* Const64Value::checkMulConstant(Procedure& proc, const Value* other) const
     CheckedInt64 result = CheckedInt64(m_value) * CheckedInt64(other->asInt64());
     if (result.hasOverflowed())
         return nullptr;
-    return proc.add<Const64Value>(origin(), result.unsafeGet());
+    return proc.add<Const64Value>(origin(), result);
 }
 
 Value* Const64Value::checkNegConstant(Procedure& proc) const

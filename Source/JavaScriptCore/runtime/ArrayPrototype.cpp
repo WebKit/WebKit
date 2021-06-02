@@ -1478,14 +1478,14 @@ static EncodedJSValue concatAppendOne(JSGlobalObject* globalObject, VM& vm, JSAr
     Butterfly* firstButterfly = first->butterfly();
     unsigned firstArraySize = firstButterfly->publicLength();
 
-    Checked<unsigned, RecordOverflow> checkedResultSize = firstArraySize;
+    CheckedUint32 checkedResultSize = firstArraySize;
     checkedResultSize += 1;
     if (UNLIKELY(checkedResultSize.hasOverflowed())) {
         throwOutOfMemoryError(globalObject, scope);
         return encodedJSValue();
     }
 
-    unsigned resultSize = checkedResultSize.unsafeGet();
+    unsigned resultSize = checkedResultSize;
     IndexingType type = first->mergeIndexingTypeForCopying(indexingTypeForValue(second) | IsArray);
     
     if (type == NonArray)
@@ -1571,7 +1571,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncConcatMemcpy, (JSGlobalObject* glo
     unsigned firstArraySize = firstButterfly->publicLength();
     unsigned secondArraySize = secondButterfly->publicLength();
 
-    Checked<unsigned, RecordOverflow> checkedResultSize = firstArraySize;
+    CheckedUint32 checkedResultSize = firstArraySize;
     checkedResultSize += secondArraySize;
 
     if (UNLIKELY(checkedResultSize.hasOverflowed())) {
@@ -1579,7 +1579,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncConcatMemcpy, (JSGlobalObject* glo
         return encodedJSValue();
     }
 
-    unsigned resultSize = checkedResultSize.unsafeGet();
+    unsigned resultSize = checkedResultSize;
     IndexingType firstType = firstArray->indexingType();
     IndexingType secondType = secondArray->indexingType();
     IndexingType type = firstArray->mergeIndexingTypeForCopying(secondType);

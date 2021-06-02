@@ -109,7 +109,7 @@ void StringBuilder::appendQuotedJSONString(const String& string)
     // Make sure we have enough buffer space to append this string for worst case without reallocating.
     // The 2 is for the '"' quotes on each end.
     // The 6 is the worst case for a single code unit that could be encoded as \uNNNN.
-    Checked<unsigned, RecordOverflow> stringLength = string.length();
+    CheckedUint32 stringLength = string.length();
     auto maximumCapacityRequired = m_length + 2 + stringLength * 6;
     if (maximumCapacityRequired.hasOverflowed()) {
         didOverflow();
@@ -119,7 +119,7 @@ void StringBuilder::appendQuotedJSONString(const String& string)
     // We need to check maximum length before calling roundUpPowerOfTwo because that function returns 0 for values in the range [2^31, 2^32-2].
     // FIXME: Instead, roundUpToPowerOfTwo should be fixed to do something more useful in those cases, perhaps using checked or saturated arithmetic.
     // https://bugs.webkit.org/show_bug.cgi?id=176086
-    auto allocationSize = maximumCapacityRequired.unsafeGet();
+    auto allocationSize = maximumCapacityRequired.value();
     if (allocationSize > String::MaxLength) {
         didOverflow();
         return;

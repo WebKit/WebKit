@@ -293,7 +293,7 @@ RefPtr<Uint8ClampedArray> FilterEffect::unmultipliedResult(const IntRect& rect, 
     auto checkedArea = scaledSize.area<RecordOverflow>() * 4;
     if (checkedArea.hasOverflowed())
         return nullptr;
-    auto pixelArray = Uint8ClampedArray::tryCreateUninitialized(checkedArea.unsafeGet());
+    auto pixelArray = Uint8ClampedArray::tryCreateUninitialized(checkedArea);
     if (!pixelArray)
         return nullptr;
     copyUnmultipliedResult(*pixelArray, rect, colorSpace);
@@ -308,7 +308,7 @@ RefPtr<Uint8ClampedArray> FilterEffect::premultipliedResult(const IntRect& rect,
     auto checkedArea = scaledSize.area<RecordOverflow>() * 4;
     if (checkedArea.hasOverflowed())
         return nullptr;
-    auto pixelArray = Uint8ClampedArray::tryCreateUninitialized(checkedArea.unsafeGet());
+    auto pixelArray = Uint8ClampedArray::tryCreateUninitialized(checkedArea);
     if (!pixelArray)
         return nullptr;
     copyPremultipliedResult(*pixelArray, rect, colorSpace);
@@ -384,7 +384,7 @@ static void copyPremultiplyingAlpha(const Uint8ClampedArray& source, Uint8Clampe
     vImagePremultiplyData_RGBA8888(&src, &dest, kvImageNoFlags);
 #else
     const uint8_t* sourceComponent = source.data();
-    const uint8_t* end = sourceComponent + (inputSize.area() * 4).unsafeGet();
+    const uint8_t* end = sourceComponent + (inputSize.area() * 4).value();
     uint8_t* destinationComponent = destination.data();
 
     while (sourceComponent < end) {
@@ -419,7 +419,7 @@ static void copyUnpremultiplyingAlpha(const Uint8ClampedArray& source, Uint8Clam
     vImageUnpremultiplyData_RGBA8888(&src, &dest, kvImageNoFlags);
 #else
     const uint8_t* sourceComponent = source.data();
-    const uint8_t* end = sourceComponent + (inputSize.area() * 4).unsafeGet();
+    const uint8_t* end = sourceComponent + (inputSize.area() * 4).value();
     uint8_t* destinationComponent = destination.data();
     while (sourceComponent < end) {
         int alpha = sourceComponent[3];

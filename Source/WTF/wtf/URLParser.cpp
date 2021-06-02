@@ -2165,7 +2165,7 @@ Expected<uint32_t, URLParser::IPv4PieceParsingError> URLParser::parseIPv4Piece(C
         }
         if (*iterator == '.') {
             ASSERT(!value.hasOverflowed());
-            return value.unsafeGet();
+            return value.value();
         }
         switch (state) {
         case State::UnknownBase:
@@ -2217,7 +2217,7 @@ Expected<uint32_t, URLParser::IPv4PieceParsingError> URLParser::parseIPv4Piece(C
         }
     }
     ASSERT(!value.hasOverflowed());
-    return value.unsafeGet();
+    return value.value();
 }
 
 ALWAYS_INLINE static uint64_t pow256(size_t exponent)

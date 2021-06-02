@@ -628,7 +628,7 @@ JSC_DEFINE_JIT_OPERATION(operationMaterializeObjectInOSR, JSCell*, (JSGlobalObje
 
         // FIXME: we should throw an out of memory error here if checkedArraySize has hasOverflowed() or tryCreate() fails.
         // https://bugs.webkit.org/show_bug.cgi?id=169784
-        unsigned arraySize = checkedArraySize.unsafeGet(); // Crashes if overflowed.
+        unsigned arraySize = checkedArraySize; // Crashes if overflowed.
         JSArray* result = JSArray::tryCreate(vm, structure, arraySize);
         RELEASE_ASSERT(result);
 

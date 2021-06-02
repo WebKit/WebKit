@@ -160,7 +160,7 @@ public:
 
     static size_t allocationSize(Checked<size_t> capacity)
     {
-        return (capacity * sizeof(BucketType)).unsafeGet();
+        return capacity * sizeof(BucketType);
     }
 
     ALWAYS_INLINE BucketType* buffer() const

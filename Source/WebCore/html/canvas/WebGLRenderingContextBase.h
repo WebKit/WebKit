@@ -851,7 +851,7 @@ protected:
                 return false;
             }
 
-            if (maxYAccessed.unsafeGet() > imageHeight) {
+            if (maxYAccessed > imageHeight) {
                 synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName,
                     "Not enough data supplied to upload to a 3D texture with depth > 1");
                 return false;
@@ -1146,7 +1146,7 @@ inline std::optional<T> WebGLRenderingContextBase::checkedAddAndMultiply(T value
     if (checkedResult.hasOverflowed())
         return std::nullopt;
 
-    return checkedResult.unsafeGet();
+    return checkedResult.value();
 }
 
 template<typename T>

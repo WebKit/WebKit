@@ -3419,7 +3419,7 @@ private:
                     return JSValue();
             }
 
-            if (length && (IntSize(width, height).area() * 4).unsafeGet() != length) {
+            if (length && (IntSize(width, height).area() * 4) != length) {
                 fail();
                 return JSValue();
             }

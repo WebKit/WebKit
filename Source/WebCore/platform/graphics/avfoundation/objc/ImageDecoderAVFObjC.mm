@@ -556,7 +556,7 @@ unsigned ImageDecoderAVFObjC::frameBytesAtIndex(size_t index, SubsamplingLevel s
         return 0;
 
     IntSize frameSize = frameSizeAtIndex(index, subsamplingLevel);
-    return (frameSize.area() * 4).unsafeGet();
+    return frameSize.area() * 4;
 }
 
 PlatformImagePtr ImageDecoderAVFObjC::createFrameImageAtIndex(size_t index, SubsamplingLevel, const DecodingOptions&)

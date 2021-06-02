@@ -3033,7 +3033,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewArrayWithSpreadSlow, JSCell*, (JSGlobalObje
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     EncodedJSValue* values = static_cast<EncodedJSValue*>(buffer);
-    Checked<unsigned, RecordOverflow> checkedLength = 0;
+    CheckedUint32 checkedLength = 0;
     for (unsigned i = 0; i < numItems; i++) {
         JSValue value = JSValue::decode(values[i]);
         if (JSImmutableButterfly* array = jsDynamicCast<JSImmutableButterfly*>(vm, value))
@@ -3047,7 +3047,7 @@ JSC_DEFINE_JIT_OPERATION(operationNewArrayWithSpreadSlow, JSCell*, (JSGlobalObje
         return nullptr;
     }
 
-    unsigned length = checkedLength.unsafeGet();
+    unsigned length = checkedLength;
     if (UNLIKELY(length >= MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH)) {
         throwOutOfMemoryError(globalObject, scope);
         return nullptr;

@@ -395,9 +395,9 @@ public:
                 this->overflowed();
                 return false;
             }
-            ASSERT(static_cast<unsigned>(sum.unsafeGet()) <= MaxLength);
+            ASSERT(static_cast<unsigned>(sum) <= MaxLength);
             m_strings.append(jsString);
-            m_length = static_cast<unsigned>(sum.unsafeGet());
+            m_length = static_cast<unsigned>(sum);
             return true;
         }
 

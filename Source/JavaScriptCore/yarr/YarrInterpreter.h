@@ -115,8 +115,8 @@ struct ByteTerm {
     {
         atom.patternCharacter = ch;
         atom.quantityType = quantityType;
-        atom.quantityMinCount = quantityCount.unsafeGet();
-        atom.quantityMaxCount = quantityCount.unsafeGet();
+        atom.quantityMinCount = quantityCount;
+        atom.quantityMaxCount = quantityCount;
         inputPosition = inputPos;
 
         switch (quantityType) {
@@ -152,8 +152,8 @@ struct ByteTerm {
         atom.casedCharacter.lo = lo;
         atom.casedCharacter.hi = hi;
         atom.quantityType = quantityType;
-        atom.quantityMinCount = quantityCount.unsafeGet();
-        atom.quantityMaxCount = quantityCount.unsafeGet();
+        atom.quantityMinCount = quantityCount;
+        atom.quantityMaxCount = quantityCount;
         inputPosition = inputPos;
     }
 
@@ -214,14 +214,14 @@ struct ByteTerm {
     static ByteTerm CheckInput(Checked<unsigned> count)
     {
         ByteTerm term(TypeCheckInput);
-        term.checkInputCount = count.unsafeGet();
+        term.checkInputCount = count;
         return term;
     }
 
     static ByteTerm UncheckInput(Checked<unsigned> count)
     {
         ByteTerm term(TypeUncheckInput);
-        term.checkInputCount = count.unsafeGet();
+        term.checkInputCount = count;
         return term;
     }
     

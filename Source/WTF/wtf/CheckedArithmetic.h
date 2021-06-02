@@ -727,23 +727,30 @@ public:
     // Boolean operators
     bool operator!() const
     {
-        if (this->hasOverflowed())
+        if (UNLIKELY(this->hasOverflowed()))
             this->crash();
         return !m_value;
     }
 
     explicit operator bool() const
     {
-        if (this->hasOverflowed())
+        if (UNLIKELY(this->hasOverflowed()))
             this->crash();
         return m_value;
     }
 
-    // Value accessors. unsafeGet() will crash if there's been an overflow.
-    template<typename U = T>
-    U unsafeGet() const
+    operator T() const
     {
-        if (this->hasOverflowed())
+        if (UNLIKELY(this->hasOverflowed()))
+            this->crash();
+        return m_value;
+    }
+
+    // Value accessors. value() will crash if there's been an overflow.
+    template<typename U = T>
+    U value() const
+    {
+        if (UNLIKELY(this->hasOverflowed()))
             this->crash();
         return static_cast<U>(m_value);
     }
@@ -809,7 +816,7 @@ public:
     // Equality comparisons
     template <typename V> bool operator==(Checked<T, V> rhs)
     {
-        return unsafeGet() == rhs.unsafeGet();
+        return value() == rhs.value();
     }
 
     template <typename U> bool operator==(U rhs)
@@ -821,7 +828,7 @@ public:
     
     template <typename U, typename V> bool operator==(Checked<U, V> rhs)
     {
-        return unsafeGet() == Checked(rhs.unsafeGet());
+        return value() == Checked(rhs.value());
     }
 
     template <typename U> bool operator!=(U rhs)
@@ -832,42 +839,22 @@ public:
     // Other comparisons
     template <typename V> bool operator<(Checked<T, V> rhs) const
     {
-        return unsafeGet() < rhs.unsafeGet();
-    }
-
-    bool operator<(T rhs) const
-    {
-        return unsafeGet() < rhs;
+        return value() < rhs.value();
     }
 
     template <typename V> bool operator<=(Checked<T, V> rhs) const
     {
-        return unsafeGet() <= rhs.unsafeGet();
-    }
-
-    bool operator<=(T rhs) const
-    {
-        return unsafeGet() <= rhs;
+        return value() <= rhs.value();
     }
 
     template <typename V> bool operator>(Checked<T, V> rhs) const
     {
-        return unsafeGet() > rhs.unsafeGet();
-    }
-
-    bool operator>(T rhs) const
-    {
-        return unsafeGet() > rhs;
+        return value() > rhs.value();
     }
 
     template <typename V> bool operator>=(Checked<T, V> rhs) const
     {
-        return unsafeGet() >= rhs.unsafeGet();
-    }
-
-    bool operator>=(T rhs) const
-    {
-        return unsafeGet() >= rhs;
+        return value() >= rhs.value();
     }
 
 private:

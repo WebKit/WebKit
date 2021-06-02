@@ -224,7 +224,7 @@ static const char** xsltParamArrayFromParameterMap(XSLTProcessor::ParameterMap& 
     if (parameters.isEmpty())
         return 0;
 
-    auto size = (((Checked<size_t>(parameters.size()) * 2U) + 1U) * sizeof(char*)).unsafeGet();
+    auto size = (((Checked<size_t>(parameters.size()) * 2U) + 1U) * sizeof(char*)).value();
     auto** parameterArray = static_cast<const char**>(fastMalloc(size));
 
     size_t index = 0;

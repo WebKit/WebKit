@@ -1083,7 +1083,7 @@ private:
         Checked<unsigned, RecordOverflow> n = consumeDigit();
         while (peekIsDigit())
             n = n * 10 + consumeDigit();
-        return n.hasOverflowed() ? quantifyInfinite : n.unsafeGet();
+        return n.hasOverflowed() ? quantifyInfinite : n.value();
     }
 
     // https://tc39.es/ecma262/#prod-annexB-LegacyOctalEscapeSequence

@@ -60,7 +60,7 @@ public:
     bool isComplete() const { return m_decodingStatus == DecodingStatus::Complete; }
 
     IntSize size() const;
-    unsigned frameBytes() const { return hasNativeImage() ? (size().area() * sizeof(uint32_t)).unsafeGet() : 0; }
+    unsigned frameBytes() const { return hasNativeImage() ? (size().area() * sizeof(uint32_t)).value() : 0; }
     SubsamplingLevel subsamplingLevel() const { return m_subsamplingLevel; }
 
     RefPtr<NativeImage> nativeImage() const { return m_nativeImage; }

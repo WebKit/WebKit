@@ -88,32 +88,32 @@ public:
     static void run()
     {
         Checked<type, RecordOverflow> value;
-        EXPECT_EQ(coerceLiteral(0), value.unsafeGet());
-        EXPECT_EQ(std::numeric_limits<type>::max(), (value + std::numeric_limits<type>::max()).unsafeGet());
-        EXPECT_EQ(std::numeric_limits<type>::max(), (std::numeric_limits<type>::max() + value).unsafeGet());
-        EXPECT_EQ(std::numeric_limits<type>::min(), (value + std::numeric_limits<type>::min()).unsafeGet());
-        EXPECT_EQ(std::numeric_limits<type>::min(), (std::numeric_limits<type>::min() + value).unsafeGet());
+        EXPECT_EQ(coerceLiteral(0), value.value());
+        EXPECT_EQ(std::numeric_limits<type>::max(), (value + std::numeric_limits<type>::max()).value());
+        EXPECT_EQ(std::numeric_limits<type>::max(), (std::numeric_limits<type>::max() + value).value());
+        EXPECT_EQ(std::numeric_limits<type>::min(), (value + std::numeric_limits<type>::min()).value());
+        EXPECT_EQ(std::numeric_limits<type>::min(), (std::numeric_limits<type>::min() + value).value());
 
-        EXPECT_EQ(coerceLiteral(0), (value * coerceLiteral(0)).unsafeGet());
-        EXPECT_EQ(coerceLiteral(0), (coerceLiteral(0) * value).unsafeGet());
-        EXPECT_EQ(coerceLiteral(0), (value * value).unsafeGet());
-        EXPECT_EQ(coerceLiteral(0), (value - coerceLiteral(0)).unsafeGet());
-        EXPECT_EQ(coerceLiteral(0), (coerceLiteral(0) - value).unsafeGet());
-        EXPECT_EQ(coerceLiteral(0), (value - value).unsafeGet());
-        EXPECT_EQ(coerceLiteral(0), (value++).unsafeGet());
-        EXPECT_EQ(coerceLiteral(1), (value--).unsafeGet());
-        EXPECT_EQ(coerceLiteral(1), (++value).unsafeGet());
-        EXPECT_EQ(coerceLiteral(0), (--value).unsafeGet());
-        EXPECT_EQ(coerceLiteral(10), (value += coerceLiteral(10)).unsafeGet());
-        EXPECT_EQ(coerceLiteral(10), value.unsafeGet());
-        EXPECT_EQ(coerceLiteral(100), (value *= coerceLiteral(10)).unsafeGet());
-        EXPECT_EQ(coerceLiteral(100), value.unsafeGet());
-        EXPECT_EQ(coerceLiteral(0), (value -= coerceLiteral(100)).unsafeGet());
-        EXPECT_EQ(coerceLiteral(0), value.unsafeGet());
+        EXPECT_EQ(coerceLiteral(0), (value * coerceLiteral(0)).value());
+        EXPECT_EQ(coerceLiteral(0), (coerceLiteral(0) * value).value());
+        EXPECT_EQ(coerceLiteral(0), (value * value).value());
+        EXPECT_EQ(coerceLiteral(0), (value - coerceLiteral(0)).value());
+        EXPECT_EQ(coerceLiteral(0), (coerceLiteral(0) - value).value());
+        EXPECT_EQ(coerceLiteral(0), (value - value).value());
+        EXPECT_EQ(coerceLiteral(0), (value++).value());
+        EXPECT_EQ(coerceLiteral(1), (value--).value());
+        EXPECT_EQ(coerceLiteral(1), (++value).value());
+        EXPECT_EQ(coerceLiteral(0), (--value).value());
+        EXPECT_EQ(coerceLiteral(10), (value += coerceLiteral(10)).value());
+        EXPECT_EQ(coerceLiteral(10), value.value());
+        EXPECT_EQ(coerceLiteral(100), (value *= coerceLiteral(10)).value());
+        EXPECT_EQ(coerceLiteral(100), value.value());
+        EXPECT_EQ(coerceLiteral(0), (value -= coerceLiteral(100)).value());
+        EXPECT_EQ(coerceLiteral(0), value.value());
         value = 10;
-        EXPECT_EQ(coerceLiteral(10), value.unsafeGet());
-        EXPECT_EQ(coerceLiteral(0), (value - coerceLiteral(10)).unsafeGet());
-        EXPECT_EQ(coerceLiteral(10), value.unsafeGet());
+        EXPECT_EQ(coerceLiteral(10), value.value());
+        EXPECT_EQ(coerceLiteral(0), (value - coerceLiteral(10)).value());
+        EXPECT_EQ(coerceLiteral(10), value.value());
 
         value = std::numeric_limits<type>::min();
         EXPECT_EQ(true, (Checked<type, RecordOverflow>(value - coerceLiteral(1))).hasOverflowed());
@@ -374,10 +374,10 @@ public:
         Checked<type, RecordOverflow> value;
         value = 10;
 
-        EXPECT_EQ(coerceLiteral(0), (value + -10).unsafeGet());
-        EXPECT_EQ(0U, (value - 10U).unsafeGet());
-        EXPECT_EQ(coerceLiteral(0), (-10 + value).unsafeGet());
-        EXPECT_EQ(0U, (10U - value).unsafeGet());
+        EXPECT_EQ(coerceLiteral(0), (value + -10).value());
+        EXPECT_EQ(0U, (value - 10U).value());
+        EXPECT_EQ(coerceLiteral(0), (-10 + value).value());
+        EXPECT_EQ(0U, (10U - value).value());
         value = std::numeric_limits<type>::min();
         EXPECT_EQ(true, (Checked<type, RecordOverflow>(value - 1)).hasOverflowed());
         EXPECT_EQ(true, !(value--).hasOverflowed());
@@ -489,14 +489,14 @@ TEST(CheckedArithmeticTest, IsInBounds)
 TEST(CheckedArithmeticTest, Division)
 {
     CheckedSize size = 100;
-    EXPECT_EQ(100U, size.unsafeGet());
+    EXPECT_EQ(100U, size.value());
     size /= 10U;
     EXPECT_FALSE(size.hasOverflowed());
-    EXPECT_EQ(10U, size.unsafeGet());
+    EXPECT_EQ(10U, size.value());
 
     size /= 11U;
     EXPECT_FALSE(size.hasOverflowed());
-    EXPECT_EQ(0U, size.unsafeGet());
+    EXPECT_EQ(0U, size.value());
 
     size = 100;
     EXPECT_FALSE(size.hasOverflowed());
@@ -506,7 +506,7 @@ TEST(CheckedArithmeticTest, Division)
 
     size = 100;
     EXPECT_FALSE(size.hasOverflowed());
-    EXPECT_EQ(100U, size.unsafeGet());
+    EXPECT_EQ(100U, size.value());
 }
 
 } // namespace TestWebKitAPI

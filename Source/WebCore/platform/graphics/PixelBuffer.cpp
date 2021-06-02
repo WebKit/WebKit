@@ -59,7 +59,7 @@ Checked<unsigned, RecordOverflow> PixelBuffer::computeBufferSize(const PixelBuff
 std::optional<PixelBuffer> PixelBuffer::tryCreateForDecoding(const PixelBufferFormat& format, const IntSize& size, unsigned dataByteLength)
 {
     ASSERT(supportedPixelFormat(format.pixelFormat));
-    ASSERT(computeBufferSize(format, size).unsafeGet() == dataByteLength);
+    ASSERT(computeBufferSize(format, size) == dataByteLength);
 
     auto pixelArray = Uint8ClampedArray::tryCreateUninitialized(dataByteLength);
     if (!pixelArray)
@@ -74,7 +74,7 @@ std::optional<PixelBuffer> PixelBuffer::tryCreate(const PixelBufferFormat& forma
     auto bufferSize = computeBufferSize(format, size);
     if (bufferSize.hasOverflowed())
         return std::nullopt;
-    auto pixelArray = Uint8ClampedArray::tryCreateUninitialized(bufferSize.unsafeGet());
+    auto pixelArray = Uint8ClampedArray::tryCreateUninitialized(bufferSize);
     if (!pixelArray)
         return std::nullopt;
     return { { format, size, pixelArray.releaseNonNull() } };
@@ -87,9 +87,9 @@ std::optional<PixelBuffer> PixelBuffer::tryCreate(const PixelBufferFormat& forma
     auto bufferSize = computeBufferSize(format, size);
     if (bufferSize.hasOverflowed())
         return std::nullopt;
-    if (bufferSize.unsafeGet() != arrayBuffer->byteLength())
+    if (bufferSize != arrayBuffer->byteLength())
         return std::nullopt;
-    auto pixelArray = Uint8ClampedArray::tryCreate(WTFMove(arrayBuffer), 0, bufferSize.unsafeGet());
+    auto pixelArray = Uint8ClampedArray::tryCreate(WTFMove(arrayBuffer), 0, bufferSize);
     if (!pixelArray)
         return std::nullopt;
     return { { format, size, pixelArray.releaseNonNull() } };
@@ -100,7 +100,7 @@ PixelBuffer::PixelBuffer(const PixelBufferFormat& format, const IntSize& size, R
     , m_size { size }
     , m_data { WTFMove(data) }
 {
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION((m_size.area() * 4).unsafeGet() <= m_data->length());
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION((m_size.area() * 4) <= m_data->length());
 }
 
 PixelBuffer::PixelBuffer(const PixelBufferFormat& format, const IntSize& size, JSC::Uint8ClampedArray& data)
@@ -108,7 +108,7 @@ PixelBuffer::PixelBuffer(const PixelBufferFormat& format, const IntSize& size, J
     , m_size { size }
     , m_data { data }
 {
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION((m_size.area() * 4).unsafeGet() <= m_data->length());
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION((m_size.area() * 4) <= m_data->length());
 }
 
 PixelBuffer::~PixelBuffer() = default;

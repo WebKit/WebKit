@@ -256,7 +256,7 @@ auto StreamingParser::addBytes(const uint8_t* bytes, size_t bytesSize, IsEndOfSt
         return m_state;
 
     m_totalSize += bytesSize;
-    if (UNLIKELY(m_totalSize.hasOverflowed() || m_totalSize.unsafeGet() > maxModuleSize)) {
+    if (UNLIKELY(m_totalSize.hasOverflowed() || m_totalSize > maxModuleSize)) {
         m_state = fail("module size is too large, maximum ", maxModuleSize);
         return m_state;
     }

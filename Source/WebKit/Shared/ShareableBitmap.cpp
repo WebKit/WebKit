@@ -43,7 +43,7 @@ ShareableBitmap::Handle::Handle()
 
 void ShareableBitmap::Handle::encode(IPC::Encoder& encoder) const
 {
-    SharedMemory::IPCHandle ipcHandle(WTFMove(m_handle), numBytesForSize(m_size, m_configuration).unsafeGet());
+    SharedMemory::IPCHandle ipcHandle(WTFMove(m_handle), numBytesForSize(m_size, m_configuration));
     encoder << ipcHandle;
     encoder << m_size;
     encoder << m_configuration;
@@ -117,7 +117,7 @@ RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Configurati
         return nullptr;
 
     void* data = 0;
-    data = ShareableBitmapMalloc::tryMalloc(numBytes.unsafeGet());
+    data = ShareableBitmapMalloc::tryMalloc(numBytes);
     if (!data)
         return nullptr;
     return adoptRef(new ShareableBitmap(size, configuration, data));
@@ -129,7 +129,7 @@ RefPtr<ShareableBitmap> ShareableBitmap::createShareable(const IntSize& size, Co
     if (numBytes.hasOverflowed())
         return nullptr;
 
-    RefPtr<SharedMemory> sharedMemory = SharedMemory::allocate(numBytes.unsafeGet());
+    RefPtr<SharedMemory> sharedMemory = SharedMemory::allocate(numBytes);
     if (!sharedMemory)
         return nullptr;
 
@@ -143,7 +143,7 @@ RefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Configurati
     auto numBytes = numBytesForSize(size, configuration);
     if (numBytes.hasOverflowed())
         return nullptr;
-    if (sharedMemory->size() < numBytes.unsafeGet()) {
+    if (sharedMemory->size() < numBytes) {
         ASSERT_NOT_REACHED();
         return nullptr;
     }

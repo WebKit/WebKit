@@ -394,12 +394,12 @@ private:
                 if (!indexValue || !indexValue.isUInt32())
                     break;
 
-                Checked<unsigned, RecordOverflow> checkedIndex = indexValue.asUInt32();
+                CheckedUint32 checkedIndex = indexValue.asUInt32();
                 checkedIndex += node->numberOfArgumentsToSkip();
                 if (checkedIndex.hasOverflowed())
                     break;
                 
-                unsigned index = checkedIndex.unsafeGet();
+                unsigned index = checkedIndex;
                 Node* arguments = node->child1().node();
                 InlineCallFrame* inlineCallFrame = arguments->origin.semantic.inlineCallFrame();
                 

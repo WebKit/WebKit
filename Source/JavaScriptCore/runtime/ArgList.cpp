@@ -68,19 +68,19 @@ template void MarkedArgumentBuffer::markLists(SlotVisitor&, ListSet&);
 void MarkedArgumentBuffer::slowEnsureCapacity(size_t requestedCapacity)
 {
     setNeedsOverflowCheck();
-    auto checkedNewCapacity = Checked<int, RecordOverflow>(requestedCapacity);
+    auto checkedNewCapacity = CheckedInt32(requestedCapacity);
     if (UNLIKELY(checkedNewCapacity.hasOverflowed()))
         return this->overflowed();
-    expandCapacity(checkedNewCapacity.unsafeGet());
+    expandCapacity(checkedNewCapacity);
 }
 
 void MarkedArgumentBuffer::expandCapacity()
 {
     setNeedsOverflowCheck();
-    auto checkedNewCapacity = Checked<int, RecordOverflow>(m_capacity) * 2;
+    auto checkedNewCapacity = CheckedInt32(m_capacity) * 2;
     if (UNLIKELY(checkedNewCapacity.hasOverflowed()))
         return this->overflowed();
-    expandCapacity(checkedNewCapacity.unsafeGet());
+    expandCapacity(checkedNewCapacity);
 }
 
 void MarkedArgumentBuffer::expandCapacity(int newCapacity)
@@ -90,7 +90,7 @@ void MarkedArgumentBuffer::expandCapacity(int newCapacity)
     auto checkedSize = CheckedSize(newCapacity) * sizeof(EncodedJSValue);
     if (UNLIKELY(checkedSize.hasOverflowed()))
         return this->overflowed();
-    EncodedJSValue* newBuffer = static_cast<EncodedJSValue*>(Gigacage::tryMalloc(Gigacage::JSValue, checkedSize.unsafeGet()));
+    EncodedJSValue* newBuffer = static_cast<EncodedJSValue*>(Gigacage::tryMalloc(Gigacage::JSValue, checkedSize));
     if (!newBuffer)
         return this->overflowed();
     for (int i = 0; i < m_size; ++i) {

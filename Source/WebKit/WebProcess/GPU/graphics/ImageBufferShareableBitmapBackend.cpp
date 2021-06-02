@@ -68,8 +68,7 @@ IntSize ImageBufferShareableBitmapBackend::calculateSafeBackendSize(const Parame
 unsigned ImageBufferShareableBitmapBackend::calculateBytesPerRow(const Parameters& parameters, const IntSize& backendSize)
 {
     ASSERT(!backendSize.isEmpty());
-    Checked<unsigned, RecordOverflow> bytesPerRow = ShareableBitmap::calculateBytesPerRow(backendSize, configuration(parameters));
-    return bytesPerRow.unsafeGet();
+    return ShareableBitmap::calculateBytesPerRow(backendSize, configuration(parameters));
 }
 
 size_t ImageBufferShareableBitmapBackend::calculateMemoryCost(const Parameters& parameters)

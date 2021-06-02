@@ -995,7 +995,7 @@ inline void FrameView::incrementVisuallyNonEmptyPixelCount(const IntSize& size)
     if (UNLIKELY(area.hasOverflowed()))
         m_visuallyNonEmptyPixelCount = std::numeric_limits<decltype(m_visuallyNonEmptyPixelCount)>::max();
     else
-        m_visuallyNonEmptyPixelCount = area.unsafeGet();
+        m_visuallyNonEmptyPixelCount = area;
 }
 
 WTF::TextStream& operator<<(WTF::TextStream&, const FrameView&);

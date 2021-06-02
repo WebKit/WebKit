@@ -145,7 +145,7 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool flush, bool
 
 Vector<uint8_t> TextCodecUTF16::encode(StringView string, UnencodableHandling) const
 {
-    Vector<uint8_t> result(WTF::checkedProduct<size_t>(string.length(), 2).unsafeGet());
+    Vector<uint8_t> result(WTF::checkedProduct<size_t>(string.length(), 2));
     auto* bytes = result.data();
 
     if (m_littleEndian) {

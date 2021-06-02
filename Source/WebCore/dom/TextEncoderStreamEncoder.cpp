@@ -38,7 +38,7 @@ RefPtr<Uint8Array> TextEncoderStreamEncoder::encode(const String& input)
     if (!view.length())
         return nullptr;
 
-    Vector<uint8_t> bytes(WTF::checkedProduct<size_t>(view.length() + 1, 3).unsafeGet());
+    Vector<uint8_t> bytes(WTF::checkedProduct<size_t>(view.length() + 1, 3));
     size_t bytesWritten = 0;
 
     for (size_t cptr = 0; cptr < view.length(); cptr++) {

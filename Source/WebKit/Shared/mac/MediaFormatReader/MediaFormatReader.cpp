@@ -265,7 +265,7 @@ OSStatus MediaFormatReader::copyTrackArray(CFArrayRef* trackArrayCopy)
     if (*m_parseTracksStatus != noErr)
         return *m_parseTracksStatus;
 
-    auto mutableArray = adoptCF(CFArrayCreateMutable(allocator(), Checked<CFIndex>(m_trackReaders.size()).unsafeGet(), &kCFTypeArrayCallBacks));
+    auto mutableArray = adoptCF(CFArrayCreateMutable(allocator(), Checked<CFIndex>(m_trackReaders.size()), &kCFTypeArrayCallBacks));
     for (auto& trackReader : m_trackReaders)
         CFArrayAppendValue(mutableArray.get(), trackReader->wrapper());
 

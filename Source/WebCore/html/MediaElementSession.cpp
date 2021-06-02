@@ -996,7 +996,7 @@ static bool isElementRectMostlyInMainFrame(const HTMLMediaElement& element)
 
     elementRectInMainFrame.intersect(mainFrameRectAdjustedForScrollPosition);
 
-    return elementRectInMainFrame.area().unsafeGet() > totalElementArea.unsafeGet() / 2;
+    return elementRectInMainFrame.area() > totalElementArea / 2;
 }
 
 static bool isElementLargeRelativeToMainFrame(const HTMLMediaElement& element)

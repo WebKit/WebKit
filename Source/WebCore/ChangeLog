@@ -1,3 +1,149 @@
+2021-06-01  Chris Dumez  <cdumez@apple.com>
+
+        Rename Checked::unsafeGet() to Checked::value()
+        https://bugs.webkit.org/show_bug.cgi?id=226514
+
+        Reviewed by Darin Adler.
+
+        Rename Checked::unsafeGet() to Checked::value(). The "unsafeGet" naming is confusing as this
+        function isn't really unsafe since it will crash if the value has overflowed. Also add an
+        `operator T()` to implicitly convert a Checked to its underlying type without needing to
+        call value().
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::readTerminal):
+        * dom/TextEncoderStreamEncoder.cpp:
+        (WebCore::TextEncoderStreamEncoder::encode):
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::takeResults):
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::saveFormControlState const):
+        * html/ImageData.cpp:
+        (WebCore::ImageData::create):
+        (WebCore::ImageData::createUninitialized):
+        * html/MediaElementSession.cpp:
+        (WebCore::isElementRectMostlyInMainFrame):
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::sliceArrayBufferView):
+        (WebCore::WebGL2RenderingContext::copyBufferSubData):
+        (WebCore::WebGL2RenderingContext::getBufferSubData):
+        (WebCore::WebGL2RenderingContext::validateClearBuffer):
+        * html/canvas/WebGLBuffer.cpp:
+        (WebCore::WebGLBuffer::associateBufferSubDataImpl):
+        (WebCore::WebGLBuffer::associateCopyBufferSubData):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::clip2D):
+        (WebCore::WebGLRenderingContextBase::validateDrawArrays):
+        (WebCore::WebGLRenderingContextBase::validateDrawElements):
+        (WebCore::WebGLRenderingContextBase::validateTexFuncData):
+        (WebCore::WebGLRenderingContextBase::validateCompressedTexFuncData):
+        (WebCore::WebGLRenderingContextBase::validateSimulatedVertexAttrib0):
+        * html/canvas/WebGLRenderingContextBase.h:
+        (WebCore::WebGLRenderingContextBase::validateTexImageSubRectangle):
+        (WebCore::WebGLRenderingContextBase::checkedAddAndMultiply):
+        * page/FrameView.h:
+        (WebCore::FrameView::incrementVisuallyNonEmptyPixelCount):
+        * page/History.cpp:
+        (WebCore::History::stateObjectAdded):
+        * platform/audio/AudioArray.h:
+        (WebCore::AudioArray::resize):
+        * platform/audio/cocoa/AudioFileReaderCocoa.cpp:
+        (WebCore::tryCreateAudioBufferList):
+        * platform/audio/cocoa/CARingBuffer.cpp:
+        (WebCore::CARingBuffer::adoptStorage):
+        (WebCore::CARingBuffer::initializeAfterAllocation):
+        (WebCore::CARingBuffer::allocate):
+        * platform/audio/cocoa/WebAudioBufferList.cpp:
+        (WebCore::WebAudioBufferList::WebAudioBufferList):
+        * platform/graphics/FormatConverter.h:
+        (WebCore::FormatConverter::FormatConverter):
+        * platform/graphics/GraphicsContextGL.cpp:
+        (WebCore::GraphicsContextGL::computeImageSizeInBytes):
+        * platform/graphics/ImageBackingStore.h:
+        (WebCore::ImageBackingStore::setSize):
+        (WebCore::ImageBackingStore::clear):
+        * platform/graphics/ImageBufferBackend.cpp:
+        (WebCore::ImageBufferBackend::calculateMemoryCost):
+        * platform/graphics/ImageFrame.h:
+        (WebCore::ImageFrame::frameBytes const):
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::maximumSubsamplingLevel):
+        * platform/graphics/PixelBuffer.cpp:
+        (WebCore::PixelBuffer::tryCreateForDecoding):
+        (WebCore::PixelBuffer::tryCreate):
+        * platform/graphics/PixelBuffer.h:
+        (WebCore::PixelBuffer::encode const):
+        (WebCore::PixelBuffer::decode):
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm:
+        (WebCore::ImageDecoderAVFObjC::frameBytesAtIndex const):
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        (WebCore::MediaSampleAVFObjC::setByteRangeOffset):
+        (WebCore::MediaSampleAVFObjC::byteRangeForAttachment const):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::updateBackdropFilters):
+        * platform/graphics/ca/LayerPool.cpp:
+        (WebCore::LayerPool::backingStoreBytesForSize):
+        * platform/graphics/cg/GraphicsContextGLCG.cpp:
+        (WebCore::GraphicsContextGLImageExtractor::extractImage):
+        * platform/graphics/cg/ImageBufferCGBackend.cpp:
+        (WebCore::ImageBufferCGBackend::calculateBytesPerRow):
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::ImageDecoderCG::frameBytesAtIndex const):
+        * platform/graphics/cocoa/SourceBufferParser.cpp:
+        (WebCore::SourceBufferParser::Segment::read const):
+        * platform/graphics/filters/FEColorMatrix.cpp:
+        (WebCore::effectApplyAccelerated):
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::platformApplySoftware):
+        * platform/graphics/filters/FETurbulence.cpp:
+        (WebCore::FETurbulence::platformApplySoftware):
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::unmultipliedResult):
+        (WebCore::FilterEffect::premultipliedResult):
+        (WebCore::copyPremultiplyingAlpha):
+        (WebCore::copyUnpremultiplyingAlpha):
+        * platform/graphics/gpu/cocoa/GPUBindGroupAllocatorMetal.mm:
+        (WebCore::GPUBindGroupAllocator::allocateAndSetEncoders):
+        (WebCore::GPUBindGroupAllocator::reallocate):
+        * platform/graphics/gpu/cocoa/GPUCommandBufferMetal.mm:
+        (WebCore::GPUCommandBuffer::copyBufferToBuffer):
+        * platform/graphics/gpu/cocoa/GPURenderPassEncoderMetal.mm:
+        (WebCore::GPURenderPassEncoder::drawIndexed):
+        * platform/graphics/gstreamer/ImageDecoderGStreamer.cpp:
+        (WebCore::ImageDecoderGStreamer::frameBytesAtIndex const):
+        * platform/graphics/nicosia/NicosiaBuffer.cpp:
+        (Nicosia::Buffer::Buffer):
+        * platform/graphics/win/Direct2DUtilities.cpp:
+        (WebCore::Direct2D::createDirect2DImageSurfaceWithData):
+        * platform/graphics/win/ImageBufferDirect2DBackend.cpp:
+        (WebCore::ImageBufferDirect2DBackend::compatibleBitmap):
+        * platform/graphics/win/ImageDecoderDirect2D.cpp:
+        (WebCore::ImageDecoderDirect2D::frameBytesAtIndex const):
+        * platform/image-decoders/ScalableImageDecoder.cpp:
+        (WebCore::ScalableImageDecoder::frameBytesAtIndex const):
+        * platform/image-decoders/jpeg2000/JPEG2000ImageDecoder.cpp:
+        (WebCore::sycc444ToRGB):
+        (WebCore::sycc422ToRGB):
+        (WebCore::sycc420ToRGB):
+        * platform/ios/LegacyTileLayerPool.mm:
+        (WebCore::LegacyTileLayerPool::bytesBackingLayerWithPixelSize):
+        * platform/text/TextCodecUTF16.cpp:
+        (WebCore::TextCodecUTF16::encode const):
+        * platform/text/TextCodecUTF8.cpp:
+        (WebCore::TextCodecUTF8::encodeUTF8):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::requiresCompositingForCanvas const):
+        * rendering/shapes/Shape.cpp:
+        (WebCore::Shape::createRasterShape):
+        * storage/StorageMap.cpp:
+        (WebCore::StorageMap::setItem):
+        * xml/XSLStyleSheetLibxslt.cpp:
+        (WebCore::XSLStyleSheet::parseString):
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::xsltParamArrayFromParameterMap):
+        * xml/parser/CharacterReferenceParserInlines.h:
+        (WebCore::consumeCharacterReference):
+
 2021-06-01  Jean-Yves Avenard  <jya@apple.com>
 
         MediaSession.coordinator should not be optional, relying on coordinator state change instead

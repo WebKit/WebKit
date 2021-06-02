@@ -631,7 +631,7 @@ SubsamplingLevel ImageSource::maximumSubsamplingLevel()
     SubsamplingLevel level = SubsamplingLevel::First;
 
     for (; level < SubsamplingLevel::Last; ++level) {
-        if (frameSizeAtIndex(0, level).area().unsafeGet() < maximumImageAreaBeforeSubsampling)
+        if (frameSizeAtIndex(0, level).area() < maximumImageAreaBeforeSubsampling)
             break;
     }
 

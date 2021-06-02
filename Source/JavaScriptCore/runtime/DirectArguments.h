@@ -163,7 +163,7 @@ public:
     
     static size_t offsetOfSlot(Checked<size_t> index)
     {
-        return (storageOffset() + sizeof(WriteBarrier<Unknown>) * index).unsafeGet();
+        return storageOffset() + sizeof(WriteBarrier<Unknown>) * index;
     }
     
     static size_t allocationSize(Checked<size_t> capacity)

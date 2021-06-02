@@ -60,8 +60,7 @@ private:
 unsigned ImageBufferCGBackend::calculateBytesPerRow(const IntSize& backendSize)
 {
     ASSERT(!backendSize.isEmpty());
-    Checked<unsigned, RecordOverflow> bytesPerRow = (Checked<unsigned, RecordOverflow>(backendSize.width()) * 4);
-    return bytesPerRow.unsafeGet();
+    return CheckedUint32(backendSize.width()) * 4;
 }
 
 RetainPtr<CGColorSpaceRef> ImageBufferCGBackend::contextColorSpace(const GraphicsContext& context)

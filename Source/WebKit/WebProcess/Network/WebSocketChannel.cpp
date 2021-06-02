@@ -133,7 +133,7 @@ bool WebSocketChannel::increaseBufferedAmount(size_t byteLength)
         return false;
     }
 
-    m_bufferedAmount = checkedNewBufferedAmount.unsafeGet();
+    m_bufferedAmount = checkedNewBufferedAmount;
     if (m_client)
         m_client->didUpdateBufferedAmount(m_bufferedAmount);
     return true;

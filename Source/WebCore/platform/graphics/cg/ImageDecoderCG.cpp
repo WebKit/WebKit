@@ -513,8 +513,7 @@ bool ImageDecoderCG::frameHasAlphaAtIndex(size_t index) const
 
 unsigned ImageDecoderCG::frameBytesAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const
 {
-    IntSize frameSize = frameSizeAtIndex(index, subsamplingLevel);
-    return (frameSize.area() * 4).unsafeGet();
+    return frameSizeAtIndex(index, subsamplingLevel).area() * 4;
 }
 
 PlatformImagePtr ImageDecoderCG::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions& decodingOptions)

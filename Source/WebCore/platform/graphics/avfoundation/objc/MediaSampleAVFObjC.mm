@@ -471,7 +471,7 @@ std::optional<MediaSample::ByteRange> MediaSampleAVFObjC::byteRange() const
 
 void MediaSampleAVFObjC::setByteRangeOffset(size_t byteOffset)
 {
-    int64_t checkedOffset = CheckedInt64(byteOffset).unsafeGet();
+    int64_t checkedOffset = CheckedInt64(byteOffset);
     auto offsetNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &checkedOffset));
     PAL::CMSetAttachment(m_sample.get(), byteRangeOffsetAttachmentKey(), offsetNumber.get(), kCMAttachmentMode_ShouldPropagate);
 }
@@ -493,7 +493,7 @@ std::optional<MediaSample::ByteRange> MediaSampleAVFObjC::byteRangeForAttachment
 
     size_t singleSizeEntry = 0;
     PAL::CMSampleBufferGetSampleSizeArray(m_sample.get(), 1, &singleSizeEntry, nullptr);
-    return { { CheckedSize(byteOffset).unsafeGet(), singleSizeEntry } };
+    return { { CheckedSize(byteOffset), singleSizeEntry } };
 }
 
 }

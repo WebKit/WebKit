@@ -143,12 +143,12 @@ bool XSLStyleSheet::parseString(const String& string)
 
     auto upconvertedCharacters = StringView(string).upconvertedCharacters();
     const char* buffer = reinterpret_cast<const char*>(upconvertedCharacters.get());
-    Checked<unsigned, RecordOverflow> unsignedSize = string.length();
+    CheckedUint32 unsignedSize = string.length();
     unsignedSize *= sizeof(UChar);
-    if (unsignedSize.hasOverflowed() || unsignedSize.unsafeGet() > static_cast<unsigned>(std::numeric_limits<int>::max()))
+    if (unsignedSize.hasOverflowed() || unsignedSize > static_cast<unsigned>(std::numeric_limits<int>::max()))
         return false;
 
-    int size = static_cast<int>(unsignedSize.unsafeGet());
+    int size = unsignedSize.value<int>();
     xmlParserCtxtPtr ctxt = xmlCreateMemoryParserCtxt(buffer, size);
     if (!ctxt)
         return false;

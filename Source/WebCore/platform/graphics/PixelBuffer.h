@@ -78,7 +78,7 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PixelBuffer&)
 
 template<class Encoder> void PixelBuffer::encode(Encoder& encoder) const
 {
-    ASSERT(m_data->byteLength() == (m_size.area().unsafeGet() * 4));
+    ASSERT(m_data->byteLength() == (m_size.area() * 4));
 
     encoder << m_format;
     encoder << m_size;
@@ -105,7 +105,7 @@ template<class Decoder> std::optional<PixelBuffer> PixelBuffer::decode(Decoder& 
     if (computedBufferSize.hasOverflowed())
         return std::nullopt;
 
-    auto bufferSize = computedBufferSize.unsafeGet();
+    auto bufferSize = computedBufferSize;
     if (!decoder.template bufferIsLargeEnoughToContain<uint8_t>(bufferSize))
         return std::nullopt;
 

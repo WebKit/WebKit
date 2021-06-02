@@ -233,7 +233,7 @@ PlatformImagePtr ImageBufferDirect2DBackend::compatibleBitmap(ID2D1RenderTarget*
 
     COMPtr<ID2D1Bitmap1> sourceCPUBitmap;
     D2D1_BITMAP_PROPERTIES1 bitmapProperties = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_CPU_READ | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, Direct2D::pixelFormat());
-    HRESULT hr = sourceDeviceContext->CreateBitmap(m_bitmap->GetPixelSize(), nullptr, bytesPerRow.unsafeGet(), bitmapProperties, &sourceCPUBitmap);
+    HRESULT hr = sourceDeviceContext->CreateBitmap(m_bitmap->GetPixelSize(), nullptr, bytesPerRow, bitmapProperties, &sourceCPUBitmap);
     if (!SUCCEEDED(hr))
         return nullptr;
 

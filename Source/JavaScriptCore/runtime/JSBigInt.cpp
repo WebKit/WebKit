@@ -2527,8 +2527,8 @@ JSValue JSBigInt::parseInt(JSGlobalObject* nullOrGlobalObjectForOOM, VM& vm, Cha
 
         if (!heapResult) {
             if (p == length) {
-                ASSERT(digit.unsafeGet() <= static_cast<uint64_t>(std::numeric_limits<int64_t>::max()));
-                int64_t maybeResult = digit.unsafeGet();
+                ASSERT(digit <= static_cast<uint64_t>(std::numeric_limits<int64_t>::max()));
+                int64_t maybeResult = digit;
                 ASSERT(maybeResult >= 0);
                 if (sign == ParseIntSign::Signed)
                     maybeResult *= -1;
@@ -2547,9 +2547,9 @@ JSValue JSBigInt::parseInt(JSGlobalObject* nullOrGlobalObjectForOOM, VM& vm, Cha
             heapResult->initialize(InitializationType::WithZero);
         }
 
-        ASSERT(static_cast<uint64_t>(static_cast<Digit>(multiplier.unsafeGet())) == multiplier.unsafeGet());
-        ASSERT(static_cast<uint64_t>(static_cast<Digit>(digit.unsafeGet())) == digit.unsafeGet());
-        heapResult->inplaceMultiplyAdd(static_cast<Digit>(multiplier.unsafeGet()), static_cast<Digit>(digit.unsafeGet()));
+        ASSERT(static_cast<uint64_t>(static_cast<Digit>(multiplier)) == multiplier);
+        ASSERT(static_cast<uint64_t>(static_cast<Digit>(digit)) == digit);
+        heapResult->inplaceMultiplyAdd(static_cast<Digit>(multiplier), static_cast<Digit>(digit));
     }
 
     heapResult->setSign(sign == ParseIntSign::Signed);

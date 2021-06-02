@@ -154,7 +154,7 @@ bool RemoteImageDecoderAVF::frameAllowSubsamplingAtIndex(size_t index) const
 
 unsigned RemoteImageDecoderAVF::frameBytesAtIndex(size_t, SubsamplingLevel) const
 {
-    return (size().area() * 4).unsafeGet();
+    return size().area() * 4;
 }
 
 PlatformImagePtr RemoteImageDecoderAVF::createFrameImageAtIndex(size_t index, SubsamplingLevel, const DecodingOptions&)

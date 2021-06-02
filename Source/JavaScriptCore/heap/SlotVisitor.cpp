@@ -415,7 +415,7 @@ inline void SlotVisitor::propagateExternalMemoryVisitedIfNecessary()
         if (m_extraMemorySize.hasOverflowed())
             heap()->reportExtraMemoryVisited(std::numeric_limits<size_t>::max());
         else if (m_extraMemorySize)
-            heap()->reportExtraMemoryVisited(m_extraMemorySize.unsafeGet());
+            heap()->reportExtraMemoryVisited(m_extraMemorySize);
         m_extraMemorySize = 0;
     }
 }

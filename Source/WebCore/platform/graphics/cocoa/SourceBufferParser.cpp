@@ -96,7 +96,7 @@ size_t SourceBufferParser::Segment::read(size_t position, size_t sizeToRead, uin
         [&](const RetainPtr<MTPluginByteSourceRef>& byteSource) -> size_t
         {
             size_t sizeRead = 0;
-            if (MTPluginByteSourceRead(byteSource.get(), sizeToRead, CheckedInt64(position).unsafeGet(), destination, &sizeRead) != noErr)
+            if (MTPluginByteSourceRead(byteSource.get(), sizeToRead, CheckedInt64(position), destination, &sizeRead) != noErr)
                 return 0;
             return sizeRead;
         },

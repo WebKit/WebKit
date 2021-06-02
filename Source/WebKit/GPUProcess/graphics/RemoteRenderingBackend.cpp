@@ -237,7 +237,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::nextDestinationImageBufferAfterApply
         checkedOffset += result.numberOfBytesRead;
         MESSAGE_CHECK_WITH_RETURN_VALUE(!checkedOffset.hasOverflowed(), nullptr, "Overflowed when advancing shared display list handle offset");
 
-        offset = checkedOffset.unsafeGet();
+        offset = checkedOffset;
         MESSAGE_CHECK_WITH_RETURN_VALUE(offset <= handle.sharedMemory().size(), nullptr, "Out-of-bounds offset into shared display list handle");
 
         if (result.reasonForStopping == DisplayList::StopReplayReason::ChangeDestinationImageBuffer) {

@@ -230,8 +230,7 @@ unsigned ImageDecoderDirect2D::frameBytesAtIndex(size_t index, SubsamplingLevel 
     if (!m_nativeDecoder)
         return 0;
 
-    auto frameSize = frameSizeAtIndex(index, subsamplingLevel);
-    return (frameSize.area() * 4).unsafeGet();
+    return frameSizeAtIndex(index, subsamplingLevel).area() * 4;
 }
 
 void ImageDecoderDirect2D::setTargetContext(ID2D1RenderTarget* renderTarget)

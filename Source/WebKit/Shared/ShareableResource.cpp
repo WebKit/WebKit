@@ -115,7 +115,7 @@ RefPtr<ShareableResource> ShareableResource::create(Ref<SharedMemory>&& sharedMe
         LOG_ERROR("Failed to create ShareableResource from SharedMemory due to overflow.");
         return nullptr;
     }
-    if (totalSize.unsafeGet() > sharedMemory->size()) {
+    if (totalSize > sharedMemory->size()) {
         LOG_ERROR("Failed to create ShareableResource from SharedMemory due to mismatched buffer size.");
         return nullptr;
     }

@@ -109,11 +109,11 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
             }
             if (character == ';') {
                 source.advancePastNonNewline();
-                decodedCharacter.appendCharacter(ParserFunctions::legalEntityFor(result.hasOverflowed() ? 0 : result.unsafeGet()));
+                decodedCharacter.appendCharacter(ParserFunctions::legalEntityFor(result.hasOverflowed() ? 0 : result.value()));
                 return true;
             }
             if (ParserFunctions::acceptMalformed()) {
-                decodedCharacter.appendCharacter(ParserFunctions::legalEntityFor(result.hasOverflowed() ? 0 : result.unsafeGet()));
+                decodedCharacter.appendCharacter(ParserFunctions::legalEntityFor(result.hasOverflowed() ? 0 : result.value()));
                 return true;
             }
             unconsumeCharacters(source, consumedCharacters);
@@ -127,11 +127,11 @@ bool consumeCharacterReference(SegmentedString& source, StringBuilder& decodedCh
             }
             if (character == ';') {
                 source.advancePastNonNewline();
-                decodedCharacter.appendCharacter(ParserFunctions::legalEntityFor(result.hasOverflowed() ? 0 : result.unsafeGet()));
+                decodedCharacter.appendCharacter(ParserFunctions::legalEntityFor(result.hasOverflowed() ? 0 : result.value()));
                 return true;
             }
             if (ParserFunctions::acceptMalformed()) {
-                decodedCharacter.appendCharacter(ParserFunctions::legalEntityFor(result.hasOverflowed() ? 0 : result.unsafeGet()));
+                decodedCharacter.appendCharacter(ParserFunctions::legalEntityFor(result.hasOverflowed() ? 0 : result.value()));
                 return true;
             }
             unconsumeCharacters(source, consumedCharacters);

@@ -39,7 +39,7 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CStringBuffer);
 Ref<CStringBuffer> CStringBuffer::createUninitialized(size_t length)
 {
     // The +1 is for the terminating null character.
-    auto size = (Checked<size_t>(sizeof(CStringBuffer)) + length + 1U).unsafeGet();
+    size_t size = Checked<size_t>(sizeof(CStringBuffer)) + length + 1U;
     auto* stringBuffer = static_cast<CStringBuffer*>(CStringBufferMalloc::malloc(size));
     return adoptRef(*new (NotNull, stringBuffer) CStringBuffer(length));
 }

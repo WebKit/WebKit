@@ -192,7 +192,7 @@ static NSData *dataWithUserTypedString(NSString *string)
     if (mallocLength.hasOverflowed())
         return nil;
     
-    char* outBytes = static_cast<char *>(malloc(mallocLength.unsafeGet()));
+    char* outBytes = static_cast<char *>(malloc(mallocLength));
     char* p = outBytes;
     int outLength = 0;
     for (int i = 0; i < inLength; i++) {

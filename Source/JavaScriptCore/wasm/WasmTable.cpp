@@ -58,7 +58,7 @@ Table::Table(uint32_t initial, std::optional<uint32_t> maximum, TableElementType
     // FIXME: It might be worth trying to pre-allocate maximum here. The spec recommends doing so.
     // But for now, we're not doing that.
     // FIXME this over-allocates and could be smarter about not committing all of that memory https://bugs.webkit.org/show_bug.cgi?id=181425
-    m_jsValues = MallocPtr<WriteBarrier<Unknown>, VMMalloc>::malloc((sizeof(WriteBarrier<Unknown>) * Checked<size_t>(allocatedLength(m_length))).unsafeGet());
+    m_jsValues = MallocPtr<WriteBarrier<Unknown>, VMMalloc>::malloc(sizeof(WriteBarrier<Unknown>) * Checked<size_t>(allocatedLength(m_length)));
     for (uint32_t i = 0; i < allocatedLength(m_length); ++i) {
         new (&m_jsValues.get()[i]) WriteBarrier<Unknown>();
         m_jsValues.get()[i].setStartingValue(jsNull());
@@ -100,8 +100,8 @@ std::optional<uint32_t> Table::grow(uint32_t delta, JSValue defaultValue)
         return std::nullopt;
 
     auto checkedGrow = [&] (auto& container, auto initializer) {
-        if (newLengthChecked.unsafeGet() > allocatedLength(m_length)) {
-            Checked reallocSizeChecked = allocatedLength(newLengthChecked.unsafeGet());
+        if (newLengthChecked > allocatedLength(m_length)) {
+            Checked reallocSizeChecked = allocatedLength(newLengthChecked);
             reallocSizeChecked *= sizeof(*container.get());
             uint32_t reallocSize;
             if (reallocSizeChecked.safeGet(reallocSize) == CheckedState::DidOverflow)
@@ -195,9 +195,9 @@ FuncRefTable::FuncRefTable(uint32_t initial, std::optional<uint32_t> maximum)
 {
     // FIXME: It might be worth trying to pre-allocate maximum here. The spec recommends doing so.
     // But for now, we're not doing that.
-    m_importableFunctions = MallocPtr<WasmToWasmImportableFunction, VMMalloc>::malloc((sizeof(WasmToWasmImportableFunction) * Checked<size_t>(allocatedLength(m_length))).unsafeGet());
+    m_importableFunctions = MallocPtr<WasmToWasmImportableFunction, VMMalloc>::malloc(sizeof(WasmToWasmImportableFunction) * Checked<size_t>(allocatedLength(m_length)));
     // FIXME this over-allocates and could be smarter about not committing all of that memory https://bugs.webkit.org/show_bug.cgi?id=181425
-    m_instances = MallocPtr<Instance*, VMMalloc>::malloc((sizeof(Instance*) * Checked<size_t>(allocatedLength(m_length))).unsafeGet());
+    m_instances = MallocPtr<Instance*, VMMalloc>::malloc(sizeof(Instance*) * Checked<size_t>(allocatedLength(m_length)));
     for (uint32_t i = 0; i < allocatedLength(m_length); ++i) {
         new (&m_importableFunctions.get()[i]) WasmToWasmImportableFunction();
         ASSERT(m_importableFunctions.get()[i].signatureIndex == Wasm::Signature::invalidIndex); // We rely on this in compiled code.

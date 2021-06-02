@@ -1,3 +1,24 @@
+2021-06-01  Chris Dumez  <cdumez@apple.com>
+
+        Rename Checked::unsafeGet() to Checked::value()
+        https://bugs.webkit.org/show_bug.cgi?id=226514
+
+        Reviewed by Darin Adler.
+
+        Rename Checked::unsafeGet() to Checked::value(). The "unsafeGet" naming is confusing as this
+        function isn't really unsafe since it will crash if the value has overflowed. Also add an
+        `operator T()` to implicitly convert a Checked to its underlying type without needing to
+        call value().
+
+        * TestWebKitAPI/Tests/WTF/CheckedArithmeticOperations.cpp:
+        (TestWebKitAPI::CheckedArithmeticTester::run):
+        (TestWebKitAPI::AllowMixedSignednessTest::run):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/IntRectTests.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebCore/IntSizeTests.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-06-01  Jean-Yves Avenard  <jya@apple.com>
 
         MediaSession.coordinator should not be optional, relying on coordinator readyState change instead

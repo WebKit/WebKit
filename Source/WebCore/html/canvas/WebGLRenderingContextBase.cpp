@@ -507,8 +507,8 @@ static bool clip2D(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height,
     Checked<GCGLint, RecordOverflow> checkedInputRight = Checked<GCGLint>(x) + Checked<GCGLsizei>(width);
     Checked<GCGLint, RecordOverflow> checkedInputBottom = Checked<GCGLint>(y) + Checked<GCGLsizei>(height);
     if (!checkedInputRight.hasOverflowed() && !checkedInputBottom.hasOverflowed()) {
-        right = std::min(checkedInputRight.unsafeGet(), sourceWidth);
-        bottom = std::min(checkedInputBottom.unsafeGet(), sourceHeight);
+        right = std::min(checkedInputRight.value(), sourceWidth);
+        bottom = std::min(checkedInputBottom.value(), sourceHeight);
     }
 
     if (left >= right || top >= bottom) {
@@ -2460,12 +2460,12 @@ bool WebGLRenderingContextBase::validateDrawArrays(const char* functionName, GCG
     // Ensure we have a valid rendering state.
     Checked<GCGLint, RecordOverflow> checkedSum = Checked<GCGLint, RecordOverflow>(first) + Checked<GCGLint, RecordOverflow>(count);
     Checked<GCGLint, RecordOverflow> checkedPrimitiveCount(primitiveCount);
-    if (checkedSum.hasOverflowed() || checkedPrimitiveCount.hasOverflowed() || !validateVertexAttributes(checkedSum.unsafeGet(), checkedPrimitiveCount.unsafeGet())) {
+    if (checkedSum.hasOverflowed() || checkedPrimitiveCount.hasOverflowed() || !validateVertexAttributes(checkedSum, checkedPrimitiveCount)) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "attempt to access out of bounds arrays");
         return false;
     }
 #if !USE(ANGLE)
-    if (!validateSimulatedVertexAttrib0(checkedSum.unsafeGet() - 1)) {
+    if (!validateSimulatedVertexAttrib0(checkedSum.value() - 1)) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "attempt to access outside the bounds of the simulated vertexAttrib0 array");
         return false;
     }
@@ -2537,8 +2537,8 @@ bool WebGLRenderingContextBase::validateDrawElements(const char* functionName, G
         return false;
     }
     
-    if (!validateIndexArrayConservative(type, numElements) || !validateVertexAttributes(numElements, checkedPrimitiveCount.unsafeGet())) {
-        if (!validateIndexArrayPrecise(checkedCount.unsafeGet(), type, static_cast<GCGLintptr>(offset), numElements) || !validateVertexAttributes(numElements, checkedPrimitiveCount.unsafeGet())) {
+    if (!validateIndexArrayConservative(type, numElements) || !validateVertexAttributes(numElements, checkedPrimitiveCount)) {
+        if (!validateIndexArrayPrecise(checkedCount, type, static_cast<GCGLintptr>(offset), numElements) || !validateVertexAttributes(numElements, checkedPrimitiveCount)) {
             synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "attempt to access out of bounds arrays");
             return false;
         }
@@ -5327,7 +5327,7 @@ bool WebGLRenderingContextBase::validateTexFuncData(const char* functionName, Te
     total *= JSC::elementSize(pixels->getType());
     total += totalBytesRequired;
     total += skipBytes;
-    if (total.hasOverflowed() || pixels->byteLength() < total.unsafeGet()) {
+    if (total.hasOverflowed() || pixels->byteLength() < total) {
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "ArrayBufferView not big enough for request");
         return false;
     }
@@ -6819,7 +6819,7 @@ bool WebGLRenderingContextBase::validateCompressedTexFuncData(const char* functi
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "too large dimensions");
             return false;
         }
-        bytesRequired = checkedBytesRequired.unsafeGet();
+        bytesRequired = checkedBytesRequired;
         break;
     }
     case ExtensionsGL::COMPRESSED_RG11_EAC:
@@ -6833,7 +6833,7 @@ bool WebGLRenderingContextBase::validateCompressedTexFuncData(const char* functi
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "too large dimensions");
             return false;
         }
-        bytesRequired = checkedBytesRequired.unsafeGet();
+        bytesRequired = checkedBytesRequired;
         break;
     }
     case ExtensionsGL::COMPRESSED_RED_RGTC1_EXT:
@@ -7412,7 +7412,7 @@ bool WebGLRenderingContextBase::validateSimulatedVertexAttrib0(GCGLuint numVerte
 
     Checked<GCGLsizeiptr, RecordOverflow> bufferDataSize(bufferSize.value());
     bufferDataSize *= Checked<GCGLsizeiptr>(sizeof(GCGLfloat));
-    return !bufferDataSize.hasOverflowed() && bufferDataSize.unsafeGet() > 0;
+    return !bufferDataSize.hasOverflowed() && bufferDataSize > 0;
 }
 
 std::optional<bool> WebGLRenderingContextBase::simulateVertexAttrib0(GCGLuint numVertex)

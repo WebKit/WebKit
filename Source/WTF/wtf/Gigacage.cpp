@@ -139,7 +139,7 @@ void* tryMallocArray(Kind kind, size_t numElements, size_t elementSize)
     checkedSize *= numElements;
     if (checkedSize.hasOverflowed())
         return nullptr;
-    return tryMalloc(kind, checkedSize.unsafeGet());
+    return tryMalloc(kind, checkedSize);
 }
 
 void* malloc(Kind kind, size_t size)

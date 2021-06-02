@@ -434,7 +434,7 @@ String tryMakeStringFromAdapters(StringTypeAdapter adapter, StringTypeAdapters .
     if (sum.hasOverflowed())
         return String();
 
-    unsigned length = sum.unsafeGet();
+    unsigned length = sum;
     ASSERT(length <= String::MaxLength);
     if (are8Bit(adapter, adapters...)) {
         LChar* buffer;

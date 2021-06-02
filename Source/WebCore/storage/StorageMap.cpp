@@ -102,11 +102,11 @@ void StorageMap::setItem(const String& key, const String& value, String& oldValu
     newSize += value.sizeInBytes();
     if (oldValue.isNull())
         newSize += key.sizeInBytes();
-    if (m_quotaSize != noQuota && (newSize.hasOverflowed() || newSize.unsafeGet() > m_quotaSize)) {
+    if (m_quotaSize != noQuota && (newSize.hasOverflowed() || newSize > m_quotaSize)) {
         quotaException = true;
         return;
     }
-    m_impl->currentSize = newSize.unsafeGet();
+    m_impl->currentSize = newSize;
 
     HashMap<String, String>::AddResult addResult = m_impl->map.add(key, value);
     if (!addResult.isNewEntry)

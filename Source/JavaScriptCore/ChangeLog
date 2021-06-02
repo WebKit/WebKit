@@ -1,3 +1,128 @@
+2021-06-01  Chris Dumez  <cdumez@apple.com>
+
+        Rename Checked::unsafeGet() to Checked::value()
+        https://bugs.webkit.org/show_bug.cgi?id=226514
+
+        Reviewed by Darin Adler.
+
+        Rename Checked::unsafeGet() to Checked::value(). The "unsafeGet" naming is confusing as this
+        function isn't really unsafe since it will crash if the value has overflowed. Also add an
+        `operator T()` to implicitly convert a Checked to its underlying type without needing to
+        call value().
+
+        * b3/B3Const32Value.cpp:
+        (JSC::B3::Const32Value::checkAddConstant const):
+        (JSC::B3::Const32Value::checkSubConstant const):
+        (JSC::B3::Const32Value::checkMulConstant const):
+        * b3/B3Const64Value.cpp:
+        (JSC::B3::Const64Value::checkAddConstant const):
+        (JSC::B3::Const64Value::checkSubConstant const):
+        (JSC::B3::Const64Value::checkMulConstant const):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::FinallyContext::numberOfBreaksOrContinues const):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayWithSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileForwardVarargsWithSpread):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::JSC_DEFINE_JIT_OPERATION):
+        * heap/Heap.cpp:
+        (JSC::Heap::deprecatedReportExtraMemorySlowCase):
+        (JSC::Heap::extraMemorySize):
+        (JSC::Heap::updateAllocationLimits):
+        (JSC::Heap::reportExtraMemoryVisited):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::propagateExternalMemoryVisitedIfNecessary):
+        * runtime/ArgList.cpp:
+        (JSC::MarkedArgumentBuffer::slowEnsureCapacity):
+        (JSC::MarkedArgumentBuffer::expandCapacity):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::concatAppendOne):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::JSC_DEFINE_COMMON_SLOW_PATH):
+        * runtime/DirectArguments.h:
+        * runtime/HashMapImpl.h:
+        (JSC::HashMapBuffer::allocationSize):
+        (JSC::HashMapImpl::HashMapImpl):
+        * runtime/HashMapImplInlines.h:
+        (JSC::nextCapacity):
+        (JSC::HashMapImpl<HashMapBucketType>::finishCreation):
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::parseInt):
+        * runtime/JSImmutableButterfly.h:
+        (JSC::JSImmutableButterfly::tryCreate):
+        * runtime/JSLexicalEnvironment.h:
+        (JSC::JSLexicalEnvironment::offsetOfVariable):
+        (JSC::JSLexicalEnvironment::allocationSizeForScopeSize):
+        * runtime/JSObject.h:
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::JSPropertyNameEnumerator::create):
+        * runtime/JSString.h:
+        * runtime/ScopedArguments.cpp:
+        (JSC::ScopedArguments::createUninitialized):
+        * runtime/StringPrototype.cpp:
+        (JSC::jsSpliceSubstrings):
+        (JSC::jsSpliceSubstringsWithSeparators):
+        * runtime/StructureChain.cpp:
+        (JSC::StructureChain::create):
+        * runtime/VM.h:
+        (JSC::ScratchBuffer::allocationSize):
+        * runtime/WeakMapImpl.h:
+        (JSC::WeakMapBuffer::allocationSize):
+        * wasm/WasmAirIRGenerator.cpp:
+        (JSC::Wasm::AirIRGenerator::AirIRGenerator):
+        (JSC::Wasm::AirIRGenerator::emitCallPatchpoint):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        * wasm/WasmInstance.cpp:
+        * wasm/WasmInstance.h:
+        (JSC::Wasm::Instance::allocationSize):
+        * wasm/WasmLLIntGenerator.cpp:
+        (JSC::Wasm::LLIntGenerator::push):
+        (JSC::Wasm::LLIntGenerator::getDropKeepCount):
+        (JSC::Wasm::LLIntGenerator::walkExpressionStack):
+        (JSC::Wasm::LLIntGenerator::finalize):
+        (JSC::Wasm::LLIntGenerator::callInformationForCaller):
+        (JSC::Wasm::LLIntGenerator::addLoop):
+        (JSC::Wasm::LLIntGenerator::addTopLevel):
+        (JSC::Wasm::LLIntGenerator::addBlock):
+        (JSC::Wasm::LLIntGenerator::addIf):
+        (JSC::Wasm::LLIntGenerator::addElseToUnreachable):
+        * wasm/WasmSignature.h:
+        (JSC::Wasm::Signature::allocatedSize):
+        * wasm/WasmStreamingParser.cpp:
+        (JSC::Wasm::StreamingParser::addBytes):
+        * wasm/WasmTable.cpp:
+        (JSC::Wasm::Table::Table):
+        (JSC::Wasm::Table::grow):
+        (JSC::Wasm::FuncRefTable::FuncRefTable):
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::DisjunctionContext::allocationSize):
+        (JSC::Yarr::Interpreter::ParenthesesDisjunctionContext::allocationSize):
+        (JSC::Yarr::Interpreter::allocParenthesesDisjunctionContext):
+        (JSC::Yarr::ByteCompiler::atomCharacterClass):
+        (JSC::Yarr::ByteCompiler::atomBackReference):
+        (JSC::Yarr::ByteCompiler::atomParentheticalAssertionEnd):
+        (JSC::Yarr::ByteCompiler::atomParenthesesSubpatternEnd):
+        (JSC::Yarr::ByteCompiler::atomParenthesesOnceEnd):
+        (JSC::Yarr::ByteCompiler::atomParenthesesTerminalEnd):
+        (JSC::Yarr::ByteCompiler::emitDisjunction):
+        * yarr/YarrInterpreter.h:
+        (JSC::Yarr::ByteTerm::ByteTerm):
+        (JSC::Yarr::ByteTerm::CheckInput):
+        (JSC::Yarr::ByteTerm::UncheckInput):
+        * yarr/YarrJIT.cpp:
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::consumeNumber):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::PatternTerm::dumpQuantifier):
+
 2021-06-01  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][GTK] Support building against uClibc

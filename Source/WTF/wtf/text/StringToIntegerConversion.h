@@ -93,7 +93,7 @@ template<typename IntegralType, typename CharacterType> std::optional<IntegralTy
             return std::nullopt;
     }
 
-    return value.unsafeGet();
+    return value.value();
 }
 
 template<typename IntegralType> std::optional<IntegralType> parseInteger(StringView string, uint8_t base)

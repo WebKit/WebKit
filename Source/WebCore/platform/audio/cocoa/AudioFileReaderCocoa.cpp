@@ -43,7 +43,7 @@ AudioBufferList* tryCreateAudioBufferList(size_t numberOfBuffers)
     if (bufferListSize.hasOverflowed())
         return nullptr;
 
-    auto allocated = tryFastCalloc(1, bufferListSize.unsafeGet());
+    auto allocated = tryFastCalloc(1, bufferListSize);
     AudioBufferList* bufferList;
     if (!allocated.getValue(bufferList))
         return nullptr;

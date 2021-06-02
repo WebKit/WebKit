@@ -1976,7 +1976,7 @@ void WebPage::requestEvasionRectsAboveSelection(CompletionHandler<void(const Vec
         return;
     }
 
-    double contextMenuAreaLimit = factorOfContentArea * scaleFactor * unobscuredContentArea.unsafeGet();
+    double contextMenuAreaLimit = factorOfContentArea * scaleFactor * unobscuredContentArea.value();
 
     FloatRect selectionBoundsInRootViewCoordinates;
     if (selection.isRange())
@@ -2031,7 +2031,7 @@ void WebPage::requestEvasionRectsAboveSelection(CompletionHandler<void(const Vec
 
         auto bounds = frameView->contentsToRootView(renderer->absoluteBoundingBoxRect());
         auto area = bounds.area();
-        if (area.hasOverflowed() || area.unsafeGet() > contextMenuAreaLimit)
+        if (area.hasOverflowed() || area > contextMenuAreaLimit)
             continue;
 
         if (bounds.contains(enclosingIntRect(selectionBoundsInRootViewCoordinates)))
@@ -4315,7 +4315,7 @@ void WebPage::updateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelt
         return;
     }
 
-    auto newSelectionRange = CharacterRange(newSelectionLocation.unsafeGet(), newSelectionLength.unsafeGet());
+    auto newSelectionRange = CharacterRange(newSelectionLocation, newSelectionLength);
     auto updatedSelectionRange = resolveCharacterRange(makeRangeSelectingNodeContents(*root), newSelectionRange);
     frame->selection().setSelectedRange(updatedSelectionRange, Affinity::Downstream, WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered);
     completionHandler();

@@ -415,7 +415,7 @@ String StyledMarkupAccumulator::takeResults()
     for (auto& string : m_reversedPrecedingMarkup)
         length += string.length();
     StringBuilder result;
-    result.reserveCapacity(length.unsafeGet());
+    result.reserveCapacity(length);
     for (auto& string : makeReversedRange(m_reversedPrecedingMarkup))
         result.append(string);
     result.append(takeMarkup());

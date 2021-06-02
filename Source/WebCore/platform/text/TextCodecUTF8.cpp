@@ -448,7 +448,7 @@ Vector<uint8_t> TextCodecUTF8::encodeUTF8(StringView string, UnencodableHandling
     // The maximum number of UTF-8 bytes needed per UTF-16 code unit is 3.
     // BMP characters take only one UTF-16 code unit and can take up to 3 bytes (3x).
     // Non-BMP characters take two UTF-16 code units and can take up to 4 bytes (2x).
-    Vector<uint8_t> bytes(WTF::checkedProduct<size_t>(string.length(), 3).unsafeGet());
+    Vector<uint8_t> bytes(WTF::checkedProduct<size_t>(string.length(), 3));
     size_t bytesWritten = 0;
     for (auto character : string.codePoints())
         U8_APPEND_UNSAFE(bytes.data(), bytesWritten, character);

@@ -101,7 +101,7 @@ private:
         Checked<size_t> objectSize = sizeof(T);
         objectSize *= size;
         objectSize += static_cast<size_t>(OBJECT_OFFSETOF(Array, data));
-        Array* result = static_cast<Array*>(ConcurrentBufferMalloc::malloc(objectSize.unsafeGet()));
+        Array* result = static_cast<Array*>(ConcurrentBufferMalloc::malloc(objectSize));
         result->size = size;
         return result;
     }

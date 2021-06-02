@@ -76,7 +76,7 @@ Checked<unsigned, RecordOverflow> ShareableBitmap::calculateBytesPerRow(WebCore:
 #if HAVE(IOSURFACE)
     if (bytesPerRow.hasOverflowed())
         return bytesPerRow;
-    return IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, bytesPerRow.unsafeGet());
+    return IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, bytesPerRow);
 #else
     return bytesPerRow;
 #endif
@@ -97,7 +97,7 @@ std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
     if (bytesPerRow.hasOverflowed())
         return nullptr;
 
-    RetainPtr<CGContextRef> bitmapContext = adoptCF(CGBitmapContextCreateWithData(data(), m_size.width(), m_size.height(), bitsPerComponent.unsafeGet(), bytesPerRow.unsafeGet(), colorSpace(m_configuration), bitmapInfo(m_configuration), releaseBitmapContextData, this));
+    RetainPtr<CGContextRef> bitmapContext = adoptCF(CGBitmapContextCreateWithData(data(), m_size.width(), m_size.height(), bitsPerComponent, bytesPerRow, colorSpace(m_configuration), bitmapInfo(m_configuration), releaseBitmapContextData, this));
     if (!bitmapContext)
         return nullptr;
 
@@ -163,7 +163,7 @@ RetainPtr<CGImageRef> ShareableBitmap::createCGImage(CGDataProviderRef dataProvi
     if (bytesPerRow.hasOverflowed())
         return nullptr;
 
-    RetainPtr<CGImageRef> image = adoptCF(CGImageCreate(m_size.width(), m_size.height(), bitsPerPixel.unsafeGet() / 4, bitsPerPixel.unsafeGet(), bytesPerRow.unsafeGet(), colorSpace(m_configuration), bitmapInfo(m_configuration), dataProvider, 0, false, kCGRenderingIntentDefault));
+    RetainPtr<CGImageRef> image = adoptCF(CGImageCreate(m_size.width(), m_size.height(), bitsPerPixel / 4, bitsPerPixel, bytesPerRow, colorSpace(m_configuration), bitmapInfo(m_configuration), dataProvider, 0, false, kCGRenderingIntentDefault));
     return image;
 }
 

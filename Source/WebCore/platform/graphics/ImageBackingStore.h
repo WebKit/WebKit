@@ -60,7 +60,7 @@ public:
             return false;
 
         Vector<char> buffer;
-        size_t bufferSize = size.area().unsafeGet() * sizeof(uint32_t);
+        size_t bufferSize = size.area() * sizeof(uint32_t);
 
         if (!buffer.tryReserveCapacity(bufferSize))
             return false;
@@ -86,7 +86,7 @@ public:
 
     void clear()
     {
-        memset(m_pixelsPtr, 0, (m_size.area() * sizeof(uint32_t)).unsafeGet());
+        memset(m_pixelsPtr, 0, m_size.area() * sizeof(uint32_t));
     }
 
     void clearRect(const IntRect& rect)

@@ -1403,7 +1403,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_array_with_spread)
         }
     }
 
-    Checked<unsigned, RecordOverflow> checkedArraySize = 0;
+    CheckedUint32 checkedArraySize = 0;
     for (int i = 0; i < numItems; i++) {
         if (bitVector.get(i)) {
             JSValue value = values[-i];
@@ -1415,7 +1415,7 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_array_with_spread)
     if (UNLIKELY(checkedArraySize.hasOverflowed()))
         THROW(createOutOfMemoryError(globalObject));
 
-    unsigned arraySize = checkedArraySize.unsafeGet();
+    unsigned arraySize = checkedArraySize;
     if (UNLIKELY(arraySize >= MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH))
         THROW(createOutOfMemoryError(globalObject));
 

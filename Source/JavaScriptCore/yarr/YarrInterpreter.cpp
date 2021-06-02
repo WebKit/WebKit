@@ -77,7 +77,7 @@ public:
         static size_t allocationSize(unsigned numberOfFrames)
         {
             static_assert(alignof(DisjunctionContext) <= sizeof(void*), "");
-            size_t rawSize = (sizeof(DisjunctionContext) - sizeof(uintptr_t) + Checked<size_t>(numberOfFrames) * sizeof(uintptr_t)).unsafeGet();
+            size_t rawSize = sizeof(DisjunctionContext) - sizeof(uintptr_t) + Checked<size_t>(numberOfFrames) * sizeof(uintptr_t);
             size_t roundedSize = roundUpToMultipleOf<sizeof(void*)>(rawSize);
             RELEASE_ASSERT(roundedSize >= rawSize);
             return roundedSize;
@@ -136,7 +136,7 @@ public:
         static size_t allocationSize(unsigned numberOfSubpatterns)
         {
             static_assert(alignof(ParenthesesDisjunctionContext) <= sizeof(void*), "");
-            size_t rawSize = (sizeof(ParenthesesDisjunctionContext) - sizeof(unsigned) + (Checked<size_t>(numberOfSubpatterns) * 2U) * sizeof(unsigned)).unsafeGet();
+            size_t rawSize = sizeof(ParenthesesDisjunctionContext) - sizeof(unsigned) + (Checked<size_t>(numberOfSubpatterns) * 2U) * sizeof(unsigned);
             size_t roundedSize = roundUpToMultipleOf<sizeof(void*)>(rawSize);
             RELEASE_ASSERT(roundedSize >= rawSize);
             return roundedSize;
@@ -148,7 +148,7 @@ public:
 
     ParenthesesDisjunctionContext* allocParenthesesDisjunctionContext(ByteDisjunction* disjunction, unsigned* output, ByteTerm& term)
     {
-        size_t size = (Checked<size_t>(ParenthesesDisjunctionContext::allocationSize(term.atom.parenthesesDisjunction->m_numSubpatterns)) + DisjunctionContext::allocationSize(disjunction->m_frameSize)).unsafeGet();
+        size_t size = Checked<size_t>(ParenthesesDisjunctionContext::allocationSize(term.atom.parenthesesDisjunction->m_numSubpatterns)) + DisjunctionContext::allocationSize(disjunction->m_frameSize);
         allocatorPool = allocatorPool->ensureCapacity(size);
         RELEASE_ASSERT(allocatorPool);
         return new (allocatorPool->alloc(size)) ParenthesesDisjunctionContext(output, term);
@@ -1786,7 +1786,7 @@ public:
     {
         m_bodyDisjunction->terms.append(ByteTerm(characterClass, invert, inputPosition));
 
-        m_bodyDisjunction->terms.last().atom.quantityMaxCount = quantityMaxCount.unsafeGet();
+        m_bodyDisjunction->terms.last().atom.quantityMaxCount = quantityMaxCount;
         m_bodyDisjunction->terms.last().atom.quantityType = quantityType;
         m_bodyDisjunction->terms.last().frameLocation = frameLocation;
     }
@@ -1797,7 +1797,7 @@ public:
 
         m_bodyDisjunction->terms.append(ByteTerm::BackReference(subpatternId, inputPosition));
 
-        m_bodyDisjunction->terms.last().atom.quantityMaxCount = quantityMaxCount.unsafeGet();
+        m_bodyDisjunction->terms.last().atom.quantityMaxCount = quantityMaxCount;
         m_bodyDisjunction->terms.last().atom.quantityType = quantityType;
         m_bodyDisjunction->terms.last().frameLocation = frameLocation;
     }
@@ -1874,9 +1874,9 @@ public:
         m_bodyDisjunction->terms[endTerm].atom.parenthesesWidth = endTerm - beginTerm;
         m_bodyDisjunction->terms[endTerm].frameLocation = frameLocation;
 
-        m_bodyDisjunction->terms[beginTerm].atom.quantityMaxCount = quantityMaxCount.unsafeGet();
+        m_bodyDisjunction->terms[beginTerm].atom.quantityMaxCount = quantityMaxCount;
         m_bodyDisjunction->terms[beginTerm].atom.quantityType = quantityType;
-        m_bodyDisjunction->terms[endTerm].atom.quantityMaxCount = quantityMaxCount.unsafeGet();
+        m_bodyDisjunction->terms[endTerm].atom.quantityMaxCount = quantityMaxCount;
         m_bodyDisjunction->terms[endTerm].atom.quantityType = quantityType;
     }
 
@@ -1974,8 +1974,8 @@ public:
         m_bodyDisjunction->terms.append(ByteTerm(ByteTerm::TypeParenthesesSubpattern, subpatternId, parenthesesDisjunction.get(), capture, inputPosition));
         m_allParenthesesInfo.append(WTFMove(parenthesesDisjunction));
 
-        m_bodyDisjunction->terms[beginTerm].atom.quantityMinCount = quantityMinCount.unsafeGet();
-        m_bodyDisjunction->terms[beginTerm].atom.quantityMaxCount = quantityMaxCount.unsafeGet();
+        m_bodyDisjunction->terms[beginTerm].atom.quantityMinCount = quantityMinCount;
+        m_bodyDisjunction->terms[beginTerm].atom.quantityMaxCount = quantityMaxCount;
         m_bodyDisjunction->terms[beginTerm].atom.quantityType = quantityType;
         m_bodyDisjunction->terms[beginTerm].frameLocation = frameLocation;
     }
@@ -1996,11 +1996,11 @@ public:
         m_bodyDisjunction->terms[endTerm].atom.parenthesesWidth = endTerm - beginTerm;
         m_bodyDisjunction->terms[endTerm].frameLocation = frameLocation;
 
-        m_bodyDisjunction->terms[beginTerm].atom.quantityMinCount = quantityMinCount.unsafeGet();
-        m_bodyDisjunction->terms[beginTerm].atom.quantityMaxCount = quantityMaxCount.unsafeGet();
+        m_bodyDisjunction->terms[beginTerm].atom.quantityMinCount = quantityMinCount;
+        m_bodyDisjunction->terms[beginTerm].atom.quantityMaxCount = quantityMaxCount;
         m_bodyDisjunction->terms[beginTerm].atom.quantityType = quantityType;
-        m_bodyDisjunction->terms[endTerm].atom.quantityMinCount = quantityMinCount.unsafeGet();
-        m_bodyDisjunction->terms[endTerm].atom.quantityMaxCount = quantityMaxCount.unsafeGet();
+        m_bodyDisjunction->terms[endTerm].atom.quantityMinCount = quantityMinCount;
+        m_bodyDisjunction->terms[endTerm].atom.quantityMaxCount = quantityMaxCount;
         m_bodyDisjunction->terms[endTerm].atom.quantityType = quantityType;
     }
 
@@ -2020,11 +2020,11 @@ public:
         m_bodyDisjunction->terms[endTerm].atom.parenthesesWidth = endTerm - beginTerm;
         m_bodyDisjunction->terms[endTerm].frameLocation = frameLocation;
 
-        m_bodyDisjunction->terms[beginTerm].atom.quantityMinCount = quantityMinCount.unsafeGet();
-        m_bodyDisjunction->terms[beginTerm].atom.quantityMaxCount = quantityMaxCount.unsafeGet();
+        m_bodyDisjunction->terms[beginTerm].atom.quantityMinCount = quantityMinCount;
+        m_bodyDisjunction->terms[beginTerm].atom.quantityMaxCount = quantityMaxCount;
         m_bodyDisjunction->terms[beginTerm].atom.quantityType = quantityType;
-        m_bodyDisjunction->terms[endTerm].atom.quantityMinCount = quantityMinCount.unsafeGet();
-        m_bodyDisjunction->terms[endTerm].atom.quantityMaxCount = quantityMaxCount.unsafeGet();
+        m_bodyDisjunction->terms[endTerm].atom.quantityMinCount = quantityMinCount;
+        m_bodyDisjunction->terms[endTerm].atom.quantityMaxCount = quantityMaxCount;
         m_bodyDisjunction->terms[endTerm].atom.quantityType = quantityType;
     }
 
@@ -2090,27 +2090,27 @@ public:
             for (auto& term : alternative->m_terms) {
                 switch (term.type) {
                 case PatternTerm::TypeAssertionBOL:
-                    assertionBOL((currentCountAlreadyChecked - term.inputPosition).unsafeGet());
+                    assertionBOL(currentCountAlreadyChecked - term.inputPosition);
                     break;
 
                 case PatternTerm::TypeAssertionEOL:
-                    assertionEOL((currentCountAlreadyChecked - term.inputPosition).unsafeGet());
+                    assertionEOL(currentCountAlreadyChecked - term.inputPosition);
                     break;
 
                 case PatternTerm::TypeAssertionWordBoundary:
-                    assertionWordBoundary(term.invert(), (currentCountAlreadyChecked - term.inputPosition).unsafeGet());
+                    assertionWordBoundary(term.invert(), currentCountAlreadyChecked - term.inputPosition);
                     break;
 
                 case PatternTerm::TypePatternCharacter:
-                    atomPatternCharacter(term.patternCharacter, (currentCountAlreadyChecked - term.inputPosition).unsafeGet(), term.frameLocation, term.quantityMaxCount, term.quantityType);
+                    atomPatternCharacter(term.patternCharacter, currentCountAlreadyChecked - term.inputPosition, term.frameLocation, term.quantityMaxCount, term.quantityType);
                     break;
 
                 case PatternTerm::TypeCharacterClass:
-                    atomCharacterClass(term.characterClass, term.invert(), (currentCountAlreadyChecked - term.inputPosition).unsafeGet(), term.frameLocation, term.quantityMaxCount, term.quantityType);
+                    atomCharacterClass(term.characterClass, term.invert(), currentCountAlreadyChecked - term.inputPosition, term.frameLocation, term.quantityMaxCount, term.quantityType);
                     break;
 
                 case PatternTerm::TypeBackReference:
-                    atomBackReference(term.backReferenceSubpatternId, (currentCountAlreadyChecked - term.inputPosition).unsafeGet(), term.frameLocation, term.quantityMaxCount, term.quantityType);
+                    atomBackReference(term.backReferenceSubpatternId, currentCountAlreadyChecked - term.inputPosition, term.frameLocation, term.quantityMaxCount, term.quantityType);
                     break;
 
                 case PatternTerm::TypeForwardReference:
@@ -2125,19 +2125,19 @@ public:
                             disjunctionAlreadyCheckedCount = term.parentheses.disjunction->m_minimumSize;
                         else
                             alternativeFrameLocation += YarrStackSpaceForBackTrackInfoParenthesesOnce;
-                        unsigned delegateEndInputOffset = (currentCountAlreadyChecked - term.inputPosition).unsafeGet();
+                        unsigned delegateEndInputOffset = currentCountAlreadyChecked - term.inputPosition;
                         atomParenthesesOnceBegin(term.parentheses.subpatternId, term.capture(), disjunctionAlreadyCheckedCount + delegateEndInputOffset, term.frameLocation, alternativeFrameLocation);
                         if (auto error = emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, disjunctionAlreadyCheckedCount))
                             return error;
                         atomParenthesesOnceEnd(delegateEndInputOffset, term.frameLocation, term.quantityMinCount, term.quantityMaxCount, term.quantityType);
                     } else if (term.parentheses.isTerminal) {
-                        unsigned delegateEndInputOffset = (currentCountAlreadyChecked - term.inputPosition).unsafeGet();
+                        unsigned delegateEndInputOffset = currentCountAlreadyChecked - term.inputPosition;
                         atomParenthesesTerminalBegin(term.parentheses.subpatternId, term.capture(), disjunctionAlreadyCheckedCount + delegateEndInputOffset, term.frameLocation, term.frameLocation + YarrStackSpaceForBackTrackInfoParenthesesTerminal);
                         if (auto error = emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, disjunctionAlreadyCheckedCount))
                             return error;
                         atomParenthesesTerminalEnd(delegateEndInputOffset, term.frameLocation, term.quantityMinCount, term.quantityMaxCount, term.quantityType);
                     } else {
-                        unsigned delegateEndInputOffset = (currentCountAlreadyChecked - term.inputPosition).unsafeGet();
+                        unsigned delegateEndInputOffset = currentCountAlreadyChecked - term.inputPosition;
                         atomParenthesesSubpatternBegin(term.parentheses.subpatternId, term.capture(), disjunctionAlreadyCheckedCount + delegateEndInputOffset, term.frameLocation, 0);
                         if (auto error = emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, 0))
                             return error;
@@ -2148,7 +2148,7 @@ public:
 
                 case PatternTerm::TypeParentheticalAssertion: {
                     unsigned alternativeFrameLocation = term.frameLocation + YarrStackSpaceForBackTrackInfoParentheticalAssertion;
-                    unsigned positiveInputOffset = (currentCountAlreadyChecked - term.inputPosition).unsafeGet();
+                    unsigned positiveInputOffset = currentCountAlreadyChecked - term.inputPosition;
                     unsigned uncheckAmount = 0;
                     if (positiveInputOffset > term.parentheses.disjunction->m_minimumSize) {
                         uncheckAmount = positiveInputOffset - term.parentheses.disjunction->m_minimumSize;

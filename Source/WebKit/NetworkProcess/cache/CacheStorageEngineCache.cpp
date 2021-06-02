@@ -441,7 +441,7 @@ void Cache::put(Vector<Record>&& records, RecordIdentifiersCallback&& callback)
         return;
     }
 
-    m_caches.requestSpace(spaceRequired.unsafeGet(), [caches = makeRef(m_caches), identifier = m_identifier, records = WTFMove(records), callback = WTFMove(callback)](std::optional<DOMCacheEngine::Error>&& error) mutable {
+    m_caches.requestSpace(spaceRequired, [caches = makeRef(m_caches), identifier = m_identifier, records = WTFMove(records), callback = WTFMove(callback)](std::optional<DOMCacheEngine::Error>&& error) mutable {
         if (error) {
             callback(makeUnexpected(error.value()));
             return;

@@ -426,7 +426,7 @@ void FETurbulence::platformApplySoftware()
     int height = resultSize.height();
 
     unsigned maxNumThreads = height / 8;
-    unsigned optimalThreadNumber = std::min<unsigned>(area.unsafeGet() / s_minimalRectDimension, maxNumThreads);
+    unsigned optimalThreadNumber = std::min<unsigned>(area / s_minimalRectDimension, maxNumThreads);
     if (optimalThreadNumber > 1) {
         WTF::ParallelJobs<FillRegionParameters> parallelJobs(&WebCore::FETurbulence::fillRegionWorker, optimalThreadNumber);
 

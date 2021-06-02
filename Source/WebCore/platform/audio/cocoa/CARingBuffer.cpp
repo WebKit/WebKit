@@ -82,7 +82,7 @@ UniqueRef<CARingBuffer> CARingBuffer::adoptStorage(UniqueRef<CARingBufferStorage
         RELEASE_LOG_FAULT(Media, "CARingBuffer::adoptStorage: Overflowed when trying to compute the storage size");
         return makeUniqueRef<CARingBuffer>();
     }
-    if (storage->size() < expectedStorageSize.unsafeGet()) {
+    if (storage->size() < expectedStorageSize) {
         RELEASE_LOG_FAULT(Media, "CARingBuffer::adoptStorage: Storage size is insufficient for format and frameCount");
         return makeUniqueRef<CARingBuffer>();
     }
@@ -99,7 +99,7 @@ void CARingBuffer::initializeAfterAllocation(const CAAudioStreamDescription& for
     m_bytesPerFrame = format.bytesPerFrame();
     m_frameCount = frameCount;
     m_frameCountMask = frameCount - 1;
-    m_capacityBytes = computeCapacityBytes(format, frameCount).unsafeGet();
+    m_capacityBytes = computeCapacityBytes(format, frameCount);
 
     m_pointers.resize(m_channelCount);
     Byte* channelData = static_cast<Byte*>(m_buffers->data());
@@ -123,8 +123,8 @@ bool CARingBuffer::allocate(const CAAudioStreamDescription& format, size_t frame
         return false;
     }
 
-    if (UNLIKELY(!m_buffers->allocate(sizeForBuffers.unsafeGet(), format, frameCount))) {
-        RELEASE_LOG_FAULT(Media, "CARingBuffer::allocate: Failed to allocate buffer of the requested size: %lu", sizeForBuffers.unsafeGet());
+    if (UNLIKELY(!m_buffers->allocate(sizeForBuffers, format, frameCount))) {
+        RELEASE_LOG_FAULT(Media, "CARingBuffer::allocate: Failed to allocate buffer of the requested size: %lu", sizeForBuffers.value());
         return false;
     }
 

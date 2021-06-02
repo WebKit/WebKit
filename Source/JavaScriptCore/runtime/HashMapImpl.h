@@ -201,7 +201,7 @@ public:
 
     static size_t allocationSize(Checked<size_t> capacity)
     {
-        return (capacity * sizeof(BucketType*)).unsafeGet();
+        return capacity * sizeof(BucketType*);
     }
 
     ALWAYS_INLINE BucketType** buffer() const
@@ -267,7 +267,7 @@ public:
         , m_keyCount(0)
         , m_deleteCount(0)
     {
-        uint32_t capacity = ((Checked<uint32_t>(sizeHint) * 2) + 1).unsafeGet();
+        uint32_t capacity = (Checked<uint32_t>(sizeHint) * 2) + 1;
         capacity = std::max<uint32_t>(WTF::roundUpToPowerOfTwo(capacity), 4U);
         m_capacity = capacity;
     }

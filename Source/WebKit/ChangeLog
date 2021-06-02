@@ -1,3 +1,56 @@
+2021-06-01  Chris Dumez  <cdumez@apple.com>
+
+        Rename Checked::unsafeGet() to Checked::value()
+        https://bugs.webkit.org/show_bug.cgi?id=226514
+
+        Reviewed by Darin Adler.
+
+        Rename Checked::unsafeGet() to Checked::value(). The "unsafeGet" naming is confusing as this
+        function isn't really unsafe since it will crash if the value has overflowed. Also add an
+        `operator T()` to implicitly convert a Checked to its underlying type without needing to
+        call value().
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::nextDestinationImageBufferAfterApplyingDisplayLists):
+        * NetworkProcess/WebStorage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::setItem):
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        (WebKit::CacheStorage::Cache::put):
+        * Platform/IPC/ArgumentCoders.h:
+        * Platform/IPC/cocoa/ConnectionCocoa.mm:
+        (IPC::Connection::sendOutgoingMessage):
+        (IPC::createMessageDecoder):
+        * Platform/IPC/cocoa/MachMessage.cpp:
+        (IPC::MachMessage::create):
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::Handle::encode const):
+        (WebKit::ShareableBitmap::create):
+        (WebKit::ShareableBitmap::createShareable):
+        * Shared/ShareableBitmap.h:
+        (WebKit::ShareableBitmap::bytesPerRow const):
+        (WebKit::ShareableBitmap::sizeInBytes const):
+        * Shared/ShareableResource.cpp:
+        (WebKit::ShareableResource::create):
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::ShareableBitmap::calculateBytesPerRow):
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        (WebKit::ShareableBitmap::createCGImage const):
+        * Shared/mac/MediaFormatReader/MediaFormatReader.cpp:
+        (WebKit::MediaFormatReader::copyTrackArray):
+        * Shared/mac/MediaFormatReader/MediaSampleCursor.cpp:
+        (WebKit::MediaSampleCursor::copySampleLocation const):
+        * WebProcess/GPU/graphics/DisplayListWriterHandle.cpp:
+        (WebKit::DisplayListWriterHandle::advance):
+        * WebProcess/GPU/graphics/ImageBufferShareableBitmapBackend.cpp:
+        (WebKit::ImageBufferShareableBitmapBackend::calculateBytesPerRow):
+        * WebProcess/GPU/media/RemoteImageDecoderAVF.cpp:
+        (WebKit::RemoteImageDecoderAVF::frameBytesAtIndex const):
+        * WebProcess/Network/WebSocketChannel.cpp:
+        (WebKit::WebSocketChannel::increaseBufferedAmount):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestEvasionRectsAboveSelection):
+        (WebKit::WebPage::updateSelectionWithDelta):
+
 2021-06-01  Dana Estra  <destra@apple.com>
 
         Adopt Reveal for phone numbers

@@ -379,8 +379,8 @@ OSStatus MediaSampleCursor::copySampleLocation(MTPluginSampleCursorStorageRange*
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(sample.platformSample().type == PlatformSample::ByteRangeSampleType);
         auto byteRange = *sample.byteRange();
         *storageRange = {
-            .offset = CheckedInt64(byteRange.byteOffset).unsafeGet(),
-            .length = CheckedInt64(byteRange.byteLength).unsafeGet(),
+            .offset = CheckedInt64(byteRange.byteOffset),
+            .length = CheckedInt64(byteRange.byteLength),
         };
         *byteSource = retainPtr(sample.platformSample().sample.byteRangeSample.first).leakRef();
     });

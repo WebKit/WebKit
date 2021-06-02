@@ -535,7 +535,7 @@ void* fastCalloc(size_t numElements, size_t elementSize)
     ASSERT_IS_WITHIN_LIMIT(numElements * elementSize);
     Checked<size_t> checkedSize = elementSize;
     checkedSize *= numElements;
-    void* result = fastZeroedMalloc(checkedSize.unsafeGet());
+    void* result = fastZeroedMalloc(checkedSize);
     if (!result)
         CRASH();
     return result;
@@ -618,7 +618,7 @@ TryMallocReturnValue tryFastCalloc(size_t numElements, size_t elementSize)
     checkedSize *= numElements;
     if (checkedSize.hasOverflowed())
         return nullptr;
-    return tryFastZeroedMalloc(checkedSize.unsafeGet());
+    return tryFastZeroedMalloc(checkedSize);
 }
 
 TryMallocReturnValue tryFastRealloc(void* object, size_t newSize)

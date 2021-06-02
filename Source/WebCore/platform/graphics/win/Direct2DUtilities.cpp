@@ -131,7 +131,7 @@ COMPtr<IWICBitmap> createDirect2DImageSurfaceWithData(void* data, const IntSize&
         return nullptr;
 
     COMPtr<IWICBitmap> surface;
-    HRESULT hr = ImageDecoderDirect2D::systemImagingFactory()->CreateBitmapFromMemory(size.width(), size.height(), wicBitmapFormat(), stride, static_cast<UINT>(numBytes.unsafeGet()), reinterpret_cast<BYTE*>(data), &surface);
+    HRESULT hr = ImageDecoderDirect2D::systemImagingFactory()->CreateBitmapFromMemory(size.width(), size.height(), wicBitmapFormat(), stride, static_cast<UINT>(numBytes.value()), reinterpret_cast<BYTE*>(data), &surface);
     if (!SUCCEEDED(hr))
         return nullptr;
 

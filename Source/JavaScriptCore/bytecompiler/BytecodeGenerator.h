@@ -207,7 +207,7 @@ namespace JSC {
         RegisterID* completionTypeRegister() const { return m_completionRecord.typeRegister.get(); }
         RegisterID* completionValueRegister() const { return m_completionRecord.valueRegister.get(); }
 
-        uint32_t numberOfBreaksOrContinues() const { return m_numberOfBreaksOrContinues.unsafeGet(); }
+        uint32_t numberOfBreaksOrContinues() const { return m_numberOfBreaksOrContinues; }
         void incNumberOfBreaksOrContinues() { m_numberOfBreaksOrContinues++; }
 
         bool handlesReturns() const { return m_handlesReturns; }

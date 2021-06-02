@@ -230,11 +230,11 @@ void LocalStorageDatabase::setItem(const String& key, const String& value, Strin
         newDatabaseSize += value.sizeInBytes();
         if (oldValue.isNull())
             newDatabaseSize += key.sizeInBytes();
-        if (newDatabaseSize.hasOverflowed() || newDatabaseSize.unsafeGet() > m_quotaInBytes) {
+        if (newDatabaseSize.hasOverflowed() || newDatabaseSize > m_quotaInBytes) {
             quotaException = true;
             return;
         }
-        m_databaseSize = newDatabaseSize.unsafeGet();
+        m_databaseSize = newDatabaseSize;
     }
 
     auto insertStatement = scopedStatement(m_insertStatement, "INSERT INTO ItemTable VALUES (?, ?)"_s);
