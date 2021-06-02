@@ -27,6 +27,9 @@
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 
+#include "ActiveDOMObject.h"
+#include "EventTarget.h"
+#include "GenericEventQueue.h"
 #include "MediaSession.h"
 #include "MediaSessionCoordinatorPrivate.h"
 #include "MediaSessionCoordinatorState.h"
@@ -41,10 +44,14 @@ template<typename> class DOMPromiseDeferred;
 class MediaSessionCoordinator
     : public RefCounted<MediaSessionCoordinator>
     , public MediaSessionCoordinatorClient
-    , public MediaSession::Observer {
+    , public MediaSession::Observer
+    , public ActiveDOMObject
+    , public EventTargetWithInlineData  {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT static Ref<MediaSessionCoordinator> create(Ref<MediaSessionCoordinatorPrivate>&&);
+    WEBCORE_EXPORT static Ref<MediaSessionCoordinator> create(ScriptExecutionContext*, RefPtr<MediaSessionCoordinatorPrivate>&&);
     WEBCORE_EXPORT ~MediaSessionCoordinator();
+    WEBCORE_EXPORT void setMediaSessionCoordinatorPrivate(Ref<MediaSessionCoordinatorPrivate>&&);
 
     void join(DOMPromiseDeferred<void>&&);
     ExceptionOr<void> leave();
@@ -62,9 +69,22 @@ public:
 
     using MediaSessionCoordinatorClient::weakPtrFactory;
     using WeakValueType = MediaSessionCoordinatorClient::WeakValueType;
+    using RefCounted::ref;
+    using RefCounted::deref;
 
 private:
-    explicit MediaSessionCoordinator(Ref<MediaSessionCoordinatorPrivate>&&);
+    MediaSessionCoordinator(ScriptExecutionContext*, RefPtr<MediaSessionCoordinatorPrivate>&&);
+
+    // EventTarget
+    void refEventTarget() final { ref(); }
+    void derefEventTarget() final { deref(); }
+    EventTargetInterface eventTargetInterface() const final { return MediaSessionCoordinatorEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
+    void eventListenersDidChange() final;
+
+    // ActiveDOMObject
+    const char* activeDOMObjectName() const final { return "MediaSessionCoordinator"; }
+    bool virtualHasPendingActivity() const final;
 
     // MediaSession::Observer
     void metadataChanged(const RefPtr<MediaMetadata>&) final;
@@ -85,12 +105,15 @@ private:
     const void* logIdentifier() const { return m_logIdentifier; }
     static WTFLogChannel& logChannel();
     static const char* logClassName() { return "MediaSessionCoordinator"; }
+    bool shouldFireEvents() const;
 
     WeakPtr<MediaSession> m_session;
-    MediaSessionCoordinatorState m_state { MediaSessionCoordinatorState::Waiting };
     RefPtr<MediaSessionCoordinatorPrivate> m_privateCoordinator;
-    Ref<const Logger> m_logger;
+    const Ref<const Logger> m_logger;
     const void* m_logIdentifier;
+    UniqueRef<MainThreadGenericEventQueue> m_asyncEventQueue;
+    MediaSessionCoordinatorState m_state { MediaSessionCoordinatorState::Closed };
+    bool m_hasCoordinatorsStateChangeEventListener { false };
 };
 
 }

@@ -33,28 +33,26 @@
 
         let changePromise = () => {
             return new Promise(resolve => {
-                navigator.mediaSession.addEventListener('coordinatorchange', (event) => {
-                    consoleWrite(`EVENT(${event.type})`);
+                navigator.mediaSession.coordinator.addEventListener('coordinatorstatechange', (event) => {
+                    consoleWrite(`EVENT(${event.type} STATE(${navigator.mediaSession.coordinator.state})`);
                     resolve();
-                });
+                }, { once: true });
             });
         }
 
         await waitForDebugger();
 
         consoleWrite('');
-        consoleWrite('** There should be no mediaSession.coordinator initially.')
+        consoleWrite('** There mediaSession.coordinator.state should be closed initially.');
 
-        testExpected('navigator.mediaSession.coordinator', undefined);
+        testExpected('navigator.mediaSession.coordinator.state', "closed");
 
         consoleWrite('');
-        consoleWrite('** Test that mediaSession.coordinatorchange event is fired when it changes.')
+        consoleWrite('** Test that mediaSession.coordinator.coordinatorstatechange event is fired when it changes.');
 
         run('internals.registerMockMediaSessionCoordinator(changeHandler)');
 
         await changePromise();
-        
-        testExpected('navigator.mediaSession.coordinator', undefined, '!=');
 
         ['play', 'pause', 'seekto'].forEach(action => {
             navigator.mediaSession.setActionHandler(action, actionDetails => {
@@ -120,7 +118,7 @@
 
         // Before joining
         consoleWrite('');
-        consoleWrite('** navigator.mediaSession.coordinator.state should be "waiting" intitially')
+        consoleWrite('** navigator.mediaSession.coordinator.state should be "waiting" initially')
         testExpected('navigator.mediaSession.coordinator.state', 'waiting');
 
         consoleWrite('');
@@ -159,9 +157,9 @@
         consoleWrite('');
         run('internals.setMockMediaSessionCoordinatorCommandsShouldFail(false)');
         run('promise = navigator.mediaSession.coordinator.join()');
+        await changePromise();
         await shouldResolve(promise).then(() => { }).catch(() => { });
         testExpected('navigator.mediaSession.coordinator.state', 'joined');
-        testExpected('latestChange', 'coordinatorStateChanged');
 
         consoleWrite('');
         consoleWrite('** Test that when coordinator methods succeed, promises resolve and mediaSession action handlers are called.')
@@ -189,8 +187,9 @@
         consoleWrite('<br>');
         consoleWrite('** Leave the session')
         run('navigator.mediaSession.coordinator.leave()');
+        await changePromise();
         testExpected('navigator.mediaSession.coordinator.state', 'closed');
-        await testExpectedEventually('latestChange', 'coordinatorStateChanged', '==', 100);
+
         latestChange = '';
 
         consoleWrite('');

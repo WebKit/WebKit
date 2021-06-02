@@ -96,7 +96,7 @@
                 window.webkit.messageHandlers.testHandler.postMessage(message);
         }
 
-        function postEvent(evt) 
+        function postEvent(evt)
         {
             postMessage(`${evt.type} event`);
         }
@@ -135,7 +135,7 @@
             audio.addEventListener('play', postEvent);
             audio.addEventListener('pause', postEvent);
             audio.addEventListener('seeked', postEvent);
-            navigator.mediaSession.addEventListener('coordinatorchange', postEvent);
+            navigator.mediaSession.coordinator.addEventListener('coordinatorstatechange', postEvent);
         }, false);
 
     </script>

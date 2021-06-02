@@ -28,8 +28,7 @@
 #if ENABLE(MEDIA_SESSION)
 
 #include "ActiveDOMObject.h"
-#include "EventTarget.h"
-#include "GenericEventQueue.h"
+#include "ExceptionOr.h"
 #include "MediaPositionState.h"
 #include "MediaSessionAction.h"
 #include "MediaSessionActionHandler.h"
@@ -52,7 +51,7 @@ class MediaSessionCoordinatorPrivate;
 class Navigator;
 template<typename> class DOMPromiseDeferred;
 
-class MediaSession : public RefCounted<MediaSession>, public ActiveDOMObject, public EventTargetWithInlineData {
+class MediaSession : public RefCounted<MediaSession>, public ActiveDOMObject, public CanMakeWeakPtr<MediaSession> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<MediaSession> create(Navigator&);
@@ -80,8 +79,7 @@ public:
     MediaSessionReadyState readyState() const { return m_readyState; };
     void setReadyState(MediaSessionReadyState);
 
-    MediaSessionCoordinator* coordinator() const { return m_coordinator.get(); }
-    WEBCORE_EXPORT void createCoordinator(Ref<MediaSessionCoordinatorPrivate>&&);
+    MediaSessionCoordinator& coordinator() const { return *m_coordinator; }
 #endif
 
 #if ENABLE(MEDIA_SESSION_PLAYLIST)
@@ -97,10 +95,6 @@ public:
     WEBCORE_EXPORT bool callActionHandler(const MediaSessionActionDetails&, TriggerGestureIndicator = TriggerGestureIndicator::Yes);
 
     const Logger& logger() const { return *m_logger.get(); }
-
-    // EventTarget
-    using RefCounted::ref;
-    using RefCounted::deref;
 
     class Observer : public CanMakeWeakPtr<Observer> {
     public:
@@ -130,15 +124,10 @@ private:
     void notifyActionHandlerObservers();
     void notifyReadyStateObservers();
 
-    // EventTarget
-    void refEventTarget() final { ref(); }
-    void derefEventTarget() final { deref(); }
-    EventTargetInterface eventTargetInterface() const final { return MediaSessionEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
+    void createCoordinator(MediaSessionCoordinatorPrivate*);
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final { return "MediaSession"; }
-    bool virtualHasPendingActivity() const final;
     void suspend(ReasonForSuspension) final;
     void stop() final;
 
@@ -155,7 +144,6 @@ private:
     const void* m_logIdentifier;
 
     WeakHashSet<Observer> m_observers;
-    UniqueRef<MainThreadGenericEventQueue> m_asyncEventQueue;
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     MediaSessionReadyState m_readyState { MediaSessionReadyState::Havenothing };

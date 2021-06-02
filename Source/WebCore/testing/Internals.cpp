@@ -6246,7 +6246,7 @@ ExceptionOr<void> Internals::registerMockMediaSessionCoordinator(ScriptExecution
     auto& session = NavigatorMediaSession::mediaSession(document->domWindow()->navigator());
     auto mock = MockMediaSessionCoordinator::create(context, WTFMove(listener));
     m_mockMediaSessionCoordinator = mock.ptr();
-    session.createCoordinator(WTFMove(mock));
+    session.coordinator().setMediaSessionCoordinatorPrivate(WTFMove(mock));
 
     return { };
 }

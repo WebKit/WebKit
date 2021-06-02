@@ -128,36 +128,28 @@ static std::optional<std::pair<PlatformMediaSession::RemoteControlCommandType, P
 
 Ref<MediaSession> MediaSession::create(Navigator& navigator)
 {
-    return adoptRef(*new MediaSession(navigator));
+    auto session = adoptRef(*new MediaSession(navigator));
+    session->suspendIfNeeded();
+    return session;
 }
 
 MediaSession::MediaSession(Navigator& navigator)
     : ActiveDOMObject(navigator.scriptExecutionContext())
     , m_navigator(makeWeakPtr(navigator))
-    , m_asyncEventQueue(MainThreadGenericEventQueue::create(*this))
 {
     m_logger = makeRefPtr(Document::sharedLogger());
     m_logIdentifier = nextLogIdentifier();
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     auto* frame = navigator.frame();
-    if (auto* page = frame ? frame->page() : nullptr) {
-        if (auto coordinatorPrivate = page->mediaSessionCoordinator())
-            createCoordinator(*coordinatorPrivate);
-    }
+    if (auto* page = frame ? frame->page() : nullptr)
+        createCoordinator(page->mediaSessionCoordinator());
 #endif
-
-    suspendIfNeeded();
 
     ALWAYS_LOG(LOGIDENTIFIER);
 }
 
 MediaSession::~MediaSession() = default;
-
-bool MediaSession::virtualHasPendingActivity() const
-{
-    return m_asyncEventQueue->hasPendingActivity();
-}
 
 void MediaSession::suspend(ReasonForSuspension reason)
 {
@@ -200,19 +192,15 @@ void MediaSession::setReadyState(MediaSessionReadyState state)
     notifyReadyStateObservers();
 }
 
-void MediaSession::createCoordinator(Ref<MediaSessionCoordinatorPrivate>&& coordinatorPrivate)
+void MediaSession::createCoordinator(MediaSessionCoordinatorPrivate* coordinatorPrivate)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
     if (m_coordinator)
         m_coordinator->setMediaSession(nullptr);
 
-    m_coordinator = MediaSessionCoordinator::create(WTFMove(coordinatorPrivate));
-
-    if (m_coordinator)
-        m_coordinator->setMediaSession(this);
-
-    m_asyncEventQueue->enqueueEvent(Event::create(eventNames().coordinatorchangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    m_coordinator = MediaSessionCoordinator::create(scriptExecutionContext(), coordinatorPrivate);
+    m_coordinator->setMediaSession(this);
 }
 #endif
 

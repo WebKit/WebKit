@@ -3427,7 +3427,7 @@ void Page::setMediaSessionCoordinator(Ref<MediaSessionCoordinatorPrivate>&& medi
 
     auto* window = mainFrame().window();
     if (auto* navigator = window ? window->optionalNavigator() : nullptr)
-        NavigatorMediaSession::mediaSession(*navigator).createCoordinator(*m_mediaSessionCoordinator);
+        NavigatorMediaSession::mediaSession(*navigator).coordinator().setMediaSessionCoordinatorPrivate(*m_mediaSessionCoordinator);
 }
 
 void Page::invalidateMediaSessionCoordinator()
@@ -3441,11 +3441,7 @@ void Page::invalidateMediaSessionCoordinator()
     if (!navigator)
         return;
 
-    auto* coordinator = NavigatorMediaSession::mediaSession(*navigator).coordinator();
-    if (!coordinator)
-        return;
-
-    coordinator->close();
+    NavigatorMediaSession::mediaSession(*navigator).coordinator().close();
 }
 #endif
 

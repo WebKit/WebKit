@@ -1,13 +1,12 @@
 
-** There should be no mediaSession.coordinator initially.
-EXPECTED (navigator.mediaSession.coordinator == 'undefined') OK
+** There mediaSession.coordinator.state should be closed initially.
+EXPECTED (navigator.mediaSession.coordinator.state == 'closed') OK
 
-** Test that mediaSession.coordinatorchange event is fired when it changes.
+** Test that mediaSession.coordinator.coordinatorstatechange event is fired when it changes.
 RUN(internals.registerMockMediaSessionCoordinator(changeHandler))
-EVENT(coordinatorchange)
-EXPECTED (navigator.mediaSession.coordinator != 'undefined') OK
+EVENT(coordinatorstatechange STATE(waiting)
 
-** navigator.mediaSession.coordinator.state should be "waiting" intitially
+** navigator.mediaSession.coordinator.state should be "waiting" initially
 EXPECTED (navigator.mediaSession.coordinator.state == 'waiting') OK
 
 ** Test that when coordinator methods fail and promises reject before mediaSession.join() is called.
@@ -78,9 +77,9 @@ EXPECTED (latestChange == '') OK
 
 RUN(internals.setMockMediaSessionCoordinatorCommandsShouldFail(false))
 RUN(promise = navigator.mediaSession.coordinator.join())
+EVENT(coordinatorstatechange STATE(joined)
 Promise resolved OK
 EXPECTED (navigator.mediaSession.coordinator.state == 'joined') OK
-EXPECTED (latestChange == 'coordinatorStateChanged') OK
 
 ** Test that when coordinator methods succeed, promises resolve and mediaSession action handlers are called.
 RUN(promise = navigator.mediaSession.coordinator.play())
@@ -149,8 +148,11 @@ EXPECTED (navigator.mediaSession.playbackState == 'none') OK
 
 ** Leave the session
 RUN(navigator.mediaSession.coordinator.leave())
+EXPECTED (latestChange == 'playbackStateChanged') OK
+EXPECTED (latestChange == 'playbackStateChanged') OK
+EXPECTED (latestChange == 'playbackStateChanged') OK
+EVENT(coordinatorstatechange STATE(closed)
 EXPECTED (navigator.mediaSession.coordinator.state == 'closed') OK
-EXPECTED (latestChange == 'coordinatorStateChanged') OK
 
 ** Test that when coordinator methods fail and promises reject after mediaSession.leave() has been called.
 RUN(promise = navigator.mediaSession.coordinator.play())

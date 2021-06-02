@@ -1,3 +1,14 @@
+2021-06-01  Jean-Yves Avenard  <jya@apple.com>
+
+        MediaSession.coordinator should not be optional, relying on coordinator readyState change instead
+        https://bugs.webkit.org/show_bug.cgi?id=226328
+        rdar://77461335
+
+        Reviewed by Eric Carlson.
+
+        * media/media-session/mock-coordinator-expected.txt:
+        * media/media-session/mock-coordinator.html: Change test to match new API.
+
 2021-06-01  Chris Dumez  <cdumez@apple.com>
 
         Fix unsafe access to m_upload in XMLHttpRequest::virtualHasPendingActivity()

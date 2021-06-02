@@ -28,8 +28,7 @@
     Conditional=MEDIA_SESSION,
     Exposed=Window,
     ExportMacro=WEBCORE_EXPORT,
-    JSGenerateToJSObject,
-] interface MediaSession : EventTarget
+] interface MediaSession
 {
     attribute MediaMetadata? metadata;
 

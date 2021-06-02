@@ -1,3 +1,47 @@
+2021-06-01  Jean-Yves Avenard  <jya@apple.com>
+
+        MediaSession.coordinator should not be optional, relying on coordinator state change instead
+        https://bugs.webkit.org/show_bug.cgi?id=226328
+        rdar://77461335
+
+        Reviewed by Eric Carlson.
+
+        The coordinator was a read-only optional attribute of the MediaSession element.
+        Testing if the attribute was to be used to determine if a MediaSessionCoordinator
+        was now available and for the MediaSession to join it. This made the use of an external
+        polyfill difficult and enforcing the validity of an user created custom
+        MediaSessionCoordinator due to IDL semantics limitations hard.
+        We instead always create a MediaSessionCoordinator which in its default state is Closed.
+        Once this state is changed to Waiting and an event is fire the MediaSession can now
+        join it.
+
+        * Modules/mediasession/MediaSession.cpp:
+        (WebCore::MediaSession::MediaSession): MediaSession no longer needs to fire event.
+        Remove no longer necessary inheritance and async event queue.
+        (WebCore::MediaSession::create): Drive-by fix, don't call suspendIfNeeded() in the constructor.
+        (WebCore::MediaSession::createCoordinator): Make method private.
+        * Modules/mediasession/MediaSession.h:
+        (WebCore::MediaSession::coordinator const): MediaSessionCoordinator always exists. Return reference instead.
+        * Modules/mediasession/MediaSession.idl: Amend definition, remove EventHandler
+        * Modules/mediasession/MediaSessionCoordinator.cpp:
+        (WebCore::MediaSessionCoordinator::create):
+        (WebCore::MediaSessionCoordinator::MediaSessionCoordinator):
+        (WebCore::MediaSessionCoordinator::setMediaSessionCoordinatorPrivate):
+        (WebCore::MediaSessionCoordinator::virtualHasPendingActivity const):
+        (WebCore::MediaSessionCoordinator::join):
+        (WebCore::MediaSessionCoordinator::close):
+        (WebCore::MediaSessionCoordinator::coordinatorStateChanged):
+        * Modules/mediasession/MediaSessionCoordinator.h:
+        * Modules/mediasession/MediaSessionCoordinator.idl: Added new EventHandler attribute.
+        * Modules/mediasession/MediaSessionCoordinatorMixin.idl: Update for new API definition.
+        * dom/EventNames.h:
+        * dom/EventTargetFactory.in:
+        * page/Page.cpp:
+        (WebCore::Page::setMediaSessionCoordinator):
+        (WebCore::Page::invalidateMediaSessionCoordinator):
+        * testing/Internals.cpp:
+        (WebCore::Internals::registerMockMediaSessionCoordinator):
+
 2021-06-01  Chris Dumez  <cdumez@apple.com>
 
         Drop unused AudioChannel::resizeSmaller()

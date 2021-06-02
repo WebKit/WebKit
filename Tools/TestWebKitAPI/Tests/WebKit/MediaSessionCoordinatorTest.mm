@@ -212,14 +212,14 @@ public:
         }];
         TestWebKitAPI::Util::run(&done);
 
-        listenForEventMessages({ "coordinatorchange"_s });
+        listenForEventMessages({ "coordinatorstatechange"_s });
 
         EXPECT_TRUE(result);
         if (!result)
             NSLog(@"-[_createMediaSessionCoordinatorForTesting:completionHandler:] failed!");
 
-        waitForEventListenerToBeCalled("coordinatorchange"_s);
-        ASSERT_TRUE(eventListenerWasCalled("coordinatorchange"_s));
+        waitForEventListenerToBeCalled("coordinatorstatechange"_s);
+        ASSERT_TRUE(eventListenerWasCalled("coordinatorstatechange"_s));
     }
 
     TestWKWebView* webView() const { return _webView.get(); }

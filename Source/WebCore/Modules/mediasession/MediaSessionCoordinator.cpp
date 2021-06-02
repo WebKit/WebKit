@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 
+#include "EventNames.h"
 #include "JSDOMException.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSMediaSessionCoordinatorState.h"
@@ -47,23 +48,48 @@ static const void* nextCoordinatorLogIdentifier()
     return reinterpret_cast<const void*>(++logIdentifier);
 }
 
-Ref<MediaSessionCoordinator> MediaSessionCoordinator::create(Ref<MediaSessionCoordinatorPrivate>&& privateCoordinator)
+Ref<MediaSessionCoordinator> MediaSessionCoordinator::create(ScriptExecutionContext* context, RefPtr<MediaSessionCoordinatorPrivate>&& privateCoordinator)
 {
-    return adoptRef(*new MediaSessionCoordinator(WTFMove(privateCoordinator)));
+    auto coordinator = adoptRef(*new MediaSessionCoordinator(context, WTFMove(privateCoordinator)));
+    coordinator->suspendIfNeeded();
+    return coordinator;
 }
 
-MediaSessionCoordinator::MediaSessionCoordinator(Ref<MediaSessionCoordinatorPrivate>&& privateCoordinator)
-    : m_privateCoordinator(WTFMove(privateCoordinator))
+MediaSessionCoordinator::MediaSessionCoordinator(ScriptExecutionContext* context, RefPtr<MediaSessionCoordinatorPrivate>&& privateCoordinator)
+    : ActiveDOMObject(context)
     , m_logger(makeRef(Document::sharedLogger()))
     , m_logIdentifier(nextCoordinatorLogIdentifier())
+    , m_asyncEventQueue(MainThreadGenericEventQueue::create(*this))
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
+    if (privateCoordinator)
+        setMediaSessionCoordinatorPrivate(*privateCoordinator);
+}
+
+void MediaSessionCoordinator::setMediaSessionCoordinatorPrivate(Ref<MediaSessionCoordinatorPrivate>&& privateCoordinator)
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    if (m_privateCoordinator)
+        m_privateCoordinator->leave();
+    m_privateCoordinator = WTFMove(privateCoordinator);
     m_privateCoordinator->setLogger(m_logger.copyRef(), m_logIdentifier);
     m_privateCoordinator->setClient(makeWeakPtr(this));
+    coordinatorStateChanged(MediaSessionCoordinatorState::Waiting);
 }
 
 MediaSessionCoordinator::~MediaSessionCoordinator() = default;
+
+void MediaSessionCoordinator::eventListenersDidChange()
+{
+    m_hasCoordinatorsStateChangeEventListener = hasEventListeners(eventNames().coordinatorstatechangeEvent);
+}
+
+bool MediaSessionCoordinator::virtualHasPendingActivity() const
+{
+    // Need to keep the JS wrapper alive as long as it may still fire events in the future.
+    return shouldFireEvents();
+}
 
 void MediaSessionCoordinator::join(DOMPromiseDeferred<void>&& promise)
 {
@@ -75,6 +101,7 @@ void MediaSessionCoordinator::join(DOMPromiseDeferred<void>&& promise)
         promise.reject(Exception { InvalidStateError, makeString("Unable to join when state is ", convertEnumerationToString(m_state)) });
         return;
     }
+    ASSERT(m_privateCoordinator, "We must be in Waiting state if no private coordinator is set");
 
     m_privateCoordinator->join([protectedThis = makeRefPtr(*this), identifier, promise = WTFMove(promise)] (std::optional<Exception>&& exception) mutable {
         if (!protectedThis->m_session) {
@@ -88,7 +115,8 @@ void MediaSessionCoordinator::join(DOMPromiseDeferred<void>&& promise)
             return;
         }
 
-        protectedThis->m_state = MediaSessionCoordinatorState::Joined;
+        protectedThis->coordinatorStateChanged(MediaSessionCoordinatorState::Joined);
+
         promise.resolve();
     });
 }
@@ -107,7 +135,7 @@ ExceptionOr<void> MediaSessionCoordinator::leave()
 void MediaSessionCoordinator::close()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_state = MediaSessionCoordinatorState::Closed;
+    coordinatorStateChanged(MediaSessionCoordinatorState::Closed);
     if (!m_privateCoordinator)
         return;
 
@@ -381,12 +409,20 @@ void MediaSessionCoordinator::setSessionTrack(const String& track, CompletionHan
     completionHandler(true);
 }
 
+bool MediaSessionCoordinator::shouldFireEvents() const
+{
+    return m_hasCoordinatorsStateChangeEventListener && m_session;
+}
+
+
 void MediaSessionCoordinator::coordinatorStateChanged(MediaSessionCoordinatorState state)
 {
     if (m_state == state)
         return;
     m_state = state;
     ALWAYS_LOG(LOGIDENTIFIER, m_state);
+    if (shouldFireEvents())
+        m_asyncEventQueue->enqueueEvent(Event::create(eventNames().coordinatorstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 bool MediaSessionCoordinator::currentPositionApproximatelyEqualTo(double time) const

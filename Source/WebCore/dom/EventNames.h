@@ -101,7 +101,7 @@ namespace WebCore {
     macro(connecting) \
     macro(contextmenu) \
     macro(controllerchange) \
-    macro(coordinatorchange) \
+    macro(coordinatorstatechange) \
     macro(copy) \
     macro(cuechange) \
     macro(cut) \
