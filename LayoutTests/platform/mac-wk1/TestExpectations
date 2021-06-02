@@ -1281,3 +1281,5 @@ webkit.org/b/226229 [ Catalina ] imported/w3c/web-platform-tests/css/css-backgro
 webkit.org/b/226360 imported/w3c/web-platform-tests/mathml/presentation-markup/mrow/inferred-mrow-stretchy.html [ Pass Failure ]
 
 webkit.org/b/226377 [ BigSur ] imported/w3c/web-platform-tests/css/css-contain/contain-paint-ignored-cases-ruby-stacking-and-clipping-001.html [ Pass Failure ]
+
+webkit.org/b/226517 [ BigSur ] media/media-event-listeners.html [ Pass Timeout ]
