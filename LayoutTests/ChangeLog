@@ -1,3 +1,19 @@
+2021-06-02  Youenn Fablet  <youenn@apple.com>
+
+        Fix race condition in binary_wsh.py
+        https://bugs.webkit.org/show_bug.cgi?id=226464
+        <rdar://77356905>
+
+        Reviewed by Alex Christensen.
+
+        The web socket server was implemented to send 4 messages as soon as connection is opened and close the connection.
+        The client expects to correctly send a message before the connection is closed.
+        This is not guaranteed by the web socket server, in case the server is very fast closing the connection and the client very slow at sending its message.
+        Given the focus of the test is to validate binary data, change the web socket server to remove the potential race.
+
+        * http/tests/websocket/tests/hybi/inspector/binary_wsh.py:
+        (web_socket_transfer_data):
+
 2021-05-28  Antoine Quint  <graouts@webkit.org>
 
         Hit-testing does not account for clip-path on <iframe>

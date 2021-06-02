@@ -1,12 +1,15 @@
 from mod_pywebsocket import common
 from mod_pywebsocket import stream
 
+from mod_pywebsocket import msgutil
 
 def web_socket_do_extra_handshake(request):
     pass
 
 
 def web_socket_transfer_data(request):
+    # Make sure to receive a message from client before sending messages.
+    client_message = msgutil.receive_message(request)
     messages_to_send = ['Hello, world!', 'Привет, Мир!', '', all_distinct_bytes()]
     for message in messages_to_send:
         # FIXME: Should use better API to send binary messages when pywebsocket supports it.
