@@ -523,5 +523,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/WebUserContentControllerProxyMessag
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/com.apple.WebKit.GPUProcess.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/com.apple.WebKit.NetworkProcess.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/com.apple.WebKit.WebAuthnProcess.sb
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/com.apple.WebKit.WebContent.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/com.apple.WebKit.plugin-common.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit2/com.apple.WebProcess.sb

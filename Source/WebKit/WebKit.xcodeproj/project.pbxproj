@@ -62,6 +62,7 @@
 			buildConfigurationList = A7AADA1419395CA9003EA1C7 /* Build configuration list for PBXAggregateTarget "Sandbox Profiles" */;
 			buildPhases = (
 				A7AADA1519395CC3003EA1C7 /* CopyFiles */,
+				E30CFBA3266138730094D9C0 /* ShellScript */,
 			);
 			dependencies = (
 			);
@@ -1639,7 +1640,6 @@
 		A5EC6AD42151BD7B00677D17 /* WebPageDebuggable.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EC6AD32151BD6900677D17 /* WebPageDebuggable.h */; };
 		A5EFD38C16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EFD38B16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A78CCDDB193AC9F8005ECC25 /* com.apple.WebKit.Networking.sb in CopyFiles */ = {isa = PBXBuildFile; fileRef = A78CCDD8193AC9E3005ECC25 /* com.apple.WebKit.Networking.sb */; };
-		A78CCDDC193AC9FB005ECC25 /* com.apple.WebKit.WebContent.sb in CopyFiles */ = {isa = PBXBuildFile; fileRef = A78CCDD9193AC9E3005ECC25 /* com.apple.WebKit.WebContent.sb */; };
 		A7D792D81767CCA300881CBE /* ActivityAssertion.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D792D41767CB0900881CBE /* ActivityAssertion.h */; };
 		AAB145E6223F931200E489D8 /* PrefetchCache.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB145E4223F931200E489D8 /* PrefetchCache.h */; };
 		AAFA634F234F7C6400FFA864 /* AsyncRevalidation.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFA634E234F7C6300FFA864 /* AsyncRevalidation.h */; };
@@ -2381,7 +2381,6 @@
 				2DB96053239886C100102791 /* com.apple.WebKit.GPU.sb in CopyFiles */,
 				A78CCDDB193AC9F8005ECC25 /* com.apple.WebKit.Networking.sb in CopyFiles */,
 				57EFC77E2550EB8600F9477D /* com.apple.WebKit.WebAuthn.sb in CopyFiles */,
-				A78CCDDC193AC9FB005ECC25 /* com.apple.WebKit.WebContent.sb in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5152,7 +5151,6 @@
 		A5EFD38B16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageVisibilityTypes.h; sourceTree = "<group>"; };
 		A72D5D7F1236CBA800A88B15 /* APISerializedScriptValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APISerializedScriptValue.h; sourceTree = "<group>"; };
 		A78CCDD8193AC9E3005ECC25 /* com.apple.WebKit.Networking.sb */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.Networking.sb; sourceTree = "<group>"; };
-		A78CCDD9193AC9E3005ECC25 /* com.apple.WebKit.WebContent.sb */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.WebContent.sb; sourceTree = "<group>"; };
 		A7D792D41767CB0900881CBE /* ActivityAssertion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ActivityAssertion.h; sourceTree = "<group>"; };
 		A7D792D51767CB6E00881CBE /* ActivityAssertion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ActivityAssertion.cpp; sourceTree = "<group>"; };
 		A7E93CEB192531AA00A1DC48 /* AuxiliaryProcessIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AuxiliaryProcessIOS.mm; path = ios/AuxiliaryProcessIOS.mm; sourceTree = "<group>"; };
@@ -5880,6 +5878,8 @@
 		E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SandboxInitializationParameters.h; sourceTree = "<group>"; };
 		E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageEditorClient.h; sourceTree = "<group>"; };
 		E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageEditorClient.cpp; sourceTree = "<group>"; };
+		E30CFB9D2660663C0094D9C0 /* com.apple.WebKit.WebContent.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = com.apple.WebKit.WebContent.sb; path = DerivedSources/WebKit2/com.apple.WebKit.WebContent.sb; sourceTree = BUILT_PRODUCTS_DIR; };
+		E313664D265EE5AF0051084F /* com.apple.WebKit.WebContent.sb.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebKit.WebContent.sb.in; sourceTree = "<group>"; };
 		E3439B632345463A0011DE0B /* NetworkProcessConnectionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NetworkProcessConnectionInfo.h; path = Network/NetworkProcessConnectionInfo.h; sourceTree = "<group>"; };
 		E3866AE42397400400F88FE9 /* WebDeviceOrientationUpdateProviderProxy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebDeviceOrientationUpdateProviderProxy.mm; path = ios/WebDeviceOrientationUpdateProviderProxy.mm; sourceTree = "<group>"; };
 		E3866AE62397405300F88FE9 /* WebDeviceOrientationUpdateProviderProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDeviceOrientationUpdateProviderProxy.h; path = ios/WebDeviceOrientationUpdateProviderProxy.h; sourceTree = "<group>"; };
@@ -9702,7 +9702,7 @@
 				2DB96052239886B900102791 /* com.apple.WebKit.GPU.sb */,
 				A78CCDD8193AC9E3005ECC25 /* com.apple.WebKit.Networking.sb */,
 				57EFC77D2550EB8500F9477D /* com.apple.WebKit.WebAuthn.sb */,
-				A78CCDD9193AC9E3005ECC25 /* com.apple.WebKit.WebContent.sb */,
+				E313664D265EE5AF0051084F /* com.apple.WebKit.WebContent.sb.in */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -11019,6 +11019,7 @@
 				E17AE2C216B9C63A001C42F1 /* com.apple.WebKit.NetworkProcess.sb */,
 				7A1506721DD56298001F4B58 /* com.apple.WebKit.plugin-common.sb */,
 				572EBBC32536AB84000552B3 /* com.apple.WebKit.WebAuthnProcess.sb */,
+				E30CFB9D2660663C0094D9C0 /* com.apple.WebKit.WebContent.sb */,
 				E1967E37150AB5E200C73169 /* com.apple.WebProcess.sb */,
 				1AB7D6171288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp */,
 				1AB7D6181288B9D900CFD08C /* DownloadProxyMessages.h */,
@@ -13630,7 +13631,6 @@
 			inputPaths = (
 				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb",
 				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb",
-				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb",
 				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb",
 			);
 			name = "Copy iOS Sandbox Profiles for Manual Sandboxing";
@@ -14011,6 +14011,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "UNLOCK_SCRIPT_PATH=\"${SRCROOT}/../../../Internal/Tools/Scripts/unlock-safari-engineering-keychain-if-needed\"\n\n[[ -x \"${UNLOCK_SCRIPT_PATH}\" ]] && exec \"${UNLOCK_SCRIPT_PATH}\"\n\nexit 0\n";
+		};
+		E30CFBA3266138730094D9C0 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/generate-derived-sources.sh sandbox-profiles-ios\ncp ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit2/com.apple.WebKit.WebContent.sb ${DSTROOT}/${INSTALL_PATH}\n";
 		};
 		F4EFBAD522540CBB00049BA6 /* Replace WebKitAdditions in Framework Headers */ = {
 			isa = PBXShellScriptBuildPhase;
