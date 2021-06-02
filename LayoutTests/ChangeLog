@@ -1,3 +1,18 @@
+2021-06-02  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION (r275227): Check boxes on V-Safe site flicker when selected
+        https://bugs.webkit.org/show_bug.cgi?id=226549
+        <rdar://problem/77722651>
+
+        Reviewed by Simon Fraser.
+
+        Check that a background-image set to a CSS variable doesn't yield a transition when another style property changes.
+
+        * webanimations/background-image-css-variable-no-transition-expected.txt: Added.
+        * webanimations/background-image-css-variable-no-transition.html: Added.
+        * webanimations/empty-keyframes-crash.html: motify this existing test which relie on the buggy behavior to trigger
+        a transition.
+
 2021-06-02  Sam Weinig  <weinig@apple.com>
 
         Add support for "relative color syntax" for color()

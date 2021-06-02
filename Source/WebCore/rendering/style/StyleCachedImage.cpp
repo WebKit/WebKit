@@ -57,7 +57,7 @@ bool StyleCachedImage::operator==(const StyleImage& other) const
         return true;
     if (m_scaleFactor != otherCached.m_scaleFactor)
         return false;
-    if (m_cssValue.ptr() == otherCached.m_cssValue.ptr())
+    if (m_cssValue.ptr() == otherCached.m_cssValue.ptr() || m_cssValue->equals(otherCached.m_cssValue.get()))
         return true;
     if (m_cachedImage && m_cachedImage == otherCached.m_cachedImage)
         return true;

@@ -4,8 +4,13 @@
 <style>
 #hr1 {
     transition: 1s;
-    background: url(data:image/gif;base64,);
+    background: black;
 }
+
+#hr1.changed {
+    background: blue;
+}
+
 </style>
 <script>
 
@@ -15,6 +20,7 @@ if (window.testRunner)
 function crash() {
     var hr1 = document.getElementById("hr1");
     var hr2 = document.getElementById("hr2");
+    hr1.classList.add("changed");
     document.all[2].appendChild(hr2);
     var animation = document.createElement("hr3").animate({  }, 1);
     var hr1_animation_effect = hr1.getAnimations()[0].effect;
