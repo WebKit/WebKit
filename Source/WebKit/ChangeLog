@@ -1,3 +1,53 @@
+2021-06-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Image extraction preview panel should automatically close when the web view is unparented
+        https://bugs.webkit.org/show_bug.cgi?id=226588
+        rdar://77062762
+
+        Reviewed by Tim Horton.
+
+        Refactor some logic for presenting the preview panel. See below for more details.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::handleProcessSwapOrExit):
+        (WebKit::WebViewImpl::viewDidMoveToWindow):
+
+        When the web view is removed from the view hierarchy (i.e. when the view is moved to a `nil` window), call into
+        `closeSharedPreviewPanelIfNecessary` to dismiss the shared preview panel if we're currently controlling its
+        presentation for the purposes of image extraction.
+
+        (WebKit::WebViewImpl::beginPreviewPanelControl):
+        (WebKit::WebViewImpl::endPreviewPanelControl):
+
+        Add more plumbing into WebPageProxy to begin and end preview panel control; this allows us to avoid having to
+        expose a separate method to reset WebPageProxy's `m_imageExtractionPreviewController` and call it from
+        WebViewImpl.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+
+        Additionally call into `closeSharedPreviewPanelIfNecessary` when committing main frame navigation. We also
+        refactor a bit of logic here so that we fold several pieces of similar "reset" logic into a single if statement.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WKImageExtractionPreviewController.h:
+        * UIProcess/mac/WKImageExtractionPreviewController.mm:
+        (-[WKImageExtractionPreviewController beginControl:]):
+        (-[WKImageExtractionPreviewController endControl:]):
+        (-[WKImageExtractionPreviewController closePanelIfNecessary]):
+        (-[WKImageExtractionPreviewController isControlling:]):
+
+        Move logic for assigning, removing, and checking the QLPreviewPanel's `-delegate` and `-dataSource` into helper
+        methods on WKImageExtractionPreviewController. Doing this allows us to consolidate more of the QuickLookUI-
+        specific logic inside WKImageExtractionPreviewController and WebPageProxy, but also (and more importantly)
+        prevents us from having to `#import <pal/spi/mac/QuickLookMacSPI.h>` inside `WebPageProxyMac.mm`, which results
+        in nullability errors when calling into `-[NSApplication stopSpeaking:]`.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::beginPreviewPanelControl):
+        (WebKit::WebPageProxy::endPreviewPanelControl):
+        (WebKit::WebPageProxy::closeSharedPreviewPanelIfNecessary):
+
 2021-06-03  Chris Fleizach  <cfleizach@apple.com>
 
         AX: macOS WebContent can't read prefs from com.apple.Accessibility

@@ -1517,6 +1517,7 @@ NSWindow *WebViewImpl::window()
 void WebViewImpl::handleProcessSwapOrExit()
 {
     dismissContentRelativeChildWindowsWithAnimation(true);
+    m_page->closeSharedPreviewPanelIfNecessary();
 
     notifyInputContextAboutDiscardedComposition();
 
@@ -2397,6 +2398,7 @@ void WebViewImpl::viewDidMoveToWindow()
         m_flagsChangedEventMonitor = nil;
 
         dismissContentRelativeChildWindowsWithAnimation(false);
+        m_page->closeSharedPreviewPanelIfNecessary();
 
         if (m_immediateActionGestureRecognizer) {
             // Work around <rdar://problem/22646404> by explicitly cancelling the animation.
@@ -5724,35 +5726,12 @@ bool WebViewImpl::acceptsPreviewPanelControl(QLPreviewPanel *)
 
 void WebViewImpl::beginPreviewPanelControl(QLPreviewPanel *panel)
 {
-#if ENABLE(IMAGE_EXTRACTION)
-    auto controller = m_page->imageExtractionPreviewController();
-    if (!controller)
-        return;
-
-    panel.dataSource = controller;
-    panel.delegate = controller;
-#else
-    UNUSED_PARAM(panel);
-#endif
+    m_page->beginPreviewPanelControl(panel);
 }
 
 void WebViewImpl::endPreviewPanelControl(QLPreviewPanel *panel)
 {
-#if ENABLE(IMAGE_EXTRACTION)
-    auto controller = m_page->imageExtractionPreviewController();
-    if (!controller)
-        return;
-
-    if (panel.dataSource == controller)
-        panel.dataSource = nil;
-
-    if (panel.delegate == controller)
-        panel.delegate = nil;
-
-    m_page->resetImageExtractionPreview();
-#else
-    UNUSED_PARAM(panel);
-#endif
+    m_page->endPreviewPanelControl(panel);
 }
 
 #if ENABLE(DATA_DETECTION)

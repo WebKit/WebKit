@@ -32,6 +32,9 @@
 #import <pal/mac/QuickLookUISoftLink.h>
 #import <wtf/RetainPtr.h>
 
+@interface WKImageExtractionPreviewController () <QLPreviewPanelDelegate, QLPreviewPanelDataSource>
+@end
+
 @implementation WKImageExtractionPreviewController {
     RetainPtr<QLItem> _item;
     RetainPtr<NSData> _imageData;
@@ -54,6 +57,35 @@
     }
 
     return self;
+}
+
+- (void)beginControl:(QLPreviewPanel *)panel
+{
+    panel.dataSource = self;
+    panel.delegate = self;
+}
+
+- (void)endControl:(QLPreviewPanel *)panel
+{
+    if (panel.dataSource == self)
+        panel.dataSource = nil;
+
+    if (panel.delegate == self)
+        panel.delegate = nil;
+}
+
+- (void)closePanelIfNecessary
+{
+    if (!PAL::isQuickLookUIFrameworkAvailable() || ![PAL::getQLPreviewPanelClass() sharedPreviewPanelExists])
+        return;
+
+    if (auto panel = [PAL::getQLPreviewPanelClass() sharedPreviewPanel]; [self isControlling:panel])
+        [panel close];
+}
+
+- (BOOL)isControlling:(QLPreviewPanel *)panel
+{
+    return panel.dataSource == self && panel.delegate == self;
 }
 
 #pragma mark - QLPreviewItemDataProvider

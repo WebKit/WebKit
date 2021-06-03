@@ -4882,15 +4882,17 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
             m_navigationClient->didCommitNavigation(*this, navigation.get(), m_process->transformHandlesToObjects(userData.object()).get());
         m_navigationClient->didCommitLoadForFrame(*this, WTFMove(request), WTFMove(frameInfo));
     }
+    if (frame->isMainFrame()) {
 #if ENABLE(ATTACHMENT_ELEMENT)
-    if (frame->isMainFrame())
         invalidateAllAttachments();
 #endif
-
 #if ENABLE(REMOTE_INSPECTOR)
-    if (frame->isMainFrame())
         remoteInspectorInformationDidChange();
 #endif
+#if USE(APPKIT)
+        closeSharedPreviewPanelIfNecessary();
+#endif
+    }
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     WEBPAGEPROXY_DIDCOMMITLOADFORFRAME_WKCOORDINATOR_ADDITIONS

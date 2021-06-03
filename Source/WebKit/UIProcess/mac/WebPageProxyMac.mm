@@ -45,6 +45,7 @@
 #import "StringUtilities.h"
 #import "TextChecker.h"
 #import "WKBrowsingContextControllerInternal.h"
+#import "WKImageExtractionPreviewController.h"
 #import "WKSharingServicePickerDelegate.h"
 #import "WebContextMenuProxyMac.h"
 #import "WebPageMessages.h"
@@ -716,6 +717,28 @@ Color WebPageProxy::platformUnderPageBackgroundColor() const
     return NSColor.controlBackgroundColor.CGColor;
 #else
     return NSColor.whiteColor.CGColor;
+#endif
+}
+
+void WebPageProxy::beginPreviewPanelControl(QLPreviewPanel *panel)
+{
+#if ENABLE(IMAGE_EXTRACTION)
+    [m_imageExtractionPreviewController beginControl:panel];
+#endif
+}
+
+void WebPageProxy::endPreviewPanelControl(QLPreviewPanel *panel)
+{
+#if ENABLE(IMAGE_EXTRACTION)
+    if (auto controller = std::exchange(m_imageExtractionPreviewController, nil))
+        [controller endControl:panel];
+#endif
+}
+
+void WebPageProxy::closeSharedPreviewPanelIfNecessary()
+{
+#if ENABLE(IMAGE_EXTRACTION)
+    [m_imageExtractionPreviewController closePanelIfNecessary];
 #endif
 }
 

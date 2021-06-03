@@ -27,14 +27,20 @@
 
 #if PLATFORM(MAC) && ENABLE(IMAGE_EXTRACTION)
 
-#import <pal/spi/mac/QuickLookMacSPI.h>
+#import <Foundation/Foundation.h>
 
 namespace WebKit {
 class WebPageProxy;
 }
 
-@interface WKImageExtractionPreviewController : NSObject <QLPreviewPanelDelegate, QLPreviewPanelDataSource>
+@class QLPreviewPanel;
+
+@interface WKImageExtractionPreviewController : NSObject
 - (instancetype)initWithPage:(WebKit::WebPageProxy&)page imageData:(NSData *)data title:(NSString *)title imageURL:(NSURL *)imageURL;
+- (void)beginControl:(QLPreviewPanel *)panel;
+- (BOOL)isControlling:(QLPreviewPanel *)panel;
+- (void)endControl:(QLPreviewPanel *)panel;
+- (void)closePanelIfNecessary;
 @end
 
 #endif // PLATFORM(MAC) && ENABLE(IMAGE_EXTRACTION)

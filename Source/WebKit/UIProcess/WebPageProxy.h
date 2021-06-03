@@ -229,6 +229,7 @@ OBJC_CLASS NSFileWrapper;
 OBJC_CLASS NSMenu;
 OBJC_CLASS NSTextAlternatives;
 OBJC_CLASS NSView;
+OBJC_CLASS QLPreviewPanel;
 OBJC_CLASS WKQLThumbnailLoadOperation;
 OBJC_CLASS WKWebView;
 OBJC_CLASS _WKRemoteObjectRegistry;
@@ -1912,7 +1913,12 @@ public:
 
 #if ENABLE(IMAGE_EXTRACTION) && ENABLE(CONTEXT_MENUS)
     void handleContextMenuRevealImage();
-    void resetImageExtractionPreview();
+#endif
+
+#if USE(APPKIT)
+    void beginPreviewPanelControl(QLPreviewPanel *);
+    void endPreviewPanelControl(QLPreviewPanel *);
+    void closeSharedPreviewPanelIfNecessary();
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
