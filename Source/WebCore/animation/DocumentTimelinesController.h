@@ -67,7 +67,7 @@ private:
     void maybeClearCachedCurrentTime();
 
     WeakHashSet<DocumentTimeline> m_timelines;
-    GenericTaskQueue<Timer> m_currentTimeClearingTaskQueue;
+    EventLoopTaskQueue m_currentTimeClearingTaskQueue;
     Document& m_document;
     Markable<Seconds, Seconds::MarkableTraits> m_cachedCurrentTime;
     bool m_isSuspended { false };

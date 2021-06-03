@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,42 +25,15 @@
 
 #pragma once
 
+#include "ContextDestructionObserver.h"
+#include "EventLoop.h"
 #include "GenericTaskQueue.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
-template <typename T>
-class DeferrableTask : public CanMakeWeakPtr<DeferrableTask<T>> {
+class DeferrableTaskBase : public CanMakeWeakPtr<DeferrableTaskBase> {
 public:
-    DeferrableTask()
-        : m_dispatcher()
-    {
-    }
-
-    DeferrableTask(T& t)
-        : m_dispatcher(&t)
-    {
-    }
-
-    typedef WTF::Function<void ()> TaskFunction;
-
-    void scheduleTask(TaskFunction&& task)
-    {
-        if (m_isClosed)
-            return;
-
-        cancelTask();
-
-        m_pendingTask = true;
-        m_dispatcher.postTask([weakThis = makeWeakPtr(*this), task = WTFMove(task)] {
-            if (!weakThis)
-                return;
-            ASSERT(weakThis->m_pendingTask);
-            weakThis->m_pendingTask = false;
-            task();
-        });
-    }
-
     void close()
     {
         cancelTask();
@@ -69,15 +42,78 @@ public:
 
     void cancelTask()
     {
-        CanMakeWeakPtr<DeferrableTask<T>>::weakPtrFactory().revokeAll();
-        m_pendingTask = false;
+        weakPtrFactory().revokeAll();
+        m_isPending = false;
     }
-    bool hasPendingTask() const { return m_pendingTask; }
+
+    bool isPending() const { return m_isPending; }
+
+protected:
+    ~DeferrableTaskBase() = default;
+    bool isClosed() const { return m_isClosed; }
+    void setIsPending(bool isPending) { m_isPending = isPending; }
+
+private:
+    bool m_isPending { false };
+    bool m_isClosed { false };
+};
+
+template <typename T>
+class DeferrableTask : public DeferrableTaskBase {
+public:
+    DeferrableTask()
+        : m_dispatcher()
+    { }
+
+    DeferrableTask(T& t)
+        : m_dispatcher(&t)
+    { }
+
+    void scheduleTask(Function<void()>&& task)
+    {
+        if (isClosed())
+            return;
+
+        cancelTask();
+
+        setIsPending(true);
+        m_dispatcher.postTask([weakThis = makeWeakPtr(*this), task = WTFMove(task)] {
+            if (!weakThis)
+                return;
+            ASSERT(weakThis->isPending());
+            weakThis->setIsPending(false);
+            task();
+        });
+    }
 
 private:
     TaskDispatcher<T> m_dispatcher;
-    bool m_pendingTask { false };
-    bool m_isClosed { false };
+};
+
+// Similar to DeferrableTask but based on the HTML event loop.
+class EventLoopDeferrableTask : public DeferrableTaskBase, private ContextDestructionObserver {
+public:
+    EventLoopDeferrableTask(ScriptExecutionContext* context)
+        : ContextDestructionObserver(context)
+    { }
+
+    // FIXME: Pass TaskSource instead of assuming TaskSource::MediaElement.
+    void scheduleTask(Function<void()>&& task)
+    {
+        if (isClosed() || !scriptExecutionContext())
+            return;
+
+        cancelTask();
+
+        setIsPending(true);
+        scriptExecutionContext()->eventLoop().queueTask(TaskSource::MediaElement, [weakThis = makeWeakPtr(*this), task = WTFMove(task)] {
+            if (!weakThis)
+                return;
+            ASSERT(weakThis->isPending());
+            weakThis->setIsPending(false);
+            task();
+        });
+    }
 };
 
 }

@@ -28,10 +28,12 @@
 
 #include "Document.h"
 #include "Event.h"
+#include "EventLoop.h"
 #include "EventTarget.h"
 #include "Node.h"
 #include "ScriptExecutionContext.h"
 #include "Timer.h"
+#include <wtf/Algorithms.h>
 #include <wtf/MainThread.h>
 #include <wtf/SetForScope.h>
 
@@ -40,13 +42,12 @@ namespace WebCore {
 MainThreadGenericEventQueue::MainThreadGenericEventQueue(EventTarget& owner)
     : ActiveDOMObject(owner.scriptExecutionContext())
     , m_owner(owner)
-    , m_taskQueue(makeUniqueRef<GenericTaskQueue<Timer>>())
 {
 }
 
 void MainThreadGenericEventQueue::enqueueEvent(RefPtr<Event>&& event)
 {
-    if (m_isClosed)
+    if (m_isClosed || !scriptExecutionContext())
         return;
 
     if (event->target() == &m_owner)
@@ -54,10 +55,10 @@ void MainThreadGenericEventQueue::enqueueEvent(RefPtr<Event>&& event)
 
     m_pendingEvents.append(WTFMove(event));
 
-    if (isSuspendedOrPausedByClient())
-        return;
-
-    m_taskQueue->enqueueTask(std::bind(&MainThreadGenericEventQueue::dispatchOneEvent, this));
+    scriptExecutionContext()->eventLoop().queueTask(TaskSource::MediaElement, [weakThis = makeWeakPtr(*this)] {
+        if (weakThis)
+            weakThis->dispatchOneEvent();
+    });
 }
 
 void MainThreadGenericEventQueue::dispatchOneEvent()
@@ -78,14 +79,12 @@ void MainThreadGenericEventQueue::dispatchOneEvent()
 void MainThreadGenericEventQueue::close()
 {
     m_isClosed = true;
-
-    m_taskQueue->close();
-    m_pendingEvents.clear();
+    cancelAllEvents();
 }
 
 void MainThreadGenericEventQueue::cancelAllEvents()
 {
-    m_taskQueue->cancelAllTasks();
+    weakPtrFactory().revokeAll();
     m_pendingEvents.clear();
 }
 
@@ -96,51 +95,7 @@ bool MainThreadGenericEventQueue::hasPendingActivity() const
 
 bool MainThreadGenericEventQueue::hasPendingEventsOfType(const AtomString& type) const
 {
-    for (auto& event : m_pendingEvents) {
-        if (event->type() == type)
-            return true;
-    }
-
-    return false;
-}
-
-void MainThreadGenericEventQueue::setPaused(bool shouldPause)
-{
-    if (m_isPausedByClient == shouldPause)
-        return;
-
-    m_isPausedByClient = shouldPause;
-    if (shouldPause)
-        m_taskQueue->cancelAllTasks();
-    else
-        rescheduleAllEventsIfNeeded();
-}
-
-void MainThreadGenericEventQueue::suspend(ReasonForSuspension)
-{
-    if (m_isSuspended)
-        return;
-
-    m_isSuspended = true;
-    m_taskQueue->cancelAllTasks();
-}
-
-void MainThreadGenericEventQueue::resume()
-{
-    if (!m_isSuspended)
-        return;
-
-    m_isSuspended = false;
-    rescheduleAllEventsIfNeeded();
-}
-
-void MainThreadGenericEventQueue::rescheduleAllEventsIfNeeded()
-{
-    if (isSuspendedOrPausedByClient())
-        return;
-
-    for (unsigned i = 0; i < m_pendingEvents.size(); ++i)
-        m_taskQueue->enqueueTask(std::bind(&MainThreadGenericEventQueue::dispatchOneEvent, this));
+    return WTF::anyOf(m_pendingEvents, [&](auto& event) { return event->type() == type; });
 }
 
 void MainThreadGenericEventQueue::stop()

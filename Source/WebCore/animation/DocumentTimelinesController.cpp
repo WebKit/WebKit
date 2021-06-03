@@ -43,7 +43,8 @@
 namespace WebCore {
 
 DocumentTimelinesController::DocumentTimelinesController(Document& document)
-    : m_document(document)
+    : m_currentTimeClearingTaskQueue(&document)
+    , m_document(document)
 {
     if (auto* page = document.page()) {
         if (page->settings().hiddenPageCSSAnimationSuspensionEnabled() && !page->isVisible())

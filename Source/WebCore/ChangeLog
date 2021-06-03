@@ -1,3 +1,63 @@
+2021-06-02  Chris Dumez  <cdumez@apple.com>
+
+        Port media code to the HTML event loop
+        https://bugs.webkit.org/show_bug.cgi?id=226543
+
+        Reviewed by Ryosuke Niwa.
+
+        Port media code to the HTML event loop so that event processing order is consistent
+        with non-media related events. To avoid having a very large patch, I made the following
+        changes:
+        - Update MainThreadGenericEventQueue to be based on the HTML event loop instead of a
+          global Timer.
+        - Introduce a EventLoopDeferrableTask which has the same API as DeferrableTask<Timer> but
+          uses the HTML event loop instead of a global Timer. Port media code to use
+          EventLoopDeferrableTask instead of DeferrableTask.
+        - Introduce an EventLoopTaskQueue which has the same API as GenericTaskQueue<Timer>
+          but uses the HTML event loop instead of a global Timer. Port media code to use
+          EventLoopTaskQueue instead of GenericTaskQueue<Timer>.
+
+        This effectively ports our entire media code to the HTML event loop. It allows new
+        media code to use the HTML event loop *directly* without fear of ordering issues. It also
+        allows us to refactor existing media code to use the HTML event loop *directly* when possible,
+        in an incremental fashion, without causing ordering issues.
+
+        * Headers.cmake:
+        * Modules/remoteplayback/RemotePlayback.cpp:
+        (WebCore::RemotePlayback::RemotePlayback):
+        * Modules/remoteplayback/RemotePlayback.h:
+        * animation/DocumentTimelinesController.cpp:
+        (WebCore::DocumentTimelinesController::DocumentTimelinesController):
+        * animation/DocumentTimelinesController.h:
+        * dom/FullscreenManager.cpp:
+        * dom/FullscreenManager.h:
+        * dom/GenericEventQueue.cpp:
+        (WebCore::MainThreadGenericEventQueue::MainThreadGenericEventQueue):
+        (WebCore::MainThreadGenericEventQueue::enqueueEvent):
+        (WebCore::MainThreadGenericEventQueue::close):
+        (WebCore::MainThreadGenericEventQueue::cancelAllEvents):
+        (WebCore::MainThreadGenericEventQueue::hasPendingEventsOfType const):
+        * dom/GenericEventQueue.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        * html/HTMLMediaElement.h:
+        * html/shadow/MediaControlTextTrackContainerElement.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::MediaControlTextTrackContainerElement):
+        * html/shadow/MediaControlTextTrackContainerElement.h:
+        * platform/DeferrableTask.h:
+        (WebCore::DeferrableTaskBase::close):
+        (WebCore::DeferrableTaskBase::cancelTask):
+        (WebCore::DeferrableTaskBase::hasPendingTask const):
+        (WebCore::DeferrableTaskBase::isClosed const):
+        (WebCore::DeferrableTaskBase::setHasPendingTask):
+        * platform/GenericTaskQueue.h:
+        (WebCore::GenericTaskQueueBase::hasPendingTasks const):
+        (WebCore::GenericTaskQueueBase::isClosed const):
+        (WebCore::GenericTaskQueueBase::close):
+        (WebCore::GenericTaskQueueBase::cancelAllTasks):
+        (WebCore::GenericTaskQueueBase::incrementPendingTasks):
+        (WebCore::GenericTaskQueueBase::decremementPendingTasks):
+
 2021-06-02  Alex Christensen  <achristensen@webkit.org>
 
         Fix WPT test resource-timing/cross-origin-redirects.html

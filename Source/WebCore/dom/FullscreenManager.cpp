@@ -48,6 +48,7 @@ using namespace HTMLNames;
 
 FullscreenManager::FullscreenManager(Document& document)
     : m_document { document }
+    , m_fullscreenTaskQueue { &document }
 #if !RELEASE_LOG_DISABLED
     , m_logIdentifier(LoggerHelper::uniqueLogIdentifier())
 #endif

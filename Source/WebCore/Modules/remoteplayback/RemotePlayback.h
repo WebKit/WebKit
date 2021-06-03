@@ -101,7 +101,7 @@ private:
     bool m_available { false };
 
     UniqueRef<MainThreadGenericEventQueue> m_eventQueue;
-    GenericTaskQueue<Timer> m_taskQueue;
+    EventLoopTaskQueue m_taskQueue;
 };
 
 }

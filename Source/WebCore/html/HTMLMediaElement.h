@@ -185,7 +185,7 @@ public:
 #endif
 
     void scheduleCheckPlaybackTargetCompatability();
-    void checkPlaybackTargetCompatablity();
+    void checkPlaybackTargetCompatibility();
     void scheduleResolvePendingPlayPromises();
     void scheduleRejectPendingPlayPromises(Ref<DOMException>&&);
     using PlayPromiseVector = Vector<DOMPromiseDeferred<void>>;
@@ -944,21 +944,21 @@ private:
     Timer m_scanTimer;
     Timer m_playbackControlsManagerBehaviorRestrictionsTimer;
     Timer m_seekToPlaybackPositionEndedTimer;
-    DeferrableTask<Timer> m_configureTextTracksTask;
-    DeferrableTask<Timer> m_checkPlaybackTargetCompatablityTask;
-    DeferrableTask<Timer> m_updateMediaStateTask;
-    DeferrableTask<Timer> m_mediaEngineUpdatedTask;
+    EventLoopDeferrableTask m_configureTextTracksTask;
+    EventLoopDeferrableTask m_checkPlaybackTargetCompatibilityTask;
+    EventLoopDeferrableTask m_updateMediaStateTask;
+    EventLoopDeferrableTask m_mediaEngineUpdatedTask;
     DeferrableTask<HTMLMediaElement> m_updatePlayStateTask;
-    DeferrableTask<Timer> m_resumeTaskQueue;
-    DeferrableTask<Timer> m_seekTaskQueue;
-    DeferrableTask<Timer> m_playbackControlsManagerBehaviorRestrictionsQueue;
-    DeferrableTask<Timer> m_bufferedTimeRangesChangedQueue;
-    GenericTaskQueue<Timer> m_promiseTaskQueue;
-    GenericTaskQueue<Timer> m_pauseAfterDetachedTaskQueue;
-    GenericTaskQueue<Timer> m_resourceSelectionTaskQueue;
-    GenericTaskQueue<Timer> m_visibilityChangeTaskQueue;
-    GenericTaskQueue<Timer> m_fullscreenTaskQueue;
-    GenericTaskQueue<Timer> m_playbackTargetIsWirelessQueue;
+    EventLoopDeferrableTask m_resumeTask;
+    EventLoopDeferrableTask m_seekTask;
+    EventLoopDeferrableTask m_playbackControlsManagerBehaviorRestrictionsTask;
+    EventLoopDeferrableTask m_bufferedTimeRangesChangedTask;
+    EventLoopTaskQueue m_promiseTaskQueue;
+    EventLoopTaskQueue m_pauseAfterDetachedTaskQueue;
+    EventLoopTaskQueue m_resourceSelectionTaskQueue;
+    EventLoopTaskQueue m_visibilityChangeTaskQueue;
+    EventLoopTaskQueue m_fullscreenTaskQueue;
+    EventLoopTaskQueue m_playbackTargetIsWirelessQueue;
     RefPtr<TimeRanges> m_playedTimeRanges;
     UniqueRef<MainThreadGenericEventQueue> m_asyncEventQueue;
 #if PLATFORM(IOS_FAMILY)
@@ -1162,7 +1162,7 @@ private:
     RefPtr<MediaKeys> m_mediaKeys;
     bool m_attachingMediaKeys { false };
     bool m_playbackBlockedWaitingForKey { false };
-    GenericTaskQueue<Timer> m_encryptedMediaQueue;
+    EventLoopTaskQueue m_encryptedMediaQueue;
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

@@ -119,7 +119,7 @@ private:
     RefPtr<Element> m_fullscreenElement;
     Vector<RefPtr<Element>> m_fullscreenElementStack;
     WeakPtr<RenderFullScreen> m_fullscreenRenderer { nullptr };
-    GenericTaskQueue<Timer> m_fullscreenTaskQueue;
+    EventLoopTaskQueue m_fullscreenTaskQueue;
     Deque<RefPtr<Node>> m_fullscreenChangeEventTargetQueue;
     Deque<RefPtr<Node>> m_fullscreenErrorEventTargetQueue;
     LayoutRect m_savedPlaceholderFrameRect;

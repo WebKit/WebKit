@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include "ContextDestructionObserver.h"
+#include "EventLoop.h"
+#include "ScriptExecutionContext.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
@@ -75,8 +78,35 @@ private:
     Deque<Function<void()>> m_pendingTasks WTF_GUARDED_BY_LOCK(s_sharedLock);
 };
 
+class GenericTaskQueueBase : public CanMakeWeakPtr<GenericTaskQueueBase> {
+public:
+    bool hasPendingTasks() const { return m_pendingTasks; }
+    bool isClosed() const { return m_isClosed; }
+
+    void close()
+    {
+        cancelAllTasks();
+        m_isClosed = true;
+    }
+
+    void cancelAllTasks()
+    {
+        weakPtrFactory().revokeAll();
+        m_pendingTasks = 0;
+    }
+
+protected:
+    ~GenericTaskQueueBase() = default;
+    void incrementPendingTasks() { ++m_pendingTasks; }
+    void decrementPendingTasks() { ASSERT(m_pendingTasks); --m_pendingTasks; }
+
+private:
+    unsigned m_pendingTasks { 0 };
+    bool m_isClosed { false };
+};
+
 template <typename T>
-class GenericTaskQueue : public CanMakeWeakPtr<GenericTaskQueue<T>> {
+class GenericTaskQueue : public GenericTaskQueueBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     GenericTaskQueue()
@@ -93,9 +123,10 @@ public:
 
     explicit GenericTaskQueue(T* t)
         : m_dispatcher(makeUniqueRef<TaskDispatcher<T>>(t))
-        , m_isClosed(!t)
     {
         ASSERT(isMainThread());
+        if (!t)
+            close();
     }
 
     ~GenericTaskQueue()
@@ -104,42 +135,45 @@ public:
             m_dispatcher->postTask([dispatcher = WTFMove(m_dispatcher)] { });
     }
 
-    typedef WTF::Function<void ()> TaskFunction;
-
-    void enqueueTask(TaskFunction&& task)
+    void enqueueTask(Function<void()>&& task)
     {
-        if (m_isClosed)
+        if (isClosed())
             return;
 
-        ++m_pendingTasks;
+        incrementPendingTasks();
         m_dispatcher->postTask([weakThis = makeWeakPtr(*this), task = WTFMove(task)] {
             if (!weakThis)
                 return;
-            ASSERT(weakThis->m_pendingTasks);
-            --weakThis->m_pendingTasks;
+            weakThis->decrementPendingTasks();
             task();
         });
     }
 
-    void close()
-    {
-        cancelAllTasks();
-        m_isClosed = true;
-    }
-
-    void cancelAllTasks()
-    {
-        CanMakeWeakPtr<GenericTaskQueue<T>>::weakPtrFactory().revokeAll();
-        m_pendingTasks = 0;
-    }
-
-    bool hasPendingTasks() const { return m_pendingTasks; }
-    bool isClosed() const { return m_isClosed; }
-
 private:
     UniqueRef<TaskDispatcher<T>> m_dispatcher;
-    unsigned m_pendingTasks { 0 };
-    bool m_isClosed { false };
+};
+
+// Similar to GenericTaskQueue but based on the HTML event loop.
+class EventLoopTaskQueue : public GenericTaskQueueBase, private ContextDestructionObserver {
+public:
+    EventLoopTaskQueue(ScriptExecutionContext* context)
+        : ContextDestructionObserver(context)
+    { }
+
+    // FIXME: Pass a TaskSource instead of assuming TaskSource::MediaElement.
+    void enqueueTask(Function<void()>&& task)
+    {
+        if (isClosed() || !scriptExecutionContext())
+            return;
+
+        incrementPendingTasks();
+        scriptExecutionContext()->eventLoop().queueTask(TaskSource::MediaElement, [weakThis = makeWeakPtr(*this), task = WTFMove(task)] {
+            if (!weakThis)
+                return;
+            weakThis->decrementPendingTasks();
+            task();
+        });
+    }
 };
 
 }

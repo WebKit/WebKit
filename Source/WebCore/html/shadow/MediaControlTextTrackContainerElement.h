@@ -97,7 +97,7 @@ private:
 
     std::unique_ptr<TextTrackRepresentation> m_textTrackRepresentation;
 
-    GenericTaskQueue<Timer> m_taskQueue;
+    EventLoopTaskQueue m_taskQueue;
     WeakPtr<HTMLMediaElement> m_mediaElement;
     IntRect m_videoDisplaySize;
     int m_fontSize { 0 };

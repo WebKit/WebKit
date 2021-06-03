@@ -26,22 +26,20 @@
 #pragma once
 
 #include "ActiveDOMObject.h"
-#include "GenericTaskQueue.h"
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class Event;
 class EventTarget;
-class Timer;
 class ScriptExecutionContext;
 
-// All instances of MainThreadGenericEventQueue use a shared Timer for dispatching events.
 // FIXME: We should port call sites to the HTML event loop and remove this class.
-class MainThreadGenericEventQueue : public ActiveDOMObject {
+class MainThreadGenericEventQueue : public ActiveDOMObject, public CanMakeWeakPtr<MainThreadGenericEventQueue> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static UniqueRef<MainThreadGenericEventQueue> create(EventTarget&);
@@ -51,10 +49,6 @@ public:
 
     void cancelAllEvents();
     bool hasPendingEventsOfType(const AtomString&) const;
-
-    void setPaused(bool);
-
-    bool isSuspended() const { return m_isSuspended; }
 
     bool hasPendingActivity() const;
 
@@ -66,18 +60,10 @@ private:
 
     const char* activeDOMObjectName() const final;
     void stop() final;
-    void suspend(ReasonForSuspension) final;
-    void resume() final;
-
-    void rescheduleAllEventsIfNeeded();
-    bool isSuspendedOrPausedByClient() const { return m_isSuspended || m_isPausedByClient; }
 
     EventTarget& m_owner;
-    UniqueRef<GenericTaskQueue<Timer>> m_taskQueue;
     Deque<RefPtr<Event>> m_pendingEvents;
     bool m_isClosed { false };
-    bool m_isPausedByClient { false };
-    bool m_isSuspended { false };
     bool m_isFiringEvent { false };
 };
 
