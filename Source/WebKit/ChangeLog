@@ -1,5 +1,18 @@
 2021-06-03  Chris Dumez  <cdumez@apple.com>
 
+        Move protector earlier in NetworkProcessProxy::networkProcessDidTerminate()
+        https://bugs.webkit.org/show_bug.cgi?id=226594
+
+        Reviewed by Geoffrey Garen.
+
+        Move protector earlier in NetworkProcessProxy::networkProcessDidTerminate() as it seems unsafe
+        to do some of the earlier operations before protected |this|.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::networkProcessDidTerminate):
+
+2021-06-03  Chris Dumez  <cdumez@apple.com>
+
         Stop storing Ref<IPC::Connection> in RTCDataChannelRemoteManagerProxy::m_webProcessConnections
         https://bugs.webkit.org/show_bug.cgi?id=226596
 

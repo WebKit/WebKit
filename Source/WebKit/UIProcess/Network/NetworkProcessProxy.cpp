@@ -300,6 +300,8 @@ void NetworkProcessProxy::renameOriginInWebsiteData(PAL::SessionID sessionID, co
 
 void NetworkProcessProxy::networkProcessDidTerminate(TerminationReason reason)
 {
+    auto protectedThis = makeRef(*this);
+
     if (m_downloadProxyMap)
         m_downloadProxyMap->invalidate();
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
@@ -313,7 +315,6 @@ void NetworkProcessProxy::networkProcessDidTerminate(TerminationReason reason)
     if (defaultNetworkProcess() == this)
         defaultNetworkProcess() = nullptr;
 
-    Ref<NetworkProcessProxy> protectedThis(*this);
     for (auto* processPool : WebProcessPool::allProcessPools())
         processPool->networkProcessDidTerminate(*this, reason);
     for (auto& websiteDataStore : copyToVectorOf<Ref<WebsiteDataStore>>(m_websiteDataStores))
