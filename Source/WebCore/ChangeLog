@@ -1,3 +1,19 @@
+2021-06-03  Alan Bujtas  <zalan@apple.com>
+
+        Incorrect text selection when crossing flex item boundary
+        https://bugs.webkit.org/show_bug.cgi?id=226518
+        <rdar://59487603>
+
+        Reviewed by Simon Fraser.
+
+        Let's use the more sophisticated "which child is closer to the hit point" logic in RenderBox for the flex (and grid) content.
+        The rest of the RenderBlock::positionForPoint is meant to deal with BFC content where block level boxes are positioned in block direction, after each other.
+
+        Test: editing/selection/selecting-content-by-overshooting-the-container.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionForPoint):
+
 2021-06-03  Antti Koivisto  <antti@apple.com>
 
         Remove TrailingFloatsRootInlineBox

@@ -1,3 +1,14 @@
+2021-06-03  Alan Bujtas  <zalan@apple.com>
+
+        Incorrect text selection when crossing flex item boundary
+        https://bugs.webkit.org/show_bug.cgi?id=226518
+        <rdar://59487603>
+
+        Reviewed by Simon Fraser.
+
+        * editing/selection/selecting-content-by-overshooting-the-container-expected.txt: Added.
+        * editing/selection/selecting-content-by-overshooting-the-container.html: Added.
+
 2021-06-03  Youenn Fablet  <youenn@apple.com>
 
         Cherry-pick webrtc fix to correctly handle audio track state in case of renegotiation

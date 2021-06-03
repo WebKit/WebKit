@@ -2197,7 +2197,9 @@ VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point, const Re
             return createVisiblePosition(caretMinOffset(), Affinity::Downstream);
         if (pointLogicalTop >= logicalHeight() || (pointLogicalTop >= 0 && pointLogicalLeft >= logicalWidth()))
             return createVisiblePosition(caretMaxOffset(), Affinity::Downstream);
-    } 
+    }
+    if (isFlexibleBoxIncludingDeprecated() || isRenderGrid())
+        return RenderBox::positionForPoint(point, fragment);
 
     LayoutPoint pointInContents = point;
     offsetForContents(pointInContents);
