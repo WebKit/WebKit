@@ -151,6 +151,7 @@ NSString *createTemporaryDirectory(NSString *directoryPrefix)
     return [[NSFileManager defaultManager] stringWithFileSystemRepresentation:path.data() length:length];
 }
 
+#ifdef IOPOL_TYPE_VFS_MATERIALIZE_DATALESS_FILES
 static int toIOPolicyScope(PolicyScope scope)
 {
     switch (scope) {
@@ -160,6 +161,7 @@ static int toIOPolicyScope(PolicyScope scope)
         return IOPOL_SCOPE_THREAD;
     }
 }
+#endif
 
 bool setAllowsMaterializingDatalessFiles(bool allow, PolicyScope scope)
 {

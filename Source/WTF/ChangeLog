@@ -1,3 +1,11 @@
+2021-06-03  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed build fix after r277881.
+
+        Fix warning about unused function.
+
+        * wtf/cocoa/FileSystemCocoa.mm:
+
 2021-06-03  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         REGRESSION(r277744): Broke build on s390x mainframes
