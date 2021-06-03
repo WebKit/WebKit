@@ -84,9 +84,6 @@ public:
     using LayoutViewportOriginOrOverrideRect = WTF::Variant<std::optional<FloatPoint>, std::optional<FloatRect>>;
     virtual void reconcileScrollingState(FrameView&, const FloatPoint&, const LayoutViewportOriginOrOverrideRect&, ScrollType, ViewportRectStability, ScrollingLayerPositionAction) { }
 
-    // Should be called whenever the slow repaint objects set changes.
-    void slowRepaintObjectsDidChange(FrameView&);
-
     // Should be called whenever the set of fixed objects changes.
     void frameViewFixedObjectsDidChange(FrameView&);
 
@@ -155,7 +152,8 @@ public:
     virtual void setPositionedNodeConstraints(ScrollingNodeID, const AbsolutePositionConstraints&) { }
     virtual void setRelatedOverflowScrollingNodes(ScrollingNodeID, Vector<ScrollingNodeID>&&) { }
     virtual void setSynchronousScrollingReasons(ScrollingNodeID, OptionSet<SynchronousScrollingReason>) { }
-    virtual bool hasSynchronousScrollingReasons(ScrollingNodeID) const { return false; }
+    virtual OptionSet<SynchronousScrollingReason> synchronousScrollingReasons(ScrollingNodeID) const { return { }; };
+    bool hasSynchronousScrollingReasons(ScrollingNodeID nodeID) const { return !!synchronousScrollingReasons(nodeID); }
 
     virtual void reconcileViewportConstrainedLayerPositions(ScrollingNodeID, const LayoutRect&, ScrollingLayerPositionAction) { }
     virtual String scrollingStateTreeAsText(ScrollingStateTreeAsTextBehavior = ScrollingStateTreeAsTextBehaviorNormal) const;
@@ -205,7 +203,6 @@ protected:
 private:
     virtual bool hasVisibleSlowRepaintViewportConstrainedObjects(const FrameView&) const;
 
-    OptionSet<SynchronousScrollingReason> synchronousScrollingReasonsForFrameView(const FrameView&) const;
     void updateSynchronousScrollingReasons(FrameView&);
     void updateSynchronousScrollingReasonsForAllFrames();
 

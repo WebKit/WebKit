@@ -159,8 +159,11 @@ void ThreadedScrollingTree::propagateSynchronousScrollingReasons(const HashSet<S
     auto propagateStateToAncestors = [&](ScrollingTreeNode& node) {
         ASSERT(is<ScrollingTreeScrollingNode>(node) && !downcast<ScrollingTreeScrollingNode>(node).synchronousScrollingReasons().isEmpty());
 
+        if (is<ScrollingTreeFrameScrollingNode>(node))
+            return;
+
         auto currNode = node.parent();
-        
+
         while (currNode) {
             if (is<ScrollingTreeScrollingNode>(currNode))
                 downcast<ScrollingTreeScrollingNode>(*currNode).addSynchronousScrollingReason(SynchronousScrollingReason::DescendantScrollersHaveSynchronousScrolling);
@@ -169,7 +172,7 @@ void ThreadedScrollingTree::propagateSynchronousScrollingReasons(const HashSet<S
                 currNode = nodeForID(downcast<ScrollingTreeOverflowScrollProxyNode>(*currNode).overflowScrollingNodeID());
                 continue;
             }
-            
+
             if (is<ScrollingTreeFrameScrollingNode>(currNode))
                 break;
 

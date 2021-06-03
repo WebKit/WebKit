@@ -1,3 +1,40 @@
+2021-06-03  Cameron McCormack  <heycam@apple.com>
+
+        Prevent background-attachment:fixed from causing slow scrolling when in a position:fixed layer
+        https://bugs.webkit.org/show_bug.cgi?id=226399
+
+        Reviewed by Simon Fraser.
+
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-in-overflow-in-iframe-expected.txt:
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-1-expected.txt: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-1.html: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-2-async-expected.txt: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-2-async.html: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-2-sync-expected.txt: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-2-sync.html: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-3-async-expected.txt: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-3-async.html: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-3-sync-expected.txt: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-3-sync.html: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-4-expected.txt: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-4.html: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-5-async-expected.txt: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-5-async.html: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-5-sync-expected.txt: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-5-sync.html: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-6-expected.txt: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-6.html: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-7-expected.txt: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-7.html: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-8-async-expected.txt: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-8-async.html: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-8-sync-expected.txt: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-8-sync.html: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-9-async-expected.txt: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-9-async.html: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-9-sync-expected.txt: Added.
+        * scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-9-sync.html: Added.
+
 2021-06-03  Alan Bujtas  <zalan@apple.com>
 
         Incorrect text selection when crossing flex item boundary

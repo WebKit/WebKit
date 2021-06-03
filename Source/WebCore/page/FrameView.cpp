@@ -1516,9 +1516,6 @@ void FrameView::addSlowRepaintObject(RenderElement& renderer)
     if (addResult.isNewEntry) {
         if (auto layer = renderer.enclosingLayer())
             layer->setNeedsScrollingTreeUpdate();
-    
-        if (auto scrollingCoordinator = this->scrollingCoordinator())
-            scrollingCoordinator->slowRepaintObjectsDidChange(*this);
     }
 
     if (hadSlowRepaintObjects)
@@ -1536,9 +1533,6 @@ void FrameView::removeSlowRepaintObject(RenderElement& renderer)
     if (removed) {
         if (auto layer = renderer.enclosingLayer())
             layer->setNeedsScrollingTreeUpdate();
-
-        if (auto scrollingCoordinator = this->scrollingCoordinator())
-            scrollingCoordinator->slowRepaintObjectsDidChange(*this);
     }
 
     if (!m_slowRepaintObjects->computesEmpty())

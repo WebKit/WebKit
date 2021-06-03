@@ -784,16 +784,16 @@ void AsyncScrollingCoordinator::setSynchronousScrollingReasons(ScrollingNodeID n
 #endif
 }
 
-bool AsyncScrollingCoordinator::hasSynchronousScrollingReasons(ScrollingNodeID nodeID) const
+OptionSet<SynchronousScrollingReason> AsyncScrollingCoordinator::synchronousScrollingReasons(ScrollingNodeID nodeID) const
 {
     auto* node = m_scrollingStateTree->stateNodeForID(nodeID);
     if (!is<ScrollingStateScrollingNode>(node))
-        return false;
+        return { };
 
 #if ENABLE(SCROLLING_THREAD)
-    return downcast<ScrollingStateScrollingNode>(*node).hasSynchronousScrollingReasons();
+    return downcast<ScrollingStateScrollingNode>(*node).synchronousScrollingReasons();
 #else
-    return false;
+    return { };
 #endif
 }
 

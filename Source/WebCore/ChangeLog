@@ -1,3 +1,63 @@
+2021-06-03  Cameron McCormack  <heycam@apple.com>
+
+        Prevent background-attachment:fixed from causing slow scrolling when in a position:fixed layer
+        https://bugs.webkit.org/show_bug.cgi?id=226399
+
+        Reviewed by Simon Fraser.
+
+        Tests: scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-1.html
+               scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-2-async.html
+               scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-2-sync.html
+               scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-3-async.html
+               scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-3-sync.html
+               scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-4.html
+               scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-5-async.html
+               scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-5-sync.html
+               scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-6.html
+               scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-7.html
+               scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-8-async.html
+               scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-8-sync.html
+               scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-9-async.html
+               scrollingcoordinator/mac/fixed-backgrounds/fixed-background-slow-scrolling-9-sync.html
+
+        We move responsbility for managing the HasSlowRepaintObjects
+        synchronous scrolling reason on the root scrolling node from
+        ScrollingCoordinator to RenderLayerCompositor, which is where it's
+        handled for all other scrolling nodes.
+
+        If a slow repaint object (i.e. a background-attachment:fixed element) is
+        present in a non-root async scrolling layer, then it continues to add
+        HasSlowRepaintObjects to the scrolling node's synchronous scrolling
+        reasons. But we now no longer add HasSlowRepaintObjects to the root
+        scrolling node's synchronous scrolling reasons if its containing async
+        scrolling layer "behaves as fixed", i.e. won't move while scrolling the
+        viewport.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::addSlowRepaintObject): No longer need to inform
+        the ScrollingCoordinator since the RenderLayerCompositor now handles
+        HasSlowRepaintObjects synchronous scroling reason updates for the root.
+        (WebCore::FrameView::removeSlowRepaintObject): Ditto.
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::synchronousScrollingReasons const):
+        * page/scrolling/AsyncScrollingCoordinator.h:
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::updateSynchronousScrollingReasons):
+        Preserve the current value of HasSlowRepaintObjects when updating
+        synchronous scrolling reasons.
+        (WebCore::ScrollingCoordinator::shouldUpdateScrollLayerPositionSynchronously const):
+        (WebCore::ScrollingCoordinator::synchronousScrollingReasonsAsText const):
+        * page/scrolling/ScrollingCoordinator.h:
+        (WebCore::ScrollingCoordinator::synchronousScrollingReasons const):
+        (WebCore::ScrollingCoordinator::hasSynchronousScrollingReasons const):
+        * page/scrolling/ThreadedScrollingTree.cpp:
+        (WebCore::ThreadedScrollingTree::propagateSynchronousScrollingReasons):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateSynchronousScrollingNodes):
+        Take responsibility for managing HasSlowRepaintObjects on the root
+        scroll tree node. Only add HasSlowRepaintObjects on the root if not
+        in a fixed position layer.
+
 2021-06-03  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Remove unused GraphicsContext::shouldIncludeChildWindows()

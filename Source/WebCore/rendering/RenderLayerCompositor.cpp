@@ -4864,9 +4864,8 @@ void RenderLayerCompositor::updateSynchronousScrollingNodes()
     for (auto key : m_scrollingNodeToLayerMap.keys())
         nodesToClear.add(key);
     
-    auto clearSynchronousReasonsOnNodes = [&] {
+    auto clearSynchronousReasonsOnNonRootNodes = [&] {
         for (auto nodeID : nodesToClear) {
-            // ScrollingCoordinator handles updating synchronous scrolling reasons for the FrameView.
             if (nodeID == rootScrollingNodeID)
                 continue;
 
@@ -4875,9 +4874,17 @@ void RenderLayerCompositor::updateSynchronousScrollingNodes()
         }
     };
     
+    auto setHasSlowRepaintObjectsSynchronousScrollingReasonOnRootNode = [&](bool hasSlowRepaintObjects) {
+        // ScrollingCoordinator manages all bits other than HasSlowRepaintObjects, so maintain their current value.
+        auto reasons = scrollingCoordinator->synchronousScrollingReasons(rootScrollingNodeID);
+        reasons.set({ SynchronousScrollingReason::HasSlowRepaintObjects }, hasSlowRepaintObjects);
+        scrollingCoordinator->setSynchronousScrollingReasons(rootScrollingNodeID, reasons);
+    };
+
     auto slowRepaintObjects = m_renderView.frameView().slowRepaintObjects();
     if (!slowRepaintObjects) {
-        clearSynchronousReasonsOnNodes();
+        setHasSlowRepaintObjectsSynchronousScrollingReasonOnRootNode(false);
+        clearSynchronousReasonsOnNonRootNodes();
         return;
     }
 
@@ -4887,26 +4894,39 @@ void RenderLayerCompositor::updateSynchronousScrollingNodes()
         return layer.contentsScrollingScope();
     };
 
-    auto rootScrollingScope = m_renderView.layer()->contentsScrollingScope();
-
+    bool rootHasSlowRepaintObjects = false;
     for (auto& renderer : *slowRepaintObjects) {
         auto layer = renderer.enclosingLayer();
         if (!layer)
             continue;
 
-        if (auto scrollingScope = relevantScrollingScope(renderer, *layer); scrollingScope && scrollingScope != rootScrollingScope) {
-            auto enclosingScrollingNodeID = asyncScrollableContainerNodeID(renderer);
-            ASSERT(enclosingScrollingNodeID);
-            
-            LOG_WITH_STREAM(Scrolling, stream << "RenderLayerCompositor::updateSynchronousScrollingNodes - node " << enclosingScrollingNodeID << " slow-scrolling because of fixed backgrounds");
+        auto scrollingScope = relevantScrollingScope(renderer, *layer);
+        if (!scrollingScope)
+            continue;
 
-            // HasSlowRepaintObjects is the only reason that can exist for overflow nodes.
+        if (auto enclosingScrollingNodeID = asyncScrollableContainerNodeID(renderer)) {
+            LOG_WITH_STREAM(Scrolling, stream << "RenderLayerCompositor::updateSynchronousScrollingNodes - node " << enclosingScrollingNodeID << " slow-scrolling because of fixed backgrounds");
+            ASSERT(enclosingScrollingNodeID != rootScrollingNodeID);
+
             scrollingCoordinator->setSynchronousScrollingReasons(enclosingScrollingNodeID, { SynchronousScrollingReason::HasSlowRepaintObjects });
             nodesToClear.remove(enclosingScrollingNodeID);
+
+            // Although the root scrolling layer does not have a slow repaint object in it directly,
+            // we need to set some synchronous scrolling reason on it so that
+            // ScrollingCoordinator::shouldUpdateScrollLayerPositionSynchronously returns an
+            // appropriate value. (Scrolling itself would be correct without this, since the
+            // scrolling tree propagates DescendantScrollersHaveSynchronousScrolling bits up the
+            // tree, but shouldUpdateScrollLayerPositionSynchronously looks at the scrolling state
+            // tree instead.)
+            rootHasSlowRepaintObjects = true;
+        } else if (!layer->behavesAsFixed()) {
+            LOG_WITH_STREAM(Scrolling, stream << "RenderLayerCompositor::updateSynchronousScrollingNodes - root node slow-scrolling because of fixed backgrounds");
+            rootHasSlowRepaintObjects = true;
         }
     }
-    
-    clearSynchronousReasonsOnNodes();
+
+    setHasSlowRepaintObjectsSynchronousScrollingReasonOnRootNode(rootHasSlowRepaintObjects);
+    clearSynchronousReasonsOnNonRootNodes();
 }
 
 ScrollableArea* RenderLayerCompositor::scrollableAreaForScrollingNodeID(ScrollingNodeID nodeID) const

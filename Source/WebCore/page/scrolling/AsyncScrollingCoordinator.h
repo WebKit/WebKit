@@ -144,7 +144,7 @@ private:
     WEBCORE_EXPORT void scrollableAreaScrollbarLayerDidChange(ScrollableArea&, ScrollbarOrientation) override;
 
     WEBCORE_EXPORT void setSynchronousScrollingReasons(ScrollingNodeID, OptionSet<SynchronousScrollingReason>) final;
-    WEBCORE_EXPORT bool hasSynchronousScrollingReasons(ScrollingNodeID) const final;
+    WEBCORE_EXPORT OptionSet<SynchronousScrollingReason> synchronousScrollingReasons(ScrollingNodeID) const final;
 
     WEBCORE_EXPORT void windowScreenDidChange(PlatformDisplayID, std::optional<FramesPerSecond> nominalFramesPerSecond) final;
 
