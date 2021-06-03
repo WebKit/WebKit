@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,10 +40,12 @@ namespace JSC { namespace DFG {
 
 namespace {
 
+constexpr bool verbose = false;
+
 class StoreBarrierClusteringPhase : public Phase {
 public:
     StoreBarrierClusteringPhase(Graph& graph)
-        : Phase(graph, "store barrier fencing")
+        : Phase(graph, "store barrier clustering")
         , m_insertionSet(graph)
     {
     }
@@ -98,6 +100,11 @@ private:
             // would be weird because it would create a new root for OSR availability analysis. I
             // don't have evidence that it would be worth it.
             if (doesGC(m_graph, node) || mayExit(m_graph, node) != DoesNotExit) {
+                if (verbose) {
+                    dataLog("Possible GC point at ", node, "\n");
+                    dataLog("    doesGC = ", doesGC(m_graph, node), "\n");
+                    dataLog("    mayExit = ", mayExit(m_graph, node), "\n");
+                }
                 futureGC = true;
                 continue;
             }

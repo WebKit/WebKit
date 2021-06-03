@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -258,6 +258,7 @@ bool doesGC(Graph& graph, Node* node)
     case DataViewGetInt:
     case DataViewGetFloat:
     case DataViewSet:
+    case PutByOffset:
         return false;
 
 #if ASSERT_ENABLED
@@ -320,7 +321,6 @@ bool doesGC(Graph& graph, Node* node)
     case PutByIdDirect:
     case PutByIdFlush:
     case PutByIdWithThis:
-    case PutByOffset:
     case PutByValWithThis:
     case PutDynamicVar:
     case PutGetterById:

@@ -1,3 +1,23 @@
+2021-06-03  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should eliminate obvious store barriers
+        https://bugs.webkit.org/show_bug.cgi?id=226604
+
+        Reviewed by Mark Lam.
+
+        This has a couple changes:
+        
+        - PutByOffset doesn't GC! So let's not say that it does.
+
+        - The store barrier clustering phase is no longer called the store barrier fencing phase in
+          dumps.
+
+        Small Speedometer2 speed-up. Definite speed-up for Elm.
+
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGStoreBarrierClusteringPhase.cpp:
+
 2021-06-03  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: [Cocoa] `RemoteInspector` won't connect to a new relay if it hasn't yet failed to communicate with a previously connected relay
