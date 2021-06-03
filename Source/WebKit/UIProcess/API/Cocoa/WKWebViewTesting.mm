@@ -49,6 +49,7 @@
 - (void)playSessionWithCompletion:(void(^)(BOOL))completionHandler;
 - (void)pauseSessionWithCompletion:(void(^)(BOOL))completionHandler;
 - (void)setSessionTrack:(NSString*)trackIdentifier withCompletion:(void(^)(BOOL))completionHandler;
+- (void)coordinatorStateChanged:(_WKMediaSessionCoordinatorState)state;
 @end
 #endif
 
@@ -444,6 +445,12 @@
                 callback(false);
         }
 
+        void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState state) final
+        {
+            if (auto coordinatorClient = client())
+                coordinatorClient->coordinatorStateChanged(state);
+        }
+
         std::optional<WebCore::ExceptionData> result(bool success) const
         {
             if (!success)
@@ -614,6 +621,15 @@
 - (void)setSessionTrack:(NSString*)trackIdentifier withCompletion:(void(^)(BOOL))completionHandler
 {
     m_coordinatorClient->setSessionTrack(trackIdentifier, makeBlockPtr(completionHandler));
+}
+
+- (void)coordinatorStateChanged:(_WKMediaSessionCoordinatorState)state
+{
+    static_assert(static_cast<size_t>(WebCore::MediaSessionCoordinatorState::Waiting) == static_cast<size_t>(WKMediaSessionCoordinatorStateWaiting), "WKMediaSessionCoordinatorStateWaiting does not match WebKit value");
+    static_assert(static_cast<size_t>(WebCore::MediaSessionCoordinatorState::Joined) == static_cast<size_t>(WKMediaSessionCoordinatorStateJoined), "WKMediaSessionCoordinatorStateJoined does not match WebKit value");
+    static_assert(static_cast<size_t>(WebCore::MediaSessionCoordinatorState::Closed) == static_cast<size_t>(WKMediaSessionCoordinatorStateClosed), "WKMediaSessionCoordinatorStateClosed does not match WebKit value");
+
+    m_coordinatorClient->coordinatorStateChanged(static_cast<WebCore::MediaSessionCoordinatorState>(state));
 }
 
 @end

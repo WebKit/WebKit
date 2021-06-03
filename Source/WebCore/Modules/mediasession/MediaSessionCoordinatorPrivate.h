@@ -48,7 +48,7 @@ public:
     virtual void playSession(std::optional<double> atTime, std::optional<double> hostTime, CompletionHandler<void(bool)>&&) = 0;
     virtual void pauseSession(CompletionHandler<void(bool)>&&) = 0;
     virtual void setSessionTrack(const String&, CompletionHandler<void(bool)>&&) = 0;
-    virtual void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState) { };
+    virtual void coordinatorStateChanged(WebCore::MediaSessionCoordinatorState) = 0;
 };
 
 class MediaSessionCoordinatorPrivate : public RefCounted<MediaSessionCoordinatorPrivate> {

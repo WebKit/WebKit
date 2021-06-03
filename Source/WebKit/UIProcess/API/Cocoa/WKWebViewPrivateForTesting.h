@@ -141,6 +141,7 @@ struct _WKMediaPositionState {
 - (void)playSessionWithCompletion:(void(^)(BOOL))completionHandler;
 - (void)pauseSessionWithCompletion:(void(^)(BOOL))completionHandler;
 - (void)setSessionTrack:(NSString*)trackIdentifier withCompletion:(void(^)(BOOL))completionHandler;
+- (void)coordinatorStateChanged:(_WKMediaSessionCoordinatorState)state;
 @end
 
 @protocol _WKMediaSessionCoordinator <NSObject>

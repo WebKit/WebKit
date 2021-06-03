@@ -1,3 +1,17 @@
+2021-06-03  Jean-Yves Avenard  <jya@apple.com>
+
+        Add MediaSessionCoordinator test to ensure that disconnection on the private side is properly handled.
+        https://bugs.webkit.org/show_bug.cgi?id=226568
+        rdar://problem/78801408
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivateForTesting.h:
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _createMediaSessionCoordinatorForTesting:completionHandler:]): Carry on required
+        change as coordinatorStateChanged is now pure virtual.
+        (-[WKMediaSessionCoordinatorHelper coordinatorStateChanged:]):
+
 2021-06-03  Chris Dumez  <cdumez@apple.com>
 
         [Hardening] Stop storing raw pointers inside WebIDBServer::m_connections

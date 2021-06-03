@@ -174,6 +174,11 @@
     }];
 }
 
+- (void)sessionStateChanged:(_WKMediaSessionCoordinatorState)state
+{
+    [self.delegate coordinatorStateChanged:state];
+}
+
 @end
 
 namespace TestWebKitAPI {
@@ -544,6 +549,36 @@ TEST_F(MediaSessionCoordinatorTest, CallSessionMethods)
         return lastMethodCalled == "setSessionTrack";
     });
     EXPECT_STREQ("setSessionTrack", lastMethodCalled.utf8().data());
+}
+
+TEST_F(MediaSessionCoordinatorTest, JoinAndPrivateLeave)
+{
+    loadPageAndBecomeReady("media-remote"_s);
+    listenForPromiseMessages({ "join"_s });
+
+    createCoordinator();
+
+    // Check that when a coordinator is created, its original state is 'waiting'.
+    // createCoordinator has already waited for the 'coordinatorstatechange' event
+    // to be fired.
+    RetainPtr<NSString> state = [webView() stringByEvaluatingJavaScript:@"navigator.mediaSession.coordinator.state"];
+    EXPECT_STREQ("waiting", [state UTF8String]);
+
+    // Check that when we join a session; the 'coordinatorstatechange' event will be
+    // fired and the coordinator state changes to 'waiting'.
+    [webView() objectByEvaluatingJavaScript:@"joinSession()"];
+    waitForEventListenerToBeCalled("coordinatorstatechange"_s);
+    ASSERT_TRUE(eventListenerWasCalled("coordinatorstatechange"_s));
+    state = [webView() stringByEvaluatingJavaScript:@"navigator.mediaSession.coordinator.state"];
+    EXPECT_STREQ("joined", [state UTF8String]);
+
+    // Check that when the MediaSessionCoordinatorPrivate changes its state to 'closed'
+    // in the UI process, the 'coordinatorstatechange' event will be fired in JS (in web
+    // process) and that the coordinator state will change to 'closed'.
+    [coordinator() sessionStateChanged:WKMediaSessionCoordinatorStateClosed];
+    waitForEventListenerToBeCalled("coordinatorstatechange"_s);
+    state = [webView() stringByEvaluatingJavaScript:@"navigator.mediaSession.coordinator.state"];
+    EXPECT_STREQ("closed", [state UTF8String]);
 }
 
 } // namespace TestWebKitAPI
