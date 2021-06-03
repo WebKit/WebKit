@@ -2216,7 +2216,7 @@ void HTMLConverter::_traverseNode(Node& node, unsigned depth, bool embedded)
                         child = nextSiblingInComposedTreeIgnoringUserAgentShadow(*child);
                     }
                 }
-                _exitElement(element, depth, startIndex);
+                _exitElement(element, depth, std::min(startIndex, [_attrStr length]));
             }
         }
     } else if (node.nodeType() == Node::TEXT_NODE)

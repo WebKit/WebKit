@@ -1,3 +1,15 @@
+2021-06-03  Julian Gonzalez  <julian_a_gonzalez@apple.com>
+
+        Crash in HTMLConverter::_addLinkForElement()
+        https://bugs.webkit.org/show_bug.cgi?id=226398
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a test for this crasher.
+
+        * editing/pasteboard/select-all-link-cut-expected.txt: Added.
+        * editing/pasteboard/select-all-link-cut.html: Added.
+
 2021-06-02  Alex Christensen  <achristensen@webkit.org>
 
         Fix WPT test resource-timing/cross-origin-redirects.html
