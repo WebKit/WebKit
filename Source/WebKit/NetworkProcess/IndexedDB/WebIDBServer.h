@@ -32,6 +32,7 @@
 #include <WebCore/StorageQuotaManager.h>
 #include <wtf/CrossThreadTaskHandler.h>
 #include <wtf/RefCounter.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 class StorageQuotaManager;
@@ -102,7 +103,7 @@ private:
     bool m_isSuspended { false };
 
     HashMap<IPC::Connection::UniqueID, std::unique_ptr<WebIDBConnectionToClient>> m_connectionMap;
-    HashSet<IPC::Connection*> m_connections;
+    WeakHashSet<IPC::Connection> m_connections; // Only used on the main thread.
 
     enum DataTaskCounterType { };
     using DataTaskCounter = RefCounter<DataTaskCounterType>;

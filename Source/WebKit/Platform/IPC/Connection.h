@@ -104,7 +104,7 @@ template<typename AsyncReplyResult> struct AsyncReplyError {
 class MachMessage;
 class UnixMessage;
 
-class Connection : public ThreadSafeRefCounted<Connection, WTF::DestructionThread::MainRunLoop> {
+class Connection : public ThreadSafeRefCounted<Connection, WTF::DestructionThread::MainRunLoop>, public CanMakeWeakPtr<Connection> {
 public:
     enum SyncRequestIDType { };
     using SyncRequestID = ObjectIdentifier<SyncRequestIDType>;

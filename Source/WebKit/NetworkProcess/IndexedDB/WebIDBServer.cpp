@@ -369,7 +369,7 @@ void WebIDBServer::addConnection(IPC::Connection& connection, WebCore::ProcessId
         Locker locker { m_serverLock };
         m_server->registerConnection(iter->value->connectionToClient());
     });
-    m_connections.add(&connection);
+    m_connections.add(connection);
     connection.addThreadMessageReceiver(Messages::WebIDBServer::messageReceiverName(), this);
 }
 
@@ -377,11 +377,10 @@ void WebIDBServer::removeConnection(IPC::Connection& connection)
 {
     ASSERT(RunLoop::isMain());
 
-    auto* takenConnection = m_connections.take(&connection);
-    if (!takenConnection)
+    if (!m_connections.remove(connection))
         return;
 
-    takenConnection->removeThreadMessageReceiver(Messages::WebIDBServer::messageReceiverName());
+    connection.removeThreadMessageReceiver(Messages::WebIDBServer::messageReceiverName());
     postTask([this, protectedThis = makeRef(*this), connectionID = connection.uniqueID()] {
         auto connection = m_connectionMap.take(connectionID);
 
@@ -413,8 +412,8 @@ void WebIDBServer::close()
         return;
 
     // Remove the references held by IPC::Connection.
-    for (auto* connection : m_connections)
-        connection->removeThreadMessageReceiver(Messages::WebIDBServer::messageReceiverName());
+    for (auto& connection : m_connections)
+        connection.removeThreadMessageReceiver(Messages::WebIDBServer::messageReceiverName());
 
     CrossThreadTaskHandler::setCompletionCallback([this, protectedThis = makeRef(*this)]() mutable {
         ASSERT(!RunLoop::isMain());
@@ -446,7 +445,7 @@ void WebIDBServer::close()
 
 void WebIDBServer::tryClose()
 {
-    if (!m_connections.isEmpty() || m_dataTaskCounter.value())
+    if (!m_connections.computesEmpty() || m_dataTaskCounter.value())
         return;
 
     close();

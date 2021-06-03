@@ -1,5 +1,22 @@
 2021-06-03  Chris Dumez  <cdumez@apple.com>
 
+        [Hardening] Stop storing raw pointers inside WebIDBServer::m_connections
+        https://bugs.webkit.org/show_bug.cgi?id=226595
+
+        Reviewed by Ryosuke Niwa.
+
+        Stop storing raw pointers inside WebIDBServer::m_connections and use a WeakHashSet instead.
+
+        * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+        (WebKit::WebIDBServer::addConnection):
+        (WebKit::WebIDBServer::removeConnection):
+        (WebKit::WebIDBServer::close):
+        (WebKit::WebIDBServer::tryClose):
+        * NetworkProcess/IndexedDB/WebIDBServer.h:
+        * Platform/IPC/Connection.h:
+
+2021-06-03  Chris Dumez  <cdumez@apple.com>
+
         Move protector earlier in NetworkProcessProxy::networkProcessDidTerminate()
         https://bugs.webkit.org/show_bug.cgi?id=226594
 
