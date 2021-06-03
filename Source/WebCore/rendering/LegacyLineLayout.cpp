@@ -195,7 +195,7 @@ static inline void dirtyLineBoxesForRenderer(RenderObject& renderer, bool fullLa
         downcast<RenderInline>(renderer).dirtyLineBoxes(fullLayout);
 }
 
-static bool parentIsConstructedOrHaveNext(InlineFlowBox* parentBox)
+static bool parentIsConstructedOrHaveNext(LegacyInlineFlowBox* parentBox)
 {
     do {
         if (parentBox->isConstructed() || parentBox->nextOnLine())
@@ -205,13 +205,13 @@ static bool parentIsConstructedOrHaveNext(InlineFlowBox* parentBox)
     return false;
 }
 
-InlineFlowBox* LegacyLineLayout::createLineBoxes(RenderObject* obj, const LineInfo& lineInfo, LegacyInlineBox* childBox)
+LegacyInlineFlowBox* LegacyLineLayout::createLineBoxes(RenderObject* obj, const LineInfo& lineInfo, LegacyInlineBox* childBox)
 {
     // See if we have an unconstructed line box for this object that is also
     // the last item on the line.
     unsigned lineDepth = 1;
-    InlineFlowBox* parentBox = nullptr;
-    InlineFlowBox* result = nullptr;
+    LegacyInlineFlowBox* parentBox = nullptr;
+    LegacyInlineFlowBox* result = nullptr;
     bool hasDefaultLineBoxContain = style().lineBoxContain() == RenderStyle::initialLineBoxContain();
     do {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(is<RenderInline>(*obj) || obj == &m_flow);
@@ -233,7 +233,7 @@ InlineFlowBox* LegacyLineLayout::createLineBoxes(RenderObject* obj, const LineIn
             // We need to make a new box for this render object. Once
             // made, we need to place it at the end of the current line.
             LegacyInlineBox* newBox = createInlineBoxForRenderer(obj);
-            parentBox = downcast<InlineFlowBox>(newBox);
+            parentBox = downcast<LegacyInlineFlowBox>(newBox);
             parentBox->setIsFirstLine(lineInfo.isFirstLine());
             parentBox->setIsHorizontal(m_flow.isHorizontalWritingMode());
             if (!hasDefaultLineBoxContain)
@@ -294,7 +294,7 @@ LegacyRootInlineBox* LegacyLineLayout::constructLine(BidiRunList<BidiRun>& bidiR
 {
     ASSERT(bidiRuns.firstRun());
 
-    InlineFlowBox* parentBox = 0;
+    LegacyInlineFlowBox* parentBox = 0;
     int runCount = bidiRuns.runCount() - lineInfo.runsFromLeadingWhitespace();
     
     for (BidiRun* r = bidiRuns.firstRun(); r; r = r->next()) {
@@ -861,13 +861,13 @@ BidiRun* LegacyLineLayout::computeInlineDirectionPositionsForSegment(LegacyRootI
         Vector<LegacyInlineBox*> queue;
         queue.append(lineBox);
         // 1. Visit each inline box in a preorder fashion
-        // 2. Accumulate the spacing when we find an InlineFlowBox (inline container e.g. span)
+        // 2. Accumulate the spacing when we find an LegacyInlineFlowBox (inline container e.g. span)
         // 3. Add the InlineTextBoxes to the hashmap
         while (!queue.isEmpty()) {
             while (true) {
                 auto* inlineBox = queue.last();
-                if (is<InlineFlowBox>(inlineBox)) {
-                    auto& inlineFlowBox = downcast<InlineFlowBox>(*inlineBox);
+                if (is<LegacyInlineFlowBox>(inlineBox)) {
+                    auto& inlineFlowBox = downcast<LegacyInlineFlowBox>(*inlineBox);
                     totalSpacingWidth += inlineFlowBox.marginBorderPaddingLogicalLeft();
                     if (auto* child = inlineFlowBox.firstChild()) {
                         queue.append(child);
@@ -881,8 +881,8 @@ BidiRun* LegacyLineLayout::computeInlineDirectionPositionsForSegment(LegacyRootI
             }
             while (!queue.isEmpty()) {
                 auto& inlineBox = *queue.takeLast();
-                if (is<InlineFlowBox>(inlineBox))
-                    totalSpacingWidth += downcast<InlineFlowBox>(inlineBox).marginBorderPaddingLogicalRight();
+                if (is<LegacyInlineFlowBox>(inlineBox))
+                    totalSpacingWidth += downcast<LegacyInlineFlowBox>(inlineBox).marginBorderPaddingLogicalRight();
                 if (auto* nextSibling = inlineBox.nextOnLine()) {
                     queue.append(nextSibling);
                     break;

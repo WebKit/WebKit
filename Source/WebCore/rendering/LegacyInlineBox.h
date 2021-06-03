@@ -138,13 +138,13 @@ public:
     // FIXME: Hide this once all callers are using tighter types.
     RenderObject& renderer() const { return *m_renderer; }
 
-    InlineFlowBox* parent() const
+    LegacyInlineFlowBox* parent() const
     {
         assertNotDeleted();
         ASSERT_WITH_SECURITY_IMPLICATION(!m_hasBadParent);
         return m_parent;
     }
-    void setParent(InlineFlowBox* par) { m_parent = par; }
+    void setParent(LegacyInlineFlowBox* par) { m_parent = par; }
 
     const LegacyRootInlineBox& root() const;
     LegacyRootInlineBox& root();
@@ -288,7 +288,7 @@ private:
     LegacyInlineBox* m_nextOnLine { nullptr }; // The next element on the same line as us.
     LegacyInlineBox* m_previousOnLine { nullptr }; // The previous element on the same line as us.
 
-    InlineFlowBox* m_parent { nullptr }; // The box that contains us.
+    LegacyInlineFlowBox* m_parent { nullptr }; // The box that contains us.
 
     WeakPtr<RenderObject> m_renderer;
 
@@ -381,7 +381,7 @@ protected:
     {
     }
 
-    LegacyInlineBox(RenderObject& renderer, FloatPoint topLeft, float logicalWidth, bool firstLine, bool constructed, bool dirty, bool extracted, bool isHorizontal, LegacyInlineBox* next, LegacyInlineBox* previous, InlineFlowBox* parent)
+    LegacyInlineBox(RenderObject& renderer, FloatPoint topLeft, float logicalWidth, bool firstLine, bool constructed, bool dirty, bool extracted, bool isHorizontal, LegacyInlineBox* next, LegacyInlineBox* previous, LegacyInlineFlowBox* parent)
         : m_nextOnLine(next)
         , m_previousOnLine(previous)
         , m_parent(parent)
@@ -405,7 +405,7 @@ protected:
     bool forceRightExpansion() const { return m_bitfields.forceRightExpansion(); }
     bool forceLeftExpansion() const { return m_bitfields.forceLeftExpansion(); }
     
-    // For InlineFlowBox and InlineTextBox
+    // For LegacyInlineFlowBox and InlineTextBox
     bool extracted() const { return m_bitfields.extracted(); }
 
 protected:

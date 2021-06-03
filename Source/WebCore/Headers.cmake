@@ -1527,11 +1527,11 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/HitTestRequest.h
     rendering/HitTestResult.h
     rendering/InlineElementBox.h
-    rendering/InlineFlowBox.h
     rendering/InlineTextBox.h
     rendering/LayerAncestorClippingStack.h
     rendering/LayerFragment.h
     rendering/LegacyInlineBox.h
+    rendering/LegacyInlineFlowBox.h
     rendering/LegacyLineLayout.h
     rendering/LegacyRootInlineBox.h
     rendering/MarkedText.h

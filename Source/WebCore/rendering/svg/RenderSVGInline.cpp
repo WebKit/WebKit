@@ -39,7 +39,7 @@ RenderSVGInline::RenderSVGInline(SVGGraphicsElement& element, RenderStyle&& styl
     setAlwaysCreateLineBoxes();
 }
 
-std::unique_ptr<InlineFlowBox> RenderSVGInline::createInlineFlowBox()
+std::unique_ptr<LegacyInlineFlowBox> RenderSVGInline::createInlineFlowBox()
 {
     auto box = makeUnique<SVGInlineFlowBox>(*this);
     box->setHasVirtualLogicalHeight();
@@ -97,7 +97,7 @@ void RenderSVGInline::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) co
         return;
 
     FloatRect textBoundingBox = textAncestor->strokeBoundingBox();
-    for (InlineFlowBox* box = firstLineBox(); box; box = box->nextLineBox())
+    for (auto* box = firstLineBox(); box; box = box->nextLineBox())
         quads.append(localToAbsoluteQuad(FloatRect(textBoundingBox.x() + box->x(), textBoundingBox.y() + box->y(), box->logicalWidth(), box->logicalHeight()), UseTransforms, wasFixed));
 }
 

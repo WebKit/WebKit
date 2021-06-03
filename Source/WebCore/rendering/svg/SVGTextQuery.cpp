@@ -21,7 +21,7 @@
 #include "SVGTextQuery.h"
 
 #include "FloatConversion.h"
-#include "InlineFlowBox.h"
+#include "LegacyInlineFlowBox.h"
 #include "RenderBlockFlow.h"
 #include "RenderInline.h"
 #include "RenderSVGText.h"
@@ -48,7 +48,7 @@ struct SVGTextQuery::Data {
     const SVGInlineTextBox* textBox;
 };
 
-static inline InlineFlowBox* flowBoxForRenderer(RenderObject* renderer)
+static inline LegacyInlineFlowBox* flowBoxForRenderer(RenderObject* renderer)
 {
     if (!renderer)
         return nullptr;
@@ -69,7 +69,7 @@ static inline InlineFlowBox* flowBoxForRenderer(RenderObject* renderer)
         RenderInline& renderInline = downcast<RenderInline>(*renderer);
 
         // RenderSVGInline only ever contains a single line box.
-        InlineFlowBox* flowBox = renderInline.firstLineBox();
+        LegacyInlineFlowBox* flowBox = renderInline.firstLineBox();
         ASSERT(flowBox == renderInline.lastLineBox());
         return flowBox;
     }
@@ -83,18 +83,18 @@ SVGTextQuery::SVGTextQuery(RenderObject* renderer)
     collectTextBoxesInFlowBox(flowBoxForRenderer(renderer));
 }
 
-void SVGTextQuery::collectTextBoxesInFlowBox(InlineFlowBox* flowBox)
+void SVGTextQuery::collectTextBoxesInFlowBox(LegacyInlineFlowBox* flowBox)
 {
     if (!flowBox)
         return;
 
     for (auto* child = flowBox->firstChild(); child; child = child->nextOnLine()) {
-        if (is<InlineFlowBox>(*child)) {
+        if (is<LegacyInlineFlowBox>(*child)) {
             // Skip generated content.
             if (!child->renderer().node())
                 continue;
 
-            collectTextBoxesInFlowBox(downcast<InlineFlowBox>(child));
+            collectTextBoxesInFlowBox(downcast<LegacyInlineFlowBox>(child));
             continue;
         }
 

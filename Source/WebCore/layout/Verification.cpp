@@ -90,7 +90,7 @@ static bool checkForMatchingTextRuns(const LineRun& lineRun, const WebCore::Inli
         && (inlineTextBox.isLineBreak() || (inlineTextBox.start() == lineRun.text()->start() && inlineTextBox.end() == lineRun.text()->end()));
 }
 
-static void collectFlowBoxSubtree(const InlineFlowBox& flowbox, Vector<WebCore::LegacyInlineBox*>& inlineBoxes)
+static void collectFlowBoxSubtree(const LegacyInlineFlowBox& flowbox, Vector<WebCore::LegacyInlineBox*>& inlineBoxes)
 {
     auto* inlineBox = flowbox.firstLeafDescendant();
     auto* lastLeafDescendant = flowbox.lastLeafDescendant();
@@ -106,11 +106,11 @@ static void collectInlineBoxes(const RenderBlockFlow& root, Vector<WebCore::Lega
 {
     for (auto* rootLine = root.firstRootBox(); rootLine; rootLine = rootLine->nextRootBox()) {
         for (auto* inlineBox = rootLine->firstChild(); inlineBox; inlineBox = inlineBox->nextOnLine()) {
-            if (!is<InlineFlowBox>(inlineBox)) {
+            if (!is<LegacyInlineFlowBox>(inlineBox)) {
                 inlineBoxes.append(inlineBox);
                 continue;
             }
-            collectFlowBoxSubtree(downcast<InlineFlowBox>(*inlineBox), inlineBoxes);
+            collectFlowBoxSubtree(downcast<LegacyInlineFlowBox>(*inlineBox), inlineBoxes);
         }
     }
 }

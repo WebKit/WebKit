@@ -257,7 +257,7 @@ void RenderInline::generateLineBoxRects(GeneratorContext& context) const
 {
     if (!alwaysCreateLineBoxes())
         generateCulledLineBoxRects(context, this);
-    else if (InlineFlowBox* curr = firstLineBox()) {
+    else if (LegacyInlineFlowBox* curr = firstLineBox()) {
         for (; curr; curr = curr->nextLineBox())
             context.addRect(FloatRect(curr->topLeft(), curr->size()));
     } else
@@ -298,7 +298,7 @@ void RenderInline::generateCulledLineBoxRects(GeneratorContext& context, const R
             if (!renderInline.alwaysCreateLineBoxes())
                 renderInline.generateCulledLineBoxRects(context, container);
             else {
-                for (InlineFlowBox* childLine = renderInline.firstLineBox(); childLine; childLine = childLine->nextLineBox()) {
+                for (auto* childLine = renderInline.firstLineBox(); childLine; childLine = childLine->nextLineBox()) {
                     const LegacyRootInlineBox& rootBox = childLine->root();
                     const RenderStyle& containerStyle = rootBox.isFirstLine() ? container->firstLineStyle() : container->style();
                     int logicalTop = rootBox.logicalTop() + (rootBox.lineStyle().fontCascade().fontMetrics().ascent() - containerStyle.fontCascade().fontMetrics().ascent());
@@ -653,7 +653,7 @@ IntRect RenderInline::linesBoundingBox() const
         // Return the width of the minimal left side and the maximal right side.
         float logicalLeftSide = 0;
         float logicalRightSide = 0;
-        for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
+        for (auto* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
             if (curr == firstLineBox() || curr->logicalLeft() < logicalLeftSide)
                 logicalLeftSide = curr->logicalLeft();
             if (curr == firstLineBox() || curr->logicalRight() > logicalRightSide)
@@ -787,7 +787,7 @@ LayoutRect RenderInline::linesVisualOverflowBoundingBox() const
     // Return the width of the minimal left side and the maximal right side.
     LayoutUnit logicalLeftSide = LayoutUnit::max();
     LayoutUnit logicalRightSide = LayoutUnit::min();
-    for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
+    for (auto* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
         logicalLeftSide = std::min(logicalLeftSide, curr->logicalLeftVisualOverflow());
         logicalRightSide = std::max(logicalRightSide, curr->logicalRightVisualOverflow());
     }
@@ -818,8 +818,8 @@ LayoutRect RenderInline::linesVisualOverflowBoundingBoxInFragment(const RenderFr
     LayoutUnit logicalRightSide = LayoutUnit::min();
     LayoutUnit logicalTop;
     LayoutUnit logicalHeight;
-    InlineFlowBox* lastInlineInFragment = 0;
-    for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
+    LegacyInlineFlowBox* lastInlineInFragment = 0;
+    for (auto* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
         const LegacyRootInlineBox& root = curr->root();
         if (root.containingFragment() != fragment) {
             if (lastInlineInFragment)
@@ -1115,7 +1115,7 @@ void RenderInline::dirtyLineBoxes(bool fullLayout)
             } else if (!current.selfNeedsLayout()) {
                 if (is<RenderInline>(current)) {
                     auto& renderInline = downcast<RenderInline>(current);
-                    for (InlineFlowBox* childLine = renderInline.firstLineBox(); childLine; childLine = childLine->nextLineBox())
+                    for (auto* childLine = renderInline.firstLineBox(); childLine; childLine = childLine->nextLineBox())
                         childLine->root().markDirty();
                 } else if (is<RenderText>(current)) {
                     auto& renderText = downcast<RenderText>(current);
@@ -1137,12 +1137,12 @@ void RenderInline::deleteLines()
     m_lineBoxes.deleteLineBoxTree();
 }
 
-std::unique_ptr<InlineFlowBox> RenderInline::createInlineFlowBox()
+std::unique_ptr<LegacyInlineFlowBox> RenderInline::createInlineFlowBox()
 {
-    return makeUnique<InlineFlowBox>(*this);
+    return makeUnique<LegacyInlineFlowBox>(*this);
 }
 
-InlineFlowBox* RenderInline::createAndAppendInlineFlowBox()
+LegacyInlineFlowBox* RenderInline::createAndAppendInlineFlowBox()
 {
     setAlwaysCreateLineBoxes();
     auto newFlowBox = createInlineFlowBox();
@@ -1272,7 +1272,7 @@ void RenderInline::paintOutline(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     Vector<LayoutRect> rects;
     rects.append(LayoutRect());
-    for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
+    for (auto* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
         const LegacyRootInlineBox& rootBox = curr->root();
         LayoutUnit top = std::max(rootBox.lineTop(), LayoutUnit(curr->logicalTop()));
         LayoutUnit bottom = std::min(rootBox.lineBottom(), LayoutUnit(curr->logicalBottom()));

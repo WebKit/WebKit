@@ -21,7 +21,7 @@
 #pragma once
 
 #include "BidiContext.h"
-#include "InlineFlowBox.h"
+#include "LegacyInlineFlowBox.h"
 #include "RenderBox.h"
 #include <wtf/WeakPtr.h>
 
@@ -36,7 +36,7 @@ class RenderFragmentContainer;
 struct BidiStatus;
 struct GapRects;
 
-class LegacyRootInlineBox : public InlineFlowBox, public CanMakeWeakPtr<LegacyRootInlineBox> {
+class LegacyRootInlineBox : public LegacyInlineFlowBox, public CanMakeWeakPtr<LegacyRootInlineBox> {
     WTF_MAKE_ISO_ALLOCATED(LegacyRootInlineBox);
 public:
     explicit LegacyRootInlineBox(RenderBlockFlow&);
@@ -167,19 +167,19 @@ public:
     
     LayoutUnit logicalTopVisualOverflow() const
     {
-        return InlineFlowBox::logicalTopVisualOverflow(lineTop());
+        return LegacyInlineFlowBox::logicalTopVisualOverflow(lineTop());
     }
     LayoutUnit logicalBottomVisualOverflow() const
     {
-        return InlineFlowBox::logicalBottomVisualOverflow(lineBottom());
+        return LegacyInlineFlowBox::logicalBottomVisualOverflow(lineBottom());
     }
     LayoutUnit logicalTopLayoutOverflow() const
     {
-        return InlineFlowBox::logicalTopLayoutOverflow(lineTop());
+        return LegacyInlineFlowBox::logicalTopLayoutOverflow(lineTop());
     }
     LayoutUnit logicalBottomLayoutOverflow() const
     {
-        return InlineFlowBox::logicalBottomLayoutOverflow(lineBottom());
+        return LegacyInlineFlowBox::logicalBottomLayoutOverflow(lineBottom());
     }
 
     virtual bool isTrailingFloatsRootInlineBox() const { return false; }

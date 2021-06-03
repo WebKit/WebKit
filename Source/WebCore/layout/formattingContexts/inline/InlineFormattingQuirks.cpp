@@ -81,7 +81,7 @@ bool InlineFormattingQuirks::inlineLevelBoxAffectsLineBox(const LineBox::InlineL
             // We do not create markers for list items when the list-style-type is none, while other browsers do.
             // The side effect of having no marker is that in quirks mode we have to specifically check for list-item
             // and make sure it is treated as if it had content and stretched the line.
-            // see InlineFlowBox c'tor.
+            // see LegacyInlineFlowBox c'tor.
             return inlineLevelBox.layoutBox().style().isOriginalDisplayListItemType();
         }
         // Non-root inline boxes (e.g. <span>).

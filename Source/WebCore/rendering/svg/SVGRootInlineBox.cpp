@@ -100,7 +100,7 @@ void SVGRootInlineBox::computePerCharacterLayoutInformation()
     layoutRootBox(childRect);
 }
 
-void SVGRootInlineBox::layoutCharactersInTextBoxes(InlineFlowBox* start, SVGTextLayoutEngine& characterLayout)
+void SVGRootInlineBox::layoutCharactersInTextBoxes(LegacyInlineFlowBox* start, SVGTextLayoutEngine& characterLayout)
 {
     for (auto* child = start->firstChild(); child; child = child->nextOnLine()) {
         if (is<SVGInlineTextBox>(*child)) {
@@ -131,7 +131,7 @@ void SVGRootInlineBox::layoutCharactersInTextBoxes(InlineFlowBox* start, SVGText
     }
 }
 
-void SVGRootInlineBox::layoutChildBoxes(InlineFlowBox* start, FloatRect* childRect)
+void SVGRootInlineBox::layoutChildBoxes(LegacyInlineFlowBox* start, FloatRect* childRect)
 {
     for (auto* child = start->firstChild(); child; child = child->nextOnLine()) {
         FloatRect boxRect;

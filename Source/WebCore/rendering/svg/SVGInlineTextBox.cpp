@@ -26,7 +26,7 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
-#include "InlineFlowBox.h"
+#include "LegacyInlineFlowBox.h"
 #include "PointerEventsHitRules.h"
 #include "RenderBlock.h"
 #include "RenderInline.h"
@@ -452,7 +452,7 @@ static inline float thicknessForDecoration(OptionSet<TextDecoration>, const Font
     return font.size() / 20.0f;
 }
 
-static inline RenderBoxModelObject& findRendererDefininingTextDecoration(InlineFlowBox* parentBox)
+static inline RenderBoxModelObject& findRendererDefininingTextDecoration(LegacyInlineFlowBox* parentBox)
 {
     // Lookup first render object in parent hierarchy which has text-decoration set.
     RenderBoxModelObject* renderer = nullptr;

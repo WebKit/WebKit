@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "InlineFlowBox.h"
+#include "LegacyInlineFlowBox.h"
 #include "LineWidth.h"
 #include "RenderLineBoxList.h"
 #include "RenderStyleConstants.h"
@@ -80,7 +80,7 @@ private:
     std::unique_ptr<LegacyRootInlineBox> createRootInlineBox();
     LegacyRootInlineBox* createAndAppendRootInlineBox();
     LegacyInlineBox* createInlineBoxForRenderer(RenderObject*, bool isOnlyRun = false);
-    InlineFlowBox* createLineBoxes(RenderObject*, const LineInfo&, LegacyInlineBox*);
+    LegacyInlineFlowBox* createLineBoxes(RenderObject*, const LineInfo&, LegacyInlineBox*);
     TextAlignMode textAlignmentForLine(bool endsWithSoftBreak) const;
     void setMarginsForRubyRun(BidiRun*, RenderRubyRun&, RenderObject* previousObject, const LineInfo&);
     void updateRubyForJustifiedText(RenderRubyRun&, BidiRun&, const Vector<unsigned, 16>& expansionOpportunities, unsigned& expansionOpportunityCount, float& totalLogicalWidth, float availableLogicalWidth, size_t&);

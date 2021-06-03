@@ -3571,8 +3571,8 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxMo
     ASSERT(containingBlock.isInFlowPositioned());
 
     const auto& flow = downcast<RenderInline>(containingBlock);
-    InlineFlowBox* first = flow.firstLineBox();
-    InlineFlowBox* last = flow.lastLineBox();
+    LegacyInlineFlowBox* first = flow.firstLineBox();
+    LegacyInlineFlowBox* last = flow.lastLineBox();
 
     // If the containing block is empty, return a width of 0.
     if (!first || !last)
@@ -3618,8 +3618,8 @@ LayoutUnit RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxM
     ASSERT(containingBlock.isInFlowPositioned());
 
     const auto& flow = downcast<RenderInline>(containingBlock);
-    InlineFlowBox* first = flow.firstLineBox();
-    InlineFlowBox* last = flow.lastLineBox();
+    LegacyInlineFlowBox* first = flow.firstLineBox();
+    LegacyInlineFlowBox* last = flow.lastLineBox();
 
     // If the containing block is empty, return a height of 0.
     if (!first || !last)
@@ -4062,8 +4062,8 @@ void RenderBox::computePositionedLogicalWidthUsing(SizeType widthType, Length lo
     // this is fixed elsewhere, this block should be removed.
     if (is<RenderInline>(containerBlock) && !containerBlock.style().isLeftToRightDirection()) {
         const auto& flow = downcast<RenderInline>(containerBlock);
-        InlineFlowBox* firstLine = flow.firstLineBox();
-        InlineFlowBox* lastLine = flow.lastLineBox();
+        LegacyInlineFlowBox* firstLine = flow.firstLineBox();
+        LegacyInlineFlowBox* lastLine = flow.lastLineBox();
         if (firstLine && lastLine && firstLine != lastLine) {
             computedValues.m_position = logicalLeftValue + marginLogicalLeftValue + lastLine->borderLogicalLeft() + (lastLine->logicalLeft() - firstLine->logicalLeft());
             return;
@@ -4527,8 +4527,8 @@ void RenderBox::computePositionedLogicalWidthReplaced(LogicalExtentComputedValue
     // this is fixed elsewhere, this block should be removed.
     if (is<RenderInline>(containerBlock) && !containerBlock.style().isLeftToRightDirection()) {
         const auto& flow = downcast<RenderInline>(containerBlock);
-        InlineFlowBox* firstLine = flow.firstLineBox();
-        InlineFlowBox* lastLine = flow.lastLineBox();
+        LegacyInlineFlowBox* firstLine = flow.firstLineBox();
+        LegacyInlineFlowBox* lastLine = flow.lastLineBox();
         if (firstLine && lastLine && firstLine != lastLine) {
             computedValues.m_position = logicalLeftValue + marginLogicalLeftAlias + lastLine->borderLogicalLeft() + (lastLine->logicalLeft() - firstLine->logicalLeft());
             return;

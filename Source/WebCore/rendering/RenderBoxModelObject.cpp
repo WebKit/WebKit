@@ -609,7 +609,7 @@ LayoutUnit RenderBoxModelObject::computedCSSPadding(const Length& padding) const
     return minimumValueForLength(padding, w);
 }
 
-RoundedRect RenderBoxModelObject::getBackgroundRoundedRect(const LayoutRect& borderRect, InlineFlowBox* box, LayoutUnit inlineBoxWidth, LayoutUnit inlineBoxHeight,
+RoundedRect RenderBoxModelObject::getBackgroundRoundedRect(const LayoutRect& borderRect, LegacyInlineFlowBox* box, LayoutUnit inlineBoxWidth, LayoutUnit inlineBoxHeight,
     bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
 {
     RoundedRect border = style().getRoundedBorderFor(borderRect, includeLogicalLeftEdge, includeLogicalRightEdge);
@@ -670,7 +670,7 @@ LayoutRect RenderBoxModelObject::borderInnerRectAdjustedForBleedAvoidance(const 
     return shrinkRectByOneDevicePixel(context, rect, document().deviceScaleFactor());
 }
 
-RoundedRect RenderBoxModelObject::backgroundRoundedRectAdjustedForBleedAvoidance(const GraphicsContext& context, const LayoutRect& borderRect, BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox* box, const LayoutSize& boxSize, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
+RoundedRect RenderBoxModelObject::backgroundRoundedRectAdjustedForBleedAvoidance(const GraphicsContext& context, const LayoutRect& borderRect, BackgroundBleedAvoidance bleedAvoidance, LegacyInlineFlowBox* box, const LayoutSize& boxSize, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
 {
     if (bleedAvoidance == BackgroundBleedShrinkBackground) {
         // We shrink the rectangle by one device pixel on each side because the bleed is one pixel maximum.
@@ -698,7 +698,7 @@ InterpolationQuality RenderBoxModelObject::chooseInterpolationQuality(GraphicsCo
     return view().imageQualityController().chooseInterpolationQuality(context, this, image, layer, size);
 }
 
-void RenderBoxModelObject::paintMaskForTextFillBox(ImageBuffer* maskImage, const IntRect& maskRect, InlineFlowBox* box, const LayoutRect& scrolledPaintRect)
+void RenderBoxModelObject::paintMaskForTextFillBox(ImageBuffer* maskImage, const IntRect& maskRect, LegacyInlineFlowBox* box, const LayoutRect& scrolledPaintRect)
 {
     GraphicsContext& maskImageContext = maskImage->context();
     maskImageContext.translate(-maskRect.location());
@@ -716,7 +716,7 @@ void RenderBoxModelObject::paintMaskForTextFillBox(ImageBuffer* maskImage, const
 }
 
 void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, const Color& color, const FillLayer& bgLayer, const LayoutRect& rect,
-    BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox* box, const LayoutSize& boxSize, CompositeOperator op, RenderElement* backgroundObject, BaseBackgroundColorUsage baseBgColorUsage)
+    BackgroundBleedAvoidance bleedAvoidance, LegacyInlineFlowBox* box, const LayoutSize& boxSize, CompositeOperator op, RenderElement* backgroundObject, BaseBackgroundColorUsage baseBgColorUsage)
 {
     GraphicsContext& context = paintInfo.context();
 
@@ -2319,7 +2319,7 @@ bool RenderBoxModelObject::borderObscuresBackground() const
     return true;
 }
 
-bool RenderBoxModelObject::boxShadowShouldBeAppliedToBackground(const LayoutPoint&, BackgroundBleedAvoidance bleedAvoidance, InlineFlowBox* inlineFlowBox) const
+bool RenderBoxModelObject::boxShadowShouldBeAppliedToBackground(const LayoutPoint&, BackgroundBleedAvoidance bleedAvoidance, LegacyInlineFlowBox* inlineFlowBox) const
 {
     if (bleedAvoidance != BackgroundBleedNone)
         return false;

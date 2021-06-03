@@ -1,3 +1,233 @@
+2021-06-03  Antti Koivisto  <antti@apple.com>
+
+        Rename InlineFlowBox to LegacyInlineFlowBox
+        https://bugs.webkit.org/show_bug.cgi?id=226569
+
+        Reviewed by Alan Bujtas.
+
+        More legacy line layout naming.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/Verification.cpp:
+        (WebCore::Layout::collectFlowBoxSubtree):
+        (WebCore::Layout::collectInlineBoxes):
+        * layout/formattingContexts/inline/InlineFormattingQuirks.cpp:
+        (WebCore::Layout::InlineFormattingQuirks::inlineLevelBoxAffectsLineBox const):
+        * layout/integration/LayoutIntegrationInlineContentBuilder.cpp:
+        (WebCore::LayoutIntegration::InlineContentBuilder::computeLineLevelVisualAdjustmentsForRuns const):
+        (WebCore::LayoutIntegration::InlineContentBuilder::createDisplayLines const):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::EllipsisBox):
+        * rendering/EllipsisBox.h:
+        * rendering/InlineElementBox.cpp:
+        * rendering/InlineElementBox.h:
+        (WebCore::InlineElementBox::InlineElementBox):
+        * rendering/LegacyInlineBox.cpp:
+        (WebCore::LegacyInlineBox::dirtyLineBoxes):
+        (WebCore::LegacyInlineBox::nextLeafOnLine const):
+        (WebCore::LegacyInlineBox::previousLeafOnLine const):
+        * rendering/LegacyInlineBox.h:
+        (WebCore::LegacyInlineBox::parent const):
+        (WebCore::LegacyInlineBox::setParent):
+        (WebCore::LegacyInlineBox::LegacyInlineBox):
+        * rendering/LegacyInlineFlowBox.cpp: Renamed from Source/WebCore/rendering/InlineFlowBox.cpp.
+        (WebCore::LegacyInlineFlowBox::~LegacyInlineFlowBox):
+        (WebCore::LegacyInlineFlowBox::setHasBadChildList):
+        (WebCore::LegacyInlineFlowBox::getFlowSpacingLogicalWidth):
+        (WebCore::setHasTextDescendantsOnAncestors):
+        (WebCore::LegacyInlineFlowBox::addToLine):
+        (WebCore::LegacyInlineFlowBox::removeChild):
+        (WebCore::LegacyInlineFlowBox::deleteLine):
+        (WebCore::LegacyInlineFlowBox::removeLineBoxFromRenderObject):
+        (WebCore::LegacyInlineFlowBox::extractLine):
+        (WebCore::LegacyInlineFlowBox::extractLineBoxFromRenderObject):
+        (WebCore::LegacyInlineFlowBox::attachLine):
+        (WebCore::LegacyInlineFlowBox::attachLineBoxToRenderObject):
+        (WebCore::LegacyInlineFlowBox::adjustPosition):
+        (WebCore::isLastChildForRenderer):
+        (WebCore::isAncestorAndWithinBlock):
+        (WebCore::LegacyInlineFlowBox::determineSpacingForFlowBoxes):
+        (WebCore::LegacyInlineFlowBox::placeBoxesInInlineDirection):
+        (WebCore::LegacyInlineFlowBox::placeBoxRangeInInlineDirection):
+        (WebCore::LegacyInlineFlowBox::requiresIdeographicBaseline const):
+        (WebCore::verticalAlignApplies):
+        (WebCore::LegacyInlineFlowBox::adjustMaxAscentAndDescent):
+        (WebCore::LegacyInlineFlowBox::computeLogicalBoxHeights):
+        (WebCore::LegacyInlineFlowBox::placeBoxesInBlockDirection):
+        (WebCore::LegacyInlineFlowBox::maxLogicalBottomForTextDecorationLine const):
+        (WebCore::LegacyInlineFlowBox::minLogicalTopForTextDecorationLine const):
+        (WebCore::LegacyInlineFlowBox::flipLinesInBlockDirection):
+        (WebCore::LegacyInlineFlowBox::addBoxShadowVisualOverflow):
+        (WebCore::LegacyInlineFlowBox::addBorderOutsetVisualOverflow):
+        (WebCore::LegacyInlineFlowBox::addTextBoxVisualOverflow):
+        (WebCore::LegacyInlineFlowBox::addOutlineVisualOverflow):
+        (WebCore::LegacyInlineFlowBox::addReplacedChildOverflow):
+        (WebCore::LegacyInlineFlowBox::computeOverflow):
+        (WebCore::LegacyInlineFlowBox::setLayoutOverflow):
+        (WebCore::LegacyInlineFlowBox::setVisualOverflow):
+        (WebCore::LegacyInlineFlowBox::setOverflowFromLogicalRects):
+        (WebCore::LegacyInlineFlowBox::nodeAtPoint):
+        (WebCore::LegacyInlineFlowBox::paint):
+        (WebCore::LegacyInlineFlowBox::paintFillLayers):
+        (WebCore::LegacyInlineFlowBox::boxShadowCanBeAppliedToBackground const):
+        (WebCore::LegacyInlineFlowBox::paintFillLayer):
+        (WebCore::LegacyInlineFlowBox::paintBoxShadow):
+        (WebCore::LegacyInlineFlowBox::constrainToLineTopAndBottomIfNeeded const):
+        (WebCore::clipRectForNinePieceImageStrip):
+        (WebCore::LegacyInlineFlowBox::paintBoxDecorations):
+        (WebCore::LegacyInlineFlowBox::paintMask):
+        (WebCore::LegacyInlineFlowBox::firstLeafDescendant const):
+        (WebCore::LegacyInlineFlowBox::lastLeafDescendant const):
+        (WebCore::LegacyInlineFlowBox::selectionState):
+        (WebCore::LegacyInlineFlowBox::canAccommodateEllipsis const):
+        (WebCore::LegacyInlineFlowBox::placeEllipsisBox):
+        (WebCore::LegacyInlineFlowBox::clearTruncation):
+        (WebCore::LegacyInlineFlowBox::computeOverAnnotationAdjustment const):
+        (WebCore::LegacyInlineFlowBox::computeUnderAnnotationAdjustment const):
+        (WebCore::LegacyInlineFlowBox::collectLeafBoxesInLogicalOrder const):
+        (WebCore::LegacyInlineFlowBox::computeReplacedAndTextLineTopAndBottom const):
+        (WebCore::LegacyInlineFlowBox::boxName const):
+        (WebCore::LegacyInlineFlowBox::outputLineTreeAndMark const):
+        (WebCore::LegacyInlineFlowBox::checkConsistency const):
+        * rendering/LegacyInlineFlowBox.h: Renamed from Source/WebCore/rendering/InlineFlowBox.h.
+        (WebCore::LegacyInlineFlowBox::LegacyInlineFlowBox):
+        (WebCore::LegacyInlineFlowBox::renderer const):
+        (WebCore::LegacyInlineFlowBox::lineStyle const):
+        (WebCore::LegacyInlineFlowBox::prevLineBox const):
+        (WebCore::LegacyInlineFlowBox::nextLineBox const):
+        (WebCore::LegacyInlineFlowBox::setNextLineBox):
+        (WebCore::LegacyInlineFlowBox::setPreviousLineBox):
+        (WebCore::LegacyInlineFlowBox::firstChild const):
+        (WebCore::LegacyInlineFlowBox::lastChild const):
+        (WebCore::LegacyInlineFlowBox::marginBorderPaddingLogicalLeft const):
+        (WebCore::LegacyInlineFlowBox::marginBorderPaddingLogicalRight const):
+        (WebCore::LegacyInlineFlowBox::marginLogicalLeft const):
+        (WebCore::LegacyInlineFlowBox::marginLogicalRight const):
+        (WebCore::LegacyInlineFlowBox::borderLogicalLeft const):
+        (WebCore::LegacyInlineFlowBox::borderLogicalRight const):
+        (WebCore::LegacyInlineFlowBox::paddingLogicalLeft const):
+        (WebCore::LegacyInlineFlowBox::paddingLogicalRight const):
+        (WebCore::LegacyInlineFlowBox::includeLogicalLeftEdge const):
+        (WebCore::LegacyInlineFlowBox::includeLogicalRightEdge const):
+        (WebCore::LegacyInlineFlowBox::setEdges):
+        (WebCore::LegacyInlineFlowBox::beginPlacingBoxRangesInInlineDirection):
+        (WebCore::LegacyInlineFlowBox::endPlacingBoxRangesInInlineDirection):
+        (WebCore::LegacyInlineFlowBox::hasTextChildren const):
+        (WebCore::LegacyInlineFlowBox::hasTextDescendants const):
+        (WebCore::LegacyInlineFlowBox::hasHardLinebreak const):
+        (WebCore::LegacyInlineFlowBox::setHasTextChildren):
+        (WebCore::LegacyInlineFlowBox::setHasTextDescendants):
+        (WebCore::LegacyInlineFlowBox::layoutOverflowRect const):
+        (WebCore::LegacyInlineFlowBox::logicalTopLayoutOverflow const):
+        (WebCore::LegacyInlineFlowBox::logicalBottomLayoutOverflow const):
+        (WebCore::LegacyInlineFlowBox::logicalLayoutOverflowRect const):
+        (WebCore::LegacyInlineFlowBox::visualOverflowRect const):
+        (WebCore::LegacyInlineFlowBox::logicalLeftVisualOverflow const):
+        (WebCore::LegacyInlineFlowBox::logicalRightVisualOverflow const):
+        (WebCore::LegacyInlineFlowBox::logicalTopVisualOverflow const):
+        (WebCore::LegacyInlineFlowBox::logicalBottomVisualOverflow const):
+        (WebCore::LegacyInlineFlowBox::logicalVisualOverflowRect const):
+        (WebCore::LegacyInlineFlowBox::frameRectIncludingLineHeight const):
+        (WebCore::LegacyInlineFlowBox::logicalFrameRectIncludingLineHeight const):
+        (WebCore::LegacyInlineFlowBox::descendantsHaveSameLineHeightAndBaseline const):
+        (WebCore::LegacyInlineFlowBox::clearDescendantsHaveSameLineHeightAndBaseline):
+        (WebCore::LegacyInlineFlowBox::checkConsistency const):
+        (WebCore::LegacyInlineFlowBox::setHasBadChildList):
+        * rendering/LegacyLineLayout.cpp:
+        (WebCore::parentIsConstructedOrHaveNext):
+        (WebCore::LegacyLineLayout::createLineBoxes):
+        (WebCore::LegacyLineLayout::constructLine):
+        (WebCore::LegacyLineLayout::computeInlineDirectionPositionsForSegment):
+        * rendering/LegacyLineLayout.h:
+        * rendering/LegacyRootInlineBox.cpp:
+        (WebCore::LegacyRootInlineBox::LegacyRootInlineBox):
+        (WebCore::LegacyRootInlineBox::clearTruncation):
+        (WebCore::LegacyRootInlineBox::lineCanAccommodateEllipsis):
+        (WebCore::LegacyRootInlineBox::placeEllipsisBox):
+        (WebCore::LegacyRootInlineBox::paint):
+        (WebCore::LegacyRootInlineBox::nodeAtPoint):
+        (WebCore::LegacyRootInlineBox::adjustPosition):
+        (WebCore::LegacyRootInlineBox::includeFontForBox const):
+        (WebCore::LegacyRootInlineBox::includeGlyphsForBox const):
+        (WebCore::LegacyRootInlineBox::includeInitialLetterForBox const):
+        * rendering/LegacyRootInlineBox.h:
+        (WebCore::LegacyRootInlineBox::logicalTopVisualOverflow const):
+        (WebCore::LegacyRootInlineBox::logicalBottomVisualOverflow const):
+        (WebCore::LegacyRootInlineBox::logicalTopLayoutOverflow const):
+        (WebCore::LegacyRootInlineBox::logicalBottomLayoutOverflow const):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::inlineBlockBaseline const):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::containingBlockLogicalWidthForPositioned const):
+        (WebCore::RenderBox::containingBlockLogicalHeightForPositioned const):
+        (WebCore::RenderBox::computePositionedLogicalWidthUsing const):
+        (WebCore::RenderBox::computePositionedLogicalWidthReplaced const):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::getBackgroundRoundedRect const):
+        (WebCore::RenderBoxModelObject::backgroundRoundedRectAdjustedForBleedAvoidance const):
+        (WebCore::RenderBoxModelObject::paintMaskForTextFillBox):
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::boxShadowShouldBeAppliedToBackground const):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::boxShadowShouldBeAppliedToBackground const):
+        * rendering/RenderImage.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::generateLineBoxRects const):
+        (WebCore::RenderInline::generateCulledLineBoxRects const):
+        (WebCore::RenderInline::linesBoundingBox const):
+        (WebCore::RenderInline::linesVisualOverflowBoundingBox const):
+        (WebCore::RenderInline::linesVisualOverflowBoundingBoxInFragment const):
+        (WebCore::RenderInline::dirtyLineBoxes):
+        (WebCore::RenderInline::createInlineFlowBox):
+        (WebCore::RenderInline::createAndAppendInlineFlowBox):
+        (WebCore::RenderInline::paintOutline):
+        * rendering/RenderInline.h:
+        (WebCore::RenderInline::firstLineBox const):
+        (WebCore::RenderInline::lastLineBox const):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::appendLineBox):
+        (WebCore::RenderLineBoxList::deleteLineBoxTree):
+        (WebCore::RenderLineBoxList::extractLineBox):
+        (WebCore::RenderLineBoxList::attachLineBox):
+        (WebCore::RenderLineBoxList::removeLineBox):
+        (WebCore::RenderLineBoxList::deleteLineBoxes):
+        (WebCore::RenderLineBoxList::dirtyLineBoxes):
+        (WebCore::RenderLineBoxList::lineIntersectsDirtyRect const):
+        (WebCore::RenderLineBoxList::paint const):
+        (WebCore::RenderLineBoxList::hitTest const):
+        (WebCore::RenderLineBoxList::checkConsistency const):
+        * rendering/RenderLineBoxList.h:
+        (WebCore::RenderLineBoxList::firstLineBox const):
+        (WebCore::RenderLineBoxList::lastLineBox const):
+        * rendering/RenderOverflow.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::boxShadowShouldBeAppliedToBackground const):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderVTTCue.cpp:
+        (WebCore::RenderVTTCue::initializeLayoutParameters):
+        (WebCore::RenderVTTCue::shouldSwitchDirection const):
+        (WebCore::RenderVTTCue::repositionCueSnapToLinesSet):
+        (WebCore::RenderVTTCue::repositionGenericCue):
+        * rendering/RenderVTTCue.h:
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::createInlineFlowBox):
+        (WebCore::RenderSVGInline::absoluteQuads const):
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/SVGInlineFlowBox.h:
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::findRendererDefininingTextDecoration):
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::layoutCharactersInTextBoxes):
+        (WebCore::SVGRootInlineBox::layoutChildBoxes):
+        * rendering/svg/SVGRootInlineBox.h:
+        * rendering/svg/SVGTextQuery.cpp:
+        (WebCore::flowBoxForRenderer):
+        (WebCore::SVGTextQuery::collectTextBoxesInFlowBox):
+        * rendering/svg/SVGTextQuery.h:
+
 2021-06-03  Alan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Use the fixed table height value to resolve percent column height values

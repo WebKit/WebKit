@@ -49,11 +49,11 @@ RenderLineBoxList::~RenderLineBoxList()
 }
 #endif
 
-void RenderLineBoxList::appendLineBox(std::unique_ptr<InlineFlowBox> box)
+void RenderLineBoxList::appendLineBox(std::unique_ptr<LegacyInlineFlowBox> box)
 {
     checkConsistency();
 
-    InlineFlowBox* boxPtr = box.release();
+    LegacyInlineFlowBox* boxPtr = box.release();
 
     if (!m_firstLineBox) {
         m_firstLineBox = boxPtr;
@@ -69,8 +69,8 @@ void RenderLineBoxList::appendLineBox(std::unique_ptr<InlineFlowBox> box)
 
 void RenderLineBoxList::deleteLineBoxTree()
 {
-    InlineFlowBox* line = m_firstLineBox;
-    InlineFlowBox* nextLine;
+    LegacyInlineFlowBox* line = m_firstLineBox;
+    LegacyInlineFlowBox* nextLine;
     while (line) {
         nextLine = line->nextLineBox();
         line->deleteLine();
@@ -79,7 +79,7 @@ void RenderLineBoxList::deleteLineBoxTree()
     m_firstLineBox = m_lastLineBox = nullptr;
 }
 
-void RenderLineBoxList::extractLineBox(InlineFlowBox* box)
+void RenderLineBoxList::extractLineBox(LegacyInlineFlowBox* box)
 {
     checkConsistency();
     
@@ -89,13 +89,13 @@ void RenderLineBoxList::extractLineBox(InlineFlowBox* box)
     if (box->prevLineBox())
         box->prevLineBox()->setNextLineBox(nullptr);
     box->setPreviousLineBox(nullptr);
-    for (InlineFlowBox* curr = box; curr; curr = curr->nextLineBox())
+    for (auto* curr = box; curr; curr = curr->nextLineBox())
         curr->setExtracted();
 
     checkConsistency();
 }
 
-void RenderLineBoxList::attachLineBox(InlineFlowBox* box)
+void RenderLineBoxList::attachLineBox(LegacyInlineFlowBox* box)
 {
     checkConsistency();
 
@@ -104,8 +104,8 @@ void RenderLineBoxList::attachLineBox(InlineFlowBox* box)
         box->setPreviousLineBox(m_lastLineBox);
     } else
         m_firstLineBox = box;
-    InlineFlowBox* last = box;
-    for (InlineFlowBox* curr = box; curr; curr = curr->nextLineBox()) {
+    LegacyInlineFlowBox* last = box;
+    for (auto* curr = box; curr; curr = curr->nextLineBox()) {
         curr->setExtracted(false);
         last = curr;
     }
@@ -114,7 +114,7 @@ void RenderLineBoxList::attachLineBox(InlineFlowBox* box)
     checkConsistency();
 }
 
-void RenderLineBoxList::removeLineBox(InlineFlowBox* box)
+void RenderLineBoxList::removeLineBox(LegacyInlineFlowBox* box)
 {
     checkConsistency();
 
@@ -133,8 +133,8 @@ void RenderLineBoxList::removeLineBox(InlineFlowBox* box)
 void RenderLineBoxList::deleteLineBoxes()
 {
     if (m_firstLineBox) {
-        InlineFlowBox* next;
-        for (InlineFlowBox* curr = m_firstLineBox; curr; curr = next) {
+        LegacyInlineFlowBox* next;
+        for (auto* curr = m_firstLineBox; curr; curr = next) {
             next = curr->nextLineBox();
             delete curr;
         }
@@ -145,7 +145,7 @@ void RenderLineBoxList::deleteLineBoxes()
 
 void RenderLineBoxList::dirtyLineBoxes()
 {
-    for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
+    for (auto* curr = firstLineBox(); curr; curr = curr->nextLineBox())
         curr->dirtyLineBoxes();
 }
 
@@ -197,7 +197,7 @@ bool RenderLineBoxList::anyLineIntersectsRect(RenderBoxModelObject* renderer, co
     return rangeIntersectsRect(renderer, firstLineTop, lastLineBottom, rect, offset);
 }
 
-bool RenderLineBoxList::lineIntersectsDirtyRect(RenderBoxModelObject* renderer, InlineFlowBox* box, const PaintInfo& paintInfo, const LayoutPoint& offset) const
+bool RenderLineBoxList::lineIntersectsDirtyRect(RenderBoxModelObject* renderer, LegacyInlineFlowBox* box, const PaintInfo& paintInfo, const LayoutPoint& offset) const
 {
     const LegacyRootInlineBox& rootBox = box->root();
     LayoutUnit logicalTop = std::min(box->logicalTopVisualOverflow(rootBox.lineTop()), rootBox.selectionTop());
@@ -227,7 +227,7 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
     // See if our root lines intersect with the dirty rect.  If so, then we paint
     // them.  Note that boxes can easily overlap, so we can't make any assumptions
     // based off positions of our first line box or our last line box.
-    for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
+    for (auto* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
         if (usePrintRect) {
             // FIXME: This is the deprecated pagination model that is still needed
             // for embedded views inside AppKit.  AppKit is incapable of paginating vertical
@@ -290,7 +290,7 @@ bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestReq
     // See if our root lines contain the point.  If so, then we hit test
     // them further.  Note that boxes can easily overlap, so we can't make any assumptions
     // based off positions of our first line box or our last line box.
-    for (InlineFlowBox* curr = lastLineBox(); curr; curr = curr->prevLineBox()) {
+    for (auto* curr = lastLineBox(); curr; curr = curr->prevLineBox()) {
         const LegacyRootInlineBox& rootBox = curr->root();
         if (rangeIntersectsRect(renderer, curr->logicalTopVisualOverflow(rootBox.lineTop()), curr->logicalBottomVisualOverflow(rootBox.lineBottom()), rect, accumulatedOffset)) {
             bool inside = curr->nodeAtPoint(request, result, locationInContainer, accumulatedOffset, rootBox.lineTop(), rootBox.lineBottom(), hitTestAction);
@@ -401,8 +401,8 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& contain
 void RenderLineBoxList::checkConsistency() const
 {
 #ifdef CHECK_CONSISTENCY
-    const InlineFlowBox* prev = nullptr;
-    for (const InlineFlowBox* child = m_firstLineBox; child != nullptr; child = child->nextLineBox()) {
+    const LegacyInlineFlowBox* prev = nullptr;
+    for (const LegacyInlineFlowBox* child = m_firstLineBox; child != nullptr; child = child->nextLineBox()) {
         ASSERT(child->prevLineBox() == prev);
         prev = child;
     }

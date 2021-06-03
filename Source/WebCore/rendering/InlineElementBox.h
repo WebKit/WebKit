@@ -37,7 +37,7 @@ public:
     {
     }
 
-    InlineElementBox(RenderObject& renderer, FloatPoint topLeft, float logicalWidth, bool firstLine, bool constructed, bool dirty, bool extracted, bool isHorizontal, LegacyInlineBox* next, LegacyInlineBox* prev, InlineFlowBox* parent)
+    InlineElementBox(RenderObject& renderer, FloatPoint topLeft, float logicalWidth, bool firstLine, bool constructed, bool dirty, bool extracted, bool isHorizontal, LegacyInlineBox* next, LegacyInlineBox* prev, LegacyInlineFlowBox* parent)
         : LegacyInlineBox(renderer, topLeft, logicalWidth, firstLine, constructed, dirty, extracted, isHorizontal, next, prev, parent)
     {
     }

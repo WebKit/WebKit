@@ -30,7 +30,7 @@ class HitTestResult;
 class EllipsisBox final : public InlineElementBox {
     WTF_MAKE_ISO_ALLOCATED(EllipsisBox);
 public:
-    EllipsisBox(RenderBlockFlow&, const AtomString& ellipsisStr, InlineFlowBox* parent, int width, int height, int y, bool firstLine, bool isHorizontal, LegacyInlineBox* markupBox);
+    EllipsisBox(RenderBlockFlow&, const AtomString& ellipsisStr, LegacyInlineFlowBox* parent, int width, int height, int y, bool firstLine, bool isHorizontal, LegacyInlineBox* markupBox);
     void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) final;
     void setSelectionState(RenderObject::HighlightState s) { m_selectionState = s; }

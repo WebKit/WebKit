@@ -23,7 +23,7 @@
 #include "FontMetrics.h"
 #include "Frame.h"
 #include "HitTestResult.h"
-#include "InlineFlowBox.h"
+#include "LegacyInlineFlowBox.h"
 #include "LegacyRootInlineBox.h"
 #include "RenderBlockFlow.h"
 #include "RenderLineBreak.h"
@@ -169,7 +169,7 @@ int LegacyInlineBox::caretMaxOffset() const
 void LegacyInlineBox::dirtyLineBoxes()
 {
     markDirty();
-    for (InlineFlowBox* curr = parent(); curr && !curr->isDirty(); curr = curr->parent())
+    for (auto* curr = parent(); curr && !curr->isDirty(); curr = curr->parent())
         curr->markDirty();
 }
 
@@ -226,7 +226,7 @@ LegacyInlineBox* LegacyInlineBox::nextLeafOnLine() const
 {
     LegacyInlineBox* leaf = nullptr;
     for (auto* box = nextOnLine(); box && !leaf; box = box->nextOnLine())
-        leaf = box->isLeaf() ? box : downcast<InlineFlowBox>(*box).firstLeafDescendant();
+        leaf = box->isLeaf() ? box : downcast<LegacyInlineFlowBox>(*box).firstLeafDescendant();
     if (!leaf && parent())
         leaf = parent()->nextLeafOnLine();
     return leaf;
@@ -236,7 +236,7 @@ LegacyInlineBox* LegacyInlineBox::previousLeafOnLine() const
 {
     LegacyInlineBox* leaf = nullptr;
     for (auto* box = previousOnLine(); box && !leaf; box = box->previousOnLine())
-        leaf = box->isLeaf() ? box : downcast<InlineFlowBox>(*box).lastLeafDescendant();
+        leaf = box->isLeaf() ? box : downcast<LegacyInlineFlowBox>(*box).lastLeafDescendant();
     if (!leaf && parent())
         leaf = parent()->previousLeafOnLine();
     return leaf;

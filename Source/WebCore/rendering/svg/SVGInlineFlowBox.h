@@ -20,23 +20,23 @@
 
 #pragma once
 
-#include "InlineFlowBox.h"
+#include "LegacyInlineFlowBox.h"
 #include "RenderSVGInline.h"
 
 namespace WebCore {
 
 class RenderSVGInlineText;
 
-class SVGInlineFlowBox final : public InlineFlowBox {
+class SVGInlineFlowBox final : public LegacyInlineFlowBox {
     WTF_MAKE_ISO_ALLOCATED(SVGInlineFlowBox);
 public:
     SVGInlineFlowBox(RenderSVGInline& renderer)
-        : InlineFlowBox(renderer)
+        : LegacyInlineFlowBox(renderer)
         , m_logicalHeight(0)
     {
     }
 
-    RenderSVGInline& renderer() { return static_cast<RenderSVGInline&>(InlineFlowBox::renderer()); }
+    RenderSVGInline& renderer() { return static_cast<RenderSVGInline&>(LegacyInlineFlowBox::renderer()); }
 
     FloatRect calculateBoundaries() const;
 

@@ -45,7 +45,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRootInlineBox);
 
-struct SameSizeAsLegacyRootInlineBox : public InlineFlowBox, public CanMakeWeakPtr<LegacyRootInlineBox> {
+struct SameSizeAsLegacyRootInlineBox : public LegacyInlineFlowBox, public CanMakeWeakPtr<LegacyRootInlineBox> {
     unsigned variables[7];
     WeakPtr<RenderObject> lineBreakObj;
     void* pointers[2];
@@ -66,7 +66,7 @@ static ContainingFragmentMap& containingFragmentMap(RenderBlockFlow& block)
 }
 
 LegacyRootInlineBox::LegacyRootInlineBox(RenderBlockFlow& block)
-    : InlineFlowBox(block)
+    : LegacyInlineFlowBox(block)
 {
     setIsHorizontal(block.isHorizontalWritingMode());
 }
@@ -92,7 +92,7 @@ void LegacyRootInlineBox::clearTruncation()
 {
     if (hasEllipsisBox()) {
         detachEllipsisBox();
-        InlineFlowBox::clearTruncation();
+        LegacyInlineFlowBox::clearTruncation();
     }
 }
 
@@ -124,7 +124,7 @@ bool LegacyRootInlineBox::lineCanAccommodateEllipsis(bool ltr, int blockEdge, in
 
     // Next iterate over all the line boxes on the line. If we find a replaced element that intersects
     // then we refuse to accommodate the ellipsis. Otherwise we're ok.
-    return InlineFlowBox::canAccommodateEllipsis(ltr, blockEdge, ellipsisWidth);
+    return LegacyInlineFlowBox::canAccommodateEllipsis(ltr, blockEdge, ellipsisWidth);
 }
 
 float LegacyRootInlineBox::placeEllipsis(const AtomString& ellipsisStr,  bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, LegacyInlineBox* markupBox)
@@ -153,7 +153,7 @@ float LegacyRootInlineBox::placeEllipsis(const AtomString& ellipsisStr,  bool lt
 
 float LegacyRootInlineBox::placeEllipsisBox(bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox)
 {
-    float result = InlineFlowBox::placeEllipsisBox(ltr, blockLeftEdge, blockRightEdge, ellipsisWidth, truncatedWidth, foundBox);
+    float result = LegacyInlineFlowBox::placeEllipsisBox(ltr, blockLeftEdge, blockRightEdge, ellipsisWidth, truncatedWidth, foundBox);
     if (result == -1) {
         result = ltr ? blockRightEdge - ellipsisWidth : blockLeftEdge;
         truncatedWidth = blockRightEdge - blockLeftEdge;
@@ -169,7 +169,7 @@ void LegacyRootInlineBox::paintEllipsisBox(PaintInfo& paintInfo, const LayoutPoi
 
 void LegacyRootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
-    InlineFlowBox::paint(paintInfo, paintOffset, lineTop, lineBottom);
+    LegacyInlineFlowBox::paint(paintInfo, paintOffset, lineTop, lineBottom);
     paintEllipsisBox(paintInfo, paintOffset, lineTop, lineBottom);
 }
 
@@ -181,12 +181,12 @@ bool LegacyRootInlineBox::nodeAtPoint(const HitTestRequest& request, HitTestResu
             return true;
         }
     }
-    return InlineFlowBox::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, lineTop, lineBottom, hitTestAction);
+    return LegacyInlineFlowBox::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, lineTop, lineBottom, hitTestAction);
 }
 
 void LegacyRootInlineBox::adjustPosition(float dx, float dy)
 {
-    InlineFlowBox::adjustPosition(dx, dy);
+    LegacyInlineFlowBox::adjustPosition(dx, dy);
     LayoutUnit blockDirectionDelta { isHorizontal() ? dy : dx }; // The block direction delta is a LayoutUnit.
     m_lineTop += blockDirectionDelta;
     m_lineBottom += blockDirectionDelta;
@@ -985,7 +985,7 @@ bool LegacyRootInlineBox::includeFontForBox(LegacyInlineBox& box) const
     if (box.renderer().isReplaced() || (box.renderer().isTextOrLineBreak() && !box.behavesLikeText()))
         return false;
     
-    if (!box.behavesLikeText() && is<InlineFlowBox>(box) && !downcast<InlineFlowBox>(box).hasTextChildren())
+    if (!box.behavesLikeText() && is<LegacyInlineFlowBox>(box) && !downcast<LegacyInlineFlowBox>(box).hasTextChildren())
         return false;
 
     return renderer().style().lineBoxContain().contains(LineBoxContain::Font);
@@ -996,7 +996,7 @@ bool LegacyRootInlineBox::includeGlyphsForBox(LegacyInlineBox& box) const
     if (box.renderer().isReplaced() || (box.renderer().isTextOrLineBreak() && !box.behavesLikeText()))
         return false;
     
-    if (!box.behavesLikeText() && is<InlineFlowBox>(box) && !downcast<InlineFlowBox>(box).hasTextChildren())
+    if (!box.behavesLikeText() && is<LegacyInlineFlowBox>(box) && !downcast<LegacyInlineFlowBox>(box).hasTextChildren())
         return false;
 
     return renderer().style().lineBoxContain().contains(LineBoxContain::Glyphs);
@@ -1007,7 +1007,7 @@ bool LegacyRootInlineBox::includeInitialLetterForBox(LegacyInlineBox& box) const
     if (box.renderer().isReplaced() || (box.renderer().isTextOrLineBreak() && !box.behavesLikeText()))
         return false;
     
-    if (!box.behavesLikeText() && is<InlineFlowBox>(box) && !downcast<InlineFlowBox>(box).hasTextChildren())
+    if (!box.behavesLikeText() && is<LegacyInlineFlowBox>(box) && !downcast<LegacyInlineFlowBox>(box).hasTextChildren())
         return false;
 
     return renderer().style().lineBoxContain().contains(LineBoxContain::InitialLetter);

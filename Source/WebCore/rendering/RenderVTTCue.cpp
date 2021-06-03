@@ -71,7 +71,7 @@ void RenderVTTCue::layout()
         repositionGenericCue();
 }
 
-bool RenderVTTCue::initializeLayoutParameters(InlineFlowBox*& firstLineBox, LayoutUnit& step, LayoutUnit& position)
+bool RenderVTTCue::initializeLayoutParameters(LegacyInlineFlowBox*& firstLineBox, LayoutUnit& step, LayoutUnit& position)
 {
     ASSERT(firstChild());
     if (!firstChild())
@@ -177,7 +177,7 @@ RenderObject* RenderVTTCue::overlappingObjectForRect(const IntRect& rect) const
     return 0;
 }
 
-bool RenderVTTCue::shouldSwitchDirection(InlineFlowBox* firstLineBox, LayoutUnit step) const
+bool RenderVTTCue::shouldSwitchDirection(LegacyInlineFlowBox* firstLineBox, LayoutUnit step) const
 {
     LayoutUnit top = y();
     LayoutUnit left = x();
@@ -312,7 +312,7 @@ bool RenderVTTCue::findNonOverlappingPosition(int& newX, int& newY) const
 
 void RenderVTTCue::repositionCueSnapToLinesSet()
 {
-    InlineFlowBox* firstLineBox;
+    LegacyInlineFlowBox* firstLineBox;
     LayoutUnit step;
     LayoutUnit position;
     if (!initializeLayoutParameters(firstLineBox, step, position))
@@ -350,7 +350,7 @@ void RenderVTTCue::repositionGenericCue()
     RenderObject& firstChild = *this->firstChild();
     RenderElement& backdropElement = downcast<RenderElement>(firstChild);
     
-    InlineFlowBox* firstLineBox = downcast<RenderInline>(*backdropElement.firstChild()).firstLineBox();
+    LegacyInlineFlowBox* firstLineBox = downcast<RenderInline>(*backdropElement.firstChild()).firstLineBox();
     if (downcast<TextTrackCueGeneric>(*m_cue).useDefaultPosition() && firstLineBox) {
         LayoutUnit parentWidth = containingBlock()->logicalWidth();
         LayoutUnit width { firstLineBox->width() };

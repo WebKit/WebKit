@@ -37,10 +37,10 @@ struct GlyphOverflow;
 
 typedef HashMap<const InlineTextBox*, std::pair<Vector<const Font*>, GlyphOverflow>> GlyphOverflowAndFallbackFontsMap;
 
-class InlineFlowBox : public LegacyInlineBox {
-    WTF_MAKE_ISO_ALLOCATED(InlineFlowBox);
+class LegacyInlineFlowBox : public LegacyInlineBox {
+    WTF_MAKE_ISO_ALLOCATED(LegacyInlineFlowBox);
 public:
-    explicit InlineFlowBox(RenderBoxModelObject& renderer)
+    explicit LegacyInlineFlowBox(RenderBoxModelObject& renderer)
         : LegacyInlineBox(renderer)
         , m_includeLogicalLeftEdge(false)
         , m_includeLogicalRightEdge(false)
@@ -58,17 +58,17 @@ public:
         , m_prevLineBox(nullptr)
         , m_nextLineBox(nullptr)
     {
-        // Internet Explorer and Firefox always create a marker for list items, even when the list-style-type is none.  We do not make a marker
-        // in the list-style-type: none case, since it is wasteful to do so.  However, in order to match other browsers we have to pretend like
-        // an invisible marker exists.  The side effect of having an invisible marker is that the quirks mode behavior of shrinking lines with no
-        // text children must not apply.  This change also means that gaps will exist between image bullet list items.  Even when the list bullet
+        // Internet Explorer and Firefox always create a marker for list items, even when the list-style-type is none. We do not make a marker
+        // in the list-style-type: none case, since it is wasteful to do so. However, in order to match other browsers we have to pretend like
+        // an invisible marker exists. The side effect of having an invisible marker is that the quirks mode behavior of shrinking lines with no
+        // text children must not apply. This change also means that gaps will exist between image bullet list items. Even when the list bullet
         // is an image, the line is still considered to be immune from the quirk.
         m_hasTextChildren = renderer.style().display() == DisplayType::ListItem;
         m_hasTextDescendants = m_hasTextChildren;
     }
 
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
-    virtual ~InlineFlowBox();
+    virtual ~LegacyInlineFlowBox();
 #endif
 
 #if ENABLE(TREE_DEBUGGING)
@@ -79,10 +79,10 @@ public:
     RenderBoxModelObject& renderer() const { return downcast<RenderBoxModelObject>(LegacyInlineBox::renderer()); }
     const RenderStyle& lineStyle() const { return isFirstLine() ? renderer().firstLineStyle() : renderer().style(); }
 
-    InlineFlowBox* prevLineBox() const { return m_prevLineBox; }
-    InlineFlowBox* nextLineBox() const { return m_nextLineBox; }
-    void setNextLineBox(InlineFlowBox* n) { m_nextLineBox = n; }
-    void setPreviousLineBox(InlineFlowBox* p) { m_prevLineBox = p; }
+    LegacyInlineFlowBox* prevLineBox() const { return m_prevLineBox; }
+    LegacyInlineFlowBox* nextLineBox() const { return m_nextLineBox; }
+    void setNextLineBox(LegacyInlineFlowBox* n) { m_nextLineBox = n; }
+    void setPreviousLineBox(LegacyInlineFlowBox* p) { m_prevLineBox = p; }
 
     LegacyInlineBox* firstChild() const { checkConsistency(); return m_firstChild; }
     LegacyInlineBox* lastChild() const { checkConsistency(); return m_lastChild; }
@@ -216,9 +216,9 @@ public:
     void checkConsistency() const;
     void setHasBadChildList();
 
-    // Line visual and layout overflow are in the coordinate space of the block.  This means that they aren't purely physical directions.
+    // Line visual and layout overflow are in the coordinate space of the block. This means that they aren't purely physical directions.
     // For horizontal-tb and vertical-lr they will match physical directions, but for horizontal-bt and vertical-rl, the top/bottom and left/right
-    // respectively are flipped when compared to their physical counterparts.  For example minX is on the left in vertical-lr, but it is on the right in vertical-rl.
+    // respectively are flipped when compared to their physical counterparts. For example minX is on the left in vertical-lr, but it is on the right in vertical-rl.
     LayoutRect layoutOverflowRect(LayoutUnit lineTop, LayoutUnit lineBottom) const
     {
         return m_overflow ? m_overflow->layoutOverflowRect() : enclosingLayoutRect(frameRectIncludingLineHeight(lineTop, lineBottom));
@@ -346,13 +346,13 @@ protected:
     LegacyInlineBox* m_firstChild;
     LegacyInlineBox* m_lastChild;
     
-    InlineFlowBox* m_prevLineBox; // The previous box that also uses our RenderObject
-    InlineFlowBox* m_nextLineBox; // The next box that also uses our RenderObject
+    LegacyInlineFlowBox* m_prevLineBox; // The previous box that also uses our RenderObject
+    LegacyInlineFlowBox* m_nextLineBox; // The next box that also uses our RenderObject
 };
 
 #ifdef NDEBUG
 
-inline void InlineFlowBox::checkConsistency() const
+inline void LegacyInlineFlowBox::checkConsistency() const
 {
 }
 
@@ -360,7 +360,7 @@ inline void InlineFlowBox::checkConsistency() const
 
 #if ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
 
-inline void InlineFlowBox::setHasBadChildList()
+inline void LegacyInlineFlowBox::setHasBadChildList()
 {
 }
 
@@ -368,9 +368,9 @@ inline void InlineFlowBox::setHasBadChildList()
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_INLINE_BOX(InlineFlowBox, isInlineFlowBox())
+SPECIALIZE_TYPE_TRAITS_INLINE_BOX(LegacyInlineFlowBox, isInlineFlowBox())
 
 #if ENABLE(TREE_DEBUGGING)
 // Outside the WebCore namespace for ease of invocation from the debugger.
-void showTree(const WebCore::InlineFlowBox*);
+void showTree(const WebCore::LegacyInlineFlowBox*);
 #endif

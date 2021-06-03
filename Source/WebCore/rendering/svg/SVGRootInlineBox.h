@@ -51,8 +51,8 @@ public:
 private:
     bool isSVGRootInlineBox() const override { return true; }
     void reorderValueLists(Vector<SVGTextLayoutAttributes*>&);
-    void layoutCharactersInTextBoxes(InlineFlowBox*, SVGTextLayoutEngine&);
-    void layoutChildBoxes(InlineFlowBox*, FloatRect* = nullptr);
+    void layoutCharactersInTextBoxes(LegacyInlineFlowBox*, SVGTextLayoutEngine&);
+    void layoutChildBoxes(LegacyInlineFlowBox*, FloatRect* = nullptr);
     void layoutRootBox(const FloatRect&);
 
     float m_logicalHeight;
