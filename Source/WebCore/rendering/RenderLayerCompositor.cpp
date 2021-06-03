@@ -1644,6 +1644,7 @@ void RenderLayerCompositor::layerStyleChanged(StyleDifference diff, RenderLayer&
                 if (layer.isStackingContext()) {
                     layer.setNeedsPostLayoutCompositingUpdate(); // Layer needs to become composited if it has composited descendants.
                     layer.setNeedsCompositingConfigurationUpdate(); // If already composited, layer needs to create/destroy clipping layer.
+                    layer.setChildrenNeedCompositingGeometryUpdate(); // Clipping layers on this layer affect descendant layer geometry.
                 } else {
                     // Descendant (in containing block order) compositing layers need to re-evaluate their clipping,
                     // but they might be siblings in z-order so go up to our stacking context.

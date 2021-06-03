@@ -1,3 +1,25 @@
+2021-06-03  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (Safari 14): Menu items jump around on codelearn.cat
+        https://bugs.webkit.org/show_bug.cgi?id=226608
+        <rdar://78636003>
+
+        Reviewed by Alan Bujtas.
+
+        This site changes overflow style dynamically on a stacking-context layer which
+        has an existing child compositing layer, and the layer has an offset from its
+        renderer due to the box-shadow.
+
+        When this happens, we need to ensure the child layers get a geometry update,
+        because the newly created clipping layer changes the offset for the child layers.
+
+        Test: compositing/overflow/overflow-change-reposition-descendants.html
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateAfterLayout):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::layerStyleChanged):
+
 2021-06-03  Chris Dumez  <cdumez@apple.com>
 
         Drop generic GenericTaskQueue<T> and DeferrableTask<T> now that they are unused

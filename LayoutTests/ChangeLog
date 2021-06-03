@@ -1,3 +1,14 @@
+2021-06-03  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (Safari 14): Menu items jump around on codelearn.cat
+        https://bugs.webkit.org/show_bug.cgi?id=226608
+        <rdar://78636003>
+
+        Reviewed by Alan Bujtas.
+
+        * compositing/overflow/overflow-change-reposition-descendants-expected.html: Added.
+        * compositing/overflow/overflow-change-reposition-descendants.html: Added.
+
 2021-06-03  Amir Mark Jr  <amir_mark@apple.com>
 
         [MacOS] animations/leak-document-with-css-animation.html is a flaky failure

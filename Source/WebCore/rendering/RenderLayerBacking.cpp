@@ -916,7 +916,7 @@ void RenderLayerBacking::updateAfterLayout(bool needsClippingUpdate, bool needsF
     RELEASE_ASSERT_WITH_MESSAGE(&m_owningLayer, "RenderLayerBacking::updateAfterLayout(): m_owningLayer is null (55699292)");
 #endif
 
-    LOG(Compositing, "RenderLayerBacking %p updateAfterLayout (layer %p)", this, &m_owningLayer);
+    LOG_WITH_STREAM(Compositing, stream << "RenderLayerBacking::updateAfterLayout (layer " << &m_owningLayer << " needsClippingUpdate " << needsClippingUpdate << " needsFullRepaint " << needsFullRepaint);
 
     // This is the main trigger for layout changing layer geometry, but we have to do the work again in updateBackingAndHierarchy()
     // when we know the final compositing hierarchy. We can't just set dirty bits from RenderLayer::setSize() because that doesn't
