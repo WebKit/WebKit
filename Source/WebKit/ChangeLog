@@ -1,3 +1,17 @@
+2021-06-03  Chris Dumez  <cdumez@apple.com>
+
+        StorageArea should be able to send its IPC directly from the background thread
+        https://bugs.webkit.org/show_bug.cgi?id=226583
+
+        Reviewed by Alex Christensen.
+
+        Update StorageArea so that it does its IPC sending straight from the storage thread, instead of
+        hopping to the main thread to do so.
+
+        * NetworkProcess/WebStorage/StorageArea.cpp:
+        (WebKit::StorageArea::clear):
+        (WebKit::StorageArea::dispatchEvents const):
+
 2021-06-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] imported/w3c/web-platform-tests/resource-timing/resource_connection_reuse_mixed_content.html is failing since r277493
