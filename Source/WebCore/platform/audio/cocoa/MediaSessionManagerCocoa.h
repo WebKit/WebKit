@@ -83,7 +83,7 @@ protected:
 
     PlatformMediaSession* nowPlayingEligibleSession();
 
-    GenericTaskQueue<Timer>& taskQueue() { return m_taskQueue; }
+    MainThreadTaskQueue& taskQueue() { return m_taskQueue; }
 
     void addSupportedCommand(PlatformMediaSession::RemoteControlCommandType) final;
     void removeSupportedCommand(PlatformMediaSession::RemoteControlCommandType) final;
@@ -113,7 +113,7 @@ private:
     double m_lastUpdatedNowPlayingElapsedTime { NAN };
     MediaUniqueIdentifier m_lastUpdatedNowPlayingInfoUniqueIdentifier;
 
-    GenericTaskQueue<Timer> m_taskQueue;
+    MainThreadTaskQueue m_taskQueue;
 
     const std::unique_ptr<NowPlayingManager> m_nowPlayingManager;
     RefPtr<AudioHardwareListener> m_audioHardwareListener;

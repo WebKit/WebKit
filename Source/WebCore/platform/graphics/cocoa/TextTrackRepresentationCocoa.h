@@ -54,7 +54,7 @@ private:
     void setContentScale(float) final;
     void setHidden(bool) const final;
 
-    GenericTaskQueue<Timer> m_taskQueue;
+    MainThreadTaskQueue m_taskQueue;
     TextTrackRepresentationClient& m_client;
     RetainPtr<CALayer> m_layer;
     RetainPtr<WebCoreTextTrackRepresentationCocoaHelper> m_delegate;

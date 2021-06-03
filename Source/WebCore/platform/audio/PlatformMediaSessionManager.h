@@ -220,7 +220,7 @@ private:
 #endif
 
     WeakHashSet<PlatformMediaSession::AudioCaptureSource> m_audioCaptureSources;
-    GenericTaskQueue<Timer> updateSessionStateQueue;
+    MainThreadTaskQueue updateSessionStateQueue;
 
 #if ENABLE(WEBM_FORMAT_READER)
     static bool m_webMFormatReaderEnabled;

@@ -193,7 +193,7 @@ private:
     bool m_initializationSegmentIsHandled { false };
     bool m_hasPendingAppendCompletedCallback { false };
     Vector<std::pair<uint64_t, Ref<MediaSample>>> m_mediaSamples;
-    GenericTaskQueue<Timer> m_mediaSampleTaskQueue;
+    MainThreadTaskQueue m_mediaSampleTaskQueue;
 
     RetainPtr<AVSampleBufferDisplayLayer> m_displayLayer;
     ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN

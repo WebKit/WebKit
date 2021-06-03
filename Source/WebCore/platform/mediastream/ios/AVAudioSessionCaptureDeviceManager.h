@@ -75,7 +75,7 @@ private:
     std::optional<Vector<AVAudioSessionCaptureDevice>> m_audioSessionCaptureDevices;
     RetainPtr<WebAVAudioSessionAvailableInputsListener> m_listener;
     RetainPtr<AVAudioSession> m_audioSession;
-    GenericTaskQueue<Timer> m_updateDeviceStateQueue;
+    MainThreadTaskQueue m_updateDeviceStateQueue;
     Ref<WorkQueue> m_dispatchQueue;
     AudioSessionState m_audioSessionState { AudioSessionState::NotNeeded };
 };

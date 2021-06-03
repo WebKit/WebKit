@@ -1,3 +1,73 @@
+2021-06-03  Chris Dumez  <cdumez@apple.com>
+
+        Drop generic GenericTaskQueue<T> and DeferrableTask<T> now that they are unused
+        https://bugs.webkit.org/show_bug.cgi?id=226601
+
+        Reviewed by Ryosuke Niwa.
+
+        Drop generic GenericTaskQueue<T> and DeferrableTask<T> now that they are unused. Rename
+        GenericTaskQueue<Timer> to MainThreadTaskQueue and DeferrableTask<Timer> to
+        MainThreadDeferrableTask as they still have some usage.
+
+        I used the "MainThread" naming for consistency with the legacy MainThreadEventQueue and
+        because the implementation relies on a static Timer.
+
+        * Modules/encryptedmedia/MediaKeySystemAccess.h:
+        * Modules/mediacapabilities/MediaCapabilities.h:
+        * dom/Document.h:
+        * dom/ScriptExecutionContext.h:
+        (WebCore::ScriptExecutionContext::enqueueTaskForDispatcher): Deleted.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::setVolume):
+        (WebCore::HTMLMediaElement::cancelPendingTasks):
+        (WebCore::HTMLMediaElement::closeTaskQueues):
+        (WebCore::HTMLMediaElement::enqueueTaskForDispatcher): Deleted.
+        * html/HTMLMediaElement.h:
+        * platform/DeferrableTask.h:
+        (WebCore::MainThreadDeferrableTask::MainThreadDeferrableTask):
+        (WebCore::DeferrableTask::DeferrableTask): Deleted.
+        (WebCore::DeferrableTask::scheduleTask): Deleted.
+        * platform/GenericTaskQueue.cpp:
+        (WebCore::MainThreadTaskDispatcher::MainThreadTaskDispatcher):
+        (WebCore::MainThreadTaskDispatcher::postTask):
+        (WebCore::MainThreadTaskDispatcher::sharedTimer):
+        (WebCore::MainThreadTaskDispatcher::sharedTimerFired):
+        (WebCore::MainThreadTaskDispatcher::pendingDispatchers):
+        (WebCore::MainThreadTaskDispatcher::dispatchOneTask):
+        (WebCore::TaskDispatcher<Timer>::TaskDispatcher): Deleted.
+        (WebCore::TaskDispatcher<Timer>::postTask): Deleted.
+        (WebCore::TaskDispatcher<Timer>::sharedTimer): Deleted.
+        (WebCore::TaskDispatcher<Timer>::sharedTimerFired): Deleted.
+        (WebCore::TaskDispatcher<Timer>::pendingDispatchers): Deleted.
+        (WebCore::TaskDispatcher<Timer>::dispatchOneTask): Deleted.
+        * platform/GenericTaskQueue.h:
+        (WebCore::MainThreadTaskQueue::MainThreadTaskQueue):
+        (WebCore::MainThreadTaskQueue::~MainThreadTaskQueue):
+        (WebCore::TaskDispatcher::TaskDispatcher): Deleted.
+        (WebCore::TaskDispatcher::postTask): Deleted.
+        (WebCore::GenericTaskQueueBase::hasPendingTasks const): Deleted.
+        (WebCore::GenericTaskQueueBase::isClosed const): Deleted.
+        (WebCore::GenericTaskQueueBase::close): Deleted.
+        (WebCore::GenericTaskQueueBase::cancelAllTasks): Deleted.
+        (WebCore::GenericTaskQueueBase::incrementPendingTasks): Deleted.
+        (WebCore::GenericTaskQueueBase::decrementPendingTasks): Deleted.
+        (WebCore::GenericTaskQueue::GenericTaskQueue): Deleted.
+        (WebCore::GenericTaskQueue::~GenericTaskQueue): Deleted.
+        (WebCore::GenericTaskQueue::enqueueTask): Deleted.
+        * platform/RemoteCommandListener.h:
+        * platform/audio/PlatformMediaSessionManager.h:
+        * platform/audio/cocoa/MediaSessionManagerCocoa.h:
+        (WebCore::MediaSessionManagerCocoa::taskQueue):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        * platform/graphics/cocoa/TextTrackRepresentationCocoa.h:
+        * platform/graphics/gpu/GPUBuffer.h:
+        * platform/graphics/gpu/GPUQueue.h:
+        * platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.h:
+        * platform/mediastream/mac/CoreAudioCaptureDeviceManager.h:
+        * platform/mock/MediaPlaybackTargetPickerMock.h:
+
 2021-06-03  Jean-Yves Avenard  <jya@apple.com>
 
         Add MediaSessionCoordinator test to ensure that disconnection on the private side is properly handled.

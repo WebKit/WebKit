@@ -32,13 +32,13 @@
 
 namespace WebCore {
 
-Lock TaskDispatcher<Timer>::s_sharedLock;
+Lock MainThreadTaskDispatcher::s_sharedLock;
 
-TaskDispatcher<Timer>::TaskDispatcher()
+MainThreadTaskDispatcher::MainThreadTaskDispatcher()
 {
 }
 
-void TaskDispatcher<Timer>::postTask(Function<void()>&& function)
+void MainThreadTaskDispatcher::postTask(Function<void()>&& function)
 {
     {
         Locker locker { s_sharedLock };
@@ -52,26 +52,26 @@ void TaskDispatcher<Timer>::postTask(Function<void()>&& function)
     });
 }
 
-Timer& TaskDispatcher<Timer>::sharedTimer()
+Timer& MainThreadTaskDispatcher::sharedTimer()
 {
     ASSERT(isMainThread());
-    static NeverDestroyed<Timer> timer([] { TaskDispatcher<Timer>::sharedTimerFired(); });
+    static NeverDestroyed<Timer> timer([] { MainThreadTaskDispatcher::sharedTimerFired(); });
     return timer.get();
 }
 
-void TaskDispatcher<Timer>::sharedTimerFired()
+void MainThreadTaskDispatcher::sharedTimerFired()
 {
     ASSERT(!sharedTimer().isActive());
 
     // Copy the pending events first because we don't want to process synchronously the new events
     // queued by the JS events handlers that are executed in the loop below.
-    Deque<WeakPtr<TaskDispatcher<Timer>>> queuedDispatchers;
+    Deque<WeakPtr<MainThreadTaskDispatcher>> queuedDispatchers;
     {
         Locker locker { s_sharedLock };
         queuedDispatchers = std::exchange(pendingDispatchers(), { });
     }
     while (!queuedDispatchers.isEmpty()) {
-        WeakPtr<TaskDispatcher<Timer>> dispatcher = queuedDispatchers.takeFirst();
+        WeakPtr<MainThreadTaskDispatcher> dispatcher = queuedDispatchers.takeFirst();
         if (!dispatcher)
             continue;
         dispatcher->dispatchOneTask();
@@ -79,13 +79,13 @@ void TaskDispatcher<Timer>::sharedTimerFired()
 }
 
 
-Deque<WeakPtr<TaskDispatcher<Timer>>>& TaskDispatcher<Timer>::pendingDispatchers()
+Deque<WeakPtr<MainThreadTaskDispatcher>>& MainThreadTaskDispatcher::pendingDispatchers()
 {
-    static NeverDestroyed<Deque<WeakPtr<TaskDispatcher<Timer>>>> dispatchers;
+    static NeverDestroyed<Deque<WeakPtr<MainThreadTaskDispatcher>>> dispatchers;
     return dispatchers.get();
 }
 
-void TaskDispatcher<Timer>::dispatchOneTask()
+void MainThreadTaskDispatcher::dispatchOneTask()
 {
     Function<void()> task;
     {

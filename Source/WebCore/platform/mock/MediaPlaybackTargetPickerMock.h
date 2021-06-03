@@ -56,7 +56,7 @@ private:
     Ref<MediaPlaybackTarget> playbackTarget() override;
 
     String m_deviceName;
-    GenericTaskQueue<Timer> m_taskQueue;
+    MainThreadTaskQueue m_taskQueue;
     MediaPlaybackTargetContext::MockState m_state { MediaPlaybackTargetContext::MockState::Unknown };
     bool m_showingMenu { false };
 };

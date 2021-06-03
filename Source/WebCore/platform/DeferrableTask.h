@@ -58,15 +58,10 @@ private:
     bool m_isClosed { false };
 };
 
-template <typename T>
-class DeferrableTask : public DeferrableTaskBase {
+class MainThreadDeferrableTask : public DeferrableTaskBase {
 public:
-    DeferrableTask()
+    MainThreadDeferrableTask()
         : m_dispatcher()
-    { }
-
-    DeferrableTask(T& t)
-        : m_dispatcher(&t)
     { }
 
     void scheduleTask(Function<void()>&& task)
@@ -87,7 +82,7 @@ public:
     }
 
 private:
-    TaskDispatcher<T> m_dispatcher;
+    MainThreadTaskDispatcher m_dispatcher;
 };
 
 // Similar to DeferrableTask but based on the HTML event loop.

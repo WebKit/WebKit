@@ -41,7 +41,7 @@ public:
     void encodingInfo(MediaEncodingConfiguration&&, Ref<DeferredPromise>&&);
 
 private:
-    GenericTaskQueue<Timer> m_taskQueue;
+    MainThreadTaskQueue m_taskQueue;
 };
 
 } // namespace WebCore

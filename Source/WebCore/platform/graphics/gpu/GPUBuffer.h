@@ -117,7 +117,7 @@ private:
 
     RefPtr<JSC::ArrayBuffer> m_stagingBuffer;
     RefPtr<PendingMappingCallback> m_mappingCallback;
-    DeferrableTask<Timer> m_mappingCallbackTask;
+    MainThreadDeferrableTask m_mappingCallbackTask;
 
     size_t m_byteLength;
     OptionSet<GPUBufferUsage::Flags> m_usage;

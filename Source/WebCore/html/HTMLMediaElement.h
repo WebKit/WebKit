@@ -936,9 +936,6 @@ private:
     const Logger& mediaPlayerLogger() final { return logger(); }
 #endif
 
-    friend class TaskDispatcher<HTMLMediaElement>;
-    void enqueueTaskForDispatcher(Function<void()>&&);
-
     Timer m_progressEventTimer;
     Timer m_playbackProgressTimer;
     Timer m_scanTimer;
@@ -948,7 +945,7 @@ private:
     EventLoopDeferrableTask m_checkPlaybackTargetCompatibilityTask;
     EventLoopDeferrableTask m_updateMediaStateTask;
     EventLoopDeferrableTask m_mediaEngineUpdatedTask;
-    DeferrableTask<HTMLMediaElement> m_updatePlayStateTask;
+    EventLoopDeferrableTask m_updatePlayStateTask;
     EventLoopDeferrableTask m_resumeTask;
     EventLoopDeferrableTask m_seekTask;
     EventLoopDeferrableTask m_playbackControlsManagerBehaviorRestrictionsTask;
@@ -962,7 +959,7 @@ private:
     RefPtr<TimeRanges> m_playedTimeRanges;
     UniqueRef<MainThreadGenericEventQueue> m_asyncEventQueue;
 #if PLATFORM(IOS_FAMILY)
-    DeferrableTask<Timer> m_volumeRevertTaskQueue;
+    EventLoopDeferrableTask m_volumeRevertTask;
 #endif
 
     PlayPromiseVector m_pendingPlayPromises;

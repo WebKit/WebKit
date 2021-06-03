@@ -37,40 +37,20 @@
 
 namespace WTF {
 class Lock;
-};
+}
 
 namespace WebCore {
 
-template <typename T>
-class TaskDispatcher {
+class MainThreadTaskDispatcher : public CanMakeWeakPtr<MainThreadTaskDispatcher, WeakPtrFactoryInitialization::Eager> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit TaskDispatcher(T* context)
-        : m_context(context)
-    {
-    }
-
-    void postTask(Function<void()>&& function)
-    {
-        ASSERT(m_context);
-        m_context->enqueueTaskForDispatcher(WTFMove(function));
-    }
-
-private:
-    T* m_context;
-};
-
-template<>
-class TaskDispatcher<Timer> : public CanMakeWeakPtr<TaskDispatcher<Timer>, WeakPtrFactoryInitialization::Eager> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    TaskDispatcher();
+    MainThreadTaskDispatcher();
     void postTask(Function<void()>&&);
 
 private:
     static Timer& sharedTimer();
     static void sharedTimerFired();
-    static Deque<WeakPtr<TaskDispatcher<Timer>>>& pendingDispatchers() WTF_REQUIRES_LOCK(s_sharedLock);
+    static Deque<WeakPtr<MainThreadTaskDispatcher>>& pendingDispatchers() WTF_REQUIRES_LOCK(s_sharedLock);
 
     void dispatchOneTask();
 
@@ -78,7 +58,8 @@ private:
     Deque<Function<void()>> m_pendingTasks WTF_GUARDED_BY_LOCK(s_sharedLock);
 };
 
-class GenericTaskQueueBase : public CanMakeWeakPtr<GenericTaskQueueBase> {
+class TaskQueueBase : public CanMakeWeakPtr<TaskQueueBase> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     bool hasPendingTasks() const { return m_pendingTasks; }
     bool isClosed() const { return m_isClosed; }
@@ -96,7 +77,7 @@ public:
     }
 
 protected:
-    ~GenericTaskQueueBase() = default;
+    ~TaskQueueBase() = default;
     void incrementPendingTasks() { ++m_pendingTasks; }
     void decrementPendingTasks() { ASSERT(m_pendingTasks); --m_pendingTasks; }
 
@@ -105,31 +86,17 @@ private:
     bool m_isClosed { false };
 };
 
-template <typename T>
-class GenericTaskQueue : public GenericTaskQueueBase {
-    WTF_MAKE_FAST_ALLOCATED;
+// Relies on a shared Timer, only safe to use on the MainThread. Please use EventLoopTaskQueue
+// (or dispatch directly to the HTML event loop) whenever possible.
+class MainThreadTaskQueue : public TaskQueueBase {
 public:
-    GenericTaskQueue()
-        : m_dispatcher(makeUniqueRef<TaskDispatcher<T>>())
+    MainThreadTaskQueue()
+        : m_dispatcher(makeUniqueRef<MainThreadTaskDispatcher>())
     {
         ASSERT(isMainThread());
     }
 
-    explicit GenericTaskQueue(T& t)
-        : m_dispatcher(makeUniqueRef<TaskDispatcher<T>>(&t))
-    {
-        ASSERT(isMainThread());
-    }
-
-    explicit GenericTaskQueue(T* t)
-        : m_dispatcher(makeUniqueRef<TaskDispatcher<T>>(t))
-    {
-        ASSERT(isMainThread());
-        if (!t)
-            close();
-    }
-
-    ~GenericTaskQueue()
+    ~MainThreadTaskQueue()
     {
         if (!isMainThread())
             m_dispatcher->postTask([dispatcher = WTFMove(m_dispatcher)] { });
@@ -150,11 +117,11 @@ public:
     }
 
 private:
-    UniqueRef<TaskDispatcher<T>> m_dispatcher;
+    UniqueRef<MainThreadTaskDispatcher> m_dispatcher;
 };
 
-// Similar to GenericTaskQueue but based on the HTML event loop.
-class EventLoopTaskQueue : public GenericTaskQueueBase, private ContextDestructionObserver {
+// Similar to MainThreadTaskQueue but based on the HTML event loop.
+class EventLoopTaskQueue : public TaskQueueBase, private ContextDestructionObserver {
 public:
     EventLoopTaskQueue(ScriptExecutionContext* context)
         : ContextDestructionObserver(context)

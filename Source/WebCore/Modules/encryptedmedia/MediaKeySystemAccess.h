@@ -57,7 +57,7 @@ private:
     String m_keySystem;
     std::unique_ptr<MediaKeySystemConfiguration> m_configuration;
     Ref<CDM> m_implementation;
-    GenericTaskQueue<Timer> m_taskQueue;
+    MainThreadTaskQueue m_taskQueue;
 };
 
 } // namespace WebCore

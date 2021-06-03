@@ -61,7 +61,7 @@ private:
     Vector<CaptureDevice> m_captureDevices;
     Vector<CaptureDevice> m_speakerDevices;
     Vector<CoreAudioCaptureDevice> m_coreAudioCaptureDevices;
-    GenericTaskQueue<Timer> m_updateDeviceStateQueue;
+    MainThreadTaskQueue m_updateDeviceStateQueue;
 };
 
 } // namespace WebCore

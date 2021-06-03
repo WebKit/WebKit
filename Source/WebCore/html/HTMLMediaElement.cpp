@@ -398,7 +398,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_checkPlaybackTargetCompatibilityTask(&document)
     , m_updateMediaStateTask(&document)
     , m_mediaEngineUpdatedTask(&document)
-    , m_updatePlayStateTask(*this)
+    , m_updatePlayStateTask(&document)
     , m_resumeTask(&document)
     , m_seekTask(&document)
     , m_playbackControlsManagerBehaviorRestrictionsTask(&document)
@@ -410,6 +410,9 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_fullscreenTaskQueue(&document)
     , m_playbackTargetIsWirelessQueue(&document)
     , m_asyncEventQueue(MainThreadGenericEventQueue::create(*this))
+#if PLATFORM(IOS_FAMILY)
+    , m_volumeRevertTask(&document)
+#endif
     , m_lastTimeUpdateEventMovieTime(MediaTime::positiveInfiniteTime())
     , m_firstTimePlaying(true)
     , m_playing(false)
@@ -3710,10 +3713,10 @@ ExceptionOr<void> HTMLMediaElement::setVolume(double volume)
     auto oldVolume = m_volume;
     m_volume = volume;
 
-    if (m_volumeRevertTaskQueue.isPending())
+    if (m_volumeRevertTask.isPending())
         return { };
 
-    m_volumeRevertTaskQueue.scheduleTask([this, oldVolume] {
+    m_volumeRevertTask.scheduleTask([this, oldVolume] {
         m_volume = oldVolume;
     });
 
@@ -5482,7 +5485,7 @@ void HTMLMediaElement::cancelPendingTasks()
     m_mediaEngineUpdatedTask.cancelTask();
     m_updatePlayStateTask.cancelTask();
 #if PLATFORM(IOS_FAMILY)
-    m_volumeRevertTaskQueue.cancelTask();
+    m_volumeRevertTask.cancelTask();
 #endif
 }
 
@@ -5657,7 +5660,7 @@ void HTMLMediaElement::closeTaskQueues()
 #endif
     m_asyncEventQueue->close();
 #if PLATFORM(IOS_FAMILY)
-    m_volumeRevertTaskQueue.close();
+    m_volumeRevertTask.close();
 #endif
 }
 
@@ -8160,15 +8163,6 @@ void HTMLMediaElement::mediaStreamCaptureStarted()
         play();
 }
 #endif
-
-void HTMLMediaElement::enqueueTaskForDispatcher(Function<void()>&& function)
-{
-    ensureOnMainThread([this, weakThis = makeWeakPtr(*this), function = WTFMove(function)]() mutable {
-        if (!weakThis || !scriptExecutionContext())
-            return;
-        scriptExecutionContext()->eventLoop().queueTask(TaskSource::MediaElement, WTFMove(function));
-    });
-}
 
 SecurityOriginData HTMLMediaElement::documentSecurityOrigin() const
 {

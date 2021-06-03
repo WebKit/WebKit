@@ -1954,7 +1954,7 @@ private:
     std::unique_ptr<DeviceOrientationAndMotionAccessController> m_deviceOrientationAndMotionAccessController;
 #endif
 
-    GenericTaskQueue<Timer> m_logMessageTaskQueue;
+    MainThreadTaskQueue m_logMessageTaskQueue;
 
     Timer m_pendingTasksTimer;
     Vector<Task> m_pendingTasks;
