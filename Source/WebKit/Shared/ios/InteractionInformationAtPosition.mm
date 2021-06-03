@@ -77,10 +77,9 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
     encoder << handle;
 #if ENABLE(DATA_DETECTION)
     encoder << isDataDetectorLink;
-    if (isDataDetectorLink) {
-        encoder << dataDetectorIdentifier;
-        encoder << dataDetectorResults;
-    }
+    encoder << dataDetectorIdentifier;
+    encoder << dataDetectorResults;
+    encoder << dataDetectorBounds;
 #endif
 #if ENABLE(DATALIST_ELEMENT)
     encoder << preventTextInteraction;
@@ -189,17 +188,18 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
 #if ENABLE(DATA_DETECTION)
     if (!decoder.decode(result.isDataDetectorLink))
         return false;
-    
-    if (result.isDataDetectorLink) {
-        if (!decoder.decode(result.dataDetectorIdentifier))
-            return false;
 
-        auto dataDetectorResults = IPC::decode<NSArray>(decoder, @[ [NSArray class], getDDScannerResultClass() ]);
-        if (!dataDetectorResults)
-            return false;
+    if (!decoder.decode(result.dataDetectorIdentifier))
+        return false;
 
-        result.dataDetectorResults = WTFMove(*dataDetectorResults);
-    }
+    auto dataDetectorResults = IPC::decode<NSArray>(decoder, @[ NSArray.class, getDDScannerResultClass() ]);
+    if (!dataDetectorResults)
+        return false;
+
+    result.dataDetectorResults = WTFMove(*dataDetectorResults);
+
+    if (!decoder.decode(result.dataDetectorBounds))
+        return false;
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)

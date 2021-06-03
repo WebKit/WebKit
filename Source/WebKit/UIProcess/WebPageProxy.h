@@ -406,6 +406,7 @@ struct WebNavigationDataStore;
 struct WebPopupItem;
 struct WebSpeechSynthesisVoice;
 
+enum class ImageExtractionUpdateResult : uint8_t;
 enum class NegotiatedLegacyTLS : bool;
 enum class ProcessSwapRequestedByClient : bool;
 enum class UndoOrRedo : bool;
@@ -1664,7 +1665,7 @@ public:
 
 #if ENABLE(IMAGE_EXTRACTION)
     void requestImageExtraction(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&);
-    void updateWithImageExtractionResult(WebCore::ImageExtractionResult&&, const WebCore::ElementContext&, const WebCore::FloatPoint& location, CompletionHandler<void(bool textExistsAtLocation)>&&);
+    void updateWithImageExtractionResult(WebCore::ImageExtractionResult&&, const WebCore::ElementContext&, const WebCore::FloatPoint& location, CompletionHandler<void(ImageExtractionUpdateResult)>&&);
     void computeCanRevealImage(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&&);
 #endif
 

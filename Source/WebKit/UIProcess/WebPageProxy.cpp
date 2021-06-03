@@ -66,6 +66,7 @@
 #include "EventDispatcherMessages.h"
 #include "FormDataReference.h"
 #include "FrameInfoData.h"
+#include "ImageExtractionUpdateResult.h"
 #include "LegacyGlobalSettings.h"
 #include "LoadParameters.h"
 #include "Logging.h"
@@ -8481,10 +8482,10 @@ void WebPageProxy::computeCanRevealImage(const URL& imageURL, ShareableBitmap& i
     pageClient().computeCanRevealImage(imageURL, imageBitmap, WTFMove(completion));
 }
 
-void WebPageProxy::updateWithImageExtractionResult(ImageExtractionResult&& results, const ElementContext& context, const FloatPoint& location, CompletionHandler<void(bool textExistsAtLocation)>&& completionHandler)
+void WebPageProxy::updateWithImageExtractionResult(ImageExtractionResult&& results, const ElementContext& context, const FloatPoint& location, CompletionHandler<void(ImageExtractionUpdateResult)>&& completionHandler)
 {
     if (!hasRunningProcess()) {
-        completionHandler(false);
+        completionHandler(ImageExtractionUpdateResult::NoText);
         return;
     }
 

@@ -1,3 +1,77 @@
+2021-06-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Show data detector context menu on long press inside image overlays
+        https://bugs.webkit.org/show_bug.cgi?id=226559
+        <rdar://problem/78789078>
+
+        Reviewed by Tim Horton.
+
+        Add additional support for data detectors that appear inside image overlays on iOS.
+
+        * Shared/ImageExtractionUpdateResult.h: Added.
+
+        Turn the `bool` propagated back to the UI process when calling `updateWithImageExtractionResult` into a separate
+        three-state enum instead; see changes below for more details.
+
+        * Shared/ios/InteractionInformationAtPosition.h:
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode const):
+        (WebKit::InteractionInformationAtPosition::decode):
+
+        Make some minor adjustments to `InteractionInformationAtPosition`:
+
+        -   Add `dataDetectorBounds`, which determines the bounds in root view coordinates of the data detector result
+            corresponding to the hit-tested element.
+
+        -   Encode and decode `dataDetectorResults`, even if `isDataDetectorLink` is `false`. Unless the data detector
+            is inside an image overlay, this (effectively) has no impact, since `dataDetectorResults` was previously
+            only set if `isDataDetectorLink` was true.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::updateWithImageExtractionResult):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView dataDetectionContextForPositionInformation:]):
+
+        Let `dataDetectorResults` take precedence over regular `bounds` when returning the context for the data
+        detector menu configuration.
+
+        (-[WKContentView positionInformationHasImageOverlayDataDetector]):
+
+        Add a helper method that returns `YES` in the case where the currently cached position information object
+        contains a text data detection result inside an image overlay.
+
+        (-[WKContentView _createTargetedContextMenuHintPreviewIfPossible]):
+
+        Use `dataDetectorBounds` instead of `bounds` when creating a fallback targeted preview for a data detection
+        result in an image overlay.
+
+        (-[WKContentView continueContextMenuInteraction:]):
+        (-[WKContentView continueContextMenuInteractionWithDataDetectors:]):
+
+        Adjust these codepaths so that we'll continue through to the data detector case instead of bailing early in the
+        case where both `isImageOverlayText` is set, and `dataDetectionResults` exist.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::findDataDetectionResultElementInImageOverlay):
+
+        Add a static helper to locate a data detector element underneath the given point, inside the given element's
+        image overlay in the user agent shadow root. Note that we check each of the element's bounds instead of using
+        a hit-test because we normally just hit-test to the text containers instead of the data detector containers.
+
+        (WebKit::WebPage::updateWithImageExtractionResult):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::dataDetectorLinkPositionInformation):
+        (WebKit::dataDetectorImageOverlayPositionInformation):
+
+        Add a static helper function to populate the given `InteractionInformationAtPosition`, if it's over a data
+        detection result inside an image overlay.
+
+        (WebKit::elementPositionInformation): Call the above helper function.
+
 2021-06-02  Alex Christensen  <achristensen@webkit.org>
 
         Fix WPT test resource-timing/cross-origin-redirects.html

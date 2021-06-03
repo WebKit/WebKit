@@ -643,6 +643,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 #endif
 
 #if ENABLE(IMAGE_EXTRACTION)
-    UpdateWithImageExtractionResult(struct WebCore::ImageExtractionResult result, struct WebCore::ElementContext element, WebCore::FloatPoint location) -> (bool textExistsAtLocation) Async
+    UpdateWithImageExtractionResult(struct WebCore::ImageExtractionResult result, struct WebCore::ElementContext element, WebCore::FloatPoint location) -> (enum:uint8_t WebKit::ImageExtractionUpdateResult result) Async
 #endif
 }

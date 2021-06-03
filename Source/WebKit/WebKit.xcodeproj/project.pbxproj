@@ -5985,6 +5985,7 @@
 		F4975CF12624B80A003C626E /* WKImageExtractionPreviewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKImageExtractionPreviewController.h; sourceTree = "<group>"; };
 		F4975CF32624B918003C626E /* WKImageExtractionPreviewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKImageExtractionPreviewController.mm; sourceTree = "<group>"; };
 		F4A6D6BB254CA3E900B65FAA /* SharedDisplayListHandle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SharedDisplayListHandle.h; sourceTree = "<group>"; };
+		F4A7CE842667EB4E00228685 /* ImageExtractionUpdateResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageExtractionUpdateResult.h; sourceTree = "<group>"; };
 		F4AC655E22A3140E00A05607 /* WebPreferencesDefaultValuesIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebPreferencesDefaultValuesIOS.mm; path = ios/WebPreferencesDefaultValuesIOS.mm; sourceTree = "<group>"; };
 		F4B378D021DDBBAB0095A378 /* WebUndoStepID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebUndoStepID.h; sourceTree = "<group>"; };
 		F4BA33F025757E89000A3CE8 /* WKImageExtractionGestureRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKImageExtractionGestureRecognizer.h; path = ios/WKImageExtractionGestureRecognizer.h; sourceTree = "<group>"; };
@@ -6719,6 +6720,7 @@
 				46AC532425DED81E003B57EC /* GPUProcessConnectionParameters.h */,
 				F40BBB40257FF46E0067463A /* GPUProcessWakeupMessageArguments.h */,
 				1AC75A1A1B3368270056745B /* HangDetectionDisabler.h */,
+				F4A7CE842667EB4E00228685 /* ImageExtractionUpdateResult.h */,
 				BCCF6B2312C93E7A008F9C35 /* ImageOptions.h */,
 				999B7ED82550E4A800F450A4 /* InspectorExtensionTypes.cpp */,
 				99BE3B1625433B9400C6551C /* InspectorExtensionTypes.h */,

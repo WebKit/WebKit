@@ -94,6 +94,7 @@ struct InteractionInformationAtPosition {
 #if ENABLE(DATA_DETECTION)
     String dataDetectorIdentifier;
     RetainPtr<NSArray> dataDetectorResults;
+    WebCore::IntRect dataDetectorBounds;
 #endif
 
     std::optional<WebCore::ElementContext> elementContext;

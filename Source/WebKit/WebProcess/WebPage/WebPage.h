@@ -310,6 +310,7 @@ class RemoteLayerTreeTransaction;
 
 enum class FindOptions : uint16_t;
 enum class DragControllerAction : uint8_t;
+enum class ImageExtractionUpdateResult : uint8_t;
 enum class SyntheticEditingCommandType : uint8_t;
 
 struct BackForwardListItemState;
@@ -1153,6 +1154,8 @@ public:
     void setDataDetectionResults(NSArray *);
     void detectDataInAllFrames(uint64_t, CompletionHandler<void(const DataDetectionResult&)>&&);
     void removeDataDetectedLinks(CompletionHandler<void(const DataDetectionResult&)>&&);
+    void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&);
+    static std::optional<std::pair<Ref<WebCore::HTMLElement>, WebCore::IntRect>> findDataDetectionResultElementInImageOverlay(const WebCore::FloatPoint& locationInRootView, const WebCore::HTMLElement& host);
 #endif
 
     unsigned extendIncrementalRenderingSuppression();
@@ -1174,10 +1177,6 @@ public:
 #if ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)
     void handleTelephoneNumberClick(const String& number, const WebCore::IntPoint&);
     void handleSelectionServiceClick(WebCore::FrameSelection&, const Vector<String>& telephoneNumbers, const WebCore::IntPoint&);
-#endif
-
-#if ENABLE(DATA_DETECTION)
-    void handleClickForDataDetectionResult(const WebCore::DataDetectorElementInfo&, const WebCore::IntPoint&);
 #endif
 
     void didChangeScrollOffsetForFrame(WebCore::Frame*);
@@ -1404,7 +1403,7 @@ public:
 
 #if ENABLE(IMAGE_EXTRACTION)
     void requestImageExtraction(WebCore::Element&, CompletionHandler<void(RefPtr<WebCore::Element>&&)>&&);
-    void updateWithImageExtractionResult(WebCore::ImageExtractionResult&&, const WebCore::ElementContext&, const WebCore::FloatPoint& location, CompletionHandler<void(bool)>&&);
+    void updateWithImageExtractionResult(WebCore::ImageExtractionResult&&, const WebCore::ElementContext&, const WebCore::FloatPoint& location, CompletionHandler<void(ImageExtractionUpdateResult)>&&);
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)

@@ -148,6 +148,7 @@
 #import <wtf/SetForScope.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cocoa/Entitlements.h>
+#import <wtf/text/StringToIntegerConversion.h>
 #import <wtf/text/TextStream.h>
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -2747,6 +2748,7 @@ static void dataDetectorLinkPositionInformation(Element& element, InteractionInf
         return;
     
     info.isDataDetectorLink = true;
+    info.dataDetectorBounds = info.bounds;
     const int dataDetectionExtendedContextLength = 350;
     info.dataDetectorIdentifier = DataDetection::dataDetectorIdentifier(element);
     if (auto* results = element.document().frame()->dataDetectionResultsIfExists())
@@ -2762,7 +2764,38 @@ static void dataDetectorLinkPositionInformation(Element& element, InteractionInf
         dataDetectionExtendedContextLength, SelectionDirection::Forward));
 }
 
-#endif
+static void dataDetectorImageOverlayPositionInformation(const HTMLElement& overlayHost, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
+{
+    auto frame = makeRefPtr(overlayHost.document().frame());
+    if (!frame)
+        return;
+
+    auto elementAndBounds = WebPage::findDataDetectionResultElementInImageOverlay(request.point, overlayHost);
+    if (!elementAndBounds)
+        return;
+
+    auto [foundElement, elementBounds] = *elementAndBounds;
+    auto identifierValue = parseInteger<uint64_t>(foundElement->attributeWithoutSynchronization(HTMLNames::x_apple_data_detectors_resultAttr));
+    if (!identifierValue)
+        return;
+
+    auto identifier = makeObjectIdentifier<ImageOverlayDataDetectionResultIdentifierType>(*identifierValue);
+    if (!identifier.isValid())
+        return;
+
+    auto* dataDetectionResults = frame->dataDetectionResultsIfExists();
+    if (!dataDetectionResults)
+        return;
+
+    auto dataDetectionResult = retainPtr(dataDetectionResults->imageOverlayDataDetectionResult(identifier));
+    if (!dataDetectionResult)
+        return;
+
+    info.dataDetectorBounds = WTFMove(elementBounds);
+    info.dataDetectorResults = @[ dataDetectionResult.get() ];
+}
+
+#endif // ENABLE(DATA_DETECTION)
 
 static std::optional<std::pair<RenderImage&, Image&>> imageRendererAndImage(Element& element)
 {
@@ -2862,6 +2895,11 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
             imagePositionInformation(page, element, request, info);
         boundsPositionInformation(*renderer, info);
     }
+
+#if ENABLE(DATA_DETECTION)
+    if (info.isImageOverlayText && is<HTMLElement>(element))
+        dataDetectorImageOverlayPositionInformation(downcast<HTMLElement>(element), request, info);
+#endif
 
     info.elementContext = page.contextForElement(element);
 }

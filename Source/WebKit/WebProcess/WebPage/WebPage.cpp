@@ -40,6 +40,7 @@
 #include "FormDataReference.h"
 #include "FrameTreeNodeData.h"
 #include "GeolocationPermissionRequestManager.h"
+#include "ImageExtractionUpdateResult.h"
 #include "InjectUserScriptImmediately.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleScriptWorld.h"
@@ -4063,6 +4064,23 @@ void WebPage::detectDataInAllFrames(uint64_t types, CompletionHandler<void(const
     completionHandler(WTFMove(mainFrameResult));
 }
 
+std::optional<std::pair<Ref<WebCore::HTMLElement>, WebCore::IntRect>> WebPage::findDataDetectionResultElementInImageOverlay(const FloatPoint& location, const HTMLElement& imageOverlayHost)
+{
+    Vector<Ref<HTMLElement>> dataDetectorElements;
+    for (auto& child : descendantsOfType<HTMLElement>(*imageOverlayHost.shadowRoot())) {
+        if (child.isImageOverlayDataDetectorResult())
+            dataDetectorElements.append(child);
+    }
+
+    for (auto& element : dataDetectorElements) {
+        auto elementBounds = element->boundsInRootViewSpace();
+        if (elementBounds.contains(roundedIntPoint(location)))
+            return {{ WTFMove(element), elementBounds }};
+    }
+
+    return std::nullopt;
+}
+
 #endif // ENABLE(DATA_DETECTION)
 
 #if PLATFORM(COCOA)
@@ -7458,11 +7476,11 @@ void WebPage::requestImageExtraction(WebCore::Element& element, CompletionHandle
     });
 }
 
-void WebPage::updateWithImageExtractionResult(ImageExtractionResult&& result, const ElementContext& context, const FloatPoint& location, CompletionHandler<void(bool)>&& completionHandler)
+void WebPage::updateWithImageExtractionResult(ImageExtractionResult&& result, const ElementContext& context, const FloatPoint& location, CompletionHandler<void(ImageExtractionUpdateResult)>&& completionHandler)
 {
     auto elementToUpdate = elementForContext(context);
     if (!is<HTMLElement>(elementToUpdate)) {
-        completionHandler(false);
+        completionHandler(ImageExtractionUpdateResult::NoText);
         return;
     }
 
@@ -7474,12 +7492,22 @@ void WebPage::updateWithImageExtractionResult(ImageExtractionResult&& result, co
     });
 
     auto nodeAtLocation = makeRefPtr(hitTestResult.innerNonSharedNode());
-    if (!nodeAtLocation || nodeAtLocation->shadowHost() != elementToUpdate) {
-        completionHandler(false);
-        return;
-    }
+    auto updateResult = ([&] {
+        if (!nodeAtLocation || nodeAtLocation->shadowHost() != elementToUpdate || !HTMLElement::isInsideImageOverlay(*nodeAtLocation))
+            return ImageExtractionUpdateResult::NoText;
 
-    completionHandler(HTMLElement::isImageOverlayText(*nodeAtLocation));
+#if ENABLE(DATA_DETECTION)
+        if (findDataDetectionResultElementInImageOverlay(location, downcast<HTMLElement>(*elementToUpdate)))
+            return ImageExtractionUpdateResult::DataDetector;
+#endif
+
+        if (HTMLElement::isImageOverlayText(*nodeAtLocation))
+            return ImageExtractionUpdateResult::Text;
+
+        return ImageExtractionUpdateResult::NoText;
+    })();
+
+    completionHandler(updateResult);
 }
 
 #endif // ENABLE(IMAGE_EXTRACTION)

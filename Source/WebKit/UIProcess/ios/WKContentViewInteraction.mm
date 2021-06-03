@@ -7523,6 +7523,8 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     CGRect sourceRect;
     if (positionInformation.isLink)
         sourceRect = positionInformation.linkIndicator.textBoundingRectInRootViewCoordinates;
+    else if (!positionInformation.dataDetectorBounds.isEmpty())
+        sourceRect = positionInformation.dataDetectorBounds;
     else
         sourceRect = positionInformation.bounds;
 
@@ -8460,6 +8462,11 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
     return _contextMenuInteractionTargetedPreview.get();
 }
 
+- (BOOL)positionInformationHasImageOverlayDataDetector
+{
+    return _positionInformation.isImageOverlayText && [_positionInformation.dataDetectorResults count];
+}
+
 - (UITargetedPreview *)_createTargetedContextMenuHintPreviewIfPossible
 {
     RetainPtr<UITargetedPreview> targetedPreview;
@@ -8474,8 +8481,10 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
         targetedPreview = createTargetedPreview(image.get(), self, self.containerForContextMenuHintPreviews, _positionInformation.bounds, { }, nil);
     }
 
-    if (!targetedPreview)
-        targetedPreview = createFallbackTargetedPreview(self, self.containerForContextMenuHintPreviews, _positionInformation.bounds, nil);
+    if (!targetedPreview) {
+        auto boundsForFallbackPreview = self.positionInformationHasImageOverlayDataDetector ? _positionInformation.dataDetectorBounds : _positionInformation.bounds;
+        targetedPreview = createFallbackTargetedPreview(self, self.containerForContextMenuHintPreviews, boundsForFallbackPreview, nil);
+    }
 
     [self _updateTargetedPreviewScrollViewUsingContainerScrollingNodeID:_positionInformation.containerScrollingNodeID];
 
@@ -10281,7 +10290,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
     if (!_positionInformation.touchCalloutEnabled)
         return continueWithContextMenuConfiguration(nil);
 
-    if (!_positionInformation.isLink && !_positionInformation.isImage && !_positionInformation.isAttachment)
+    if (!_positionInformation.isLink && !_positionInformation.isImage && !_positionInformation.isAttachment && !self.positionInformationHasImageOverlayDataDetector)
         return continueWithContextMenuConfiguration(nil);
 
     URL linkURL = _positionInformation.url;
@@ -10405,7 +10414,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 #if ENABLE(DATA_DETECTION)
         // FIXME: Support JavaScript urls here. But make sure they don't show a preview.
         // <rdar://problem/50572283>
-        if (!linkURL.protocolIsInHTTPFamily() && !WebCore::DataDetection::canBePresentedByDataDetectors(linkURL)) {
+        if (!linkURL.protocolIsInHTTPFamily() && !WebCore::DataDetection::canBePresentedByDataDetectors(linkURL) && ![strongSelf positionInformationHasImageOverlayDataDetector]) {
             continueWithContextMenuConfiguration(nil);
             return;
         }
@@ -10449,19 +10458,28 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 }
 
 #if ENABLE(DATA_DETECTION)
+
 - (void)continueContextMenuInteractionWithDataDetectors:(void(^)(UIContextMenuConfiguration *))continueWithContextMenuConfiguration
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     auto ddContextMenuActionClass = getDDContextMenuActionClass();
-    URL linkURL = _positionInformation.url;
-    NSDictionary *context = [self dataDetectionContextForPositionInformation:_positionInformation];
-    UIContextMenuConfiguration *configurationFromDD = [ddContextMenuActionClass contextMenuConfigurationForURL:linkURL identifier:_positionInformation.dataDetectorIdentifier selectedText:[self selectedText] results:_positionInformation.dataDetectorResults.get() inView:self context:context menuIdentifier:nil];
+    auto context = retainPtr([self dataDetectionContextForPositionInformation:_positionInformation]);
+    RetainPtr<UIContextMenuConfiguration> configurationFromDataDetectors;
+
+    if (self.positionInformationHasImageOverlayDataDetector) {
+        DDScannerResult *scannerResult = [_positionInformation.dataDetectorResults firstObject];
+        configurationFromDataDetectors = [ddContextMenuActionClass contextMenuConfigurationWithResult:scannerResult.coreResult inView:self context:context.get() menuIdentifier:nil];
+    } else {
+        configurationFromDataDetectors = [ddContextMenuActionClass contextMenuConfigurationForURL:_positionInformation.url identifier:_positionInformation.dataDetectorIdentifier selectedText:[self selectedText] results:_positionInformation.dataDetectorResults.get() inView:self context:context.get() menuIdentifier:nil];
+        _page->startInteractionWithPositionInformation(_positionInformation);
+    }
+
     _contextMenuActionProviderDelegateNeedsOverride = YES;
-    _page->startInteractionWithPositionInformation(_positionInformation);
-    continueWithContextMenuConfiguration(configurationFromDD);
+    continueWithContextMenuConfiguration(configurationFromDataDetectors.get());
     END_BLOCK_OBJC_EXCEPTIONS
 }
-#endif
+
+#endif // ENABLE(DATA_DETECTION)
 
 - (NSArray<UIMenuElement *> *)_contextMenuInteraction:(UIContextMenuInteraction *)interaction overrideSuggestedActionsForConfiguration:(UIContextMenuConfiguration *)configuration
 {
