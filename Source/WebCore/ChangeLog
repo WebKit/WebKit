@@ -1,3 +1,32 @@
+2021-06-03  Antti Koivisto  <antti@apple.com>
+
+        Remove TrailingFloatsRootInlineBox
+        https://bugs.webkit.org/show_bug.cgi?id=226579
+
+        Reviewed by Sam Weinig.
+
+        Replace it with a bit in LegacyRootInlineBox.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/VisibleUnits.cpp:
+        (WebCore::previousLinePosition):
+        (WebCore::nextLinePosition):
+        * rendering/LegacyInlineBox.cpp:
+        (WebCore::LegacyInlineBox::logicalHeight const):
+        * rendering/LegacyInlineFlowBox.h:
+        (WebCore::LegacyInlineFlowBox::LegacyInlineFlowBox):
+        * rendering/LegacyLineLayout.cpp:
+        (WebCore::LegacyLineLayout::linkToEndLineIfNeeded):
+        * rendering/LegacyRootInlineBox.h:
+        (WebCore::LegacyRootInlineBox::isForTrailingFloats const):
+        (WebCore::LegacyRootInlineBox::setIsForTrailingFloats):
+        (WebCore::LegacyRootInlineBox::isTrailingFloatsRootInlineBox const): Deleted.
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::dirtyLinesFromChangedChild):
+        * rendering/TrailingFloatsRootInlineBox.cpp: Removed.
+        * rendering/TrailingFloatsRootInlineBox.h: Removed.
+
 2021-06-03  Miguel Gomez  <magomez@igalia.com>
 
         [GStreamer] Remove dependency on glvideoflip and videoflip

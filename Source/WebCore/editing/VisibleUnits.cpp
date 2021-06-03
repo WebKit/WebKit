@@ -963,7 +963,7 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, int
     if (auto run = visiblePosition.inlineRunAndOffset().run) {
         line = run.line().previous();
         // We want to skip zero height boxes.
-        // This could happen in case it is a TrailingFloatsRootInlineBox.
+        // This could happen in case it is a LegacyRootInlineBox with trailing floats.
         if (!line || !line->logicalHeight() || !line.firstRun())
             line = { };
     }
@@ -1013,7 +1013,7 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, int lin
     if (auto run = visiblePosition.inlineRunAndOffset().run) {
         line = run.line().next();
         // We want to skip zero height boxes.
-        // This could happen in case it is a TrailingFloatsRootInlineBox.
+        // This could happen in case it is a LegacyRootInlineBox with trailing floats.
         if (!line || !line->logicalHeight() || !line.firstRun())
             line = { };
     }

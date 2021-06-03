@@ -389,7 +389,7 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& contain
             // FIXME: We should be able to figure out the actual "changed child" even when we are calling through empty inlines recursively.
             if (is<RenderInline>(child) && !downcast<RenderInline>(child).firstLineBoxIncludingCulling()) {
                 auto* lastRootBox = nextBox->blockFlow().lastRootBox();
-                if (lastRootBox->isTrailingFloatsRootInlineBox() && !lastRootBox->isDirty())
+                if (lastRootBox->isForTrailingFloats() && !lastRootBox->isDirty())
                     lastRootBox->markDirty();
             }
         }

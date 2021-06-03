@@ -47,7 +47,6 @@
 #include "RenderView.h"
 #include "SVGRootInlineBox.h"
 #include "Settings.h"
-#include "TrailingFloatsRootInlineBox.h"
 #include "VerticalPositionCache.h"
 #include <wtf/StdLibExtras.h>
 
@@ -1660,7 +1659,8 @@ void LegacyLineLayout::linkToEndLineIfNeeded(LineLayoutState& layoutState)
         if (layoutState.checkForFloatsFromLastLine()) {
             LayoutUnit bottomVisualOverflow = lastRootBox()->logicalBottomVisualOverflow();
             LayoutUnit bottomLayoutOverflow = lastRootBox()->logicalBottomLayoutOverflow();
-            auto newLineBox = makeUnique<TrailingFloatsRootInlineBox>(m_flow);
+            auto newLineBox = makeUnique<LegacyRootInlineBox>(m_flow);
+            newLineBox->setIsForTrailingFloats();
             auto trailingFloatsLineBox = newLineBox.get();
             m_lineBoxes.appendLineBox(WTFMove(newLineBox));
             trailingFloatsLineBox->setConstructed();

@@ -97,6 +97,9 @@ public:
     unsigned lineBreakPos() const { return m_lineBreakPos; }
     void setLineBreakPos(unsigned p) { m_lineBreakPos = p; }
 
+    bool isForTrailingFloats() const { return m_isForTrailingFloats; }
+    void setIsForTrailingFloats() { m_isForTrailingFloats = true; }
+
     using LegacyInlineBox::endsWithBreak;
     using LegacyInlineBox::setEndsWithBreak;
 
@@ -181,8 +184,6 @@ public:
     {
         return LegacyInlineFlowBox::logicalBottomLayoutOverflow(lineBottom());
     }
-
-    virtual bool isTrailingFloatsRootInlineBox() const { return false; }
 
 #if ENABLE(TREE_DEBUGGING)
     void outputLineBox(WTF::TextStream&, bool mark, int depth) const final;
