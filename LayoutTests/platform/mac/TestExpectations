@@ -2275,3 +2275,5 @@ webkit.org/b/225882 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 webkit.org/b/226050 imported/w3c/web-platform-tests/IndexedDB/blob-valid-before-commit.any.html [ Pass Failure ]
 
 webkit.org/b/226299 [ BigSur ] http/tests/performance/performance-resource-timing-resourcetimingbufferfull-crash.html [ Pass Failure ]
+
+webkit.org/b/226520 media/video-played-collapse.html [ Pass Timeout Failure ]
