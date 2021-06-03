@@ -1,3 +1,16 @@
+2021-06-03  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: macOS WebContent can't read prefs from com.apple.Accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=226528
+
+        Reviewed by Per Arne Vollan.
+
+        Some accessibility preferences on macOS use libAccessibility. 
+        WebContent should process these on iOS & macOS.
+
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::setPreferenceValue):
+
 2021-06-03  Chris Dumez  <cdumez@apple.com>
 
         StorageArea should be able to send its IPC directly from the background thread

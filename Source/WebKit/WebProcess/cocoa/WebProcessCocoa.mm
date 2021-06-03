@@ -102,6 +102,10 @@
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
+#if ENABLE(CFPREFS_DIRECT_MODE)
+#import "AccessibilitySupportSPI.h"
+#endif
+
 #if ENABLE(REMOTE_INSPECTOR)
 #import <JavaScriptCore/RemoteInspector.h>
 #endif
@@ -112,7 +116,6 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-#import "AccessibilitySupportSPI.h"
 #import "RunningBoardServicesSPI.h"
 #import "UserInterfaceIdiom.h"
 #import "WKAccessibilityWebPageObjectIOS.h"
@@ -170,7 +173,7 @@ SOFT_LINK_FRAMEWORK_IN_UMBRELLA(ApplicationServices, HIServices)
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, HIServices, _AXSetAuditTokenIsAuthenticatedCallback, void, (AXAuditTokenIsAuthenticatedCallback callback), (callback))
 #endif
 
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(CFPREFS_DIRECT_MODE)
 SOFT_LINK_LIBRARY(libAccessibility)
 SOFT_LINK_OPTIONAL(libAccessibility, _AXSUpdateWebAccessibilitySettings, void, (), ());
 #endif
@@ -1126,12 +1129,10 @@ static void setPreferenceValue(const String& domain, const String& key, id value
         WTF::languageDidChange();
     }
 
-#if PLATFORM(IOS_FAMILY)
     if (domain == String(kAXSAccessibilityPreferenceDomain)) {
         if (_AXSUpdateWebAccessibilitySettingsPtr())
             _AXSUpdateWebAccessibilitySettingsPtr()();
     }
-#endif
     
 #if USE(APPKIT)
     auto cfKey = key.createCFString();
