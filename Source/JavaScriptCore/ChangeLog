@@ -1,3 +1,40 @@
+2021-06-03  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: [Cocoa] `RemoteInspector` won't connect to a new relay if it hasn't yet failed to communicate with a previously connected relay
+        https://bugs.webkit.org/show_bug.cgi?id=226539
+
+        Reviewed by Devin Rousso.
+
+        `RemoteInspector` communicates with a relay daemon running on the same device in order to send updates like new
+        or removed inspectable targets and receive changes to settings like automatic debugging. The relay daemon then
+        communicates with a client that connects for debugging. Only one relay daemon should ever be running at a time,
+        and its lifecycle is managed separately from JavaScriptCore.
+
+        RemoteInspector holds a RefPtr to its connection to this relay, and only clears this pointer upon a failure to
+        communicate over the XPC connection or a known disconnection. However, it is possible, and in some cases likely
+        (for example the relay restarting from a brief client disconnection and reconnection), that we can be informed
+        of a newly launched relay being available while still thinking we are connected to the old relay, as we have not 
+        yet sent a message and triggered a failure in the interim period of time.
+
+        To correct this we now send a simple message any time `setupXPCConnectionIfNeeded` is called if we have an
+        existing RefPtr to a relay connection in order to verify the connection is still functional. We now also retry
+        to connect to a relay upon failure in order to create a new connection to the current relay.
+
+        In order to prevent entering a retry loop where every subsequent retry's failure results in another retry
+        forever, a flag to retry connecting is set when a call to setupXPCConnectionIfNeeded is made while we already
+        have a RefPtr to a relay connection. On failure if we are in this special state we will retry once to connect
+        but subsequent failures will not automatically reattempt a connection.
+
+        * inspector/remote/RemoteInspector.h:
+        * inspector/remote/cocoa/RemoteInspectorCocoa.mm:
+        (Inspector::RemoteInspector::stopInternal):
+        - Clear the retry connection flag when stopping in an orderly fashion.
+        (Inspector::RemoteInspector::setupXPCConnectionIfNeeded):
+        - Set the retry connection flag and send a simple message if we already have a relay connection in order to make
+        sure the connection is either still valid or is torn down properly on failure.
+        (Inspector::RemoteInspector::xpcConnectionFailed):
+        - If the retry flag is set, schedule a retry and clear the retry flag.
+
 2021-06-02  Robin Morisset  <rmorisset@apple.com>
 
         B3MoveConstants should filter directly on Values, and only create ValueKeys when useful

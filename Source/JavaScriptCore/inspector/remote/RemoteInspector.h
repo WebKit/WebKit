@@ -260,6 +260,7 @@ private:
 
 #if PLATFORM(COCOA)
     RefPtr<RemoteInspectorXPCConnection> m_relayConnection;
+    bool m_shouldReconnectToRelayOnFailure { false };
 #endif
 #if USE(GLIB)
     RefPtr<SocketConnection> m_socketConnection;

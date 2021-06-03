@@ -265,6 +265,8 @@ void RemoteInspector::stopInternal(StopSource source)
         m_relayConnection = nullptr;
     }
 
+    m_shouldReconnectToRelayOnFailure = false;
+
     notify_cancel(m_notifyToken);
 }
 
@@ -272,12 +274,19 @@ void RemoteInspector::setupXPCConnectionIfNeeded()
 {
     Locker locker { m_mutex };
 
-    if (m_relayConnection)
+    if (m_relayConnection) {
+        m_shouldReconnectToRelayOnFailure = true;
+
+        // Send a simple message to make sure the connection is still open.
+        m_relayConnection->sendMessage(@"check", nil);
         return;
+    }
 
     auto connection = adoptOSObject(xpc_connection_create_mach_service(WIRXPCMachPortName, m_xpcQueue, 0));
-    if (!connection)
+    if (!connection) {
+        WTFLogAlways("RemoteInspector failed to create XPC connection.");
         return;
+    }
 
     m_relayConnection = adoptRef(new RemoteInspectorXPCConnection(connection.get(), m_xpcQueue, this));
     m_relayConnection->sendMessage(@"syn", nil); // Send a simple message to initialize the XPC connection.
@@ -363,6 +372,19 @@ void RemoteInspector::xpcConnectionFailed(RemoteInspectorXPCConnection* relayCon
 
     // The XPC connection will close itself.
     m_relayConnection = nullptr;
+
+    if (!m_shouldReconnectToRelayOnFailure) {
+        WTFLogAlways("RemoteInspector XPC connection to relay failed.");
+        return;
+    }
+
+    m_shouldReconnectToRelayOnFailure = false;
+    WTFLogAlways("RemoteInspector XPC connection to relay failed, reconnecting in 1 second...");
+
+    // Schedule setting up a new connection, since we currently are holding a lock needed to create a new connection.
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        RemoteInspector::singleton().setupXPCConnectionIfNeeded();
+    });
 }
 
 void RemoteInspector::xpcConnectionUnhandledMessage(RemoteInspectorXPCConnection*, xpc_object_t)
