@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2012 Michael Pruett <michael@68k.org>
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,15 +43,21 @@
 #include "JSDOMConvertNullable.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSFile.h"
+#include "JSIDBSerializationGlobalObject.h"
 #include "Logging.h"
 #include "MessagePort.h"
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 #include "SharedBuffer.h"
 #include "ThreadSafeDataBuffer.h"
+#include "WebCoreJSClientData.h"
 #include <JavaScriptCore/ArrayBuffer.h>
 #include <JavaScriptCore/DateInstance.h>
 #include <JavaScriptCore/ObjectConstructor.h>
+#include <JavaScriptCore/StrongInlines.h>
+#include <wtf/AutodrainedPool.h>
+#include <wtf/MessageQueue.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
 using namespace JSC;
@@ -517,6 +523,76 @@ std::optional<JSC::JSValue> deserializeIDBValueWithKeyInjection(JSGlobalObject& 
     }
 
     return jsValue;
+}
+
+class IDBSerializationContext {
+public:
+    IDBSerializationContext()
+        : m_thread(Thread::current())
+    {
+    }
+
+    ~IDBSerializationContext()
+    {
+        ASSERT(&m_thread == &Thread::current());
+        if (!m_vm)
+            return;
+
+        JSC::JSLockHolder lock(*m_vm);
+        m_globalObject.clear();
+        m_vm = nullptr;
+    }
+
+    JSC::JSGlobalObject& globalObject()
+    {
+        ASSERT(&m_thread == &Thread::current());
+
+        initializeVM();
+        return *m_globalObject.get();
+    }
+
+private:
+    void initializeVM()
+    {
+        if (m_vm)
+            return;
+
+        ASSERT(!m_globalObject);
+        m_vm = JSC::VM::create();
+        m_vm->heap.acquireAccess();
+        JSVMClientData::initNormalWorld(m_vm.get(), WorkerThreadType::Worklet);
+
+        JSC::JSLockHolder locker(m_vm.get());
+        m_globalObject.set(*m_vm, JSIDBSerializationGlobalObject::create(*m_vm, JSIDBSerializationGlobalObject::createStructure(*m_vm, JSC::jsNull()), normalWorld(*m_vm)));
+    }
+
+    RefPtr<JSC::VM> m_vm;
+    JSC::Strong<JSIDBSerializationGlobalObject> m_globalObject;
+    Thread& m_thread;
+};
+
+void callOnIDBSerializationThreadAndWait(Function<void(JSC::JSGlobalObject&)>&& function)
+{
+    static NeverDestroyed<MessageQueue<Function<void(JSC::JSGlobalObject&)>>> queue;
+    static std::once_flag createThread;
+
+    std::call_once(createThread, [] {
+        Thread::create("IndexedDB Serialization", [] {
+            IDBSerializationContext serializationContext;
+            while (auto function = queue->waitForMessage()) {
+                AutodrainedPool pool;
+                (*function)(serializationContext.globalObject());
+            }
+        });
+    });
+
+    BinarySemaphore semaphore;
+    auto newFuntion = [&semaphore, function = WTFMove(function)](JSC::JSGlobalObject& globalObject) {
+        function(globalObject);
+        semaphore.signal();
+    };
+    queue->append(makeUnique<Function<void(JSC::JSGlobalObject&)>>(WTFMove(newFuntion)));
+    semaphore.wait();
 }
 
 } // namespace WebCore

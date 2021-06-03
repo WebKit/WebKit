@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,7 @@
 #include "IDBIterateCursorData.h"
 #include "IDBKeyRangeData.h"
 #include "IDBResultData.h"
-#include "IDBSerializationContext.h"
+#include "IDBSerialization.h"
 #include "IDBServer.h"
 #include "IDBTransactionInfo.h"
 #include "IDBValue.h"
@@ -744,7 +744,10 @@ void UniqueIDBDatabase::putOrAdd(const IDBRequestData& requestData, const IDBKey
         usedKey = keyData;
 
     // Generate index keys up front for more accurate quota check.
-    auto indexKeys = generateIndexKeyMapForValue(m_backingStore->serializationContext().globalObject(), *objectStoreInfo, usedKey, value);
+    IndexIDToIndexKeyMap indexKeys;
+    callOnIDBSerializationThreadAndWait([objectStoreInfo = objectStoreInfo->isolatedCopy(), key = usedKey.isolatedCopy(), value = value.isolatedCopy(), &indexKeys](auto& globalObject) {
+        indexKeys = generateIndexKeyMapForValue(globalObject, objectStoreInfo, key, value);
+    });
 
     if (overwriteMode == IndexedDB::ObjectStoreOverwriteMode::NoOverwrite) {
         bool keyExists;

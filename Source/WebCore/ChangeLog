@@ -1,3 +1,47 @@
+2021-06-02  Sihui Liu  <sihui_liu@apple.com>
+
+        Introduce a shared IDB serialization thread
+        https://bugs.webkit.org/show_bug.cgi?id=226228
+        <rdar://problem/78725516>
+
+        Reviewed by Chris Dumez.
+
+        Currently each WebIDBServer has its own thread, and does serialization/deserialization on that thread. To
+        prepare for making WebIDBServer use WorkQueue, like the other storage manager classes, let's create a shared
+        thread for handling all serialization/deserialization operations, which cannot be done on WorkQueue as VM needs 
+        to access thread-specific data. Now IDB tasks will call callOnIDBSerializationThreadAndWait to perform 
+        serialization/deserialization operations synchronously.
+
+        * Modules/indexeddb/server/IDBBackingStore.h:
+        * Modules/indexeddb/server/IDBSerializationContext.cpp: Removed. Moved to IDBBindingUtilities.cpp as 
+        IDBSerializationContext is only used by IDBSerialization thread now.
+        * Modules/indexeddb/server/IDBSerializationContext.h: Removed.
+        * Modules/indexeddb/server/MemoryIDBBackingStore.cpp:
+        (WebCore::IDBServer::MemoryIDBBackingStore::MemoryIDBBackingStore):
+        (WebCore::IDBServer::MemoryIDBBackingStore::serializationContext): Deleted.
+        * Modules/indexeddb/server/MemoryIDBBackingStore.h:
+        * Modules/indexeddb/server/MemoryObjectStore.cpp:
+        (WebCore::IDBServer::MemoryObjectStore::MemoryObjectStore):
+        (WebCore::IDBServer::MemoryObjectStore::addRecord):
+        (WebCore::IDBServer::MemoryObjectStore::populateIndexWithExistingRecords):
+        * Modules/indexeddb/server/MemoryObjectStore.h:
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::SQLiteIDBBackingStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::updateOneIndexForAddRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::serializationContext): Deleted.
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.h:
+        * Modules/indexeddb/server/UniqueIDBDatabase.cpp:
+        (WebCore::IDBServer::UniqueIDBDatabase::putOrAdd):
+        * Sources.txt:
+        * bindings/js/IDBBindingUtilities.cpp:
+        (WebCore::IDBSerializationContext::IDBSerializationContext):
+        (WebCore::IDBSerializationContext::~IDBSerializationContext):
+        (WebCore::IDBSerializationContext::globalObject):
+        (WebCore::IDBSerializationContext::initializeVM):
+        (WebCore::callOnIDBSerializationThreadAndWait): Create a IDBSerialization thread if not exists, and dispatch a 
+        synchronous task to it.
+        * bindings/js/IDBBindingUtilities.h:
+
 2021-06-02  Chris Dumez  <cdumez@apple.com>
 
         Port media code to the HTML event loop

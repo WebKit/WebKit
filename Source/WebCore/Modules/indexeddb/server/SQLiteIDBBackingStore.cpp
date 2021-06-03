@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,6 @@
 #include "IDBKeyData.h"
 #include "IDBObjectStoreInfo.h"
 #include "IDBSerialization.h"
-#include "IDBSerializationContext.h"
 #include "IDBTransactionInfo.h"
 #include "IDBValue.h"
 #include "IndexKey.h"
@@ -241,7 +240,6 @@ SQLiteIDBBackingStore::SQLiteIDBBackingStore(PAL::SessionID sessionID, const IDB
     : m_sessionID(sessionID)
     , m_identifier(identifier)
     , m_databaseRootDirectory(databaseRootDirectory)
-    , m_serializationContext(IDBSerializationContext::getOrCreateForCurrentThread())
 {
     m_databaseDirectory = fullDatabaseDirectoryWithUpgrade();
 }
@@ -1886,19 +1884,24 @@ IDBError SQLiteIDBBackingStore::deleteRange(const IDBResourceIdentifier& transac
 
 IDBError SQLiteIDBBackingStore::updateOneIndexForAddRecord(IDBObjectStoreInfo& objectStoreInfo, const IDBIndexInfo& info, const IDBKeyData& key, const ThreadSafeDataBuffer& value, int64_t recordID)
 {
-    JSLockHolder locker(m_serializationContext->vm());
+    std::optional<IndexKey> resultIndexKey;
+    callOnIDBSerializationThreadAndWait([objectStoreInfo = objectStoreInfo.isolatedCopy(), info = info.isolatedCopy(), key = key.isolatedCopy(), value, &resultIndexKey](auto& globalObject) {
+        auto jsValue = deserializeIDBValueToJSValue(globalObject, value);
+        if (jsValue.isUndefinedOrNull())
+            return;
 
-    auto jsValue = deserializeIDBValueToJSValue(m_serializationContext->globalObject(), value);
-    if (jsValue.isUndefinedOrNull())
+        IndexKey indexKey;
+        generateIndexKeyForValue(globalObject, info, jsValue, indexKey, objectStoreInfo.keyPath(), key);
+        resultIndexKey = indexKey.isolatedCopy();
+    });
+
+    if (!resultIndexKey)
         return IDBError { };
 
-    IndexKey indexKey;
-    generateIndexKeyForValue(m_serializationContext->globalObject(), info, jsValue, indexKey, objectStoreInfo.keyPath(), key);
-
-    if (indexKey.isNull())
+    if (resultIndexKey->isNull())
         return IDBError { };
 
-    return uncheckedPutIndexKey(info, key, indexKey, recordID);
+    return uncheckedPutIndexKey(info, key, *resultIndexKey, recordID);
 }
 
 IDBError SQLiteIDBBackingStore::updateAllIndexesForAddRecord(const IDBObjectStoreInfo& info, const IDBKeyData& key, const IndexIDToIndexKeyMap& indexKeys, int64_t recordID)
@@ -2743,11 +2746,6 @@ IDBError SQLiteIDBBackingStore::iterateCursor(const IDBResourceIdentifier& trans
     }
 
     return IDBError { };
-}
-
-IDBSerializationContext& SQLiteIDBBackingStore::serializationContext()
-{
-    return m_serializationContext.get();
 }
 
 IDBObjectStoreInfo* SQLiteIDBBackingStore::infoForObjectStore(uint64_t objectStoreIdentifier)

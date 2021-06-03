@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,6 @@
 #include "IDBIndexInfo.h"
 #include "IDBIterateCursorData.h"
 #include "IDBKeyRangeData.h"
-#include "IDBSerializationContext.h"
 #include "Logging.h"
 #include "MemoryIndexCursor.h"
 #include "MemoryObjectStore.h"
@@ -48,7 +47,6 @@ constexpr uint64_t maxGeneratedKeyValue = 0x20000000000000;
 MemoryIDBBackingStore::MemoryIDBBackingStore(PAL::SessionID sessionID, const IDBDatabaseIdentifier& identifier)
     : m_identifier(identifier)
     , m_sessionID(sessionID)
-    , m_serializationContext(IDBSerializationContext::getOrCreateForCurrentThread())
 {
 }
 
@@ -614,11 +612,6 @@ RefPtr<MemoryObjectStore> MemoryIDBBackingStore::takeObjectStoreByIdentifier(uin
     ASSERT_UNUSED(objectStore, objectStore);
 
     return objectStoreByIdentifier;
-}
-
-IDBSerializationContext& MemoryIDBBackingStore::serializationContext()
-{
-    return m_serializationContext.get();
 }
 
 IDBObjectStoreInfo* MemoryIDBBackingStore::infoForObjectStore(uint64_t objectStoreIdentifier)
