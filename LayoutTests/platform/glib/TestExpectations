@@ -2413,9 +2413,6 @@ webkit.org/b/225466 imported/w3c/web-platform-tests/css/css-color-adjust/renderi
 # Failing since r277091.
 webkit.org/b/225499 imported/w3c/web-platform-tests/css/css-fonts/font-feature-resolution-002.html [ ImageOnlyFailure ]
 
-# Failing since r277493.
-webkit.org/b/225904 imported/w3c/web-platform-tests/resource-timing/resource_connection_reuse_mixed_content.html [ Failure ]
-
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

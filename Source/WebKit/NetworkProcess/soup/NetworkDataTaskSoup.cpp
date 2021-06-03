@@ -1466,6 +1466,8 @@ void NetworkDataTaskSoup::didStartRequest()
 {
 #if USE(SOUP2)
     m_networkLoadMetrics.requestStart = MonotonicTime::now();
+    if (!m_networkLoadMetrics.secureConnectionStart && m_currentRequest.url().protocolIs("https"))
+        m_networkLoadMetrics.secureConnectionStart = WebCore::reusedTLSConnectionSentinel;
 #else
     auto* metrics = soup_message_get_metrics(m_soupMessage.get());
     auto domainLookupStart = Seconds::fromMicroseconds(soup_message_metrics_get_dns_start(metrics));
@@ -1479,7 +1481,10 @@ void NetworkDataTaskSoup::didStartRequest()
     m_networkLoadMetrics.domainLookupEnd = MonotonicTime::fromRawSeconds(domainLookupEnd.seconds());
     m_networkLoadMetrics.connectStart = MonotonicTime::fromRawSeconds(connectStart.seconds());
     m_networkLoadMetrics.connectEnd = MonotonicTime::fromRawSeconds(connectEnd.seconds());
-    m_networkLoadMetrics.secureConnectionStart = MonotonicTime::fromRawSeconds(secureConnectionStart.seconds());
+    if (!secureConnectionStart && m_currentRequest.url().protocolIs("https"))
+        m_networkLoadMetrics.secureConnectionStart = WebCore::reusedTLSConnectionSentinel;
+    else
+        m_networkLoadMetrics.secureConnectionStart = MonotonicTime::fromRawSeconds(secureConnectionStart.seconds());
     m_networkLoadMetrics.requestStart = MonotonicTime::fromRawSeconds(requestStart.seconds());
 #endif
 }

@@ -1,3 +1,15 @@
+2021-06-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GLIB] imported/w3c/web-platform-tests/resource-timing/resource_connection_reuse_mixed_content.html is failing since r277493
+        https://bugs.webkit.org/show_bug.cgi?id=225904
+
+        Reviewed by Michael Catanzaro.
+
+        Set secureConnectionStart to WebCore::reusedTLSConnectionSentinel in case of reused TLS connection.
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::didStartRequest):
+
 2021-06-02  Rob Buis  <rbuis@igalia.com>
 
         Split FillInlinePath/StrokeInlinePath
