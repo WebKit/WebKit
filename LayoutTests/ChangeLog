@@ -1,3 +1,14 @@
+2021-06-03  Chris Lord  <clord@igalia.com>
+
+        [WPE] position:sticky content is not correctly offset on async scrolled overflow layers with an RTL vertical scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=226327
+
+        Reviewed by Darin Adler.
+
+        Some sticky-positioning RTL related tests now pass.
+
+        * platform/wpe/TestExpectations:
+
 2021-06-03  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (Safari 14): Menu items jump around on codelearn.cat
