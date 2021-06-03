@@ -1,3 +1,14 @@
+2021-06-03  Youenn Fablet  <youenn@apple.com>
+
+        Cherry-pick webrtc fix to correctly handle audio track state in case of renegotiation
+        https://bugs.webkit.org/show_bug.cgi?id=226577
+
+        Reviewed by Eric Carlson.
+
+        Update test now that we have the correct behavior.
+
+        * webrtc/receiver-track-should-stay-live-even-if-receiver-is-inactive.html:
+
 2021-06-03  Alan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Use the fixed table height value to resolve percent column height values

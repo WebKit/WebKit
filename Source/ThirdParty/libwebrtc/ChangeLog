@@ -1,3 +1,22 @@
+2021-06-03  Youenn Fablet  <youenn@apple.com>
+
+        Cherry-pick webrtc fix to correctly handle audio track state in case of renegotiation
+        https://bugs.webkit.org/show_bug.cgi?id=226577
+
+        Reviewed by Eric Carlson.
+
+        Cherry-pick https://webrtc.googlesource.com/src/+/c335b0e63bff56ca0fbfa617dee6a644c85df164%5E%21/.
+        We need to do small changes to peer_connection.cc given the upstream fix is based on a newer version
+        which has some code moved from peer_connection.cc to rtp_transmission_manager.cc.
+
+        * Source/webrtc/pc/audio_rtp_receiver.cc:
+        * Source/webrtc/pc/audio_rtp_receiver.h:
+        * Source/webrtc/pc/peer_connection.cc:
+        * Source/webrtc/pc/peer_connection_rtp_unittest.cc:
+        * Source/webrtc/pc/remote_audio_source.cc:
+        * Source/webrtc/pc/remote_audio_source.h:
+        * Source/webrtc/pc/rtp_sender_receiver_unittest.cc:
+
 2021-06-02  Youenn Fablet  <youenn@apple.com>
 
         Update boringssl to M92
