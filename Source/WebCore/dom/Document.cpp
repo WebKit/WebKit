@@ -1383,16 +1383,16 @@ void Document::setReadyState(ReadyState readyState)
 
     switch (readyState) {
     case Loading:
-        if (!m_documentTiming.domLoading)
-            m_documentTiming.domLoading = MonotonicTime::now();
+        if (!m_eventTiming.domLoading)
+            m_eventTiming.domLoading = MonotonicTime::now();
         break;
     case Complete:
-        if (!m_documentTiming.domComplete)
-            m_documentTiming.domComplete = MonotonicTime::now();
+        if (!m_eventTiming.domComplete)
+            m_eventTiming.domComplete = MonotonicTime::now();
         FALLTHROUGH;
     case Interactive:
-        if (!m_documentTiming.domInteractive)
-            m_documentTiming.domInteractive = MonotonicTime::now();
+        if (!m_eventTiming.domInteractive)
+            m_eventTiming.domInteractive = MonotonicTime::now();
         break;
     }
 
@@ -6034,15 +6034,15 @@ void Document::finishedParsing()
 
     scriptRunner().documentFinishedParsing();
 
-    if (!m_documentTiming.domContentLoadedEventStart)
-        m_documentTiming.domContentLoadedEventStart = MonotonicTime::now();
+    if (!m_eventTiming.domContentLoadedEventStart)
+        m_eventTiming.domContentLoadedEventStart = MonotonicTime::now();
 
     // FIXME: Schedule a task to fire DOMContentLoaded event instead. See webkit.org/b/82931
     eventLoop().performMicrotaskCheckpoint();
     dispatchEvent(Event::create(eventNames().DOMContentLoadedEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
 
-    if (!m_documentTiming.domContentLoadedEventEnd)
-        m_documentTiming.domContentLoadedEventEnd = MonotonicTime::now();
+    if (!m_eventTiming.domContentLoadedEventEnd)
+        m_eventTiming.domContentLoadedEventEnd = MonotonicTime::now();
 
     if (RefPtr<Frame> frame = this->frame()) {
 #if ENABLE(XSLT)
@@ -6745,9 +6745,8 @@ double Document::monotonicTimestamp() const
 {
     auto* loader = this->loader();
     if (!loader)
-        return 0;
-
-    return loader->timing().secondsSinceStartTime(MonotonicTime::now()).seconds();
+        return 0.0;
+    return (MonotonicTime::now() - loader->timing().startTime()).seconds();
 }
 
 int Document::requestAnimationFrame(Ref<RequestAnimationFrameCallback>&& callback)

@@ -24,7 +24,7 @@ sys.stdout.write(
     '\n'
     'shouldBeNonZero("timing.requestStart");\n'
     'shouldBeNonZero("timing.responseStart");\n'
-    'shouldBe("timing.responseEnd", "0");\n'
+    'shouldBeNonZero("timing.responseEnd");\n'
     '\n'
     '</script>\n'
     '<script src="../../js-test-resources/js-test-post.js"></script>\n'

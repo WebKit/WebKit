@@ -468,9 +468,8 @@ void DocumentLoader::finishedLoading()
 
     maybeFinishLoadingMultipartContent();
 
-    MonotonicTime responseEndTime = m_timeOfLastDataReceived ? m_timeOfLastDataReceived : MonotonicTime::now();
-    timing().setResponseEnd(responseEndTime);
-
+    timing().markEndTime();
+    
     commitIfReady();
     if (!frameLoader())
         return;
@@ -637,7 +636,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
         return completionHandler(WTFMove(newRequest));
     }
 
-    ASSERT(timing().fetchStart());
+    ASSERT(timing().startTime());
     if (didReceiveRedirectResponse) {
         // If the redirecting url is not allowed to display content from the target origin,
         // then block the redirect.
@@ -655,7 +654,6 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
             cancelMainResourceLoad(frameLoader()->blockedError(newRequest));
             return completionHandler(WTFMove(newRequest));
         }
-        timing().addRedirect(redirectResponse.url(), newRequest.url());
     }
 
     ASSERT(m_frame);
@@ -1282,7 +1280,6 @@ void DocumentLoader::dataReceived(const char* data, int length)
         frameLoader()->notifier().dispatchDidReceiveData(this, m_identifierForLoadWithoutResourceLoader, data, length, -1);
 
     m_applicationCacheHost->mainResourceDataReceived(data, length, -1, false);
-    m_timeOfLastDataReceived = MonotonicTime::now();
 
     if (!isMultipartReplacingLoad())
         commitLoad(data, length);
@@ -1914,7 +1911,7 @@ bool DocumentLoader::maybeLoadEmpty()
 void DocumentLoader::startLoadingMainResource()
 {
     m_mainDocumentError = ResourceError();
-    timing().markStartTimeAndFetchStart();
+    timing().markStartTime();
     ASSERT(!m_mainResource);
     ASSERT(!m_loadingMainResource);
     m_loadingMainResource = true;
@@ -1935,7 +1932,6 @@ void DocumentLoader::startLoadingMainResource()
     m_request.clearHTTPUserAgent();
 
     ASSERT(timing().startTime());
-    ASSERT(timing().fetchStart());
 
     willSendRequest(ResourceRequest(m_request), ResourceResponse(), [this, protectedThis = WTFMove(protectedThis)] (ResourceRequest&& request) mutable {
         m_request = request;

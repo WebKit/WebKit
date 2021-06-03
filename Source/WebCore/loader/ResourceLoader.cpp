@@ -137,8 +137,8 @@ void ResourceLoader::init(ResourceRequest&& clientRequest, CompletionHandler<voi
     ASSERT(m_deferredRequest.isNull());
     ASSERT(!m_documentLoader->isSubstituteLoadPending(this));
     
-    m_loadTiming.markStartTimeAndFetchStart();
-    
+    m_loadTiming.markStartTime();
+
     m_defersLoading = m_options.defersLoadingPolicy == DefersLoadingPolicy::AllowDefersLoading && m_frame->page()->defersLoading();
 
     if (m_options.securityCheck == SecurityCheckPolicy::DoSecurityCheck && !m_frame->document()->securityOrigin().canDisplay(clientRequest.url())) {

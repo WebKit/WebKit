@@ -32,7 +32,6 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLFrameOwnerElement.h"
-#include "LoadTiming.h"
 #include "Performance.h"
 #include "ResourceTiming.h"
 #include "RuntimeEnabledFeatures.h"

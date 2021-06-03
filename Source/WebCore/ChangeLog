@@ -1,3 +1,234 @@
+2021-06-02  Alex Christensen  <achristensen@webkit.org>
+
+        Fix WPT test resource-timing/cross-origin-redirects.html
+        https://bugs.webkit.org/show_bug.cgi?id=190523
+        <rdar://45227788>
+
+        Reviewed by Brady Eidson.
+
+        Test: imported/w3c/web-platform-tests/resource-timing/cross-origin-redirects.html
+
+        This test took more to fix than I thought it would.  We used to collect our timing data
+        from various sources into various structures, mostly based on Google's work from 2010 with
+        a few things tacked on to it.  The timing specifications have changed considerably in the
+        last 11 years, and so should the shape of the structures we put the data into.
+
+        We used to have a LoadTiming structure in various places that claimed to contain the redirect times,
+        but markRedirectStart and markRedirectEnd were never called.  Instead we tried to collect this data
+        from the SubResourceLoader and DocumentLoader reporting redirects in the web process.  This wasn't great.
+        Redirect timing is best collected in the network process by the framework doing the redirecting,
+        and now we have the NSURLSessionTaskMetrics API to get the data we need.
+
+        I've made NetworkLoadMetrics the structure that contains all the network load metrics from the network process.
+        DocumentEventTiming is owned in the web process by the Document, and it contains the load event timing data.
+        ResourceLoadTiming is owned by the ResourceLoader, and it contains the fetch start and end times including the
+        parts of the fetch algorithm that happen in the web process.
+        DocumentLoadTiming inherits from it and is owned by the DocumentLoader, which reflects the fact that
+        PerformanceNavigationTiming inherits from PerformanceResourceTiming in the specs.
+        With these structures in place, we now have the infrastructure to collect timing data and expose it correctly.
+
+        Another thing that has changed is that these structures consistently store the timing data in the MonotonicTime type,
+        which is the number of seconds since the machine restarted.  NetworkLoadMetrics used to confusingly store fetch
+        start time and then other network times as deltas from it, and we would pretend that fetch start time was the same
+        as the fetch start time in the web process and calculate everything from the deltas.  This is an unfortunate
+        consequence of my younger self not realizing that the double values from NSURLConnection._timingData are values to
+        be put into [NSDate initWithTimeIntervalSinceReferenceDate] then pulled out with timeIntervalSince1970 to get
+        WallTime.  I was confused because they weren't WallTime or MonotonicTime, so I only dealt with them as deltas
+        from each other.  Consistently using MonotonicTime makes all this code much more straightforward.
+
+        I also use std::numeric_limits<uint64_t>::max() instead of std::numeric_limits<uint32_t>::max() as a sentinel value
+        for requestHeaderBytesSent and responseHeaderBytesReceived to make everything more sane.  I'm not too worried about
+        the metrics of downloads of exactly 4GB, but they should also be fixed.
+
+        A consequence of collecting the redirect times in the network process is that we have to move the
+        SecurityOrigin::canRequest checks to see if the redirects are same-origin to ResourceHandle and NetworkDataTask.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::setReadyState):
+        (WebCore::Document::finishedParsing):
+        (WebCore::Document::monotonicTimestamp const):
+        * dom/Document.h:
+        (WebCore::Document::eventTiming const):
+        (WebCore::Document::timing const): Deleted.
+        * dom/DocumentEventTiming.h: Copied from Source/WebCore/dom/DocumentTiming.h.
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::buildObjectForTiming):
+        (WebCore::InspectorNetworkAgent::buildObjectForMetrics):
+        (WebCore::InspectorNetworkAgent::buildObjectForResourceResponse):
+        (WebCore::InspectorNetworkAgent::didFinishLoading):
+        * inspector/agents/InspectorNetworkAgent.h:
+        * loader/DocumentLoadTiming.h: Renamed from Source/WebCore/loader/LoadTiming.h.
+        (WebCore::DocumentLoadTiming::timeOrigin const):
+        (WebCore::DocumentLoadTiming::markUnloadEventStart):
+        (WebCore::DocumentLoadTiming::markUnloadEventEnd):
+        (WebCore::DocumentLoadTiming::markLoadEventStart):
+        (WebCore::DocumentLoadTiming::markLoadEventEnd):
+        (WebCore::DocumentLoadTiming::setHasSameOriginAsPreviousDocument):
+        (WebCore::DocumentLoadTiming::unloadEventStart const):
+        (WebCore::DocumentLoadTiming::unloadEventEnd const):
+        (WebCore::DocumentLoadTiming::loadEventStart const):
+        (WebCore::DocumentLoadTiming::loadEventEnd const):
+        (WebCore::DocumentLoadTiming::hasSameOriginAsPreviousDocument const):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::finishedLoading):
+        (WebCore::DocumentLoader::willSendRequest):
+        (WebCore::DocumentLoader::dataReceived):
+        (WebCore::DocumentLoader::startLoadingMainResource):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::timing const):
+        (WebCore::DocumentLoader::timing):
+        (WebCore::DocumentLoader::resetTiming):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::dispatchUnloadEvents):
+        * loader/LoadTiming.cpp: Removed.
+        * loader/ResourceLoadTiming.h: Renamed from Source/WebCore/dom/DocumentTiming.h.
+        (WebCore::ResourceLoadTiming::markStartTime):
+        (WebCore::ResourceLoadTiming::markEndTime):
+        (WebCore::ResourceLoadTiming::startTime const):
+        (WebCore::ResourceLoadTiming::endTime const):
+        (WebCore::ResourceLoadTiming::isolatedCopy const):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::init):
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::loadTiming):
+        * loader/ResourceTiming.cpp:
+        (WebCore::ResourceTiming::fromMemoryCache):
+        (WebCore::ResourceTiming::fromLoad):
+        (WebCore::ResourceTiming::fromSynchronousLoad):
+        (WebCore::ResourceTiming::ResourceTiming):
+        (WebCore::ResourceTiming::isolatedCopy const):
+        (WebCore::ResourceTiming::fromCache): Deleted.
+        * loader/ResourceTiming.h:
+        (WebCore::ResourceTiming::resourceLoadTiming const):
+        (WebCore::ResourceTiming::ResourceTiming):
+        (WebCore::ResourceTiming::loadTiming const): Deleted.
+        * loader/ResourceTimingInformation.cpp:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willSendRequestInternal):
+        (WebCore::SubresourceLoader::didFinishLoading):
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::performance const):
+        * page/Performance.cpp:
+        (WebCore::Performance::addNavigationTiming):
+        * page/Performance.h:
+        * page/PerformanceNavigation.cpp:
+        (WebCore::PerformanceNavigation::redirectCount const):
+        * page/PerformanceNavigationTiming.cpp:
+        (WebCore::PerformanceNavigationTiming::PerformanceNavigationTiming):
+        (WebCore::PerformanceNavigationTiming::millisecondsSinceOrigin const):
+        (WebCore::PerformanceNavigationTiming::sameOriginCheckFails const):
+        (WebCore::PerformanceNavigationTiming::unloadEventStart const):
+        (WebCore::PerformanceNavigationTiming::unloadEventEnd const):
+        (WebCore::PerformanceNavigationTiming::domInteractive const):
+        (WebCore::PerformanceNavigationTiming::domContentLoadedEventStart const):
+        (WebCore::PerformanceNavigationTiming::domContentLoadedEventEnd const):
+        (WebCore::PerformanceNavigationTiming::domComplete const):
+        (WebCore::PerformanceNavigationTiming::loadEventStart const):
+        (WebCore::PerformanceNavigationTiming::loadEventEnd const):
+        (WebCore::PerformanceNavigationTiming::redirectCount const):
+        * page/PerformanceNavigationTiming.h:
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::networkLoadTimeToDOMHighResTimeStamp):
+        (WebCore::fetchStart):
+        (WebCore::entryStartTime):
+        (WebCore::entryEndTime):
+        (WebCore::PerformanceResourceTiming::redirectStart const):
+        (WebCore::PerformanceResourceTiming::redirectEnd const):
+        (WebCore::PerformanceResourceTiming::fetchStart const):
+        (WebCore::PerformanceResourceTiming::domainLookupStart const):
+        (WebCore::PerformanceResourceTiming::domainLookupEnd const):
+        (WebCore::PerformanceResourceTiming::connectStart const):
+        (WebCore::PerformanceResourceTiming::connectEnd const):
+        (WebCore::PerformanceResourceTiming::secureConnectionStart const):
+        (WebCore::PerformanceResourceTiming::requestStart const):
+        (WebCore::PerformanceResourceTiming::responseStart const):
+        (WebCore::PerformanceResourceTiming::responseEnd const):
+        (WebCore::monotonicTimeToDOMHighResTimeStamp): Deleted.
+        (WebCore::PerformanceResourceTiming::networkLoadTimeToDOMHighResTimeStamp const): Deleted.
+        * page/PerformanceResourceTiming.h:
+        * page/PerformanceTiming.cpp:
+        (WebCore::PerformanceTiming::navigationStart const):
+        (WebCore::PerformanceTiming::unloadEventStart const):
+        (WebCore::PerformanceTiming::unloadEventEnd const):
+        (WebCore::PerformanceTiming::redirectStart const):
+        (WebCore::PerformanceTiming::redirectEnd const):
+        (WebCore::PerformanceTiming::fetchStart const):
+        (WebCore::PerformanceTiming::domainLookupStart const):
+        (WebCore::PerformanceTiming::domainLookupEnd const):
+        (WebCore::PerformanceTiming::connectStart const):
+        (WebCore::PerformanceTiming::connectEnd const):
+        (WebCore::PerformanceTiming::secureConnectionStart const):
+        (WebCore::PerformanceTiming::requestStart const):
+        (WebCore::PerformanceTiming::responseStart const):
+        (WebCore::PerformanceTiming::responseEnd const):
+        (WebCore::PerformanceTiming::domLoading const):
+        (WebCore::PerformanceTiming::domInteractive const):
+        (WebCore::PerformanceTiming::domContentLoadedEventStart const):
+        (WebCore::PerformanceTiming::domContentLoadedEventEnd const):
+        (WebCore::PerformanceTiming::domComplete const):
+        (WebCore::PerformanceTiming::loadEventStart const):
+        (WebCore::PerformanceTiming::loadEventEnd const):
+        (WebCore::PerformanceTiming::documentLoader const):
+        (WebCore::PerformanceTiming::documentEventTiming const):
+        (WebCore::PerformanceTiming::documentLoadTiming const):
+        (WebCore::PerformanceTiming::networkLoadMetrics const):
+        (WebCore::PerformanceTiming::monotonicTimeToIntegerMilliseconds const):
+        (WebCore::PerformanceTiming::documentTiming const): Deleted.
+        (WebCore::PerformanceTiming::loadTiming const): Deleted.
+        (WebCore::PerformanceTiming::resourceLoadTimeRelativeToFetchStart const): Deleted.
+        * page/PerformanceTiming.h:
+        * platform/network/NetworkLoadMetrics.h:
+        (WebCore::NetworkLoadMetrics::isolatedCopy const):
+        (WebCore::NetworkLoadMetrics::operator== const):
+        (WebCore::NetworkLoadMetrics::encode const):
+        (WebCore::NetworkLoadMetrics::decode):
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::hasCrossOriginRedirect const):
+        (WebCore::ResourceHandle::setHasCrossOriginRedirect):
+        (WebCore::ResourceHandle::incrementRedirectCount):
+        (WebCore::ResourceHandle::redirectCount const):
+        (WebCore::ResourceHandle::startTimeBeforeRedirects const):
+        (WebCore::ResourceHandle::networkLoadMetrics):
+        (WebCore::ResourceHandle::setNetworkLoadMetrics):
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleInternal.h:
+        * platform/network/cocoa/NetworkLoadMetrics.mm:
+        (WebCore::dateToMonotonicTime):
+        (WebCore::packageTimingData):
+        (WebCore::copyTimingData):
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (networkLoadMetricsDate):
+        (-[WebCoreNSURLSessionTaskTransactionMetrics fetchStartDate]):
+        (-[WebCoreNSURLSessionTaskTransactionMetrics domainLookupStartDate]):
+        (-[WebCoreNSURLSessionTaskTransactionMetrics domainLookupEndDate]):
+        (-[WebCoreNSURLSessionTaskTransactionMetrics connectStartDate]):
+        (-[WebCoreNSURLSessionTaskTransactionMetrics secureConnectionStartDate]):
+        (-[WebCoreNSURLSessionTaskTransactionMetrics connectEndDate]):
+        (-[WebCoreNSURLSessionTaskTransactionMetrics requestStartDate]):
+        (-[WebCoreNSURLSessionTaskTransactionMetrics responseStartDate]):
+        (-[WebCoreNSURLSessionTaskTransactionMetrics responseEndDate]):
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlHandle::getNetworkLoadMetrics):
+        * platform/network/curl/CurlContext.h:
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::didCompleteTransfer):
+        (WebCore::CurlRequest::networkLoadMetrics):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::start):
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.h:
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:willSendRequest:redirectResponse:]):
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:didReceiveResponse:]):
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connectionDidFinishLoading:]):
+
 2021-06-02  Alan Bujtas  <zalan@apple.com>
 
         Remove redundant isChildHitTestCandidate in RenderBlock::positionForPoint

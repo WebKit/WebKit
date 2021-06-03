@@ -30,6 +30,7 @@
 #include "CurlSSLHandle.h"
 
 #include <wtf/Lock.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Seconds.h>
@@ -296,7 +297,7 @@ public:
     std::optional<long> getHttpAuthAvail();
     std::optional<long> getProxyAuthAvail();
     std::optional<long> getHttpVersion();
-    std::optional<NetworkLoadMetrics> getNetworkLoadMetrics(const WTF::Seconds& domainLookupStart);
+    std::optional<NetworkLoadMetrics> getNetworkLoadMetrics(MonotonicTime startTime);
     void addExtraNetworkLoadMetrics(NetworkLoadMetrics&);
 
     int sslErrors() const;

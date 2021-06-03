@@ -267,6 +267,7 @@ bool ResourceHandle::start()
 
     [connection() setDelegateQueue:operationQueueForAsyncClients()];
     [connection() start];
+    d->m_startTime = MonotonicTime::now();
 
     LOG(Network, "Handle %p starting connection %p for %@", this, connection(), firstRequest().nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody));
     

@@ -195,7 +195,6 @@ private:
     WebCore::ResourceResponse m_response;
     CString m_sniffedContentType;
     Vector<char> m_readBuffer;
-    unsigned m_redirectCount { 0 };
     uint64_t m_bodyDataTotalBytesSent { 0 };
     GRefPtr<GFile> m_downloadDestinationFile;
     GRefPtr<GFile> m_downloadIntermediateFile;

@@ -310,7 +310,6 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
             cancel();
             return completionHandler(WTFMove(newRequest));
         }
-        m_loadTiming.addRedirect(redirectResponse.url(), newRequest.url());
         m_resource->redirectReceived(WTFMove(newRequest), redirectResponse, [this, protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), continueWillSendRequest = WTFMove(continueWillSendRequest)] (ResourceRequest&& request) mutable {
             RELEASE_LOG_IF_ALLOWED("willSendRequestInternal: resource done notifying clients");
             continueWillSendRequest(WTFMove(completionHandler), WTFMove(request));
@@ -733,8 +732,7 @@ void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMe
     Ref<SubresourceLoader> protectedThis(*this);
     CachedResourceHandle<CachedResource> protectResource(m_resource);
 
-    // FIXME: Remove this with deprecatedNetworkLoadMetrics.
-    m_loadTiming.setResponseEnd(MonotonicTime::now());
+    m_loadTiming.markEndTime();
 
     if (networkLoadMetrics.isComplete())
         reportResourceTiming(networkLoadMetrics);
@@ -743,12 +741,7 @@ void SubresourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLoadMe
         // complete load metrics in didFinishLoad. In those cases, fall back to the possibility
         // that they populated partial load timing information on the ResourceResponse.
         const auto* timing = m_resource->response().deprecatedNetworkLoadMetricsOrNull();
-        std::optional<NetworkLoadMetrics> empty;
-        if (!timing) {
-            empty.emplace();
-            timing = &empty.value();
-        }
-        reportResourceTiming(*timing);
+        reportResourceTiming(timing ? *timing : NetworkLoadMetrics { });
     }
 
     if (m_resource->type() != CachedResource::Type::MainResource)

@@ -99,7 +99,6 @@ private:
     WebCore::ResourceResponse m_response;
     unsigned m_redirectCount { 0 };
     unsigned m_authFailureCount { 0 };
-    MonotonicTime m_startTime;
 
     WebCore::FrameIdentifier m_frameID;
     WebCore::PageIdentifier m_pageID;

@@ -110,9 +110,6 @@ void CurlRequest::start()
 
     ASSERT(isMainThread());
 
-    if (std::isnan(m_requestStartTime))
-        m_requestStartTime = MonotonicTime::now().isolatedCopy();
-
     if (m_request.url().isLocalFile())
         invokeDidReceiveResponseForFile(m_request.url());
     else
@@ -456,8 +453,8 @@ void CurlRequest::didCompleteTransfer(CURLcode result)
         auto metrics = networkLoadMetrics();
 
         finalizeTransfer();
-        callClient([requestStartTime = m_requestStartTime.isolatedCopy(), networkLoadMetrics = WTFMove(metrics)](CurlRequest& request, CurlRequestClient& client) mutable {
-            networkLoadMetrics.responseEnd = MonotonicTime::now() - requestStartTime;
+        callClient([networkLoadMetrics = WTFMove(metrics)](CurlRequest& request, CurlRequestClient& client) mutable {
+            networkLoadMetrics.responseEnd = MonotonicTime::now();
             networkLoadMetrics.markComplete();
 
             client.curlDidComplete(request, WTFMove(networkLoadMetrics));
@@ -726,8 +723,7 @@ NetworkLoadMetrics CurlRequest::networkLoadMetrics()
 {
     ASSERT(m_curlHandle);
 
-    auto domainLookupStart = m_performStartTime - m_requestStartTime;
-    auto networkLoadMetrics = m_curlHandle->getNetworkLoadMetrics(domainLookupStart);
+    auto networkLoadMetrics = m_curlHandle->getNetworkLoadMetrics(m_performStartTime);
     if (!networkLoadMetrics)
         return NetworkLoadMetrics();
 

@@ -31,6 +31,7 @@
 #include "ResourceHandleClient.h"
 #include "ResourceRequest.h"
 #include "Timer.h"
+#include <wtf/MonotonicTime.h>
 
 #if USE(CFURLCONNECTION)
 #include "ResourceHandleCFURLConnectionDelegate.h"
@@ -124,13 +125,15 @@ public:
     std::unique_ptr<CurlResourceHandleDelegate> m_delegate;
     
     bool m_cancelled { false };
-    unsigned m_redirectCount { 0 };
     unsigned m_authFailureCount { 0 };
     bool m_addedCacheValidationHeaders { false };
     RefPtr<CurlRequest> m_curlRequest;
     RefPtr<SynchronousLoaderMessageQueue> m_messageQueue;
-    MonotonicTime m_startTime;
 #endif
+    Box<NetworkLoadMetrics> m_networkLoadMetrics;
+    MonotonicTime m_startTime;
+    uint16_t m_redirectCount { 0 };
+    bool m_hasCrossOriginRedirect { false };
 
 #if PLATFORM(COCOA)
     // We need to keep a reference to the original challenge to be able to cancel it.

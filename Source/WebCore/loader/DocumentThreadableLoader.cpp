@@ -45,7 +45,6 @@
 #include "FrameLoader.h"
 #include "InspectorInstrumentation.h"
 #include "LegacySchemeRegistry.h"
-#include "LoadTiming.h"
 #include "LoaderStrategy.h"
 #include "MixedContentChecker.h"
 #include "Performance.h"
@@ -584,8 +583,8 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
     // If credentials mode is 'Omit', we should disable cookie sending.
     ASSERT(m_options.credentials != FetchOptions::Credentials::Omit);
 
-    LoadTiming loadTiming;
-    loadTiming.markStartTimeAndFetchStart();
+    ResourceLoadTiming loadTiming;
+    loadTiming.markStartTime();
 
     // FIXME: ThreadableLoaderOptions.sniffContent is not supported for synchronous requests.
     RefPtr<SharedBuffer> data;
@@ -599,7 +598,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
         identifier = frameLoader.loadResourceSynchronously(request, m_options.clientCredentialPolicy, m_options, *m_originalHeaders, error, response, data);
     }
 
-    loadTiming.setResponseEnd(MonotonicTime::now());
+    loadTiming.markEndTime();
 
     if (!error.isNull() && response.httpStatusCode() <= 0) {
         if (requestURL.isLocalFile()) {
@@ -654,12 +653,7 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
         didReceiveData(identifier, data->data(), data->size());
 
     const auto* timing = response.deprecatedNetworkLoadMetricsOrNull();
-    std::optional<NetworkLoadMetrics> empty;
-    if (!timing) {
-        empty.emplace();
-        timing = &empty.value();
-    }
-    auto resourceTiming = ResourceTiming::fromSynchronousLoad(requestURL, m_options.initiator, loadTiming, *timing, response, securityOrigin());
+    auto resourceTiming = ResourceTiming::fromSynchronousLoad(requestURL, m_options.initiator, loadTiming, timing ? *timing : NetworkLoadMetrics { }, response, securityOrigin());
     if (options().initiatorContext == InitiatorContext::Worker)
         finishedTimingForWorkerLoad(resourceTiming);
     else {

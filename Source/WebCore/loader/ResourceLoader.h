@@ -28,8 +28,8 @@
 
 #pragma once
 
-#include "LoadTiming.h"
 #include "ResourceHandleClient.h"
+#include "ResourceLoadTiming.h"
 #include "ResourceLoaderOptions.h"
 #include "ResourceLoaderTypes.h"
 #include "ResourceRequest.h"
@@ -140,7 +140,7 @@ public:
 
     void willSwitchToSubstituteResource();
 
-    const LoadTiming& loadTiming() { return m_loadTiming; }
+    const ResourceLoadTiming& loadTiming() { return m_loadTiming; }
 
 #if PLATFORM(COCOA)
     void schedule(WTF::SchedulePair&);
@@ -178,7 +178,7 @@ protected:
     RefPtr<Frame> m_frame;
     RefPtr<DocumentLoader> m_documentLoader;
     ResourceResponse m_response;
-    LoadTiming m_loadTiming;
+    ResourceLoadTiming m_loadTiming;
 #if USE(QUICK_LOOK)
     std::unique_ptr<LegacyPreviewLoader> m_previewLoader;
 #endif

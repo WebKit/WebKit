@@ -50,13 +50,14 @@ using namespace WebCore;
 
 NS_ASSUME_NONNULL_BEGIN
 
-static NSDate * __nullable networkLoadMetricsDate(Seconds fetchStart, Seconds delta)
+static NSDate * __nullable networkLoadMetricsDate(MonotonicTime time)
 {
-    if (!fetchStart.value())
+    if (!time)
         return nil;
-    if (delta.value() == -1)
+    NSTimeInterval value = time.approximateWallTime().secondsSinceEpoch().seconds();
+    if (value <= 0)
         return nil;
-    return [NSDate dateWithTimeIntervalSince1970:fetchStart.value() + delta.value()];
+    return [NSDate dateWithTimeIntervalSince1970:value];
 }
 
 @interface WebCoreNSURLSessionTaskTransactionMetrics : NSObject
@@ -94,55 +95,57 @@ WEBCORE_SESSION_ADDITIONS_1;
 @dynamic fetchStartDate;
 - (nullable NSDate *)fetchStartDate
 {
-    return networkLoadMetricsDate(_metrics.fetchStart, Seconds(0));
+    return networkLoadMetricsDate(_metrics.fetchStart);
 }
 
 @dynamic domainLookupStartDate;
 - (nullable NSDate *)domainLookupStartDate
 {
-    return networkLoadMetricsDate(_metrics.fetchStart, _metrics.domainLookupStart);
+    return networkLoadMetricsDate(_metrics.domainLookupStart);
 }
 
 @dynamic domainLookupEndDate;
 - (nullable NSDate *)domainLookupEndDate
 {
-    return networkLoadMetricsDate(_metrics.fetchStart, _metrics.domainLookupEnd);
+    return networkLoadMetricsDate(_metrics.domainLookupEnd);
 }
 
 @dynamic connectStartDate;
 - (nullable NSDate *)connectStartDate
 {
-    return networkLoadMetricsDate(_metrics.fetchStart, _metrics.connectStart);
+    return networkLoadMetricsDate(_metrics.connectStart);
 }
 
 @dynamic secureConnectionStartDate;
 - (nullable NSDate *)secureConnectionStartDate
 {
-    return networkLoadMetricsDate(_metrics.fetchStart, _metrics.secureConnectionStart);
+    if (_metrics.secureConnectionStart == reusedTLSConnectionSentinel)
+        return nil;
+    return networkLoadMetricsDate(_metrics.secureConnectionStart);
 }
 
 @dynamic connectEndDate;
 - (nullable NSDate *)connectEndDate
 {
-    return networkLoadMetricsDate(_metrics.fetchStart, _metrics.connectEnd);
+    return networkLoadMetricsDate(_metrics.connectEnd);
 }
 
 @dynamic requestStartDate;
 - (nullable NSDate *)requestStartDate
 {
-    return networkLoadMetricsDate(_metrics.fetchStart, _metrics.requestStart);
+    return networkLoadMetricsDate(_metrics.requestStart);
 }
 
 @dynamic responseStartDate;
 - (nullable NSDate *)responseStartDate
 {
-    return networkLoadMetricsDate(_metrics.fetchStart, _metrics.responseStart);
+    return networkLoadMetricsDate(_metrics.responseStart);
 }
 
 @dynamic responseEndDate;
 - (nullable NSDate *)responseEndDate
 {
-    return networkLoadMetricsDate(_metrics.fetchStart, _metrics.responseEnd);
+    return networkLoadMetricsDate(_metrics.responseEnd);
 }
 
 @dynamic networkProtocolName;

@@ -774,31 +774,31 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
 {
     LOG(NetworkSession, "%llu didFinishCollectingMetrics", task.taskIdentifier);
     if (auto* networkDataTask = [self existingTask:task]) {
-        NSURLSessionTaskTransactionMetrics *m = metrics.transactionMetrics.lastObject;
-        NSDate *fetchStartDate = m.fetchStartDate;
-        NSTimeInterval domainLookupStartInterval = m.domainLookupStartDate ? [m.domainLookupStartDate timeIntervalSinceDate:fetchStartDate] : -1;
-        NSTimeInterval domainLookupEndInterval = m.domainLookupEndDate ? [m.domainLookupEndDate timeIntervalSinceDate:fetchStartDate] : -1;
-        NSTimeInterval connectStartInterval = m.connectStartDate ? [m.connectStartDate timeIntervalSinceDate:fetchStartDate] : -1;
-        NSTimeInterval secureConnectionStartInterval = m.secureConnectionStartDate ? [m.secureConnectionStartDate timeIntervalSinceDate:fetchStartDate] : -1;
-        NSTimeInterval connectEndInterval = m.connectEndDate ? [m.connectEndDate timeIntervalSinceDate:fetchStartDate] : -1;
-        NSTimeInterval requestStartInterval = [m.requestStartDate timeIntervalSinceDate:fetchStartDate];
-        NSTimeInterval responseStartInterval = [m.responseStartDate timeIntervalSinceDate:fetchStartDate];
-        NSTimeInterval responseEndInterval = [m.responseEndDate timeIntervalSinceDate:fetchStartDate];
+        NSArray<NSURLSessionTaskTransactionMetrics *> *transactionMetrics = metrics.transactionMetrics;
+        NSURLSessionTaskTransactionMetrics *m = transactionMetrics.lastObject;
+
+        auto dateToMonotonicTime = [] (NSDate *date) {
+            if (auto interval = date.timeIntervalSince1970)
+                return WallTime::fromRawSeconds(interval).approximateMonotonicTime();
+            return MonotonicTime { };
+        };
 
         auto& networkLoadMetrics = networkDataTask->networkLoadMetrics();
-        networkLoadMetrics.fetchStart = Seconds(fetchStartDate.timeIntervalSince1970);
-        networkLoadMetrics.domainLookupStart = Seconds(domainLookupStartInterval);
-        networkLoadMetrics.domainLookupEnd = Seconds(domainLookupEndInterval);
-        networkLoadMetrics.connectStart = Seconds(connectStartInterval);
+        networkLoadMetrics.redirectStart = dateToMonotonicTime(transactionMetrics.firstObject.fetchStartDate);
+        networkLoadMetrics.fetchStart = dateToMonotonicTime(m.fetchStartDate);
+        networkLoadMetrics.domainLookupStart = dateToMonotonicTime(m.domainLookupStartDate);
+        networkLoadMetrics.domainLookupEnd = dateToMonotonicTime(m.domainLookupEndDate);
+        networkLoadMetrics.connectStart = dateToMonotonicTime(m.connectStartDate);
         if (m.reusedConnection && [m.response.URL.scheme isEqualToString:@"https"])
             networkLoadMetrics.secureConnectionStart = WebCore::reusedTLSConnectionSentinel;
         else
-            networkLoadMetrics.secureConnectionStart = Seconds(secureConnectionStartInterval);
-        networkLoadMetrics.connectEnd = Seconds(connectEndInterval);
-        networkLoadMetrics.requestStart = Seconds(requestStartInterval);
-        networkLoadMetrics.responseStart = Seconds(responseStartInterval);
-        networkLoadMetrics.responseEnd = Seconds(responseEndInterval);
+            networkLoadMetrics.secureConnectionStart = dateToMonotonicTime(m.secureConnectionStartDate);
+        networkLoadMetrics.connectEnd = dateToMonotonicTime(m.connectEndDate);
+        networkLoadMetrics.requestStart = dateToMonotonicTime(m.requestStartDate);
+        networkLoadMetrics.responseStart = dateToMonotonicTime(m.responseStartDate);
+        networkLoadMetrics.responseEnd = dateToMonotonicTime(m.responseEndDate);
         networkLoadMetrics.markComplete();
+        networkLoadMetrics.redirectCount = metrics.redirectCount;
         networkLoadMetrics.protocol = String(m.networkProtocolName);
 #if HAVE(CFNETWORK_METRICS_CONNECTION_PROPERTIES)
         networkLoadMetrics.cellular = m.cellular;
@@ -881,12 +881,12 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
         ASSERT(RunLoop::isMain());
 
         NegotiatedLegacyTLS negotiatedLegacyTLS = NegotiatedLegacyTLS::No;
-        NSURLSessionTaskTransactionMetrics *metrics = dataTask._incompleteTaskMetrics.transactionMetrics.lastObject;
+        NSURLSessionTaskMetrics *taskMetrics = dataTask._incompleteTaskMetrics;
 #if HAVE(TLS_PROTOCOL_VERSION_T)
+        NSURLSessionTaskTransactionMetrics *metrics = taskMetrics.transactionMetrics.lastObject;
         auto tlsVersion = (tls_protocol_version_t)metrics.negotiatedTLSProtocolVersion.unsignedShortValue;
         if (tlsVersion == tls_protocol_version_TLSv10 || tlsVersion == tls_protocol_version_TLSv11)
             negotiatedLegacyTLS = NegotiatedLegacyTLS::Yes;
-        UNUSED_PARAM(metrics);
 #else // We do not need to check _TLSNegotiatedProtocolVersion if we have metrics.negotiatedTLSProtocolVersion because it works at response time even before rdar://problem/56522601
         ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([dataTask respondsToSelector:@selector(_TLSNegotiatedProtocolVersion)]) {
@@ -909,7 +909,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
         // all the fields when sending the response to the WebContent process over IPC.
         resourceResponse.disableLazyInitialization();
 
-        resourceResponse.setDeprecatedNetworkLoadMetrics(WebCore::copyTimingData(metrics));
+        resourceResponse.setDeprecatedNetworkLoadMetrics(WebCore::copyTimingData(taskMetrics, networkDataTask->networkLoadMetrics().hasCrossOriginRedirect));
 
         networkDataTask->didReceiveResponse(WTFMove(resourceResponse), negotiatedLegacyTLS, [completionHandler = makeBlockPtr(completionHandler), taskIdentifier](WebCore::PolicyAction policyAction) {
 #if !LOG_DISABLED

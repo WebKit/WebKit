@@ -213,32 +213,30 @@ static Ref<Protocol::Network::Headers> buildObjectForHeaders(const HTTPHeaderMap
     return headersValue;
 }
 
-Ref<Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildObjectForTiming(const NetworkLoadMetrics* timing, ResourceLoader& resourceLoader)
+Ref<Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildObjectForTiming(const NetworkLoadMetrics& timing, ResourceLoader& resourceLoader)
 {
-    auto& loadTiming = resourceLoader.loadTiming();
-
     auto elapsedTimeSince = [&] (const MonotonicTime& time) {
         return m_environment.executionStopwatch().elapsedTimeSince(time).seconds();
     };
-    std::optional<NetworkLoadMetrics> empty;
-    if (!timing) {
-        empty.emplace();
-        timing = &empty.value();
-    }
+    auto millisecondsSinceFetchStart = [&] (const MonotonicTime& time) {
+        if (!time)
+            return 0.0;
+        return (time - timing.fetchStart).milliseconds();
+    };
 
     return Protocol::Network::ResourceTiming::create()
-        .setStartTime(elapsedTimeSince(loadTiming.startTime()))
-        .setRedirectStart(elapsedTimeSince(loadTiming.redirectStart()))
-        .setRedirectEnd(elapsedTimeSince(loadTiming.redirectEnd()))
-        .setFetchStart(elapsedTimeSince(loadTiming.fetchStart()))
-        .setDomainLookupStart(timing->domainLookupStart.milliseconds())
-        .setDomainLookupEnd(timing->domainLookupEnd.milliseconds())
-        .setConnectStart(timing->connectStart.milliseconds())
-        .setConnectEnd(timing->connectEnd.milliseconds())
-        .setSecureConnectionStart(timing->secureConnectionStart.milliseconds())
-        .setRequestStart(timing->requestStart.milliseconds())
-        .setResponseStart(timing->responseStart.milliseconds())
-        .setResponseEnd(timing->responseEnd.milliseconds())
+        .setStartTime(elapsedTimeSince(resourceLoader.loadTiming().startTime()))
+        .setRedirectStart(elapsedTimeSince(timing.redirectStart))
+        .setRedirectEnd(elapsedTimeSince(timing.fetchStart))
+        .setFetchStart(elapsedTimeSince(timing.fetchStart))
+        .setDomainLookupStart(millisecondsSinceFetchStart(timing.domainLookupStart))
+        .setDomainLookupEnd(millisecondsSinceFetchStart(timing.domainLookupEnd))
+        .setConnectStart(millisecondsSinceFetchStart(timing.connectStart))
+        .setConnectEnd(millisecondsSinceFetchStart(timing.connectEnd))
+        .setSecureConnectionStart(millisecondsSinceFetchStart(timing.secureConnectionStart))
+        .setRequestStart(millisecondsSinceFetchStart(timing.requestStart))
+        .setResponseStart(millisecondsSinceFetchStart(timing.responseStart))
+        .setResponseEnd(millisecondsSinceFetchStart(timing.responseEnd))
         .release();
 }
 
@@ -274,11 +272,11 @@ Ref<Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectForMetrics(con
     if (!networkLoadMetrics.requestHeaders.isEmpty())
         metrics->setRequestHeaders(buildObjectForHeaders(networkLoadMetrics.requestHeaders));
 
-    if (networkLoadMetrics.requestHeaderBytesSent != std::numeric_limits<uint32_t>::max())
+    if (networkLoadMetrics.requestHeaderBytesSent != std::numeric_limits<uint64_t>::max())
         metrics->setRequestHeaderBytesSent(networkLoadMetrics.requestHeaderBytesSent);
     if (networkLoadMetrics.requestBodyBytesSent != std::numeric_limits<uint64_t>::max())
         metrics->setRequestBodyBytesSent(networkLoadMetrics.requestBodyBytesSent);
-    if (networkLoadMetrics.responseHeaderBytesReceived != std::numeric_limits<uint32_t>::max())
+    if (networkLoadMetrics.responseHeaderBytesReceived != std::numeric_limits<uint64_t>::max())
         metrics->setResponseHeaderBytesReceived(networkLoadMetrics.responseHeaderBytesReceived);
     if (networkLoadMetrics.responseBodyBytesReceived != std::numeric_limits<uint64_t>::max())
         metrics->setResponseBodyBytesReceived(networkLoadMetrics.responseBodyBytesReceived);
@@ -353,8 +351,10 @@ RefPtr<Protocol::Network::Response> InspectorNetworkAgent::buildObjectForResourc
         .setSource(responseSource(response.source()))
         .release();
 
-    if (resourceLoader)
-        responseObject->setTiming(buildObjectForTiming(response.deprecatedNetworkLoadMetricsOrNull(), *resourceLoader));
+    if (resourceLoader) {
+        auto* metrics = response.deprecatedNetworkLoadMetricsOrNull();
+        responseObject->setTiming(buildObjectForTiming(metrics ? *metrics : NetworkLoadMetrics { }, *resourceLoader));
+    }
 
     if (auto& certificateInfo = response.certificateInfo()) {
         auto securityPayload = Protocol::Security::Security::create()
@@ -592,17 +592,15 @@ void InspectorNetworkAgent::didReceiveData(unsigned long identifier, const char*
     m_frontendDispatcher->dataReceived(requestId, timestamp(), dataLength, encodedDataLength);
 }
 
-void InspectorNetworkAgent::didFinishLoading(unsigned long identifier, DocumentLoader* loader, const NetworkLoadMetrics& networkLoadMetrics, ResourceLoader* resourceLoader)
+void InspectorNetworkAgent::didFinishLoading(unsigned long identifier, DocumentLoader* loader, const NetworkLoadMetrics& networkLoadMetrics, ResourceLoader*)
 {
     if (m_hiddenRequestIdentifiers.remove(identifier))
         return;
 
     double elapsedFinishTime;
-    if (resourceLoader && networkLoadMetrics.isComplete()) {
-        MonotonicTime fetchStart = resourceLoader->loadTiming().fetchStart();
-        Seconds fetchStartInInspector = m_environment.executionStopwatch().elapsedTimeSince(fetchStart);
-        elapsedFinishTime = (fetchStartInInspector + networkLoadMetrics.responseEnd).seconds();
-    } else
+    if (networkLoadMetrics.isComplete())
+        elapsedFinishTime = m_environment.executionStopwatch().elapsedTimeSince(networkLoadMetrics.responseEnd).seconds();
+    else
         elapsedFinishTime = timestamp();
 
     String requestId = IdentifiersFactory::requestId(identifier);

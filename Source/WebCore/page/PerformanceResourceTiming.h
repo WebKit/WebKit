@@ -31,7 +31,6 @@
 
 #pragma once
 
-#include "LoadTiming.h"
 #include "NetworkLoadMetrics.h"
 #include "PerformanceEntry.h"
 #include "ResourceTiming.h"
@@ -71,8 +70,6 @@ public:
 protected:
     PerformanceResourceTiming(MonotonicTime timeOrigin, ResourceTiming&&);
     ~PerformanceResourceTiming();
-
-    double networkLoadTimeToDOMHighResTimeStamp(Seconds) const;
 
     MonotonicTime m_timeOrigin;
     const ResourceTiming m_resourceTiming;

@@ -1602,7 +1602,6 @@ loader/ImageLoader.cpp
 loader/LinkHeader.cpp
 loader/LinkLoader.cpp
 loader/LinkPreloadResourceClients.cpp
-loader/LoadTiming.cpp
 loader/LoaderStrategy.cpp
 loader/MediaResourceLoader.cpp
 loader/MixedContentChecker.cpp

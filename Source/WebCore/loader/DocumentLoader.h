@@ -35,10 +35,10 @@
 #include "ContentSecurityPolicyClient.h"
 #include "DeviceOrientationOrMotionPermissionState.h"
 #include "DocumentIdentifier.h"
+#include "DocumentLoadTiming.h"
 #include "DocumentWriter.h"
 #include "FrameDestructionObserver.h"
 #include "LinkIcon.h"
-#include "LoadTiming.h"
 #include "NavigationAction.h"
 #include "ResourceError.h"
 #include "ResourceLoaderOptions.h"
@@ -351,8 +351,9 @@ public:
     void recordMemoryCacheLoadForFutureClientNotification(const ResourceRequest&);
     void takeMemoryCacheLoadsForClientNotification(Vector<ResourceRequest>& loads);
 
-    LoadTiming& timing() { return m_loadTiming; }
-    void resetTiming() { m_loadTiming = LoadTiming(); }
+    const DocumentLoadTiming& timing() const { return m_loadTiming; }
+    DocumentLoadTiming& timing() { return m_loadTiming; }
+    void resetTiming() { m_loadTiming = { }; }
 
     // The WebKit layer calls this function when it's ready for the data to actually be added to the document.
     WEBCORE_EXPORT void commitData(const char* bytes, size_t length);
@@ -596,9 +597,8 @@ private:
     bool m_didCreateGlobalHistoryEntry { false };
 
     bool m_loadingMainResource { false };
-    LoadTiming m_loadTiming;
+    DocumentLoadTiming m_loadTiming;
 
-    MonotonicTime m_timeOfLastDataReceived;
     unsigned long m_identifierForLoadWithoutResourceLoader { 0 };
 
     DataLoadToken m_dataLoadToken;

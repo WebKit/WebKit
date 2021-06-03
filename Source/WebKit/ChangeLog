@@ -1,3 +1,27 @@
+2021-06-02  Alex Christensen  <achristensen@webkit.org>
+
+        Fix WPT test resource-timing/cross-origin-redirects.html
+        https://bugs.webkit.org/show_bug.cgi?id=190523
+        <rdar://45227788>
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:didFinishCollectingMetrics:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::NetworkDataTaskSoup):
+        (WebKit::NetworkDataTaskSoup::clearRequest):
+        (WebKit::NetworkDataTaskSoup::resume):
+        (WebKit::NetworkDataTaskSoup::didSendRequest):
+        (WebKit::NetworkDataTaskSoup::dispatchDidCompleteWithError):
+        (WebKit::NetworkDataTaskSoup::continueHTTPRedirection):
+        (WebKit::NetworkDataTaskSoup::networkEvent):
+        (WebKit::NetworkDataTaskSoup::didStartRequest):
+        (WebKit::NetworkDataTaskSoup::didRestart):
+
 2021-06-02  Brent Fulgham  <bfulgham@apple.com>
 
         [Cocoa] Clean up notification_center message filters

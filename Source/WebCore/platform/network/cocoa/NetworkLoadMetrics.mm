@@ -26,71 +26,96 @@
 #import "config.h"
 #import "NetworkLoadMetrics.h"
 
+#import "ResourceHandle.h"
 #import <pal/spi/cocoa/NSURLConnectionSPI.h>
 
 namespace WebCore {
 
-static Box<NetworkLoadMetrics> packageTimingData(double fetchStart, double domainLookupStart, double domainLookupEnd, double connectStart, double secureConnectionStart, double connectEnd, double requestStart, double responseStart, bool reusedTLSConnection, NSString *protocol)
+static MonotonicTime dateToMonotonicTime(NSDate *date)
 {
+    if (auto interval = date.timeIntervalSince1970)
+        return WallTime::fromRawSeconds(interval).approximateMonotonicTime();
+    return { };
+}
+
+static Box<NetworkLoadMetrics> packageTimingData(MonotonicTime redirectStart, NSDate *fetchStart, NSDate *domainLookupStart, NSDate *domainLookupEnd, NSDate *connectStart, NSDate *secureConnectionStart, NSDate *connectEnd, NSDate *requestStart, NSDate *responseStart, bool reusedTLSConnection, NSString *protocol, uint16_t redirectCount, bool hasCrossOriginRedirect)
+{
+
     auto timing = Box<NetworkLoadMetrics>::create();
 
-    timing->fetchStart = Seconds(fetchStart);
-    timing->domainLookupStart = Seconds(domainLookupStart <= 0 ? -1 : domainLookupStart - fetchStart);
-    timing->domainLookupEnd = Seconds(domainLookupEnd <= 0 ? -1 : domainLookupEnd - fetchStart);
-    timing->connectStart = Seconds(connectStart <= 0 ? -1 : connectStart - fetchStart);
+    timing->redirectStart = redirectStart;
+    timing->fetchStart = dateToMonotonicTime(fetchStart);
+    timing->domainLookupStart = dateToMonotonicTime(domainLookupStart);
+    timing->domainLookupEnd = dateToMonotonicTime(domainLookupEnd);
+    timing->connectStart = dateToMonotonicTime(connectStart);
     if (reusedTLSConnection && [protocol isEqualToString:@"https"])
         timing->secureConnectionStart = reusedTLSConnectionSentinel;
     else
-        timing->secureConnectionStart = Seconds(secureConnectionStart <= 0 ? -1 : secureConnectionStart - fetchStart);
-    timing->connectEnd = Seconds(connectEnd <= 0 ? -1 : connectEnd - fetchStart);
-    timing->requestStart = Seconds(requestStart <= 0 ? 0 : requestStart - fetchStart);
-    timing->responseStart = Seconds(responseStart <= 0 ? 0 : responseStart - fetchStart);
+        timing->secureConnectionStart = dateToMonotonicTime(secureConnectionStart);
+    timing->connectEnd = dateToMonotonicTime(connectEnd);
+    timing->requestStart = dateToMonotonicTime(requestStart);
+    timing->responseStart = dateToMonotonicTime(responseStart);
+    timing->redirectCount = redirectCount;
+    timing->hasCrossOriginRedirect = hasCrossOriginRedirect;
 
     // NOTE: responseEnd is not populated in this code path.
 
     return timing;
 }
 
-Box<NetworkLoadMetrics> copyTimingData(NSURLSessionTaskTransactionMetrics *incompleteMetrics)
+Box<NetworkLoadMetrics> copyTimingData(NSURLSessionTaskMetrics *incompleteMetrics, bool hasCrossOriginRedirect)
 {
+    NSArray<NSURLSessionTaskTransactionMetrics *> *transactionMetrics = incompleteMetrics.transactionMetrics;
+    NSURLSessionTaskTransactionMetrics *metrics = transactionMetrics.lastObject;
     return packageTimingData(
-        incompleteMetrics.fetchStartDate.timeIntervalSince1970,
-        incompleteMetrics.domainLookupStartDate.timeIntervalSince1970,
-        incompleteMetrics.domainLookupEndDate.timeIntervalSince1970,
-        incompleteMetrics.connectStartDate.timeIntervalSince1970,
-        incompleteMetrics.secureConnectionStartDate.timeIntervalSince1970,
-        incompleteMetrics.connectEndDate.timeIntervalSince1970,
-        incompleteMetrics.requestStartDate.timeIntervalSince1970,
-        incompleteMetrics.responseStartDate.timeIntervalSince1970,
-        incompleteMetrics.reusedConnection,
-        incompleteMetrics.response.URL.scheme
+        dateToMonotonicTime(transactionMetrics.firstObject.fetchStartDate),
+        metrics.fetchStartDate,
+        metrics.domainLookupStartDate,
+        metrics.domainLookupEndDate,
+        metrics.connectStartDate,
+        metrics.secureConnectionStartDate,
+        metrics.connectEndDate,
+        metrics.requestStartDate,
+        metrics.responseStartDate,
+        metrics.reusedConnection,
+        metrics.response.URL.scheme,
+        incompleteMetrics.redirectCount,
+        hasCrossOriginRedirect
     );
 }
 
-Box<NetworkLoadMetrics> copyTimingData(NSURLConnection *connection)
+Box<NetworkLoadMetrics> copyTimingData(NSURLConnection *connection, const ResourceHandle& handle)
 {
     NSDictionary *timingData = [connection _timingData];
-    if (!timingData)
-        return nullptr;
 
-    auto timingValue = [](NSDictionary *timingData, NSString *key) {
-        if (id object = [timingData objectForKey:key])
-            return [object doubleValue];
-        return 0.0;
+    auto timingValue = [&](NSString *key) -> RetainPtr<NSDate> {
+        if (NSNumber *number = [timingData objectForKey:key]) {
+            if (double doubleValue = number.doubleValue)
+                return adoptNS([[NSDate alloc] initWithTimeIntervalSinceReferenceDate:doubleValue]);
+        }
+        return { };
     };
 
-    return packageTimingData(
-        timingValue(timingData, @"_kCFNTimingDataFetchStart"),
-        timingValue(timingData, @"_kCFNTimingDataDomainLookupStart"),
-        timingValue(timingData, @"_kCFNTimingDataDomainLookupEnd"),
-        timingValue(timingData, @"_kCFNTimingDataConnectStart"),
-        timingValue(timingData, @"_kCFNTimingDataSecureConnectionStart"),
-        timingValue(timingData, @"_kCFNTimingDataConnectEnd"),
-        timingValue(timingData, @"_kCFNTimingDataRequestStart"),
-        timingValue(timingData, @"_kCFNTimingDataResponseStart"),
-        timingValue(timingData, @"_kCFNTimingDataConnectionReused"),
-        connection.currentRequest.URL.scheme
+    auto data = packageTimingData(
+        handle.startTimeBeforeRedirects(),
+        timingValue(@"_kCFNTimingDataFetchStart").get(),
+        timingValue(@"_kCFNTimingDataDomainLookupStart").get(),
+        timingValue(@"_kCFNTimingDataDomainLookupEnd").get(),
+        timingValue(@"_kCFNTimingDataConnectStart").get(),
+        timingValue(@"_kCFNTimingDataSecureConnectionStart").get(),
+        timingValue(@"_kCFNTimingDataConnectEnd").get(),
+        timingValue(@"_kCFNTimingDataRequestStart").get(),
+        timingValue(@"_kCFNTimingDataResponseStart").get(),
+        timingValue(@"_kCFNTimingDataConnectionReused").get(),
+        connection.currentRequest.URL.scheme,
+        handle.redirectCount(),
+        handle.hasCrossOriginRedirect()
     );
+
+    if (!data->fetchStart)
+        data->fetchStart = data->redirectStart;
+
+    return data;
 }
     
 }

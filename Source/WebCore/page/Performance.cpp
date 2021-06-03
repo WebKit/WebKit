@@ -228,10 +228,10 @@ void Performance::reportFirstContentfulPaint()
     queueEntry(*m_firstContentfulPaint);
 }
 
-void Performance::addNavigationTiming(DocumentLoader& documentLoader, Document& document, CachedResource& resource, const LoadTiming& timing, const NetworkLoadMetrics& metrics)
+void Performance::addNavigationTiming(DocumentLoader& documentLoader, Document& document, CachedResource& resource, const DocumentLoadTiming& timing, const NetworkLoadMetrics& metrics)
 {
     ASSERT(document.settings().performanceNavigationTimingAPIEnabled());
-    m_navigationTiming = PerformanceNavigationTiming::create(m_timeOrigin, resource, timing, metrics, document.timing(), document.securityOrigin(), documentLoader.triggeringAction().type());
+    m_navigationTiming = PerformanceNavigationTiming::create(m_timeOrigin, resource, timing, metrics, document.eventTiming(), document.securityOrigin(), documentLoader.triggeringAction().type());
     queueEntry(*m_navigationTiming);
 }
 

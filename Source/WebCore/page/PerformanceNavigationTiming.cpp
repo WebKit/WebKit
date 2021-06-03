@@ -50,70 +50,71 @@ static PerformanceNavigationTiming::NavigationType toPerformanceNavigationTiming
     return PerformanceNavigationTiming::NavigationType::Navigate;
 }
 
-PerformanceNavigationTiming::PerformanceNavigationTiming(MonotonicTime timeOrigin, CachedResource& resource, const LoadTiming& loadTiming, const NetworkLoadMetrics& metrics, const DocumentTiming& documentTiming, const SecurityOrigin& origin, WebCore::NavigationType navigationType)
-    : PerformanceResourceTiming(timeOrigin, ResourceTiming::fromLoad(resource, resource.response().url(), "navigation"_s, loadTiming, metrics, origin))
-    , m_documentTiming(documentTiming)
+PerformanceNavigationTiming::PerformanceNavigationTiming(MonotonicTime timeOrigin, CachedResource& resource, const DocumentLoadTiming& documentLoadTiming, const NetworkLoadMetrics& metrics, const DocumentEventTiming& documentEventTiming, const SecurityOrigin& origin, WebCore::NavigationType navigationType)
+    : PerformanceResourceTiming(timeOrigin, ResourceTiming::fromLoad(resource, resource.response().url(), "navigation"_s, documentLoadTiming, metrics, origin))
+    , m_documentEventTiming(documentEventTiming)
+    , m_documentLoadTiming(documentLoadTiming)
     , m_navigationType(toPerformanceNavigationTimingNavigationType(navigationType)) { }
 
 PerformanceNavigationTiming::~PerformanceNavigationTiming() = default;
 
-double PerformanceNavigationTiming::millisecondsSinceOrigin(MonotonicTime time, std::optional<MonotonicTime> timeOrigin) const
+double PerformanceNavigationTiming::millisecondsSinceOrigin(MonotonicTime time) const
 {
     if (!time)
         return 0;
-    return Performance::reduceTimeResolution(time - (timeOrigin ? *timeOrigin : m_timeOrigin)).milliseconds();
+    return Performance::reduceTimeResolution(time - m_timeOrigin).milliseconds();
 }
 
 bool PerformanceNavigationTiming::sameOriginCheckFails() const
 {
     // https://www.w3.org/TR/navigation-timing-2/#dfn-same-origin-check
     return !m_resourceTiming.allowTimingDetails()
-        || m_resourceTiming.loadTiming().hasCrossOriginRedirect()
-        || !m_resourceTiming.loadTiming().hasSameOriginAsPreviousDocument();
+        || m_resourceTiming.networkLoadMetrics().hasCrossOriginRedirect
+        || !m_documentLoadTiming.hasSameOriginAsPreviousDocument();
 }
 
 double PerformanceNavigationTiming::unloadEventStart() const
 {
     if (sameOriginCheckFails())
         return 0.0;
-    return millisecondsSinceOrigin(m_resourceTiming.loadTiming().unloadEventStart());
+    return millisecondsSinceOrigin(m_documentLoadTiming.unloadEventStart());
 }
 
 double PerformanceNavigationTiming::unloadEventEnd() const
 {
     if (sameOriginCheckFails())
         return 0.0;
-    return millisecondsSinceOrigin(m_resourceTiming.loadTiming().unloadEventEnd());
+    return millisecondsSinceOrigin(m_documentLoadTiming.unloadEventEnd());
 }
 
 double PerformanceNavigationTiming::domInteractive() const
 {
-    return millisecondsSinceOrigin(m_documentTiming.domInteractive);
+    return millisecondsSinceOrigin(m_documentEventTiming.domInteractive);
 }
 
 double PerformanceNavigationTiming::domContentLoadedEventStart() const
 {
-    return millisecondsSinceOrigin(m_documentTiming.domContentLoadedEventStart);
+    return millisecondsSinceOrigin(m_documentEventTiming.domContentLoadedEventStart);
 }
 
 double PerformanceNavigationTiming::domContentLoadedEventEnd() const
 {
-    return millisecondsSinceOrigin(m_documentTiming.domContentLoadedEventEnd);
+    return millisecondsSinceOrigin(m_documentEventTiming.domContentLoadedEventEnd);
 }
 
 double PerformanceNavigationTiming::domComplete() const
 {
-    return millisecondsSinceOrigin(m_documentTiming.domComplete);
+    return millisecondsSinceOrigin(m_documentEventTiming.domComplete);
 }
 
 double PerformanceNavigationTiming::loadEventStart() const
 {
-    return millisecondsSinceOrigin(m_resourceTiming.loadTiming().loadEventStart());
+    return millisecondsSinceOrigin(m_documentLoadTiming.loadEventStart());
 }
 
 double PerformanceNavigationTiming::loadEventEnd() const
 {
-    return millisecondsSinceOrigin(m_resourceTiming.loadTiming().loadEventEnd());
+    return millisecondsSinceOrigin(m_documentLoadTiming.loadEventEnd());
 }
 
 PerformanceNavigationTiming::NavigationType PerformanceNavigationTiming::type() const
@@ -126,10 +127,10 @@ unsigned short PerformanceNavigationTiming::redirectCount() const
     if (!m_resourceTiming.allowTimingDetails())
         return 0;
 
-    if (m_resourceTiming.loadTiming().hasCrossOriginRedirect())
+    if (m_resourceTiming.networkLoadMetrics().hasCrossOriginRedirect)
         return 0;
 
-    return m_resourceTiming.loadTiming().redirectCount();
+    return m_resourceTiming.networkLoadMetrics().redirectCount;
 }
 
 double PerformanceNavigationTiming::startTime() const

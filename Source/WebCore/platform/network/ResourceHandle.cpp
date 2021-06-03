@@ -203,7 +203,42 @@ void ResourceHandle::clearAuthentication()
 #endif
     d->m_currentWebChallenge.nullify();
 }
-  
+
+bool ResourceHandle::hasCrossOriginRedirect() const
+{
+    return d->m_hasCrossOriginRedirect;
+}
+
+void ResourceHandle::setHasCrossOriginRedirect(bool value)
+{
+    d->m_hasCrossOriginRedirect = value;
+}
+
+void ResourceHandle::incrementRedirectCount()
+{
+    d->m_redirectCount++;
+}
+
+uint16_t ResourceHandle::redirectCount() const
+{
+    return d->m_redirectCount;
+}
+
+MonotonicTime ResourceHandle::startTimeBeforeRedirects() const
+{
+    return d->m_startTime;
+}
+
+NetworkLoadMetrics* ResourceHandle::networkLoadMetrics()
+{
+    return d->m_networkLoadMetrics.get();
+}
+
+void ResourceHandle::setNetworkLoadMetrics(Box<NetworkLoadMetrics>&& metrics)
+{
+    d->m_networkLoadMetrics = WTFMove(metrics);
+}
+
 bool ResourceHandle::shouldContentSniff() const
 {
     return d->m_shouldContentSniff;

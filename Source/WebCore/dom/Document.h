@@ -32,9 +32,9 @@
 #include "Color.h"
 #include "ContainerNode.h"
 #include "DisabledAdaptations.h"
+#include "DocumentEventTiming.h"
 #include "DocumentIdentifier.h"
 #include "DocumentTimelinesController.h"
-#include "DocumentTiming.h"
 #include "ElementIdentifier.h"
 #include "FocusOptions.h"
 #include "FontSelectorClient.h"
@@ -1207,9 +1207,8 @@ public:
     DeviceOrientationAndMotionAccessController& deviceOrientationAndMotionAccessController();
 #endif
 
-    const DocumentTiming& timing() const { return m_documentTiming; }
-
     WEBCORE_EXPORT double monotonicTimestamp() const;
+    const DocumentEventTiming& eventTiming() const { return m_eventTiming; }
 
     int requestAnimationFrame(Ref<RequestAnimationFrameCallback>&&);
     void cancelAnimationFrame(int id);
@@ -1918,7 +1917,7 @@ private:
     ViewportArguments m_viewportArguments;
     OptionSet<DisabledAdaptations> m_disabledAdaptations;
 
-    DocumentTiming m_documentTiming;
+    DocumentEventTiming m_eventTiming;
 
     RefPtr<MediaQueryMatcher> m_mediaQueryMatcher;
     

@@ -439,13 +439,13 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/DeviceOrientationData.h
     dom/DeviceOrientationOrMotionPermissionState.h
     dom/Document.h
+    dom/DocumentEventTiming.h
     dom/DocumentFontLoader.h
     dom/DocumentFragment.h
     dom/DocumentFullscreen.h
     dom/DocumentMarker.h
     dom/DocumentMarkerController.h
     dom/DocumentStorageAccess.h
-    dom/DocumentTiming.h
     dom/DocumentType.h
     dom/Element.h
     dom/ElementAncestorIterator.h
@@ -776,6 +776,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/CrossOriginAccessControl.h
     loader/CrossOriginPreflightResultCache.h
     loader/CustomHeaderFields.h
+    loader/DocumentLoadTiming.h
     loader/DocumentLoader.h
     loader/DocumentWriter.h
     loader/EmptyClients.h
@@ -796,7 +797,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/LinkLoader.h
     loader/LinkLoaderClient.h
     loader/LoadSchedulingMode.h
-    loader/LoadTiming.h
     loader/LoaderStrategy.h
     loader/MediaResourceLoader.h
     loader/MixedContentChecker.h
@@ -812,6 +812,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     loader/ResourceLoadNotifier.h
     loader/ResourceLoadObserver.h
     loader/ResourceLoadStatistics.h
+    loader/ResourceLoadTiming.h
     loader/ResourceLoader.h
     loader/ResourceLoaderOptions.h
     loader/ResourceLoaderTypes.h

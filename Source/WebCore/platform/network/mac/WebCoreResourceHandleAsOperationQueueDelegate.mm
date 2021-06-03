@@ -34,6 +34,7 @@
 #import "ResourceHandleClient.h"
 #import "ResourceRequest.h"
 #import "ResourceResponse.h"
+#import "SecurityOrigin.h"
 #import "SharedBuffer.h"
 #import "SynchronousLoaderClient.h"
 #import "WebCoreURLResponse.h"
@@ -147,6 +148,11 @@ static bool scheduledWithCustomRunLoopMode(const std::optional<SchedulePairHashS
         }
         if (m_handle->firstRequest().httpContentType().isEmpty())
             redirectRequest.clearHTTPContentType();
+
+        // Check if the redirected url is allowed to access the redirecting url's timing information.
+        m_handle->setHasCrossOriginRedirect(!WebCore::SecurityOrigin::create(redirectRequest.url())->canRequest(redirectResponse.get().URL));
+        m_handle->incrementRedirectCount();
+
         m_handle->willSendRequest(WTFMove(redirectRequest), redirectResponse.get(), [self, protectedSelf = WTFMove(protectedSelf)](ResourceRequest&& request) {
             m_requestResult = request.nsURLRequest(HTTPBodyUpdatePolicy::UpdateHTTPBody);
             m_semaphore.signal();
@@ -251,9 +257,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         if ([m_handle->firstRequest().nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) _propertyForKey:@"ForceHTMLMIMEType"])
             [r _setMIMEType:@"text/html"];
 
+        auto metrics = copyTimingData(connection.get(), *m_handle);
         ResourceResponse resourceResponse(r.get());
         resourceResponse.setSource(ResourceResponse::Source::Network);
-        resourceResponse.setDeprecatedNetworkLoadMetrics(copyTimingData(connection.get()));
+        resourceResponse.setDeprecatedNetworkLoadMetrics(Box<NetworkLoadMetrics> { metrics });
+
+        m_handle->setNetworkLoadMetrics(WTFMove(metrics));
 
         m_handle->didReceiveResponse(WTFMove(resourceResponse), [self, protectedSelf = WTFMove(protectedSelf)] {
             m_semaphore.signal();
@@ -315,13 +324,17 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     LOG(Network, "Handle %p delegate connectionDidFinishLoading:%p", m_handle, connection);
 
-    auto work = [self = self, protectedSelf = retainPtr(self), connection = retainPtr(connection)] () mutable {
+    double responseEndTime = [[[connection _timingData] objectForKey:@"_kCFNTimingDataResponseEnd"] doubleValue];
+
+    auto work = [self = self, protectedSelf = retainPtr(self), connection = retainPtr(connection), responseEndTime] () mutable {
         if (!m_handle || !m_handle->client())
             return;
 
-        if (auto metrics = copyTimingData(connection.get())) {
-            double responseEndTime = [[[connection _timingData] objectForKey:@"_kCFNTimingDataResponseEnd"] doubleValue];
-            metrics->responseEnd = Seconds(responseEndTime <= 0 ? metrics->responseStart.value() : responseEndTime - metrics->fetchStart.value());
+        if (auto metrics = m_handle->networkLoadMetrics()) {
+            if (responseEndTime)
+                metrics->responseEnd = WallTime::fromRawSeconds(adoptNS([[NSDate alloc] initWithTimeIntervalSinceReferenceDate:responseEndTime]).get().timeIntervalSince1970).approximateMonotonicTime();
+            else
+                metrics->responseEnd = metrics->responseStart;
             metrics->markComplete();
             m_handle->client()->didFinishLoading(m_handle, *metrics);
         } else {

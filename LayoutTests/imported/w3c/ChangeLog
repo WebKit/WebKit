@@ -1,3 +1,33 @@
+2021-06-02  Alex Christensen  <achristensen@webkit.org>
+
+        Fix WPT test resource-timing/cross-origin-redirects.html
+        https://bugs.webkit.org/show_bug.cgi?id=190523
+        <rdar://45227788>
+
+        Reviewed by Brady Eidson.
+
+        * web-platform-tests/navigation-timing/nav2_test_redirect_server-expected.txt:
+        * web-platform-tests/navigation-timing/nav2_test_redirect_server.html:
+        Sometimes, with our use of Performance::reduceTimeResolution, the event times are equal to each other.
+        Allow this.
+        * web-platform-tests/resource-timing/cross-origin-redirects-expected.txt: Added.
+        * web-platform-tests/resource-timing/cross-origin-redirects.html: Added.
+        * web-platform-tests/resource-timing/resources/entry-invariants.js: Added.
+        (const.assert_all_equal_):
+        (const.assert_ordered_):
+        (const.assert_zeroed_):
+        (const.assert_not_negative_):
+        (const.assert_positive_):
+        (const.attribute_test_internal):
+        (async const):
+        (const.attribute_test_with_validator):
+        * web-platform-tests/resource-timing/resources/resource-loaders.js: Added.
+        (const.load.font.path.return.document.fonts.ready.then):
+        (const.load.stylesheet.async path):
+        (const.load.iframe.async path):
+        (const.load.script.async path):
+        (const.load.xhr_sync.async path):
+
 2021-06-02  Martin Robinson  <mrobinson@igalia.com>
 
         [css-scroll-snap] Scroll snap is broken with non-horizontal writing modes

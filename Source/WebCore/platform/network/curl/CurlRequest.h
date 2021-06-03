@@ -76,7 +76,6 @@ public:
     WEBCORE_EXPORT void setUserPass(const String&, const String&);
     bool isServerTrustEvaluationDisabled() { return m_shouldDisableServerTrustEvaluation; }
     void disableServerTrustEvaluation() { m_shouldDisableServerTrustEvaluation = true; }
-    void setStartTime(const MonotonicTime& startTime) { m_requestStartTime = startTime.isolatedCopy(); }
 
     void start();
     void cancel();
@@ -210,7 +209,6 @@ private:
 
     bool m_captureExtraMetrics;
     HTTPHeaderMap m_requestHeaders;
-    MonotonicTime m_requestStartTime { MonotonicTime::nan() };
     MonotonicTime m_performStartTime;
     size_t m_totalReceivedSize { 0 };
 };

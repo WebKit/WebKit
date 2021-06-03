@@ -729,7 +729,8 @@ Navigator& DOMWindow::navigator()
 Performance& DOMWindow::performance() const
 {
     if (!m_performance) {
-        MonotonicTime timeOrigin = document() && document()->loader() ? document()->loader()->timing().referenceMonotonicTime() : MonotonicTime::now();
+        auto* documentLoader = document() ? document()->loader() : nullptr;
+        auto timeOrigin = documentLoader ? documentLoader->timing().timeOrigin() : MonotonicTime::now();
         m_performance = Performance::create(document(), timeOrigin);
     }
     ASSERT(m_performance->scriptExecutionContext() == document());

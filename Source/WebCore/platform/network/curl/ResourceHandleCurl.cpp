@@ -81,8 +81,6 @@ bool ResourceHandle::start()
         return true;
     }
 
-    d->m_startTime = MonotonicTime::now();
-
     d->m_curlRequest = createCurlRequest(WTFMove(request));
 
     if (auto credential = getCredential(d->m_firstRequest, false)) {
@@ -90,7 +88,6 @@ bool ResourceHandle::start()
         d->m_curlRequest->setAuthenticationScheme(ProtectionSpaceAuthenticationSchemeHTTPBasic);
     }
 
-    d->m_curlRequest->setStartTime(d->m_startTime);
     d->m_curlRequest->start();
 
     return true;
@@ -365,7 +362,6 @@ void ResourceHandle::restartRequestWithCredential(const ProtectionSpace& protect
     d->m_curlRequest = createCurlRequest(WTFMove(previousRequest), RequestStatus::ReusedRequest);
     d->m_curlRequest->setAuthenticationScheme(protectionSpace.authenticationScheme());
     d->m_curlRequest->setUserPass(credential.user(), credential.password());
-    d->m_curlRequest->setStartTime(d->m_startTime);
     d->m_curlRequest->start();
 }
 
@@ -382,7 +378,6 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     bool shouldContentEncodingSniff = true;
     RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(context, request, &client, defersLoading, shouldContentSniff, shouldContentEncodingSniff));
     handle->d->m_messageQueue = &client.messageQueue();
-    handle->d->m_startTime = MonotonicTime::now();
 
     if (request.url().protocolIsData()) {
         handle->handleDataURL();
@@ -397,7 +392,6 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
         handle->d->m_curlRequest->setAuthenticationScheme(ProtectionSpaceAuthenticationSchemeHTTPBasic);
     }
 
-    handle->d->m_curlRequest->setStartTime(handle->d->m_startTime);
     handle->d->m_curlRequest->start();
 
     do {
@@ -485,7 +479,6 @@ void ResourceHandle::willSendRequest()
         // in a cross-origin redirect, we want to clear those headers here. 
         newRequest.clearHTTPAuthorization();
         newRequest.clearHTTPOrigin();
-        d->m_startTime = WTF::MonotonicTime::now();
     }
 
     ResourceResponse responseCopy = delegate()->response();
@@ -516,7 +509,6 @@ void ResourceHandle::continueAfterWillSendRequest(ResourceRequest&& request)
     if (shouldForwardCredential && credential)
         d->m_curlRequest->setUserPass(credential->user(), credential->password());
 
-    d->m_curlRequest->setStartTime(d->m_startTime);
     d->m_curlRequest->start();
 }
 

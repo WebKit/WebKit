@@ -459,6 +459,10 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
 {
     WTFEmitSignpost(m_task.get(), "DataTask", "redirect");
 
+    // Check if the redirected url is allowed to access the redirecting url's timing information.
+    // FIXME: This should not set back to true after another same-origin redirect once it has been set to true.
+    networkLoadMetrics().hasCrossOriginRedirect = !WebCore::SecurityOrigin::create(request.url())->canRequest(redirectResponse.url());
+
     if (redirectResponse.httpStatusCode() == 307 || redirectResponse.httpStatusCode() == 308) {
         ASSERT(m_lastHTTPMethod == request.httpMethod());
         WebCore::FormData* body = m_firstRequest.httpBody();

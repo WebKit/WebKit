@@ -45,7 +45,6 @@ class CachedResourceHandleBase;
 class CachedResourceLoader;
 class CachedResourceRequest;
 class CookieJar;
-class LoadTiming;
 class MemoryCache;
 class NetworkLoadMetrics;
 class SecurityOrigin;

@@ -50,8 +50,8 @@ namespace WebCore {
 
 class CachedResource;
 class Document;
+class DocumentLoadTiming;
 class DocumentLoader;
-class LoadTiming;
 class NetworkLoadMetrics;
 class PerformanceUserTiming;
 class PerformanceEntry;
@@ -95,7 +95,7 @@ public:
     ExceptionOr<Ref<PerformanceMeasure>> measure(JSC::JSGlobalObject&, const String& measureName, std::optional<StartOrMeasureOptions>&&, const String& endMark);
     void clearMeasures(const String& measureName);
 
-    void addNavigationTiming(DocumentLoader&, Document&, CachedResource&, const LoadTiming&, const NetworkLoadMetrics&);
+    void addNavigationTiming(DocumentLoader&, Document&, CachedResource&, const DocumentLoadTiming&, const NetworkLoadMetrics&);
     void addResourceTiming(ResourceTiming&&);
 
     void reportFirstContentfulPaint();

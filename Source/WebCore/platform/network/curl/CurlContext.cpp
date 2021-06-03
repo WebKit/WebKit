@@ -760,7 +760,7 @@ std::optional<long> CurlHandle::getHttpVersion()
     return version;
 }
 
-std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics(const WTF::Seconds& domainLookupStart)
+std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics(MonotonicTime startTime)
 {
     double nameLookup = 0.0;
     double connect = 0.0;
@@ -793,18 +793,18 @@ std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics(const WTF::S
 
     NetworkLoadMetrics networkLoadMetrics;
 
-    networkLoadMetrics.domainLookupStart = domainLookupStart;
-    networkLoadMetrics.domainLookupEnd = domainLookupStart + Seconds(nameLookup);
-    networkLoadMetrics.connectStart = domainLookupStart + Seconds(nameLookup);
-    networkLoadMetrics.connectEnd = domainLookupStart + Seconds(connect);
+    networkLoadMetrics.domainLookupStart = startTime;
+    networkLoadMetrics.domainLookupEnd = startTime + Seconds(nameLookup);
+    networkLoadMetrics.connectStart = networkLoadMetrics.domainLookupEnd;
+    networkLoadMetrics.connectEnd = startTime + Seconds(connect);
 
     if (appConnect > 0.0) {
-        networkLoadMetrics.secureConnectionStart = domainLookupStart + Seconds(connect);
-        networkLoadMetrics.connectEnd = domainLookupStart + Seconds(appConnect);
+        networkLoadMetrics.secureConnectionStart = networkLoadMetrics.connectEnd;
+        networkLoadMetrics.connectEnd = startTime + Seconds(appConnect);
     }
 
     networkLoadMetrics.requestStart = networkLoadMetrics.connectEnd;
-    networkLoadMetrics.responseStart = domainLookupStart + Seconds(startTransfer);
+    networkLoadMetrics.responseStart = startTime + Seconds(startTransfer);
 
     if (version == CURL_HTTP_VERSION_1_0)
         networkLoadMetrics.protocol = httpVersion10;

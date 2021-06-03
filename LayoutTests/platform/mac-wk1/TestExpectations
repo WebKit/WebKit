@@ -582,6 +582,9 @@ svg/hixie/text/003.html [ Failure ]
 
 webkit.org/b/159893 [ Debug ] imported/w3c/web-platform-tests/xhr/event-readystatechange-loaded.any.js [ Pass Failure ]
 
+# NSURLConnection doesn't have an API to give us good timing for redirects. We do what we can with MonotonicTime::now() but this still fails sometimes.
+imported/w3c/web-platform-tests/navigation-timing/nav2_test_redirect_server.html [ Pass Failure ]
+
 webkit.org/b/160101 userscripts/window-onerror-for-isolated-world-3.html [ Pass Failure ]
 
 # rdar://problem/27723718

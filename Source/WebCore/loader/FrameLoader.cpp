@@ -85,7 +85,6 @@
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
 #include "LinkLoader.h"
-#include "LoadTiming.h"
 #include "LoaderStrategy.h"
 #include "Logging.h"
 #include "MemoryCache.h"
@@ -3303,18 +3302,17 @@ void FrameLoader::dispatchUnloadEvents(UnloadEventPolicy unloadEventPolicy)
 
             if (m_frame.document()->backForwardCacheState() == Document::NotInBackForwardCache) {
                 Ref<Event> unloadEvent(Event::create(eventNames().unloadEvent, Event::CanBubble::No, Event::IsCancelable::No));
-                // The DocumentLoader (and thus its LoadTiming) might get destroyed
+                // The DocumentLoader (and thus its DocumentLoadTiming) might get destroyed
                 // while dispatching the event, so protect it to prevent writing the end
                 // time into freed memory.
                 RefPtr<DocumentLoader> documentLoader = m_provisionalDocumentLoader;
+                auto* timing = documentLoader ? &documentLoader->timing() : nullptr;
                 m_pageDismissalEventBeingDispatched = PageDismissalType::Unload;
-                if (documentLoader && documentLoader->timing().startTime() && !documentLoader->timing().unloadEventStart() && !documentLoader->timing().unloadEventEnd()) {
-                    auto& timing = documentLoader->timing();
-                    timing.markUnloadEventStart();
-                    m_frame.document()->domWindow()->dispatchEvent(unloadEvent, m_frame.document());
-                    timing.markUnloadEventEnd();
-                } else
-                    m_frame.document()->domWindow()->dispatchEvent(unloadEvent, m_frame.document());
+                if (timing && !timing->unloadEventStart())
+                    timing->markUnloadEventStart();
+                m_frame.document()->domWindow()->dispatchEvent(unloadEvent, m_frame.document());
+                if (timing && !timing->unloadEventEnd())
+                    timing->markUnloadEventEnd();
             }
         }
         m_pageDismissalEventBeingDispatched = PageDismissalType::None;

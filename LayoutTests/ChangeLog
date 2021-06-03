@@ -1,3 +1,24 @@
+2021-06-02  Alex Christensen  <achristensen@webkit.org>
+
+        Fix WPT test resource-timing/cross-origin-redirects.html
+        https://bugs.webkit.org/show_bug.cgi?id=190523
+        <rdar://45227788>
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/misc/webtiming-slow-load-expected.txt:
+        * http/tests/misc/webtiming-slow-load.py:
+        Our new metrics gathering now matches Firefox instead of Chrome in PerformanceResourceTiming::responseEnd in this edge case of a deprecated API.
+        Update expectations accordingly.
+        * platform/mac-wk1/TestExpectations:
+        Bringing this test to passing in WK2 makes it flaky in WK1 because we don't get good redirect timing data from CFNetwork through NSURLConnection.
+        * platform/win/http/tests/misc/webtiming-one-redirect-expected.txt: Added.
+        * platform/win/http/tests/misc/webtiming-slow-load-expected.txt: Copied from LayoutTests/http/tests/misc/webtiming-slow-load-expected.txt.
+        * platform/win/http/tests/misc/webtiming-two-redirects-expected.txt: Added.
+        The network layer is now responsible for counting redirects and providing redirect timings.
+        Our friend CFURLConnection doesn't have that ability, so it doesn't pass these tests any more.
+        It never supported any timing APIs and other tests are skipped.
+
 2021-06-02  Amir Mark Jr  <amir_mark@apple.com>
 
         [MacOS] media/video-played-collapse.html is flaky timeout and failure

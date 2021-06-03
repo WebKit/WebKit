@@ -960,8 +960,8 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         }
     }
 
-    LoadTiming loadTiming;
-    loadTiming.markStartTimeAndFetchStart();
+    ResourceLoadTiming loadTiming;
+    loadTiming.markStartTime();
     InitiatorContext initiatorContext = request.options().initiatorContext;
 
     if (request.resourceRequest().url().protocolIsInHTTPFamily())
@@ -1021,12 +1021,12 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
             if (!shouldContinueAfterNotifyingLoadedFromMemoryCache(request, *resource, error))
                 return makeUnexpected(WTFMove(error));
             logMemoryCacheResourceRequest(&frame, DiagnosticLoggingKeys::memoryCacheEntryDecisionKey(), DiagnosticLoggingKeys::usedKey());
-            loadTiming.setResponseEnd(MonotonicTime::now());
+            loadTiming.markEndTime();
 
             memoryCache.resourceAccessed(*resource);
 
             if (document() && !resource->isLoading()) {
-                auto resourceTiming = ResourceTiming::fromCache(url, request.initiatorName(), loadTiming, resource->response(), *request.origin());
+                auto resourceTiming = ResourceTiming::fromMemoryCache(url, request.initiatorName(), loadTiming, resource->response(), *request.origin());
                 if (initiatorContext == InitiatorContext::Worker) {
                     ASSERT(is<CachedRawResource>(resource.get()));
                     downcast<CachedRawResource>(resource.get())->finishedTimingForWorkerLoad(WTFMove(resourceTiming));

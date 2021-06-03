@@ -25,7 +25,8 @@
 
 #pragma once
 
-#include "DocumentTiming.h"
+#include "DocumentEventTiming.h"
+#include "DocumentLoadTiming.h"
 #include "PerformanceResourceTiming.h"
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefCounted.h>
@@ -34,7 +35,6 @@
 namespace WebCore {
 
 class CachedResource;
-class LoadTiming;
 class NetworkLoadMetrics;
 class SecurityOrigin;
 enum class NavigationType : uint8_t;
@@ -69,12 +69,13 @@ public:
     double duration() const final;
 
 private:
-    PerformanceNavigationTiming(MonotonicTime timeOrigin, CachedResource&, const LoadTiming&, const NetworkLoadMetrics&, const DocumentTiming&, const SecurityOrigin&, WebCore::NavigationType);
+    PerformanceNavigationTiming(MonotonicTime timeOrigin, CachedResource&, const DocumentLoadTiming&, const NetworkLoadMetrics&, const DocumentEventTiming&, const SecurityOrigin&, WebCore::NavigationType);
 
-    double millisecondsSinceOrigin(MonotonicTime, std::optional<MonotonicTime> timeOrigin = std::nullopt) const;
+    double millisecondsSinceOrigin(MonotonicTime) const;
     bool sameOriginCheckFails() const;
 
-    DocumentTiming m_documentTiming;
+    DocumentEventTiming m_documentEventTiming;
+    DocumentLoadTiming m_documentLoadTiming;
     NavigationType m_navigationType;
 };
 

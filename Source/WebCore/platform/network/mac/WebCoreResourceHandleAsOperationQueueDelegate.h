@@ -24,6 +24,7 @@
  */
 
 #import <dispatch/dispatch.h>
+#import <wtf/Box.h>
 #import <wtf/Function.h>
 #import <wtf/Lock.h>
 #import <wtf/MessageQueue.h>
@@ -33,6 +34,7 @@
 #import <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
+class NetworkLoadMetrics;
 class ResourceHandle;
 class SynchronousLoaderMessageQueue;
 }
