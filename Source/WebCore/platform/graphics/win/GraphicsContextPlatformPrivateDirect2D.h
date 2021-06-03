@@ -79,7 +79,6 @@ public:
     ID2D1RenderTarget* renderTarget();
 
     HDC m_hdc { nullptr };
-    bool m_shouldIncludeChildWindows { false };
 
     float currentGlobalAlpha() const;
 

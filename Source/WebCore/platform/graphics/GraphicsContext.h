@@ -537,17 +537,7 @@ public:
     // FIXME: This should not exist; we need a different place to
     // put code shared between Windows CG and Windows Cairo backends.
     virtual GraphicsContextPlatformPrivate* deprecatedPrivateContext() const { return nullptr; }
-#if PLATFORM(WIN)
-    // When set to true, child windows should be rendered into this context
-    // rather than allowing them just to render to the screen. Defaults to
-    // false.
-    // FIXME: This is a layering violation. GraphicsContext shouldn't know
-    // what a "window" is. It would be much more appropriate for this flag
-    // to be passed as a parameter alongside the GraphicsContext, but doing
-    // that would require lots of changes in cross-platform code that we
-    // aren't sure we want to make.
-    void setShouldIncludeChildWindows(bool);
-    bool shouldIncludeChildWindows() const;
+#endif // OS(WINDOWS)
 
 #if USE(DIRECT2D)
     GraphicsContext(HDC, ID2D1DCRenderTarget**, RECT, bool hasAlpha = false); // FIXME: To be removed.
@@ -568,10 +558,6 @@ public:
 
     ID2D1SolidColorBrush* brushWithColor(const Color&);
 #endif
-#else // PLATFORM(WIN)
-    bool shouldIncludeChildWindows() const { return false; }
-#endif // PLATFORM(WIN)
-#endif // OS(WINDOWS)
 
 private:
     virtual bool supportsTransparencyLayers() const { return true; }

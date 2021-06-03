@@ -1130,7 +1130,7 @@ static void getUpdateRects(HRGN region, const IntRect& dirtyRect, Vector<IntRect
         rects.append(*rect);
 }
 
-void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStoreCompletelyDirty, WindowsToPaint windowsToPaint)
+void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStoreCompletelyDirty)
 {
     ASSERT(!isAcceleratedCompositing());
 
@@ -1172,7 +1172,7 @@ void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStore
         }
 
         for (unsigned i = 0; i < paintRects.size(); ++i)
-            paintIntoBackingStore(frameView, bitmapDC, paintRects[i], windowsToPaint);
+            paintIntoBackingStore(frameView, bitmapDC, paintRects[i]);
 
         if (m_uiDelegatePrivate)
             m_uiDelegatePrivate->webViewPainted(this);
@@ -1304,23 +1304,16 @@ void WebView::paint(HDC dc, LPARAM options)
     GDIObject<HRGN> region;
     int regionType = NULLREGION;
     PAINTSTRUCT ps;
-    WindowsToPaint windowsToPaint;
     if (!dc) {
         region = adoptGDIObject(::CreateRectRgn(0, 0, 0, 0));
         regionType = GetUpdateRgn(m_viewWindow, region.get(), false);
         hdc = BeginPaint(m_viewWindow, &ps);
         rcPaint = ps.rcPaint;
-        // We're painting to the screen, and our child windows can handle
-        // painting themselves to the screen.
-        windowsToPaint = PaintWebViewOnly;
     } else {
         hdc = dc;
         ::GetClientRect(m_viewWindow, &rcPaint);
         if (options & PRF_ERASEBKGND)
             ::FillRect(hdc, &rcPaint, (HBRUSH)GetStockObject(WHITE_BRUSH));
-        // Since we aren't painting to the screen, we want to paint all our
-        // children into the HDC.
-        windowsToPaint = PaintWebViewAndChildren;
     }
 
     bool backingStoreCompletelyDirty = ensureBackingStore();
@@ -1334,7 +1327,7 @@ void WebView::paint(HDC dc, LPARAM options)
     HGDIOBJ oldBitmap = ::SelectObject(bitmapDC.get(), m_backingStoreBitmap->get());
 
     // Update our backing store if needed.
-    updateBackingStore(frameView, bitmapDC.get(), backingStoreCompletelyDirty, windowsToPaint);
+    updateBackingStore(frameView, bitmapDC.get(), backingStoreCompletelyDirty);
 
     // Now we blit the updated backing store
     IntRect windowDirtyRect = rcPaint;
@@ -1370,7 +1363,7 @@ void WebView::paint(HDC dc, LPARAM options)
         deleteBackingStoreSoon();
 }
 
-void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const IntRect& dirtyRectPixels, WindowsToPaint windowsToPaint)
+void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const IntRect& dirtyRectPixels)
 {
     // FIXME: This function should never be called in accelerated compositing mode, and we should
     // assert as such. But currently it *is* sometimes called, so we can't assert yet. See
@@ -1407,7 +1400,6 @@ void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const In
 #endif
 
     GraphicsContextWin gc(bitmapDC, m_transparent);
-    gc.setShouldIncludeChildWindows(windowsToPaint == PaintWebViewAndChildren);
     gc.save();
     if (m_transparent)
         gc.clearRect(logicalDirtyRect);

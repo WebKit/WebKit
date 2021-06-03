@@ -321,7 +321,6 @@ HRESULT WebFrame::paintDocumentRectToContext(RECT rect, _In_ HDC deviceContext)
     view->updateLayoutAndStyleIfNeededRecursive();
 
     GraphicsContextWin gc(deviceContext);
-    gc.setShouldIncludeChildWindows(true);
     gc.save();
     LONG width = rect.right - rect.left;
     LONG height = rect.bottom - rect.top;
@@ -352,7 +351,6 @@ HRESULT WebFrame::paintScrollViewRectToContextAtPoint(RECT rect, POINT pt, _In_ 
     view->updateLayoutAndStyleIfNeededRecursive();
 
     GraphicsContextWin gc(deviceContext);
-    gc.setShouldIncludeChildWindows(true);
     gc.save();
     IntRect dirtyRect(rect);
     dirtyRect.move(-pt.x, -pt.y);
@@ -1808,7 +1806,6 @@ HRESULT WebFrame::spoolPages(HDC printDC, UINT startPage, UINT endPage, void* ct
     headerAndFooterHeights(&headerHeight, &footerHeight);
 #if USE(CG) || USE(CAIRO)
     GraphicsContextWin spoolCtx(pctx);
-    spoolCtx.setShouldIncludeChildWindows(true);
 
     for (UINT ii = startPage; ii < endPage; ii++)
         spoolPage(pctx, spoolCtx, printDC, ui.get(), headerHeight, footerHeight, ii, pageCount);

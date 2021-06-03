@@ -1,3 +1,20 @@
+2021-06-03  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Remove unused GraphicsContext::shouldIncludeChildWindows()
+        https://bugs.webkit.org/show_bug.cgi?id=226567
+
+        Reviewed by Don Olmstead.
+
+        * WebFrame.cpp:
+        (WebFrame::paintDocumentRectToContext):
+        (WebFrame::paintScrollViewRectToContextAtPoint):
+        (WebFrame::spoolPages):
+        * WebView.cpp:
+        (WebView::updateBackingStore):
+        (WebView::paint):
+        (WebView::paintIntoBackingStore):
+        * WebView.h: Removed WindowsToPaint.
+
 2021-05-30  Darin Adler  <darin@apple.com>
 
         Remove some of the unneeded WebKitLegacy Windows-specific plug-in code

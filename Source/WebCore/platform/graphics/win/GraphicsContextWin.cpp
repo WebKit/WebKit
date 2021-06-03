@@ -53,18 +53,6 @@ static void fillWithClearColor(HBITMAP bitmap)
     memset(bmpInfo.bmBits, 0, bufferSize);
 }
 
-#if PLATFORM(WIN)
-void GraphicsContext::setShouldIncludeChildWindows(bool include)
-{
-    deprecatedPrivateContext()->m_shouldIncludeChildWindows = include;
-}
-
-bool GraphicsContext::shouldIncludeChildWindows() const
-{
-    return deprecatedPrivateContext()->m_shouldIncludeChildWindows;
-}
-#endif
-
 HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlphaBlend)
 {
     HDC hdc = deprecatedPrivateContext()->m_hdc;

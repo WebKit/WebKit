@@ -550,9 +550,8 @@ private:
     void sizeChanged(const WebCore::IntSize&);
     bool dpiChanged(float, const WebCore::IntSize&);
 
-    enum WindowsToPaint { PaintWebViewOnly, PaintWebViewAndChildren };
-    void paintIntoBackingStore(WebCore::FrameView*, HDC bitmapDC, const WebCore::IntRect& dirtyRect, WindowsToPaint);
-    void updateBackingStore(WebCore::FrameView*, HDC = 0, bool backingStoreCompletelyDirty = false, WindowsToPaint = PaintWebViewOnly);
+    void paintIntoBackingStore(WebCore::FrameView*, HDC bitmapDC, const WebCore::IntRect& dirtyRect);
+    void updateBackingStore(WebCore::FrameView*, HDC = 0, bool backingStoreCompletelyDirty = false);
 
     void performLayeredWindowUpdate();
 
