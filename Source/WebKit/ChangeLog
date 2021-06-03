@@ -1,3 +1,25 @@
+2021-06-03  Chris Dumez  <cdumez@apple.com>
+
+        Stop storing Ref<IPC::Connection> in RTCDataChannelRemoteManagerProxy::m_webProcessConnections
+        https://bugs.webkit.org/show_bug.cgi?id=226596
+
+        Reviewed by Eric Carlson.
+
+        Stop storing Ref<IPC::Connection> in RTCDataChannelRemoteManagerProxy::m_webProcessConnections.
+        Keeping the IPC::Connection alive always carries the chance of leaking if we fail to properly
+        clear the HashMap. We can simply store an IPC::Connection::UniqueID and use that ID to send the
+        IPC on the background thread.
+
+        * NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy.cpp:
+        (WebKit::RTCDataChannelRemoteManagerProxy::registerConnectionToWebProcess):
+        (WebKit::RTCDataChannelRemoteManagerProxy::sendData):
+        (WebKit::RTCDataChannelRemoteManagerProxy::close):
+        (WebKit::RTCDataChannelRemoteManagerProxy::changeReadyState):
+        (WebKit::RTCDataChannelRemoteManagerProxy::receiveData):
+        (WebKit::RTCDataChannelRemoteManagerProxy::detectError):
+        (WebKit::RTCDataChannelRemoteManagerProxy::bufferedAmountIsDecreasing):
+        * NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy.h:
+
 2021-06-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Image extraction preview panel should automatically close when the web view is unparented
