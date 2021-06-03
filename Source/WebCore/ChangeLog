@@ -1,5 +1,16 @@
 2021-06-02  Alan Bujtas  <zalan@apple.com>
 
+        Remove redundant isChildHitTestCandidate in RenderBlock::positionForPoint
+        https://bugs.webkit.org/show_bug.cgi?id=226554
+        <rdar://problem/78782485>
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionForPoint):
+
+2021-06-02  Alan Bujtas  <zalan@apple.com>
+
         Incorrect selection when tall float is present
         https://bugs.webkit.org/show_bug.cgi?id=226552
         <rdar://problem/78781056>
