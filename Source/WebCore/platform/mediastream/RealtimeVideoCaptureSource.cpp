@@ -407,11 +407,11 @@ void RealtimeVideoCaptureSource::clientUpdatedSizeAndFrameRate(std::optional<int
 {
     // FIXME: We only change settings if capture resolution is below requested one. We should get the best preset for all clients.
     auto& settings = this->settings();
-    if (width && *width < static_cast<int>(settings.width()))
+    if (width && *width <= static_cast<int>(settings.width()))
         width = { };
-    if (height && *height < static_cast<int>(settings.height()))
+    if (height && *height <= static_cast<int>(settings.height()))
         height = { };
-    if (frameRate && *frameRate < static_cast<double>(settings.frameRate()))
+    if (frameRate && *frameRate <= static_cast<double>(settings.frameRate()))
         frameRate = { };
 
     if (!width && !height && !frameRate)

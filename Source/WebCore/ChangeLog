@@ -1,3 +1,16 @@
+2021-06-03  Youenn Fablet  <youenn@apple.com>
+
+        Do not recalibrate camera if the settings are the same
+        https://bugs.webkit.org/show_bug.cgi?id=226585
+
+        Reviewed by Eric Carlson.
+
+        Make sure to not update the preset if the constraints are equal to the current settings.
+        Manually tested.
+
+        * platform/mediastream/RealtimeVideoCaptureSource.cpp:
+        (WebCore::RealtimeVideoCaptureSource::clientUpdatedSizeAndFrameRate):
+
 2021-06-03  Alan Bujtas  <zalan@apple.com>
 
         Incorrect text selection when crossing flex item boundary
