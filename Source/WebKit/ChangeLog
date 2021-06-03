@@ -1,3 +1,39 @@
+2021-06-02  Chris Dumez  <cdumez@apple.com>
+
+        Stop using a RefPtr<IPC::Connection> as HashMap key in DisplayLink
+        https://bugs.webkit.org/show_bug.cgi?id=226561
+
+        Reviewed by Simon Fraser.
+
+        Stop using a RefPtr<IPC::Connection> as HashMap key in DisplayLink. Using a RefPtr as key is suboptimal
+        and could leak to memory leaks. The reason this needed a RefPtr<IPC::Connection> was because we needed
+        to send IPC from a background thread. To support this, I have added a static IPC::Connection::send()
+        function that takes an IPC::Connection::UniqueID and that is thread safe. The function looks up the
+        IPC::Connection from its UniqueID and sends the IPC while still holding the lock.
+
+        As a result, DisplayLink can use IPC::Connection::UniqueID as key instead.
+
+        Note that I am planning to use the new static IPC::Connection::send() in other cases where we could
+        send IPC directly from a background thread instead of having to hop to the main thread to look up
+        the IPC::Connection from its UniqueID. StorageArea::dispatchEvents() is an example of where this will
+        be useful.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::Connection):
+        (IPC::Connection::~Connection):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::send):
+        * UIProcess/mac/DisplayLink.cpp:
+        (WebKit::DisplayLink::addObserver):
+        (WebKit::DisplayLink::removeObserver):
+        (WebKit::DisplayLink::removeObservers):
+        (WebKit::DisplayLink::removeInfoForConnectionIfPossible):
+        (WebKit::DisplayLink::incrementFullSpeedRequestClientCount):
+        (WebKit::DisplayLink::decrementFullSpeedRequestClientCount):
+        (WebKit::DisplayLink::setPreferredFramesPerSecond):
+        (WebKit::DisplayLink::notifyObserversDisplayWasRefreshed):
+        * UIProcess/mac/DisplayLink.h:
+
 2021-06-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Show data detector context menu on long press inside image overlays

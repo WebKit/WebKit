@@ -27,6 +27,7 @@
 
 #if HAVE(CVDISPLAYLINK)
 
+#include "Connection.h"
 #include "DisplayLinkObserverID.h"
 #include <CoreVideo/CVDisplayLink.h>
 #include <WebCore/AnimationFrameRate.h>
@@ -84,7 +85,7 @@ private:
 
     CVDisplayLinkRef m_displayLink { nullptr };
     Lock m_observersLock;
-    HashMap<RefPtr<IPC::Connection>, ConnectionClientInfo> m_observers WTF_GUARDED_BY_LOCK(m_observersLock);
+    HashMap<IPC::Connection::UniqueID, ConnectionClientInfo> m_observers WTF_GUARDED_BY_LOCK(m_observersLock);
     WebCore::PlatformDisplayID m_displayID;
     WebCore::FramesPerSecond m_displayNominalFramesPerSecond { 0 };
     WebCore::DisplayUpdate m_currentUpdate;
