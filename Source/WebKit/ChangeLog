@@ -1,3 +1,15 @@
+2021-06-02  Rob Buis  <rbuis@igalia.com>
+
+        Split FillInlinePath/StrokeInlinePath
+        https://bugs.webkit.org/show_bug.cgi?id=225687
+
+        Reviewed by Wenson Hsieh.
+
+        Adjust to new display list item types.
+
+        * GPUProcess/graphics/RemoteRenderingBackend.cpp:
+        (WebKit::RemoteRenderingBackend::decodeItem):
+
 2021-06-02  Chris Dumez  <cdumez@apple.com>
 
         Stop using a RefPtr<IPC::Connection> as HashMap key in DisplayLink

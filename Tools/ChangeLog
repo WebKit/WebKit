@@ -1,3 +1,15 @@
+2021-06-02  Rob Buis  <rbuis@igalia.com>
+
+        Split FillInlinePath/StrokeInlinePath
+        https://bugs.webkit.org/show_bug.cgi?id=225687
+
+        Reviewed by Wenson Hsieh.
+
+        Adjust to API new display list items.
+
+        * TestWebKitAPI/Tests/WebCore/DisplayListTests.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-06-02  Jonathan Bedard  <jbedard@apple.com>
 
         [webkitcorepy] TaskPool shouldn't fork when 1 process is needed

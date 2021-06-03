@@ -72,7 +72,10 @@ enum class ItemType : uint8_t {
     FillRoundedRect,
     FillRectWithRoundedHole,
 #if ENABLE(INLINE_PATH_DATA)
-    FillInlinePath,
+    FillLine,
+    FillArc,
+    FillQuadCurve,
+    FillBezierCurve,
 #endif
     FillPath,
     FillEllipse,
@@ -87,7 +90,9 @@ enum class ItemType : uint8_t {
     StrokeRect,
     StrokeLine,
 #if ENABLE(INLINE_PATH_DATA)
-    StrokeInlinePath,
+    StrokeArc,
+    StrokeQuadCurve,
+    StrokeBezierCurve,
 #endif
     StrokePath,
     StrokeEllipse,

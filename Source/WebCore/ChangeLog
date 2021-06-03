@@ -1,3 +1,75 @@
+2021-06-02  Rob Buis  <rbuis@igalia.com>
+
+        Split FillInlinePath/StrokeInlinePath
+        https://bugs.webkit.org/show_bug.cgi?id=225687
+
+        Reviewed by Wenson Hsieh.
+
+        Use specialized display list item types instead of
+        a Variant for FillInlinePath/StrokeInlinePath.
+
+        * platform/graphics/displaylists/DisplayList.cpp:
+        (WebCore::DisplayList::DisplayList::append):
+        * platform/graphics/displaylists/DisplayListItemBuffer.cpp:
+        (WebCore::DisplayList::ItemHandle::apply):
+        (WebCore::DisplayList::ItemHandle::destroy):
+        (WebCore::DisplayList::ItemHandle::safeCopy const):
+        * platform/graphics/displaylists/DisplayListItemType.cpp:
+        (WebCore::DisplayList::sizeOfItemInBytes):
+        (WebCore::DisplayList::isDrawingItem):
+        (WebCore::DisplayList::isInlineItem):
+        * platform/graphics/displaylists/DisplayListItemType.h:
+        * platform/graphics/displaylists/DisplayListItems.cpp:
+        (WebCore::DisplayList::FillLine::apply const):
+        (WebCore::DisplayList::operator<<):
+        (WebCore::DisplayList::FillArc::apply const):
+        (WebCore::DisplayList::FillQuadCurve::apply const):
+        (WebCore::DisplayList::FillBezierCurve::apply const):
+        (WebCore::DisplayList::StrokeArc::localBounds const):
+        (WebCore::DisplayList::StrokeArc::apply const):
+        (WebCore::DisplayList::StrokeQuadCurve::localBounds const):
+        (WebCore::DisplayList::StrokeQuadCurve::apply const):
+        (WebCore::DisplayList::StrokeBezierCurve::localBounds const):
+        (WebCore::DisplayList::StrokeBezierCurve::apply const):
+        (WebCore::DisplayList::FillInlinePath::apply const): Deleted.
+        (WebCore::DisplayList::StrokeInlinePath::localBounds const): Deleted.
+        (WebCore::DisplayList::StrokeInlinePath::apply const): Deleted.
+        * platform/graphics/displaylists/DisplayListItems.h:
+        (WebCore::DisplayList::FillLine::FillLine):
+        (WebCore::DisplayList::FillLine::path const):
+        (WebCore::DisplayList::FillLine::globalBounds const):
+        (WebCore::DisplayList::FillLine::localBounds const):
+        (WebCore::DisplayList::FillArc::FillArc):
+        (WebCore::DisplayList::FillArc::path const):
+        (WebCore::DisplayList::FillArc::globalBounds const):
+        (WebCore::DisplayList::FillArc::localBounds const):
+        (WebCore::DisplayList::FillQuadCurve::FillQuadCurve):
+        (WebCore::DisplayList::FillQuadCurve::path const):
+        (WebCore::DisplayList::FillQuadCurve::globalBounds const):
+        (WebCore::DisplayList::FillQuadCurve::localBounds const):
+        (WebCore::DisplayList::FillBezierCurve::FillBezierCurve):
+        (WebCore::DisplayList::FillBezierCurve::path const):
+        (WebCore::DisplayList::StrokeLine::StrokeLine):
+        (WebCore::DisplayList::StrokeArc::StrokeArc):
+        (WebCore::DisplayList::StrokeArc::path const):
+        (WebCore::DisplayList::StrokeArc::globalBounds const):
+        (WebCore::DisplayList::StrokeQuadCurve::StrokeQuadCurve):
+        (WebCore::DisplayList::StrokeQuadCurve::path const):
+        (WebCore::DisplayList::StrokeQuadCurve::globalBounds const):
+        (WebCore::DisplayList::StrokeBezierCurve::StrokeBezierCurve):
+        (WebCore::DisplayList::StrokeBezierCurve::path const):
+        (WebCore::DisplayList::InlinePathDataStorage::InlinePathDataStorage): Deleted.
+        (WebCore::DisplayList::InlinePathDataStorage::isValid const): Deleted.
+        (WebCore::DisplayList::InlinePathDataStorage::path const): Deleted.
+        (WebCore::DisplayList::FillInlinePath::FillInlinePath): Deleted.
+        (WebCore::DisplayList::FillInlinePath::globalBounds const): Deleted.
+        (WebCore::DisplayList::FillInlinePath::localBounds const): Deleted.
+        (WebCore::DisplayList::StrokeInlinePath::StrokeInlinePath): Deleted.
+        (WebCore::DisplayList::StrokeInlinePath::globalBounds const): Deleted.
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::fillPath):
+        (WebCore::DisplayList::Recorder::strokePath):
+
 2021-06-02  Sihui Liu  <sihui_liu@apple.com>
 
         Introduce a shared IDB serialization thread

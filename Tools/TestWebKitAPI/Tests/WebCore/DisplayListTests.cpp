@@ -73,7 +73,7 @@ TEST(DisplayListTests, AppendItems)
         list.append<FillRectWithGradient>(FloatRect { 1., 1., 10., 10. }, gradient);
         list.append<SetInlineFillColor>(Color::red);
 #if ENABLE(INLINE_PATH_DATA)
-        list.append<StrokeInlinePath>(InlinePathData { LineData {{ 0., 0. }, { 10., 15. }}});
+        list.append<StrokeLine>(LineData {{ 0., 0. }, { 10., 15. }});
 #endif
     }
 
@@ -113,14 +113,12 @@ TEST(DisplayListTests, AppendItems)
             break;
         }
 #if ENABLE(INLINE_PATH_DATA)
-        case ItemType::StrokeInlinePath: {
+        case ItemType::StrokeLine: {
             EXPECT_TRUE(handle.isDrawingItem());
-            EXPECT_TRUE(handle.is<StrokeInlinePath>());
-            auto& item = handle.get<StrokeInlinePath>();
-            const auto path = item.path();
-            auto& line = path.inlineData<LineData>();
-            EXPECT_EQ(line.start, FloatPoint(0, 0));
-            EXPECT_EQ(line.end, FloatPoint(10., 15.));
+            EXPECT_TRUE(handle.is<StrokeLine>());
+            auto& item = handle.get<StrokeLine>();
+            EXPECT_EQ(item.start(), FloatPoint(0, 0));
+            EXPECT_EQ(item.end(), FloatPoint(10., 15.));
             break;
         }
 #endif

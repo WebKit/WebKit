@@ -1846,45 +1846,84 @@ std::optional<FillRectWithRoundedHole> FillRectWithRoundedHole::decode(Decoder& 
 
 #if ENABLE(INLINE_PATH_DATA)
 
-class InlinePathDataStorage {
+class FillLine {
 public:
-    InlinePathDataStorage(const InlinePathData& pathData)
-    {
-        if (pathData.index() >= 0 && static_cast<size_t>(pathData.index()) < WTF::variant_size<InlinePathData>::value)
-            m_pathData = pathData;
-        else {
-            auto moved = WTFMove(m_pathData);
-            UNUSED_VARIABLE(moved);
-        }
-    }
-
-    bool isValid() const { return !m_pathData.valueless_by_exception(); }
-
-    Path path() const { return Path::from(m_pathData); }
-
-protected:
-    InlinePathData m_pathData;
-};
-
-class FillInlinePath : public InlinePathDataStorage {
-public:
-    static constexpr ItemType itemType = ItemType::FillInlinePath;
+    static constexpr ItemType itemType = ItemType::FillLine;
     static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = true;
 
-    FillInlinePath(const FillInlinePath& other)
-        : InlinePathDataStorage(other.m_pathData)
-    {
-    }
-    FillInlinePath(const InlinePathData& pathData)
-        : InlinePathDataStorage(pathData)
+    FillLine(const LineData& lineData)
+        : m_lineData(lineData)
     {
     }
 
+    Path path() const { return Path::from({m_lineData}); }
     void apply(GraphicsContext&) const;
-
     std::optional<FloatRect> globalBounds() const { return std::nullopt; }
     std::optional<FloatRect> localBounds(const GraphicsContext&) const { return path().fastBoundingRect(); }
+
+private:
+    LineData m_lineData;
+};
+
+class FillArc {
+public:
+    static constexpr ItemType itemType = ItemType::FillArc;
+    static constexpr bool isInlineItem = true;
+    static constexpr bool isDrawingItem = true;
+
+    FillArc(const ArcData& arcData)
+        : m_arcData(arcData)
+    {
+    }
+
+    Path path() const { return Path::from({m_arcData}); }
+    void apply(GraphicsContext&) const;
+    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
+    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return path().fastBoundingRect(); }
+
+private:
+    ArcData m_arcData;
+};
+
+class FillQuadCurve {
+public:
+    static constexpr ItemType itemType = ItemType::FillQuadCurve;
+    static constexpr bool isInlineItem = true;
+    static constexpr bool isDrawingItem = true;
+
+    FillQuadCurve(const QuadCurveData& quadCurveData)
+        : m_quadCurveData(quadCurveData)
+    {
+    }
+
+    Path path() const { return Path::from({m_quadCurveData}); }
+    void apply(GraphicsContext&) const;
+    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
+    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return path().fastBoundingRect(); }
+
+private:
+    QuadCurveData m_quadCurveData;
+};
+
+class FillBezierCurve {
+public:
+    static constexpr ItemType itemType = ItemType::FillBezierCurve;
+    static constexpr bool isInlineItem = true;
+    static constexpr bool isDrawingItem = true;
+
+    FillBezierCurve(const BezierCurveData& bezierCurveData)
+        : m_bezierCurveData(bezierCurveData)
+    {
+    }
+
+    Path path() const { return Path::from({m_bezierCurveData}); }
+    void apply(GraphicsContext&) const;
+    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
+    std::optional<FloatRect> localBounds(const GraphicsContext&) const { return path().fastBoundingRect(); }
+
+private:
+    BezierCurveData m_bezierCurveData;
 };
 
 #endif // ENABLE(INLINE_PATH_DATA)
@@ -2135,6 +2174,13 @@ public:
     static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = true;
 
+#if ENABLE(INLINE_PATH_DATA)
+    StrokeLine(const LineData& lineData)
+        : m_start(lineData.start)
+        , m_end(lineData.end)
+    {
+    }
+#endif
     StrokeLine(const FloatPoint& start, const FloatPoint& end)
         : m_start(start)
         , m_end(end)
@@ -2156,26 +2202,64 @@ private:
 
 #if ENABLE(INLINE_PATH_DATA)
 
-class StrokeInlinePath : public InlinePathDataStorage {
+class StrokeArc {
 public:
-    static constexpr ItemType itemType = ItemType::StrokeInlinePath;
+    static constexpr ItemType itemType = ItemType::StrokeArc;
     static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = true;
 
-    StrokeInlinePath(const StrokeInlinePath& other)
-        : InlinePathDataStorage(other.m_pathData)
+    StrokeArc(const ArcData& arcData)
+        : m_arcData(arcData)
     {
     }
 
-    StrokeInlinePath(const InlinePathData& pathData)
-        : InlinePathDataStorage(pathData)
-    {
-    }
-
+    Path path() const { return Path::from({m_arcData}); }
     void apply(GraphicsContext&) const;
-
     std::optional<FloatRect> globalBounds() const { return std::nullopt; }
     std::optional<FloatRect> localBounds(const GraphicsContext&) const;
+
+private:
+    ArcData m_arcData;
+};
+
+class StrokeQuadCurve {
+public:
+    static constexpr ItemType itemType = ItemType::StrokeQuadCurve;
+    static constexpr bool isInlineItem = true;
+    static constexpr bool isDrawingItem = true;
+
+    StrokeQuadCurve(const QuadCurveData& quadCurveData)
+        : m_quadCurveData(quadCurveData)
+    {
+    }
+
+    Path path() const { return Path::from({m_quadCurveData}); }
+    void apply(GraphicsContext&) const;
+    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
+    std::optional<FloatRect> localBounds(const GraphicsContext&) const;
+
+private:
+    QuadCurveData m_quadCurveData;
+};
+
+class StrokeBezierCurve {
+public:
+    static constexpr ItemType itemType = ItemType::StrokeBezierCurve;
+    static constexpr bool isInlineItem = true;
+    static constexpr bool isDrawingItem = true;
+
+    StrokeBezierCurve(const BezierCurveData& bezierCurveData)
+        : m_bezierCurveData(bezierCurveData)
+    {
+    }
+
+    Path path() const { return Path::from({m_bezierCurveData}); }
+    void apply(GraphicsContext&) const;
+    std::optional<FloatRect> globalBounds() const { return std::nullopt; }
+    std::optional<FloatRect> localBounds(const GraphicsContext&) const;
+
+private:
+    BezierCurveData m_bezierCurveData;
 };
 
 #endif // ENABLE(INLINE_PATH_DATA)
@@ -2430,8 +2514,13 @@ using DisplayListItem = Variant
     , Translate
 
 #if ENABLE(INLINE_PATH_DATA)
-    , FillInlinePath
-    , StrokeInlinePath
+    , FillLine
+    , FillArc
+    , FillQuadCurve
+    , FillBezierCurve
+    , StrokeArc
+    , StrokeQuadCurve
+    , StrokeBezierCurve
 #endif
 
 #if ENABLE(VIDEO)
@@ -2500,7 +2589,10 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::FillRoundedRect,
     WebCore::DisplayList::ItemType::FillRectWithRoundedHole,
 #if ENABLE(INLINE_PATH_DATA)
-    WebCore::DisplayList::ItemType::FillInlinePath,
+    WebCore::DisplayList::ItemType::FillLine,
+    WebCore::DisplayList::ItemType::FillArc,
+    WebCore::DisplayList::ItemType::FillQuadCurve,
+    WebCore::DisplayList::ItemType::FillBezierCurve,
 #endif
     WebCore::DisplayList::ItemType::FillPath,
     WebCore::DisplayList::ItemType::FillEllipse,
@@ -2515,7 +2607,9 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::StrokeRect,
     WebCore::DisplayList::ItemType::StrokeLine,
 #if ENABLE(INLINE_PATH_DATA)
-    WebCore::DisplayList::ItemType::StrokeInlinePath,
+    WebCore::DisplayList::ItemType::StrokeArc,
+    WebCore::DisplayList::ItemType::StrokeQuadCurve,
+    WebCore::DisplayList::ItemType::StrokeBezierCurve,
 #endif
     WebCore::DisplayList::ItemType::StrokePath,
     WebCore::DisplayList::ItemType::StrokeEllipse,

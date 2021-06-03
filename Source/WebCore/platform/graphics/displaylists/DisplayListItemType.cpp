@@ -119,8 +119,14 @@ static size_t sizeOfItemInBytes(ItemType type)
     case ItemType::FillRectWithRoundedHole:
         return sizeof(FillRectWithRoundedHole);
 #if ENABLE(INLINE_PATH_DATA)
-    case ItemType::FillInlinePath:
-        return sizeof(FillInlinePath);
+    case ItemType::FillLine:
+        return sizeof(FillLine);
+    case ItemType::FillArc:
+        return sizeof(FillArc);
+    case ItemType::FillQuadCurve:
+        return sizeof(FillQuadCurve);
+    case ItemType::FillBezierCurve:
+        return sizeof(FillBezierCurve);
 #endif
     case ItemType::FillPath:
         return sizeof(FillPath);
@@ -145,8 +151,12 @@ static size_t sizeOfItemInBytes(ItemType type)
     case ItemType::StrokeLine:
         return sizeof(StrokeLine);
 #if ENABLE(INLINE_PATH_DATA)
-    case ItemType::StrokeInlinePath:
-        return sizeof(StrokeInlinePath);
+    case ItemType::StrokeArc:
+        return sizeof(StrokeArc);
+    case ItemType::StrokeQuadCurve:
+        return sizeof(StrokeQuadCurve);
+    case ItemType::StrokeBezierCurve:
+        return sizeof(StrokeBezierCurve);
 #endif
     case ItemType::StrokePath:
         return sizeof(StrokePath);
@@ -229,7 +239,10 @@ bool isDrawingItem(ItemType type)
     case ItemType::FillCompositedRect:
     case ItemType::FillEllipse:
 #if ENABLE(INLINE_PATH_DATA)
-    case ItemType::FillInlinePath:
+    case ItemType::FillLine:
+    case ItemType::FillArc:
+    case ItemType::FillQuadCurve:
+    case ItemType::FillBezierCurve:
 #endif
     case ItemType::FillPath:
     case ItemType::FillRect:
@@ -243,7 +256,9 @@ bool isDrawingItem(ItemType type)
     case ItemType::PutPixelBuffer:
     case ItemType::StrokeEllipse:
 #if ENABLE(INLINE_PATH_DATA)
-    case ItemType::StrokeInlinePath:
+    case ItemType::StrokeArc:
+    case ItemType::StrokeQuadCurve:
+    case ItemType::StrokeBezierCurve:
 #endif
     case ItemType::StrokePath:
     case ItemType::StrokeRect:
@@ -324,7 +339,10 @@ bool isInlineItem(ItemType type)
     case ItemType::EndTransparencyLayer:
     case ItemType::FillEllipse:
 #if ENABLE(INLINE_PATH_DATA)
-    case ItemType::FillInlinePath:
+    case ItemType::FillLine:
+    case ItemType::FillArc:
+    case ItemType::FillQuadCurve:
+    case ItemType::FillBezierCurve:
 #endif
     case ItemType::FillRect:
     case ItemType::FlushContext:
@@ -347,7 +365,9 @@ bool isInlineItem(ItemType type)
     case ItemType::SetStrokeThickness:
     case ItemType::StrokeEllipse:
 #if ENABLE(INLINE_PATH_DATA)
-    case ItemType::StrokeInlinePath:
+    case ItemType::StrokeArc:
+    case ItemType::StrokeQuadCurve:
+    case ItemType::StrokeBezierCurve:
 #endif
     case ItemType::StrokeRect:
     case ItemType::StrokeLine:

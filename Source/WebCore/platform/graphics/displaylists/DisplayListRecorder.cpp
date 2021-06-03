@@ -372,7 +372,14 @@ void Recorder::fillPath(const Path& path)
 {
 #if ENABLE(INLINE_PATH_DATA)
     if (path.hasInlineData()) {
-        append<FillInlinePath>(path.inlineData());
+        if (path.hasInlineData<LineData>())
+            append<FillLine>(path.inlineData<LineData>());
+        else if (path.hasInlineData<ArcData>())
+            append<FillArc>(path.inlineData<ArcData>());
+        else if (path.hasInlineData<QuadCurveData>())
+            append<FillQuadCurve>(path.inlineData<QuadCurveData>());
+        else if (path.hasInlineData<BezierCurveData>())
+            append<FillBezierCurve>(path.inlineData<BezierCurveData>());
         return;
     }
 #endif
@@ -392,14 +399,15 @@ void Recorder::strokeRect(const FloatRect& rect, float lineWidth)
 void Recorder::strokePath(const Path& path)
 {
 #if ENABLE(INLINE_PATH_DATA)
-    if (path.hasInlineData<LineData>()) {
-        auto& lineData = path.inlineData<LineData>();
-        append<StrokeLine>(lineData.start, lineData.end);
-        return;
-    }
-
     if (path.hasInlineData()) {
-        append<StrokeInlinePath>(path.inlineData());
+        if (path.hasInlineData<LineData>())
+            append<StrokeLine>(path.inlineData<LineData>());
+        else if (path.hasInlineData<ArcData>())
+            append<StrokeArc>(path.inlineData<ArcData>());
+        else if (path.hasInlineData<QuadCurveData>())
+            append<StrokeQuadCurve>(path.inlineData<QuadCurveData>());
+        else if (path.hasInlineData<BezierCurveData>())
+            append<StrokeBezierCurve>(path.inlineData<BezierCurveData>());
         return;
     }
 #endif

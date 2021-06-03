@@ -576,7 +576,10 @@ std::optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend
     case DisplayList::ItemType::EndTransparencyLayer:
     case DisplayList::ItemType::FillEllipse:
 #if ENABLE(INLINE_PATH_DATA)
-    case DisplayList::ItemType::FillInlinePath:
+    case DisplayList::ItemType::FillLine:
+    case DisplayList::ItemType::FillArc:
+    case DisplayList::ItemType::FillQuadCurve:
+    case DisplayList::ItemType::FillBezierCurve:
 #endif
     case DisplayList::ItemType::FillRect:
     case DisplayList::ItemType::FlushContext:
@@ -599,7 +602,9 @@ std::optional<DisplayList::ItemHandle> WARN_UNUSED_RETURN RemoteRenderingBackend
     case DisplayList::ItemType::SetStrokeThickness:
     case DisplayList::ItemType::StrokeEllipse:
 #if ENABLE(INLINE_PATH_DATA)
-    case DisplayList::ItemType::StrokeInlinePath:
+    case DisplayList::ItemType::StrokeArc:
+    case DisplayList::ItemType::StrokeQuadCurve:
+    case DisplayList::ItemType::StrokeBezierCurve:
 #endif
     case DisplayList::ItemType::StrokeRect:
     case DisplayList::ItemType::StrokeLine:
