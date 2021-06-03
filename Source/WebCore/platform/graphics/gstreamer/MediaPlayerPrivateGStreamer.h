@@ -562,9 +562,6 @@ private:
     uint64_t m_totalVideoFrames { 0 };
     uint64_t m_droppedVideoFrames { 0 };
 
-    // This is set to true if no videoflip element has been added to the pipeline.
-    bool m_shouldHandleOrientationTags { false };
-
     DataMutex<TaskAtMediaTimeScheduler> m_TaskAtMediaTimeSchedulerDataMutex;
 
 private:

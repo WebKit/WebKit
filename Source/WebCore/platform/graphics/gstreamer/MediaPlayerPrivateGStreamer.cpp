@@ -2802,17 +2802,6 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
     if (!m_player->isVideoPlayer())
         return;
 
-    if (!m_canRenderingBeAccelerated) {
-        // If not using accelerated compositing, let GStreamer handle
-        // the image-orientation tag.
-        GstElement* videoFlip = makeGStreamerElement("videoflip", nullptr);
-        if (videoFlip) {
-            gst_util_set_object_arg(G_OBJECT(videoFlip), "method", "automatic");
-            g_object_set(m_pipeline.get(), "video-filter", videoFlip, nullptr);
-        } else
-            m_shouldHandleOrientationTags = true;
-    }
-
     GRefPtr<GstPad> videoSinkPad = adoptGRef(gst_element_get_static_pad(m_videoSink.get(), "sink"));
     if (videoSinkPad)
         g_signal_connect(videoSinkPad.get(), "notify::caps", G_CALLBACK(+[](GstPad* videoSinkPad, GParamSpec*, MediaPlayerPrivateGStreamer* player) {
@@ -3058,16 +3047,10 @@ void MediaPlayerPrivateGStreamer::updateVideoSizeAndOrientationFromCaps(const Gs
         return;
     }
 
-    if (m_shouldHandleOrientationTags)
-        setVideoSourceOrientation(getVideoOrientation(m_videoSink.get()));
-
-#if USE(TEXTURE_MAPPER_GL)
-    // When using accelerated compositing, if the video is tagged as rotated 90 or 270 degrees, swap width and height.
-    if (m_canRenderingBeAccelerated) {
-        if (m_videoSourceOrientation.usesWidthAsHeight())
-            originalSize = originalSize.transposedSize();
-    }
-#endif
+    setVideoSourceOrientation(getVideoOrientation(m_videoSink.get()));
+    // If the video is tagged as rotated 90 or 270 degrees, swap width and height.
+    if (m_videoSourceOrientation.usesWidthAsHeight())
+        originalSize = originalSize.transposedSize();
 
     GST_DEBUG_OBJECT(pipeline(), "Original video size: %dx%d", originalSize.width(), originalSize.height());
     GST_DEBUG_OBJECT(pipeline(), "Pixel aspect ratio: %d/%d", pixelAspectRatioNumerator, pixelAspectRatioDenominator);
@@ -3326,7 +3309,9 @@ void MediaPlayerPrivateGStreamer::paint(GraphicsContext& context, const FloatRec
     if (!gstImage)
         return;
 
-    context.drawImage(gstImage->image(), rect, gstImage->rect(), { gstImage->hasAlpha() ? CompositeOperator::SourceOver : CompositeOperator::Copy, m_shouldHandleOrientationTags ? m_videoSourceOrientation : ImageOrientation() });
+    FloatRect imageRect = m_videoSourceOrientation.usesWidthAsHeight() ? FloatRect(gstImage->rect().location(), gstImage->rect().size().transposedSize()) : gstImage->rect();
+
+    context.drawImage(gstImage->image(), rect, imageRect, { gstImage->hasAlpha() ? CompositeOperator::SourceOver : CompositeOperator::Copy, m_videoSourceOrientation });
 }
 
 #if USE(GSTREAMER_GL)
@@ -3428,10 +3413,6 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSinkGL()
     GstElement* sink = gst_element_factory_make("webkitglvideosink", nullptr);
     ASSERT(sink);
     webKitGLVideoSinkSetMediaPlayerPrivate(WEBKIT_GL_VIDEO_SINK(sink), this);
-
-    gboolean handlesRotationTags;
-    g_object_get(sink, "handles-rotation-tags", &handlesRotationTags, nullptr);
-    m_shouldHandleOrientationTags = !handlesRotationTags;
 
     return sink;
 }
