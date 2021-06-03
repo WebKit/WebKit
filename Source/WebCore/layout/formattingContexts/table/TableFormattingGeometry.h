@@ -45,7 +45,7 @@ public:
     IntrinsicWidthConstraints intrinsicWidthConstraintsForCell(const TableGrid::Cell&) const;
     InlineLayoutUnit usedBaselineForCell(const ContainerBox& cellBox) const;
     LayoutUnit horizontalSpaceForCellContent(const TableGrid::Cell&) const;
-    LayoutUnit verticalSpaceForCellContent(const TableGrid::Cell&) const;
+    LayoutUnit verticalSpaceForCellContent(const TableGrid::Cell&, std::optional<LayoutUnit> availableVerticalSpace) const;
 
 private:
     const TableFormattingContext& formattingContext() const { return downcast<TableFormattingContext>(FormattingGeometry::formattingContext()); }

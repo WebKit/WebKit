@@ -61,7 +61,7 @@ void TableFormattingContext::layoutInFlowContent(InvalidationState&, const Const
     // 1. Compute width and height for the grid.
     computeAndDistributeExtraSpace(availableHorizontalSpace, availableVerticalSpace);
     // 2. Finalize cells.
-    setUsedGeometryForCells(availableHorizontalSpace);
+    setUsedGeometryForCells(availableHorizontalSpace, availableVerticalSpace);
     // 3. Finalize rows.
     setUsedGeometryForRows(availableHorizontalSpace);
     // 4. Finalize sections.
@@ -76,7 +76,7 @@ LayoutUnit TableFormattingContext::usedContentHeight() const
     return bottom - top;
 }
 
-void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizontalSpace)
+void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizontalSpace, std::optional<LayoutUnit> availableVerticalSpace)
 {
     auto& grid = formattingState().tableGrid();
     auto& columnList = grid.columns().list();
@@ -111,7 +111,7 @@ void TableFormattingContext::setUsedGeometryForCells(LayoutUnit availableHorizon
             floatingStateForCellContent.clear();
             LayoutContext::createFormattingContext(cellBox, layoutState())->layoutInFlowContent(invalidationState, formattingGeometry.constraintsForInFlowContent(cellBox));
         }
-        cellBoxGeometry.setContentBoxHeight(formattingGeometry.verticalSpaceForCellContent(*cell));
+        cellBoxGeometry.setContentBoxHeight(formattingGeometry.verticalSpaceForCellContent(*cell, availableVerticalSpace));
 
         auto computeIntrinsicVerticalPaddingForCell = [&] {
             auto cellLogicalHeight = rowList[cell->startRow()].logicalHeight();
@@ -444,7 +444,7 @@ void TableFormattingContext::computeAndDistributeExtraSpace(LayoutUnit available
                     auto invalidationState = InvalidationState { };
                     LayoutContext::createFormattingContext(cellBox, layoutState())->layoutInFlowContent(invalidationState, formattingGeometry.constraintsForInFlowContent(cellBox));
                 }
-                cellBoxGeometry.setContentBoxHeight(formattingGeometry.verticalSpaceForCellContent(cell));
+                cellBoxGeometry.setContentBoxHeight(formattingGeometry.verticalSpaceForCellContent(cell, availableVerticalSpace));
             };
             layoutCellContent(slot.cell());
             if (slot.hasRowSpan())

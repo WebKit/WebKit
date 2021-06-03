@@ -72,7 +72,7 @@ private:
     TableFormattingContext::TableLayout tableLayout() const { return TableLayout(*this, formattingState().tableGrid()); }
 
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
-    void setUsedGeometryForCells(LayoutUnit availableHorizontalSpace);
+    void setUsedGeometryForCells(LayoutUnit availableHorizontalSpace, std::optional<LayoutUnit> availableVerticalSpace);
     void setUsedGeometryForRows(LayoutUnit availableHorizontalSpace);
     void setUsedGeometryForSections(const ConstraintsForInFlowContent&);
 

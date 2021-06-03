@@ -1,3 +1,15 @@
+2021-06-03  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Use the fixed table height value to resolve percent column height values
+        https://bugs.webkit.org/show_bug.cgi?id=226566
+
+        Reviewed by Antti Koivisto.
+
+        * fast/layoutformattingcontext/table-with-percent-columns-and-spacing-expected.html:
+        * fast/layoutformattingcontext/table-with-percent-columns-and-spacing.html:
+        * fast/layoutformattingcontext/table-with-percent-columns-simple-expected.html: Added.
+        * fast/layoutformattingcontext/table-with-percent-columns-simple.html: Added.
+
 2021-06-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GLIB] imported/w3c/web-platform-tests/resource-timing/resource_connection_reuse_mixed_content.html is failing since r277493

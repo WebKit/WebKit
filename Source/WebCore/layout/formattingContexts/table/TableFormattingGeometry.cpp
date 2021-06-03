@@ -180,11 +180,11 @@ LayoutUnit TableFormattingGeometry::horizontalSpaceForCellContent(const TableGri
     return logicalWidth;
 }
 
-LayoutUnit TableFormattingGeometry::verticalSpaceForCellContent(const TableGrid::Cell& cell) const
+LayoutUnit TableFormattingGeometry::verticalSpaceForCellContent(const TableGrid::Cell& cell, std::optional<LayoutUnit> availableVerticalSpace) const
 {
     auto& cellBox = cell.box();
     auto contentHeight = cellBoxContentHeight(cellBox);
-    auto computedHeight = this->computedHeight(cellBox);
+    auto computedHeight = this->computedHeight(cellBox, availableVerticalSpace);
     if (!computedHeight)
         return contentHeight;
     auto heightUsesBorderBox = layoutState().inQuirksMode() || cellBox.style().boxSizing() == BoxSizing::BorderBox;
