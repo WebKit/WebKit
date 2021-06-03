@@ -1,3 +1,12 @@
+2021-06-03  Amir Mark Jr  <amir_mark@apple.com>
+
+        [MacOS] animations/leak-document-with-css-animation.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=226598
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2021-06-03  Cameron McCormack  <heycam@apple.com>
 
         Prevent background-attachment:fixed from causing slow scrolling when in a position:fixed layer
