@@ -12,6 +12,7 @@
 #include "config.h"
 #include <wtf/text/StringBuilder.h>
 
+#include <wtf/text/StringBuilderInternals.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {

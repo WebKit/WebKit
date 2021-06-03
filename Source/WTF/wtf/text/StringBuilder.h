@@ -103,6 +103,8 @@ public:
     WTF_EXPORT_PRIVATE bool isAllASCII() const;
 
 private:
+    static unsigned expandedCapacity(unsigned capacity, unsigned requiredCapacity);
+
     template<typename AllocationCharacterType, typename CurrentCharacterType> void allocateBuffer(const CurrentCharacterType* currentCharacters, unsigned requiredCapacity);
     template<typename CharacterType> void reallocateBuffer(unsigned requiredCapacity);
     void reallocateBuffer(unsigned requiredCapacity);

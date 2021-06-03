@@ -1,3 +1,35 @@
+2021-06-03  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        REGRESSION(r277744): Broke build on s390x mainframes
+        https://bugs.webkit.org/show_bug.cgi?id=226497
+
+        Reviewed by Darin Adler.
+
+        The problem is we have a template defined in a C++ source file, used by multiple source
+        files. This is not valid C++, so let's split the templates defined in StringBuilder.cpp out
+        into a new StringBuilderInternals.h that we can #include in both StringBuilder.cpp and
+        StringBuilderJSON.cpp.
+
+        Ideally we would move the template defined in StringBuilderJSON.cpp as well, and then
+        eliminate StringBuilderJSON.cpp since there would only be one function left. But that file
+        has an MPL license. It's easier to leave it be to keep the license situation simpler.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::expandedCapacity):
+        (WTF::expandedCapacity): Deleted.
+        (WTF::StringBuilder::allocateBuffer): Deleted.
+        (WTF::StringBuilder::extendBufferForAppending): Deleted.
+        (WTF::StringBuilder::extendBufferForAppendingSlowCase): Deleted.
+        * wtf/text/StringBuilder.h:
+        * wtf/text/StringBuilderInternals.h: Added.
+        (WTF::StringBuilder::allocateBuffer):
+        (WTF::StringBuilder::reallocateBuffer):
+        (WTF::StringBuilder::extendBufferForAppending):
+        (WTF::StringBuilder::extendBufferForAppendingSlowCase):
+        * wtf/text/StringBuilderJSON.cpp:
+
 2021-06-02  Chris Dumez  <cdumez@apple.com>
 
         Drop WTF::Vector overloads taking index as Checked<size_t>

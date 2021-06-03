@@ -654,6 +654,7 @@
 		A8A47323151A825B004123FF /* StringBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringBuffer.h; sourceTree = "<group>"; };
 		A8A47324151A825B004123FF /* StringBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringBuilder.cpp; sourceTree = "<group>"; };
 		A8A47325151A825B004123FF /* StringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringBuilder.h; sourceTree = "<group>"; };
+		A8A47325151A825B004123EE /* StringBuilderInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringBuilderInternals.h; sourceTree = "<group>"; };
 		A8A47326151A825B004123FF /* StringConcatenate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringConcatenate.h; sourceTree = "<group>"; };
 		A8A47327151A825B004123FF /* StringHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringHash.h; sourceTree = "<group>"; };
 		A8A47328151A825B004123FF /* StringImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringImpl.cpp; sourceTree = "<group>"; };
@@ -1424,6 +1425,7 @@
 				A8A47323151A825B004123FF /* StringBuffer.h */,
 				A8A47324151A825B004123FF /* StringBuilder.cpp */,
 				A8A47325151A825B004123FF /* StringBuilder.h */,
+				A8A47325151A825B004123EE /* StringBuilderInternals.h */,
 				E38D6E261F5522E300A75CC4 /* StringBuilderJSON.cpp */,
 				430B47871AAAAC1A001223DA /* StringCommon.h */,
 				A8A47326151A825B004123FF /* StringConcatenate.h */,

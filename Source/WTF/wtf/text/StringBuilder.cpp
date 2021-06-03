@@ -28,12 +28,13 @@
 #include <wtf/text/StringBuilder.h>
 
 #include <wtf/dtoa.h>
+#include <wtf/text/StringBuilderInternals.h>
 
 namespace WTF {
 
 static constexpr unsigned maxCapacity = String::MaxLength;
 
-static unsigned expandedCapacity(unsigned capacity, unsigned requiredCapacity)
+unsigned StringBuilder::expandedCapacity(unsigned capacity, unsigned requiredCapacity)
 {
     static constexpr unsigned minimumCapacity = 16;
     return std::max(requiredCapacity, std::max(minimumCapacity, std::min(capacity * 2, maxCapacity)));
@@ -102,43 +103,6 @@ void StringBuilder::shrink(unsigned newLength)
     m_string = StringImpl::createSubstringSharingImpl(*m_string.impl(), 0, newLength);
 }
 
-// Allocate a new buffer, copying in currentCharacters (these may come from either m_string or m_buffer.
-template<typename AllocationCharacterType, typename CurrentCharacterType> void StringBuilder::allocateBuffer(const CurrentCharacterType* currentCharacters, unsigned requiredCapacity)
-{
-    AllocationCharacterType* bufferCharacters;
-    auto buffer = StringImpl::tryCreateUninitialized(requiredCapacity, bufferCharacters);
-    if (UNLIKELY(!buffer)) {
-        didOverflow();
-        return;
-    }
-
-    ASSERT(!hasOverflowed());
-    StringImpl::copyCharacters(bufferCharacters, currentCharacters, m_length);
-
-    m_buffer = WTFMove(buffer);
-    m_string = { };
-}
-
-template<typename CharacterType> void StringBuilder::reallocateBuffer(unsigned requiredCapacity)
-{
-    // If the buffer has only one ref (by this StringBuilder), reallocate it.
-    if (m_buffer) {
-        m_string = { }; // Clear the string to remove the reference to m_buffer if any before checking the reference count of m_buffer.
-        if (m_buffer->hasOneRef()) {
-            CharacterType* bufferCharacters;
-            auto buffer = StringImpl::tryReallocate(m_buffer.releaseNonNull(), requiredCapacity, bufferCharacters);
-            if (UNLIKELY(!buffer)) {
-                didOverflow();
-                return;
-            }
-            m_buffer = WTFMove(*buffer);
-            return;
-        }
-    }
-
-    allocateBuffer<CharacterType>(characters<CharacterType>(), requiredCapacity);
-}
-
 void StringBuilder::reallocateBuffer(unsigned requiredCapacity)
 {
     if (is8Bit())
@@ -166,31 +130,6 @@ void StringBuilder::reserveCapacity(unsigned newCapacity)
         }
     }
     ASSERT(hasOverflowed() || !newCapacity || m_buffer->length() >= newCapacity);
-}
-
-// Make 'additionalLength' additional capacity be available in m_buffer, update m_string & m_length to use,
-// that capacity and return a pointer to the newly allocated storage so the caller can write characters there.
-// Returns nullptr if allocation fails, length overflows, or if total capacity is 0 so no buffer is needed.
-// The caller has the responsibility for checking that CharacterType is the type of the existing buffer.
-template<typename CharacterType> CharacterType* StringBuilder::extendBufferForAppending(unsigned requiredLength)
-{
-    if (m_buffer && requiredLength <= m_buffer->length()) {
-        m_string = { };
-        return const_cast<CharacterType*>(m_buffer->characters<CharacterType>()) + std::exchange(m_length, requiredLength);
-    }
-    return extendBufferForAppendingSlowCase<CharacterType>(requiredLength);
-}
-
-// Shared by the other extendBuffer functions.
-template<typename CharacterType> CharacterType* StringBuilder::extendBufferForAppendingSlowCase(unsigned requiredLength)
-{
-    ASSERT(!hasOverflowed());
-    if (!requiredLength)
-        return nullptr;
-    reallocateBuffer(expandedCapacity(capacity(), requiredLength));
-    if (UNLIKELY(hasOverflowed()))
-        return nullptr;
-    return const_cast<CharacterType*>(m_buffer->characters<CharacterType>()) + std::exchange(m_length, requiredLength);
 }
 
 // Alterative extendBufferForAppending that can be called from the header without inlining.

@@ -346,6 +346,7 @@ set(WTF_PUBLIC_HEADERS
     text/OrdinalNumber.h
     text/StringBuffer.h
     text/StringBuilder.h
+    text/StringBuilderInternals.h
     text/StringCommon.h
     text/StringConcatenate.h
     text/StringConcatenateNumbers.h
