@@ -1,5 +1,17 @@
 2021-06-02  Robin Morisset  <rmorisset@apple.com>
 
+        B3MoveConstants should filter directly on Values, and only create ValueKeys when useful
+        https://bugs.webkit.org/show_bug.cgi?id=226420
+
+        Reviewed by Phil Pizlo.
+
+        I did a few runs of JetStream2 to measure results, the time spent in B3MoveConstants goes from 160-180ms to 100-110ms.
+        The total time spent in B3+Air is in the 6 to 8s range, so this is approximately a 1% speedup.
+
+        * b3/B3MoveConstants.cpp:
+
+2021-06-02  Robin Morisset  <rmorisset@apple.com>
+
         Merge B3::StackSlot and Air::StackSlot
         https://bugs.webkit.org/show_bug.cgi?id=226362
 
