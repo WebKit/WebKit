@@ -2309,8 +2309,14 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 - (void)_addAppHighlight
 {
     THROW_IF_SUSPENDED;
+    [self _addAppHighlightInNewGroup:NO originatedInApp:YES];
+}
+
+- (void)_addAppHighlightInNewGroup:(BOOL)newGroup originatedInApp:(BOOL)originatedInApp
+{
+    THROW_IF_SUSPENDED;
 #if ENABLE(APP_HIGHLIGHTS)
-    _page->createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::No, WebCore::HighlightRequestOriginatedInApp::Yes);
+    _page->createAppHighlightInSelectedRange(newGroup ? WebCore::CreateNewGroupForHighlight::Yes : WebCore::CreateNewGroupForHighlight::No, originatedInApp ? WebCore::HighlightRequestOriginatedInApp::Yes : WebCore::HighlightRequestOriginatedInApp::No);
 #endif
 }
 

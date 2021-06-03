@@ -1,3 +1,19 @@
+2021-06-03  Matt Mokary  <mmokary@apple.com>
+
+        Add a way to specify origin and destination of app highlight
+        https://bugs.webkit.org/show_bug.cgi?id=226607
+
+        Reviewed by Megan Gardner.
+
+        Expose a method for adding app highlights which allows the caller to specify origin and destination of the new
+        highlight. Update the existing method, which specifies originatedInApp: true, newGroup: false, to use this new
+        method.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _addAppHighlight]):
+        (-[WKWebView _addAppHighlightInNewGroup:originatedInApp:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2021-06-03  Jean-Yves Avenard  <jya@apple.com>
 
         Add MediaSessionCoordinator test to ensure that disconnection on the private side is properly handled.
