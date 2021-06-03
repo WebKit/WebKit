@@ -1072,7 +1072,8 @@ static TextStream& operator<<(TextStream& ts, const BeginTransparencyLayer& item
 
 void EndTransparencyLayer::apply(GraphicsContext& context) const
 {
-    context.endTransparencyLayer();
+    if (context.isInTransparencyLayer())
+        context.endTransparencyLayer();
 }
 
 #if USE(CG)
