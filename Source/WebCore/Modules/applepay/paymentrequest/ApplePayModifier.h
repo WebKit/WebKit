@@ -27,6 +27,7 @@
 
 #if ENABLE(APPLE_PAY) && ENABLE(PAYMENT_REQUEST)
 
+#include "ApplePayLineItem.h"
 #include "ApplePayPaymentMethodType.h"
 #include "ApplePayShippingMethod.h"
 
@@ -38,7 +39,9 @@ namespace WebCore {
 
 struct ApplePayModifier {
     std::optional<ApplePayPaymentMethodType> paymentMethodType;
-    Vector<ApplePayShippingMethod> additionalShippingOptions;
+    std::optional<ApplePayLineItem> total;
+    Vector<ApplePayLineItem> additionalLineItems;
+    Vector<ApplePayShippingMethod> additionalShippingMethods;
 
 #if defined(ApplePayModifierAdditions_members)
     ApplePayModifierAdditions_members

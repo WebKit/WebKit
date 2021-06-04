@@ -311,15 +311,10 @@ ExceptionOr<Vector<ApplePayShippingMethod>> ApplePayPaymentHandler::computeShipp
     if (modifierException.hasException())
         return modifierException.releaseException();
     if (auto modifierData = modifierException.releaseReturnValue())
-        shippingOptions.appendVector(WTFMove(std::get<1>(*modifierData).additionalShippingOptions));
+        shippingOptions.appendVector(WTFMove(std::get<1>(*modifierData).additionalShippingMethods));
 
     return WTFMove(shippingOptions);
 }
-
-
-#if !ENABLE(APPLE_PAY_LINE_ITEM_DATA)
-static void merge(ApplePayLineItem&, ApplePayModifier&&) { }
-#endif // !ENABLE(APPLE_PAY_LINE_ITEM_DATA)
 
 ExceptionOr<std::tuple<ApplePayLineItem, Vector<ApplePayLineItem>>> ApplePayPaymentHandler::computeTotalAndLineItems() const
 {
@@ -357,7 +352,10 @@ ExceptionOr<std::tuple<ApplePayLineItem, Vector<ApplePayLineItem>>> ApplePayPaym
             return additionalDisplayItems.releaseException();
         lineItems.appendVector(additionalDisplayItems.releaseReturnValue());
 
-        merge(total, WTFMove(applePayModifier));
+        if (applePayModifier.total)
+            total = *applePayModifier.total;
+
+        lineItems.appendVector(applePayModifier.additionalLineItems);
     }
 
     return {{ WTFMove(total), WTFMove(lineItems) }};
