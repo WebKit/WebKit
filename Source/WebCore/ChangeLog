@@ -1,3 +1,20 @@
+2021-06-03  Alan Bujtas  <zalan@apple.com>
+
+        Crack in hero text on https://www.apple.com/mac-mini/
+        https://bugs.webkit.org/show_bug.cgi?id=226610
+        <rdar://71246655>
+
+        Reviewed by Simon Fraser.
+
+        FillBox::Text's mask rect needs pixel snapping so that we can position/size it properly on non-1x screens.
+
+        Test: fast/clip/hidpi-background-clip-with-text-fill-color.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintMaskForTextFillBox):
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderBoxModelObject.h:
+
 2021-06-03  Jean-Yves Avenard  <jya@apple.com>
 
         REGRESSION(r278336): fast/dom/Window/property-access-on-cached-window-after-frame-removed.html (layout-test) is a constant crash

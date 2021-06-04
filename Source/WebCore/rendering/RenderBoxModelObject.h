@@ -326,7 +326,7 @@ private:
     void drawBoxSideFromPath(GraphicsContext&, const LayoutRect&, const Path&, const BorderEdges&,
         float thickness, float drawThickness, BoxSide, const RenderStyle&,
         Color, BorderStyle, BackgroundBleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
-    void paintMaskForTextFillBox(ImageBuffer*, const IntRect&, LegacyInlineFlowBox*, const LayoutRect&);
+    void paintMaskForTextFillBox(ImageBuffer*, const FloatRect&, LegacyInlineFlowBox*, const LayoutRect&);
 };
 
 } // namespace WebCore
