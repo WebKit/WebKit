@@ -45,6 +45,7 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/CallbackAggregator.h>
+#import <wtf/FileSystem.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
@@ -92,6 +93,9 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     setSharedHTTPCookieStorage(parameters.uiProcessCookieStorageIdentifier);
 #endif
+
+    // Allow the network process to materialize files stored in the cloud so that loading/reading such files actually succeeds.
+    FileSystem::setAllowsMaterializingDatalessFiles(true, FileSystem::PolicyScope::Process);
 
     // FIXME: Most of what this function does for cache size gets immediately overridden by setCacheModel().
     // - memory cache size passed from UI process is always ignored;

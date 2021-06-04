@@ -181,6 +181,35 @@ NSString *createTemporaryDirectory(NSString *directoryPrefix)
 bool deleteNonEmptyDirectory(const String& path)
 {
     return [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
+
+static int toIOPolicyScope(PolicyScope scope)
+{
+    switch (scope) {
+    case PolicyScope::Process:
+        return IOPOL_SCOPE_PROCESS;
+    case PolicyScope::Thread:
+        return IOPOL_SCOPE_THREAD;
+    }
+}
+
+bool setAllowsMaterializingDatalessFiles(bool allow, PolicyScope scope)
+{
+    if (setiopolicy_np(IOPOL_TYPE_VFS_MATERIALIZE_DATALESS_FILES, toIOPolicyScope(scope), allow ? IOPOL_MATERIALIZE_DATALESS_FILES_ON : IOPOL_MATERIALIZE_DATALESS_FILES_OFF) == -1) {
+        LOG_ERROR("FileSystem::setAllowsMaterializingDatalessFiles(%d): setiopolicy_np call failed, errno: %d", allow, errno);
+        return false;
+    }
+    return true;
+}
+
+Optional<bool> allowsMaterializingDatalessFiles(PolicyScope scope)
+{
+    int ret = getiopolicy_np(IOPOL_TYPE_VFS_MATERIALIZE_DATALESS_FILES, toIOPolicyScope(scope));
+    if (ret == IOPOL_MATERIALIZE_DATALESS_FILES_ON)
+        return true;
+    if (ret == IOPOL_MATERIALIZE_DATALESS_FILES_OFF)
+        return false;
+    LOG_ERROR("FileSystem::allowsMaterializingDatalessFiles(): getiopolicy_np call failed, errno: %d", errno);
+    return WTF::nullopt;
 }
 
 #if PLATFORM(IOS_FAMILY)
