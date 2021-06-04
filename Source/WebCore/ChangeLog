@@ -1,3 +1,17 @@
+2021-06-04  Chris Dumez  <cdumez@apple.com>
+
+        Stop using legacy MainThreadTaskQueue in Document::didLogMessage()
+        https://bugs.webkit.org/show_bug.cgi?id=226645
+
+        Reviewed by Darin Adler.
+
+        Stop using legacy MainThreadTaskQueue in Document::didLogMessage() and use the HTML
+        event loop instead.
+
+        * dom/Document.cpp:
+        (WebCore::Document::didLogMessage):
+        * dom/Document.h:
+
 2021-06-04  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (maybe r276882): custom properties not available on host on initial paint

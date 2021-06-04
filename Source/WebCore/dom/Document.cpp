@@ -8514,11 +8514,10 @@ void Document::didLogMessage(const WTFLogChannel& channel, WTFLogLevel level, Ve
             JSC::ConsoleClient::printConsoleMessage(message->source(), message->type(), message->level(), message->toString(), message->url(), message->line(), message->column());
     }
 
-    m_logMessageTaskQueue.enqueueTask([this, message = WTFMove(message)]() mutable {
-        if (!this->page())
+    eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakThis = makeWeakPtr(*this), message = WTFMove(message)]() mutable {
+        if (!weakThis || !weakThis->page())
             return;
-
-        addConsoleMessage(WTFMove(message));
+        weakThis->addConsoleMessage(WTFMove(message));
     });
 }
 
