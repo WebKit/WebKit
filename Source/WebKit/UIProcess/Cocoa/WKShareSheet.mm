@@ -37,6 +37,7 @@
 #import <wtf/Scope.h>
 #import <wtf/UUID.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/WorkQueue.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
@@ -89,6 +90,32 @@
     return self;
 }
 
+static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArray, const Vector<WebCore::RawFile>& files, NSURL* temporaryDirectory, CompletionHandler<void(RetainPtr<NSMutableArray>&&)>&& completionHandler)
+{
+    struct FileWriteTask {
+        String fileName;
+        RetainPtr<NSData> fileData;
+    };
+    Vector<FileWriteTask> fileWriteTasks;
+    for (auto& file : files)
+        fileWriteTasks.append({ file.fileName.isolatedCopy(), file.fileData->createNSData() });
+
+    auto queue = WorkQueue::create("com.apple.WebKit.WKShareSheet.ShareableFileWriter");
+    queue->dispatch([shareDataArray = WTFMove(shareDataArray), fileWriteTasks = WTFMove(fileWriteTasks), temporaryDirectory = retainPtr(temporaryDirectory), completionHandler = WTFMove(completionHandler)]() mutable {
+        for (auto& fileWriteTask : fileWriteTasks) {
+            NSURL *fileURL = [WKShareSheet writeFileToShareableURL:WebCore::ResourceResponseBase::sanitizeSuggestedFilename(fileWriteTask.fileName) data:fileWriteTask.fileData.get() temporaryDirectory:temporaryDirectory.get()];
+            if (!fileURL) {
+                shareDataArray = nullptr;
+                break;
+            }
+            [shareDataArray addObject:fileURL];
+        }
+        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), shareDataArray = WTFMove(shareDataArray)]() mutable {
+            completionHandler(WTFMove(shareDataArray));
+        });
+    });
+}
+
 - (void)presentWithParameters:(const WebCore::ShareDataWithParsedURL &)data inRect:(WTF::Optional<WebCore::FloatRect>)rect completionHandler:(WTF::CompletionHandler<void(bool)>&&)completionHandler
 {
     auto shareDataArray = adoptNS([[NSMutableArray alloc] init]);
@@ -116,35 +143,14 @@
         return;
     }
     
-    if (data.files.size()) {
+    if (!data.files.isEmpty()) {
         _temporaryFileShareDirectory = [WKShareSheet createTemporarySharingDirectory];
-        
-        auto fileWriteGroup = adoptOSObject(dispatch_group_create());
-        auto queue = adoptOSObject(dispatch_queue_create("com.apple.WebKit.WKShareSheet.ShareableFileWriter", DISPATCH_QUEUE_SERIAL));
-        
-        __block bool successful = true;
-        
-        int index = 0;
-        for (auto file : data.files) {
-            dispatch_group_async(fileWriteGroup.get(), queue.get(), ^{
-                if (!successful)
-                    return;
-                NSURL *fileURL = [WKShareSheet writeFileToShareableURL:WebCore::ResourceResponseBase::sanitizeSuggestedFilename(file.fileName) data:file.fileData->createNSData().get() temporaryDirectory:_temporaryFileShareDirectory.get()];
-                if (!fileURL) {
-                    successful = false;
-                    return;
-                }
-                [shareDataArray addObject:fileURL];
-            });
-            index++;
-        }
-        
-        dispatch_group_notify(fileWriteGroup.get(), dispatch_get_main_queue(), ^{
-            if (!successful) {
-                [self dismiss];
+        appendFilesAsShareableURLs(WTFMove(shareDataArray), data.files, _temporaryFileShareDirectory.get(), [retainedSelf = retainPtr(self), rect = WTFMove(rect)](RetainPtr<NSMutableArray>&& shareDataArray) mutable {
+            if (!shareDataArray) {
+                [retainedSelf dismiss];
                 return;
             }
-            [self presentWithShareDataArray:shareDataArray.get() inRect:rect];
+            [retainedSelf presentWithShareDataArray:shareDataArray.get() inRect:rect];
         });
         return;
     }

@@ -1,5 +1,47 @@
 2021-06-04  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r278441. rdar://problem/78875140
+
+    Fix thread safety issues in [WKShareSheet presentWithParameters]
+    https://bugs.webkit.org/show_bug.cgi?id=226611
+    <rdar://77736001>
+    
+    Reviewed by Ryosuke Niwa.
+    
+    The code in [WKShareSheet presentWithParameters] was passing WebCore::RawFile objects to another thread.
+    This wasn't safe since WebCore::RawFile contains a WTF::String and a SharedBuffer, both of which are not
+    thread safe. Fix this by creating an isolated copy of the fileName String and converting the SharedBuffer
+    to a NSData before passing them to the background thread.
+    
+    Also rewrite the code from ObjC to C++ because I felt it was clearer and less error-prone.
+    
+    * UIProcess/Cocoa/WKShareSheet.mm:
+    (appendFilesAsShareableURLs):
+    (-[WKShareSheet presentWithParameters:inRect:completionHandler:]):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@278441 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-06-03  Chris Dumez  <cdumez@apple.com>
+
+            Fix thread safety issues in [WKShareSheet presentWithParameters]
+            https://bugs.webkit.org/show_bug.cgi?id=226611
+            <rdar://77736001>
+
+            Reviewed by Ryosuke Niwa.
+
+            The code in [WKShareSheet presentWithParameters] was passing WebCore::RawFile objects to another thread.
+            This wasn't safe since WebCore::RawFile contains a WTF::String and a SharedBuffer, both of which are not
+            thread safe. Fix this by creating an isolated copy of the fileName String and converting the SharedBuffer
+            to a NSData before passing them to the background thread.
+
+            Also rewrite the code from ObjC to C++ because I felt it was clearer and less error-prone.
+
+            * UIProcess/Cocoa/WKShareSheet.mm:
+            (appendFilesAsShareableURLs):
+            (-[WKShareSheet presentWithParameters:inRect:completionHandler:]):
+
+2021-06-04  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r277873. rdar://problem/78875406
 
     [Cocoa] REGRESSION(Sandbox): Font smoothing within Safari doesn't seem to respect AppleFontSmoothing
