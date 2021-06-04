@@ -3033,7 +3033,7 @@ parseMethod:
                 semanticFailIfTrue(*ident == propertyNames.constructorPrivateField, "Cannot declare a private method named '#constructor'");
 
                 if (tag == ClassElementTag::Static)
-                    declaresStaticPrivateAccessor = true;
+                    declaresStaticPrivateMethod = true;
                 else
                     declaresPrivateMethod = true;
 
