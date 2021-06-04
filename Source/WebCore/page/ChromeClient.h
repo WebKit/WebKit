@@ -491,7 +491,7 @@ public:
 
     virtual bool shouldUseTiledBackingForFrameView(const FrameView&) const { return false; }
 
-    virtual void isPlayingMediaDidChange(MediaProducer::MediaStateFlags, uint64_t) { }
+    virtual void isPlayingMediaDidChange(MediaProducer::MediaStateFlags) { }
     virtual void handleAutoplayEvent(AutoplayEvent, OptionSet<AutoplayEventFlags>) { }
 
 #if ENABLE(WEB_CRYPTO)

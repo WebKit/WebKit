@@ -1487,7 +1487,7 @@ public:
     bool isShowingNavigationGestureSnapshot() const { return m_isShowingNavigationGestureSnapshot; }
 
     bool isPlayingAudio() const { return !!(m_mediaState & WebCore::MediaProducer::MediaState::IsPlayingAudio); }
-    void isPlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags, uint64_t);
+    void isPlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags);
     void updateReportedMediaCaptureState();
 
     enum class CanDelayNotification { No, Yes };

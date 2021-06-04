@@ -2134,7 +2134,7 @@ void Page::storageBlockingStateChanged()
         view->storageBlockingStateChanged();
 }
 
-void Page::updateIsPlayingMedia(uint64_t sourceElementID)
+void Page::updateIsPlayingMedia()
 {
     MediaProducer::MediaStateFlags state;
     forEachDocument([&](auto& document) {
@@ -2146,7 +2146,7 @@ void Page::updateIsPlayingMedia(uint64_t sourceElementID)
 
     m_mediaState = state;
 
-    chrome().client().isPlayingMediaDidChange(state, sourceElementID);
+    chrome().client().isPlayingMediaDidChange(state);
 }
 
 void Page::schedulePlaybackControlsManagerUpdate()

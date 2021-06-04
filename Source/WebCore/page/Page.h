@@ -711,7 +711,7 @@ public:
     bool usesEphemeralSession() const { return m_sessionID.isEphemeral(); }
 
     MediaProducer::MediaStateFlags mediaState() const { return m_mediaState; }
-    void updateIsPlayingMedia(uint64_t);
+    void updateIsPlayingMedia();
     MediaProducer::MutedStateFlags mutedState() const { return m_mutedState; }
     bool isAudioMuted() const { return m_mutedState.contains(MediaProducer::MutedState::AudioIsMuted); }
     bool isMediaCaptureMuted() const { return m_mutedState.containsAny(MediaProducer::MediaStreamCaptureIsMuted); };

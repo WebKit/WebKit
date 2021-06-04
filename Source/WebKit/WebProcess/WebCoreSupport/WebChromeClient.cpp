@@ -1233,9 +1233,9 @@ bool WebChromeClient::shouldUseTiledBackingForFrameView(const FrameView& frameVi
     return m_page.drawingArea()->shouldUseTiledBackingForFrameView(frameView);
 }
 
-void WebChromeClient::isPlayingMediaDidChange(MediaProducer::MediaStateFlags state, uint64_t sourceElementID)
+void WebChromeClient::isPlayingMediaDidChange(MediaProducer::MediaStateFlags state)
 {
-    m_page.send(Messages::WebPageProxy::IsPlayingMediaDidChange(state, sourceElementID));
+    m_page.send(Messages::WebPageProxy::IsPlayingMediaDidChange(state));
 }
 
 void WebChromeClient::handleAutoplayEvent(AutoplayEvent event, OptionSet<AutoplayEventFlags> flags)

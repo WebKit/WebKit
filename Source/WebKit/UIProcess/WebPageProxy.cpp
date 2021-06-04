@@ -9295,7 +9295,7 @@ void WebPageProxy::navigationGestureSnapshotWasRemoved()
     m_navigationClient->didRemoveNavigationGestureSnapshot(*this);
 }
 
-void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags newState, uint64_t sourceElementID)
+void WebPageProxy::isPlayingMediaDidChange(MediaProducer::MediaStateFlags newState)
 {
 #if PLATFORM(IOS_FAMILY)
     if (!m_process->throttler().shouldBeRunnable())

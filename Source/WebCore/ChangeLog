@@ -1,3 +1,28 @@
+2021-06-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove the unused `sourceElementID` argument in `Document::updateIsPlayingMedia` and related code
+        https://bugs.webkit.org/show_bug.cgi?id=226650
+
+        Reviewed by Chris Dumez.
+
+        This `uint64_t` argument is currently not used for anything. It was originally added in r188030 with the purpose
+        of mapping to HTMLMediaElements via `HTMLMediaElement::elementWithID()`, but that mechanism was entirely removed
+        in r267885.
+
+        It appears that this code has been superceded by (relatively recent) support for the Media Session API.
+
+        No change in behavior.
+
+        * dom/Document.cpp:
+        (WebCore::Document::willBeRemovedFromFrame):
+        (WebCore::Document::updateIsPlayingMedia):
+        * dom/Document.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::isPlayingMediaDidChange):
+        * page/Page.cpp:
+        (WebCore::Page::updateIsPlayingMedia):
+        * page/Page.h:
+
 2021-06-04  Chris Dumez  <cdumez@apple.com>
 
         Port MediaKeySystemAccess & MediaCapabilities to the HTML event loop

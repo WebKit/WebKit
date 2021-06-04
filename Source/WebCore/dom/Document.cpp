@@ -2653,7 +2653,7 @@ void Document::willBeRemovedFromFrame()
 
     if (page() && !m_mediaState.isEmpty()) {
         m_mediaState = MediaProducer::IsNotPlaying;
-        page()->updateIsPlayingMedia(HTMLMediaElementInvalidID);
+        page()->updateIsPlayingMedia();
     }
 
     selection().willBeRemovedFromFrame();
@@ -4343,7 +4343,7 @@ void Document::noteUserInteractionWithMediaElement()
     updateIsPlayingMedia();
 }
 
-void Document::updateIsPlayingMedia(uint64_t sourceElementID)
+void Document::updateIsPlayingMedia()
 {
     ASSERT(!m_audioProducers.hasNullReferences());
     MediaProducer::MediaStateFlags state;
@@ -4368,8 +4368,8 @@ void Document::updateIsPlayingMedia(uint64_t sourceElementID)
     
     m_mediaState = state;
 
-    if (page())
-        page()->updateIsPlayingMedia(sourceElementID);
+    if (auto* page = this->page())
+        page->updateIsPlayingMedia();
 
 #if ENABLE(MEDIA_STREAM)
     if (captureStateChanged)
