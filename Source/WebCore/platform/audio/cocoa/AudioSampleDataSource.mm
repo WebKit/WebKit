@@ -213,12 +213,14 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t 
 
     ASSERT(buffer.mNumberBuffers == m_ringBuffer->channelCount());
     if (buffer.mNumberBuffers != m_ringBuffer->channelCount()) {
-        AudioSampleBufferList::zeroABL(buffer, byteCount);
+        if (mode != AudioSampleDataSource::Mix)
+            AudioSampleBufferList::zeroABL(buffer, byteCount);
         return false;
     }
 
     if (!m_ringBuffer || m_muted || m_inputSampleOffset == MediaTime::invalidTime()) {
-        AudioSampleBufferList::zeroABL(buffer, byteCount);
+        if (mode != AudioSampleDataSource::Mix)
+            AudioSampleBufferList::zeroABL(buffer, byteCount);
         return false;
     }
 
@@ -229,7 +231,8 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t 
     if (m_shouldComputeOutputSampleOffset) {
         uint64_t buffered = endFrame - startFrame;
         if (buffered < sampleCount * 2 || (m_endFrameWhenNotEnoughData && m_endFrameWhenNotEnoughData == endFrame)) {
-            AudioSampleBufferList::zeroABL(buffer, byteCount);
+            if (mode != AudioSampleDataSource::Mix)
+                AudioSampleBufferList::zeroABL(buffer, byteCount);
             return false;
         }
 
@@ -263,7 +266,8 @@ bool AudioSampleDataSource::pullSamplesInternal(AudioBufferList& buffer, size_t 
                 ALWAYS_LOG(logIdentifier, "updating offset to ", outputSampleOffset);
             });
         }
-        AudioSampleBufferList::zeroABL(buffer, byteCount);
+        if (mode != AudioSampleDataSource::Mix)
+            AudioSampleBufferList::zeroABL(buffer, byteCount);
         return false;
     }
 
@@ -335,7 +339,8 @@ bool AudioSampleDataSource::pullSamples(AudioBufferList& buffer, size_t sampleCo
 {
     if (!m_ringBuffer) {
         size_t byteCount = sampleCount * m_outputDescription->bytesPerFrame();
-        AudioSampleBufferList::zeroABL(buffer, byteCount);
+        if (mode != AudioSampleDataSource::Mix)
+            AudioSampleBufferList::zeroABL(buffer, byteCount);
         return false;
     }
 
