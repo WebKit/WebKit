@@ -88,21 +88,18 @@ public:
 
     WEBCORE_EXPORT virtual bool handleWheelEventForScrolling(const PlatformWheelEvent&, std::optional<WheelScrollGestureState>);
 
-    bool usesScrollSnap() const;
-
 #if ENABLE(CSS_SCROLL_SNAP)
-    WEBCORE_EXPORT const LayoutScrollSnapOffsetsInfo* snapOffsetInfo() const;
     virtual void updateSnapOffsets() { };
+    WEBCORE_EXPORT const LayoutScrollSnapOffsetsInfo* snapOffsetsInfo() const;
     void setScrollSnapOffsetInfo(const LayoutScrollSnapOffsetsInfo&);
     void clearSnapOffsets();
-    unsigned currentHorizontalSnapPointIndex() const { return m_currentHorizontalSnapPointIndex; }
-    void setCurrentHorizontalSnapPointIndex(unsigned index) { m_currentHorizontalSnapPointIndex = index; }
-    unsigned currentVerticalSnapPointIndex() const { return m_currentVerticalSnapPointIndex; }
-    void setCurrentVerticalSnapPointIndex(unsigned index) { m_currentVerticalSnapPointIndex = index; }
-    IntPoint nearestActiveSnapPoint(const IntPoint&);
+    WEBCORE_EXPORT unsigned currentHorizontalSnapPointIndex() const;
+    WEBCORE_EXPORT unsigned currentVerticalSnapPointIndex() const;
+    WEBCORE_EXPORT void setCurrentHorizontalSnapPointIndex(unsigned);
+    WEBCORE_EXPORT void setCurrentVerticalSnapPointIndex(unsigned);
 #endif
 
-    void updateScrollSnapState();
+    void resnapAfterLayout();
     void doPostThumbMoveSnapping(ScrollbarOrientation);
 
 #if ENABLE(TOUCH_EVENTS)
@@ -383,13 +380,6 @@ private:
     virtual void setScrollOffset(const ScrollOffset&) = 0;
 
     mutable std::unique_ptr<ScrollAnimator> m_scrollAnimator;
-
-#if ENABLE(CSS_SCROLL_SNAP)
-    LayoutScrollSnapOffsetsInfo& ensureSnapOffsetsInfo();
-    std::unique_ptr<LayoutScrollSnapOffsetsInfo> m_snapOffsetsInfo;
-    unsigned m_currentHorizontalSnapPointIndex { 0 };
-    unsigned m_currentVerticalSnapPointIndex { 0 };
-#endif
 
     // There are 8 possible combinations of writing mode and direction. Scroll origin will be non-zero in the x or y axis
     // if there is any reversed direction or writing-mode. The combinations are:

@@ -1303,7 +1303,7 @@ bool ScrollAnimatorMac::allowsVerticalStretching(const PlatformWheelEvent& wheel
         bool eventPreventsStretching = m_scrollableArea.hasScrollableOrRubberbandableAncestor() && wheelEvent.isGestureStart() && m_scrollableArea.isPinnedForScrollDeltaOnAxis(-wheelEvent.deltaY(), ScrollEventAxis::Vertical);
 #if ENABLE(CSS_SCROLL_SNAP)
         if (!eventPreventsStretching)
-            eventPreventsStretching = gestureShouldBeginSnap(wheelEvent, ScrollEventAxis::Vertical, m_scrollableArea.snapOffsetInfo());
+            eventPreventsStretching = gestureShouldBeginSnap(wheelEvent, ScrollEventAxis::Vertical, m_scrollableArea.snapOffsetsInfo());
 #endif
         return scrollbarsAllowStretching && !eventPreventsStretching;
     }
@@ -1327,7 +1327,7 @@ bool ScrollAnimatorMac::allowsHorizontalStretching(const PlatformWheelEvent& whe
         bool eventPreventsStretching = m_scrollableArea.hasScrollableOrRubberbandableAncestor() && wheelEvent.isGestureStart() && m_scrollableArea.isPinnedForScrollDeltaOnAxis(-wheelEvent.deltaX(), ScrollEventAxis::Horizontal);
 #if ENABLE(CSS_SCROLL_SNAP)
         if (!eventPreventsStretching)
-            eventPreventsStretching = gestureShouldBeginSnap(wheelEvent, ScrollEventAxis::Horizontal, m_scrollableArea.snapOffsetInfo());
+            eventPreventsStretching = gestureShouldBeginSnap(wheelEvent, ScrollEventAxis::Horizontal, m_scrollableArea.snapOffsetsInfo());
 #endif
         return scrollbarsAllowStretching && !eventPreventsStretching;
     }

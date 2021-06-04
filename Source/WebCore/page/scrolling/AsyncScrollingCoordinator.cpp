@@ -708,7 +708,7 @@ void AsyncScrollingCoordinator::setScrollingNodeScrollableAreaGeometry(Scrolling
 
 #if ENABLE(CSS_SCROLL_SNAP)
     scrollableArea.updateSnapOffsets();
-    setStateScrollingNodeSnapOffsetsAsFloat(scrollingNode, scrollableArea.snapOffsetInfo(), m_page->deviceScaleFactor());
+    setStateScrollingNodeSnapOffsetsAsFloat(scrollingNode, scrollableArea.snapOffsetsInfo(), m_page->deviceScaleFactor());
     scrollingNode.setCurrentHorizontalSnapPointIndex(scrollableArea.currentHorizontalSnapPointIndex());
     scrollingNode.setCurrentVerticalSnapPointIndex(scrollableArea.currentVerticalSnapPointIndex());
 #endif
@@ -902,7 +902,7 @@ bool AsyncScrollingCoordinator::isScrollSnapInProgress(ScrollingNodeID nodeID) c
 void AsyncScrollingCoordinator::updateScrollSnapPropertiesWithFrameView(const FrameView& frameView)
 {
     if (auto node = downcast<ScrollingStateFrameScrollingNode>(m_scrollingStateTree->stateNodeForID(frameView.scrollingNodeID()))) {
-        setStateScrollingNodeSnapOffsetsAsFloat(*node, frameView.snapOffsetInfo(), m_page->deviceScaleFactor());
+        setStateScrollingNodeSnapOffsetsAsFloat(*node, frameView.snapOffsetsInfo(), m_page->deviceScaleFactor());
         node->setCurrentHorizontalSnapPointIndex(frameView.currentHorizontalSnapPointIndex());
         node->setCurrentVerticalSnapPointIndex(frameView.currentVerticalSnapPointIndex());
     }

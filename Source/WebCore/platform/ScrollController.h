@@ -139,7 +139,8 @@ public:
     void animationCallback(MonotonicTime);
 
 #if ENABLE(CSS_SCROLL_SNAP)
-    void updateScrollSnapPoints(const LayoutScrollSnapOffsetsInfo&);
+    void setSnapOffsetsInfo(const LayoutScrollSnapOffsetsInfo&);
+    const LayoutScrollSnapOffsetsInfo* snapOffsetsInfo() const;
     void setActiveScrollSnapIndexForAxis(ScrollEventAxis, unsigned);
     void setActiveScrollSnapIndicesForOffset(ScrollOffset);
     bool activeScrollSnapIndexDidChange() const { return m_activeScrollSnapIndexDidChange; }

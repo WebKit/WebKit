@@ -158,6 +158,9 @@ public:
     void updateScrollSnapState();
     bool activeScrollSnapIndexDidChange() const;
     unsigned activeScrollSnapIndexForAxis(ScrollEventAxis) const;
+    void setActiveScrollSnapIndexForAxis(ScrollEventAxis, unsigned index);
+    void setSnapOffsetsInfo(const LayoutScrollSnapOffsetsInfo&);
+    const LayoutScrollSnapOffsetsInfo* snapOffsetsInfo() const;
 #endif
 
     // ScrollControllerClient.

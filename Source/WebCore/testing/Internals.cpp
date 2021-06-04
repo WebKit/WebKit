@@ -4736,7 +4736,7 @@ ExceptionOr<String> Internals::scrollSnapOffsets(Element& element)
     if (!scrollableArea)
         return Exception { InvalidAccessError };
 
-    auto* offsetInfo = scrollableArea->snapOffsetInfo();
+    auto* offsetInfo = scrollableArea->snapOffsetsInfo();
     StringBuilder result;
     if (offsetInfo && !offsetInfo->horizontalSnapOffsets.isEmpty()) {
         result.append("horizontal = ");

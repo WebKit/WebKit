@@ -99,18 +99,7 @@ bool ScrollController::usesScrollSnap() const
 
 #if ENABLE(CSS_SCROLL_SNAP)
 
-void ScrollController::updateScrollSnapState(const ScrollableArea& scrollableArea)
-{
-    const auto* snapOffsetInfo = scrollableArea.snapOffsetInfo();
-    if (!snapOffsetInfo) {
-        m_scrollSnapState = nullptr;
-        return;
-    }
-
-    updateScrollSnapPoints(*snapOffsetInfo);
-}
-
-void ScrollController::updateScrollSnapPoints(const LayoutScrollSnapOffsetsInfo& snapOffsetInfo)
+void ScrollController::setSnapOffsetsInfo(const LayoutScrollSnapOffsetsInfo& snapOffsetInfo)
 {
     if (snapOffsetInfo.isEmpty()) {
         m_scrollSnapState = nullptr;
@@ -126,7 +115,12 @@ void ScrollController::updateScrollSnapPoints(const LayoutScrollSnapOffsetsInfo&
     if (shouldComputeCurrentSnapIndices)
         setActiveScrollSnapIndicesForOffset(roundedIntPoint(m_client.scrollOffset()));
 
-    LOG_WITH_STREAM(ScrollSnap, stream << "ScrollController " << this << " updateScrollSnapState new state: " << ValueOrNull(m_scrollSnapState.get()));
+    LOG_WITH_STREAM(ScrollSnap, stream << "ScrollController " << this << " setSnapOffsetsInfo new state: " << ValueOrNull(m_scrollSnapState.get()));
+}
+
+const LayoutScrollSnapOffsetsInfo* ScrollController::snapOffsetsInfo() const
+{
+    return m_scrollSnapState ? &m_scrollSnapState->snapOffsetInfo() : nullptr;
 }
 
 unsigned ScrollController::activeScrollSnapIndexForAxis(ScrollEventAxis axis) const

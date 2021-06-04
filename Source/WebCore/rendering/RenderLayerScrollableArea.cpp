@@ -1213,7 +1213,7 @@ void RenderLayerScrollableArea::updateScrollInfoAfterLayout()
     if (canUseCompositedScrolling())
         m_layer.setNeedsPostLayoutCompositingUpdate();
 
-    updateScrollSnapState();
+    resnapAfterLayout();
 }
 
 bool RenderLayerScrollableArea::overflowControlsIntersectRect(const IntRect& localRect) const

@@ -1,3 +1,66 @@
+2021-06-04  Martin Robinson  <mrobinson@webkit.org>
+
+        [css-scroll-snap] Snap offsets and active index are duplicated in ScrollController and ScrollableArea
+        https://bugs.webkit.org/show_bug.cgi?id=226538
+
+        Reviewed by Simon Fraser.
+
+        Remove duplicate css-scroll-snap state from ScrollableArea. This state is already
+        stored in ScrollController, so we do not need to store it also in ScrollableArea.
+        This change also renames a couple methods so that they have clearer and more
+        consistent names.
+
+        No new tests. This should not change behavior.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::performPostLayoutTasks): updateScrollSnapState() is now called
+        resnapAfterLayout().
+        * page/scrolling/AsyncScrollingCoordinator.cpp: snapOffsetInfo() is now called
+        snapOffsetsInfo().
+        (WebCore::AsyncScrollingCoordinator::setScrollingNodeScrollableAreaGeometry): Ditto.
+        (WebCore::AsyncScrollingCoordinator::updateScrollSnapPropertiesWithFrameView): Ditto.
+        * page/scrolling/mac/ScrollingTreeScrollingNodeDelegateMac.mm:
+        (WebCore::ScrollingTreeScrollingNodeDelegateMac::updateFromStateNode): Use new method name.
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::updateActiveScrollSnapIndexForOffset): We no longer need to
+        sync state with Scrollable Area.
+        (WebCore::ScrollAnimator::setSnapOffsetsInfo): Added this setter which
+        calls through to ScrollController.
+        (WebCore::ScrollAnimator::snapOffsetsInfo const): Added this getter which calls through
+        to ScrollController.
+        (WebCore::ScrollAnimator::setActiveScrollSnapIndexForAxis): Added this method.
+        * platform/ScrollAnimator.h: Update method declarations.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::allowsVerticalStretching const): Use new method names.
+        (WebCore::ScrollAnimatorMac::allowsHorizontalStretching const): Ditto.
+        * platform/ScrollController.cpp:
+        (WebCore::ScrollController::setSnapOffsetsInfo): Combined updateScrollSnapState and
+        updateScrollSnapPoints into this method.
+        (WebCore::ScrollController::snapOffsetsInfo const): Added this getter.
+        * platform/ScrollController.h: Update method declarations.
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::handleWheelEventForScrolling): We no longer need to sync
+        from the ScrollAnimator.
+        (WebCore::ScrollableArea::snapOffsetsInfo const): Renamed this getter.
+        (WebCore::ScrollableArea::setScrollSnapOffsetInfo): This now calls through to
+        ScrollController.
+        (WebCore::ScrollableArea::clearSnapOffsets): Ditto.
+        (WebCore::ScrollableArea::currentHorizontalSnapPointIndex const): Ditto.
+        (WebCore::ScrollableArea::currentVerticalSnapPointIndex const): Ditto.
+        (WebCore::ScrollableArea::setCurrentHorizontalSnapPointIndex): Ditto.
+        (WebCore::ScrollableArea::setCurrentVerticalSnapPointIndex): Ditto.
+        (WebCore::ScrollableArea::resnapAfterLayout): Renamed this method and moved
+        setting the ScrollSnapOffsetsInfo to setScrollSnapOffsetInfo.
+        (WebCore::ScrollableArea::doPostThumbMoveSnapping): Use new methods to access
+        scroll snap state and return early if we don't have a ScrollAnimator already.
+        This was done implicitly in the previous implementation.
+        * platform/ScrollableArea.h:
+        * rendering/RenderLayerScrollableArea.cpp: Update method definitions and
+        remove members that are no longer used.
+        (WebCore::RenderLayerScrollableArea::updateScrollInfoAfterLayout): Use new method name.
+        * testing/Internals.cpp:
+        (WebCore::Internals::scrollSnapOffsets): Ditto.
+
 2021-06-04  Chris Dumez  <cdumez@apple.com>
 
         Stop using legacy MainThreadTaskQueue in PlatformMediaSessionManager / MediaSessionManagerCocoa

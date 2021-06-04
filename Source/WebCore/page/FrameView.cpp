@@ -3353,7 +3353,7 @@ void FrameView::performPostLayoutTasks()
     updateLayoutViewport();
     viewportContentsChanged();
 
-    updateScrollSnapState();
+    resnapAfterLayout();
 
     if (AXObjectCache* cache = frame().document()->existingAXObjectCache())
         cache->performDeferredCacheUpdate();
