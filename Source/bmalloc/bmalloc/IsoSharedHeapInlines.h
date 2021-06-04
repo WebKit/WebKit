@@ -63,6 +63,7 @@ template<unsigned passedObjectSize>
 BNO_INLINE void* IsoSharedHeap::allocateSlow(const LockHolder& locker, bool abortOnFailure)
 {
     Scavenger& scavenger = *Scavenger::get();
+    scavenger.didStartGrowing();
     scavenger.scheduleIfUnderMemoryPressure(IsoSharedPage::pageSize);
 
     IsoSharedPage* page = IsoSharedPage::tryCreate();

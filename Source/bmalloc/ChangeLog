@@ -1,3 +1,61 @@
+2021-06-03  Michael Saboff  <msaboff@apple.com>
+
+        Unreviewed, rolling out r278278.
+        https://bugs.webkit.org/show_bug.cgi?id=226237
+
+        Made  some JSC mini mode and other tests flakey.
+
+        Reverted changeset:
+
+        [bmalloc] Make adaptive scavenging more precise
+        https://bugs.webkit.org/show_bug.cgi?id=226237
+
+        * bmalloc/BPlatform.h:
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::decommitLargeRange):
+        (bmalloc::Heap::scavenge):
+        (bmalloc::Heap::scavengeToHighWatermark):
+        (bmalloc::Heap::allocateSmallChunk):
+        (bmalloc::Heap::deallocateSmallChunk):
+        (bmalloc::Heap::allocateSmallPage):
+        (bmalloc::Heap::splitAndAllocate):
+        (bmalloc::Heap::allocateLarge):
+        (bmalloc::Heap::tryAllocateLargeChunk):
+        (bmalloc::Heap::shrinkLarge):
+        (bmalloc::Heap::deallocateLarge):
+        * bmalloc/Heap.h:
+        * bmalloc/IsoDirectory.h:
+        * bmalloc/IsoDirectoryInlines.h:
+        (bmalloc::passedNumPages>::takeFirstEligible):
+        (bmalloc::passedNumPages>::scavenge):
+        (bmalloc::passedNumPages>::scavengeToHighWatermark):
+        * bmalloc/IsoHeapImpl.h:
+        * bmalloc/IsoHeapImplInlines.h:
+        (bmalloc::IsoHeapImpl<Config>::scavengeToHighWatermark):
+        * bmalloc/IsoSharedHeapInlines.h:
+        (bmalloc::IsoSharedHeap::allocateSlow):
+        * bmalloc/LargeMap.cpp:
+        (bmalloc::LargeMap::add):
+        * bmalloc/LargeRange.h:
+        (bmalloc::LargeRange::LargeRange):
+        (bmalloc::LargeRange::setTotalPhysicalSize):
+        (bmalloc::merge):
+        (bmalloc::LargeRange::split const):
+        (bmalloc::LargeRange::physicalEnd const): Deleted.
+        (bmalloc::LargeRange::setPhysicalEnd): Deleted.
+        (bmalloc::LargeRange::clearPhysicalEnd): Deleted.
+        * bmalloc/Scavenger.cpp:
+        (bmalloc::Scavenger::Scavenger):
+        (bmalloc::Scavenger::didStartGrowing):
+        (bmalloc::Scavenger::scheduleIfUnderMemoryPressure):
+        (bmalloc::Scavenger::schedule):
+        (bmalloc::Scavenger::timeSinceLastPartialScavenge):
+        (bmalloc::Scavenger::scavenge):
+        (bmalloc::Scavenger::partialScavenge):
+        (bmalloc::Scavenger::threadRunLoop):
+        * bmalloc/Scavenger.h:
+        * bmalloc/SmallPage.h:
+
 2021-05-31  Michael Saboff  <msaboff@apple.com>
 
         [bmalloc] Make adaptive scavenging more precise
