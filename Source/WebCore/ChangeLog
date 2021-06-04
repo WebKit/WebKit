@@ -1,3 +1,32 @@
+2021-05-27  Sergio Villar Senin  <svillar@igalia.com>
+
+        [css-flexbox] Sanitize the aspect ratio handling code
+        https://bugs.webkit.org/show_bug.cgi?id=226324
+
+        Reviewed by Javier Fernandez.
+
+        Sanitized the code that detects whether aspect ratio should be used to compute sizes. The
+        useChildAspectRatio() method was removed as it was very misleading, the name was a bad choice
+        and it was very confusing. A new method childHasComputableAspectRatio() was added. It verifies
+        whether the item has an aspect ratio (of any type) and whether we could compute it.
+
+        Also two calls to detect whether the cross size was definite (or considered definite) were
+        unified in a single method.
+
+        No new tests as there is no change in behaviour.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::childHasComputableAspectRatio const): New method which takes the
+        checks from useChildAspectRatio.
+        (WebCore::RenderFlexibleBox::childHasComputableAspectRatioAndCrossSizeIsConsideredDefinite):
+        New method doing 3 different checks.
+        (WebCore::RenderFlexibleBox::childCrossSizeShouldUseContainerCrossSize const): Removed the aspect
+        ratio checks which make no sense there.
+        (WebCore::RenderFlexibleBox::computeInnerFlexBaseSizeForChild): Use the new method.
+        (WebCore::RenderFlexibleBox::adjustChildSizeForMinAndMax): Ditto.
+        (WebCore::RenderFlexibleBox::useChildAspectRatio): Deleted.
+        * rendering/RenderFlexibleBox.h:
+
 2021-06-03  Jean-Yves Avenard  <jya@apple.com>
 
         fast/dom/Window/property-access-on-cached-window-after-frame-removed.html (layout-test) may crash

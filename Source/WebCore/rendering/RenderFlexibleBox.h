@@ -142,7 +142,8 @@ private:
     LayoutUnit crossAxisScrollbarExtent() const;
     LayoutUnit crossAxisScrollbarExtentForChild(const RenderBox& child) const;
     LayoutPoint flowAwareLocationForChild(const RenderBox& child) const;
-    bool useChildAspectRatio(const RenderBox& child);
+    bool childHasComputableAspectRatio(const RenderBox&) const;
+    bool childHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(const RenderBox&);
     bool childCrossSizeShouldUseContainerCrossSize(const RenderBox& child) const;
     LayoutUnit computeMainSizeFromAspectRatioUsing(const RenderBox& child, Length crossSizeLength) const;
     void setFlowAwareLocationForChild(RenderBox& child, const LayoutPoint&);

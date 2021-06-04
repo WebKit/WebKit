@@ -791,17 +791,6 @@ Length RenderFlexibleBox::mainSizeLengthForChild(SizeType sizeType, const Render
     return { };
 }
 
-bool RenderFlexibleBox::useChildAspectRatio(const RenderBox& child)
-{
-    if (!childHasAspectRatio(child))
-        return false;
-    if (!child.intrinsicSize().height() && !child.style().hasAspectRatio()) {
-        // We can't compute a ratio in this case.
-        return false;
-    }
-    return childCrossSizeIsDefinite(child, crossSizeLengthForChild(MainOrPreferredSize, child));
-}
-
 // FIXME: computeMainSizeFromAspectRatioUsing may need to return an std::optional<LayoutUnit> in the future
 // rather than returning indefinite sizes as 0/-1.
 LayoutUnit RenderFlexibleBox::computeMainSizeFromAspectRatioUsing(const RenderBox& child, Length crossSizeLength) const
@@ -882,15 +871,21 @@ bool RenderFlexibleBox::childMainSizeIsDefinite(const RenderBox& child, const Le
     return true;
 }
 
-bool RenderFlexibleBox::childCrossSizeShouldUseContainerCrossSize(const RenderBox& child) const
+bool RenderFlexibleBox::childHasComputableAspectRatio(const RenderBox& child) const
 {
     if (!childHasAspectRatio(child))
         return false;
-    if (!child.intrinsicSize().height() && !child.style().hasAspectRatio()) {
-        // We can't compute a ratio in this case.
-        return false;
-    }
+    return child.intrinsicSize().height() || child.style().hasAspectRatio();
+}
 
+bool RenderFlexibleBox::childHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(const RenderBox& child)
+{
+    return childHasComputableAspectRatio(child)
+        && (childCrossSizeIsDefinite(child, crossSizeLengthForChild(MainOrPreferredSize, child)) || childCrossSizeShouldUseContainerCrossSize(child));
+}
+
+bool RenderFlexibleBox::childCrossSizeShouldUseContainerCrossSize(const RenderBox& child) const
+{
     // 9.8 https://drafts.csswg.org/css-flexbox/#definite-sizes
     // 1. If a single-line flex container has a definite cross size, the automatic preferred outer cross size of any
     // stretched flex items is the flex container's inner cross size (clamped to the flex item's min and max cross size)
@@ -952,7 +947,7 @@ LayoutUnit RenderFlexibleBox::computeInnerFlexBaseSizeForChild(RenderBox& child,
     if (childMainSizeIsDefinite(child, flexBasis))
         return std::max(0_lu, computeMainAxisExtentForChild(child, MainOrPreferredSize, flexBasis).value());
 
-    if (useChildAspectRatio(child) || childCrossSizeShouldUseContainerCrossSize(child)) {
+    if (childHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(child)) {
         const Length& crossSizeLength = crossSizeLengthForChild(MainOrPreferredSize, child);
         return adjustChildSizeForAspectRatioCrossAxisMinAndMax(child, computeMainSizeFromAspectRatioUsing(child, crossSizeLength));
     }
@@ -1225,7 +1220,7 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(RenderBox& child, Layo
         // ensure it's valid through the virtual calls of computeIntrinsicLogicalContentHeightUsing.
         LayoutUnit contentSize;
         Length childCrossSizeLength = crossSizeLengthForChild(MainOrPreferredSize, child);
-        if (child.isRenderReplaced() && useChildAspectRatio(child))
+        if (child.isRenderReplaced() && childHasComputableAspectRatio(child) && childCrossSizeIsDefinite(child, childCrossSizeLength))
             contentSize = computeMainSizeFromAspectRatioUsing(child, childCrossSizeLength);
         else
             contentSize = computeMainAxisExtentForChild(child, MinSize, Length(LengthType::MinContent)).value_or(0);
@@ -1242,7 +1237,7 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(RenderBox& child, Layo
             return std::max(childSize, std::min(specifiedSize, contentSize));
         }
 
-        if (child.isRenderReplaced() && (useChildAspectRatio(child) || childCrossSizeShouldUseContainerCrossSize(child))) {
+        if (child.isRenderReplaced() && childHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(child)) {
             LayoutUnit transferredSize = computeMainSizeFromAspectRatioUsing(child, childCrossSizeLength);
             transferredSize = adjustChildSizeForAspectRatioCrossAxisMinAndMax(child, transferredSize);
             return std::max(childSize, std::min(transferredSize, contentSize));
