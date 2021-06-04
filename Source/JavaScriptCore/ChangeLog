@@ -1,3 +1,16 @@
+2021-06-04  Devin Rousso  <drousso@apple.com>
+
+        Web Inspector: mark recently added protocol commands/events as page-only
+        https://bugs.webkit.org/show_bug.cgi?id=226661
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/protocol/CSS.json:
+        * inspector/protocol/Network.json:
+        These commands are not implemented in ITML. By not specifying `"targetTypes": ["page"]` it's
+        implicitly saying that the command/event is supported by ITML since the command/event will
+        fall back to the domain's `"targetTypes"`, which includes ITML.
+
 2021-06-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Private static method should define privateClassBrandIdentifier in class-scope

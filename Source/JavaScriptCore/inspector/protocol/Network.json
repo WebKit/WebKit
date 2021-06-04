@@ -279,6 +279,7 @@
         {
             "name": "interceptWithRequest",
             "description": "Replace intercepted request with the provided one.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Identifier for the intercepted Network request or response to continue." },
                 { "name": "url", "type": "string", "optional": true,"description": "HTTP request url." },
@@ -304,6 +305,7 @@
         {
             "name": "interceptRequestWithResponse",
             "description": "Provide response for an intercepted request. Request completely bypasses the network in this case and is immediately fulfilled with the provided data.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Identifier for the intercepted Network response to modify." },
                 { "name": "content", "type": "string" },
@@ -317,6 +319,7 @@
         {
             "name": "interceptRequestWithError",
             "description": "Fail request with given error type.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Identifier for the intercepted Network request to fail." },
                 { "name": "errorType", "$ref": "ResourceErrorType", "description": "Deliver error reason for the request failure." }
@@ -399,6 +402,7 @@
         {
             "name": "requestIntercepted",
             "description": "Fired when HTTP request has been intercepted. The frontend must respond with <code>Network.interceptContinue</code>, <code>Network.interceptWithRequest</code>` or <code>Network.interceptWithResponse</code>` to resolve this request.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "requestId", "$ref": "RequestId", "description": "Identifier for this intercepted network. Corresponds with an earlier <code>Network.requestWillBeSent</code>." },
                 { "name": "request", "$ref": "Request", "description": "Original request content that would proceed if this is continued." }
