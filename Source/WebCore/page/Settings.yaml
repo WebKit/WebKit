@@ -475,7 +475,7 @@ SessionStorageQuota:
   type: uint32_t
   defaultValue:
     WebCore:
-      default: StorageMap::noQuota
+      default: 5242880
 
 ShouldDispatchSyntheticMouseEventsWhenModifyingSelection:
   type: bool

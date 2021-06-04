@@ -54,39 +54,7 @@ function testQuota(storageString)
     }
 }
 
-function testNoQuota(storageString)
-{
-    storage = eval(storageString);
-    if (!storage) {
-        testFailed(storageString + " DOES NOT exist");
-        return;
-    }
-
-    debug("Testing " + storageString);
-
-    evalAndLog("storage.clear()");
-    shouldBe("storage.length", "0");
-
-    debug("Creating 'data' which contains 64K of data");
-    data = "X";
-    for (var i=0; i<16; i++)
-        data += data;
-    shouldBe("data.length", "65536");
-
-    debug("Putting 'data' into 39 " + storageString + " buckets.");
-    for (var i=0; i<39; i++)
-        storage[i] = data;
-
-    debug("Putting 'data' into another bucket.h");
-    try {
-        storage[39] = data;
-        testPassed("Insertion worked.");
-    } catch (e) {
-        testFailed("Exception: " + e);
-    }
-}
-
-testNoQuota("sessionStorage");
+testQuota("sessionStorage");
 debug("");
 debug("");
 testQuota("localStorage");

@@ -899,9 +899,6 @@ http/tests/navigation/page-cache-iframe-no-current-historyItem.html [ Failure ]
 # JavaScripts tests that fail:
 js/dom/deep-recursion-test.html [ Failure ]
 
-# iOS-specific tests that fail:
-platform/ios/ios/storage/domstorage/5mb-quota.html [ Failure ]
-
 # LayoutTests/fast test that time out:
 fast/block/positioning/vertical-rl/001.html
 fast/body-propagation/background-color/001-xhtml.xhtml

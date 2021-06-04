@@ -1,3 +1,17 @@
+2021-06-04  Brady Eidson  <beidson@apple.com>
+
+        Enforce a quota in window.sessionStorage
+        rdar://78507096 and https://bugs.webkit.org/show_bug.cgi?id=226337
+
+        Reviewed by Chris Dumez.
+
+        Covered by change to existing test.
+
+        * page/Page.cpp:
+        (WebCore::Page::sessionStorage): Make sure the quota for session storage is not "noQuota"
+
+        * page/Settings.yaml: Default to 5mb instead of noQuota to match other browsers.
+
 2021-06-03  Darin Adler  <darin@apple.com>
 
         Move from WebCore::SuccessOr to WTF::Expected
