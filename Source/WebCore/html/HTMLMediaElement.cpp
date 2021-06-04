@@ -2321,41 +2321,41 @@ void HTMLMediaElement::mediaPlayerReadyStateChanged()
     endProcessingMediaPlayerCallback();
 }
 
-SuccessOr<MediaPlaybackDenialReason> HTMLMediaElement::canTransitionFromAutoplayToPlay() const
+Expected<void, MediaPlaybackDenialReason> HTMLMediaElement::canTransitionFromAutoplayToPlay() const
 {
     if (m_readyState != HAVE_ENOUGH_DATA) {
         ALWAYS_LOG(LOGIDENTIFIER, "m_readyState != HAVE_ENOUGH_DATA");
-        return MediaPlaybackDenialReason::PageConsentRequired;
+        return makeUnexpected(MediaPlaybackDenialReason::PageConsentRequired);
     }
     if (!isAutoplaying()) {
         ALWAYS_LOG(LOGIDENTIFIER, "!isAutoplaying");
-        return MediaPlaybackDenialReason::PageConsentRequired;
+        return makeUnexpected(MediaPlaybackDenialReason::PageConsentRequired);
     }
     if (!mediaSession().autoplayPermitted()) {
         ALWAYS_LOG(LOGIDENTIFIER, "!mediaSession().autoplayPermitted");
-        return MediaPlaybackDenialReason::PageConsentRequired;
+        return makeUnexpected(MediaPlaybackDenialReason::PageConsentRequired);
     }
     if (!paused()) {
         ALWAYS_LOG(LOGIDENTIFIER, "!paused");
-        return MediaPlaybackDenialReason::PageConsentRequired;
+        return makeUnexpected(MediaPlaybackDenialReason::PageConsentRequired);
     }
     if (!autoplay()) {
         ALWAYS_LOG(LOGIDENTIFIER, "!autoplay");
-        return MediaPlaybackDenialReason::PageConsentRequired;
+        return makeUnexpected(MediaPlaybackDenialReason::PageConsentRequired);
     }
     if (pausedForUserInteraction()) {
         ALWAYS_LOG(LOGIDENTIFIER, "pausedForUserInteraction");
-        return MediaPlaybackDenialReason::PageConsentRequired;
+        return makeUnexpected(MediaPlaybackDenialReason::PageConsentRequired);
     }
     if (document().isSandboxed(SandboxAutomaticFeatures)) {
         ALWAYS_LOG(LOGIDENTIFIER, "isSandboxed");
-        return MediaPlaybackDenialReason::PageConsentRequired;
+        return makeUnexpected(MediaPlaybackDenialReason::PageConsentRequired);
     }
 
     auto permitted = mediaSession().playbackStateChangePermitted(MediaPlaybackState::Playing);
 #if !RELEASE_LOG_DISABLED
     if (!permitted)
-        ALWAYS_LOG(LOGIDENTIFIER, permitted.value());
+        ALWAYS_LOG(LOGIDENTIFIER, permitted.error());
     else
         ALWAYS_LOG(LOGIDENTIFIER, "can transition!");
 #endif
@@ -2470,15 +2470,15 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
 
         scheduleEvent(eventNames().canplaythroughEvent);
 
-        auto success = canTransitionFromAutoplayToPlay();
-        if (success) {
+        auto canTransition = canTransitionFromAutoplayToPlay();
+        if (canTransition) {
             m_paused = false;
             setShowPosterFlag(false);
             invalidateCachedTime();
             setAutoplayEventPlaybackState(AutoplayEventPlaybackState::StartedWithoutUserGesture);
             m_playbackStartedTime = currentMediaTime().toDouble();
             scheduleEvent(eventNames().playEvent);
-        } else if (success.value() == MediaPlaybackDenialReason::UserGestureRequired) {
+        } else if (canTransition.error() == MediaPlaybackDenialReason::UserGestureRequired) {
             ALWAYS_LOG(LOGIDENTIFIER, "Autoplay blocked, user gesture required");
             setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);
         }
@@ -2488,7 +2488,7 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
     // honoring any playback denial reasons such as the requirement of a user gesture.
     if (m_readyState == HAVE_FUTURE_DATA && oldState < HAVE_FUTURE_DATA && potentiallyPlaying() && !mediaSession().playbackStateChangePermitted(MediaPlaybackState::Playing)) {
         auto canTransition = canTransitionFromAutoplayToPlay();
-        if (canTransition && canTransition.value() == MediaPlaybackDenialReason::UserGestureRequired)
+        if (!canTransition && canTransition.error() == MediaPlaybackDenialReason::UserGestureRequired)
             ALWAYS_LOG(LOGIDENTIFIER, "Autoplay blocked, user gesture required");
 
         pauseInternal();
@@ -3475,11 +3475,11 @@ void HTMLMediaElement::play(DOMPromiseDeferred<void>&& promise)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    auto success = mediaSession().playbackStateChangePermitted(MediaPlaybackState::Playing);
-    if (!success) {
-        if (success.value() == MediaPlaybackDenialReason::UserGestureRequired)
+    auto permitted = mediaSession().playbackStateChangePermitted(MediaPlaybackState::Playing);
+    if (!permitted) {
+        if (permitted.error() == MediaPlaybackDenialReason::UserGestureRequired)
             setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);
-        ERROR_LOG(LOGIDENTIFIER, "rejecting promise: ", success.value());
+        ERROR_LOG(LOGIDENTIFIER, "rejecting promise: ", permitted.error());
         promise.reject(NotAllowedError);
         return;
     }
@@ -3501,10 +3501,10 @@ void HTMLMediaElement::play()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    auto success = mediaSession().playbackStateChangePermitted(MediaPlaybackState::Playing);
-    if (!success) {
-        ERROR_LOG(LOGIDENTIFIER, "playback not permitted: ", success.value());
-        if (success.value() == MediaPlaybackDenialReason::UserGestureRequired)
+    auto permitted = mediaSession().playbackStateChangePermitted(MediaPlaybackState::Playing);
+    if (!permitted) {
+        ERROR_LOG(LOGIDENTIFIER, "playback not permitted: ", permitted.error());
+        if (permitted.error() == MediaPlaybackDenialReason::UserGestureRequired)
             setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);
         return;
     }

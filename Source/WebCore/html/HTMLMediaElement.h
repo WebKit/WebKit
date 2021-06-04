@@ -818,7 +818,7 @@ private:
     bool pausedForUserInteraction() const;
     bool couldPlayIfEnoughData() const;
     void dispatchPlayPauseEventsIfNeedsQuirks();
-    SuccessOr<MediaPlaybackDenialReason> canTransitionFromAutoplayToPlay() const;
+    Expected<void, MediaPlaybackDenialReason> canTransitionFromAutoplayToPlay() const;
 
     void setAutoplayEventPlaybackState(AutoplayEventPlaybackState);
     void userDidInterfereWithAutoplay();

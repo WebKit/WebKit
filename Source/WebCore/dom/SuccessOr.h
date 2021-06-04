@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,17 +25,4 @@
 
 #pragma once
 
-#include <optional>
-
-namespace WebCore {
-
-// FIXME: This is used in two places. We should switch them to WTF::Expected and delete this.
-template<typename T> class SuccessOr : public std::optional<T> {
-public:
-    SuccessOr() : std::optional<T>() { }
-    SuccessOr(T&& error) : std::optional<T>(error) { }
-
-    explicit constexpr operator bool() const { return !std::optional<T>::operator bool(); }
-};
-
-} // namespace WebCore
+// Nothing here any more. No need to include it. We plan to delete this header.

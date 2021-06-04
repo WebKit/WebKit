@@ -525,7 +525,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/SpaceSplitString.h
     dom/StaticRange.h
     dom/StyledElement.h
-    dom/SuccessOr.h
     dom/TaskSource.h
     dom/Text.h
     dom/TextEvent.h

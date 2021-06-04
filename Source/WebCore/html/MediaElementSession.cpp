@@ -327,19 +327,19 @@ void MediaElementSession::removeBehaviorRestriction(BehaviorRestrictions restric
     m_restrictions &= ~restriction;
 }
 
-SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackStateChangePermitted(MediaPlaybackState state) const
+Expected<void, MediaPlaybackDenialReason> MediaElementSession::playbackStateChangePermitted(MediaPlaybackState state) const
 {
     INFO_LOG(LOGIDENTIFIER, "state = ", state);
     if (m_element.isSuspended()) {
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because element is suspended");
-        return MediaPlaybackDenialReason::InvalidState;
+        return makeUnexpected(MediaPlaybackDenialReason::InvalidState);
     }
 
     auto& document = m_element.document();
     auto* page = document.page();
     if (!page || page->mediaPlaybackIsSuspended()) {
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because media playback is suspended");
-        return MediaPlaybackDenialReason::PageConsentRequired;
+        return makeUnexpected(MediaPlaybackDenialReason::PageConsentRequired);
     }
 
     if (document.isMediaDocument() && !document.ownerElement())
@@ -350,7 +350,7 @@ SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackStateChangePer
 
     if (requiresFullscreenForVideoPlayback() && !fullscreenPermitted()) {
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because of fullscreen restriction");
-        return MediaPlaybackDenialReason::FullscreenRequired;
+        return makeUnexpected(MediaPlaybackDenialReason::FullscreenRequired);
     }
 
     if (m_restrictions & OverrideUserGestureRequirementForMainContent && updateIsMainContent())
@@ -372,7 +372,7 @@ SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackStateChangePer
         && !m_element.paused() && state == MediaPlaybackState::Paused
         && !document.processingUserGestureForMedia()) {
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because a quirk requires a user gesture to pause while in Picture-in-Picture");
-        return MediaPlaybackDenialReason::UserGestureRequired;
+        return makeUnexpected(MediaPlaybackDenialReason::UserGestureRequired);
     }
 
     if (topDocument.mediaState() & MediaProducer::MediaState::HasUserInteractedWithMediaElement && topDocument.quirks().needsPerDocumentAutoplayBehavior())
@@ -383,17 +383,17 @@ SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackStateChangePer
 
     if (m_restrictions & RequireUserGestureForVideoRateChange && m_element.isVideo() && !document.processingUserGestureForMedia()) {
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because a user gesture is required for video rate change restriction");
-        return MediaPlaybackDenialReason::UserGestureRequired;
+        return makeUnexpected(MediaPlaybackDenialReason::UserGestureRequired);
     }
 
     if (m_restrictions & RequireUserGestureForAudioRateChange && (!m_element.isVideo() || m_element.hasAudio()) && !m_element.muted() && m_element.volume() && !document.processingUserGestureForMedia()) {
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because a user gesture is required for audio rate change restriction");
-        return MediaPlaybackDenialReason::UserGestureRequired;
+        return makeUnexpected(MediaPlaybackDenialReason::UserGestureRequired);
     }
 
     if (m_restrictions & RequireUserGestureForVideoDueToLowPowerMode && m_element.isVideo() && !document.processingUserGestureForMedia()) {
         ALWAYS_LOG(LOGIDENTIFIER, "Returning FALSE because of video low power mode restriction");
-        return MediaPlaybackDenialReason::UserGestureRequired;
+        return makeUnexpected(MediaPlaybackDenialReason::UserGestureRequired);
     }
 
     return { };

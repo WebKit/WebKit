@@ -1,3 +1,44 @@
+2021-06-03  Darin Adler  <darin@apple.com>
+
+        Move from WebCore::SuccessOr to WTF::Expected
+        https://bugs.webkit.org/show_bug.cgi?id=226614
+
+        Reviewed by Sam Weinig.
+
+        The upcoming std::expected is designed for cases like the ones we
+        are using SuccessOr for, using void for the expected type in a case like
+        this where it's success or failure. Our WTF::Expected is for our use
+        while waiting for compilers with std::expected. It was straightforward
+        to port our uses of SuccessOr to instead use Expected.
+
+        * Headers.cmake: Removed SuccessOr.h.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * dom/SuccessOr.h: Emptied out this file for now; delete later.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::canTransitionFromAutoplayToPlay const): Use
+        Expected for the return type and call makeUnexpected as needed. Also
+        updated the check of the result from playbackStateChangePermitted to
+        call Expected::error instead of SuccessOr::value.
+        (WebCore::HTMLMediaElement::setReadyState): Use Expected::error
+        instead of SuccessOr::value, and updated local variable name for
+        greater clarity. Also fixed one call site that had the success check
+        backwards: The symptom is that it would never log "Autoplay blocked"
+        in that case, but otherwise seems harmless.
+        (WebCore::HTMLMediaElement::play): Ditto.
+
+        * html/HTMLMediaElement.h: Use Expected for the return type of
+        canTransitionFromAutoplayToPlay.
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::playbackStateChangePermitted const): Use
+        Expected for the return type and call makeUnexpected as needed.
+
+        * html/MediaElementSession.h: Removed include of SuccessOr.h, and
+        tweaked coding style a bit. Use Expected for the return type of
+        playbackStateChangePermitted.
+
 2021-06-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Store MediaPlayer using WeakPtr in MediaPlayerPrivateRemote

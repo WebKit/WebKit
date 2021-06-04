@@ -31,25 +31,14 @@
 #include "MediaProducer.h"
 #include "MediaUsageInfo.h"
 #include "PlatformMediaSession.h"
-#include "SuccessOr.h"
 #include "Timer.h"
-#include <wtf/TypeCasts.h>
-
-#if ENABLE(MEDIA_SESSION)
 #include <memory>
-#endif
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
-enum class MediaSessionMainContentPurpose {
-    MediaControls,
-    Autoplay
-};
-
-enum class MediaPlaybackState {
-    Playing,
-    Paused
-};
+enum class MediaSessionMainContentPurpose { MediaControls, Autoplay };
+enum class MediaPlaybackState { Playing, Paused };
 
 enum class MediaPlaybackDenialReason {
     UserGestureRequired,
@@ -61,14 +50,15 @@ enum class MediaPlaybackDenialReason {
 class Document;
 class HTMLMediaElement;
 class MediaMetadata;
-struct MediaPositionState;
 class MediaSession;
 class MediaSessionObserver;
 class SourceBuffer;
+
+struct MediaPositionState;
+
 enum class MediaSessionPlaybackState : uint8_t;
 
-class MediaElementSession final : public PlatformMediaSession
-{
+class MediaElementSession final : public PlatformMediaSession {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit MediaElementSession(HTMLMediaElement&);
@@ -85,7 +75,7 @@ public:
     void isVisibleInViewportChanged();
     void inActiveDocumentChanged();
 
-    SuccessOr<MediaPlaybackDenialReason> playbackStateChangePermitted(MediaPlaybackState) const;
+    Expected<void, MediaPlaybackDenialReason> playbackStateChangePermitted(MediaPlaybackState) const;
     bool autoplayPermitted() const;
     bool dataLoadingPermitted() const;
     MediaPlayer::BufferingPolicy preferredBufferingPolicy() const;
