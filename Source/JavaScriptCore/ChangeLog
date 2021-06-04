@@ -1,3 +1,49 @@
+2021-06-04  Robin Morisset  <rmorisset@apple.com>
+
+        Drop the FTL(DFG) graph after lowering to B3
+        https://bugs.webkit.org/show_bug.cgi?id=226556
+
+        Reviewed by Phil Pizlo.
+
+        The challenge in this patch was dealing with all of the Patchpoints created by FTLLowerDFGToB3: they get a lambda at that time, which they execute at the end of Air, and many of these lambdas were capturing a pointer to some parts of the DFG graph and reading through it when being executed.
+        In all cases but one it was easily fixed: they were only reading a few bits from a given node, so I just read these bits in FTLLowerDFGToB3, and captured them (by value) instead of the pointer to the node.
+        The exception was compileCallOrConstructVarargsSpread(): its patchpoint generator was walking through the graph, flattening a tree of PhantomSpread/PhantomNewArrayWithSpread/PhantomNewArrayBuffer/PhantomCreateRest, emitting some code along the way.
+        We now do this flattening of the tree in FTLLowerDFGToB3, store just enough information to later emit the required code in a vector, and capture that vector in the lambda (through a move capture, which is allowed since C++14). See `struct VarargsSpreadArgumentToEmit` for the information that we need to store in that vector.
+
+        I tested this change by completing a full run of JetStream2 with ASAN.
+        I also ran the stress tests with "spread" in their name in Debug mode.
+
+        * b3/B3SparseCollection.h:
+        (JSC::B3::SparseCollection::clearAll):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::freeDFGIRAfterLowering):
+        * dfg/DFGGraph.h:
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileUnaryMathIC):
+        (JSC::FTL::DFG::LowerDFGToB3::compileBinaryMathIC):
+        (JSC::FTL::DFG::LowerDFGToB3::getPrivateName):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePrivateBrandAccess):
+        (JSC::FTL::DFG::LowerDFGToB3::cachedPutById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDelBy):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDirectCallOrConstruct):
+        (JSC::FTL::DFG::LowerDFGToB3::compileTailCall):
+        (JSC::FTL::DFG::LowerDFGToB3::VarargsSpreadArgumentToEmit::VarargsSpreadArgumentToEmit):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCallEval):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInstanceOf):
+        (JSC::FTL::DFG::LowerDFGToB3::getById):
+        (JSC::FTL::DFG::LowerDFGToB3::getByIdWithThis):
+        (JSC::FTL::DFG::LowerDFGToB3::emitBinarySnippet):
+        (JSC::FTL::DFG::LowerDFGToB3::emitBinaryBitOpSnippet):
+        (JSC::FTL::DFG::LowerDFGToB3::emitRightShiftSnippet):
+        (JSC::FTL::DFG::LowerDFGToB3::crash):
+
 2021-06-04  Tadeu Zagallo  <tzagallo@apple.com>
 
         Optimize Function.prototype.toString
