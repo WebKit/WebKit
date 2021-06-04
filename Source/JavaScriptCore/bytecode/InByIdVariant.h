@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "CacheableIdentifier.h"
 #include "ObjectPropertyConditionSet.h"
 #include "PropertyOffset.h"
 #include "StructureSet.h"
@@ -35,13 +36,13 @@ namespace DOMJIT {
 class GetterSetter;
 }
 
-class InByIdStatus;
+class InByStatus;
 struct DumpContext;
 
 class InByIdVariant {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InByIdVariant(const StructureSet& = StructureSet(), PropertyOffset = invalidOffset, const ObjectPropertyConditionSet& = ObjectPropertyConditionSet());
+    InByIdVariant(CacheableIdentifier, const StructureSet& = StructureSet(), PropertyOffset = invalidOffset, const ObjectPropertyConditionSet& = ObjectPropertyConditionSet());
 
     bool isSet() const { return !!m_structureSet.size(); }
     explicit operator bool() const { return isSet(); }
@@ -63,17 +64,26 @@ public:
     void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;
 
+    CacheableIdentifier identifier() const { return m_identifier; }
+
     bool overlaps(const InByIdVariant& other)
     {
+        if (!!m_identifier != !!other.m_identifier)
+            return true;
+        if (m_identifier) {
+            if (m_identifier != other.m_identifier)
+                return false;
+        }
         return structureSet().overlaps(other.structureSet());
     }
 
 private:
-    friend class InByIdStatus;
+    friend class InByStatus;
 
     StructureSet m_structureSet;
     ObjectPropertyConditionSet m_conditionSet;
     PropertyOffset m_offset;
+    CacheableIdentifier m_identifier;
 };
 
 } // namespace JSC

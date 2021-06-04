@@ -565,6 +565,7 @@ namespace JSC {
         void emit_op_get_argument_by_val(const Instruction*);
         void emit_op_get_prototype_of(const Instruction*);
         void emit_op_in_by_id(const Instruction*);
+        void emit_op_in_by_val(const Instruction*);
         void emit_op_init_lazy_reg(const Instruction*);
         void emit_op_overrides_has_instance(const Instruction*);
         void emit_op_instanceof(const Instruction*);
@@ -698,6 +699,7 @@ namespace JSC {
         void emitSlow_op_check_private_brand(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_argument_by_val(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_in_by_id(const Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_in_by_val(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_instanceof(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_instanceof_custom(const Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jless(const Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -1037,6 +1039,7 @@ namespace JSC {
         Vector<JITGetByIdWithThisGenerator> m_getByIdsWithThis;
         Vector<JITPutByIdGenerator> m_putByIds;
         Vector<JITInByIdGenerator> m_inByIds;
+        Vector<JITInByValGenerator> m_inByVals;
         Vector<JITDelByIdGenerator> m_delByIds;
         Vector<JITDelByValGenerator> m_delByVals;
         Vector<JITInstanceOfGenerator> m_instanceOfs;
@@ -1063,6 +1066,7 @@ namespace JSC {
         unsigned m_getByIdWithThisIndex { UINT_MAX };
         unsigned m_putByIdIndex { UINT_MAX };
         unsigned m_inByIdIndex { UINT_MAX };
+        unsigned m_inByValIndex { UINT_MAX };
         unsigned m_delByValIndex { UINT_MAX };
         unsigned m_delByIdIndex { UINT_MAX };
         unsigned m_instanceOfIndex { UINT_MAX };

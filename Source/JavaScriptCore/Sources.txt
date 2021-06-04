@@ -239,7 +239,7 @@ bytecode/GetByIdVariant.cpp
 bytecode/GetterSetterAccessCase.cpp
 bytecode/ICStatusMap.cpp
 bytecode/ICStatusUtils.cpp
-bytecode/InByIdStatus.cpp
+bytecode/InByStatus.cpp
 bytecode/InByIdVariant.cpp
 bytecode/InlineAccess.cpp
 bytecode/InlineCallFrame.cpp

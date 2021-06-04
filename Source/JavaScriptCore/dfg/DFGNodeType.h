@@ -546,7 +546,7 @@ namespace JSC { namespace DFG {
     /* Used to provide feedback to the IC profiler. */ \
     macro(FilterCallLinkStatus, NodeMustGenerate) \
     macro(FilterGetByStatus, NodeMustGenerate) \
-    macro(FilterInByIdStatus, NodeMustGenerate) \
+    macro(FilterInByStatus, NodeMustGenerate) \
     macro(FilterPutByIdStatus, NodeMustGenerate) \
     macro(FilterDeleteByStatus, NodeMustGenerate) \
     macro(FilterCheckPrivateBrandStatus, NodeMustGenerate) \

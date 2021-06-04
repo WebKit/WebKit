@@ -897,7 +897,7 @@ void repatchDeleteBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, DeleteP
     }
 }
 
-static InlineCacheAction tryCacheInByID(
+static InlineCacheAction tryCacheInBy(
     JSGlobalObject* globalObject, CodeBlock* codeBlock, JSObject* base, CacheableIdentifier propertyName,
     bool wasFound, const PropertySlot& slot, StructureStubInfo& stubInfo)
 {
@@ -1002,12 +1002,18 @@ static InlineCacheAction tryCacheInByID(
     return result.shouldGiveUpNow() ? GiveUpOnCache : RetryCacheLater;
 }
 
-void repatchInByID(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSObject* baseObject, CacheableIdentifier propertyName, bool wasFound, const PropertySlot& slot, StructureStubInfo& stubInfo)
+void repatchInBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSObject* baseObject, CacheableIdentifier propertyName, bool wasFound, const PropertySlot& slot, StructureStubInfo& stubInfo, InByKind kind)
 {
     SuperSamplerScope superSamplerScope(false);
+    VM& vm = globalObject->vm();
 
-    if (tryCacheInByID(globalObject, codeBlock, baseObject, propertyName, wasFound, slot, stubInfo) == GiveUpOnCache)
-        ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation, operationInById);
+    if (tryCacheInBy(globalObject, codeBlock, baseObject, propertyName, wasFound, slot, stubInfo) == GiveUpOnCache) {
+        LOG_IC((ICEvent::InReplaceWithGeneric, baseObject->classInfo(globalObject->vm()), Identifier::fromUid(vm, propertyName.uid())));
+        if (kind == InByKind::Normal)
+            ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation, operationInByIdGeneric);
+        else
+            ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation, operationInByValGeneric);
+    }
 }
 
 static InlineCacheAction tryCacheCheckPrivateBrand(
@@ -1683,9 +1689,12 @@ static void resetPatchableJump(StructureStubInfo& stubInfo)
     MacroAssembler::repatchJump(stubInfo.patchableJump(), stubInfo.slowPathStartLocation);
 }
 
-void resetInByID(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
+void resetInBy(CodeBlock* codeBlock, StructureStubInfo& stubInfo, InByKind kind)
 {
-    ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation, operationInByIdOptimize);
+    if (kind == InByKind::Normal)
+        ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation, operationInByIdOptimize);
+    else
+        ftlThunkAwareRepatchCall(codeBlock, stubInfo.slowPathCallLocation, operationInByValOptimize);
     InlineAccess::rewireStubAsJump(stubInfo, stubInfo.slowPathStartLocation);
 }
 

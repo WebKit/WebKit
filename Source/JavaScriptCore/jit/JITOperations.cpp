@@ -394,7 +394,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetByIdWithThisOptimize, EncodedJSValue, (JSGl
     }));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationInById, EncodedJSValue, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, uintptr_t rawCacheableIdentifier))
+JSC_DEFINE_JIT_OPERATION(operationInByIdGeneric, EncodedJSValue, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, EncodedJSValue base, uintptr_t rawCacheableIdentifier))
 {
     SuperSamplerScope superSamplerScope(false);
 
@@ -415,7 +415,7 @@ JSC_DEFINE_JIT_OPERATION(operationInById, EncodedJSValue, (JSGlobalObject* globa
     }
     JSObject* baseObject = asObject(baseValue);
 
-    LOG_IC((ICEvent::OperationInById, baseObject->classInfo(vm), ident));
+    LOG_IC((ICEvent::OperationInByIdGeneric, baseObject->classInfo(vm), ident));
 
     scope.release();
     PropertySlot slot(baseObject, PropertySlot::InternalMethodType::HasProperty);
@@ -448,19 +448,64 @@ JSC_DEFINE_JIT_OPERATION(operationInByIdOptimize, EncodedJSValue, (JSGlobalObjec
     bool found = baseObject->getPropertySlot(globalObject, ident, slot);
     CodeBlock* codeBlock = callFrame->codeBlock();
     if (stubInfo->considerCachingBy(vm, codeBlock, baseObject->structure(vm), identifier))
-        repatchInByID(globalObject, codeBlock, baseObject, identifier, found, slot, *stubInfo);
+        repatchInBy(globalObject, codeBlock, baseObject, identifier, found, slot, *stubInfo, InByKind::Normal);
     return JSValue::encode(jsBoolean(found));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationInByVal, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* base, EncodedJSValue key))
+JSC_DEFINE_JIT_OPERATION(operationInByValOptimize, EncodedJSValue, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, ArrayProfile* arrayProfile, EncodedJSValue encodedBase, EncodedJSValue encodedKey))
 {
     SuperSamplerScope superSamplerScope(false);
-    
+
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue baseValue = JSValue::decode(encodedBase);
+    if (!baseValue.isObject()) {
+        throwException(globalObject, scope, createInvalidInParameterError(globalObject, baseValue));
+        return encodedJSValue();
+    }
+    JSObject* baseObject = asObject(baseValue);
+    if (arrayProfile)
+        arrayProfile->observeStructure(baseObject->structure(vm));
+
+    JSValue key = JSValue::decode(encodedKey);
+    uint32_t i;
+    if (key.getUInt32(i)) {
+        // FIXME: InByVal should have inline caching for integer indices too, as GetByVal does.
+        // https://bugs.webkit.org/show_bug.cgi?id=226619
+        if (arrayProfile)
+            arrayProfile->observeIndexedRead(vm, baseObject, i);
+        RELEASE_AND_RETURN(scope, JSValue::encode(jsBoolean(baseObject->hasProperty(globalObject, i))));
+    }
+
+    const Identifier propertyName = key.toPropertyKey(globalObject);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    PropertySlot slot(baseObject, PropertySlot::InternalMethodType::HasProperty);
+    bool found = baseObject->getPropertySlot(globalObject, propertyName, slot);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    if (CacheableIdentifier::isCacheableIdentifierCell(key) && (key.isSymbol() || !parseIndex(propertyName))) {
+        CodeBlock* codeBlock = callFrame->codeBlock();
+        CacheableIdentifier identifier = CacheableIdentifier::createFromCell(key.asCell());
+        if (stubInfo->considerCachingBy(vm, codeBlock, baseObject->structure(vm), identifier))
+            repatchInBy(globalObject, codeBlock, baseObject, identifier, found, slot, *stubInfo, InByKind::NormalByVal);
+    }
+
+    return JSValue::encode(jsBoolean(found));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationInByValGeneric, EncodedJSValue, (JSGlobalObject* globalObject, StructureStubInfo* stubInfo, ArrayProfile* arrayProfile, EncodedJSValue base, EncodedJSValue key))
+{
+    SuperSamplerScope superSamplerScope(false);
+
     VM& vm = globalObject->vm();
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
 
-    return JSValue::encode(jsBoolean(CommonSlowPaths::opInByVal(globalObject, base, JSValue::decode(key))));
+    stubInfo->tookSlowPath = true;
+    return JSValue::encode(jsBoolean(CommonSlowPaths::opInByVal(globalObject, JSValue::decode(base), JSValue::decode(key), arrayProfile)));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationHasPrivateName, EncodedJSValue, (JSGlobalObject* globalObject, JSCell* base, EncodedJSValue key))

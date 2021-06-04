@@ -1286,18 +1286,31 @@ void SpeculativeJIT::compileInByVal(Node* node)
 {
     SpeculateCellOperand base(this, node->child1());
     JSValueOperand key(this, node->child2());
+    JSValueRegsTemporary result(this, Reuse, key);
 
     GPRReg baseGPR = base.gpr();
-    JSValueRegs regs = key.jsValueRegs();
+    JSValueRegs keyRegs = key.jsValueRegs();
+    JSValueRegs resultRegs = result.regs();
 
     base.use();
     key.use();
 
-    flushRegisters();
-    JSValueRegsFlushedCallResult result(this);
-    JSValueRegs resultRegs = result.regs();
-    callOperation(operationInByVal, resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), baseGPR, regs);
-    m_jit.exceptionCheck();
+    CodeOrigin codeOrigin = node->origin.semantic;
+    CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream->size());
+    RegisterSet usedRegisters = this->usedRegisters();
+    JITInByValGenerator gen(
+        m_jit.codeBlock(), codeOrigin, callSite, usedRegisters,
+        JSValueRegs::payloadOnly(baseGPR), keyRegs, resultRegs);
+    gen.generateFastPath(m_jit);
+
+    auto slowPath = slowPathCall(
+        gen.slowPathJump(), this, operationInByValOptimize,
+        NeedToSpill, ExceptionCheckRequirement::CheckNeeded,
+        resultRegs, TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), gen.stubInfo(), nullptr, CCallHelpers::CellValue(baseGPR), keyRegs);
+
+    m_jit.addInByVal(gen, slowPath.get());
+    addSlowPathGenerator(WTFMove(slowPath));
+
     blessedBooleanResult(resultRegs.payloadGPR(), node, UseChildrenCalledExplicitly);
 }
 

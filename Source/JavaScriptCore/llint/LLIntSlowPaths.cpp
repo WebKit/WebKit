@@ -1424,6 +1424,14 @@ LLINT_SLOW_PATH_DECL(slow_path_in_by_id)
     LLINT_RETURN(jsBoolean(asObject(baseValue)->hasProperty(globalObject, codeBlock->identifier(bytecode.m_property))));
 }
 
+LLINT_SLOW_PATH_DECL(slow_path_in_by_val)
+{
+    LLINT_BEGIN();
+    auto bytecode = pc->as<OpInByVal>();
+    auto& metadata = bytecode.metadata(codeBlock);
+    LLINT_RETURN(jsBoolean(CommonSlowPaths::opInByVal(globalObject, getOperand(callFrame, bytecode.m_base), getOperand(callFrame, bytecode.m_property), &metadata.m_arrayProfile)));
+}
+
 LLINT_SLOW_PATH_DECL(slow_path_put_getter_by_id)
 {
     LLINT_BEGIN();

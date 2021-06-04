@@ -285,7 +285,6 @@ void JIT::privateCompileMainPass()
         }
 
         switch (opcodeID) {
-        DEFINE_SLOW_OP(in_by_val)
         DEFINE_SLOW_OP(has_private_name)
         DEFINE_SLOW_OP(has_private_brand)
         DEFINE_SLOW_OP(less)
@@ -361,6 +360,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_beloweq)
         DEFINE_OP(op_try_get_by_id)
         DEFINE_OP(op_in_by_id)
+        DEFINE_OP(op_in_by_val)
         DEFINE_OP(op_get_by_id)
         DEFINE_OP(op_get_by_id_with_this)
         DEFINE_OP(op_get_by_id_direct)
@@ -518,8 +518,9 @@ void JIT::privateCompileSlowCases()
     m_getByIdWithThisIndex = 0;
     m_putByIdIndex = 0;
     m_inByIdIndex = 0;
-    m_delByValIndex = 0;
+    m_inByValIndex = 0;
     m_delByIdIndex = 0;
+    m_delByValIndex = 0;
     m_instanceOfIndex = 0;
     m_privateBrandAccessIndex = 0;
     m_byValInstructionIndex = 0;
@@ -570,6 +571,7 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_eq)
         DEFINE_SLOWCASE_OP(op_try_get_by_id)
         DEFINE_SLOWCASE_OP(op_in_by_id)
+        DEFINE_SLOWCASE_OP(op_in_by_val)
         DEFINE_SLOWCASE_OP(op_get_by_id)
         DEFINE_SLOWCASE_OP(op_get_by_id_with_this)
         DEFINE_SLOWCASE_OP(op_get_by_id_direct)
@@ -919,6 +921,7 @@ void JIT::link()
     finalizeInlineCaches(m_delByIds, patchBuffer);
     finalizeInlineCaches(m_delByVals, patchBuffer);
     finalizeInlineCaches(m_inByIds, patchBuffer);
+    finalizeInlineCaches(m_inByVals, patchBuffer);
     finalizeInlineCaches(m_instanceOfs, patchBuffer);
     finalizeInlineCaches(m_privateBrandAccesses, patchBuffer);
 

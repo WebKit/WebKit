@@ -25,8 +25,9 @@
  */
 
 #include "config.h"
-#include "InByIdStatus.h"
+#include "InByStatus.h"
 
+#include "CacheableIdentifierInlines.h"
 #include "CodeBlock.h"
 #include "ComplexGetStatus.h"
 #include "ICStatusUtils.h"
@@ -36,46 +37,45 @@
 
 namespace JSC {
 
-bool InByIdStatus::appendVariant(const InByIdVariant& variant)
+bool InByStatus::appendVariant(const InByIdVariant& variant)
 {
     return appendICStatusVariant(m_variants, variant);
 }
 
-void InByIdStatus::shrinkToFit()
+void InByStatus::shrinkToFit()
 {
     m_variants.shrinkToFit();
 }
 
 #if ENABLE(JIT)
-InByIdStatus InByIdStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, BytecodeIndex bytecodeIndex, UniquedStringImpl* uid, ExitFlag didExit)
+InByStatus InByStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, BytecodeIndex bytecodeIndex, ExitFlag didExit)
 {
     ConcurrentJSLocker locker(profiledBlock->m_lock);
 
-    InByIdStatus result;
+    InByStatus result;
 
 #if ENABLE(DFG_JIT)
-    result = computeForStubInfoWithoutExitSiteFeedback(locker, profiledBlock->vm(), map.get(CodeOrigin(bytecodeIndex)).stubInfo, uid);
+    result = computeForStubInfoWithoutExitSiteFeedback(locker, profiledBlock->vm(), map.get(CodeOrigin(bytecodeIndex)).stubInfo);
 
     if (!result.takesSlowPath() && didExit)
-        return InByIdStatus(TakesSlowPath);
+        return InByStatus(TakesSlowPath);
 #else
     UNUSED_PARAM(map);
     UNUSED_PARAM(bytecodeIndex);
-    UNUSED_PARAM(uid);
     UNUSED_PARAM(didExit);
 #endif
 
     return result;
 }
 
-InByIdStatus InByIdStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, BytecodeIndex bytecodeIndex, UniquedStringImpl* uid)
+InByStatus InByStatus::computeFor(CodeBlock* profiledBlock, ICStatusMap& map, BytecodeIndex bytecodeIndex)
 {
-    return computeFor(profiledBlock, map, bytecodeIndex, uid, hasBadCacheExitSite(profiledBlock, bytecodeIndex));
+    return computeFor(profiledBlock, map, bytecodeIndex, hasBadCacheExitSite(profiledBlock, bytecodeIndex));
 }
 
-InByIdStatus InByIdStatus::computeFor(
+InByStatus InByStatus::computeFor(
     CodeBlock* profiledBlock, ICStatusMap& baselineMap,
-    ICStatusContextStack& contextStack, CodeOrigin codeOrigin, UniquedStringImpl* uid)
+    ICStatusContextStack& contextStack, CodeOrigin codeOrigin)
 {
     BytecodeIndex bytecodeIndex = codeOrigin.bytecodeIndex();
     ExitFlag didExit = hasBadCacheExitSite(profiledBlock, bytecodeIndex);
@@ -83,24 +83,24 @@ InByIdStatus InByIdStatus::computeFor(
     for (ICStatusContext* context : contextStack) {
         ICStatus status = context->get(codeOrigin);
         
-        auto bless = [&] (const InByIdStatus& result) -> InByIdStatus {
+        auto bless = [&] (const InByStatus& result) -> InByStatus {
             if (!context->isInlined(codeOrigin)) {
-                InByIdStatus baselineResult = computeFor(
-                    profiledBlock, baselineMap, bytecodeIndex, uid, didExit);
+                InByStatus baselineResult = computeFor(
+                    profiledBlock, baselineMap, bytecodeIndex, didExit);
                 baselineResult.merge(result);
                 return baselineResult;
             }
             if (didExit.isSet(ExitFromInlined))
-                return InByIdStatus(TakesSlowPath);
+                return InByStatus(TakesSlowPath);
             return result;
         };
         
 #if ENABLE(DFG_JIT)
         if (status.stubInfo) {
-            InByIdStatus result;
+            InByStatus result;
             {
                 ConcurrentJSLocker locker(context->optimizedCodeBlock->m_lock);
-                result = computeForStubInfoWithoutExitSiteFeedback(locker, profiledBlock->vm(), status.stubInfo, uid);
+                result = computeForStubInfoWithoutExitSiteFeedback(locker, profiledBlock->vm(), status.stubInfo);
             }
             if (result.isSet())
                 return bless(result);
@@ -111,44 +111,47 @@ InByIdStatus InByIdStatus::computeFor(
             return bless(*status.inStatus);
     }
     
-    return computeFor(profiledBlock, baselineMap, bytecodeIndex, uid, didExit);
+    return computeFor(profiledBlock, baselineMap, bytecodeIndex, didExit);
 }
 #endif // ENABLE(JIT)
 
 #if ENABLE(DFG_JIT)
-InByIdStatus InByIdStatus::computeForStubInfo(const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, CodeOrigin codeOrigin, UniquedStringImpl* uid)
+InByStatus InByStatus::computeForStubInfo(const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, StructureStubInfo* stubInfo, CodeOrigin codeOrigin)
 {
-    InByIdStatus result = InByIdStatus::computeForStubInfoWithoutExitSiteFeedback(locker, profiledBlock->vm(), stubInfo, uid);
+    InByStatus result = InByStatus::computeForStubInfoWithoutExitSiteFeedback(locker, profiledBlock->vm(), stubInfo);
 
     if (!result.takesSlowPath() && hasBadCacheExitSite(profiledBlock, codeOrigin.bytecodeIndex()))
-        return InByIdStatus(TakesSlowPath);
+        return InByStatus(TakesSlowPath);
     return result;
 }
 
-InByIdStatus InByIdStatus::computeForStubInfoWithoutExitSiteFeedback(const ConcurrentJSLocker&, VM& vm, StructureStubInfo* stubInfo, UniquedStringImpl* uid)
+InByStatus InByStatus::computeForStubInfoWithoutExitSiteFeedback(const ConcurrentJSLocker&, VM& vm, StructureStubInfo* stubInfo)
 {
     StubInfoSummary summary = StructureStubInfo::summary(vm, stubInfo);
     if (!isInlineable(summary))
-        return InByIdStatus(summary);
+        return InByStatus(summary);
     
     // Finally figure out if we can derive an access strategy.
-    InByIdStatus result;
+    InByStatus result;
     result.m_state = Simple;
     switch (stubInfo->cacheType()) {
     case CacheType::Unset:
-        return InByIdStatus(NoInformation);
+        return InByStatus(NoInformation);
 
     case CacheType::InByIdSelf: {
         Structure* structure = stubInfo->u.byIdSelf.baseObjectStructure.get();
         if (structure->takesSlowPathInDFGForImpureProperty())
-            return InByIdStatus(TakesSlowPath);
+            return InByStatus(TakesSlowPath);
+        CacheableIdentifier identifier = stubInfo->identifier();
+        UniquedStringImpl* uid = identifier.uid();
+        RELEASE_ASSERT(uid);
+        InByIdVariant variant(WTFMove(identifier));
         unsigned attributes;
-        InByIdVariant variant;
         variant.m_offset = structure->getConcurrently(uid, attributes);
         if (!isValidOffset(variant.m_offset))
-            return InByIdStatus(TakesSlowPath);
+            return InByStatus(TakesSlowPath);
         if (attributes & PropertyAttribute::CustomAccessorOrValue)
-            return InByIdStatus(TakesSlowPath);
+            return InByStatus(TakesSlowPath);
 
         variant.m_structureSet.add(structure);
         bool didAppend = result.appendVariant(variant);
@@ -161,10 +164,10 @@ InByIdStatus InByIdStatus::computeForStubInfoWithoutExitSiteFeedback(const Concu
         for (unsigned listIndex = 0; listIndex < list->size(); ++listIndex) {
             const AccessCase& access = list->at(listIndex);
             if (access.viaProxy())
-                return InByIdStatus(TakesSlowPath);
+                return InByStatus(TakesSlowPath);
 
             if (access.usesPolyProto())
-                return InByIdStatus(TakesSlowPath);
+                return InByStatus(TakesSlowPath);
 
             Structure* structure = access.structure();
             if (!structure) {
@@ -174,16 +177,16 @@ InByIdStatus InByIdStatus::computeForStubInfoWithoutExitSiteFeedback(const Concu
                 // have to use value profiling to discover something that the AccessCase could have
                 // told us. But, it works well enough. So, our only concern here is to not
                 // crash on null structure.
-                return InByIdStatus(TakesSlowPath);
+                return InByStatus(TakesSlowPath);
             }
 
-            ComplexGetStatus complexGetStatus = ComplexGetStatus::computeFor(structure, access.conditionSet(), uid);
+            ComplexGetStatus complexGetStatus = ComplexGetStatus::computeFor(structure, access.conditionSet(), access.uid());
             switch (complexGetStatus.kind()) {
             case ComplexGetStatus::ShouldSkip:
                 continue;
 
             case ComplexGetStatus::TakesSlowPath:
-                return InByIdStatus(TakesSlowPath);
+                return InByStatus(TakesSlowPath);
 
             case ComplexGetStatus::Inlineable: {
                 switch (access.type()) {
@@ -191,15 +194,15 @@ InByIdStatus InByIdStatus::computeForStubInfoWithoutExitSiteFeedback(const Concu
                 case AccessCase::InMiss:
                     break;
                 default:
-                    return InByIdStatus(TakesSlowPath);
+                    return InByStatus(TakesSlowPath);
                 }
 
                 InByIdVariant variant(
-                    StructureSet(structure), complexGetStatus.offset(),
+                    access.identifier(), StructureSet(structure), complexGetStatus.offset(),
                     complexGetStatus.conditionSet());
 
                 if (!result.appendVariant(variant))
-                    return InByIdStatus(TakesSlowPath);
+                    return InByStatus(TakesSlowPath);
                 break;
             }
             }
@@ -210,15 +213,15 @@ InByIdStatus InByIdStatus::computeForStubInfoWithoutExitSiteFeedback(const Concu
     }
 
     default:
-        return InByIdStatus(TakesSlowPath);
+        return InByStatus(TakesSlowPath);
     }
 
     RELEASE_ASSERT_NOT_REACHED();
-    return InByIdStatus();
+    return InByStatus();
 }
 #endif
 
-void InByIdStatus::merge(const InByIdStatus& other)
+void InByStatus::merge(const InByStatus& other)
 {
     if (other.m_state == NoInformation)
         return;
@@ -230,12 +233,12 @@ void InByIdStatus::merge(const InByIdStatus& other)
         
     case Simple:
         if (other.m_state != Simple) {
-            *this = InByIdStatus(TakesSlowPath);
+            *this = InByStatus(TakesSlowPath);
             return;
         }
         for (const InByIdVariant& otherVariant : other.m_variants) {
             if (!appendVariant(otherVariant)) {
-                *this = InByIdStatus(TakesSlowPath);
+                *this = InByStatus(TakesSlowPath);
                 return;
             }
         }
@@ -249,7 +252,7 @@ void InByIdStatus::merge(const InByIdStatus& other)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void InByIdStatus::filter(const StructureSet& structureSet)
+void InByStatus::filter(const StructureSet& structureSet)
 {
     if (m_state != Simple)
         return;
@@ -259,16 +262,16 @@ void InByIdStatus::filter(const StructureSet& structureSet)
 }
 
 template<typename Visitor>
-void InByIdStatus::markIfCheap(Visitor& visitor)
+void InByStatus::markIfCheap(Visitor& visitor)
 {
     for (InByIdVariant& variant : m_variants)
         variant.markIfCheap(visitor);
 }
 
-template void InByIdStatus::markIfCheap(AbstractSlotVisitor&);
-template void InByIdStatus::markIfCheap(SlotVisitor&);
+template void InByStatus::markIfCheap(AbstractSlotVisitor&);
+template void InByStatus::markIfCheap(SlotVisitor&);
 
-bool InByIdStatus::finalize(VM& vm)
+bool InByStatus::finalize(VM& vm)
 {
     for (InByIdVariant& variant : m_variants) {
         if (!variant.finalize(vm))
@@ -277,7 +280,12 @@ bool InByIdStatus::finalize(VM& vm)
     return true;
 }
 
-void InByIdStatus::dump(PrintStream& out) const
+CacheableIdentifier InByStatus::singleIdentifier() const
+{
+    return singleIdentifierForICStatus(m_variants);
+}
+
+void InByStatus::dump(PrintStream& out) const
 {
     out.print("(");
     switch (m_state) {

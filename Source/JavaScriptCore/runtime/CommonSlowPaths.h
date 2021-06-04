@@ -251,7 +251,6 @@ JSC_DECLARE_COMMON_SLOW_PATH(slow_path_typeof_is_object);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_typeof_is_function);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_is_callable);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_is_constructor);
-JSC_DECLARE_COMMON_SLOW_PATH(slow_path_in_by_val);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_has_private_name);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_has_private_brand);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_strcat);

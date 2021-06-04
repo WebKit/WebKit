@@ -4439,7 +4439,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case FilterCallLinkStatus:
     case FilterGetByStatus:
     case FilterPutByIdStatus:
-    case FilterInByIdStatus:
+    case FilterInByStatus:
     case FilterDeleteByStatus:
     case FilterCheckPrivateBrandStatus:
     case FilterSetPrivateBrandStatus:
@@ -4610,10 +4610,10 @@ void AbstractInterpreter<AbstractStateType>::filterICStatus(Node* node)
         break;
     }
         
-    case FilterInByIdStatus: {
+    case FilterInByStatus: {
         AbstractValue& value = forNode(node->child1());
         if (value.m_structure.isFinite())
-            node->inByIdStatus()->filter(value.m_structure.toStructureSet());
+            node->inByStatus()->filter(value.m_structure.toStructureSet());
         break;
     }
         

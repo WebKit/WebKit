@@ -195,6 +195,31 @@ private:
     MacroAssembler::PatchableJump m_slowPathJump;
 };
 
+class JITInByValGenerator : public JITInlineCacheGenerator {
+    using Base = JITInlineCacheGenerator;
+public:
+    JITInByValGenerator() { }
+
+    JITInByValGenerator(
+        CodeBlock*, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters,
+        JSValueRegs base, JSValueRegs property, JSValueRegs result);
+
+    MacroAssembler::Jump slowPathJump() const
+    {
+        ASSERT(m_slowPathJump.m_jump.isSet());
+        return m_slowPathJump.m_jump;
+    }
+
+    void finalize(
+        LinkBuffer& fastPathLinkBuffer, LinkBuffer& slowPathLinkBuffer);
+
+    void generateFastPath(MacroAssembler&);
+
+private:
+    MacroAssembler::Label m_start;
+    MacroAssembler::PatchableJump m_slowPathJump;
+};
+
 class JITInByIdGenerator : public JITByIdGenerator {
 public:
     JITInByIdGenerator() { }

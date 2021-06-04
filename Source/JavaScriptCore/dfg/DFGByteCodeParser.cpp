@@ -55,7 +55,7 @@
 #include "GetByStatus.h"
 #include "GetterSetter.h"
 #include "Heap.h"
-#include "InByIdStatus.h"
+#include "InByStatus.h"
 #include "InstanceOfStatus.h"
 #include "JSArrayIterator.h"
 #include "JSCInlines.h"
@@ -263,7 +263,9 @@ private:
 
     void handleDeleteById(
         VirtualRegister destination, Node* base, CacheableIdentifier, unsigned identifierNumber, DeleteByStatus, ECMAMode);
-    
+
+    void handleInById(VirtualRegister destination, Node* base, CacheableIdentifier, InByStatus);
+
     // Either register a watchpoint or emit a check for this condition. Returns false if the
     // condition no longer holds, and therefore no reasonable check can be emitted.
     bool check(const ObjectPropertyCondition&);
@@ -4928,6 +4930,35 @@ void ByteCodeParser::handleDeleteById(
     return;
 }
 
+void ByteCodeParser::handleInById(VirtualRegister destination, Node* base, CacheableIdentifier identifier, InByStatus status)
+{
+    if (status.isSimple() && Options::useAccessInlining()) {
+        bool allOK = true;
+        MatchStructureData* data = m_graph.m_matchStructureData.add();
+        for (const InByIdVariant& variant : status.variants()) {
+            if (!check(variant.conditionSet())) {
+                allOK = false;
+                break;
+            }
+            for (Structure* structure : variant.structureSet()) {
+                MatchStructureVariant matchVariant;
+                matchVariant.structure = m_graph.registerStructure(structure);
+                matchVariant.result = variant.isHit();
+
+                data->variants.append(WTFMove(matchVariant));
+            }
+        }
+
+        if (allOK) {
+            addToGraph(FilterInByStatus, OpInfo(m_graph.m_plan.recordedStatuses().addInByStatus(currentCodeOrigin(), status)), base);
+            set(destination, addToGraph(MatchStructure, OpInfo(data), base));
+            return;
+        }
+    }
+
+    set(destination, addToGraph(InById, OpInfo(identifier), base));
+}
+
 void ByteCodeParser::emitPutById(
     Node* base, CacheableIdentifier identifier, Node* value, const PutByIdStatus& putByIdStatus, bool isDirect, ECMAMode ecmaMode)
 {
@@ -8212,8 +8243,39 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_in_by_val: {
             auto bytecode = currentInstruction->as<OpInByVal>();
-            ArrayMode arrayMode = getArrayMode(bytecode.metadata(codeBlock).m_arrayProfile, Array::Read);
-            set(bytecode.m_dst, addToGraph(InByVal, OpInfo(arrayMode.asWord()), get(bytecode.m_base), get(bytecode.m_property)));
+            Node* base = get(bytecode.m_base);
+            Node* property = get(bytecode.m_property);
+            bool compiledAsInById = false;
+
+            if (!m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)
+                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)) {
+
+                InByStatus status = InByStatus::computeFor(
+                    m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap,
+                    m_icContextStack, currentCodeOrigin());
+
+                if (CacheableIdentifier identifier = status.singleIdentifier()) {
+                    UniquedStringImpl* uid = identifier.uid();
+                    m_graph.identifiers().ensure(uid);
+                    if (identifier.isCell()) {
+                        FrozenValue* frozen = m_graph.freezeStrong(identifier.cell());
+                        if (identifier.isSymbolCell())
+                            addToGraph(CheckIsConstant, OpInfo(frozen), property);
+                        else
+                            addToGraph(CheckIdent, OpInfo(uid), property);
+                    } else
+                        addToGraph(CheckIdent, OpInfo(uid), property);
+
+                    handleInById(bytecode.m_dst, base, identifier, status);
+                    compiledAsInById = true;
+                }
+            }
+
+            if (!compiledAsInById) {
+                ArrayMode arrayMode = getArrayMode(bytecode.metadata(codeBlock).m_arrayProfile, Array::Read);
+                set(bytecode.m_dst, addToGraph(InByVal, OpInfo(arrayMode.asWord()), base, property));
+            }
             NEXT_OPCODE(op_in_by_val);
         }
 
@@ -8222,39 +8284,10 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* base = get(bytecode.m_base);
             unsigned identifierNumber = m_inlineStackTop->m_identifierRemap[bytecode.m_property];
             UniquedStringImpl* uid = m_graph.identifiers()[identifierNumber];
-
-            InByIdStatus status = InByIdStatus::computeFor(
-                m_inlineStackTop->m_profiledBlock,
-                m_inlineStackTop->m_baselineMap, m_icContextStack,
-                currentCodeOrigin(), uid);
-
-            if (status.isSimple() && Options::useAccessInlining()) {
-                bool allOK = true;
-                MatchStructureData* data = m_graph.m_matchStructureData.add();
-                for (const InByIdVariant& variant : status.variants()) {
-                    if (!check(variant.conditionSet())) {
-                        allOK = false;
-                        break;
-                    }
-                    for (Structure* structure : variant.structureSet()) {
-                        MatchStructureVariant matchVariant;
-                        matchVariant.structure = m_graph.registerStructure(structure);
-                        matchVariant.result = variant.isHit();
-
-                        data->variants.append(WTFMove(matchVariant));
-                    }
-                }
-
-                if (allOK) {
-                    addToGraph(FilterInByIdStatus, OpInfo(m_graph.m_plan.recordedStatuses().addInByIdStatus(currentCodeOrigin(), status)), base);
-
-                    Node* match = addToGraph(MatchStructure, OpInfo(data), base);
-                    set(bytecode.m_dst, match);
-                    NEXT_OPCODE(op_in_by_id);
-                }
-            }
-
-            set(bytecode.m_dst, addToGraph(InById, OpInfo(CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid)), base));
+            InByStatus status = InByStatus::computeFor(
+                m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap,
+                m_icContextStack, currentCodeOrigin());
+            handleInById(bytecode.m_dst, base, CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid), status);
             NEXT_OPCODE(op_in_by_id);
         }
         

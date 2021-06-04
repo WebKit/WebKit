@@ -1573,6 +1573,76 @@ void JIT::emitSlow_op_in_by_id(const Instruction* currentInstruction, Vector<Slo
     gen.reportSlowPathCall(coldPathBegin, call);
 }
 
+void JIT::emit_op_in_by_val(const Instruction* currentInstruction)
+{
+    auto bytecode = currentInstruction->as<OpInByVal>();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister base = bytecode.m_base;
+    VirtualRegister property = bytecode.m_property;
+    auto& metadata = bytecode.metadata(m_codeBlock);
+    ArrayProfile* profile = &metadata.m_arrayProfile;
+
+    emitGetVirtualRegister(base, regT0);
+    emitJumpSlowCaseIfNotJSCell(regT0, base);
+    emitGetVirtualRegister(property, regT1);
+    emitArrayProfilingSiteWithCell(regT0, regT2, profile);
+
+    JITInByValGenerator gen(
+        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+        JSValueRegs(regT0), JSValueRegs(regT1), JSValueRegs(regT0));
+    gen.generateFastPath(*this);
+    addSlowCase(gen.slowPathJump());
+    m_inByVals.append(gen);
+
+    emitPutVirtualRegister(dst);
+}
+
+void JIT::emitSlow_op_in_by_val(const Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkAllSlowCases(iter);
+
+    auto bytecode = currentInstruction->as<OpInByVal>();
+    VirtualRegister dst = bytecode.m_dst;
+    auto& metadata = bytecode.metadata(m_codeBlock);
+    ArrayProfile* profile = &metadata.m_arrayProfile;
+
+    JITInByValGenerator& gen = m_inByVals[m_inByValIndex++];
+
+    Label coldPathBegin = label();
+
+#if !ENABLE(EXTRA_CTI_THUNKS)
+    Call call = callOperation(operationInByValOptimize, dst, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), profile, regT0, regT1);
+#else
+    VM& vm = this->vm();
+    uint32_t bytecodeOffset = m_bytecodeIndex.offset();
+    ASSERT(BytecodeIndex(bytecodeOffset) == m_bytecodeIndex);
+
+    constexpr GPRReg bytecodeOffsetGPR = argumentGPR4;
+    move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
+
+    constexpr GPRReg stubInfoGPR = argumentGPR3;
+    constexpr GPRReg profileGPR = argumentGPR2;
+    constexpr GPRReg baseGPR = regT0;
+    constexpr GPRReg propertyGPR = regT1;
+    static_assert(baseGPR == argumentGPR0 || !isARM64());
+    static_assert(propertyGPR == argumentGPR1);
+
+    move(TrustedImmPtr(gen.stubInfo()), stubInfoGPR);
+    move(TrustedImmPtr(profile), profileGPR);
+    // slow_op_get_by_val_prepareCallGenerator will do exactly what we need.
+    // So, there's no point in creating a duplicate thunk just to give it a different name.
+    static_assert(std::is_same<decltype(operationInByValOptimize), decltype(operationGetByValOptimize)>::value);
+    emitNakedNearCall(vm.getCTIStub(slow_op_get_by_val_prepareCallGenerator).retaggedCode<NoPtrTag>());
+
+    Call call = appendCall(operationInByValOptimize);
+    emitNakedNearCall(vm.getCTIStub(checkExceptionGenerator).retaggedCode<NoPtrTag>());
+
+    emitPutVirtualRegister(dst, returnValueGPR);
+#endif // ENABLE(EXTRA_CTI_THUNKS)
+
+    gen.reportSlowPathCall(coldPathBegin, call);
+}
+
 void JIT::emitVarInjectionCheck(bool needsVarInjectionChecks)
 {
     if (!needsVarInjectionChecks)

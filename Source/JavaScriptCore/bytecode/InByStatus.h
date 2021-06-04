@@ -39,7 +39,7 @@ class AccessCase;
 class CodeBlock;
 class StructureStubInfo;
 
-class InByIdStatus final {
+class InByStatus final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum State {
@@ -52,17 +52,15 @@ public:
         TakesSlowPath,
     };
 
-    InByIdStatus() = default;
+    InByStatus() = default;
 
-    InByIdStatus(State state, const InByIdVariant& variant = InByIdVariant())
+    InByStatus(State state)
         : m_state(state)
     {
-        ASSERT((state == Simple) == variant.isSet());
-        if (variant.isSet())
-            m_variants.append(variant);
+        ASSERT(state != Simple);
     }
 
-    explicit InByIdStatus(StubInfoSummary summary)
+    explicit InByStatus(StubInfoSummary summary)
     {
         switch (summary) {
         case StubInfoSummary::NoInformation:
@@ -80,12 +78,12 @@ public:
         RELEASE_ASSERT_NOT_REACHED();
     }
     
-    static InByIdStatus computeFor(CodeBlock*, ICStatusMap&, BytecodeIndex, UniquedStringImpl* uid);
-    static InByIdStatus computeFor(CodeBlock*, ICStatusMap&, BytecodeIndex, UniquedStringImpl* uid, ExitFlag);
-    static InByIdStatus computeFor(CodeBlock* baselineBlock, ICStatusMap& baselineMap, ICStatusContextStack& contextStack, CodeOrigin, UniquedStringImpl* uid);
+    static InByStatus computeFor(CodeBlock*, ICStatusMap&, BytecodeIndex);
+    static InByStatus computeFor(CodeBlock*, ICStatusMap&, BytecodeIndex, ExitFlag);
+    static InByStatus computeFor(CodeBlock* baselineBlock, ICStatusMap& baselineMap, ICStatusContextStack&, CodeOrigin);
 
 #if ENABLE(DFG_JIT)
-    static InByIdStatus computeForStubInfo(const ConcurrentJSLocker&, CodeBlock* baselineBlock, StructureStubInfo*, CodeOrigin, UniquedStringImpl* uid);
+    static InByStatus computeForStubInfo(const ConcurrentJSLocker&, CodeBlock* baselineBlock, StructureStubInfo*, CodeOrigin);
 #endif
 
     State state() const { return m_state; }
@@ -101,7 +99,7 @@ public:
 
     bool takesSlowPath() const { return m_state == TakesSlowPath; }
     
-    void merge(const InByIdStatus&);
+    void merge(const InByStatus&);
 
     // Attempts to reduce the set of variants to fit the given structure set. This may be approximate.
     void filter(const StructureSet&);
@@ -111,9 +109,11 @@ public:
 
     void dump(PrintStream&) const;
 
+    CacheableIdentifier singleIdentifier() const;
+
 private:
 #if ENABLE(DFG_JIT)
-    static InByIdStatus computeForStubInfoWithoutExitSiteFeedback(const ConcurrentJSLocker&, VM&, StructureStubInfo*, UniquedStringImpl* uid);
+    static InByStatus computeForStubInfoWithoutExitSiteFeedback(const ConcurrentJSLocker&, VM&, StructureStubInfo*);
 #endif
     bool appendVariant(const InByIdVariant&);
     void shrinkToFit();

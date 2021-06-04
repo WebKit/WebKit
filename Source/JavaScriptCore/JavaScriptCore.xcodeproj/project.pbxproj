@@ -1401,7 +1401,9 @@
 		A1D792FF1B43864B004516F5 /* IntlNumberFormatConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = A1D792F91B43864B004516F5 /* IntlNumberFormatConstructor.h */; };
 		A1D793011B43864B004516F5 /* IntlNumberFormatPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = A1D792FB1B43864B004516F5 /* IntlNumberFormatPrototype.h */; };
 		A321AA6D2626359B0023ADA2 /* IntlWorkaround.h in Headers */ = {isa = PBXBuildFile; fileRef = A321AA6C2626359B0023ADA2 /* IntlWorkaround.h */; };
+		A382C5312667111D0042CD99 /* InByIdVariant.h in Headers */ = {isa = PBXBuildFile; fileRef = E3305FB120B0F78800CEB82B /* InByIdVariant.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A38D250E25800D440042BFDD /* JSArrayBufferPrototypeInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = A38D250D25800D430042BFDD /* JSArrayBufferPrototypeInlines.h */; };
+		A38D5BFC2666D3DA00A109A6 /* InByStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = A38D5BFA2666D3DA00A109A6 /* InByStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A3EE8543262514B000FC9B8D /* IntlWorkaround.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A37619402625127C00CBCBA9 /* IntlWorkaround.cpp */; };
 		A3FF9BC72234749100B1A9AB /* YarrFlags.h in Headers */ = {isa = PBXBuildFile; fileRef = A3FF9BC52234746600B1A9AB /* YarrFlags.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A503FA1A188E0FB000110F14 /* JavaScriptCallFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = A503FA14188E0FAF00110F14 /* JavaScriptCallFrame.h */; };
@@ -4430,6 +4432,8 @@
 		A321AA6C2626359B0023ADA2 /* IntlWorkaround.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlWorkaround.h; sourceTree = "<group>"; };
 		A37619402625127C00CBCBA9 /* IntlWorkaround.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlWorkaround.cpp; sourceTree = "<group>"; };
 		A38D250D25800D430042BFDD /* JSArrayBufferPrototypeInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSArrayBufferPrototypeInlines.h; sourceTree = "<group>"; };
+		A38D5BF92666D3DA00A109A6 /* InByStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InByStatus.cpp; sourceTree = "<group>"; };
+		A38D5BFA2666D3DA00A109A6 /* InByStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InByStatus.h; sourceTree = "<group>"; };
 		A3AFF92B245A3CF900C9BA3B /* IntlLocale.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlLocale.h; sourceTree = "<group>"; };
 		A3AFF92C245A3CFA00C9BA3B /* IntlLocaleConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlLocaleConstructor.h; sourceTree = "<group>"; };
 		A3AFF92D245A3CFA00C9BA3B /* IntlLocale.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlLocale.cpp; sourceTree = "<group>"; };
@@ -5058,10 +5062,8 @@
 		E3282BB91FE930A300EDAF71 /* YarrErrorCode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = YarrErrorCode.cpp; path = yarr/YarrErrorCode.cpp; sourceTree = "<group>"; };
 		E3282BBA1FE930A400EDAF71 /* YarrErrorCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YarrErrorCode.h; path = yarr/YarrErrorCode.h; sourceTree = "<group>"; };
 		E32C3C6823E94C1E00BC97C0 /* UnlinkedCodeBlockGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnlinkedCodeBlockGenerator.h; sourceTree = "<group>"; };
-		E3305FAF20B0F78700CEB82B /* InByIdStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InByIdStatus.h; sourceTree = "<group>"; };
 		E3305FB020B0F78700CEB82B /* InByIdVariant.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InByIdVariant.cpp; sourceTree = "<group>"; };
 		E3305FB120B0F78800CEB82B /* InByIdVariant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InByIdVariant.h; sourceTree = "<group>"; };
-		E3305FB220B0F78800CEB82B /* InByIdStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InByIdStatus.cpp; sourceTree = "<group>"; };
 		E33095DC23210A1400EB7856 /* JSInternalFieldObjectImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSInternalFieldObjectImpl.h; sourceTree = "<group>"; };
 		E334CBB221FD96A8000EB178 /* RegExpGlobalData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpGlobalData.cpp; sourceTree = "<group>"; };
 		E334CBB321FD96A9000EB178 /* RegExpGlobalData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpGlobalData.h; sourceTree = "<group>"; };
@@ -6282,9 +6284,9 @@
 				FE3A06B91C1103D900390FDD /* JITRightShiftGenerator.h */,
 				72131BF326587EF2007114CF /* JITSafepoint.cpp */,
 				72131BF526587EF2007114CF /* JITSafepoint.h */,
+				72131BF426587EF2007114CF /* JITScannable.h */,
 				52B5100C265EFCD4008970E7 /* JITSizeStatistics.cpp */,
 				52B5100B265EFCD4008970E7 /* JITSizeStatistics.h */,
-				72131BF426587EF2007114CF /* JITScannable.h */,
 				0F766D2615A8CC1B008F363E /* JITStubRoutine.cpp */,
 				0F766D1C15A5028D008F363E /* JITStubRoutine.h */,
 				FE42388F1BE18C1200514737 /* JITSubGenerator.cpp */,
@@ -8577,10 +8579,10 @@
 				0F44A7AF20BF685F0022B171 /* ICStatusMap.h */,
 				0F44A7B520C0BE3F0022B171 /* ICStatusUtils.cpp */,
 				0FB399BD20AF6B380017E213 /* ICStatusUtils.h */,
-				E3305FB220B0F78800CEB82B /* InByIdStatus.cpp */,
-				E3305FAF20B0F78700CEB82B /* InByIdStatus.h */,
 				E3305FB020B0F78700CEB82B /* InByIdVariant.cpp */,
 				E3305FB120B0F78800CEB82B /* InByIdVariant.h */,
+				A38D5BF92666D3DA00A109A6 /* InByStatus.cpp */,
+				A38D5BFA2666D3DA00A109A6 /* InByStatus.h */,
 				7905BB661D12050E0019FE57 /* InlineAccess.cpp */,
 				7905BB671D12050E0019FE57 /* InlineAccess.h */,
 				148A7BED1B82975A002D9157 /* InlineCallFrame.cpp */,
@@ -9617,7 +9619,6 @@
 				0F2BDC21151E803B00CD8910 /* DFGInsertionSet.h in Headers */,
 				0F300B7C18AB1B1400A6D72E /* DFGIntegerCheckCombiningPhase.h in Headers */,
 				0F898F321B27689F0083A33C /* DFGIntegerRangeOptimizationPhase.h in Headers */,
-				52B5100D265EFCDB008970E7 /* JITSizeStatistics.h in Headers */,
 				0FC97F3E18202119002C9B26 /* DFGInvalidationPointInjectionPhase.h in Headers */,
 				0FEA0A34170D40BF00BB722C /* DFGJITCode.h in Headers */,
 				86EC9DCC1328DF82002B2AD7 /* DFGJITCompiler.h in Headers */,
@@ -9920,6 +9921,8 @@
 				BC18C40F0E16F5CD00B34460 /* Identifier.h in Headers */,
 				8606DDEA18DA44AB00A383D0 /* IdentifierInlines.h in Headers */,
 				A5FD0076189B038C00633231 /* IdentifiersFactory.h in Headers */,
+				A382C5312667111D0042CD99 /* InByIdVariant.h in Headers */,
+				A38D5BFC2666D3DA00A109A6 /* InByStatus.h in Headers */,
 				C25F8BCE157544A900245B71 /* IncrementalSweeper.h in Headers */,
 				0FB7F39915ED8E4600F167B2 /* IndexingHeader.h in Headers */,
 				0FB7F39A15ED8E4600F167B2 /* IndexingHeaderInlines.h in Headers */,
@@ -10071,6 +10074,7 @@
 				FE3A06C01C11041A00390FDD /* JITRightShiftGenerator.h in Headers */,
 				72131BF926587EF2007114CF /* JITSafepoint.h in Headers */,
 				72131BF826587EF2007114CF /* JITScannable.h in Headers */,
+				52B5100D265EFCDB008970E7 /* JITSizeStatistics.h in Headers */,
 				0F766D3115AA8112008F363E /* JITStubRoutine.h in Headers */,
 				0F766D2C15A8CC3A008F363E /* JITStubRoutineSet.h in Headers */,
 				0F5EF91F16878F7D003E5C25 /* JITThunks.h in Headers */,

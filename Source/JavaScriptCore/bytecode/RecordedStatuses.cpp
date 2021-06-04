@@ -70,10 +70,10 @@ PutByIdStatus* RecordedStatuses::addPutByIdStatus(const CodeOrigin& codeOrigin, 
     return result;
 }
 
-InByIdStatus* RecordedStatuses::addInByIdStatus(const CodeOrigin& codeOrigin, const InByIdStatus& status)
+InByStatus* RecordedStatuses::addInByStatus(const CodeOrigin& codeOrigin, const InByStatus& status)
 {
-    auto statusPtr = makeUnique<InByIdStatus>(status);
-    InByIdStatus* result = statusPtr.get();
+    auto statusPtr = makeUnique<InByStatus>(status);
+    InByStatus* result = statusPtr.get();
     ins.append(std::make_pair(codeOrigin, WTFMove(statusPtr)));
     return result;
 }

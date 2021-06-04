@@ -1,3 +1,143 @@
+2021-06-03  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Implement JIT ICs for InByVal
+        https://bugs.webkit.org/show_bug.cgi?id=226563
+
+        Reviewed by Saam Barati.
+
+        Until now, InByVal has had few optimizations implemented:
+        DFG would attempt to convert string index lookups to InById and int32 lookups to HasIndexedProperty,
+        but there has been no inline caching nor any special handling for symbol lookups.
+
+        This has become a more urgent problem now, as `#x in obj` (i.e. HasPrivateName / HasPrivateBrand)
+        will need to mimic InByVal's inline caching strategy in order to be deemed performant enough to ship.
+
+        This patch thus implements inline caching for InByVal at all JIT tiers.
+        The result is a night-and-day difference for symbols, a nice boost for string indices, and no change for int32s: 
+
+        in-by-val-symbol                  203.5572+-2.7647     ^     19.1035+-0.7498        ^ definitely 10.6555x faster
+        in-by-val-string-index             87.0368+-44.7766          45.9971+-32.0007         might be 1.8922x faster
+        in-by-val-int32                   110.9904+-1.7109     ?    111.3431+-1.7558        ?
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/CheckPrivateBrandStatus.cpp:
+        (JSC::CheckPrivateBrandStatus::singleIdentifier const):
+        * bytecode/DeleteByStatus.cpp:
+        (JSC::DeleteByStatus::singleIdentifier const):
+        * bytecode/GetByStatus.cpp:
+        (JSC::GetByStatus::singleIdentifier const):
+        * bytecode/ICStatusMap.h:
+        * bytecode/ICStatusUtils.h:
+        (JSC::singleIdentifierForICStatus):
+        * bytecode/InByIdVariant.cpp:
+        (JSC::InByIdVariant::InByIdVariant):
+        (JSC::InByIdVariant::attemptToMerge):
+        (JSC::InByIdVariant::dumpInContext const):
+        * bytecode/InByIdVariant.h:
+        (JSC::InByIdVariant::identifier const):
+        (JSC::InByIdVariant::overlaps):
+        * bytecode/InByStatus.cpp: Renamed from Source/JavaScriptCore/bytecode/InByIdStatus.cpp.
+        (JSC::InByStatus::appendVariant):
+        (JSC::InByStatus::shrinkToFit):
+        (JSC::InByStatus::computeFor):
+        (JSC::InByStatus::computeForStubInfo):
+        (JSC::InByStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::InByStatus::merge):
+        (JSC::InByStatus::filter):
+        (JSC::InByStatus::markIfCheap):
+        (JSC::InByStatus::finalize):
+        (JSC::InByStatus::singleIdentifier const):
+        (JSC::InByStatus::dump const):
+        * bytecode/InByStatus.h: Renamed from Source/JavaScriptCore/bytecode/InByIdStatus.h.
+        * bytecode/RecordedStatuses.cpp:
+        (JSC::RecordedStatuses::addInByStatus): Renamed from addInByIdStatus.
+        * bytecode/RecordedStatuses.h:
+        * bytecode/SetPrivateBrandStatus.cpp:
+        (JSC::SetPrivateBrandStatus::singleIdentifier const):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::reset):
+        * bytecode/StructureStubInfo.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::filterICStatus):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleInById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGClobbersExitState.cpp:
+        (JSC::DFG::clobbersExitState):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addInByVal):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasInByStatus): Renamed from hasInByIdStatus.
+        (JSC::DFG::Node::inByStatus): Renamed from inByIdStatus.
+        * dfg/DFGNodeType.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileInByVal):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGVarargsForwardingPhase.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInBy):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileInByVal):
+        * jit/ICStats.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::link):
+        * jit/JIT.h:
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITInByValGenerator::JITInByValGenerator):
+        (JSC::JITInByValGenerator::generateFastPath):
+        (JSC::JITInByValGenerator::finalize):
+        (JSC::JITInByIdGenerator::JITInByIdGenerator):
+        * jit/JITInlineCacheGenerator.h:
+        (JSC::JITDelByIdGenerator::slowPathJump const):
+        (JSC::JITInByValGenerator::JITInByValGenerator):
+        (JSC::JITInByValGenerator::slowPathJump const):
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * jit/JITOperations.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_in_by_val):
+        (JSC::JIT::emitSlow_op_in_by_val):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_in_by_val):
+        (JSC::JIT::emitSlow_op_in_by_val):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheInBy): Renamed from tryCacheInByID.
+        (JSC::repatchInBy): Renamed from repatchInByID.
+        (JSC::resetInBy): Renamed from resetInByID.
+        * jit/Repatch.h:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CommonSlowPaths.cpp:
+        * runtime/CommonSlowPaths.h:
+
 2021-06-03  Mark Lam  <mark.lam@apple.com>
 
         Fix an ASSERT in objectPrototypeHasOwnProperty() to account for TerminationException.
