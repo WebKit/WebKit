@@ -344,7 +344,7 @@ void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& 
     if (!m_hasUpdatedRenderingAfterDidCommitLoad) {
         if (layerTreeTransaction.transactionID() >= m_firstLayerTreeTransactionIdAfterDidCommitLoad) {
             m_hasUpdatedRenderingAfterDidCommitLoad = true;
-            stopMakingViewBlankDueToLackOfRenderingUpdate();
+            stopMakingViewBlankDueToLackOfRenderingUpdateIfNecessary();
             m_lastVisibleContentRectUpdate = VisibleContentRectUpdateInfo();
         }
     }

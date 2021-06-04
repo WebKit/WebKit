@@ -1,5 +1,21 @@
 2021-06-03  Chris Dumez  <cdumez@apple.com>
 
+        stopMakingViewBlankDueToLackOfRenderingUpdate logging shows even if we never made the view blank
+        https://bugs.webkit.org/show_bug.cgi?id=226616
+
+        Reviewed by Tim Horton.
+
+        stopMakingViewBlankDueToLackOfRenderingUpdate logging was showing even if we never made the view blank.
+        This was confusing so this fix makes the logging conditional.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didUpdateRenderingAfterCommittingLoad):
+        (WebKit::WebPageProxy::stopMakingViewBlankDueToLackOfRenderingUpdate):
+        (WebKit::WebPageProxy::makeViewBlankIfUnpaintedSinceLastLoadCommit):
+        * UIProcess/WebPageProxy.h:
+
+2021-06-03  Chris Dumez  <cdumez@apple.com>
+
         Fix thread safety issues in [WKShareSheet presentWithParameters]
         https://bugs.webkit.org/show_bug.cgi?id=226611
         <rdar://77736001>

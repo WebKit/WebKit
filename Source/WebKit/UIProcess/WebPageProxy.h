@@ -2237,7 +2237,7 @@ private:
     void didPerformDictionaryLookup(const WebCore::DictionaryPopupInfo&);
 #endif
 
-    void stopMakingViewBlankDueToLackOfRenderingUpdate();
+    void stopMakingViewBlankDueToLackOfRenderingUpdateIfNecessary();
 
     // Spelling and grammar.
     void checkSpellingOfString(const String& text, CompletionHandler<void(int32_t misspellingLocation, int32_t misspellingLength)>&&);
@@ -2857,6 +2857,7 @@ private:
 
     bool m_shouldScaleViewToFitDocument { false };
     bool m_shouldSuppressNextAutomaticNavigationSnapshot { false };
+    bool m_madeViewBlankDueToLackOfRenderingUpdate { false };
 
 #if PLATFORM(COCOA)
     using TemporaryPDFFileMap = HashMap<String, String>;

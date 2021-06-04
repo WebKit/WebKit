@@ -2515,14 +2515,18 @@ void WebPageProxy::didUpdateRenderingAfterCommittingLoad()
         return;
 
     m_hasUpdatedRenderingAfterDidCommitLoad = true;
-    stopMakingViewBlankDueToLackOfRenderingUpdate();
+    stopMakingViewBlankDueToLackOfRenderingUpdateIfNecessary();
 }
 
-void WebPageProxy::stopMakingViewBlankDueToLackOfRenderingUpdate()
+void WebPageProxy::stopMakingViewBlankDueToLackOfRenderingUpdateIfNecessary()
 {
+    if (!m_madeViewBlankDueToLackOfRenderingUpdate)
+        return;
+
     ASSERT(m_hasUpdatedRenderingAfterDidCommitLoad);
-    WEBPAGEPROXY_RELEASE_LOG(Process, "stopMakingViewBlankDueToLackOfRenderingUpdate:");
+    WEBPAGEPROXY_RELEASE_LOG(Process, "stopMakingViewBlankDueToLackOfRenderingUpdateIfNecessary:");
     pageClient().makeViewBlank(false);
+    m_madeViewBlankDueToLackOfRenderingUpdate = false;
 }
 
 // If we have not painted yet since the last load commit, then we are likely still displaying the previous page.
@@ -2539,6 +2543,7 @@ void WebPageProxy::makeViewBlankIfUnpaintedSinceLastLoadCommit()
         if (shouldMakeViewBlank) {
             WEBPAGEPROXY_RELEASE_LOG(Process, "makeViewBlankIfUnpaintedSinceLastLoadCommit: Making the view blank because of a JS prompt before the first paint for its page");
             pageClient().makeViewBlank(true);
+            m_madeViewBlankDueToLackOfRenderingUpdate = true;
         }
     }
 }
