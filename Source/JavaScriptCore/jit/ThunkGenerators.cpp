@@ -388,6 +388,7 @@ MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunkFor(VM& vm, CallLinkInfo
                 return virtualThunkForConstructCall;
             return virtualThunkForConstructConstruct;
         }
+        RELEASE_ASSERT_NOT_REACHED();
     };
     return vm.getCTIStub(generator()).retagged<JITStubRoutinePtrTag>();
 }

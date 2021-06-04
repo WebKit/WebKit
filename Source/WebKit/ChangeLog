@@ -1,3 +1,15 @@
+2021-06-04  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Fix more GCC warnings
+        https://bugs.webkit.org/show_bug.cgi?id=226193
+
+        Reviewed by Adrian Perez de Castro.
+
+        Remove redundant WTFMove that's triggering GCC's -Wredundant-move.
+
+        * Platform/IPC/ArgumentCoder.h:
+        (IPC::ArgumentCoder::decode):
+
 2021-06-04  Jan-Michael Brummer  <jan.brummer@tabos.org>
 
         [GTK][WPE] Expose setCORSDisablingPatterns

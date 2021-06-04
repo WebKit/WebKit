@@ -82,6 +82,7 @@ auto JITPlan::tier() const -> Tier
     case JITCompilationMode::FTLForOSREntry:
         return Tier::FTL;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 JITCompilationKey JITPlan::key()

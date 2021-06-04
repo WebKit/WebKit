@@ -149,7 +149,7 @@ ExceptionOr<RefPtr<TimingFunction>> TimingFunction::createFromCSSText(const Stri
     properties->parseDeclaration(makeString("animation-timing-function:", cssText), CSSParserContext(HTMLStandardMode));
     if (auto value = properties->getPropertyCSSValue(CSSPropertyAnimationTimingFunction)) {
         if (auto function = createFromCSSValue(*value))
-            return WTFMove(function);
+            return function;
     }
     return Exception { TypeError };
 }

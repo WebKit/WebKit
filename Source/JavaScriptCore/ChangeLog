@@ -1,3 +1,17 @@
+2021-06-04  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Fix more GCC warnings
+        https://bugs.webkit.org/show_bug.cgi?id=226193
+
+        Reviewed by Adrian Perez de Castro.
+
+        Fix -Wreturn-type warnings due to missing RELEASE_ASSERT_NOT_REACHED() where expected.
+
+        * jit/JITPlan.cpp:
+        (JSC::JITPlan::tier const):
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualThunkFor):
+
 2021-06-03  Ross Kirsling  <ross.kirsling@sony.com>
 
         [JSC] Implement JIT ICs for InByVal

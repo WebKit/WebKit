@@ -89,6 +89,7 @@ bool GraphicsContextCairo::hasPlatformContext() const
 
 AffineTransform GraphicsContextCairo::getCTM(IncludeDeviceScale includeScale) const
 {
+    UNUSED_PARAM(includeScale);
     return Cairo::State::getCTM(*platformContext());
 }
 
@@ -251,6 +252,7 @@ void GraphicsContextCairo::drawDotsForDocumentMarker(const FloatRect& rect, Docu
 
 FloatRect GraphicsContextCairo::roundToDevicePixels(const FloatRect& rect, RoundingMode roundingMode)
 {
+    UNUSED_PARAM(roundingMode);
     return Cairo::State::roundToDevicePixels(*platformContext(), rect);
 }
 
