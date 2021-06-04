@@ -183,13 +183,6 @@ class Port(object):
         # An empty list would indicate a port was incapable of running tests.
         return [None]
 
-    def worker_startup_delay_secs(self):
-        # FIXME: If we start workers up too quickly, DumpRenderTree appears
-        # to thrash on something and time out its first few tests. Until
-        # we can figure out what's going on, sleep a bit in between
-        # workers. See https://bugs.webkit.org/show_bug.cgi?id=79147 .
-        return 0.1
-
     def baseline_path(self):
         """Return the absolute path to the directory to store new baselines in for this port."""
         # FIXME: remove once all callers are calling either baseline_version_dir() or baseline_platform_dir()

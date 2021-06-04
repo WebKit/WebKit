@@ -187,7 +187,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         self.assertEqual(details.initial_results.total, test.TOTAL_TESTS)
         self.assertEqual(details.initial_results.expected_skips, test.TOTAL_SKIPS)
         self.assertEqual(len(details.initial_results.unexpected_results_by_name), test.UNEXPECTED_PASSES + test.UNEXPECTED_FAILURES)
-        self.assertEqual(details.exit_code, test.UNEXPECTED_FAILURES)
+        self.assertEqual(details.exit_code, test.UNEXPECTED_FAILURES - 1)  # failures/expected/hang.html actually passes when run in the same process
         self.assertEqual(details.retry_results.total, test.TOTAL_RETRIES)
 
         one_line_summary = "%d tests ran as expected, %d didn't:\n" % (
@@ -254,13 +254,6 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         # FIXME: verify html?
         details, _, _ = logging_run(['--full-results-html'])
         self.assertEqual(details.exit_code, 0)
-
-    def test_hung_thread(self):
-        details, err, _ = logging_run(['--run-singly', '--time-out-ms=50', 'failures/expected/hang.html'], tests_included=True)
-        # Note that hang.html is marked as WontFix and all WontFix tests are
-        # expected to Pass, so that actually running them generates an "unexpected" error.
-        self.assertEqual(details.exit_code, 1)
-        self.assertNotEmpty(err)
 
     def test_keyboard_interrupt(self):
         # Note that this also tests running a test marked as SKIP if

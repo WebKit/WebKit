@@ -32,8 +32,6 @@ from __future__ import print_function
 import logging
 import optparse
 import os
-import signal
-import sys
 import traceback
 
 from webkitpy.common.host import Host
@@ -491,6 +489,3 @@ def run(port, options, args, logging_stream):
         return run_details
     finally:
         printer.cleanup()
-
-if __name__ == '__main__':
-    sys.exit(main(sys.argv[1:], sys.stdout, sys.stderr))

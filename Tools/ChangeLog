@@ -1,3 +1,60 @@
+2021-06-04  Jonathan Bedard  <jbedard@apple.com>
+
+        [run-webkit-tests] Use webkitcorepy's TaskPool
+        https://bugs.webkit.org/show_bug.cgi?id=226234
+        <rdar://problem/78471695>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/run-webkit-tests: Stop using multiprocessing_bootstrap.
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (setup_shard): Run setup in Worker process.
+        (handle_started_test): Notify parent process that a test has started.
+        (run_shard): Run test shard in Worker process.
+        (handle_finished_test): Notify parent process that a test has finished.
+        (teardown_shard): Teardown worker process metadata.
+        (LayoutTestRunner.__init__): Make printer public.
+        (LayoutTestRunner.run_tests): Use TaskPool to spawn multiple workers.
+        (LayoutTestRunner.update_summary_with_result): Renamed from
+        _update_summary_with_result, strip unused arguments.
+        (LayoutTestRunner._annotate_results_with_additional_failures): Strip
+        unused arguments.
+        (LayoutTestRunner.start_servers): Make printer public.
+        (LayoutTestRunner.stop_servers): Ditto.
+        (Worker.setup): Instantiate singleton worker.
+        (Worker.teardown): Teardown singleton worker.
+        (Worker.__init__): Pass port object, remove unused variable.
+        (Worker.run_tests): Use TaskPool process name.
+        (Worker.stop): Ditto.
+        (Worker._kill_driver): Use port options, use TaskPool process name.
+        (Worker._run_test_with_or_without_timeout): Ditto.
+        (Worker._clean_up_after_test): Use TaskPool process name.
+        (Worker._run_test_in_another_thread): Ditto.
+        (Worker._run_test_in_this_thread): Ditto.
+        (Worker._run_single_test): Use port options.
+        (LayoutTestRunner._worker_factory): Deleted.
+        (LayoutTestRunner._handle_did_spawn_worker): Deleted.
+        (LayoutTestRunner._update_summary_with_result): Deleted.
+        (LayoutTestRunner.handle): Deleted.
+        (LayoutTestRunner._handle_started_test): Deleted.
+        (LayoutTestRunner._handle_finished_test): Deleted.
+        (LayoutTestRunner._handle_finished_test_group): Deleted.
+        (Worker.__del__): Deleted.
+        (Worker.start): Deleted.
+        (Worker.handle): Deleted.
+        (Worker._run_test): Deleted.
+        (Worker._finished_test_group): Deleted.
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner_unittest.py:
+        (LayoutTestRunnerTests.test_update_summary_with_result): The runner keeps track of it's state.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py: Remove call to main.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.serial_test_basic): Run all tests in the same process.
+        (RunTest.test_hung_thread): Deleted.
+        * Scripts/webkitpy/port/base.py:
+        (Port.worker_startup_delay_secs): Deleted.
+        * Scripts/webkitpy/port/test.py:
+        (Port.worker_startup_delay_secs): Deleted.
+
 2021-06-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] MiniBrowser: add support for saving multiple tabs in session state
