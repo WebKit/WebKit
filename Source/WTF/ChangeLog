@@ -1,5 +1,31 @@
 2021-05-28  Russell Epstein  <repstein@apple.com>
 
+Cherry-pick r278209. rdar://problem/78595584
+
+    Unreviewed build fix after r277881.
+    
+    Deal with IOPOL_TYPE_VFS_MATERIALIZE_DATALESS_FILES potentially not being defined on
+    older OSes.
+    
+    * wtf/cocoa/FileSystemCocoa.mm:
+    (WTF::FileSystemImpl::setAllowsMaterializingDatalessFiles):
+    (WTF::FileSystemImpl::allowsMaterializingDatalessFiles):
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@278209 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-05-28  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed build fix after r277881.
+
+            Deal with IOPOL_TYPE_VFS_MATERIALIZE_DATALESS_FILES potentially not being defined on
+            older OSes.
+
+            * wtf/cocoa/FileSystemCocoa.mm:
+            (WTF::FileSystemImpl::setAllowsMaterializingDatalessFiles):
+            (WTF::FileSystemImpl::allowsMaterializingDatalessFiles):
+
+2021-05-28  Russell Epstein  <repstein@apple.com>
+
 Cherry-pick r278208. rdar://problem/78595584
 
     Unreviewed build fix after r277881.
