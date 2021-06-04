@@ -2365,7 +2365,10 @@ sub cmakeFilesPath()
 
 sub shouldRemoveCMakeCache(@)
 {
-    my (@buildArgs) = sort (@_, @originalArgv);
+    # For this check, ignore all arguments that do not begin with a dash. These
+    # are probably arguments specifying build targets. Changing those should
+    # not trigger a reconfiguration of the build.
+    my (@buildArgs) = grep(/^-/, sort(@_, @originalArgv));
 
     # We check this first, because we always want to create this file for a fresh build.
     my $productDir = File::Spec->catdir(baseProductDir(), configuration());
