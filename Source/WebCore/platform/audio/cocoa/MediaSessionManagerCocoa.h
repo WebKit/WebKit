@@ -28,7 +28,6 @@
 #if PLATFORM(COCOA)
 
 #include "AudioHardwareListener.h"
-#include "GenericTaskQueue.h"
 #include "NowPlayingManager.h"
 #include "PlatformMediaSessionManager.h"
 #include "RemoteCommandListener.h"
@@ -83,8 +82,6 @@ protected:
 
     PlatformMediaSession* nowPlayingEligibleSession();
 
-    MainThreadTaskQueue& taskQueue() { return m_taskQueue; }
-
     void addSupportedCommand(PlatformMediaSession::RemoteControlCommandType) final;
     void removeSupportedCommand(PlatformMediaSession::RemoteControlCommandType) final;
 
@@ -112,8 +109,6 @@ private:
     double m_lastUpdatedNowPlayingDuration { NAN };
     double m_lastUpdatedNowPlayingElapsedTime { NAN };
     MediaUniqueIdentifier m_lastUpdatedNowPlayingInfoUniqueIdentifier;
-
-    MainThreadTaskQueue m_taskQueue;
 
     const std::unique_ptr<NowPlayingManager> m_nowPlayingManager;
     RefPtr<AudioHardwareListener> m_audioHardwareListener;

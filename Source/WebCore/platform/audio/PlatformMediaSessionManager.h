@@ -26,7 +26,6 @@
 #ifndef PlatformMediaSessionManager_h
 #define PlatformMediaSessionManager_h
 
-#include "GenericTaskQueue.h"
 #include "MediaUniqueIdentifier.h"
 #include "PlatformMediaSession.h"
 #include "Timer.h"
@@ -41,16 +40,14 @@ class PlatformMediaSession;
 class RemoteCommandListener;
 
 class PlatformMediaSessionManager
-    : public CanMakeWeakPtr<PlatformMediaSessionManager>
 #if !RELEASE_LOG_DISABLED
-    , private LoggerHelper
+    : private LoggerHelper
 #endif
 {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT static PlatformMediaSessionManager* sharedManagerIfExists();
     WEBCORE_EXPORT static PlatformMediaSessionManager& sharedManager();
-    WEBCORE_EXPORT static std::unique_ptr<PlatformMediaSessionManager> create();
 
     static void updateNowPlayingInfoIfNecessary();
 
@@ -173,6 +170,7 @@ public:
 
 protected:
     friend class PlatformMediaSession;
+    static std::unique_ptr<PlatformMediaSessionManager> create();
     PlatformMediaSessionManager();
 
     virtual void addSession(PlatformMediaSession&);
@@ -220,7 +218,7 @@ private:
 #endif
 
     WeakHashSet<PlatformMediaSession::AudioCaptureSource> m_audioCaptureSources;
-    MainThreadTaskQueue updateSessionStateQueue;
+    bool m_hasScheduledSessionStateUpdate { false };
 
 #if ENABLE(WEBM_FORMAT_READER)
     static bool m_webMFormatReaderEnabled;

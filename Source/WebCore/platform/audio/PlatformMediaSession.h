@@ -210,12 +210,9 @@ protected:
     PlatformMediaSession(PlatformMediaSessionManager&, PlatformMediaSessionClient&);
     PlatformMediaSessionClient& client() const { return m_client; }
 
-    PlatformMediaSessionManager& manager();
-
 private:
     bool processClientWillPausePlayback(DelayCallingUpdateNowPlaying);
 
-    WeakPtr<PlatformMediaSessionManager> m_manager;
     PlatformMediaSessionClient& m_client;
     MediaSessionIdentifier m_mediaSessionIdentifier;
     State m_state { Idle };

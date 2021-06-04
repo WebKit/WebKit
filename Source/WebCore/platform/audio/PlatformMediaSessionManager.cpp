@@ -593,11 +593,13 @@ void PlatformMediaSessionManager::removeAudioCaptureSource(PlatformMediaSession:
 
 void PlatformMediaSessionManager::scheduleUpdateSessionState()
 {
-    if (updateSessionStateQueue.hasPendingTasks())
+    if (m_hasScheduledSessionStateUpdate)
         return;
 
-    updateSessionStateQueue.enqueueTask([this] {
+    m_hasScheduledSessionStateUpdate = true;
+    callOnMainThread([this] {
         updateSessionState();
+        m_hasScheduledSessionStateUpdate = false;
     });
 }
 

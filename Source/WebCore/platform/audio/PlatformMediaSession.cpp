@@ -128,9 +128,8 @@ std::unique_ptr<PlatformMediaSession> PlatformMediaSession::create(PlatformMedia
     return std::unique_ptr<PlatformMediaSession>(new PlatformMediaSession(manager, client));
 }
 
-PlatformMediaSession::PlatformMediaSession(PlatformMediaSessionManager& manager, PlatformMediaSessionClient& client)
-    : m_manager(makeWeakPtr(manager))
-    , m_client(client)
+PlatformMediaSession::PlatformMediaSession(PlatformMediaSessionManager&, PlatformMediaSessionClient& client)
+    : m_client(client)
     , m_mediaSessionIdentifier(MediaSessionIdentifier::generate())
 #if !RELEASE_LOG_DISABLED
     , m_logger(client.logger())
@@ -150,13 +149,10 @@ void PlatformMediaSession::setActive(bool active)
         return;
     m_active = active;
 
-    if (!m_manager)
-        return;
-
     if (m_active)
-        m_manager->addSession(*this);
+        PlatformMediaSessionManager::sharedManager().addSession(*this);
     else
-        m_manager->removeSession(*this);
+        PlatformMediaSessionManager::sharedManager().removeSession(*this);
 }
 
 void PlatformMediaSession::setState(State state)
@@ -168,7 +164,7 @@ void PlatformMediaSession::setState(State state)
     m_state = state;
     if (m_state == State::Playing)
         m_hasPlayedSinceLastInterruption = true;
-    m_manager->sessionStateChanged(*this);
+    PlatformMediaSessionManager::sharedManager().sessionStateChanged(*this);
 }
 
 void PlatformMediaSession::beginInterruption(InterruptionType type)
@@ -242,7 +238,7 @@ bool PlatformMediaSession::clientWillBeginPlayback()
 
     ALWAYS_LOG(LOGIDENTIFIER, "state = ", m_state);
 
-    if (!m_manager->sessionWillBeginPlayback(*this)) {
+    if (!PlatformMediaSessionManager::sharedManager().sessionWillBeginPlayback(*this)) {
         if (state() == Interrupted)
             m_stateToRestore = Playing;
         return false;
@@ -265,7 +261,7 @@ bool PlatformMediaSession::processClientWillPausePlayback(DelayCallingUpdateNowP
     }
     
     setState(Paused);
-    m_manager->sessionWillEndPlayback(*this, shouldDelayCallingUpdateNowPlaying);
+    PlatformMediaSessionManager::sharedManager().sessionWillEndPlayback(*this, shouldDelayCallingUpdateNowPlaying);
     return true;
 }
 
@@ -291,7 +287,7 @@ void PlatformMediaSession::stopSession()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
     m_client.suspendPlayback();
-    m_manager->removeSession(*this);
+    PlatformMediaSessionManager::sharedManager().removeSession(*this);
 }
 
 PlatformMediaSession::MediaType PlatformMediaSession::mediaType() const
@@ -341,7 +337,7 @@ void PlatformMediaSession::isPlayingToWirelessPlaybackTargetChanged(bool isWirel
     // Save and restore the interruption count so it doesn't get out of sync if beginInterruption is called because
     // if we in the background.
     int interruptionCount = m_interruptionCount;
-    m_manager->sessionIsPlayingToWirelessPlaybackTargetChanged(*this);
+    PlatformMediaSessionManager::sharedManager().sessionIsPlayingToWirelessPlaybackTargetChanged(*this);
     m_interruptionCount = interruptionCount;
 }
 
@@ -366,12 +362,12 @@ bool PlatformMediaSession::canProduceAudio() const
 
 void PlatformMediaSession::canProduceAudioChanged()
 {
-    m_manager->sessionCanProduceAudioChanged();
+    PlatformMediaSessionManager::sharedManager().sessionCanProduceAudioChanged();
 }
 
 void PlatformMediaSession::clientCharacteristicsChanged()
 {
-    m_manager->clientCharacteristicsChanged(*this);
+    PlatformMediaSessionManager::sharedManager().clientCharacteristicsChanged(*this);
 }
 
 static inline bool isPlayingAudio(PlatformMediaSession::MediaType mediaType)
@@ -402,11 +398,6 @@ bool PlatformMediaSession::canPlayConcurrently(const PlatformMediaSession& other
 bool PlatformMediaSession::shouldOverridePauseDuringRouteChange() const
 {
     return m_client.shouldOverridePauseDuringRouteChange();
-}
-
-PlatformMediaSessionManager& PlatformMediaSession::manager()
-{
-    return *m_manager;
 }
 
 std::optional<NowPlayingInfo> PlatformMediaSession::nowPlayingInfo() const

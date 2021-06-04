@@ -1,3 +1,27 @@
+2021-06-04  Chris Dumez  <cdumez@apple.com>
+
+        Stop using legacy MainThreadTaskQueue in PlatformMediaSessionManager / MediaSessionManagerCocoa
+        https://bugs.webkit.org/show_bug.cgi?id=226649
+
+        Reviewed by Eric Carlson.
+
+        Stop using legacy MainThreadTaskQueue in PlatformMediaSessionManager / MediaSessionManagerCocoa.
+        Media code should be using the HTML event loop whenever possible and can use callOnMainThread()
+        for global singleton classes that are not associated with a particular document (like
+        PlatformMediaSessionManager).
+
+        Also stop subclassing CanMakeWeakPtr<>. It doesn't make sense since the class is a singleton.
+
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::scheduleUpdateSessionState):
+        * platform/audio/PlatformMediaSessionManager.h:
+        * platform/audio/cocoa/MediaSessionManagerCocoa.h:
+        * platform/audio/cocoa/MediaSessionManagerCocoa.mm:
+        (WebCore::MediaSessionManagerCocoa::scheduleSessionStatusUpdate):
+        (WebCore::MediaSessionManagerCocoa::sessionWillEndPlayback):
+        * platform/audio/ios/MediaSessionManagerIOS.mm:
+        (WebCore::MediaSessionManageriOS::mediaServerConnectionDied):
+
 2021-06-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove the unused `sourceElementID` argument in `Document::updateIsPlayingMedia` and related code
