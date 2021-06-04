@@ -1322,6 +1322,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return _sampledPageTopColorMinHeight;
 }
 
+- (void)_setAttributedBundleIdentifier:(NSString *)identifier
+{
+    _pageConfiguration->setAttributedBundleIdentifier(identifier);
+}
+
+- (NSString *)_attributedBundleIdentifier
+{
+    auto& identifier = _pageConfiguration->attributedBundleIdentifier();
+    if (!identifier)
+        return nil;
+    return identifier;
+}
+
 @end
 
 @implementation WKWebViewConfiguration (WKDeprecated)

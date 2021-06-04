@@ -1,3 +1,89 @@
+2021-06-04  Alex Christensen  <achristensen@webkit.org>
+
+        Make attributedBundleIdendifier a property for WKWebViewConfiguration instead of _WKWebsiteDataStoreConfiguration
+        https://bugs.webkit.org/show_bug.cgi?id=226548
+        <rdar://78737547>
+
+        Reviewed by Brady Eidson.
+
+        We have been putting properties to go into the NSURLSessionConfiguration on the _WKWebsiteDataStoreConfiguration.
+        This has been ok so far, but now we have an application that needs to run networking attributed to different applications
+        but sharing the data storage in the same process.  We now do what we should've done long ago: put these non-storage-related
+        properties on the WKWebViewConfiguration.
+
+        I introduce WebPageNetworkParameters which currently has only one member, but will soon have more.
+
+        I made it so that if multiple WKWebViews with the same data store have the same attributedBundleIdendifier, they share an NSURLSession.
+        Otherwise, they get their own NSURLSession in a different SessionSet.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::addWebPageNetworkParameters):
+        (WebKit::NetworkProcess::removeWebPageNetworkParameters):
+        (WebKit::NetworkProcess::countNonDefaultSessionSets):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkSession.h:
+        (WebKit::NetworkSession::addWebPageNetworkParameters):
+        (WebKit::NetworkSession::removeWebPageNetworkParameters):
+        (WebKit::NetworkSession::countNonDefaultSessionSets const):
+        * NetworkProcess/NetworkSessionCreationParameters.cpp:
+        (WebKit::NetworkSessionCreationParameters::encode const):
+        (WebKit::NetworkSessionCreationParameters::decode):
+        * NetworkProcess/NetworkSessionCreationParameters.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa):
+        (WebKit::NetworkSessionCocoa::initializeNSURLSessionsInSet):
+        (WebKit::NetworkSessionCocoa::SessionSet::initializeEphemeralStatelessSessionIfNeeded):
+        (WebKit::NetworkSessionCocoa::addWebPageNetworkParameters):
+        (WebKit::NetworkSessionCocoa::removeWebPageNetworkParameters):
+        (WebKit::NetworkSessionCocoa::countNonDefaultSessionSets const):
+        (WebKit::NetworkSessionCocoa::attributedBundleIdentifier const): Deleted.
+        (WebKit::NetworkSessionCocoa::initializeStandardSessionsInSet): Deleted.
+        * Shared/WebPageNetworkParameters.cpp: Added.
+        (WebKit::WebPageNetworkParameters::encode const):
+        (WebKit::WebPageNetworkParameters::decode):
+        * Shared/WebPageNetworkParameters.h: Added.
+        (WebKit::WebPageNetworkParameters::WebPageNetworkParameters):
+        (WebKit::WebPageNetworkParameters::isHashTableDeletedValue const):
+        (WebKit::WebPageNetworkParameters::hash const):
+        (WebKit::WebPageNetworkParameters::operator== const):
+        (WebKit::WebPageNetworkParameters::attributedBundleIdentifier const):
+        (WTF::DefaultHash<WebKit::WebPageNetworkParameters>::hash):
+        (WTF::DefaultHash<WebKit::WebPageNetworkParameters>::equal):
+        * Sources.txt:
+        * UIProcess/API/APIPageConfiguration.cpp:
+        (API::PageConfiguration::copy const):
+        * UIProcess/API/APIPageConfiguration.h:
+        (API::PageConfiguration::setAttributedBundleIdentifier):
+        (API::PageConfiguration::attributedBundleIdentifier const):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _setAttributedBundleIdentifier:]):
+        (-[WKWebViewConfiguration _attributedBundleIdentifier]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _countNonDefaultSessionSets:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h:
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.mm:
+        (-[_WKWebsiteDataStoreConfiguration setAttributedBundleIdentifier:]): Deleted.
+        (-[_WKWebsiteDataStoreConfiguration attributedBundleIdentifier]): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::~WebPageProxy):
+        (WebKit::WebPageProxy::initializeWebPage):
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::platformSetNetworkParameters):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::countNonDefaultSessionSets):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.cpp:
+        (WebKit::WebsiteDataStoreConfiguration::copy const):
+        * UIProcess/WebsiteData/WebsiteDataStoreConfiguration.h:
+        (WebKit::WebsiteDataStoreConfiguration::setSourceApplicationSecondaryIdentifier):
+        (WebKit::WebsiteDataStoreConfiguration::attributedBundleIdentifier const): Deleted.
+        (WebKit::WebsiteDataStoreConfiguration::setAttributedBundleIdentifier): Deleted.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-06-04  Chris Dumez  <cdumez@apple.com>
 
         Avoid wasteful large allocation in SpeechRecognitionRemoteRealtimeMediaSource::setStorage()

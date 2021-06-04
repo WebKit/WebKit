@@ -2794,4 +2794,31 @@ RTCDataChannelRemoteManagerProxy& NetworkProcess::rtcDataChannelProxy()
 }
 #endif
 
+void NetworkProcess::addWebPageNetworkParameters(const PAL::SessionID& sessionID, WebPageProxyIdentifier pageID, WebPageNetworkParameters&& parameters)
+{
+    auto session = networkSession(sessionID);
+    if (!session)
+        return;
+
+    session->addWebPageNetworkParameters(pageID, WTFMove(parameters));
+}
+
+void NetworkProcess::removeWebPageNetworkParameters(const PAL::SessionID& sessionID, WebPageProxyIdentifier pageID)
+{
+    auto session = networkSession(sessionID);
+    if (!session)
+        return;
+
+    session->removeWebPageNetworkParameters(pageID);
+}
+
+void NetworkProcess::countNonDefaultSessionSets(const PAL::SessionID& sessionID, CompletionHandler<void(size_t)>&& completionHandler)
+{
+    auto session = networkSession(sessionID);
+    if (!session)
+        return completionHandler(0);
+
+    completionHandler(session->countNonDefaultSessionSets());
+}
+
 } // namespace WebKit

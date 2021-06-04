@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include <optional>
-#include <wtf/RetainPtr.h>
-
-namespace IPC {
-class Decoder;
-class Encoder;
-}
+#include "config.h"
+#include "WebPageNetworkParameters.h"
 
 namespace WebKit {
+
+void WebPageNetworkParameters::encode(IPC::Encoder& encoder) const
+{
+    encoder << m_attributedBundleIdentifier;
+}
+
+std::optional<WebPageNetworkParameters> WebPageNetworkParameters::decode(IPC::Decoder& decoder)
+{
+    std::optional<String> attributedBundleIdentifier;
+    decoder >> attributedBundleIdentifier;
+    if (!attributedBundleIdentifier)
+        return std::nullopt;
     
-class SecItemResponseData {
-public:
-    SecItemResponseData(OSStatus, RetainPtr<CFTypeRef>&& result);
+    return {{
+        WTFMove(*attributedBundleIdentifier)
+    }};
+}
 
-    void encode(IPC::Encoder&) const;
-    static std::optional<SecItemResponseData> decode(IPC::Decoder&);
-
-    RetainPtr<CFTypeRef>& resultObject() { return m_resultObject; }
-    OSStatus resultCode() const { return m_resultCode; }
-
-private:
-    RetainPtr<CFTypeRef> m_resultObject;
-    OSStatus m_resultCode;
-};
-    
-} // namespace WebKit
+}

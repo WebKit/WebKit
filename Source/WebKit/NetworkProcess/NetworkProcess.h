@@ -106,6 +106,7 @@ class NetworkProcessSupplement;
 class NetworkProximityManager;
 class NetworkResourceLoader;
 class StorageManagerSet;
+class WebPageNetworkParameters;
 class WebSWServerConnection;
 class WebSWServerToContextConnection;
 enum class CallDownloadDidStart : bool;
@@ -451,6 +452,10 @@ private:
     void setAllowsAnySSLCertificateForWebSocket(bool, CompletionHandler<void()>&&);
     
     void flushCookies(const PAL::SessionID&, CompletionHandler<void()>&&);
+
+    void addWebPageNetworkParameters(const PAL::SessionID&, WebPageProxyIdentifier, WebPageNetworkParameters&&);
+    void removeWebPageNetworkParameters(const PAL::SessionID&, WebPageProxyIdentifier);
+    void countNonDefaultSessionSets(const PAL::SessionID&, CompletionHandler<void(size_t)>&&);
 
 #if USE(SOUP)
     void setIgnoreTLSErrors(PAL::SessionID, bool);

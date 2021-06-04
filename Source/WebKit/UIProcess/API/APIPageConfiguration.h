@@ -166,7 +166,10 @@ public:
 
     void setShouldRelaxThirdPartyCookieBlocking(WebCore::ShouldRelaxThirdPartyCookieBlocking value) { m_shouldRelaxThirdPartyCookieBlocking = value; }
     WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const { return m_shouldRelaxThirdPartyCookieBlocking; }
-    
+
+    void setAttributedBundleIdentifier(WTF::String&& identifier) { m_attributedBundleIdentifier = WTFMove(identifier); }
+    const WTF::String& attributedBundleIdentifier() const { return m_attributedBundleIdentifier; }
+
 private:
 
     RefPtr<WebKit::WebProcessPool> m_processPool;
@@ -217,6 +220,7 @@ private:
     bool m_httpsUpgradeEnabled { true };
 
     WebCore::ShouldRelaxThirdPartyCookieBlocking m_shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
+    WTF::String m_attributedBundleIdentifier;
 };
 
 } // namespace API

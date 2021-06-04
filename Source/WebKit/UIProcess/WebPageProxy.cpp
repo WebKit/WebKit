@@ -128,6 +128,7 @@
 #include "WebPageGroupData.h"
 #include "WebPageInspectorController.h"
 #include "WebPageMessages.h"
+#include "WebPageNetworkParameters.h"
 #include "WebPageProxyMessages.h"
 #include "WebPasteboardProxy.h"
 #include "WebPaymentCoordinatorProxy.h"
@@ -604,6 +605,8 @@ WebPageProxy::~WebPageProxy()
     
     for (auto& callback : m_nextActivityStateChangeCallbacks)
         callback();
+
+    websiteDataStore().networkProcess().send(Messages::NetworkProcess::RemoveWebPageNetworkParameters(sessionID(), m_identifier), 0);
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     WEBPAGEPROXY_DESTRUCTOR_WKCOORDINATOR_ADDITIONS
@@ -1100,6 +1103,11 @@ void WebPageProxy::initializeWebPage()
     // Initialize remote inspector connection now that we have a sub-process that is hosting one of our web views.
     Inspector::RemoteInspector::singleton();
 #endif
+
+    if (auto& attributedBundleIdentifier = m_configuration->attributedBundleIdentifier(); !!attributedBundleIdentifier) {
+        WebPageNetworkParameters parameters { attributedBundleIdentifier };
+        websiteDataStore().networkProcess().send(Messages::NetworkProcess::AddWebPageNetworkParameters(sessionID(), m_identifier, WTFMove(parameters)), 0);
+    }
 
     send(Messages::WebProcess::CreateWebPage(m_webPageID, creationParameters(m_process, *m_drawingArea)), 0);
 

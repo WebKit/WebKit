@@ -60,7 +60,6 @@ struct NetworkSessionCreationParameters {
     RetainPtr<CFDictionaryRef> proxyConfiguration;
     String sourceApplicationBundleIdentifier;
     String sourceApplicationSecondaryIdentifier;
-    String attributedBundleIdentifier;
     bool shouldLogCookieInformation { false };
     URL httpProxy;
     URL httpsProxy;

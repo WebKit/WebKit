@@ -267,7 +267,6 @@ TEST(WebKit, SettingNonPersistentDataStorePathsThrowsException)
     [configuration setHTTPSProxy:[NSURL URLWithString:@"https://www.apple.com/"]];
     [configuration setSourceApplicationBundleIdentifier:@"com.apple.Safari"];
     [configuration setSourceApplicationSecondaryIdentifier:@"com.apple.Safari"];
-    [configuration setAttributedBundleIdentifier:@"com.apple.Safari"];
 }
 
 TEST(WKWebsiteDataStore, FetchNonPersistentWebStorage)
@@ -310,6 +309,38 @@ TEST(WKWebsiteDataStore, FetchNonPersistentWebStorage)
         readyToContinue = true;
     }];
     TestWebKitAPI::Util::run(&readyToContinue);
+}
+
+TEST(WKWebsiteDataStore, SessionSetCount)
+{
+    auto countSessionSets = [] {
+        __block bool done = false;
+        __block size_t result = 0;
+        [[WKWebsiteDataStore defaultDataStore] _countNonDefaultSessionSets:^(size_t count) {
+            result = count;
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+        return result;
+    };
+    @autoreleasepool {
+        auto webView0 = adoptNS([WKWebView new]);
+        EXPECT_EQ(countSessionSets(), 0u);
+        auto configuration = adoptNS([WKWebViewConfiguration new]);
+        EXPECT_NULL(configuration.get()._attributedBundleIdentifier);
+        configuration.get()._attributedBundleIdentifier = @"test.bundle.id.1";
+        auto webView1 = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
+        [webView1 loadHTMLString:@"hi" baseURL:nil];
+        EXPECT_EQ(countSessionSets(), 1u);
+        auto webView2 = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
+        [webView2 loadHTMLString:@"hi" baseURL:nil];
+        EXPECT_EQ(countSessionSets(), 1u);
+        configuration.get()._attributedBundleIdentifier = @"test.bundle.id.2";
+        auto webView3 = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration.get()]);
+        [webView3 loadHTMLString:@"hi" baseURL:nil];
+        EXPECT_EQ(countSessionSets(), 2u);
+    }
+    while (countSessionSets()) { }
 }
 
 TEST(WebKit, ClearCustomDataStoreNoWebViews)

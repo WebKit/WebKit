@@ -132,6 +132,9 @@ typedef NS_ENUM(NSUInteger, _WKDragLiftDelay) {
 // Expects 0 (the color doesn't need to continue into the page at all) or any positive number.
 @property (nonatomic, setter=_setSampledPageTopColorMinHeight:) double _sampledPageTopColorMinHeight WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+// Attributes network activity from this WKWebView to the app with this bundle.
+@property (nonatomic, setter=_setAttributedBundleIdentifier:) NSString *_attributedBundleIdentifier;
+
 @end
 
 #if TARGET_OS_IPHONE

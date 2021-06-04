@@ -47,7 +47,6 @@ void NetworkSessionCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << proxyConfiguration;
     encoder << sourceApplicationBundleIdentifier;
     encoder << sourceApplicationSecondaryIdentifier;
-    encoder << attributedBundleIdentifier;
     encoder << shouldLogCookieInformation;
     encoder << httpProxy;
     encoder << httpsProxy;
@@ -119,11 +118,6 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
     std::optional<String> sourceApplicationSecondaryIdentifier;
     decoder >> sourceApplicationSecondaryIdentifier;
     if (!sourceApplicationSecondaryIdentifier)
-        return std::nullopt;
-
-    std::optional<String> attributedBundleIdentifier;
-    decoder >> attributedBundleIdentifier;
-    if (!attributedBundleIdentifier)
         return std::nullopt;
     
     std::optional<bool> shouldLogCookieInformation;
@@ -301,7 +295,6 @@ std::optional<NetworkSessionCreationParameters> NetworkSessionCreationParameters
         , WTFMove(proxyConfiguration)
         , WTFMove(*sourceApplicationBundleIdentifier)
         , WTFMove(*sourceApplicationSecondaryIdentifier)
-        , WTFMove(*attributedBundleIdentifier)
         , WTFMove(*shouldLogCookieInformation)
         , WTFMove(*httpProxy)
         , WTFMove(*httpsProxy)

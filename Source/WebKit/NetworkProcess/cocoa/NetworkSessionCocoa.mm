@@ -36,6 +36,7 @@
 #import "NetworkLoad.h"
 #import "NetworkProcess.h"
 #import "NetworkSessionCreationParameters.h"
+#import "WebPageNetworkParameters.h"
 #import "WebSocketTask.h"
 #import <Foundation/NSURLSession.h>
 #import <WebCore/Credential.h>
@@ -1099,11 +1100,6 @@ const String& NetworkSessionCocoa::sourceApplicationSecondaryIdentifier() const
     return m_sourceApplicationSecondaryIdentifier;
 }
 
-const String& NetworkSessionCocoa::attributedBundleIdentifier() const
-{
-    return m_attributedBundleIdentifier;
-}
-
 #if PLATFORM(IOS_FAMILY)
 const String& NetworkSessionCocoa::dataConnectionServiceType() const
 {
@@ -1176,7 +1172,6 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     , m_boundInterfaceIdentifier(parameters.boundInterfaceIdentifier)
     , m_sourceApplicationBundleIdentifier(parameters.sourceApplicationBundleIdentifier)
     , m_sourceApplicationSecondaryIdentifier(parameters.sourceApplicationSecondaryIdentifier)
-    , m_attributedBundleIdentifier(parameters.attributedBundleIdentifier)
     , m_proxyConfiguration(parameters.proxyConfiguration)
     , m_shouldLogCookieInformation(parameters.shouldLogCookieInformation)
     , m_fastServerTrustEvaluationEnabled(parameters.fastServerTrustEvaluationEnabled)
@@ -1228,13 +1223,6 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
     if (!m_sourceApplicationSecondaryIdentifier.isEmpty())
         configuration._sourceApplicationSecondaryIdentifier = m_sourceApplicationSecondaryIdentifier;
 
-#if HAVE(CFNETWORK_NSURLSESSION_ATTRIBUTED_BUNDLE_IDENTIFIER)
-    if (!m_attributedBundleIdentifier.isEmpty()) {
-        if ([configuration respondsToSelector:@selector(_attributedBundleIdentifier)])
-            configuration._attributedBundleIdentifier = m_attributedBundleIdentifier;
-    }
-#endif
-
 #if HAVE(CFNETWORK_ALTERNATIVE_SERVICE)
     if (!parameters.alternativeServiceDirectory.isEmpty()) {
         SandboxExtension::consumePermanently(parameters.alternativeServiceDirectoryExtensionHandle);
@@ -1284,7 +1272,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
         cookieStorage.get()._overrideSessionCookieAcceptPolicy = YES;
 #endif
 
-    initializeStandardSessionsInSet(m_defaultSessionSet.get(), configuration);
+    initializeNSURLSessionsInSet(m_defaultSessionSet.get(), configuration);
 
     m_deviceManagementRestrictionsEnabled = parameters.deviceManagementRestrictionsEnabled;
     m_allLoadsBlockedByDeviceManagementRestrictionsForTesting = parameters.allLoadsBlockedByDeviceManagementRestrictionsForTesting;
@@ -1301,7 +1289,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, Network
 
 NetworkSessionCocoa::~NetworkSessionCocoa() = default;
 
-void NetworkSessionCocoa::initializeStandardSessionsInSet(SessionSet& sessionSet, NSURLSessionConfiguration *configuration)
+void NetworkSessionCocoa::initializeNSURLSessionsInSet(SessionSet& sessionSet, NSURLSessionConfiguration *configuration)
 {
     sessionSet.sessionWithCredentialStorage.initialize(configuration, *this, WebCore::StoredCredentialsPolicy::Use, NavigatingToAppBoundDomain::No);
     LOG(NetworkSession, "Created NetworkSession with cookieAcceptPolicy %lu", configuration.HTTPCookieStorage.cookieAcceptPolicy);
@@ -1346,10 +1334,6 @@ SessionWrapper& NetworkSessionCocoa::SessionSet::initializeEphemeralStatelessSes
     configuration._sourceApplicationSecondaryIdentifier = existingConfiguration._sourceApplicationSecondaryIdentifier;
 #if PLATFORM(IOS_FAMILY)
     configuration._CTDataConnectionServiceType = existingConfiguration._CTDataConnectionServiceType;
-#endif
-#if HAVE(CFNETWORK_NSURLSESSION_ATTRIBUTED_BUNDLE_IDENTIFIER)
-    if ([configuration respondsToSelector:@selector(_attributedBundleIdentifier)])
-        configuration._attributedBundleIdentifier = existingConfiguration._attributedBundleIdentifier;
 #endif
 
     ephemeralStatelessSession.initialize(configuration, session, WebCore::StoredCredentialsPolicy::EphemeralStateless, isNavigatingToAppBoundDomain);
@@ -1676,6 +1660,38 @@ void NetworkSessionCocoa::removeWebSocketTask(WebPageProxyIdentifier webPageProx
 }
 
 #endif // HAVE(NSURLSESSION_WEBSOCKET)
+
+void NetworkSessionCocoa::addWebPageNetworkParameters(WebPageProxyIdentifier pageID, WebPageNetworkParameters&& parameters)
+{
+    auto addResult1 = m_perParametersSessionSets.add(parameters, nullptr);
+    if (auto set = addResult1.iterator->value) {
+        m_perPageSessionSets.add(pageID, *set);
+        return;
+    }
+
+    auto addResult2 = m_perPageSessionSets.add(pageID, SessionSet::create());
+    ASSERT(addResult2.isNewEntry);
+    RetainPtr<NSURLSessionConfiguration> configuration = adoptNS([m_defaultSessionSet->sessionWithCredentialStorage.session.get().configuration copy]);
+#if HAVE(CFNETWORK_NSURLSESSION_ATTRIBUTED_BUNDLE_IDENTIFIER)
+    if ([configuration respondsToSelector:@selector(_attributedBundleIdentifier)])
+        configuration.get()._attributedBundleIdentifier = parameters.attributedBundleIdentifier();
+#endif
+    initializeNSURLSessionsInSet(addResult2.iterator->value.get(), configuration.get());
+    addResult1.iterator->value = makeWeakPtr(addResult2.iterator->value.get());
+}
+
+void NetworkSessionCocoa::removeWebPageNetworkParameters(WebPageProxyIdentifier pageID)
+{
+    m_perPageSessionSets.remove(pageID);
+}
+
+size_t NetworkSessionCocoa::countNonDefaultSessionSets() const
+{
+    HashSet<Ref<SessionSet>> uniqueSets;
+    for (auto& set : m_perPageSessionSets.values())
+        uniqueSets.add(set);
+    return uniqueSets.size();
+}
 
 Vector<WebCore::SecurityOriginData> NetworkSessionCocoa::hostNamesWithAlternativeServices() const
 {

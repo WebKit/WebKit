@@ -2179,6 +2179,11 @@ void WebsiteDataStore::clearBundleIdentifierInNetworkProcess(CompletionHandler<v
     networkProcess().clearBundleIdentifier([callbackAggregator] { });
 }
 
+void WebsiteDataStore::countNonDefaultSessionSets(CompletionHandler<void(size_t)>&& completionHandler)
+{
+    networkProcess().sendWithAsyncReply(Messages::NetworkProcess::CountNonDefaultSessionSets(m_sessionID), WTFMove(completionHandler));
+}
+
 static bool nextNetworkProcessLaunchShouldFailForTesting { false };
 
 void WebsiteDataStore::makeNextNetworkProcessLaunchFailForTesting()

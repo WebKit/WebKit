@@ -59,6 +59,7 @@ class NetworkLoadScheduler;
 class NetworkProcess;
 class NetworkResourceLoader;
 class NetworkSocketChannel;
+class WebPageNetworkParameters;
 class WebResourceLoadStatisticsStore;
 class WebSocketTask;
 struct NetworkSessionCreationParameters;
@@ -167,6 +168,10 @@ public:
     void removePrivateClickMeasurementNetworkLoader(PrivateClickMeasurementNetworkLoader* loader) { m_privateClickMeasurementNetworkLoaders.remove(loader); }
 
     virtual void removeNetworkWebsiteData(std::optional<WallTime>, std::optional<HashSet<WebCore::RegistrableDomain>>&&, CompletionHandler<void()>&& completionHandler) { completionHandler(); }
+
+    virtual void addWebPageNetworkParameters(WebPageProxyIdentifier, WebPageNetworkParameters&&) { }
+    virtual void removeWebPageNetworkParameters(WebPageProxyIdentifier) { }
+    virtual size_t countNonDefaultSessionSets() const { return 0; }
 
 protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);

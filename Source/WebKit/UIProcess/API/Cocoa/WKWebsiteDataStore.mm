@@ -741,4 +741,11 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     return !!WebKit::NetworkProcessProxy::defaultNetworkProcess();
 }
 
+- (void)_countNonDefaultSessionSets:(void(^)(size_t))completionHandler
+{
+    _websiteDataStore->countNonDefaultSessionSets([completionHandler = makeBlockPtr(completionHandler)] (size_t count) {
+        completionHandler(count);
+    });
+}
+
 @end

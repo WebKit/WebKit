@@ -196,4 +196,8 @@ messages -> NetworkProcess LegacyReceiver {
     AppBoundNavigationData(PAL::SessionID sessionID) -> (struct WebKit::AppBoundNavigationTestingData data) Async
     ClearAppBoundNavigationData(PAL::SessionID sessionID) -> () Async
 #endif
+
+    AddWebPageNetworkParameters(PAL::SessionID sessionID, WebKit::WebPageProxyIdentifier pageID, WebKit::WebPageNetworkParameters parameters)
+    RemoveWebPageNetworkParameters(PAL::SessionID sessionID, WebKit::WebPageProxyIdentifier pageID)
+    CountNonDefaultSessionSets(PAL::SessionID sessionID) -> (size_t count) Async
 }
