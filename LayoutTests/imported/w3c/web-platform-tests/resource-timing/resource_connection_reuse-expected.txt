@@ -8,4 +8,7 @@ PASS window.performance.getEntriesByType is defined
 PASS There should be 2 PerformanceEntries
 PASS connectStart and fetchStart should be the same
 PASS connectEnd and fetchStart should be the same
+PASS secureConnectionStart should be zero
+PASS domainLookupStart and fetchStart should be the same
+PASS domainLookupEnd and fetchStart should be the same
 

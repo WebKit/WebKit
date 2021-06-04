@@ -61,6 +61,9 @@ public:
     double requestStart() const;
     double responseStart() const;
     double responseEnd() const;
+    uint64_t transferSize() const;
+    uint64_t encodedBodySize() const;
+    uint64_t decodedBodySize() const;
 
     const Vector<Ref<PerformanceServerTiming>>& serverTiming() const { return m_serverTiming; }
 

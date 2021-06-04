@@ -256,4 +256,44 @@ double PerformanceResourceTiming::responseEnd() const
     return networkLoadTimeToDOMHighResTimeStamp(m_timeOrigin, m_resourceTiming.resourceLoadTiming().endTime());
 }
 
+uint64_t PerformanceResourceTiming::transferSize() const
+{
+    if (!m_resourceTiming.allowTimingDetails()
+        || m_resourceTiming.networkLoadMetrics().hasCrossOriginRedirect)
+        return 0;
+
+    auto encodedBodySize = m_resourceTiming.networkLoadMetrics().responseBodyBytesReceived;
+    if (encodedBodySize == std::numeric_limits<uint64_t>::max())
+        return 0;
+
+    // https://w3c.github.io/resource-timing/#dom-performanceresourcetiming-transfersize
+    return encodedBodySize + 300;
+}
+
+uint64_t PerformanceResourceTiming::encodedBodySize() const
+{
+    if (!m_resourceTiming.allowTimingDetails()
+        || m_resourceTiming.networkLoadMetrics().hasCrossOriginRedirect)
+        return 0;
+
+    auto encodedBodySize = m_resourceTiming.networkLoadMetrics().responseBodyBytesReceived;
+    if (encodedBodySize == std::numeric_limits<uint64_t>::max())
+        return 0;
+
+    return encodedBodySize;
+}
+
+uint64_t PerformanceResourceTiming::decodedBodySize() const
+{
+    if (!m_resourceTiming.allowTimingDetails()
+        || m_resourceTiming.networkLoadMetrics().hasCrossOriginRedirect)
+        return 0;
+
+    auto decodedBodySize = m_resourceTiming.networkLoadMetrics().responseBodyDecodedSize;
+    if (decodedBodySize == std::numeric_limits<uint64_t>::max())
+        return 0;
+
+    return decodedBodySize;
+}
+
 } // namespace WebCore

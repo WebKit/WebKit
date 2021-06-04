@@ -324,17 +324,17 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     LOG(Network, "Handle %p delegate connectionDidFinishLoading:%p", m_handle, connection);
 
-    double responseEndTime = [[[connection _timingData] objectForKey:@"_kCFNTimingDataResponseEnd"] doubleValue];
-
-    auto work = [self = self, protectedSelf = retainPtr(self), connection = retainPtr(connection), responseEndTime] () mutable {
+    auto work = [self = self, protectedSelf = retainPtr(self), connection = retainPtr(connection), timingData = retainPtr([connection _timingData])] () mutable {
         if (!m_handle || !m_handle->client())
             return;
 
         if (auto metrics = m_handle->networkLoadMetrics()) {
-            if (responseEndTime)
+            if (double responseEndTime = [[timingData objectForKey:@"_kCFNTimingDataResponseEnd"] doubleValue])
                 metrics->responseEnd = WallTime::fromRawSeconds(adoptNS([[NSDate alloc] initWithTimeIntervalSinceReferenceDate:responseEndTime]).get().timeIntervalSince1970).approximateMonotonicTime();
             else
                 metrics->responseEnd = metrics->responseStart;
+            metrics->responseBodyBytesReceived = [[timingData objectForKey:@"_kCFNTimingDataResponseBodyBytesReceived"] unsignedLongLongValue];
+            metrics->responseBodyDecodedSize = [[timingData objectForKey:@"_kCFNTimingDataResponseBodyBytesDecoded"] unsignedLongLongValue];
             metrics->markComplete();
             m_handle->client()->didFinishLoading(m_handle, *metrics);
         } else {

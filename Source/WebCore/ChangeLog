@@ -1,3 +1,20 @@
+2021-06-04  Alex Christensen  <achristensen@webkit.org>
+
+        Implement off-by-default experimental feature for PerformanceResourceTiming.transferSize, encodedBodySize, and decodedBodySize
+        https://bugs.webkit.org/show_bug.cgi?id=226629
+
+        Reviewed by Brady Eidson.
+
+        The tests for TAO are entangled with the tests for these properties.  Having an implementation helps see what is still broken.
+        Covered by web platform tests.
+
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::PerformanceResourceTiming::transferSize const):
+        (WebCore::PerformanceResourceTiming::encodedBodySize const):
+        (WebCore::PerformanceResourceTiming::decodedBodySize const):
+        * page/PerformanceResourceTiming.h:
+        * page/PerformanceResourceTiming.idl:
+
 2021-06-04  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Use references in font loading code instead of pointers which can never be null

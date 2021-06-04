@@ -846,21 +846,15 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
 
             uint64_t requestHeaderBytesSent = 0;
             uint64_t responseHeaderBytesReceived = 0;
-            uint64_t responseBodyBytesReceived = 0;
-            uint64_t responseBodyDecodedSize = 0;
 
             for (NSURLSessionTaskTransactionMetrics *transactionMetrics in metrics.transactionMetrics) {
 #if HAVE(CFNETWORK_METRICS_APIS_V4)
                 requestHeaderBytesSent += transactionMetrics.countOfRequestHeaderBytesSent;
                 responseHeaderBytesReceived += transactionMetrics.countOfResponseHeaderBytesReceived;
-                responseBodyBytesReceived += transactionMetrics.countOfResponseBodyBytesReceived;
-                responseBodyDecodedSize += transactionMetrics.countOfResponseBodyBytesAfterDecoding ? transactionMetrics.countOfResponseBodyBytesAfterDecoding : transactionMetrics.countOfResponseBodyBytesReceived;
 #else
                 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                 requestHeaderBytesSent += transactionMetrics._requestHeaderBytesSent;
                 responseHeaderBytesReceived += transactionMetrics._responseHeaderBytesReceived;
-                responseBodyBytesReceived += transactionMetrics._responseBodyBytesReceived;
-                responseBodyDecodedSize += transactionMetrics._responseBodyBytesDecoded ? transactionMetrics._responseBodyBytesDecoded : transactionMetrics._responseBodyBytesReceived;
                 ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
             }
@@ -868,9 +862,20 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
             networkLoadMetrics.requestHeaderBytesSent = requestHeaderBytesSent;
             networkLoadMetrics.requestBodyBytesSent = task.countOfBytesSent;
             networkLoadMetrics.responseHeaderBytesReceived = responseHeaderBytesReceived;
-            networkLoadMetrics.responseBodyBytesReceived = responseBodyBytesReceived;
-            networkLoadMetrics.responseBodyDecodedSize = responseBodyDecodedSize;
         }
+#if HAVE(CFNETWORK_METRICS_APIS_V4)
+        networkLoadMetrics.responseBodyBytesReceived = m.countOfResponseBodyBytesReceived;
+        networkLoadMetrics.responseBodyDecodedSize = m.countOfResponseBodyBytesAfterDecoding;
+#else
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        networkLoadMetrics.responseBodyBytesReceived = m._responseBodyBytesReceived;
+        networkLoadMetrics.responseBodyDecodedSize = m._responseBodyBytesDecoded;
+        ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
+        // Sometimes the encoded body bytes received contains a few (3 or so) bytes from the header when there is no body.
+        // When this happens, trim our metrics to make more sense.
+        if (!networkLoadMetrics.responseBodyDecodedSize)
+            networkLoadMetrics.responseBodyBytesReceived = 0;
     }
 }
 

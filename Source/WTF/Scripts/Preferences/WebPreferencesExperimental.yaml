@@ -794,6 +794,20 @@ PerformanceNavigationTimingAPIEnabled:
     WebCore:
       default: false
 
+# Note: This is off by default because of privacy concerns
+# such as https://github.com/w3c/resource-timing/issues/238
+PerformanceResourceTimingSensitivePropertiesEnabled:
+  type: bool
+  humanReadableName: "PerformanceResourceTiming.transferSize, encodedBodySize, and decodedBodySize"
+  humanReadableDescription: "Enable all properties of PerformanceResourceTiming API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 PrivateClickMeasurementDebugModeEnabled:
   type: bool
   humanReadableName: "Private Click Measurement Debug Mode"
