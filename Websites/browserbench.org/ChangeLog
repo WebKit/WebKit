@@ -1,3 +1,16 @@
+2021-06-04  Said Abou-Hallawa  <said@apple.com> and Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [MotionMark] Publish r278436 as a part of MotionMark 1.2
+        https://bugs.webkit.org/show_bug.cgi?id=226626
+
+        Reviewed by Simon Fraser.
+
+        Controller.filterOutOutliers must pass a compare function to Array.sort()
+        because it filters an array of numbers.
+
+        * MotionMark1.2/tests/resources/main.js:
+        (filterOutOutliers):
+
 2021-05-21  Sam Sneddon  <gsnedders@apple.com>
 
         Fix Python 3.6+ DeprecationWarnings about unknown escapes

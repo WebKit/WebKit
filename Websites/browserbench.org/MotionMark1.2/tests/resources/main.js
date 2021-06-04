@@ -115,7 +115,7 @@ Controller = Utilities.createClass(
         if (array.length == 0)
             return [];
 
-        array.sort();
+        array.sort((a, b) => a - b);
         var q1 = array[Math.min(Math.round(array.length * 1 / 4), array.length - 1)];
         var q3 = array[Math.min(Math.round(array.length * 3 / 4), array.length - 1)];
         var interquartileRange = q3 - q1;
