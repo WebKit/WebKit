@@ -1,3 +1,23 @@
+2021-06-04  Aakash Jain  <aakash_jain@apple.com>
+
+        [ews] Speed up ews status bubble loading speed
+        https://bugs.webkit.org/show_bug.cgi?id=214821
+
+        Reviewed by Jonathan Bedard.
+
+        This change does a trade-off between accuracy of queue position vs status-bubble loading time.
+        This would reduce the calculations needed for queue position computation, but the position
+        might not be accurate if the queue has a backlog of more than 12 hours (which shouldn't be
+        the case normally). If the backlog is less than 12 hours, then the queue position will be accurate.
+
+        Also, this patch separates the logic of when to hide the status-bubble. Status-bubble will now be hidden
+        after 7 days of no build. However, if patch is waiting for more than 12 hours, but less than 7 days,
+        instead of computing the exact queue position, we do not display queue position.
+        * CISupport/ews-app/ews/views/statusbubble.py:
+        (StatusBubble):
+        (StatusBubble._build_bubble):
+        (StatusBubble._queue_position):
+
 2021-06-04  Jonathan Bedard  <jbedard@apple.com>
 
         [run-webkit-tests] Use webkitcorepy's TaskPool
