@@ -4780,3 +4780,38 @@ void webkit_web_view_terminate_web_process(WebKitWebView* webView)
         protectedProcessProxy->requestTermination(WebKit::ProcessTerminationReason::RequestedByClient);
     }
 }
+
+/**
+ * webkit_web_view_set_cors_allowlist:
+ * @web_view: a #WebKitWebView
+ * @allowlist: (array zero-terminated=1) (element-type utf8) (transfer none) (nullable): an allowlist of URI patterns, or %NULL
+ *
+ * Sets the @allowlist for which
+ * [Cross-Origin Resource Sharing](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)
+ * checks are disabled in @web_view. URI patterns must be of the form
+ * `[protocol]://[host]/[path]`, each component may contain the wildcard
+ * character (`*`) to represent zero or more other characters. All three
+ * components are required and must not be omitted from the URI
+ * patterns.
+ *
+ * Disabling CORS checks permits resources from other origins to load
+ * allowlisted resources. It does not permit the allowlisted resources
+ * to load resources from other origins.
+ *
+ * If this function is called multiple times, only the allowlist set by
+ * the most recent call will be effective.
+ *
+ * Since: 2.34
+ */
+void webkit_web_view_set_cors_allowlist(WebKitWebView* webView, const gchar* const* allowList)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+
+    Vector<String> allowListVector;
+    if (allowList) {
+        for (auto str = allowList; *str; ++str)
+            allowListVector.append(String::fromUTF8(*str));
+    }
+
+    getPage(webView).setCORSDisablingPatterns(WTFMove(allowListVector));
+}

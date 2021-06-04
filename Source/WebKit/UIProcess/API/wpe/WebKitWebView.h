@@ -573,6 +573,10 @@ webkit_web_view_get_is_web_process_responsive        (WebKitWebView             
 WEBKIT_API void
 webkit_web_view_terminate_web_process                (WebKitWebView             *web_view);
 
+WEBKIT_API void
+webkit_web_view_set_cors_allowlist                   (WebKitWebView             *web_view,
+                                                      const gchar * const       *allowlist);
+
 G_END_DECLS
 
 #endif

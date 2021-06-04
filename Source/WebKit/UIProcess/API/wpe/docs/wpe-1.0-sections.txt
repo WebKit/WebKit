@@ -264,6 +264,7 @@ webkit_web_view_get_input_method_context
 webkit_web_view_get_website_policies
 webkit_web_view_get_is_web_process_responsive
 webkit_web_view_terminate_web_process
+webkit_web_view_set_cors_allowlist
 
 <SUBSECTION WebKitJavascriptResult>
 WebKitJavascriptResult

@@ -587,6 +587,9 @@ webkit_web_view_set_input_method_context             (WebKitWebView             
 WEBKIT_API WebKitInputMethodContext *
 webkit_web_view_get_input_method_context             (WebKitWebView             *web_view);
 
+WEBKIT_API void
+webkit_web_view_set_cors_allowlist                   (WebKitWebView             *web_view,
+                                                      const gchar * const       *allowlist);
 
 WEBKIT_API WebKitWebsitePolicies *
 webkit_web_view_get_website_policies                 (WebKitWebView             *web_view);

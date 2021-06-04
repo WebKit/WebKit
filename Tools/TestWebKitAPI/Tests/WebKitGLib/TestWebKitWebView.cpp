@@ -1608,6 +1608,57 @@ static void testWebViewTerminateUnresponsiveWebProcess(WebViewTerminateWebProces
     g_assert_true(webkit_web_view_get_is_web_process_responsive(test->m_webView));
 }
 
+static void testWebViewCORSAllowlist(WebViewTest* test, gconstpointer)
+{
+    webkit_web_context_register_uri_scheme(test->m_webContext.get(), "foo",
+        [](WebKitURISchemeRequest* request, gpointer userData) {
+            GRefPtr<GInputStream> inputStream = adoptGRef(g_memory_input_stream_new());
+            const char* data = "<p>foobar!</p>";
+            g_memory_input_stream_add_data(G_MEMORY_INPUT_STREAM(inputStream.get()), data, strlen(data), nullptr);
+            webkit_uri_scheme_request_finish(request, inputStream.get(), strlen(data), "text/html");
+        }, nullptr, nullptr);
+
+    char html[] = "<html><script>let foo = 0; fetch('foo://bar/baz').then(response => { if (response.status === 200) foo = 42});</script></html>";
+    webkit_web_view_load_html(test->m_webView, html, "http://example.com");
+    test->waitUntilLoadFinished();
+
+    // Request is not allowed, foo should be 0.
+    GUniqueOutPtr<GError> error;
+    WebKitJavascriptResult* result = test->runJavaScriptAndWaitUntilFinished("foo;", &error.outPtr());
+    g_assert_no_error(error.get());
+    JSCValue* value = webkit_javascript_result_get_js_value(result);
+    g_assert_cmpint(jsc_value_to_int32(value), ==, 0);
+    webkit_javascript_result_unref(result);
+
+    // Allowlisting host alone does not work. Path is also required. foo should remain 0.
+    GUniquePtr<char*> allowlist(g_new(char*, 2));
+    allowlist.get()[0] = g_strdup("foo://*");
+    allowlist.get()[1] = nullptr;
+    webkit_web_view_set_cors_allowlist(test->m_webView, allowlist.get());
+
+    webkit_web_view_load_html(test->m_webView, html, "http://example.com");
+    test->waitUntilLoadFinished();
+    result = test->runJavaScriptAndWaitUntilFinished("foo;", &error.outPtr());
+    g_assert_no_error(error.get());
+    value = webkit_javascript_result_get_js_value(result);
+    g_assert_cmpint(jsc_value_to_int32(value), ==, 0);
+    webkit_javascript_result_unref(result);
+
+    // Finally let's properly allow our scheme. foo should now change to 42 when the request succeeds.
+    allowlist.reset(g_new(char*, 2));
+    allowlist.get()[0] = g_strdup("foo://*/*");
+    allowlist.get()[1] = nullptr;
+    webkit_web_view_set_cors_allowlist(test->m_webView, allowlist.get());
+
+    webkit_web_view_load_html(test->m_webView, html, "http://example.com");
+    test->waitUntilLoadFinished();
+    result = test->runJavaScriptAndWaitUntilFinished("foo;", &error.outPtr());
+    g_assert_no_error(error.get());
+    value = webkit_javascript_result_get_js_value(result);
+    g_assert_cmpint(jsc_value_to_int32(value), ==, 42);
+    webkit_javascript_result_unref(result);
+}
+
 #if USE(SOUP2)
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 #else
@@ -1678,6 +1729,7 @@ void beforeAll()
     WebViewTest::add("WebKitWebView", "is-web-process-responsive", testWebViewIsWebProcessResponsive);
     WebViewTerminateWebProcessTest::add("WebKitWebView", "terminate-web-process", testWebViewTerminateWebProcess);
     WebViewTerminateWebProcessTest::add("WebKitWebView", "terminate-unresponsive-web-process", testWebViewTerminateUnresponsiveWebProcess);
+    WebViewTest::add("WebKitWebView", "cors-allowlist", testWebViewCORSAllowlist);
 }
 
 void afterAll()
