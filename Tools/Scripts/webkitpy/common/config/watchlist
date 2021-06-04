@@ -408,6 +408,7 @@
         # Note: All email addresses listed must be registered with bugzilla.
         # Specifically, levin@chromium.org and levin+threading@chromium.org are
         # two different accounts as far as bugzilla is concerned.
+        "ANGLE": [ "dino@apple.com", "kbr@google.com" ],
         "Accessibility": [ "cfleizach@apple.com", "dmazzoni@google.com", "apinheiro@igalia.com", "jdiggs@igalia.com", "aboxhall@chromium.org", "samuel_white@apple.com", "jcraig@apple.com" ],
         "Animation" : [ "simon.fraser@apple.com", "dino@apple.com", "dstockwell@chromium.org" ],
         "MotionMark" : [ "sabouhallawa@apple.com" ],
@@ -459,7 +460,7 @@
         "TextureMapper" : [ "cmarcelo@webkit.org", "luiz@webkit.org", "kondapallykalyan@gmail.com" ],
         "TouchAdjustment" : [ "allan.jensen@digia.com" ],
         "WTF": [ "benjamin@webkit.org", "cmarcelo@webkit.org", "cdumez@apple.com" ],
-        "WebGL": [ "dino@apple.com", "kondapallykalyan@gmail.com", "graouts@webkit.org" ],
+        "WebGL": [ "dino@apple.com", "kondapallykalyan@gmail.com" ],
         "WebIDL": [ "esprehn+autocc@chromium.org", "cdumez@apple.com", "kondapallykalyan@gmail.com" ],
         "WebInspectorBackend": [ "joepeck@webkit.org", "drousso@apple.com" ],
         "WebInspectorFrontend": [ "drousso@apple.com" ],
