@@ -1,5 +1,46 @@
 2021-06-04  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r275886. rdar://problem/78874996
+
+    StorageArea in LocalStorageNamespace can be abandoned
+    https://bugs.webkit.org/show_bug.cgi?id=224459
+    
+    Reviewed by Geoffrey Garen.
+    
+    Remove StorageArea from LocalStorageNamespace if it has no connection (no web page is using it).
+    
+    * NetworkProcess/WebStorage/LocalStorageNamespace.cpp:
+    (WebKit::LocalStorageNamespace::removeStorageArea):
+    * NetworkProcess/WebStorage/LocalStorageNamespace.h:
+    * NetworkProcess/WebStorage/StorageArea.cpp:
+    (WebKit::StorageArea::removeListener):
+    * NetworkProcess/WebStorage/StorageManagerSet.cpp:
+    (WebKit::StorageManagerSet::removeConnection):
+    (WebKit::StorageManagerSet::disconnectFromStorageArea):
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@275886 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-04-13  Sihui Liu  <sihui_liu@apple.com>
+
+            StorageArea in LocalStorageNamespace can be abandoned
+            https://bugs.webkit.org/show_bug.cgi?id=224459
+
+            Reviewed by Geoffrey Garen.
+
+            Remove StorageArea from LocalStorageNamespace if it has no connection (no web page is using it).
+
+            * NetworkProcess/WebStorage/LocalStorageNamespace.cpp:
+            (WebKit::LocalStorageNamespace::removeStorageArea):
+            * NetworkProcess/WebStorage/LocalStorageNamespace.h:
+            * NetworkProcess/WebStorage/StorageArea.cpp:
+            (WebKit::StorageArea::removeListener):
+            * NetworkProcess/WebStorage/StorageManagerSet.cpp:
+            (WebKit::StorageManagerSet::removeConnection):
+            (WebKit::StorageManagerSet::disconnectFromStorageArea):
+
+2021-06-04  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r273141. rdar://problem/78875378
 
     Norton Safe Web extension is causing crashes / hangs under [WKRemoteObjectEncoder encodeObject:forKey:]

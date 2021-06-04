@@ -70,6 +70,15 @@ void StorageArea::removeListener(IPC::Connection::UniqueID connectionID)
 {
     ASSERT(!RunLoop::isMain());
     m_eventListeners.remove(connectionID);
+
+    if (!m_eventListeners.isEmpty())
+        return;
+
+    if (!m_localStorageNamespace)
+        return;
+
+    syncToDatabase();
+    m_localStorageNamespace->removeStorageArea(m_securityOrigin);
 }
 
 bool StorageArea::hasListener(IPC::Connection::UniqueID connectionID) const

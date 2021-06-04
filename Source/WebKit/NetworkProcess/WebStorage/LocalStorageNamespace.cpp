@@ -79,6 +79,13 @@ void LocalStorageNamespace::flushAndClose(const SecurityOriginData& origin)
     }
 }
 
+
+void LocalStorageNamespace::removeStorageArea(const SecurityOriginData& origin)
+{
+    ASSERT(!RunLoop::isMain());
+    m_storageAreaMap.remove(origin);
+}
+
 Vector<SecurityOriginData> LocalStorageNamespace::ephemeralOrigins() const
 {
     ASSERT(!RunLoop::isMain());
