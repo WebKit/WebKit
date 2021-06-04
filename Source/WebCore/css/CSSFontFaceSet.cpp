@@ -118,7 +118,7 @@ void CSSFontFaceSet::ensureLocalFontFacesForFamilyRegistered(const String& famil
 
     Vector<Ref<CSSFontFace>> faces;
     for (auto item : capabilities) {
-        Ref<CSSFontFace> face = CSSFontFace::create(m_owningFontSelector.get(), nullptr, nullptr, true);
+        auto face = CSSFontFace::create(*m_owningFontSelector, nullptr, nullptr, true);
         
         Ref<CSSValueList> familyList = CSSValueList::createCommaSeparated();
         familyList->append(m_owningFontSelector->scriptExecutionContext()->cssValuePool().createFontFamilyValue(familyName));

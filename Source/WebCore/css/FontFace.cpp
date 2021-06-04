@@ -151,7 +151,7 @@ Ref<FontFace> FontFace::create(ScriptExecutionContext* context, CSSFontFace& fac
 
 FontFace::FontFace(CSSFontSelector& fontSelector)
     : ActiveDOMObject(fontSelector.scriptExecutionContext())
-    , m_backing(CSSFontFace::create(&fontSelector, nullptr, this))
+    , m_backing(CSSFontFace::create(fontSelector, nullptr, this))
     , m_loadedPromise(makeUniqueRef<LoadedPromise>(*this, &FontFace::loadedPromiseResolve))
 {
     m_backing->addClient(*this);
