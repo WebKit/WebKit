@@ -18453,6 +18453,9 @@ private:
 
     void speculateNotDouble(Edge edge)
     {
+        if (!m_interpreter.needsTypeCheck(edge))
+            return;
+    
         LValue value = lowJSValue(edge, ManualOperandSpeculation);
         
         LBasicBlock isNotInt32 = m_out.newBlock();

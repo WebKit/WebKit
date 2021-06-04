@@ -11434,6 +11434,9 @@ void SpeculativeJIT::speculateNotCellNorBigInt(Edge edge)
 
 void SpeculativeJIT::speculateNotDouble(Edge edge)
 {
+    if (!needsTypeCheck(edge, ~SpecFullDouble))
+        return;
+    
     JSValueOperand operand(this, edge, ManualOperandSpeculation);
     GPRTemporary temp(this);
     JSValueRegs regs = operand.jsValueRegs();
