@@ -1,5 +1,54 @@
 2021-06-04  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r277536. rdar://problem/78875336
+
+    Replace PlatformCAAnimationRemote::KeyframeValue with Variant
+    https://bugs.webkit.org/show_bug.cgi?id=225474
+    
+    Patch by Ian Gilbert <iang@apple.com> on 2021-05-15
+    Reviewed by Ryosuke Niwa.
+    
+    KeyframeValue was effectively a Variant. Replaced the existing class with a WTF::Variant.
+    
+    No test as this does not change code behavior.
+    
+    * Shared/WebCoreArgumentCoders.cpp:
+    (IPC::ArgumentCoder<RefPtr<WebCore::FilterOperation>>::encode):
+    (IPC::ArgumentCoder<RefPtr<WebCore::FilterOperation>>::decode):
+    * Shared/WebCoreArgumentCoders.h:
+    * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.h:
+    * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm:
+    (WebKit::animationValueFromKeyframeValue):
+    (WebKit::operator<<):
+    (WebKit::PlatformCAAnimationRemote::KeyframeValue::encode const): Deleted.
+    (WebKit::PlatformCAAnimationRemote::KeyframeValue::decode): Deleted.
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@277536 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-05-15  Ian Gilbert  <iang@apple.com>
+
+            Replace PlatformCAAnimationRemote::KeyframeValue with Variant
+            https://bugs.webkit.org/show_bug.cgi?id=225474
+
+            Reviewed by Ryosuke Niwa.
+
+            KeyframeValue was effectively a Variant. Replaced the existing class with a WTF::Variant.
+
+            No test as this does not change code behavior.
+
+            * Shared/WebCoreArgumentCoders.cpp:
+            (IPC::ArgumentCoder<RefPtr<WebCore::FilterOperation>>::encode):
+            (IPC::ArgumentCoder<RefPtr<WebCore::FilterOperation>>::decode):
+            * Shared/WebCoreArgumentCoders.h:
+            * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.h:
+            * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm:
+            (WebKit::animationValueFromKeyframeValue):
+            (WebKit::operator<<):
+            (WebKit::PlatformCAAnimationRemote::KeyframeValue::encode const): Deleted.
+            (WebKit::PlatformCAAnimationRemote::KeyframeValue::decode): Deleted.
+
+2021-06-04  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r276514. rdar://problem/78875360
 
     Web Inspector: [Cocoa] WKInspectorResourceURLSchemeHandler needs to serialize cleanup actions
