@@ -273,6 +273,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case ToBoolean:
     case LogicalNot:
     case ToString:
+    case FunctionToString:
     case NumberToStringWithValidRadixConstant:
     case StrCat:
     case CallStringConstructor:

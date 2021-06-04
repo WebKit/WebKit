@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FunctionExecutable.h"
+#include "JSBoundFunction.h"
 #include "JSFunction.h"
 #include "NativeExecutable.h"
 
@@ -154,6 +155,15 @@ inline FunctionRareData* JSFunction::ensureRareDataAndAllocationProfile(JSGlobal
     if (UNLIKELY(!rareData->isObjectAllocationProfileInitialized()))
         return initializeRareData(globalObject, inlineCapacity);
     return rareData;
+}
+
+inline JSString* JSFunction::asStringConcurrently(VM& vm) const
+{
+    if (inherits<JSBoundFunction>(vm))
+        return nullptr;
+    if (isHostFunction())
+        return static_cast<NativeExecutable*>(executable())->asStringConcurrently();
+    return jsExecutable()->asStringConcurrently();
 }
 
 } // namespace JSC

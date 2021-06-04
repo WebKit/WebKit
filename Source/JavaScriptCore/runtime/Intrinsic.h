@@ -152,6 +152,7 @@ enum Intrinsic : uint8_t {
     AtomicsWaitIntrinsic,
     AtomicsXorIntrinsic,
     ParseIntIntrinsic,
+    FunctionToStringIntrinsic,
 
     // Getter intrinsics.
     TypedArrayLengthIntrinsic,

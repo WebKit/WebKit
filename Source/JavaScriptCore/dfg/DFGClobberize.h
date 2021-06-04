@@ -1818,6 +1818,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             RELEASE_ASSERT_NOT_REACHED();
             return;
         }
+
+    case FunctionToString:
+        def(PureValue(node));
+        return;
         
     case CountExecution:
     case SuperSamplerBegin:

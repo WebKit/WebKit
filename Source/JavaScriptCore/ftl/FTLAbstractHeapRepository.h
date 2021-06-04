@@ -77,6 +77,8 @@ namespace JSC { namespace FTL {
     macro(DirectArguments_minCapacity, DirectArguments::offsetOfMinCapacity()) \
     macro(DirectArguments_mappedArguments, DirectArguments::offsetOfMappedArguments()) \
     macro(DirectArguments_modifiedArgumentsDescriptor, DirectArguments::offsetOfModifiedArgumentsDescriptor()) \
+    macro(FunctionExecutable_rareData, FunctionExecutable::offsetOfRareData()) \
+    macro(FunctionExecutableRareData_asString, FunctionExecutable::offsetOfAsStringInRareData()) \
     macro(FunctionRareData_allocator, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfileWithPrototype::offsetOfAllocator()) \
     macro(FunctionRareData_structure, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfileWithPrototype::offsetOfStructure()) \
     macro(FunctionRareData_prototype, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfileWithPrototype::offsetOfPrototype()) \
@@ -119,6 +121,7 @@ namespace JSC { namespace FTL {
     macro(JSRopeString_fiber2, JSRopeString::offsetOfFiber2()) \
     macro(JSScope_next, JSScope::offsetOfNext()) \
     macro(JSSymbolTableObject_symbolTable, JSSymbolTableObject::offsetOfSymbolTable()) \
+    macro(NativeExecutable_asString, NativeExecutable::offsetOfAsString()) \
     macro(RegExpObject_regExpAndLastIndexIsNotWritableFlag, RegExpObject::offsetOfRegExpAndLastIndexIsNotWritableFlag()) \
     macro(RegExpObject_lastIndex, RegExpObject::offsetOfLastIndex()) \
     macro(ShadowChicken_Packet_callee, OBJECT_OFFSETOF(ShadowChicken::Packet, callee)) \

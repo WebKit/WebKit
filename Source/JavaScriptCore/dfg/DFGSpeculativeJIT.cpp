@@ -52,6 +52,7 @@
 #include "JSArrayIterator.h"
 #include "JSAsyncFunction.h"
 #include "JSAsyncGeneratorFunction.h"
+#include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "JSGeneratorFunction.h"
 #include "JSImmutableButterfly.h"
@@ -10555,6 +10556,47 @@ void SpeculativeJIT::compileToStringOrCallStringConstructorOrStringValueOf(Node*
     }
 }
 
+static void getExecutable(JITCompiler& jit, GPRReg functionGPR, GPRReg resultGPR)
+{
+    jit.loadPtr(JITCompiler::Address(functionGPR, JSFunction::offsetOfExecutableOrRareData()), resultGPR);
+    auto hasExecutable = jit.branchTestPtr(CCallHelpers::Zero, resultGPR, CCallHelpers::TrustedImm32(JSFunction::rareDataTag));
+    jit.loadPtr(CCallHelpers::Address(resultGPR, FunctionRareData::offsetOfExecutable() - JSFunction::rareDataTag), resultGPR);
+    hasExecutable.link(&jit);
+}
+
+void SpeculativeJIT::compileFunctionToString(Node* node)
+{
+    SpeculateCellOperand function(this, node->child1());
+    GPRTemporary executable(this);
+    GPRTemporary result(this);
+    JITCompiler::JumpList slowCases;
+
+    speculateFunction(node->child1(), function.gpr());
+
+    m_jit.emitLoadStructure(vm(), function.gpr(), result.gpr(), executable.gpr());
+    m_jit.loadPtr(JITCompiler::Address(result.gpr(), Structure::classInfoOffset()), result.gpr());
+    static_assert(std::is_final_v<JSBoundFunction>, "We don't handle subclasses when comparing classInfo below");
+    slowCases.append(m_jit.branchPtr(CCallHelpers::Equal, result.gpr(), TrustedImmPtr(JSBoundFunction::info())));
+
+    getExecutable(m_jit, function.gpr(), executable.gpr());
+    JITCompiler::Jump isNativeExecutable = m_jit.branch8(JITCompiler::Equal, JITCompiler::Address(executable.gpr(), JSCell::typeInfoTypeOffset()), TrustedImm32(NativeExecutableType));
+
+    m_jit.loadPtr(MacroAssembler::Address(executable.gpr(), FunctionExecutable::offsetOfRareData()), result.gpr());
+    slowCases.append(m_jit.branchTestPtr(MacroAssembler::Zero, result.gpr()));
+    m_jit.loadPtr(MacroAssembler::Address(result.gpr(), FunctionExecutable::offsetOfAsStringInRareData()), result.gpr());
+    JITCompiler::Jump continuation = m_jit.jump();
+
+    isNativeExecutable.link(&m_jit);
+    m_jit.loadPtr(MacroAssembler::Address(executable.gpr(), NativeExecutable::offsetOfAsString()), result.gpr());
+
+    continuation.link(&m_jit);
+    slowCases.append(m_jit.branchTestPtr(MacroAssembler::Zero, result.gpr()));
+
+    addSlowPathGenerator(slowPathCall(slowCases, this, operationFunctionToString, result.gpr(), TrustedImmPtr::weakPointer(m_graph, m_graph.globalObjectFor(node->origin.semantic)), function.gpr()));
+
+    cellResult(result.gpr(), node);
+}
+
 void SpeculativeJIT::compileNumberToStringWithValidRadixConstant(Node* node)
 {
     compileNumberToStringWithValidRadixConstant(node, node->validRadixConstant());
@@ -13304,14 +13346,9 @@ void SpeculativeJIT::compileGetExecutable(Node* node)
 {
     SpeculateCellOperand function(this, node->child1());
     GPRTemporary result(this, Reuse, function);
-    GPRReg functionGPR = function.gpr();
-    GPRReg resultGPR = result.gpr();
-    speculateCellType(node->child1(), functionGPR, SpecFunction, JSFunctionType);
-    m_jit.loadPtr(JITCompiler::Address(functionGPR, JSFunction::offsetOfExecutableOrRareData()), resultGPR);
-    auto hasExecutable = m_jit.branchTestPtr(CCallHelpers::Zero, resultGPR, CCallHelpers::TrustedImm32(JSFunction::rareDataTag));
-    m_jit.loadPtr(CCallHelpers::Address(resultGPR, FunctionRareData::offsetOfExecutable() - JSFunction::rareDataTag), resultGPR);
-    hasExecutable.link(&m_jit);
-    cellResult(resultGPR, node);
+    speculateFunction(node->child1(), function.gpr());
+    getExecutable(m_jit, function.gpr(), result.gpr());
+    cellResult(result.gpr(), node);
 }
 
 void SpeculativeJIT::compileGetGetter(Node* node)

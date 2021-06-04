@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "JSGlobalObjectInlines.h"
 #include "JSString.h"
 
 namespace JSC {

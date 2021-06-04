@@ -2560,6 +2560,15 @@ JSC_DEFINE_JIT_OPERATION(operationDoubleToStringWithValidRadix, char*, (JSGlobal
     return reinterpret_cast<char*>(numberToString(vm, value, radix));
 }
 
+JSC_DEFINE_JIT_OPERATION(operationFunctionToString, JSString*, (JSGlobalObject* globalObject, JSFunction* function))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    return function->toString(globalObject);
+}
+
 JSC_DEFINE_JIT_OPERATION(operationSingleCharacterString, JSString*, (VM* vmPointer, int32_t character))
 {
     VM& vm = *vmPointer;

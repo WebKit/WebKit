@@ -1158,6 +1158,7 @@ private:
         case StringCharAt:
         case CallStringConstructor:
         case ToString:
+        case FunctionToString:
         case NumberToStringWithRadix:
         case NumberToStringWithValidRadixConstant:
         case MakeRope:

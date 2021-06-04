@@ -3790,6 +3790,10 @@ void SpeculativeJIT::compile(Node* node)
         compileToStringOrCallStringConstructorOrStringValueOf(node);
         break;
     }
+
+    case FunctionToString:
+        compileFunctionToString(node);
+        break;
         
     case NewStringObject: {
         compileNewStringObject(node);

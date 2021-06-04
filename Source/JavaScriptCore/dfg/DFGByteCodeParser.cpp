@@ -3742,6 +3742,17 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
 #endif
         }
 
+        case FunctionToStringIntrinsic: {
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return false;
+
+            insertChecks();
+            Node* function = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+            Node* resultNode = addToGraph(FunctionToString, function);
+            setResult(resultNode);
+            return true;
+        }
+
         default:
             return false;
         }

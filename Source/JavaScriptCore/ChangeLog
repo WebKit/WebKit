@@ -1,3 +1,86 @@
+2021-06-04  Tadeu Zagallo  <tzagallo@apple.com>
+
+        Optimize Function.prototype.toString
+        https://bugs.webkit.org/show_bug.cgi?id=226418
+        <rdar://77861846>
+
+        Reviewed by Saam Barati.
+
+        Add caching to Function.prototype.toString. This is used heavily in Speedometer2, and repeatedly recomputing a
+        string which is a constant is costly. We cache the results of toString in all cases except for bound functions.
+        To make this work for bound functions, we'd need to add a new field they can use for this cache. For other
+        functions, we cache it on the executable (either NativeExecutable or FunctionExecutable). The reason we can't
+        do this on the executable for bound functions is that all bound functions share the same executable, but
+        individual bound functions can have different names. The reason it's valid to cache the results in general is that a
+        function's name field can't be changed from JS code -- it's non-writable.
+
+        This patch also makes Function.prototype.toString an intrinsic in the DFG/FTL. We emit code on the fast path
+        which reads the cached value if it's present. If not, we call into the slow path, which will compute
+        the cached value for non bound functions, or compute the result for bound functions.
+
+        I added a new microbenchmark that speeds up by >35x:
+
+        function-to-string     2197.5952+-30.7118    ^     59.9861+-2.5550        ^ definitely 36.6350x faster
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::JSC_DEFINE_JIT_OPERATION):
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::getExecutable):
+        (JSC::DFG::SpeculativeJIT::compileFunctionToString):
+        (JSC::DFG::SpeculativeJIT::compileGetExecutable):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::getExecutable):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetExecutable):
+        (JSC::FTL::DFG::LowerDFGToB3::compileFunctionToString):
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::visitChildrenImpl):
+        (JSC::FunctionExecutable::toStringSlow):
+        * runtime/FunctionExecutable.h:
+        * runtime/FunctionExecutableInlines.h:
+        (JSC::FunctionExecutable::toString):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::addFunctionProperties):
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::toString):
+        * runtime/JSFunction.h:
+        * runtime/JSFunctionInlines.h:
+        (JSC::JSFunction::asStringConcurrently const):
+        * runtime/JSStringInlines.h:
+        * runtime/NativeExecutable.cpp:
+        (JSC::NativeExecutable::toStringSlow):
+        (JSC::NativeExecutable::visitChildrenImpl):
+        * runtime/NativeExecutable.h:
+
 2021-06-04  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Fix more GCC warnings

@@ -275,6 +275,8 @@ const char* intrinsicName(Intrinsic intrinsic)
         return "AtomicsXorIntrinsic";
     case ParseIntIntrinsic:
         return "ParseIntIntrinsic";
+    case FunctionToStringIntrinsic:
+        return "FunctionToStringIntrinsic";
     case TypedArrayLengthIntrinsic:
         return "TypedArrayLengthIntrinsic";
     case TypedArrayByteLengthIntrinsic:

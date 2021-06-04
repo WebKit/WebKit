@@ -1973,6 +1973,10 @@ private:
             break;
         }
 
+        case FunctionToString: {
+            fixEdge<FunctionUse>(node->child1());
+            break;
+        }
 
         case SetPrivateBrand: {
             fixEdge<CellUse>(node->child1());

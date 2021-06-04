@@ -943,6 +943,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSArrayBufferViewInlines.h
     runtime/JSArrayIterator.h
     runtime/JSBigInt.h
+    runtime/JSBoundFunction.h
     runtime/JSCConfig.h
     runtime/JSCInlines.h
     runtime/JSCJSValue.h

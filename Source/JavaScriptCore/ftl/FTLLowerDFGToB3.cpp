@@ -77,6 +77,7 @@
 #include "JSAsyncFunction.h"
 #include "JSAsyncGenerator.h"
 #include "JSAsyncGeneratorFunction.h"
+#include "JSBoundFunction.h"
 #include "JSCInlines.h"
 #include "JSGenerator.h"
 #include "JSGeneratorFunction.h"
@@ -1195,6 +1196,9 @@ private:
         case CallStringConstructor:
         case StringValueOf:
             compileToStringOrCallStringConstructorOrStringValueOf();
+            break;
+        case FunctionToString:
+            compileFunctionToString();
             break;
         case ToPrimitive:
             compileToPrimitive();
@@ -3774,14 +3778,12 @@ private:
         speculate(BadIdent, noValue(), nullptr, m_out.notEqual(stringImpl, m_out.constIntPtr(uid)));
     }
 
-    void compileGetExecutable()
+    LValue getExecutable(LValue function)
     {
         LBasicBlock continuation = m_out.newBlock();
         LBasicBlock hasRareData = m_out.newBlock();
-        LValue cell = lowCell(m_node->child1());
-        speculateFunction(m_node->child1(), cell);
 
-        LValue rareDataTags = m_out.loadPtr(cell, m_heaps.JSFunction_executableOrRareData);
+        LValue rareDataTags = m_out.loadPtr(function, m_heaps.JSFunction_executableOrRareData);
         ValueFromBlock fastExecutable = m_out.anchor(rareDataTags);
         m_out.branch(m_out.testIsZeroPtr(rareDataTags, m_out.constIntPtr(JSFunction::rareDataTag)), unsure(continuation), unsure(hasRareData));
 
@@ -3791,7 +3793,15 @@ private:
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
-        setJSValue(m_out.phi(pointerType(), fastExecutable, slowExecutable));
+        return m_out.phi(pointerType(), fastExecutable, slowExecutable);
+    }
+
+    void compileGetExecutable()
+    {
+        LValue cell = lowCell(m_node->child1());
+        speculateFunction(m_node->child1(), cell);
+        LValue executable = getExecutable(cell);
+        setJSValue(executable);
     }
     
     void compileArrayify()
@@ -8219,6 +8229,55 @@ private:
             DFG_CRASH(m_graph, m_node, "Bad use kind");
             break;
         }
+    }
+
+    void compileFunctionToString()
+    {
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+
+        LBasicBlock notBoundFunctionCase = m_out.newBlock();
+        LBasicBlock functionExecutableCase = m_out.newBlock();
+        LBasicBlock nativeExecutableCase = m_out.newBlock();
+        LBasicBlock testPtr = m_out.newBlock();
+        LBasicBlock hasRareData = m_out.newBlock();
+        LBasicBlock slowCase = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        LValue function = lowCell(m_node->child1());
+        speculateFunction(m_node->child1(), function);
+
+        LValue structure = loadStructure(function);
+        LValue classInfo = m_out.loadPtr(structure, m_heaps.Structure_classInfo);
+        static_assert(std::is_final_v<JSBoundFunction>, "We don't handle subclasses when comparing classInfo below");
+        m_out.branch(m_out.equal(classInfo, m_out.constIntPtr(JSBoundFunction::info())), unsure(slowCase), unsure(notBoundFunctionCase));
+
+        LBasicBlock lastNext = m_out.appendTo(notBoundFunctionCase, nativeExecutableCase);
+        LValue executable = getExecutable(function);
+        m_out.branch(isType(executable, NativeExecutableType), unsure(nativeExecutableCase), unsure(functionExecutableCase));
+
+        m_out.appendTo(nativeExecutableCase, functionExecutableCase);
+        ValueFromBlock nativeResult = m_out.anchor(m_out.loadPtr(executable, m_heaps.NativeExecutable_asString));
+        m_out.jump(testPtr);
+
+        m_out.appendTo(functionExecutableCase, testPtr);
+        LValue rareData = m_out.loadPtr(executable, m_heaps.FunctionExecutable_rareData);
+        m_out.branch(m_out.notNull(rareData), usually(hasRareData), rarely(slowCase));
+
+        m_out.appendTo(hasRareData, slowCase);
+        ValueFromBlock functionResult = m_out.anchor(m_out.loadPtr(rareData, m_heaps.FunctionExecutableRareData_asString));
+        m_out.jump(testPtr);
+
+        m_out.appendTo(testPtr, continuation);
+        LValue asString = m_out.phi(pointerType(), nativeResult, functionResult);
+        ValueFromBlock fastResult = m_out.anchor(asString);
+        m_out.branch(m_out.notNull(asString), usually(continuation), rarely(slowCase));
+
+        m_out.appendTo(slowCase, continuation);
+        ValueFromBlock slowResult = m_out.anchor(vmCall(pointerType(), operationFunctionToString, weakPointer(globalObject), function));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setJSValue(m_out.phi(pointerType(), fastResult, slowResult));
     }
     
     void compileToPrimitive()

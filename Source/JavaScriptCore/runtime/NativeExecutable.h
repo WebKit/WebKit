@@ -67,6 +67,7 @@ public:
         return OBJECT_OFFSETOF(NativeExecutable, m_constructor);
     }
 
+    DECLARE_VISIT_CHILDREN;
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue proto);
         
     DECLARE_INFO;
@@ -76,14 +77,27 @@ public:
     const DOMJIT::Signature* signatureFor(CodeSpecializationKind) const;
     Intrinsic intrinsic() const;
 
+    JSString* toString(JSGlobalObject* globalObject)
+    {
+        if (!m_asString)
+            return toStringSlow(globalObject);
+        return m_asString.get();
+    }
+
+    JSString* asStringConcurrently() const { return m_asString.get(); }
+    static inline ptrdiff_t offsetOfAsString() { return OBJECT_OFFSETOF(NativeExecutable, m_asString); }
+
 private:
     NativeExecutable(VM&, TaggedNativeFunction, TaggedNativeFunction constructor);
     void finishCreation(VM&, Ref<JITCode>&& callThunk, Ref<JITCode>&& constructThunk, const String& name);
+
+    JSString* toStringSlow(JSGlobalObject*);
 
     TaggedNativeFunction m_function;
     TaggedNativeFunction m_constructor;
 
     String m_name;
+    WriteBarrier<JSString> m_asString;
 };
 
 } // namespace JSC

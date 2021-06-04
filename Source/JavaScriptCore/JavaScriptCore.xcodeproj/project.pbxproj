@@ -1302,7 +1302,7 @@
 		86ECA3FA132DF25A002B2AD7 /* DFGScoreBoard.h in Headers */ = {isa = PBXBuildFile; fileRef = 86ECA3F9132DF25A002B2AD7 /* DFGScoreBoard.h */; };
 		86F3EEBD168CDE930077B92A /* ObjCCallbackFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 86F3EEB9168CCF750077B92A /* ObjCCallbackFunction.h */; };
 		86F3EEBF168CDE930077B92A /* ObjcRuntimeExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 86F3EEB616855A5B0077B92A /* ObjcRuntimeExtras.h */; };
-		86FA9E92142BBB2E001773B7 /* JSBoundFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 86FA9E90142BBB2E001773B7 /* JSBoundFunction.h */; };
+		86FA9E92142BBB2E001773B7 /* JSBoundFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 86FA9E90142BBB2E001773B7 /* JSBoundFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8B3BF5E41E3D368B0076A87A /* AsyncGeneratorPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B3BF5E31E3D365A0076A87A /* AsyncGeneratorPrototype.lut.h */; };
 		8B6016F61F3E3CC000F9DE6A /* AsyncFromSyncIteratorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B6016F41F3E3CC000F9DE6A /* AsyncFromSyncIteratorPrototype.h */; };
 		8B9F6D561D5912FA001C739F /* IterationKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B9F6D551D5912FA001C739F /* IterationKind.h */; settings = {ATTRIBUTES = (Private, ); }; };

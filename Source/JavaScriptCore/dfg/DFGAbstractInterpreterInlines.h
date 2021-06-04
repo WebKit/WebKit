@@ -2855,6 +2855,19 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case FunctionToString: {
+        JSValue value = m_state.forNode(node->child1()).value();
+        if (value) {
+            JSFunction* function = jsDynamicCast<JSFunction*>(m_vm, value);
+            if (JSString* asString = function->asStringConcurrently(m_vm)) {
+                setConstant(node, *m_graph.freeze(asString));
+                break;
+            }
+        }
+        setForNode(node, m_vm.stringStructure.get());
+        break;
+    }
+
     case NumberToStringWithRadix: {
         JSValue radixValue = forNode(node->child2()).m_value;
         if (radixValue && radixValue.isInt32()) {
