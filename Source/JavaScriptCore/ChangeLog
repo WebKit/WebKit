@@ -1,3 +1,14 @@
+2021-06-03  Mark Lam  <mark.lam@apple.com>
+
+        Fix an ASSERT in objectPrototypeHasOwnProperty() to account for TerminationException.
+        https://bugs.webkit.org/show_bug.cgi?id=226609
+        rdar://78465046
+
+        Reviewed by Robin Morisset.
+
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectPrototypeHasOwnProperty):
+
 2021-06-03  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Make $vm's accessor test functions robust against primitive |this|
