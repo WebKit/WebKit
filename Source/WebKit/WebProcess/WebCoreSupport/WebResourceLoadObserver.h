@@ -69,6 +69,8 @@ public:
     void setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, SubFrameDomain>&&, CompletionHandler<void()>&&) final;
     bool hasHadUserInteraction(const WebCore::RegistrableDomain&) const final;
     bool hasCrossPageStorageAccess(const SubFrameDomain&, const TopFrameDomain&) const final;
+    void setHasDeniedCrossPageStorageAccess(HashMap<TopFrameDomain, SubFrameDomain>&&, CompletionHandler<void()>&&) final;
+    bool hasDeniedCrossPageStorageAccess(const SubFrameDomain&, const TopFrameDomain&) const final;
 
 private:
     WebCore::ResourceLoadStatistics& ensureResourceStatisticsForRegistrableDomain(const WebCore::RegistrableDomain&);
@@ -88,6 +90,7 @@ private:
 
     HashSet<WebCore::RegistrableDomain> m_domainsWithUserInteraction;
     HashMap<TopFrameDomain, HashSet<SubFrameDomain>> m_domainsWithCrossPageStorageAccess;
+    HashMap<TopFrameDomain, HashSet<SubFrameDomain>> m_domainsWithDeniedStorageAccess;
 #if !RELEASE_LOG_DISABLED
     uint64_t m_loggingCounter { 0 };
     static bool shouldLogUserInteraction;

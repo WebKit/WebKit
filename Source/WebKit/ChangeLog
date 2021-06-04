@@ -1,3 +1,104 @@
+2021-03-22  Russell Epstein  <repstein@apple.com>
+
+Cherry-pick r274746. rdar://problem/76366123
+
+    Cannot login to microsoftonline.com without allowing storage access
+    https://bugs.webkit.org/show_bug.cgi?id=223510
+    <rdar://problem/75619058>
+    
+    Reviewed by John Wilander.
+    
+    Source/WebCore:
+    
+    This patch introduces two changes:
+    
+    1. Activate the storage access quirks for default browsers only. This
+    is the main place we test them, and can lead to unexpected behavior in
+    apps otherwise.
+    
+    2. Doesn't cancel the click even if the user denies storage access.
+    Previously we we were not allowing the click because it produces
+    unexpected behavior. But, sites like login.microsoftonline.com are used
+    by multiple Microsoft login flows. Since only a subset require storage
+    access, canceling the click across the board could be considered
+    regressing behavior.
+    
+    Since storage access data is stored in the network process, we
+    currently cancel the user's click on quirked sites while we wait
+    asyncronously for the IPC response. If the user grants storage access,
+    we store this in the web content process and dispatch a synthetic
+    click. In this case, when the click triggers another storage access
+    check, we can allow the click because we no longer need to wait for
+    information from the network process.
+    
+    We need some heuristic in the web content process to handle the case
+    of the user denying storage access to know whether to allow a
+    synthetic click to happen. This patch introduces
+    hasDeniedCrossPageStorageAccess which stores domains in the web
+    content process which have been denied storage access via quirk. If
+    a user has previously denied storage access in that web content
+    process, we don't prompt again. A new web content process will give them
+    another opportunity to allow/deny storage access.
+    
+    * dom/Element.cpp:
+    (WebCore::Element::dispatchMouseEvent):
+    * loader/FrameLoaderClient.h:
+    Add a client function to check if the parent process is a full web
+    browser, and pass this to the place we apply the quirks.
+    
+    * loader/ResourceLoadObserver.h:
+    (WebCore::ResourceLoadObserver::setHasDeniedCrossPageStorageAccess):
+    (WebCore::ResourceLoadObserver::hasDeniedCrossPageStorageAccess const):
+    * page/Quirks.cpp:
+    (WebCore::hasDeniedCrossPageStorageAccess):
+    (WebCore::Quirks::requestStorageAccessAndHandleClick const):
+    (WebCore::Quirks::triggerOptionalStorageAccessQuirk const):
+    * page/Quirks.h:
+    
+    Source/WebKit:
+    
+    Disable the storage access quirk for non-default web browsers and
+    don't cancel the login click on sites even if the user denies storage
+    access. See WebCore changelog for more details.
+    
+    * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+    (WebKit::WebFrameLoaderClient::isParentProcessAFullWebBrowser const):
+    * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+    * WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp:
+    (WebKit::WebResourceLoadObserver::hasDeniedCrossPageStorageAccess const):
+    (WebKit::WebResourceLoadObserver::setHasDeniedCrossPageStorageAccess):
+    * WebProcess/WebCoreSupport/WebResourceLoadObserver.h:
+    * WebProcess/WebPage/WebPage.cpp:
+    (WebKit::WebPage::pageIsParentProcessAFullWebBrowser):
+    (WebKit::WebPage::updatePreferences):
+    * WebProcess/WebPage/WebPage.h:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@274746 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-03-19  Kate Cheney  <katherine_cheney@apple.com>
+
+            Cannot login to microsoftonline.com without allowing storage access
+            https://bugs.webkit.org/show_bug.cgi?id=223510
+            <rdar://problem/75619058>
+
+            Reviewed by John Wilander.
+
+            Disable the storage access quirk for non-default web browsers and
+            don't cancel the login click on sites even if the user denies storage
+            access. See WebCore changelog for more details.
+
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+            (WebKit::WebFrameLoaderClient::isParentProcessAFullWebBrowser const):
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+            * WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp:
+            (WebKit::WebResourceLoadObserver::hasDeniedCrossPageStorageAccess const):
+            (WebKit::WebResourceLoadObserver::setHasDeniedCrossPageStorageAccess):
+            * WebProcess/WebCoreSupport/WebResourceLoadObserver.h:
+            * WebProcess/WebPage/WebPage.cpp:
+            (WebKit::WebPage::pageIsParentProcessAFullWebBrowser):
+            (WebKit::WebPage::updatePreferences):
+            * WebProcess/WebPage/WebPage.h:
+
 2021-06-04  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r278441. rdar://problem/78875140

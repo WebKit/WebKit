@@ -290,6 +290,8 @@ private:
     bool shouldEnableInAppBrowserPrivacyProtections() const final;
     void notifyPageOfAppBoundBehavior() final;
 #endif
+
+    bool isParentProcessAFullWebBrowser() const final;
 };
 
 // As long as EmptyFrameLoaderClient exists in WebCore, this can return nullptr.
