@@ -9,50 +9,53 @@ function bitAnd(a, b) {
 }
 noInline(bitAnd);
 
-var o = { valueOf: () => 0b1101 };
+// This can fail if we are fuzzing executable allocation .
+if (numberOfDFGCompiles(bitAnd) === 0) {
 
-for (var i = 0; i < 10000; i++)
-    assert(bitAnd(0b11, o), 0b1);
+    var o = { valueOf: () => 0b1101 };
 
-assert(numberOfDFGCompiles(bitAnd) <= 1, true);
+    for (var i = 0; i < 10000; i++)
+        assert(bitAnd(0b11, o), 0b1);
 
-function bitOr(a, b) {
-    return a | b;
+    assert(numberOfDFGCompiles(bitAnd) <= 1, true);
+
+    function bitOr(a, b) {
+        return a | b;
+    }
+    noInline(bitOr);
+
+    for (var i = 0; i < 10000; i++)
+        assert(bitOr(0b11, o), 0b1111);
+
+    assert(numberOfDFGCompiles(bitOr) <= 1, true);
+
+    function bitXor(a, b) {
+        return a ^ b;
+    }
+    noInline(bitXor);
+
+    for (var i = 0; i < 10000; i++)
+        assert(bitXor(0b0011, o), 0b1110);
+
+    assert(numberOfDFGCompiles(bitXor) <= 1, true);
+
+    function bitNot(a) {
+        return ~a;
+    }
+    noInline(bitNot);
+
+    for (var i = 0; i < 10000; i++)
+        assert(bitNot(o), -14);
+
+    assert(numberOfDFGCompiles(bitNot) <= 1, true);
+
+    function bitLShift(a, b) {
+        return a << b;
+    }
+    noInline(bitLShift);
+
+    for (var i = 0; i < 10000; i++)
+        assert(bitLShift(o, 3), 0b1101000);
+
+    assert(numberOfDFGCompiles(bitLShift) <= 1, true);
 }
-noInline(bitOr);
-
-for (var i = 0; i < 10000; i++)
-    assert(bitOr(0b11, o), 0b1111);
-
-assert(numberOfDFGCompiles(bitOr) <= 1, true);
-
-function bitXor(a, b) {
-    return a ^ b;
-}
-noInline(bitXor);
-
-for (var i = 0; i < 10000; i++)
-    assert(bitXor(0b0011, o), 0b1110);
-
-assert(numberOfDFGCompiles(bitXor) <= 1, true);
-
-function bitNot(a) {
-    return ~a;
-}
-noInline(bitNot);
-
-for (var i = 0; i < 10000; i++)
-    assert(bitNot(o), -14);
-
-assert(numberOfDFGCompiles(bitNot) <= 1, true);
-
-function bitLShift(a, b) {
-    return a << b;
-}
-noInline(bitLShift);
-
-for (var i = 0; i < 10000; i++)
-    assert(bitLShift(o, 3), 0b1101000);
-
-assert(numberOfDFGCompiles(bitLShift) <= 1, true);
-

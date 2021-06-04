@@ -10,18 +10,20 @@ function foo(a) {
 }
 noInline(foo);
 
-let c = 0;
-let o = {
-    valueOf: () => {
-        c++;
-        return 3;
-    }
-};
+// This can fail when we are fuzzing executable allocation.
+if (!numberOfDFGCompiles(foo)) {
+    let c = 0;
+    let o = {
+        valueOf: () => {
+            c++;
+            return 3;
+        }
+    };
 
-for (let i = 0; i < 10000; i++)
-    foo(o);
+    for (let i = 0; i < 10000; i++)
+        foo(o);
 
-assert(c, 10000);
-if (numberOfDFGCompiles(foo) > 1)
-    throw new Error("Function 'foo' should be compiled just once");
-
+    assert(c, 10000);
+    if (numberOfDFGCompiles(foo) > 1)
+        throw new Error("Function 'foo' should be compiled just once");
+}

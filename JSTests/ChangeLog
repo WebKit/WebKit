@@ -1,3 +1,36 @@
+2021-06-04  Keith Miller  <keith_miller@apple.com>
+
+        Fix tests that fail under executable allocation fuzzing
+        https://bugs.webkit.org/show_bug.cgi?id=226593
+
+        Reviewed by Mark Lam.
+
+        * microbenchmarks/memcpy-wasm-large.js:
+        (typeof.WebAssembly.string_appeared_here.try.const.1.new.WebAssembly.Instance.new.WebAssembly.Module.new.Uint8Array):
+        (typeof.WebAssembly.string_appeared_here.catch):
+        (typeof.WebAssembly.string_appeared_here.const.1.new.WebAssembly.Instance.new.WebAssembly.Module.new.Uint8Array): Deleted.
+        * microbenchmarks/memcpy-wasm-medium.js:
+        (typeof.WebAssembly.string_appeared_here.try.const.1.new.WebAssembly.Instance.new.WebAssembly.Module.new.Uint8Array):
+        (typeof.WebAssembly.string_appeared_here.catch):
+        (typeof.WebAssembly.string_appeared_here.const.1.new.WebAssembly.Instance.new.WebAssembly.Module.new.Uint8Array): Deleted.
+        * microbenchmarks/memcpy-wasm-small.js:
+        (typeof.WebAssembly.string_appeared_here.try.const.1.new.WebAssembly.Instance.new.WebAssembly.Module.new.Uint8Array):
+        (typeof.WebAssembly.string_appeared_here.catch):
+        (typeof.WebAssembly.string_appeared_here.const.1.new.WebAssembly.Instance.new.WebAssembly.Module.new.Uint8Array): Deleted.
+        * microbenchmarks/memcpy-wasm.js:
+        (typeof.WebAssembly.string_appeared_here.try.const.1.new.WebAssembly.Instance.new.WebAssembly.Module.new.Uint8Array):
+        (typeof.WebAssembly.string_appeared_here.catch):
+        (typeof.WebAssembly.string_appeared_here.const.1.new.WebAssembly.Instance.new.WebAssembly.Module.new.Uint8Array): Deleted.
+        * stress/bit-op-with-object-returning-int32.js:
+        (numberOfDFGCompiles):
+        (bitOr): Deleted.
+        (bitXor): Deleted.
+        (bitNot): Deleted.
+        (bitLShift): Deleted.
+        * stress/bitwise-not-fixup-rules.js:
+        (numberOfDFGCompiles):
+        (let.o.valueOf): Deleted.
+
 2021-06-04  Tadeu Zagallo  <tzagallo@apple.com>
 
         Optimize Function.prototype.toString
