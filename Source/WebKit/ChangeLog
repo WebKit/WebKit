@@ -1,3 +1,39 @@
+2021-06-03  Sihui Liu  <sihui_liu@apple.com>
+
+        Make WebIDBServer use WorkQueue instead of Thread
+        https://bugs.webkit.org/show_bug.cgi?id=226589
+
+        Reviewed by Chris Dumez.
+
+        This matches other storage manager classes and makes management of thread lifetime much easier. We used to
+        destroy WebIDBServer aggressively (when there is no connection or task left) to ensure thread of WebIDBServer 
+        does not stay around idly, and that led us to create new WebIDBServer for new task right after destroying 
+        WebIDBServer and before databases are properly closed in some cases, which can caused issues like database is 
+        locked during new task. With WorkQueue, we don't need to manage the threads, and we can close WebIDBServer
+        when session is destroyed.
+
+        * NetworkProcess/IndexedDB/WebIDBServer.cpp:
+        (WebKit::WebIDBServer::create):
+        (WebKit::WebIDBServer::WebIDBServer):
+        (WebKit::WebIDBServer::~WebIDBServer):
+        (WebKit::WebIDBServer::getOrigins):
+        (WebKit::WebIDBServer::closeAndDeleteDatabasesModifiedSince):
+        (WebKit::WebIDBServer::closeAndDeleteDatabasesForOrigins):
+        (WebKit::WebIDBServer::renameOrigin):
+        (WebKit::WebIDBServer::addConnection):
+        (WebKit::WebIDBServer::removeConnection):
+        (WebKit::WebIDBServer::postTask):
+        (WebKit::WebIDBServer::postTaskReply):
+        (WebKit::WebIDBServer::close):
+        (WebKit::m_closeCallback): Deleted.
+        (WebKit::WebIDBServer::dispatchToThread): Deleted.
+        (WebKit::WebIDBServer::tryClose): Deleted.
+        * NetworkProcess/IndexedDB/WebIDBServer.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didClose):
+        (WebKit::NetworkProcess::destroySession):
+        (WebKit::NetworkProcess::createWebIDBServer):
+
 2021-06-03  Chris Dumez  <cdumez@apple.com>
 
         stopMakingViewBlankDueToLackOfRenderingUpdate logging shows even if we never made the view blank

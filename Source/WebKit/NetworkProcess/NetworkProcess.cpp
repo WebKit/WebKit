@@ -273,10 +273,10 @@ void NetworkProcess::didClose(IPC::Connection&)
         platformFlushCookies(networkSession.sessionID(), [callbackAggregator] { });
     });
 
-    // Make sure references to NetworkProcess in spaceRequester and closeHandler is removed.
+    // Make sure reference to NetworkProcess in spaceRequester is removed.
     auto servers = std::exchange(m_webIDBServers, { });
     for (auto& server : servers.values())
-        server->close();
+        server->close([callbackAggregator] { });
 }
 
 void NetworkProcess::didCreateDownload()
@@ -553,6 +553,8 @@ void NetworkProcess::destroySession(PAL::SessionID sessionID)
 #endif
 
     m_storageManagerSet->remove(sessionID);
+    if (auto server = m_webIDBServers.take(sessionID))
+        server->close();
 }
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -2348,10 +2350,7 @@ Ref<WebIDBServer> NetworkProcess::createWebIDBServer(PAL::SessionID sessionID)
     auto spaceRequester = [protectedThis = makeRef(*this), sessionID](const auto& origin, uint64_t spaceRequested) {
         return protectedThis->storageQuotaManager(sessionID, origin)->requestSpaceOnBackgroundThread(spaceRequested);
     };
-    auto closeHandler = [protectedThis = makeRef(*this), sessionID]() {
-        protectedThis->m_webIDBServers.remove(sessionID);
-    };
-    return WebIDBServer::create(sessionID, path, WTFMove(spaceRequester), WTFMove(closeHandler));
+    return WebIDBServer::create(sessionID, path, WTFMove(spaceRequester));
 }
 
 WebIDBServer& NetworkProcess::webIDBServer(PAL::SessionID sessionID)
