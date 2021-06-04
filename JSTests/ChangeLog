@@ -1,3 +1,13 @@
+2021-06-04  Mark Lam  <mark.lam@apple.com>
+
+        Placate exception checker validation in objectPrototypeHasOwnProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=226651
+        rdar://78861296
+
+        Reviewed by Keith Miller.
+
+        * stress/placate-exception-checker-in-objectPrototypeHasOwnProperty.js: Added.
+
 2021-06-03  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should speculate on CompareStrictEq(@x, @x)
