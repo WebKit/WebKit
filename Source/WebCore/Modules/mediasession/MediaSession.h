@@ -123,7 +123,9 @@ private:
     void notifyActionHandlerObservers();
     void notifyReadyStateObservers();
 
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
     void createCoordinator(MediaSessionCoordinatorPrivate*);
+#endif
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final { return "MediaSession"; }

@@ -37,7 +37,7 @@
 
     readonly attribute MediaSessionCoordinatorState state;
     attribute EventHandler oncoordinatorstatechange;
-    
+
     readonly attribute DOMString? identifier;
 
     Promise<undefined> seekTo(unrestricted double time);
