@@ -33,8 +33,8 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "ActiveDOMObject.h"
+#include "EventLoopEventQueue.h"
 #include "EventTarget.h"
-#include "GenericEventQueue.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -80,7 +80,7 @@ private:
 
     const char* activeDOMObjectName() const final;
 
-    UniqueRef<MainThreadGenericEventQueue> m_asyncEventQueue;
+    UniqueRef<EventLoopEventQueue> m_asyncEventQueue;
 
     Vector<RefPtr<SourceBuffer>> m_list;
 };

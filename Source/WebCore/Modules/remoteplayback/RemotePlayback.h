@@ -28,8 +28,8 @@
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 #include "ActiveDOMObject.h"
+#include "EventLoopEventQueue.h"
 #include "EventTarget.h"
-#include "GenericEventQueue.h"
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -100,7 +100,7 @@ private:
     State m_state { State::Disconnected };
     bool m_available { false };
 
-    UniqueRef<MainThreadGenericEventQueue> m_eventQueue;
+    UniqueRef<EventLoopEventQueue> m_eventQueue;
     EventLoopTaskQueue m_taskQueue;
 };
 

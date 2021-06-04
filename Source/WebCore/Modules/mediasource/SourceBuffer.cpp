@@ -38,7 +38,6 @@
 #include "BufferSource.h"
 #include "Event.h"
 #include "EventNames.h"
-#include "GenericEventQueue.h"
 #include "HTMLMediaElement.h"
 #include "InbandTextTrack.h"
 #include "InbandTextTrackPrivate.h"
@@ -75,7 +74,7 @@ SourceBuffer::SourceBuffer(Ref<SourceBufferPrivate>&& sourceBufferPrivate, Media
     : ActiveDOMObject(source->scriptExecutionContext())
     , m_private(WTFMove(sourceBufferPrivate))
     , m_source(source)
-    , m_asyncEventQueue(MainThreadGenericEventQueue::create(*this))
+    , m_asyncEventQueue(EventLoopEventQueue::create(*this))
     , m_appendBufferTimer(*this, &SourceBuffer::appendBufferTimerFired)
     , m_appendWindowStart(MediaTime::zeroTime())
     , m_appendWindowEnd(MediaTime::positiveInfiniteTime())

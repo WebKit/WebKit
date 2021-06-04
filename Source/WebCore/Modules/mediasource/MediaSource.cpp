@@ -104,7 +104,7 @@ MediaSource::MediaSource(ScriptExecutionContext& context)
     : ActiveDOMObject(&context)
     , m_duration(MediaTime::invalidTime())
     , m_pendingSeekTime(MediaTime::invalidTime())
-    , m_asyncEventQueue(MainThreadGenericEventQueue::create(*this))
+    , m_asyncEventQueue(EventLoopEventQueue::create(*this))
 #if !RELEASE_LOG_DISABLED
     , m_logger(downcast<Document>(context).logger())
 #endif

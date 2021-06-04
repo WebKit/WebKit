@@ -949,6 +949,7 @@ dom/EventContext.cpp
 dom/EventDispatcher.cpp
 dom/EventListenerMap.cpp
 dom/EventLoop.cpp
+dom/EventLoopEventQueue.cpp
 dom/EventNames.cpp
 dom/EventPath.cpp
 dom/EventTarget.cpp
@@ -958,7 +959,6 @@ dom/ExtensionStyleSheets.cpp
 dom/FocusEvent.cpp
 dom/FullscreenManager.cpp
 dom/GCReachableRef.cpp
-dom/GenericEventQueue.cpp
 dom/HashChangeEvent.cpp
 dom/IdTargetObserver.cpp
 dom/IdTargetObserverRegistry.cpp

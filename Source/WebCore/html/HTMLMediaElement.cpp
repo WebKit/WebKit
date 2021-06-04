@@ -409,7 +409,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_visibilityChangeTaskQueue(&document)
     , m_fullscreenTaskQueue(&document)
     , m_playbackTargetIsWirelessQueue(&document)
-    , m_asyncEventQueue(MainThreadGenericEventQueue::create(*this))
+    , m_asyncEventQueue(EventLoopEventQueue::create(*this))
 #if PLATFORM(IOS_FAMILY)
     , m_volumeRevertTask(&document)
 #endif

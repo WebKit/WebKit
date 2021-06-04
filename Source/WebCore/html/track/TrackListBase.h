@@ -28,8 +28,8 @@
 #if ENABLE(VIDEO)
 
 #include "ActiveDOMObject.h"
+#include "EventLoopEventQueue.h"
 #include "EventTarget.h"
-#include "GenericEventQueue.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
@@ -85,7 +85,7 @@ private:
 
     WeakPtr<HTMLMediaElement> m_element;
 
-    UniqueRef<MainThreadGenericEventQueue> m_asyncEventQueue;
+    UniqueRef<EventLoopEventQueue> m_asyncEventQueue;
 };
 
 } // namespace WebCore

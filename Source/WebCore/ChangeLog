@@ -1,3 +1,49 @@
+2021-06-04  Chris Dumez  <cdumez@apple.com>
+
+        Rename MainThreadGenericEventQueue to EventLoopEventQueue
+        https://bugs.webkit.org/show_bug.cgi?id=226618
+
+        Reviewed by Ryosuke Niwa.
+
+        Rename MainThreadGenericEventQueue to EventLoopEventQueue, now that it is based on the HTML
+        event loop (and not a global Timer).
+
+        * Modules/mediasession/MediaSessionCoordinator.cpp:
+        (WebCore::MediaSessionCoordinator::MediaSessionCoordinator):
+        * Modules/mediasession/MediaSessionCoordinator.h:
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::MediaSource):
+        * Modules/mediasource/MediaSource.h:
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::SourceBuffer):
+        * Modules/mediasource/SourceBuffer.h:
+        * Modules/mediasource/SourceBufferList.cpp:
+        (WebCore::SourceBufferList::SourceBufferList):
+        * Modules/mediasource/SourceBufferList.h:
+        * Modules/remoteplayback/RemotePlayback.cpp:
+        (WebCore::RemotePlayback::RemotePlayback):
+        * Modules/remoteplayback/RemotePlayback.h:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/EventLoopEventQueue.cpp: Renamed from Source/WebCore/dom/GenericEventQueue.cpp.
+        (WebCore::EventLoopEventQueue::EventLoopEventQueue):
+        (WebCore::EventLoopEventQueue::enqueueEvent):
+        (WebCore::EventLoopEventQueue::dispatchOneEvent):
+        (WebCore::EventLoopEventQueue::close):
+        (WebCore::EventLoopEventQueue::cancelAllEvents):
+        (WebCore::EventLoopEventQueue::hasPendingActivity const):
+        (WebCore::EventLoopEventQueue::hasPendingEventsOfType const):
+        (WebCore::EventLoopEventQueue::stop):
+        (WebCore::EventLoopEventQueue::activeDOMObjectName const):
+        (WebCore::EventLoopEventQueue::create):
+        * dom/EventLoopEventQueue.h: Renamed from Source/WebCore/dom/GenericEventQueue.h.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        * html/HTMLMediaElement.h:
+        * html/track/TrackListBase.cpp:
+        (WebCore::TrackListBase::TrackListBase):
+        * html/track/TrackListBase.h:
+
 2021-06-04  Youenn Fablet  <youenn@apple.com>
 
         Reintroduce logging useful for debugging in AudioSampleDataSource

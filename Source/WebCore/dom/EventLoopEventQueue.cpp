@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "GenericEventQueue.h"
+#include "EventLoopEventQueue.h"
 
 #include "Document.h"
 #include "Event.h"
@@ -39,13 +39,13 @@
 
 namespace WebCore {
 
-MainThreadGenericEventQueue::MainThreadGenericEventQueue(EventTarget& owner)
+EventLoopEventQueue::EventLoopEventQueue(EventTarget& owner)
     : ActiveDOMObject(owner.scriptExecutionContext())
     , m_owner(owner)
 {
 }
 
-void MainThreadGenericEventQueue::enqueueEvent(RefPtr<Event>&& event)
+void EventLoopEventQueue::enqueueEvent(RefPtr<Event>&& event)
 {
     if (m_isClosed || !scriptExecutionContext())
         return;
@@ -61,11 +61,11 @@ void MainThreadGenericEventQueue::enqueueEvent(RefPtr<Event>&& event)
     });
 }
 
-void MainThreadGenericEventQueue::dispatchOneEvent()
+void EventLoopEventQueue::dispatchOneEvent()
 {
     ASSERT(!m_pendingEvents.isEmpty());
 
-    Ref<EventTarget> protect(m_owner);
+    Ref<EventTarget> protectedOwner(m_owner);
     SetForScope<bool> eventFiringScope(m_isFiringEvent, true);
 
     RefPtr<Event> event = m_pendingEvents.takeFirst();
@@ -76,41 +76,41 @@ void MainThreadGenericEventQueue::dispatchOneEvent()
     target->dispatchEvent(*event);
 }
 
-void MainThreadGenericEventQueue::close()
+void EventLoopEventQueue::close()
 {
     m_isClosed = true;
     cancelAllEvents();
 }
 
-void MainThreadGenericEventQueue::cancelAllEvents()
+void EventLoopEventQueue::cancelAllEvents()
 {
     weakPtrFactory().revokeAll();
     m_pendingEvents.clear();
 }
 
-bool MainThreadGenericEventQueue::hasPendingActivity() const
+bool EventLoopEventQueue::hasPendingActivity() const
 {
     return !m_pendingEvents.isEmpty() || m_isFiringEvent;
 }
 
-bool MainThreadGenericEventQueue::hasPendingEventsOfType(const AtomString& type) const
+bool EventLoopEventQueue::hasPendingEventsOfType(const AtomString& type) const
 {
     return WTF::anyOf(m_pendingEvents, [&](auto& event) { return event->type() == type; });
 }
 
-void MainThreadGenericEventQueue::stop()
+void EventLoopEventQueue::stop()
 {
     close();
 }
 
-const char* MainThreadGenericEventQueue::activeDOMObjectName() const
+const char* EventLoopEventQueue::activeDOMObjectName() const
 {
-    return "MainThreadGenericEventQueue";
+    return "EventLoopEventQueue";
 }
 
-UniqueRef<MainThreadGenericEventQueue> MainThreadGenericEventQueue::create(EventTarget& eventTarget)
+UniqueRef<EventLoopEventQueue> EventLoopEventQueue::create(EventTarget& eventTarget)
 {
-    auto eventQueue = makeUniqueRef<MainThreadGenericEventQueue>(eventTarget);
+    auto eventQueue = makeUniqueRef<EventLoopEventQueue>(eventTarget);
     eventQueue->suspendIfNeeded();
     return eventQueue;
 }

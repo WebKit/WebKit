@@ -33,9 +33,9 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "ActiveDOMObject.h"
+#include "EventLoopEventQueue.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
-#include "GenericEventQueue.h"
 #include "HTMLMediaElement.h"
 #include "MediaSourcePrivateClient.h"
 #include "URLRegistry.h"
@@ -174,7 +174,7 @@ private:
     MediaTime m_duration;
     MediaTime m_pendingSeekTime;
     ReadyState m_readyState { ReadyState::Closed };
-    UniqueRef<MainThreadGenericEventQueue> m_asyncEventQueue;
+    UniqueRef<EventLoopEventQueue> m_asyncEventQueue;
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier { nullptr };

@@ -28,8 +28,8 @@
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 
 #include "ActiveDOMObject.h"
+#include "EventLoopEventQueue.h"
 #include "EventTarget.h"
-#include "GenericEventQueue.h"
 #include "MediaSession.h"
 #include "MediaSessionCoordinatorPrivate.h"
 #include "MediaSessionCoordinatorState.h"
@@ -110,7 +110,7 @@ private:
     RefPtr<MediaSessionCoordinatorPrivate> m_privateCoordinator;
     const Ref<const Logger> m_logger;
     const void* m_logIdentifier;
-    UniqueRef<MainThreadGenericEventQueue> m_asyncEventQueue;
+    UniqueRef<EventLoopEventQueue> m_asyncEventQueue;
     MediaSessionCoordinatorState m_state { MediaSessionCoordinatorState::Closed };
     bool m_hasCoordinatorsStateChangeEventListener { false };
 };

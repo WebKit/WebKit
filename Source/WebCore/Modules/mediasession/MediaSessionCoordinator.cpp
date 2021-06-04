@@ -59,7 +59,7 @@ MediaSessionCoordinator::MediaSessionCoordinator(ScriptExecutionContext* context
     : ActiveDOMObject(context)
     , m_logger(makeRef(Document::sharedLogger()))
     , m_logIdentifier(nextCoordinatorLogIdentifier())
-    , m_asyncEventQueue(MainThreadGenericEventQueue::create(*this))
+    , m_asyncEventQueue(EventLoopEventQueue::create(*this))
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 }

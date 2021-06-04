@@ -462,6 +462,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/EventListenerMap.h
     dom/EventListenerOptions.h
     dom/EventLoop.h
+    dom/EventLoopEventQueue.h
     dom/EventModifierInit.h
     dom/EventNames.h
     dom/EventQueue.h
@@ -475,7 +476,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/FragmentScriptingPermission.h
     dom/FullscreenManager.h
     dom/GCReachableRef.h
-    dom/GenericEventQueue.h
     dom/InlineStyleSheetOwner.h
     dom/KeyboardEvent.h
     dom/LiveNodeList.h

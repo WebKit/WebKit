@@ -44,7 +44,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(SourceBufferList);
 
 SourceBufferList::SourceBufferList(ScriptExecutionContext* context)
     : ActiveDOMObject(context)
-    , m_asyncEventQueue(MainThreadGenericEventQueue::create(*this))
+    , m_asyncEventQueue(EventLoopEventQueue::create(*this))
 {
     suspendIfNeeded();
 }

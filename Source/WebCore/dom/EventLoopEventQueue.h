@@ -39,10 +39,10 @@ class EventTarget;
 class ScriptExecutionContext;
 
 // FIXME: We should port call sites to the HTML event loop and remove this class.
-class MainThreadGenericEventQueue : public ActiveDOMObject, public CanMakeWeakPtr<MainThreadGenericEventQueue> {
+class EventLoopEventQueue : public ActiveDOMObject, public CanMakeWeakPtr<EventLoopEventQueue> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static UniqueRef<MainThreadGenericEventQueue> create(EventTarget&);
+    static UniqueRef<EventLoopEventQueue> create(EventTarget&);
 
     void enqueueEvent(RefPtr<Event>&&);
     void close();
@@ -53,8 +53,8 @@ public:
     bool hasPendingActivity() const;
 
 private:
-    friend UniqueRef<MainThreadGenericEventQueue> WTF::makeUniqueRefWithoutFastMallocCheck<MainThreadGenericEventQueue, WebCore::EventTarget&>(WebCore::EventTarget&);
-    explicit MainThreadGenericEventQueue(EventTarget&);
+    friend UniqueRef<EventLoopEventQueue> WTF::makeUniqueRefWithoutFastMallocCheck<EventLoopEventQueue, WebCore::EventTarget&>(WebCore::EventTarget&);
+    explicit EventLoopEventQueue(EventTarget&);
 
     void dispatchOneEvent();
 

@@ -32,7 +32,7 @@
 #include "AutoplayEvent.h"
 #include "CaptionUserPreferences.h"
 #include "DeferrableTask.h"
-#include "GenericEventQueue.h"
+#include "EventLoopEventQueue.h"
 #include "HTMLElement.h"
 #include "HTMLMediaElementEnums.h"
 #include "MediaCanStartListener.h"
@@ -957,7 +957,7 @@ private:
     EventLoopTaskQueue m_fullscreenTaskQueue;
     EventLoopTaskQueue m_playbackTargetIsWirelessQueue;
     RefPtr<TimeRanges> m_playedTimeRanges;
-    UniqueRef<MainThreadGenericEventQueue> m_asyncEventQueue;
+    UniqueRef<EventLoopEventQueue> m_asyncEventQueue;
 #if PLATFORM(IOS_FAMILY)
     EventLoopDeferrableTask m_volumeRevertTask;
 #endif

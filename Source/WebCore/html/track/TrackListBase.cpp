@@ -42,7 +42,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(TrackListBase);
 TrackListBase::TrackListBase(WeakPtr<HTMLMediaElement> element, ScriptExecutionContext* context)
     : ActiveDOMObject(context)
     , m_element(element)
-    , m_asyncEventQueue(MainThreadGenericEventQueue::create(*this))
+    , m_asyncEventQueue(EventLoopEventQueue::create(*this))
 {
     ASSERT(!context || is<Document>(context));
 }
