@@ -64,7 +64,7 @@ static RefPtr<API::Dictionary> createEncodedObject(WKRemoteObjectEncoder *, id);
     API::Array* _objectStream;
 
     API::Dictionary* _currentDictionary;
-    RetainPtr<NSMutableSet> _objectsBeingEncoded; // Used to detect cycles.
+    HashSet<NSObject *> _objectsBeingEncoded; // Used to detect cycles.
 }
 
 - (id)init
@@ -74,7 +74,6 @@ static RefPtr<API::Dictionary> createEncodedObject(WKRemoteObjectEncoder *, id);
 
     _rootDictionary = API::Dictionary::create();
     _currentDictionary = _rootDictionary.get();
-    _objectsBeingEncoded = adoptNS([[NSMutableSet alloc] init]);
 
     return self;
 }
@@ -249,7 +248,12 @@ static void encodeInvocationArguments(WKRemoteObjectEncoder *encoder, NSInvocati
             id value;
             [invocation getArgument:&value atIndex:i];
 
-            encodeToObjectStream(encoder, value);
+            @try {
+                encodeToObjectStream(encoder, value);
+            } @catch (NSException *e) {
+                RELEASE_LOG_ERROR(IPC, "WKRemoteObjectCode::encodeInvocationArguments: Exception caught when trying to encode an argument of type ObjC Object");
+            }
+
             break;
         }
 
@@ -424,20 +428,15 @@ static void encodeObject(WKRemoteObjectEncoder *encoder, id object)
     if (!objectClass)
         [NSException raise:NSInvalidArgumentException format:@"-classForCoder returned nil for %@", object];
 
-    if ([encoder->_objectsBeingEncoded containsObject:object]) {
+    if (encoder->_objectsBeingEncoded.contains(object)) {
         RELEASE_LOG_FAULT(IPC, "WKRemoteObjectCode::encodeObject: Object of type '%{private}s' contains a cycle", class_getName(object_getClass(object)));
-        @try {
-            // Try to encode a newly initialized object instead.
-            id newObject = [[[[object class] alloc] init] autorelease];
-            object = newObject;
-        } @catch (NSException *e) {
-            [NSException raise:NSInvalidArgumentException format:@"Object of type '%s' contains a cycle", class_getName(object_getClass(object))];
-        }
+        [NSException raise:NSInvalidArgumentException format:@"Object of type '%s' contains a cycle", class_getName(object_getClass(object))];
+        return;
     }
 
-    [encoder->_objectsBeingEncoded addObject:object];
+    encoder->_objectsBeingEncoded.add(object);
     auto exitScope = makeScopeExit([encoder, object] {
-        [encoder->_objectsBeingEncoded removeObject:object];
+        encoder->_objectsBeingEncoded.remove(object);
     });
 
     encoder->_currentDictionary->set(classNameKey, API::String::create(class_getName(objectClass)));
