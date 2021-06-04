@@ -1,3 +1,13 @@
+2021-06-03  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Make $vm's accessor test functions robust against primitive |this|
+        https://bugs.webkit.org/show_bug.cgi?id=226591
+
+        Reviewed by Saam Barati.
+
+        * stress/test-static-accessor-on-primitive.js: Added.
+        (shouldThrow):
+
 2021-05-28  Robin Morisset  <rmorisset@apple.com>
 
         Fix LikelyDenseUnsignedIntegerSet::clear()

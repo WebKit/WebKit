@@ -702,9 +702,11 @@ JSC_DEFINE_CUSTOM_GETTER(testStaticAccessorGetter, (JSGlobalObject* globalObject
 {
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     
     JSObject* thisObject = jsDynamicCast<JSObject*>(vm, JSValue::decode(thisValue));
-    RELEASE_ASSERT(thisObject);
+    if (!thisObject)
+        return throwVMTypeError(globalObject, scope);
 
     if (JSValue result = thisObject->getDirect(vm, PropertyName(Identifier::fromString(vm, "testField"))))
         return JSValue::encode(result);
@@ -715,9 +717,11 @@ JSC_DEFINE_CUSTOM_SETTER(testStaticAccessorPutter, (JSGlobalObject* globalObject
 {
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     
     JSObject* thisObject = jsDynamicCast<JSObject*>(vm, JSValue::decode(thisValue));
-    RELEASE_ASSERT(thisObject);
+    if (!thisObject)
+        return throwVMTypeError(globalObject, scope);
 
     return thisObject->putDirect(vm, PropertyName(Identifier::fromString(vm, "testField")), JSValue::decode(value));
 }
@@ -785,9 +789,11 @@ JSC_DEFINE_CUSTOM_SETTER(testStaticValuePutter, (JSGlobalObject* globalObject, E
 {
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     
     JSObject* thisObject = jsDynamicCast<JSObject*>(vm, JSValue::decode(thisValue));
-    RELEASE_ASSERT(thisObject);
+    if (!thisObject)
+        return throwVMTypeError(globalObject, scope);
 
     return thisObject->putDirect(vm, PropertyName(Identifier::fromString(vm, "testStaticValue")), JSValue::decode(value));
 }
@@ -1027,8 +1033,10 @@ JSC_DEFINE_CUSTOM_GETTER(domJITGetterCustomGetter, (JSGlobalObject* globalObject
 {
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     DOMJITNode* thisObject = jsDynamicCast<DOMJITNode*>(vm, JSValue::decode(thisValue));
-    ASSERT(thisObject);
+    if (!thisObject)
+        return throwVMTypeError(globalObject, scope);
     return JSValue::encode(jsNumber(thisObject->value()));
 }
 
@@ -1125,8 +1133,10 @@ JSC_DEFINE_CUSTOM_GETTER(domJITGetterNoEffectCustomGetter, (JSGlobalObject* glob
 {
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     DOMJITNode* thisObject = jsDynamicCast<DOMJITNode*>(vm, JSValue::decode(thisValue));
-    ASSERT(thisObject);
+    if (!thisObject)
+        return throwVMTypeError(globalObject, scope);
     return JSValue::encode(jsNumber(thisObject->value()));
 }
 
@@ -1230,7 +1240,8 @@ JSC_DEFINE_CUSTOM_GETTER(domJITGetterComplexCustomGetter, (JSGlobalObject* globa
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto* thisObject = jsDynamicCast<DOMJITGetterComplex*>(vm, JSValue::decode(thisValue));
-    ASSERT(thisObject);
+    if (!thisObject)
+        return throwVMTypeError(globalObject, scope);
     if (thisObject->m_enableException)
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "DOMJITGetterComplex slow call exception"_s)));
     return JSValue::encode(jsNumber(thisObject->value()));
@@ -1489,8 +1500,10 @@ JSC_DEFINE_CUSTOM_GETTER(domJITGetterBaseJSObjectCustomGetter, (JSGlobalObject* 
 {
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* thisObject = jsDynamicCast<JSObject*>(vm, JSValue::decode(thisValue));
-    RELEASE_ASSERT(thisObject);
+    if (!thisObject)
+        return throwVMTypeError(globalObject, scope);
     return JSValue::encode(thisObject->getPrototypeDirect(vm));
 }
 
