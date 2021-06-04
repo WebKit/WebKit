@@ -1,3 +1,26 @@
+2021-06-04  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (maybe r276882): custom properties not available on host on initial paint
+        https://bugs.webkit.org/show_bug.cgi?id=226574
+        <rdar://problem/78863643>
+
+        Reviewed by Simon Fraser.
+
+        We fail to invalidate :host style when switching out of shared resolver after asynchronously
+        loading a stylesheet into a shadow tree. This happens because the resolver has been cleared and
+        the invalidation code just bails out if none is present.
+
+        Test case by vb@bigdot.de.
+
+        Test: fast/shadow-dom/shared-resolver-host-invalidation.html
+
+        * style/StyleInvalidator.cpp:
+        (WebCore::Style::Invalidator::invalidateHostAndSlottedStyleIfNeeded):
+
+        Change the assumption so that if we don't have a resolver we always invalidate the host.
+        The alternative would be to build the resolver and do this accurately but doing that here
+        seems bit risky. This should be cheap and rare invalidation in any case.
+
 2021-06-04  Alex Christensen  <achristensen@webkit.org>
 
         Implement off-by-default experimental feature for PerformanceResourceTiming.transferSize, encodedBodySize, and decodedBodySize
