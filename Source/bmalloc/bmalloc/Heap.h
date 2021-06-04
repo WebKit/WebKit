@@ -74,7 +74,12 @@ public:
     size_t largeSize(UniqueLockHolder&, void*);
     void shrinkLarge(UniqueLockHolder&, const Range&, size_t);
 
+#if BUSE(PARTIAL_SCAVENGE)
+    void scavengeToHighWatermark(UniqueLockHolder&, BulkDecommit&);
+    void scavenge(UniqueLockHolder&, BulkDecommit&);
+#else
     void scavenge(UniqueLockHolder&, BulkDecommit&, size_t& deferredDecommits);
+#endif
     void scavenge(UniqueLockHolder&, BulkDecommit&, size_t& freed, size_t goal);
 
     size_t freeableMemory(UniqueLockHolder&);
@@ -141,6 +146,10 @@ private:
 
 #if ENABLE_PHYSICAL_PAGE_MAP 
     PhysicalPageMap m_physicalPageMap;
+#endif
+    
+#if BUSE(PARTIAL_SCAVENGE)
+    void* m_highWatermark { nullptr };
 #endif
 };
 

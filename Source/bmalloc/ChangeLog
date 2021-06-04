@@ -1,3 +1,86 @@
+2021-05-24  Russell Epstein  <repstein@apple.com>
+
+Cherry-pick r277898. rdar://problem/78888809
+
+    [bmalloc] Rollout r276266 because WebKit processes are spending much more time in madvise
+    https://bugs.webkit.org/show_bug.cgi?id=226122
+    
+    Unreviewed rollout.
+    
+    Rolling out r276266 to do some automated testing.  At the same time, we'll work on changing the madvise() decommitting to be more precise.
+    
+    * bmalloc/BPlatform.h:
+    * bmalloc/Heap.cpp:
+    (bmalloc::Heap::scavenge):
+    (bmalloc::Heap::scavengeToHighWatermark):
+    (bmalloc::Heap::allocateSmallChunk):
+    (bmalloc::Heap::allocateSmallPage):
+    (bmalloc::Heap::allocateLarge):
+    * bmalloc/Heap.h:
+    * bmalloc/IsoDirectory.h:
+    * bmalloc/IsoDirectoryInlines.h:
+    (bmalloc::passedNumPages>::takeFirstEligible):
+    (bmalloc::passedNumPages>::scavenge):
+    (bmalloc::passedNumPages>::scavengeToHighWatermark):
+    * bmalloc/IsoHeapImpl.h:
+    * bmalloc/IsoHeapImplInlines.h:
+    (bmalloc::IsoHeapImpl<Config>::scavengeToHighWatermark):
+    * bmalloc/LargeMap.cpp:
+    (bmalloc::LargeMap::add):
+    * bmalloc/LargeRange.h:
+    (bmalloc::LargeRange::LargeRange):
+    (bmalloc::merge):
+    * bmalloc/Scavenger.cpp:
+    (bmalloc::Scavenger::Scavenger):
+    (bmalloc::Scavenger::timeSinceLastPartialScavenge):
+    (bmalloc::Scavenger::scavenge):
+    (bmalloc::Scavenger::partialScavenge):
+    (bmalloc::Scavenger::threadRunLoop):
+    * bmalloc/Scavenger.h:
+    * bmalloc/SmallPage.h:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@277898 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-05-21  Michael Saboff  <msaboff@apple.com>
+
+            [bmalloc] Rollout r276266 because WebKit processes are spending much more time in madvise
+            https://bugs.webkit.org/show_bug.cgi?id=226122
+
+            Unreviewed rollout.
+
+            Rolling out r276266 to do some automated testing.  At the same time, we'll work on changing the madvise() decommitting to be more precise.
+
+            * bmalloc/BPlatform.h:
+            * bmalloc/Heap.cpp:
+            (bmalloc::Heap::scavenge):
+            (bmalloc::Heap::scavengeToHighWatermark):
+            (bmalloc::Heap::allocateSmallChunk):
+            (bmalloc::Heap::allocateSmallPage):
+            (bmalloc::Heap::allocateLarge):
+            * bmalloc/Heap.h:
+            * bmalloc/IsoDirectory.h:
+            * bmalloc/IsoDirectoryInlines.h:
+            (bmalloc::passedNumPages>::takeFirstEligible):
+            (bmalloc::passedNumPages>::scavenge):
+            (bmalloc::passedNumPages>::scavengeToHighWatermark):
+            * bmalloc/IsoHeapImpl.h:
+            * bmalloc/IsoHeapImplInlines.h:
+            (bmalloc::IsoHeapImpl<Config>::scavengeToHighWatermark):
+            * bmalloc/LargeMap.cpp:
+            (bmalloc::LargeMap::add):
+            * bmalloc/LargeRange.h:
+            (bmalloc::LargeRange::LargeRange):
+            (bmalloc::merge):
+            * bmalloc/Scavenger.cpp:
+            (bmalloc::Scavenger::Scavenger):
+            (bmalloc::Scavenger::timeSinceLastPartialScavenge):
+            (bmalloc::Scavenger::scavenge):
+            (bmalloc::Scavenger::partialScavenge):
+            (bmalloc::Scavenger::threadRunLoop):
+            * bmalloc/Scavenger.h:
+            * bmalloc/SmallPage.h:
+
 2021-04-21  Alan Coon  <alancoon@apple.com>
 
         Cherry-pick r276266. rdar://problem/76962930
