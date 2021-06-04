@@ -116,6 +116,8 @@ private:
     bool m_shouldComputeOutputSampleOffset { true };
     uint64_t m_endFrameWhenNotEnoughData { 0 };
 
+    bool m_isInNeedOfMoreData { false };
+
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;

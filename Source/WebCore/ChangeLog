@@ -1,3 +1,24 @@
+2021-06-04  Youenn Fablet  <youenn@apple.com>
+
+        Reintroduce logging useful for debugging in AudioSampleDataSource
+        https://bugs.webkit.org/show_bug.cgi?id=226578
+
+        Reviewed by Eric Carlson.
+
+        Removed logging was actually useful for debugging audio issues.
+        Reintroduce it by restrict logging to ensure we do not introduce too much audio glitches by doing so:
+        - If we pull samples and do not have enough data, enter more-data-needed mode, and log once that data is missing.
+        - If we pull samples and do not have enough data and we are already in more-data-needed mode, do not log anything.
+        - If we push samples and are in more-data-needed mode, reset mode to none and log this information.
+        The mode check happens in two different threads so might be a bit racy but at worst, this reduces accuracy of the logging.
+
+        No change of behavior.
+
+        * platform/audio/cocoa/AudioSampleDataSource.h:
+        * platform/audio/cocoa/AudioSampleDataSource.mm:
+        (WebCore::AudioSampleDataSource::pushSamplesInternal):
+        (WebCore::AudioSampleDataSource::pullSamplesInternal):
+
 2021-05-27  Sergio Villar Senin  <svillar@igalia.com>
 
         [css-flexbox] Sanitize the aspect ratio handling code
