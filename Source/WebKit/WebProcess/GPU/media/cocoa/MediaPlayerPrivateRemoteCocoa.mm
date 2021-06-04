@@ -45,7 +45,7 @@ MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer* player, MediaPla
     : m_logger(player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
 #endif
-    , m_player(player)
+    , m_player(makeWeakPtr(*player))
     , m_mediaResourceLoader(*player->createResourceLoader())
     , m_videoLayerManager(makeUniqueRef<VideoLayerManagerObjC>(logger(), logIdentifier()))
     , m_manager(manager)

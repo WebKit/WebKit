@@ -87,7 +87,7 @@ public:
     WebCore::MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier() const { return m_remoteEngineIdentifier; }
     WebCore::MediaPlayerIdentifier itentifier() const { return m_id; }
     IPC::Connection& connection() const { return m_manager.gpuProcessConnection().connection(); }
-    WebCore::MediaPlayer* player() const { return m_player; }
+    WebCore::MediaPlayer* player() const { return m_player.get(); }
 
     WebCore::MediaPlayer::ReadyState readyState() const final { return m_cachedState.readyState; }
     void setReadyState(WebCore::MediaPlayer::ReadyState);
@@ -391,7 +391,7 @@ private:
 
     bool performTaskAtMediaTime(Function<void()>&&, const MediaTime&) final;
 
-    WebCore::MediaPlayer* m_player { nullptr };
+    WeakPtr<WebCore::MediaPlayer> m_player;
     Ref<WebCore::PlatformMediaResourceLoader> m_mediaResourceLoader;
 #if PLATFORM(COCOA)
     UniqueRef<WebCore::VideoLayerManager> m_videoLayerManager;
