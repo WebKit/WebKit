@@ -1,3 +1,22 @@
+2021-06-04  Alex Christensen  <achristensen@webkit.org>
+
+        Pass NetworkLoadParameters to NetworkDataTaskCocoa constructor
+        https://bugs.webkit.org/show_bug.cgi?id=226628
+
+        Reviewed by Sam Weinig.
+
+        No change in behavior.  Just pass a parameters object instead of splitting them into separate parameters.
+
+        * NetworkProcess/NetworkActivityTracker.h:
+        (WebKit::NetworkActivityTracker::getPlatformObject const):
+        (WebKit::NetworkActivityTracker::getPlatformObject): Deleted.
+        * NetworkProcess/NetworkDataTask.cpp:
+        (WebKit::NetworkDataTask::create):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        (WebKit::NetworkDataTaskCocoa::didReceiveResponse):
+
 2021-06-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Long pressing images on 9gag.com fails to present context menus
