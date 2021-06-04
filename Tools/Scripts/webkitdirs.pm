@@ -1022,7 +1022,7 @@ sub XcodeOptions
         push @options, ("-xcconfig", File::Spec->catfile(sourceDir(), "Tools", "sanitizer", "tsan.xcconfig"));
     }
     push @options, ("-xcconfig", File::Spec->catfile(sourceDir(), "Tools", "sanitizer", "ubsan.xcconfig")) if $ubsanIsEnabled;
-    push @options, ("-xcconfig", sourceDir() . "/Tools/coverage/coverage.xcconfig") if $coverageIsEnabled;
+    push @options, XcodeCoverageSupportOptions() if $coverageIsEnabled;
     push @options, ("GCC_OPTIMIZATION_LEVEL=$forceOptimizationLevel") if $forceOptimizationLevel;
     push @options, "WK_LTO_MODE=$ltoMode" if $ltoMode;
     push @options, @baseProductDirOption;
@@ -1062,10 +1062,7 @@ sub XcodeOptionStringNoConfig
 
 sub XcodeCoverageSupportOptions()
 {
-    my @coverageSupportOptions = ();
-    push @coverageSupportOptions, "GCC_GENERATE_TEST_COVERAGE_FILES=YES";
-    push @coverageSupportOptions, "GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES";
-    return @coverageSupportOptions;
+    return ("-xcconfig", sourceDir() . "/Tools/coverage/coverage.xcconfig");
 }
 
 sub XcodeStaticAnalyzerOption()
