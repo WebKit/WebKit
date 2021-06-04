@@ -39,10 +39,11 @@ public:
     WTF_EXPORT_PRIVATE static std::unique_ptr<StackTrace> captureStackTrace(int maxFrames, int framesToSkip = 0);
 
     // Borrowed stack trace.
-    StackTrace(void** stack, int size)
+    StackTrace(void** stack, int size, const char* prefix = "")
         : m_size(size)
         , m_capacity(0)
         , m_borrowedStack(stack)
+        , m_prefix(prefix)
     { }
 
     int size() const { return m_size; }
@@ -99,6 +100,8 @@ private:
         void** m_borrowedStack;
         void* m_stack[1];
     };
+
+    const char* m_prefix;
 };
 
 } // namespace WTF

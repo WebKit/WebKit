@@ -141,9 +141,9 @@ void StackTrace::dump(PrintStream& out, const char* indentString) const
         }
         const int frameNumber = i + 1;
         if (mangledName || cxaDemangled)
-            out.printf("%s%-3d %p %s\n", indentString, frameNumber, stack[i], cxaDemangled ? cxaDemangled : mangledName);
+            out.printf("%s%s%-3d %p %s\n", m_prefix ? m_prefix : "", indentString, frameNumber, stack[i], cxaDemangled ? cxaDemangled : mangledName);
         else
-            out.printf("%s%-3d %p\n", indentString, frameNumber, stack[i]);
+            out.printf("%s%s%-3d %p\n", m_prefix ? m_prefix : "", indentString, frameNumber, stack[i]);
     }
 
 #if HAVE(BACKTRACE_SYMBOLS)

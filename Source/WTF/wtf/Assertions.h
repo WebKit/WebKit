@@ -218,7 +218,9 @@ WTF_EXPORT_PRIVATE void WTFSetLogChannelLevel(WTFLogChannel*, WTFLogLevel);
 WTF_EXPORT_PRIVATE bool WTFWillLogWithLevel(WTFLogChannel*, WTFLogLevel);
 
 WTF_EXPORT_PRIVATE void WTFGetBacktrace(void** stack, int* size);
+WTF_EXPORT_PRIVATE void WTFReportBacktraceWithPrefix(const char*);
 WTF_EXPORT_PRIVATE void WTFReportBacktrace(void);
+WTF_EXPORT_PRIVATE void WTFPrintBacktraceWithPrefix(void** stack, int size, const char* prefix);
 WTF_EXPORT_PRIVATE void WTFPrintBacktrace(void** stack, int size);
 #if !RELEASE_LOG_DISABLED
 WTF_EXPORT_PRIVATE void WTFReleaseLogStackTrace(WTFLogChannel*);

@@ -1,3 +1,29 @@
+2021-06-04  Devin Rousso  <drousso@apple.com>
+
+        Add a way to prefix output of `WTFReportBacktrace` to make log filtering easier
+        https://bugs.webkit.org/show_bug.cgi?id=226390
+
+        Reviewed by Megan Gardner.
+
+        Often times while debugging I add `WTFLogAlways("<DR> ...")` to various places as indicators
+        that "logic has reached here". This is especially useful when debugging iOS as unlike macOS
+        there's no console output from `run-safari`, meaning that I have to use system logging,
+        which is often a deluge of unrelated information. Having "<DR>" as a prefix makes filtering
+        through the system logging trivial as I can ignore logs that don't have it. Unfortunately,
+        `WTFReportBacktrace` does not have a way to add this prefix, so it becomes much harder to
+        find in the logs. This patch enables adding a prefix to each line of `WTFReportBacktrace`
+        via a new function `WTFReportBactraceWithPrefix`.
+
+        * wtf/Assertions.h:
+        * wtf/Assertions.cpp:
+        (WTFReportBacktraceWithPrefix): Added.
+        (WTFPrintBacktraceWithPrefix): Added.
+
+        * wtf/StackTrace.h:
+        (WTF::StackTrace::StackTrace):
+        * wtf/StackTrace.cpp:
+        (WTF::StackTrace::dump const):
+
 2021-06-04  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Fix more GCC warnings
