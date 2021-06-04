@@ -92,6 +92,7 @@ public:
         case MiscUse:
         case AnyIntUse:
         case DoubleRepAnyIntUse:
+        case NotDoubleUse:
             return;
             
         case KnownInt32Use:

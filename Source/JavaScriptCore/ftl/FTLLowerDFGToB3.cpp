@@ -18403,6 +18403,9 @@ private:
         case NotCellNorBigIntUse:
             speculateNotCellNorBigInt(edge);
             break;
+        case NotDoubleUse:
+            speculateNotDouble(edge);
+            break;
         case OtherUse:
             speculateOther(edge);
             break;
@@ -18446,6 +18449,22 @@ private:
 #else
         speculateNotCell(edge);
 #endif
+    }
+
+    void speculateNotDouble(Edge edge)
+    {
+        LValue value = lowJSValue(edge, ManualOperandSpeculation);
+        
+        LBasicBlock isNotInt32 = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        m_out.branch(isInt32(value, provenType(edge)), unsure(continuation), unsure(isNotInt32));
+
+        LBasicBlock lastNext = m_out.appendTo(isNotInt32, continuation);
+        FTL_TYPE_CHECK(jsValueValue(value), edge, ~SpecFullDouble, isNumber(value));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
     }
     
     void speculateCellOrOther(Edge edge)

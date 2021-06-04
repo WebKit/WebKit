@@ -528,6 +528,7 @@ CapabilityLevel canCompile(Graph& graph)
                 case NotSymbolUse:
                 case AnyIntUse:
                 case DoubleRepAnyIntUse:
+                case NotDoubleUse:
                     // These are OK.
                     break;
                 default:

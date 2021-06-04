@@ -439,6 +439,11 @@ inline bool isNotBooleanSpeculation(SpeculatedType value)
     return value && !(value & SpecBoolean);
 }
 
+inline bool isNotDoubleSpeculation(SpeculatedType type)
+{
+    return !(type & SpecFullDouble);
+}
+
 inline bool isOtherSpeculation(SpeculatedType value)
 {
     return value == SpecOther;

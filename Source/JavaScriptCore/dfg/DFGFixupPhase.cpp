@@ -4282,6 +4282,14 @@ private:
     {
         ASSERT(node->op() == SameValue || node->op() == CompareStrictEq);
 
+        if (node->child1().node() == node->child2().node()
+            && node->child1()->shouldSpeculateNotDouble()) {
+            m_insertionSet.insertNode(
+                m_indexInBlock, SpecNone, Check, node->origin,
+                Edge(node->child1().node(), NotDoubleUse));
+            m_graph.convertToConstant(node, jsBoolean(true));
+            return;
+        }
         if (Node::shouldSpeculateBoolean(node->child1().node(), node->child2().node())) {
             fixEdge<BooleanUse>(node->child1());
             fixEdge<BooleanUse>(node->child2());

@@ -11432,6 +11432,18 @@ void SpeculativeJIT::speculateNotCellNorBigInt(Edge edge)
 #endif
 }
 
+void SpeculativeJIT::speculateNotDouble(Edge edge)
+{
+    JSValueOperand operand(this, edge, ManualOperandSpeculation);
+    GPRTemporary temp(this);
+    JSValueRegs regs = operand.jsValueRegs();
+    GPRReg tempGPR = temp.gpr();
+    
+    JITCompiler::Jump done = m_jit.branchIfInt32(regs);
+    DFG_TYPE_CHECK(regs, edge, ~SpecFullDouble, m_jit.branchIfNumber(regs, tempGPR));
+    done.link(&m_jit);
+}
+
 void SpeculativeJIT::speculateOther(Edge edge, JSValueRegs regs, GPRReg tempGPR)
 {
     DFG_TYPE_CHECK(regs, edge, SpecOther, m_jit.branchIfNotOther(regs, tempGPR));
@@ -11613,6 +11625,9 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
         break;
     case NotCellNorBigIntUse:
         speculateNotCellNorBigInt(edge);
+        break;
+    case NotDoubleUse:
+        speculateNotDouble(edge);
         break;
     case OtherUse:
         speculateOther(edge);

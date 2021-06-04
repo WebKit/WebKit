@@ -1,3 +1,16 @@
+2021-06-03  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should speculate on CompareStrictEq(@x, @x)
+        https://bugs.webkit.org/show_bug.cgi?id=226621
+
+        Reviewed by Mark Lam.
+
+        * microbenchmarks/untyped-stricteq-self.js: Added.
+        (foo):
+        * stress/untyped-stricteq-self-fail.js: Added.
+        (bar):
+        (foo):
+
 2021-06-04  Keith Miller  <keith_miller@apple.com>
 
         Fix tests that fail under executable allocation fuzzing
