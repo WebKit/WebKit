@@ -10372,8 +10372,21 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
             return;
         }
 
+        bool canShowHTTPLinkOrDataDetectorPreview = ([&] {
+            if (linkURL.protocolIsInHTTPFamily())
+                return true;
+
+            if (WebCore::DataDetection::canBePresentedByDataDetectors(linkURL))
+                return true;
+
+            if ([strongSelf positionInformationHasImageOverlayDataDetector])
+                return true;
+
+            return false;
+        })();
+
         ASSERT_IMPLIES(strongSelf->_positionInformation.isImage, strongSelf->_positionInformation.image);
-        if (strongSelf->_positionInformation.isImage && strongSelf->_positionInformation.image && !strongSelf->_positionInformation.isLink) {
+        if (strongSelf->_positionInformation.isImage && strongSelf->_positionInformation.image && !canShowHTTPLinkOrDataDetectorPreview) {
             auto cgImage = strongSelf->_positionInformation.image->makeCGImageCopy();
 
             strongSelf->_contextMenuActionProviderDelegateNeedsOverride = NO;
@@ -10414,7 +10427,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 #if ENABLE(DATA_DETECTION)
         // FIXME: Support JavaScript urls here. But make sure they don't show a preview.
         // <rdar://problem/50572283>
-        if (!linkURL.protocolIsInHTTPFamily() && !WebCore::DataDetection::canBePresentedByDataDetectors(linkURL) && ![strongSelf positionInformationHasImageOverlayDataDetector]) {
+        if (!canShowHTTPLinkOrDataDetectorPreview) {
             continueWithContextMenuConfiguration(nil);
             return;
         }

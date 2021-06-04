@@ -1,3 +1,48 @@
+2021-06-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Long pressing images on 9gag.com fails to present context menus
+        https://bugs.webkit.org/show_bug.cgi?id=226625
+        rdar://78136095
+
+        Reviewed by Megan Gardner.
+
+        Make some small adjustments to context menu logic to allow the context menu to appear when long pressing images
+        that are inside links (anchor elements) with JavaScript URLs. See below for more details.
+
+        Test: fast/events/touch/ios/long-press-on-image-in-javascript-link.html
+
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (isJavaScriptURL):
+
+        Pull logic that checks for "javascript" URL schemes into a separate helper function, and use it below.
+
+        (-[WKActionSheetAssistant _createSheetWithElementActions:defaultTitle:showLinkTitle:]):
+        (-[WKActionSheetAssistant defaultActionsForLinkSheet:]):
+        (-[WKActionSheetAssistant defaultActionsForImageSheet:]):
+
+        Add `_WKElementActionTypeCopy` for image sheets, even when the target URL is a JavaScript URL; even if the image
+        is inside a JavaScript URL, we should be capable of triggering the "Copy" action by copying the image data and
+        the image URL, rather than the JavaScript URL. The change in `WebPage::performActionOnElement` below ensures
+        that we don't end up copying the JavaScript URL.
+
+        (-[WKActionSheetAssistant handleElementActionWithType:element:needsInteraction:]):
+
+        Make another minor adjustment to share the imageURL instead of the target URL in the case where the target is a
+        JavaScript URL.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView continueContextMenuInteraction:]):
+
+        Avoid bailing early with `continueWithContextMenuConfiguration(nil);` in the case where we're long pressing an
+        image inside a JavaScript link.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::performActionOnElement):
+
+        Push the JavaScript URL check in `defaultActionsForImageSheet` down into `WebPage::performActionOnElement`, when
+        copying an image. This tweak allows us to still show the Copy action for images in JavaScript URLs, but just
+        copy the image and image URL instead of the JavaScript URL.
+
 2021-06-04  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Fix more GCC warnings

@@ -338,6 +338,12 @@ static const CGFloat presentationElementRectPadding = 15;
     return _positionInformation;
 }
 
+static bool isJavaScriptURL(NSURL *url)
+{
+    auto scheme = url.scheme;
+    return scheme && [scheme caseInsensitiveCompare:@"javascript"] == NSOrderedSame;
+}
+
 - (void)_createSheetWithElementActions:(NSArray *)actions defaultTitle:(NSString *)defaultTitle showLinkTitle:(BOOL)showLinkTitle
 {
     auto delegate = _delegate.get();
@@ -348,8 +354,6 @@ static const CGFloat presentationElementRectPadding = 15;
         return;
 
     NSURL *targetURL = _positionInformation->url;
-    NSString *urlScheme = [targetURL scheme];
-    BOOL isJavaScriptURL = [urlScheme length] && [urlScheme caseInsensitiveCompare:@"javascript"] == NSOrderedSame;
     // FIXME: We should check if Javascript is enabled in the preferences.
 
     _interactionSheet = adoptNS([[WKActionSheet alloc] init]);
@@ -359,7 +363,7 @@ static const CGFloat presentationElementRectPadding = 15;
     NSString *titleString = nil;
     BOOL titleIsURL = NO;
     if (showLinkTitle && [[targetURL absoluteString] length]) {
-        if (isJavaScriptURL)
+        if (isJavaScriptURL(targetURL))
             titleString = WEB_UI_STRING_KEY("JavaScript", "JavaScript Action Sheet Title", "Title for action sheet for JavaScript link");
         else {
             titleString = WTF::userVisibleString(targetURL);
@@ -563,7 +567,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeSaveImage assistant:self]];
     }
 
-    if (![[targetURL scheme] length] || [[targetURL scheme] caseInsensitiveCompare:@"javascript"] != NSOrderedSame) {
+    if (!isJavaScriptURL(targetURL)) {
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopy assistant:self]];
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeShare assistant:self]];
     }
@@ -597,8 +601,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
     if (TCCAccessPreflight(getkTCCServicePhotos(), NULL) != kTCCAccessPreflightDenied)
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeSaveImage assistant:self]];
-    if (!targetURL.scheme.length || [targetURL.scheme caseInsensitiveCompare:@"javascript"] != NSOrderedSame)
-        [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopy assistant:self]];
+
+    [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopy assistant:self]];
 
 #if ENABLE(IMAGE_EXTRACTION)
     if ([_delegate respondsToSelector:@selector(actionSheetAssistant:shouldIncludeImageExtractionActionForElement:)] && [_delegate actionSheetAssistant:self shouldIncludeImageExtractionActionForElement:elementInfo])
@@ -1017,8 +1021,10 @@ static NSArray<UIMenuElement *> *menuElementsFromDefaultActions(RetainPtr<NSArra
     case _WKElementActionTypeShare:
         if (URL(element.imageURL).protocolIsData() && element.image && [delegate respondsToSelector:@selector(actionSheetAssistant:shareElementWithImage:rect:)])
             [delegate actionSheetAssistant:self shareElementWithImage:element.image rect:element.boundingRect];
-        else
-            [delegate actionSheetAssistant:self shareElementWithURL:element.URL ?: element.imageURL rect:element.boundingRect];
+        else {
+            auto urlToShare = element.URL && !isJavaScriptURL(element.URL) ? element.URL : element.imageURL;
+            [delegate actionSheetAssistant:self shareElementWithURL:urlToShare rect:element.boundingRect];
+        }
         break;
     case _WKElementActionTypeImageExtraction:
 #if ENABLE(IMAGE_EXTRACTION)

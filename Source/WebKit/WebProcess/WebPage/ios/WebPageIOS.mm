@@ -3157,16 +3157,18 @@ void WebPage::performActionOnElement(uint32_t action)
 
     if (static_cast<SheetAction>(action) == SheetAction::Copy) {
         if (is<RenderImage>(*element.renderer())) {
-            URL url;
-            String title;
-            if (auto* linkElement = containingLinkAnchorElement(element)) {
-                url = linkElement->href();
-                title = linkElement->attributeWithoutSynchronization(HTMLNames::titleAttr);
-                if (!title.length())
-                    title = linkElement->textContent();
-                title = stripLeadingAndTrailingHTMLSpaces(title);
+            URL urlToCopy;
+            String titleToCopy;
+            if (auto linkElement = makeRefPtr(containingLinkAnchorElement(element))) {
+                if (auto url = linkElement->href(); !url.isEmpty() && !url.protocolIsJavaScript()) {
+                    urlToCopy = url;
+                    titleToCopy = linkElement->attributeWithoutSynchronization(HTMLNames::titleAttr);
+                    if (!titleToCopy.length())
+                        titleToCopy = linkElement->textContent();
+                    titleToCopy = stripLeadingAndTrailingHTMLSpaces(titleToCopy);
+                }
             }
-            m_interactionNode->document().editor().writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(element.document().pageID())), element, url, title);
+            m_interactionNode->document().editor().writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(element.document().pageID())), element, urlToCopy, titleToCopy);
         } else if (element.isLink())
             m_interactionNode->document().editor().copyURL(element.document().completeURL(stripLeadingAndTrailingHTMLSpaces(element.attributeWithoutSynchronization(HTMLNames::hrefAttr))), element.textContent());
 #if ENABLE(ATTACHMENT_ELEMENT)

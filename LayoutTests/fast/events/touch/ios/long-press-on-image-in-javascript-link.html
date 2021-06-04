@@ -1,0 +1,44 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<meta charset="utf-8">
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1, width=device-width, user-scalable=no">
+<script src="../../../../resources/basic-gestures.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<script src="../../../../resources/js-test.js"></script>
+<style>
+#target {
+    width: 320px;
+    height: 240px;
+    background-color: silver;
+    display: block;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that long pressing an image inside a JavaScript link presents a context menu. To manually test, long press on the image.");
+
+    if (!window.testRunner || !testRunner.runUIScript)
+        return;
+
+    const rect = document.getElementById("target").getBoundingClientRect();
+    await UIHelper.longPressAtPoint(rect.x + rect.width / 2, rect.y + rect.height / 2);
+    await UIHelper.waitForContextMenuToShow();
+    testPassed("Presented context menu");
+
+    await UIHelper.activateAt(0, 0);
+    await UIHelper.waitForContextMenuToHide();
+    testPassed("Dismissed context menu");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+<a id="target" href="javascript:void(0)">
+    <img src="../../../images/resources/dice.png" width="320" height="240">
+</a>
+</body>
+</html>
