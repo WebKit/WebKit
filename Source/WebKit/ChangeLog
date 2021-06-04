@@ -1,3 +1,18 @@
+2021-06-04  Chris Dumez  <cdumez@apple.com>
+
+        Avoid wasteful large allocation in SpeechRecognitionRemoteRealtimeMediaSource::setStorage()
+        https://bugs.webkit.org/show_bug.cgi?id=226644
+
+        Reviewed by Eric Carlson.
+
+        Avoid wasteful large allocation in SpeechRecognitionRemoteRealtimeMediaSource::setStorage().
+        setStorage() was setting m_buffer's size to the same size as the RingBuffer (2*sampleRate),
+        only to resize it to the size of the rendering quantum (512) later in
+        SpeechRecognitionRemoteRealtimeMediaSource::remoteAudioSamplesAvailable().
+
+        * UIProcess/SpeechRecognitionRemoteRealtimeMediaSource.cpp:
+        (WebKit::SpeechRecognitionRemoteRealtimeMediaSource::setStorage):
+
 2021-06-04  Alex Christensen  <achristensen@webkit.org>
 
         Pass NetworkLoadParameters to NetworkDataTaskCocoa constructor
