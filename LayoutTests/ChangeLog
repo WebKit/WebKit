@@ -1,3 +1,19 @@
+2021-06-04  Robert Jenner  <jenner@apple.com>
+
+        Cleanup unused resources in LayoutTests/storage
+        https://bugs.webkit.org/show_bug.cgi?id=226226
+        <rdar://problem/78469934>
+
+        Reviewed by Jonathan Bedard.
+
+        * storage/domstorage/localstorage/resources/iframe-events-second.html: Removed.
+        * storage/domstorage/localstorage/resources/private-browsing-3.html: Removed.
+        * storage/domstorage/localstorage/resources/private-browsing-storage-2.html: Removed.
+        * storage/domstorage/sessionstorage/resources/iframe-events-second.html: Removed.
+        * storage/indexeddb/modern/resources/workers-disabled.js: Removed.
+        * storage/indexeddb/resources/test-data.html: Removed.
+        * storage/indexeddb/resources/test-data.txt: Removed.
+
 2021-06-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Long pressing images on 9gag.com fails to present context menus
