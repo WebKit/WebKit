@@ -1,5 +1,24 @@
 2021-06-04  Chris Dumez  <cdumez@apple.com>
 
+        Port MediaKeySystemAccess & MediaCapabilities to the HTML event loop
+        https://bugs.webkit.org/show_bug.cgi?id=226646
+
+        Reviewed by Eric Carlson.
+
+        Port MediaKeySystemAccess & MediaCapabilities to the HTML event loop instead of using
+        a global Timer. Most of the media code has been ported to the HTML event loop already.
+
+        * Modules/encryptedmedia/MediaKeySystemAccess.cpp:
+        (WebCore::MediaKeySystemAccess::createMediaKeys):
+        * Modules/encryptedmedia/MediaKeySystemAccess.h:
+        * Modules/mediacapabilities/MediaCapabilities.cpp:
+        (WebCore::MediaCapabilities::decodingInfo):
+        (WebCore::MediaCapabilities::encodingInfo):
+        * Modules/mediacapabilities/MediaCapabilities.h:
+        * Modules/mediacapabilities/MediaCapabilities.idl:
+
+2021-06-04  Chris Dumez  <cdumez@apple.com>
+
         DOMFileSystem::listDirectory() fails to protect |this| when going to the background thread
         https://bugs.webkit.org/show_bug.cgi?id=226652
 
