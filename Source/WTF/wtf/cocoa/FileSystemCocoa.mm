@@ -184,6 +184,7 @@ bool deleteNonEmptyDirectory(const String& path)
     return [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
 }
 
+#ifdef IOPOL_TYPE_VFS_MATERIALIZE_DATALESS_FILES
 static int toIOPolicyScope(PolicyScope scope)
 {
     switch (scope) {
@@ -193,6 +194,7 @@ static int toIOPolicyScope(PolicyScope scope)
         return IOPOL_SCOPE_THREAD;
     }
 }
+#endif
 
 bool setAllowsMaterializingDatalessFiles(bool allow, PolicyScope scope)
 {
