@@ -1,3 +1,30 @@
+2021-06-03  Jean-Yves Avenard  <jya@apple.com>
+
+        fast/dom/Window/property-access-on-cached-window-after-frame-removed.html (layout-test) may crash
+        https://bugs.webkit.org/show_bug.cgi?id=226612
+        rdar://78846264
+
+        Reviewed by Eric Carlson.
+
+        It is possible under some circumstances for a MediaSession to be constructed
+        when no page or frame exists (such as when we move in/out bfcache).
+        The MediaSession constructor incorrectly only created the MediaSessionCoordinatorPrivate
+        if a Page and Frame existed.
+        To avoid any ambiguities on when MediaSession::m_coordinator could be set, we
+        make this member a const Ref<>.
+        Test is covered by fast/dom/Window/property-access-on-cached-window-after-frame-removed.html
+
+        * Modules/mediasession/MediaSession.cpp:
+        (WebCore::MediaSession::MediaSession): Create MediaSessionCoordinatorPrivate in initializer list.
+        (WebCore::MediaSession::suspend): Remove unnecessary null check
+        (WebCore::MediaSession::stop): Remove unnecessary null check
+        * Modules/mediasession/MediaSession.h: Make m_coordinator a const Ref<>
+        (WebCore::MediaSession::coordinator const):
+        * Modules/mediasession/MediaSessionCoordinator.cpp:
+        (WebCore::MediaSessionCoordinator::create): Remove MediaSessionCoordinatorPrivate argument to constructor.
+        (WebCore::MediaSessionCoordinator::MediaSessionCoordinator):
+        * Modules/mediasession/MediaSessionCoordinator.h:
+
 2021-06-03  Alan Bujtas  <zalan@apple.com>
 
         Crack in hero text on https://www.apple.com/mac-mini/

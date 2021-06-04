@@ -78,7 +78,7 @@ public:
     MediaSessionReadyState readyState() const { return m_readyState; };
     void setReadyState(MediaSessionReadyState);
 
-    MediaSessionCoordinator& coordinator() const { return *m_coordinator; }
+    MediaSessionCoordinator& coordinator() const { return m_coordinator.get(); }
 #endif
 
 #if ENABLE(MEDIA_SESSION_PLAYLIST)
@@ -123,10 +123,6 @@ private:
     void notifyActionHandlerObservers();
     void notifyReadyStateObservers();
 
-#if ENABLE(MEDIA_SESSION_COORDINATOR)
-    void createCoordinator(MediaSessionCoordinatorPrivate*);
-#endif
-
     // ActiveDOMObject
     const char* activeDOMObjectName() const final { return "MediaSession"; }
     void suspend(ReasonForSuspension) final;
@@ -148,7 +144,7 @@ private:
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     MediaSessionReadyState m_readyState { MediaSessionReadyState::Havenothing };
-    RefPtr<MediaSessionCoordinator> m_coordinator;
+    const Ref<MediaSessionCoordinator> m_coordinator;
 #endif
 
 #if ENABLE(MEDIA_SESSION_PLAYLIST)

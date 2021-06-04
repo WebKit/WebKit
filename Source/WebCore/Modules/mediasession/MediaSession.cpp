@@ -136,14 +136,19 @@ Ref<MediaSession> MediaSession::create(Navigator& navigator)
 MediaSession::MediaSession(Navigator& navigator)
     : ActiveDOMObject(navigator.scriptExecutionContext())
     , m_navigator(makeWeakPtr(navigator))
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+    , m_coordinator(MediaSessionCoordinator::create(navigator.scriptExecutionContext()))
+#endif
 {
     m_logger = makeRefPtr(Document::sharedLogger());
     m_logIdentifier = nextLogIdentifier();
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     auto* frame = navigator.frame();
-    if (auto* page = frame ? frame->page() : nullptr)
-        createCoordinator(page->mediaSessionCoordinator());
+    auto* page = frame ? frame->page() : nullptr;
+    if (page && page->mediaSessionCoordinator())
+        m_coordinator->setMediaSessionCoordinatorPrivate(*page->mediaSessionCoordinator());
+    m_coordinator->setMediaSession(this);
 #endif
 
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -154,7 +159,7 @@ MediaSession::~MediaSession() = default;
 void MediaSession::suspend(ReasonForSuspension reason)
 {
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-    if (m_coordinator && reason == ReasonForSuspension::BackForwardCache)
+    if (reason == ReasonForSuspension::BackForwardCache)
         m_coordinator->leave();
 #else
     UNUSED_PARAM(reason);
@@ -164,8 +169,7 @@ void MediaSession::suspend(ReasonForSuspension reason)
 void MediaSession::stop()
 {
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
-    if (m_coordinator)
-        m_coordinator->close();
+    m_coordinator->close();
 #endif
 }
 
@@ -190,17 +194,6 @@ void MediaSession::setReadyState(MediaSessionReadyState state)
 
     m_readyState = state;
     notifyReadyStateObservers();
-}
-
-void MediaSession::createCoordinator(MediaSessionCoordinatorPrivate* coordinatorPrivate)
-{
-    ALWAYS_LOG(LOGIDENTIFIER);
-
-    if (m_coordinator)
-        m_coordinator->setMediaSession(nullptr);
-
-    m_coordinator = MediaSessionCoordinator::create(scriptExecutionContext(), coordinatorPrivate);
-    m_coordinator->setMediaSession(this);
 }
 #endif
 

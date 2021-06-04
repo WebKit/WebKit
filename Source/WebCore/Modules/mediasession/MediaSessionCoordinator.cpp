@@ -48,23 +48,20 @@ static const void* nextCoordinatorLogIdentifier()
     return reinterpret_cast<const void*>(++logIdentifier);
 }
 
-Ref<MediaSessionCoordinator> MediaSessionCoordinator::create(ScriptExecutionContext* context, RefPtr<MediaSessionCoordinatorPrivate>&& privateCoordinator)
+Ref<MediaSessionCoordinator> MediaSessionCoordinator::create(ScriptExecutionContext* context)
 {
-    auto coordinator = adoptRef(*new MediaSessionCoordinator(context, WTFMove(privateCoordinator)));
+    auto coordinator = adoptRef(*new MediaSessionCoordinator(context));
     coordinator->suspendIfNeeded();
     return coordinator;
 }
 
-MediaSessionCoordinator::MediaSessionCoordinator(ScriptExecutionContext* context, RefPtr<MediaSessionCoordinatorPrivate>&& privateCoordinator)
+MediaSessionCoordinator::MediaSessionCoordinator(ScriptExecutionContext* context)
     : ActiveDOMObject(context)
     , m_logger(makeRef(Document::sharedLogger()))
     , m_logIdentifier(nextCoordinatorLogIdentifier())
     , m_asyncEventQueue(MainThreadGenericEventQueue::create(*this))
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-
-    if (privateCoordinator)
-        setMediaSessionCoordinatorPrivate(*privateCoordinator);
 }
 
 void MediaSessionCoordinator::setMediaSessionCoordinatorPrivate(Ref<MediaSessionCoordinatorPrivate>&& privateCoordinator)

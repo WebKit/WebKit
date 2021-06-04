@@ -48,7 +48,7 @@ class MediaSessionCoordinator
     , public EventTargetWithInlineData  {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT static Ref<MediaSessionCoordinator> create(ScriptExecutionContext*, RefPtr<MediaSessionCoordinatorPrivate>&&);
+    WEBCORE_EXPORT static Ref<MediaSessionCoordinator> create(ScriptExecutionContext*);
     WEBCORE_EXPORT ~MediaSessionCoordinator();
     WEBCORE_EXPORT void setMediaSessionCoordinatorPrivate(Ref<MediaSessionCoordinatorPrivate>&&);
 
@@ -72,7 +72,7 @@ public:
     using RefCounted::deref;
 
 private:
-    MediaSessionCoordinator(ScriptExecutionContext*, RefPtr<MediaSessionCoordinatorPrivate>&&);
+    MediaSessionCoordinator(ScriptExecutionContext*);
 
     // EventTarget
     void refEventTarget() final { ref(); }
