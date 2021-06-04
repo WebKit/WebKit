@@ -1,5 +1,41 @@
 2021-06-04  Alan Coon  <alancoon@apple.com>
 
+        Cherry-pick r277873. rdar://problem/78875406
+
+    [Cocoa] REGRESSION(Sandbox): Font smoothing within Safari doesn't seem to respect AppleFontSmoothing
+    https://bugs.webkit.org/show_bug.cgi?id=226066
+    <rdar://problem/72795817>
+    
+    Reviewed by Per Arne Vollan.
+    
+    We accidentally blocked access to the relevant defaults database.
+    
+    It turns out this is untestable. I can't use the actual functionality without actually setting the preference
+    for the whole user (and all their apps). And, I can't use sandbox_check() to make sure the file is readable
+    because it's in the user's home directory, so the path to check will be different for every user.
+    
+    * WebProcess/com.apple.WebProcess.sb.in:
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@277873 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-05-21  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            [Cocoa] REGRESSION(Sandbox): Font smoothing within Safari doesn't seem to respect AppleFontSmoothing
+            https://bugs.webkit.org/show_bug.cgi?id=226066
+            <rdar://problem/72795817>
+
+            Reviewed by Per Arne Vollan.
+
+            We accidentally blocked access to the relevant defaults database.
+
+            It turns out this is untestable. I can't use the actual functionality without actually setting the preference
+            for the whole user (and all their apps). And, I can't use sandbox_check() to make sure the file is readable
+            because it's in the user's home directory, so the path to check will be different for every user.
+
+            * WebProcess/com.apple.WebProcess.sb.in:
+
+2021-06-04  Alan Coon  <alancoon@apple.com>
+
         Cherry-pick r277536. rdar://problem/78875336
 
     Replace PlatformCAAnimationRemote::KeyframeValue with Variant
