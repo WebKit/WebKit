@@ -1,3 +1,18 @@
+2021-06-04  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r278121): Fix build failure due to weak external symbol
+
+        Occurs when building coverage+release builds:
+
+            ERROR: symbol _DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection
+
+        The soft-linked symbol was originally added in r259276.
+
+        * Configurations/WebCore.unexp:
+        - Add _DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection
+          to the list of unexported symbols.
+        - Also sort symbols in the group alphabetically.
+
 2021-06-04  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Fix more GCC warnings
