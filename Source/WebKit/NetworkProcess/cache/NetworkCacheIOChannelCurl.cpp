@@ -68,7 +68,7 @@ void IOChannel::read(size_t offset, size_t size, WorkQueue& queue, Function<void
         readSize = std::min(size, readSize);
         Vector<uint8_t> buffer(readSize);
         FileSystem::seekFile(m_fileDescriptor, offset, FileSystem::FileSeekOrigin::Beginning);
-        int err = FileSystem::readFromFile(m_fileDescriptor, reinterpret_cast<char*>(buffer.data()), readSize);
+        int err = FileSystem::readFromFile(m_fileDescriptor, buffer.data(), readSize);
         err = err < 0 ? err : 0;
         auto data = Data(WTFMove(buffer));
         completionHandler(data, err);

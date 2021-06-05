@@ -155,7 +155,7 @@ WTF_EXPORT_PRIVATE bool truncateFile(PlatformFileHandle, long long offset);
 // Returns number of bytes actually read if successful, -1 otherwise.
 WTF_EXPORT_PRIVATE int writeToFile(PlatformFileHandle, const void* data, int length);
 // Returns number of bytes actually written if successful, -1 otherwise.
-WTF_EXPORT_PRIVATE int readFromFile(PlatformFileHandle, char* data, int length); // FIXME: Should use `void*`.
+WTF_EXPORT_PRIVATE int readFromFile(PlatformFileHandle, void* data, int length);
 
 WTF_EXPORT_PRIVATE PlatformFileHandle openAndLockFile(const String&, FileOpenMode, OptionSet<FileLockMode> = FileLockMode::Exclusive);
 WTF_EXPORT_PRIVATE void unlockAndCloseFile(PlatformFileHandle);

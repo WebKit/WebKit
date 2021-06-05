@@ -224,7 +224,7 @@ int writeToFile(PlatformFileHandle handle, const void* data, int length)
     return bytesWritten;
 }
 
-int readFromFile(PlatformFileHandle handle, char* data, int length)
+int readFromFile(PlatformFileHandle handle, void* data, int length)
 {
     GUniqueOutPtr<GError> error;
     do {

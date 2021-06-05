@@ -1,3 +1,24 @@
+2021-06-04  Chris Dumez  <cdumez@apple.com>
+
+        FileSystem::readFromFile() should return data as `void*`
+        https://bugs.webkit.org/show_bug.cgi?id=226671
+
+        Reviewed by Darin Adler.
+
+        FileSystem::readFromFile() should return data as `void*` instead of `char*`. This is more flexible and
+        consistent with FileSystem::writeToFile().
+
+        * wtf/FileSystem.cpp:
+        (WTF::FileSystemImpl::appendFileContentsToFileHandle):
+        (WTF::FileSystemImpl::readOrMakeSalt):
+        * wtf/FileSystem.h:
+        * wtf/glib/FileSystemGlib.cpp:
+        (WTF::FileSystemImpl::readFromFile):
+        * wtf/posix/FileSystemPOSIX.cpp:
+        (WTF::FileSystemImpl::readFromFile):
+        * wtf/win/FileSystemWin.cpp:
+        (WTF::FileSystemImpl::readFromFile):
+
 2021-06-04  Alex Christensen  <achristensen@webkit.org>
 
         Implement off-by-default experimental feature for PerformanceResourceTiming.transferSize, encodedBodySize, and decodedBodySize

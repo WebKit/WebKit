@@ -55,7 +55,7 @@ std::unique_ptr<KeyedDecoder> createForFile(const String& path)
         return nullptr;
     }
 
-    Vector<char> buffer(bytesToRead);
+    Vector<uint8_t> buffer(bytesToRead);
     size_t totalBytesRead = FileSystem::readFromFile(handle, buffer.data(), buffer.size());
 
     FileSystem::unlockAndCloseFile(handle);
@@ -64,7 +64,7 @@ std::unique_ptr<KeyedDecoder> createForFile(const String& path)
         return nullptr;
 
     // FIXME: We should try to modify the constructor to pass &&.
-    return KeyedDecoder::decoder(reinterpret_cast<const uint8_t*>(buffer.data()), buffer.size());
+    return KeyedDecoder::decoder(buffer.data(), buffer.size());
 }
 
 void writeToDisk(std::unique_ptr<KeyedEncoder>&& encoder, String&& path)

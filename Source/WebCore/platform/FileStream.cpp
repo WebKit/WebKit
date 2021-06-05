@@ -96,7 +96,7 @@ void FileStream::close()
     }
 }
 
-int FileStream::read(char* buffer, int bufferSize)
+int FileStream::read(void* buffer, int bufferSize)
 {
     if (!FileSystem::isHandleValid(m_handle))
         return -1;

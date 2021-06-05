@@ -316,7 +316,7 @@ int writeToFile(PlatformFileHandle handle, const void* data, int length)
     return static_cast<int>(bytesWritten);
 }
 
-int readFromFile(PlatformFileHandle handle, char* data, int length)
+int readFromFile(PlatformFileHandle handle, void* data, int length)
 {
     if (!isHandleValid(handle))
         return -1;

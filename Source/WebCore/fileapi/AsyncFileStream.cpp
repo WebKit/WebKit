@@ -167,7 +167,7 @@ void AsyncFileStream::close()
     });
 }
 
-void AsyncFileStream::read(char* buffer, int length)
+void AsyncFileStream::read(void* buffer, int length)
 {
     perform([buffer, length](FileStream& stream) -> WTF::Function<void(FileStreamClient&)> {
         int bytesRead = stream.read(buffer, length);

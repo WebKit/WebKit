@@ -256,7 +256,7 @@ bool appendFileContentsToFileHandle(const String& path, PlatformFileHandle& targ
         return false;
 
     static int bufferSize = 1 << 19;
-    Vector<char> buffer(bufferSize);
+    Vector<uint8_t> buffer(bufferSize);
 
     auto fileCloser = WTF::makeScopeExit([source]() {
         PlatformFileHandle handle = source;
@@ -498,7 +498,7 @@ std::optional<Salt> readOrMakeSalt(const String& path)
     if (FileSystem::fileExists(path)) {
         auto file = FileSystem::openFile(path, FileSystem::FileOpenMode::Read);
         Salt salt;
-        auto bytesRead = static_cast<std::size_t>(FileSystem::readFromFile(file, reinterpret_cast<char*>(salt.data()), salt.size()));
+        auto bytesRead = static_cast<std::size_t>(FileSystem::readFromFile(file, salt.data(), salt.size()));
         FileSystem::closeFile(file);
         if (bytesRead == salt.size())
             return salt;

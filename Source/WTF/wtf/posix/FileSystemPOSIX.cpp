@@ -128,7 +128,7 @@ int writeToFile(PlatformFileHandle handle, const void* data, int length)
     return -1;
 }
 
-int readFromFile(PlatformFileHandle handle, char* data, int length)
+int readFromFile(PlatformFileHandle handle, void* data, int length)
 {
     do {
         int bytesRead = read(handle, data, static_cast<size_t>(length));

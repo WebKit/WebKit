@@ -55,7 +55,7 @@ public:
     // Reads a file into the provided data buffer.
     // Returns number of bytes being read on success. -1 otherwise.
     // If 0 is returned, it means that the reading is completed.
-    int read(char* buffer, int length);
+    int read(void* buffer, int length);
 
 private:
     FileSystem::PlatformFileHandle m_handle;

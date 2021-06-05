@@ -120,7 +120,7 @@ static String readContentsOfFile(const String& path)
     });
 
     // Since we control the test files, we know we only need one read
-    int readBytes = FileSystem::readFromFile(source, reinterpret_cast<char*>(buffer.characters()), bufferSize);
+    int readBytes = FileSystem::readFromFile(source, buffer.characters(), bufferSize);
     if (readBytes < 0)
         return emptyString();
 
