@@ -63,7 +63,8 @@ InspectorBackendClass = class InspectorBackendClass
     // Domain/Command/Event feature checking should use one of the `has*` functions below.
     get Enum()
     {
-        return this._activeDomains;
+        // Enums should not be conditionally enabled by debuggable and/or target type.
+        return this._registeredDomains;
     }
 
     // It's still possible to set this flag on InspectorBackend to just
