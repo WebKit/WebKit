@@ -1,5 +1,18 @@
 2021-06-04  Chris Dumez  <cdumez@apple.com>
 
+        Optimize a few call sites creating SharedBuffer objects
+        https://bugs.webkit.org/show_bug.cgi?id=226674
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadDataInFrame):
+        (WebKit::WebPage::loadData):
+        (WebKit::WebPage::loadAlternateHTML):
+        (WebKit::WebPage::loadSimulatedRequestAndResponse):
+
+2021-06-04  Chris Dumez  <cdumez@apple.com>
+
         FileSystem::readFromFile() should return data as `void*`
         https://bugs.webkit.org/show_bug.cgi?id=226671
 

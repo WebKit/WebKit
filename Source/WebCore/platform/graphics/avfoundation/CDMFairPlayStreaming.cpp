@@ -177,7 +177,7 @@ std::optional<Vector<Ref<SharedBuffer>>> CDMPrivateFairPlayStreaming::extractKey
 
     for (auto& result : results) {
         if (validFairPlayStreamingSchemes().contains(result.first))
-            keyIDs.append(SharedBuffer::create(result.second.data(), result.second.size()));
+            keyIDs.append(SharedBuffer::create(WTFMove(result.second)));
     }
 
     return keyIDs;

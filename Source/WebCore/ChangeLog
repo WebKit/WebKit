@@ -1,5 +1,22 @@
 2021-06-04  Chris Dumez  <cdumez@apple.com>
 
+        Optimize a few call sites creating SharedBuffer objects
+        https://bugs.webkit.org/show_bug.cgi?id=226674
+
+        Reviewed by Darin Adler.
+
+        * Modules/mediastream/RTCRtpSFrameTransform.cpp:
+        (WebCore::transformFrame):
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::interceptWithResponse):
+        (WebCore::InspectorNetworkAgent::interceptRequestWithResponse):
+        * platform/graphics/avfoundation/CDMFairPlayStreaming.cpp:
+        (WebCore::CDMPrivateFairPlayStreaming::extractKeyIDsSinf):
+        * workers/service/context/ServiceWorkerFetch.cpp:
+        (WebCore::ServiceWorkerFetch::processResponse):
+
+2021-06-04  Chris Dumez  <cdumez@apple.com>
+
         Reduce use of legacy MainThreadTaskQueue in media code
         https://bugs.webkit.org/show_bug.cgi?id=226672
 

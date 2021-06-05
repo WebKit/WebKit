@@ -121,7 +121,7 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, s
             }
 
             if (auto chunk = result.returnValue())
-                client->didReceiveData(SharedBuffer::create(reinterpret_cast<const char*>(chunk->data), chunk->size));
+                client->didReceiveData(SharedBuffer::create(chunk->data, chunk->size));
             else
                 client->didFinish();
         });
