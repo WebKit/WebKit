@@ -485,10 +485,9 @@ override;
     virtual void stopAutoscroll() { }
     virtual void panScroll(const IntPoint&);
 
-    bool hasVerticalScrollbarWithAutoBehavior() const;
-    bool hasHorizontalScrollbarWithAutoBehavior() const;
-    
     bool canUseOverlayScrollbars() const;
+    bool hasAutoScrollbar(ScrollbarOrientation) const;
+    bool hasAlwaysPresentScrollbar(ScrollbarOrientation) const;
 
     bool scrollsOverflow() const { return scrollsOverflowX() || scrollsOverflowY(); }
     bool scrollsOverflowX() const { return hasOverflowClip() && (style().overflowX() == Overflow::Scroll || style().overflowX() == Overflow::Auto); }

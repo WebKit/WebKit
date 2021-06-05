@@ -1,3 +1,26 @@
+2021-06-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove some duplicated code related to scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=226685
+
+        Reviewed by Alan Bujtas.
+
+        RenderLayerScrollableArea and RenderBox had some very similar code related to 
+        computing whether scrollbars are present, so remove the duplication, and prepare
+        for ScrollbarOrientation to become an enum class.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::hasAutoScrollbar const):
+        (WebCore::RenderBox::hasAlwaysPresentScrollbar const):
+        (WebCore::RenderBox::hasVerticalScrollbarWithAutoBehavior const): Deleted.
+        (WebCore::RenderBox::hasHorizontalScrollbarWithAutoBehavior const): Deleted.
+        * rendering/RenderBox.h:
+        * rendering/RenderLayerScrollableArea.cpp:
+        (WebCore::RenderLayerScrollableArea::updateScrollbarsAfterLayout):
+        (WebCore::RenderLayerScrollableArea::updateScrollbarsAfterStyleChange):
+        (WebCore::styleRequiresScrollbar): Deleted.
+        (WebCore::styleDefinesAutomaticScrollbar): Deleted.
+
 2021-06-04  Dean Jackson  <dino@apple.com>
 
         [WebXR] WebXR on Cocoa doesn't work with webgl 1 contexts
