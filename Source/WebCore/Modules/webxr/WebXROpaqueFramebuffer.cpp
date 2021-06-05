@@ -81,6 +81,10 @@ WebXROpaqueFramebuffer::WebXROpaqueFramebuffer(PlatformXR::LayerHandle handle, R
 WebXROpaqueFramebuffer::~WebXROpaqueFramebuffer()
 {
     if (auto gl = m_context.graphicsContextGL()) {
+#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
+        if (m_opaqueTexture)
+            gl->deleteTexture(m_opaqueTexture);
+#endif
         if (m_stencilBuffer)
             gl->deleteRenderbuffer(m_stencilBuffer);
         if (m_depthStencilBuffer)
@@ -144,13 +148,9 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
 
     // FIXME: This is assuming multisampling is turned off and we're rendering directly into the framebuffer.
 
-    // Now set up the framebuffer to use the textures/renderbuffers we have created.
+    // Now set up the framebuffer to use the texture that points to the IOSurface. The depth and
+    // stencil buffers were attached by startFrame.
     gl.framebufferTexture2D(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::TEXTURE_2D, m_opaqueTexture, 0);
-
-    if (m_attributes.stencil)
-        gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::STENCIL_ATTACHMENT, GL::RENDERBUFFER, m_depthStencilBuffer);
-    if (m_attributes.depth)
-        gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::DEPTH_ATTACHMENT, GL::RENDERBUFFER, m_depthStencilBuffer);
 
     // At this point the framebuffer should be "complete".
     ASSERT(gl.checkFramebufferStatus(GL::FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE);
@@ -240,21 +240,21 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
     });
 
     // Set up color, depth and stencil formats
-    bool useDepthStencil = m_attributes.stencil || m_attributes.depth;
+    bool hasDepthOrStencil = m_attributes.stencil || m_attributes.depth;
     auto colorFormat = m_attributes.alpha ? GL::RGBA8 : GL::RGB8;
 #if USE(OPENGL_ES)
     auto& extensions = reinterpret_cast<ExtensionsGLOpenGLES&>(gl.getExtensions());
-    bool supportsPackedDepthStencil = useDepthStencil && extensions.supports("GL_OES_packed_depth_stencil");
-    auto depthFormat = supportsPackedDepthStencil ? GL::DEPTH24_STENCIL8 : GL::DEPTH_COMPONENT16;
+    bool platformSupportsPackedDepthStencil = hasDepthOrStencil && extensions.supports("GL_OES_packed_depth_stencil");
+    auto depthFormat = platformSupportsPackedDepthStencil ? GL::DEPTH24_STENCIL8 : GL::DEPTH_COMPONENT16;
     auto stencilFormat = GL::STENCIL_INDEX8;
 #elif USE(ANGLE)
-    bool supportsPackedDepthStencil = true;
-    auto depthFormat = supportsPackedDepthStencil ? GL::DEPTH24_STENCIL8 : GL::DEPTH_COMPONENT;
+    bool platformSupportsPackedDepthStencil = true;
+    auto depthFormat = platformSupportsPackedDepthStencil ? GL::DEPTH24_STENCIL8 : GL::DEPTH_COMPONENT;
     auto stencilFormat = GL::STENCIL_INDEX8;
 #else
     auto& extensions = reinterpret_cast<ExtensionsGLOpenGLCommon&>(gl.getExtensions());
-    bool supportsPackedDepthStencil = useDepthStencil && extensions.supports("GL_EXT_packed_depth_stencil");
-    auto depthFormat = supportsPackedDepthStencil ? GL::DEPTH24_STENCIL8 : GL::DEPTH_COMPONENT;
+    bool platformSupportsPackedDepthStencil = hasDepthOrStencil && extensions.supports("GL_EXT_packed_depth_stencil");
+    auto depthFormat = platformSupportsPackedDepthStencil ? GL::DEPTH24_STENCIL8 : GL::DEPTH_COMPONENT;
     auto stencilFormat = GL::STENCIL_COMPONENT;
 #endif
 
@@ -275,12 +275,12 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
     // Use multisampled_render_to_texture extension if available.
     if (m_attributes.antialias && extensions.isImagination()) {
         // framebufferTexture2DMultisampleIMG is set up in startFrame call.
-        if (!useDepthStencil)
+        if (!hasDepthOrStencil)
             return true;
         
         gl.bindFramebuffer(GL::FRAMEBUFFER, m_framebuffer->object());
         m_depthStencilBuffer = gl.createRenderbuffer();
-        if (supportsPackedDepthStencil) {
+        if (platformSupportsPackedDepthStencil) {
             gl.bindRenderbuffer(GL::RENDERBUFFER, m_depthStencilBuffer);
             extensions.renderbufferStorageMultisampleANGLE(GL::RENDERBUFFER, m_sampleCount, depthFormat, m_width, m_height);
             if (m_attributes.stencil)
@@ -311,9 +311,9 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
         gl.bindRenderbuffer(GL::RENDERBUFFER, m_multisampleColorBuffer);
         gl.renderbufferStorageMultisample(GL::RENDERBUFFER, m_sampleCount, colorFormat, m_width, m_height);
         gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::RENDERBUFFER, m_multisampleColorBuffer);
-        if (useDepthStencil) {
+        if (hasDepthOrStencil) {
             m_depthStencilBuffer = gl.createRenderbuffer();
-            if (supportsPackedDepthStencil) {
+            if (platformSupportsPackedDepthStencil) {
                 gl.bindRenderbuffer(GL::RENDERBUFFER, m_depthStencilBuffer);
                 gl.renderbufferStorageMultisample(GL::RENDERBUFFER, m_sampleCount, depthFormat, m_width, m_height);
                 if (m_attributes.stencil)
@@ -336,16 +336,22 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
         }
         return gl.checkFramebufferStatus(GL::FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE;
     }
-    if (useDepthStencil) {
+
+    if (hasDepthOrStencil) {
         gl.bindFramebuffer(GL::FRAMEBUFFER, m_framebuffer->object());
         m_depthStencilBuffer = gl.createRenderbuffer();
-        if (supportsPackedDepthStencil) {
+        if (platformSupportsPackedDepthStencil) {
             gl.bindRenderbuffer(GL::RENDERBUFFER, m_depthStencilBuffer);
             gl.renderbufferStorage(GL::RENDERBUFFER, depthFormat, m_width, m_height);
-            if (m_attributes.stencil)
-                gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::STENCIL_ATTACHMENT, GL::RENDERBUFFER, m_depthStencilBuffer);
-            if (m_attributes.depth)
-                gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::DEPTH_ATTACHMENT, GL::RENDERBUFFER, m_depthStencilBuffer);
+            if (m_context.isWebGL2()) {
+                if (m_attributes.stencil)
+                    gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::STENCIL_ATTACHMENT, GL::RENDERBUFFER, m_depthStencilBuffer);
+                if (m_attributes.depth)
+                    gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::DEPTH_ATTACHMENT, GL::RENDERBUFFER, m_depthStencilBuffer);
+            } else {
+                if (m_attributes.stencil || m_attributes.depth)
+                    gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::DEPTH_STENCIL_ATTACHMENT, GL::RENDERBUFFER, m_depthStencilBuffer);
+            }
         } else {
             if (m_attributes.stencil) {
                 m_stencilBuffer = gl.createRenderbuffer();

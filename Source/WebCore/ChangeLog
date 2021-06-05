@@ -1,3 +1,23 @@
+2021-06-04  Dean Jackson  <dino@apple.com>
+
+        [WebXR] WebXR on Cocoa doesn't work with webgl 1 contexts
+        https://bugs.webkit.org/show_bug.cgi?id=226675
+
+        Reviewed by Sam Weinig.
+
+        Support WebGL 1 contexts by attaching the correct combined depth+stencil
+        target.
+
+        While here, rename some variables to be a bit more clear about what
+        they do.
+
+        * Modules/webxr/WebXROpaqueFramebuffer.cpp:
+        (WebCore::WebXROpaqueFramebuffer::~WebXROpaqueFramebuffer): Make sure we delete
+        the texture if we created one.
+        (WebCore::WebXROpaqueFramebuffer::startFrame): Use the correct attachment point
+        if we're a WebGL 1 context.
+        (WebCore::WebXROpaqueFramebuffer::setupFramebuffer):
+
 2021-06-05  Antti Koivisto  <antti@apple.com>
 
         Rename InlineTextBox to LegacyInlineTextBox
