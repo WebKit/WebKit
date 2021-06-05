@@ -136,7 +136,7 @@ void WebPlatformStrategies::getTypes(Vector<String>& types, const String& pasteb
 RefPtr<WebCore::SharedBuffer> WebPlatformStrategies::bufferForType(const String& pasteboardType, const String& pasteboardName, const PasteboardContext* context)
 {
     // First check the overrides.
-    Vector<char> overrideBuffer;
+    Vector<uint8_t> overrideBuffer;
     if (WebPasteboardOverrides::sharedPasteboardOverrides().getDataForOverride(pasteboardName, pasteboardType, overrideBuffer))
         return SharedBuffer::create(WTFMove(overrideBuffer));
 

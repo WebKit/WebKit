@@ -50,6 +50,7 @@ public:
 
     WEBCORE_EXPORT String decode(const char*, size_t length, bool stopOnError, bool& sawError) const;
     String decode(const char*, size_t length) const;
+    String decode(const uint8_t* data, size_t length) const { return decode(reinterpret_cast<const char*>(data), length); }
     WEBCORE_EXPORT Vector<uint8_t> encode(StringView, UnencodableHandling, NFCNormalize = NFCNormalize::Yes) const;
     Vector<uint8_t> encodeForURLParsing(StringView string) const final { return encode(string, UnencodableHandling::URLEncodedEntities, NFCNormalize::No); }
 

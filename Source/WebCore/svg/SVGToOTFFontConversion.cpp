@@ -58,7 +58,7 @@ public:
     SVGToOTFFontConverter(const SVGFontElement&);
     bool convertSVGToOTFFont();
 
-    Vector<char> releaseResult()
+    Vector<uint8_t> releaseResult()
     {
         return WTFMove(m_result);
     }
@@ -246,7 +246,7 @@ private:
     Vector<GlyphData> m_glyphs;
     HashMap<String, Glyph> m_glyphNameToIndexMap; // SVG 1.1: "It is recommended that glyph names be unique within a font."
     HashMap<String, Vector<Glyph, 1>> m_codepointsToIndicesMap;
-    Vector<char> m_result;
+    Vector<uint8_t> m_result;
     Vector<char, 17> m_emptyGlyphCharString;
     FloatRect m_boundingBox;
     const SVGFontElement& m_fontElement;
@@ -1553,7 +1553,7 @@ bool SVGToOTFFontConverter::convertSVGToOTFFont()
     return true;
 }
 
-std::optional<Vector<char>> convertSVGToOTFFont(const SVGFontElement& element)
+std::optional<Vector<uint8_t>> convertSVGToOTFFont(const SVGFontElement& element)
 {
     SVGToOTFFontConverter converter(element);
     if (converter.error())

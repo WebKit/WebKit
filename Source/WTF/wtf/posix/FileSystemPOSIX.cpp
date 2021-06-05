@@ -118,7 +118,7 @@ bool truncateFile(PlatformFileHandle handle, long long offset)
     return !ftruncate(handle, offset);
 }
 
-int writeToFile(PlatformFileHandle handle, const char* data, int length)
+int writeToFile(PlatformFileHandle handle, const void* data, int length)
 {
     do {
         int bytesWritten = write(handle, data, static_cast<size_t>(length));

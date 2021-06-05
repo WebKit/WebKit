@@ -70,13 +70,13 @@ void CurlFormDataStream::clean()
     }
 }
 
-const Vector<char>* CurlFormDataStream::getPostData()
+const Vector<uint8_t>* CurlFormDataStream::getPostData()
 {
     if (!m_formData)
         return nullptr;
 
     if (!m_postData)
-        m_postData = makeUnique<Vector<char>>(m_formData->flatten());
+        m_postData = makeUnique<Vector<uint8_t>>(m_formData->flatten());
 
     return m_postData.get();
 }
@@ -124,7 +124,7 @@ std::optional<size_t> CurlFormDataStream::read(char* buffer, size_t size)
         char* bufferPosition = buffer + totalReadBytes;
 
         std::optional<size_t> readBytes = switchOn(element.data,
-            [&] (const Vector<char>& bytes) {
+            [&] (const Vector<uint8_t>& bytes) {
                 return readFromData(bytes, bufferPosition, bufferSize);
             }, [&] (const FormDataElement::EncodedFileData& fileData) {
                 return readFromFile(fileData, bufferPosition, bufferSize);
@@ -173,10 +173,10 @@ std::optional<size_t> CurlFormDataStream::readFromFile(const FormDataElement::En
     return readBytes;
 }
 
-std::optional<size_t> CurlFormDataStream::readFromData(const Vector<char>& data, char* buffer, size_t size)
+std::optional<size_t> CurlFormDataStream::readFromData(const Vector<uint8_t>& data, char* buffer, size_t size)
 {
     size_t elementSize = data.size() - m_dataOffset;
-    const char* elementBuffer = data.data() + m_dataOffset;
+    const uint8_t* elementBuffer = data.data() + m_dataOffset;
 
     size_t readBytes = elementSize > size ? size : elementSize;
     memcpy(buffer, elementBuffer, readBytes);

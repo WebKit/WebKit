@@ -219,7 +219,7 @@ static NPError parsePostBuffer(bool isFile, const char *buffer, uint32_t length,
         if (!fileContents)
             return NPERR_FILE_NOT_FOUND;
 
-        postBuffer = fileContents->data();
+        postBuffer = fileContents->dataAsCharPtr();
         postBufferSize = fileContents->size();
 
         // FIXME: The NPAPI spec states that the file should be deleted here.

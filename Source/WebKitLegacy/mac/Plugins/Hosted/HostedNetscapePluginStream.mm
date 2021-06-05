@@ -115,12 +115,12 @@ void HostedNetscapePluginStream::startStream(NSURL *responseURL, long long expec
                      const_cast<char*>(reinterpret_cast<const char*>([headers bytes])), [headers length]);
 }
                      
-void HostedNetscapePluginStream::didReceiveData(WebCore::NetscapePlugInStreamLoader*, const char* bytes, int length)
+void HostedNetscapePluginStream::didReceiveData(WebCore::NetscapePlugInStreamLoader*, const uint8_t* bytes, int length)
 {
     _WKPHStreamDidReceiveData(m_instance->hostProxy()->port(),
                               m_instance->pluginID(),
                               m_streamID,
-                              const_cast<char*>(bytes), length);
+                              const_cast<char*>(reinterpret_cast<const char*>(bytes)), length);
 }
     
 void HostedNetscapePluginStream::didFinishLoading(WebCore::NetscapePlugInStreamLoader*)

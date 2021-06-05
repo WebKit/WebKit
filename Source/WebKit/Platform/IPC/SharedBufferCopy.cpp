@@ -43,7 +43,7 @@ void SharedBufferCopy::encode(Encoder& encoder) const
     if (!bufferSize)
         return;
     for (auto& segment : *m_buffer)
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(segment.segment->data()), segment.segment->size(), 1);
+        encoder.encodeFixedLengthData(segment.segment->data(), segment.segment->size(), 1);
 }
 
 std::optional<SharedBufferCopy> SharedBufferCopy::decode(Decoder& decoder)

@@ -39,7 +39,7 @@ public:
 
     virtual void didChangeReadyState(RTCDataChannelIdentifier, RTCDataChannelState) = 0;
     virtual void didReceiveStringData(RTCDataChannelIdentifier, const String&) = 0;
-    virtual void didReceiveRawData(RTCDataChannelIdentifier, const char*, size_t) = 0;
+    virtual void didReceiveRawData(RTCDataChannelIdentifier, const uint8_t*, size_t) = 0;
     virtual void didDetectError(RTCDataChannelIdentifier) = 0;
     virtual void bufferedAmountIsDecreasing(RTCDataChannelIdentifier, size_t) = 0;
 };

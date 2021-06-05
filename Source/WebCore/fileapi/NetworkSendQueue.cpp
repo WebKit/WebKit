@@ -53,7 +53,7 @@ void NetworkSendQueue::enqueue(CString&& utf8)
 void NetworkSendQueue::enqueue(const JSC::ArrayBuffer& binaryData, unsigned byteOffset, unsigned byteLength)
 {
     if (m_queue.isEmpty()) {
-        auto* data = static_cast<const char*>(binaryData.data());
+        auto* data = static_cast<const uint8_t*>(binaryData.data());
         m_writeRawData(data + byteOffset, byteLength);
         return;
     }
@@ -102,7 +102,7 @@ void NetworkSendQueue::processMessages()
             }
 
             if (const auto& result = loader->arrayBufferResult()) {
-                m_writeRawData(static_cast<const char*>(result->data()), result->byteLength());
+                m_writeRawData(static_cast<const uint8_t*>(result->data()), result->byteLength());
                 return;
             }
             ASSERT(errorCode);

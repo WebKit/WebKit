@@ -124,13 +124,13 @@ public:
         m_decoder = TextResourceDecoder::create("text/plain"_s, textEncoding, useDetector);
     }
 
-    void didReceiveData(const char* data, int dataLength) override
+    void didReceiveData(const uint8_t* data, int dataLength) override
     {
         if (!dataLength)
             return;
 
         if (dataLength == -1)
-            dataLength = strlen(data);
+            dataLength = strlen(reinterpret_cast<const char*>(data));
 
         m_responseText.append(m_decoder->decode(data, dataLength));
     }
@@ -572,7 +572,7 @@ void InspectorNetworkAgent::didReceiveResponse(unsigned long identifier, Documen
         didReceiveData(identifier, nullptr, cachedResource->encodedSize(), 0);
 }
 
-void InspectorNetworkAgent::didReceiveData(unsigned long identifier, const char* data, int dataLength, int encodedDataLength)
+void InspectorNetworkAgent::didReceiveData(unsigned long identifier, const uint8_t* data, int dataLength, int encodedDataLength)
 {
     if (m_hiddenRequestIdentifiers.contains(identifier))
         return;

@@ -270,7 +270,7 @@ void CDMInstanceThunder::initializeWithConfiguration(const CDMKeySystemConfigura
 
 void CDMInstanceThunder::setServerCertificate(Ref<SharedBuffer>&& certificate,  SuccessCallback&& callback)
 {
-    OpenCDMError error = opencdm_system_set_server_certificate(m_thunderSystem.get(), const_cast<uint8_t*>(certificate->dataAsUInt8Ptr()),
+    OpenCDMError error = opencdm_system_set_server_certificate(m_thunderSystem.get(), const_cast<uint8_t*>(certificate->data()),
         certificate->size());
     callback(!error ? Succeeded : Failed);
 }
@@ -340,7 +340,7 @@ public:
             return;
 
         GST_DEBUG("parsing buffer of size %zu", buffer->size());
-        GST_MEMDUMP("buffer", buffer->dataAsUInt8Ptr(), buffer->size());
+        GST_MEMDUMP("buffer", buffer->data(), buffer->size());
 
         StringView payload(reinterpret_cast<const LChar*>(buffer->data()), buffer->size());
         static NeverDestroyed<StringView> type(reinterpret_cast<const LChar*>(":Type:"), 6);
@@ -486,7 +486,7 @@ void CDMInstanceSessionThunder::keysUpdateDoneCallback()
 void CDMInstanceSessionThunder::errorCallback(RefPtr<SharedBuffer>&& message)
 {
     GST_ERROR("CDM error");
-    GST_MEMDUMP("error dump", message->dataAsUInt8Ptr(), message->size());
+    GST_MEMDUMP("error dump", message->data(), message->size());
     for (const auto& challengeCallback : m_challengeCallbacks)
         challengeCallback();
     m_challengeCallbacks.clear();
@@ -507,11 +507,11 @@ void CDMInstanceSessionThunder::requestLicense(LicenseType licenseType, const At
     m_initData = InitData(instance->keySystem(), WTFMove(initDataSharedBuffer));
 
     GST_TRACE("Going to request a new session id, init data size %zu", m_initData.payload()->size());
-    GST_MEMDUMP("init data", m_initData.payload()->dataAsUInt8Ptr(), m_initData.payload()->size());
+    GST_MEMDUMP("init data", m_initData.payload()->data(), m_initData.payload()->size());
 
     OpenCDMSession* session = nullptr;
     opencdm_construct_session(&instance->thunderSystem(), thunderLicenseType(licenseType), initDataType.string().utf8().data(),
-        m_initData.payload()->dataAsUInt8Ptr(), m_initData.payload()->size(), nullptr, 0, &m_thunderSessionCallbacks, this, &session);
+        m_initData.payload()->data(), m_initData.payload()->size(), nullptr, 0, &m_thunderSessionCallbacks, this, &session);
     if (!session) {
         GST_ERROR("Could not create session");
         RefPtr<SharedBuffer> initData = m_initData.payload();
@@ -572,7 +572,7 @@ void CDMInstanceSessionThunder::updateLicense(const String& sessionID, LicenseTy
                 if (parsedResponseMessage.hasPayload()) {
                     Ref<SharedBuffer> message = WTFMove(parsedResponseMessage.payload());
                     GST_DEBUG("got message of size %zu", message->size());
-                    GST_MEMDUMP("message", message->dataAsUInt8Ptr(), message->size());
+                    GST_MEMDUMP("message", message->data(), message->size());
                     callback(false, std::nullopt, std::nullopt,
                         std::make_pair(parsedResponseMessage.typeOr(MediaKeyMessageType::LicenseRequest),
                             WTFMove(message)), SuccessValue::Succeeded);
@@ -586,7 +586,7 @@ void CDMInstanceSessionThunder::updateLicense(const String& sessionID, LicenseTy
             callback(false, std::nullopt, std::nullopt, std::nullopt, SuccessValue::Failed);
         }
     });
-    if (!m_session || m_sessionID.isEmpty() || opencdm_session_update(m_session.get(), response->dataAsUInt8Ptr(), response->size()))
+    if (!m_session || m_sessionID.isEmpty() || opencdm_session_update(m_session.get(), response->data(), response->size()))
         sessionFailure();
 }
 
@@ -607,7 +607,7 @@ void CDMInstanceSessionThunder::loadSession(LicenseType, const String& sessionID
                 if (parsedResponseMessage.hasPayload()) {
                     Ref<SharedBuffer> message = WTFMove(parsedResponseMessage.payload());
                     GST_DEBUG("got message of size %zu", message->size());
-                    GST_MEMDUMP("message", message->dataAsUInt8Ptr(), message->size());
+                    GST_MEMDUMP("message", message->data(), message->size());
                     callback(std::nullopt, std::nullopt, std::make_pair(parsedResponseMessage.typeOr(MediaKeyMessageType::LicenseRequest),
                         WTFMove(message)), SuccessValue::Succeeded, SessionLoadFailure::None);
                 } else {

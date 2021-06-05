@@ -59,7 +59,7 @@ private:
 
     // CachedRawResourceClient
     void responseReceived(CachedResource&, const ResourceResponse&, CompletionHandler<void()>&&) final;
-    void dataReceived(CachedResource&, const char*, int) final;
+    void dataReceived(CachedResource&, const uint8_t*, int) final;
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
 
     void fulfillRequestWithResource(CachedResource&);
@@ -128,7 +128,7 @@ void CachedResourceMediaLoader::notifyFinished(CachedResource& resource, const N
     m_parent.loadFinished();
 }
 
-void CachedResourceMediaLoader::dataReceived(CachedResource& resource, const char*, int)
+void CachedResourceMediaLoader::dataReceived(CachedResource& resource, const uint8_t*, int)
 {
     ASSERT(&resource == m_resource);
     if (auto* data = resource.resourceBuffer())
@@ -154,7 +154,7 @@ private:
     void redirectReceived(PlatformMediaResource&, ResourceRequest&& request, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler) final { completionHandler(WTFMove(request)); }
     bool shouldCacheResponse(PlatformMediaResource&, const ResourceResponse&) final { return false; }
     void dataSent(PlatformMediaResource&, unsigned long long, unsigned long long) final { }
-    void dataReceived(PlatformMediaResource&, const char*, int) final;
+    void dataReceived(PlatformMediaResource&, const uint8_t*, int) final;
     void accessControlCheckFailed(PlatformMediaResource&, const ResourceError& error) final { loadFailed(error); }
     void loadFailed(PlatformMediaResource&, const ResourceError& error) final { loadFailed(error); }
     void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) final { loadFinished(); }
@@ -209,7 +209,7 @@ void PlatformResourceMediaLoader::loadFinished()
     m_parent.loadFinished();
 }
 
-void PlatformResourceMediaLoader::dataReceived(PlatformMediaResource&, const char* data, int size)
+void PlatformResourceMediaLoader::dataReceived(PlatformMediaResource&, const uint8_t* data, int size)
 {
     if (!m_buffer)
         m_buffer = SharedBuffer::create(data, size);

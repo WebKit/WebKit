@@ -570,7 +570,7 @@ Storage::Record Cache::encode(const RecordInformation& recordInformation, const 
     WTF::switchOn(record.responseBody, [](const Ref<WebCore::FormData>& formData) {
         // FIXME: Store form data body.
     }, [&](const Ref<WebCore::SharedBuffer>& buffer) {
-        body = { reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size() };
+        body = { buffer->data(), buffer->size() };
     }, [](const std::nullptr_t&) {
     });
 

@@ -63,7 +63,7 @@ private:
     // RTCDataChannelHandler API
     void setClient(RTCDataChannelHandlerClient&, ScriptExecutionContextIdentifier) final;
     bool sendStringData(const CString&) final;
-    bool sendRawData(const char*, size_t) final;
+    bool sendRawData(const uint8_t*, size_t) final;
     void close() final;
 
     // webrtc::DataChannelObserver API

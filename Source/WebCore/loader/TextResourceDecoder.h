@@ -55,9 +55,11 @@ public:
     bool hasEqualEncodingForCharset(const String& charset) const;
 
     WEBCORE_EXPORT String decode(const char* data, size_t length);
+    String decode(const uint8_t* data, size_t length) { return decode(reinterpret_cast<const char*>(data), length); }
     WEBCORE_EXPORT String flush();
 
     WEBCORE_EXPORT String decodeAndFlush(const char* data, size_t length);
+    String decodeAndFlush(const uint8_t* data, size_t length) { return decodeAndFlush(reinterpret_cast<const char*>(data), length); }
 
     void setHintEncoding(const TextResourceDecoder* parentFrameDecoder);
    

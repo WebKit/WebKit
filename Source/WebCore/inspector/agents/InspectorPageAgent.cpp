@@ -85,7 +85,7 @@ namespace WebCore {
 
 using namespace Inspector;
 
-static bool decodeBuffer(const char* buffer, unsigned size, const String& textEncodingName, String* result)
+static bool decodeBuffer(const uint8_t* buffer, unsigned size, const String& textEncodingName, String* result)
 {
     if (buffer) {
         TextEncoding encoding(textEncodingName);
@@ -110,7 +110,7 @@ bool InspectorPageAgent::sharedBufferContent(RefPtr<SharedBuffer>&& buffer, cons
     return dataContent(buffer ? buffer->data() : nullptr, buffer ? buffer->size() : 0, textEncodingName, withBase64Encode, result);
 }
 
-bool InspectorPageAgent::dataContent(const char* data, unsigned size, const String& textEncodingName, bool withBase64Encode, String* result)
+bool InspectorPageAgent::dataContent(const uint8_t* data, unsigned size, const String& textEncodingName, bool withBase64Encode, String* result)
 {
     if (withBase64Encode) {
         *result = base64EncodeToString(data, size);

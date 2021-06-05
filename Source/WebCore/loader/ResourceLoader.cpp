@@ -320,7 +320,7 @@ void ResourceLoader::willSwitchToSubstituteResource()
         m_handle->cancel();
 }
 
-void ResourceLoader::addDataOrBuffer(const char* data, unsigned length, SharedBuffer* buffer, DataPayloadType dataPayloadType)
+void ResourceLoader::addDataOrBuffer(const uint8_t* data, unsigned length, SharedBuffer* buffer, DataPayloadType dataPayloadType)
 {
     if (m_options.dataBufferingPolicy == DataBufferingPolicy::DoNotBufferData)
         return;
@@ -533,7 +533,7 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r, CompletionHan
         frameLoader()->notifier().didReceiveResponse(this, m_response);
 }
 
-void ResourceLoader::didReceiveData(const char* data, unsigned length, long long encodedDataLength, DataPayloadType dataPayloadType)
+void ResourceLoader::didReceiveData(const uint8_t* data, unsigned length, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
     // The following assertions are not quite valid here, since a subclass
     // might override didReceiveData in a way that invalidates them. This
@@ -549,7 +549,7 @@ void ResourceLoader::didReceiveBuffer(Ref<SharedBuffer>&& buffer, long long enco
     didReceiveDataOrBuffer(nullptr, 0, WTFMove(buffer), encodedDataLength, dataPayloadType);
 }
 
-void ResourceLoader::didReceiveDataOrBuffer(const char* data, unsigned length, RefPtr<SharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
+void ResourceLoader::didReceiveDataOrBuffer(const uint8_t* data, unsigned length, RefPtr<SharedBuffer>&& buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
     // This method should only get data+length *OR* a SharedBuffer.
     ASSERT(!buffer || (!data && !length));
@@ -723,7 +723,7 @@ void ResourceLoader::didReceiveResponseAsync(ResourceHandle*, ResourceResponse&&
     didReceiveResponse(response, WTFMove(completionHandler));
 }
 
-void ResourceLoader::didReceiveData(ResourceHandle*, const char* data, unsigned length, int encodedDataLength)
+void ResourceLoader::didReceiveData(ResourceHandle*, const uint8_t* data, unsigned length, int encodedDataLength)
 {
     didReceiveData(data, length, encodedDataLength, DataPayloadBytes);
 }

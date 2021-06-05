@@ -611,7 +611,7 @@ void WebNetscapePluginStream::didFinishLoading(NetscapePlugInStreamLoader*)
     destroyStreamWithReason(NPRES_DONE);
 }
 
-void WebNetscapePluginStream::didReceiveData(NetscapePlugInStreamLoader*, const char* bytes, int length)
+void WebNetscapePluginStream::didReceiveData(NetscapePlugInStreamLoader*, const uint8_t* bytes, int length)
 {
     auto data = adoptNS([[NSData alloc] initWithBytesNoCopy:(void*)bytes length:length freeWhenDone:NO]);
 

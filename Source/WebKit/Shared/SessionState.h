@@ -59,7 +59,7 @@ struct HTTPBody {
         Type type = Type::Data;
 
         // Data.
-        Vector<char> data;
+        Vector<uint8_t> data;
 
         // File.
         String filePath;

@@ -187,7 +187,7 @@ static SIDBKeyType serializedTypeForKeyType(IndexedDB::KeyType type)
 }
 
 #if CPU(BIG_ENDIAN) || CPU(MIDDLE_ENDIAN) || CPU(NEEDS_ALIGNED_ACCESS)
-template <typename T> static void writeLittleEndian(Vector<char>& buffer, T value)
+template <typename T> static void writeLittleEndian(Vector<uint8_t>& buffer, T value)
 {
     for (unsigned i = 0; i < sizeof(T); i++) {
         buffer.append(value & 0xFF);
@@ -206,7 +206,7 @@ template <typename T> static bool readLittleEndian(const uint8_t*& ptr, const ui
     return true;
 }
 #else
-template <typename T> static void writeLittleEndian(Vector<char>& buffer, T value)
+template <typename T> static void writeLittleEndian(Vector<uint8_t>& buffer, T value)
 {
     buffer.append(reinterpret_cast<uint8_t*>(&value), sizeof(value));
 }
@@ -223,7 +223,7 @@ template <typename T> static bool readLittleEndian(const uint8_t*& ptr, const ui
 }
 #endif
 
-static void writeDouble(Vector<char>& data, double d)
+static void writeDouble(Vector<uint8_t>& data, double d)
 {
     writeLittleEndian(data, *reinterpret_cast<uint64_t*>(&d));
 }
@@ -233,10 +233,10 @@ static bool readDouble(const uint8_t*& data, const uint8_t* end, double& d)
     return readLittleEndian(data, end, *reinterpret_cast<uint64_t*>(&d));
 }
 
-static void encodeKey(Vector<char>& data, const IDBKeyData& key)
+static void encodeKey(Vector<uint8_t>& data, const IDBKeyData& key)
 {
     SIDBKeyType type = serializedTypeForKeyType(key.type());
-    data.append(static_cast<char>(type));
+    data.append(static_cast<uint8_t>(type));
 
     switch (type) {
     case SIDBKeyType::Number:
@@ -284,7 +284,7 @@ static void encodeKey(Vector<char>& data, const IDBKeyData& key)
 
 RefPtr<SharedBuffer> serializeIDBKeyData(const IDBKeyData& key)
 {
-    Vector<char> data;
+    Vector<uint8_t> data;
     data.append(SIDBKeyVersion);
 
     encodeKey(data, key);

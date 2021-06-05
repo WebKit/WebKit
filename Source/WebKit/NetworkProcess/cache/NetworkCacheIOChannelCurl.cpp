@@ -79,7 +79,7 @@ void IOChannel::write(size_t offset, const Data& data, WorkQueue& queue, Functio
 {
     queue.dispatch([this, protectedThis = makeRef(*this), offset, data, completionHandler = WTFMove(completionHandler)] {
         FileSystem::seekFile(m_fileDescriptor, offset, FileSystem::FileSeekOrigin::Beginning);
-        int err = FileSystem::writeToFile(m_fileDescriptor, reinterpret_cast<const char*>(data.data()), data.size());
+        int err = FileSystem::writeToFile(m_fileDescriptor, data.data(), data.size());
         err = err < 0 ? err : 0;
         completionHandler(err);
     });

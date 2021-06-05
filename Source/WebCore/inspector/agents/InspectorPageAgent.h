@@ -153,7 +153,7 @@ private:
     double timestamp();
 
     static bool mainResourceContent(Frame*, bool withBase64Encode, String* result);
-    static bool dataContent(const char* data, unsigned size, const String& textEncodingName, bool withBase64Encode, String* result);
+    static bool dataContent(const uint8_t* data, unsigned size, const String& textEncodingName, bool withBase64Encode, String* result);
 
     Ref<Inspector::Protocol::Page::Frame> buildObjectForFrame(Frame*);
     Ref<Inspector::Protocol::Page::FrameResourceTree> buildObjectForFrameTree(Frame*);

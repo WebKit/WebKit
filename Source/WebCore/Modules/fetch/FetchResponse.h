@@ -143,7 +143,7 @@ private:
         void didSucceed() final;
         void didFail(const ResourceError&) final;
         void didReceiveResponse(const ResourceResponse&) final;
-        void didReceiveData(const char*, size_t) final;
+        void didReceiveData(const uint8_t*, size_t) final;
 
         FetchResponse& m_response;
         NotificationCallback m_responseCallback;

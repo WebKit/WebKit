@@ -48,24 +48,24 @@ public:
     void setSeparator(const char*);
 
     // Returns false when the end of the buffer was reached.
-    bool nextChunk(Vector<char>& data, bool includeSeparator = false);
+    bool nextChunk(Vector<uint8_t>& data, bool includeSeparator = false);
 
     // Returns a null string when the end of the buffer has been reached.
     String nextChunkAsUTF8StringWithLatin1Fallback(bool includeSeparator = false);
 
     // Reads size bytes at the current location in the buffer, without changing the buffer position.
     // Returns the number of bytes read. That number might be less than the specified size if the end of the buffer was reached.
-    size_t peek(Vector<char>&, size_t);
+    size_t peek(Vector<uint8_t>&, size_t);
 
 private:
     SharedBuffer* m_buffer;
-    size_t m_bufferPosition;
-    const char* m_segment;
-    size_t m_segmentLength;
-    size_t m_segmentIndex;
+    size_t m_bufferPosition { 0 };
+    const uint8_t* m_segment { nullptr };
+    size_t m_segmentLength { 0 };
+    size_t m_segmentIndex { 0 };
     bool m_reachedEndOfFile;
-    Vector<char> m_separator;
-    size_t m_separatorIndex;
+    Vector<char> m_separator { false };
+    size_t m_separatorIndex { 0 };
 };
 
 }

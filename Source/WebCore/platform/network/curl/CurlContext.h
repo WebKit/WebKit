@@ -254,7 +254,7 @@ public:
     void enableHttpGetRequest();
     void enableHttpHeadRequest();
     void enableHttpPostRequest();
-    void setPostFields(const char*, long);
+    void setPostFields(const uint8_t*, long);
     void setPostFieldLarge(curl_off_t);
     void enableHttpPutRequest();
     void setInFileSizeLarge(curl_off_t);

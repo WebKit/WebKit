@@ -213,7 +213,7 @@ public:
     virtual void willReplaceMultipartContent() = 0;
     virtual void didReplaceMultipartContent() = 0;
 
-    virtual void committedLoad(DocumentLoader*, const char*, int) = 0;
+    virtual void committedLoad(DocumentLoader*, const uint8_t*, int) = 0;
     virtual void finishedLoading(DocumentLoader*) = 0;
     
     virtual void updateGlobalHistory() = 0;

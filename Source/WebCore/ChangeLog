@@ -1,3 +1,141 @@
+2021-06-04  Chris Dumez  <cdumez@apple.com>
+
+        Use Vector<uint8_t> instead of Vector<char> to store bytes in SharedBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=226623
+
+        Reviewed by Darin Adler.
+
+        Use Vector<uint8_t> instead of Vector<char> to store bytes in SharedBuffer. Also have SharedBuffer::data()
+        return a `const uint8_t*` instead of `const char*`. This is our preferred type to store bytes.
+
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::consumeFormData):
+        * Modules/fetch/FetchBodyConsumer.cpp:
+        (WebCore::packageFormData):
+        (WebCore::resolveWithTypeAndData):
+        * Modules/highlight/AppHighlight.h:
+        (WebCore::AppHighlight::encode const):
+        * Modules/indexeddb/IDBGetResult.cpp:
+        (WebCore::IDBGetResult::dataFromBuffer):
+        * Modules/indexeddb/server/IDBSerialization.cpp:
+        (WebCore::serializeIDBKeyData):
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::didReceiveRawData):
+        * Modules/mediastream/RTCDataChannel.h:
+        * Modules/mediastream/RTCDataChannelRemoteHandler.cpp:
+        (WebCore::RTCDataChannelRemoteHandler::didReceiveRawData):
+        (WebCore::RTCDataChannelRemoteHandler::sendRawData):
+        * Modules/mediastream/RTCDataChannelRemoteHandler.h:
+        * Modules/mediastream/RTCDataChannelRemoteSource.h:
+        (WebCore::RTCDataChannelRemoteSource::sendRawData):
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.cpp:
+        (WebCore::LibWebRTCDataChannelHandler::sendRawData):
+        (WebCore::LibWebRTCDataChannelHandler::OnMessage):
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.h:
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::load):
+        * fileapi/Blob.cpp:
+        (WebCore::Blob::Blob):
+        * fileapi/NetworkSendQueue.cpp:
+        (WebCore::NetworkSendQueue::enqueue):
+        (WebCore::NetworkSendQueue::processMessages):
+        * fileapi/NetworkSendQueue.h:
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::NetworkResourcesData::ResourceData::appendData):
+        (WebCore::NetworkResourcesData::maybeAddResourceData):
+        * inspector/NetworkResourcesData.h:
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::didReceiveData):
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::decodeBuffer):
+        (WebCore::InspectorPageAgent::dataContent):
+        * inspector/agents/InspectorPageAgent.h:
+        * loader/ContentFilter.cpp:
+        (WebCore::ContentFilter::deliverResourceData):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::continueAfterContentPolicy):
+        (WebCore::DocumentLoader::maybeCreateArchive):
+        (WebCore::DocumentLoader::maybeFinishLoadingMultipartContent):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::didFinishLoading):
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::didReceiveDataOrBuffer):
+        * loader/NetscapePlugInStreamLoader.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didReceiveDataOrBuffer):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didReceiveDataOrBuffer):
+        * loader/TextResourceDecoder.h:
+        (WebCore::TextResourceDecoder::decode):
+        (WebCore::TextResourceDecoder::decodeAndFlush):
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::processNewCueData):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::writeDataToUniqueFileInDirectory):
+        * loader/archive/mhtml/MHTMLArchive.cpp:
+        (WebCore::MHTMLArchive::generateMHTMLData):
+        * loader/archive/mhtml/MHTMLParser.cpp:
+        (WebCore::MHTMLParser::parseNextPart):
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::updateBuffer):
+        (WebCore::CachedRawResource::finishLoading):
+        (WebCore::CachedRawResource::didAddClient):
+        * loader/cache/CachedSVGFont.cpp:
+        (WebCore::CachedSVGFont::ensureCustomFontData):
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::SharedBuffer):
+        (WebCore::SharedBuffer::create):
+        (WebCore::SharedBuffer::combineIntoOneSegment const):
+        (WebCore::SharedBuffer::data const):
+        (WebCore::SharedBuffer::tryCreateArrayBuffer const):
+        (WebCore::SharedBuffer::append):
+        (WebCore::SharedBuffer::DataSegment::data const):
+        (WebCore::SharedBuffer::DataSegment::size const):
+        (WebCore::SharedBufferDataView::data const):
+        (WebCore::utf8Buffer):
+        * platform/SharedBuffer.h:
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::extractKeyidsLocationFromCencInitData):
+        (WebCore::extractKeyidsFromCencInitData):
+        * platform/graphics/Model.h:
+        (WebCore::Model::encode const):
+        * platform/graphics/displaylists/DisplayListItemBuffer.cpp:
+        (WebCore::DisplayList::ItemBuffer::append):
+        * platform/graphics/gstreamer/eme/CDMThunder.cpp:
+        (WebCore::CDMInstanceThunder::setServerCertificate):
+        (WebCore::ParsedResponseMessage::ParsedResponseMessage):
+        (WebCore::CDMInstanceSessionThunder::errorCallback):
+        (WebCore::CDMInstanceSessionThunder::requestLicense):
+        (WebCore::CDMInstanceSessionThunder::updateLicense):
+        (WebCore::CDMInstanceSessionThunder::loadSession):
+        * platform/graphics/opentype/OpenTypeTypes.h:
+        (WebCore::OpenType::TableBase::isValidEnd):
+        * platform/mediastream/RTCDataChannelHandler.h:
+        * platform/mediastream/RTCDataChannelHandlerClient.h:
+        * platform/mediastream/RTCDataChannelRemoteSourceConnection.h:
+        * platform/mock/RTCDataChannelHandlerMock.cpp:
+        (WebCore::RTCDataChannelHandlerMock::sendRawData):
+        * platform/mock/RTCDataChannelHandlerMock.h:
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::asSharedBuffer const):
+        * platform/network/ResourceHandleClient.cpp:
+        (WebCore::ResourceHandleClient::didReceiveBuffer):
+        * platform/network/cocoa/RangeResponseGenerator.mm:
+        (WebCore::RangeResponseGenerator::giveResponseToTaskIfBytesInRangeReceived):
+        * platform/text/TextEncoding.h:
+        (WebCore::TextEncoding::decode const):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::docLoaderFunc):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::OffsetBuffer::OffsetBuffer):
+
 2021-06-04  Brady Eidson  <beidson@apple.com>
 
         Enforce a quota in window.sessionStorage

@@ -77,7 +77,7 @@ void NetscapePluginStream::didReceiveResponse(const URL& responseURL, uint32_t s
     start(responseURL.string(), streamLength, lastModifiedTime, mimeType, headers);
 }
 
-void NetscapePluginStream::didReceiveData(const char* bytes, int length)
+void NetscapePluginStream::didReceiveData(const uint8_t* bytes, int length)
 {
     // Delivering the data could cause the plug-in stream to go away so we keep a reference to it here.
     Ref<NetscapePluginStream> protect(*this);
@@ -117,7 +117,7 @@ void NetscapePluginStream::sendJavaScriptStream(const String& result)
     if (!start(m_requestURLString, resultCString.length(), 0, "text/plain", ""))
         return;
 
-    deliverData(resultCString.data(), resultCString.length());
+    deliverData(reinterpret_cast<const uint8_t*>(resultCString.data()), resultCString.length());
     stop(NPRES_DONE);
 }
 
@@ -187,7 +187,7 @@ bool NetscapePluginStream::start(const String& responseURLString, uint32_t strea
     return true;
 }
 
-void NetscapePluginStream::deliverData(const char* bytes, int length)
+void NetscapePluginStream::deliverData(const uint8_t* bytes, int length)
 {
     ASSERT(m_isStarted);
 
@@ -260,7 +260,7 @@ void NetscapePluginStream::deliverDataToPlugin()
     }
 }
 
-void NetscapePluginStream::deliverDataToFile(const char* bytes, int length)
+void NetscapePluginStream::deliverDataToFile(const uint8_t* bytes, int length)
 {
     if (m_fileHandle == FileSystem::invalidPlatformFileHandle && m_filePath.isNull()) {
         // Create a temporary file.

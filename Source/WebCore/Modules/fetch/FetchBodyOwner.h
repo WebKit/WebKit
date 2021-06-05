@@ -99,7 +99,7 @@ protected:
 
 private:
     // Blob loading routines
-    void blobChunk(const char*, size_t);
+    void blobChunk(const uint8_t*, size_t);
     void blobLoadingSucceeded();
     void blobLoadingFailed();
     void finishBlobLoading();
@@ -112,7 +112,7 @@ private:
 
         // FetchLoaderClient API
         void didReceiveResponse(const ResourceResponse&) final;
-        void didReceiveData(const char* data, size_t size) final { owner.blobChunk(data, size); }
+        void didReceiveData(const uint8_t* data, size_t size) final { owner.blobChunk(data, size); }
         void didFail(const ResourceError&) final;
         void didSucceed() final { owner.blobLoadingSucceeded(); }
 

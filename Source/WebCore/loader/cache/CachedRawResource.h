@@ -52,7 +52,7 @@ public:
 private:
     void didAddClient(CachedResourceClient&) final;
     void updateBuffer(SharedBuffer&) final;
-    void updateData(const char* data, unsigned length) final;
+    void updateData(const uint8_t* data, unsigned length) final;
     void finishLoading(SharedBuffer*, const NetworkLoadMetrics&) final;
 
     bool shouldIgnoreHTTPStatusCodeErrors() const override { return true; }
@@ -67,7 +67,7 @@ private:
     bool mayTryReplaceEncodedData() const override { return m_allowEncodedDataReplacement; }
 
     std::optional<SharedBufferDataView> calculateIncrementalDataChunk(const SharedBuffer*) const;
-    void notifyClientsDataWasReceived(const char* data, unsigned length);
+    void notifyClientsDataWasReceived(const uint8_t* data, unsigned length);
     
 #if USE(QUICK_LOOK)
     void previewResponseReceived(const ResourceResponse&) final;

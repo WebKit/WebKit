@@ -65,7 +65,7 @@ public:
 
     virtual void didSendData(ResourceHandle*, unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/) { }
 
-    virtual void didReceiveData(ResourceHandle*, const char*, unsigned, int /*encodedDataLength*/) { }
+    virtual void didReceiveData(ResourceHandle*, const uint8_t*, unsigned, int /*encodedDataLength*/) { }
     WEBCORE_EXPORT virtual void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&&, int encodedDataLength);
     
     virtual void didFinishLoading(ResourceHandle*, const NetworkLoadMetrics&) { }

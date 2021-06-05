@@ -99,7 +99,7 @@ void ApplicationCacheResourceLoader::responseReceived(CachedResource& resource, 
     m_applicationCacheResource = ApplicationCacheResource::create(m_resource->url(), response, m_type);
 }
 
-void ApplicationCacheResourceLoader::dataReceived(CachedResource&, const char* data, int length)
+void ApplicationCacheResourceLoader::dataReceived(CachedResource&, const uint8_t* data, int length)
 {
     m_applicationCacheResource->data().append(data, length);
 }

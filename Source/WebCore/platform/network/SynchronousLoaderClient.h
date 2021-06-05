@@ -66,7 +66,7 @@ private:
     bool shouldUseCredentialStorage(ResourceHandle*) override;
     void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) override;
     void didReceiveResponseAsync(ResourceHandle*, ResourceResponse&&, CompletionHandler<void()>&&) override;
-    void didReceiveData(ResourceHandle*, const char*, unsigned, int /*encodedDataLength*/) override;
+    void didReceiveData(ResourceHandle*, const uint8_t*, unsigned, int /*encodedDataLength*/) override;
     void didFinishLoading(ResourceHandle*, const NetworkLoadMetrics&) override;
     void didFail(ResourceHandle*, const ResourceError&) override;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)

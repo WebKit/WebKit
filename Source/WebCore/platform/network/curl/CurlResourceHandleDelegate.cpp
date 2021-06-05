@@ -148,7 +148,7 @@ void CurlResourceHandleDelegate::curlDidReceiveBuffer(CurlRequest&, Ref<SharedBu
     if (cancelledOrClientless())
         return;
 
-    CurlCacheManager::singleton().didReceiveData(m_handle, buffer->data(), buffer->size());
+    CurlCacheManager::singleton().didReceiveData(m_handle, buffer->dataAsCharPtr(), buffer->size());
     client()->didReceiveBuffer(&m_handle, WTFMove(buffer), buffer->size());
 }
 

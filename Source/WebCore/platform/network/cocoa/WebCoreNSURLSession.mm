@@ -570,7 +570,7 @@ public:
     void redirectReceived(PlatformMediaResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) override;
     bool shouldCacheResponse(PlatformMediaResource&, const ResourceResponse&) override;
     void dataSent(PlatformMediaResource&, unsigned long long, unsigned long long) override;
-    void dataReceived(PlatformMediaResource&, const char* /* data */, int /* length */) override;
+    void dataReceived(PlatformMediaResource&, const uint8_t* /* data */, int /* length */) override;
     void accessControlCheckFailed(PlatformMediaResource&, const ResourceError&) override;
     void loadFailed(PlatformMediaResource&, const ResourceError&) override;
     void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) override;
@@ -614,7 +614,7 @@ bool WebCoreNSURLSessionDataTaskClient::shouldCacheResponse(PlatformMediaResourc
     return [m_task resource:&resource shouldCacheResponse:response];
 }
 
-void WebCoreNSURLSessionDataTaskClient::dataReceived(PlatformMediaResource& resource, const char* data, int length)
+void WebCoreNSURLSessionDataTaskClient::dataReceived(PlatformMediaResource& resource, const uint8_t* data, int length)
 {
     Locker locker { m_taskLock };
     if (!m_task)
@@ -873,7 +873,7 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
     return response.httpHeaderField(HTTPHeaderName::ContentRange).isEmpty();
 }
 
-- (void)resource:(PlatformMediaResource*)resource receivedData:(const char*)data length:(int)length
+- (void)resource:(PlatformMediaResource*)resource receivedData:(const uint8_t*)data length:(int)length
 {
     ASSERT_UNUSED(resource, !resource || resource == _resource);
     RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytes:data length:length]);

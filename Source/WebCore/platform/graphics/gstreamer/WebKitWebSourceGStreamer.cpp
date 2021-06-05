@@ -69,7 +69,7 @@ private:
 
     // PlatformMediaResourceClient virtual methods.
     void responseReceived(PlatformMediaResource&, const ResourceResponse&, CompletionHandler<void(ShouldContinuePolicyCheck)>&&) override;
-    void dataReceived(PlatformMediaResource&, const char*, int) override;
+    void dataReceived(PlatformMediaResource&, const uint8_t*, int) override;
     void accessControlCheckFailed(PlatformMediaResource&, const ResourceError&) override;
     void loadFailed(PlatformMediaResource&, const ResourceError&) override;
     void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) override;
@@ -1087,7 +1087,7 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
     completionHandler(ShouldContinuePolicyCheck::Yes);
 }
 
-void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const char* data, int length)
+void CachedResourceStreamingClient::dataReceived(PlatformMediaResource&, const uint8_t* data, int length)
 {
     ASSERT(isMainThread());
     WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());

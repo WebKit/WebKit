@@ -52,7 +52,7 @@ template<class Encoder>
 void AppHighlight::encode(Encoder& encoder) const
 {
     encoder << static_cast<size_t>(highlight->size());
-    encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(highlight->dataAsUInt8Ptr()), highlight->size(), 1);
+    encoder.encodeFixedLengthData(highlight->data(), highlight->size(), 1);
 
     encoder << text;
 

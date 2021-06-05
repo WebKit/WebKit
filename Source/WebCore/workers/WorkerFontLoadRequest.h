@@ -61,7 +61,7 @@ private:
     bool isWorkerFontLoadRequest() const final { return true; }
 
     void didReceiveResponse(unsigned long identifier, const ResourceResponse&) final;
-    void didReceiveData(const char* data, int dataLength) final;
+    void didReceiveData(const uint8_t* data, int dataLength) final;
     void didFinishLoading(unsigned long identifier) final;
     void didFail(const ResourceError&) final;
 

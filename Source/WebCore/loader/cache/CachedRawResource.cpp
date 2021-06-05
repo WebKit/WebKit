@@ -90,7 +90,7 @@ void CachedRawResource::updateBuffer(SharedBuffer& data)
     }
 }
 
-void CachedRawResource::updateData(const char* data, unsigned length)
+void CachedRawResource::updateData(const uint8_t* data, unsigned length)
 {
     ASSERT(dataBufferingPolicy() == DataBufferingPolicy::DoNotBufferData);
     notifyClientsDataWasReceived(data, length);
@@ -128,7 +128,7 @@ void CachedRawResource::finishLoading(SharedBuffer* data, const NetworkLoadMetri
     }
 }
 
-void CachedRawResource::notifyClientsDataWasReceived(const char* data, unsigned length)
+void CachedRawResource::notifyClientsDataWasReceived(const uint8_t* data, unsigned length)
 {
     if (!length)
         return;

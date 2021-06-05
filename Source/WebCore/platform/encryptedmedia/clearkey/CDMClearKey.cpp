@@ -138,7 +138,7 @@ static std::pair<unsigned, unsigned> extractKeyidsLocationFromCencInitData(const
     if (initData.isEmpty() || initData.size() > std::numeric_limits<unsigned>::max())
         return keyIdsMap;
 
-    const char* data = initData.data();
+    auto* data = initData.data();
     unsigned initDataSize = initData.size();
     unsigned index = 0;
     unsigned psshSize = 0;
@@ -206,7 +206,7 @@ static Ref<SharedBuffer> extractKeyidsFromCencInitData(const SharedBuffer& initD
     if (!keyIdCount || !index)
         return keyIds;
 
-    const char* data = initData.data();
+    auto* data = initData.data();
 
     auto object = JSON::Object::create();
     auto keyIdsArray = JSON::Array::create();

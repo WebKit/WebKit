@@ -60,7 +60,7 @@ static bool webkitFormDataInputStreamCreateNextStream(WebKitFormDataInputStream*
 
     const auto& element = elements[priv->nextIndex++];
     switchOn(element.data,
-        [priv] (const Vector<char>& data) {
+        [priv] (const Vector<uint8_t>& data) {
             GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_static(data.data(), data.size()));
             priv->currentStream = adoptGRef(g_memory_input_stream_new_from_bytes(bytes.get()));
         }, [priv, cancellable] (const FormDataElement::EncodedFileData& fileData) {

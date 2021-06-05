@@ -235,7 +235,7 @@ void FetchBody::consumeBlob(FetchBodyOwner& owner, Ref<DeferredPromise>&& promis
 void FetchBody::consumeFormData(FetchBodyOwner& owner, Ref<DeferredPromise>&& promise)
 {
     if (auto sharedBuffer = formDataBody().asSharedBuffer()) {
-        m_consumer.resolveWithData(WTFMove(promise), owner.contentType(), sharedBuffer->dataAsUInt8Ptr(), sharedBuffer->size());
+        m_consumer.resolveWithData(WTFMove(promise), owner.contentType(), sharedBuffer->data(), sharedBuffer->size());
         m_data = nullptr;
     } else {
         // FIXME: If the form data contains blobs, load them like we do other blobs.

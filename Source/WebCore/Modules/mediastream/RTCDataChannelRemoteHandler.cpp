@@ -60,7 +60,7 @@ void RTCDataChannelRemoteHandler::didReceiveStringData(String&& text)
     m_client->didReceiveStringData(text);
 }
 
-void RTCDataChannelRemoteHandler::didReceiveRawData(const char* data, size_t size)
+void RTCDataChannelRemoteHandler::didReceiveRawData(const uint8_t* data, size_t size)
 {
     m_client->didReceiveRawData(data, size);
 }
@@ -104,7 +104,7 @@ bool RTCDataChannelRemoteHandler::sendStringData(const CString& text)
     return true;
 }
 
-bool RTCDataChannelRemoteHandler::sendRawData(const char* data, size_t size)
+bool RTCDataChannelRemoteHandler::sendRawData(const uint8_t* data, size_t size)
 {
     if (!m_isReadyToSend) {
         m_pendingMessages.append(Message { true, SharedBuffer::create(data, size) });

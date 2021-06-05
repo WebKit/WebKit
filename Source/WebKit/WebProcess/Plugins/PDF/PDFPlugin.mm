@@ -1157,7 +1157,7 @@ void PDFPlugin::PDFPluginStreamLoaderClient::didReceiveResponse(NetscapePlugInSt
     }
 }
 
-void PDFPlugin::PDFPluginStreamLoaderClient::didReceiveData(NetscapePlugInStreamLoader* loader, const char* data, int count)
+void PDFPlugin::PDFPluginStreamLoaderClient::didReceiveData(NetscapePlugInStreamLoader* loader, const uint8_t* data, int count)
 {
     if (!m_pdfPlugin)
         return;
@@ -1166,7 +1166,7 @@ void PDFPlugin::PDFPluginStreamLoaderClient::didReceiveData(NetscapePlugInStream
     if (!request)
         return;
 
-    request->addData(reinterpret_cast<const uint8_t*>(data), count);
+    request->addData(data, count);
 }
 
 void PDFPlugin::PDFPluginStreamLoaderClient::didFail(NetscapePlugInStreamLoader* loader, const ResourceError&)
@@ -1684,14 +1684,14 @@ void PDFPlugin::streamDidReceiveResponse(uint64_t streamID, const URL&, uint32_t
         m_isPostScript = true;
 }
 
-void PDFPlugin::streamDidReceiveData(uint64_t streamID, const char* bytes, int length)
+void PDFPlugin::streamDidReceiveData(uint64_t streamID, const uint8_t* bytes, int length)
 {
     ASSERT_UNUSED(streamID, streamID == pdfDocumentRequestID);
 
     if (!m_data)
         m_data = adoptCF(CFDataCreateMutable(0, 0));
 
-    CFDataAppendBytes(m_data.get(), reinterpret_cast<const UInt8*>(bytes), length);
+    CFDataAppendBytes(m_data.get(), bytes, length);
     m_streamedBytes += length;
 }
 
@@ -1729,7 +1729,7 @@ void PDFPlugin::ensureDataBufferLength(uint64_t targetLength)
         CFDataIncreaseLength(m_data.get(), targetLength - currentLength);
 }
 
-void PDFPlugin::manualStreamDidReceiveData(const char* bytes, int length)
+void PDFPlugin::manualStreamDidReceiveData(const uint8_t* bytes, int length)
 {
     if (!m_data)
         m_data = adoptCF(CFDataCreateMutable(0, 0));

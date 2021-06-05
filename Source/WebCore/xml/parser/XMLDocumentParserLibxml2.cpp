@@ -359,9 +359,8 @@ static int matchFunc(const char*)
 class OffsetBuffer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    OffsetBuffer(Vector<char> buffer)
+    OffsetBuffer(Vector<uint8_t>&& buffer)
         : m_buffer(WTFMove(buffer))
-        , m_currentOffset(0)
     {
     }
 
@@ -377,8 +376,8 @@ public:
     }
 
 private:
-    Vector<char> m_buffer;
-    unsigned m_currentOffset;
+    Vector<uint8_t> m_buffer;
+    unsigned m_currentOffset { 0 };
 };
 
 static bool externalEntityMimeTypeAllowed(const ResourceResponse& response)

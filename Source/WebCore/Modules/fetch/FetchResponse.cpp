@@ -349,12 +349,12 @@ void FetchResponse::BodyLoader::didReceiveResponse(const ResourceResponse& resou
         responseCallback(m_response);
 }
 
-void FetchResponse::BodyLoader::didReceiveData(const char* data, size_t size)
+void FetchResponse::BodyLoader::didReceiveData(const uint8_t* data, size_t size)
 {
     ASSERT(m_response.m_readableStreamSource || m_consumeDataCallback);
 
     if (m_consumeDataCallback) {
-        ReadableStreamChunk chunk { reinterpret_cast<const uint8_t*>(data), size };
+        ReadableStreamChunk chunk { data, size };
         m_consumeDataCallback(&chunk);
         return;
     }
@@ -400,7 +400,7 @@ void FetchResponse::BodyLoader::consumeDataByChunk(ConsumeDataByChunkCallback&& 
     if (!data)
         return;
 
-    ReadableStreamChunk chunk { reinterpret_cast<const uint8_t*>(data->data()), data->size() };
+    ReadableStreamChunk chunk { data->data(), data->size() };
     m_consumeDataCallback(&chunk);
 }
 

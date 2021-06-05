@@ -42,7 +42,7 @@ namespace WebCore {
         virtual void didSendData(unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/) { }
 
         virtual void didReceiveResponse(unsigned long /*identifier*/, const ResourceResponse&) { }
-        virtual void didReceiveData(const char*, int /*dataLength*/) { }
+        virtual void didReceiveData(const uint8_t*, int /*dataLength*/) { }
         virtual void didFinishLoading(unsigned long /*identifier*/) { }
         virtual void didFail(const ResourceError&) { }
         virtual void didFinishTiming(const ResourceTiming&) { }

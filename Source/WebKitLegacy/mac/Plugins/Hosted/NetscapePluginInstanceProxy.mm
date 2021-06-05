@@ -725,7 +725,7 @@ void NetscapePluginInstanceProxy::evaluateJavaScript(PluginRequest* pluginReques
                                                                 expectedContentLength:[JSData length]
                                                                      textEncodingName:nil]);
         stream->startStreamWithResponse(response.get());
-        stream->didReceiveData(0, static_cast<const char*>([JSData bytes]), [JSData length]);
+        stream->didReceiveData(0, static_cast<const uint8_t*>([JSData bytes]), [JSData length]);
         stream->didFinishLoading(0);
     }
 }

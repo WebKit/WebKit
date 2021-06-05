@@ -183,7 +183,7 @@ private:
         }
 
         for (const auto& page : m_pages) {
-            int bytesWritten = FileSystem::writeToFile(m_fd, reinterpret_cast<char*>(page.buffer()), page.size());
+            int bytesWritten = FileSystem::writeToFile(m_fd, page.buffer(), page.size());
             if (bytesWritten == -1) {
                 error = BytecodeCacheError::StandardError(errno);
                 return nullptr;

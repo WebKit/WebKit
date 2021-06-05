@@ -610,7 +610,7 @@ void InspectorInstrumentation::didReceiveThreadableLoaderResponseImpl(Instrument
         networkAgent->didReceiveThreadableLoaderResponse(identifier, documentThreadableLoader);
 }
 
-void InspectorInstrumentation::didReceiveDataImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, const char* data, int dataLength, int encodedDataLength)
+void InspectorInstrumentation::didReceiveDataImpl(InstrumentingAgents& instrumentingAgents, unsigned long identifier, const uint8_t* data, int dataLength, int encodedDataLength)
 {
     if (auto* networkAgent = instrumentingAgents.enabledNetworkAgent())
         networkAgent->didReceiveData(identifier, data, dataLength, encodedDataLength);

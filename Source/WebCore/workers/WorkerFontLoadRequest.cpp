@@ -111,7 +111,7 @@ void WorkerFontLoadRequest::didReceiveResponse(unsigned long, const ResourceResp
         m_errorOccurred = true;
 }
 
-void WorkerFontLoadRequest::didReceiveData(const char* data, int dataLength)
+void WorkerFontLoadRequest::didReceiveData(const uint8_t* data, int dataLength)
 {
     if (m_errorOccurred)
         return;

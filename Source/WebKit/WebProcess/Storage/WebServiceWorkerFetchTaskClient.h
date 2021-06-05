@@ -59,7 +59,7 @@ private:
 
     void cleanup();
     
-    void didReceiveBlobChunk(const char* data, size_t size);
+    void didReceiveBlobChunk(const uint8_t* data, size_t);
     void didFinishBlobLoading();
 
     struct BlobLoader final : WebCore::FetchLoaderClient {
@@ -67,7 +67,7 @@ private:
 
         // FetchLoaderClient API
         void didReceiveResponse(const WebCore::ResourceResponse&) final { }
-        void didReceiveData(const char* data, size_t size) final { client->didReceiveBlobChunk(data, size); }
+        void didReceiveData(const uint8_t* data, size_t size) final { client->didReceiveBlobChunk(data, size); }
         void didFail(const WebCore::ResourceError& error) final { client->didFail(error); }
         void didSucceed() final { client->didFinishBlobLoading(); }
 

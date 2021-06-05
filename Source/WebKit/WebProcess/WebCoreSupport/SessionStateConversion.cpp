@@ -43,7 +43,7 @@ static HTTPBody toHTTPBody(const FormData& formData)
         HTTPBody::Element element;
 
         switchOn(formDataElement.data,
-            [&] (const Vector<char>& bytes) {
+            [&] (const Vector<uint8_t>& bytes) {
                 element.type = HTTPBody::Element::Type::Data;
                 element.data = bytes;
             }, [&] (const FormDataElement::EncodedFileData& fileData) {

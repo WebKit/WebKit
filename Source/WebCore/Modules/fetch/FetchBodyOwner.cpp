@@ -288,7 +288,7 @@ void FetchBodyOwner::blobLoadingFailed()
     finishBlobLoading();
 }
 
-void FetchBodyOwner::blobChunk(const char* data, size_t size)
+void FetchBodyOwner::blobChunk(const uint8_t* data, size_t size)
 {
     ASSERT(data);
     ASSERT(m_readableStreamSource);

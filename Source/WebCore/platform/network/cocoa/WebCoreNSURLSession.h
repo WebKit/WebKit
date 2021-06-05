@@ -155,7 +155,7 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
 - (void)resource:(nullable WebCore::PlatformMediaResource*)resource sentBytes:(unsigned long long)bytesSent totalBytesToBeSent:(unsigned long long)totalBytesToBeSent;
 - (void)resource:(nullable WebCore::PlatformMediaResource*)resource receivedResponse:(const WebCore::ResourceResponse&)response completionHandler:(CompletionHandler<void(WebCore::ShouldContinuePolicyCheck)>&&)completionHandler;
 - (BOOL)resource:(nullable WebCore::PlatformMediaResource*)resource shouldCacheResponse:(const WebCore::ResourceResponse&)response;
-- (void)resource:(nullable WebCore::PlatformMediaResource*)resource receivedData:(const char*)data length:(int)length;
+- (void)resource:(nullable WebCore::PlatformMediaResource*)resource receivedData:(const uint8_t*)data length:(int)length;
 - (void)resource:(nullable WebCore::PlatformMediaResource*)resource receivedRedirect:(const WebCore::ResourceResponse&)response request:(WebCore::ResourceRequest&&)request completionHandler:(CompletionHandler<void(WebCore::ResourceRequest&&)>&&)completionHandler;
 - (void)resource:(nullable WebCore::PlatformMediaResource*)resource accessControlCheckFailedWithError:(const WebCore::ResourceError&)error;
 - (void)resource:(nullable WebCore::PlatformMediaResource*)resource loadFailedWithError:(const WebCore::ResourceError&)error;

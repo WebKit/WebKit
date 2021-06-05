@@ -181,7 +181,7 @@ Ref<SharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
         mhtmlData->append(asciiString.data(), asciiString.length());
 
         // FIXME: ideally we would encode the content as a stream without having to fetch it all.
-        auto* data = resource.data->dataAsUInt8Ptr();
+        auto* data = resource.data->data();
         size_t dataLength = resource.data->size();
         if (!strcmp(contentEncoding, quotedPrintable)) {
             auto encodedData = quotedPrintableEncode(data, dataLength);

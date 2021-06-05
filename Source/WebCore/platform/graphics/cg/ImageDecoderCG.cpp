@@ -236,7 +236,7 @@ size_t sharedBufferGetBytesAtPosition(void* info, void* buffer, off_t position, 
     if (position >= sourceSize)
         return 0;
     
-    const char* source = sharedBuffer->data() + position;
+    auto* source = sharedBuffer->data() + position;
     size_t amount = std::min<size_t>(count, sourceSize - position);
     memcpy(buffer, source, amount);
     return amount;

@@ -438,7 +438,7 @@ static JSC::JSPromise* handleResponseOnStreamingAction(JSC::JSGlobalObject* glob
     auto body = inputResponse->consumeBody();
     WTF::switchOn(body, [&](Ref<FormData>& formData) {
         if (auto buffer = formData->asSharedBuffer()) {
-            compiler->addBytes(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
+            compiler->addBytes(buffer->data(), buffer->size());
             compiler->finalize(globalObject);
             return;
         }
@@ -446,7 +446,7 @@ static JSC::JSPromise* handleResponseOnStreamingAction(JSC::JSGlobalObject* glob
         // https://bugs.webkit.org/show_bug.cgi?id=221248
         compiler->fail(globalObject, createDOMException(*globalObject, Exception { NotSupportedError, "Not implemented"_s  }));
     }, [&](Ref<SharedBuffer>& buffer) {
-        compiler->addBytes(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
+        compiler->addBytes(buffer->data(), buffer->size());
         compiler->finalize(globalObject);
     }, [&](std::nullptr_t&) {
         compiler->finalize(globalObject);

@@ -1016,7 +1016,7 @@ Ref<TextResourceDecoder> XMLHttpRequest::createDecoder() const
     return TextResourceDecoder::create("text/plain", "UTF-8");
 }
 
-void XMLHttpRequest::didReceiveData(const char* data, int len)
+void XMLHttpRequest::didReceiveData(const uint8_t* data, int len)
 {
     if (m_error)
         return;
@@ -1038,7 +1038,7 @@ void XMLHttpRequest::didReceiveData(const char* data, int len)
         return;
 
     if (len == -1)
-        len = strlen(data);
+        len = strlen(reinterpret_cast<const char*>(data));
 
     if (useDecoder)
         m_responseBuilder.append(m_decoder->decode(data, len));

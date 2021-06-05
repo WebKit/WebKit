@@ -114,7 +114,7 @@ Blob::Blob(ScriptExecutionContext* context, const SharedBuffer& buffer, const St
     , m_size(buffer.size())
 {
     Vector<BlobPart> blobParts;
-    blobParts.append(Vector { buffer.dataAsUInt8Ptr(), buffer.size() });
+    blobParts.append(Vector { buffer.data(), buffer.size() });
     m_internalURL = BlobURL::createInternalURL();
     ThreadableBlobRegistry::registerBlobURL(m_internalURL, WTFMove(blobParts), contentType);
 }

@@ -47,7 +47,7 @@ private:
     void redirectReceived(WebCore::PlatformMediaResource&, WebCore::ResourceRequest&&, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&) final;
     bool shouldCacheResponse(WebCore::PlatformMediaResource&, const WebCore::ResourceResponse&) final;
     void dataSent(WebCore::PlatformMediaResource&, unsigned long long, unsigned long long) final;
-    void dataReceived(WebCore::PlatformMediaResource&, const char*, int) final;
+    void dataReceived(WebCore::PlatformMediaResource&, const uint8_t*, int) final;
     void accessControlCheckFailed(WebCore::PlatformMediaResource&, const WebCore::ResourceError&) final;
     void loadFailed(WebCore::PlatformMediaResource&, const WebCore::ResourceError&) final;
     void loadFinished(WebCore::PlatformMediaResource&, const WebCore::NetworkLoadMetrics&) final;

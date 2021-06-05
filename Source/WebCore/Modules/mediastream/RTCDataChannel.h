@@ -112,7 +112,7 @@ private:
     // RTCDataChannelHandlerClient API
     void didChangeReadyState(RTCDataChannelState) final;
     void didReceiveStringData(const String&) final;
-    void didReceiveRawData(const char*, size_t) final;
+    void didReceiveRawData(const uint8_t*, size_t) final;
     void didDetectError() final;
     void bufferedAmountIsDecreasing(size_t) final;
 

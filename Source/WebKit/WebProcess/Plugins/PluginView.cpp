@@ -129,7 +129,7 @@ private:
     // NetscapePluginStreamLoaderClient
     void willSendRequest(NetscapePlugInStreamLoader*, ResourceRequest&&, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&&) override;
     void didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse&) override;
-    void didReceiveData(NetscapePlugInStreamLoader*, const char*, int) override;
+    void didReceiveData(NetscapePlugInStreamLoader*, const uint8_t*, int) override;
     void didFail(NetscapePlugInStreamLoader*, const ResourceError&) override;
     void didFinishLoading(NetscapePlugInStreamLoader*) override;
 
@@ -239,7 +239,7 @@ void PluginView::Stream::didReceiveResponse(NetscapePlugInStreamLoader*, const R
     m_pluginView->m_plugin->streamDidReceiveResponse(m_streamID, responseURL, streamLength, lastModifiedDateMS(response), mimeType, headers, response.suggestedFilename());
 }
 
-void PluginView::Stream::didReceiveData(NetscapePlugInStreamLoader*, const char* bytes, int length)
+void PluginView::Stream::didReceiveData(NetscapePlugInStreamLoader*, const uint8_t* bytes, int length)
 {
     m_pluginView->m_plugin->streamDidReceiveData(m_streamID, bytes, length);
 }
@@ -407,7 +407,7 @@ void PluginView::manualLoadDidReceiveResponse(const ResourceResponse& response)
     m_plugin->manualStreamDidReceiveResponse(responseURL, streamLength, lastModifiedDateMS(response), mimeType, headers, response.suggestedFilename());
 }
 
-void PluginView::manualLoadDidReceiveData(const char* bytes, int length)
+void PluginView::manualLoadDidReceiveData(const uint8_t* bytes, int length)
 {
     // The plug-in can be null here if it failed to initialize.
     if (!m_plugin)

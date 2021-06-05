@@ -34,7 +34,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(IDBGetResult);
 
 void IDBGetResult::dataFromBuffer(SharedBuffer& buffer)
 {
-    m_value = ThreadSafeDataBuffer::create({ buffer.dataAsUInt8Ptr(), buffer.size() });
+    m_value = ThreadSafeDataBuffer::create({ buffer.data(), buffer.size() });
 }
 
 IDBGetResult::IDBGetResult(const IDBGetResult& that, IsolatedCopyTag)

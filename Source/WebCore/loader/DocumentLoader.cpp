@@ -1114,7 +1114,7 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
     }
 }
 
-void DocumentLoader::commitLoad(const char* data, int length)
+void DocumentLoader::commitLoad(const uint8_t* data, int length)
 {
     // Both unloading the old page and parsing the new page may execute JavaScript which destroys the datasource
     // by starting a new load, so retain temporarily.
@@ -1158,7 +1158,7 @@ static inline bool shouldUseActiveServiceWorkerFromParent(const Document& docume
 }
 #endif
 
-void DocumentLoader::commitData(const char* bytes, size_t length)
+void DocumentLoader::commitData(const uint8_t* bytes, size_t length)
 {
     if (!m_gotFirstByte) {
         m_gotFirstByte = true;
@@ -1253,13 +1253,13 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
     m_writer.addData(bytes, length);
 }
 
-void DocumentLoader::dataReceived(CachedResource& resource, const char* data, int length)
+void DocumentLoader::dataReceived(CachedResource& resource, const uint8_t* data, int length)
 {
     ASSERT_UNUSED(resource, &resource == m_mainResource);
     dataReceived(data, length);
 }
 
-void DocumentLoader::dataReceived(const char* data, int length)
+void DocumentLoader::dataReceived(const uint8_t* data, int length)
 {
 #if ENABLE(CONTENT_FILTERING)
     if (m_contentFilter && !m_contentFilter->continueAfterDataReceived(data, length))
@@ -2320,7 +2320,7 @@ void DocumentLoader::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolation
 }
 
 #if ENABLE(CONTENT_FILTERING)
-void DocumentLoader::dataReceivedThroughContentFilter(const char* data, int size)
+void DocumentLoader::dataReceivedThroughContentFilter(const uint8_t* data, int size)
 {
     dataReceived(data, size);
 }

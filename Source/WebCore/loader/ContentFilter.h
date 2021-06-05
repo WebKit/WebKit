@@ -60,7 +60,7 @@ public:
 
     bool continueAfterWillSendRequest(ResourceRequest&, const ResourceResponse&);
     bool continueAfterResponseReceived(const ResourceResponse&);
-    bool continueAfterDataReceived(const char* data, int length);
+    bool continueAfterDataReceived(const uint8_t* data, int length);
     bool continueAfterNotifyFinished(CachedResource&);
 
     static bool continueAfterSubstituteDataRequest(const DocumentLoader& activeLoader, const SubstituteData&);

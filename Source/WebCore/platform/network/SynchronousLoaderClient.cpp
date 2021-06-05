@@ -71,9 +71,9 @@ void SynchronousLoaderClient::didReceiveResponseAsync(ResourceHandle*, ResourceR
     completionHandler();
 }
 
-void SynchronousLoaderClient::didReceiveData(ResourceHandle*, const char* data, unsigned length, int /*encodedDataLength*/)
+void SynchronousLoaderClient::didReceiveData(ResourceHandle*, const uint8_t* data, unsigned length, int /*encodedDataLength*/)
 {
-    m_data.append(reinterpret_cast<const uint8_t*>(data), length);
+    m_data.append(data, length);
 }
 
 void SynchronousLoaderClient::didFinishLoading(ResourceHandle* handle, const NetworkLoadMetrics&)

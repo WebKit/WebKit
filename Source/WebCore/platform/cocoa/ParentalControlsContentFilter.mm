@@ -94,7 +94,7 @@ void ParentalControlsContentFilter::responseReceived(const ResourceResponse& res
     updateFilterState();
 }
 
-void ParentalControlsContentFilter::addData(const char* data, int length)
+void ParentalControlsContentFilter::addData(const uint8_t* data, int length)
 {
     ASSERT(![m_replacementData.get() length]);
     m_replacementData = [m_webFilterEvaluator addData:[NSData dataWithBytesNoCopy:(void*)data length:length freeWhenDone:NO]];

@@ -213,7 +213,7 @@ void EventSource::dispatchErrorEvent()
     dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
-void EventSource::didReceiveData(const char* data, int length)
+void EventSource::didReceiveData(const uint8_t* data, int length)
 {
     ASSERT(m_state == OPEN);
     ASSERT(m_requestInFlight);

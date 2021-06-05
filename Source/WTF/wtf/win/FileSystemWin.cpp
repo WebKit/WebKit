@@ -303,7 +303,7 @@ bool truncateFile(PlatformFileHandle handle, long long offset)
     return SetFileInformationByHandle(handle, FileEndOfFileInfo, &eofInfo, sizeof(FILE_END_OF_FILE_INFO));
 }
 
-int writeToFile(PlatformFileHandle handle, const char* data, int length)
+int writeToFile(PlatformFileHandle handle, const void* data, int length)
 {
     if (!isHandleValid(handle))
         return -1;

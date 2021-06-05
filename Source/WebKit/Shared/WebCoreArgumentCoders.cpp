@@ -144,7 +144,7 @@ static void encodeSharedBuffer(Encoder& encoder, const SharedBuffer* buffer)
     // over the IPC. ConnectionUnix.cpp already uses shared memory to send any IPC message that is
     // too large. See https://bugs.webkit.org/show_bug.cgi?id=208571.
     for (const auto& element : *buffer)
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(element.segment->data()), element.segment->size(), 1);
+        encoder.encodeFixedLengthData(element.segment->data(), element.segment->size(), 1);
 #else
     SharedMemory::Handle handle;
     auto sharedMemoryBuffer = SharedMemory::copyBuffer(*buffer);
@@ -3061,7 +3061,7 @@ static ShareableResource::Handle tryConvertToShareableResourceHandle(const Scrip
         return ShareableResource::Handle { };
 
     auto& segment = script.buffer()->begin()->segment;
-    auto sharedMemory = SharedMemory::wrapMap(const_cast<char*>(segment->data()), segment->size(), SharedMemory::Protection::ReadOnly);
+    auto sharedMemory = SharedMemory::wrapMap(const_cast<uint8_t*>(segment->data()), segment->size(), SharedMemory::Protection::ReadOnly);
     if (!sharedMemory)
         return ShareableResource::Handle { };
 

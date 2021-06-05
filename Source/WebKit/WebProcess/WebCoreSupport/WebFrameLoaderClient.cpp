@@ -1144,7 +1144,7 @@ void WebFrameLoaderClient::didReplaceMultipartContent()
     webPage->didReplaceMultipartContent(m_frame);
 }
 
-void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const char* data, int length)
+void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const uint8_t* data, int length)
 {
     if (!m_pluginView)
         loader->commitData(data, length);
@@ -1181,7 +1181,7 @@ void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
                 return;
 
             RefPtr<SharedBuffer> mainResourceData = loader->mainResourceData();
-            IPC::DataReference dataReference(reinterpret_cast<const uint8_t*>(mainResourceData ? mainResourceData->data() : 0), mainResourceData ? mainResourceData->size() : 0);
+            IPC::DataReference dataReference(mainResourceData ? mainResourceData->data() : nullptr, mainResourceData ? mainResourceData->size() : 0);
             webPage->send(Messages::WebPageProxy::DidFinishLoadingDataForCustomContentProvider(loader->response().suggestedFilename(), dataReference));
         }
 

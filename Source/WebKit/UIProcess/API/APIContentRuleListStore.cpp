@@ -142,7 +142,7 @@ template<> void getData(const WebKit::NetworkCache::Data& data, const Function<b
 }
 template<> void getData(const WebCore::SharedBuffer& data, const Function<bool(const uint8_t*, size_t)>& function)
 {
-    function(reinterpret_cast<const uint8_t*>(data.data()), data.size());
+    function(data.data(), data.size());
 }
 
 template<typename T>
@@ -574,7 +574,7 @@ void ContentRuleListStore::invalidateContentRuleListVersion(const WTF::String& i
     if (file == invalidPlatformFileHandle)
         return;
     ContentRuleListMetaData invalidHeader = {0, 0, 0, 0, 0, 0};
-    auto bytesWritten = writeToFile(file, reinterpret_cast<const char*>(&invalidHeader), sizeof(invalidHeader));
+    auto bytesWritten = writeToFile(file, &invalidHeader, sizeof(invalidHeader));
     ASSERT_UNUSED(bytesWritten, bytesWritten == sizeof(invalidHeader));
     closeFile(file);
 }

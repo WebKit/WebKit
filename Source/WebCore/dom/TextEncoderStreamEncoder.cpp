@@ -69,7 +69,7 @@ RefPtr<Uint8Array> TextEncoderStreamEncoder::encode(const String& input)
         return nullptr;
 
     bytes.shrink(bytesWritten);
-    return Uint8Array::tryCreate(reinterpret_cast<const uint8_t*>(bytes.data()), bytesWritten);
+    return Uint8Array::tryCreate(bytes.data(), bytesWritten);
 }
 
 RefPtr<Uint8Array> TextEncoderStreamEncoder::flush()

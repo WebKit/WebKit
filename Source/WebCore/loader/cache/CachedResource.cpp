@@ -341,7 +341,7 @@ void CachedResource::updateBuffer(SharedBuffer&)
     ASSERT(dataBufferingPolicy() == DataBufferingPolicy::BufferData);
 }
 
-void CachedResource::updateData(const char*, unsigned)
+void CachedResource::updateData(const uint8_t*, unsigned)
 {
     ASSERT(dataBufferingPolicy() == DataBufferingPolicy::DoNotBufferData);
 }

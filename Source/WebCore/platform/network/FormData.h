@@ -38,12 +38,12 @@ class TextEncoding;
 struct FormDataElement {
     struct EncodedFileData;
     struct EncodedBlobData;
-    using Data = Variant<Vector<char>, EncodedFileData, EncodedBlobData>;
+    using Data = Variant<Vector<uint8_t>, EncodedFileData, EncodedBlobData>;
 
     FormDataElement() = default;
     explicit FormDataElement(Data&& data)
         : data(WTFMove(data)) { }
-    explicit FormDataElement(Vector<char>&& array)
+    explicit FormDataElement(Vector<uint8_t>&& array)
         : data(WTFMove(array)) { }
     FormDataElement(const String& filename, int64_t fileStart, int64_t fileLength, std::optional<WallTime> expectedFileModificationTime)
         : data(EncodedFileData { filename, fileStart, fileLength, expectedFileModificationTime }) { }
@@ -193,7 +193,7 @@ public:
     WEBCORE_EXPORT static Ref<FormData> create();
     WEBCORE_EXPORT static Ref<FormData> create(const void*, size_t);
     WEBCORE_EXPORT static Ref<FormData> create(const CString&);
-    static Ref<FormData> create(Vector<char>&&);
+    static Ref<FormData> create(Vector<uint8_t>&&);
     static Ref<FormData> create(const Vector<char>&);
     static Ref<FormData> create(const Vector<uint8_t>&);
     static Ref<FormData> create(const DOMFormData&, EncodingType = FormURLEncoded);
@@ -215,7 +215,7 @@ public:
     WEBCORE_EXPORT void appendFileRange(const String& filename, long long start, long long length, std::optional<WallTime> expectedModificationTime);
     WEBCORE_EXPORT void appendBlob(const URL& blobURL);
 
-    WEBCORE_EXPORT Vector<char> flatten() const; // omits files
+    WEBCORE_EXPORT Vector<uint8_t> flatten() const; // omits files
     String flattenToString() const; // omits files
 
     // Resolve all blob references so we only have file and data.

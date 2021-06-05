@@ -641,7 +641,7 @@ void WebFrameLoaderClient::didChangeTitle(DocumentLoader*)
     notImplemented();
 }
 
-void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const char* data, int length)
+void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const uint8_t* data, int length)
 {
     loader->commitData(data, length);
 

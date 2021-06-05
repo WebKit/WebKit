@@ -75,7 +75,7 @@ public:
     bool isBeingDestroyed() const { return !m_plugin || m_plugin->isBeingDestroyed(); }
 
     void manualLoadDidReceiveResponse(const WebCore::ResourceResponse&);
-    void manualLoadDidReceiveData(const char* bytes, int length);
+    void manualLoadDidReceiveData(const uint8_t* bytes, int length);
     void manualLoadDidFinishLoading();
     void manualLoadDidFail(const WebCore::ResourceError&);
 

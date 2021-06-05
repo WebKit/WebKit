@@ -63,7 +63,7 @@ public:
     void startStreamWithResponse(NSURLResponse *response);
 
     // FIXME: Can these be made private?
-    void didReceiveData(WebCore::NetscapePlugInStreamLoader*, const char* bytes, int length) override;
+    void didReceiveData(WebCore::NetscapePlugInStreamLoader*, const uint8_t* bytes, int length) override;
     void didFinishLoading(WebCore::NetscapePlugInStreamLoader*) override;
     void didFail(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceError&) override;
 

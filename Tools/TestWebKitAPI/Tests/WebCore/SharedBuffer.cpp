@@ -103,9 +103,9 @@ TEST_F(SharedBufferTest, tryCreateArrayBuffer)
 
 TEST_F(SharedBufferTest, tryCreateArrayBufferLargeSegments)
 {
-    Vector<char> vector0(0x4000, 'a');
-    Vector<char> vector1(0x4000, 'b');
-    Vector<char> vector2(0x4000, 'c');
+    Vector<uint8_t> vector0(0x4000, 'a');
+    Vector<uint8_t> vector1(0x4000, 'b');
+    Vector<uint8_t> vector2(0x4000, 'c');
 
     RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(WTFMove(vector0));
     sharedBuffer->append(WTFMove(vector1));
@@ -160,7 +160,7 @@ TEST_F(SharedBufferTest, copy)
     ASSERT_EQ(length * 5, clone->size());
 }
 
-static void checkBuffer(const char* buffer, size_t bufferLength, const char* expected)
+static void checkBuffer(const uint8_t* buffer, size_t bufferLength, const char* expected)
 {
     // expected is null terminated, buffer is not.
     size_t length = strlen(expected);
@@ -171,9 +171,9 @@ static void checkBuffer(const char* buffer, size_t bufferLength, const char* exp
 
 TEST_F(SharedBufferTest, getSomeData)
 {
-    Vector<char> s1 = {'a', 'b', 'c', 'd'};
-    Vector<char> s2 = {'e', 'f', 'g', 'h'};
-    Vector<char> s3 = {'i', 'j', 'k', 'l'};
+    Vector<uint8_t> s1 = {'a', 'b', 'c', 'd'};
+    Vector<uint8_t> s2 = {'e', 'f', 'g', 'h'};
+    Vector<uint8_t> s3 = {'i', 'j', 'k', 'l'};
     
     auto buffer = SharedBuffer::create();
     buffer->append(WTFMove(s1));
@@ -200,7 +200,7 @@ TEST_F(SharedBufferTest, getSomeData)
 
 TEST_F(SharedBufferTest, isEqualTo)
 {
-    auto makeBuffer = [] (Vector<Vector<char>>&& contents) {
+    auto makeBuffer = [] (Vector<Vector<uint8_t>>&& contents) {
         auto buffer = SharedBuffer::create();
         for (auto& content : contents)
             buffer->append(WTFMove(content));
@@ -209,7 +209,7 @@ TEST_F(SharedBufferTest, isEqualTo)
     auto buffer1 = makeBuffer({{'a', 'b', 'c', 'd'}});
     EXPECT_EQ(buffer1.get(), buffer1.get());
 
-    buffer1->append(Vector<char>({'a', 'b', 'c', 'd'}));
+    buffer1->append(Vector<uint8_t>({'a', 'b', 'c', 'd'}));
     EXPECT_EQ(buffer1.get(), makeBuffer({{'a', 'b', 'c', 'd', 'a', 'b', 'c', 'd'}}).get());
     EXPECT_EQ(makeBuffer({{'a'}, {'b', 'c'}, {'d'}}).get(), makeBuffer({{'a', 'b'}, {'c', 'd'}}).get());
     EXPECT_NE(makeBuffer({{'a', 'b'}}).get(), makeBuffer({{'a', 'b', 'c'}}).get());
@@ -219,7 +219,7 @@ TEST_F(SharedBufferTest, isEqualTo)
 
 TEST_F(SharedBufferTest, toHexString)
 {
-    Vector<char> t1 = {0x11, 0x5, 0x12};
+    Vector<uint8_t> t1 = {0x11, 0x5, 0x12};
     auto buffer = SharedBuffer::create();
     buffer->append(WTFMove(t1));
     String result = buffer->toHexString();

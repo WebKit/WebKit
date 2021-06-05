@@ -1,3 +1,27 @@
+2021-06-04  Chris Dumez  <cdumez@apple.com>
+
+        Use Vector<uint8_t> instead of Vector<char> to store bytes in SharedBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=226623
+
+        Reviewed by Darin Adler.
+
+        Use Vector<uint8_t> instead of Vector<char> to store bytes in SharedBuffer. Also have SharedBuffer::data()
+        return a `const uint8_t*` instead of `const char*`. This is our preferred type to store bytes.
+
+        * Plugins/Hosted/HostedNetscapePluginStream.h:
+        * Plugins/Hosted/HostedNetscapePluginStream.mm:
+        (WebKit::HostedNetscapePluginStream::didReceiveData):
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::evaluateJavaScript):
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView pluginView:receivedData:]):
+        * Plugins/WebNetscapePluginStream.h:
+        * Plugins/WebNetscapePluginStream.mm:
+        (WebNetscapePluginStream::didReceiveData):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView pluginView:receivedData:]):
+        (-[WebNetscapePluginView evaluateJavaScriptPluginRequest:]):
+
 2021-06-01  Darin Adler  <darin@apple.com>
 
         Remove <wtf/Optional.h>

@@ -1,3 +1,64 @@
+2021-06-04  Chris Dumez  <cdumez@apple.com>
+
+        Use Vector<uint8_t> instead of Vector<char> to store bytes in SharedBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=226623
+
+        Reviewed by Darin Adler.
+
+        Use Vector<uint8_t> instead of Vector<char> to store bytes in SharedBuffer. Also have SharedBuffer::data()
+        return a `const uint8_t*` instead of `const char*`. This is our preferred type to store bytes.
+
+        * Platform/IPC/SharedBufferCopy.h:
+        (IPC::SharedBufferCopy::data const):
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::streamDidReceiveData):
+        (WebKit::PluginControllerProxy::manualStreamDidReceiveData):
+        * Shared/PersistencyUtils.cpp:
+        (WebKit::writeToDisk):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::tryConvertToShareableResourceHandle):
+        * UIProcess/WebURLSchemeTask.cpp:
+        (WebKit::WebURLSchemeTask::didComplete):
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveData):
+        * WebProcess/Network/WebSocketChannel.cpp:
+        (WebKit::WebSocketChannel::createMessageQueue):
+        * WebProcess/Network/webrtc/RTCDataChannelRemoteManager.cpp:
+        (WebKit::RTCDataChannelRemoteManager::sendData):
+        (WebKit::RTCDataChannelRemoteManager::receiveData):
+        (WebKit::RTCDataChannelRemoteManager::RemoteSourceConnection::didReceiveRawData):
+        * WebProcess/Network/webrtc/RTCDataChannelRemoteManager.h:
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::parsePostBuffer):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::streamDidReceiveData):
+        (WebKit::NetscapePlugin::manualStreamDidReceiveData):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        (WebKit::NetscapePluginStream::didReceiveData):
+        (WebKit::NetscapePluginStream::sendJavaScriptStream):
+        (WebKit::NetscapePluginStream::deliverData):
+        (WebKit::NetscapePluginStream::deliverDataToFile):
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::PDFPluginStreamLoaderClient::didReceiveData):
+        (WebKit::PDFPlugin::streamDidReceiveData):
+        (WebKit::PDFPlugin::manualStreamDidReceiveData):
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::streamDidReceiveData):
+        (WebKit::PluginProxy::manualStreamDidReceiveData):
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::Stream::didReceiveData):
+        (WebKit::PluginView::manualLoadDidReceiveData):
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::committedLoad):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::bufferForType):
+
 2021-06-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Meaningful click heuristic should account for media state changes

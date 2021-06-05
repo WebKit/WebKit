@@ -121,7 +121,7 @@ void RTCDataChannelRemoteManager::sendData(WebCore::RTCDataChannelIdentifier sou
 {
     if (auto* source = sourceFromIdentifier(sourceIdentifier)) {
         if (isRaw)
-            source->sendRawData(reinterpret_cast<const char*>(data.data()), data.size());
+            source->sendRawData(data.data(), data.size());
         else
             source->sendStringData(CString(reinterpret_cast<const char*>(data.data()), data.size()));
     }
@@ -142,7 +142,7 @@ void RTCDataChannelRemoteManager::changeReadyState(WebCore::RTCDataChannelIdenti
 
 void RTCDataChannelRemoteManager::receiveData(WebCore::RTCDataChannelIdentifier handlerIdentifier, bool isRaw, const IPC::DataReference& data)
 {
-    Vector<unsigned char> buffer;
+    Vector<uint8_t> buffer;
     String text;
     if (isRaw)
         buffer = data.vector();
@@ -151,7 +151,7 @@ void RTCDataChannelRemoteManager::receiveData(WebCore::RTCDataChannelIdentifier 
 
     postTaskToHandler(handlerIdentifier, [isRaw, text = WTFMove(text).isolatedCopy(), buffer = WTFMove(buffer)](auto& handler) mutable {
         if (isRaw)
-            handler.didReceiveRawData(reinterpret_cast<const char*>(buffer.data()), buffer.size());
+            handler.didReceiveRawData(buffer.data(), buffer.size());
         else
             handler.didReceiveStringData(WTFMove(text));
     });
@@ -230,9 +230,9 @@ void RTCDataChannelRemoteManager::RemoteSourceConnection::didReceiveStringData(W
     m_connection->send(Messages::RTCDataChannelRemoteManagerProxy::ReceiveData { identifier, false, IPC::DataReference { reinterpret_cast<const unsigned char*>(text.data()), text.length() } }, 0);
 }
 
-void RTCDataChannelRemoteManager::RemoteSourceConnection::didReceiveRawData(WebCore::RTCDataChannelIdentifier identifier, const char* data, size_t size)
+void RTCDataChannelRemoteManager::RemoteSourceConnection::didReceiveRawData(WebCore::RTCDataChannelIdentifier identifier, const uint8_t* data, size_t size)
 {
-    m_connection->send(Messages::RTCDataChannelRemoteManagerProxy::ReceiveData { identifier, true, IPC::DataReference { reinterpret_cast<const unsigned char*>(data), size  } }, 0);
+    m_connection->send(Messages::RTCDataChannelRemoteManagerProxy::ReceiveData { identifier, true, IPC::DataReference { data, size  } }, 0);
 }
 
 void RTCDataChannelRemoteManager::RemoteSourceConnection::didDetectError(WebCore::RTCDataChannelIdentifier identifier)

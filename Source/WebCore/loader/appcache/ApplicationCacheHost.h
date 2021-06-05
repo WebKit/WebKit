@@ -95,7 +95,7 @@ public:
     void maybeLoadMainResource(const ResourceRequest&, SubstituteData&);
     void maybeLoadMainResourceForRedirect(const ResourceRequest&, SubstituteData&);
     bool maybeLoadFallbackForMainResponse(const ResourceRequest&, const ResourceResponse&);
-    void mainResourceDataReceived(const char* data, int length, long long encodedDataLength, bool allAtOnce);
+    void mainResourceDataReceived(const uint8_t* data, int length, long long encodedDataLength, bool allAtOnce);
     void finishedLoadingMainResource();
     void failedLoadingMainResource();
 

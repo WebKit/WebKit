@@ -77,7 +77,7 @@ Ref<FormData> FormData::create(const Vector<char>& vector)
     return create(vector.data(), vector.size());
 }
 
-Ref<FormData> FormData::create(Vector<char>&& vector)
+Ref<FormData> FormData::create(Vector<uint8_t>&& vector)
 {
     auto data = create();
     data->m_elements.append(WTFMove(vector));
@@ -142,7 +142,7 @@ unsigned FormData::imageOrMediaFilesCount() const
 uint64_t FormDataElement::lengthInBytes(const Function<uint64_t(const URL&)>& blobSize) const
 {
     return switchOn(data,
-        [] (const Vector<char>& bytes) {
+        [] (const Vector<uint8_t>& bytes) {
             return static_cast<uint64_t>(bytes.size());
         }, [] (const FormDataElement::EncodedFileData& fileData) {
             if (fileData.fileLength != BlobDataItem::toEndOfFile)
@@ -164,7 +164,7 @@ uint64_t FormDataElement::lengthInBytes() const
 FormDataElement FormDataElement::isolatedCopy() const
 {
     return switchOn(data,
-        [] (const Vector<char>& bytes) {
+        [] (const Vector<uint8_t>& bytes) {
             return FormDataElement(Vector { bytes.data(), bytes.size() });
         }, [] (const FormDataElement::EncodedFileData& fileData) {
             return FormDataElement(fileData.isolatedCopy());
@@ -178,12 +178,12 @@ void FormData::appendData(const void* data, size_t size)
 {
     m_lengthInBytes = std::nullopt;
     if (!m_elements.isEmpty()) {
-        if (auto* vector = WTF::get_if<Vector<char>>(m_elements.last().data)) {
-            vector->append(reinterpret_cast<const char*>(data), size);
+        if (auto* vector = WTF::get_if<Vector<uint8_t>>(m_elements.last().data)) {
+            vector->append(static_cast<const uint8_t*>(data), size);
             return;
         }
     }
-    m_elements.append(Vector { reinterpret_cast<const char*>(data), size });
+    m_elements.append(Vector { static_cast<const uint8_t*>(data), size });
 }
 
 void FormData::appendFile(const String& filename)
@@ -284,12 +284,12 @@ void FormData::appendNonMultiPartKeyValuePairItems(const DOMFormData& formData, 
     appendData(encodedData.data(), encodedData.size());
 }
 
-Vector<char> FormData::flatten() const
+Vector<uint8_t> FormData::flatten() const
 {
     // Concatenate all the byte arrays, but omit any files.
-    Vector<char> data;
+    Vector<uint8_t> data;
     for (auto& element : m_elements) {
-        if (auto* vector = WTF::get_if<Vector<char>>(element.data))
+        if (auto* vector = WTF::get_if<Vector<uint8_t>>(element.data))
             data.append(vector->data(), vector->size());
     }
     return data;
@@ -298,7 +298,7 @@ Vector<char> FormData::flatten() const
 String FormData::flattenToString() const
 {
     auto bytes = flatten();
-    return Latin1Encoding().decode(reinterpret_cast<const char*>(bytes.data()), bytes.size());
+    return Latin1Encoding().decode(bytes.data(), bytes.size());
 }
 
 static void appendBlobResolved(BlobRegistryImpl* blobRegistry, FormData& formData, const URL& url)
@@ -347,7 +347,7 @@ Ref<FormData> FormData::resolveBlobReferences(BlobRegistryImpl* blobRegistryImpl
 
     for (auto& element : m_elements) {
         switchOn(element.data,
-            [&] (const Vector<char>& bytes) {
+            [&] (const Vector<uint8_t>& bytes) {
                 newFormData->appendData(bytes.data(), bytes.size());
             }, [&] (const FormDataElement::EncodedFileData& fileData) {
                 newFormData->appendFileRange(fileData.filename, fileData.fileStart, fileData.fileLength, fileData.expectedFileModificationTime);
@@ -410,7 +410,7 @@ uint64_t FormData::lengthInBytes() const
 RefPtr<SharedBuffer> FormData::asSharedBuffer() const
 {
     for (auto& element : m_elements) {
-        if (!WTF::holds_alternative<Vector<char>>(element.data))
+        if (!WTF::holds_alternative<Vector<uint8_t>>(element.data))
             return nullptr;
     }
     return SharedBuffer::create(flatten());

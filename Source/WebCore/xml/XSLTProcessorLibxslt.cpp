@@ -135,7 +135,7 @@ static xmlDocPtr docLoaderFunc(const xmlChar* uri,
 
         // We don't specify an encoding here. Neither Gecko nor WinIE respects
         // the encoding specified in the HTTP headers.
-        xmlDocPtr doc = xmlReadMemory(data ? data->data() : nullptr, data ? data->size() : 0, (const char*)uri, 0, options);
+        xmlDocPtr doc = xmlReadMemory(data ? data->dataAsCharPtr() : nullptr, data ? data->size() : 0, (const char*)uri, 0, options);
 
         xmlSetStructuredErrorFunc(0, 0);
         xmlSetGenericErrorFunc(0, 0);

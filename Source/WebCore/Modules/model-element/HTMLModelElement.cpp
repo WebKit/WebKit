@@ -164,7 +164,7 @@ RenderPtr<RenderElement> HTMLModelElement::createElementRenderer(RenderStyle&& s
 
 // MARK: - CachedRawResourceClient
 
-void HTMLModelElement::dataReceived(CachedResource& resource, const char* data, int dataLength)
+void HTMLModelElement::dataReceived(CachedResource& resource, const uint8_t* data, int dataLength)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
     ASSERT(m_data);

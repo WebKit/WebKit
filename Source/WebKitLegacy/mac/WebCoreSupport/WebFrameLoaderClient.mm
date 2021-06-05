@@ -1005,7 +1005,7 @@ void WebFrameLoaderClient::didReplaceMultipartContent()
 #endif
 }
 
-void WebFrameLoaderClient::committedLoad(WebCore::DocumentLoader* loader, const char* data, int length)
+void WebFrameLoaderClient::committedLoad(WebCore::DocumentLoader* loader, const uint8_t* data, int length)
 {
     auto nsData = adoptNS([[NSData alloc] initWithBytesNoCopy:(void*)data length:length freeWhenDone:NO]);
     [dataSource(loader) _receivedData:nsData.get()];

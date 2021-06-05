@@ -866,7 +866,7 @@ void NetscapePlugin::streamDidReceiveResponse(uint64_t streamID, const URL& resp
         pluginStream->didReceiveResponse(responseURL, streamLength, lastModifiedTime, mimeType, headers);
 }
 
-void NetscapePlugin::streamDidReceiveData(uint64_t streamID, const char* bytes, int length)
+void NetscapePlugin::streamDidReceiveData(uint64_t streamID, const uint8_t* bytes, int length)
 {
     ASSERT(m_isStarted);
     
@@ -901,7 +901,7 @@ void NetscapePlugin::manualStreamDidReceiveResponse(const URL& responseURL, uint
     m_manualStream->didReceiveResponse(responseURL, streamLength, lastModifiedTime, mimeType, headers);
 }
 
-void NetscapePlugin::manualStreamDidReceiveData(const char* bytes, int length)
+void NetscapePlugin::manualStreamDidReceiveData(const uint8_t* bytes, int length)
 {
     ASSERT(m_isStarted);
     ASSERT(m_shouldUseManualLoader);

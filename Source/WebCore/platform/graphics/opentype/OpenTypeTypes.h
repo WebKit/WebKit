@@ -86,7 +86,7 @@ protected:
     {
         if (position < buffer.data())
             return false;
-        size_t offset = reinterpret_cast<const char*>(position) - buffer.data();
+        size_t offset = static_cast<const uint8_t*>(position) - buffer.data();
         return offset <= buffer.size(); // "<=" because end is included as valid
     }
 

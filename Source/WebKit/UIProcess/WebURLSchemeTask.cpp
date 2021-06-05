@@ -221,7 +221,7 @@ auto WebURLSchemeTask::didComplete(const ResourceError& error) -> ExceptionType
     if (isSync()) {
         Vector<uint8_t> data;
         if (m_syncData)
-            data = { m_syncData->dataAsUInt8Ptr(), m_syncData->size() };
+            data = { m_syncData->data(), m_syncData->size() };
 
         m_syncCompletionHandler(m_syncResponse, error, WTFMove(data));
         m_syncData = nullptr;

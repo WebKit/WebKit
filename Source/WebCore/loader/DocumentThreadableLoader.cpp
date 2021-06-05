@@ -425,13 +425,13 @@ void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, cons
     m_client->didReceiveResponse(identifier, response);
 }
 
-void DocumentThreadableLoader::dataReceived(CachedResource& resource, const char* data, int dataLength)
+void DocumentThreadableLoader::dataReceived(CachedResource& resource, const uint8_t* data, int dataLength)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
     didReceiveData(m_resource->identifier(), data, dataLength);
 }
 
-void DocumentThreadableLoader::didReceiveData(unsigned long, const char* data, int dataLength)
+void DocumentThreadableLoader::didReceiveData(unsigned long, const uint8_t* data, int dataLength)
 {
     ASSERT(m_client);
 

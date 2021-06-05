@@ -69,7 +69,7 @@ private:
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
     // CachedRawResourceClient overrides.
-    void dataReceived(CachedResource&, const char* data, int dataLength) final;
+    void dataReceived(CachedResource&, const uint8_t* data, int dataLength) final;
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
 
     URL m_sourceURL;

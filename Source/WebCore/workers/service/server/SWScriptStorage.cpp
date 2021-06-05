@@ -88,7 +88,7 @@ ScriptBuffer SWScriptStorage::store(const ServiceWorkerRegistrationKey& registra
 
     auto iterateOverBufferAndWriteData = [&](const Function<bool(const uint8_t*, size_t)>& writeData) {
         for (auto it = script.buffer()->begin(); it != script.buffer()->end(); ++it)
-            writeData(reinterpret_cast<const uint8_t*>(it->segment->data()), it->segment->size());
+            writeData(it->segment->data(), it->segment->size());
     };
 
     if (!shouldUseFileMapping(script.buffer()->size())) {
@@ -98,7 +98,7 @@ ScriptBuffer SWScriptStorage::store(const ServiceWorkerRegistrationKey& registra
             return { };
         }
         iterateOverBufferAndWriteData([&](const uint8_t* data, size_t size) {
-            FileSystem::writeToFile(handle, reinterpret_cast<const char*>(data), size);
+            FileSystem::writeToFile(handle, data, size);
             return true;
         });
         FileSystem::closeFile(handle);

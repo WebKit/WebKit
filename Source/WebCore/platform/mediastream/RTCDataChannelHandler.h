@@ -108,7 +108,7 @@ public:
     virtual void setClient(RTCDataChannelHandlerClient&, ScriptExecutionContextIdentifier) = 0;
 
     virtual bool sendStringData(const CString&) = 0;
-    virtual bool sendRawData(const char*, size_t) = 0;
+    virtual bool sendRawData(const uint8_t*, size_t) = 0;
     virtual void close() = 0;
 };
 

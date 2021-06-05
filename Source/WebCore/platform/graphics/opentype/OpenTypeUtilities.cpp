@@ -204,7 +204,7 @@ bool getEOTHeader(SharedBuffer* fontData, EOTHeader& eotHeader, size_t& overlayD
     overlayLength = 0;
 
     size_t dataLength = fontData->size();
-    const char* data = fontData->data();
+    auto* data = fontData->data();
 
     EOTPrefix* prefix = eotHeader.prefix();
 
@@ -334,8 +334,8 @@ bool getEOTHeader(SharedBuffer* fontData, EOTHeader& eotHeader, size_t& overlayD
 
     // If possible, ensure that the family name is a prefix of the full name.
     if (fullNameLength >= familyNameLength && memcmp(familyName, fullName, familyNameLength)) {
-        overlaySrc = reinterpret_cast<const char*>(fullName) - data;
-        overlayDst = reinterpret_cast<const char*>(familyName) - data;
+        overlaySrc = reinterpret_cast<const uint8_t*>(fullName) - data;
+        overlayDst = reinterpret_cast<const uint8_t*>(familyName) - data;
         overlayLength = familyNameLength;
     }
     eotHeader.appendBigEndianString(fullName, fullNameLength);

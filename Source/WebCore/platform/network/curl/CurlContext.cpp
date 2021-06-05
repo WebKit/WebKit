@@ -487,7 +487,7 @@ void CurlHandle::enableHttpPostRequest()
     curl_easy_setopt(m_handle, CURLOPT_POSTFIELDSIZE, 0L);
 }
 
-void CurlHandle::setPostFields(const char* data, long size)
+void CurlHandle::setPostFields(const uint8_t* data, long size)
 {
     curl_easy_setopt(m_handle, CURLOPT_POSTFIELDS, data);
     curl_easy_setopt(m_handle, CURLOPT_POSTFIELDSIZE, size);

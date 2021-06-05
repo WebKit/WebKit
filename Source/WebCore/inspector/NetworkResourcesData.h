@@ -108,7 +108,7 @@ public:
     private:
         bool hasData() const { return m_dataBuffer; }
         size_t dataLength() const;
-        void appendData(const char* data, size_t dataLength);
+        void appendData(const uint8_t* data, size_t dataLength);
         unsigned decodeDataToContent();
 
         String m_requestId;
@@ -141,7 +141,7 @@ public:
     void setResourceType(const String& requestId, InspectorPageAgent::ResourceType);
     InspectorPageAgent::ResourceType resourceType(const String& requestId);
     void setResourceContent(const String& requestId, const String& content, bool base64Encoded = false);
-    ResourceData const* maybeAddResourceData(const String& requestId, const char* data, size_t dataLength);
+    ResourceData const* maybeAddResourceData(const String& requestId, const uint8_t* data, size_t dataLength);
     void maybeDecodeDataToContent(const String& requestId);
     void addCachedResource(const String& requestId, CachedResource*);
     void addResourceSharedBuffer(const String& requestId, RefPtr<SharedBuffer>&&, const String& textEncodingName);

@@ -54,7 +54,7 @@ public:
     void willSendRequest(const URL& requestURL, const URL& redirectResponseURL, int redirectResponseStatus);
     void didReceiveResponse(const URL& responseURL, uint32_t streamLength,
                             uint32_t lastModifiedTime, const String& mimeType, const String& headers);
-    void didReceiveData(const char* bytes, int length);
+    void didReceiveData(const uint8_t* bytes, int length);
     void didFinishLoading();
     void didFail(bool wasCancelled);
 
@@ -73,9 +73,9 @@ private:
     void cancel();
     void notifyAndDestroyStream(NPReason);
 
-    void deliverData(const char* bytes, int length);
+    void deliverData(const uint8_t* bytes, int length);
     void deliverDataToPlugin();
-    void deliverDataToFile(const char* bytes, int length);
+    void deliverDataToFile(const uint8_t* bytes, int length);
 
     Ref<NetscapePlugin> m_plugin;
     uint64_t m_streamID;

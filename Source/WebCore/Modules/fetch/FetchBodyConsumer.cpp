@@ -127,16 +127,16 @@ static std::optional<MimeType> parseMIMEType(const String& contentType)
 }
 
 // https://fetch.spec.whatwg.org/#concept-body-package-data
-static RefPtr<DOMFormData> packageFormData(ScriptExecutionContext* context, const String& contentType, const char* data, size_t length)
+static RefPtr<DOMFormData> packageFormData(ScriptExecutionContext* context, const String& contentType, const uint8_t* data, size_t length)
 {
-    auto parseMultipartPart = [context] (const char* part, size_t partLength, DOMFormData& form) -> bool {
-        const char* headerEnd = static_cast<const char*>(memmem(part, partLength, "\r\n\r\n", 4));
+    auto parseMultipartPart = [context] (const uint8_t* part, size_t partLength, DOMFormData& form) -> bool {
+        const uint8_t* headerEnd = static_cast<const uint8_t*>(memmem(part, partLength, "\r\n\r\n", 4));
         if (!headerEnd)
             return false;
-        const char* headerBegin = part;
+        const uint8_t* headerBegin = part;
         size_t headerLength = headerEnd - headerBegin;
 
-        const char* bodyBegin = headerEnd + strlen("\r\n\r\n");
+        const uint8_t* bodyBegin = headerEnd + strlen("\r\n\r\n");
         size_t bodyLength = partLength - (bodyBegin - headerBegin);
 
         String header = String::fromUTF8(headerBegin, headerLength);
@@ -191,16 +191,16 @@ static RefPtr<DOMFormData> packageFormData(ScriptExecutionContext* context, cons
         CString boundary = boundaryWithDashes.utf8();
         size_t boundaryLength = boundary.length();
 
-        const char* currentBoundary = static_cast<const char*>(memmem(data, length, boundary.data(), boundaryLength));
+        const uint8_t* currentBoundary = static_cast<const uint8_t*>(memmem(data, length, boundary.data(), boundaryLength));
         if (!currentBoundary)
             return nullptr;
-        const char* nextBoundary = static_cast<const char*>(memmem(currentBoundary + boundaryLength, length - (currentBoundary + boundaryLength - data), boundary.data(), boundaryLength));
+        const uint8_t* nextBoundary = static_cast<const uint8_t*>(memmem(currentBoundary + boundaryLength, length - (currentBoundary + boundaryLength - data), boundary.data(), boundaryLength));
         if (!nextBoundary)
             return nullptr;
         while (nextBoundary) {
             parseMultipartPart(currentBoundary + boundaryLength, nextBoundary - currentBoundary - boundaryLength - strlen("\r\n"), form.get());
             currentBoundary = nextBoundary;
-            nextBoundary = static_cast<const char*>(memmem(nextBoundary + boundaryLength, length - (nextBoundary + boundaryLength - data), boundary.data(), boundaryLength));
+            nextBoundary = static_cast<const uint8_t*>(memmem(nextBoundary + boundaryLength, length - (nextBoundary + boundaryLength - data), boundary.data(), boundaryLength));
         }
     } else if (mimeType && equalIgnoringASCIICase(mimeType->type, "application") && equalIgnoringASCIICase(mimeType->subtype, "x-www-form-urlencoded")) {
         auto dataString = String::fromUTF8(data, length);
@@ -232,7 +232,7 @@ static void resolveWithTypeAndData(Ref<DeferredPromise>&& promise, FetchBodyCons
         promise->resolve<IDLDOMString>(TextResourceDecoder::textFromUTF8(data, length));
         return;
     case FetchBodyConsumer::Type::FormData:
-        if (auto formData = packageFormData(context, contentType, reinterpret_cast<const char*>(data), length))
+        if (auto formData = packageFormData(context, contentType, data, length))
             promise->resolve<IDLInterface<DOMFormData>>(*formData);
         else
             promise->reject(TypeError);

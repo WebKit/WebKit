@@ -147,7 +147,7 @@ void FetchLoader::didReceiveResponse(unsigned long, const ResourceResponse& resp
     m_client.didReceiveResponse(response);
 }
 
-void FetchLoader::didReceiveData(const char* value, int size)
+void FetchLoader::didReceiveData(const uint8_t* value, int size)
 {
     if (!m_consumer) {
         m_client.didReceiveData(value, size);

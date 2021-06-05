@@ -236,7 +236,7 @@ private:
         return false;
     }
 
-    void dataReceived(PlatformMediaResource&, const char* bytes, int length) final
+    void dataReceived(PlatformMediaResource&, const uint8_t* bytes, int length) final
     {
         ASSERT(isMainThread());
         if (!m_generator)

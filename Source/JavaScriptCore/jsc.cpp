@@ -1067,7 +1067,7 @@ public:
         m_cachedBytecode->commitUpdates([&] (off_t offset, const void* data, size_t size) {
             long long result = FileSystem::seekFile(fd, offset, FileSystem::FileSeekOrigin::Beginning);
             ASSERT_UNUSED(result, result != -1);
-            size_t bytesWritten = static_cast<size_t>(FileSystem::writeToFile(fd, static_cast<const char*>(data), size));
+            size_t bytesWritten = static_cast<size_t>(FileSystem::writeToFile(fd, data, size));
             ASSERT_UNUSED(bytesWritten, bytesWritten == size);
         });
     }

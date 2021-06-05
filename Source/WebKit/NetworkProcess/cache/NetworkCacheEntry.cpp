@@ -102,7 +102,7 @@ Storage::Record Entry::encodeAsStorageRecord() const
     Data header(encoder.buffer(), encoder.bufferSize());
     Data body;
     if (m_buffer)
-        body = { reinterpret_cast<const uint8_t*>(m_buffer->data()), m_buffer->size() };
+        body = { m_buffer->data(), m_buffer->size() };
 
     return { m_key, m_timeStamp, header, body, { } };
 }

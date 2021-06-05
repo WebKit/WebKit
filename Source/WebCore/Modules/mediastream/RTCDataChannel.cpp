@@ -214,7 +214,7 @@ void RTCDataChannel::didReceiveStringData(const String& text)
     scheduleDispatchEvent(MessageEvent::create(text));
 }
 
-void RTCDataChannel::didReceiveRawData(const char* data, size_t dataLength)
+void RTCDataChannel::didReceiveRawData(const uint8_t* data, size_t dataLength)
 {
     switch (m_binaryType) {
     case BinaryType::Blob:

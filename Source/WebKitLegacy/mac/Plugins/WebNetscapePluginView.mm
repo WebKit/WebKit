@@ -1051,7 +1051,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     }
 
     if (_manualStream->plugin())
-        _manualStream->didReceiveData(0, static_cast<const char *>([data bytes]), [data length]);
+        _manualStream->didReceiveData(0, static_cast<const uint8_t*>([data bytes]), [data length]);
 }
 
 - (void)pluginView:(NSView *)pluginView receivedError:(NSError *)error
@@ -1127,7 +1127,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                                                                      textEncodingName:nil]);
         
         stream->startStreamWithResponse(response.get());
-        stream->didReceiveData(0, static_cast<const char*>([JSData bytes]), [JSData length]);
+        stream->didReceiveData(0, static_cast<const uint8_t*>([JSData bytes]), [JSData length]);
         stream->didFinishLoading(0);
     }
 }

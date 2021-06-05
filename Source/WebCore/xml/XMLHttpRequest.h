@@ -160,7 +160,7 @@ private:
     // ThreadableLoaderClient
     void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) override;
     void didReceiveResponse(unsigned long identifier, const ResourceResponse&) override;
-    void didReceiveData(const char* data, int dataLength) override;
+    void didReceiveData(const uint8_t* data, int dataLength) override;
     void didFinishLoading(unsigned long identifier) override;
     void didFail(const ResourceError&) override;
     void notifyIsDone(bool) final;

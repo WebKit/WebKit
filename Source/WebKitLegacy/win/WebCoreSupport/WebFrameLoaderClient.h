@@ -112,7 +112,7 @@ public:
 
     void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = String()) override;
 
-    void committedLoad(WebCore::DocumentLoader*, const char*, int) override;
+    void committedLoad(WebCore::DocumentLoader*, const uint8_t*, int) override;
     void finishedLoading(WebCore::DocumentLoader*) override;
 
     void willChangeTitle(WebCore::DocumentLoader*) override;

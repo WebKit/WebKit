@@ -512,7 +512,7 @@ std::optional<Salt> readOrMakeSalt(const String& path)
     if (!FileSystem::isHandleValid(file))
         return { };
 
-    bool success = static_cast<std::size_t>(FileSystem::writeToFile(file, reinterpret_cast<char*>(salt.data()), salt.size())) == salt.size();
+    bool success = static_cast<std::size_t>(FileSystem::writeToFile(file, salt.data(), salt.size())) == salt.size();
     FileSystem::closeFile(file);
     if (!success)
         return { };
