@@ -32,8 +32,8 @@
 #include "HTMLParserIdioms.h"
 #include "InlineElementBox.h"
 #include "InlineIterator.h"
-#include "InlineTextBox.h"
 #include "InlineTextBoxStyle.h"
+#include "LegacyInlineTextBox.h"
 #include "LineLayoutState.h"
 #include "Logging.h"
 #include "RenderBlockFlow.h"
@@ -324,8 +324,8 @@ LegacyRootInlineBox* LegacyLineLayout::constructLine(BidiRunList<BidiRun>& bidiR
         bool visuallyOrdered = r->renderer().style().rtlOrdering() == Order::Visual;
         box->setBidiLevel(r->level());
 
-        if (is<InlineTextBox>(*box)) {
-            auto& textBox = downcast<InlineTextBox>(*box);
+        if (is<LegacyInlineTextBox>(*box)) {
+            auto& textBox = downcast<LegacyInlineTextBox>(*box);
             textBox.setStart(r->m_start);
             textBox.setLen(r->m_stop - r->m_start);
             textBox.setDirOverride(r->dirOverride(visuallyOrdered));
@@ -485,7 +485,7 @@ static inline void setLogicalWidthForTextRun(LegacyRootInlineBox* lineBox, BidiR
     }
     
     LayoutUnit hyphenWidth;
-    if (downcast<InlineTextBox>(*run->box()).hasHyphen())
+    if (downcast<LegacyInlineTextBox>(*run->box()).hasHyphen())
         hyphenWidth = measureHyphenWidth(renderer, font, &fallbackFonts);
 
     float measuredWidth = 0;
@@ -538,7 +538,7 @@ static inline void setLogicalWidthForTextRun(LegacyRootInlineBox* lineBox, BidiR
     run->box()->setLogicalWidth(measuredWidth + hyphenWidth);
     if (!fallbackFonts.isEmpty()) {
         ASSERT(run->box()->behavesLikeText());
-        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(downcast<InlineTextBox>(run->box()), std::make_pair(Vector<const Font*>(), GlyphOverflow())).iterator;
+        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(downcast<LegacyInlineTextBox>(run->box()), std::make_pair(Vector<const Font*>(), GlyphOverflow())).iterator;
         ASSERT(it->value.first.isEmpty());
         it->value.first = copyToVector(fallbackFonts);
         run->box()->parent()->clearDescendantsHaveSameLineHeightAndBaseline();
@@ -546,11 +546,11 @@ static inline void setLogicalWidthForTextRun(LegacyRootInlineBox* lineBox, BidiR
 
     // Include text decoration visual overflow as part of the glyph overflow.
     if (!renderer.style().textDecorationsInEffect().isEmpty())
-        glyphOverflow.extendTo(visualOverflowForDecorations(run->box()->lineStyle(), downcast<InlineTextBox>(run->box())));
+        glyphOverflow.extendTo(visualOverflowForDecorations(run->box()->lineStyle(), downcast<LegacyInlineTextBox>(run->box())));
 
     if (!glyphOverflow.isEmpty()) {
         ASSERT(run->box()->behavesLikeText());
-        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(downcast<InlineTextBox>(run->box()), std::make_pair(Vector<const Font*>(), GlyphOverflow())).iterator;
+        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(downcast<LegacyInlineTextBox>(run->box()), std::make_pair(Vector<const Font*>(), GlyphOverflow())).iterator;
         it->value.second = glyphOverflow;
         run->box()->clearKnownToHaveNoOverflow();
     }
@@ -613,7 +613,7 @@ void LegacyLineLayout::computeExpansionForJustifiedText(BidiRun* firstRun, BidiR
             
             // Only justify text if whitespace is collapsed.
             if (run->renderer().style().collapseWhiteSpace()) {
-                InlineTextBox& textBox = downcast<InlineTextBox>(*run->box());
+                LegacyInlineTextBox& textBox = downcast<LegacyInlineTextBox>(*run->box());
                 float expansion = (availableLogicalWidth - totalLogicalWidth) * opportunitiesInRun / expansionOpportunityCount;
                 textBox.setExpansion(expansion);
                 totalLogicalWidth += expansion;
@@ -717,7 +717,7 @@ void LegacyLineLayout::computeInlineDirectionPositionsForLine(LegacyRootInlineBo
     lineBox->placeBoxesInInlineDirection(lineLogicalLeft, needsWordSpacing);
 }
 
-static inline ExpansionBehavior expansionBehaviorForInlineTextBox(RenderBlockFlow& block, InlineTextBox& textBox, BidiRun* previousRun, BidiRun* nextRun, TextAlignMode textAlign, bool isAfterExpansion)
+static inline ExpansionBehavior expansionBehaviorForInlineTextBox(RenderBlockFlow& block, LegacyInlineTextBox& textBox, BidiRun* previousRun, BidiRun* nextRun, TextAlignMode textAlign, bool isAfterExpansion)
 {
     // Tatechuyoko is modeled as the Object Replacement Character (U+FFFC), which can never have expansion opportunities inside nor intrinsically adjacent to it.
     if (textBox.renderer().style().textCombine() == TextCombine::Horizontal)
@@ -732,7 +732,7 @@ static inline ExpansionBehavior expansionBehaviorForInlineTextBox(RenderBlockFlo
             auto& rubyBase = *downcast<RenderRubyRun>(nextRun->renderer()).rubyBase();
             if (rubyBase.firstRootBox() && !rubyBase.firstRootBox()->nextRootBox()) {
                 if (auto* leafChild = rubyBase.firstRootBox()->firstLeafDescendant()) {
-                    if (is<InlineTextBox>(*leafChild)) {
+                    if (is<LegacyInlineTextBox>(*leafChild)) {
                         // FIXME: This leftExpansionOpportunity doesn't actually work because it doesn't perform the UBA
                         if (FontCascade::leftExpansionOpportunity(downcast<RenderText>(leafChild->renderer()).stringView(), leafChild->direction())) {
                             setRightExpansion = true;
@@ -747,7 +747,7 @@ static inline ExpansionBehavior expansionBehaviorForInlineTextBox(RenderBlockFlo
             auto& rubyBase = *downcast<RenderRubyRun>(previousRun->renderer()).rubyBase();
             if (rubyBase.firstRootBox() && !rubyBase.firstRootBox()->nextRootBox()) {
                 if (auto* leafChild = rubyBase.firstRootBox()->lastLeafDescendant()) {
-                    if (is<InlineTextBox>(*leafChild)) {
+                    if (is<LegacyInlineTextBox>(*leafChild)) {
                         // FIXME: This leftExpansionOpportunity doesn't actually work because it doesn't perform the UBA
                         if (FontCascade::rightExpansionOpportunity(downcast<RenderText>(leafChild->renderer()).stringView(), leafChild->direction())) {
                             setLeftExpansion = true;
@@ -776,7 +776,7 @@ static inline ExpansionBehavior expansionBehaviorForInlineTextBox(RenderBlockFlo
     return result;
 }
 
-static inline void applyExpansionBehavior(InlineTextBox& textBox, ExpansionBehavior expansionBehavior)
+static inline void applyExpansionBehavior(LegacyInlineTextBox& textBox, ExpansionBehavior expansionBehavior)
 {
     switch (expansionBehavior & LeftExpansionMask) {
     case ForceLeftExpansion:
@@ -853,7 +853,7 @@ BidiRun* LegacyLineLayout::computeInlineDirectionPositionsForSegment(LegacyRootI
     bool isAfterExpansion = is<RenderRubyBase>(m_flow) ? downcast<RenderRubyBase>(m_flow).isAfterExpansion() : true;
     Vector<unsigned, 16> expansionOpportunities;
 
-    HashMap<InlineTextBox*, LayoutUnit> logicalSpacingForInlineTextBoxes;
+    HashMap<LegacyInlineTextBox*, LayoutUnit> logicalSpacingForInlineTextBoxes;
     auto collectSpacingLogicalWidths = [&] () {
         auto totalSpacingWidth = LayoutUnit { };
         // Collect the spacing positions (margin, border padding) for the textboxes by traversing the inline tree of the current line.
@@ -861,7 +861,7 @@ BidiRun* LegacyLineLayout::computeInlineDirectionPositionsForSegment(LegacyRootI
         queue.append(lineBox);
         // 1. Visit each inline box in a preorder fashion
         // 2. Accumulate the spacing when we find an LegacyInlineFlowBox (inline container e.g. span)
-        // 3. Add the InlineTextBoxes to the hashmap
+        // 3. Add the LegacyInlineTextBoxes to the hashmap
         while (!queue.isEmpty()) {
             while (true) {
                 auto* inlineBox = queue.last();
@@ -874,8 +874,8 @@ BidiRun* LegacyLineLayout::computeInlineDirectionPositionsForSegment(LegacyRootI
                     }
                     break;
                 }
-                if (is<InlineTextBox>(inlineBox))
-                    logicalSpacingForInlineTextBoxes.add(downcast<InlineTextBox>(inlineBox), totalSpacingWidth);
+                if (is<LegacyInlineTextBox>(inlineBox))
+                    logicalSpacingForInlineTextBoxes.add(downcast<LegacyInlineTextBox>(inlineBox), totalSpacingWidth);
                 break;
             }
             while (!queue.isEmpty()) {
@@ -895,7 +895,7 @@ BidiRun* LegacyLineLayout::computeInlineDirectionPositionsForSegment(LegacyRootI
     BidiRun* previousRun = nullptr;
     for (; run; run = run->next()) {
         auto computeExpansionOpportunities = [&expansionOpportunities, &expansionOpportunityCount, textAlign, &isAfterExpansion] (RenderBlockFlow& block,
-            InlineTextBox& textBox, BidiRun* previousRun, BidiRun* nextRun, const StringView& stringView, TextDirection direction)
+            LegacyInlineTextBox& textBox, BidiRun* previousRun, BidiRun* nextRun, const StringView& stringView, TextDirection direction)
         {
             if (stringView.isEmpty()) {
                 // Empty runs should still produce an entry in expansionOpportunities list so that the number of items matches the number of runs.
@@ -916,7 +916,7 @@ BidiRun* LegacyLineLayout::computeInlineDirectionPositionsForSegment(LegacyRootI
         }
         if (is<RenderText>(run->renderer())) {
             auto& renderText = downcast<RenderText>(run->renderer());
-            auto& textBox = downcast<InlineTextBox>(*run->box());
+            auto& textBox = downcast<LegacyInlineTextBox>(*run->box());
             if (canHangPunctuationAtStart && lineInfo.isFirstLine() && (isLTR || isLastInFlowRun(*run))
                 && !inlineAncestorHasStartBorderPaddingOrMargin(m_flow, *run->box())) {
                 float hangStartWidth = renderText.hangablePunctuationStartWidth(run->m_start);
@@ -955,10 +955,10 @@ BidiRun* LegacyLineLayout::computeInlineDirectionPositionsForSegment(LegacyRootI
                 if (rubyBase->firstRootBox() && !rubyBase->firstRootBox()->nextRootBox() && run->renderer().style().collapseWhiteSpace()) {
                     rubyBase->setIsAfterExpansion(isAfterExpansion);
                     for (auto* leafChild = rubyBase->firstRootBox()->firstLeafDescendant(); leafChild; leafChild = leafChild->nextLeafOnLine()) {
-                        if (!is<InlineTextBox>(*leafChild))
+                        if (!is<LegacyInlineTextBox>(*leafChild))
                             continue;
                         encounteredJustifiedRuby = true;
-                        computeExpansionOpportunities(*rubyBase, downcast<InlineTextBox>(*leafChild), nullptr, nullptr,
+                        computeExpansionOpportunities(*rubyBase, downcast<LegacyInlineTextBox>(*leafChild), nullptr, nullptr,
                             downcast<RenderText>(leafChild->renderer()).stringView(), leafChild->direction());
                     }
                 }
@@ -1017,7 +1017,7 @@ void LegacyLineLayout::removeInlineBox(BidiRun& run, const LegacyRootInlineBox& 
 
     auto& renderer = run.renderer();
     if (is<RenderText>(renderer))
-        downcast<RenderText>(renderer).removeTextBox(downcast<InlineTextBox>(*inlineBox));
+        downcast<RenderText>(renderer).removeTextBox(downcast<LegacyInlineTextBox>(*inlineBox));
     delete inlineBox;
     run.setBox(nullptr);
     // removeFromParent() unnecessarily dirties the ancestor subtree.
@@ -1050,7 +1050,7 @@ void LegacyLineLayout::computeBlockDirectionPositionsForLine(LegacyRootInlineBox
         // to update the static normal flow x/y of positioned elements.
         bool inlineBoxIsRedundant = false;
         if (is<RenderText>(renderer)) {
-            auto& inlineTextBox = downcast<InlineTextBox>(*run->box());
+            auto& inlineTextBox = downcast<LegacyInlineTextBox>(*run->box());
             downcast<RenderText>(renderer).positionLineBox(inlineTextBox);
             inlineBoxIsRedundant = !inlineTextBox.hasTextContent();
         } else if (is<RenderBox>(renderer)) {
@@ -1263,7 +1263,7 @@ LegacyRootInlineBox* LegacyLineLayout::createLineBoxesFromBidiRuns(unsigned bidi
     
     // SVG text layout code computes vertical & horizontal positions on its own.
     // Note that we still need to execute computeVerticalPositionsForLine() as
-    // it calls InlineTextBox::positionLineBox(), which tracks whether the box
+    // it calls LegacyInlineTextBox::positionLineBox(), which tracks whether the box
     // contains reversed text or not. If we wouldn't do that editing and thus
     // text selection in RTL boxes would not work as expected.
     if (isSVGRootInlineBox) {

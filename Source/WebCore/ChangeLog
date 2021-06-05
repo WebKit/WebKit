@@ -1,3 +1,206 @@
+2021-06-05  Antti Koivisto  <antti@apple.com>
+
+        Rename InlineTextBox to LegacyInlineTextBox
+        https://bugs.webkit.org/show_bug.cgi?id=226633
+
+        Rubber-stamped by Sam Weinig.
+
+        More legacy line layout naming.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ContainerNode.cpp:
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::addMarker):
+        * dom/Position.cpp:
+        * editing/CompositeEditCommand.cpp:
+        * editing/Editor.h:
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::debugRenderer const):
+        * editing/RenderedPosition.cpp:
+        * editing/TextIterator.cpp:
+        * editing/VisiblePosition.cpp:
+        * layout/Verification.cpp:
+        (WebCore::Layout::checkForMatchingTextRuns):
+        (WebCore::Layout::outputMismatchingComplexLineInformationIfNeeded):
+        * layout/formattingContexts/inline/text/TextUtil.h:
+        * layout/integration/LayoutIntegrationRunIterator.cpp:
+        (WebCore::LayoutIntegration::firstTextRunInTextOrderFor):
+        * layout/integration/LayoutIntegrationRunIterator.h:
+        (WebCore::LayoutIntegration::PathTextRun::legacyInlineBox const):
+        * layout/integration/LayoutIntegrationRunIteratorLegacyPath.h:
+        (WebCore::LayoutIntegration::RunIteratorLegacyPath::traverseNextTextRunInTextOrder):
+        (WebCore::LayoutIntegration::RunIteratorLegacyPath::inlineTextBox const):
+        * layout/layouttree/LayoutBox.h:
+        (WebCore::Layout::Box::isInlineTextBox const):
+        * layout/layouttree/LayoutInlineTextBox.cpp:
+        (WebCore::Layout::InlineTextBox::InlineTextBox):
+        * rendering/CaretRectComputation.cpp:
+        (WebCore::computeCaretRectForSVGInlineText):
+        * rendering/EllipsisBox.cpp:
+        * rendering/LegacyInlineBox.h:
+        * rendering/LegacyInlineFlowBox.cpp:
+        (WebCore::LegacyInlineFlowBox::addToLine):
+        (WebCore::LegacyInlineFlowBox::placeBoxRangeInInlineDirection):
+        (WebCore::LegacyInlineFlowBox::requiresIdeographicBaseline const):
+        (WebCore::LegacyInlineFlowBox::placeBoxesInBlockDirection):
+        (WebCore::LegacyInlineFlowBox::addTextBoxVisualOverflow):
+        (WebCore::LegacyInlineFlowBox::computeOverflow):
+        (WebCore::LegacyInlineFlowBox::computeOverAnnotationAdjustment const):
+        (WebCore::LegacyInlineFlowBox::computeUnderAnnotationAdjustment const):
+        * rendering/LegacyInlineFlowBox.h:
+        * rendering/LegacyInlineTextBox.cpp: Renamed from Source/WebCore/rendering/InlineTextBox.cpp.
+        (WebCore::LegacyInlineTextBox::~LegacyInlineTextBox):
+        (WebCore::LegacyInlineTextBox::hasTextContent const):
+        (WebCore::LegacyInlineTextBox::markDirty):
+        (WebCore::LegacyInlineTextBox::logicalOverflowRect const):
+        (WebCore::LegacyInlineTextBox::setLogicalOverflowRect):
+        (WebCore::LegacyInlineTextBox::baselinePosition const):
+        (WebCore::LegacyInlineTextBox::lineHeight const):
+        (WebCore::LegacyInlineTextBox::selectionTop const):
+        (WebCore::LegacyInlineTextBox::selectionBottom const):
+        (WebCore::LegacyInlineTextBox::selectionHeight const):
+        (WebCore::LegacyInlineTextBox::isSelected const):
+        (WebCore::LegacyInlineTextBox::selectionState):
+        (WebCore::LegacyInlineTextBox::verifySelectionState const):
+        (WebCore::LegacyInlineTextBox::lineFont const):
+        (WebCore::snappedSelectionRect):
+        (WebCore::LegacyInlineTextBox::localSelectionRect const):
+        (WebCore::LegacyInlineTextBox::deleteLine):
+        (WebCore::LegacyInlineTextBox::extractLine):
+        (WebCore::LegacyInlineTextBox::attachLine):
+        (WebCore::LegacyInlineTextBox::placeEllipsisBox):
+        (WebCore::LegacyInlineTextBox::isLineBreak const):
+        (WebCore::LegacyInlineTextBox::nodeAtPoint):
+        (WebCore::LegacyInlineTextBox::emphasisMarkExistsAndIsAbove const):
+        (WebCore::createMarkedTextFromSelectionInBox):
+        (WebCore::LegacyInlineTextBox::paint):
+        (WebCore::LegacyInlineTextBox::clampedOffset const):
+        (WebCore::LegacyInlineTextBox::clampedStartEndForState const):
+        (WebCore::LegacyInlineTextBox::selectionStartEnd const):
+        (WebCore::LegacyInlineTextBox::highlightStartEnd const):
+        (WebCore::LegacyInlineTextBox::hasMarkers const):
+        (WebCore::LegacyInlineTextBox::paintPlatformDocumentMarkers):
+        (WebCore::LegacyInlineTextBox::calculateUnionOfAllDocumentMarkerBounds const):
+        (WebCore::LegacyInlineTextBox::calculateDocumentMarkerBounds const):
+        (WebCore::LegacyInlineTextBox::paintPlatformDocumentMarker):
+        (WebCore::LegacyInlineTextBox::collectMarkedTextsForDraggedContent):
+        (WebCore::LegacyInlineTextBox::collectMarkedTextsForDocumentMarkers const):
+        (WebCore::LegacyInlineTextBox::collectMarkedTextsForHighlights const):
+        (WebCore::LegacyInlineTextBox::textOriginFromBoxRect const):
+        (WebCore::LegacyInlineTextBox::paintMarkedTexts):
+        (WebCore::LegacyInlineTextBox::paintMarkedTextBackground):
+        (WebCore::LegacyInlineTextBox::paintMarkedTextForeground):
+        (WebCore::LegacyInlineTextBox::paintMarkedTextDecoration):
+        (WebCore::LegacyInlineTextBox::paintCompositionBackground):
+        (WebCore::LegacyInlineTextBox::paintCompositionUnderlines const):
+        (WebCore::mirrorRTLSegment):
+        (WebCore::LegacyInlineTextBox::paintCompositionUnderline const):
+        (WebCore::LegacyInlineTextBox::caretMinOffset const):
+        (WebCore::LegacyInlineTextBox::caretMaxOffset const):
+        (WebCore::LegacyInlineTextBox::textPos const):
+        (WebCore::LegacyInlineTextBox::offsetForPosition const):
+        (WebCore::LegacyInlineTextBox::positionForOffset const):
+        (WebCore::LegacyInlineTextBox::createTextRun const):
+        (WebCore::LegacyInlineTextBox::text const):
+        (WebCore::LegacyInlineTextBox::combinedText const):
+        (WebCore::LegacyInlineTextBox::debugTextShadow):
+        (WebCore::LegacyInlineTextBox::expansionBehavior const):
+        (WebCore::LegacyInlineTextBox::boxName const):
+        (WebCore::LegacyInlineTextBox::outputLineBox const):
+        * rendering/LegacyInlineTextBox.h: Renamed from Source/WebCore/rendering/InlineTextBox.h.
+        (WebCore::LegacyInlineTextBox::LegacyInlineTextBox):
+        (WebCore::LegacyInlineTextBox::renderer const):
+        (WebCore::LegacyInlineTextBox::lineStyle const):
+        (WebCore::LegacyInlineTextBox::prevTextBox const):
+        (WebCore::LegacyInlineTextBox::nextTextBox const):
+        (WebCore::LegacyInlineTextBox::setNextTextBox):
+        (WebCore::LegacyInlineTextBox::setPreviousTextBox):
+        (WebCore::LegacyInlineTextBox::start const):
+        (WebCore::LegacyInlineTextBox::end const):
+        (WebCore::LegacyInlineTextBox::len const):
+        (WebCore::LegacyInlineTextBox::setStart):
+        (WebCore::LegacyInlineTextBox::setLen):
+        (WebCore::LegacyInlineTextBox::offsetRun):
+        (WebCore::LegacyInlineTextBox::truncation const):
+        (WebCore::LegacyInlineTextBox::compareByStart):
+        (WebCore::LegacyInlineTextBox::logicalTopVisualOverflow const):
+        (WebCore::LegacyInlineTextBox::logicalBottomVisualOverflow const):
+        (WebCore::LegacyInlineTextBox::logicalLeftVisualOverflow const):
+        (WebCore::LegacyInlineTextBox::logicalRightVisualOverflow const):
+        (WebCore::LegacyInlineTextBox::dirtyOwnLineBoxes):
+        (WebCore::LegacyInlineTextBox::paintMarkedTexts):
+        * rendering/LegacyLineLayout.cpp:
+        (WebCore::LegacyLineLayout::constructLine):
+        (WebCore::setLogicalWidthForTextRun):
+        (WebCore::LegacyLineLayout::computeExpansionForJustifiedText):
+        (WebCore::expansionBehaviorForInlineTextBox):
+        (WebCore::applyExpansionBehavior):
+        (WebCore::LegacyLineLayout::computeInlineDirectionPositionsForSegment):
+        (WebCore::LegacyLineLayout::removeInlineBox const):
+        (WebCore::LegacyLineLayout::computeBlockDirectionPositionsForLine):
+        (WebCore::LegacyLineLayout::createLineBoxesFromBidiRuns):
+        * rendering/LegacyRootInlineBox.cpp:
+        (WebCore::LegacyRootInlineBox::isHyphenated const):
+        (WebCore::LegacyRootInlineBox::ascentAndDescentForBox const):
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::inlineSelectionGaps):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintMaskForTextFillBox):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::generateCulledLineBoxRects const):
+        (WebCore::RenderInline::culledInlineVisualOverflowBoundingBox const):
+        (WebCore::RenderInline::dirtyLineBoxes):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::dirtyLinesFromChangedChild):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteQuadsForRange const):
+        (WebCore::RenderText::createTextBox):
+        (WebCore::RenderText::positionLineBox):
+        * rendering/RenderText.h:
+        (WebCore::RenderText::extractTextBox):
+        (WebCore::RenderText::attachTextBox):
+        (WebCore::RenderText::removeTextBox):
+        (WebCore::RenderText::createInlineTextBox):
+        (WebCore::RenderText::firstTextBox const):
+        (WebCore::RenderText::lastTextBox const):
+        (WebCore::RenderText::findNextInlineTextBox const):
+        * rendering/RenderTextLineBoxes.cpp:
+        (WebCore::RenderTextLineBoxes::createAndAppendLineBox):
+        (WebCore::RenderTextLineBoxes::extract):
+        (WebCore::RenderTextLineBoxes::attach):
+        (WebCore::RenderTextLineBoxes::remove):
+        (WebCore::RenderTextLineBoxes::deleteAll):
+        (WebCore::RenderTextLineBoxes::findNext const):
+        (WebCore::RenderTextLineBoxes::checkConsistency const):
+        * rendering/RenderTextLineBoxes.h:
+        (WebCore::RenderTextLineBoxes::first const):
+        (WebCore::RenderTextLineBoxes::last const):
+        * rendering/RenderTreeAsText.cpp:
+        * rendering/TextDecorationPainter.h:
+        (WebCore::TextDecorationPainter::setInlineTextBox):
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::clearGlyphDisplayLists):
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::createTextBox):
+        * rendering/svg/RenderSVGInlineText.h:
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::SVGInlineTextBox):
+        (WebCore::SVGInlineTextBox::dirtyOwnLineBoxes):
+        (WebCore::SVGInlineTextBox::dirtyLineBoxes):
+        (WebCore::SVGInlineTextBox::offsetForPositionInFragment const):
+        (WebCore::SVGInlineTextBox::paint):
+        (WebCore::SVGInlineTextBox::nodeAtPoint):
+        * rendering/svg/SVGInlineTextBox.h:
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeSVGInlineTextBoxes):
+        * style/InlineTextBoxStyle.cpp:
+        (WebCore::computeUnderlineOffset):
+        (WebCore::visualOverflowForDecorations):
+        * style/InlineTextBoxStyle.h:
+
 2021-06-05  Cameron McCormack  <heycam@apple.com>
 
         Diff aspect-ratio property values correctly

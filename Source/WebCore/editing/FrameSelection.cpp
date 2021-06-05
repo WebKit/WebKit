@@ -53,7 +53,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "InlineRunAndOffset.h"
-#include "InlineTextBox.h"
+#include "LegacyInlineTextBox.h"
 #include "Logging.h"
 #include "Page.h"
 #include "Range.h"
@@ -1850,7 +1850,7 @@ void FrameSelection::debugRenderer(RenderObject* renderer, bool selected) const
                 offset = m_selection.end().computeOffsetInContainerNode();
 
             int pos;
-            InlineTextBox* box = textRenderer.findNextInlineTextBox(offset, pos);
+            LegacyInlineTextBox* box = textRenderer.findNextInlineTextBox(offset, pos);
             text = text.substring(box->start(), box->len());
             
             String show;

@@ -39,24 +39,24 @@ struct TextPaintStyle;
 const unsigned short cNoTruncation = USHRT_MAX;
 const unsigned short cFullTruncation = USHRT_MAX - 1;
 
-class InlineTextBox : public LegacyInlineBox {
-    WTF_MAKE_ISO_ALLOCATED(InlineTextBox);
+class LegacyInlineTextBox : public LegacyInlineBox {
+    WTF_MAKE_ISO_ALLOCATED(LegacyInlineTextBox);
 public:
-    explicit InlineTextBox(RenderText& renderer)
+    explicit LegacyInlineTextBox(RenderText& renderer)
         : LegacyInlineBox(renderer)
     {
         setBehavesLikeText(true);
     }
 
-    virtual ~InlineTextBox();
+    virtual ~LegacyInlineTextBox();
 
     RenderText& renderer() const { return downcast<RenderText>(LegacyInlineBox::renderer()); }
     const RenderStyle& lineStyle() const { return isFirstLine() ? renderer().firstLineStyle() : renderer().style(); }
 
-    InlineTextBox* prevTextBox() const { return m_prevTextBox; }
-    InlineTextBox* nextTextBox() const { return m_nextTextBox; }
-    void setNextTextBox(InlineTextBox* n) { m_nextTextBox = n; }
-    void setPreviousTextBox(InlineTextBox* p) { m_prevTextBox = p; }
+    LegacyInlineTextBox* prevTextBox() const { return m_prevTextBox; }
+    LegacyInlineTextBox* nextTextBox() const { return m_nextTextBox; }
+    void setNextTextBox(LegacyInlineTextBox* n) { m_nextTextBox = n; }
+    void setPreviousTextBox(LegacyInlineTextBox* p) { m_prevTextBox = p; }
 
     bool hasTextContent() const;
 
@@ -90,7 +90,7 @@ public:
     using LegacyInlineBox::forceLeftExpansion;
     using LegacyInlineBox::setForceLeftExpansion;
 
-    static inline bool compareByStart(const InlineTextBox* first, const InlineTextBox* second) { return first->start() < second->start(); }
+    static inline bool compareByStart(const LegacyInlineTextBox* first, const LegacyInlineTextBox* second) { return first->start() < second->start(); }
 
     LayoutUnit baselinePosition(FontBaseline) const final;
     LayoutUnit lineHeight() const final;
@@ -199,8 +199,8 @@ private:
 
     void behavesLikeText() const = delete;
 
-    InlineTextBox* m_prevTextBox { nullptr }; // The previous box that also uses our RenderObject
-    InlineTextBox* m_nextTextBox { nullptr }; // The next box that also uses our RenderObject
+    LegacyInlineTextBox* m_prevTextBox { nullptr }; // The previous box that also uses our RenderObject
+    LegacyInlineTextBox* m_nextTextBox { nullptr }; // The next box that also uses our RenderObject
 
     unsigned m_start { 0 };
     unsigned short m_len { 0 };
@@ -214,4 +214,4 @@ LayoutRect snappedSelectionRect(const LayoutRect&, float logicalRight, float sel
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_INLINE_BOX(InlineTextBox, isInlineTextBox())
+SPECIALIZE_TYPE_TRAITS_INLINE_BOX(LegacyInlineTextBox, isInlineTextBox())

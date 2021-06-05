@@ -194,10 +194,10 @@ static LayoutRect computeCaretRectForSVGInlineText(const InlineRunAndOffset& run
     auto* box = runAndOffset.run ? runAndOffset.run->legacyInlineBox() : nullptr;
     auto caretOffset = runAndOffset.offset;
 
-    if (!is<InlineTextBox>(box))
+    if (!is<LegacyInlineTextBox>(box))
         return { };
 
-    auto& textBox = downcast<InlineTextBox>(*box);
+    auto& textBox = downcast<LegacyInlineTextBox>(*box);
     if (caretOffset < textBox.start() || caretOffset > textBox.start() + textBox.len())
         return { };
 

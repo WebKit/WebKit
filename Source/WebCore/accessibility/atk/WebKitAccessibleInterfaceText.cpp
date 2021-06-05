@@ -41,7 +41,6 @@
 #include "FrameView.h"
 #include "HTMLParserIdioms.h"
 #include "HostWindow.h"
-#include "InlineTextBox.h"
 #include "NotImplemented.h"
 #include "Range.h"
 #include "RenderListItem.h"

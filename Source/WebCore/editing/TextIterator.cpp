@@ -44,7 +44,7 @@
 #include "HTMLSlotElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLTextFormControlElement.h"
-#include "InlineTextBox.h"
+#include "LegacyInlineTextBox.h"
 #include "NodeTraversal.h"
 #include "Range.h"
 #include "RenderImage.h"

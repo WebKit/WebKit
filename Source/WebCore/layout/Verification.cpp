@@ -31,12 +31,12 @@
 #ifndef NDEBUG
 #include "BlockFormattingState.h"
 #include "InlineFormattingState.h"
-#include "InlineTextBox.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutContainerBox.h"
 #include "LayoutContext.h"
 #include "LayoutTreeBuilder.h"
+#include "LegacyInlineTextBox.h"
 #include "RenderBox.h"
 #include "RenderInline.h"
 #include "RenderLineBreak.h"
@@ -79,7 +79,7 @@ static bool checkForMatchingNonTextRuns(const LineRun& lineRun, const WebCore::L
 }
 
 
-static bool checkForMatchingTextRuns(const LineRun& lineRun, const WebCore::InlineTextBox& inlineTextBox)
+static bool checkForMatchingTextRuns(const LineRun& lineRun, const WebCore::LegacyInlineTextBox& inlineTextBox)
 {
     if (!lineRun.text())
         return false;
@@ -134,7 +134,7 @@ static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, 
     for (unsigned inlineBoxIndex = 0; inlineBoxIndex < inlineBoxes.size() && runIndex < lineRuns.size(); ++inlineBoxIndex) {
         auto& lineRun = lineRuns[runIndex];
         auto* inlineBox = inlineBoxes[inlineBoxIndex];
-        auto* inlineTextBox = is<WebCore::InlineTextBox>(inlineBox) ? downcast<WebCore::InlineTextBox>(inlineBox) : nullptr;
+        auto* inlineTextBox = is<WebCore::LegacyInlineTextBox>(inlineBox) ? downcast<WebCore::LegacyInlineTextBox>(inlineBox) : nullptr;
         bool matchingRuns = inlineTextBox ? checkForMatchingTextRuns(lineRun, *inlineTextBox) : checkForMatchingNonTextRuns(lineRun, *inlineBox);
 
         if (!matchingRuns) {

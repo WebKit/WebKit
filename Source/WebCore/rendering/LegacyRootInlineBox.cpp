@@ -28,7 +28,7 @@
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
-#include "InlineTextBox.h"
+#include "LegacyInlineTextBox.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "PaintInfo.h"
 #include "RenderFragmentedFlow.h"
@@ -99,7 +99,7 @@ void LegacyRootInlineBox::clearTruncation()
 bool LegacyRootInlineBox::isHyphenated() const
 {
     for (auto* box = firstLeafDescendant(); box; box = box->nextLeafOnLine()) {
-        if (is<InlineTextBox>(*box) && downcast<InlineTextBox>(*box).hasHyphen())
+        if (is<LegacyInlineTextBox>(*box) && downcast<LegacyInlineTextBox>(*box).hasHyphen())
             return true;
     }
     return false;
@@ -803,8 +803,8 @@ void LegacyRootInlineBox::ascentAndDescentForBox(LegacyInlineBox& box, GlyphOver
 
     Vector<const Font*>* usedFonts = nullptr;
     GlyphOverflow* glyphOverflow = nullptr;
-    if (is<InlineTextBox>(box)) {
-        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.find(&downcast<InlineTextBox>(box));
+    if (is<LegacyInlineTextBox>(box)) {
+        GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.find(&downcast<LegacyInlineTextBox>(box));
         usedFonts = it == textBoxDataMap.end() ? nullptr : &it->value.first;
         glyphOverflow = it == textBoxDataMap.end() ? nullptr : &it->value.second;
     }

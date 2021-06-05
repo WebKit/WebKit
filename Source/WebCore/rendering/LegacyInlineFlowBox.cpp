@@ -26,7 +26,7 @@
 #include "FontCascade.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
-#include "InlineTextBox.h"
+#include "LegacyInlineTextBox.h"
 #include "LegacyRootInlineBox.h"
 #include "RenderBlock.h"
 #include "RenderInline.h"
@@ -161,8 +161,8 @@ void LegacyInlineFlowBox::addToLine(LegacyInlineBox* child)
         if (child->behavesLikeText()) {
             const RenderStyle* childStyle = &child->lineStyle();
             bool hasMarkers = false;
-            if (is<InlineTextBox>(child)) {
-                const auto* textBox = downcast<InlineTextBox>(child);
+            if (is<LegacyInlineTextBox>(child)) {
+                const auto* textBox = downcast<LegacyInlineTextBox>(child);
                 hasMarkers = textBox->hasMarkers();
             }
             if (childStyle->letterSpacing() < 0 || childStyle->textShadow() || childStyle->textEmphasisMark() != TextEmphasisMark::None || childStyle->hasPositiveStrokeWidth() || hasMarkers || !childStyle->textUnderlineOffset().isAuto() || !childStyle->textDecorationThickness().isAuto() || childStyle->textUnderlinePosition() != TextUnderlinePosition::Auto)
@@ -392,7 +392,7 @@ float LegacyInlineFlowBox::placeBoxRangeInInlineDirection(LegacyInlineBox* first
     float totalExpansion = 0;
     for (auto* child = firstChild; child && child != lastChild; child = child->nextOnLine()) {
         if (is<RenderText>(child->renderer())) {
-            auto& textBox = downcast<InlineTextBox>(*child);
+            auto& textBox = downcast<LegacyInlineTextBox>(*child);
             RenderText& renderText = textBox.renderer();
             if (renderText.text().length()) {
                 if (needsWordSpacing && isSpaceOrNewline(renderText.characterAt(textBox.start())))
@@ -472,8 +472,8 @@ bool LegacyInlineFlowBox::requiresIdeographicBaseline(const GlyphOverflowAndFall
                 return true;
             
             const Vector<const Font*>* usedFonts = nullptr;
-            if (is<InlineTextBox>(*child)) {
-                GlyphOverflowAndFallbackFontsMap::const_iterator it = textBoxDataMap.find(downcast<InlineTextBox>(child));
+            if (is<LegacyInlineTextBox>(*child)) {
+                GlyphOverflowAndFallbackFontsMap::const_iterator it = textBoxDataMap.find(downcast<LegacyInlineTextBox>(child));
                 usedFonts = it == textBoxDataMap.end() ? nullptr : &it->value.first;
             }
 
@@ -734,8 +734,8 @@ void LegacyInlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit 
                     boxHeight -= (topRubyBaseLeading + bottomRubyBaseLeading);
                 }
             }
-            if (is<InlineTextBox>(*child)) {
-                if (std::optional<bool> markExistsAndIsAbove = downcast<InlineTextBox>(*child).emphasisMarkExistsAndIsAbove(childLineStyle)) {
+            if (is<LegacyInlineTextBox>(*child)) {
+                if (std::optional<bool> markExistsAndIsAbove = downcast<LegacyInlineTextBox>(*child).emphasisMarkExistsAndIsAbove(childLineStyle)) {
                     if (*markExistsAndIsAbove != childLineStyle.isFlippedLinesWritingMode())
                         hasAnnotationsBefore = true;
                     else
@@ -906,7 +906,7 @@ inline void LegacyInlineFlowBox::addBorderOutsetVisualOverflow(LayoutRect& logic
     logicalVisualOverflow = LayoutRect(logicalLeftVisualOverflow, logicalTopVisualOverflow, logicalRightVisualOverflow - logicalLeftVisualOverflow, logicalBottomVisualOverflow - logicalTopVisualOverflow);
 }
 
-inline void LegacyInlineFlowBox::addTextBoxVisualOverflow(InlineTextBox& textBox, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, LayoutRect& logicalVisualOverflow)
+inline void LegacyInlineFlowBox::addTextBoxVisualOverflow(LegacyInlineTextBox& textBox, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, LayoutRect& logicalVisualOverflow)
 {
     if (textBox.knownToHaveNoOverflow())
         return;
@@ -1030,7 +1030,7 @@ void LegacyInlineFlowBox::computeOverflow(LayoutUnit lineTop, LayoutUnit lineBot
         if (is<RenderLineBreak>(child->renderer()))
             continue;
         if (is<RenderText>(child->renderer())) {
-            auto& textBox = downcast<InlineTextBox>(*child);
+            auto& textBox = downcast<LegacyInlineTextBox>(*child);
             LayoutRect textBoxOverflow(enclosingLayoutRect(textBox.logicalFrameRect()));
             addTextBoxVisualOverflow(textBox, textBoxDataMap, textBoxOverflow);
             logicalVisualOverflow.unite(textBoxOverflow);
@@ -1613,9 +1613,9 @@ LayoutUnit LegacyInlineFlowBox::computeOverAnnotationAdjustment(LayoutUnit allow
             }
         }
 
-        if (is<InlineTextBox>(*child)) {
+        if (is<LegacyInlineTextBox>(*child)) {
             const RenderStyle& childLineStyle = child->lineStyle();
-            std::optional<bool> markExistsAndIsAbove = downcast<InlineTextBox>(*child).emphasisMarkExistsAndIsAbove(childLineStyle);
+            std::optional<bool> markExistsAndIsAbove = downcast<LegacyInlineTextBox>(*child).emphasisMarkExistsAndIsAbove(childLineStyle);
             if (markExistsAndIsAbove && *markExistsAndIsAbove) {
                 if (!childLineStyle.isFlippedLinesWritingMode()) {
                     int topOfEmphasisMark = child->logicalTop() - childLineStyle.fontCascade().emphasisMarkHeight(childLineStyle.textEmphasisMarkString());
@@ -1661,9 +1661,9 @@ LayoutUnit LegacyInlineFlowBox::computeUnderAnnotationAdjustment(LayoutUnit allo
             }
         }
 
-        if (is<InlineTextBox>(*child)) {
+        if (is<LegacyInlineTextBox>(*child)) {
             const RenderStyle& childLineStyle = child->lineStyle();
-            std::optional<bool> markExistsAndIsAbove = downcast<InlineTextBox>(*child).emphasisMarkExistsAndIsAbove(childLineStyle);
+            std::optional<bool> markExistsAndIsAbove = downcast<LegacyInlineTextBox>(*child).emphasisMarkExistsAndIsAbove(childLineStyle);
             if (markExistsAndIsAbove && !*markExistsAndIsAbove) {
                 if (!childLineStyle.isFlippedLinesWritingMode()) {
                     LayoutUnit bottomOfEmphasisMark { child->logicalBottom() + childLineStyle.fontCascade().emphasisMarkHeight(childLineStyle.textEmphasisMarkString()) };

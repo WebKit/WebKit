@@ -42,7 +42,7 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(SVGInlineTextBox);
 
-struct ExpectedSVGInlineTextBoxSize : public InlineTextBox {
+struct ExpectedSVGInlineTextBoxSize : public LegacyInlineTextBox {
     float float1;
     uint32_t bitfields : 5;
     void* pointer;
@@ -52,7 +52,7 @@ struct ExpectedSVGInlineTextBoxSize : public InlineTextBox {
 COMPILE_ASSERT(sizeof(SVGInlineTextBox) == sizeof(ExpectedSVGInlineTextBoxSize), SVGInlineTextBox_is_not_of_expected_size);
 
 SVGInlineTextBox::SVGInlineTextBox(RenderSVGInlineText& renderer)
-    : InlineTextBox(renderer)
+    : LegacyInlineTextBox(renderer)
     , m_paintingResourceMode(OptionSet<RenderSVGResourceMode>().toRaw())
     , m_startsNewTextChunk(false)
 {
@@ -60,7 +60,7 @@ SVGInlineTextBox::SVGInlineTextBox(RenderSVGInlineText& renderer)
 
 void SVGInlineTextBox::dirtyOwnLineBoxes()
 {
-    InlineTextBox::dirtyLineBoxes();
+    LegacyInlineTextBox::dirtyLineBoxes();
 
     // Clear the now stale text fragments
     clearTextFragments();
@@ -72,7 +72,7 @@ void SVGInlineTextBox::dirtyLineBoxes()
 
     // And clear any following text fragments as the text on which they
     // depend may now no longer exist, or glyph positions may be wrong
-    for (InlineTextBox* nextBox = nextTextBox(); nextBox; nextBox = nextBox->nextTextBox())
+    for (auto* nextBox = nextTextBox(); nextBox; nextBox = nextBox->nextTextBox())
         nextBox->dirtyOwnLineBoxes();
 }
 
@@ -86,7 +86,7 @@ int SVGInlineTextBox::offsetForPosition(float, bool) const
 
 int SVGInlineTextBox::offsetForPositionInFragment(const SVGTextFragment& fragment, float position, bool includePartialGlyphs) const
 {
-   float scalingFactor = renderer().scalingFactor();
+    float scalingFactor = renderer().scalingFactor();
     ASSERT(scalingFactor);
 
     TextRun textRun = constructTextRun(renderer().style(), fragment);
@@ -240,7 +240,7 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     if (renderer().style().visibility() != Visibility::Visible)
         return;
 
-    // Note: We're explicitly not supporting composition & custom underlines and custom highlighters - unlike InlineTextBox.
+    // Note: We're explicitly not supporting composition & custom underlines and custom highlighters - unlike LegacyInlineTextBox.
     // If we ever need that for SVG, it's very easy to refactor and reuse the code.
 
     auto& parentRenderer = parent()->renderer();
@@ -638,7 +638,7 @@ FloatRect SVGInlineTextBox::calculateBoundaries() const
 
 bool SVGInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit, LayoutUnit, HitTestAction)
 {
-    // FIXME: integrate with InlineTextBox::nodeAtPoint better.
+    // FIXME: integrate with LegacyInlineTextBox::nodeAtPoint better.
     ASSERT(!isLineBreak());
 
     PointerEventsHitRules hitRules(PointerEventsHitRules::SVG_TEXT_HITTESTING, request, renderer().style().pointerEvents());

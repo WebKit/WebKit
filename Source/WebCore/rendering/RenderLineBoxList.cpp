@@ -31,7 +31,7 @@
 
 #include "HitTestResult.h"
 #include "InlineElementBox.h"
-#include "InlineTextBox.h"
+#include "LegacyInlineTextBox.h"
 #include "LegacyRootInlineBox.h"
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
@@ -339,7 +339,7 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderBoxModelObject& contain
             if (auto wrapper = downcast<RenderLineBreak>(*current).inlineBoxWrapper())
                 box = &wrapper->root();
         } else if (is<RenderText>(*current)) {
-            if (InlineTextBox* textBox = downcast<RenderText>(*current).lastTextBox())
+            if (LegacyInlineTextBox* textBox = downcast<RenderText>(*current).lastTextBox())
                 box = &textBox->root();
         } else if (is<RenderInline>(*current)) {
             LegacyInlineBox* lastSiblingBox = downcast<RenderInline>(*current).lastLineBoxIncludingCulling();

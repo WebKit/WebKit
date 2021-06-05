@@ -171,7 +171,7 @@ TextRunIterator firstTextRunInTextOrderFor(const RenderText& text)
         for (auto* textBox = text.firstTextBox(); textBox; textBox = textBox->nextTextBox())
             sortedTextBoxes.append(textBox);
         std::sort(sortedTextBoxes.begin(), sortedTextBoxes.end(), [](auto* a, auto* b) {
-            return InlineTextBox::compareByStart(downcast<InlineTextBox>(a), downcast<InlineTextBox>(b));
+            return LegacyInlineTextBox::compareByStart(downcast<LegacyInlineTextBox>(a), downcast<LegacyInlineTextBox>(b));
         });
         auto* first = sortedTextBoxes[0];
         return { RunIteratorLegacyPath { first, WTFMove(sortedTextBoxes), 0 } };

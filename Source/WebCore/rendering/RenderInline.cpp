@@ -29,8 +29,8 @@
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "InlineElementBox.h"
-#include "InlineTextBox.h"
 #include "LayoutIntegrationLineLayout.h"
+#include "LegacyInlineTextBox.h"
 #include "RenderBlock.h"
 #include "RenderChildIterator.h"
 #include "RenderFragmentedFlow.h"
@@ -318,7 +318,7 @@ void RenderInline::generateCulledLineBoxRects(GeneratorContext& context, const R
             }
         } else if (is<RenderText>(current)) {
             auto& currText = downcast<RenderText>(current);
-            for (InlineTextBox* childText = currText.firstTextBox(); childText; childText = childText->nextTextBox()) {
+            for (auto* childText = currText.firstTextBox(); childText; childText = childText->nextTextBox()) {
                 const LegacyRootInlineBox& rootBox = childText->root();
                 const RenderStyle& containerStyle = rootBox.isFirstLine() ? container->firstLineStyle() : container->style();
                 int logicalTop = rootBox.logicalTop() + (rootBox.lineStyle().fontCascade().fontMetrics().ascent() - containerStyle.fontCascade().fontMetrics().ascent());
@@ -763,7 +763,7 @@ LayoutRect RenderInline::culledInlineVisualOverflowBoundingBox() const
                 result.uniteIfNonZero(renderInline.linesVisualOverflowBoundingBox());
         } else if (is<RenderText>(current)) {
             // FIXME; Overflow from text boxes is lost. We will need to cache this information in
-            // InlineTextBoxes.
+            // LegacyInlineTextBoxes.
             auto& renderText = downcast<RenderText>(current);
             result.uniteIfNonZero(renderText.linesVisualOverflowBoundingBox());
         }
@@ -1119,7 +1119,7 @@ void RenderInline::dirtyLineBoxes(bool fullLayout)
                         childLine->root().markDirty();
                 } else if (is<RenderText>(current)) {
                     auto& renderText = downcast<RenderText>(current);
-                    for (InlineTextBox* childText = renderText.firstTextBox(); childText; childText = childText->nextTextBox())
+                    for (auto* childText = renderText.firstTextBox(); childText; childText = childText->nextTextBox())
                         childText->root().markDirty();
                 } else if (is<RenderLineBreak>(current)) {
                     auto& renderBR = downcast<RenderLineBreak>(current);

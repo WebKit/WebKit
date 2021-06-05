@@ -37,7 +37,6 @@
 #include "HTMLParserIdioms.h"
 #include "Hyphenation.h"
 #include "InlineRunAndOffset.h"
-#include "InlineTextBox.h"
 #include "LayoutIntegrationLineIterator.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LayoutIntegrationRunIterator.h"
@@ -480,7 +479,7 @@ static FloatRect localQuadForTextRun(const LayoutIntegration::PathTextRun& run, 
 Vector<FloatQuad> RenderText::absoluteQuadsForRange(unsigned start, unsigned end, bool useSelectionHeight, bool ignoreEmptyTextSelections, bool* wasFixed) const
 {
     // Work around signed/unsigned issues. This function takes unsigneds, and is often passed UINT_MAX
-    // to mean "all the way to the end". InlineTextBox coordinates are unsigneds, so changing this
+    // to mean "all the way to the end". LegacyInlineTextBox coordinates are unsigneds, so changing this
     // function to take ints causes various internal mismatches. But selectionRect takes ints, and
     // passing UINT_MAX to it causes trouble. Ideally we'd change selectionRect to take unsigneds, but
     // that would cause many ripple effects, so for now we'll just clamp our unsigned parameters to INT_MAX.
@@ -1492,12 +1491,12 @@ void RenderText::deleteLineBoxes()
     m_lineBoxes.deleteAll();
 }
 
-std::unique_ptr<InlineTextBox> RenderText::createTextBox()
+std::unique_ptr<LegacyInlineTextBox> RenderText::createTextBox()
 {
-    return makeUnique<InlineTextBox>(*this);
+    return makeUnique<LegacyInlineTextBox>(*this);
 }
 
-void RenderText::positionLineBox(InlineTextBox& textBox)
+void RenderText::positionLineBox(LegacyInlineTextBox& textBox)
 {
     if (!textBox.hasTextContent())
         return;

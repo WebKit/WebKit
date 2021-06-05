@@ -24,7 +24,7 @@
 #include "FontCascade.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
-#include "InlineTextBox.h"
+#include "LegacyInlineTextBox.h"
 #include "LegacyRootInlineBox.h"
 #include "PaintInfo.h"
 #include "TextRun.h"

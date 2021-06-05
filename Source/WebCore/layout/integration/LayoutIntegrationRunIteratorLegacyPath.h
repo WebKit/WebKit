@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "InlineTextBox.h"
+#include "LegacyInlineTextBox.h"
 #include "LegacyRootInlineBox.h"
 #include "RenderText.h"
 #include <wtf/RefCountedArray.h>
@@ -87,7 +87,7 @@ public:
     {
         if (!m_logicalOrderCache.isEmpty()) {
             traverseNextInlineBoxInCacheOrder();
-            ASSERT(!m_inlineBox || is<InlineTextBox>(m_inlineBox));
+            ASSERT(!m_inlineBox || is<LegacyInlineTextBox>(m_inlineBox));
             return;
         }
         traverseNextTextRun();
@@ -123,7 +123,7 @@ public:
     const LegacyRootInlineBox& rootInlineBox() const { return m_inlineBox->root(); }
 
 private:
-    const InlineTextBox* inlineTextBox() const { return downcast<InlineTextBox>(m_inlineBox); }
+    const LegacyInlineTextBox* inlineTextBox() const { return downcast<LegacyInlineTextBox>(m_inlineBox); }
 
     static Vector<const LegacyInlineBox*> inlineBoxesInLogicalOrder(const LegacyRootInlineBox& root)
     {

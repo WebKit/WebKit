@@ -362,7 +362,7 @@ static inline void writeSVGInlineTextBox(TextStream& ts, SVGInlineTextBox* textB
 
 static inline void writeSVGInlineTextBoxes(TextStream& ts, const RenderText& text)
 {
-    for (InlineTextBox* box = text.firstTextBox(); box; box = box->nextTextBox()) {
+    for (auto* box = text.firstTextBox(); box; box = box->nextTextBox()) {
         if (!is<SVGInlineTextBox>(*box))
             continue;
 

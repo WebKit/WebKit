@@ -27,13 +27,13 @@
 #include "InlineTextBoxStyle.h"
 
 #include "FontCascade.h"
-#include "InlineTextBox.h"
+#include "LegacyInlineTextBox.h"
 #include "LegacyRootInlineBox.h"
 #include "TextUnderlineOffset.h"
 
 namespace WebCore {
     
-float computeUnderlineOffset(TextUnderlinePosition underlinePosition, TextUnderlineOffset underlineOffset, const FontMetrics& fontMetrics, const InlineTextBox* inlineTextBox, float defaultGap)
+float computeUnderlineOffset(TextUnderlinePosition underlinePosition, TextUnderlineOffset underlineOffset, const FontMetrics& fontMetrics, const LegacyInlineTextBox* inlineTextBox, float defaultGap)
 {
     // This represents the gap between the baseline and the closest edge of the underline.
     float gap = std::max<int>(1, std::ceil(defaultGap / 2.0f));
@@ -102,7 +102,7 @@ static inline void extendIntToFloat(int& extendMe, float extendTo)
     extendMe = std::max(extendMe, static_cast<int>(ceilf(extendTo)));
 }
 
-GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const InlineTextBox* inlineTextBox)
+GlyphOverflow visualOverflowForDecorations(const RenderStyle& lineStyle, const LegacyInlineTextBox* inlineTextBox)
 {
     ASSERT(!inlineTextBox || inlineTextBox->lineStyle() == lineStyle);
     

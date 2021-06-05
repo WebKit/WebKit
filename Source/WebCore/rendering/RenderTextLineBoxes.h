@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class InlineTextBox;
+class LegacyInlineTextBox;
 class RenderStyle;
 class RenderText;
 class VisiblePosition;
@@ -39,14 +39,14 @@ class RenderTextLineBoxes {
 public:
     RenderTextLineBoxes();
 
-    InlineTextBox* first() const { return m_first; }
-    InlineTextBox* last() const { return m_last; }
+    LegacyInlineTextBox* first() const { return m_first; }
+    LegacyInlineTextBox* last() const { return m_last; }
 
-    InlineTextBox* createAndAppendLineBox(RenderText&);
+    LegacyInlineTextBox* createAndAppendLineBox(RenderText&);
 
-    void extract(InlineTextBox&);
-    void attach(InlineTextBox&);
-    void remove(InlineTextBox&);
+    void extract(LegacyInlineTextBox&);
+    void attach(LegacyInlineTextBox&);
+    void remove(LegacyInlineTextBox&);
 
     void removeAllFromParent(RenderText&);
     void deleteAll();
@@ -54,7 +54,7 @@ public:
     void dirtyAll();
     bool dirtyRange(RenderText&, unsigned start, unsigned end, int lengthDelta);
 
-    InlineTextBox* findNext(int offset, int& position) const;
+    LegacyInlineTextBox* findNext(int offset, int& position) const;
 
     LayoutRect visualOverflowBoundingBox(const RenderText&) const;
 
@@ -69,8 +69,8 @@ public:
 private:
     void checkConsistency() const;
 
-    InlineTextBox* m_first;
-    InlineTextBox* m_last;
+    LegacyInlineTextBox* m_first;
+    LegacyInlineTextBox* m_last;
 };
 
 } // namespace WebCore

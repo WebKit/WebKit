@@ -21,7 +21,7 @@
  */
 
 #include "config.h"
-#include "InlineTextBox.h"
+#include "LegacyInlineTextBox.h"
 
 #include "BreakLines.h"
 #include "CompositionHighlight.h"
@@ -64,27 +64,27 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(InlineTextBox);
+WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyInlineTextBox);
 
-struct SameSizeAsInlineTextBox : public LegacyInlineBox {
+struct SameSizeAsLegacyInlineTextBox : public LegacyInlineBox {
     unsigned variables[1];
     unsigned short variables2[2];
     void* pointers[2];
 };
 
-COMPILE_ASSERT(sizeof(InlineTextBox) == sizeof(SameSizeAsInlineTextBox), InlineTextBox_should_stay_small);
+COMPILE_ASSERT(sizeof(LegacyInlineTextBox) == sizeof(SameSizeAsLegacyInlineTextBox), LegacyInlineTextBox_should_stay_small);
 
-typedef WTF::HashMap<const InlineTextBox*, LayoutRect> InlineTextBoxOverflowMap;
-static InlineTextBoxOverflowMap* gTextBoxesWithOverflow;
+typedef WTF::HashMap<const LegacyInlineTextBox*, LayoutRect> LegacyInlineTextBoxOverflowMap;
+static LegacyInlineTextBoxOverflowMap* gTextBoxesWithOverflow;
 
-InlineTextBox::~InlineTextBox()
+LegacyInlineTextBox::~LegacyInlineTextBox()
 {
     if (!knownToHaveNoOverflow() && gTextBoxesWithOverflow)
         gTextBoxesWithOverflow->remove(this);
     TextPainter::removeGlyphDisplayList(*this);
 }
 
-bool InlineTextBox::hasTextContent() const
+bool LegacyInlineTextBox::hasTextContent() const
 {
     if (m_len > 1)
         return true;
@@ -95,7 +95,7 @@ bool InlineTextBox::hasTextContent() const
     return m_len;
 }
 
-void InlineTextBox::markDirty(bool dirty)
+void LegacyInlineTextBox::markDirty(bool dirty)
 {
     if (dirty) {
         m_len = 0;
@@ -104,22 +104,22 @@ void InlineTextBox::markDirty(bool dirty)
     LegacyInlineBox::markDirty(dirty);
 }
 
-LayoutRect InlineTextBox::logicalOverflowRect() const
+LayoutRect LegacyInlineTextBox::logicalOverflowRect() const
 {
     if (knownToHaveNoOverflow() || !gTextBoxesWithOverflow)
         return enclosingIntRect(logicalFrameRect());
     return gTextBoxesWithOverflow->get(this);
 }
 
-void InlineTextBox::setLogicalOverflowRect(const LayoutRect& rect)
+void LegacyInlineTextBox::setLogicalOverflowRect(const LayoutRect& rect)
 {
     ASSERT(!knownToHaveNoOverflow());
     if (!gTextBoxesWithOverflow)
-        gTextBoxesWithOverflow = new InlineTextBoxOverflowMap;
+        gTextBoxesWithOverflow = new LegacyInlineTextBoxOverflowMap;
     gTextBoxesWithOverflow->add(this, rect);
 }
 
-LayoutUnit InlineTextBox::baselinePosition(FontBaseline baselineType) const
+LayoutUnit LegacyInlineTextBox::baselinePosition(FontBaseline baselineType) const
 {
     if (!parent())
         return 0;
@@ -128,7 +128,7 @@ LayoutUnit InlineTextBox::baselinePosition(FontBaseline baselineType) const
     return downcast<RenderBoxModelObject>(*renderer().parent()).baselinePosition(baselineType, isFirstLine(), isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine);
 }
 
-LayoutUnit InlineTextBox::lineHeight() const
+LayoutUnit LegacyInlineTextBox::lineHeight() const
 {
     if (!renderer().parent())
         return 0;
@@ -137,27 +137,27 @@ LayoutUnit InlineTextBox::lineHeight() const
     return downcast<RenderBoxModelObject>(*renderer().parent()).lineHeight(isFirstLine(), isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine);
 }
 
-LayoutUnit InlineTextBox::selectionTop() const
+LayoutUnit LegacyInlineTextBox::selectionTop() const
 {
     return root().selectionTop();
 }
 
-LayoutUnit InlineTextBox::selectionBottom() const
+LayoutUnit LegacyInlineTextBox::selectionBottom() const
 {
     return root().selectionBottom();
 }
 
-LayoutUnit InlineTextBox::selectionHeight() const
+LayoutUnit LegacyInlineTextBox::selectionHeight() const
 {
     return root().selectionHeight();
 }
 
-bool InlineTextBox::isSelected(unsigned startPosition, unsigned endPosition) const
+bool LegacyInlineTextBox::isSelected(unsigned startPosition, unsigned endPosition) const
 {
     return clampedOffset(startPosition) < clampedOffset(endPosition);
 }
 
-RenderObject::HighlightState InlineTextBox::selectionState()
+RenderObject::HighlightState LegacyInlineTextBox::selectionState()
 {
     auto state = verifySelectionState(renderer().selectionState(), renderer().view().selection());
     
@@ -183,7 +183,7 @@ RenderObject::HighlightState InlineTextBox::selectionState()
     return state;
 }
 
-RenderObject::HighlightState InlineTextBox::verifySelectionState(RenderObject::HighlightState state, HighlightData& selection) const
+RenderObject::HighlightState LegacyInlineTextBox::verifySelectionState(RenderObject::HighlightState state, HighlightData& selection) const
 {
     if (state == RenderObject::HighlightState::Start || state == RenderObject::HighlightState::End || state == RenderObject::HighlightState::Both) {
         auto startOffset = selection.startOffset();
@@ -210,7 +210,7 @@ RenderObject::HighlightState InlineTextBox::verifySelectionState(RenderObject::H
     return state;
 }
 
-inline const FontCascade& InlineTextBox::lineFont() const
+inline const FontCascade& LegacyInlineTextBox::lineFont() const
 {
     return combinedText() ? combinedText()->textCombineFont() : lineStyle().fontCascade();
 }
@@ -240,7 +240,7 @@ LayoutRect snappedSelectionRect(const LayoutRect& selectionRect, float logicalRi
 }
 
 // FIXME: Share more code with paintMarkedTextBackground().
-LayoutRect InlineTextBox::localSelectionRect(unsigned startPos, unsigned endPos) const
+LayoutRect LegacyInlineTextBox::localSelectionRect(unsigned startPos, unsigned endPos) const
 {
     unsigned sPos = clampedOffset(startPos);
     unsigned ePos = clampedOffset(endPos);
@@ -262,13 +262,13 @@ LayoutRect InlineTextBox::localSelectionRect(unsigned startPos, unsigned endPos)
     return snappedSelectionRect(selectionRect, logicalRight(), selectionTop, selectionHeight, isHorizontal());
 }
 
-void InlineTextBox::deleteLine()
+void LegacyInlineTextBox::deleteLine()
 {
     renderer().removeTextBox(*this);
     delete this;
 }
 
-void InlineTextBox::extractLine()
+void LegacyInlineTextBox::extractLine()
 {
     if (extracted())
         return;
@@ -276,7 +276,7 @@ void InlineTextBox::extractLine()
     renderer().extractTextBox(*this);
 }
 
-void InlineTextBox::attachLine()
+void LegacyInlineTextBox::attachLine()
 {
     if (!extracted())
         return;
@@ -284,7 +284,7 @@ void InlineTextBox::attachLine()
     renderer().attachTextBox(*this);
 }
 
-float InlineTextBox::placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox)
+float LegacyInlineTextBox::placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, float visibleRightEdge, float ellipsisWidth, float &truncatedWidth, bool& foundBox)
 {
     if (foundBox) {
         m_truncation = cFullTruncation;
@@ -300,7 +300,7 @@ float InlineTextBox::placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, flo
     bool ltrFullTruncation = flowIsLTR && ellipsisX <= left();
     bool rtlFullTruncation = !flowIsLTR && ellipsisX >= left() + logicalWidth();
     if (ltrFullTruncation || rtlFullTruncation) {
-        // Too far.  Just set full truncation, but return -1 and let the ellipsis just be placed at the edge of the box.
+        // Too far. Just set full truncation, but return -1 and let the ellipsis just be placed at the edge of the box.
         m_truncation = cFullTruncation;
         foundBox = true;
         return -1;
@@ -311,19 +311,19 @@ float InlineTextBox::placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, flo
     if (ltrEllipsisWithinBox || rtlEllipsisWithinBox) {
         foundBox = true;
 
-        // The inline box may have different directionality than it's parent.  Since truncation
+        // The inline box may have different directionality than it's parent. Since truncation
         // behavior depends both on both the parent and the inline block's directionality, we
         // must keep track of these separately.
         bool ltr = isLeftToRightDirection();
         if (ltr != flowIsLTR) {
-          // Width in pixels of the visible portion of the box, excluding the ellipsis.
-          int visibleBoxWidth = visibleRightEdge - visibleLeftEdge  - ellipsisWidth;
-          ellipsisX = ltr ? left() + visibleBoxWidth : right() - visibleBoxWidth;
+            // Width in pixels of the visible portion of the box, excluding the ellipsis.
+            int visibleBoxWidth = visibleRightEdge - visibleLeftEdge  - ellipsisWidth;
+            ellipsisX = ltr ? left() + visibleBoxWidth : right() - visibleBoxWidth;
         }
 
         int offset = offsetForPosition(ellipsisX, false);
-        if (offset == 0) {
-            // No characters should be rendered.  Set ourselves to full truncation and place the ellipsis at the min of our start
+        if (!offset) {
+            // No characters should be rendered. Set ourselves to full truncation and place the ellipsis at the min of our start
             // and the ellipsis edge.
             m_truncation = cFullTruncation;
             truncatedWidth += ellipsisWidth;
@@ -345,21 +345,19 @@ float InlineTextBox::placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, flo
         truncatedWidth += widthOfVisibleText + ellipsisWidth;
         if (flowIsLTR)
             return left() + widthOfVisibleText;
-        else
-            return right() - widthOfVisibleText - ellipsisWidth;
+
+        return right() - widthOfVisibleText - ellipsisWidth;
     }
     truncatedWidth += logicalWidth();
     return -1;
 }
 
-
-
-bool InlineTextBox::isLineBreak() const
+bool LegacyInlineTextBox::isLineBreak() const
 {
     return renderer().style().preserveNewline() && len() == 1 && renderer().text()[start()] == '\n';
 }
 
-bool InlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit /* lineTop */, LayoutUnit /*lineBottom*/,
+bool LegacyInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit /* lineTop */, LayoutUnit /*lineBottom*/,
     HitTestAction /*hitTestAction*/)
 {
     if (!visibleToHitTesting(request))
@@ -392,7 +390,7 @@ bool InlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     return false;
 }
 
-std::optional<bool> InlineTextBox::emphasisMarkExistsAndIsAbove(const RenderStyle& style) const
+std::optional<bool> LegacyInlineTextBox::emphasisMarkExistsAndIsAbove(const RenderStyle& style) const
 {
     // This function returns true if there are text emphasis marks and they are suppressed by ruby text.
     if (style.textEmphasisMark() == TextEmphasisMark::None)
@@ -433,7 +431,7 @@ std::optional<bool> InlineTextBox::emphasisMarkExistsAndIsAbove(const RenderStyl
     return isAbove;
 }
 
-static MarkedText createMarkedTextFromSelectionInBox(const InlineTextBox& box)
+static MarkedText createMarkedTextFromSelectionInBox(const LegacyInlineTextBox& box)
 {
     auto [selectionStart, selectionEnd] = box.selectionStartEnd();
     if (selectionStart < selectionEnd)
@@ -441,7 +439,7 @@ static MarkedText createMarkedTextFromSelectionInBox(const InlineTextBox& box)
     return { };
 }
 
-void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit /*lineTop*/, LayoutUnit /*lineBottom*/)
+void LegacyInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit /*lineTop*/, LayoutUnit /*lineBottom*/)
 {
     if (isLineBreak() || !paintInfo.shouldPaintWithinRoot(renderer()) || renderer().style().visibility() != Visibility::Visible
         || m_truncation == cFullTruncation || paintInfo.phase == PaintPhase::Outline || !hasTextContent())
@@ -539,9 +537,9 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         paintMarkedTexts(paintInfo, TextPaintPhase::Background, boxRect, coalescedStyledMarkedTexts);
     }
 
-    // FIXME: Right now, InlineTextBoxes never call addRelevantUnpaintedObject() even though they might
+    // FIXME: Right now, LegacyInlineTextBoxes never call addRelevantUnpaintedObject() even though they might
     // legitimately be unpainted if they are waiting on a slow-loading web font. We should fix that, and
-    // when we do, we will have to account for the fact the InlineTextBoxes do not always have unique
+    // when we do, we will have to account for the fact the LegacyInlineTextBoxes do not always have unique
     // renderers and Page currently relies on each unpainted object having a unique renderer.
     if (paintInfo.phase == PaintPhase::Foreground)
         renderer().page().addRelevantRepaintedObject(&renderer(), IntRect(boxOrigin.x(), boxOrigin.y(), logicalWidth(), logicalHeight()));
@@ -582,8 +580,11 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     auto styledMarkedTexts = subdivideAndResolveStyle(markedTexts, renderer(), isFirstLine(), paintInfo);
 
     // ... now remove the selection marked text if we are excluding selection.
-    if (!isPrinting && paintInfo.paintBehavior.contains(PaintBehavior::ExcludeSelection))
-        styledMarkedTexts.removeAllMatching([] (const StyledMarkedText& markedText) { return markedText.type == MarkedText::Selection; });
+    if (!isPrinting && paintInfo.paintBehavior.contains(PaintBehavior::ExcludeSelection)) {
+        styledMarkedTexts.removeAllMatching([] (const StyledMarkedText& markedText) {
+            return markedText.type == MarkedText::Selection;
+        });
+    }
 
     // Coalesce styles of adjacent marked texts to minimize the number of drawing commands.
     auto coalescedStyledMarkedTexts = coalesceAdjacentMarkedTexts(styledMarkedTexts, &MarkedTextStyle::areForegroundMarkedTextStylesEqual);
@@ -638,7 +639,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         context.concatCTM(rotation(boxRect, Counterclockwise));
 }
 
-unsigned InlineTextBox::clampedOffset(unsigned x) const
+unsigned LegacyInlineTextBox::clampedOffset(unsigned x) const
 {
     unsigned offset = std::max(std::min(x, m_start + m_len), m_start) - m_start;
     if (m_truncation == cFullTruncation)
@@ -657,7 +658,7 @@ unsigned InlineTextBox::clampedOffset(unsigned x) const
     return offset;
 }
 
-std::pair<unsigned, unsigned> InlineTextBox::clampedStartEndForState(unsigned start, unsigned end, RenderObject::HighlightState selectionState) const
+std::pair<unsigned, unsigned> LegacyInlineTextBox::clampedStartEndForState(unsigned start, unsigned end, RenderObject::HighlightState selectionState) const
 {
     if (selectionState == RenderObject::HighlightState::Inside)
         return { 0, clampedOffset(m_start + m_len) };
@@ -669,14 +670,14 @@ std::pair<unsigned, unsigned> InlineTextBox::clampedStartEndForState(unsigned st
     return { clampedOffset(start), clampedOffset(end) };
 }
 
-std::pair<unsigned, unsigned> InlineTextBox::selectionStartEnd() const
+std::pair<unsigned, unsigned> LegacyInlineTextBox::selectionStartEnd() const
 {
     auto selectionState = renderer().selectionState();
     
     return clampedStartEndForState(renderer().view().selection().startOffset(), renderer().view().selection().endOffset(), selectionState);
 }
 
-std::pair<unsigned, unsigned> InlineTextBox::highlightStartEnd(HighlightData &rangeData) const
+std::pair<unsigned, unsigned> LegacyInlineTextBox::highlightStartEnd(HighlightData &rangeData) const
 {
     auto state = rangeData.highlightStateForRenderer(renderer());
     state = verifySelectionState(state, rangeData);
@@ -687,19 +688,19 @@ std::pair<unsigned, unsigned> InlineTextBox::highlightStartEnd(HighlightData &ra
     return clampedStartEndForState(rangeData.startOffset(), rangeData.endOffset(), state);
 }
 
-bool InlineTextBox::hasMarkers() const
+bool LegacyInlineTextBox::hasMarkers() const
 {
     return collectMarkedTextsForDocumentMarkers(TextPaintPhase::Decoration).size();
 }
 
-void InlineTextBox::paintPlatformDocumentMarkers(GraphicsContext& context, const FloatPoint& boxOrigin)
+void LegacyInlineTextBox::paintPlatformDocumentMarkers(GraphicsContext& context, const FloatPoint& boxOrigin)
 {
     // This must match calculateUnionOfAllDocumentMarkerBounds().
     for (auto& markedText : subdivide(collectMarkedTextsForDocumentMarkers(TextPaintPhase::Decoration), OverlapStrategy::Frontmost))
         paintPlatformDocumentMarker(context, boxOrigin, markedText);
 }
 
-FloatRect InlineTextBox::calculateUnionOfAllDocumentMarkerBounds() const
+FloatRect LegacyInlineTextBox::calculateUnionOfAllDocumentMarkerBounds() const
 {
     // This must match paintPlatformDocumentMarkers().
     FloatRect result;
@@ -708,7 +709,7 @@ FloatRect InlineTextBox::calculateUnionOfAllDocumentMarkerBounds() const
     return result;
 }
 
-FloatRect InlineTextBox::calculateDocumentMarkerBounds(const MarkedText& markedText) const
+FloatRect LegacyInlineTextBox::calculateDocumentMarkerBounds(const MarkedText& markedText) const
 {
     auto& font = lineFont();
     auto ascent = font.fontMetrics().ascent();
@@ -727,7 +728,7 @@ FloatRect InlineTextBox::calculateDocumentMarkerBounds(const MarkedText& markedT
     return FloatRect(0, y, logicalWidth(), height);
 }
 
-void InlineTextBox::paintPlatformDocumentMarker(GraphicsContext& context, const FloatPoint& boxOrigin, const MarkedText& markedText)
+void LegacyInlineTextBox::paintPlatformDocumentMarker(GraphicsContext& context, const FloatPoint& boxOrigin, const MarkedText& markedText)
 {
     // Never print spelling/grammar markers (5327887)
     if (renderer().document().printing())
@@ -764,7 +765,7 @@ void InlineTextBox::paintPlatformDocumentMarker(GraphicsContext& context, const 
     context.drawDotsForDocumentMarker(bounds, lineStyleForMarkedTextType());
 }
 
-Vector<MarkedText> InlineTextBox::collectMarkedTextsForDraggedContent()
+Vector<MarkedText> LegacyInlineTextBox::collectMarkedTextsForDraggedContent()
 {
     using DraggendContentRange = std::pair<unsigned, unsigned>;
     auto draggedContentRanges = renderer().draggedContentRangesBetweenOffsets(m_start, m_start + m_len);
@@ -774,7 +775,7 @@ Vector<MarkedText> InlineTextBox::collectMarkedTextsForDraggedContent()
     return result;
 }
 
-Vector<MarkedText> InlineTextBox::collectMarkedTextsForDocumentMarkers(TextPaintPhase phase) const
+Vector<MarkedText> LegacyInlineTextBox::collectMarkedTextsForDocumentMarkers(TextPaintPhase phase) const
 {
     ASSERT_ARG(phase, phase == TextPaintPhase::Background || phase == TextPaintPhase::Foreground || phase == TextPaintPhase::Decoration);
 
@@ -879,7 +880,7 @@ Vector<MarkedText> InlineTextBox::collectMarkedTextsForDocumentMarkers(TextPaint
     return markedTexts;
 }
 
-Vector<MarkedText> InlineTextBox::collectMarkedTextsForHighlights(TextPaintPhase phase) const
+Vector<MarkedText> LegacyInlineTextBox::collectMarkedTextsForHighlights(TextPaintPhase phase) const
 {
     ASSERT_ARG(phase, phase == TextPaintPhase::Background || phase == TextPaintPhase::Foreground || phase == TextPaintPhase::Decoration);
     UNUSED_PARAM(phase);
@@ -928,7 +929,7 @@ Vector<MarkedText> InlineTextBox::collectMarkedTextsForHighlights(TextPaintPhase
     return markedTexts;
 }
 
-FloatPoint InlineTextBox::textOriginFromBoxRect(const FloatRect& boxRect) const
+FloatPoint LegacyInlineTextBox::textOriginFromBoxRect(const FloatRect& boxRect) const
 {
     FloatPoint textOrigin { boxRect.x(), boxRect.y() + lineFont().fontMetrics().ascent() };
     if (auto* combinedText = this->combinedText()) {
@@ -942,7 +943,7 @@ FloatPoint InlineTextBox::textOriginFromBoxRect(const FloatRect& boxRect) const
     return textOrigin;
 }
 
-void InlineTextBox::paintMarkedTexts(PaintInfo& paintInfo, TextPaintPhase phase, const FloatRect& boxRect, const Vector<StyledMarkedText>& markedTexts, const FloatRect& decorationClipOutRect)
+void LegacyInlineTextBox::paintMarkedTexts(PaintInfo& paintInfo, TextPaintPhase phase, const FloatRect& boxRect, const Vector<StyledMarkedText>& markedTexts, const FloatRect& decorationClipOutRect)
 {
     switch (phase) {
     case TextPaintPhase::Background:
@@ -960,7 +961,7 @@ void InlineTextBox::paintMarkedTexts(PaintInfo& paintInfo, TextPaintPhase phase,
     }
 }
 
-void InlineTextBox::paintMarkedTextBackground(PaintInfo& paintInfo, const FloatPoint& boxOrigin, const Color& color, unsigned clampedStartOffset, unsigned clampedEndOffset, MarkedTextBackgroundStyle style)
+void LegacyInlineTextBox::paintMarkedTextBackground(PaintInfo& paintInfo, const FloatPoint& boxOrigin, const Color& color, unsigned clampedStartOffset, unsigned clampedEndOffset, MarkedTextBackgroundStyle style)
 {
     if (clampedStartOffset >= clampedEndOffset)
         return;
@@ -997,7 +998,7 @@ void InlineTextBox::paintMarkedTextBackground(PaintInfo& paintInfo, const FloatP
     context.fillRect(backgroundRect, color);
 }
 
-void InlineTextBox::paintMarkedTextForeground(PaintInfo& paintInfo, const FloatRect& boxRect, const StyledMarkedText& markedText)
+void LegacyInlineTextBox::paintMarkedTextForeground(PaintInfo& paintInfo, const FloatRect& boxRect, const StyledMarkedText& markedText)
 {
     if (markedText.startOffset >= markedText.endOffset)
         return;
@@ -1037,7 +1038,7 @@ void InlineTextBox::paintMarkedTextForeground(PaintInfo& paintInfo, const FloatR
     textPainter.paintRange(textRun, boxRect, textOriginFromBoxRect(boxRect), markedText.startOffset, markedText.endOffset);
 }
 
-void InlineTextBox::paintMarkedTextDecoration(PaintInfo& paintInfo, const FloatRect& boxRect, const FloatRect& clipOutRect, const StyledMarkedText& markedText)
+void LegacyInlineTextBox::paintMarkedTextDecoration(PaintInfo& paintInfo, const FloatRect& boxRect, const FloatRect& clipOutRect, const StyledMarkedText& markedText)
 {
     if (m_truncation == cFullTruncation)
         return;
@@ -1097,7 +1098,7 @@ void InlineTextBox::paintMarkedTextDecoration(PaintInfo& paintInfo, const FloatR
         context.concatCTM(rotation(boxRect, Counterclockwise));
 }
 
-void InlineTextBox::paintCompositionBackground(PaintInfo& paintInfo, const FloatPoint& boxOrigin)
+void LegacyInlineTextBox::paintCompositionBackground(PaintInfo& paintInfo, const FloatPoint& boxOrigin)
 {
     if (!renderer().frame().editor().compositionUsesCustomHighlights()) {
         paintMarkedTextBackground(paintInfo, boxOrigin, CompositionHighlight::defaultCompositionFillColor, clampedOffset(renderer().frame().editor().compositionStart()), clampedOffset(renderer().frame().editor().compositionEnd()));
@@ -1118,7 +1119,7 @@ void InlineTextBox::paintCompositionBackground(PaintInfo& paintInfo, const Float
     }
 }
 
-void InlineTextBox::paintCompositionUnderlines(PaintInfo& paintInfo, const FloatPoint& boxOrigin) const
+void LegacyInlineTextBox::paintCompositionUnderlines(PaintInfo& paintInfo, const FloatPoint& boxOrigin) const
 {
     if (m_truncation == cFullTruncation)
         return;
@@ -1149,7 +1150,7 @@ static inline void mirrorRTLSegment(float logicalWidth, TextDirection direction,
     start = logicalWidth - width - start;
 }
 
-void InlineTextBox::paintCompositionUnderline(PaintInfo& paintInfo, const FloatPoint& boxOrigin, const CompositionUnderline& underline) const
+void LegacyInlineTextBox::paintCompositionUnderline(PaintInfo& paintInfo, const FloatPoint& boxOrigin, const CompositionUnderline& underline) const
 {
     if (m_truncation == cFullTruncation)
         return;
@@ -1164,7 +1165,7 @@ void InlineTextBox::paintCompositionUnderline(PaintInfo& paintInfo, const FloatP
         useWholeWidth = false;
         start = renderer().width(m_start, paintStart - m_start, textPos(), isFirstLine());
     }
-    if (paintEnd != underline.endOffset) {      // end points at the last char, not past it
+    if (paintEnd != underline.endOffset) {
         paintEnd = std::min(paintEnd, (unsigned)underline.endOffset);
         useWholeWidth = false;
     }
@@ -1197,26 +1198,26 @@ void InlineTextBox::paintCompositionUnderline(PaintInfo& paintInfo, const FloatP
     context.drawLineForText(FloatRect(boxOrigin.x() + start, boxOrigin.y() + logicalHeight() - lineThickness, width, lineThickness), renderer().document().printing());
 }
 
-int InlineTextBox::caretMinOffset() const
+int LegacyInlineTextBox::caretMinOffset() const
 {
     return m_start;
 }
 
-int InlineTextBox::caretMaxOffset() const
+int LegacyInlineTextBox::caretMaxOffset() const
 {
     return m_start + m_len;
 }
 
-float InlineTextBox::textPos() const
+float LegacyInlineTextBox::textPos() const
 {
     // When computing the width of a text run, RenderBlock::computeInlineDirectionPositionsForLine() doesn't include the actual offset
     // from the containing block edge in its measurement. textPos() should be consistent so the text are rendered in the same width.
-    if (logicalLeft() == 0)
+    if (!logicalLeft())
         return 0;
     return logicalLeft() - root().logicalLeft();
 }
 
-int InlineTextBox::offsetForPosition(float lineOffset, bool includePartialGlyphs) const
+int LegacyInlineTextBox::offsetForPosition(float lineOffset, bool includePartialGlyphs) const
 {
     if (isLineBreak())
         return 0;
@@ -1229,7 +1230,7 @@ int InlineTextBox::offsetForPosition(float lineOffset, bool includePartialGlyphs
     return lineFont().offsetForPosition(createTextRun(ignoreCombinedText, ignoreHyphen), lineOffset - logicalLeft(), includePartialGlyphs);
 }
 
-float InlineTextBox::positionForOffset(unsigned offset) const
+float LegacyInlineTextBox::positionForOffset(unsigned offset) const
 {
     ASSERT(offset >= m_start);
     ASSERT(offset <= m_start + len());
@@ -1256,7 +1257,7 @@ float InlineTextBox::positionForOffset(unsigned offset) const
     return snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()).maxX();
 }
 
-TextRun InlineTextBox::createTextRun(bool ignoreCombinedText, bool ignoreHyphen) const
+TextRun LegacyInlineTextBox::createTextRun(bool ignoreCombinedText, bool ignoreHyphen) const
 {
     const auto& style = lineStyle();
     TextRun textRun { text(ignoreCombinedText, ignoreHyphen), textPos(), expansion(), expansionBehavior(), direction(), dirOverride() || style.rtlOrdering() == Order::Visual, !renderer().canUseSimpleFontCodePath() };
@@ -1264,7 +1265,7 @@ TextRun InlineTextBox::createTextRun(bool ignoreCombinedText, bool ignoreHyphen)
     return textRun;
 }
 
-String InlineTextBox::text(bool ignoreCombinedText, bool ignoreHyphen) const
+String LegacyInlineTextBox::text(bool ignoreCombinedText, bool ignoreHyphen) const
 {
     String result;
     if (auto* combinedText = this->combinedText()) {
@@ -1285,12 +1286,12 @@ String InlineTextBox::text(bool ignoreCombinedText, bool ignoreHyphen) const
     return RenderBlock::updateSecurityDiscCharacters(lineStyle(), WTFMove(result));
 }
 
-inline const RenderCombineText* InlineTextBox::combinedText() const
+inline const RenderCombineText* LegacyInlineTextBox::combinedText() const
 {
     return lineStyle().hasTextCombine() && is<RenderCombineText>(renderer()) && downcast<RenderCombineText>(renderer()).isCombined() ? &downcast<RenderCombineText>(renderer()) : nullptr;
 }
 
-ShadowData* InlineTextBox::debugTextShadow()
+ShadowData* LegacyInlineTextBox::debugTextShadow()
 {
     if (!renderer().settings().legacyLineLayoutVisualCoverageEnabled())
         return nullptr;
@@ -1299,7 +1300,7 @@ ShadowData* InlineTextBox::debugTextShadow()
     return &debugTextShadow.get();
 }
 
-ExpansionBehavior InlineTextBox::expansionBehavior() const
+ExpansionBehavior LegacyInlineTextBox::expansionBehavior() const
 {
     ExpansionBehavior leftBehavior;
     if (forceLeftExpansion())
@@ -1322,12 +1323,12 @@ ExpansionBehavior InlineTextBox::expansionBehavior() const
 
 #if ENABLE(TREE_DEBUGGING)
 
-const char* InlineTextBox::boxName() const
+const char* LegacyInlineTextBox::boxName() const
 {
     return "InlineTextBox";
 }
 
-void InlineTextBox::outputLineBox(TextStream& stream, bool mark, int depth) const
+void LegacyInlineTextBox::outputLineBox(TextStream& stream, bool mark, int depth) const
 {
     stream << "-------- " << (isDirty() ? "D" : "-") << "-";
 

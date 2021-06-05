@@ -346,12 +346,12 @@ private:
         ADD_BOOLEAN_BITFIELD(isHorizontal, IsHorizontal);
         // for RootInlineBox
         ADD_BOOLEAN_BITFIELD(endsWithBreak, EndsWithBreak); // Whether the line ends with a <br>.
-        // shared between RootInlineBox and InlineTextBox
+        // shared between RootInlineBox and LegacyInlineTextBox
         ADD_BOOLEAN_BITFIELD(canHaveLeftExpansion, CanHaveLeftExpansion);
         ADD_BOOLEAN_BITFIELD(canHaveRightExpansion, CanHaveRightExpansion);
         ADD_BOOLEAN_BITFIELD(knownToHaveNoOverflow, KnownToHaveNoOverflow);
         ADD_BOOLEAN_BITFIELD(hasEllipsisBoxOrHyphen, HasEllipsisBoxOrHyphen);
-        // for InlineTextBox
+        // for LegacyInlineTextBox
         ADD_BOOLEAN_BITFIELD(dirOverride, DirOverride);
         ADD_BOOLEAN_BITFIELD(behavesLikeText, BehavesLikeText); // Whether or not this object represents text with a non-zero height. Includes non-image list markers, text boxes, br.
         ADD_BOOLEAN_BITFIELD(forceRightExpansion, ForceRightExpansion);
@@ -398,14 +398,14 @@ protected:
     bool hasEllipsisBox() const { return m_bitfields.hasEllipsisBoxOrHyphen(); }
     void setHasEllipsisBox(bool hasEllipsisBox) { m_bitfields.setHasEllipsisBoxOrHyphen(hasEllipsisBox); }
 
-    // For InlineTextBox
+    // For LegacyInlineTextBox
     bool hasHyphen() const { return m_bitfields.hasEllipsisBoxOrHyphen(); }
     bool canHaveLeftExpansion() const { return m_bitfields.canHaveLeftExpansion(); }
     bool canHaveRightExpansion() const { return m_bitfields.canHaveRightExpansion(); }
     bool forceRightExpansion() const { return m_bitfields.forceRightExpansion(); }
     bool forceLeftExpansion() const { return m_bitfields.forceLeftExpansion(); }
     
-    // For LegacyInlineFlowBox and InlineTextBox
+    // For LegacyInlineFlowBox and LegacyInlineTextBox
     bool extracted() const { return m_bitfields.extracted(); }
 
 protected:

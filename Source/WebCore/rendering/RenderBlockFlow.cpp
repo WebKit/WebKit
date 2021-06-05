@@ -34,11 +34,11 @@
 #include "HTMLTextAreaElement.h"
 #include "HitTestLocation.h"
 #include "InlineIterator.h"
-#include "InlineTextBox.h"
 #include "LayoutIntegrationLineIterator.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LayoutIntegrationRunIterator.h"
 #include "LayoutRepainter.h"
+#include "LegacyInlineTextBox.h"
 #include "LegacyLineLayout.h"
 #include "Logging.h"
 #include "RenderCombineText.h"
@@ -3232,7 +3232,7 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
 
     auto hasSelectedChildren = [&](const LegacyRootInlineBox& root) {
         for (auto* box = root.firstLeafDescendant(); box; box = box->nextLeafOnLine()) {
-            if (!is<InlineTextBox>(*box)) {
+            if (!is<LegacyInlineTextBox>(*box)) {
                 if (box->selectionState() != HighlightState::None)
                     return true;
                 continue;
@@ -3241,7 +3241,7 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
             auto start = view().selection().startOffset();
             auto end = view().selection().endOffset();
 
-            auto& textBox = downcast<InlineTextBox>(*box);
+            auto& textBox = downcast<LegacyInlineTextBox>(*box);
             switch (textBox.renderer().selectionState()) {
             case RenderObject::HighlightState::None:
                 continue;

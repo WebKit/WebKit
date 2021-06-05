@@ -63,7 +63,7 @@ private:
 
     VisiblePosition positionForPoint(const LayoutPoint&, const RenderFragmentContainer*) override;
     IntRect linesBoundingBox() const override;
-    std::unique_ptr<InlineTextBox> createTextBox() override;
+    std::unique_ptr<LegacyInlineTextBox> createTextBox() override;
 
     float m_scalingFactor;
     FontCascade m_scaledFont;
