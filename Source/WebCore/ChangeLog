@@ -1,3 +1,15 @@
+2021-06-05  Cameron McCormack  <heycam@apple.com>
+
+        Diff aspect-ratio property values correctly
+        https://bugs.webkit.org/show_bug.cgi?id=226673
+
+        Reviewed by Rob Buis.
+
+        Test: fast/css/aspect-ratio-no-relayout.html
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::rareNonInheritedDataChangeRequiresLayout):
+
 2021-06-04  Chris Dumez  <cdumez@apple.com>
 
         Optimize a few call sites creating SharedBuffer objects
