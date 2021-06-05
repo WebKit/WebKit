@@ -7360,6 +7360,11 @@ void WebPage::synchronizeCORSDisablingPatternsWithNetworkProcess()
     WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::SetCORSDisablingPatterns(m_identifier, m_corsDisablingPatterns), 0);
 }
 
+void WebPage::isPlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags state)
+{
+    platformIsPlayingMediaDidChange();
+    send(Messages::WebPageProxy::IsPlayingMediaDidChange(state));
+}
 
 #if ENABLE(MEDIA_USAGE)
 void WebPage::addMediaUsageManagerSession(MediaSessionIdentifier identifier, const String& bundleIdentifier, const URL& pageURL)

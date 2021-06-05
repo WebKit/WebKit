@@ -874,7 +874,7 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
     bool altKey = modifiers.contains(WebEvent::Modifier::AltKey);
     bool metaKey = modifiers.contains(WebEvent::Modifier::MetaKey);
 
-    m_didHandleOrPreventMouseDownOrMouseUpEventDuringSyntheticClick = false;
+    m_currentSyntheticClickMayNotBeMeaningful = true;
 
     tapWasHandled |= mainframe.eventHandler().handleMousePressEvent(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, LeftButton, PlatformEvent::MousePressed, 1, shiftKey, ctrlKey, altKey, metaKey, WallTime::now(), WebCore::ForceAtClick, syntheticClickType, pointerId));
     if (m_isClosed)
@@ -903,7 +903,7 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
         return;
 
     bool shouldDispatchDidNotHandleTapAsMeaningfulClickAtPoint = ([&] {
-        if (m_didHandleOrPreventMouseDownOrMouseUpEventDuringSyntheticClick)
+        if (!m_currentSyntheticClickMayNotBeMeaningful)
             return false;
 
         if (oldFocusedElement != newFocusedElement)
@@ -924,8 +924,6 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
     if (!tapWasHandled || !nodeRespondingToClick.isElementNode())
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(location)));
 
-    m_didHandleOrPreventMouseDownOrMouseUpEventDuringSyntheticClick = false;
-    
     send(Messages::WebPageProxy::DidCompleteSyntheticClick());
 }
 
@@ -947,7 +945,7 @@ void WebPage::attemptSyntheticClick(const IntPoint& point, OptionSet<WebEvent::M
 
 void WebPage::didHandleOrPreventMouseDownOrMouseUpEvent()
 {
-    m_didHandleOrPreventMouseDownOrMouseUpEventDuringSyntheticClick = true;
+    m_currentSyntheticClickMayNotBeMeaningful = false;
 }
 
 void WebPage::handleDoubleTapForDoubleClickAtPoint(const IntPoint& point, OptionSet<WebEvent::Modifier> modifiers, TransactionID lastLayerTreeTransactionId)
@@ -4692,6 +4690,11 @@ void WebPage::animationDidFinishForElement(const WebCore::Element& animatedEleme
     auto endContainer = makeRefPtr(selection.end().containerNode());
     if (startContainer != endContainer)
         scheduleEditorStateUpdateForStartOrEndContainerNodeIfNeeded(endContainer.get());
+}
+
+void WebPage::platformIsPlayingMediaDidChange()
+{
+    m_currentSyntheticClickMayNotBeMeaningful = false;
 }
 
 } // namespace WebKit

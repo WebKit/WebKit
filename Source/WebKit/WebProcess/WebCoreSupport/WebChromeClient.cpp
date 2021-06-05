@@ -1235,7 +1235,7 @@ bool WebChromeClient::shouldUseTiledBackingForFrameView(const FrameView& frameVi
 
 void WebChromeClient::isPlayingMediaDidChange(MediaProducer::MediaStateFlags state)
 {
-    m_page.send(Messages::WebPageProxy::IsPlayingMediaDidChange(state));
+    m_page.isPlayingMediaDidChange(state);
 }
 
 void WebChromeClient::handleAutoplayEvent(AutoplayEvent event, OptionSet<AutoplayEventFlags> flags)

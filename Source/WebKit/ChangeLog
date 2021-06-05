@@ -1,3 +1,41 @@
+2021-06-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Meaningful click heuristic should account for media state changes
+        https://bugs.webkit.org/show_bug.cgi?id=226655
+        rdar://78330664
+
+        Reviewed by Tim Horton and Devin Rousso.
+
+        Teach the "meaningful click" heuristic about changes to media element state flags. See comments below for more
+        details.
+
+        Test: fast/events/ios/meaningful-click-when-playing-media.html
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::isPlayingMediaDidChange):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::isPlayingMediaDidChange):
+
+        Refactor some logic here so that the WebChromeClient calls into WebPage, which then sends an IPC message to the
+        UI process and additionally calls into a private method for platform-specific logic (see WebPageIOS.mm).
+
+        * WebProcess/WebPage/WebPage.h:
+
+        Replace `m_didHandleOrPreventMouseDownOrMouseUpEventDuringSyntheticClick` with another flag,
+        `m_currentSyntheticClickMayNotBeMeaningful`, that is initially set to `true` at the beginning of
+        `WebPage::completeSyntheticClick`, and consulted after the events have been dispatched to see if anything has
+        set it to `false` (currently, this includes only playing media state changes and handled click events by the
+        page). If the flag is set to `false`, we then consider the click to have been "meaningful", with respect to the
+        `-_webView:didNotHandleTapAsMeaningfulClickAtPoint:` UI delegate method.
+
+        (WebKit::WebPage::platformIsPlayingMediaDidChange):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::completeSyntheticClick):
+        (WebKit::WebPage::didHandleOrPreventMouseDownOrMouseUpEvent):
+        (WebKit::WebPage::platformIsPlayingMediaDidChange):
+
+        Make these set `m_currentSyntheticClickMayNotBeMeaningful` to `false`.
+
 2021-06-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Store MediaPlayer using WeakPtr in MediaPlayerPrivateRemote

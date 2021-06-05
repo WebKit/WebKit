@@ -1401,6 +1401,8 @@ public:
     void removeMediaUsageManagerSession(WebCore::MediaSessionIdentifier);
 #endif
 
+    void isPlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags);
+
 #if ENABLE(IMAGE_EXTRACTION)
     void requestImageExtraction(WebCore::Element&, CompletionHandler<void(RefPtr<WebCore::Element>&&)>&&);
     void updateWithImageExtractionResult(WebCore::ImageExtractionResult&&, const WebCore::ElementContext&, const WebCore::FloatPoint& location, CompletionHandler<void(ImageExtractionUpdateResult)>&&);
@@ -1897,6 +1899,8 @@ private:
     
     void consumeNetworkExtensionSandboxExtensions(const SandboxExtension::HandleArray&);
 
+    void platformIsPlayingMediaDidChange();
+
     WebCore::PageIdentifier m_identifier;
 
     std::unique_ptr<WebCore::Page> m_page;
@@ -2185,8 +2189,8 @@ private:
     RefPtr<WebCore::Node> m_potentialTapNode;
     WebCore::FloatPoint m_potentialTapLocation;
     RefPtr<WebCore::SecurityOrigin> m_potentialTapSecurityOrigin;
-    bool m_didHandleOrPreventMouseDownOrMouseUpEventDuringSyntheticClick { false };
 
+    bool m_currentSyntheticClickMayNotBeMeaningful { true };
     bool m_hasReceivedVisibleContentRectsAfterDidCommitLoad { false };
     bool m_hasRestoredExposedContentRectAfterDidCommitLoad { false };
     bool m_scaleWasSetByUIProcess { false };
@@ -2358,6 +2362,7 @@ inline void WebPage::platformWillPerformEditingCommand() { }
 inline bool WebPage::platformNeedsLayoutForEditorState(const WebCore::Frame&) const { return false; }
 inline void WebPage::didHandleOrPreventMouseDownOrMouseUpEvent() { }
 inline void WebPage::prepareToRunModalJavaScriptDialog() { }
+inline void WebPage::platformIsPlayingMediaDidChange() { }
 #endif
 
 } // namespace WebKit
