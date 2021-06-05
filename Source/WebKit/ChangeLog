@@ -1,3 +1,41 @@
+2021-06-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Store MediaPlayer using WeakPtr in MediaPlayerPrivateRemote
+        https://bugs.webkit.org/show_bug.cgi?id=224421
+
+        Unreviewed. Address Darin's post commit commnet.
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::load):
+        (WebKit::MediaPlayerPrivateRemote::networkStateChanged):
+        (WebKit::MediaPlayerPrivateRemote::setReadyState):
+        (WebKit::MediaPlayerPrivateRemote::readyStateChanged):
+        (WebKit::MediaPlayerPrivateRemote::volumeChanged):
+        (WebKit::MediaPlayerPrivateRemote::muteChanged):
+        (WebKit::MediaPlayerPrivateRemote::timeChanged):
+        (WebKit::MediaPlayerPrivateRemote::durationChanged):
+        (WebKit::MediaPlayerPrivateRemote::rateChanged):
+        (WebKit::MediaPlayerPrivateRemote::playbackStateChanged):
+        (WebKit::MediaPlayerPrivateRemote::engineFailedToLoad):
+        (WebKit::MediaPlayerPrivateRemote::characteristicChanged):
+        (WebKit::MediaPlayerPrivateRemote::sizeChanged):
+        (WebKit::MediaPlayerPrivateRemote::firstVideoFrameAvailable):
+        (WebKit::MediaPlayerPrivateRemote::renderingModeChanged):
+        (WebKit::MediaPlayerPrivateRemote::acceleratedRenderingStateChanged):
+        (WebKit::MediaPlayerPrivateRemote::addRemoteAudioTrack):
+        (WebKit::MediaPlayerPrivateRemote::removeRemoteAudioTrack):
+        (WebKit::MediaPlayerPrivateRemote::addRemoteTextTrack):
+        (WebKit::MediaPlayerPrivateRemote::removeRemoteTextTrack):
+        (WebKit::MediaPlayerPrivateRemote::addRemoteVideoTrack):
+        (WebKit::MediaPlayerPrivateRemote::removeRemoteVideoTrack):
+        (WebKit::MediaPlayerPrivateRemote::currentPlaybackTargetIsWirelessChanged):
+        (WebKit::MediaPlayerPrivateRemote::mediaPlayerKeyNeeded):
+        (WebKit::MediaPlayerPrivateRemote::waitingForKeyChanged):
+        (WebKit::MediaPlayerPrivateRemote::initializationDataEncountered):
+        (WebKit::MediaPlayerPrivateRemote::resourceNotSupported):
+        (WebKit::MediaPlayerPrivateRemote::activeSourceBuffersChanged):
+        (WebKit::MediaPlayerPrivateRemote::getRawCookies const):
+
 2021-06-04  Chris Dumez  <cdumez@apple.com>
 
         Flaky crash under UserMediaCaptureManagerProxy::SourceProxy::~SourceProxy() on the bots
