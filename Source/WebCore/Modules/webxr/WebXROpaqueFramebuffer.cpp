@@ -120,8 +120,7 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
     // the textures/renderbuffers.
 
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
-    if (!data.surface)
-        return;
+    ASSERT(data.surface);
 
     auto gCGL = static_cast<GraphicsContextGLOpenGL*>(m_context.graphicsContextGL());
     GCGLenum textureTarget = GraphicsContextGLOpenGL::drawingBufferTextureTarget();

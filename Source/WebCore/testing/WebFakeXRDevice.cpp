@@ -35,6 +35,10 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/MathExtras.h>
 
+#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
+#include "IOSurface.h"
+#endif
+
 namespace WebCore {
 
 static constexpr Seconds FakeXRFrameTime = 15_ms;
@@ -146,7 +150,7 @@ void SimulatedXRDevice::frameTimerFired()
 
     for (auto& layer : m_layers) {
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
-        data.layers.add(layer.key, FrameData::LayerData { });
+        data.layers.add(layer.key, FrameData::LayerData { .surface = IOSurface::create(recommendedResolution(PlatformXR::SessionMode::ImmersiveVr), DestinationColorSpace::SRGB()) });
 #else
         data.layers.add(layer.key, FrameData::LayerData { .opaqueTexture = layer.value });
 #endif
