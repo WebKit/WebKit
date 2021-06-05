@@ -1,3 +1,17 @@
+2021-06-04  Chris Dumez  <cdumez@apple.com>
+
+        Worker.constructor throws an exception when the url param is an empty string
+        https://bugs.webkit.org/show_bug.cgi?id=226637
+
+        Reviewed by Darin Adler.
+
+        Update existing tests to reflect behavior change.
+
+        * fast/workers/worker-constructor-expected.txt:
+        * fast/workers/worker-constructor.html:
+        * http/tests/workers/worker-invalid-url-expected.txt:
+        * http/tests/workers/worker-invalid-url.html:
+
 2021-06-04  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB][GTK] Unreviewed test gardening. Remove flaky tests that have been constantly passing for the last 4000 revisions.

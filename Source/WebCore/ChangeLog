@@ -1,5 +1,20 @@
 2021-06-04  Chris Dumez  <cdumez@apple.com>
 
+        Worker.constructor throws an exception when the url param is an empty string
+        https://bugs.webkit.org/show_bug.cgi?id=226637
+
+        Reviewed by Darin Adler.
+
+        Stop throwing an exception if the Worker constructor gets called with an empty string.
+        Instead treat it as a relative URL, like Chrome and Firefox do.
+
+        No new tests, updated existing ones.
+
+        * workers/AbstractWorker.cpp:
+        (WebCore::AbstractWorker::resolveURL):
+
+2021-06-04  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed Windows build fix after r278516.
 
         * platform/graphics/avfoundation/cf/WebCoreAVCFResourceLoader.cpp:

@@ -42,9 +42,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(AbstractWorker);
 
 ExceptionOr<URL> AbstractWorker::resolveURL(const String& url, bool shouldBypassMainWorldContentSecurityPolicy)
 {
-    if (url.isEmpty())
-        return Exception { SyntaxError };
-
     auto& context = *scriptExecutionContext();
 
     // FIXME: This should use the dynamic global scope (bug #27887).
