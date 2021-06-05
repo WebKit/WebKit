@@ -175,11 +175,13 @@ static bool isValidCaptureDevice(const CoreAudioCaptureDevice& device)
 
 void CoreAudioCaptureDeviceManager::scheduleUpdateCaptureDevices()
 {
-    if (m_updateDeviceStateQueue.hasPendingTasks())
+    if (m_wasRefreshAudioCaptureDevicesScheduled)
         return;
 
-    m_updateDeviceStateQueue.enqueueTask([this] {
+    m_wasRefreshAudioCaptureDevicesScheduled = true;
+    callOnMainThread([this] {
         refreshAudioCaptureDevices(NotifyIfDevicesHaveChanged::Notify);
+        m_wasRefreshAudioCaptureDevicesScheduled = false;
     });
 }
 

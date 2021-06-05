@@ -1,5 +1,28 @@
 2021-06-04  Chris Dumez  <cdumez@apple.com>
 
+        Reduce use of legacy MainThreadTaskQueue in media code
+        https://bugs.webkit.org/show_bug.cgi?id=226672
+
+        Reviewed by Darin Adler.
+
+        Reduce use of legacy MainThreadTaskQueue in media code. Simply use callOnMainThread()
+        for these instead.
+
+        * platform/graphics/cocoa/TextTrackRepresentationCocoa.h:
+        * platform/graphics/cocoa/TextTrackRepresentationCocoa.mm:
+        (WebCore::TextTrackRepresentationCocoa::boundsChanged):
+        * platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.h:
+        * platform/mediastream/mac/CoreAudioCaptureDeviceManager.cpp:
+        (WebCore::CoreAudioCaptureDeviceManager::scheduleUpdateCaptureDevices):
+        * platform/mediastream/mac/CoreAudioCaptureDeviceManager.h:
+        * platform/mock/MediaPlaybackTargetPickerMock.cpp:
+        (WebCore::MediaPlaybackTargetPickerMock::showPlaybackTargetPicker):
+        (WebCore::MediaPlaybackTargetPickerMock::startingMonitoringPlaybackTargets):
+        (WebCore::MediaPlaybackTargetPickerMock::setState):
+        * platform/mock/MediaPlaybackTargetPickerMock.h:
+
+2021-06-04  Chris Dumez  <cdumez@apple.com>
+
         FileSystem::readFromFile() should return data as `void*`
         https://bugs.webkit.org/show_bug.cgi?id=226671
 

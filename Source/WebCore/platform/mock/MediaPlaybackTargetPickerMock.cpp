@@ -74,7 +74,10 @@ void MediaPlaybackTargetPickerMock::showPlaybackTargetPicker(PlatformView*, cons
     LOG(Media, "MediaPlaybackTargetPickerMock::showPlaybackTargetPicker - checkActiveRoute = %i, useDarkAppearance = %i", (int)checkActiveRoute, (int)useDarkAppearance);
 
     m_showingMenu = true;
-    m_taskQueue.enqueueTask([this] {
+    callOnMainThread([this, weakThis = makeWeakPtr(*this)] {
+        if (!weakThis)
+            return;
+
         m_showingMenu = false;
         currentDeviceDidChange();
     });
@@ -84,7 +87,10 @@ void MediaPlaybackTargetPickerMock::startingMonitoringPlaybackTargets()
 {
     LOG(Media, "MediaPlaybackTargetPickerMock::startingMonitoringPlaybackTargets");
 
-    m_taskQueue.enqueueTask([this] {
+    callOnMainThread([this, weakThis = makeWeakPtr(*this)] {
+        if (!weakThis)
+            return;
+
         if (m_state == MediaPlaybackTargetContext::MockState::OutputDeviceAvailable)
             availableDevicesDidChange();
 
@@ -108,7 +114,10 @@ void MediaPlaybackTargetPickerMock::setState(const String& deviceName, MediaPlay
 {
     LOG(Media, "MediaPlaybackTargetPickerMock::setState - name = %s, state = 0x%x", deviceName.utf8().data(), (unsigned)state);
 
-    m_taskQueue.enqueueTask([this, state, deviceName] {
+    callOnMainThread([this, weakThis = makeWeakPtr(*this), state, deviceName] {
+        if (!weakThis)
+            return;
+
         if (deviceName != m_deviceName && state != MediaPlaybackTargetContext::MockState::Unknown) {
             m_deviceName = deviceName;
             currentDeviceDidChange();

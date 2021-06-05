@@ -29,7 +29,6 @@
 
 #include "CaptureDevice.h"
 #include "CaptureDeviceManager.h"
-#include "GenericTaskQueue.h"
 #include <CoreAudio/CoreAudio.h>
 #include <wtf/text/WTFString.h>
 
@@ -61,7 +60,7 @@ private:
     Vector<CaptureDevice> m_captureDevices;
     Vector<CaptureDevice> m_speakerDevices;
     Vector<CoreAudioCaptureDevice> m_coreAudioCaptureDevices;
-    MainThreadTaskQueue m_updateDeviceStateQueue;
+    bool m_wasRefreshAudioCaptureDevicesScheduled { false };
 };
 
 } // namespace WebCore

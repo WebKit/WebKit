@@ -28,16 +28,16 @@
 
 #if (PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))) && ENABLE(VIDEO)
 
-#include "GenericTaskQueue.h"
 #include "TextTrackRepresentation.h"
 #include <QuartzCore/CALayer.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/WeakPtr.h>
 
 @class WebCoreTextTrackRepresentationCocoaHelper;
 
 namespace WebCore {
 
-class TextTrackRepresentationCocoa final : public TextTrackRepresentation {
+class TextTrackRepresentationCocoa final : public TextTrackRepresentation, public CanMakeWeakPtr<TextTrackRepresentationCocoa, WeakPtrFactoryInitialization::Eager> {
 public:
     explicit TextTrackRepresentationCocoa(TextTrackRepresentationClient&);
     virtual ~TextTrackRepresentationCocoa();
@@ -54,7 +54,6 @@ private:
     void setContentScale(float) final;
     void setHidden(bool) const final;
 
-    MainThreadTaskQueue m_taskQueue;
     TextTrackRepresentationClient& m_client;
     RetainPtr<CALayer> m_layer;
     RetainPtr<WebCoreTextTrackRepresentationCocoaHelper> m_delegate;
