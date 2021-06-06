@@ -136,7 +136,7 @@ MockSourceBufferPrivate::MockSourceBufferPrivate(MockMediaSourcePrivate* parent)
 
 MockSourceBufferPrivate::~MockSourceBufferPrivate() = default;
 
-void MockSourceBufferPrivate::append(Vector<unsigned char>&& data)
+void MockSourceBufferPrivate::append(Vector<uint8_t>&& data)
 {
     m_inputBuffer.appendVector(data);
     SourceBufferPrivateClient::AppendResult result = SourceBufferPrivateClient::AppendResult::AppendSucceeded;

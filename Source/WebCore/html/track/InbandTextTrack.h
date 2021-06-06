@@ -82,7 +82,7 @@ private:
     void removeGenericCue(InbandGenericCue&) override { ASSERT_NOT_REACHED(); }
 
     void parseWebVTTFileHeader(String&&) override { ASSERT_NOT_REACHED(); }
-    void parseWebVTTCueData(const char*, unsigned) override { ASSERT_NOT_REACHED(); }
+    void parseWebVTTCueData(const uint8_t*, unsigned) override { ASSERT_NOT_REACHED(); }
     void parseWebVTTCueData(ISOWebVTTCue&&) override { ASSERT_NOT_REACHED(); }
 
     MediaTime startTimeVariance() const override;

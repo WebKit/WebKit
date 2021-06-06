@@ -344,7 +344,7 @@ void NetworkDataTaskBlob::readData(const BlobDataItem& item)
     if (bytesToRead > m_totalRemainingSize)
         bytesToRead = m_totalRemainingSize;
 
-    auto* data = reinterpret_cast<const char*>(item.data().data()->data()) + item.offset() + m_currentItemReadSize;
+    auto* data = item.data().data()->data() + item.offset() + m_currentItemReadSize;
     m_currentItemReadSize = 0;
 
     consumeData(data, static_cast<int>(bytesToRead));
@@ -399,7 +399,7 @@ void NetworkDataTaskBlob::didRead(int bytesRead)
     consumeData(m_buffer.data(), bytesRead);
 }
 
-void NetworkDataTaskBlob::consumeData(const char* data, int bytesRead)
+void NetworkDataTaskBlob::consumeData(const uint8_t* data, int bytesRead)
 {
     m_totalRemainingSize -= bytesRead;
 
@@ -475,7 +475,7 @@ void NetworkDataTaskBlob::download()
     read();
 }
 
-bool NetworkDataTaskBlob::writeDownload(const char* data, int bytesRead)
+bool NetworkDataTaskBlob::writeDownload(const uint8_t* data, int bytesRead)
 {
     ASSERT(isDownload());
     int bytesWritten = FileSystem::writeToFile(m_downloadFile, data, bytesRead);

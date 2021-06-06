@@ -229,7 +229,7 @@ static bool writeDataToFile(const WebKit::NetworkCache::Data& fileData, Platform
 {
     bool success = true;
     fileData.apply([fd, &success](const uint8_t* data, size_t size) {
-        if (writeToFile(fd, (const char*)data, size) == -1) {
+        if (writeToFile(fd, data, size) == -1) {
             success = false;
             return false;
         }

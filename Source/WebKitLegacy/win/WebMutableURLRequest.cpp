@@ -298,7 +298,7 @@ HRESULT WebMutableURLRequest::setHTTPBody(_In_opt_ IStream* data)
         return E_FAIL;
 
     size_t length = stat.cbSize.LowPart;
-    Vector<char> vector(length);
+    Vector<uint8_t> vector(length);
     ULONG bytesRead = 0;
     if (FAILED(data->Read(vector.data(), stat.cbSize.LowPart, &bytesRead)))
         return E_FAIL;

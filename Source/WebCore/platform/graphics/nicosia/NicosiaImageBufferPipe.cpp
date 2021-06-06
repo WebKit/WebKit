@@ -117,7 +117,7 @@ void NicosiaImageBufferPipeSource::handle(RefPtr<ImageBuffer>&& buffer)
                     texture->reset(size, nativeImage->hasAlpha() ? BitmapTexture::SupportsAlpha : BitmapTexture::NoFlag);
 #if USE(CAIRO)
                     auto* surface = nativeImage->platformImage().get();
-                    auto* imageData = reinterpret_cast<const char*>(cairo_image_surface_get_data(surface));
+                    auto* imageData = cairo_image_surface_get_data(surface);
                     texture->updateContents(imageData, IntRect(IntPoint(), size), IntPoint(), cairo_image_surface_get_stride(surface));
 #else
                     notImplemented();

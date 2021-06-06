@@ -299,8 +299,8 @@ public:
     const std::string& testURL() const { return m_testURL; }
     const std::string& expectedPixelHash() const { return m_expectedPixelHash; }
 
-    const std::vector<char>& audioResult() const { return m_audioResult; }
-    void setAudioResult(const std::vector<char>& audioData) { m_audioResult = audioData; }
+    const std::vector<uint8_t>& audioResult() const { return m_audioResult; }
+    void setAudioResult(const std::vector<uint8_t>& audioData) { m_audioResult = audioData; }
 
     void addOriginAccessAllowListEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains);
     void removeOriginAccessAllowListEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains);
@@ -377,7 +377,7 @@ public:
     void setOpenPanelFiles(JSContextRef, JSValueRef);
 
 #if PLATFORM(IOS_FAMILY)
-    const std::vector<char>& openPanelFilesMediaIcon() const { return m_openPanelFilesMediaIcon; }
+    const std::vector<uint8_t>& openPanelFilesMediaIcon() const { return m_openPanelFilesMediaIcon; }
     void setOpenPanelFilesMediaIcon(JSContextRef, JSValueRef);
 #endif
 
@@ -468,7 +468,7 @@ private:
     std::set<std::string> m_willSendRequestClearHeaders;
     std::set<std::string> m_allowedHosts;
 
-    std::vector<char> m_audioResult;
+    std::vector<uint8_t> m_audioResult;
 
     std::map<std::string, std::string> m_URLsToRedirect;
 
@@ -482,7 +482,7 @@ private:
 
     std::vector<std::string> m_openPanelFiles;
 #if PLATFORM(IOS_FAMILY)
-    std::vector<char> m_openPanelFilesMediaIcon;
+    std::vector<uint8_t> m_openPanelFilesMediaIcon;
 #endif
 
     static JSRetainPtr<JSClassRef> createJSClass();

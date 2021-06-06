@@ -58,7 +58,7 @@ private:
     {
     }
 
-    void appendBytes(DocumentWriter&, const char*, size_t) final;
+    void appendBytes(DocumentWriter&, const uint8_t*, size_t) final;
     void createDocumentStructure();
 
     HTMLEmbedElement* m_embedElement { nullptr };
@@ -110,7 +110,7 @@ void PluginDocumentParser::createDocumentStructure()
     document.setHasVisuallyNonEmptyCustomContent();
 }
 
-void PluginDocumentParser::appendBytes(DocumentWriter&, const char*, size_t)
+void PluginDocumentParser::appendBytes(DocumentWriter&, const uint8_t*, size_t)
 {
     if (m_embedElement)
         return;

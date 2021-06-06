@@ -312,8 +312,8 @@ static JSValueRef setAudioResultCallback(JSContextRef context, JSObjectRef funct
     JSC::JSArrayBufferView* jsBufferView = JSC::jsDynamicCast<JSC::JSArrayBufferView*>(vm, toJS(toJS(context), arguments[0]));
     ASSERT(jsBufferView);
     RefPtr<JSC::ArrayBufferView> bufferView = jsBufferView->unsharedImpl();
-    const char* buffer = static_cast<const char*>(bufferView->baseAddress());
-    std::vector<char> audioData(buffer, buffer + bufferView->byteLength());
+    auto buffer = static_cast<const uint8_t*>(bufferView->baseAddress());
+    std::vector audioData(buffer, buffer + bufferView->byteLength());
 
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
     controller->setAudioResult(audioData);
@@ -2367,8 +2367,8 @@ void TestRunner::setOpenPanelFilesMediaIcon(JSContextRef context, JSValueRef med
     JSC::JSArrayBufferView* jsBufferView = JSC::jsDynamicCast<JSC::JSArrayBufferView*>(vm, toJS(toJS(context), mediaIcon));
     ASSERT(jsBufferView);
     RefPtr<JSC::ArrayBufferView> bufferView = jsBufferView->unsharedImpl();
-    const char* buffer = static_cast<const char*>(bufferView->baseAddress());
-    std::vector<char> mediaIconData(buffer, buffer + bufferView->byteLength());
+    auto buffer = static_cast<const uint8_t*>(bufferView->baseAddress());
+    std::vector mediaIconData(buffer, buffer + bufferView->byteLength());
     
     m_openPanelFilesMediaIcon = mediaIconData;
 }

@@ -348,7 +348,7 @@ bool getEOTHeader(SharedBuffer* fontData, EOTHeader& eotHeader, size_t& overlayD
 
 // adds fontName to the font table in fontData, and writes the new font table to rewrittenFontTable
 // returns the size of the name table (which is used by renameAndActivateFont), or 0 on early abort
-bool renameFont(const SharedBuffer& fontData, const String& fontName, Vector<char>& rewrittenFontData)
+bool renameFont(const SharedBuffer& fontData, const String& fontName, Vector<uint8_t>& rewrittenFontData)
 {
     size_t originalDataSize = fontData.size();
     const sfntHeader* sfnt = reinterpret_cast<const sfntHeader*>(fontData.data());
@@ -375,7 +375,7 @@ bool renameFont(const SharedBuffer& fontData, const String& fontName, Vector<cha
     size_t nameTableSize = ((offsetof(nameTable, nameRecords) + nameRecordCount * sizeof(nameRecord) + fontName.length() * sizeof(UChar)) & ~3) + 4;
 
     rewrittenFontData.resize(fontData.size() + nameTableSize);
-    char* data = rewrittenFontData.data();
+    auto* data = rewrittenFontData.data();
     memcpy(data, fontData.data(), originalDataSize);
 
     // Make the table directory entry point to the new 'name' table.
@@ -417,7 +417,7 @@ bool renameFont(const SharedBuffer& fontData, const String& fontName, Vector<cha
 // Rename the font and install the new font data into the system
 RefPtr<FontMemoryResource> renameAndActivateFont(const SharedBuffer& fontData, const String& fontName)
 {
-    Vector<char> rewrittenFontData;
+    Vector<uint8_t> rewrittenFontData;
     if (!renameFont(fontData, fontName, rewrittenFontData))
         return { };
 

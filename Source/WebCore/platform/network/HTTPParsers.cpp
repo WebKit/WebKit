@@ -310,7 +310,8 @@ bool isValidUserAgentHeaderValue(const String& value)
 #endif
 
 static const size_t maxInputSampleSize = 128;
-static String trimInputSample(const char* p, size_t length)
+template<typename CharType>
+static String trimInputSample(CharType* p, size_t length)
 {
     String s = String(p, std::min<size_t>(length, maxInputSampleSize));
     if (length > maxInputSampleSize)
@@ -631,14 +632,15 @@ bool parseRange(const String& range, long long& rangeOffset, long long& rangeEnd
     return true;
 }
 
-static inline bool isValidHeaderNameCharacter(const char* character)
+template<typename CharacterType>
+static inline bool isValidHeaderNameCharacter(CharacterType character)
 {
     // https://tools.ietf.org/html/rfc7230#section-3.2
     // A header name should only contain one or more of
     // alphanumeric or ! # $ % & ' * + - . ^ _ ` | ~
-    if (isASCIIAlphanumeric(*character))
+    if (isASCIIAlphanumeric(character))
         return true;
-    switch (*character) {
+    switch (character) {
     case '!':
     case '#':
     case '$':
@@ -660,16 +662,16 @@ static inline bool isValidHeaderNameCharacter(const char* character)
     }
 }
 
-size_t parseHTTPHeader(const char* start, size_t length, String& failureReason, StringView& nameStr, String& valueStr, bool strict)
+size_t parseHTTPHeader(const uint8_t* start, size_t length, String& failureReason, StringView& nameStr, String& valueStr, bool strict)
 {
-    const char* p = start;
-    const char* end = start + length;
+    auto p = start;
+    auto end = start + length;
 
-    Vector<char> name;
-    Vector<char> value;
+    Vector<uint8_t> name;
+    Vector<uint8_t> value;
 
     bool foundFirstNameChar = false;
-    const char* namePtr = nullptr;
+    const uint8_t* namePtr = nullptr;
     size_t nameSize = 0;
 
     nameStr = StringView();
@@ -692,7 +694,7 @@ size_t parseHTTPHeader(const char* start, size_t length, String& failureReason, 
         case ':':
             break;
         default:
-            if (!isValidHeaderNameCharacter(p)) {
+            if (!isValidHeaderNameCharacter(*p)) {
                 if (name.size() < 1)
                     failureReason = "Unexpected start character in header name";
                 else
@@ -747,7 +749,7 @@ size_t parseHTTPHeader(const char* start, size_t length, String& failureReason, 
     return p - start;
 }
 
-size_t parseHTTPRequestBody(const char* data, size_t length, Vector<unsigned char>& body)
+size_t parseHTTPRequestBody(const uint8_t* data, size_t length, Vector<uint8_t>& body)
 {
     body.clear();
     body.append(data, length);

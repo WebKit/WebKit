@@ -1,3 +1,16 @@
+2021-06-05  Chris Dumez  <cdumez@apple.com>
+
+        Use `const uint8_t*` type more consistently to store bytes in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=226688
+
+        Reviewed by Darin Adler.
+
+        * GPUProcess/media/RemoteTextTrackProxy.cpp:
+        (WebKit::RemoteTextTrackProxy::parseWebVTTCueData):
+        * GPUProcess/media/RemoteTextTrackProxy.h:
+        * WebProcess/GPU/media/TextTrackPrivateRemote.cpp:
+        (WebKit::TextTrackPrivateRemote::parseWebVTTCueData):
+
 2021-06-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Dictionary lookup highlights in image overlays should include background content

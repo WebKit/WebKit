@@ -46,7 +46,7 @@ public:
     public:
         virtual void didOpen(CurlStreamID) = 0;
         virtual void didSendData(CurlStreamID, size_t) = 0;
-        virtual void didReceiveData(CurlStreamID, const char*, size_t) = 0;
+        virtual void didReceiveData(CurlStreamID, const uint8_t*, size_t) = 0;
         virtual void didFail(CurlStreamID, CURLcode) = 0;
     };
 

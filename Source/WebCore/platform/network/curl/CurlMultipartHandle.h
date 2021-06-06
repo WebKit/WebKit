@@ -62,13 +62,13 @@ private:
 
     bool processContent();
     bool checkForBoundary(size_t& boundaryStartPosition, size_t& lastPartialMatchPosition);
-    size_t matchedLength(const char* data);
+    size_t matchedLength(const uint8_t* data);
     bool parseHeadersIfPossible();
 
     CurlMultipartHandleClient& m_client;
 
     String m_boundary;
-    Vector<char> m_buffer;
+    Vector<uint8_t> m_buffer;
     Vector<String> m_headers;
 
     State m_state { State::CheckBoundary };

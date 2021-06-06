@@ -1,3 +1,100 @@
+2021-06-05  Chris Dumez  <cdumez@apple.com>
+
+        Use `const uint8_t*` type more consistently to store bytes in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=226688
+
+        Reviewed by Darin Adler.
+
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::addAll):
+        (WebCore::DOMCache::put):
+        * Modules/fetch/FetchBodyConsumer.cpp:
+        (WebCore::FetchBodyConsumer::resolve):
+        (WebCore::FetchBodyConsumer::append):
+        * Modules/fetch/FetchBodyConsumer.h:
+        * Modules/mediastream/libwebrtc/LibWebRTCDataChannelHandler.cpp:
+        (WebCore::LibWebRTCDataChannelHandler::OnMessage):
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::send):
+        (WebCore::WebSocketChannel::didReceiveSocketStreamData):
+        (WebCore::WebSocketChannel::appendToBuffer):
+        (WebCore::WebSocketChannel::startClosingHandshake):
+        (WebCore::WebSocketChannel::processFrame):
+        (WebCore::WebSocketChannel::enqueueRawFrame):
+        (WebCore::WebSocketChannel::processOutgoingFrameQueue):
+        (WebCore::WebSocketChannel::sendFrame):
+        * Modules/websockets/WebSocketChannel.h:
+        * Modules/websockets/WebSocketDeflater.cpp:
+        (WebCore::setStreamParameter):
+        (WebCore::WebSocketDeflater::addBytes):
+        (WebCore::WebSocketInflater::addBytes):
+        (WebCore::WebSocketInflater::finish):
+        * Modules/websockets/WebSocketDeflater.h:
+        (WebCore::WebSocketDeflater::data):
+        (WebCore::WebSocketInflater::data):
+        * Modules/websockets/WebSocketFrame.cpp:
+        (WebCore::WebSocketFrame::parseFrame):
+        (WebCore::appendFramePayload):
+        (WebCore::WebSocketFrame::makeFrameData):
+        (WebCore::WebSocketFrame::WebSocketFrame):
+        * Modules/websockets/WebSocketFrame.h:
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::trimInputSample):
+        (WebCore::WebSocketHandshake::readServerHandshake):
+        (WebCore::WebSocketHandshake::readStatusLine):
+        (WebCore::WebSocketHandshake::readHTTPHeaders):
+        * Modules/websockets/WebSocketHandshake.h:
+        * Modules/websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::send):
+        * contentextensions/SerializedNFA.cpp:
+        (WebCore::ContentExtensions::writeAllToFile):
+        * crypto/SubtleCrypto.cpp:
+        (WebCore::SubtleCrypto::unwrapKey):
+        * crypto/mac/SerializedCryptoKeyWrapMac.mm:
+        (WebCore::findMasterKey):
+        * dom/DecodedDataDocumentParser.cpp:
+        (WebCore::DecodedDataDocumentParser::appendBytes):
+        * dom/DecodedDataDocumentParser.h:
+        * dom/DocumentParser.h:
+        * dom/RawDataDocumentParser.h:
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocumentParser::appendBytes):
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::appendBytes):
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::appendBytes):
+        * html/track/InbandTextTrack.h:
+        * html/track/InbandWebVTTTextTrack.cpp:
+        (WebCore::InbandWebVTTTextTrack::parseWebVTTCueData):
+        * html/track/InbandWebVTTTextTrack.h:
+        * html/track/WebVTTParser.cpp:
+        (WebCore::WebVTTParser::parseBytes):
+        (WebCore::WebVTTParser::fileFinished):
+        * html/track/WebVTTParser.h:
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::addData):
+        * loader/DocumentWriter.h:
+        * loader/SinkDocument.cpp:
+        * loader/TextTrackLoader.cpp:
+        (WebCore::TextTrackLoader::processNewCueData):
+        * platform/graphics/InbandTextTrackPrivateClient.h:
+        * platform/graphics/gstreamer/InbandTextTrackPrivateGStreamer.cpp:
+        (WebCore::InbandTextTrackPrivateGStreamer::notifyTrackOfSample):
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::trimInputSample):
+        (WebCore::isValidHeaderNameCharacter):
+        (WebCore::parseHTTPHeader):
+        (WebCore::parseHTTPRequestBody):
+        * platform/network/HTTPParsers.h:
+        * platform/network/SocketStreamHandle.cpp:
+        (WebCore::SocketStreamHandle::sendData):
+        * platform/network/SocketStreamHandle.h:
+        * platform/network/SocketStreamHandleClient.h:
+        * platform/network/cf/SocketStreamHandleImplCFNet.cpp:
+        (WebCore::SocketStreamHandleImpl::readStreamCallback):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+
 2021-06-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] Move DataDetectors softlinking in DataDetectorsSPI.h out into a separate PAL header

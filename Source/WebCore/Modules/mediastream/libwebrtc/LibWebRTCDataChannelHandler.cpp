@@ -159,7 +159,7 @@ void LibWebRTCDataChannelHandler::OnMessage(const webrtc::DataBuffer& buffer)
 {
     Locker locker { m_clientLock };
     if (!m_client) {
-        const char* data = reinterpret_cast<const char*>(buffer.data.data<char>());
+        auto* data = buffer.data.data<uint8_t>();
         if (buffer.binary)
             m_bufferedMessages.append(SharedBuffer::create(data, buffer.size()));
         else

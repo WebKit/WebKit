@@ -236,7 +236,7 @@ static RefPtr<SharedBuffer> readICCProfile(jpeg_decompress_struct* info)
             return nullptr;
 
         unsigned markerSize = marker->data_length - iccHeaderSize;
-        buffer->append(reinterpret_cast<const char*>(marker->data + iccHeaderSize), markerSize);
+        buffer->append(reinterpret_cast<const uint8_t*>(marker->data + iccHeaderSize), markerSize);
     }
 
     if (buffer->isEmpty())

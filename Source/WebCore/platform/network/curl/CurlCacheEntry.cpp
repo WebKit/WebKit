@@ -98,7 +98,7 @@ bool CurlCacheEntry::isCached()
     return true;
 }
 
-bool CurlCacheEntry::saveCachedData(const char* data, size_t size)
+bool CurlCacheEntry::saveCachedData(const uint8_t* data, size_t size)
 {
     if (!openContentFile())
         return false;

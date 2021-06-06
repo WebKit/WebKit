@@ -49,7 +49,7 @@ public:
     bool getCachedResponse(const String& url, ResourceResponse&);
 
     void didReceiveResponse(ResourceHandle&, ResourceResponse&);
-    void didReceiveData(ResourceHandle&, const char*, size_t); // Save data
+    void didReceiveData(ResourceHandle&, const uint8_t*, size_t); // Save data
     void didFinishLoading(ResourceHandle&);
     void didFail(ResourceHandle&);
 

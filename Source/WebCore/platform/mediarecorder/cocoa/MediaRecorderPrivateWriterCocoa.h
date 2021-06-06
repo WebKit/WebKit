@@ -75,7 +75,7 @@ public:
     void pause();
     void resume();
 
-    void appendData(const char*, size_t);
+    void appendData(const uint8_t*, size_t);
 
     const String& mimeType() const;
     unsigned audioBitRate() const;

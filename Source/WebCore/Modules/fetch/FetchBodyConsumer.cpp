@@ -276,7 +276,7 @@ void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, const String& co
             }
 
             if (auto chunk = result.returnValue())
-                data->append(reinterpret_cast<const char*>(chunk->data), chunk->size);
+                data->append(chunk->data, chunk->size);
             else
                 resolveWithTypeAndData(WTFMove(promise), type, contentType, reinterpret_cast<const unsigned char*>(data->data()), data->size());
         });
@@ -321,7 +321,7 @@ void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, const String& co
     }
 }
 
-void FetchBodyConsumer::append(const char* data, unsigned size)
+void FetchBodyConsumer::append(const uint8_t* data, unsigned size)
 {
     if (m_source) {
         m_source->enqueue(ArrayBuffer::tryCreate(data, size));
@@ -332,11 +332,6 @@ void FetchBodyConsumer::append(const char* data, unsigned size)
         return;
     }
     m_buffer->append(data, size);
-}
-
-void FetchBodyConsumer::append(const unsigned char* data, unsigned size)
-{
-    append(reinterpret_cast<const char*>(data), size);
 }
 
 RefPtr<SharedBuffer> FetchBodyConsumer::takeData()

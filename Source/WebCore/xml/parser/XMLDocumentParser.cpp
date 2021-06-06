@@ -159,7 +159,7 @@ bool XMLDocumentParser::updateLeafTextNode()
         return true;
 
     // This operation might fire mutation event, see below.
-    m_leafTextNode->appendData(String::fromUTF8(reinterpret_cast<const char*>(m_bufferedText.data()), m_bufferedText.size()));
+    m_leafTextNode->appendData(String::fromUTF8(m_bufferedText.data(), m_bufferedText.size()));
     m_bufferedText = { };
 
     m_leafTextNode = nullptr;

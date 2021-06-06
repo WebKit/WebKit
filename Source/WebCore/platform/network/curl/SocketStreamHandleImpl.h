@@ -61,7 +61,7 @@ private:
 
     void didOpen(CurlStreamID) final;
     void didSendData(CurlStreamID, size_t) final;
-    void didReceiveData(CurlStreamID, const char*, size_t) final;
+    void didReceiveData(CurlStreamID, const uint8_t*, size_t) final;
     void didFail(CurlStreamID, CURLcode) final;
 
     bool isStreamInvalidated() { return m_streamID == invalidCurlStreamID; }

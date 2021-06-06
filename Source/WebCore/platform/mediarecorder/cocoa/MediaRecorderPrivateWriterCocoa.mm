@@ -74,14 +74,14 @@
 - (void)assetWriter:(AVAssetWriter *)assetWriter didProduceFragmentedHeaderData:(NSData *)fragmentedHeaderData
 {
     UNUSED_PARAM(assetWriter);
-    m_writer->appendData(static_cast<const char*>([fragmentedHeaderData bytes]), [fragmentedHeaderData length]);
+    m_writer->appendData(static_cast<const uint8_t*>([fragmentedHeaderData bytes]), [fragmentedHeaderData length]);
 }
 
 - (void)assetWriter:(AVAssetWriter *)assetWriter didProduceFragmentedMediaData:(NSData *)fragmentedMediaData fragmentedMediaDataReport:(AVFragmentedMediaDataReport *)fragmentedMediaDataReport
 {
     UNUSED_PARAM(assetWriter);
     UNUSED_PARAM(fragmentedMediaDataReport);
-    m_writer->appendData(static_cast<const char*>([fragmentedMediaData bytes]), [fragmentedMediaData length]);
+    m_writer->appendData(static_cast<const uint8_t*>([fragmentedMediaData bytes]), [fragmentedMediaData length]);
 }
 
 - (void)close
@@ -531,7 +531,7 @@ void MediaRecorderPrivateWriter::completeFetchData()
     m_fetchDataCompletionHandler(takeData(), currentTimeCode);
 }
 
-void MediaRecorderPrivateWriter::appendData(const char* data, size_t size)
+void MediaRecorderPrivateWriter::appendData(const uint8_t* data, size_t size)
 {
     Locker locker { m_dataLock };
     if (!m_data) {

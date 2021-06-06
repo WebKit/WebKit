@@ -36,9 +36,9 @@ namespace ContentExtensions {
 template<typename T>
 bool writeAllToFile(FileSystem::PlatformFileHandle file, const T& container)
 {
-    const char* bytes = reinterpret_cast<const char*>(container.data());
+    auto bytes = reinterpret_cast<const uint8_t*>(container.data());
     size_t bytesLength = container.size() * sizeof(container[0]);
-    const char* end = bytes + bytesLength;
+    auto end = bytes + bytesLength;
     while (bytes < end) {
         auto written = FileSystem::writeToFile(file, bytes, bytesLength);
         if (written == -1)

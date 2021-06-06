@@ -167,7 +167,7 @@ static std::optional<Vector<uint8_t>> findMasterKey()
         return std::nullopt;
     }
     RetainPtr<CFDataRef> keyData = adoptCF(keyDataRef);
-    return base64Decode(reinterpret_cast<const char*>(CFDataGetBytePtr(keyData.get())), CFDataGetLength(keyData.get()));
+    return base64Decode(CFDataGetBytePtr(keyData.get()), CFDataGetLength(keyData.get()));
 }
 
 std::optional<Vector<uint8_t>> defaultWebCryptoMasterKey()

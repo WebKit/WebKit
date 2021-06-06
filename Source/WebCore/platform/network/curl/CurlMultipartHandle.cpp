@@ -190,7 +190,7 @@ bool CurlMultipartHandle::processContent()
         if (m_buffer.size() < 2)
             return false;
 
-        const char* content = m_buffer.data();
+        auto* content = m_buffer.data();
         // By default we'll remove 2 characters at the end.
         // The \r and \n as stated in the multipart RFC.
         size_t removeCount = 2;
@@ -250,7 +250,7 @@ bool CurlMultipartHandle::processContent()
             return false; // Not enough data to check. Return later when there is more data.
 
         // We'll decide if this is a closing boundary or an opening one.
-        const char* content = m_buffer.data();
+        auto* content = m_buffer.data();
 
         if (content[0] == '-' && content[1] == '-') {
             // This is a closing boundary. Close down the handler.
@@ -300,7 +300,7 @@ bool CurlMultipartHandle::checkForBoundary(size_t& boundaryStartPosition, size_t
     return false;
 }
 
-size_t CurlMultipartHandle::matchedLength(const char* data)
+size_t CurlMultipartHandle::matchedLength(const uint8_t* data)
 {
     auto length = m_boundary.length();
     for (size_t i = 0; i < length; ++i) {
@@ -318,12 +318,12 @@ bool CurlMultipartHandle::parseHeadersIfPossible()
     if (!contentLength)
         return false;
 
-    const auto content = m_buffer.data();
+    auto* content = m_buffer.data();
 
     // Check if we have the header closing strings.
-    if (!strnstr(content, "\r\n\r\n", contentLength)) {
+    if (!memmem(content, contentLength, "\r\n\r\n", 4)) {
         // Some servers closes the headers with only \n-s.
-        if (!strnstr(content, "\n\n", contentLength)) {
+        if (!memmem(content, contentLength, "\n\n", 2)) {
             // Don't have the header closing string. Wait for more data.
             return false;
         }

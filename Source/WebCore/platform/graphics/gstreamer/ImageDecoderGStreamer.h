@@ -84,12 +84,12 @@ private:
         WTF_MAKE_FAST_ALLOCATED;
         WTF_MAKE_NONCOPYABLE(InnerDecoder);
     public:
-        static RefPtr<InnerDecoder> create(ImageDecoderGStreamer& decoder, const char* data, gssize size)
+        static RefPtr<InnerDecoder> create(ImageDecoderGStreamer& decoder, const uint8_t* data, gssize size)
         {
             return adoptRef(*new InnerDecoder(decoder, data, size));
         }
 
-        InnerDecoder(ImageDecoderGStreamer& decoder, const char* data, gssize size)
+        InnerDecoder(ImageDecoderGStreamer& decoder, const uint8_t* data, gssize size)
             : m_decoder(decoder)
             , m_runLoop(RunLoop::current())
         {

@@ -143,7 +143,7 @@ public:
     static bool parseFloatPercentageValuePair(VTTScanner& valueScanner, char, FloatPoint&);
 
     // Input data to the parser to parse.
-    void parseBytes(const char*, unsigned);
+    void parseBytes(const uint8_t*, unsigned);
     void parseFileHeader(String&&);
     void parseCueData(const ISOWebVTTCue&);
     void flush();

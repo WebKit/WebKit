@@ -43,7 +43,7 @@ public:
 
     virtual void didOpenSocketStream(SocketStreamHandle&) = 0;
     virtual void didCloseSocketStream(SocketStreamHandle&) = 0;
-    virtual void didReceiveSocketStreamData(SocketStreamHandle&, const char* data, size_t length) = 0;
+    virtual void didReceiveSocketStreamData(SocketStreamHandle&, const uint8_t* data, size_t length) = 0;
     virtual void didFailToReceiveSocketStreamData(SocketStreamHandle&) = 0;
     virtual void didUpdateBufferedAmount(SocketStreamHandle&, size_t bufferedAmount) = 0;
     virtual void didFailSocketStream(SocketStreamHandle&, const SocketStreamError&) = 0;

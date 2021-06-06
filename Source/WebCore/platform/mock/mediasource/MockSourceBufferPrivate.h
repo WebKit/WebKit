@@ -50,7 +50,7 @@ private:
     explicit MockSourceBufferPrivate(MockMediaSourcePrivate*);
 
     // SourceBufferPrivate overrides
-    void append(Vector<unsigned char>&&) final;
+    void append(Vector<uint8_t>&&) final;
     void abort() final;
     void resetParserState() final;
     void removedFromMediaSource() final;
@@ -92,7 +92,7 @@ private:
     MediaTime m_minimumUpcomingPresentationTime;
     Vector<String> m_enqueuedSamples;
     std::optional<uint64_t> m_maxQueueDepth;
-    Vector<char> m_inputBuffer;
+    Vector<uint8_t> m_inputBuffer;
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;

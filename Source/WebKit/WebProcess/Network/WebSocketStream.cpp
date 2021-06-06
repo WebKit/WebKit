@@ -164,7 +164,7 @@ void WebSocketStream::didCloseSocketStream()
 
 void WebSocketStream::didReceiveSocketStreamData(const IPC::DataReference& data)
 {
-    m_client.didReceiveSocketStreamData(*this, reinterpret_cast<const char*>(data.data()), data.size());
+    m_client.didReceiveSocketStreamData(*this, data.data(), data.size());
 }
 
 void WebSocketStream::didFailToReceiveSocketStreamData()

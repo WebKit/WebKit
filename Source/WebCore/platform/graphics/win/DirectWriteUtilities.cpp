@@ -112,7 +112,7 @@ IDWriteFontCollection1* webProcessFontCollection()
     return fontCollection.get();
 }
 
-HRESULT addFontFromDataToProcessCollection(const Vector<char>& fontData)
+HRESULT addFontFromDataToProcessCollection(const Vector<uint8_t>& fontData)
 {
     COMPtr<IDWriteFontFile> fontFile;
     HRESULT hr = memoryFontLoader()->CreateInMemoryFontFileReference(factory(), fontData.data(), fontData.size(), nullptr, &fontFile);

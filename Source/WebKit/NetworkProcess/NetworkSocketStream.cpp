@@ -84,10 +84,10 @@ void NetworkSocketStream::didCloseSocketStream(SocketStreamHandle& handle)
     send(Messages::WebSocketStream::DidCloseSocketStream());
 }
 
-void NetworkSocketStream::didReceiveSocketStreamData(SocketStreamHandle& handle, const char* data, size_t length)
+void NetworkSocketStream::didReceiveSocketStreamData(SocketStreamHandle& handle, const uint8_t* data, size_t length)
 {
     ASSERT_UNUSED(handle, &handle == m_impl.ptr());
-    send(Messages::WebSocketStream::DidReceiveSocketStreamData(IPC::DataReference(reinterpret_cast<const uint8_t*>(data), length)));
+    send(Messages::WebSocketStream::DidReceiveSocketStreamData(IPC::DataReference(data, length)));
 }
 
 void NetworkSocketStream::didFailToReceiveSocketStreamData(WebCore::SocketStreamHandle& handle)

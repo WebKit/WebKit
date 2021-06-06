@@ -43,7 +43,7 @@ private:
     InbandWebVTTTextTrack(Document&, TextTrackClient&, InbandTextTrackPrivate&);
 
     WebVTTParser& parser();
-    void parseWebVTTCueData(const char* data, unsigned length) final;
+    void parseWebVTTCueData(const uint8_t* data, unsigned length) final;
     void parseWebVTTCueData(ISOWebVTTCue&&) final;
 
     void newCuesParsed() final;

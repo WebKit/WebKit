@@ -53,7 +53,7 @@ public:
     virtual ~SocketStreamHandle() = default;
     SocketStreamState state() const;
 
-    void sendData(const char* data, size_t length, Function<void(bool)>);
+    void sendData(const uint8_t* data, size_t length, Function<void(bool)>);
     void sendHandshake(CString&& handshake, std::optional<CookieRequestHeaderFieldProxy>&&, Function<void(bool, bool)>);
     void close(); // Disconnect after all data in buffer are sent.
     void disconnect();

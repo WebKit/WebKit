@@ -447,10 +447,10 @@ ThreadableWebSocketChannel::SendResult WorkerThreadableWebSocketChannel::Bridge:
     if (!m_peer)
         return ThreadableWebSocketChannel::SendFail;
 
-    // ArrayBuffer isn't thread-safe, hence the content of ArrayBuffer is copied into Vector<char>.
-    Vector<char> data(byteLength);
+    // ArrayBuffer isn't thread-safe, hence the content of ArrayBuffer is copied into Vector<uint8_t>.
+    Vector<uint8_t> data(byteLength);
     if (binaryData.byteLength())
-        memcpy(data.data(), static_cast<const char*>(binaryData.data()) + byteOffset, byteLength);
+        memcpy(data.data(), static_cast<const uint8_t*>(binaryData.data()) + byteOffset, byteLength);
     setMethodNotCompleted();
 
     m_loaderProxy.postTaskToLoader([peer = m_peer, data = WTFMove(data)](ScriptExecutionContext& context) {

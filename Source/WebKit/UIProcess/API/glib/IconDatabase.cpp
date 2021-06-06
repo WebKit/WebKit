@@ -366,7 +366,7 @@ Vector<uint8_t> IconDatabase::iconData(int64_t iconID)
     return result;
 }
 
-std::optional<int64_t> IconDatabase::addIcon(const String& iconURL, const Vector<char>& iconData)
+std::optional<int64_t> IconDatabase::addIcon(const String& iconURL, const Vector<uint8_t>& iconData)
 {
     ASSERT(!isMainRunLoop());
     ASSERT(m_db.isOpen());
@@ -606,7 +606,7 @@ String IconDatabase::iconURLForPageURL(const String& pageURL)
     return m_pageURLToIconURLMap.get(pageURL);
 }
 
-void IconDatabase::setIconForPageURL(const String& iconURL, const unsigned char* iconData, size_t iconDataSize, const String& pageURL, AllowDatabaseWrite allowDatabaseWrite, CompletionHandler<void(bool)>&& completionHandler)
+void IconDatabase::setIconForPageURL(const String& iconURL, const uint8_t* iconData, size_t iconDataSize, const String& pageURL, AllowDatabaseWrite allowDatabaseWrite, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(isMainRunLoop());
 
@@ -638,7 +638,7 @@ void IconDatabase::setIconForPageURL(const String& iconURL, const unsigned char*
         return;
     }
 
-    Vector<char> data { reinterpret_cast<const char*>(iconData), iconDataSize };
+    Vector<uint8_t> data { iconData, iconDataSize };
     m_workQueue->dispatch([this, protectedThis = makeRef(*this), iconURL = iconURL.isolatedCopy(), iconData = WTFMove(data), pageURL = pageURL.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         bool result = false;
         if (m_db.isOpen()) {

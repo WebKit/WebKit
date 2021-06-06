@@ -84,7 +84,7 @@ static String hostName(const URL& url, bool secure)
 }
 
 static const size_t maxInputSampleSize = 128;
-static String trimInputSample(const char* p, size_t len)
+static String trimInputSample(const uint8_t* p, size_t len)
 {
     String s = String(p, std::min<size_t>(len, maxInputSampleSize));
     if (len > maxInputSampleSize)
@@ -221,7 +221,7 @@ void WebSocketHandshake::reset()
     m_extensionDispatcher.reset();
 }
 
-int WebSocketHandshake::readServerHandshake(const char* header, size_t len)
+int WebSocketHandshake::readServerHandshake(const uint8_t* header, size_t len)
 {
     m_mode = Incomplete;
     int statusCode;
@@ -245,12 +245,12 @@ int WebSocketHandshake::readServerHandshake(const char* header, size_t len)
         return len;
     }
     m_mode = Normal;
-    if (!strnstr(header, "\r\n\r\n", len)) {
+    if (!memmem(header, len, "\r\n\r\n", 4)) {
         // Just hasn't been received fully yet.
         m_mode = Incomplete;
         return -1;
     }
-    const char* p = readHTTPHeaders(header + lineLength, header + len);
+    auto p = readHTTPHeaders(header + lineLength, header + len);
     if (!p) {
         LOG(Network, "WebSocketHandshake %p readServerHandshake() readHTTPHeaders() failed", this);
         m_mode = Failed; // m_failureReason is set inside readHTTPHeaders().
@@ -362,7 +362,7 @@ static inline bool headerHasValidHTTPVersion(StringView httpStatusLine)
 // Returns the header length (including "\r\n"), or -1 if we have not received enough data yet.
 // If the line is malformed or the status code is not a 3-digit number,
 // statusCode and statusText will be set to -1 and a null string, respectively.
-int WebSocketHandshake::readStatusLine(const char* header, size_t headerLength, int& statusCode, String& statusText)
+int WebSocketHandshake::readStatusLine(const uint8_t* header, size_t headerLength, int& statusCode, String& statusText)
 {
     // Arbitrary size limit to prevent the server from sending an unbounded
     // amount of data with no newlines and forcing us to buffer it all.
@@ -371,9 +371,9 @@ int WebSocketHandshake::readStatusLine(const char* header, size_t headerLength, 
     statusCode = -1;
     statusText = String();
 
-    const char* space1 = nullptr;
-    const char* space2 = nullptr;
-    const char* p;
+    const uint8_t* space1 = nullptr;
+    const uint8_t* space2 = nullptr;
+    const uint8_t* p;
     size_t consumedLength;
 
     for (p = header, consumedLength = 0; consumedLength < headerLength; p++, consumedLength++) {
@@ -397,7 +397,7 @@ int WebSocketHandshake::readStatusLine(const char* header, size_t headerLength, 
     if (consumedLength == headerLength)
         return -1; // We have not received '\n' yet.
 
-    const char* end = p + 1;
+    auto end = p + 1;
     int lineLength = end - header;
     if (lineLength > maximumLength) {
         m_failureReason = "Status line is too long"_s;
@@ -415,13 +415,13 @@ int WebSocketHandshake::readStatusLine(const char* header, size_t headerLength, 
         return lineLength;
     }
 
-    StringView httpStatusLine(reinterpret_cast<const LChar*>(header), space1 - header);
+    StringView httpStatusLine(header, space1 - header);
     if (!headerHasValidHTTPVersion(httpStatusLine)) {
         m_failureReason = makeString("Invalid HTTP version string: ", httpStatusLine);
         return lineLength;
     }
 
-    StringView statusCodeString(reinterpret_cast<const LChar*>(space1 + 1), space2 - space1 - 1);
+    StringView statusCodeString(space1 + 1, space2 - space1 - 1);
     if (statusCodeString.length() != 3) // Status code must consist of three digits.
         return lineLength;
     for (int i = 0; i < 3; ++i) {
@@ -436,14 +436,14 @@ int WebSocketHandshake::readStatusLine(const char* header, size_t headerLength, 
     return lineLength;
 }
 
-const char* WebSocketHandshake::readHTTPHeaders(const char* start, const char* end)
+const uint8_t* WebSocketHandshake::readHTTPHeaders(const uint8_t* start, const uint8_t* end)
 {
     StringView name;
     String value;
     bool sawSecWebSocketExtensionsHeaderField = false;
     bool sawSecWebSocketAcceptHeaderField = false;
     bool sawSecWebSocketProtocolHeaderField = false;
-    const char* p = start;
+    auto p = start;
     for (; p < end; p++) {
         size_t consumedLength = parseHTTPHeader(p, end - p, m_failureReason, name, value);
         if (!consumedLength)

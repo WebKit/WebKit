@@ -126,7 +126,7 @@ void TextTrackPrivateRemote::parseWebVTTCueData(const IPC::DataReference& data)
 {
     ASSERT(client());
     if (auto* client = this->client())
-        client->parseWebVTTCueData(reinterpret_cast<const char*>(data.data()), data.size());
+        client->parseWebVTTCueData(data.data(), data.size());
 }
 
 void TextTrackPrivateRemote::parseWebVTTCueDataStruct(ISOWebVTTCue&& cueData)
@@ -140,7 +140,7 @@ void TextTrackPrivateRemote::addDataCue(MediaTime&& start, MediaTime&& end, IPC:
 {
     ASSERT(client());
     if (auto* client = this->client())
-        client->addDataCue(WTFMove(start), WTFMove(end), reinterpret_cast<const char*>(data.data()), data.size());
+        client->addDataCue(WTFMove(start), WTFMove(end), data.data(), data.size());
 }
 
 #if ENABLE(DATACUE_VALUE)

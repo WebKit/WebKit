@@ -299,7 +299,7 @@ void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& pr
                 }
 
                 if (auto chunk = result.returnValue())
-                    data->append(reinterpret_cast<const char*>(chunk->data), chunk->size);
+                    data->append(chunk->data, chunk->size);
                 else
                     taskHandler->addResponseBody(recordPosition, response, WTFMove(data));
             });
@@ -383,7 +383,7 @@ void DOMCache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromise
             }
 
             if (auto chunk = result.returnValue())
-                data->append(reinterpret_cast<const char*>(chunk->data), chunk->size);
+                data->append(chunk->data, chunk->size);
             else
                 this->putWithResponseData(WTFMove(promise), WTFMove(request), WTFMove(response), RefPtr<SharedBuffer> { WTFMove(data) });
         });

@@ -58,7 +58,7 @@ WebVTTParser& InbandWebVTTTextTrack::parser()
     return *m_webVTTParser;
 }
 
-void InbandWebVTTTextTrack::parseWebVTTCueData(const char* data, unsigned length)
+void InbandWebVTTTextTrack::parseWebVTTCueData(const uint8_t* data, unsigned length)
 {
     parser().parseBytes(data, length);
 }

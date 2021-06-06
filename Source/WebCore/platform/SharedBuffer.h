@@ -123,7 +123,6 @@ public:
     class DataSegment : public ThreadSafeRefCounted<DataSegment> {
     public:
         WEBCORE_EXPORT const uint8_t* data() const;
-        const char* dataAsCharPtr() const { return reinterpret_cast<const char*>(data()); }
         WEBCORE_EXPORT size_t size() const;
 
         static Ref<DataSegment> create(Vector<uint8_t>&& data)

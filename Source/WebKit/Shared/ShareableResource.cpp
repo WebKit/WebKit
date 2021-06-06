@@ -153,9 +153,9 @@ bool ShareableResource::createHandle(Handle& handle)
     return true;
 }
 
-const char* ShareableResource::data() const
+const uint8_t* ShareableResource::data() const
 {
-    return static_cast<const char*>(m_sharedMemory->data()) + m_offset;
+    return static_cast<const uint8_t*>(m_sharedMemory->data()) + m_offset;
 }
 
 unsigned ShareableResource::size() const

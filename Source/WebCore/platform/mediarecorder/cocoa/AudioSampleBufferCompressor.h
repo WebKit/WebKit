@@ -83,8 +83,8 @@ private:
     CMTime m_currentOutputPresentationTimeStamp { kCMTimeInvalid };
     CMTime m_remainingPrimeDuration { kCMTimeInvalid };
 
-    Vector<char> m_sourceBuffer;
-    Vector<char> m_destinationBuffer;
+    Vector<uint8_t> m_sourceBuffer;
+    Vector<uint8_t> m_destinationBuffer;
 
     RetainPtr<CMBlockBufferRef> m_sampleBlockBuffer;
     size_t m_sampleBlockBufferSize { 0 };

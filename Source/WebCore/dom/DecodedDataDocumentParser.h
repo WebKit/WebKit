@@ -43,7 +43,7 @@ private:
     void append(RefPtr<StringImpl>&&) override = 0;
 
     // appendBytes and flush are used by DocumentWriter (the loader).
-    void appendBytes(DocumentWriter&, const char* bytes, size_t length) override;
+    void appendBytes(DocumentWriter&, const uint8_t* bytes, size_t length) override;
     void flush(DocumentWriter&) override;
 };
 

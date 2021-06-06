@@ -56,7 +56,7 @@ RefPtr<SharedBuffer> SharedBuffer::createFromReadingFile(const String& filePath)
         return nullptr;
     }
 
-    Vector<char> buffer(bytesToRead);
+    Vector<uint8_t> buffer(bytesToRead);
 
     size_t totalBytesRead = 0;
     ssize_t bytesRead;

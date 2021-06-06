@@ -104,7 +104,7 @@ void SocketStreamHandleImpl::didSendData(CurlStreamID, size_t length)
     sendPendingData();
 }
 
-void SocketStreamHandleImpl::didReceiveData(CurlStreamID, const char* data, size_t length)
+void SocketStreamHandleImpl::didReceiveData(CurlStreamID, const uint8_t* data, size_t length)
 {
     if (m_state != Open)
         return;

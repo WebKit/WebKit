@@ -102,7 +102,7 @@ OSStatus AudioFileReader::readProc(void* clientData, SInt64 position, UInt32 req
     if (static_cast<UInt64>(position) < dataSize) {
         size_t bytesAvailable = dataSize - static_cast<size_t>(position);
         bytesToRead = requestCount <= bytesAvailable ? requestCount : bytesAvailable;
-        memcpy(buffer, static_cast<const char*>(data) + position, bytesToRead);
+        memcpy(buffer, static_cast<const uint8_t*>(data) + position, bytesToRead);
     }
 
     if (actualCount)
