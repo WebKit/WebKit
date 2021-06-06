@@ -68,11 +68,6 @@ LayoutUnit TableGrid::Column::logicalLeft() const
     return m_computedLogicalLeft;
 }
 
-bool TableGrid::Column::isFixedWidth() const
-{
-    return hasFixedWidthCell() || (box() && box()->columnWidth());
-}
-
 void TableGrid::Columns::addColumn(const ContainerBox& columnBox)
 {
     m_columnList.append({ &columnBox });
@@ -81,15 +76,6 @@ void TableGrid::Columns::addColumn(const ContainerBox& columnBox)
 void TableGrid::Columns::addAnonymousColumn()
 {
     m_columnList.append({ nullptr });
-}
-
-bool TableGrid::Columns::hasFixedColumnsOnly() const
-{
-    for (auto& column : m_columnList) {
-        if (!column.isFixedWidth())
-            return false;
-    }
-    return true;
 }
 
 void TableGrid::Rows::addRow(const ContainerBox& rowBox)
@@ -107,11 +93,6 @@ TableGrid::Cell::Cell(const ContainerBox& cellBox, SlotPosition position, CellSp
     , m_position(position)
     , m_span(span)
 {
-}
-
-bool TableGrid::Cell::isFixedWidth() const
-{
-    return box().style().logicalWidth().isFixed();
 }
 
 TableGrid::Slot::Slot(Cell& cell, bool isColumnSpanned, bool isRowSpanned)
@@ -169,11 +150,6 @@ void TableGrid::appendCell(const ContainerBox& cellBox)
     auto missingNumberOfColumns = std::max<int>(0, initialSlotPosition.column + columnSpan - m_columns.size());
     for (auto column = 0; column < missingNumberOfColumns; ++column)
         m_columns.addAnonymousColumn();
-
-    if (cell->isFixedWidth()) {
-        for (auto column = cell->startColumn(); column < cell->endColumn(); ++column)
-            m_columns.list()[column].setHasFixedWidthCell();
-    }
 
     if (isInNewRow)
         m_rows.addRow(cellBox.parent());

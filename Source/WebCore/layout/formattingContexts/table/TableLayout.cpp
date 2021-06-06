@@ -244,18 +244,16 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
     enum class ColumnWidthBalancingBase { MinimumWidth, MaximumWidth };
     auto columnWidthBalancingBase = availableHorizontalSpace >= m_grid.widthConstraints()->maximum ? ColumnWidthBalancingBase::MaximumWidth : ColumnWidthBalancingBase::MinimumWidth;
     return distributeAvailableSpace<ColumnSpan>(m_grid, availableHorizontalSpace, [&] (const TableGrid::Slot& slot, size_t columnIndex) {
-        auto& column = m_grid.columns().list()[columnIndex];
-        auto columnBoxFixedWidth = column.box() ? column.box()->columnWidth().value_or(0_lu) : 0_lu;
-        auto minimumWidth = std::max<float>(slot.widthConstraints().minimum, columnBoxFixedWidth);
-        auto maximumWidth = std::max<float>(slot.widthConstraints().maximum, columnBoxFixedWidth);
+        float minimumWidth = slot.widthConstraints().minimum;
+        float maximumWidth = slot.widthConstraints().maximum;
+
+        if (auto fixedWidth = m_grid.columns().list()[columnIndex].fixedWidth())
+            maximumWidth = std::max<float>(minimumWidth, *fixedWidth);
 
         if (columnWidthBalancingBase == ColumnWidthBalancingBase::MinimumWidth) {
             ASSERT(maximumWidth >= minimumWidth);
             return GridSpace { minimumWidth, maximumWidth - minimumWidth };
         }
-        // When the column has a fixed width cell, the maximum width balancing is based on the minimum width.
-        if (column.isFixedWidth())
-            return GridSpace { minimumWidth, maximumWidth };
         return GridSpace { maximumWidth, maximumWidth };
     });
 }

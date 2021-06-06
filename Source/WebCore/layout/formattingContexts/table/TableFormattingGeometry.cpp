@@ -118,34 +118,14 @@ std::optional<LayoutUnit> TableFormattingGeometry::computedColumnWidth(const Con
     return columnBox.columnWidth();
 }
 
-IntrinsicWidthConstraints TableFormattingGeometry::intrinsicWidthConstraintsForCell(const TableGrid::Cell& cell) const
+IntrinsicWidthConstraints TableFormattingGeometry::intrinsicWidthConstraintsForCellContent(const TableGrid::Cell& cell) const
 {
     auto& cellBox = cell.box();
-    auto& style = cellBox.style();
-
-    auto computedIntrinsicWidthConstraints = [&]() -> IntrinsicWidthConstraints {
-        // Even fixed width cells expand to their minimum content width
-        // <td style="width: 10px">test_content</td> will size to max(minimum content width, computed width).
-        auto intrinsicWidthConstraints = IntrinsicWidthConstraints { };
-        if (cellBox.hasChild()) {
-            auto& layoutState = this->layoutState();
-            intrinsicWidthConstraints = LayoutContext::createFormattingContext(cellBox, const_cast<LayoutState&>(layoutState))->computedIntrinsicWidthConstraints();
-        }
-        if (auto fixedWidth = fixedValue(style.logicalWidth()))
-            return { std::max(intrinsicWidthConstraints.minimum, *fixedWidth), std::max(intrinsicWidthConstraints.minimum, *fixedWidth) };
-        return intrinsicWidthConstraints;
-    };
-    // FIXME Check for box-sizing: border-box;
-    auto intrinsicWidthConstraints = constrainByMinMaxWidth(cellBox, computedIntrinsicWidthConstraints());
-    // Expand with border
-    intrinsicWidthConstraints.expand(computedCellBorder(cell).width());
-    // padding
-    intrinsicWidthConstraints.expand(fixedValue(style.paddingLeft()).value_or(0) + fixedValue(style.paddingRight()).value_or(0));
-    // and margin
-    intrinsicWidthConstraints.expand(fixedValue(style.marginStart()).value_or(0) + fixedValue(style.marginEnd()).value_or(0));
-    return intrinsicWidthConstraints;
+    if (!cellBox.hasInFlowOrFloatingChild())
+        return { };
+    auto& layoutState = this->layoutState();
+    return LayoutContext::createFormattingContext(cellBox, const_cast<LayoutState&>(layoutState))->computedIntrinsicWidthConstraints();
 }
-
 
 InlineLayoutUnit TableFormattingGeometry::usedBaselineForCell(const ContainerBox& cellBox) const
 {

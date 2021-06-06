@@ -316,27 +316,14 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
     ASSERT(!grid.widthConstraints());
 
     // Column preferred width computation as follows:
-    // 1. Collect each cells' width constraints
-    // 2. Collect fixed column widths set by <colgroup>'s and <col>s
+    // 1. Collect fixed column widths set by <colgroup>'s and <col>s
+    // 2. Collect each cells' width constraints and adjust fixed width column values.
     // 3. Find the min/max width for each columns using the cell constraints and the <col> fixed widths but ignore column spans.
     // 4. Distribute column spanning cells min/max widths.
     // 5. Add them all up and return the computed min/max widths.
-    for (auto& cell : grid.cells()) {
-        auto& cellBox = cell->box();
-        ASSERT(cellBox.establishesBlockFormattingContext());
-
-        auto intrinsicWidth = formattingState.intrinsicWidthConstraintsForBox(cellBox);
-        if (!intrinsicWidth) {
-            intrinsicWidth = formattingGeometry().intrinsicWidthConstraintsForCell(*cell);
-            formattingState.setIntrinsicWidthConstraintsForBox(cellBox, *intrinsicWidth);
-        }
-        // Spanner cells put their intrinsic widths on the initial slots.
-        grid.slot(cell->position())->setWidthConstraints(*intrinsicWidth);
-    }
-
     // 2. Collect the fixed width <col>s.
     auto& columnList = grid.columns().list();
-    Vector<std::optional<LayoutUnit>> fixedWidthColumns;
+    auto& formattingGeometry = this->formattingGeometry();
     for (auto& column : columnList) {
         auto fixedWidth = [&] () -> std::optional<LayoutUnit> {
             auto* columnBox = column.box();
@@ -346,9 +333,33 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
             }
             if (auto width = columnBox->columnWidth())
                 return width;
-            return formattingGeometry().computedColumnWidth(*columnBox);
-        };
-        fixedWidthColumns.append(fixedWidth());
+            return formattingGeometry.computedColumnWidth(*columnBox);
+        }();
+        if (fixedWidth)
+            column.setFixedWidth(*fixedWidth);
+    }
+
+    for (auto& cell : grid.cells()) {
+        auto& cellBox = cell->box();
+        ASSERT(cellBox.establishesBlockFormattingContext());
+
+        auto intrinsicWidth = formattingState.intrinsicWidthConstraintsForBox(cellBox);
+        if (!intrinsicWidth) {
+            intrinsicWidth = formattingGeometry.intrinsicWidthConstraintsForCellContent(*cell);
+            formattingState.setIntrinsicWidthConstraintsForBox(cellBox, *intrinsicWidth);
+        }
+        auto cellPosition = cell->position();
+        // Expand it with border and padding.
+        auto horizontalBorderAndPaddingWidth = formattingGeometry.computedCellBorder(*cell).width()
+            + formattingGeometry.fixedValue(cellBox.style().paddingLeft()).value_or(0)
+            + formattingGeometry.fixedValue(cellBox.style().paddingRight()).value_or(0);
+        intrinsicWidth->expand(horizontalBorderAndPaddingWidth);
+        // Spanner cells put their intrinsic widths on the initial slots.
+        grid.slot(cellPosition)->setWidthConstraints(*intrinsicWidth);
+        if (auto fixedWidth = formattingGeometry.fixedValue(cellBox.style().logicalWidth())) {
+            *fixedWidth += horizontalBorderAndPaddingWidth;
+            columnList[cellPosition.column].setFixedWidth(std::max(*fixedWidth, columnList[cellPosition.column].fixedWidth().value_or(0)));
+        }
     }
 
     Vector<IntrinsicWidthConstraints> columnIntrinsicWidths(columnList.size());
@@ -366,8 +377,10 @@ IntrinsicWidthConstraints TableFormattingContext::computedPreferredWidthForColum
                 spanningCellPositionList.append({ columnIndex, rowIndex });
                 continue;
             }
-            auto columnFixedWidth = fixedWidthColumns[columnIndex];
-            auto widthConstraints = !columnFixedWidth ? slot.widthConstraints() : IntrinsicWidthConstraints { *columnFixedWidth, *columnFixedWidth };
+            auto widthConstraints = slot.widthConstraints();
+            if (auto columnFixedWidth = columnList[columnIndex].fixedWidth())
+                widthConstraints.maximum = std::max(*columnFixedWidth, widthConstraints.minimum);
+
             columnIntrinsicWidths[columnIndex].minimum = std::max(widthConstraints.minimum, columnIntrinsicWidths[columnIndex].minimum);
             columnIntrinsicWidths[columnIndex].maximum = std::max(widthConstraints.maximum, columnIntrinsicWidths[columnIndex].maximum);
         }

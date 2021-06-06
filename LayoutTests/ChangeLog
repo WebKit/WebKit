@@ -1,3 +1,14 @@
+2021-06-06  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Adopt a less quirky fixed column width space distribution
+        https://bugs.webkit.org/show_bug.cgi?id=226696
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations: We don't match current WebKit space distribution anymore.
+        * fast/layoutformattingcontext/table-fixed-width-variations-simple-expected.html: Added.
+        * fast/layoutformattingcontext/table-fixed-width-variations-simple.html: Added.
+
 2021-06-05  Cameron McCormack  <heycam@apple.com>
 
         Diff aspect-ratio property values correctly

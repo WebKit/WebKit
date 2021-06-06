@@ -1,3 +1,39 @@
+2021-06-06  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Adopt a less quirky fixed column width space distribution
+        https://bugs.webkit.org/show_bug.cgi?id=226696
+
+        Reviewed by Antti Koivisto.
+
+        This patch adopts a less quirky space distribution model where any fixed cell width
+        makes the column fixed (as opposed to just when <col> has fixed with).
+        This distribution model matches both Chrome and Firefox.
+        It also enables us to simplify some of the distribution logic by using the same set of values (min vs max)
+        as the base for the distribution ratio.
+
+        Test: fast/layoutformattingcontext/table-fixed-width-variations-simple.html
+
+        * layout/formattingContexts/table/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::computedPreferredWidthForColumns): Collect the fixed with values from the cells too now.
+        * layout/formattingContexts/table/TableFormattingGeometry.cpp:
+        (WebCore::Layout::TableFormattingGeometry::intrinsicWidthConstraintsForCellContent const):
+        (WebCore::Layout::TableFormattingGeometry::intrinsicWidthConstraintsForCell const): Deleted.
+        * layout/formattingContexts/table/TableFormattingGeometry.h:
+        * layout/formattingContexts/table/TableGrid.cpp:
+        (WebCore::Layout::TableGrid::appendCell):
+        (WebCore::Layout::TableGrid::Column::isFixedWidth const): Deleted.
+        (WebCore::Layout::TableGrid::Columns::hasFixedColumnsOnly const): Deleted.
+        (WebCore::Layout::TableGrid::Cell::isFixedWidth const): Deleted.
+        * layout/formattingContexts/table/TableGrid.h:
+        (WebCore::Layout::TableGrid::Column::setFixedWidth):
+        (WebCore::Layout::TableGrid::Column::fixedWidth const):
+        (WebCore::Layout::TableGrid::Columns::logicalWidth const):
+        (WebCore::Layout::TableGrid::Column::setHasFixedWidthCell): Deleted.
+        (WebCore::Layout::TableGrid::Column::hasFixedWidthCell const): Deleted.
+        * layout/formattingContexts/table/TableLayout.cpp:
+        (WebCore::Layout::TableFormattingContext::TableLayout::distributedHorizontalSpace): Adjust the distribution values based on whether
+        the column has fixed width and use max/max in both fixed and non-fixed cases.
+
 2021-06-06  Antti Koivisto  <antti@apple.com>
 
         Rename InlineElementBox to LegacyInlineElementBox
