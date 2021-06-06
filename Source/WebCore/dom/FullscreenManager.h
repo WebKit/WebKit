@@ -28,9 +28,9 @@
 #if ENABLE(FULLSCREEN_API)
 
 #include "Document.h"
-#include "GenericTaskQueue.h"
 #include "LayoutRect.h"
 #include <wtf/Deque.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -38,7 +38,7 @@ class RenderFullScreen;
 class RenderTreeBuilder;
 class RenderStyle;
 
-class FullscreenManager final {
+class FullscreenManager final : public CanMakeWeakPtr<FullscreenManager> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     FullscreenManager(Document&);
@@ -119,7 +119,6 @@ private:
     RefPtr<Element> m_fullscreenElement;
     Vector<RefPtr<Element>> m_fullscreenElementStack;
     WeakPtr<RenderFullScreen> m_fullscreenRenderer { nullptr };
-    EventLoopTaskQueue m_fullscreenTaskQueue;
     Deque<RefPtr<Node>> m_fullscreenChangeEventTargetQueue;
     Deque<RefPtr<Node>> m_fullscreenErrorEventTargetQueue;
     LayoutRect m_savedPlaceholderFrameRect;

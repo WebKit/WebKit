@@ -43,7 +43,7 @@
 namespace WebCore {
 
 DocumentTimelinesController::DocumentTimelinesController(Document& document)
-    : m_currentTimeClearingTaskQueue(&document)
+    : m_currentTimeClearingTask(&document)
     , m_document(document)
 {
     if (auto* page = document.page()) {
@@ -73,7 +73,7 @@ void DocumentTimelinesController::removeTimeline(DocumentTimeline& timeline)
 
 void DocumentTimelinesController::detachFromDocument()
 {
-    m_currentTimeClearingTaskQueue.close();
+    m_currentTimeClearingTask.close();
 
     while (!m_timelines.computesEmpty())
         m_timelines.begin()->detachFromDocument();
@@ -233,8 +233,8 @@ void DocumentTimelinesController::cacheCurrentTime(ReducedResolutionSeconds newC
     // animations, so we schedule the invalidation task and register a whenIdle callback on the VM, which will
     // fire syncronously if no JS is running.
     m_waitingOnVMIdle = true;
-    if (!m_currentTimeClearingTaskQueue.hasPendingTasks())
-        m_currentTimeClearingTaskQueue.enqueueTask(std::bind(&DocumentTimelinesController::maybeClearCachedCurrentTime, this));
+    if (!m_currentTimeClearingTask.isPending())
+        m_currentTimeClearingTask.scheduleTask(std::bind(&DocumentTimelinesController::maybeClearCachedCurrentTime, this));
     // We extent the associated Document's lifecycle until the VM became idle since the DocumentTimelinesController
     // is owned by the Document.
     m_document.vm().whenIdle([this, protectedDocument = makeRefPtr(m_document)]() {
@@ -249,7 +249,7 @@ void DocumentTimelinesController::maybeClearCachedCurrentTime()
     // JS or waiting on all current animation updating code to have completed. This is so that
     // we're guaranteed to have a consistent current time reported for all work happening in a given
     // JS frame or throughout updating animations in WebCore.
-    if (!m_isSuspended && !m_waitingOnVMIdle && !m_currentTimeClearingTaskQueue.hasPendingTasks())
+    if (!m_isSuspended && !m_waitingOnVMIdle && !m_currentTimeClearingTask.isPending())
         m_cachedCurrentTime = std::nullopt;
 }
 

@@ -27,7 +27,6 @@
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 
-#include "EventLoopEventQueue.h"
 #include "MediaSessionCoordinatorPrivate.h"
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>

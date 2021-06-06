@@ -28,7 +28,6 @@
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 
 #include "ActiveDOMObject.h"
-#include "EventLoopEventQueue.h"
 #include "EventTarget.h"
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
@@ -81,7 +80,6 @@ private:
 
     // ActiveDOMObject.
     const char* activeDOMObjectName() const final;
-    void stop() final;
 
     // EventTargetWithInlineData.
     EventTargetInterface eventTargetInterface() const final { return RemotePlaybackEventTargetInterfaceType; }
@@ -99,9 +97,6 @@ private:
     PromiseVector m_promptPromises;
     State m_state { State::Disconnected };
     bool m_available { false };
-
-    UniqueRef<EventLoopEventQueue> m_eventQueue;
-    EventLoopTaskQueue m_taskQueue;
 };
 
 }

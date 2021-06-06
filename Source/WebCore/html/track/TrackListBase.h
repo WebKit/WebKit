@@ -28,7 +28,6 @@
 #if ENABLE(VIDEO)
 
 #include "ActiveDOMObject.h"
-#include "EventLoopEventQueue.h"
 #include "EventTarget.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -61,7 +60,7 @@ public:
 
     // Needs to be public so tracks can call it
     void scheduleChangeEvent();
-    bool isChangeEventScheduled() const;
+    bool isChangeEventScheduled() const { return m_isChangeEventScheduled; }
 
     bool isAnyTrackEnabled() const;
 
@@ -76,16 +75,12 @@ protected:
 private:
     void scheduleTrackEvent(const AtomString& eventName, Ref<TrackBase>&&);
 
-    // ActiveDOMObject.
-    bool virtualHasPendingActivity() const override;
-
     // EventTarget
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
     WeakPtr<HTMLMediaElement> m_element;
-
-    UniqueRef<EventLoopEventQueue> m_asyncEventQueue;
+    bool m_isChangeEventScheduled { false };
 };
 
 } // namespace WebCore

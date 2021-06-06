@@ -1,3 +1,87 @@
+2021-06-06  Chris Dumez  <cdumez@apple.com>
+
+        Reduce use of legacy EventLoopEventQueue and EventLoopTaskQueue
+        https://bugs.webkit.org/show_bug.cgi?id=226692
+
+        Reviewed by Darin Adler.
+
+        Reduce use of legacy EventLoopEventQueue and EventLoopTaskQueue, and use the HTML event
+        loop directly instead. Those are very simple cases, they really don't need any of the
+        features the queue was providing (such as cancelling events).
+
+        To get rid of the remaining usage of EventLoopEventQueue / EventLoopTaskQueue, I believe
+        we'll need a way to cancel tasks scheduled in the HTML event loop.
+
+        * Modules/mediasession/MediaSessionCoordinator.cpp:
+        (WebCore::MediaSessionCoordinator::MediaSessionCoordinator):
+        (WebCore::MediaSessionCoordinator::coordinatorStateChanged):
+        * Modules/mediasession/MediaSessionCoordinator.h:
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::MediaSource):
+        (WebCore::MediaSource::virtualHasPendingActivity const):
+        (WebCore::MediaSource::scheduleEvent):
+        * Modules/mediasource/MediaSource.h:
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::SourceBuffer):
+        (WebCore::SourceBuffer::virtualHasPendingActivity const):
+        (WebCore::SourceBuffer::scheduleEvent):
+        * Modules/mediasource/SourceBuffer.h:
+        * Modules/mediasource/SourceBufferList.cpp:
+        (WebCore::SourceBufferList::SourceBufferList):
+        (WebCore::SourceBufferList::scheduleEvent):
+        * Modules/mediasource/SourceBufferList.h:
+        * Modules/remoteplayback/RemotePlayback.cpp:
+        (WebCore::RemotePlayback::RemotePlayback):
+        (WebCore::RemotePlayback::watchAvailability):
+        (WebCore::RemotePlayback::cancelWatchAvailability):
+        (WebCore::RemotePlayback::prompt):
+        (WebCore::RemotePlayback::setState):
+        (WebCore::RemotePlayback::disconnect):
+        (WebCore::RemotePlayback::availabilityChanged):
+        (WebCore::RemotePlayback::stop): Deleted.
+        * Modules/remoteplayback/RemotePlayback.h:
+        * animation/DocumentTimelinesController.cpp:
+        (WebCore::DocumentTimelinesController::DocumentTimelinesController):
+        (WebCore::DocumentTimelinesController::detachFromDocument):
+        (WebCore::DocumentTimelinesController::cacheCurrentTime):
+        (WebCore::DocumentTimelinesController::maybeClearCachedCurrentTime):
+        * animation/DocumentTimelinesController.h:
+        * dom/FullscreenManager.cpp:
+        (WebCore::FullscreenManager::FullscreenManager):
+        (WebCore::FullscreenManager::requestFullscreenForElement):
+        (WebCore::FullscreenManager::exitFullscreen):
+        (): Deleted.
+        * dom/FullscreenManager.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::removedFromAncestor):
+        (WebCore::HTMLMediaElement::scheduleResolvePendingPlayPromises):
+        (WebCore::HTMLMediaElement::scheduleRejectPendingPlayPromises):
+        (WebCore::HTMLMediaElement::scheduleNotifyAboutPlaying):
+        (WebCore::HTMLMediaElement::setMediaKeys):
+        (WebCore::HTMLMediaElement::closeTaskQueues):
+        (WebCore::HTMLMediaElement::virtualHasPendingActivity const):
+        (WebCore::HTMLMediaElement::setIsPlayingToWirelessTarget):
+        (WebCore::HTMLMediaElement::enterFullscreen):
+        (WebCore::HTMLMediaElement::isVisibleInViewportChanged):
+        * html/HTMLMediaElement.h:
+        * html/shadow/MediaControlTextTrackContainerElement.cpp:
+        (WebCore::MediaControlTextTrackContainerElement::MediaControlTextTrackContainerElement):
+        (WebCore::MediaControlTextTrackContainerElement::updateSizes):
+        * html/shadow/MediaControlTextTrackContainerElement.h:
+        * html/track/TrackListBase.cpp:
+        (WebCore::TrackListBase::TrackListBase):
+        (WebCore::TrackListBase::scheduleChangeEvent):
+        (WebCore::TrackListBase::isChangeEventScheduled const):
+        (WebCore::TrackListBase::virtualHasPendingActivity const): Deleted.
+        * html/track/TrackListBase.h:
+        * platform/network/curl/CurlMultipartHandle.cpp:
+        (WebCore::CurlMultipartHandle::processContent):
+        (WebCore::CurlMultipartHandle::matchedLength):
+        * platform/network/curl/CurlMultipartHandle.h:
+        * testing/MockMediaSessionCoordinator.h:
+
 2021-06-06  Alan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Adopt a less quirky fixed column width space distribution

@@ -59,7 +59,6 @@ MediaSessionCoordinator::MediaSessionCoordinator(ScriptExecutionContext* context
     : ActiveDOMObject(context)
     , m_logger(makeRef(Document::sharedLogger()))
     , m_logIdentifier(nextCoordinatorLogIdentifier())
-    , m_asyncEventQueue(EventLoopEventQueue::create(*this))
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 }
@@ -419,7 +418,7 @@ void MediaSessionCoordinator::coordinatorStateChanged(MediaSessionCoordinatorSta
     m_state = state;
     ALWAYS_LOG(LOGIDENTIFIER, m_state);
     if (shouldFireEvents())
-        m_asyncEventQueue->enqueueEvent(Event::create(eventNames().coordinatorstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        queueTaskToDispatchEvent(*this, TaskSource::MediaElement, Event::create(eventNames().coordinatorstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 bool MediaSessionCoordinator::currentPositionApproximatelyEqualTo(double time) const

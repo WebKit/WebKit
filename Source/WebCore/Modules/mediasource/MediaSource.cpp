@@ -104,7 +104,6 @@ MediaSource::MediaSource(ScriptExecutionContext& context)
     : ActiveDOMObject(&context)
     , m_duration(MediaTime::invalidTime())
     , m_pendingSeekTime(MediaTime::invalidTime())
-    , m_asyncEventQueue(EventLoopEventQueue::create(*this))
 #if !RELEASE_LOG_DISABLED
     , m_logger(downcast<Document>(context).logger())
 #endif
@@ -998,7 +997,7 @@ void MediaSource::openIfInEndedState()
 
 bool MediaSource::virtualHasPendingActivity() const
 {
-    return m_private || m_asyncEventQueue->hasPendingActivity() || m_associatedRegistryCount;
+    return m_private || m_associatedRegistryCount;
 }
 
 void MediaSource::stop()
@@ -1078,10 +1077,7 @@ void MediaSource::scheduleEvent(const AtomString& eventName)
 {
     DEBUG_LOG(LOGIDENTIFIER, "scheduling '", eventName, "'");
 
-    auto event = Event::create(eventName, Event::CanBubble::No, Event::IsCancelable::No);
-    event->setTarget(this);
-
-    m_asyncEventQueue->enqueueEvent(WTFMove(event));
+    queueTaskToDispatchEvent(*this, TaskSource::MediaElement, Event::create(eventName, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 ScriptExecutionContext* MediaSource::scriptExecutionContext() const

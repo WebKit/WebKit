@@ -48,7 +48,6 @@ using namespace HTMLNames;
 
 FullscreenManager::FullscreenManager(Document& document)
     : m_document { document }
-    , m_fullscreenTaskQueue { &document }
 #if !RELEASE_LOG_DISABLED
     , m_logIdentifier(LoggerHelper::uniqueLogIdentifier())
 #endif
@@ -62,10 +61,11 @@ void FullscreenManager::requestFullscreenForElement(Element* element, Fullscreen
     if (!element)
         element = documentElement();
 
-    auto failedPreflights = [this](auto element) mutable {
+    auto failedPreflights = [this, weakThis = makeWeakPtr(*this)](auto element) mutable {
         m_fullscreenErrorEventTargetQueue.append(WTFMove(element));
-        m_fullscreenTaskQueue.enqueueTask([this] {
-            dispatchFullscreenChangeEvents();
+        m_document.eventLoop().queueTask(TaskSource::MediaElement, [weakThis = WTFMove(weakThis)]() mutable {
+            if (weakThis)
+                weakThis->dispatchFullscreenChangeEvents();
         });
     };
 
@@ -114,7 +114,10 @@ void FullscreenManager::requestFullscreenForElement(Element* element, Fullscreen
 
     m_pendingFullscreenElement = element;
 
-    m_fullscreenTaskQueue.enqueueTask([this, element = makeRefPtr(element), checkType, hasKeyboardAccess, failedPreflights, identifier = LOGIDENTIFIER] () mutable {
+    m_document.eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = makeWeakPtr(*this), element = makeRefPtr(element), checkType, hasKeyboardAccess, failedPreflights, identifier = LOGIDENTIFIER] () mutable {
+        if (!weakThis)
+            return;
+
         // Don't allow fullscreen if it has been cancelled or a different fullscreen element
         // has requested fullscreen.
         if (m_pendingFullscreenElement != element) {
@@ -223,7 +226,10 @@ void FullscreenManager::requestFullscreenForElement(Element* element, Fullscreen
         // 5. Return, and run the remaining steps asynchronously.
         // 6. Optionally, perform some animation.
         m_areKeysEnabledInFullscreen = hasKeyboardAccess;
-        m_fullscreenTaskQueue.enqueueTask([this, element = WTFMove(element), failedPreflights = WTFMove(failedPreflights), identifier] () mutable {
+        m_document.eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = WTFMove(weakThis), element = WTFMove(element), failedPreflights = WTFMove(failedPreflights), identifier] () mutable {
+            if (!weakThis)
+                return;
+
             auto page = this->page();
             if (!page || document().hidden() || m_pendingFullscreenElement != element || !element->isConnected()) {
                 ERROR_LOG(identifier, "task - page, document, or element mismatch; failing.");
@@ -327,7 +333,10 @@ void FullscreenManager::exitFullscreen()
 
     // 6. Return, and run the remaining steps asynchronously.
     // 7. Optionally, perform some animation.
-    m_fullscreenTaskQueue.enqueueTask([this, newTop = makeRefPtr(newTop), fullscreenElement = m_fullscreenElement, identifier = LOGIDENTIFIER] {
+    m_document.eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = makeWeakPtr(*this), newTop = makeRefPtr(newTop), fullscreenElement = m_fullscreenElement, identifier = LOGIDENTIFIER] {
+        if (!weakThis)
+            return;
+
         auto* page = this->page();
         if (!page) {
             ERROR_LOG(identifier, "task - Document not in page; bailing.");

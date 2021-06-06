@@ -74,7 +74,6 @@ SourceBuffer::SourceBuffer(Ref<SourceBufferPrivate>&& sourceBufferPrivate, Media
     : ActiveDOMObject(source->scriptExecutionContext())
     , m_private(WTFMove(sourceBufferPrivate))
     , m_source(source)
-    , m_asyncEventQueue(EventLoopEventQueue::create(*this))
     , m_appendBufferTimer(*this, &SourceBuffer::appendBufferTimerFired)
     , m_appendWindowStart(MediaTime::zeroTime())
     , m_appendWindowEnd(MediaTime::positiveInfiniteTime())
@@ -439,7 +438,7 @@ void SourceBuffer::seekToTime(const MediaTime& time)
 
 bool SourceBuffer::virtualHasPendingActivity() const
 {
-    return m_source || m_asyncEventQueue->hasPendingActivity();
+    return m_source;
 }
 
 void SourceBuffer::stop()
@@ -460,10 +459,7 @@ bool SourceBuffer::isRemoved() const
 
 void SourceBuffer::scheduleEvent(const AtomString& eventName)
 {
-    auto event = Event::create(eventName, Event::CanBubble::No, Event::IsCancelable::No);
-    event->setTarget(this);
-
-    m_asyncEventQueue->enqueueEvent(WTFMove(event));
+    queueTaskToDispatchEvent(*this, TaskSource::MediaElement, Event::create(eventName, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 ExceptionOr<void> SourceBuffer::appendBufferInternal(const unsigned char* data, unsigned size)

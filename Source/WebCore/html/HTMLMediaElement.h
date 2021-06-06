@@ -950,12 +950,7 @@ private:
     EventLoopDeferrableTask m_seekTask;
     EventLoopDeferrableTask m_playbackControlsManagerBehaviorRestrictionsTask;
     EventLoopDeferrableTask m_bufferedTimeRangesChangedTask;
-    EventLoopTaskQueue m_promiseTaskQueue;
-    EventLoopTaskQueue m_pauseAfterDetachedTaskQueue;
     EventLoopTaskQueue m_resourceSelectionTaskQueue;
-    EventLoopTaskQueue m_visibilityChangeTaskQueue;
-    EventLoopTaskQueue m_fullscreenTaskQueue;
-    EventLoopTaskQueue m_playbackTargetIsWirelessQueue;
     RefPtr<TimeRanges> m_playedTimeRanges;
     UniqueRef<EventLoopEventQueue> m_asyncEventQueue;
 #if PLATFORM(IOS_FAMILY)
@@ -1159,7 +1154,6 @@ private:
     RefPtr<MediaKeys> m_mediaKeys;
     bool m_attachingMediaKeys { false };
     bool m_playbackBlockedWaitingForKey { false };
-    EventLoopTaskQueue m_encryptedMediaQueue;
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

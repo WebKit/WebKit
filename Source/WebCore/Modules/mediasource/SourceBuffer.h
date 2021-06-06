@@ -35,7 +35,6 @@
 
 #include "ActiveDOMObject.h"
 #include "AudioTrack.h"
-#include "EventLoopEventQueue.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "SourceBufferPrivate.h"
@@ -208,7 +207,6 @@ private:
 
     Ref<SourceBufferPrivate> m_private;
     MediaSource* m_source;
-    UniqueRef<EventLoopEventQueue> m_asyncEventQueue;
     AppendMode m_mode { AppendMode::Segments };
 
     Vector<unsigned char> m_pendingAppendData;

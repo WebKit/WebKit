@@ -75,7 +75,6 @@ Ref<MediaControlTextTrackContainerElement> MediaControlTextTrackContainerElement
 
 MediaControlTextTrackContainerElement::MediaControlTextTrackContainerElement(Document& document, HTMLMediaElement& element)
     : HTMLDivElement(divTag, document)
-    , m_taskQueue(&document)
     , m_mediaElement(makeWeakPtr(&element))
 {
 }
@@ -387,8 +386,9 @@ void MediaControlTextTrackContainerElement::updateSizes(ForceUpdate force)
     for (auto& activeCue : m_mediaElement->currentlyActiveCues())
         activeCue.data()->recalculateStyles();
 
-    m_taskQueue.enqueueTask([this] () {
-        updateDisplay();
+    document().eventLoop().queueTask(TaskSource::MediaElement, [weakThis = makeWeakPtr(*this)] () {
+        if (weakThis)
+            weakThis->updateDisplay();
     });
 }
 

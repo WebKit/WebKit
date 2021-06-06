@@ -403,12 +403,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_seekTask(&document)
     , m_playbackControlsManagerBehaviorRestrictionsTask(&document)
     , m_bufferedTimeRangesChangedTask(&document)
-    , m_promiseTaskQueue(&document)
-    , m_pauseAfterDetachedTaskQueue(&document)
     , m_resourceSelectionTaskQueue(&document)
-    , m_visibilityChangeTaskQueue(&document)
-    , m_fullscreenTaskQueue(&document)
-    , m_playbackTargetIsWirelessQueue(&document)
     , m_asyncEventQueue(EventLoopEventQueue::create(*this))
 #if PLATFORM(IOS_FAMILY)
     , m_volumeRevertTask(&document)
@@ -451,9 +446,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_processingPreferenceChange(false)
     , m_shouldAudioPlaybackRequireUserGesture(document.topDocument().audioPlaybackRequiresUserGesture() && !processingUserGestureForMedia())
     , m_shouldVideoPlaybackRequireUserGesture(document.topDocument().videoPlaybackRequiresUserGesture() && !processingUserGestureForMedia())
-#if ENABLE(ENCRYPTED_MEDIA)
-    , m_encryptedMediaQueue(&document)
-#endif
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     , m_remote(RemotePlayback::create(*this))
 #endif
@@ -589,14 +581,8 @@ HTMLMediaElement::~HTMLMediaElement()
 
     m_seekTask.close();
     m_resumeTask.close();
-    m_promiseTaskQueue.close();
-    m_pauseAfterDetachedTaskQueue.close();
     m_playbackControlsManagerBehaviorRestrictionsTask.close();
     m_resourceSelectionTaskQueue.close();
-    m_visibilityChangeTaskQueue.close();
-#if ENABLE(ENCRYPTED_MEDIA)
-    m_encryptedMediaQueue.close();
-#endif
 
     m_completelyLoaded = true;
 
@@ -864,7 +850,10 @@ void HTMLMediaElement::removedFromAncestor(RemovalType removalType, ContainerNod
     setInActiveDocument(false);
     if (removalType.disconnectedFromDocument) {
         // Pause asynchronously to let the operation that removed us finish, in case we get inserted back into a document.
-        m_pauseAfterDetachedTaskQueue.enqueueTask(std::bind(&HTMLMediaElement::pauseAfterDetachedTask, this));
+        queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this] {
+            if (!isContextStopped())
+                pauseAfterDetachedTask();
+        });
     }
 
     if (m_mediaSession)
@@ -948,8 +937,9 @@ void HTMLMediaElement::scheduleResolvePendingPlayPromises()
     if (m_pendingPlayPromises.isEmpty())
         return;
 
-    m_promiseTaskQueue.enqueueTask([this, pendingPlayPromises = WTFMove(m_pendingPlayPromises)] () mutable {
-        resolvePendingPlayPromises(WTFMove(pendingPlayPromises));
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this, pendingPlayPromises = WTFMove(m_pendingPlayPromises)] () mutable {
+        if (!isContextStopped())
+            resolvePendingPlayPromises(WTFMove(pendingPlayPromises));
     });
 }
 
@@ -958,8 +948,9 @@ void HTMLMediaElement::scheduleRejectPendingPlayPromises(Ref<DOMException>&& err
     if (m_pendingPlayPromises.isEmpty())
         return;
 
-    m_promiseTaskQueue.enqueueTask([this, error = WTFMove(error), pendingPlayPromises = WTFMove(m_pendingPlayPromises)] () mutable {
-        rejectPendingPlayPromises(WTFMove(pendingPlayPromises), WTFMove(error));
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this, error = WTFMove(error), pendingPlayPromises = WTFMove(m_pendingPlayPromises)] () mutable {
+        if (!isContextStopped())
+            rejectPendingPlayPromises(WTFMove(pendingPlayPromises), WTFMove(error));
     });
 }
 
@@ -977,8 +968,9 @@ void HTMLMediaElement::resolvePendingPlayPromises(PlayPromiseVector&& pendingPla
 
 void HTMLMediaElement::scheduleNotifyAboutPlaying()
 {
-    m_promiseTaskQueue.enqueueTask([this, pendingPlayPromises = WTFMove(m_pendingPlayPromises)] () mutable {
-        notifyAboutPlaying(WTFMove(pendingPlayPromises));
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this, pendingPlayPromises = WTFMove(m_pendingPlayPromises)] () mutable {
+        if (!isContextStopped())
+            notifyAboutPlaying(WTFMove(pendingPlayPromises));
     });
 }
 
@@ -2606,7 +2598,10 @@ void HTMLMediaElement::setMediaKeys(MediaKeys* mediaKeys, Ref<DeferredPromise>&&
 
     // 4. Let promise be a new promise.
     // 5. Run the following steps in parallel:
-    m_encryptedMediaQueue.enqueueTask([this, mediaKeys = RefPtr<MediaKeys>(mediaKeys), promise = WTFMove(promise)]() mutable {
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this, mediaKeys = RefPtr<MediaKeys>(mediaKeys), promise = WTFMove(promise)]() mutable {
+        if (isContextStopped())
+            return;
+
         // 5.1. If all the following conditions hold:
         //      - mediaKeys is not null,
         //      - the CDM instance represented by mediaKeys is already in use by another media element
@@ -2641,8 +2636,9 @@ void HTMLMediaElement::setMediaKeys(MediaKeys* mediaKeys, Ref<DeferredPromise>&&
             // FIXME: ^
 
             // 5.3.3. Queue a task to run the Attempt to Resume Playback If Necessary algorithm on the media element.
-            m_encryptedMediaQueue.enqueueTask([this] {
-                attemptToResumePlaybackIfNecessary();
+            queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this] {
+                if (!isContextStopped())
+                    attemptToResumePlaybackIfNecessary();
             });
         }
 
@@ -5651,13 +5647,7 @@ void HTMLMediaElement::closeTaskQueues()
     m_playbackControlsManagerBehaviorRestrictionsTask.close();
     m_seekTask.close();
     m_resumeTask.close();
-    m_promiseTaskQueue.close();
-    m_pauseAfterDetachedTaskQueue.close();
     m_resourceSelectionTaskQueue.close();
-    m_visibilityChangeTaskQueue.close();
-#if ENABLE(ENCRYPTED_MEDIA)
-    m_encryptedMediaQueue.close();
-#endif
     m_asyncEventQueue->close();
 #if PLATFORM(IOS_FAMILY)
     m_volumeRevertTask.close();
@@ -5750,7 +5740,6 @@ bool HTMLMediaElement::virtualHasPendingActivity() const
 {
     return m_creatingControls
         || m_asyncEventQueue->hasPendingActivity()
-        || m_playbackTargetIsWirelessQueue.hasPendingTasks()
         || m_resourceSelectionTaskQueue.hasPendingTasks()
         || (hasAudio() && isPlaying())
         || (hasLiveSource() && hasEventListeners());
@@ -5838,7 +5827,10 @@ void HTMLMediaElement::mediaPlayerCurrentPlaybackTargetIsWirelessChanged(bool is
 void HTMLMediaElement::setIsPlayingToWirelessTarget(bool isPlayingToWirelessTarget)
 {
     auto logSiteIdentifier = LOGIDENTIFIER;
-    m_playbackTargetIsWirelessQueue.enqueueTask([this, isPlayingToWirelessTarget, logSiteIdentifier] {
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this, isPlayingToWirelessTarget, logSiteIdentifier] {
+        if (isContextStopped())
+            return;
+
         UNUSED_PARAM(logSiteIdentifier);
 
         if (isPlayingToWirelessTarget == m_isPlayingToWirelessTarget)
@@ -6055,7 +6047,10 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
     }
 #endif
 
-    m_fullscreenTaskQueue.enqueueTask([this, mode] {
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this, mode] {
+        if (isContextStopped())
+            return;
+
         if (document().hidden()) {
             ALWAYS_LOG(LOGIDENTIFIER, " returning because document is hidden");
             m_changingVideoFullscreenMode = false;
@@ -8002,7 +7997,9 @@ bool HTMLMediaElement::isVideoTooSmallForInlinePlayback()
 
 void HTMLMediaElement::isVisibleInViewportChanged()
 {
-    m_visibilityChangeTaskQueue.enqueueTask([this] {
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this] {
+        if (isContextStopped())
+            return;
         mediaSession().isVisibleInViewportChanged();
         updateShouldAutoplay();
         schedulePlaybackControlsManagerUpdate();

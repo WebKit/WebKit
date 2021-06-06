@@ -33,7 +33,6 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "ActiveDOMObject.h"
-#include "EventLoopEventQueue.h"
 #include "EventTarget.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -79,8 +78,6 @@ private:
     void derefEventTarget() override { deref(); }
 
     const char* activeDOMObjectName() const final;
-
-    UniqueRef<EventLoopEventQueue> m_asyncEventQueue;
 
     Vector<RefPtr<SourceBuffer>> m_list;
 };

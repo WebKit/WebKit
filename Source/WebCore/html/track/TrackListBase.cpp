@@ -42,7 +42,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(TrackListBase);
 TrackListBase::TrackListBase(WeakPtr<HTMLMediaElement> element, ScriptExecutionContext* context)
     : ActiveDOMObject(context)
     , m_element(element)
-    , m_asyncEventQueue(EventLoopEventQueue::create(*this))
 {
     ASSERT(!context || is<Document>(context));
 }
@@ -97,7 +96,7 @@ bool TrackListBase::contains(TrackBase& track) const
 
 void TrackListBase::scheduleTrackEvent(const AtomString& eventName, Ref<TrackBase>&& track)
 {
-    m_asyncEventQueue->enqueueEvent(TrackEvent::create(eventName, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(track)));
+    queueTaskToDispatchEvent(*this, TaskSource::MediaElement, TrackEvent::create(eventName, Event::CanBubble::No, Event::IsCancelable::No, WTFMove(track)));
 }
 
 void TrackListBase::scheduleAddTrackEvent(Ref<TrackBase>&& track)
@@ -160,12 +159,11 @@ void TrackListBase::scheduleChangeEvent()
     // Whenever a track in a VideoTrackList that was previously not selected is
     // selected, the user agent must queue a task to fire a simple event named
     // change at the VideoTrackList object.
-    m_asyncEventQueue->enqueueEvent(Event::create(eventNames().changeEvent, Event::CanBubble::No, Event::IsCancelable::No));
-}
-
-bool TrackListBase::isChangeEventScheduled() const
-{
-    return m_asyncEventQueue->hasPendingEventsOfType(eventNames().changeEvent);
+    m_isChangeEventScheduled = true;
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this] {
+        m_isChangeEventScheduled = false;
+        dispatchEvent(Event::create(eventNames().changeEvent, Event::CanBubble::No, Event::IsCancelable::No));
+    });
 }
 
 bool TrackListBase::isAnyTrackEnabled() const
@@ -175,11 +173,6 @@ bool TrackListBase::isAnyTrackEnabled() const
             return true;
     }
     return false;
-}
-
-bool TrackListBase::virtualHasPendingActivity() const
-{
-    return m_asyncEventQueue->hasPendingActivity();
 }
 
 } // namespace WebCore
