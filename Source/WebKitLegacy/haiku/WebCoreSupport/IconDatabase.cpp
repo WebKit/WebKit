@@ -937,7 +937,8 @@ void IconDatabase::iconDatabaseSyncThread()
 
 static int databaseVersionNumber(SQLiteDatabase& db)
 {
-    return SQLiteStatement(db, "SELECT value FROM IconDatabaseInfo WHERE key = 'Version';").getColumnInt(0);
+    auto versionStatement = db.prepareStatement("SELECT value FROM IconDatabaseInfo WHERE key = 'Version';"_s);
+    return versionStatement->columnInt(0);
 }
 
 static bool isValidDatabase(SQLiteDatabase& db)
@@ -956,42 +957,43 @@ static bool isValidDatabase(SQLiteDatabase& db)
 
 static void createDatabaseTables(SQLiteDatabase& db)
 {
-    if (!db.executeCommand("CREATE TABLE PageURL (url TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,iconID INTEGER NOT NULL ON CONFLICT FAIL);")) {
+    if (!db.executeCommand("CREATE TABLE PageURL (url TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,iconID INTEGER NOT NULL ON CONFLICT FAIL);"_s)) {
         LOG_ERROR("Could not create PageURL table in database (%i) - %s", db.lastError(), db.lastErrorMsg());
         db.close();
         return;
     }
-    if (!db.executeCommand("CREATE INDEX PageURLIndex ON PageURL (url);")) {
+    if (!db.executeCommand("CREATE INDEX PageURLIndex ON PageURL (url);"_s)) {
         LOG_ERROR("Could not create PageURL index in database (%i) - %s", db.lastError(), db.lastErrorMsg());
         db.close();
         return;
     }
-    if (!db.executeCommand("CREATE TABLE IconInfo (iconID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE ON CONFLICT REPLACE, url TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL, stamp INTEGER);")) {
+    if (!db.executeCommand("CREATE TABLE IconInfo (iconID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE ON CONFLICT REPLACE, url TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT FAIL, stamp INTEGER);"_s)) {
         LOG_ERROR("Could not create IconInfo table in database (%i) - %s", db.lastError(), db.lastErrorMsg());
         db.close();
         return;
     }
-    if (!db.executeCommand("CREATE INDEX IconInfoIndex ON IconInfo (url, iconID);")) {
+    if (!db.executeCommand("CREATE INDEX IconInfoIndex ON IconInfo (url, iconID);"_s)) {
         LOG_ERROR("Could not create PageURL index in database (%i) - %s", db.lastError(), db.lastErrorMsg());
         db.close();
         return;
     }
-    if (!db.executeCommand("CREATE TABLE IconData (iconID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE ON CONFLICT REPLACE, data BLOB);")) {
+    if (!db.executeCommand("CREATE TABLE IconData (iconID INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE ON CONFLICT REPLACE, data BLOB);"_s)) {
         LOG_ERROR("Could not create IconData table in database (%i) - %s", db.lastError(), db.lastErrorMsg());
         db.close();
         return;
     }
-    if (!db.executeCommand("CREATE INDEX IconDataIndex ON IconData (iconID);")) {
+    if (!db.executeCommand("CREATE INDEX IconDataIndex ON IconData (iconID);"_s)) {
         LOG_ERROR("Could not create PageURL index in database (%i) - %s", db.lastError(), db.lastErrorMsg());
         db.close();
         return;
     }
-    if (!db.executeCommand("CREATE TABLE IconDatabaseInfo (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL);")) {
+    if (!db.executeCommand("CREATE TABLE IconDatabaseInfo (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL);"_s)) {
         LOG_ERROR("Could not create IconDatabaseInfo table in database (%i) - %s", db.lastError(), db.lastErrorMsg());
         db.close();
         return;
     }
-    if (!db.executeCommand(String("INSERT INTO IconDatabaseInfo VALUES ('Version', ") + String::number(currentDatabaseVersion) + ");")) {
+    auto statement = db.prepareStatement("INSERT INTO IconDatabaseInfo VALUES ('Version', ?);"_s);
+    if (!statement || statement->bindInt(1, currentDatabaseVersion) != SQLITE_OK || !statement->executeCommand()) {
         LOG_ERROR("Could not insert icon database version into IconDatabaseInfo table (%i) - %s", db.lastError(), db.lastErrorMsg());
         db.close();
         return;
@@ -1043,7 +1045,7 @@ void IconDatabase::performOpenInitialization()
     }
 
     // Reduce sqlite RAM cache size from default 2000 pages (~1.5kB per page). 3MB of cache for icon database is overkill
-    if (!SQLiteStatement(m_syncDB, "PRAGMA cache_size = 200;").executeCommand())
+    if (!m_syncDB.executeCommand("PRAGMA cache_size = 200;"_s))
         LOG_ERROR("SQLite database could not set cache_size");
 }
 
@@ -1051,26 +1053,26 @@ bool IconDatabase::checkIntegrity()
 {
     ASSERT_ICON_SYNC_THREAD();
 
-    SQLiteStatement integrity(m_syncDB, "PRAGMA integrity_check;");
-    if (integrity.prepare() != SQLITE_OK) {
+    auto integrity = m_syncDB.prepareStatement("PRAGMA integrity_check;"_s);
+    if (!integrity) {
         LOG_ERROR("checkIntegrity failed to execute");
         return false;
     }
 
-    int resultCode = integrity.step();
+    int resultCode = integrity->step();
     if (resultCode == SQLITE_OK)
         return true;
 
     if (resultCode != SQLITE_ROW)
         return false;
 
-    int columns = integrity.columnCount();
+    int columns = integrity->columnCount();
     if (columns != 1) {
         LOG_ERROR("Received %i columns performing integrity check, should be 1", columns);
         return false;
     }
 
-    String resultText = integrity.getColumnText(0);
+    String resultText = integrity->columnText(0);
 
     // A successful, no-error integrity check will be "ok" - all other strings imply failure
     if (resultText == "ok")
@@ -1088,19 +1090,17 @@ void IconDatabase::performURLImport()
     // Note that IconInfo.stamp is only set when the icon data is retrieved from the server (and thus is not updated whether
     // we use it or not). This code works anyway because the IconDatabase downloads icons again if they are older than 4 days,
     // so if the timestamp goes back in time more than those 30 days we can be sure that the icon was not used at all.
-    String importQuery = makeString("SELECT PageURL.url, IconInfo.url, IconInfo.stamp FROM PageURL INNER JOIN IconInfo ON PageURL.iconID=IconInfo.iconID WHERE IconInfo.stamp > ", floor((WallTime::now() - notUsedIconExpirationTime).secondsSinceEpoch().seconds()), ';');
-
-    SQLiteStatement query(m_syncDB, importQuery);
-
-    if (query.prepare() != SQLITE_OK) {
+    auto query = m_syncDB.prepareStatement("SELECT PageURL.url, IconInfo.url, IconInfo.stamp FROM PageURL INNER JOIN IconInfo ON PageURL.iconID=IconInfo.iconID WHERE IconInfo.stamp > (?) ;"_s);
+    query->bindInt(1, floor((WallTime::now() - notUsedIconExpirationTime).secondsSinceEpoch().seconds()));
+    if (!query) {
         LOG_ERROR("Unable to prepare icon url import query");
         return;
     }
 
-    int result = query.step();
+    int result = query->step();
     while (result == SQLITE_ROW) {
-        String pageURL = query.getColumnText(0);
-        String iconURL = query.getColumnText(1);
+        String pageURL = query->columnText(0);
+        String iconURL = query->columnText(1);
 
         {
             LockHolder locker(m_urlAndIconLock);
@@ -1127,7 +1127,7 @@ void IconDatabase::performURLImport()
 
                 // Regardless, the time stamp from disk still takes precedence. Until we read this icon from disk, we didn't think we'd seen it before
                 // so we marked the timestamp as "now", but it's really much older
-                currentIcon->setTimestamp(query.getColumnInt(2));
+                currentIcon->setTimestamp(query->columnInt(2));
             }
         }
 
@@ -1149,7 +1149,7 @@ void IconDatabase::performURLImport()
             return;
         }
 
-        result = query.step();
+        result = query->step();
     }
 
     if (result != SQLITE_DONE)
@@ -1532,19 +1532,18 @@ void IconDatabase::pruneUnretainedIcons()
     // Get the known PageURLs from the db, and record the ID of any that are not in the retain count set.
     Vector<int64_t> pageIDsToDelete;
 
-    SQLiteStatement pageSQL(m_syncDB, "SELECT rowid, url FROM PageURL;");
-    pageSQL.prepare();
+    auto pageSQL = m_syncDB.prepareStatement("SELECT rowid, url FROM PageURL;"_s);
 
     int result;
-    while ((result = pageSQL.step()) == SQLITE_ROW) {
+    while ((result = pageSQL->step()) == SQLITE_ROW) {
         LockHolder locker(m_urlAndIconLock);
-        if (!m_pageURLToRecordMap.contains(pageSQL.getColumnText(1)))
-            pageIDsToDelete.append(pageSQL.getColumnInt64(0));
+        if (!m_pageURLToRecordMap.contains(pageSQL->columnText(1)))
+            pageIDsToDelete.append(pageSQL->columnInt64(0));
     }
 
     if (result != SQLITE_DONE)
         LOG_ERROR("Error reading PageURL table from on-disk DB");
-    pageSQL.finalize();
+    pageSQL->reset();
 
     // Delete page URLs that were in the table, but not in our retain count set.
     size_t numToDelete = pageIDsToDelete.size();
@@ -1552,15 +1551,14 @@ void IconDatabase::pruneUnretainedIcons()
         SQLiteTransaction pruningTransaction(m_syncDB);
         pruningTransaction.begin();
 
-        SQLiteStatement pageDeleteSQL(m_syncDB, "DELETE FROM PageURL WHERE rowid = (?);");
-        pageDeleteSQL.prepare();
+        auto pageDeleteSQL = m_syncDB.prepareStatement("DELETE FROM PageURL WHERE rowid = (?);"_s);
         for (size_t i = 0; i < numToDelete; ++i) {
             LOG(IconDatabase, "Pruning page with rowid %lli from disk", static_cast<long long>(pageIDsToDelete[i]));
-            pageDeleteSQL.bindInt64(1, pageIDsToDelete[i]);
-            int result = pageDeleteSQL.step();
+            pageDeleteSQL->bindInt64(1, pageIDsToDelete[i]);
+            int result = pageDeleteSQL->step();
             if (result != SQLITE_DONE)
                 LOG_ERROR("Unabled to delete page with id %lli from disk", static_cast<long long>(pageIDsToDelete[i]));
-            pageDeleteSQL.reset();
+            pageDeleteSQL->reset();
 
             // If the thread was asked to terminate, we should commit what pruning we've done so far, figuring we can
             // finish the rest later (hopefully)
@@ -1570,7 +1568,7 @@ void IconDatabase::pruneUnretainedIcons()
             }
         }
         pruningTransaction.commit();
-        pageDeleteSQL.finalize();
+        pageDeleteSQL->reset();
     }
 
     // Deleting unreferenced icons from the Icon tables has to be atomic -
@@ -1581,9 +1579,9 @@ void IconDatabase::pruneUnretainedIcons()
     pruningTransaction.begin();
 
     // Wipe Icons that aren't retained
-    if (!m_syncDB.executeCommand("DELETE FROM IconData WHERE iconID NOT IN (SELECT iconID FROM PageURL);"))
+    if (!m_syncDB.executeCommand("DELETE FROM IconData WHERE iconID NOT IN (SELECT iconID FROM PageURL);"_s))
         LOG_ERROR("Failed to execute SQL to prune unretained icons from the on-disk IconData table");
-    if (!m_syncDB.executeCommand("DELETE FROM IconInfo WHERE iconID NOT IN (SELECT iconID FROM PageURL);"))
+    if (!m_syncDB.executeCommand("DELETE FROM IconInfo WHERE iconID NOT IN (SELECT iconID FROM PageURL);"_s))
         LOG_ERROR("Failed to execute SQL to prune unretained icons from the on-disk IconInfo table");
 
     pruningTransaction.commit();
@@ -1606,10 +1604,11 @@ void IconDatabase::checkForDanglingPageURLs(bool pruneIfFound)
     static bool danglersFound = false;
 #endif
 
-    if ((pruneIfFound || !danglersFound) && SQLiteStatement(m_syncDB, "SELECT url FROM PageURL WHERE PageURL.iconID NOT IN (SELECT iconID FROM IconInfo) LIMIT 1;").returnsAtLeastOneResult()) {
+    auto testStatement = m_syncDB.prepareStatement("SELECT url FROM PageURL WHERE PageURL.iconID NOT IN (SELECT iconID FROM IconInfo) LIMIT 1;"_s);
+    if ((pruneIfFound || !danglersFound) && testStatement->step() == SQLITE_ROW) {
         danglersFound = true;
         LOG(IconDatabase, "Dangling PageURL entries found");
-        if (pruneIfFound && !m_syncDB.executeCommand("DELETE FROM PageURL WHERE iconID NOT IN (SELECT iconID FROM IconInfo);"))
+        if (pruneIfFound && !m_syncDB.executeCommand("DELETE FROM PageURL WHERE iconID NOT IN (SELECT iconID FROM IconInfo);"_s))
             LOG(IconDatabase, "Unable to prune dangling PageURLs");
     }
 }
@@ -1687,17 +1686,17 @@ void* IconDatabase::cleanupSyncThread()
 // 1 - If the SQLDatabase& argument is different, the statement must be destroyed and remade. This happens when the user
 //     switches to and from private browsing
 // 2 - Lazy construction of the Statement in the first place, in case we've never made this query before
-inline void readySQLiteStatement(std::unique_ptr<SQLiteStatement>& statement, SQLiteDatabase& db, const String& str)
+inline void readySQLiteStatement(std::unique_ptr<SQLiteStatement>& statement, SQLiteDatabase& db, const WTF::ASCIILiteral& str)
 {
-    if (statement && (&statement->database() != &db || statement->isExpired())) {
-        if (statement->isExpired())
-            LOG(IconDatabase, "SQLiteStatement associated with %s is expired", str.ascii().data());
+    if (statement && (&statement->database() != &db)) {
         statement = nullptr;
     }
     if (!statement) {
-        statement = std::make_unique<SQLiteStatement>(db, str);
-        if (statement->prepare() != SQLITE_OK)
+        auto temp = db.prepareHeapStatement(str);
+        if (!statement)
             LOG_ERROR("Preparing statement %s failed", str.ascii().data());
+        else
+            statement = temp.value().moveToUniquePtr();
     }
 }
 
@@ -1723,7 +1722,7 @@ void IconDatabase::setIconIDForPageURLInSQLDatabase(int64_t iconID, const String
 {
     ASSERT_ICON_SYNC_THREAD();
 
-    readySQLiteStatement(m_setIconIDForPageURLStatement, m_syncDB, "INSERT INTO PageURL (url, iconID) VALUES ((?), ?);");
+    readySQLiteStatement(m_setIconIDForPageURLStatement, m_syncDB, "INSERT INTO PageURL (url, iconID) VALUES ((?), ?);"_s);
     m_setIconIDForPageURLStatement->bindText(1, pageURL);
     m_setIconIDForPageURLStatement->bindInt64(2, iconID);
 
@@ -1740,7 +1739,7 @@ void IconDatabase::removePageURLFromSQLDatabase(const String& pageURL)
 {
     ASSERT_ICON_SYNC_THREAD();
 
-    readySQLiteStatement(m_removePageURLStatement, m_syncDB, "DELETE FROM PageURL WHERE url = (?);");
+    readySQLiteStatement(m_removePageURLStatement, m_syncDB, "DELETE FROM PageURL WHERE url = (?);"_s);
     m_removePageURLStatement->bindText(1, pageURL);
 
     if (m_removePageURLStatement->step() != SQLITE_DONE)
@@ -1754,12 +1753,12 @@ int64_t IconDatabase::getIconIDForIconURLFromSQLDatabase(const String& iconURL)
 {
     ASSERT_ICON_SYNC_THREAD();
 
-    readySQLiteStatement(m_getIconIDForIconURLStatement, m_syncDB, "SELECT IconInfo.iconID FROM IconInfo WHERE IconInfo.url = (?);");
+    readySQLiteStatement(m_getIconIDForIconURLStatement, m_syncDB, "SELECT IconInfo.iconID FROM IconInfo WHERE IconInfo.url = (?);"_s);
     m_getIconIDForIconURLStatement->bindText(1, iconURL);
 
     int64_t result = m_getIconIDForIconURLStatement->step();
     if (result == SQLITE_ROW)
-        result = m_getIconIDForIconURLStatement->getColumnInt64(0);
+        result = m_getIconIDForIconURLStatement->columnInt64(0);
     else {
         if (result != SQLITE_DONE)
             LOG_ERROR("getIconIDForIconURLFromSQLDatabase failed for url %s", urlForLogging(iconURL).ascii().data());
@@ -1778,7 +1777,7 @@ int64_t IconDatabase::addIconURLToSQLDatabase(const String& iconURL)
     // In practice the only caller of this method is always wrapped in a transaction itself so placing another
     // here is unnecessary
 
-    readySQLiteStatement(m_addIconToIconInfoStatement, m_syncDB, "INSERT INTO IconInfo (url, stamp) VALUES (?, 0);");
+    readySQLiteStatement(m_addIconToIconInfoStatement, m_syncDB, "INSERT INTO IconInfo (url, stamp) VALUES (?, 0);"_s);
     m_addIconToIconInfoStatement->bindText(1, iconURL);
 
     int result = m_addIconToIconInfoStatement->step();
@@ -1789,7 +1788,7 @@ int64_t IconDatabase::addIconURLToSQLDatabase(const String& iconURL)
     }
     int64_t iconID = m_syncDB.lastInsertRowID();
 
-    readySQLiteStatement(m_addIconToIconDataStatement, m_syncDB, "INSERT INTO IconData (iconID, data) VALUES (?, ?);");
+    readySQLiteStatement(m_addIconToIconDataStatement, m_syncDB, "INSERT INTO IconData (iconID, data) VALUES (?, ?);"_s);
     m_addIconToIconDataStatement->bindInt64(1, iconID);
 
     result = m_addIconToIconDataStatement->step();
@@ -1808,13 +1807,12 @@ RefPtr<SharedBuffer> IconDatabase::getImageDataForIconURLFromSQLDatabase(const S
 
     RefPtr<SharedBuffer> imageData;
 
-    readySQLiteStatement(m_getImageDataForIconURLStatement, m_syncDB, "SELECT IconData.data FROM IconData WHERE IconData.iconID IN (SELECT iconID FROM IconInfo WHERE IconInfo.url = (?));");
+    readySQLiteStatement(m_getImageDataForIconURLStatement, m_syncDB, "SELECT IconData.data FROM IconData WHERE IconData.iconID IN (SELECT iconID FROM IconInfo WHERE IconInfo.url = (?));"_s);
     m_getImageDataForIconURLStatement->bindText(1, iconURL);
 
     int result = m_getImageDataForIconURLStatement->step();
     if (result == SQLITE_ROW) {
-        Vector<char> data;
-        m_getImageDataForIconURLStatement->getColumnBlobAsVector(0, data);
+        auto data = m_getImageDataForIconURLStatement->columnBlob(0);
         imageData = SharedBuffer::create(data.data(), data.size());
     } else if (result != SQLITE_DONE)
         LOG_ERROR("getImageDataForIconURLFromSQLDatabase failed for url %s", urlForLogging(iconURL).ascii().data());
@@ -1840,19 +1838,19 @@ void IconDatabase::removeIconFromSQLDatabase(const String& iconURL)
     if (!iconID)
         return;
 
-    readySQLiteStatement(m_deletePageURLsForIconURLStatement, m_syncDB, "DELETE FROM PageURL WHERE PageURL.iconID = (?);");
+    readySQLiteStatement(m_deletePageURLsForIconURLStatement, m_syncDB, "DELETE FROM PageURL WHERE PageURL.iconID = (?);"_s);
     m_deletePageURLsForIconURLStatement->bindInt64(1, iconID);
 
     if (m_deletePageURLsForIconURLStatement->step() != SQLITE_DONE)
         LOG_ERROR("m_deletePageURLsForIconURLStatement failed for url %s", urlForLogging(iconURL).ascii().data());
 
-    readySQLiteStatement(m_deleteIconFromIconInfoStatement, m_syncDB, "DELETE FROM IconInfo WHERE IconInfo.iconID = (?);");
+    readySQLiteStatement(m_deleteIconFromIconInfoStatement, m_syncDB, "DELETE FROM IconInfo WHERE IconInfo.iconID = (?);"_s);
     m_deleteIconFromIconInfoStatement->bindInt64(1, iconID);
 
     if (m_deleteIconFromIconInfoStatement->step() != SQLITE_DONE)
         LOG_ERROR("m_deleteIconFromIconInfoStatement failed for url %s", urlForLogging(iconURL).ascii().data());
 
-    readySQLiteStatement(m_deleteIconFromIconDataStatement, m_syncDB, "DELETE FROM IconData WHERE IconData.iconID = (?);");
+    readySQLiteStatement(m_deleteIconFromIconDataStatement, m_syncDB, "DELETE FROM IconData WHERE IconData.iconID = (?);"_s);
     m_deleteIconFromIconDataStatement->bindInt64(1, iconID);
 
     if (m_deleteIconFromIconDataStatement->step() != SQLITE_DONE)
@@ -1886,7 +1884,7 @@ void IconDatabase::writeIconSnapshotToSQLDatabase(const IconSnapshot& snapshot)
     // If there is already an iconID in place, update the database.
     // Otherwise, insert new records
     if (iconID) {
-        readySQLiteStatement(m_updateIconInfoStatement, m_syncDB, "UPDATE IconInfo SET stamp = ?, url = ? WHERE iconID = ?;");
+        readySQLiteStatement(m_updateIconInfoStatement, m_syncDB, "UPDATE IconInfo SET stamp = ?, url = ? WHERE iconID = ?;"_s);
         m_updateIconInfoStatement->bindInt64(1, snapshot.timestamp());
         m_updateIconInfoStatement->bindText(2, snapshot.iconURL());
         m_updateIconInfoStatement->bindInt64(3, iconID);
@@ -1896,7 +1894,7 @@ void IconDatabase::writeIconSnapshotToSQLDatabase(const IconSnapshot& snapshot)
 
         m_updateIconInfoStatement->reset();
 
-        readySQLiteStatement(m_updateIconDataStatement, m_syncDB, "UPDATE IconData SET data = ? WHERE iconID = ?;");
+        readySQLiteStatement(m_updateIconDataStatement, m_syncDB, "UPDATE IconData SET data = ? WHERE iconID = ?;"_s);
         m_updateIconDataStatement->bindInt64(2, iconID);
 
         // If we *have* image data, bind it to this statement - Otherwise bind "null" for the blob data,
@@ -1911,7 +1909,7 @@ void IconDatabase::writeIconSnapshotToSQLDatabase(const IconSnapshot& snapshot)
 
         m_updateIconDataStatement->reset();
     } else {
-        readySQLiteStatement(m_setIconInfoStatement, m_syncDB, "INSERT INTO IconInfo (url,stamp) VALUES (?, ?);");
+        readySQLiteStatement(m_setIconInfoStatement, m_syncDB, "INSERT INTO IconInfo (url,stamp) VALUES (?, ?);"_s);
         m_setIconInfoStatement->bindText(1, snapshot.iconURL());
         m_setIconInfoStatement->bindInt64(2, snapshot.timestamp());
 
@@ -1922,7 +1920,7 @@ void IconDatabase::writeIconSnapshotToSQLDatabase(const IconSnapshot& snapshot)
 
         int64_t iconID = m_syncDB.lastInsertRowID();
 
-        readySQLiteStatement(m_setIconDataStatement, m_syncDB, "INSERT INTO IconData (iconID, data) VALUES (?, ?);");
+        readySQLiteStatement(m_setIconDataStatement, m_syncDB, "INSERT INTO IconData (iconID, data) VALUES (?, ?);"_s);
         m_setIconDataStatement->bindInt64(1, iconID);
 
         // If we *have* image data, bind it to this statement - Otherwise bind "null" for the blob data,
