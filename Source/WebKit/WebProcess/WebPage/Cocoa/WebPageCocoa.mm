@@ -200,6 +200,9 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame& frame, const Sim
 #endif // PLATFORM(MAC)
 
     OptionSet<TextIndicatorOption> indicatorOptions { TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges };
+    if (HTMLElement::isInsideImageOverlay(range))
+        indicatorOptions.add({ TextIndicatorOption::PaintAllContent, TextIndicatorOption::PaintBackgrounds });
+
     if (presentationTransition == TextIndicatorPresentationTransition::BounceAndCrossfade)
         indicatorOptions.add(TextIndicatorOption::IncludeSnapshotWithSelectionHighlight);
     

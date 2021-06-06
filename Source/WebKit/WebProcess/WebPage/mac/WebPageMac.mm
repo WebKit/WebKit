@@ -877,10 +877,18 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
 
     auto selectionRange = corePage()->focusController().focusedOrMainFrame().selection().selection().firstRange();
 
+    auto indicatorOptions = [&](const SimpleRange& range) {
+        OptionSet<TextIndicatorOption> options { TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges };
+        if (HTMLElement::isInsideImageOverlay(range))
+            options.add({ TextIndicatorOption::PaintAllContent, TextIndicatorOption::PaintBackgrounds });
+        return options;
+    };
+
     URL absoluteLinkURL = hitTestResult.absoluteLinkURL();
-    Element* URLElement = hitTestResult.URLElement();
-    if (!absoluteLinkURL.isEmpty() && URLElement)
-        immediateActionResult.linkTextIndicator = TextIndicator::createWithRange(makeRangeSelectingNodeContents(*URLElement), { TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges }, TextIndicatorPresentationTransition::FadeIn);
+    if (auto urlElement = makeRefPtr(hitTestResult.URLElement()); !absoluteLinkURL.isEmpty() && urlElement) {
+        auto elementRange = makeRangeSelectingNodeContents(*urlElement);
+        immediateActionResult.linkTextIndicator = TextIndicator::createWithRange(elementRange, indicatorOptions(elementRange), TextIndicatorPresentationTransition::FadeIn);
+    }
 
     if (auto lookupResult = lookupTextAtLocation(locationInViewCoordinates)) {
         auto [lookupRange, options] = WTFMove(*lookupResult);
@@ -908,7 +916,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
         pageOverlayDidOverrideDataDetectors = true;
         immediateActionResult.detectedDataActionContext = actionContext->context.get();
         immediateActionResult.detectedDataBoundingBox = view->contentsToWindow(enclosingIntRect(unitedBoundingBoxes(RenderObject::absoluteTextQuads(actionContext->range))));
-        immediateActionResult.detectedDataTextIndicator = TextIndicator::createWithRange(actionContext->range, { TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges }, TextIndicatorPresentationTransition::FadeIn);
+        immediateActionResult.detectedDataTextIndicator = TextIndicator::createWithRange(actionContext->range, indicatorOptions(actionContext->range), TextIndicatorPresentationTransition::FadeIn);
         immediateActionResult.detectedDataOriginatingPageOverlay = overlay->pageOverlayID();
         break;
     }
@@ -918,8 +926,7 @@ void WebPage::performImmediateActionHitTestAtLocation(WebCore::FloatPoint locati
         if (auto result = DataDetection::detectItemAroundHitTestResult(hitTestResult)) {
             immediateActionResult.detectedDataActionContext = WTFMove(result->actionContext);
             immediateActionResult.detectedDataBoundingBox = result->boundingBox;
-            immediateActionResult.detectedDataTextIndicator = TextIndicator::createWithRange(result->range,
-                { TextIndicatorOption::UseBoundingRectAndPaintAllContentForComplexRanges }, TextIndicatorPresentationTransition::FadeIn);
+            immediateActionResult.detectedDataTextIndicator = TextIndicator::createWithRange(result->range, indicatorOptions(result->range), TextIndicatorPresentationTransition::FadeIn);
         }
     }
 
