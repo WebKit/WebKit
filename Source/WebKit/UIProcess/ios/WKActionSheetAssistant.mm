@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "APIUIClient.h"
-#import "TCCSPI.h"
+#import "TCCSoftLink.h"
 #import "UIKitSPI.h"
 #import "WKActionSheet.h"
 #import "WKContentViewInteraction.h"
@@ -63,10 +63,6 @@ SOFT_LINK_CLASS(SafariServices, SSReadingList)
 #endif
 
 OBJC_CLASS DDAction;
-
-SOFT_LINK_PRIVATE_FRAMEWORK(TCC)
-SOFT_LINK(TCC, TCCAccessPreflight, TCCAccessPreflightResult, (CFStringRef service, CFDictionaryRef options), (service, options))
-SOFT_LINK_CONSTANT(TCC, kTCCServicePhotos, CFStringRef)
 
 #if HAVE(APP_LINKS)
 static bool applicationHasAppLinkEntitlements()
@@ -563,7 +559,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
     if ([elementInfo imageURL]) {
-        if (TCCAccessPreflight(getkTCCServicePhotos(), NULL) != kTCCAccessPreflightDenied)
+        if (TCCAccessPreflight(WebKit::get_TCC_kTCCServicePhotos(), NULL) != kTCCAccessPreflightDenied)
             [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeSaveImage assistant:self]];
     }
 
@@ -599,7 +595,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if ([getSSReadingListClass() supportsURL:targetURL])
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeAddToReadingList assistant:self]];
 #endif
-    if (TCCAccessPreflight(getkTCCServicePhotos(), NULL) != kTCCAccessPreflightDenied)
+    if (TCCAccessPreflight(WebKit::get_TCC_kTCCServicePhotos(), NULL) != kTCCAccessPreflightDenied)
         [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeSaveImage assistant:self]];
 
     [defaultActions addObject:[_WKElementAction _elementActionWithType:_WKElementActionTypeCopy assistant:self]];

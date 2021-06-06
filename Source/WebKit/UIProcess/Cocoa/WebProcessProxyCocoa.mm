@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,7 @@
 #import "WKTypeRefWrapper.h"
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
+#import <pal/cf/AudioToolboxSoftLink.h>
 #import <sys/sysctl.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Scope.h>
@@ -52,14 +53,8 @@
 #endif
 
 #if PLATFORM(MAC)
-#import <wtf/SoftLinking.h>
-
-SOFT_LINK_PRIVATE_FRAMEWORK(TCC)
-SOFT_LINK(TCC, TCCAccessCheckAuditToken, Boolean, (CFStringRef service, audit_token_t auditToken, CFDictionaryRef options), (service, auditToken, options))
-SOFT_LINK_CONSTANT(TCC, kTCCServiceAccessibility, CFStringRef)
+#include "TCCSoftLink.h"
 #endif
-
-#import <pal/cf/AudioToolboxSoftLink.h>
 
 namespace WebKit {
 
@@ -279,7 +274,7 @@ Vector<String> WebProcessProxy::platformOverrideLanguages() const
 #if PLATFORM(MAC)
 void WebProcessProxy::isAXAuthenticated(audit_token_t auditToken, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto authenticated = TCCAccessCheckAuditToken(getkTCCServiceAccessibility(), auditToken, nullptr);
+    auto authenticated = TCCAccessCheckAuditToken(get_TCC_kTCCServiceAccessibility(), auditToken, nullptr);
     completionHandler(authenticated);
 }
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,25 +27,18 @@
 #import "MediaPermissionUtilities.h"
 
 #import "SandboxUtilities.h"
-#import "TCCSPI.h"
+#import "TCCSoftLink.h"
 #import "WKWebViewInternal.h"
 #import "WebPageProxy.h"
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/SecurityOriginData.h>
 #import <mutex>
+#import <pal/cocoa/AVFoundationSoftLink.h>
+#import <pal/cocoa/SpeechSoftLink.h>
 #import <wtf/BlockPtr.h>
-#import <wtf/SoftLinking.h>
 #import <wtf/URLHelpers.h>
 #import <wtf/spi/cf/CFBundleSPI.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
-
-#import <pal/cocoa/AVFoundationSoftLink.h>
-#import <pal/cocoa/SpeechSoftLink.h>
-
-SOFT_LINK_PRIVATE_FRAMEWORK(TCC)
-SOFT_LINK(TCC, TCCAccessPreflight, TCCAccessPreflightResult, (CFStringRef service, CFDictionaryRef options), (service, options))
-SOFT_LINK_CONSTANT(TCC, kTCCServiceMicrophone, CFStringRef)
-SOFT_LINK_CONSTANT(TCC, kTCCServiceCamera, CFStringRef)
 
 namespace WebKit {
 
@@ -88,7 +81,7 @@ bool checkUsageDescriptionStringForType(MediaPermissionType type)
 
     switch (type) {
     case MediaPermissionType::Audio:
-        static TCCAccessPreflightResult audioAccess = TCCAccessPreflight(getkTCCServiceMicrophone(), NULL);
+        static TCCAccessPreflightResult audioAccess = TCCAccessPreflight(get_TCC_kTCCServiceMicrophone(), NULL);
         if (audioAccess == kTCCAccessPreflightGranted)
             return true;
         std::call_once(audioDescriptionFlag, [] {
@@ -96,7 +89,7 @@ bool checkUsageDescriptionStringForType(MediaPermissionType type)
         });
         return hasMicrophoneDescriptionString;
     case MediaPermissionType::Video:
-        static TCCAccessPreflightResult videoAccess = TCCAccessPreflight(getkTCCServiceCamera(), NULL);
+        static TCCAccessPreflightResult videoAccess = TCCAccessPreflight(get_TCC_kTCCServiceCamera(), NULL);
         if (videoAccess == kTCCAccessPreflightGranted)
             return true;
         std::call_once(videoDescriptionFlag, [] {

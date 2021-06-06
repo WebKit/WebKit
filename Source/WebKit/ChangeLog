@@ -1,3 +1,53 @@
+2021-06-06  David Kilzer  <ddkilzer@apple.com>
+
+        Weak external symbols found in WebKit.framework with Release+Coverage configuration
+        <https://webkit.org/b/226668>
+        <rdar://problem/78890081>
+
+        Reviewed by Darin Adler.
+
+        * Configurations/WebKit.xcconfig:
+        (UNEXPORTED_SYMBOL_LDFLAGS):
+        - Remove std::function<> symbols as those were replaced
+          by WTF::Function<> a while ago.
+
+        * Shared/Cocoa/DefaultWebBrowserChecks.mm:
+        (WebKit::determineITPStateInternal):
+        (WebKit::doesParentProcessHaveITPEnabled):
+        - Switch to use TCCSoftLink.h.
+
+        * Shared/Cocoa/TCCSoftLink.h: Add.
+        * Shared/Cocoa/TCCSoftLink.mm: Add.
+        - Implement a single place for soft-linking to
+          TCC.framework.
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::getProcessIdentifier):
+        - Change ProcessIdentifier to WebCore::ProcessIdentifier
+          to fix the build since this source file no longer gets
+          `using namespace WebCore;` from another source file
+          after changes to SourcesCocoa.txt.
+
+        * SourcesCocoa.txt:
+        - Add DefaultWebBrowserChecks.mm since it no longer
+          contains any SOFT_LINK macros.
+        - Add new TCCSoftLink.mm file.
+
+        * UIProcess/Cocoa/MediaPermissionUtilities.mm:
+        (WebKit::checkUsageDescriptionStringForType):
+        * UIProcess/Cocoa/WebProcessProxyCocoa.mm:
+        (WebKit::WebProcessProxy::isAXAuthenticated):
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant defaultActionsForLinkSheet:]):
+        (-[WKActionSheetAssistant defaultActionsForImageSheet:]):
+        - Switch to use TCCSoftLink.h.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        - Add TCCSoftLink.{h,mm} to the project.
+        - Remove DefaultWebBrowserChecks.mm from the
+          WebKit.framework target after adding it to
+          SourcesCocoa.txt.
+
 2021-06-05  Chris Dumez  <cdumez@apple.com>
 
         Use `const uint8_t*` type more consistently to store bytes in WebKit

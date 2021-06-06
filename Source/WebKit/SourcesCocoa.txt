@@ -161,6 +161,7 @@ Shared/Cocoa/AuxiliaryProcessCocoa.mm
 Shared/Cocoa/CompletionHandlerCallChecker.mm
 Shared/Cocoa/CoreTextHelpers.mm
 Shared/Cocoa/DataDetectionResult.mm
+Shared/Cocoa/DefaultWebBrowserChecks.mm
 Shared/Cocoa/InsertTextOptions.cpp
 Shared/Cocoa/LoadParametersCocoa.mm
 Shared/Cocoa/PDFKitSoftLink.mm
@@ -168,6 +169,7 @@ Shared/Cocoa/SandboxExtensionCocoa.mm
 Shared/Cocoa/SandboxInitialiationParametersCocoa.mm
 Shared/Cocoa/SandboxUtilities.mm
 Shared/Cocoa/SharedRingBufferStorage.cpp
+Shared/Cocoa/TCCSoftLink.mm
 Shared/Cocoa/WebCoreArgumentCodersCocoa.mm
 Shared/Cocoa/WebErrorsCocoa.mm
 Shared/Cocoa/WebKit2InitializeCocoa.mm

@@ -88,13 +88,13 @@ bool XPCServiceInitializerDelegate::getClientSDKVersion(uint32_t& clientSDKVersi
     return version.has_value();
 }
 
-bool XPCServiceInitializerDelegate::getProcessIdentifier(ProcessIdentifier& identifier)
+bool XPCServiceInitializerDelegate::getProcessIdentifier(WebCore::ProcessIdentifier& identifier)
 {
     auto parsedIdentifier = parseInteger<uint64_t>(xpc_dictionary_get_string(m_initializerMessage, "process-identifier"));
     if (!parsedIdentifier)
         return false;
 
-    identifier = makeObjectIdentifier<ProcessIdentifierType>(*parsedIdentifier);
+    identifier = makeObjectIdentifier<WebCore::ProcessIdentifierType>(*parsedIdentifier);
     return true;
 }
 
