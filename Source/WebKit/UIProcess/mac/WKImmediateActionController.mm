@@ -38,12 +38,12 @@
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/TextIndicatorWindow.h>
-#import <pal/mac/QuickLookUISoftLink.h>
-#import <pal/spi/mac/DataDetectorsSPI.h>
 #import <pal/spi/mac/LookupSPI.h>
 #import <pal/spi/mac/NSMenuSPI.h>
 #import <pal/spi/mac/NSPopoverSPI.h>
 #import <wtf/URL.h>
+#import <pal/mac/DataDetectorsSoftLink.h>
+#import <pal/mac/QuickLookUISoftLink.h>
 
 @interface WKImmediateActionController () <QLPreviewMenuItemDelegate>
 @end
@@ -114,8 +114,8 @@
 
     if (_currentActionContext && _hasActivatedActionContext) {
         _hasActivatedActionContext = NO;
-        if (DataDetectorsLibrary())
-            [getDDActionsManagerClass() didUseActions];
+        if (PAL::isDataDetectorsFrameworkAvailable())
+            [PAL::getDDActionsManagerClass() didUseActions];
     }
 
     _state = WebKit::ImmediateActionState::None;
@@ -202,8 +202,8 @@
 
     if (_currentActionContext) {
         _hasActivatedActionContext = YES;
-        if (DataDetectorsLibrary()) {
-            if (![getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()])
+        if (PAL::isDataDetectorsFrameworkAvailable()) {
+            if (![PAL::getDDActionsManagerClass() shouldUseActionsWithContext:_currentActionContext.get()])
                 [self _cancelImmediateAction];
         }
     }
@@ -401,7 +401,7 @@
 
 - (id<NSImmediateActionAnimationController>)_animationControllerForDataDetectedText
 {
-    if (!DataDetectorsLibrary())
+    if (!PAL::isDataDetectorsFrameworkAvailable())
         return nil;
 
     DDActionContext *actionContext = _hitTestResultData.detectedDataActionContext.get();
@@ -410,7 +410,7 @@
 
     actionContext.altMode = YES;
     actionContext.immediate = YES;
-    if (![[getDDActionsManagerClass() sharedManager] hasActionsForResult:actionContext.mainResult actionContext:actionContext])
+    if (![[PAL::getDDActionsManagerClass() sharedManager] hasActionsForResult:actionContext.mainResult actionContext:actionContext])
         return nil;
 
     RefPtr<WebKit::WebPageProxy> page = _page.get();
@@ -428,7 +428,7 @@
 
     [_currentActionContext setHighlightFrame:[_view.window convertRectToScreen:[_view convertRect:_hitTestResultData.detectedDataBoundingBox toView:nil]]];
 
-    NSArray *menuItems = [[getDDActionsManagerClass() sharedManager] menuItemsForResult:[_currentActionContext mainResult] actionContext:_currentActionContext.get()];
+    NSArray *menuItems = [[PAL::getDDActionsManagerClass() sharedManager] menuItemsForResult:[_currentActionContext mainResult] actionContext:_currentActionContext.get()];
 
     if (menuItems.count != 1)
         return nil;
@@ -438,10 +438,10 @@
 
 - (id<NSImmediateActionAnimationController>)_animationControllerForDataDetectedLink
 {
-    if (!DataDetectorsLibrary())
+    if (!PAL::isDataDetectorsFrameworkAvailable())
         return nil;
 
-    RetainPtr<DDActionContext> actionContext = adoptNS([allocDDActionContextInstance() init]);
+    auto actionContext = adoptNS([PAL::allocDDActionContextInstance() init]);
 
     if (!actionContext)
         return nil;
@@ -464,7 +464,7 @@
     if (!hitTestResult)
         return nil;
 
-    NSArray *menuItems = [[getDDActionsManagerClass() sharedManager] menuItemsForTargetURL:hitTestResult->absoluteLinkURL() actionContext:_currentActionContext.get()];
+    NSArray *menuItems = [[PAL::getDDActionsManagerClass() sharedManager] menuItemsForTargetURL:hitTestResult->absoluteLinkURL() actionContext:_currentActionContext.get()];
 
     if (menuItems.count != 1)
         return nil;

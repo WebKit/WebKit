@@ -1,3 +1,25 @@
+2021-06-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Move DataDetectors softlinking in DataDetectorsSPI.h out into a separate PAL header
+        https://bugs.webkit.org/show_bug.cgi?id=226669
+
+        Reviewed by Sam Weinig.
+
+        Add the new softlinking headers. See WebCore/ChangeLog for more details.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/PlatformMac.cmake:
+        * pal/cocoa/DataDetectorsCoreSoftLink.h:
+        * pal/cocoa/DataDetectorsCoreSoftLink.mm:
+
+        Move the `DDBinderPhoneNumberKey` soft link into `DataDetectorsCoreSoftLink` instead, since this symbol comes
+        from DataDetectorsCore rather than the DataDetectors framework.
+
+        * pal/mac/DataDetectorsSoftLink.h: Added.
+        * pal/mac/DataDetectorsSoftLink.mm: Added.
+        * pal/mac/QuickLookUISoftLink.h:
+        * pal/spi/mac/DataDetectorsSPI.h:
+
 2021-06-01  Darin Adler  <darin@apple.com>
 
         Remove <wtf/Optional.h>

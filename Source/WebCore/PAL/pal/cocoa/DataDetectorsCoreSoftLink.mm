@@ -33,7 +33,9 @@
 SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE(PAL, DataDetectorsCore)
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, DataDetectorsCore, DDScannerResult, PAL_EXPORT)
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, DataDetectorsCore, DDBinderPhoneNumberKey, CFStringRef, PAL_EXPORT)
+#elif PLATFORM(IOS_FAMILY)
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, DataDetectorsCore, DDScannerCreate, DDScannerRef, (DDScannerType type, DDScannerOptions options, CFErrorRef * errorRef), (type, options, errorRef))
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, DataDetectorsCore, DDScannerScanQuery, Boolean, (DDScannerRef scanner, DDScanQueryRef query), (scanner, query))
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, DataDetectorsCore, DDScanQueryCreate, DDScanQueryRef, (CFAllocatorRef allocator), (allocator))

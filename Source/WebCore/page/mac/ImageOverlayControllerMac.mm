@@ -41,9 +41,9 @@
 #import "SimpleRange.h"
 #import "TypedElementDescendantIterator.h"
 #import <QuartzCore/QuartzCore.h>
-#import <pal/spi/mac/DataDetectorsSPI.h>
 #import <wtf/HashSet.h>
 #import <wtf/text/StringToIntegerConversion.h>
+#import <pal/mac/DataDetectorsSoftLink.h>
 
 namespace WebCore {
 
@@ -88,9 +88,9 @@ void ImageOverlayController::updateDataDetectorHighlights(const HTMLElement& ove
 
         // FIXME: We should teach DataDetectorHighlight to render quads instead of always falling back to axis-aligned bounding rects.
 #if HAVE(DD_HIGHLIGHT_CREATE_WITH_SCALE)
-        auto highlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, &elementBounds, 1, mainFrameView->visibleContentRect(), DDHighlightStyleBubbleStandard | DDHighlightStyleStandardIconArrow, YES, NSWritingDirectionNatural, NO, YES, 0));
+        auto highlight = adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleScaleAndDirection(nullptr, &elementBounds, 1, mainFrameView->visibleContentRect(), DDHighlightStyleBubbleStandard | DDHighlightStyleStandardIconArrow, YES, NSWritingDirectionNatural, NO, YES, 0));
 #else
-        auto highlight = adoptCF(DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, &elementBounds, 1, mainFrameView->visibleContentRect(), DDHighlightStyleBubbleStandard | DDHighlightStyleStandardIconArrow, YES, NSWritingDirectionNatural, NO, YES));
+        auto highlight = adoptCF(PAL::softLink_DataDetectors_DDHighlightCreateWithRectsInVisibleRectWithStyleAndDirection(nullptr, &elementBounds, 1, mainFrameView->visibleContentRect(), DDHighlightStyleBubbleStandard | DDHighlightStyleStandardIconArrow, YES, NSWritingDirectionNatural, NO, YES));
 #endif
         m_dataDetectorContainersAndHighlights.append({ makeWeakPtr(element.get()), DataDetectorHighlight::createForImageOverlay(*m_page, *this, WTFMove(highlight), *makeRangeSelectingNode(element.get())) });
     }
@@ -112,7 +112,7 @@ bool ImageOverlayController::platformHandleMouseEvent(const PlatformMouseEvent& 
             continue;
 
         Boolean isOverButton = NO;
-        if (!DDHighlightPointIsOnHighlight(highlight->highlight(), mousePositionInContents, &isOverButton))
+        if (!PAL::softLink_DataDetectors_DDHighlightPointIsOnHighlight(highlight->highlight(), mousePositionInContents, &isOverButton))
             continue;
 
         mouseIsOverActiveDataDetectorHighlightButton = isOverButton;

@@ -28,11 +28,7 @@
 
 #import "ArgumentCodersCocoa.h"
 #import "WebCoreArgumentCoders.h"
-#import <pal/spi/cocoa/DataDetectorsCoreSPI.h>
-#import <wtf/SoftLinking.h>
-
-SOFT_LINK_PRIVATE_FRAMEWORK(DataDetectorsCore)
-SOFT_LINK_CLASS(DataDetectorsCore, DDScannerResult)
+#import <pal/cocoa/DataDetectorsCoreSoftLink.h>
 
 namespace WebKit {
 
@@ -45,7 +41,7 @@ void DataDetectionResult::encode(IPC::Encoder& encoder) const
 
 std::optional<DataDetectionResult> DataDetectionResult::decode(IPC::Decoder& decoder)
 {
-    auto results = IPC::decode<NSArray>(decoder, @[ [NSArray class], getDDScannerResultClass() ]);
+    auto results = IPC::decode<NSArray>(decoder, @[ NSArray.class, PAL::getDDScannerResultClass() ]);
     if (!results)
         return std::nullopt;
 

@@ -120,7 +120,6 @@
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
 #import <pal/spi/cocoa/NSTouchBarSPI.h>
-#import <pal/spi/mac/DataDetectorsSPI.h>
 #import <pal/spi/mac/LookupSPI.h>
 #import <pal/spi/mac/NSAppearanceSPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
@@ -158,6 +157,7 @@ SOFT_LINK_CLASS_OPTIONAL(TranslationUIServices, LTUITranslationViewController)
 #endif
 
 #import <pal/cocoa/RevealSoftLink.h>
+#import <pal/mac/DataDetectorsSoftLink.h>
 
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 SOFT_LINK_FRAMEWORK(AVKit)
@@ -3623,8 +3623,8 @@ void WebViewImpl::dismissContentRelativeChildWindowsFromViewOnly()
     if ([m_view window].isKeyWindow || hasActiveImmediateAction) {
         WebCore::DictionaryLookup::hidePopup();
 
-        if (DataDetectorsLibrary())
-            [[getDDActionsManagerClass() sharedManager] requestBubbleClosureUnanchorOnFailure:YES];
+        if (PAL::isDataDetectorsFrameworkAvailable())
+            [[PAL::getDDActionsManagerClass() sharedManager] requestBubbleClosureUnanchorOnFailure:YES];
     }
 
     clearTextIndicatorWithAnimation(WebCore::TextIndicatorDismissalAnimation::FadeOut);

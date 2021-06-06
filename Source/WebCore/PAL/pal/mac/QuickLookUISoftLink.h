@@ -26,8 +26,8 @@
 
 #if PLATFORM(MAC)
 
-#include <pal/spi/mac/QuickLookMacSPI.h>
-#include <wtf/SoftLinking.h>
+#import <pal/spi/mac/QuickLookMacSPI.h>
+#import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, QuickLookUI)
 

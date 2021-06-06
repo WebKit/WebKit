@@ -1,3 +1,29 @@
+2021-06-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Move DataDetectors softlinking in DataDetectorsSPI.h out into a separate PAL header
+        https://bugs.webkit.org/show_bug.cgi?id=226669
+
+        Reviewed by Sam Weinig.
+
+        Clean up some softlinking code for the DataDetectors framework. Currently, the `SOFT_LINK_*` macros are defined
+        inside the SPI header (`pal/spi/mac/DataDetectorsSPI.h`); this patch moves them out into
+        `pal/mac/DataDetectorsSoftLink.{h|mm}` instead, and updates a few places that use these soft-linked symbols to
+        import `DataDetectorsSoftLink.h` instead of `DataDetectorsSPI.h`.
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::detectItem):
+        (WebCore::DataDetection::detectItemAroundHitTestResult):
+        * page/mac/ImageOverlayControllerMac.mm:
+        (WebCore::ImageOverlayController::updateDataDetectorHighlights):
+        (WebCore::ImageOverlayController::platformHandleMouseEvent):
+        * page/mac/ServicesOverlayController.mm:
+        (WebCore::ServicesOverlayController::mouseIsOverHighlight const):
+        (WebCore::ServicesOverlayController::buildPhoneNumberHighlights):
+        (WebCore::ServicesOverlayController::buildSelectionHighlight):
+        * platform/mac/DataDetectorHighlight.mm:
+        (WebCore::DataDetectorHighlight::setHighlight):
+        (WebCore::DataDetectorHighlight::paintContents):
+
 2021-06-05  Dean Jackson  <dino@apple.com>
 
         [WebXR] Supply an IOSurface in SimulatedXRDevice

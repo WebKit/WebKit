@@ -28,11 +28,7 @@
 
 #import "ArgumentCodersCocoa.h"
 #import "WebCoreArgumentCoders.h"
-#import <pal/spi/cocoa/DataDetectorsCoreSPI.h>
-#import <wtf/SoftLinking.h>
-
-SOFT_LINK_PRIVATE_FRAMEWORK(DataDetectorsCore)
-SOFT_LINK_CLASS(DataDetectorsCore, DDScannerResult)
+#import <pal/cocoa/DataDetectorsCoreSoftLink.h>
 
 namespace WebKit {
 
@@ -192,7 +188,7 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
     if (!decoder.decode(result.dataDetectorIdentifier))
         return false;
 
-    auto dataDetectorResults = IPC::decode<NSArray>(decoder, @[ NSArray.class, getDDScannerResultClass() ]);
+    auto dataDetectorResults = IPC::decode<NSArray>(decoder, @[ NSArray.class, PAL::getDDScannerResultClass() ]);
     if (!dataDetectorResults)
         return false;
 

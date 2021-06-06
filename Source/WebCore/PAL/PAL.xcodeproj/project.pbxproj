@@ -213,6 +213,8 @@
 		F4C85A4F2658551A005B89CC /* QuickLookUISoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = F4C85A4D2658551A005B89CC /* QuickLookUISoftLink.h */; };
 		F4DDD01B264DC69E00EF1B91 /* DataDetectorsCoreSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4DDD019264DC69E00EF1B91 /* DataDetectorsCoreSoftLink.mm */; };
 		F4DDD01C264DC69E00EF1B91 /* DataDetectorsCoreSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = F4DDD01A264DC69E00EF1B91 /* DataDetectorsCoreSoftLink.h */; };
+		F4E0875B266ACA53000F814A /* DataDetectorsSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = F4E08759266ACA53000F814A /* DataDetectorsSoftLink.h */; };
+		F4E0875C266ACA53000F814A /* DataDetectorsSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4E0875A266ACA53000F814A /* DataDetectorsSoftLink.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -432,6 +434,8 @@
 		F4C85A4D2658551A005B89CC /* QuickLookUISoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickLookUISoftLink.h; sourceTree = "<group>"; };
 		F4DDD019264DC69E00EF1B91 /* DataDetectorsCoreSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetectorsCoreSoftLink.mm; sourceTree = "<group>"; };
 		F4DDD01A264DC69E00EF1B91 /* DataDetectorsCoreSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDetectorsCoreSoftLink.h; sourceTree = "<group>"; };
+		F4E08759266ACA53000F814A /* DataDetectorsSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataDetectorsSoftLink.h; sourceTree = "<group>"; };
+		F4E0875A266ACA53000F814A /* DataDetectorsSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetectorsSoftLink.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -755,6 +759,8 @@
 		44E1A8AC21FA548F00C3048E /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				F4E08759266ACA53000F814A /* DataDetectorsSoftLink.h */,
+				F4E0875A266ACA53000F814A /* DataDetectorsSoftLink.mm */,
 				44E1A8AD21FA54DA00C3048E /* LookupSoftLink.h */,
 				44E1A8AE21FA54DA00C3048E /* LookupSoftLink.mm */,
 				F4C85A4D2658551A005B89CC /* QuickLookUISoftLink.h */,
@@ -867,6 +873,7 @@
 				DF83E209263734F1000825EF /* CryptoKitCBridgingSPI.h in Headers */,
 				F4DDD01C264DC69E00EF1B91 /* DataDetectorsCoreSoftLink.h in Headers */,
 				0C2DA1411F3BEB4900DBC317 /* DataDetectorsCoreSPI.h in Headers */,
+				F4E0875B266ACA53000F814A /* DataDetectorsSoftLink.h in Headers */,
 				0C77858A1F45130F00F4EBB6 /* DataDetectorsSPI.h in Headers */,
 				0C5AF91A1F43A4C7002EAC02 /* DataDetectorsUISPI.h in Headers */,
 				A1175B571F6B470500C4B9F0 /* DefaultSearchProvider.h in Headers */,
@@ -1081,6 +1088,7 @@
 				1C09D0561E31C46500725F18 /* CryptoDigestCommonCrypto.cpp in Sources */,
 				57F1C90A25DCF0CF00E8F6EA /* CryptoKitCBridgingSoftLink.mm in Sources */,
 				F4DDD01B264DC69E00EF1B91 /* DataDetectorsCoreSoftLink.mm in Sources */,
+				F4E0875C266ACA53000F814A /* DataDetectorsSoftLink.mm in Sources */,
 				A1175B581F6B470500C4B9F0 /* DefaultSearchProvider.cpp in Sources */,
 				F44291641FA52670002CC93E /* FileSizeFormatter.cpp in Sources */,
 				F44291681FA52705002CC93E /* FileSizeFormatterCocoa.mm in Sources */,

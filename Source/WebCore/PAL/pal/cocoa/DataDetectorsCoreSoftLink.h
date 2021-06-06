@@ -32,7 +32,9 @@
 
 SOFT_LINK_CLASS_FOR_HEADER(PAL, DDScannerResult)
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(MAC)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, DataDetectorsCore, DDBinderPhoneNumberKey, CFStringRef)
+#elif PLATFORM(IOS_FAMILY)
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectorsCore, DDScannerCreate, DDScannerRef, (DDScannerType type, DDScannerOptions options, CFErrorRef * errorRef), (type, options, errorRef))
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectorsCore, DDScannerScanQuery, Boolean, (DDScannerRef scanner, DDScanQueryRef query), (scanner, query))
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, DataDetectorsCore, DDScanQueryCreate, DDScanQueryRef, (CFAllocatorRef allocator), (allocator))

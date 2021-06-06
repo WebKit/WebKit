@@ -1,3 +1,30 @@
+2021-06-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] Move DataDetectors softlinking in DataDetectorsSPI.h out into a separate PAL header
+        https://bugs.webkit.org/show_bug.cgi?id=226669
+
+        Reviewed by Sam Weinig.
+
+        Adopt the new PAL softlinking header in a few places. See WebCore/ChangeLog for more details. Additionally, move
+        several softlinking header imports so that they're the last imported headers in a few sources.
+
+        * Platform/mac/MenuUtilities.mm:
+        (WebKit::actionForMenuItem):
+        (WebKit::menuItemForTelephoneNumber):
+        * Shared/Cocoa/DataDetectionResult.mm:
+        (WebKit::DataDetectionResult::decode):
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::decode):
+        * Shared/mac/WebHitTestResultData.mm:
+        (WebKit::WebHitTestResultData::platformDecode):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::dismissContentRelativeChildWindowsFromViewOnly):
+        * UIProcess/mac/WKImmediateActionController.mm:
+        (-[WKImmediateActionController _clearImmediateActionState]):
+        (-[WKImmediateActionController immediateActionRecognizerWillBeginAnimation:]):
+        (-[WKImmediateActionController _animationControllerForDataDetectedText]):
+        (-[WKImmediateActionController _animationControllerForDataDetectedLink]):
+
 2021-06-04  Chris Dumez  <cdumez@apple.com>
 
         Optimize a few call sites creating SharedBuffer objects

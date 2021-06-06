@@ -20,6 +20,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     cocoa/SpeechSoftLink.h
     cocoa/UsageTrackingSoftLink.h
 
+    mac/DataDetectorsSoftLink.h
     mac/LookupSoftLink.h
     mac/QuickLookUISoftLink.h
 
@@ -163,7 +164,9 @@ list(APPEND PAL_SOURCES
 
     crypto/commoncrypto/CryptoDigestCommonCrypto.cpp
 
+    mac/DataDetectorsSoftLink.mm
     mac/LookupSoftLink.mm
+    mac/QuickLookUISoftLink.mm
 
     spi/cocoa/AccessibilitySupportSoftLink.cpp
 

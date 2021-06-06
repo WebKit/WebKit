@@ -31,7 +31,6 @@
 
 #import "StringUtilities.h"
 #import <WebCore/LocalizedStrings.h>
-#import <pal/spi/mac/DataDetectorsSPI.h>
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
 #import <pal/spi/mac/TelephonyUtilitiesSPI.h>
@@ -40,6 +39,9 @@
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(TelephonyUtilities)
 SOFT_LINK_CLASS(TelephonyUtilities, TUCall)
 #endif
+
+#import <pal/cocoa/DataDetectorsCoreSoftLink.h>
+#import <pal/mac/DataDetectorsSoftLink.h>
 
 @interface WKEmptyPresenterHighlightDelegate : NSObject <RVPresenterHighlightDelegate>
 @end
@@ -75,10 +77,10 @@ static DDAction *actionForMenuItem(NSMenuItem *item)
     id action = [representedObject objectForKey:@"DDAction"];
 
 #if HAVE(DATA_DETECTORS_MAC_ACTION)
-    if (![action isKindOfClass:getDDMacActionClass()])
+    if (![action isKindOfClass:PAL::getDDMacActionClass()])
         return nil;
 #else
-    if (![action isKindOfClass:getDDActionClass()])
+    if (![action isKindOfClass:PAL::getDDActionClass()])
         return nil;
 #endif
 
@@ -87,13 +89,13 @@ static DDAction *actionForMenuItem(NSMenuItem *item)
 
 NSMenuItem *menuItemForTelephoneNumber(const String& telephoneNumber)
 {
-    if (!DataDetectorsLibrary())
+    if (!PAL::isDataDetectorsFrameworkAvailable())
         return nil;
 
-    RetainPtr<DDActionContext> actionContext = adoptNS([allocDDActionContextInstance() init]);
+    auto actionContext = adoptNS([PAL::allocDDActionContextInstance() init]);
     [actionContext setAllowedActionUTIs:@[ @"com.apple.dial" ]];
 
-    NSArray *proposedMenuItems = [[getDDActionsManagerClass() sharedManager] menuItemsForValue:(NSString *)telephoneNumber type:getDDBinderPhoneNumberKey() service:nil context:actionContext.get()];
+    NSArray *proposedMenuItems = [[PAL::getDDActionsManagerClass() sharedManager] menuItemsForValue:(NSString *)telephoneNumber type:PAL::get_DataDetectorsCore_DDBinderPhoneNumberKey() service:nil context:actionContext.get()];
     for (NSMenuItem *item in proposedMenuItems) {
         auto action = actionForMenuItem(item);
         if ([action.actionUTI hasPrefix:@"com.apple.dial"]) {

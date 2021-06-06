@@ -53,12 +53,12 @@
 #import "TextIterator.h"
 #import "VisiblePosition.h"
 #import "VisibleUnits.h"
-#import <pal/cocoa/DataDetectorsCoreSoftLink.h>
 #import <pal/spi/ios/DataDetectorsUISPI.h>
-#import <pal/spi/mac/DataDetectorsSPI.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/text/StringBuilder.h>
 #import <wtf/text/StringToIntegerConversion.h>
+#import <pal/cocoa/DataDetectorsCoreSoftLink.h>
+#import <pal/mac/DataDetectorsSoftLink.h>
 
 #if PLATFORM(MAC)
 template<> struct WTF::CFTypeTrait<DDResultRef> {
@@ -108,7 +108,7 @@ static std::optional<DetectedItem> detectItem(const VisiblePosition& position, c
     if (!view)
         return { };
 
-    auto actionContext = adoptNS([allocDDActionContextInstance() init]);
+    auto actionContext = adoptNS([PAL::allocDDActionContextInstance() init]);
     [actionContext setAllResults:@[ (__bridge id)mainResult ]];
     [actionContext setMainResult:mainResult];
 
@@ -121,7 +121,7 @@ static std::optional<DetectedItem> detectItem(const VisiblePosition& position, c
 
 std::optional<DetectedItem> DataDetection::detectItemAroundHitTestResult(const HitTestResult& hitTestResult)
 {
-    if (!DataDetectorsLibrary())
+    if (!PAL::isDataDetectorsFrameworkAvailable())
         return { };
 
     Node* node = hitTestResult.innerNonSharedNode();
