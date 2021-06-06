@@ -53,9 +53,8 @@ public:
     void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions&) override;
     String toDataURL(const String& mimeType, Optional<double> quality, PreserveResolution) const override;
     Vector<uint8_t> toData(const String& mimeType, Optional<double> quality) const override;
-    Vector<uint8_t> toBGRAData() const override;
-    RefPtr<ImageData> getImageData(AlphaPremultiplication outputFormat, const IntRect&) const override;
-    void putImageData(AlphaPremultiplication inputFormat, const ImageData&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) override;
+    WTF::Optional<WebCore::PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect&) const override;
+    void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) override;
     unsigned bytesPerRow() const override;
 
     static size_t calculateMemoryCost(const Parameters&);

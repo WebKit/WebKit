@@ -85,8 +85,9 @@ void ResourceHandle::cancel()
     }
 }
 
-void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentialsPolicy /*storedCredentials*/, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentialsPolicy /*storedCredentials*/, ResourceError& error, ResourceResponse& response, Vector<unsigned char>& data)
 {
+    fprintf(stderr, "platformLoadResourceSynchronously is not implemented!\n");
     ASSERT_NOT_REACHED();
 }
 

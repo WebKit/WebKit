@@ -175,20 +175,15 @@ void ImageBufferHaikuSurfaceBackend::drawPattern(GraphicsContext& destContext,
         destContext.drawPattern(*m_data.m_image.get(), srcRect.size(), destRect, srcRect, patternTransform, phase, size, options.compositeOperator());
 }
 
-Vector<uint8_t> ImageBufferHaikuSurfaceBackend::toBGRAData() const
+
+WTF::Optional<PixelBuffer> ImageBufferHaikuSurfaceBackend::getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect) const
 {
-    return ImageBufferBackend::toBGRAData(m_data.m_image->platformImage()->Bits());
+    return ImageBufferBackend::getPixelBuffer(outputFormat, srcRect, m_data.m_image->platformImage()->Bits());
 }
 
-
-RefPtr<ImageData> ImageBufferHaikuSurfaceBackend::getImageData(AlphaPremultiplication outputFormat, const IntRect& srcRect) const
+void ImageBufferHaikuSurfaceBackend::putPixelBuffer(const PixelBuffer& imageData, const IntRect& sourceRect, const IntPoint& destPoint, AlphaPremultiplication premultiplication)
 {
-    return ImageBufferBackend::getImageData(outputFormat, srcRect, m_data.m_image->platformImage()->Bits());
-}
-
-void ImageBufferHaikuSurfaceBackend::putImageData(AlphaPremultiplication sourceFormat, const ImageData& imageData, const IntRect& sourceRect, const IntPoint& destPoint, AlphaPremultiplication premultiplication)
-{
-    ImageBufferBackend::putImageData(sourceFormat, imageData, sourceRect, destPoint, premultiplication, m_data.m_image->platformImage()->Bits());
+    ImageBufferBackend::putPixelBuffer(imageData, sourceRect, destPoint, premultiplication, m_data.m_image->platformImage()->Bits());
 }
 
 unsigned ImageBufferHaikuSurfaceBackend::bytesPerRow() const
@@ -208,9 +203,9 @@ String ImageBufferHaikuSurfaceBackend::toDataURL(const String& mimeType, Optiona
         return "data:,";
 
     Vector<char> encodedBuffer;
-    base64Encode(binaryBuffer, encodedBuffer);
 
-    return "data:" + mimeType + ";base64;" + encodedBuffer;
+    return makeString("data:", mimeType, ";base64;",
+        base64Encoded(binaryBuffer.data(), binaryBuffer.size()));
 }
 
 

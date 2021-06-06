@@ -23,6 +23,7 @@
 
 #include "FormData.h"
 #include "HTTPParsers.h"
+#include "ImageData.h"
 #include "MIMETypeRegistry.h"
 #include "NetworkStorageSession.h"
 #include "ProtectionSpace.h"
@@ -32,6 +33,7 @@
 #include "ResourceResponse.h"
 #include "ResourceRequest.h"
 #include "SharedBuffer.h"
+
 #include <wtf/CompletionHandler.h>
 #include <wtf/text/CString.h>
 
@@ -139,7 +141,7 @@ void BUrlRequestWrapper::abort()
     {
         // Lock if we have already unblocked the receive thread to
         // synchronize cancellation status.
-        auto locker = holdLockIf(m_receiveMutex, m_didUnblockReceive);
+        Locker locker { m_didUnblockReceive ? &m_receiveMutex : nullptr };
 
         m_handler = nullptr;
     }
@@ -266,7 +268,7 @@ bool BUrlRequestWrapper::CertificateVerificationFailed(BPrivate::Network::BUrlRe
 
 ssize_t BUrlRequestWrapper::Write(const void* data, size_t size)
 {
-    auto locker = holdLock(m_receiveMutex);
+    Locker locker { m_receiveMutex };
 
     if (!m_handler)
         return size;
@@ -497,7 +499,8 @@ void BUrlProtocolHandler::didFinishLoading()
     if (!m_resourceHandle || !m_resourceHandle->client())
         return;
 
-    m_resourceHandle->client()->didFinishLoading(m_resourceHandle);
+    const WebCore::NetworkLoadMetrics metrics;
+    m_resourceHandle->client()->didFinishLoading(m_resourceHandle, metrics);
 }
 
 bool BUrlProtocolHandler::didReceiveInvalidCertificate(BCertificate& certificate, const char* message)

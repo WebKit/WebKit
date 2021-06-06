@@ -194,7 +194,7 @@ WTF::Optional<size_t> BFormDataIO::readFromBlob(const FormDataElement::EncodedBl
 		// Open the file if not done yet
 		if (m_fileHandle == FileSystem::invalidPlatformFileHandle)
 		{
-			WTF::Optional<WallTime> fileModificationTime = FileSystem::getFileModificationTime(blobItem.file()->path());
+			WTF::Optional<WallTime> fileModificationTime = FileSystem::fileModificationTime(blobItem.file()->path());
 			if (fileModificationTime
 					&& fileModificationTime == blobItem.file()->expectedModificationTime())
 				m_fileHandle = FileSystem::openFile(blobItem.file()->path(), FileSystem::FileOpenMode::Read);

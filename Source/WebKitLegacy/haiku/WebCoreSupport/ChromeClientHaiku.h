@@ -175,6 +175,8 @@ namespace WebCore {
         WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) const override;
 
         std::unique_ptr<WebCore::DateTimeChooser> createDateTimeChooser(WebCore::DateTimeChooserClient&) override;
+
+        void setTextIndicator(const TextIndicatorData&) const final {};
     private:
         BWebPage* m_webPage;
         BWebView* m_webView;

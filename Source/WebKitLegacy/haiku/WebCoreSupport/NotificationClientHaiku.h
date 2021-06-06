@@ -32,6 +32,8 @@
 #include "WebCore/NotificationClient.h"
 #include "WebCore/NotificationPermissionCallback.h"
 
+#include "wtf/CompletionHandler.h"
+
 #include <support/Locker.h>
 #include <app/Notification.h>
 
@@ -62,13 +64,10 @@ public:
     void notificationObjectDestroyed(Notification*) override {}
     void notificationControllerDestroyed() override {}
 
-    void requestPermission(ScriptExecutionContext*, 
-            RefPtr<NotificationPermissionCallback>&& callback) override {
-        if (callback)
-            callback->handleEvent(NotificationPermission::Granted);
+    void requestPermission(ScriptExecutionContext&,
+            PermissionHandler&& callback) override {
+         callback(WebCore::NotificationPermission::Granted);
     }
-    void cancelRequestsForPermission(ScriptExecutionContext*) override {}
-    bool hasPendingPermissionRequests(WebCore::ScriptExecutionContext*) const override { return false; }
 
     Permission checkPermission(ScriptExecutionContext*) override {
         return NotificationPermission::Granted;
