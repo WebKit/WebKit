@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "InlineElementBox.h"
 #include "LayoutIntegrationRunIteratorLegacyPath.h"
 #include "LayoutIntegrationRunIteratorModernPath.h"
+#include "LegacyInlineElementBox.h"
 #include <wtf/Variant.h>
 
 namespace WebCore {

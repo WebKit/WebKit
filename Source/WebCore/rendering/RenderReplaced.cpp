@@ -34,7 +34,6 @@
 #include "HTMLParserIdioms.h"
 #include "HighlightData.h"
 #include "HighlightRegister.h"
-#include "InlineElementBox.h"
 #include "LayoutIntegrationLineIterator.h"
 #include "LayoutIntegrationRunIterator.h"
 #include "LayoutRepainter.h"

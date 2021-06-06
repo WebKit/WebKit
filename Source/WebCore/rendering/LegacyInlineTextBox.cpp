@@ -30,16 +30,17 @@
 #include "DocumentMarkerController.h"
 #include "Editor.h"
 #include "ElementRuleCollector.h"
-#include "EllipsisBox.h"
 #include "EventRegion.h"
 #include "FloatRoundedRect.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
+
 #include "HighlightData.h"
 #include "HighlightRegister.h"
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
 #include "InlineTextBoxStyle.h"
+#include "LegacyEllipsisBox.h"
 #include "MarkedTextStyle.h"
 #include "Page.h"
 #include "PaintInfo.h"
@@ -167,7 +168,7 @@ RenderObject::HighlightState LegacyInlineTextBox::selectionState()
     // https://bugs.webkit.org/show_bug.cgi?id=205528
     // If there are ellipsis following, make sure their selection is updated.
     if (m_truncation != cNoTruncation && root().ellipsisBox()) {
-        EllipsisBox* ellipsis = root().ellipsisBox();
+        LegacyEllipsisBox* ellipsis = root().ellipsisBox();
         if (state != RenderObject::HighlightState::None) {
             auto [selectionStart, selectionEnd] = selectionStartEnd();
             // The ellipsis should be considered to be selected if the end of

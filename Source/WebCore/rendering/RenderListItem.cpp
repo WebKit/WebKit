@@ -29,7 +29,6 @@
 #include "HTMLNames.h"
 #include "HTMLOListElement.h"
 #include "HTMLUListElement.h"
-#include "InlineElementBox.h"
 #include "PseudoElement.h"
 #include "RenderStyleConstants.h"
 #include "RenderTreeBuilder.h"

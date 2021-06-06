@@ -26,10 +26,10 @@
 #include "FontMetrics.h"
 #include "HTMLElement.h"
 #include "HTMLWBRElement.h"
-#include "InlineElementBox.h"
 #include "InlineRunAndOffset.h"
 #include "LayoutIntegrationLineIterator.h"
 #include "LayoutIntegrationRunIterator.h"
+#include "LegacyInlineElementBox.h"
 #include "LegacyRootInlineBox.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "RenderBlock.h"
@@ -83,18 +83,18 @@ LayoutUnit RenderLineBreak::baselinePosition(FontBaseline baselineType, bool fir
     return LayoutUnit { (fontMetrics.ascent(baselineType) + (lineHeight(firstLine, direction, linePositionMode) - fontMetrics.height()) / 2).toInt() };
 }
 
-std::unique_ptr<InlineElementBox> RenderLineBreak::createInlineBox()
+std::unique_ptr<LegacyInlineElementBox> RenderLineBreak::createInlineBox()
 {
-    return makeUnique<InlineElementBox>(*this);
+    return makeUnique<LegacyInlineElementBox>(*this);
 }
 
-void RenderLineBreak::setInlineBoxWrapper(InlineElementBox* inlineBox)
+void RenderLineBreak::setInlineBoxWrapper(LegacyInlineElementBox* inlineBox)
 {
     ASSERT(!inlineBox || !m_inlineBoxWrapper);
     m_inlineBoxWrapper = inlineBox;
 }
 
-void RenderLineBreak::replaceInlineBoxWrapper(InlineElementBox& inlineBox)
+void RenderLineBreak::replaceInlineBoxWrapper(LegacyInlineElementBox& inlineBox)
 {
     deleteInlineBoxWrapper();
     setInlineBoxWrapper(&inlineBox);

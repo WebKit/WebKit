@@ -28,7 +28,7 @@
 #include "Document.h"
 #include "FontCascade.h"
 #include "GraphicsContext.h"
-#include "InlineElementBox.h"
+#include "LegacyInlineElementBox.h"
 #include "RenderLayer.h"
 #include "RenderListItem.h"
 #include "RenderMultiColumnFlow.h"
@@ -1109,7 +1109,7 @@ void RenderListMarker::styleDidChange(StyleDifference diff, const RenderStyle* o
     }
 }
 
-std::unique_ptr<InlineElementBox> RenderListMarker::createInlineBox()
+std::unique_ptr<LegacyInlineElementBox> RenderListMarker::createInlineBox()
 {
     auto box = RenderBox::createInlineBox();
     box->setBehavesLikeText(isText());

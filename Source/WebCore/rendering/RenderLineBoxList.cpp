@@ -30,7 +30,6 @@
 #include "RenderLineBoxList.h"
 
 #include "HitTestResult.h"
-#include "InlineElementBox.h"
 #include "LegacyInlineTextBox.h"
 #include "LegacyRootInlineBox.h"
 #include "PaintInfo.h"

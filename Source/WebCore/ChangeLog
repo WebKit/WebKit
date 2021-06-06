@@ -1,3 +1,70 @@
+2021-06-06  Antti Koivisto  <antti@apple.com>
+
+        Rename InlineElementBox to LegacyInlineElementBox
+        https://bugs.webkit.org/show_bug.cgi?id=226695
+
+        Reviewed by Sam Weinig.
+
+        Also EllipsisBox -> LegacyEllipsisBox.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AXObjectCache.cpp:
+        * dom/Position.cpp:
+        * layout/integration/LayoutIntegrationRunIterator.h:
+        * rendering/LegacyEllipsisBox.cpp: Renamed from Source/WebCore/rendering/EllipsisBox.cpp.
+        (WebCore::LegacyEllipsisBox::LegacyEllipsisBox):
+        (WebCore::LegacyEllipsisBox::paint):
+        (WebCore::LegacyEllipsisBox::markupBox const):
+        (WebCore::LegacyEllipsisBox::paintMarkupBox):
+        (WebCore::LegacyEllipsisBox::selectionRect):
+        (WebCore::LegacyEllipsisBox::paintSelection):
+        (WebCore::LegacyEllipsisBox::nodeAtPoint):
+        * rendering/LegacyEllipsisBox.h: Renamed from Source/WebCore/rendering/EllipsisBox.h.
+        * rendering/LegacyInlineElementBox.cpp: Renamed from Source/WebCore/rendering/InlineElementBox.cpp.
+        (WebCore::LegacyInlineElementBox::deleteLine):
+        (WebCore::LegacyInlineElementBox::extractLine):
+        (WebCore::LegacyInlineElementBox::attachLine):
+        (WebCore::LegacyInlineElementBox::paint):
+        (WebCore::LegacyInlineElementBox::nodeAtPoint):
+        * rendering/LegacyInlineElementBox.h: Renamed from Source/WebCore/rendering/InlineElementBox.h.
+        (WebCore::LegacyInlineElementBox::LegacyInlineElementBox):
+        * rendering/LegacyInlineFlowBox.cpp:
+        (WebCore::LegacyInlineFlowBox::nodeAtPoint):
+        * rendering/LegacyInlineTextBox.cpp:
+        (WebCore::LegacyInlineTextBox::selectionState):
+        * rendering/LegacyLineLayout.cpp:
+        (WebCore::LegacyLineLayout::computeBlockDirectionPositionsForLine):
+        * rendering/LegacyRootInlineBox.cpp:
+        (WebCore::LegacyRootInlineBox::placeEllipsis):
+        (WebCore::LegacyRootInlineBox::ellipsisBox const):
+        * rendering/LegacyRootInlineBox.h:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::createInlineBox):
+        (WebCore::RenderBox::positionLineBox):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::inlineBoxWrapper const):
+        (WebCore::RenderBox::setInlineBoxWrapper):
+        * rendering/RenderFragmentedFlow.cpp:
+        (WebCore::RenderFragmentedFlow::computedFragmentRangeForBox const):
+        * rendering/RenderImage.cpp:
+        * rendering/RenderInline.cpp:
+        * rendering/RenderLineBoxList.cpp:
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::createInlineBox):
+        (WebCore::RenderLineBreak::setInlineBoxWrapper):
+        (WebCore::RenderLineBreak::replaceInlineBoxWrapper):
+        * rendering/RenderLineBreak.h:
+        * rendering/RenderListItem.cpp:
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::createInlineBox):
+        * rendering/RenderListMarker.h:
+        * rendering/RenderReplaced.cpp:
+        * rendering/RenderText.cpp:
+        * rendering/RenderTextLineBoxes.cpp:
+
 2021-06-05  Chris Dumez  <cdumez@apple.com>
 
         Fix repeated call to String::utf8() in SQLiteFileSystem::computeHashForFileName()

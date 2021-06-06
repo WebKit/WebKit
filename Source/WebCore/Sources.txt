@@ -2240,7 +2240,6 @@ rendering/CaretRectComputation.cpp
 rendering/ClipRect.cpp
 rendering/ContentfulPaintChecker.cpp
 rendering/CounterNode.cpp
-rendering/EllipsisBox.cpp
 rendering/EventRegion.cpp
 rendering/FixedTableLayout.cpp
 rendering/FlexibleBoxAlgorithm.cpp
@@ -2254,13 +2253,14 @@ rendering/HitTestLocation.cpp
 rendering/HitTestResult.cpp
 rendering/HitTestingTransformState.cpp
 rendering/ImageQualityController.cpp
-rendering/InlineElementBox.cpp
 rendering/InlineIterator.cpp
 rendering/LayerAncestorClippingStack.cpp
 rendering/LayerOverlapMap.cpp
 rendering/LayoutDisallowedScope.cpp
 rendering/LayoutRepainter.cpp
+rendering/LegacyEllipsisBox.cpp
 rendering/LegacyInlineBox.cpp
+rendering/LegacyInlineElementBox.cpp
 rendering/LegacyInlineFlowBox.cpp
 rendering/LegacyLineLayout.cpp
 rendering/LegacyRootInlineBox.cpp

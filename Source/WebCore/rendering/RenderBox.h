@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class InlineElementBox;
+class LegacyInlineElementBox;
 class RenderBlockFlow;
 class RenderBoxFragmentInfo;
 class RenderFragmentContainer;
@@ -380,16 +380,16 @@ public:
     bool hasFragmentRangeInFragmentedFlow() const;
     virtual LayoutUnit offsetFromLogicalTopOfFirstPage() const;
     
-    void positionLineBox(InlineElementBox&);
+    void positionLineBox(LegacyInlineElementBox&);
 
-    virtual std::unique_ptr<InlineElementBox> createInlineBox();
+    virtual std::unique_ptr<LegacyInlineElementBox> createInlineBox();
     void dirtyLineBoxes(bool fullLayout);
 
     // For inline replaced elements, this function returns the inline box that owns us.  Enables
     // the replaced RenderObject to quickly determine what line it is contained on and to easily
     // iterate over structures on the line.
-    InlineElementBox* inlineBoxWrapper() const { return m_inlineBoxWrapper; }
-    void setInlineBoxWrapper(InlineElementBox*);
+    LegacyInlineElementBox* inlineBoxWrapper() const { return m_inlineBoxWrapper; }
+    void setInlineBoxWrapper(LegacyInlineElementBox*);
     void deleteLineBoxWrapper();
 
     LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const override;
@@ -784,7 +784,7 @@ protected:
     LayoutUnit m_maxPreferredLogicalWidth;
 
     // For inline replaced elements, the inline box that owns us.
-    InlineElementBox* m_inlineBoxWrapper { nullptr };
+    LegacyInlineElementBox* m_inlineBoxWrapper { nullptr };
 
     // Our overflow information.
     RefPtr<RenderOverflow> m_overflow;
@@ -839,7 +839,7 @@ inline RenderBox* RenderBox::nextSiblingBox() const
     return nullptr;
 }
 
-inline void RenderBox::setInlineBoxWrapper(InlineElementBox* boxWrapper)
+inline void RenderBox::setInlineBoxWrapper(LegacyInlineElementBox* boxWrapper)
 {
     if (boxWrapper) {
         ASSERT(!m_inlineBoxWrapper);

@@ -29,15 +29,15 @@
 
 namespace WebCore {
 
-class InlineElementBox : public LegacyInlineBox {
-    WTF_MAKE_ISO_ALLOCATED(InlineElementBox);
+class LegacyInlineElementBox : public LegacyInlineBox {
+    WTF_MAKE_ISO_ALLOCATED(LegacyInlineElementBox);
 public:
-    explicit InlineElementBox(RenderBoxModelObject& renderer)
+    explicit LegacyInlineElementBox(RenderBoxModelObject& renderer)
         : LegacyInlineBox(renderer)
     {
     }
 
-    InlineElementBox(RenderObject& renderer, FloatPoint topLeft, float logicalWidth, bool firstLine, bool constructed, bool dirty, bool extracted, bool isHorizontal, LegacyInlineBox* next, LegacyInlineBox* prev, LegacyInlineFlowBox* parent)
+    LegacyInlineElementBox(RenderObject& renderer, FloatPoint topLeft, float logicalWidth, bool firstLine, bool constructed, bool dirty, bool extracted, bool isHorizontal, LegacyInlineBox* next, LegacyInlineBox* prev, LegacyInlineFlowBox* parent)
         : LegacyInlineBox(renderer, topLeft, logicalWidth, firstLine, constructed, dirty, extracted, isHorizontal, next, prev, parent)
     {
     }
@@ -57,4 +57,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_INLINE_BOX(InlineElementBox, isInlineElementBox())
+SPECIALIZE_TYPE_TRAITS_INLINE_BOX(LegacyInlineElementBox, isInlineElementBox())

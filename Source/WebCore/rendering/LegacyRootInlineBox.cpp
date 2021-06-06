@@ -24,10 +24,10 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
-#include "EllipsisBox.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
+#include "LegacyEllipsisBox.h"
 #include "LegacyInlineTextBox.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "PaintInfo.h"
@@ -56,7 +56,7 @@ COMPILE_ASSERT(sizeof(LegacyRootInlineBox) == sizeof(SameSizeAsLegacyRootInlineB
 COMPILE_ASSERT(sizeof(WeakPtr<RenderObject>) == sizeof(void*), WeakPtr_should_be_same_size_as_raw_pointer);
 #endif
 
-typedef WTF::HashMap<const LegacyRootInlineBox*, std::unique_ptr<EllipsisBox>> EllipsisBoxMap;
+typedef WTF::HashMap<const LegacyRootInlineBox*, std::unique_ptr<LegacyEllipsisBox>> EllipsisBoxMap;
 static EllipsisBoxMap* gEllipsisBoxMap;
 
 static ContainingFragmentMap& containingFragmentMap(RenderBlockFlow& block)
@@ -133,7 +133,7 @@ float LegacyRootInlineBox::placeEllipsis(const AtomString& ellipsisStr,  bool lt
         gEllipsisBoxMap = new EllipsisBoxMap();
 
     ASSERT(!hasEllipsisBox());
-    auto* ellipsisBox = gEllipsisBoxMap->set(this, makeUnique<EllipsisBox>(blockFlow(), ellipsisStr, this, ellipsisWidth - (markupBox ? markupBox->logicalWidth() : 0), logicalHeight(), y(), !prevRootBox(), isHorizontal(), markupBox)).iterator->value.get();
+    auto* ellipsisBox = gEllipsisBoxMap->set(this, makeUnique<LegacyEllipsisBox>(blockFlow(), ellipsisStr, this, ellipsisWidth - (markupBox ? markupBox->logicalWidth() : 0), logicalHeight(), y(), !prevRootBox(), isHorizontal(), markupBox)).iterator->value.get();
     setHasEllipsisBox(true);
     // FIXME: Do we need an RTL version of this?
     if (ltr && (x() + logicalWidth() + ellipsisWidth) <= blockRightEdge) {
@@ -725,7 +725,7 @@ void LegacyRootInlineBox::setLineBreakInfo(RenderObject* object, unsigned breakP
     m_lineBreakContext = status.context;
 }
 
-EllipsisBox* LegacyRootInlineBox::ellipsisBox() const
+LegacyEllipsisBox* LegacyRootInlineBox::ellipsisBox() const
 {
     if (!hasEllipsisBox())
         return nullptr;

@@ -30,9 +30,9 @@
 #include "BreakingContext.h"
 #include "FloatingObjects.h"
 #include "HTMLParserIdioms.h"
-#include "InlineElementBox.h"
 #include "InlineIterator.h"
 #include "InlineTextBoxStyle.h"
+#include "LegacyInlineElementBox.h"
 #include "LegacyInlineTextBox.h"
 #include "LineLayoutState.h"
 #include "Logging.h"
@@ -1054,10 +1054,10 @@ void LegacyLineLayout::computeBlockDirectionPositionsForLine(LegacyRootInlineBox
             downcast<RenderText>(renderer).positionLineBox(inlineTextBox);
             inlineBoxIsRedundant = !inlineTextBox.hasTextContent();
         } else if (is<RenderBox>(renderer)) {
-            downcast<RenderBox>(renderer).positionLineBox(downcast<InlineElementBox>(*run->box()));
+            downcast<RenderBox>(renderer).positionLineBox(downcast<LegacyInlineElementBox>(*run->box()));
             inlineBoxIsRedundant = renderer.isOutOfFlowPositioned();
         } else if (is<RenderLineBreak>(renderer))
-            downcast<RenderLineBreak>(renderer).replaceInlineBoxWrapper(downcast<InlineElementBox>(*run->box()));
+            downcast<RenderLineBreak>(renderer).replaceInlineBoxWrapper(downcast<LegacyInlineElementBox>(*run->box()));
         // Check if we need to keep this box on the line at all.
         if (inlineBoxIsRedundant)
             removeInlineBox(*run, *lineBox);

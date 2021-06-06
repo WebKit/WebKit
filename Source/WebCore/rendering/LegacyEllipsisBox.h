@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include "InlineElementBox.h"
+#include "LegacyInlineElementBox.h"
 #include "RenderBlockFlow.h"
 
 namespace WebCore {
@@ -27,10 +27,10 @@ namespace WebCore {
 class HitTestRequest;
 class HitTestResult;
 
-class EllipsisBox final : public InlineElementBox {
-    WTF_MAKE_ISO_ALLOCATED(EllipsisBox);
+class LegacyEllipsisBox final : public LegacyInlineElementBox {
+    WTF_MAKE_ISO_ALLOCATED(LegacyEllipsisBox);
 public:
-    EllipsisBox(RenderBlockFlow&, const AtomString& ellipsisStr, LegacyInlineFlowBox* parent, int width, int height, int y, bool firstLine, bool isHorizontal, LegacyInlineBox* markupBox);
+    LegacyEllipsisBox(RenderBlockFlow&, const AtomString& ellipsisStr, LegacyInlineFlowBox* parent, int width, int height, int y, bool firstLine, bool isHorizontal, LegacyInlineBox* markupBox);
     void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) final;
     void setSelectionState(RenderObject::HighlightState s) { m_selectionState = s; }

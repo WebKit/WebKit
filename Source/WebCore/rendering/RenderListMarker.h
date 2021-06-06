@@ -66,7 +66,7 @@ private:
 
     void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
 
-    std::unique_ptr<InlineElementBox> createInlineBox() override;
+    std::unique_ptr<LegacyInlineElementBox> createInlineBox() override;
 
     LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
     LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;

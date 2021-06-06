@@ -32,7 +32,7 @@
 
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
-#include "InlineElementBox.h"
+#include "LegacyInlineElementBox.h"
 #include "Node.h"
 #include "RenderBoxFragmentInfo.h"
 #include "RenderFragmentContainer.h"
@@ -647,7 +647,7 @@ bool RenderFragmentedFlow::computedFragmentRangeForBox(const RenderBox* box, Ren
     // Search the fragment range using the information provided by the containing block chain.
     auto* containingBlock = const_cast<RenderBox*>(box);
     while (!containingBlock->isRenderFragmentedFlow()) {
-        InlineElementBox* boxWrapper = containingBlock->inlineBoxWrapper();
+        LegacyInlineElementBox* boxWrapper = containingBlock->inlineBoxWrapper();
         if (boxWrapper && boxWrapper->root().containingFragment()) {
             startFragment = endFragment = boxWrapper->root().containingFragment();
             ASSERT(m_fragmentList.contains(startFragment));

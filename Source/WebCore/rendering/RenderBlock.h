@@ -399,7 +399,7 @@ public:
     void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const override;
     void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const override;
 
-    // Public for EllipsisBox
+    // Public for LegacyEllipsisBox
     Node* nodeForHitTest() const override;
 
 protected:

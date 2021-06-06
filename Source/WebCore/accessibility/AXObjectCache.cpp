@@ -84,7 +84,6 @@
 #include "HTMLParserIdioms.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTextFormControlElement.h"
-#include "InlineElementBox.h"
 #include "InlineRunAndOffset.h"
 #include "MathMLElement.h"
 #include "Page.h"

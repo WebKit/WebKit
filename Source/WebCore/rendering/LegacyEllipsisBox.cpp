@@ -18,7 +18,7 @@
  */
 
 #include "config.h"
-#include "EllipsisBox.h"
+#include "LegacyEllipsisBox.h"
 
 #include "Document.h"
 #include "FontCascade.h"
@@ -32,10 +32,10 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(EllipsisBox);
+WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyEllipsisBox);
 
-EllipsisBox::EllipsisBox(RenderBlockFlow& renderer, const AtomString& ellipsisStr, LegacyInlineFlowBox* parent, int width, int height, int y, bool firstLine, bool isHorizontal, LegacyInlineBox* markupBox)
-    : InlineElementBox(renderer, FloatPoint(0, y), width, firstLine, true, false, false, isHorizontal, 0, 0, parent)
+LegacyEllipsisBox::LegacyEllipsisBox(RenderBlockFlow& renderer, const AtomString& ellipsisStr, LegacyInlineFlowBox* parent, int width, int height, int y, bool firstLine, bool isHorizontal, LegacyInlineBox* markupBox)
+    : LegacyInlineElementBox(renderer, FloatPoint(0, y), width, firstLine, true, false, false, isHorizontal, 0, 0, parent)
     , m_shouldPaintMarkupBox(markupBox)
     , m_height(height)
     , m_str(ellipsisStr)
@@ -45,7 +45,7 @@ EllipsisBox::EllipsisBox(RenderBlockFlow& renderer, const AtomString& ellipsisSt
 #endif
 }
 
-void EllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
+void LegacyEllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
 {
     GraphicsContext& context = paintInfo.context();
     const RenderStyle& lineStyle = this->lineStyle();
@@ -82,7 +82,7 @@ void EllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, La
     paintMarkupBox(paintInfo, paintOffset, lineTop, lineBottom, lineStyle);
 }
 
-LegacyInlineBox* EllipsisBox::markupBox() const
+LegacyInlineBox* LegacyEllipsisBox::markupBox() const
 {
     if (!m_shouldPaintMarkupBox)
         return 0;
@@ -100,7 +100,7 @@ LegacyInlineBox* EllipsisBox::markupBox() const
     return anchorBox;
 }
 
-void EllipsisBox::paintMarkupBox(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom, const RenderStyle& style)
+void LegacyEllipsisBox::paintMarkupBox(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom, const RenderStyle& style)
 {
     LegacyInlineBox* markupBox = this->markupBox();
     if (!markupBox)
@@ -112,7 +112,7 @@ void EllipsisBox::paintMarkupBox(PaintInfo& paintInfo, const LayoutPoint& paintO
     markupBox->paint(paintInfo, adjustedPaintOffset, lineTop, lineBottom);
 }
 
-IntRect EllipsisBox::selectionRect()
+IntRect LegacyEllipsisBox::selectionRect()
 {
     const RenderStyle& lineStyle = this->lineStyle();
     const FontCascade& font = lineStyle.fontCascade();
@@ -124,7 +124,7 @@ IntRect EllipsisBox::selectionRect()
     return enclosingIntRect(selectionRect);
 }
 
-void EllipsisBox::paintSelection(GraphicsContext& context, const LayoutPoint& paintOffset, const RenderStyle& style, const FontCascade& font)
+void LegacyEllipsisBox::paintSelection(GraphicsContext& context, const LayoutPoint& paintOffset, const RenderStyle& style, const FontCascade& font)
 {
     Color textColor = style.visitedDependentColorWithColorFilter(CSSPropertyColor);
     Color c = blockFlow().selectionBackgroundColor();
@@ -145,7 +145,7 @@ void EllipsisBox::paintSelection(GraphicsContext& context, const LayoutPoint& pa
     context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()), c);
 }
 
-bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction hitTestAction)
+bool LegacyEllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction hitTestAction)
 {
     LayoutPoint adjustedLocation = accumulatedOffset + LayoutPoint(topLeft());
 

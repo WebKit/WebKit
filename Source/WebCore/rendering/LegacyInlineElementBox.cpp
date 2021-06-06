@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "InlineElementBox.h"
+#include "LegacyInlineElementBox.h"
 
 #include "LegacyInlineFlowBox.h"
 #include "PaintInfo.h"
@@ -35,9 +35,9 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(InlineElementBox);
+WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyInlineElementBox);
 
-void InlineElementBox::deleteLine()
+void LegacyInlineElementBox::deleteLine()
 {
     if (!extracted()) {
         if (is<RenderBox>(renderer()))
@@ -48,7 +48,7 @@ void InlineElementBox::deleteLine()
     delete this;
 }
 
-void InlineElementBox::extractLine()
+void LegacyInlineElementBox::extractLine()
 {
     setExtracted(true);
     if (is<RenderBox>(renderer()))
@@ -57,7 +57,7 @@ void InlineElementBox::extractLine()
         downcast<RenderLineBreak>(renderer()).setInlineBoxWrapper(nullptr);
 }
 
-void InlineElementBox::attachLine()
+void LegacyInlineElementBox::attachLine()
 {
     setExtracted(false);
     if (is<RenderBox>(renderer()))
@@ -66,7 +66,7 @@ void InlineElementBox::attachLine()
         downcast<RenderLineBreak>(renderer()).setInlineBoxWrapper(this);
 }
 
-void InlineElementBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit /* lineTop */, LayoutUnit /*lineBottom*/)
+void LegacyInlineElementBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit /* lineTop */, LayoutUnit /*lineBottom*/)
 {
     if (!paintInfo.shouldPaintWithinRoot(renderer()))
         return;
@@ -81,7 +81,7 @@ void InlineElementBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     renderer().paintAsInlineBlock(paintInfo, childPoint);
 }
 
-bool InlineElementBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit /* lineTop */, LayoutUnit /*lineBottom*/,
+bool LegacyInlineElementBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit /* lineTop */, LayoutUnit /*lineBottom*/,
     HitTestAction)
 {
     // Hit test all phases of replaced elements atomically, as though the replaced element established its

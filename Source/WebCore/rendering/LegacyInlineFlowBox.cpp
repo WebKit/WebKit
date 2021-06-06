@@ -22,10 +22,10 @@
 
 #include "CSSPropertyNames.h"
 #include "Document.h"
-#include "EllipsisBox.h"
 #include "FontCascade.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
+#include "LegacyEllipsisBox.h"
 #include "LegacyInlineTextBox.h"
 #include "LegacyRootInlineBox.h"
 #include "RenderBlock.h"
@@ -1136,7 +1136,7 @@ bool LegacyInlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResu
 
     // Do not hittest content beyond the ellipsis box.
     if (isRootInlineBox() && hasEllipsisBox()) {
-        const EllipsisBox* ellipsisBox = root().ellipsisBox();
+        const LegacyEllipsisBox* ellipsisBox = root().ellipsisBox();
         FloatRect boundsRect(frameRect());
 
         if (isHorizontal())
