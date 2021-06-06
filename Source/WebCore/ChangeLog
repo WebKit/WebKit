@@ -1,5 +1,15 @@
 2021-06-05  Chris Dumez  <cdumez@apple.com>
 
+        Fix repeated call to String::utf8() in SQLiteFileSystem::computeHashForFileName()
+        https://bugs.webkit.org/show_bug.cgi?id=226693
+
+        Reviewed by Darin Adler.
+
+        * platform/sql/SQLiteFileSystem.cpp:
+        (WebCore::SQLiteFileSystem::computeHashForFileName):
+
+2021-06-05  Chris Dumez  <cdumez@apple.com>
+
         Use `const uint8_t*` type more consistently to store bytes in WebKit
         https://bugs.webkit.org/show_bug.cgi?id=226688
 
