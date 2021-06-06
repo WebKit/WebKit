@@ -1,3 +1,24 @@
+2021-06-06  David Kilzer  <ddkilzer@apple.com>
+
+        Unexport llvm coverage symbols to fix build
+        <https://webkit.org/b/226684>
+        <rdar://problem/78906691>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/check-for-weak-vtables-and-externals:
+        - Revert change from r278444.  That fixes errors when
+          this script is run, but the Generate TAPI build phase
+          for some projects still fails due to the new weak
+          external symbols.
+        * coverage/coverage.xcconfig:
+        (UNEXPORTED_SYMBOL_LDFLAGS_FOR_COVERAGE): Add.
+        - Linker flags to unexport llvm symbols added by the
+          compiler for coverage.
+        (OTHER_LDFLAGS):
+        - Add $(UNEXPORTED_SYMBOL_LDFLAGS_FOR_COVERAGE) to list
+          of switches to unexport the symbols during linking.
+
 2021-06-04  Chris Dumez  <cdumez@apple.com>
 
         FileSystem::readFromFile() should return data as `void*`
