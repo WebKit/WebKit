@@ -12,10 +12,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define INCLUDE_LIBYUV_COMPARE_H_
-#include "libyuv.h"
-#include "./psnr.h"
-#include "./ssim.h"
+#include "libyuv/cpu_id.h"
+
+#ifdef __cplusplus
+using namespace libyuv;
+#endif
 
 int main(int argc, const char* argv[]) {
   int cpu_flags = TestCpuFlag(-1);
@@ -83,7 +84,7 @@ int main(int argc, const char* argv[]) {
     int has_avx2 = TestCpuFlag(kCpuHasAVX2);
     int has_erms = TestCpuFlag(kCpuHasERMS);
     int has_fma3 = TestCpuFlag(kCpuHasFMA3);
-    int has_f16c = TestCpuFlag(kCpuHasF16C); 
+    int has_f16c = TestCpuFlag(kCpuHasF16C);
     int has_gfni = TestCpuFlag(kCpuHasGFNI);
     int has_avx512bw = TestCpuFlag(kCpuHasAVX512BW);
     int has_avx512vl = TestCpuFlag(kCpuHasAVX512VL);

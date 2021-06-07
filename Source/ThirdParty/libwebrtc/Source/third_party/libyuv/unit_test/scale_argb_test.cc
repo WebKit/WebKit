@@ -114,8 +114,8 @@ static int ARGBTestFilter(int src_width,
   return max_diff;
 }
 
-static const int kTileX = 8;
-static const int kTileY = 8;
+static const int kTileX = 64;
+static const int kTileY = 64;
 
 static int TileARGBScale(const uint8_t* src_argb,
                          int src_stride_argb,
@@ -232,7 +232,7 @@ static int ARGBClipTestFilter(int src_width,
 #define DX(x, nom, denom) static_cast<int>((Abs(x) / nom) * nom)
 #define SX(x, nom, denom) static_cast<int>((x / nom) * denom)
 
-#define TEST_FACTOR1(name, filter, nom, denom, max_diff)                     \
+#define TEST_FACTOR1(DISABLED_, name, filter, nom, denom, max_diff)          \
   TEST_F(LibYUVScaleTest, ARGBScaleDownBy##name##_##filter) {                \
     int diff = ARGBTestFilter(                                               \
         SX(benchmark_width_, nom, denom), SX(benchmark_height_, nom, denom), \
@@ -241,7 +241,7 @@ static int ARGBClipTestFilter(int src_width,
         benchmark_cpu_info_);                                                \
     EXPECT_LE(diff, max_diff);                                               \
   }                                                                          \
-  TEST_F(LibYUVScaleTest, ARGBScaleDownClipBy##name##_##filter) {            \
+  TEST_F(LibYUVScaleTest, DISABLED_##ARGBScaleDownClipBy##name##_##filter) { \
     int diff = ARGBClipTestFilter(                                           \
         SX(benchmark_width_, nom, denom), SX(benchmark_height_, nom, denom), \
         DX(benchmark_width_, nom, denom), DX(benchmark_height_, nom, denom), \
@@ -251,11 +251,19 @@ static int ARGBClipTestFilter(int src_width,
 
 // Test a scale factor with all 4 filters.  Expect unfiltered to be exact, but
 // filtering is different fixed point implementations for SSSE3, Neon and C.
-#define TEST_FACTOR(name, nom, denom)         \
-  TEST_FACTOR1(name, None, nom, denom, 0)     \
-  TEST_FACTOR1(name, Linear, nom, denom, 3)   \
-  TEST_FACTOR1(name, Bilinear, nom, denom, 3) \
-  TEST_FACTOR1(name, Box, nom, denom, 3)
+#ifdef ENABLE_SLOW_TESTS
+#define TEST_FACTOR(name, nom, denom)           \
+  TEST_FACTOR1(, name, None, nom, denom, 0)     \
+  TEST_FACTOR1(, name, Linear, nom, denom, 3)   \
+  TEST_FACTOR1(, name, Bilinear, nom, denom, 3) \
+  TEST_FACTOR1(, name, Box, nom, denom, 3)
+#else
+#define TEST_FACTOR(name, nom, denom)                    \
+  TEST_FACTOR1(DISABLED_, name, None, nom, denom, 0)     \
+  TEST_FACTOR1(DISABLED_, name, Linear, nom, denom, 3)   \
+  TEST_FACTOR1(DISABLED_, name, Bilinear, nom, denom, 3) \
+  TEST_FACTOR1(DISABLED_, name, Box, nom, denom, 3)
+#endif
 
 TEST_FACTOR(2, 1, 2)
 TEST_FACTOR(4, 1, 4)
@@ -268,7 +276,7 @@ TEST_FACTOR(3, 1, 3)
 #undef SX
 #undef DX
 
-#define TEST_SCALETO1(name, width, height, filter, max_diff)                   \
+#define TEST_SCALETO1(DISABLED_, name, width, height, filter, max_diff)        \
   TEST_F(LibYUVScaleTest, name##To##width##x##height##_##filter) {             \
     int diff = ARGBTestFilter(benchmark_width_, benchmark_height_, width,      \
                               height, kFilter##filter, benchmark_iterations_,  \
@@ -282,13 +290,15 @@ TEST_FACTOR(3, 1, 3)
                               benchmark_cpu_info_);                            \
     EXPECT_LE(diff, max_diff);                                                 \
   }                                                                            \
-  TEST_F(LibYUVScaleTest, name##ClipTo##width##x##height##_##filter) {         \
+  TEST_F(LibYUVScaleTest,                                                      \
+         DISABLED_##name##ClipTo##width##x##height##_##filter) {               \
     int diff =                                                                 \
         ARGBClipTestFilter(benchmark_width_, benchmark_height_, width, height, \
                            kFilter##filter, benchmark_iterations_);            \
     EXPECT_LE(diff, max_diff);                                                 \
   }                                                                            \
-  TEST_F(LibYUVScaleTest, name##ClipFrom##width##x##height##_##filter) {       \
+  TEST_F(LibYUVScaleTest,                                                      \
+         DISABLED_##name##ClipFrom##width##x##height##_##filter) {             \
     int diff = ARGBClipTestFilter(width, height, Abs(benchmark_width_),        \
                                   Abs(benchmark_height_), kFilter##filter,     \
                                   benchmark_iterations_);                      \
@@ -296,19 +306,44 @@ TEST_FACTOR(3, 1, 3)
   }
 
 /// Test scale to a specified size with all 4 filters.
-#define TEST_SCALETO(name, width, height)       \
-  TEST_SCALETO1(name, width, height, None, 0)   \
-  TEST_SCALETO1(name, width, height, Linear, 3) \
-  TEST_SCALETO1(name, width, height, Bilinear, 3)
+#ifdef ENABLE_SLOW_TESTS
+#define TEST_SCALETO(name, width, height)         \
+  TEST_SCALETO1(, name, width, height, None, 0)   \
+  TEST_SCALETO1(, name, width, height, Linear, 3) \
+  TEST_SCALETO1(, name, width, height, Bilinear, 3)
+#else
+#define TEST_SCALETO(name, width, height)                  \
+  TEST_SCALETO1(DISABLED_, name, width, height, None, 0)   \
+  TEST_SCALETO1(DISABLED_, name, width, height, Linear, 3) \
+  TEST_SCALETO1(DISABLED_, name, width, height, Bilinear, 3)
+#endif
 
 TEST_SCALETO(ARGBScale, 1, 1)
+TEST_SCALETO(ARGBScale, 256, 144) /* 128x72 * 2 */
 TEST_SCALETO(ARGBScale, 320, 240)
 TEST_SCALETO(ARGBScale, 569, 480)
 TEST_SCALETO(ARGBScale, 640, 360)
+#ifdef ENABLE_SLOW_TESTS
 TEST_SCALETO(ARGBScale, 1280, 720)
 TEST_SCALETO(ARGBScale, 1920, 1080)
+#endif  // ENABLE_SLOW_TESTS
 #undef TEST_SCALETO1
 #undef TEST_SCALETO
+
+#define TEST_SCALESWAPXY1(name, filter, max_diff)                       \
+  TEST_F(LibYUVScaleTest, name##SwapXY_##filter) {                      \
+    int diff = ARGBTestFilter(benchmark_width_, benchmark_height_,      \
+                              benchmark_height_, benchmark_width_,      \
+                              kFilter##filter, benchmark_iterations_,   \
+                              disable_cpu_flags_, benchmark_cpu_info_); \
+    EXPECT_LE(diff, max_diff);                                          \
+  }
+
+// Test scale with swapped width and height with all 3 filters.
+TEST_SCALESWAPXY1(ARGBScale, None, 0)
+TEST_SCALESWAPXY1(ARGBScale, Linear, 0)
+TEST_SCALESWAPXY1(ARGBScale, Bilinear, 0)
+#undef TEST_SCALESWAPXY1
 
 // Scale with YUV conversion to ARGB and clipping.
 // TODO(fbarchard): Add fourcc support.  All 4 ARGB formats is easy to support.
@@ -452,6 +487,81 @@ TEST_F(LibYUVScaleTest, YUVToRGBScaleDown) {
       benchmark_width_ * 3 / 2, benchmark_height_ * 3 / 2, benchmark_width_,
       benchmark_height_, libyuv::kFilterBilinear, benchmark_iterations_);
   EXPECT_LE(diff, 10);
+}
+
+TEST_F(LibYUVScaleTest, ARGBTest3x) {
+  const int kSrcStride = 48 * 4;
+  const int kDstStride = 16 * 4;
+  const int kSize = kSrcStride * 3;
+  align_buffer_page_end(orig_pixels, kSize);
+  for (int i = 0; i < 48 * 3; ++i) {
+    orig_pixels[i * 4 + 0] = i;
+    orig_pixels[i * 4 + 1] = 255 - i;
+    orig_pixels[i * 4 + 2] = i + 1;
+    orig_pixels[i * 4 + 3] = i + 10;
+  }
+  align_buffer_page_end(dest_pixels, kDstStride);
+
+  int iterations16 =
+      benchmark_width_ * benchmark_height_ / (16 * 1) * benchmark_iterations_;
+  for (int i = 0; i < iterations16; ++i) {
+    ARGBScale(orig_pixels, kSrcStride, 48, 3, dest_pixels, kDstStride, 16, 1,
+              kFilterBilinear);
+  }
+
+  EXPECT_EQ(49, dest_pixels[0]);
+  EXPECT_EQ(255 - 49, dest_pixels[1]);
+  EXPECT_EQ(50, dest_pixels[2]);
+  EXPECT_EQ(59, dest_pixels[3]);
+
+  ARGBScale(orig_pixels, kSrcStride, 48, 3, dest_pixels, kDstStride, 16, 1,
+            kFilterNone);
+
+  EXPECT_EQ(49, dest_pixels[0]);
+  EXPECT_EQ(255 - 49, dest_pixels[1]);
+  EXPECT_EQ(50, dest_pixels[2]);
+  EXPECT_EQ(59, dest_pixels[3]);
+
+  free_aligned_buffer_page_end(dest_pixels);
+  free_aligned_buffer_page_end(orig_pixels);
+}
+
+TEST_F(LibYUVScaleTest, ARGBTest4x) {
+  const int kSrcStride = 64 * 4;
+  const int kDstStride = 16 * 4;
+  const int kSize = kSrcStride * 4;
+  align_buffer_page_end(orig_pixels, kSize);
+  for (int i = 0; i < 64 * 4; ++i) {
+    orig_pixels[i * 4 + 0] = i;
+    orig_pixels[i * 4 + 1] = 255 - i;
+    orig_pixels[i * 4 + 2] = i + 1;
+    orig_pixels[i * 4 + 3] = i + 10;
+  }
+  align_buffer_page_end(dest_pixels, kDstStride);
+
+  int iterations16 =
+      benchmark_width_ * benchmark_height_ / (16 * 1) * benchmark_iterations_;
+  for (int i = 0; i < iterations16; ++i) {
+    ARGBScale(orig_pixels, kSrcStride, 64, 4, dest_pixels, kDstStride, 16, 1,
+              kFilterBilinear);
+  }
+
+  EXPECT_NEAR((65 + 66 + 129 + 130 + 2) / 4, dest_pixels[0], 4);
+  EXPECT_NEAR((255 - 65 + 255 - 66 + 255 - 129 + 255 - 130 + 2) / 4,
+              dest_pixels[1], 4);
+  EXPECT_NEAR((1 * 4 + 65 + 66 + 129 + 130 + 2) / 4, dest_pixels[2], 4);
+  EXPECT_NEAR((10 * 4 + 65 + 66 + 129 + 130 + 2) / 4, dest_pixels[3], 4);
+
+  ARGBScale(orig_pixels, kSrcStride, 64, 4, dest_pixels, kDstStride, 16, 1,
+            kFilterNone);
+
+  EXPECT_EQ(130, dest_pixels[0]);
+  EXPECT_EQ(255 - 130, dest_pixels[1]);
+  EXPECT_EQ(130 + 1, dest_pixels[2]);
+  EXPECT_EQ(130 + 10, dest_pixels[3]);
+
+  free_aligned_buffer_page_end(dest_pixels);
+  free_aligned_buffer_page_end(orig_pixels);
 }
 
 }  // namespace libyuv

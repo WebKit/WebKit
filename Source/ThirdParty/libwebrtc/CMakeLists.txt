@@ -317,6 +317,7 @@ set(webrtc_SOURCES
     Source/third_party/libyuv/source/scale_argb.cc
     Source/third_party/libyuv/source/scale_common.cc
     Source/third_party/libyuv/source/scale_gcc.cc
+    Source/third_party/libyuv/source/scale_uv.cc
     Source/third_party/libyuv/source/video_common.cc
     Source/third_party/pffft/src/pffft.c
     Source/third_party/rnnoise/src/rnn_vad_weights.cc
@@ -2355,6 +2356,7 @@ if (APPLE)
         Source/third_party/libvpx/source/libvpx/third_party/libyuv/source/planar_functions.cc
         Source/third_party/libvpx/source/libvpx/third_party/libyuv/source/row_common.cc
         Source/third_party/libvpx/source/libvpx/third_party/libyuv/source/scale_any.cc
+        Source/third_party/libvpx/source/libvpx/third_party/libyuv/source/scale_uv.cc
         Source/third_party/libvpx/source/libvpx/third_party/libyuv/source/rotate_gcc.cc
         Source/third_party/libvpx/source/libvpx/third_party/libyuv/source/convert.cc
         Source/third_party/libvpx/source/libvpx/third_party/libyuv/source/convert_from.cc

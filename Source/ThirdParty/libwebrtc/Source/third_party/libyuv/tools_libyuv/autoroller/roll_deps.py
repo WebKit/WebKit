@@ -37,7 +37,7 @@ CHROMIUM_LOG_TEMPLATE = CHROMIUM_SRC_URL + '/+log/%s'
 CHROMIUM_FILE_TEMPLATE = CHROMIUM_SRC_URL + '/+/%s/%s'
 
 COMMIT_POSITION_RE = re.compile('^Cr-Commit-Position: .*#([0-9]+).*$')
-CLANG_REVISION_RE = re.compile(r'^CLANG_REVISION = \'([0-9a-z]+)\'$')
+CLANG_REVISION_RE = re.compile(r'^CLANG_REVISION = \'([0-9a-z-]+)\'$')
 ROLL_BRANCH_NAME = 'roll_chromium_revision'
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -46,7 +46,7 @@ CHECKOUT_SRC_DIR = os.path.realpath(os.path.join(SCRIPT_DIR, os.pardir,
 CHECKOUT_ROOT_DIR = os.path.realpath(os.path.join(CHECKOUT_SRC_DIR, os.pardir))
 
 sys.path.append(os.path.join(CHECKOUT_SRC_DIR, 'build'))
-import find_depot_tools
+import find_depot_tools  # pylint: disable=wrong-import-position
 find_depot_tools.add_depot_tools_to_path()
 
 CLANG_UPDATE_SCRIPT_URL_PATH = 'tools/clang/scripts/update.py'
@@ -69,6 +69,7 @@ def ParseDepsDict(deps_content):
   local_scope = {}
   global_scope = {
     'Var': VarLookup(local_scope),
+    'Str': lambda s: s,
     'deps_os': {},
   }
   exec(deps_content, global_scope, local_scope)
@@ -274,7 +275,7 @@ def CalculateChangedClang(new_cr_rev):
       match = CLANG_REVISION_RE.match(line)
       if match:
         return match.group(1)
-    raise RollError('Could not parse Clang revision!')
+    raise RollError('Could not parse Clang revision from:\n' + '\n'.join('  ' + l for l in lines))
 
   with open(CLANG_UPDATE_SCRIPT_LOCAL_PATH, 'rb') as f:
     current_lines = f.readlines()
@@ -365,12 +366,12 @@ def _IsTreeClean():
 def _EnsureUpdatedMasterBranch(dry_run):
   current_branch = _RunCommand(
       ['git', 'rev-parse', '--abbrev-ref', 'HEAD'])[0].splitlines()[0]
-  if current_branch != 'master':
-    logging.error('Please checkout the master branch and re-run this script.')
+  if current_branch != 'main':
+    logging.error('Please checkout the main branch and re-run this script.')
     if not dry_run:
       sys.exit(-1)
 
-  logging.info('Updating master branch...')
+  logging.info('Updating main branch...')
   _RunCommand(['git', 'pull'])
 
 
@@ -383,7 +384,7 @@ def _CreateRollBranch(dry_run):
 def _RemovePreviousRollBranch(dry_run):
   active_branch, branches = _GetBranches()
   if active_branch == ROLL_BRANCH_NAME:
-    active_branch = 'master'
+    active_branch = 'main'
   if ROLL_BRANCH_NAME in branches:
     logging.info('Removing previous roll branch (%s)', ROLL_BRANCH_NAME)
     if not dry_run:
@@ -443,7 +444,7 @@ def main():
                        'tryjobs.'))
   p.add_argument('-i', '--ignore-unclean-workdir', action='store_true',
                  default=False,
-                 help=('Ignore if the current branch is not master or if there '
+                 help=('Ignore if the current branch is not main or if there '
                        'are uncommitted changes (default: %(default)s).'))
   grp = p.add_mutually_exclusive_group()
   grp.add_argument('--skip-cq', action='store_true', default=False,

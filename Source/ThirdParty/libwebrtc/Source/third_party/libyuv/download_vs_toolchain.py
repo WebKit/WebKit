@@ -22,7 +22,7 @@ sys.path.insert(0, os.path.join(checkout_root, 'build'))
 sys.path.insert(0, os.path.join(checkout_root, 'tools', 'find_depot_tools'))
 
 
-import vs_toolchain
+import vs_toolchain  # pylint: disable=wrong-import-position
 
 
 if __name__ == '__main__':

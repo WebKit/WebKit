@@ -165,6 +165,7 @@ Running test with C code:
     ninja -C out/Debug libyuv_unittest
     ninja -C out/Debug compare
     ninja -C out/Debug yuvconvert
+    ninja -C out/Debug yuvconstants
     ninja -C out/Debug psnr
     ninja -C out/Debug cpuid
 
@@ -190,7 +191,7 @@ mips
 
     make V=1 -f linux.mk
     make V=1 -f linux.mk clean
-    make V=1 -f linux.mk CXX=clang++
+    make V=1 -f linux.mk CXX=clang++ CC=clang
 
 ## Building the library with cmake
 

@@ -1543,6 +1543,7 @@
 		416D3BEB212731C200775F09 /* signal_classifier.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41D6B46F212731A4008F9353 /* signal_classifier.cc */; };
 		416D3BEC212731C200775F09 /* vad_with_level.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41D6B46C212731A4008F9353 /* vad_with_level.cc */; };
 		416D3BED212731C200775F09 /* vector_float_frame.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41D6B466212731A2008F9353 /* vector_float_frame.cc */; };
+		416EEC42266A4DF800360587 /* scale_uv.cc in Sources */ = {isa = PBXBuildFile; fileRef = 416EEC41266A4DF800360587 /* scale_uv.cc */; };
 		4175EA0B216596DD00B46390 /* gen_scalers.c in Sources */ = {isa = PBXBuildFile; fileRef = 41239B0B214757AE00396F81 /* gen_scalers.c */; };
 		4175EA0C216596DD00B46390 /* vpx_scale.c in Sources */ = {isa = PBXBuildFile; fileRef = 41239B08214757AD00396F81 /* vpx_scale.c */; };
 		4175EA0D216596DD00B46390 /* yv12config.c in Sources */ = {isa = PBXBuildFile; fileRef = 41239B09214757AD00396F81 /* yv12config.c */; };
@@ -5767,6 +5768,7 @@
 		41673205212E0491001280EB /* postproc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = postproc.c; sourceTree = "<group>"; };
 		41673206212E0491001280EB /* idct_blk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = idct_blk.c; sourceTree = "<group>"; };
 		416D2F101FA8CC0400097345 /* VideoProcessing.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoProcessing.framework; path = System/Library/PrivateFrameworks/VideoProcessing.framework; sourceTree = SDKROOT; };
+		416EEC41266A4DF800360587 /* scale_uv.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = scale_uv.cc; path = source/scale_uv.cc; sourceTree = "<group>"; };
 		417953AC2169823D0028266B /* nalu_rewriter.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nalu_rewriter.cc; sourceTree = "<group>"; };
 		417953AD2169823E0028266B /* RTCDefaultVideoDecoderFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RTCDefaultVideoDecoderFactory.m; sourceTree = "<group>"; };
 		417953AE2169823F0028266B /* UIDevice+H264Profile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UIDevice+H264Profile.mm"; sourceTree = "<group>"; };
@@ -12708,6 +12710,7 @@
 				5CDD84241E439BCB00621E92 /* scale_gcc.cc */,
 				5CFD538B1E4BD3A300482908 /* scale_neon.cc */,
 				5CFD538C1E4BD3A300482908 /* scale_neon64.cc */,
+				416EEC41266A4DF800360587 /* scale_uv.cc */,
 				5C4B4D5A1E4323D4002651C8 /* video_common.cc */,
 			);
 			name = source;
@@ -17788,6 +17791,7 @@
 				5C0884F41E4A986000403995 /* rotate_common.cc in Sources */,
 				5C0884F51E4A986000403995 /* rotate_gcc.cc in Sources */,
 				5C0884F61E4A986000403995 /* row_any.cc in Sources */,
+				416EEC42266A4DF800360587 /* scale_uv.cc in Sources */,
 				5C0884F71E4A986000403995 /* row_common.cc in Sources */,
 				5C0884F81E4A986000403995 /* row_gcc.cc in Sources */,
 				5C0884F91E4A986000403995 /* scale.cc in Sources */,

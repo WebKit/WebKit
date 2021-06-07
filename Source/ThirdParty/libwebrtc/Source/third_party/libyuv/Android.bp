@@ -9,17 +9,20 @@ cc_library {
         "source/compare.cc",
         "source/compare_common.cc",
         "source/compare_gcc.cc",
-        "source/compare_neon.cc",
-        "source/compare_neon64.cc",
         "source/compare_mmi.cc",
         "source/compare_msa.cc",
+        "source/compare_neon.cc",
+        "source/compare_neon64.cc",
         "source/convert.cc",
         "source/convert_argb.cc",
         "source/convert_from.cc",
         "source/convert_from_argb.cc",
+        "source/convert_jpeg.cc",
         "source/convert_to_argb.cc",
         "source/convert_to_i420.cc",
         "source/cpu_id.cc",
+        "source/mjpeg_decoder.cc",
+        "source/mjpeg_validate.cc",
         "source/planar_functions.cc",
         "source/rotate.cc",
         "source/rotate_any.cc",
@@ -46,10 +49,8 @@ cc_library {
         "source/scale_msa.cc",
         "source/scale_neon.cc",
         "source/scale_neon64.cc",
+        "source/scale_uv.cc",
         "source/video_common.cc",
-        "source/convert_jpeg.cc",
-        "source/mjpeg_decoder.cc",
-        "source/mjpeg_validate.cc",
     ],
 
     cflags: [
@@ -79,7 +80,6 @@ cc_test {
     shared_libs: ["libjpeg"],
     cflags: ["-Wall", "-Werror"],
     srcs: [
-        "unit_test/unit_test.cc",
         "unit_test/basictypes_test.cc",
         "unit_test/color_test.cc",
         "unit_test/compare_test.cc",
@@ -92,6 +92,8 @@ cc_test {
         "unit_test/rotate_test.cc",
         "unit_test/scale_argb_test.cc",
         "unit_test/scale_test.cc",
+        "unit_test/scale_uv_test.cc",
+        "unit_test/unit_test.cc",
         "unit_test/video_common_test.cc",
     ],
 }
@@ -101,6 +103,15 @@ cc_test {
     gtest: false,
     srcs: [
         "util/compare.cc",
+    ],
+    static_libs: ["libyuv"],
+}
+
+cc_test {
+    name: "i444tonv12_eg",
+    gtest: false,
+    srcs: [
+        "util/i444tonv12_eg.cc",
     ],
     static_libs: ["libyuv"],
 }
@@ -133,4 +144,13 @@ cc_test {
     ],
     static_libs: ["libyuv"],
     shared_libs: ["libjpeg"],
+}
+
+cc_test {
+    name: "yuvconstants",
+    gtest: false,
+    srcs: [
+        "util/yuvconstants.c",
+    ],
+    static_libs: ["libyuv"],
 }

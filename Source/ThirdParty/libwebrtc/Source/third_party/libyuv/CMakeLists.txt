@@ -71,12 +71,6 @@ if(TEST)
   if(NACL AND NACL_LIBC STREQUAL "newlib")
     target_link_libraries(libyuv_unittest glibc-compat)
   endif()
-
-  find_library(GFLAGS_LIBRARY gflags)
-  if(NOT GFLAGS_LIBRARY STREQUAL "GFLAGS_LIBRARY-NOTFOUND")
-    target_link_libraries(libyuv_unittest gflags)
-    add_definitions(-DLIBYUV_USE_GFLAGS)
-  endif()
 endif()
 
 
