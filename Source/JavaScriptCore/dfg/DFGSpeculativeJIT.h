@@ -1189,6 +1189,8 @@ public:
     void compileSymbolEquality(Node*);
     void compileHeapBigIntEquality(Node*);
     void compilePeepHoleSymbolEquality(Node*, Node* branchNode);
+    void compileNotDoubleNeitherDoubleNorHeapBigIntNorStringStrictEquality(Node*, Edge notDoubleEdge, Edge neitherDoubleNorHeapBigIntNorStringEdge);
+    void compilePeepHoleNotDoubleNeitherDoubleNorHeapBigIntNorStringStrictEquality(Node*, Node* branchNode, Edge notDoubleEdge, Edge neitherDoubleNorHeapBigIntNorStringEdge);
     void compileSymbolUntypedEquality(Node*, Edge symbolEdge, Edge untypedEdge);
 
     void emitObjectOrOtherBranch(Edge value, BasicBlock* taken, BasicBlock* notTaken);
@@ -1671,7 +1673,10 @@ public:
     void speculateNotCell(Edge, JSValueRegs);
     void speculateNotCell(Edge);
     void speculateNotCellNorBigInt(Edge);
+    void speculateNotDouble(Edge, JSValueRegs, GPRReg temp);
     void speculateNotDouble(Edge);
+    void speculateNeitherDoubleNorHeapBigIntNorString(Edge, JSValueRegs, GPRReg temp);
+    void speculateNeitherDoubleNorHeapBigIntNorString(Edge);
     void speculateOther(Edge, JSValueRegs, GPRReg temp);
     void speculateOther(Edge, JSValueRegs);
     void speculateOther(Edge);

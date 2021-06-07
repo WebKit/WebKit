@@ -1,14 +1,16 @@
 //@ skip if $model == "Apple Watch Series 3" # added by mark-jsc-stress-test.py
 //@ runNoFTL
 
-// Tests the performance of completely polymorphic strict equality.
+// Tests the performance of polymorphic strict equality.
+// It has most kinds of types, but not Doubles. This is relevant because NaN is the only value that returns false when compared to itself.
+// This test does not have strings or big ints either. This is relevant because strings/big ints at different places in memory can compare equal.
 
 var array = [];
 
 for (var i = 0; i < 1000; ++i) {
-    array.push((i % 2) == 0);
-    array.push(3.14 * i);
-    array.push("" + i);
+    array.push((i%2) == 0);
+    array.push(i);
+    array.push([i]);
     var o = {};
     o["a" + i] = i + 1;
     array.push(o);
@@ -33,7 +35,6 @@ function test()
     if (numStrictEqual != 249500)
         throw "Incorrect result: " + numStrictEqual;
 }
-noInline(test);
+noInline(test)
 test();
-
 

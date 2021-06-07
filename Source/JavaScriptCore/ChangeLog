@@ -1,3 +1,86 @@
+2021-06-07  Robin Morisset  <rmorisset@apple.com>
+
+        Optimize compareStrictEq when neither side is a double and at least one is neither a string nor a BigInt
+        https://bugs.webkit.org/show_bug.cgi?id=226676
+
+        Reviewed by Filip Pizlo.
+
+        There is exactly one case where x === y must return false despite x and y being JSValues with the same bits:
+            NaN === NaN
+        There are a few cases where x === y must return true despite x and y being JSValues with potentially different bits:
+            Double === Int32
+            String === String
+            HeapBigInt === HeapBigInt
+            HeapBigInt === BigInt32 (if they are enabled)
+        If we don't have a double on either side, at least one side has neither a String nor a HeapBigInt, and BigInt32 are disabled, we can clearly ignore all of these pathological cases.
+
+        This optimization was decided based on looking at DFG graphs of Speedometer2; here is a sample of the compareStrictEq(Untyped, Untyped), courtesy of Phil:
+            Final|Array|String|Bool, Final|Array|String|Bool
+            Array|String|Bool, String|Bool (twice)
+            Array|String|Bool, String|Int32 (once in DFG, once in FTL)
+        !   Array|String|Bool, Array|Bool
+        !   Final|Other, Final|Other
+        !   Int32|Other, Int32
+            Final|StringIdent, Final|StringIdent (3 times)
+            Final|StringIdent|BoolInt32, StringIdent|BoolInt32 (twice)
+            String|Bool, String|Bool (4 times)
+            DoublePureNaN, String|Bool
+        !   Other, Function|Other
+        !   Final|Other, Final|Function|Other (twice)
+            Final|String|Bool|Other, Final|String|Bool|Other (3 times, two in the FTL)
+            Final|String|Int32, String|Int32 (four times)
+            String|Int32|Bool, Function|String|Int32|Bool (twice)
+            String|DoublePureNaN, String|Bool (twice)
+        !   Final|Bool|Other, Final|Function|Other (four times, twice in FTL)
+        I marked with a ! those for which this optimization should apply.
+
+        The only slightly interesting part of this patch is DFG::SpeculativeJIT::speculateNeitherDoubleNorHeapBigIntNorString where I took care to skip every test whose result we can predict from the abstract interpreter.
+
+        Results on microbenchmarks:
+            poly-stricteq-not-double                  45.5793+-0.5304     ?     46.0306+-0.5621        ?
+            poly-stricteq-not-double-nor-string       45.5829+-0.5750     ^     16.9089+-0.3070        ^ definitely 2.6958x faster
+            poly-stricteq                             49.9719+-0.6450           48.9855+-0.5227          might be 1.0201x faster
+
+        I also measured the amount of code that we generate in the DFG on JetStream2.
+        The results here are disappointing but still measurable. Before:
+            DFG_fast_CompareStrictEq totalBytes: 468425 count: 10951 avg: 42.774632
+            DFG_fast_CompareStrictEq totalBytes: 468020 count: 10917 avg: 42.870752
+            DFG_fast_CompareStrictEq totalBytes: 467424 count: 10888 avg: 42.930198
+        After:
+            DFG_fast_CompareStrictEq totalBytes: 463946 count: 10917 avg: 42.497573
+            DFG_fast_CompareStrictEq totalBytes: 474492 count: 11138 avg: 42.601185
+            DFG_fast_CompareStrictEq totalBytes: 467138 count: 10970 avg: 42.583227
+
+        * bytecode/SpeculatedType.h:
+        (JSC::isNeitherDoubleNorHeapBigIntNorStringSpeculation):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupCompareStrictEqAndSameValue):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::shouldSpeculateNeitherDoubleNorHeapBigIntNorString):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileStrictEq):
+        (JSC::DFG::SpeculativeJIT::compileNotDoubleNeitherDoubleNorHeapBigIntNorStringStrictEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleNotDoubleNeitherDoubleNorHeapBigIntNorStringStrictEquality):
+        (JSC::DFG::SpeculativeJIT::speculateNotDouble):
+        (JSC::DFG::SpeculativeJIT::speculateNeitherDoubleNorHeapBigIntNorString):
+        (JSC::DFG::SpeculativeJIT::speculate):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        (JSC::DFG::checkMayCrashIfInputIsEmpty):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        (JSC::FTL::DFG::LowerDFGToB3::speculate):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateNeitherDoubleNorHeapBigIntNorString):
+
 2021-06-07  Tuomas Karkkainen  <tuomas.webkit@apple.com>
 
         $vm should have a function for checking if security assertions are enabled similar to $vm.assertEnabled

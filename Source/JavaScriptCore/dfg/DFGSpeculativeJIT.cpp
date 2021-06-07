@@ -6933,7 +6933,42 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
         compileSymbolEquality(node);
         return false;
     }
-    
+
+#if !USE(BIGINT32)
+    if (node->isBinaryUseKind(NotDoubleUse, NeitherDoubleNorHeapBigIntNorStringUse)) {
+        Edge notDoubleChild = node->child1();
+        Edge neitherDoubleNorHeapBigIntNorStringChild = node->child2();
+        unsigned branchIndexInBlock = detectPeepHoleBranch();
+        if (branchIndexInBlock != UINT_MAX) {
+            Node* branchNode = m_block->at(branchIndexInBlock);
+            compilePeepHoleNotDoubleNeitherDoubleNorHeapBigIntNorStringStrictEquality(node, branchNode, notDoubleChild, neitherDoubleNorHeapBigIntNorStringChild);
+            use(notDoubleChild);
+            use(neitherDoubleNorHeapBigIntNorStringChild);
+            m_indexInBlock = branchIndexInBlock;
+            m_currentNode = branchNode;
+            return true;
+        }
+        compileNotDoubleNeitherDoubleNorHeapBigIntNorStringStrictEquality(node, notDoubleChild, neitherDoubleNorHeapBigIntNorStringChild);
+        return false;
+    }
+    if (node->isBinaryUseKind(NeitherDoubleNorHeapBigIntNorStringUse, NotDoubleUse)) {
+        Edge neitherDoubleNorHeapBigIntNorStringChild = node->child1();
+        Edge notDoubleChild = node->child2();
+        unsigned branchIndexInBlock = detectPeepHoleBranch();
+        if (branchIndexInBlock != UINT_MAX) {
+            Node* branchNode = m_block->at(branchIndexInBlock);
+            compilePeepHoleNotDoubleNeitherDoubleNorHeapBigIntNorStringStrictEquality(node, branchNode, notDoubleChild, neitherDoubleNorHeapBigIntNorStringChild);
+            use(notDoubleChild);
+            use(neitherDoubleNorHeapBigIntNorStringChild);
+            m_indexInBlock = branchIndexInBlock;
+            m_currentNode = branchNode;
+            return true;
+        }
+        compileNotDoubleNeitherDoubleNorHeapBigIntNorStringStrictEquality(node, notDoubleChild, neitherDoubleNorHeapBigIntNorStringChild);
+        return false;
+    }
+#endif
+
     if (node->isBinaryUseKind(HeapBigIntUse)) {
         compileHeapBigIntEquality(node);
         return false;
@@ -7161,6 +7196,72 @@ void SpeculativeJIT::compilePeepHoleSymbolEquality(Node* node, Node* branchNode)
         branchPtr(JITCompiler::Equal, leftGPR, rightGPR, taken);
         jump(notTaken);
     }
+}
+
+void SpeculativeJIT::compileNotDoubleNeitherDoubleNorHeapBigIntNorStringStrictEquality(Node* node, Edge notDoubleChild, Edge neitherDoubleNorHeapBigIntNorStringChild)
+{
+    JSValueOperand left(this, notDoubleChild, ManualOperandSpeculation);
+    JSValueOperand right(this, neitherDoubleNorHeapBigIntNorStringChild, ManualOperandSpeculation);
+
+    GPRTemporary temp(this);
+#if USE(JSVALUE64)
+    GPRTemporary result(this, Reuse, left, right);
+#else
+    GPRTemporary result(this, Reuse, left, PayloadWord);
+#endif
+    JSValueRegs leftRegs = left.jsValueRegs();
+    JSValueRegs rightRegs = right.jsValueRegs();
+    GPRReg tempGPR = temp.gpr();
+    GPRReg resultGPR = result.gpr();
+
+    speculateNotDouble(notDoubleChild, leftRegs, tempGPR);
+    speculateNeitherDoubleNorHeapBigIntNorString(neitherDoubleNorHeapBigIntNorStringChild, rightRegs, tempGPR);
+
+#if USE(JSVALUE64)
+    m_jit.compare64(JITCompiler::Equal, left.gpr(), right.gpr(), result.gpr());
+#else
+    m_jit.move(TrustedImm32(0), result.gpr());
+    JITCompiler::Jump notEqual = m_jit.branch32(JITCompiler::NotEqual, left.tagGPR(), right.tagGPR());
+    m_jit.compare32(JITCompiler::Equal, left.payloadGPR(), right.payloadGPR(), result.gpr());
+    notEqual.link(&m_jit);
+#endif
+    unblessedBooleanResult(resultGPR, node);
+}
+
+void SpeculativeJIT::compilePeepHoleNotDoubleNeitherDoubleNorHeapBigIntNorStringStrictEquality(Node*, Node* branchNode, Edge notDoubleChild, Edge neitherDoubleNorHeapBigIntNorStringChild)
+{
+    JSValueOperand left(this, notDoubleChild, ManualOperandSpeculation);
+    JSValueOperand right(this, neitherDoubleNorHeapBigIntNorStringChild, ManualOperandSpeculation);
+
+    GPRTemporary temp(this);
+    JSValueRegs leftRegs = left.jsValueRegs();
+    JSValueRegs rightRegs = right.jsValueRegs();
+    GPRReg tempGPR = temp.gpr();
+
+    speculateNotDouble(notDoubleChild, leftRegs, tempGPR);
+    speculateNeitherDoubleNorHeapBigIntNorString(neitherDoubleNorHeapBigIntNorStringChild, rightRegs, tempGPR);
+
+    BasicBlock* taken = branchNode->branchData()->taken.block;
+    BasicBlock* notTaken = branchNode->branchData()->notTaken.block;
+
+#if USE(JSVALUE64)
+    if (taken == nextBlock()) {
+        branch64(JITCompiler::NotEqual, left.gpr(), right.gpr(), notTaken);
+        jump(taken);
+    } else {
+        branch64(JITCompiler::Equal, left.gpr(), right.gpr(), taken);
+        jump(notTaken);
+    }
+#else
+    branch32(JITCompiler::NotEqual, left.tagGPR(), right.tagGPR(), notTaken);
+    if (taken == nextBlock()) {
+        branch32(JITCompiler::NotEqual, left.payloadGPR(), right.payloadGPR(), notTaken);
+        jump(taken);
+    } else {
+        branch32(JITCompiler::Equal, left.payloadGPR(), right.payloadGPR(), taken);
+        jump(notTaken);
+    }
+#endif
 }
 
 void SpeculativeJIT::compileStringEquality(
@@ -11432,6 +11533,23 @@ void SpeculativeJIT::speculateNotCellNorBigInt(Edge edge)
 #endif
 }
 
+void SpeculativeJIT::speculateNotDouble(Edge edge, JSValueRegs regs, GPRReg tempGPR)
+{
+    if (!needsTypeCheck(edge, ~SpecFullDouble))
+        return;
+
+    JITCompiler::Jump done;
+
+    bool mayBeInt32 = needsTypeCheck(edge, ~SpecInt32Only);
+    if (mayBeInt32)
+        done = m_jit.branchIfInt32(regs);
+
+    DFG_TYPE_CHECK(regs, edge, ~SpecFullDouble, m_jit.branchIfNumber(regs, tempGPR));
+
+    if (mayBeInt32)
+        done.link(&m_jit);
+}
+
 void SpeculativeJIT::speculateNotDouble(Edge edge)
 {
     if (!needsTypeCheck(edge, ~SpecFullDouble))
@@ -11442,9 +11560,44 @@ void SpeculativeJIT::speculateNotDouble(Edge edge)
     JSValueRegs regs = operand.jsValueRegs();
     GPRReg tempGPR = temp.gpr();
     
-    JITCompiler::Jump done = m_jit.branchIfInt32(regs);
+    speculateNotDouble(edge, regs, tempGPR);
+}
+
+void SpeculativeJIT::speculateNeitherDoubleNorHeapBigIntNorString(Edge edge, JSValueRegs regs, GPRReg tempGPR)
+{
+    if (!needsTypeCheck(edge, ~(SpecFullDouble | SpecString)))
+        return;
+
+    MacroAssembler::JumpList done;
+
+    bool mayBeInt32 = needsTypeCheck(edge, ~SpecInt32Only);
+    if (mayBeInt32)
+        done.append(m_jit.branchIfInt32(regs));
+
     DFG_TYPE_CHECK(regs, edge, ~SpecFullDouble, m_jit.branchIfNumber(regs, tempGPR));
-    done.link(&m_jit);
+
+    bool mayNotBeCell = needsTypeCheck(edge, SpecCell);
+    if (mayNotBeCell)
+        done.append(m_jit.branchIfNotCell(regs));
+
+    DFG_TYPE_CHECK(regs, edge, ~SpecString, m_jit.branchIfString(regs.payloadGPR()));
+    DFG_TYPE_CHECK(regs, edge, ~SpecHeapBigInt, m_jit.branchIfHeapBigInt(regs.payloadGPR()));
+
+    if (mayBeInt32 || mayNotBeCell)
+        done.link(&m_jit);
+}
+
+void SpeculativeJIT::speculateNeitherDoubleNorHeapBigIntNorString(Edge edge)
+{
+    if (!needsTypeCheck(edge, ~(SpecFullDouble | SpecString)))
+        return;
+
+    JSValueOperand operand(this, edge, ManualOperandSpeculation);
+    GPRTemporary temp(this);
+    JSValueRegs regs = operand.jsValueRegs();
+    GPRReg tempGPR = temp.gpr();
+
+    speculateNeitherDoubleNorHeapBigIntNorString(edge, regs, tempGPR);
 }
 
 void SpeculativeJIT::speculateOther(Edge edge, JSValueRegs regs, GPRReg tempGPR)
@@ -11631,6 +11784,9 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
         break;
     case NotDoubleUse:
         speculateNotDouble(edge);
+        break;
+    case NeitherDoubleNorHeapBigIntNorStringUse:
+        speculateNeitherDoubleNorHeapBigIntNorString(edge);
         break;
     case OtherUse:
         speculateOther(edge);

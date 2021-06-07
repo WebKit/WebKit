@@ -1,3 +1,27 @@
+2021-06-07  Robin Morisset  <rmorisset@apple.com>
+
+        Optimize compareStrictEq when neither side is a double and at least one is neither a string nor a BigInt
+        https://bugs.webkit.org/show_bug.cgi?id=226676
+
+        Reviewed by Filip Pizlo.
+
+        I made two variants of the already existing poly-stricteq microbenchmarks with different types in the array.
+        I also tweaked all three so that we more reliably reach the FTL.
+        Finally I added a stress-test to verify that I did not introduce an OSR exit bug.
+
+        * microbenchmarks/poly-stricteq-not-double-nor-string.js: Added.
+        (foo):
+        (test):
+        * microbenchmarks/poly-stricteq-not-double.js: Added.
+        (foo):
+        (test):
+        * microbenchmarks/poly-stricteq.js:
+        (foo):
+        (test):
+        * stress/poly-stricteq-not-double-nor-string-fail.js: Added.
+        (foo):
+        (test):
+
 2021-06-04  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Private static method should define privateClassBrandIdentifier in class-scope

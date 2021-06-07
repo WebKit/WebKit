@@ -93,6 +93,7 @@ public:
         case AnyIntUse:
         case DoubleRepAnyIntUse:
         case NotDoubleUse:
+        case NeitherDoubleNorHeapBigIntNorStringUse:
             return;
             
         case KnownInt32Use:
