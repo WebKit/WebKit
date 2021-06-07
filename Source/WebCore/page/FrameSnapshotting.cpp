@@ -31,6 +31,7 @@
 #include "config.h"
 #include "FrameSnapshotting.h"
 
+#include "DestinationColorSpace.h"
 #include "Document.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -39,8 +40,10 @@
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "Page.h"
+#include "PixelFormat.h"
 #include "RenderObject.h"
 #include "Settings.h"
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 
@@ -67,13 +70,13 @@ struct ScopedFramePaintingState {
     const Color backgroundColor;
 };
 
-RefPtr<ImageBuffer> snapshotFrameRect(Frame& frame, const IntRect& imageRect, SnapshotOptions options)
+RefPtr<ImageBuffer> snapshotFrameRect(Frame& frame, const IntRect& imageRect, SnapshotOptions&& options)
 {
     Vector<FloatRect> clipRects;
-    return snapshotFrameRectWithClip(frame, imageRect, clipRects, options);
+    return snapshotFrameRectWithClip(frame, imageRect, clipRects, WTFMove(options));
 }
 
-RefPtr<ImageBuffer> snapshotFrameRectWithClip(Frame& frame, const IntRect& imageRect, const Vector<FloatRect>& clipRects, SnapshotOptions options)
+RefPtr<ImageBuffer> snapshotFrameRectWithClip(Frame& frame, const IntRect& imageRect, const Vector<FloatRect>& clipRects, SnapshotOptions&& options)
 {
     if (!frame.page())
         return nullptr;
@@ -81,23 +84,23 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(Frame& frame, const IntRect& image
     frame.document()->updateLayout();
 
     FrameView::SelectionInSnapshot shouldIncludeSelection = FrameView::IncludeSelection;
-    if (options & SnapshotOptionsExcludeSelectionHighlighting)
+    if (options.flags.contains(SnapshotFlags::ExcludeSelectionHighlighting))
         shouldIncludeSelection = FrameView::ExcludeSelection;
 
     FrameView::CoordinateSpaceForSnapshot coordinateSpace = FrameView::DocumentCoordinates;
-    if (options & SnapshotOptionsInViewCoordinates)
+    if (options.flags.contains(SnapshotFlags::InViewCoordinates))
         coordinateSpace = FrameView::ViewCoordinates;
 
     ScopedFramePaintingState state(frame, nullptr);
 
     auto paintBehavior = state.paintBehavior;
-    if (options & SnapshotOptionsForceBlackText)
+    if (options.flags.contains(SnapshotFlags::ForceBlackText))
         paintBehavior.add(PaintBehavior::ForceBlackText);
-    if (options & SnapshotOptionsPaintSelectionOnly)
+    if (options.flags.contains(SnapshotFlags::PaintSelectionOnly))
         paintBehavior.add(PaintBehavior::SelectionOnly);
-    if (options & SnapshotOptionsPaintSelectionAndBackgroundsOnly)
+    if (options.flags.contains(SnapshotFlags::PaintSelectionAndBackgroundsOnly))
         paintBehavior.add(PaintBehavior::SelectionAndBackgroundsOnly);
-    if (options & SnapshotOptionsPaintEverythingExcludingSelection)
+    if (options.flags.contains(SnapshotFlags::PaintEverythingExcludingSelection))
         paintBehavior.add(PaintBehavior::ExcludeSelection);
 
     // Other paint behaviors are set by paintContentsForSnapshot.
@@ -108,10 +111,10 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(Frame& frame, const IntRect& image
     if (frame.page()->delegatesScaling())
         scaleFactor *= frame.page()->pageScaleFactor();
 
-    if (options & SnapshotOptionsPaintWithIntegralScaleFactor)
+    if (options.flags.contains(SnapshotFlags::PaintWithIntegralScaleFactor))
         scaleFactor = ceilf(scaleFactor);
 
-    auto buffer = ImageBuffer::create(imageRect.size(), RenderingMode::Unaccelerated, scaleFactor, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    auto buffer = ImageBuffer::create(imageRect.size(), RenderingMode::Unaccelerated, scaleFactor, options.colorSpace.value_or(DestinationColorSpace::SRGB()), options.pixelFormat.value_or(PixelFormat::BGRA8));
     if (!buffer)
         return nullptr;
     buffer->context().translate(-imageRect.x(), -imageRect.y());
@@ -127,7 +130,7 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(Frame& frame, const IntRect& image
     return buffer;
 }
 
-RefPtr<ImageBuffer> snapshotSelection(Frame& frame, SnapshotOptions options)
+RefPtr<ImageBuffer> snapshotSelection(Frame& frame, SnapshotOptions&& options)
 {
     auto& selection = frame.selection();
 
@@ -140,11 +143,11 @@ RefPtr<ImageBuffer> snapshotSelection(Frame& frame, SnapshotOptions options)
     if (selectionBounds.isEmpty())
         return nullptr;
 
-    options |= SnapshotOptionsPaintSelectionOnly;
-    return snapshotFrameRect(frame, enclosingIntRect(selectionBounds), options);
+    options.flags.add(SnapshotFlags::PaintSelectionOnly);
+    return snapshotFrameRect(frame, enclosingIntRect(selectionBounds), WTFMove(options));
 }
 
-RefPtr<ImageBuffer> snapshotNode(Frame& frame, Node& node)
+RefPtr<ImageBuffer> snapshotNode(Frame& frame, Node& node, SnapshotOptions&& options)
 {
     if (!node.renderer())
         return nullptr;
@@ -155,7 +158,7 @@ RefPtr<ImageBuffer> snapshotNode(Frame& frame, Node& node)
     frame.view()->setNodeToDraw(&node);
 
     LayoutRect topLevelRect;
-    return snapshotFrameRect(frame, snappedIntRect(node.renderer()->paintingRootRect(topLevelRect)));
+    return snapshotFrameRect(frame, snappedIntRect(node.renderer()->paintingRootRect(topLevelRect)), WTFMove(options));
 }
 
 } // namespace WebCore

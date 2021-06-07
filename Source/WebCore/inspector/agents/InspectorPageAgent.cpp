@@ -1081,12 +1081,12 @@ Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotNode(Protocol::DOM::
 
 Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotRect(int x, int y, int width, int height, Protocol::Page::CoordinateSystem coordinateSystem)
 {
-    SnapshotOptions options = SnapshotOptionsNone;
+    SnapshotOptions options;
     if (coordinateSystem == Protocol::Page::CoordinateSystem::Viewport)
-        options |= SnapshotOptionsInViewCoordinates;
+        options.flags.add(SnapshotFlags::InViewCoordinates);
 
     IntRect rectangle(x, y, width, height);
-    auto snapshot = snapshotFrameRect(m_inspectedPage.mainFrame(), rectangle, options);
+    auto snapshot = snapshotFrameRect(m_inspectedPage.mainFrame(), rectangle, WTFMove(options));
 
     if (!snapshot)
         return makeUnexpected("Could not capture snapshot"_s);

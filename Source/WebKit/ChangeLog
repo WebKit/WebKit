@@ -1,3 +1,19 @@
+2021-06-07  Devin Rousso  <drousso@apple.com>
+
+        Convert WebCore::SnapshotOptions into an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=226730
+
+        Reviewed by Wenson Hsieh.
+
+        Convert `SnapshotOptions` into an `enum class SnapshotFlags` and create a container `struct
+        SnapshotOptions` that also allows for changing the `DestinationColorSpace` (defaults to sRGB)
+        and `PixelFormat` (defaults to BGRA8).
+
+        No behavior change.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::createSelectionSnapshot const):
+
 2021-06-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Find-in-page should match text inside image overlays

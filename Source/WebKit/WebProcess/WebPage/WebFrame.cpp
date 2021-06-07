@@ -842,7 +842,7 @@ RetainPtr<CFDataRef> WebFrame::webArchiveData(FrameFilterFunction callback, void
 
 RefPtr<ShareableBitmap> WebFrame::createSelectionSnapshot() const
 {
-    auto snapshot = snapshotSelection(*coreFrame(), WebCore::SnapshotOptionsForceBlackText);
+    auto snapshot = snapshotSelection(*coreFrame(), { { WebCore::SnapshotFlags::ForceBlackText } });
     if (!snapshot)
         return nullptr;
 

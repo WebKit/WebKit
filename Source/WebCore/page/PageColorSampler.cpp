@@ -116,12 +116,15 @@ static std::optional<Lab<float>> sampleColor(Document& document, IntPoint&& loca
     if (!isValidSampleLocation(document, location))
         return std::nullopt;
 
+    // FIXME: <https://webkit.org/b/225942> (Sampled Page Top Color: support sampling non-RGB values like P3)
+    auto colorSpace = DestinationColorSpace::SRGB();
+
     ASSERT(document.view());
-    auto snapshot = snapshotFrameRect(document.view()->frame(), IntRect(location, IntSize(1, 1)), SnapshotOptionsExcludeSelectionHighlighting | SnapshotOptionsPaintEverythingExcludingSelection);
+    auto snapshot = snapshotFrameRect(document.view()->frame(), IntRect(location, IntSize(1, 1)), { { SnapshotFlags::ExcludeSelectionHighlighting, SnapshotFlags::PaintEverythingExcludingSelection }, PixelFormat::BGRA8, colorSpace });
     if (!snapshot)
         return std::nullopt;
 
-    auto pixelBuffer = snapshot->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, DestinationColorSpace::SRGB() }, { { }, snapshot->logicalSize() });
+    auto pixelBuffer = snapshot->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, colorSpace }, { { }, snapshot->logicalSize() });
     if (!pixelBuffer)
         return std::nullopt;
 

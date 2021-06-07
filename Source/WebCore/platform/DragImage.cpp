@@ -126,8 +126,10 @@ DragImageRef createDragImageForNode(Frame& frame, Node& node)
 
 DragImageRef createDragImageForSelection(Frame& frame, TextIndicatorData&, bool forceBlackText)
 {
-    SnapshotOptions options = forceBlackText ? SnapshotOptionsForceBlackText : SnapshotOptionsNone;
-    return createDragImageFromSnapshot(snapshotSelection(frame, options), nullptr);
+    SnapshotOptions options;
+    if (forceBlackText)
+        options.flags.add(SnapshotFlags::ForceBlackText);
+    return createDragImageFromSnapshot(snapshotSelection(frame, WTFMove(options)), nullptr);
 }
 
 #endif
@@ -182,14 +184,18 @@ DragImageRef createDragImageForRange(Frame& frame, const SimpleRange& range, boo
     if (!startRenderer || !endRenderer)
         return nullptr;
 
-    SnapshotOptions options = SnapshotOptionsPaintSelectionOnly | (forceBlackText ? SnapshotOptionsForceBlackText : SnapshotOptionsNone);
+    SnapshotOptions options;
+    options.flags.add(SnapshotFlags::PaintSelectionOnly);
+    if (forceBlackText)
+        options.flags.add(SnapshotFlags::ForceBlackText);
+
     int startOffset = start.deprecatedEditingOffset();
     int endOffset = end.deprecatedEditingOffset();
     ASSERT(startOffset >= 0 && endOffset >= 0);
     view->selection().set({ startRenderer, endRenderer, static_cast<unsigned>(startOffset), static_cast<unsigned>(endOffset) }, SelectionRangeData::RepaintMode::Nothing);
     // We capture using snapshotFrameRect() because we fake up the selection using
     // FrameView but snapshotSelection() uses the selection from the Frame itself.
-    return createDragImageFromSnapshot(snapshotFrameRect(frame, view->selection().boundsClippedToVisibleContent(), options), nullptr);
+    return createDragImageFromSnapshot(snapshotFrameRect(frame, view->selection().boundsClippedToVisibleContent(), WTFMove(options)), nullptr);
 }
 
 #endif

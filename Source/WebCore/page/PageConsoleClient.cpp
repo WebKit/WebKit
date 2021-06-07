@@ -404,7 +404,7 @@ void PageConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Ref
         if (!target) {
             // If no target is provided, capture an image of the viewport.
             IntRect imageRect(IntPoint::zero(), m_page.mainFrame().view()->sizeForVisibleContent());
-            if (auto snapshot = WebCore::snapshotFrameRect(m_page.mainFrame(), imageRect, SnapshotOptionsInViewCoordinates))
+            if (auto snapshot = WebCore::snapshotFrameRect(m_page.mainFrame(), imageRect, { { SnapshotFlags::InViewCoordinates } }))
                 dataURL = snapshot->toDataURL("image/png"_s, std::nullopt, PreserveResolution::Yes);
         }
 
