@@ -655,6 +655,7 @@ webkit.org/b/225483 imported/w3c/web-platform-tests/webxr/xrView_match.https.htm
 webkit.org/b/225483 imported/w3c/web-platform-tests/webxr/xrView_oneframeupdate.https.html [ Pass ]
 [ Release ] imported/w3c/web-platform-tests/webxr/navigator_xr_sameObject.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrReferenceSpace_originOffset.https.html [ Pass ]
+imported/w3c/web-platform-tests/webxr/xrReferenceSpace_originOffsetBounded.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrReferenceSpace_originOffset_viewer.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrReferenceSpace_relationships.https.html [ Pass ]
 imported/w3c/web-platform-tests/webxr/xrRigidTransform_constructor.https.html [ Pass ]

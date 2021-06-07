@@ -101,9 +101,8 @@ void WebXRBoundedReferenceSpace::updateIfNeeded()
         // Each point has to multiplied by the inverse of originOffset.
         auto transform = originOffset().rawTransform().inverse().value_or(TransformationMatrix());
         for (auto& point : frameData.stageParameters.bounds) {
-            auto mappedPoint = transform.mapPoint(point);
-            // The y value of each point MUST be 0.
-            m_boundsGeometry.append(DOMPointReadOnly::create(quantize(mappedPoint.x()), 0.0, quantize(mappedPoint.y()), 1.0));
+            auto mappedPoint = transform.mapPoint(FloatPoint3D(point.x(), 0.0, point.y()));
+            m_boundsGeometry.append(DOMPointReadOnly::create(quantize(mappedPoint.x()), quantize(mappedPoint.y()), quantize(mappedPoint.z()), 1.0));
         }
     }
 }

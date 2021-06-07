@@ -1,3 +1,20 @@
+2021-06-07  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Use 3D points to map the WebXRBoundedReferenceSpace bounds transform
+        https://bugs.webkit.org/show_bug.cgi?id=224365
+        <rdar://problem/76754927>
+
+        Reviewed by Sergio Villar Senin.
+
+        WebXRBoundedReferenceSpace is currently using Point2D mapping to transfom the bounds geometry.
+        This is not correct because the originOffset is a 3D transform and it expects the bounds depth
+        coordinates to be on the z axis instead of the y axis.
+
+        Tested by WebXR WPT tests.
+
+        * Modules/webxr/WebXRBoundedReferenceSpace.cpp:
+        (WebCore::WebXRBoundedReferenceSpace::updateIfNeeded):
+
 2021-06-07  Antti Koivisto  <antti@apple.com>
 
         Factor selection state computation out of LegacyInlineTextBox

@@ -1,3 +1,15 @@
+2021-06-07  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Use 3D points to map the WebXRBoundedReferenceSpace bounds transform
+        https://bugs.webkit.org/show_bug.cgi?id=224365
+        <rdar://problem/76754927>
+
+        Reviewed by Sergio Villar Senin.
+
+        Update WebXR test expectations.
+
+        * web-platform-tests/webxr/xrReferenceSpace_originOffsetBounded.https-expected.txt:
+
 2021-06-06  Darin Adler  <darin@apple.com>
 
         Handle custom identifiers and strings separately, so we can quote strings correctly consistently
