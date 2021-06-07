@@ -1,3 +1,17 @@
+2021-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Signal "window-object-cleared" not emitted unless frame js context is get before
+        https://bugs.webkit.org/show_bug.cgi?id=221771
+
+        Reviewed by Michael Catanzaro.
+
+        This is because when FrameLoader::dispatchDidClearWindowObjectInWorld() is called, the JSWindowProxy for the
+        world hasn't been created yet, so it returns early. But we want to dispatch it always for worlds created by the
+        API, to ensure that WebKitScriptWorld::window-object-cleared is emmitted.
+
+        * WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp: Implement globalObjectIsAvailableForFrame() to force the
+        creation of the JavaScript context for existing WebKitScriptWorlds.
+
 2021-06-06  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r277464.

@@ -1,3 +1,25 @@
+2021-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Signal "window-object-cleared" not emitted unless frame js context is get before
+        https://bugs.webkit.org/show_bug.cgi?id=221771
+
+        Reviewed by Michael Catanzaro.
+
+        Update window-object-cleared test to check that the signal is emitted for the WebKitScriptWorld objects created
+        by the extension.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebExtensions.cpp:
+        (UserMessageTest::sendMessage):
+        (UserMessageTest::viewUserMessageReceived):
+        (UserMessageTest::waitUntilViewMessagesReceived):
+        (UserMessageTest::waitUntilViewMessageReceived):
+        (testWebExtensionWindowObjectCleared):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKitGLib/WebExtensionTest.cpp:
+        (windowObjectCleared):
+        (isolatedWorldWindowObjectCleared):
+        (webkit_web_extension_initialize_with_user_data):
+
 2021-06-06  Darin Adler  <darin@apple.com>
 
         Handle custom identifiers and strings separately, so we can quote strings correctly consistently
