@@ -1,5 +1,17 @@
 2021-06-07  Alicia Boya García  <aboya@igalia.com>
 
+        [GStreamer] Add clang TSA annotations: MainThreadNotifier
+        https://bugs.webkit.org/show_bug.cgi?id=226717
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Adds clang thread safety annotations to
+        MainThreadNotifier.h
+
+        * platform/graphics/gstreamer/MainThreadNotifier.h:
+
+2021-06-07  Alicia Boya García  <aboya@igalia.com>
+
         [GStreamer] Add clang TSA annotations: InbandTextTrackPrivateGStreamer
         https://bugs.webkit.org/show_bug.cgi?id=226716
 

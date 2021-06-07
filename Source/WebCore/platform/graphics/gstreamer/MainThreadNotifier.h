@@ -125,7 +125,7 @@ private:
     }
 
     Lock m_pendingNotificationsLock;
-    unsigned m_pendingNotifications { 0 };
+    unsigned m_pendingNotifications WTF_GUARDED_BY_LOCK(m_pendingNotificationsLock) { 0 };
     Atomic<bool> m_isValid;
 };
 
