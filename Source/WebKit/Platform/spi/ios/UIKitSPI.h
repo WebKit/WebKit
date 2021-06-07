@@ -27,11 +27,6 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-// FIXME (77983361): Remove this workaround when <rdar://problem/77977216> is fixed.
-#if defined(NDEBUG) && NDEBUG
-#define WK_NDEBUG 1
-#endif
-
 #import <UIKit/NSTextAlternatives.h>
 #import <UIKit/UIAlertController_Private.h>
 #import <UIKit/UIApplication_Private.h>
@@ -138,11 +133,6 @@
 #if HAVE(UI_POINTER_INTERACTION)
 #import <UIKit/UIPointerInteraction_ForWebKitOnly.h>
 #import <UIKit/UIPointerStyle_Private.h>
-#endif
-
-#if defined(WK_NDEBUG) && !defined(NDEBUG)
-#define NDEBUG 1
-#undef WK_NDEBUG
 #endif
 
 #else // USE(APPLE_INTERNAL_SDK)

@@ -31,17 +31,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-// FIXME (77983361): Remove this workaround when <rdar://problem/77977216> is fixed.
-#if defined(NDEBUG) && NDEBUG
-#define WK_NDEBUG 1
-#endif
-
 #import <GraphicsServices/GraphicsServices.h>
-
-#if defined(WK_NDEBUG) && !defined(NDEBUG)
-#define NDEBUG 1
-#undef WK_NDEBUG
-#endif
 
 #endif
 

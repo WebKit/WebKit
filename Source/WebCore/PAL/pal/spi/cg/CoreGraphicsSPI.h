@@ -38,21 +38,11 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
-// FIXME (77983361): Remove this workaround when <rdar://problem/77977216> is fixed.
-#if defined(NDEBUG) && NDEBUG
-#define WK_NDEBUG 1
-#endif
-
 #include <CoreGraphics/CGContextDelegatePrivate.h>
 #include <CoreGraphics/CGFontCache.h>
 #include <CoreGraphics/CGPathPrivate.h>
 #include <CoreGraphics/CoreGraphicsPrivate.h>
 #include <CoreGraphics/CGStylePrivate.h>
-
-#if defined(WK_NDEBUG) && !defined(NDEBUG)
-#define NDEBUG 1
-#undef WK_NDEBUG
-#endif
 
 #if PLATFORM(MAC)
 #include <ColorSync/ColorSyncPriv.h>
