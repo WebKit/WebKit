@@ -32,6 +32,7 @@ struct TextBoxSelectableRange {
     const unsigned start;
     const unsigned length;
     const unsigned additionalLengthAtEnd { 0 };
+    const bool isLineBreak { false };
     const std::optional<unsigned> truncation { };
 
     unsigned clamp(unsigned offset) const

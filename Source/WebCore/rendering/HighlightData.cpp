@@ -41,6 +41,7 @@
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderObject.h"
 #include "RenderView.h"
+#include "TextBoxSelectableRange.h"
 #include "VisibleSelection.h"
 #include <wtf/text/TextStream.h>
 
@@ -120,6 +121,9 @@ bool HighlightData::setRenderRange(const HighlightRangeData& rangeData)
 
 RenderObject::HighlightState HighlightData::highlightStateForRenderer(const RenderObject& renderer)
 {
+    if (m_isSelection)
+        return renderer.selectionState();
+
     if (&renderer == m_renderRange.start()) {
         if (m_renderRange.start() && m_renderRange.end() && m_renderRange.start() == m_renderRange.end())
             return RenderObject::HighlightState::Both;
@@ -141,6 +145,52 @@ RenderObject::HighlightState HighlightData::highlightStateForRenderer(const Rend
             return RenderObject::HighlightState::Inside;
     }
     return RenderObject::HighlightState::None;
+}
+
+RenderObject::HighlightState HighlightData::highlightStateForTextBox(const RenderText& renderer, const TextBoxSelectableRange& textBoxRange)
+{
+    auto state = highlightStateForRenderer(renderer);
+
+    if (state == RenderObject::HighlightState::None || state == RenderObject::HighlightState::Inside)
+        return state;
+
+    auto startOffset = this->startOffset();
+    auto endOffset = this->endOffset();
+
+    // The position after a hard line break is considered to be past its end.
+    ASSERT(textBoxRange.start + textBoxRange.length >= (textBoxRange.isLineBreak ? 1 : 0));
+    unsigned lastSelectable = textBoxRange.start + textBoxRange.length - (textBoxRange.isLineBreak ? 1 : 0);
+
+    bool containsStart = state != RenderObject::HighlightState::End && startOffset >= textBoxRange.start && startOffset < textBoxRange.start + textBoxRange.length;
+    bool containsEnd = state != RenderObject::HighlightState::Start && endOffset > textBoxRange.start && endOffset <= lastSelectable;
+    if (containsStart && containsEnd)
+        return RenderObject::HighlightState::Both;
+    if (containsStart)
+        return RenderObject::HighlightState::Start;
+    if (containsEnd)
+        return RenderObject::HighlightState::End;
+    if ((state == RenderObject::HighlightState::End || startOffset < textBoxRange.start) && (state == RenderObject::HighlightState::Start || endOffset > lastSelectable))
+        return RenderObject::HighlightState::Inside;
+
+    return RenderObject::HighlightState::None;
+}
+
+std::pair<unsigned, unsigned> HighlightData::rangeForTextBox(const RenderText& renderer, const TextBoxSelectableRange& textBoxRange)
+{
+    auto state = highlightStateForTextBox(renderer, textBoxRange);
+
+    switch (state) {
+    case RenderObject::HighlightState::Inside:
+        return textBoxRange.clamp(0, std::numeric_limits<unsigned>::max());
+    case RenderObject::HighlightState::Start:
+        return textBoxRange.clamp(startOffset(), std::numeric_limits<unsigned>::max());
+    case RenderObject::HighlightState::End:
+        return textBoxRange.clamp(0, endOffset());
+    case RenderObject::HighlightState::Both:
+        return textBoxRange.clamp(startOffset(), endOffset());
+    case RenderObject::HighlightState::None:
+        return { 0, 0 };
+    };
 }
 
 } // namespace WebCore

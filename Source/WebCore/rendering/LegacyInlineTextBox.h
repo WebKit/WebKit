@@ -134,9 +134,6 @@ private:
     void extractLine() final;
     void attachLine() final;
     
-    RenderObject::HighlightState verifySelectionState(RenderObject::HighlightState, HighlightData&) const;
-    std::pair<unsigned, unsigned> clampedStartEndForState(unsigned, unsigned, RenderObject::HighlightState) const;
-
 public:
     RenderObject::HighlightState selectionState() final;
 

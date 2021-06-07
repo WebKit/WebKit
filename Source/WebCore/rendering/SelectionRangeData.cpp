@@ -108,7 +108,8 @@ static SelectionContext collectSelectionData(const RenderRange& selection, bool 
 }
 
 SelectionRangeData::SelectionRangeData(RenderView& view)
-    : m_renderView(view)
+    : HighlightData(IsSelection)
+    , m_renderView(view)
 #if ENABLE(SERVICE_CONTROLS)
     , m_selectionGeometryGatherer(view)
 #endif

@@ -161,7 +161,7 @@ bool LegacyInlineTextBox::isSelectable(unsigned startPosition, unsigned endPosit
 
 RenderObject::HighlightState LegacyInlineTextBox::selectionState()
 {
-    auto state = verifySelectionState(renderer().selectionState(), renderer().view().selection());
+    auto state = renderer().view().selection().highlightStateForTextBox(renderer(), selectableRange());
     
     // FIXME: this code mutates selection state, but it's used at a simple getter elsewhere
     // in this file. This code should likely live in HighlightData, or somewhere else.
@@ -182,33 +182,6 @@ RenderObject::HighlightState LegacyInlineTextBox::selectionState()
             ellipsis->setSelectionState(RenderObject::HighlightState::None);
     }
     
-    return state;
-}
-
-RenderObject::HighlightState LegacyInlineTextBox::verifySelectionState(RenderObject::HighlightState state, HighlightData& selection) const
-{
-    if (state == RenderObject::HighlightState::Start || state == RenderObject::HighlightState::End || state == RenderObject::HighlightState::Both) {
-        auto startOffset = selection.startOffset();
-        auto endOffset = selection.endOffset();
-        // The position after a hard line break is considered to be past its end.
-        ASSERT(start() + len() >= (isLineBreak() ? 1 : 0));
-        unsigned lastSelectable = start() + len() - (isLineBreak() ? 1 : 0);
-
-        bool start = (state != RenderObject::HighlightState::End && startOffset >= m_start && startOffset < m_start + m_len);
-        bool end = (state != RenderObject::HighlightState::Start && endOffset > m_start && endOffset <= lastSelectable);
-        if (start && end)
-            state = RenderObject::HighlightState::Both;
-        else if (start)
-            state = RenderObject::HighlightState::Start;
-        else if (end)
-            state = RenderObject::HighlightState::End;
-        else if ((state == RenderObject::HighlightState::End || startOffset < m_start)
-            && (state == RenderObject::HighlightState::Start || endOffset > lastSelectable))
-            state = RenderObject::HighlightState::Inside;
-        else if (state == RenderObject::HighlightState::Both)
-            state = RenderObject::HighlightState::None;
-    }
-
     return state;
 }
 
@@ -666,38 +639,19 @@ TextBoxSelectableRange LegacyInlineTextBox::selectableRange() const
         m_start,
         m_len,
         additionalLengthAtEnd,
+        isLineBreak(),
         truncation
     };
 }
 
-std::pair<unsigned, unsigned> LegacyInlineTextBox::clampedStartEndForState(unsigned start, unsigned end, RenderObject::HighlightState selectionState) const
-{
-    if (selectionState == RenderObject::HighlightState::Inside)
-        return { 0, selectableRange().clamp(m_start + m_len) };
-    
-    if (selectionState == RenderObject::HighlightState::Start)
-        end = renderer().text().length();
-    else if (selectionState == RenderObject::HighlightState::End)
-        start = 0;
-    return selectableRange().clamp(start, end);
-}
-
 std::pair<unsigned, unsigned> LegacyInlineTextBox::selectionStartEnd() const
 {
-    auto selectionState = renderer().selectionState();
-    
-    return clampedStartEndForState(renderer().view().selection().startOffset(), renderer().view().selection().endOffset(), selectionState);
+    return renderer().view().selection().rangeForTextBox(renderer(), selectableRange());
 }
 
-std::pair<unsigned, unsigned> LegacyInlineTextBox::highlightStartEnd(HighlightData &rangeData) const
+std::pair<unsigned, unsigned> LegacyInlineTextBox::highlightStartEnd(HighlightData& rangeData) const
 {
-    auto state = rangeData.highlightStateForRenderer(renderer());
-    state = verifySelectionState(state, rangeData);
-    
-    if (state == RenderObject::HighlightState::None)
-        return {0, 0};
-    
-    return clampedStartEndForState(rangeData.startOffset(), rangeData.endOffset(), state);
+    return rangeData.rangeForTextBox(renderer(), selectableRange());
 }
 
 bool LegacyInlineTextBox::hasMarkers() const

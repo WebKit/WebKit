@@ -209,7 +209,8 @@ private:
         return {
             start(),
             length(),
-            run().style().hyphenString().length()
+            run().style().hyphenString().length(),
+            run().isLineBreak()
         };
     }
 

@@ -1,3 +1,32 @@
+2021-06-07  Antti Koivisto  <antti@apple.com>
+
+        Factor selection state computation out of LegacyInlineTextBox
+        https://bugs.webkit.org/show_bug.cgi?id=226718
+
+        Reviewed by Alan Bujtas.
+
+        Move the code to SelectionRangeData.
+
+        * layout/integration/LayoutIntegrationRunIteratorModernPath.h:
+        (WebCore::LayoutIntegration::RunIteratorModernPath::selectableRange const):
+        * rendering/HighlightData.cpp:
+        (WebCore::HighlightData::highlightStateForRenderer):
+        (WebCore::HighlightData::highlightStateForTextBox):
+        (WebCore::HighlightData::rangeForTextBox):
+        * rendering/HighlightData.h:
+        (WebCore::HighlightData::HighlightData):
+        * rendering/LegacyInlineTextBox.cpp:
+        (WebCore::LegacyInlineTextBox::selectionState):
+        (WebCore::LegacyInlineTextBox::selectableRange const):
+        (WebCore::LegacyInlineTextBox::selectionStartEnd const):
+        (WebCore::LegacyInlineTextBox::highlightStartEnd const):
+        (WebCore::LegacyInlineTextBox::verifySelectionState const): Deleted.
+        (WebCore::LegacyInlineTextBox::clampedStartEndForState const): Deleted.
+        * rendering/LegacyInlineTextBox.h:
+        * rendering/SelectionRangeData.cpp:
+        (WebCore::SelectionRangeData::SelectionRangeData):
+        * rendering/TextBoxSelectableRange.h:
+
 2021-06-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Find-in-page should match text inside image overlays
