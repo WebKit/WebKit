@@ -1,3 +1,16 @@
+2021-06-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        run-webkit-test should use python2 for wpt serve until the latest will be imported
+        https://bugs.webkit.org/show_bug.cgi?id=226703
+
+        Reviewed by Jonathan Bedard.
+
+        The current imported wpt.py doesn't support Python 3 yet. Use
+        Python 2 temporarily.
+
+        * Scripts/webkitpy/layout_tests/servers/web_platform_test_server.py:
+        (WebPlatformTestServer.__init__):
+
 2021-06-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Find-in-page should match text inside image overlays
