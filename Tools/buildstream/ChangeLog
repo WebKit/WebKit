@@ -1,3 +1,9 @@
+2021-06-07  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, fix libsoup3 build in Flatpak SDK
+
+        * elements/sdk/libsoup3.bst:
+
 2021-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Flatpak SDK] Update to libsoup3 2.99.8

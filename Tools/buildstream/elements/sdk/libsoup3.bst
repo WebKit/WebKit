@@ -9,6 +9,7 @@ build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 depends:
 - freedesktop-sdk.bst:components/brotli.bst
+- freedesktop-sdk.bst:components/gnutls.bst
 - sdk/glib.bst
 - sdk/krb5.bst
 - sdk/nghttp2.bst
@@ -25,6 +26,7 @@ variables:
     -Dsysprof=disabled
     -Dtests=false
     -Dautobahn=disabled
+    -Dhttp2_tests=disabled
 public:
   bst:
     overlap-whitelist:
