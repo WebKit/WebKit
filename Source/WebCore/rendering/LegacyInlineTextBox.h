@@ -34,6 +34,7 @@ class TextPainter;
 struct CompositionUnderline;
 struct MarkedText;
 struct StyledMarkedText;
+struct TextBoxSelectableRange;
 struct TextPaintStyle;
 
 const unsigned short cNoTruncation = USHRT_MAX;
@@ -77,6 +78,8 @@ public:
 
     unsigned short truncation() const { return m_truncation; }
 
+    TextBoxSelectableRange selectableRange() const;
+
     void markDirty(bool dirty = true) final;
 
     using LegacyInlineBox::hasHyphen;
@@ -118,15 +121,13 @@ private:
 
 public:
     virtual LayoutRect localSelectionRect(unsigned startPos, unsigned endPos) const;
-    bool isSelected(unsigned startPosition, unsigned endPosition) const;
+    bool isSelectable(unsigned startPosition, unsigned endPosition) const;
     std::pair<unsigned, unsigned> selectionStartEnd() const;
     std::pair<unsigned, unsigned> highlightStartEnd(HighlightData&) const;
 
 protected:
     void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override;
-
-    unsigned clampedOffset(unsigned) const;
 
 private:
     void deleteLine() final;

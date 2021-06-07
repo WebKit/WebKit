@@ -55,6 +55,7 @@
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include "Text.h"
+#include "TextBoxSelectableRange.h"
 #include "TextDecorationPainter.h"
 #include "TextPaintStyle.h"
 #include "TextPainter.h"
@@ -153,9 +154,9 @@ LayoutUnit LegacyInlineTextBox::selectionHeight() const
     return root().selectionHeight();
 }
 
-bool LegacyInlineTextBox::isSelected(unsigned startPosition, unsigned endPosition) const
+bool LegacyInlineTextBox::isSelectable(unsigned startPosition, unsigned endPosition) const
 {
-    return clampedOffset(startPosition) < clampedOffset(endPosition);
+    return selectableRange().intersects(startPosition, endPosition);
 }
 
 RenderObject::HighlightState LegacyInlineTextBox::selectionState()
@@ -243,10 +244,9 @@ LayoutRect snappedSelectionRect(const LayoutRect& selectionRect, float logicalRi
 // FIXME: Share more code with paintMarkedTextBackground().
 LayoutRect LegacyInlineTextBox::localSelectionRect(unsigned startPos, unsigned endPos) const
 {
-    unsigned sPos = clampedOffset(startPos);
-    unsigned ePos = clampedOffset(endPos);
+    auto [clampedStart, clampedEnd] = selectableRange().clamp(startPos, endPos);
 
-    if (sPos >= ePos && !(startPos == endPos && startPos >= start() && startPos <= (start() + len())))
+    if (clampedStart >= clampedEnd && !(startPos == endPos && startPos >= start() && startPos <= (start() + len())))
         return { };
 
     LayoutUnit selectionTop = this->selectionTop();
@@ -256,8 +256,8 @@ LayoutRect LegacyInlineTextBox::localSelectionRect(unsigned startPos, unsigned e
 
     LayoutRect selectionRect { LayoutUnit(logicalLeft()), selectionTop, LayoutUnit(logicalWidth()), selectionHeight };
     // Avoid measuring the text when the entire line box is selected as an optimization.
-    if (sPos || ePos != textRun.length())
-        lineFont().adjustSelectionRectForText(textRun, selectionRect, sPos, ePos);
+    if (clampedStart || clampedEnd != textRun.length())
+        lineFont().adjustSelectionRectForText(textRun, selectionRect, clampedStart, clampedEnd);
     // FIXME: The computation of the snapped selection rect differs from the computation of this rect
     // in paintMarkedTextBackground(). See <https://bugs.webkit.org/show_bug.cgi?id=138913>.
     return snappedSelectionRect(selectionRect, logicalRight(), selectionTop, selectionHeight, isHorizontal());
@@ -553,7 +553,8 @@ void LegacyInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
     Vector<MarkedText> markedTexts;
     if (paintInfo.phase != PaintPhase::Selection) {
         // The marked texts for the gaps between document markers and selection are implicitly created by subdividing the entire line.
-        markedTexts.append({ clampedOffset(m_start), clampedOffset(end()), MarkedText::Unmarked });
+        auto selectableRange = this->selectableRange();
+        markedTexts.append({ selectableRange.clamp(m_start), selectableRange.clamp(end()), MarkedText::Unmarked });
         if (!isPrinting) {
             markedTexts.appendVector(collectMarkedTextsForDocumentMarkers(TextPaintPhase::Foreground));
             auto highlightMarkedTexts = collectMarkedTextsForHighlights(TextPaintPhase::Foreground);
@@ -640,35 +641,45 @@ void LegacyInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOf
         context.concatCTM(rotation(boxRect, Counterclockwise));
 }
 
-unsigned LegacyInlineTextBox::clampedOffset(unsigned x) const
+TextBoxSelectableRange LegacyInlineTextBox::selectableRange() const
 {
-    unsigned offset = std::max(std::min(x, m_start + m_len), m_start) - m_start;
-    if (m_truncation == cFullTruncation)
-        return offset;
-    if (m_truncation != cNoTruncation)
-        offset = std::min<unsigned>(offset, m_truncation);
-    else if (offset == m_len) {
-        // Fix up the offset if we are combined text or have a hyphen because we manage these embellishments.
-        // That is, they are not reflected in renderer().text(). We treat combined text as a single unit.
-        // We also treat the last codepoint in this box and the hyphen as a single unit.
+    // Fix up the offset if we are combined text or have a hyphen because we manage these embellishments.
+    // That is, they are not reflected in renderer().text(). We treat combined text as a single unit.
+    // We also treat the last codepoint in this box and the hyphen as a single unit.
+    auto additionalLengthAtEnd = [&] {
         if (auto* combinedText = this->combinedText())
-            offset = combinedText->combinedStringForRendering().length();
-        else if (hasHyphen())
-            offset += lineStyle().hyphenString().length();
-    }
-    return offset;
+            return combinedText->combinedStringForRendering().length() - m_len;
+        if (hasHyphen())
+            return lineStyle().hyphenString().length();
+        return 0u;
+    }();
+
+    auto truncation = [&]() -> std::optional<unsigned> {
+        if (m_truncation == cNoTruncation)
+            return { };
+        if (m_truncation == cFullTruncation)
+            return std::numeric_limits<unsigned>::max();
+        return m_truncation;
+    }();
+
+    return {
+        m_start,
+        m_len,
+        additionalLengthAtEnd,
+        truncation
+    };
 }
 
 std::pair<unsigned, unsigned> LegacyInlineTextBox::clampedStartEndForState(unsigned start, unsigned end, RenderObject::HighlightState selectionState) const
 {
     if (selectionState == RenderObject::HighlightState::Inside)
-        return { 0, clampedOffset(m_start + m_len) };
+        return { 0, selectableRange().clamp(m_start + m_len) };
     
     if (selectionState == RenderObject::HighlightState::Start)
         end = renderer().text().length();
     else if (selectionState == RenderObject::HighlightState::End)
         start = 0;
-    return { clampedOffset(start), clampedOffset(end) };
+    return selectableRange().clamp(start, end);
 }
 
 std::pair<unsigned, unsigned> LegacyInlineTextBox::selectionStartEnd() const
@@ -719,7 +730,7 @@ FloatRect LegacyInlineTextBox::calculateDocumentMarkerBounds(const MarkedText& m
     auto height = 0.13247 * fontSize;
 
     // Avoid measuring the text when the entire line box is selected as an optimization.
-    if (markedText.startOffset || markedText.endOffset != clampedOffset(end())) {
+    if (markedText.startOffset || markedText.endOffset != selectableRange().clamp(end())) {
         TextRun run = createTextRun();
         LayoutRect selectionRect = LayoutRect(0, y, 0, height);
         lineFont().adjustSelectionRectForText(run, selectionRect, markedText.startOffset, markedText.endOffset);
@@ -770,8 +781,10 @@ Vector<MarkedText> LegacyInlineTextBox::collectMarkedTextsForDraggedContent()
 {
     using DraggendContentRange = std::pair<unsigned, unsigned>;
     auto draggedContentRanges = renderer().draggedContentRangesBetweenOffsets(m_start, m_start + m_len);
+
     Vector<MarkedText> result = draggedContentRanges.map([this] (const DraggendContentRange& range) -> MarkedText {
-        return { clampedOffset(range.first), clampedOffset(range.second), MarkedText::DraggedContent };
+        auto [clampedStart, clampedEnd] = selectableRange().clamp(range.first, range.second);
+        return { clampedStart, clampedEnd, MarkedText::DraggedContent };
     });
     return result;
 }
@@ -865,9 +878,11 @@ Vector<MarkedText> LegacyInlineTextBox::collectMarkedTextsForDocumentMarkers(Tex
         // FIXME: See <rdar://problem/8933352>. Also, remove the PLATFORM(IOS_FAMILY)-guard.
         case DocumentMarker::DictationPhraseWithAlternatives:
 #endif
-        case DocumentMarker::TextMatch:
-            markedTexts.uncheckedAppend({ clampedOffset(marker->startOffset()), clampedOffset(marker->endOffset()), markedTextTypeForMarkerType(marker->type()), marker });
+        case DocumentMarker::TextMatch: {
+            auto [clampedStart, clampedEnd] = selectableRange().clamp(marker->startOffset(), marker->endOffset());
+            markedTexts.uncheckedAppend({ clampedStart, clampedEnd, markedTextTypeForMarkerType(marker->type()), marker });
             break;
+        }
         case DocumentMarker::Replacement:
             break;
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
@@ -1101,8 +1116,10 @@ void LegacyInlineTextBox::paintMarkedTextDecoration(PaintInfo& paintInfo, const 
 
 void LegacyInlineTextBox::paintCompositionBackground(PaintInfo& paintInfo, const FloatPoint& boxOrigin)
 {
+    auto selectableRange = this->selectableRange();
+
     if (!renderer().frame().editor().compositionUsesCustomHighlights()) {
-        paintMarkedTextBackground(paintInfo, boxOrigin, CompositionHighlight::defaultCompositionFillColor, clampedOffset(renderer().frame().editor().compositionStart()), clampedOffset(renderer().frame().editor().compositionEnd()));
+        paintMarkedTextBackground(paintInfo, boxOrigin, CompositionHighlight::defaultCompositionFillColor, selectableRange.clamp(renderer().frame().editor().compositionStart()), selectableRange.clamp(renderer().frame().editor().compositionEnd()));
         return;
     }
 
@@ -1113,7 +1130,8 @@ void LegacyInlineTextBox::paintCompositionBackground(PaintInfo& paintInfo, const
         if (highlight.startOffset >= end())
             break;
 
-        paintMarkedTextBackground(paintInfo, boxOrigin, highlight.color, clampedOffset(highlight.startOffset), clampedOffset(highlight.endOffset), MarkedTextBackgroundStyle::Rounded);
+        auto [clampedStart, clampedEnd] = selectableRange.clamp(highlight.startOffset, highlight.endOffset);
+        paintMarkedTextBackground(paintInfo, boxOrigin, highlight.color, clampedStart, clampedEnd, MarkedTextBackgroundStyle::Rounded);
 
         if (highlight.endOffset > end())
             break;
@@ -1243,9 +1261,9 @@ float LegacyInlineTextBox::positionForOffset(unsigned offset) const
     unsigned endOffset;
     if (isLeftToRightDirection()) {
         startOffset = 0;
-        endOffset = clampedOffset(offset);
+        endOffset = selectableRange().clamp(offset);
     } else {
-        startOffset = clampedOffset(offset);
+        startOffset = selectableRange().clamp(offset);
         endOffset = m_len;
     }
 

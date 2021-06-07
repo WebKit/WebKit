@@ -35,6 +35,7 @@
 #include "SVGRenderingContext.h"
 #include "SVGResourcesCache.h"
 #include "SVGRootInlineBox.h"
+#include "TextBoxSelectableRange.h"
 #include "TextPainter.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -134,11 +135,11 @@ FloatRect SVGInlineTextBox::selectionRectForTextFragment(const SVGTextFragment& 
     return snappedSelectionRect;
 }
 
-LayoutRect SVGInlineTextBox::localSelectionRect(unsigned startPosition, unsigned endPosition) const
+LayoutRect SVGInlineTextBox::localSelectionRect(unsigned start, unsigned end) const
 {
-    startPosition = clampedOffset(startPosition);
-    endPosition = clampedOffset(endPosition);
-    if (startPosition >= endPosition)
+    auto [clampedStart, clampedEnd] = selectableRange().clamp(start, end);
+
+    if (clampedStart >= clampedEnd)
         return LayoutRect();
 
     auto& style = renderer().style();
@@ -152,8 +153,8 @@ LayoutRect SVGInlineTextBox::localSelectionRect(unsigned startPosition, unsigned
     for (unsigned i = 0; i < textFragmentsSize; ++i) {
         const SVGTextFragment& fragment = m_textFragments.at(i);
 
-        fragmentStartPosition = startPosition;
-        fragmentEndPosition = endPosition;
+        fragmentStartPosition = clampedStart;
+        fragmentEndPosition = clampedEnd;
         if (!mapStartEndPositionsIntoFragmentCoordinates(fragment, fragmentStartPosition, fragmentEndPosition))
             continue;
 

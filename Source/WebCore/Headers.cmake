@@ -1580,6 +1580,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderWidget.h
     rendering/ScrollAlignment.h
     rendering/SelectionRangeData.h
+    rendering/TextBoxSelectableRange.h
 
     rendering/line/LineWidth.h
     rendering/line/TrailingObjects.h

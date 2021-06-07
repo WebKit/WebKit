@@ -1,3 +1,45 @@
+2021-06-06  Antti Koivisto  <antti@apple.com>
+
+        Factor selection clamping into a type
+        https://bugs.webkit.org/show_bug.cgi?id=226697
+
+        Reviewed by Sam Weinig.
+
+        TextBoxSelectableRange will be helpful for moving selection code out of the legacy inline boxes.
+        It also allows some code sharing already in this patch.
+
+        * Headers.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * layout/integration/LayoutIntegrationRunIteratorLegacyPath.h:
+        (WebCore::LayoutIntegration::RunIteratorLegacyPath::isSelectable const):
+        * layout/integration/LayoutIntegrationRunIteratorModernPath.h:
+        (WebCore::LayoutIntegration::RunIteratorModernPath::positionForOffset const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::isSelectable const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::selectionRect const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::selectableRange const):
+        (WebCore::LayoutIntegration::RunIteratorModernPath::clampedOffset const): Deleted.
+        * rendering/LegacyInlineTextBox.cpp:
+        (WebCore::LegacyInlineTextBox::isSelectable const):
+        (WebCore::LegacyInlineTextBox::localSelectionRect const):
+        (WebCore::LegacyInlineTextBox::paint):
+        (WebCore::LegacyInlineTextBox::selectableRange const):
+        (WebCore::LegacyInlineTextBox::clampedStartEndForState const):
+        (WebCore::LegacyInlineTextBox::calculateDocumentMarkerBounds const):
+        (WebCore::LegacyInlineTextBox::collectMarkedTextsForDraggedContent):
+        (WebCore::LegacyInlineTextBox::collectMarkedTextsForDocumentMarkers const):
+        (WebCore::LegacyInlineTextBox::paintCompositionBackground):
+        (WebCore::LegacyInlineTextBox::positionForOffset const):
+        (WebCore::LegacyInlineTextBox::isSelected const): Deleted.
+        (WebCore::LegacyInlineTextBox::clampedOffset const): Deleted.
+        * rendering/LegacyInlineTextBox.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::inlineSelectionGaps):
+        * rendering/TextBoxSelectableRange.h: Added.
+        (WebCore::TextBoxSelectableRange::clamp const):
+        (WebCore::TextBoxSelectableRange::intersects const):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::localSelectionRect const):
+
 2021-06-06  Chris Dumez  <cdumez@apple.com>
 
         Drop MainThreadTaskDispatcher and use callOnMainThread() instead

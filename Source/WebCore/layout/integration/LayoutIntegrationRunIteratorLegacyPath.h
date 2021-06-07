@@ -74,7 +74,7 @@ public:
     unsigned offsetForPosition(float x) const { return inlineTextBox()->offsetForPosition(x); }
     float positionForOffset(unsigned offset) const { return inlineTextBox()->positionForOffset(offset); }
 
-    bool isSelectable(unsigned start, unsigned end) const { return inlineTextBox()->isSelected(start, end); }
+    bool isSelectable(unsigned start, unsigned end) const { return inlineTextBox()->isSelectable(start, end); }
     LayoutRect selectionRect(unsigned start, unsigned end) const { return inlineTextBox()->localSelectionRect(start, end); }
 
     const RenderObject& renderer() const

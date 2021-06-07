@@ -3259,7 +3259,7 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
             case RenderObject::HighlightState::Both:
                 break;
             }
-            if (textBox.isSelected(start, end))
+            if (textBox.isSelectable(start, end))
                 return true;
         }
         return false;
