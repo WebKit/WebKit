@@ -511,7 +511,7 @@ private:
     static void dumpAnimations(WTF::TextStream&, const char* category, const Vector<LayerPropertyAnimation>&);
 
     enum MoveOrCopy { Move, Copy };
-    static void moveOrCopyLayerAnimation(MoveOrCopy, const String& animationIdentifier, PlatformCALayer *fromLayer, PlatformCALayer *toLayer);
+    static void moveOrCopyLayerAnimation(MoveOrCopy, const String& animationIdentifier, std::optional<Seconds> beginTime, PlatformCALayer *fromLayer, PlatformCALayer *toLayer);
     void moveOrCopyAnimations(MoveOrCopy, PlatformCALayer* fromLayer, PlatformCALayer* toLayer);
 
     void moveAnimations(PlatformCALayer* fromLayer, PlatformCALayer* toLayer)

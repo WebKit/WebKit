@@ -684,11 +684,14 @@ void GraphicsLayerCA::setChildrenTransform(const TransformationMatrix& t)
     noteLayerPropertyChanged(ChildrenTransformChanged);
 }
 
-void GraphicsLayerCA::moveOrCopyLayerAnimation(MoveOrCopy operation, const String& animationIdentifier, PlatformCALayer *fromLayer, PlatformCALayer *toLayer)
+void GraphicsLayerCA::moveOrCopyLayerAnimation(MoveOrCopy operation, const String& animationIdentifier, std::optional<Seconds> beginTime, PlatformCALayer *fromLayer, PlatformCALayer *toLayer)
 {
     RefPtr<PlatformCAAnimation> anim = fromLayer->animationForKey(animationIdentifier);
     if (!anim)
         return;
+
+    if (beginTime && beginTime->seconds() != anim->beginTime())
+        anim->setBeginTime(beginTime->seconds());
 
     switch (operation) {
     case Move:
@@ -704,13 +707,12 @@ void GraphicsLayerCA::moveOrCopyLayerAnimation(MoveOrCopy operation, const Strin
 
 void GraphicsLayerCA::moveOrCopyAnimations(MoveOrCopy operation, PlatformCALayer *fromLayer, PlatformCALayer *toLayer)
 {
-    for (auto& animation : m_animations) {
-        if ((animatedPropertyIsTransformOrRelated(animation.m_property)
-            || animation.m_property == AnimatedPropertyOpacity
-            || animation.m_property == AnimatedPropertyBackgroundColor
-            || animation.m_property == AnimatedPropertyFilter)
-            && (animation.m_playState == PlayState::Playing || animation.m_playState == PlayState::Paused))
-            moveOrCopyLayerAnimation(operation, animation.animationIdentifier(), fromLayer, toLayer);
+    for (auto& animationGroup : m_animationGroups) {
+        if ((animatedPropertyIsTransformOrRelated(animationGroup.m_property)
+            || animationGroup.m_property == AnimatedPropertyOpacity
+            || animationGroup.m_property == AnimatedPropertyBackgroundColor
+            || animationGroup.m_property == AnimatedPropertyFilter))
+            moveOrCopyLayerAnimation(operation, animationGroup.animationIdentifier(), animationGroup.computedBeginTime(), fromLayer, toLayer);
     }
 }
 

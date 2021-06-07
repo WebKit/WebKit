@@ -1,3 +1,21 @@
+2021-06-07  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION (r272201): iPad render flashing on load
+        https://bugs.webkit.org/show_bug.cgi?id=226216
+        <rdar://problem/78466306>
+
+        Reviewed by Simon Fraser.
+
+        Add a test that runs the same accelerated animation on two container elements, stack one above the other.
+        The bottom container has a red background while the top container has a green background, the whole body
+        being green. After the animation has started, we set the bottom element to have a very large size such
+        that its layer becomes tiled. Before this patch the bottom element would stop animation and its red
+        background would start appearing as the top element would keep animating. After this patch both elements
+        are animated and no red should appear.
+
+        * webanimations/accelerated-animation-tiled-while-running-expected.html: Added.
+        * webanimations/accelerated-animation-tiled-while-running.html: Added.
+
 2021-06-07  Imanol Fernandez  <ifernandez@igalia.com>
 
         Use 3D points to map the WebXRBoundedReferenceSpace bounds transform
