@@ -69,22 +69,24 @@ public:
         m_isLocked = true;
     }
 
-    ~DataMutexLocker() WTF_RELEASES_LOCK(m_dataMutex.m_mutex)
+    ~DataMutexLocker() WTF_RELEASES_LOCK()
     {
-        if (m_isLocked)
+        if (m_isLocked) {
+            assertIsHeld(m_dataMutex.m_mutex);
             mutex().unlock();
+        }
     }
 
     T* operator->()
     {
-        DATA_MUTEX_CHECK(mutex().isHeld());
+        DATA_MUTEX_CHECK(m_isLocked && mutex().isHeld());
         assertIsHeld(m_dataMutex.m_mutex);
         return &m_dataMutex.m_data;
     }
 
     T& operator*()
     {
-        DATA_MUTEX_CHECK(mutex().isHeld());
+        DATA_MUTEX_CHECK(m_isLocked && mutex().isHeld());
         assertIsHeld(m_dataMutex.m_mutex);
         return m_dataMutex.m_data;
     }
@@ -94,6 +96,9 @@ public:
         return m_dataMutex.m_mutex;
     }
 
+    // Note: DataMutexLocker shouldn't be used after this. Due to limitations of clang thread safety analysis this can't
+    // currently be staticly checked (adding WTF_REQUIRES_LOCK() to operator->() doesn't work.)
+    // Run-time checks are still performed if enabled.
     void unlockEarly() WTF_RELEASES_LOCK(m_dataMutex.m_mutex)
     {
         DATA_MUTEX_CHECK(mutex().isHeld());
@@ -104,7 +109,7 @@ public:
     // Used to avoid excessive brace scoping when only small parts of the code need to be run unlocked.
     // Please be mindful that accessing the wrapped data from the callback is unsafe and will fail on assertions.
     // It's helpful to use a minimal lambda capture to be conscious of what data you're having access to in these sections.
-    void runUnlocked(const Function<void()>& callback)
+    void runUnlocked(const Function<void()>& callback) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     {
         DATA_MUTEX_CHECK(mutex().isHeld());
         assertIsHeld(m_dataMutex.m_mutex);

@@ -1,5 +1,21 @@
 2021-06-07  Alicia Boya García  <aboya@igalia.com>
 
+        [WTF][GStreamer] Fix clang TSA warnings in WTF::DataMutex
+        https://bugs.webkit.org/show_bug.cgi?id=226719
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Fix the remaning clang thread safety warnings in WTF::DataMutex.
+
+        The goal of this patch is to reduce the number of warnings in the
+        GStreamer codebase. Whether DataMutex should be deprecated in favor of
+        Locker with the clang TSA annotations is outside of the scope of this
+        patch.
+
+        * wtf/DataMutex.h:
+
+2021-06-07  Alicia Boya García  <aboya@igalia.com>
+
         [GStreamer] Remove spurious assert in WTF::DataMutex
         https://bugs.webkit.org/show_bug.cgi?id=226714
 
