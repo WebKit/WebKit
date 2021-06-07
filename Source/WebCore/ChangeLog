@@ -1,5 +1,22 @@
 2021-06-07  Imanol Fernandez  <ifernandez@igalia.com>
 
+        Change WebXRSpace::efectiveOrigin() matrix multiplication order
+        https://bugs.webkit.org/show_bug.cgi?id=224364
+        <rdar://problem/76754680>
+
+        Reviewed by Sergio Villar Senin.
+
+        The current multiplication order is not working correctly when combining local-floor space and getOfffsetReferenceSpace().
+        The reference space is out of sync with input ray pose after some teleportations:
+        https://github.com/immersive-web/webxr-samples/blob/main/teleportation.html
+
+        Tested using WebXR WPT tests.
+
+        * Modules/webxr/WebXRSpace.cpp:
+        (WebCore::WebXRSpace::effectiveOrigin const):
+
+2021-06-07  Imanol Fernandez  <ifernandez@igalia.com>
+
         Use 3D points to map the WebXRBoundedReferenceSpace bounds transform
         https://bugs.webkit.org/show_bug.cgi?id=224365
         <rdar://problem/76754927>
