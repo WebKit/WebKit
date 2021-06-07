@@ -25,7 +25,9 @@
 
 #pragma once
 
-#include "GenericTaskQueue.h"
+#include <wtf/Function.h>
+#include <wtf/MainThread.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -55,7 +57,7 @@ public:
         cancelTask();
 
         m_isPending = true;
-        m_dispatcher.postTask([weakThis = makeWeakPtr(*this), task = WTFMove(task)] {
+        callOnMainThread([weakThis = makeWeakPtr(*this), task = WTFMove(task)] {
             if (!weakThis)
                 return;
             ASSERT(weakThis->isPending());
@@ -65,7 +67,6 @@ public:
     }
 
 private:
-    MainThreadTaskDispatcher m_dispatcher;
     bool m_isPending { false };
     bool m_isClosed { false };
 };

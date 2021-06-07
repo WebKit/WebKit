@@ -28,35 +28,11 @@
 #include "ContextDestructionObserver.h"
 #include "EventLoop.h"
 #include "ScriptExecutionContext.h"
-#include "Timer.h"
-#include <wtf/Deque.h>
 #include <wtf/Function.h>
 #include <wtf/MainThread.h>
-#include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
-namespace WTF {
-class Lock;
-}
-
 namespace WebCore {
-
-class MainThreadTaskDispatcher : public CanMakeWeakPtr<MainThreadTaskDispatcher, WeakPtrFactoryInitialization::Eager> {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    MainThreadTaskDispatcher();
-    void postTask(Function<void()>&&);
-
-private:
-    static Timer& sharedTimer();
-    static void sharedTimerFired();
-    static Deque<WeakPtr<MainThreadTaskDispatcher>>& pendingDispatchers() WTF_REQUIRES_LOCK(s_sharedLock);
-
-    void dispatchOneTask();
-
-    static Lock s_sharedLock;
-    Deque<Function<void()>> m_pendingTasks WTF_GUARDED_BY_LOCK(s_sharedLock);
-};
 
 class TaskQueueBase : public CanMakeWeakPtr<TaskQueueBase> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -91,15 +67,8 @@ private:
 class MainThreadTaskQueue : public TaskQueueBase {
 public:
     MainThreadTaskQueue()
-        : m_dispatcher(makeUniqueRef<MainThreadTaskDispatcher>())
     {
         ASSERT(isMainThread());
-    }
-
-    ~MainThreadTaskQueue()
-    {
-        if (!isMainThread())
-            m_dispatcher->postTask([dispatcher = WTFMove(m_dispatcher)] { });
     }
 
     void enqueueTask(Function<void()>&& task)
@@ -108,16 +77,13 @@ public:
             return;
 
         incrementPendingTasks();
-        m_dispatcher->postTask([weakThis = makeWeakPtr(*this), task = WTFMove(task)] {
+        callOnMainThread([weakThis = makeWeakPtr(*this), task = WTFMove(task)] {
             if (!weakThis)
                 return;
             weakThis->decrementPendingTasks();
             task();
         });
     }
-
-private:
-    UniqueRef<MainThreadTaskDispatcher> m_dispatcher;
 };
 
 // Similar to MainThreadTaskQueue but based on the HTML event loop.

@@ -1,5 +1,24 @@
 2021-06-06  Chris Dumez  <cdumez@apple.com>
 
+        Drop MainThreadTaskDispatcher and use callOnMainThread() instead
+        https://bugs.webkit.org/show_bug.cgi?id=226701
+
+        Reviewed by Darin Adler.
+
+        Drop MainThreadTaskDispatcher and use callOnMainThread() instead. There is a no need for a
+        global Timer or a Deque of tasks.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/DeferrableTask.h:
+        (WebCore::MainThreadDeferrableTask::scheduleTask):
+        * platform/GenericTaskQueue.cpp: Removed.
+        * platform/GenericTaskQueue.h:
+        (WebCore::MainThreadTaskQueue::MainThreadTaskQueue):
+        (WebCore::MainThreadTaskQueue::enqueueTask):
+
+2021-06-06  Chris Dumez  <cdumez@apple.com>
+
         Stop using legacy EventLoopDeferrableTask
         https://bugs.webkit.org/show_bug.cgi?id=226700
 
