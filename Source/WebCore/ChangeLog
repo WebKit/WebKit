@@ -1,3 +1,17 @@
+2021-06-07  Eleni Maria Stea  <estea@igalia.com>
+
+        Compile error by trying to fit a GCGLint64* to a GLint64*
+        https://bugs.webkit.org/show_bug.cgi?id=226639
+
+        Reviewed by Kenneth Russell.
+
+        ANGLE functions GetInteger64vRobustANGLE and
+        GetInteger64i_vRobustANGLE expect a value of GLint64* aka
+        long int * but we try to fit a pointer to a long long int.
+        Fixed compile errors.
+
+        * platform/graphics/GraphicsTypesGL.h:
+
 2021-06-07  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION (r272201): iPad render flashing on load

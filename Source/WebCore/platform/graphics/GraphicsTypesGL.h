@@ -55,8 +55,8 @@ typedef void GCGLvoid;
 typedef intptr_t GCGLintptr;
 typedef intptr_t GCGLsizeiptr;
 typedef intptr_t GCGLvoidptr;
-typedef long long GCGLint64;
-typedef unsigned long long GCGLuint64;
+typedef int64_t GCGLint64;
+typedef uint64_t GCGLuint64;
 
 typedef GCGLuint PlatformGLObject;
 
