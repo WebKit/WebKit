@@ -1,5 +1,22 @@
 2021-06-07  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        Windows Python 2.7 fails to install tblib-1.7.0 due to "TypeError: environment can only contain strings"
+        https://bugs.webkit.org/show_bug.cgi?id=226707
+
+        Reviewed by Jonathan Bedard.
+
+        WinCairo port is still using Python 2.7 that has ascii strings and
+        unicode strings. WinPort.setup_crash_log_saving modifies
+        _NT_SYMBOL_PATH env var to have a unicode string. So, after
+        setup_crash_log_saving, AutoInstall failed due to the unicode
+        string in os.environ.
+
+        * Scripts/webkitpy/port/win.py:
+        (WinPort.setup_crash_log_saving): Convert self._build_path() to a
+        ascii string with str().
+
+2021-06-07  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         run-webkit-test should use python2 for wpt serve until the latest will be imported
         https://bugs.webkit.org/show_bug.cgi?id=226703
 
