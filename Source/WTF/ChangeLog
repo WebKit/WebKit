@@ -1,3 +1,18 @@
+2021-06-07  Alicia Boya García  <aboya@igalia.com>
+
+        [GStreamer] Remove spurious assert in WTF::DataMutex
+        https://bugs.webkit.org/show_bug.cgi?id=226714
+
+        Reviewed by Michael Catanzaro.
+
+        Remove DATA_MUTEX_CHECK(!mutex().isHeld()); from the DataMutexLocker
+        constructor, introduced in r278248.
+
+        Trying to lock a currently held mutex is not an error condition that
+        should crash the process, it will just wait for its turn to lock it.
+
+        * wtf/DataMutex.h:
+
 2021-06-06  Chris Dumez  <cdumez@apple.com>
 
         Stop using legacy EventLoopDeferrableTask

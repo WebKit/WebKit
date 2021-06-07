@@ -65,7 +65,6 @@ public:
     explicit DataMutexLocker(DataMutex<T>& dataMutex) WTF_ACQUIRES_LOCK(m_dataMutex.m_mutex)
         : m_dataMutex(dataMutex)
     {
-        DATA_MUTEX_CHECK(!mutex().isHeld());
         mutex().lock();
         m_isLocked = true;
     }
