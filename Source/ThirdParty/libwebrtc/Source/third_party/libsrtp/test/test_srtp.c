@@ -44,14 +44,14 @@
  */
 
 /*
- * Test specific.
- */
-#include "cutest.h"
-
-/*
  * libSRTP specific.
  */
 #include "../srtp/srtp.c" // Get access to static functions
+
+/*
+ * Test specific.
+ */
+#include "cutest.h"
 
 /*
  * Standard library.
@@ -152,14 +152,15 @@ void srtp_calc_aead_iv_srtcp_distinct_iv_per_sequence_number()
     srtp_session_keys_t session_keys;
     srtcp_hdr_t header;
     v128_t output_iv[SAMPLE_COUNT];
-    memset(&output_iv, 0, SAMPLE_COUNT * sizeof(v128_t));
     uint32_t sequence_num[SAMPLE_COUNT];
+    v128_t final_iv[SAMPLE_COUNT];
+    size_t i = 0;
+    memset(&output_iv, 0, SAMPLE_COUNT * sizeof(v128_t));
     sequence_num[0] = 0xFF;
     sequence_num[1] = 0xFF00;
     sequence_num[2] = 0xFF0000;
 
     // Postconditions
-    v128_t final_iv[SAMPLE_COUNT];
     memset(&final_iv, 0, SAMPLE_COUNT * sizeof(v128_t));
     final_iv[0].v8[11] = 0xFF;
     final_iv[1].v8[10] = 0xFF;
@@ -170,7 +171,6 @@ void srtp_calc_aead_iv_srtcp_distinct_iv_per_sequence_number()
     memset(&header, 0, sizeof(srtcp_hdr_t));
 
     // When
-    size_t i = 0;
     for (i = 0; i < SAMPLE_COUNT; i++) {
         TEST_CHECK(srtp_calc_aead_iv_srtcp(&session_keys, &output_iv[i],
                                            sequence_num[i],

@@ -13,12 +13,13 @@ declare_args() {
 config("libsrtp_config") {
   defines = [
     # Package identity
-    "PACKAGE_STRING=\"libsrtp2 2.1.0-pre\"",
-    "PACKAGE_VERSION=\"2.1.0-pre\"",
+    "PACKAGE_STRING=\"860492290f7d1f25e2bd45da6471bfd4cd4d7add\"",
+    "PACKAGE_VERSION=\"860492290f7d1f25e2bd45da6471bfd4cd4d7add\"",
 
     # Config
     "HAVE_CONFIG_H",
     "OPENSSL",
+    "GCM",
 
     # Platform properties
     "HAVE_STDLIB_H",
@@ -33,6 +34,7 @@ config("libsrtp_config") {
     "HAVE_UINT64_T",
     "HAVE_UINT8_T",
   ]
+
   if (is_posix || is_fuchsia) {
     defines += [
       "HAVE_ARPA_INET_H",
@@ -74,9 +76,10 @@ static_library("libsrtp") {
 
     # headers
     "crypto/include/aes.h",
-    "crypto/include/aes_gcm_ossl.h",
+    "crypto/include/aes_gcm.h",
+    "crypto/include/cipher_priv.h",
     "crypto/include/aes_icm.h",
-    "crypto/include/aes_icm_ossl.h",
+    "crypto/include/aes_icm_ext.h",
     "crypto/include/alloc.h",
     "crypto/include/auth.h",
     "crypto/include/cipher.h",
@@ -113,7 +116,23 @@ static_library("libsrtp") {
     "crypto/replay/rdbx.c",
     "srtp/ekt.c",
     "srtp/srtp.c",
+
+    # TODO(bugs.webrtc.org/11915): The following files are not needed by
+    # WebRTC and they are not part of the build and the checkout.
+    # Adding them to the build, requires the addition of some conditionals
+    # since these files include duplicated symbols and cannot be built
+    # together.
+    #
+    # "crypto/include/hmac.h",
+    # "crypto/include/sha1.h",
+    # "crypto/cipher/aes.c",
+    # "crypto/cipher/aes_icm.c",
+    # "crypto/hash/hmac.c",
+    # "crypto/hash/sha1.c",
+    # "crypto/cipher/aes_gcm_nss.c",
+    # "crypto/cipher/aes_icm_nss.c",
   ]
+
   public_deps = [
     "//third_party/boringssl:boringssl",
   ]

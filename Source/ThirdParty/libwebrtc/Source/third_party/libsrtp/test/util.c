@@ -42,12 +42,14 @@
  *
  */
 
+#include "config.h"
 #include "util.h"
 
 #include <string.h>
 #include <stdint.h>
 
-char bit_string[MAX_PRINT_STRING_LEN];
+/* include space for null terminator */
+static char bit_string[MAX_PRINT_STRING_LEN + 1];
 
 static inline int hex_char_to_nibble(uint8_t c)
 {
@@ -151,7 +153,7 @@ char *octet_string_hex_string(const void *s, int length)
 
     /* truncate string if it would be too long */
     if (length > MAX_PRINT_STRING_LEN) {
-        length = MAX_PRINT_STRING_LEN - 1;
+        length = MAX_PRINT_STRING_LEN;
     }
 
     for (i = 0; i < length; i += 2) {

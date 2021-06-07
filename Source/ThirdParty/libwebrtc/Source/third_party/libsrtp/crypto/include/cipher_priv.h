@@ -1,15 +1,6 @@
 /*
- * aes_icm.h
  *
- * Header for AES Integer Counter Mode.
- *
- * David A. McGrew
- * Cisco Systems, Inc.
- *
- */
-/*
- *
- * Copyright (c) 2001-2017, Cisco Systems, Inc.
+ * Copyright(c) 2001-2017 Cisco Systems, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,19 +34,29 @@
  *
  */
 
-#ifndef AES_ICM_H
-#define AES_ICM_H
+#ifndef SRTP_CIHPER_PRIV_H
+#define SRTP_CIHPER_PRIV_H
 
 #include "cipher.h"
-#include "datatypes.h"
-#include <openssl/evp.h>
-#include <openssl/aes.h>
 
-typedef struct {
-    v128_t counter; /* holds the counter value          */
-    v128_t offset;  /* initial offset value             */
-    int key_size;
-    EVP_CIPHER_CTX *ctx;
-} srtp_aes_icm_ctx_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#endif /* AES_ICM_H */
+/*
+ * A trivial platform independent random source.
+ * For use in test only.
+ */
+void srtp_cipher_rand_for_tests(void *dest, uint32_t len);
+
+/*
+ * A trivial platform independent 32 bit random number.
+ * For use in test only.
+ */
+uint32_t srtp_cipher_rand_u32_for_tests(void);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* SRTP_CIPHER_PRIV_H */

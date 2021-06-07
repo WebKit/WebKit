@@ -196,7 +196,7 @@ srtp_err_status_t stat_test_runs(uint8_t *data)
     }
 
     if (srtp_mod_stat.on) {
-        debug_print(srtp_mod_stat, "runs test", NULL);
+        debug_print0(srtp_mod_stat, "runs test");
         for (i = 0; i < 6; i++)
             debug_print(srtp_mod_stat, "  runs[]: %d", runs[i]);
         for (i = 0; i < 6; i++)

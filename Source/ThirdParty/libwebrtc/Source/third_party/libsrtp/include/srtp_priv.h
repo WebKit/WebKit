@@ -215,7 +215,7 @@ typedef struct {
  * srtcp_hdr_t represents a secure rtcp header
  *
  * in this implementation, an srtcp header is assumed to be 32-bit
- * alinged
+ * aligned
  */
 
 #ifndef WORDS_BIGENDIAN

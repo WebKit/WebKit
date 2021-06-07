@@ -1,13 +1,12 @@
 /*
- * ut_sim.c
+ * aes_icm.h
  *
- * an unreliable transport simulator
- * (for testing replay databases and suchlike)
+ * Header for AES Integer Counter Mode.
  *
  * David A. McGrew
  * Cisco Systems, Inc.
+ *
  */
-
 /*
  *
  * Copyright (c) 2001-2017, Cisco Systems, Inc.
@@ -44,64 +43,41 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#ifndef AES_ICM_H
+#define AES_ICM_H
 
-#include "ut_sim.h"
-#include "cipher_priv.h"
+#include "cipher.h"
+#include "datatypes.h"
 
-int ut_compar(const void *a, const void *b)
-{
-    uint8_t r;
-    srtp_cipher_rand_for_tests(&r, sizeof(r));
-    return r > (UINT8_MAX / 2) ? -1 : 1;
-}
+#ifdef OPENSSL
 
-void ut_init(ut_connection *utc)
-{
-    int i;
-    utc->index = 0;
+#include <openssl/evp.h>
+#include <openssl/aes.h>
 
-    for (i = 0; i < UT_BUF; i++)
-        utc->buffer[i] = i;
+typedef struct {
+    v128_t counter; /* holds the counter value          */
+    v128_t offset;  /* initial offset value             */
+    int key_size;
+    EVP_CIPHER_CTX *ctx;
+} srtp_aes_icm_ctx_t;
 
-    qsort(utc->buffer, UT_BUF, sizeof(uint32_t), ut_compar);
+#endif /* OPENSSL */
 
-    utc->index = UT_BUF - 1;
-}
+#ifdef NSS
 
-uint32_t ut_next_index(ut_connection *utc)
-{
-    uint32_t tmp;
+#include <nss.h>
+#include <pk11pub.h>
 
-    tmp = utc->buffer[0];
-    utc->index++;
-    utc->buffer[0] = utc->index;
+typedef struct {
+    v128_t counter;
+    v128_t offset;
+    int key_size;
+    uint8_t iv[16];
+    NSSInitContext *nss;
+    PK11SymKey *key;
+    PK11Context *ctx;
+} srtp_aes_icm_ctx_t;
 
-    qsort(utc->buffer, UT_BUF, sizeof(uint32_t), ut_compar);
+#endif /* NSS */
 
-    return tmp;
-}
-
-#ifdef UT_TEST
-
-#include <stdio.h>
-
-int main()
-{
-    uint32_t i, irecvd, idiff;
-    ut_connection utc;
-
-    ut_init(&utc);
-
-    for (i = 0; i < 1000; i++) {
-        irecvd = ut_next_index(&utc);
-        idiff = i - irecvd;
-        printf("%lu\t%lu\t%d\n", i, irecvd, idiff);
-    }
-
-    return 0;
-}
-
-#endif
+#endif /* AES_ICM_H */

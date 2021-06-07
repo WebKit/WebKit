@@ -109,6 +109,8 @@ typedef struct {
 
 #ifdef ENABLE_DEBUG_LOGGING
 
+#define debug_print0(mod, format)                                              \
+    srtp_err_report(srtp_err_level_debug, ("%s: " format "\n"), mod.name)
 #define debug_print(mod, format, arg)                                          \
     srtp_err_report(srtp_err_level_debug, ("%s: " format "\n"), mod.name, arg)
 #define debug_print2(mod, format, arg1, arg2)                                  \
@@ -117,6 +119,9 @@ typedef struct {
 
 #else
 
+#define debug_print0(mod, format)                                              \
+    if (mod.on)                                                                \
+    srtp_err_report(srtp_err_level_debug, ("%s: " format "\n"), mod.name)
 #define debug_print(mod, format, arg)                                          \
     if (mod.on)                                                                \
     srtp_err_report(srtp_err_level_debug, ("%s: " format "\n"), mod.name, arg)

@@ -47,10 +47,10 @@
 extern const srtp_cipher_type_t srtp_null_cipher;
 extern const srtp_cipher_type_t srtp_aes_icm_128;
 extern const srtp_cipher_type_t srtp_aes_icm_256;
-#ifdef OPENSSL
 extern const srtp_cipher_type_t srtp_aes_icm_192;
-extern const srtp_cipher_type_t srtp_aes_gcm_128_openssl;
-extern const srtp_cipher_type_t srtp_aes_gcm_256_openssl;
+#ifdef GCM
+extern const srtp_cipher_type_t srtp_aes_gcm_128;
+extern const srtp_cipher_type_t srtp_aes_gcm_256;
 #endif
 
 /*
@@ -72,6 +72,9 @@ extern srtp_debug_module_t srtp_mod_alloc;
 /* debug modules for cipher types */
 extern srtp_debug_module_t srtp_mod_aes_icm;
 #ifdef OPENSSL
+extern srtp_debug_module_t srtp_mod_aes_gcm;
+#endif
+#ifdef NSS
 extern srtp_debug_module_t srtp_mod_aes_gcm;
 #endif
 

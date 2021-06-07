@@ -1762,6 +1762,7 @@ target_compile_options(libsrtp PRIVATE
 )
 
 target_compile_definitions(libsrtp PRIVATE
+    GCM
     HAVE_ARPA_INET_H
     HAVE_CONFIG_H
     HAVE_INT16_T

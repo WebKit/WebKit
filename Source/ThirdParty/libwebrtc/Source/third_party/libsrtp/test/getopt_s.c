@@ -58,8 +58,9 @@ static int getopt_check_character(char c, const char *string)
 
     while (*string != 0) {
         if (max_string_len == 0) {
-            return '?';
+            return GETOPT_NOT_FOUND;
         }
+        max_string_len--;
         if (*string++ == c) {
             if (*string == ':') {
                 return GETOPT_FOUND_WITH_ARGUMENT;

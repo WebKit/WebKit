@@ -2220,6 +2220,12 @@
 		41D728FF2665075A00651A0B /* hpke.c in Sources */ = {isa = PBXBuildFile; fileRef = 41D728FE2665075A00651A0B /* hpke.c */; };
 		41D729022665079700651A0B /* encrypted_client_hello.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41D729002665079600651A0B /* encrypted_client_hello.cc */; };
 		41D729032665079700651A0B /* handoff.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41D729012665079600651A0B /* handoff.cc */; };
+		41D7290C2665092B00651A0B /* aes_gcm.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D729062665091A00651A0B /* aes_gcm.h */; };
+		41D7290D2665093100651A0B /* aes_icm_ext.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D729042665091900651A0B /* aes_icm_ext.h */; };
+		41D7290F2665093D00651A0B /* cipher_priv.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D729052665091A00651A0B /* cipher_priv.h */; };
+		41D729102665094100651A0B /* cipher_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D729072665091A00651A0B /* cipher_types.h */; };
+		41D72911266509FB00651A0B /* cipher_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 41D729072665091A00651A0B /* cipher_types.h */; };
+		41D7291226650A5900651A0B /* aes_gcm_ossl.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90AA1E43D52900621E92 /* aes_gcm_ossl.c */; };
 		41DB1A9424321614005AB8EA /* rtcstats_objects.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41DB1A9324321614005AB8EA /* rtcstats_objects.cc */; };
 		41DDB24D21265BD700296D47 /* fixed_array.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DDB24B21265BD700296D47 /* fixed_array.h */; };
 		41DDB24E21265BD700296D47 /* inlined_vector.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DDB24C21265BD700296D47 /* inlined_vector.h */; };
@@ -2503,15 +2509,12 @@
 		5C0885071E4A988300403995 /* auth.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90A41E43D51B00621E92 /* auth.c */; };
 		5C0885081E4A988300403995 /* hmac_ossl.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90A51E43D51B00621E92 /* hmac_ossl.c */; };
 		5C0885091E4A988300403995 /* null_auth.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90A61E43D51B00621E92 /* null_auth.c */; };
-		5C08850A1E4A988900403995 /* aes_gcm_ossl.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90AA1E43D52900621E92 /* aes_gcm_ossl.c */; };
 		5C08850B1E4A988900403995 /* aes_icm_ossl.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90AB1E43D52900621E92 /* aes_icm_ossl.c */; };
 		5C08850C1E4A988900403995 /* cipher.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90AC1E43D52900621E92 /* cipher.c */; };
 		5C08850D1E4A988900403995 /* null_cipher.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD90AD1E43D52900621E92 /* null_cipher.c */; };
 		5C08850E1E4A989000403995 /* rdb.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD908D1E43D4CC00621E92 /* rdb.c */; };
 		5C08850F1E4A989000403995 /* rdbx.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD908E1E43D4CC00621E92 /* rdbx.c */; };
 		5C0885101E4A989000403995 /* ut_sim.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CDD908F1E43D4CC00621E92 /* ut_sim.c */; };
-		5C0885241E4A99D200403995 /* aes_gcm_ossl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C0885121E4A99D200403995 /* aes_gcm_ossl.h */; };
-		5C0885251E4A99D200403995 /* aes_icm_ossl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C0885131E4A99D200403995 /* aes_icm_ossl.h */; };
 		5C0885261E4A99D200403995 /* aes_icm.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C0885141E4A99D200403995 /* aes_icm.h */; };
 		5C0885271E4A99D200403995 /* aes.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C0885151E4A99D200403995 /* aes.h */; };
 		5C0885281E4A99D200403995 /* alloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C0885161E4A99D200403995 /* alloc.h */; };
@@ -6559,6 +6562,10 @@
 		41D728FE2665075A00651A0B /* hpke.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hpke.c; sourceTree = "<group>"; };
 		41D729002665079600651A0B /* encrypted_client_hello.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = encrypted_client_hello.cc; sourceTree = "<group>"; };
 		41D729012665079600651A0B /* handoff.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = handoff.cc; sourceTree = "<group>"; };
+		41D729042665091900651A0B /* aes_icm_ext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aes_icm_ext.h; sourceTree = "<group>"; };
+		41D729052665091A00651A0B /* cipher_priv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cipher_priv.h; sourceTree = "<group>"; };
+		41D729062665091A00651A0B /* aes_gcm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aes_gcm.h; sourceTree = "<group>"; };
+		41D729072665091A00651A0B /* cipher_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cipher_types.h; sourceTree = "<group>"; };
 		41DB1A9324321614005AB8EA /* rtcstats_objects.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rtcstats_objects.cc; path = stats/rtcstats_objects.cc; sourceTree = "<group>"; };
 		41DDB24B21265BD700296D47 /* fixed_array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fixed_array.h; path = container/fixed_array.h; sourceTree = "<group>"; };
 		41DDB24C21265BD700296D47 /* inlined_vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = inlined_vector.h; path = container/inlined_vector.h; sourceTree = "<group>"; };
@@ -6838,8 +6845,6 @@
 		5C08848A1E4A978C00403995 /* libyuv.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = libyuv.xcconfig; sourceTree = "<group>"; };
 		5C0884D11E4A97E300403995 /* libsrtp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsrtp.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C0884DE1E4A980100403995 /* libyuv.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libyuv.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		5C0885121E4A99D200403995 /* aes_gcm_ossl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aes_gcm_ossl.h; sourceTree = "<group>"; };
-		5C0885131E4A99D200403995 /* aes_icm_ossl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aes_icm_ossl.h; sourceTree = "<group>"; };
 		5C0885141E4A99D200403995 /* aes_icm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aes_icm.h; sourceTree = "<group>"; };
 		5C0885151E4A99D200403995 /* aes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aes.h; sourceTree = "<group>"; };
 		5C0885161E4A99D200403995 /* alloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = alloc.h; sourceTree = "<group>"; };
@@ -11815,12 +11820,14 @@
 		5C0885111E4A99C200403995 /* include */ = {
 			isa = PBXGroup;
 			children = (
-				5C0885151E4A99D200403995 /* aes.h */,
-				5C0885121E4A99D200403995 /* aes_gcm_ossl.h */,
+				41D729062665091A00651A0B /* aes_gcm.h */,
+				41D729042665091900651A0B /* aes_icm_ext.h */,
 				5C0885141E4A99D200403995 /* aes_icm.h */,
-				5C0885131E4A99D200403995 /* aes_icm_ossl.h */,
+				5C0885151E4A99D200403995 /* aes.h */,
 				5C0885161E4A99D200403995 /* alloc.h */,
 				5C0885171E4A99D200403995 /* auth.h */,
+				41D729052665091A00651A0B /* cipher_priv.h */,
+				41D729072665091A00651A0B /* cipher_types.h */,
 				5C0885181E4A99D200403995 /* cipher.h */,
 				5C0885191E4A99D200403995 /* crypto_kernel.h */,
 				5C08851A1E4A99D200403995 /* crypto_types.h */,
@@ -15439,6 +15446,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				41D72911266509FB00651A0B /* cipher_types.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15654,9 +15662,7 @@
 				5CDD85E81E43B81000621E92 /* aecm_core.h in Headers */,
 				5CDD85E91E43B81000621E92 /* aecm_defines.h in Headers */,
 				5C0885271E4A99D200403995 /* aes.h in Headers */,
-				5C0885241E4A99D200403995 /* aes_gcm_ossl.h in Headers */,
 				5C0885261E4A99D200403995 /* aes_icm.h in Headers */,
-				5C0885251E4A99D200403995 /* aes_icm_ossl.h in Headers */,
 				5CDD87021E43BA7500621E92 /* agc.h in Headers */,
 				416D3BDF212731C200775F09 /* agc2_common.h in Headers */,
 				5CDD87001E43BA7500621E92 /* agc_manager_direct.h in Headers */,
@@ -15896,6 +15902,7 @@
 				4189391C242A704E007FDC41 /* create_video_rtp_depacketizer.h in Headers */,
 				5CDD8A101E43BFB300621E92 /* cross_correlation.h in Headers */,
 				4131C04E234B898D0028A615 /* crypt_string.h in Headers */,
+				41D7290D2665093100651A0B /* aes_icm_ext.h in Headers */,
 				5C08852B1E4A99D200403995 /* crypto_kernel.h in Headers */,
 				4131C3B4234B97120028A615 /* crypto_options.h in Headers */,
 				4131C309234B8DC20028A615 /* crypto_params.h in Headers */,
@@ -16107,6 +16114,7 @@
 				4131C4F7234C867B0028A615 /* histogram.h in Headers */,
 				5CDD83DC1E439A6F00621E92 /* histogram.h in Headers */,
 				419C83581FE246650040C30F /* histogram_percentile_counter.h in Headers */,
+				41D7290F2665093D00651A0B /* cipher_priv.h in Headers */,
 				41893985242A7251007FDC41 /* histograms.h in Headers */,
 				4131C081234B898D0028A615 /* http_common.h in Headers */,
 				41A08BAD212681C8001D5D7B /* i010_buffer.h in Headers */,
@@ -16406,6 +16414,7 @@
 				410091DD242E0BBC00C5EDA2 /* recordable_encoded_frame.h in Headers */,
 				412FF9E1254B3FC8001DF036 /* recursive_critical_section.h in Headers */,
 				5CDD8A4E1E43BFB300621E92 /* red_payload_splitter.h in Headers */,
+				41D7290C2665092B00651A0B /* aes_gcm.h in Headers */,
 				4131C101234B89E20028A615 /* ref_count.h in Headers */,
 				4131C2FD234B8DC20028A615 /* ref_counted_base.h in Headers */,
 				4131C149234B89E20028A615 /* ref_counted_object.h in Headers */,
@@ -16871,6 +16880,7 @@
 				418939CA242A7337007FDC41 /* used_ids.h in Headers */,
 				413A21401FE0F0EF00373E99 /* ut_sim.h in Headers */,
 				5CDD87091E43BA7500621E92 /* utility.h in Headers */,
+				41D729102665094100651A0B /* cipher_types.h in Headers */,
 				5CDD87DF1E43BC2E00621E92 /* utility.h in Headers */,
 				5CDD873B1E43BABE00621E92 /* vad_audio_proc.h in Headers */,
 				5CDD87381E43BABE00621E92 /* vad_audio_proc_internal.h in Headers */,
@@ -17733,9 +17743,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5C08850A1E4A988900403995 /* aes_gcm_ossl.c in Sources */,
 				5C08850B1E4A988900403995 /* aes_icm_ossl.c in Sources */,
 				5C0885031E4A987C00403995 /* alloc.c in Sources */,
+				41D7291226650A5900651A0B /* aes_gcm_ossl.c in Sources */,
 				5C0885071E4A988300403995 /* auth.c in Sources */,
 				5C08850C1E4A988900403995 /* cipher.c in Sources */,
 				5C0885041E4A987C00403995 /* crypto_kernel.c in Sources */,

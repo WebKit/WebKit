@@ -50,6 +50,7 @@
 #include "getopt_s.h" /* for local getopt()    */
 
 #include "rdbx.h"
+#include "cipher_priv.h"
 
 #ifdef ROC_TEST
 #error "srtp_rdbx_t won't work with ROC_TEST - bitmask same size as seq_median"
@@ -305,7 +306,7 @@ srtp_err_status_t test_replay_dbx(int num_trials, unsigned long ws)
      */
     printf("\ttesting insertion with large gaps...");
     for (idx = 0, ircvd = 0; (int)idx < num_trials;
-         idx++, ircvd += (1 << (rand() % 12))) {
+         idx++, ircvd += (1 << (srtp_cipher_rand_u32_for_tests() % 12))) {
         status = rdbx_check_add(&rdbx, ircvd);
         if (status)
             return status;
@@ -320,8 +321,7 @@ srtp_err_status_t test_replay_dbx(int num_trials, unsigned long ws)
     return srtp_err_status_ok;
 }
 
-#include <time.h>   /* for clock()  */
-#include <stdlib.h> /* for random() */
+#include <time.h> /* for clock()  */
 
 double rdbx_check_adds_per_second(int num_trials, unsigned long ws)
 {
@@ -348,6 +348,9 @@ double rdbx_check_adds_per_second(int num_trials, unsigned long ws)
             ++failures;
     }
     timer = clock() - timer;
+    if (timer < 1) {
+        timer = 1;
+    }
 
     printf("number of failures: %d \n", failures);
 

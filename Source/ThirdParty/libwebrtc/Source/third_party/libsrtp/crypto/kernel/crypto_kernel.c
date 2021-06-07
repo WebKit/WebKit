@@ -130,18 +130,18 @@ srtp_err_status_t srtp_crypto_kernel_init()
     if (status) {
         return status;
     }
-#ifdef OPENSSL
+#ifdef GCM
     status = srtp_crypto_kernel_load_cipher_type(&srtp_aes_icm_192,
                                                  SRTP_AES_ICM_192);
     if (status) {
         return status;
     }
-    status = srtp_crypto_kernel_load_cipher_type(&srtp_aes_gcm_128_openssl,
+    status = srtp_crypto_kernel_load_cipher_type(&srtp_aes_gcm_128,
                                                  SRTP_AES_GCM_128);
     if (status) {
         return status;
     }
-    status = srtp_crypto_kernel_load_cipher_type(&srtp_aes_gcm_256_openssl,
+    status = srtp_crypto_kernel_load_cipher_type(&srtp_aes_gcm_256,
                                                  SRTP_AES_GCM_256);
     if (status) {
         return status;
