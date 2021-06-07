@@ -51,7 +51,13 @@ const int cornerRadius = 3;
 const int totalHorizontalMargin = 1;
 const int totalVerticalMargin = 1;
 
-constexpr OptionSet<TextIndicatorOption> findTextIndicatorOptions { TextIndicatorOption::IncludeMarginIfRangeMatchesSelection, TextIndicatorOption::DoNotClipToVisibleRect };
+static OptionSet<TextIndicatorOption> findTextIndicatorOptions(const Frame& frame)
+{
+    OptionSet<TextIndicatorOption> options { TextIndicatorOption::IncludeMarginIfRangeMatchesSelection, TextIndicatorOption::DoNotClipToVisibleRect };
+    if (auto selectedRange = frame.selection().selection().range(); selectedRange && HTMLElement::isInsideImageOverlay(*selectedRange))
+        options.add({ TextIndicatorOption::PaintAllContent, TextIndicatorOption::PaintBackgrounds });
+    return options;
+};
 
 static constexpr auto highlightColor = SRGBA<uint8_t> { 255, 228, 56 };
 
@@ -64,7 +70,7 @@ void FindIndicatorOverlayClientIOS::drawRect(PageOverlay& overlay, GraphicsConte
 
     // If the page scale changed, we need to paint a new TextIndicator.
     if (m_textIndicator->contentImageScaleFactor() != scaleFactor)
-        m_textIndicator = TextIndicator::createWithSelectionInFrame(m_frame, findTextIndicatorOptions, TextIndicatorPresentationTransition::None, FloatSize(totalHorizontalMargin, totalVerticalMargin));
+        m_textIndicator = TextIndicator::createWithSelectionInFrame(m_frame, findTextIndicatorOptions(m_frame), TextIndicatorPresentationTransition::None, FloatSize(totalHorizontalMargin, totalVerticalMargin));
 
     if (!m_textIndicator)
         return;
@@ -91,7 +97,7 @@ bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOve
         m_isShowingFindIndicator = false;
     }
 
-    auto textIndicator = TextIndicator::createWithSelectionInFrame(selectedFrame, findTextIndicatorOptions, TextIndicatorPresentationTransition::None, FloatSize(totalHorizontalMargin, totalVerticalMargin));
+    auto textIndicator = TextIndicator::createWithSelectionInFrame(selectedFrame, findTextIndicatorOptions(selectedFrame), TextIndicatorPresentationTransition::None, FloatSize(totalHorizontalMargin, totalVerticalMargin));
     if (!textIndicator)
         return false;
 

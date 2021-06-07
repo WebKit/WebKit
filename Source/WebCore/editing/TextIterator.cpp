@@ -731,6 +731,16 @@ bool TextIterator::handleReplacedElement()
         }
     }
 
+    if (m_behaviors.contains(TextIteratorBehavior::EntersImageOverlays) && is<HTMLElement>(m_node) && downcast<HTMLElement>(*m_node).hasImageOverlay()) {
+        if (auto shadowRoot = makeRefPtr(m_node->shadowRoot())) {
+            m_node = shadowRoot.get();
+            pushFullyClippedState(m_fullyClippedStack, *m_node);
+            m_offset = 0;
+            return false;
+        }
+        ASSERT_NOT_REACHED();
+    }
+
     m_hasEmitted = true;
 
     if (m_behaviors.contains(TextIteratorBehavior::EmitsObjectReplacementCharacters) && renderer.isReplaced()) {
@@ -2454,9 +2464,9 @@ String plainTextReplacingNoBreakSpace(const SimpleRange& range, TextIteratorBeha
     return plainText(range, defaultBehaviors, isDisplayString).replace(noBreakSpace, ' ');
 }
 
-static TextIteratorBehaviors findIteratorOptions(FindOptions options)
+static constexpr TextIteratorBehaviors findIteratorOptions(FindOptions options)
 {
-    TextIteratorBehaviors iteratorOptions { TextIteratorBehavior::EntersTextControls, TextIteratorBehavior::ClipsToFrameAncestors };
+    TextIteratorBehaviors iteratorOptions { TextIteratorBehavior::EntersTextControls, TextIteratorBehavior::ClipsToFrameAncestors, TextIteratorBehavior::EntersImageOverlays };
     if (!options.contains(DoNotTraverseFlatTree))
         iteratorOptions.add(TextIteratorBehavior::TraversesFlatTree);
     return iteratorOptions;

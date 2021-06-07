@@ -59,6 +59,8 @@ enum class TextIteratorBehavior : uint16_t {
     ClipsToFrameAncestors = 1 << 8,
 
     TraversesFlatTree = 1 << 9,
+
+    EntersImageOverlays = 1 << 10,
 };
 
 using TextIteratorBehaviors = OptionSet<TextIteratorBehavior>;

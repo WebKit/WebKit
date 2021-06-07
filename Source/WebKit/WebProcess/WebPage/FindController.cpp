@@ -374,7 +374,11 @@ void FindController::hideFindUI()
 
 bool FindController::updateFindIndicator(Frame& selectedFrame, bool isShowingOverlay, bool shouldAnimate)
 {
-    auto indicator = TextIndicator::createWithSelectionInFrame(selectedFrame, { TextIndicatorOption::IncludeMarginIfRangeMatchesSelection }, shouldAnimate ? TextIndicatorPresentationTransition::Bounce : TextIndicatorPresentationTransition::None);
+    OptionSet<TextIndicatorOption> textIndicatorOptions { TextIndicatorOption::IncludeMarginIfRangeMatchesSelection };
+    if (auto selectedRange = selectedFrame.selection().selection().range(); selectedRange && HTMLElement::isInsideImageOverlay(*selectedRange))
+        textIndicatorOptions.add({ TextIndicatorOption::PaintAllContent, TextIndicatorOption::PaintBackgrounds });
+
+    auto indicator = TextIndicator::createWithSelectionInFrame(selectedFrame, textIndicatorOptions, shouldAnimate ? TextIndicatorPresentationTransition::Bounce : TextIndicatorPresentationTransition::None);
     if (!indicator)
         return false;
 

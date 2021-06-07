@@ -1,3 +1,14 @@
+2021-06-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Find-in-page should match text inside image overlays
+        https://bugs.webkit.org/show_bug.cgi?id=226704
+
+        Reviewed by Tim Horton.
+
+        Add an API test to verify that text inside image overlays is visible to find-in-page.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/FindInPage.mm:
+
 2021-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Signal "window-object-cleared" not emitted unless frame js context is get before
