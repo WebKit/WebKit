@@ -1,3 +1,23 @@
+2021-06-07  Saam Barati  <sbarati@apple.com>
+
+        Short circuit read modify write nodes emit byte code that uses the wrong locals
+        https://bugs.webkit.org/show_bug.cgi?id=226576
+        <rdar://problem/78810362>
+
+        Reviewed by Yusuke Suzuki.
+
+        It's never a good idea to use the wrong local :-)
+        
+        This patch also adds support for dumping predecessors of basic blocks
+        in the bytecode dump.
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::CodeBlockBytecodeDumper<Block>::dumpGraph):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ShortCircuitReadModifyResolveNode::emitBytecode):
+        (JSC::ShortCircuitReadModifyDotNode::emitBytecode):
+        (JSC::ShortCircuitReadModifyBracketNode::emitBytecode):
+
 2021-06-07  Mark Lam  <mark.lam@apple.com>
 
         Put the Baseline JIT prologue and op_loop_hint code in JIT thunks.

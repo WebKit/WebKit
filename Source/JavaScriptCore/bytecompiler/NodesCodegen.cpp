@@ -3484,7 +3484,7 @@ RegisterID* ShortCircuitReadModifyResolveNode::emitBytecode(BytecodeGenerator& g
             Ref<Label> afterAssignment = generator.newLabel();
             emitShortCircuitAssignment(generator, result.get(), m_operator, afterAssignment.get());
 
-            result = generator.emitNode(result.get(), m_right); // Execute side effects first.
+            generator.emitNode(result.get(), m_right); // Execute side effects first.
             bool threwException = generator.emitReadOnlyExceptionIfNeeded(var);
 
             if (!threwException)
@@ -3501,7 +3501,7 @@ RegisterID* ShortCircuitReadModifyResolveNode::emitBytecode(BytecodeGenerator& g
             Ref<Label> afterAssignment = generator.newLabel();
             emitShortCircuitAssignment(generator, result.get(), m_operator, afterAssignment.get());
 
-            result = generator.emitNode(result.get(), m_right);
+            generator.emitNode(result.get(), m_right);
             generator.move(local.get(), result.get());
             generator.emitProfileType(result.get(), var, divotStart(), divotEnd());
 
@@ -3514,7 +3514,7 @@ RegisterID* ShortCircuitReadModifyResolveNode::emitBytecode(BytecodeGenerator& g
         Ref<Label> afterAssignment = generator.newLabel();
         emitShortCircuitAssignment(generator, result.get(), m_operator, afterAssignment.get());
 
-        result = generator.emitNode(result.get(), m_right);
+        generator.emitNode(result.get(), m_right);
         generator.emitProfileType(result.get(), var, divotStart(), divotEnd());
 
         generator.emitLabel(afterAssignment.get());
@@ -3524,7 +3524,9 @@ RegisterID* ShortCircuitReadModifyResolveNode::emitBytecode(BytecodeGenerator& g
     generator.emitExpressionInfo(newDivot, divotStart(), newDivot);
     RefPtr<RegisterID> scope = generator.emitResolveScope(nullptr, var);
 
-    RefPtr<RegisterID> result = generator.emitGetFromScope(generator.tempDestination(dst), scope.get(), var, ThrowIfNotFound);
+    RefPtr<RegisterID> result = generator.tempDestination(dst);
+
+    generator.emitGetFromScope(result.get(), scope.get(), var, ThrowIfNotFound);
     generator.emitTDZCheckIfNecessary(var, result.get(), nullptr);
 
     Ref<Label> afterAssignment = generator.newLabel();
@@ -3657,24 +3659,24 @@ RegisterID* ShortCircuitReadModifyDotNode::emitBytecode(BytecodeGenerator& gener
     RefPtr<RegisterID> base = generator.emitNodeForLeftHandSide(m_base, m_rightHasAssignments, m_right->isPure(generator));
     RefPtr<RegisterID> thisValue;
 
-    RefPtr<RegisterID> result;
+    RefPtr<RegisterID> result = generator.tempDestination(dst);
 
     generator.emitExpressionInfo(subexpressionDivot(), subexpressionStart(), subexpressionEnd());
     if (m_base->isSuperNode()) {
         thisValue = generator.ensureThis();
-        result = generator.emitGetById(generator.tempDestination(dst), base.get(), thisValue.get(), m_ident);
+        generator.emitGetById(result.get(), base.get(), thisValue.get(), m_ident);
     } else
-        result = generator.emitGetById(generator.tempDestination(dst), base.get(), m_ident);
+        generator.emitGetById(result.get(), base.get(), m_ident);
 
     Ref<Label> afterAssignment = generator.newLabel();
     emitShortCircuitAssignment(generator, result.get(), m_operator, afterAssignment.get());
 
-    result = generator.emitNode(result.get(), m_right);
+    generator.emitNode(result.get(), m_right);
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     if (m_base->isSuperNode())
-        result = generator.emitPutById(base.get(), thisValue.get(), m_ident, result.get());
+        generator.emitPutById(base.get(), thisValue.get(), m_ident, result.get());
     else
-        result = generator.emitPutById(base.get(), m_ident, result.get());
+        generator.emitPutById(base.get(), m_ident, result.get());
     generator.emitProfileType(result.get(), divotStart(), divotEnd());
 
     generator.emitLabel(afterAssignment.get());
@@ -3753,24 +3755,24 @@ RegisterID* ShortCircuitReadModifyBracketNode::emitBytecode(BytecodeGenerator& g
     RefPtr<RegisterID> property = generator.emitNodeForLeftHandSideForProperty(m_subscript, m_rightHasAssignments, m_right->isPure(generator));
     RefPtr<RegisterID> thisValue;
 
-    RefPtr<RegisterID> result;
+    RefPtr<RegisterID> result = generator.tempDestination(dst);
 
     generator.emitExpressionInfo(subexpressionDivot(), subexpressionStart(), subexpressionEnd());
     if (m_base->isSuperNode()) {
         thisValue = generator.ensureThis();
-        result = generator.emitGetByVal(generator.tempDestination(dst), base.get(), thisValue.get(), property.get());
+        generator.emitGetByVal(result.get(), base.get(), thisValue.get(), property.get());
     } else
-        result = generator.emitGetByVal(generator.tempDestination(dst), base.get(), property.get());
+        generator.emitGetByVal(result.get(), base.get(), property.get());
 
     Ref<Label> afterAssignment = generator.newLabel();
     emitShortCircuitAssignment(generator, result.get(), m_operator, afterAssignment.get());
 
-    result = generator.emitNode(result.get(), m_right);
+    generator.emitNode(result.get(), m_right);
     generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
     if (m_base->isSuperNode())
-        result = generator.emitPutByVal(base.get(), thisValue.get(), property.get(), result.get());
+        generator.emitPutByVal(base.get(), thisValue.get(), property.get(), result.get());
     else
-        result = generator.emitPutByVal(base.get(), property.get(), result.get());
+        generator.emitPutByVal(base.get(), property.get(), result.get());
     generator.emitProfileType(result.get(), divotStart(), divotEnd());
 
     generator.emitLabel(afterAssignment.get());
