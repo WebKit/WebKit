@@ -54,8 +54,13 @@ public:
 
     ALWAYS_INLINE void untagReturnAddress(RegisterID scratch = InvalidGPR)
     {
-        untagPtr(ARM64Registers::sp, ARM64Registers::lr);
+        untagReturnAddressWithoutExtraValidation();
         validateUntaggedPtr(ARM64Registers::lr, scratch);
+    }
+
+    ALWAYS_INLINE void untagReturnAddressWithoutExtraValidation()
+    {
+        untagPtr(ARM64Registers::sp, ARM64Registers::lr);
     }
 
     ALWAYS_INLINE void tagPtr(PtrTag tag, RegisterID target)

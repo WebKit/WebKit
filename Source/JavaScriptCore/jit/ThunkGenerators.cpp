@@ -81,11 +81,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> popThunkStackPreservesAndHandleExceptionGe
 {
     CCallHelpers jit;
 
-#if CPU(X86_64)
-    jit.addPtr(CCallHelpers::TrustedImm32(2 * sizeof(CPURegister)), X86Registers::esp);
-#elif CPU(ARM64)
-    jit.popPair(CCallHelpers::framePointerRegister, CCallHelpers::linkRegister);
-#endif
+    jit.addPtr(CCallHelpers::TrustedImm32(2 * sizeof(CPURegister)), CCallHelpers::stackPointerRegister);
 
     CCallHelpers::Jump continuation = jit.jump();
 

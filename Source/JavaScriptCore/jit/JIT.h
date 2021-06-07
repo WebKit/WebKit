@@ -318,7 +318,9 @@ namespace JSC {
             m_exceptionChecksWithCallFrameRollback.append(emitExceptionCheck(vm()));
         }
 
+#if !ENABLE(EXTRA_CTI_THUNKS)
         void privateCompileExceptionHandlers();
+#endif
 
         void advanceToNextCheckpoint();
         void emitJumpSlowToHotForCheckpoint(Jump);
@@ -790,6 +792,26 @@ namespace JSC {
 
 #if ENABLE(EXTRA_CTI_THUNKS)
         // Thunk generators.
+        static MacroAssemblerCodeRef<JITThunkPtrTag> prologueGenerator0(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> prologueGenerator1(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> prologueGenerator2(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> prologueGenerator3(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> prologueGenerator4(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> prologueGenerator5(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> prologueGenerator6(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> prologueGenerator7(VM&);
+        MacroAssemblerCodeRef<JITThunkPtrTag> prologueGenerator(VM&, bool doesProfiling, bool isConstructor, bool hasHugeFrame, const char* name);
+
+        static MacroAssemblerCodeRef<JITThunkPtrTag> arityFixup_prologueGenerator0(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> arityFixup_prologueGenerator1(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> arityFixup_prologueGenerator2(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> arityFixup_prologueGenerator3(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> arityFixup_prologueGenerator4(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> arityFixup_prologueGenerator5(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> arityFixup_prologueGenerator6(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> arityFixup_prologueGenerator7(VM&);
+        MacroAssemblerCodeRef<JITThunkPtrTag> arityFixupPrologueGenerator(VM&, bool isConstructor, ThunkGenerator normalPrologueGenerator, const char* name);
+
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_del_by_id_prepareCallGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_del_by_val_prepareCallGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_get_by_id_prepareCallGenerator(VM&);
@@ -804,7 +826,14 @@ namespace JSC {
         static MacroAssemblerCodeRef<JITThunkPtrTag> slow_op_resolve_scopeGenerator(VM&);
 
         static MacroAssemblerCodeRef<JITThunkPtrTag> op_check_traps_handlerGenerator(VM&);
-        static MacroAssemblerCodeRef<JITThunkPtrTag> op_enter_handlerGenerator(VM&);
+
+        static MacroAssemblerCodeRef<JITThunkPtrTag> op_enter_canBeOptimized_Generator(VM&);
+        static MacroAssemblerCodeRef<JITThunkPtrTag> op_enter_cannotBeOptimized_Generator(VM&);
+        MacroAssemblerCodeRef<JITThunkPtrTag> op_enter_Generator(VM&, bool canBeOptimized, const char* thunkName);
+
+#if ENABLE(DFG_JIT)
+        static MacroAssemblerCodeRef<JITThunkPtrTag> op_loop_hint_Generator(VM&);
+#endif
         static MacroAssemblerCodeRef<JITThunkPtrTag> op_ret_handlerGenerator(VM&);
         static MacroAssemblerCodeRef<JITThunkPtrTag> op_throw_handlerGenerator(VM&);
 

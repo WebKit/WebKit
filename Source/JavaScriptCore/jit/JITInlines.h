@@ -91,7 +91,6 @@ ALWAYS_INLINE void JIT::emitLoadCharacterString(RegisterID src, RegisterID dst, 
 
 ALWAYS_INLINE JIT::Call JIT::emitNakedNearCall(CodePtr<NoPtrTag> target)
 {
-    ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
     Call nakedCall = nearCall();
     m_nearCalls.append(NearCallRecord(nakedCall, FunctionPtr<JSInternalPtrTag>(target.retagged<JSInternalPtrTag>())));
     return nakedCall;

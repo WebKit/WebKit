@@ -1,3 +1,97 @@
+2021-06-07  Mark Lam  <mark.lam@apple.com>
+
+        Put the Baseline JIT prologue and op_loop_hint code in JIT thunks.
+        https://bugs.webkit.org/show_bug.cgi?id=226375
+
+        Reviewed by Keith Miller and Robin Morisset.
+
+        Baseline JIT prologue code varies in behavior based on several variables.  These
+        variables include (1) whether the prologue does any arguments value profiling,
+        (2) whether the prologue is for a constructor, and (3) whether the compiled
+        CodeBlock will have such a large frame that it is greater than the stack reserved
+        zone (aka red zone) which would require additional stack check logic.
+
+        The pre-existing code would generate specialized code based on these (and other
+        variables).  In converting to using thunks for the prologue, we opt not to
+        convert these specializations into runtime checks.  Instead, the implementation
+        uses 1 of 8 possible specialized thunks to reduce the need to pass arguments for
+        runtime checks.  The only needed argument passed to the prologue thunks is the
+        codeBlock pointer.
+
+        There are 8 possible thunks because we specialize based on 3 variables:
+        1. doesProfiling
+        2. isConstructor
+        3. hasHugeFrame
+
+        2**3 yields 8 permutations of prologue thunk specializations.
+
+        Similarly, there are also 8 analogous arity fixup prologues that work similarly.
+
+        The op_loop_hint thunk only takes 1 runtime argument: the bytecode offset.
+
+        We've tried doing the loop_hint optimization check in the thunk (in order to move
+        both the fast and slow path into the thunk for maximum space savings).  However,
+        this seems to have some slight negative impact on benchmark performance.  We ended
+        up just keeping the fast path and instead have the slow path call a thunk to do
+        its work.  This realizes the bulk of the size savings without the perf impact.
+
+        This patch also optimizes op_enter a bit more by eliminating the need to pass any
+        arguments to the thunk.  The thunk previously took 2 arguments: localsToInit and
+        canBeOptimized.  localsToInit is now computed in the thunk at runtime, and
+        canBeOptimized is used as a specialization argument to generate 2 variants of the
+        op_enter thunk: op_enter_canBeOptimized_Generator and op_enter_cannotBeOptimized_Generator,
+        thereby removing the need to pass it as a runtime argument.
+
+        LinkBuffer size results (from a single run of Speedometer2):
+
+           BaselineJIT: 93319628 (88.996532 MB)   => 83851824 (79.967331 MB)   0.90x
+         ExtraCTIThunk: 5992 (5.851562 KB)        => 6984 (6.820312 KB)        1.17x
+                        ...
+                 Total: 197530008 (188.379295 MB) => 188459444 (179.728931 MB) 0.95x
+
+        Speedometer2 and JetStream2 results (as measured on an M1 Mac) are neutral.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::untagReturnAddressWithoutExtraValidation):
+        * assembler/MacroAssemblerARM64E.h:
+        (JSC::MacroAssemblerARM64E::untagReturnAddress):
+        (JSC::MacroAssemblerARM64E::untagReturnAddressWithoutExtraValidation):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::branchAdd32):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::branchAdd32):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::offsetOfNumCalleeLocals):
+        (JSC::CodeBlock::offsetOfNumVars):
+        (JSC::CodeBlock::offsetOfArgumentValueProfiles):
+        (JSC::CodeBlock::offsetOfShouldAlwaysBeInlined):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitSaveCalleeSavesFor):
+        (JSC::AssemblyHelpers::emitSaveCalleeSavesForBaselineJIT):
+        (JSC::AssemblyHelpers::emitRestoreCalleeSavesForBaselineJIT):
+        * jit/JIT.cpp:
+        (JSC::JIT::compileAndLinkWithoutFinalizing):
+        (JSC::JIT::prologueGenerator):
+        (JSC::JIT::arityFixupPrologueGenerator):
+        (JSC::JIT::privateCompileExceptionHandlers):
+        * jit/JIT.h:
+        * jit/JITInlines.h:
+        (JSC::JIT::emitNakedNearCall):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::op_ret_handlerGenerator):
+        (JSC::JIT::emit_op_enter):
+        (JSC::JIT::op_enter_Generator):
+        (JSC::JIT::op_enter_canBeOptimized_Generator):
+        (JSC::JIT::op_enter_cannotBeOptimized_Generator):
+        (JSC::JIT::emit_op_loop_hint):
+        (JSC::JIT::emitSlow_op_loop_hint):
+        (JSC::JIT::op_loop_hint_Generator):
+        (JSC::JIT::op_enter_handlerGenerator): Deleted.
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_enter):
+        * jit/ThunkGenerators.cpp:
+        (JSC::popThunkStackPreservesAndHandleExceptionGenerator):
+
 2021-06-07  Robin Morisset  <rmorisset@apple.com>
 
         Optimize compareStrictEq when neither side is a double and at least one is neither a string nor a BigInt
