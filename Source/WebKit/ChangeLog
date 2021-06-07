@@ -1,3 +1,32 @@
+2021-06-06  Jean-Yves Avenard  <jya@apple.com>
+
+        [GPUP][MSE] QuotaExceededError Exception not thrown even if the sum of totalTrackBufferSize and appendBuffer size exceeds maximumBufferSize
+        https://bugs.webkit.org/show_bug.cgi?id=226034
+        rdar://78579904
+
+        Reviewed by Eric Carlson.
+
+        Cache the size of the remote source buffer's track size. We pass an extra
+        totalTrackBufferSizeInBytes argument to each method that could impact
+        a source buffer size.
+
+        * GPUProcess/media/RemoteSourceBufferProxy.cpp:
+        (WebKit::RemoteSourceBufferProxy::sourceBufferPrivateAppendComplete):
+        (WebKit::RemoteSourceBufferProxy::removeCodedFrames):
+        (WebKit::RemoteSourceBufferProxy::evictCodedFrames):
+        * GPUProcess/media/RemoteSourceBufferProxy.h:
+        * GPUProcess/media/RemoteSourceBufferProxy.messages.in:
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.cpp:
+        (WebKit::SourceBufferPrivateRemote::abort): Add comment explaining on why
+        getting an up to date totalTrackBufferSizeInBytes isn't necessary at this point.
+        (WebKit::SourceBufferPrivateRemote::removeCodedFrames):
+        (WebKit::SourceBufferPrivateRemote::evictCodedFrames):
+        (WebKit::SourceBufferPrivateRemote::clearTrackBuffers):
+        (WebKit::SourceBufferPrivateRemote::sourceBufferPrivateAppendComplete):
+        (WebKit::SourceBufferPrivateRemote::totalTrackBufferSizeInBytes const):
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.h:
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.messages.in:
+
 2021-06-06  David Kilzer  <ddkilzer@apple.com>
 
         Weak external symbols found in WebKit.framework with Release+Coverage configuration

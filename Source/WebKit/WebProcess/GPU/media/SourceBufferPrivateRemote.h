@@ -99,6 +99,7 @@ private:
     void setAppendWindowEnd(const MediaTime&) final;
     void seekToTime(const MediaTime&) final;
     void updateTrackIds(Vector<std::pair<AtomString, AtomString>>&&) final;
+    uint64_t totalTrackBufferSizeInBytes() const final;
 
     bool isActive() const final { return m_isActive; }
 
@@ -110,7 +111,7 @@ private:
     void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&&, CompletionHandler<void()>&&);
     void sourceBufferPrivateStreamEndedWithDecodeError();
     void sourceBufferPrivateAppendError(bool decodeError);
-    void sourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult, const WebCore::PlatformTimeRanges& buffered);
+    void sourceBufferPrivateAppendComplete(WebCore::SourceBufferPrivateClient::AppendResult, const WebCore::PlatformTimeRanges& buffered, uint64_t totalTrackBufferSizeInBytes);
     void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&);
     void sourceBufferPrivateDurationChanged(const MediaTime&);
     void sourceBufferPrivateDidParseSample(double sampleDuration);
@@ -127,6 +128,7 @@ private:
     HashMap<AtomString, TrackPrivateRemoteIdentifier> m_trackIdentifierMap;
 
     bool m_isActive { false };
+    uint64_t m_totalTrackBufferSizeInBytes = { 0 };
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }

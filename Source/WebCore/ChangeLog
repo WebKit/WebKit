@@ -1,3 +1,19 @@
+2021-06-06  Jean-Yves Avenard  <jya@apple.com>
+
+        [GPUP][MSE] QuotaExceededError Exception not thrown even if the sum of totalTrackBufferSize and appendBuffer size exceeds maximumBufferSize
+        https://bugs.webkit.org/show_bug.cgi?id=226034
+        rdar://78579904
+
+        Reviewed by Eric Carlson.
+
+        Existing media-source-append-buffer-full-quota-exceeded-error.html test will
+        be exercising this code once bug 225367 has been fixed.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::appendBufferInternal): fly-by fix, use size of pending
+        buffer rather than the capacity of the holding vector.
+        * platform/graphics/SourceBufferPrivate.h: Make totalTrackBufferSizeInBytes method virtual.
+
 2021-06-06  Chris Dumez  <cdumez@apple.com>
 
         Reduce use of legacy EventLoopEventQueue and EventLoopTaskQueue
