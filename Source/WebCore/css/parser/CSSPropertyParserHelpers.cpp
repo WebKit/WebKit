@@ -1308,15 +1308,12 @@ RefPtr<CSSPrimitiveValue> consumeIdentRange(CSSParserTokenRange& range, CSSValue
     return consumeIdent(range);
 }
 
-// FIXME-NEWPARSER: Eventually we'd like this to use CSSCustomIdentValue, but we need
-// to do other plumbing work first (like changing Pair to CSSValuePair and make it not
-// use only primitive values).
 RefPtr<CSSPrimitiveValue> consumeCustomIdent(CSSParserTokenRange& range, bool shouldLowercase)
 {
     if (range.peek().type() != IdentToken || isCSSWideKeyword(range.peek().id()))
         return nullptr;
     auto identifier = range.consumeIncludingWhitespace().value();
-    return CSSValuePool::singleton().createValue(shouldLowercase ? identifier.convertToASCIILowercase() : identifier.toString(), CSSUnitType::CSS_STRING);
+    return CSSValuePool::singleton().createCustomIdent(shouldLowercase ? identifier.convertToASCIILowercase() : identifier.toString());
 }
 
 RefPtr<CSSPrimitiveValue> consumeString(CSSParserTokenRange& range)

@@ -1,3 +1,44 @@
+2021-06-06  Darin Adler  <darin@apple.com>
+
+        Handle custom identifiers and strings separately, so we can quote strings correctly consistently
+        https://bugs.webkit.org/show_bug.cgi?id=226694
+
+        Reviewed by Sam Weinig.
+
+        * TestExpectations: Removed expected failures from 13 css-counter-styles tests that are not
+        currently failing. I had planned to work on making more of these pass, but first found I could
+        fix them with a corrected custom-ident implementation.
+
+        * css3/supports-expected.txt: Rebased.
+        * css3/supports.html: Updated to expect the value of the content property to be a quoted string,
+        rather than the old behavior, which was to leave the string unquoted if it happened to be a
+        string with all characters legal for a custom-ident. New expectation is the correct behavior.
+
+        * fast/css/alt-inherit-initial-expected.txt: Rebased.
+        * fast/css/alt-inherit-initial.html: Updated to expect the value of the language property to be
+        a custom-ident, and serialize unusual cases with custom-ident rules, not as a quoted string. New
+        expectation is the correct behavior.
+        * fast/css/content-language-comma-separated-list-expected.txt: Ditto.
+        * fast/css/content-language-empty-expected.txt: Ditto.
+        * fast/css/content-language-only-whitespace-expected.txt: Ditto.
+        * fast/css/content-language-with-whitespace-expected.txt: Ditto.
+
+        * fast/css/getComputedStyle/computed-style-properties-expected.txt: Rebased.
+        * fast/css/getComputedStyle/computed-style-properties.html: Expect content string (see above).
+
+        * fast/css/lang-mapped-to-webkit-locale-expected.txt: Rebased.
+        * fast/css/lang-mapped-to-webkit-locale.xhtml: Expect language custom-ident (see above).
+
+        * fast/css/nested-at-rules-expected.txt: Rebased.
+        * fast/css/nested-at-rules.html: Expect content string (see above).
+
+        * fast/css/parsing-text-emphasis-expected.txt: Rebased.
+        * fast/css/parsing-text-emphasis.html: Updated to expect strings to remaing quoted strings in
+        the text-emphasis property, not change into custom-ident if all characters happen to fit.
+
+        * fast/encoding/css-charset-default-expected.txt: Expect content string (see above).
+        * inspector/css/pseudo-element-matches-for-pseudo-element-node-expected.txt: Ditto.
+
 2021-06-06  Alan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Adopt a less quirky fixed column width space distribution

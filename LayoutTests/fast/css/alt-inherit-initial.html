@@ -19,13 +19,13 @@ description("Tests inherit and initial on 'alt' CSS property.");
 var parentDiv = document.getElementById("parentDiv");
 var testDiv = document.getElementById("testDiv");
 shouldBeEmptyString("parentDiv.style['alt']", "");
-shouldBeEqualToString("window.getComputedStyle(parentDiv).getPropertyValue('alt')", "TestAlt");
+shouldBeEqualToString("window.getComputedStyle(parentDiv).getPropertyValue('alt')", '"TestAlt"');
 shouldBeEmptyString("testDiv.style['alt']");
 
 // Inherit.
 evalAndLog("testDiv.style['alt'] = 'inherit'");
 shouldBeEqualToString("testDiv.style['alt']", "inherit");
-shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('alt')", "TestAlt");
+shouldBeEqualToString("window.getComputedStyle(testDiv).getPropertyValue('alt')", '"TestAlt"');
 
 // Initial.
 evalAndLog("testDiv.style['alt'] = 'initial'");

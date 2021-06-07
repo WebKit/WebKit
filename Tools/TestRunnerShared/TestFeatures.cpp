@@ -283,7 +283,7 @@ static TestFeatures parseTestHeader(std::filesystem::path path, const std::unord
         auto value = pairString.substr(equalsLocation + 1, pairEnd - (equalsLocation + 1));
         
         if (!parseTestHeaderFeature(features, key, value, path, keyTypeMap))
-            LOG_ERROR("Unknown key, '%s, in test header in %s", key.c_str(), path.c_str());
+            LOG_ERROR("Unknown key, '%s', in test header in %s", key.c_str(), path.c_str());
         
         pairStart = pairEnd + 1;
     }

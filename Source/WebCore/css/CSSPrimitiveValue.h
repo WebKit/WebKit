@@ -78,14 +78,10 @@ template<> inline float roundForImpreciseConversion(double value)
 
 class CSSPrimitiveValue final : public CSSValue {
 public:
-
-    static bool isFontRelativeLength(CSSUnitType);
-    static bool isLength(CSSUnitType);
-    static bool isResolution(CSSUnitType);
-    static bool isViewportPercentageLength(CSSUnitType type) { return type >= CSSUnitType::CSS_VW && type <= CSSUnitType::CSS_VMAX; }
+    static constexpr bool isLength(CSSUnitType);
     static double computeDegrees(CSSUnitType, double angle);
 
-    // FIXME: Some of these use primitiveUnitType() and some use primitiveType(). Those that use primitiveUnitType() are broken with calc().
+    // FIXME: Some of these use primitiveUnitType() and some use primitiveType(). Many that use primitiveUnitType() are likely broken with calc().
     bool isAngle() const { return unitCategory(primitiveType()) == CSSUnitCategory::Angle; }
     bool isAttr() const { return primitiveUnitType() == CSSUnitType::CSS_ATTR; }
     bool isCounter() const { return primitiveUnitType() == CSSUnitType::CSS_COUNTER; }
@@ -120,6 +116,7 @@ public:
     bool isViewportPercentageMin() const { return primitiveUnitType() == CSSUnitType::CSS_VMIN; }
     bool isValueID() const { return primitiveUnitType() == CSSUnitType::CSS_VALUE_ID; }
     bool isFlex() const { return primitiveType() == CSSUnitType::CSS_FR; }
+    bool isCustomIdent() const { return primitiveUnitType() == CSSUnitType::CustomIdent; }
 
     static Ref<CSSPrimitiveValue> createIdentifier(CSSValueID valueID) { return adoptRef(*new CSSPrimitiveValue(valueID)); }
     static Ref<CSSPrimitiveValue> createIdentifier(CSSPropertyID propertyID) { return adoptRef(*new CSSPrimitiveValue(propertyID)); }
@@ -135,11 +132,8 @@ public:
 
     void cleanup();
 
-    WEBCORE_EXPORT CSSUnitType primitiveType() const;
-    WEBCORE_EXPORT ExceptionOr<void> setFloatValue(CSSUnitType , double);
-    WEBCORE_EXPORT ExceptionOr<float> getFloatValue(CSSUnitType) const;
-    WEBCORE_EXPORT ExceptionOr<void> setStringValue(CSSUnitType, const String&);
-    WEBCORE_EXPORT ExceptionOr<String> getStringValue() const;
+    CSSUnitType primitiveType() const;
+    ExceptionOr<float> getFloatValue(CSSUnitType) const;
 
     double computeDegrees() const;
     
@@ -152,6 +146,7 @@ public:
     bool convertingToLengthRequiresNonNullStyle(int lengthConversion) const;
 
     double doubleValue(CSSUnitType) const;
+
     // It's usually wrong to call this; it can trigger type conversion in calc without sufficient context to resolve relative length units.
     double doubleValue() const;
 
@@ -246,6 +241,10 @@ private:
     ALWAYS_INLINE String formatNumberForCustomCSSText() const;
     NEVER_INLINE String formatNumberValue(StringView) const;
 
+    static constexpr bool isFontRelativeLength(CSSUnitType);
+    static constexpr bool isResolution(CSSUnitType);
+    static constexpr bool isViewportPercentageLength(CSSUnitType type) { return type >= CSSUnitType::CSS_VW && type <= CSSUnitType::CSS_VMAX; }
+
     union {
         CSSPropertyID propertyID;
         CSSValueID valueID;
@@ -262,7 +261,7 @@ private:
     } m_value;
 };
 
-inline bool CSSPrimitiveValue::isFontRelativeLength(CSSUnitType type)
+constexpr bool CSSPrimitiveValue::isFontRelativeLength(CSSUnitType type)
 {
     return type == CSSUnitType::CSS_EMS
         || type == CSSUnitType::CSS_EXS
@@ -273,7 +272,7 @@ inline bool CSSPrimitiveValue::isFontRelativeLength(CSSUnitType type)
         || type == CSSUnitType::CSS_QUIRKY_EMS;
 }
 
-inline bool CSSPrimitiveValue::isLength(CSSUnitType type)
+constexpr bool CSSPrimitiveValue::isLength(CSSUnitType type)
 {
     return (type >= CSSUnitType::CSS_EMS && type <= CSSUnitType::CSS_PC)
         || type == CSSUnitType::CSS_REMS
@@ -285,7 +284,7 @@ inline bool CSSPrimitiveValue::isLength(CSSUnitType type)
         || type == CSSUnitType::CSS_QUIRKY_EMS;
 }
 
-inline bool CSSPrimitiveValue::isResolution(CSSUnitType type)
+constexpr bool CSSPrimitiveValue::isResolution(CSSUnitType type)
 {
     return type >= CSSUnitType::CSS_DPPX && type <= CSSUnitType::CSS_DPCM;
 }

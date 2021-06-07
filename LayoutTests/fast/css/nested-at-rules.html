@@ -57,7 +57,7 @@ shouldEvaluateTo("rules[1].cssRules[1].cssRules.length", 2);
 shouldBe("rules[1].cssRules[1].cssRules[1].type", "CSSRule.MEDIA_RULE");
 shouldBe("rules[1].cssRules[1].cssRules[1].cssRules[0].type", "CSSRule.PAGE_RULE");
 
-shouldBeEqualToString("getComputedStyle(document.getElementById('t0')).content", "APPLIED");
-shouldBeEqualToString("getComputedStyle(document.getElementById('t1')).content", "UNTOUCHED");
+shouldBeEqualToString("getComputedStyle(document.getElementById('t0')).content", '"APPLIED"');
+shouldBeEqualToString("getComputedStyle(document.getElementById('t1')).content", '"UNTOUCHED"');
 </script>
 <script src="../../resources/js-test-post.js"></script>

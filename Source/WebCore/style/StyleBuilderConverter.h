@@ -1059,8 +1059,7 @@ inline bool BuilderConverter::createGridPosition(const CSSValue& value, GridPosi
     // auto | <custom-ident> | [ <integer> && <custom-ident>? ] | [ span && [ <integer> || <custom-ident> ] ]
     if (is<CSSPrimitiveValue>(value)) {
         auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-        // We translate <ident> to <string> during parsing as it makes handling it simpler.
-        if (primitiveValue.isString()) {
+        if (primitiveValue.isCustomIdent()) {
             position.setNamedGridArea(primitiveValue.stringValue());
             return true;
         }
@@ -1089,7 +1088,7 @@ inline bool BuilderConverter::createGridPosition(const CSSValue& value, GridPosi
     }
 
     String gridLineName;
-    if (currentValue && currentValue->isString()) {
+    if (currentValue && currentValue->isCustomIdent()) {
         gridLineName = currentValue->stringValue();
         ++it;
     }

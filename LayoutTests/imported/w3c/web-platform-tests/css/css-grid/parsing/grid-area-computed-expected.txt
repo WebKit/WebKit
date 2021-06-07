@@ -26,6 +26,6 @@ PASS Property grid-area value 'auto / i / 2 j'
 PASS Property grid-area value 'auto / i / 2 j / span 3 k'
 PASS Property grid-row value 'auto / i'
 PASS Property grid-column value '2 j / span 3 k'
-FAIL Property grid-column-end value '\31st' assert_equals: expected "\\31 st" but got "\"1st\""
-FAIL Property grid-column-end value '\31 st' assert_equals: expected "\\31 st" but got "\"1st\""
+PASS Property grid-column-end value '\31st'
+PASS Property grid-column-end value '\31 st'
 

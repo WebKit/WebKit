@@ -136,7 +136,6 @@ IGNORE_ERRONEOUS_GCC_NULL_CHECK_WARNINGS_END
     bool isGridLineNamesValue() const { return m_classType == GridLineNamesClass; }
     bool isUnicodeRangeValue() const { return m_classType == UnicodeRangeClass; }
 
-    bool isCustomIdentValue() const { return m_classType == CustomIdentClass; }
     bool isVariableReferenceValue() const { return m_classType == VariableReferenceClass; }
     bool isPendingSubstitutionValue() const { return m_classType == PendingSubstitutionValueClass; }
     
@@ -206,8 +205,6 @@ protected:
         ValuePairClass,
 
         CSSContentDistributionClass,
-
-        CustomIdentClass,
 
         CustomPropertyClass,
         VariableReferenceClass,

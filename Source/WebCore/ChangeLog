@@ -1,3 +1,194 @@
+2021-06-06  Darin Adler  <darin@apple.com>
+
+        Handle custom identifiers and strings separately, so we can quote strings correctly consistently
+        https://bugs.webkit.org/show_bug.cgi?id=226694
+
+        Reviewed by Sam Weinig.
+
+        Progressions in a number of WPT tests.
+
+        * animation/CSSAnimation.cpp:
+        (WebCore::CSSAnimation::CSSAnimation): Update since Animation::name() now
+        returns a struct.
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::computeCSSAnimationBlendingKeyframes): Ditto.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::OrderedNamedLinesCollector::appendLines const): Use
+        createCustomIdent for line names.
+        (WebCore::valueForGridPosition): Use createCustomIdent for grid line name.
+        (WebCore::createTransitionPropertyValue): Use createCustomIdent for
+        animation property names.
+        (WebCore::counterToCSSValue): Use createCustomIdent for counter names.
+        (WebCore::ComputedStyleExtractor::valueForPropertyInStyle): Use
+        createCustomIdent for list-style-type, locale, animation names if they
+        were created from a custom-ident, and line-grid.
+
+        * css/CSSCustomIdentValue.cpp: Emptied out this file; we can delete it soon.
+        * css/CSSCustomIdentValue.h: Ditto.
+
+        * css/CSSMarkup.cpp:
+        (WebCore::serializeCharacterAsCodePoint): Optimized to do a single
+        StringBuilder::append call.
+        (WebCore::serializeAsStringOrCustomIdent): Deleted.
+        * css/CSSMarkup.h: Removed serializeAsStringOrCustomIdent.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::isValidCSSUnitTypeForDoubleConversion): Added a case for
+        CustomIdent. Changed CSS_IDENT to assert not reached, since it should
+        never be passed to this function. More cleanup of CSSUnitType is needed,
+        but for now mostly leaving it alone.
+        (WebCore::isStringType): Added a case for CustomIdent. Moved CSS_DIMENSION,
+        which was incorrectly returning true, to return false. Pretty sure there's
+        no way to create one of these with CSS_DIMENSION, but this is less peculiar.
+        (WebCore::CSSPrimitiveValue::primitiveType const): Added transformation
+        from CustomIdent to CSS_IDENT as we do with CSS_PROPERTY_ID and CSS_VALUE_ID.
+        (WebCore::CSSPrimitiveValue::cleanup): Added a case for CustomIdent.
+        Moved CSS_DIMENSION to the correct section. Pretty sure there's no way to
+        create one of these with CSS_DIMENSION, but this is less peculiar.
+        (WebCore::CSSPrimitiveValue::setFloatValue): Deleted.
+        (WebCore::CSSPrimitiveValue::setStringValue): Deleted.
+        (WebCore::CSSPrimitiveValue::getStringValue const): Deleted.
+        (WebCore::CSSPrimitiveValue::stringValue const): Added a case for CustomIdent.
+        (WebCore::CSSPrimitiveValue::unitTypeString): Added a case for CustomIdent
+        and an ASSERT_NOT_REACHED for invalid enumeration values.
+        (WebCore::CSSPrimitiveValue::formatNumberForCustomCSSText const):
+        Removed inaccurate FIXME comment for CSS_DIMENSION and changed it to do
+        something less wrong, but still incorrect. Pretty sure there's no way to
+        create one of these with CSS_DIMENSION, but this is less peculiar. Changed
+        CSS_STRING case to always serializeAsString. Added a CustomIdent case
+        that always serializes as an identifier.
+        (WebCore::CSSPrimitiveValue::equals const): Moved the CSS_DIMENSION to
+        the correct part of this switch statement. Pretty sure there's no way to
+        create one of these with CSS_DIMENSION, but this is less peculiar.
+        Added case for CustomIdent.
+
+        * css/CSSPrimitiveValue.h: Made isFontRelativeLength, isResolution,
+        and isViewportPercentageLength private. Made those plus isLength all
+        constexpr. Removed WEBCORE_EXPORT from primitiveType and getFloatValue:
+        those needed to be exported when this was the web-exposed class, but
+        that is now DeprecatedCSSOMPrimitiveValue. Deleted setFloatValue,
+        setStringValue, and getStringValue for the same reason: those functions
+        are now in DeprecatedCSSOMPrimitiveValue and don't need to be here.
+
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapAnimationName): Updated to pass a boolean
+        in to the animation name to keep track of whether it was created with
+        a string or a custom-ident so we it can properly round-trip in computed
+        style. This is required to pass some of the WPT tests, although I could
+        not find clear guidance in the specification that this behavior is required.
+        The same name with a string and custom-ident are equivalent in other ways.
+
+        * css/CSSUnits.cpp:
+        (WebCore::operator<<): Added a case for CustomIdent.
+        * css/CSSUnits.h: Added CustomIdent. Added some FIXME about how we can
+        change this in the future. It's a remnant of the past when these were part
+        of our web-facing API, and this can be greatly cleaned up.
+
+        * css/CSSValue.cpp:
+        (WebCore::CSSValue::cssText const): Removed CSSCustomIdentValue.h,
+        CustomIdentClass, CSSCustomIdentValue. We are not going to use a separate
+        class for custom-ident, just a separate type of primitive value.
+        (WebCore::CSSValue::destroy): Ditto.
+        * css/CSSValue.h: Deleted isCustomIdentValue and CustomIdentClass.
+
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::customCSSText const): Tweaked algorithm
+        to be slightly more efficient.
+
+        * css/CSSValuePool.h: Added createCustomIdent. Later should remove
+        the create function that takes a string value and a type and use
+        separate named functions for the few different cases, but doing the
+        new one this way for now.
+
+        * css/DeprecatedCSSOMPrimitiveValue.cpp:
+        (WebCore::DeprecatedCSSOMPrimitiveValue::primitiveType const):
+        Rewrote this to be a switch that preserves the current behavior
+        but no longer relies on the numeric values of CSSUnitType values.
+        Added a FIXME about using CSS_UNKNOWN more: some of the numbers
+        we are exposing to the web are doing no good.
+        (WebCore::DeprecatedCSSOMPrimitiveValue::setFloatValue): Moved this
+        function to the header.
+        (WebCore::DeprecatedCSSOMPrimitiveValue::getFloatValue const):
+        Rewrote this to be a switch as above. Preserves current behavior
+        but stops relying on CSSUnitType numeric values.
+        (WebCore::DeprecatedCSSOMPrimitiveValue::setStringValue): Moved this
+        function to the header.
+        (WebCore::DeprecatedCSSOMPrimitiveValue::getStringValue const):
+        Ditto. By putting a switch on primitiveType here, we can enforce
+        the desired exception behavior here, instead of getting it from
+        CSSPrimitiveValue, and it's better for this class to deal with
+        the legacy bindings issues.
+        (WebCore::DeprecatedCSSOMPrimitiveValue::getCounterValue const): Ditto.
+        (WebCore::DeprecatedCSSOMPrimitiveValue::getRectValue const): Ditto.
+        (WebCore::DeprecatedCSSOMPrimitiveValue::getRGBColorValue const): Ditto.
+
+        * css/DeprecatedCSSOMPrimitiveValue.h: Removed unneeded cssValueType
+        function. Made both setFloatValue and setStringValue simpler since
+        they always raise an exception and we do not intend to change that.
+        Also stop using protected since we have no classes derived from this.
+        Could do more cleanup, but this is a start.
+
+        * css/DeprecatedCSSOMValue.cpp:
+        (WebCore::DeprecatedCSSOMValue::cssValueType const): Put the constant
+        values, CSS_PRIMITIVE_VALUE and CSS_VALUE_LIST, here rather than
+        calling member functions.
+
+        * css/DeprecatedCSSOMValueList.cpp:
+        (WebCore::DeprecatedCSSOMValueList::cssText const): Tweaked to make
+        the code more efficient.
+
+        * css/DeprecatedCSSOMValueList.h: Removed unneeded cssValueType
+        function and const overload of item function. Also stop using protected
+        since we have no classes derived from this.
+
+        * css/MediaQueryExpression.cpp:
+        (WebCore::featureWithValidIdent): Fixed indentation to match WebKit style.
+        (WebCore::featureWithValidDensity): Ditto.
+        (WebCore::featureWithValidPositiveLength): Ditto.
+        (WebCore::featureExpectingPositiveInteger): Ditto.
+        (WebCore::featureWithPositiveNumber): Ditto.
+
+        * css/calc/CSSCalcCategoryMapping.cpp:
+        (WebCore::hasDoubleValue): Added a case for CustomIdent.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeWillChange): Removed comment saying we should use
+        CSSCustomIdentValue since using a property ID for the value is great.
+        (WebCore::consumeAnimationName): Removed comment saying we should use
+        CSSCustomIdentValue here because that would be incorrect: we need to
+        preserve and round-trip the fact that this was string, not custom-ident.
+        (WebCore::consumeTransitionProperty): Remove special case for
+        CSSValueAll that wasn't doing anything. Removed comment saying we should
+        use CSSCustomIdentValue since using a value ID for the value is great.
+        (WebCore::consumeAttr): Updated comment.
+        (WebCore::isCustomIdentValue): Updated to work with the new primitive value.
+
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeCustomIdent):
+        Use the new createCustomIdent and removed an outdated comment. While we
+        might some day want to implement custom-ident differently, we won't need
+        to change the code here to make that happen.
+
+        * platform/animation/Animation.cpp:
+        (WebCore::Animation::animationsMatch const): Update since m_name now is a
+        struct.
+        (WebCore::Animation::initialName): Update to return Name instead of String.
+        (WebCore::operator<<): Update since name() now returns a struct.
+        * platform/animation/Animation.h: Added the Name struct so we can store a
+        boolean to indicate whether it's a string or custom-ident for round tripping.
+        Update types and implementations of function and data members accordingly.
+
+        * style/StyleBuilderConverter.h:
+        (WebCore::Style::BuilderConverter::createGridPosition): Update code to expect
+        custom-ident instead of string; they used to both be the same thing.
+
+        * style/Styleable.cpp:
+        (WebCore::shouldConsiderAnimation): Update since Animation::name() now
+        returns a struct. Also got rid of unsuccessful attempt to optimize comparison
+        againt the string "none"; later might be good to clean out that special case.
+        (WebCore::Styleable::updateCSSAnimations const): Ditto.
+
 2021-06-06  Jean-Yves Avenard  <jya@apple.com>
 
         [GPUP][MSE] QuotaExceededError Exception not thrown even if the sum of totalTrackBufferSize and appendBuffer size exceeds maximumBufferSize

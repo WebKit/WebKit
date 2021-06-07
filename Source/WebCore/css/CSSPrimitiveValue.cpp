@@ -93,7 +93,7 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSUnitType unitType)
     case CSSUnitType::CSS_COUNTER:
     case CSSUnitType::CSS_COUNTER_NAME:
     case CSSUnitType::CSS_FONT_FAMILY:
-    case CSSUnitType::CSS_IDENT:
+    case CSSUnitType::CustomIdent:
     case CSSUnitType::CSS_PAIR:
     case CSSUnitType::CSS_PROPERTY_ID:
     case CSSUnitType::CSS_QUAD:
@@ -106,6 +106,8 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSUnitType unitType)
     case CSSUnitType::CSS_URI:
     case CSSUnitType::CSS_VALUE_ID:
         return false;
+    case CSSUnitType::CSS_IDENT:
+        break;
     }
 
     ASSERT_NOT_REACHED();
@@ -118,10 +120,10 @@ static inline bool isStringType(CSSUnitType type)
 {
     switch (type) {
     case CSSUnitType::CSS_STRING:
+    case CSSUnitType::CustomIdent:
     case CSSUnitType::CSS_URI:
     case CSSUnitType::CSS_ATTR:
     case CSSUnitType::CSS_COUNTER_NAME:
-    case CSSUnitType::CSS_DIMENSION:
         return true;
     case CSSUnitType::CSS_CALC:
     case CSSUnitType::CSS_CALC_PERCENTAGE_WITH_LENGTH:
@@ -130,6 +132,7 @@ static inline bool isStringType(CSSUnitType type)
     case CSSUnitType::CSS_CM:
     case CSSUnitType::CSS_COUNTER:
     case CSSUnitType::CSS_DEG:
+    case CSSUnitType::CSS_DIMENSION:
     case CSSUnitType::CSS_DPCM:
     case CSSUnitType::CSS_DPI:
     case CSSUnitType::CSS_DPPX:
@@ -188,7 +191,9 @@ static CSSTextCache& cssTextCache()
 
 CSSUnitType CSSPrimitiveValue::primitiveType() const
 {
-    if (primitiveUnitType() == CSSUnitType::CSS_PROPERTY_ID || primitiveUnitType() == CSSUnitType::CSS_VALUE_ID)
+    // FIXME: Use a switch statement here.
+
+    if (primitiveUnitType() == CSSUnitType::CSS_PROPERTY_ID || primitiveUnitType() == CSSUnitType::CSS_VALUE_ID || primitiveUnitType() == CSSUnitType::CustomIdent)
         return CSSUnitType::CSS_IDENT;
 
     // Web-exposed content expects font family values to have CSSUnitType::CSS_STRING primitive type
@@ -295,10 +300,9 @@ CSSPrimitiveValue::CSSPrimitiveValue(const Length& length, const RenderStyle& st
         setPrimitiveUnitType(CSSUnitType::CSS_PX);
         m_value.num = adjustFloatForAbsoluteZoom(length.value(), style);
         return;
-    case LengthType::Calculated: {
+    case LengthType::Calculated:
         init(CSSCalcValue::create(length.calculationValue(), style));
         return;
-    }
     case LengthType::Relative:
     case LengthType::Undefined:
         ASSERT_NOT_REACHED();
@@ -439,13 +443,13 @@ void CSSPrimitiveValue::cleanup()
     auto type = primitiveUnitType();
     switch (type) {
     case CSSUnitType::CSS_STRING:
+    case CSSUnitType::CustomIdent:
     case CSSUnitType::CSS_URI:
     case CSSUnitType::CSS_ATTR:
     case CSSUnitType::CSS_COUNTER_NAME:
         if (m_value.string)
             m_value.string->deref();
         break;
-    case CSSUnitType::CSS_DIMENSION:
     case CSSUnitType::CSS_COUNTER:
         m_value.counter->deref();
         break;
@@ -479,6 +483,7 @@ void CSSPrimitiveValue::cleanup()
         delete m_value.color;
         m_value.color = nullptr;
         break;
+    case CSSUnitType::CSS_DIMENSION:
     case CSSUnitType::CSS_NUMBER:
     case CSSUnitType::CSS_PERCENTAGE:
     case CSSUnitType::CSS_EMS:
@@ -751,14 +756,6 @@ bool CSSPrimitiveValue::equalForLengthResolution(const RenderStyle& styleA, cons
     return true;
 }
 
-ExceptionOr<void> CSSPrimitiveValue::setFloatValue(CSSUnitType, double)
-{
-    // Keeping values immutable makes optimizations easier and allows sharing of the primitive value objects.
-    // No other engine supports mutating style through this API. Computed style is always read-only anyway.
-    // Supporting setter would require making primitive value copy-on-write and taking care of style invalidation.
-    return Exception { NoModificationAllowedError };
-}
-
 double CSSPrimitiveValue::conversionToCanonicalUnitsScaleFactor(CSSUnitType unitType)
 {
     double factor = 1.0;
@@ -906,36 +903,11 @@ std::optional<double> CSSPrimitiveValue::doubleValueInternal(CSSUnitType request
     return convertedValue;
 }
 
-ExceptionOr<void> CSSPrimitiveValue::setStringValue(CSSUnitType, const String&)
-{
-    // Keeping values immutable makes optimizations easier and allows sharing of the primitive value objects.
-    // No other engine supports mutating style through this API. Computed style is always read-only anyway.
-    // Supporting setter would require making primitive value copy-on-write and taking care of style invalidation.
-    return Exception { NoModificationAllowedError };
-}
-
-ExceptionOr<String> CSSPrimitiveValue::getStringValue() const
-{
-    switch (primitiveUnitType()) {
-    case CSSUnitType::CSS_STRING:
-    case CSSUnitType::CSS_ATTR:
-    case CSSUnitType::CSS_URI:
-        return m_value.string;
-    case CSSUnitType::CSS_FONT_FAMILY:
-        return String { m_value.fontFamily->familyName };
-    case CSSUnitType::CSS_VALUE_ID:
-        return String { valueName(m_value.valueID).string() };
-    case CSSUnitType::CSS_PROPERTY_ID:
-        return String { propertyName(m_value.propertyID).string() };
-    default:
-        return Exception { InvalidAccessError };
-    }
-}
-
 String CSSPrimitiveValue::stringValue() const
 {
     switch (primitiveUnitType()) {
     case CSSUnitType::CSS_STRING:
+    case CSSUnitType::CustomIdent:
     case CSSUnitType::CSS_ATTR:
     case CSSUnitType::CSS_URI:
         return m_value.string;
@@ -955,6 +927,7 @@ NEVER_INLINE String CSSPrimitiveValue::formatNumberValue(StringView suffix) cons
     return makeString(m_value.num, suffix);
 }
 
+// FIXME: Should return const char*.
 String CSSPrimitiveValue::unitTypeString(CSSUnitType unitType)
 {
     switch (unitType) {
@@ -995,6 +968,7 @@ String CSSPrimitiveValue::unitTypeString(CSSUnitType unitType)
         case CSSUnitType::CSS_STRING:
         case CSSUnitType::CSS_URI:
         case CSSUnitType::CSS_IDENT:
+        case CSSUnitType::CustomIdent:
         case CSSUnitType::CSS_ATTR:
         case CSSUnitType::CSS_COUNTER:
         case CSSUnitType::CSS_RECT:
@@ -1013,6 +987,7 @@ String CSSPrimitiveValue::unitTypeString(CSSUnitType unitType)
         case CSSUnitType::CSS_QUIRKY_EMS:
             return emptyString();
     }
+    ASSERT_NOT_REACHED();
     return emptyString();
 }
 
@@ -1077,13 +1052,15 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
     case CSSUnitType::CSS_RLHS:
         return formatNumberValue("rlh");
     case CSSUnitType::CSS_DIMENSION:
-        // FIXME: We currently don't handle CSSUnitType::CSS_DIMENSION properly as we don't store
-        // the actual dimension, just the numeric value as a string.
+        // FIXME: This isn't correct.
+        return formatNumberValue("");
     case CSSUnitType::CSS_STRING:
-        // FIME-NEWPARSER: Once we have CSSCustomIdentValue hooked up, this can just be
-        // serializeString, since custom identifiers won't be the same value as strings
-        // any longer.
-        return serializeAsStringOrCustomIdent(m_value.string);
+        return serializeString(m_value.string);
+    case CSSUnitType::CustomIdent: {
+        StringBuilder builder;
+        serializeIdentifier(m_value.string, builder);
+        return builder.toString();
+    }
     case CSSUnitType::CSS_FONT_FAMILY:
         return serializeFontFamily(m_value.fontFamily->familyName);
     case CSSUnitType::CSS_URI:
@@ -1197,13 +1174,14 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
     case CSSUnitType::CSS_Q:
     case CSSUnitType::CSS_LHS:
     case CSSUnitType::CSS_RLHS:
+    case CSSUnitType::CSS_DIMENSION:
         return m_value.num == other.m_value.num;
     case CSSUnitType::CSS_PROPERTY_ID:
         return propertyName(m_value.propertyID) == propertyName(other.m_value.propertyID);
     case CSSUnitType::CSS_VALUE_ID:
         return valueName(m_value.valueID) == valueName(other.m_value.valueID);
-    case CSSUnitType::CSS_DIMENSION:
     case CSSUnitType::CSS_STRING:
+    case CSSUnitType::CustomIdent:
     case CSSUnitType::CSS_URI:
     case CSSUnitType::CSS_ATTR:
     case CSSUnitType::CSS_COUNTER_NAME:

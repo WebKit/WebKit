@@ -23,8 +23,8 @@ rules[1].cssRules[1].insertRule('@media all { @page :left { top: 0; } }', 1)
 PASS rules[1].cssRules[1].cssRules.length is 2
 PASS rules[1].cssRules[1].cssRules[1].type is CSSRule.MEDIA_RULE
 PASS rules[1].cssRules[1].cssRules[1].cssRules[0].type is CSSRule.PAGE_RULE
-PASS getComputedStyle(document.getElementById('t0')).content is "APPLIED"
-PASS getComputedStyle(document.getElementById('t1')).content is "UNTOUCHED"
+PASS getComputedStyle(document.getElementById('t0')).content is "\"APPLIED\""
+PASS getComputedStyle(document.getElementById('t1')).content is "\"UNTOUCHED\""
 PASS successfullyParsed is true
 
 TEST COMPLETE

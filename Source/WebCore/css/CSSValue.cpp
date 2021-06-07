@@ -35,7 +35,6 @@
 #include "CSSContentDistributionValue.h"
 #include "CSSCrossfadeValue.h"
 #include "CSSCursorImageValue.h"
-#include "CSSCustomIdentValue.h"
 #include "CSSCustomPropertyValue.h"
 #include "CSSFilterImageValue.h"
 #include "CSSFontFaceSrcValue.h"
@@ -325,8 +324,6 @@ String CSSValue::cssText() const
         return downcast<CSSContentDistributionValue>(*this).customCSSText();
     case CustomPropertyClass:
         return downcast<CSSCustomPropertyValue>(*this).customCSSText();
-    case CustomIdentClass:
-        return downcast<CSSCustomIdentValue>(*this).customCSSText();
     case VariableReferenceClass:
         return downcast<CSSVariableReferenceValue>(*this).customCSSText();
     case PendingSubstitutionValueClass:
@@ -477,9 +474,6 @@ void CSSValue::destroy()
         return;
     case CustomPropertyClass:
         delete downcast<CSSCustomPropertyValue>(this);
-        return;
-    case CustomIdentClass:
-        delete downcast<CSSCustomIdentValue>(this);
         return;
     case VariableReferenceClass:
         delete downcast<CSSVariableReferenceValue>(this);

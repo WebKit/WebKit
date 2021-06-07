@@ -76,28 +76,27 @@ public:
     }
 
     bool equals(const DeprecatedCSSOMPrimitiveValue& other) const { return m_value->equals(other.m_value); }
-    unsigned cssValueType() const { return m_value->cssValueType(); }
     String cssText() const { return m_value->cssText(); }
     
     WEBCORE_EXPORT unsigned short primitiveType() const;
-    WEBCORE_EXPORT ExceptionOr<void> setFloatValue(unsigned short unitType, double);
     WEBCORE_EXPORT ExceptionOr<float> getFloatValue(unsigned short unitType) const;
-    WEBCORE_EXPORT ExceptionOr<void> setStringValue(unsigned short stringType, const String&);
     WEBCORE_EXPORT ExceptionOr<String> getStringValue() const;
     WEBCORE_EXPORT ExceptionOr<Ref<DeprecatedCSSOMCounter>> getCounterValue() const;
     WEBCORE_EXPORT ExceptionOr<Ref<DeprecatedCSSOMRect>> getRectValue() const;
     WEBCORE_EXPORT ExceptionOr<Ref<DeprecatedCSSOMRGBColor>> getRGBColorValue() const;
 
+    static ExceptionOr<void> setFloatValue(unsigned short, double) { return Exception { NoModificationAllowedError }; }
+    static ExceptionOr<void> setStringValue(unsigned short, const String&) { return Exception { NoModificationAllowedError }; }
+
     String stringValue() const { return m_value->stringValue(); }
 
-protected:
+private:
     DeprecatedCSSOMPrimitiveValue(const CSSPrimitiveValue& value, CSSStyleDeclaration& owner)
         : DeprecatedCSSOMValue(DeprecatedPrimitiveValueClass, owner)
         , m_value(const_cast<CSSPrimitiveValue&>(value))
     {
     }
 
-private:
     Ref<CSSPrimitiveValue> m_value;
 };
     

@@ -37,14 +37,12 @@ public:
         return adoptRef(*new DeprecatedCSSOMValueList(value, owner));
     }
     
-    unsigned cssValueType() const { return CSS_VALUE_LIST; }
     String cssText() const;
     
     size_t length() const { return m_values.size(); }
     DeprecatedCSSOMValue* item(size_t index) { return index < m_values.size() ? m_values[index].ptr() : nullptr; }
-    const DeprecatedCSSOMValue* item(size_t index) const { return index < m_values.size() ? m_values[index].ptr() : nullptr; }
 
-protected:
+private:
     DeprecatedCSSOMValueList(const CSSValueList& value, CSSStyleDeclaration& owner)
         : DeprecatedCSSOMValue(DeprecatedValueListClass, owner)
     {
@@ -54,7 +52,6 @@ protected:
             m_values.uncheckedAppend(value.itemWithoutBoundsCheck(i)->createDeprecatedCSSOMWrapper(owner));
     }
     
-private:
     Vector<Ref<DeprecatedCSSOMValue>, 4> m_values;
 };
 

@@ -1019,7 +1019,7 @@ void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const RenderStyle& una
     auto cssAnimation = downcast<CSSAnimation>(animation());
     auto& backingAnimation = cssAnimation->backingAnimation();
 
-    KeyframeList keyframeList(backingAnimation.name());
+    KeyframeList keyframeList(backingAnimation.name().string);
     if (auto* styleScope = Style::Scope::forOrdinal(*m_target, backingAnimation.nameStyleScopeOrdinal()))
         styleScope->resolver().keyframeStylesForAnimation(*m_target, &unanimatedStyle, parentElementStyle, keyframeList);
 

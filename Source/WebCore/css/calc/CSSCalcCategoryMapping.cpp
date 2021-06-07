@@ -172,6 +172,7 @@ bool hasDoubleValue(CSSUnitType type)
     case CSSUnitType::CSS_FONT_FAMILY:
     case CSSUnitType::CSS_URI:
     case CSSUnitType::CSS_IDENT:
+    case CSSUnitType::CustomIdent:
     case CSSUnitType::CSS_ATTR:
     case CSSUnitType::CSS_COUNTER:
     case CSSUnitType::CSS_RECT:

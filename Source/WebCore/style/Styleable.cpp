@@ -140,10 +140,8 @@ static bool shouldConsiderAnimation(Element& element, const Animation& animation
     if (!animation.isValidAnimation())
         return false;
 
-    static NeverDestroyed<const String> animationNameNone(MAKE_STATIC_STRING_IMPL("none"));
-
-    auto& name = animation.name();
-    if (name == animationNameNone || name.isEmpty())
+    auto& name = animation.name().string;
+    if (name == "none" || name.isEmpty())
         return false;
 
     if (auto* styleScope = Style::Scope::forOrdinal(element, animation.nameStyleScopeOrdinal()))
@@ -189,7 +187,7 @@ void Styleable::updateCSSAnimations(const RenderStyle* currentStyle, const Rende
 
             bool foundMatchingAnimation = false;
             for (auto& previousAnimation : previousAnimations) {
-                if (previousAnimation->animationName() == currentAnimation.name()) {
+                if (previousAnimation->animationName() == currentAnimation.name().string) {
                     // Timing properties or play state may have changed so we need to update the backing animation with
                     // the Animation found in the current style.
                     previousAnimation->setBackingAnimation(currentAnimation);
