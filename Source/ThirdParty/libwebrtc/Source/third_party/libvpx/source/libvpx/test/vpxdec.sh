@@ -86,7 +86,7 @@ vpxdec_vp9_webm_frame_parallel() {
      [ "$(webm_io_available)" = "yes" ]; then
     for threads in 2 3 4 5 6 7 8; do
       vpxdec "${VP9_FPM_WEBM_FILE}" --summary --noblit --threads=$threads \
-        --frame-parallel
+        --frame-parallel || return 1
     done
   fi
 }

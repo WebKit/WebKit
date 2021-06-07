@@ -31,13 +31,13 @@ class IDCTTest : public ::testing::TestWithParam<IdctFunc> {
     UUT = GetParam();
 
     input = new Buffer<int16_t>(4, 4, 0);
-    ASSERT_TRUE(input != NULL);
+    ASSERT_NE(input, nullptr);
     ASSERT_TRUE(input->Init());
     predict = new Buffer<uint8_t>(4, 4, 3);
-    ASSERT_TRUE(predict != NULL);
+    ASSERT_NE(predict, nullptr);
     ASSERT_TRUE(predict->Init());
     output = new Buffer<uint8_t>(4, 4, 3);
-    ASSERT_TRUE(output != NULL);
+    ASSERT_NE(output, nullptr);
     ASSERT_TRUE(output->Init());
   }
 
@@ -72,7 +72,7 @@ TEST_P(IDCTTest, TestAllZeros) {
 
 TEST_P(IDCTTest, TestAllOnes) {
   input->Set(0);
-  ASSERT_TRUE(input->TopLeftPixel() != NULL);
+  ASSERT_NE(input->TopLeftPixel(), nullptr);
   // When the first element is '4' it will fill the output buffer with '1'.
   input->TopLeftPixel()[0] = 4;
   predict->Set(0);
@@ -90,7 +90,7 @@ TEST_P(IDCTTest, TestAddOne) {
   // Set the transform output to '1' and make sure it gets added to the
   // prediction buffer.
   input->Set(0);
-  ASSERT_TRUE(input->TopLeftPixel() != NULL);
+  ASSERT_NE(input->TopLeftPixel(), nullptr);
   input->TopLeftPixel()[0] = 4;
   output->Set(0);
 
@@ -155,25 +155,26 @@ TEST_P(IDCTTest, TestWithData) {
   ASSERT_TRUE(output->CheckPadding());
 }
 
-INSTANTIATE_TEST_CASE_P(C, IDCTTest, ::testing::Values(vp8_short_idct4x4llm_c));
+INSTANTIATE_TEST_SUITE_P(C, IDCTTest,
+                         ::testing::Values(vp8_short_idct4x4llm_c));
 
 #if HAVE_NEON
-INSTANTIATE_TEST_CASE_P(NEON, IDCTTest,
-                        ::testing::Values(vp8_short_idct4x4llm_neon));
+INSTANTIATE_TEST_SUITE_P(NEON, IDCTTest,
+                         ::testing::Values(vp8_short_idct4x4llm_neon));
 #endif  // HAVE_NEON
 
 #if HAVE_MMX
-INSTANTIATE_TEST_CASE_P(MMX, IDCTTest,
-                        ::testing::Values(vp8_short_idct4x4llm_mmx));
+INSTANTIATE_TEST_SUITE_P(MMX, IDCTTest,
+                         ::testing::Values(vp8_short_idct4x4llm_mmx));
 #endif  // HAVE_MMX
 
 #if HAVE_MSA
-INSTANTIATE_TEST_CASE_P(MSA, IDCTTest,
-                        ::testing::Values(vp8_short_idct4x4llm_msa));
+INSTANTIATE_TEST_SUITE_P(MSA, IDCTTest,
+                         ::testing::Values(vp8_short_idct4x4llm_msa));
 #endif  // HAVE_MSA
 
 #if HAVE_MMI
-INSTANTIATE_TEST_CASE_P(MMI, IDCTTest,
-                        ::testing::Values(vp8_short_idct4x4llm_mmi));
+INSTANTIATE_TEST_SUITE_P(MMI, IDCTTest,
+                         ::testing::Values(vp8_short_idct4x4llm_mmi));
 #endif  // HAVE_MMI
 }  // namespace

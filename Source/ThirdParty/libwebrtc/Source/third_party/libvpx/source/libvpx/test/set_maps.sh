@@ -36,7 +36,7 @@ set_maps() {
 
   eval "${VPX_TEST_PREFIX}" "${encoder}" "${codec}" "${YUV_RAW_INPUT_WIDTH}" \
       "${YUV_RAW_INPUT_HEIGHT}" "${YUV_RAW_INPUT}" "${output_file}" \
-      ${devnull}
+      ${devnull} || return 1
 
   [ -e "${output_file}" ] || return 1
 }

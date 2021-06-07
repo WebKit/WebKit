@@ -41,7 +41,7 @@ class VPxFirstPassEncoderThreadTest
 
     row_mt_mode_ = 1;
     first_pass_only_ = true;
-    firstpass_stats_.buf = NULL;
+    firstpass_stats_.buf = nullptr;
     firstpass_stats_.sz = 0;
   }
   virtual ~VPxFirstPassEncoderThreadTest() { free(firstpass_stats_.buf); }
@@ -390,7 +390,7 @@ TEST_P(VPxEncoderThreadTest, EncoderResultTest) {
   EXPECT_NEAR(single_thr_psnr, multi_thr_psnr, 0.2);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     VP9, VPxFirstPassEncoderThreadTest,
     ::testing::Combine(
         ::testing::Values(
@@ -401,7 +401,7 @@ INSTANTIATE_TEST_CASE_P(
 // Split this into two instantiations so that we can distinguish
 // between very slow runs ( ie cpu_speed 0 ) vs ones that can be
 // run nightly by adding Large to the title.
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     VP9, VPxEncoderThreadTest,
     ::testing::Combine(
         ::testing::Values(
@@ -413,7 +413,7 @@ INSTANTIATE_TEST_CASE_P(
         ::testing::Range(0, 3),    // tile_columns
         ::testing::Range(2, 5)));  // threads
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     VP9Large, VPxEncoderThreadTest,
     ::testing::Combine(
         ::testing::Values(

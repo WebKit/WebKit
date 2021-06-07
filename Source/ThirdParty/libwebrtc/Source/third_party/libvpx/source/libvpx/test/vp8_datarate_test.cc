@@ -408,9 +408,31 @@ TEST_P(DatarateTestRealTime, GFBoost) {
       << " The datarate for the file missed the target!";
 }
 
-VP8_INSTANTIATE_TEST_CASE(DatarateTestLarge, ALL_TEST_MODES,
-                          ::testing::Values(0));
-VP8_INSTANTIATE_TEST_CASE(DatarateTestRealTime,
-                          ::testing::Values(::libvpx_test::kRealTime),
-                          ::testing::Values(-6, -12));
+TEST_P(DatarateTestRealTime, NV12) {
+  denoiser_on_ = 0;
+  cfg_.rc_buf_initial_sz = 500;
+  cfg_.rc_dropframe_thresh = 0;
+  cfg_.rc_max_quantizer = 56;
+  cfg_.rc_end_usage = VPX_CBR;
+  cfg_.g_error_resilient = 0;
+  ::libvpx_test::YUVVideoSource video("hantro_collage_w352h288_nv12.yuv",
+                                      VPX_IMG_FMT_NV12, 352, 288, 30, 1, 0,
+                                      100);
+
+  cfg_.rc_target_bitrate = 200;
+  ResetModel();
+
+  ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+  ASSERT_GE(cfg_.rc_target_bitrate, effective_datarate_ * 0.95)
+      << " The datarate for the file exceeds the target!";
+
+  ASSERT_LE(cfg_.rc_target_bitrate, file_datarate_ * 1.4)
+      << " The datarate for the file missed the target!";
+}
+
+VP8_INSTANTIATE_TEST_SUITE(DatarateTestLarge, ALL_TEST_MODES,
+                           ::testing::Values(0));
+VP8_INSTANTIATE_TEST_SUITE(DatarateTestRealTime,
+                           ::testing::Values(::libvpx_test::kRealTime),
+                           ::testing::Values(-6, -12));
 }  // namespace

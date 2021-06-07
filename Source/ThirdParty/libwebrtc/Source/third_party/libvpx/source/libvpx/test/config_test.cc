@@ -58,5 +58,5 @@ TEST_P(ConfigTest, LagIsDisabled) {
   EXPECT_EQ(frame_count_in_, frame_count_out_);
 }
 
-VP8_INSTANTIATE_TEST_CASE(ConfigTest, ONE_PASS_TEST_MODES);
+VP8_INSTANTIATE_TEST_SUITE(ConfigTest, ONE_PASS_TEST_MODES);
 }  // namespace

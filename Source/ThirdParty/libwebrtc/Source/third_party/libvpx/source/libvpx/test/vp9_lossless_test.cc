@@ -118,8 +118,8 @@ TEST_P(LosslessTest, TestLossLessEncodingCtrl) {
   EXPECT_GE(psnr_lossless, kMaxPsnr);
 }
 
-VP9_INSTANTIATE_TEST_CASE(LosslessTest,
-                          ::testing::Values(::libvpx_test::kRealTime,
-                                            ::libvpx_test::kOnePassGood,
-                                            ::libvpx_test::kTwoPassGood));
+VP9_INSTANTIATE_TEST_SUITE(LosslessTest,
+                           ::testing::Values(::libvpx_test::kRealTime,
+                                             ::libvpx_test::kOnePassGood,
+                                             ::libvpx_test::kTwoPassGood));
 }  // namespace

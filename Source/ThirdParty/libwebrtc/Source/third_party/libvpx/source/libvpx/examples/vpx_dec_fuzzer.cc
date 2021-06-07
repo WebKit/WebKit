@@ -94,6 +94,13 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     return 0;
   }
 
+  if (threads > 1) {
+    const int enable = (data[IVF_FILE_HDR_SZ] & 0xa0) != 0;
+    const vpx_codec_err_t err =
+        vpx_codec_control(&codec, VP9D_SET_LOOP_FILTER_OPT, enable);
+    static_cast<void>(err);
+  }
+
   data += IVF_FILE_HDR_SZ;
   size -= IVF_FILE_HDR_SZ;
 

@@ -71,7 +71,7 @@ vp8_multi_resolution_encoder_three_formats() {
         ${layer_bitrates} \
         ${temporal_layers} \
         "${keyframe_insert}" \
-        0
+        0 || return 1
 
       for output_file in ${output_files}; do
         if [ ! -e "${output_file}" ]; then

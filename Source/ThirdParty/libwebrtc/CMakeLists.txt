@@ -2247,6 +2247,7 @@ if (APPLE)
         Source/third_party/libvpx/source/libvpx/vp9/encoder/vp9_encoder.c
         Source/third_party/libvpx/source/libvpx/vp9/encoder/vp9_ethread.c
         Source/third_party/libvpx/source/libvpx/vp9/encoder/vp9_extend.c
+        Source/third_party/libvpx/source/libvpx/vp9/encoder/vp9_ext_ratectrl.c
         Source/third_party/libvpx/source/libvpx/vp9/encoder/vp9_firstpass.c
         Source/third_party/libvpx/source/libvpx/vp9/encoder/vp9_frame_scale.c
         Source/third_party/libvpx/source/libvpx/vp9/encoder/vp9_lookahead.c

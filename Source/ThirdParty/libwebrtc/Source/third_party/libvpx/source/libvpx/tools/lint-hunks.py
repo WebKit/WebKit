@@ -106,6 +106,8 @@ def main(argv=None):
         for filename, affected_lines in file_affected_line_map.iteritems():
             if filename.split(".")[-1] not in ("c", "h", "cc"):
                 continue
+            if filename.startswith("third_party"):
+                continue
 
             if args:
                 # File contents come from git

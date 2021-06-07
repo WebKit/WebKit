@@ -90,7 +90,7 @@ class Y4mVideoSourceTest : public ::testing::TestWithParam<Y4mTestParam>,
 
   // Checks y4m header information
   void HeaderChecks(unsigned int bit_depth, vpx_img_fmt_t fmt) {
-    ASSERT_TRUE(input_file_ != NULL);
+    ASSERT_NE(input_file_, nullptr);
     ASSERT_EQ(y4m_.pic_w, (int)kWidth);
     ASSERT_EQ(y4m_.pic_h, (int)kHeight);
     ASSERT_EQ(img()->d_w, kWidth);
@@ -116,7 +116,7 @@ class Y4mVideoSourceTest : public ::testing::TestWithParam<Y4mTestParam>,
 
   // Checks MD5 of the raw frame data
   void Md5Check(const string &expected_md5) {
-    ASSERT_TRUE(input_file_ != NULL);
+    ASSERT_NE(input_file_, nullptr);
     libvpx_test::MD5 md5;
     for (unsigned int i = start_; i < limit_; i++) {
       md5.Add(img());
@@ -133,16 +133,16 @@ TEST_P(Y4mVideoSourceTest, SourceTest) {
   Md5Check(t.md5raw);
 }
 
-INSTANTIATE_TEST_CASE_P(C, Y4mVideoSourceTest,
-                        ::testing::ValuesIn(kY4mTestVectors));
+INSTANTIATE_TEST_SUITE_P(C, Y4mVideoSourceTest,
+                         ::testing::ValuesIn(kY4mTestVectors));
 
 class Y4mVideoWriteTest : public Y4mVideoSourceTest {
  protected:
-  Y4mVideoWriteTest() : tmpfile_(NULL) {}
+  Y4mVideoWriteTest() : tmpfile_(nullptr) {}
 
   virtual ~Y4mVideoWriteTest() {
     delete tmpfile_;
-    input_file_ = NULL;
+    input_file_ = nullptr;
   }
 
   void ReplaceInputFile(FILE *input_file) {
@@ -155,11 +155,11 @@ class Y4mVideoWriteTest : public Y4mVideoSourceTest {
 
   // Writes out a y4m file and then reads it back
   void WriteY4mAndReadBack() {
-    ASSERT_TRUE(input_file_ != NULL);
+    ASSERT_NE(input_file_, nullptr);
     char buf[Y4M_BUFFER_SIZE] = { 0 };
     const struct VpxRational framerate = { y4m_.fps_n, y4m_.fps_d };
     tmpfile_ = new libvpx_test::TempOutFile;
-    ASSERT_TRUE(tmpfile_->file() != NULL);
+    ASSERT_NE(tmpfile_->file(), nullptr);
     y4m_write_file_header(buf, sizeof(buf), kWidth, kHeight, &framerate,
                           y4m_.vpx_fmt, y4m_.bit_depth);
     fputs(buf, tmpfile_->file());
@@ -186,6 +186,57 @@ TEST_P(Y4mVideoWriteTest, WriteTest) {
   Md5Check(t.md5raw);
 }
 
-INSTANTIATE_TEST_CASE_P(C, Y4mVideoWriteTest,
-                        ::testing::ValuesIn(kY4mTestVectors));
+INSTANTIATE_TEST_SUITE_P(C, Y4mVideoWriteTest,
+                         ::testing::ValuesIn(kY4mTestVectors));
+
+static const char kY4MRegularHeader[] =
+    "YUV4MPEG2 W4 H4 F30:1 Ip A0:0 C420jpeg XYSCSS=420JPEG\n"
+    "FRAME\n"
+    "012345678912345601230123";
+
+TEST(Y4MHeaderTest, RegularHeader) {
+  libvpx_test::TempOutFile f;
+  fwrite(kY4MRegularHeader, 1, sizeof(kY4MRegularHeader), f.file());
+  fflush(f.file());
+  EXPECT_EQ(0, fseek(f.file(), 0, 0));
+
+  y4m_input y4m;
+  EXPECT_EQ(y4m_input_open(&y4m, f.file(), /*skip_buffer=*/NULL,
+                           /*num_skip=*/0, /*only_420=*/0),
+            0);
+  EXPECT_EQ(y4m.pic_w, 4);
+  EXPECT_EQ(y4m.pic_h, 4);
+  EXPECT_EQ(y4m.fps_n, 30);
+  EXPECT_EQ(y4m.fps_d, 1);
+  EXPECT_EQ(y4m.interlace, 'p');
+  EXPECT_EQ(strcmp("420jpeg", y4m.chroma_type), 0);
+  y4m_input_close(&y4m);
+}
+
+// Testing that headers over 100 characters can be parsed.
+static const char kY4MLongHeader[] =
+    "YUV4MPEG2 W4 H4 F30:1 Ip A0:0 C420jpeg XYSCSS=420JPEG "
+    "XCOLORRANGE=LIMITED XSOME_UNKNOWN_METADATA XOTHER_UNKNOWN_METADATA\n"
+    "FRAME\n"
+    "012345678912345601230123";
+
+TEST(Y4MHeaderTest, LongHeader) {
+  libvpx_test::TempOutFile f;
+  fwrite(kY4MLongHeader, 1, sizeof(kY4MLongHeader), f.file());
+  fflush(f.file());
+  EXPECT_EQ(fseek(f.file(), 0, 0), 0);
+
+  y4m_input y4m;
+  EXPECT_EQ(y4m_input_open(&y4m, f.file(), /*skip_buffer=*/NULL,
+                           /*num_skip=*/0, /*only_420=*/0),
+            0);
+  EXPECT_EQ(y4m.pic_w, 4);
+  EXPECT_EQ(y4m.pic_h, 4);
+  EXPECT_EQ(y4m.fps_n, 30);
+  EXPECT_EQ(y4m.fps_d, 1);
+  EXPECT_EQ(y4m.interlace, 'p');
+  EXPECT_EQ(strcmp("420jpeg", y4m.chroma_type), 0);
+  y4m_input_close(&y4m);
+}
+
 }  // namespace

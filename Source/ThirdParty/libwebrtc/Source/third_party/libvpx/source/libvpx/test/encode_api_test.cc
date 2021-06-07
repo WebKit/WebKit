@@ -34,29 +34,33 @@ TEST(EncodeAPI, InvalidParams) {
 
   EXPECT_EQ(&img, vpx_img_wrap(&img, VPX_IMG_FMT_I420, 1, 1, 1, buf));
 
-  EXPECT_EQ(VPX_CODEC_INVALID_PARAM, vpx_codec_enc_init(NULL, NULL, NULL, 0));
-  EXPECT_EQ(VPX_CODEC_INVALID_PARAM, vpx_codec_enc_init(&enc, NULL, NULL, 0));
-  EXPECT_EQ(VPX_CODEC_INVALID_PARAM, vpx_codec_encode(NULL, NULL, 0, 0, 0, 0));
-  EXPECT_EQ(VPX_CODEC_INVALID_PARAM, vpx_codec_encode(NULL, &img, 0, 0, 0, 0));
-  EXPECT_EQ(VPX_CODEC_INVALID_PARAM, vpx_codec_destroy(NULL));
   EXPECT_EQ(VPX_CODEC_INVALID_PARAM,
-            vpx_codec_enc_config_default(NULL, NULL, 0));
+            vpx_codec_enc_init(nullptr, nullptr, nullptr, 0));
   EXPECT_EQ(VPX_CODEC_INVALID_PARAM,
-            vpx_codec_enc_config_default(NULL, &cfg, 0));
-  EXPECT_TRUE(vpx_codec_error(NULL) != NULL);
+            vpx_codec_enc_init(&enc, nullptr, nullptr, 0));
+  EXPECT_EQ(VPX_CODEC_INVALID_PARAM,
+            vpx_codec_encode(nullptr, nullptr, 0, 0, 0, 0));
+  EXPECT_EQ(VPX_CODEC_INVALID_PARAM,
+            vpx_codec_encode(nullptr, &img, 0, 0, 0, 0));
+  EXPECT_EQ(VPX_CODEC_INVALID_PARAM, vpx_codec_destroy(nullptr));
+  EXPECT_EQ(VPX_CODEC_INVALID_PARAM,
+            vpx_codec_enc_config_default(nullptr, nullptr, 0));
+  EXPECT_EQ(VPX_CODEC_INVALID_PARAM,
+            vpx_codec_enc_config_default(nullptr, &cfg, 0));
+  EXPECT_NE(vpx_codec_error(nullptr), nullptr);
 
   for (int i = 0; i < NELEMENTS(kCodecs); ++i) {
     SCOPED_TRACE(vpx_codec_iface_name(kCodecs[i]));
     EXPECT_EQ(VPX_CODEC_INVALID_PARAM,
-              vpx_codec_enc_init(NULL, kCodecs[i], NULL, 0));
+              vpx_codec_enc_init(nullptr, kCodecs[i], nullptr, 0));
     EXPECT_EQ(VPX_CODEC_INVALID_PARAM,
-              vpx_codec_enc_init(&enc, kCodecs[i], NULL, 0));
+              vpx_codec_enc_init(&enc, kCodecs[i], nullptr, 0));
     EXPECT_EQ(VPX_CODEC_INVALID_PARAM,
               vpx_codec_enc_config_default(kCodecs[i], &cfg, 1));
 
     EXPECT_EQ(VPX_CODEC_OK, vpx_codec_enc_config_default(kCodecs[i], &cfg, 0));
     EXPECT_EQ(VPX_CODEC_OK, vpx_codec_enc_init(&enc, kCodecs[i], &cfg, 0));
-    EXPECT_EQ(VPX_CODEC_OK, vpx_codec_encode(&enc, NULL, 0, 0, 0, 0));
+    EXPECT_EQ(VPX_CODEC_OK, vpx_codec_encode(&enc, nullptr, 0, 0, 0, 0));
 
     EXPECT_EQ(VPX_CODEC_OK, vpx_codec_destroy(&enc));
   }

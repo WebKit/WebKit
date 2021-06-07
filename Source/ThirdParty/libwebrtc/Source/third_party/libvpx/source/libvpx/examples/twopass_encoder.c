@@ -128,7 +128,7 @@ static vpx_fixed_buf_t pass0(vpx_image_t *raw, FILE *infile,
   vpx_fixed_buf_t stats = { NULL, 0 };
 
   if (vpx_codec_enc_init(&codec, encoder->codec_interface(), cfg, 0))
-    die_codec(&codec, "Failed to initialize encoder");
+    die("Failed to initialize encoder");
 
   // Calculate frame statistics.
   while (vpx_img_read(raw, infile)) {
@@ -164,7 +164,7 @@ static void pass1(vpx_image_t *raw, FILE *infile, const char *outfile_name,
   if (!writer) die("Failed to open %s for writing", outfile_name);
 
   if (vpx_codec_enc_init(&codec, encoder->codec_interface(), cfg, 0))
-    die_codec(&codec, "Failed to initialize encoder");
+    die("Failed to initialize encoder");
 
   // Encode frames.
   while (vpx_img_read(raw, infile)) {

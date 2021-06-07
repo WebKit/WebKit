@@ -2040,6 +2040,8 @@
 		41BA04E62165992800B527E0 /* threading.h in Headers */ = {isa = PBXBuildFile; fileRef = 414502082152E01B0033B4D3 /* threading.h */; };
 		41BA04E72165992800B527E0 /* vp8_entropymodedata.h in Headers */ = {isa = PBXBuildFile; fileRef = 4145020A2152E01B0033B4D3 /* vp8_entropymodedata.h */; };
 		41BA04E82165992800B527E0 /* vp8_skin_detection.h in Headers */ = {isa = PBXBuildFile; fileRef = 414502062152E01B0033B4D3 /* vp8_skin_detection.h */; };
+		41BAE0D8266E030D004DB6AA /* vp9_ext_ratectrl.c in Sources */ = {isa = PBXBuildFile; fileRef = 41BAE0D6266E030C004DB6AA /* vp9_ext_ratectrl.c */; };
+		41BAE0D9266E030D004DB6AA /* vp9_ext_ratectrl.h in Headers */ = {isa = PBXBuildFile; fileRef = 41BAE0D7266E030D004DB6AA /* vp9_ext_ratectrl.h */; };
 		41BAE3C0212E2C5B00E22482 /* vpx_thread.c in Sources */ = {isa = PBXBuildFile; fileRef = 41330A39212E2C3600280939 /* vpx_thread.c */; };
 		41BAE3C1212E2C5B00E22482 /* vpx_thread.h in Headers */ = {isa = PBXBuildFile; fileRef = 41330A36212E2C3500280939 /* vpx_thread.h */; };
 		41BAE3C2212E2C5B00E22482 /* vpx_write_yuv_frame.c in Sources */ = {isa = PBXBuildFile; fileRef = 41330A37212E2C3600280939 /* vpx_write_yuv_frame.c */; };
@@ -6393,6 +6395,8 @@
 		41A3920E1EFC4AFE00C4516A /* rand_extra.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rand_extra.c; sourceTree = "<group>"; };
 		41A3920F1EFC4AFE00C4516A /* windows.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = windows.c; sourceTree = "<group>"; };
 		41A392181EFC5AB800C4516A /* x25519-asm-arm.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "x25519-asm-arm.S"; sourceTree = "<group>"; };
+		41BAE0D6266E030C004DB6AA /* vp9_ext_ratectrl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vp9_ext_ratectrl.c; sourceTree = "<group>"; };
+		41BAE0D7266E030D004DB6AA /* vp9_ext_ratectrl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vp9_ext_ratectrl.h; sourceTree = "<group>"; };
 		41BAE3C5212E2D8F00E22482 /* highbd_loopfilter_sse2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = highbd_loopfilter_sse2.c; sourceTree = "<group>"; };
 		41BAE3C6212E2D8F00E22482 /* highbd_intrapred_intrin_sse2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = highbd_intrapred_intrin_sse2.c; sourceTree = "<group>"; };
 		41BAE3C7212E2D9000E22482 /* highbd_idct4x4_add_sse4.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = highbd_idct4x4_add_sse4.c; sourceTree = "<group>"; };
@@ -9477,6 +9481,8 @@
 				4140365024AA30A500BCE9B2 /* vp9_ethread.h */,
 				4140367024AA30AD00BCE9B2 /* vp9_extend.c */,
 				4140364E24AA30A500BCE9B2 /* vp9_extend.h */,
+				41BAE0D6266E030C004DB6AA /* vp9_ext_ratectrl.c */,
+				41BAE0D7266E030D004DB6AA /* vp9_ext_ratectrl.h */,
 				4140368124AA30B400BCE9B2 /* vp9_firstpass.c */,
 				4140368324AA30B500BCE9B2 /* vp9_firstpass.h */,
 				4140368824AA30B600BCE9B2 /* vp9_frame_scale.c */,
@@ -15408,6 +15414,7 @@
 				4140375524AA30DA00BCE9B2 /* vp9_mvref_common.h in Headers */,
 				414036B824AA30B700BCE9B2 /* vp9_noise_estimate.h in Headers */,
 				414036B924AA30B700BCE9B2 /* vp9_non_greedy_mv.h in Headers */,
+				41BAE0D9266E030D004DB6AA /* vp9_ext_ratectrl.h in Headers */,
 				4140373B24AA30DA00BCE9B2 /* vp9_onyxc_int.h in Headers */,
 				414036B724AA30B700BCE9B2 /* vp9_partition_models.h in Headers */,
 				414036BA24AA30B700BCE9B2 /* vp9_picklpf.h in Headers */,
@@ -17550,6 +17557,7 @@
 				414036A824AA30B700BCE9B2 /* vp9_aq_360.c in Sources */,
 				4140369C24AA30B600BCE9B2 /* vp9_aq_complexity.c in Sources */,
 				414036A024AA30B600BCE9B2 /* vp9_aq_cyclicrefresh.c in Sources */,
+				41BAE0D8266E030D004DB6AA /* vp9_ext_ratectrl.c in Sources */,
 				414036C824AA30B700BCE9B2 /* vp9_aq_variance.c in Sources */,
 				414036D524AA30B700BCE9B2 /* vp9_bitstream.c in Sources */,
 				4140372824AA30D900BCE9B2 /* vp9_blockd.c in Sources */,

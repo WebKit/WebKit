@@ -38,7 +38,7 @@ simple_decoder() {
   fi
 
   eval "${VPX_TEST_PREFIX}" "${decoder}" "${input_file}" "${output_file}" \
-      ${devnull}
+      ${devnull} || return 1
 
   [ -e "${output_file}" ] || return 1
 }

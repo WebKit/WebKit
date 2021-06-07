@@ -129,11 +129,11 @@ TEST(non_greedy_mv, smooth_mf) {
   const char *ground_truth_file =
       "non_greedy_mv_test_files/ground_truth_16x16.txt";
   BLOCK_SIZE bsize = BLOCK_32X32;
-  MV *search_mf = NULL;
-  MV *smooth_mf = NULL;
-  MV *estimation = NULL;
-  MV *ground_truth = NULL;
-  int(*local_var)[MF_LOCAL_STRUCTURE_SIZE] = NULL;
+  MV *search_mf = nullptr;
+  MV *smooth_mf = nullptr;
+  MV *estimation = nullptr;
+  MV *ground_truth = nullptr;
+  int(*local_var)[MF_LOCAL_STRUCTURE_SIZE] = nullptr;
   int rows = 0, cols = 0;
 
   int alpha = 100, max_iter = 100;
@@ -169,8 +169,8 @@ TEST(non_greedy_mv, local_var) {
   const char *gt_local_var_file = "non_greedy_mv_test_files/localVar_16x16.txt";
   const char *search_mf_file = "non_greedy_mv_test_files/exhaust_16x16.txt";
   BLOCK_SIZE bsize = BLOCK_16X16;
-  int(*gt_local_var)[MF_LOCAL_STRUCTURE_SIZE] = NULL;
-  int(*est_local_var)[MF_LOCAL_STRUCTURE_SIZE] = NULL;
+  int(*gt_local_var)[MF_LOCAL_STRUCTURE_SIZE] = nullptr;
+  int(*est_local_var)[MF_LOCAL_STRUCTURE_SIZE] = nullptr;
   YV12_BUFFER_CONFIG ref_frame, cur_frame;
   int rows, cols;
   MV *search_mf;

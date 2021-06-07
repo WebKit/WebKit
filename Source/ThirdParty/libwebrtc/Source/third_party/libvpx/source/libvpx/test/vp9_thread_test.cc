@@ -128,18 +128,18 @@ TEST_P(VPxWorkerThreadTest, EndWithoutSync) {
 }
 
 TEST(VPxWorkerThreadTest, TestInterfaceAPI) {
-  EXPECT_EQ(0, vpx_set_worker_interface(NULL));
-  EXPECT_TRUE(vpx_get_worker_interface() != NULL);
+  EXPECT_EQ(0, vpx_set_worker_interface(nullptr));
+  EXPECT_NE(vpx_get_worker_interface(), nullptr);
   for (int i = 0; i < 6; ++i) {
     VPxWorkerInterface winterface = *vpx_get_worker_interface();
     switch (i) {
       default:
-      case 0: winterface.init = NULL; break;
-      case 1: winterface.reset = NULL; break;
-      case 2: winterface.sync = NULL; break;
-      case 3: winterface.launch = NULL; break;
-      case 4: winterface.execute = NULL; break;
-      case 5: winterface.end = NULL; break;
+      case 0: winterface.init = nullptr; break;
+      case 1: winterface.reset = nullptr; break;
+      case 2: winterface.sync = nullptr; break;
+      case 3: winterface.launch = nullptr; break;
+      case 4: winterface.execute = nullptr; break;
+      case 5: winterface.end = nullptr; break;
     }
     EXPECT_EQ(0, vpx_set_worker_interface(&winterface));
   }
@@ -172,7 +172,7 @@ string DecodeFile(const string &filename, int num_threads) {
     }
 
     libvpx_test::DxDataIterator dec_iter = decoder.GetDxData();
-    const vpx_image_t *img = NULL;
+    const vpx_image_t *img = nullptr;
 
     // Get decompressed data
     while ((img = dec_iter.Next())) {
@@ -183,7 +183,7 @@ string DecodeFile(const string &filename, int num_threads) {
 }
 
 void DecodeFiles(const FileList files[]) {
-  for (const FileList *iter = files; iter->name != NULL; ++iter) {
+  for (const FileList *iter = files; iter->name != nullptr; ++iter) {
     SCOPED_TRACE(iter->name);
     for (int t = 1; t <= 8; ++t) {
       EXPECT_EQ(iter->expected_md5, DecodeFile(iter->name, t))
@@ -245,7 +245,7 @@ TEST(VP9DecodeMultiThreadedTest, FrameParallel) {
                                       "368ebc6ebf3a5e478d85b2c3149b2848" },
                                     { "vp90-2-08-tile_1x8_frame_parallel.webm",
                                       "17e439da2388aff3a0f69cb22579c6c1" },
-                                    { NULL, NULL } };
+                                    { nullptr, nullptr } };
 
   DecodeFiles(files);
 }
@@ -296,7 +296,7 @@ TEST(VP9DecodeMultiThreadedTest, FrameParallelResize) {
       "ae96f21f21b6370cc0125621b441fc52" },
     { "vp90-2-14-resize-fp-tiles-8-4.webm",
       "3eb4f24f10640d42218f7fd7b9fd30d4" },
-    { NULL, NULL }
+    { nullptr, nullptr }
   };
 
   DecodeFiles(files);
@@ -309,13 +309,13 @@ TEST(VP9DecodeMultiThreadedTest, NonFrameParallel) {
     { "vp90-2-08-tile_1x8.webm", "0941902a52e9092cb010905eab16364c" },
     { "vp90-2-08-tile-4x1.webm", "06505aade6647c583c8e00a2f582266f" },
     { "vp90-2-08-tile-4x4.webm", "85c2299892460d76e2c600502d52bfe2" },
-    { NULL, NULL }
+    { nullptr, nullptr }
   };
 
   DecodeFiles(files);
 }
 #endif  // CONFIG_WEBM_IO
 
-INSTANTIATE_TEST_CASE_P(Synchronous, VPxWorkerThreadTest, ::testing::Bool());
+INSTANTIATE_TEST_SUITE_P(Synchronous, VPxWorkerThreadTest, ::testing::Bool());
 
 }  // namespace

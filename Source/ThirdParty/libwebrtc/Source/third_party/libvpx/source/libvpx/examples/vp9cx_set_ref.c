@@ -251,7 +251,7 @@ int main(int argc, char **argv) {
     die("Failed to open %s for reading.", infile_arg);
 
   if (vpx_codec_enc_init(&ecodec, encoder->codec_interface(), &cfg, 0))
-    die_codec(&ecodec, "Failed to initialize encoder");
+    die("Failed to initialize encoder");
 
   // Disable alt_ref.
   if (vpx_codec_control(&ecodec, VP8E_SET_ENABLEAUTOALTREF, 0))

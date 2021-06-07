@@ -183,6 +183,6 @@ TEST_P(VP9EncodePerfTest, PerfTest) {
   }
 }
 
-VP9_INSTANTIATE_TEST_CASE(VP9EncodePerfTest,
-                          ::testing::Values(::libvpx_test::kRealTime));
+VP9_INSTANTIATE_TEST_SUITE(VP9EncodePerfTest,
+                           ::testing::Values(::libvpx_test::kRealTime));
 }  // namespace

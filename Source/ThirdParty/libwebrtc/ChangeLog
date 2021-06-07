@@ -1,3 +1,14 @@
+2021-06-07  Youenn Fablet  <youenn@apple.com>
+
+        Update libvpx to M92
+        https://bugs.webkit.org/show_bug.cgi?id=226488
+
+        Reviewed by Eric Carlson.
+
+        * CMakeLists.txt:
+        * Source/third_party/libvpx: Resynced.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2021-06-07  Youenn Fablet  <youenn@apple.com> and Victor M. Jaquez L. <vjaquez@igalia.com>
 
         Update libyuv to M92

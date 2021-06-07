@@ -29,9 +29,9 @@ uint8_t avg_with_rounding(uint8_t a, uint8_t b) { return (a + b + 1) >> 1; }
 
 void reference_pred(const Buffer<uint8_t> &pred, const Buffer<uint8_t> &ref,
                     int width, int height, Buffer<uint8_t> *avg) {
-  ASSERT_TRUE(avg->TopLeftPixel() != NULL);
-  ASSERT_TRUE(pred.TopLeftPixel() != NULL);
-  ASSERT_TRUE(ref.TopLeftPixel() != NULL);
+  ASSERT_NE(avg->TopLeftPixel(), nullptr);
+  ASSERT_NE(pred.TopLeftPixel(), nullptr);
+  ASSERT_NE(ref.TopLeftPixel(), nullptr);
 
   for (int y = 0; y < height; ++y) {
     for (int x = 0; x < width; ++x) {
@@ -166,21 +166,21 @@ TEST_P(AvgPredTest, DISABLED_Speed) {
   }
 }
 
-INSTANTIATE_TEST_CASE_P(C, AvgPredTest,
-                        ::testing::Values(&vpx_comp_avg_pred_c));
+INSTANTIATE_TEST_SUITE_P(C, AvgPredTest,
+                         ::testing::Values(&vpx_comp_avg_pred_c));
 
 #if HAVE_SSE2
-INSTANTIATE_TEST_CASE_P(SSE2, AvgPredTest,
-                        ::testing::Values(&vpx_comp_avg_pred_sse2));
+INSTANTIATE_TEST_SUITE_P(SSE2, AvgPredTest,
+                         ::testing::Values(&vpx_comp_avg_pred_sse2));
 #endif  // HAVE_SSE2
 
 #if HAVE_NEON
-INSTANTIATE_TEST_CASE_P(NEON, AvgPredTest,
-                        ::testing::Values(&vpx_comp_avg_pred_neon));
+INSTANTIATE_TEST_SUITE_P(NEON, AvgPredTest,
+                         ::testing::Values(&vpx_comp_avg_pred_neon));
 #endif  // HAVE_NEON
 
 #if HAVE_VSX
-INSTANTIATE_TEST_CASE_P(VSX, AvgPredTest,
-                        ::testing::Values(&vpx_comp_avg_pred_vsx));
+INSTANTIATE_TEST_SUITE_P(VSX, AvgPredTest,
+                         ::testing::Values(&vpx_comp_avg_pred_vsx));
 #endif  // HAVE_VSX
 }  // namespace

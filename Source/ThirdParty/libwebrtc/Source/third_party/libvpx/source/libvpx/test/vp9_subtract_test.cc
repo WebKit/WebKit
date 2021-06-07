@@ -126,30 +126,30 @@ TEST_P(VP9SubtractBlockTest, SimpleSubtract) {
   }
 }
 
-INSTANTIATE_TEST_CASE_P(C, VP9SubtractBlockTest,
-                        ::testing::Values(vpx_subtract_block_c));
+INSTANTIATE_TEST_SUITE_P(C, VP9SubtractBlockTest,
+                         ::testing::Values(vpx_subtract_block_c));
 
 #if HAVE_SSE2
-INSTANTIATE_TEST_CASE_P(SSE2, VP9SubtractBlockTest,
-                        ::testing::Values(vpx_subtract_block_sse2));
+INSTANTIATE_TEST_SUITE_P(SSE2, VP9SubtractBlockTest,
+                         ::testing::Values(vpx_subtract_block_sse2));
 #endif
 #if HAVE_NEON
-INSTANTIATE_TEST_CASE_P(NEON, VP9SubtractBlockTest,
-                        ::testing::Values(vpx_subtract_block_neon));
+INSTANTIATE_TEST_SUITE_P(NEON, VP9SubtractBlockTest,
+                         ::testing::Values(vpx_subtract_block_neon));
 #endif
 #if HAVE_MSA
-INSTANTIATE_TEST_CASE_P(MSA, VP9SubtractBlockTest,
-                        ::testing::Values(vpx_subtract_block_msa));
+INSTANTIATE_TEST_SUITE_P(MSA, VP9SubtractBlockTest,
+                         ::testing::Values(vpx_subtract_block_msa));
 #endif
 
 #if HAVE_MMI
-INSTANTIATE_TEST_CASE_P(MMI, VP9SubtractBlockTest,
-                        ::testing::Values(vpx_subtract_block_mmi));
+INSTANTIATE_TEST_SUITE_P(MMI, VP9SubtractBlockTest,
+                         ::testing::Values(vpx_subtract_block_mmi));
 #endif
 
 #if HAVE_VSX
-INSTANTIATE_TEST_CASE_P(VSX, VP9SubtractBlockTest,
-                        ::testing::Values(vpx_subtract_block_vsx));
+INSTANTIATE_TEST_SUITE_P(VSX, VP9SubtractBlockTest,
+                         ::testing::Values(vpx_subtract_block_vsx));
 #endif
 
 }  // namespace vp9

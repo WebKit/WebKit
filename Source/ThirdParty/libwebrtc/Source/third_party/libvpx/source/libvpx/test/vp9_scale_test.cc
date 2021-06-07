@@ -199,17 +199,17 @@ TEST_P(ScaleTest, DISABLED_Speed) {
   }
 }
 
-INSTANTIATE_TEST_CASE_P(C, ScaleTest,
-                        ::testing::Values(vp9_scale_and_extend_frame_c));
+INSTANTIATE_TEST_SUITE_P(C, ScaleTest,
+                         ::testing::Values(vp9_scale_and_extend_frame_c));
 
 #if HAVE_SSSE3
-INSTANTIATE_TEST_CASE_P(SSSE3, ScaleTest,
-                        ::testing::Values(vp9_scale_and_extend_frame_ssse3));
+INSTANTIATE_TEST_SUITE_P(SSSE3, ScaleTest,
+                         ::testing::Values(vp9_scale_and_extend_frame_ssse3));
 #endif  // HAVE_SSSE3
 
 #if HAVE_NEON
-INSTANTIATE_TEST_CASE_P(NEON, ScaleTest,
-                        ::testing::Values(vp9_scale_and_extend_frame_neon));
+INSTANTIATE_TEST_SUITE_P(NEON, ScaleTest,
+                         ::testing::Values(vp9_scale_and_extend_frame_neon));
 #endif  // HAVE_NEON
 
 }  // namespace libvpx_test

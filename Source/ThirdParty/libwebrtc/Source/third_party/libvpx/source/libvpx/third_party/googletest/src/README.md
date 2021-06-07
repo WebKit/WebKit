@@ -6,51 +6,10 @@ To build Google Test and your tests that use it, you need to tell your build
 system where to find its headers and source files. The exact way to do it
 depends on which build system you use, and is usually straightforward.
 
-#### Build
+### Build with CMake
 
-Suppose you put Google Test in directory `${GTEST_DIR}`. To build it, create a
-library build target (or a project as called by Visual Studio and Xcode) to
-compile
-
-    ${GTEST_DIR}/src/gtest-all.cc
-
-with `${GTEST_DIR}/include` in the system header search path and `${GTEST_DIR}`
-in the normal header search path. Assuming a Linux-like system and gcc,
-something like the following will do:
-
-    g++ -isystem ${GTEST_DIR}/include -I${GTEST_DIR} \
-        -pthread -c ${GTEST_DIR}/src/gtest-all.cc
-    ar -rv libgtest.a gtest-all.o
-
-(We need `-pthread` as Google Test uses threads.)
-
-Next, you should compile your test source file with `${GTEST_DIR}/include` in
-the system header search path, and link it with gtest and any other necessary
-libraries:
-
-    g++ -isystem ${GTEST_DIR}/include -pthread path/to/your_test.cc libgtest.a \
-        -o your_test
-
-As an example, the make/ directory contains a Makefile that you can use to build
-Google Test on systems where GNU make is available (e.g. Linux, Mac OS X, and
-Cygwin). It doesn't try to build Google Test's own tests. Instead, it just
-builds the Google Test library and a sample test. You can use it as a starting
-point for your own build script.
-
-If the default settings are correct for your environment, the following commands
-should succeed:
-
-    cd ${GTEST_DIR}/make
-    make
-    ./sample1_unittest
-
-If you see errors, try to tweak the contents of `make/Makefile` to make them go
-away. There are instructions in `make/Makefile` on how to do it.
-
-### Using CMake
-
-Google Test comes with a CMake build script (
-[CMakeLists.txt](https://github.com/google/googletest/blob/master/CMakeLists.txt))
+Google Test comes with a CMake build script
+([CMakeLists.txt](https://github.com/google/googletest/blob/master/CMakeLists.txt))
 that can be used on a wide range of platforms ("C" stands for cross-platform.).
 If you don't have CMake installed already, you can download it for free from
 <http://www.cmake.org/>.
@@ -115,60 +74,64 @@ pulled into the main build with `add_subdirectory()`. For example:
 
 New file `CMakeLists.txt.in`:
 
-    cmake_minimum_required(VERSION 2.8.2)
+```cmake
+cmake_minimum_required(VERSION 2.8.2)
 
-    project(googletest-download NONE)
+project(googletest-download NONE)
 
-    include(ExternalProject)
-    ExternalProject_Add(googletest
-      GIT_REPOSITORY    https://github.com/google/googletest.git
-      GIT_TAG           master
-      SOURCE_DIR        "${CMAKE_BINARY_DIR}/googletest-src"
-      BINARY_DIR        "${CMAKE_BINARY_DIR}/googletest-build"
-      CONFIGURE_COMMAND ""
-      BUILD_COMMAND     ""
-      INSTALL_COMMAND   ""
-      TEST_COMMAND      ""
-    )
+include(ExternalProject)
+ExternalProject_Add(googletest
+  GIT_REPOSITORY    https://github.com/google/googletest.git
+  GIT_TAG           master
+  SOURCE_DIR        "${CMAKE_CURRENT_BINARY_DIR}/googletest-src"
+  BINARY_DIR        "${CMAKE_CURRENT_BINARY_DIR}/googletest-build"
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND     ""
+  INSTALL_COMMAND   ""
+  TEST_COMMAND      ""
+)
+```
 
 Existing build's `CMakeLists.txt`:
 
-    # Download and unpack googletest at configure time
-    configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
-    execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
-      RESULT_VARIABLE result
-      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-download )
-    if(result)
-      message(FATAL_ERROR "CMake step for googletest failed: ${result}")
-    endif()
-    execute_process(COMMAND ${CMAKE_COMMAND} --build .
-      RESULT_VARIABLE result
-      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/googletest-download )
-    if(result)
-      message(FATAL_ERROR "Build step for googletest failed: ${result}")
-    endif()
+```cmake
+# Download and unpack googletest at configure time
+configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
+execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
+  RESULT_VARIABLE result
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download )
+if(result)
+  message(FATAL_ERROR "CMake step for googletest failed: ${result}")
+endif()
+execute_process(COMMAND ${CMAKE_COMMAND} --build .
+  RESULT_VARIABLE result
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download )
+if(result)
+  message(FATAL_ERROR "Build step for googletest failed: ${result}")
+endif()
 
-    # Prevent overriding the parent project's compiler/linker
-    # settings on Windows
-    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+# Prevent overriding the parent project's compiler/linker
+# settings on Windows
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
-    # Add googletest directly to our build. This defines
-    # the gtest and gtest_main targets.
-    add_subdirectory(${CMAKE_BINARY_DIR}/googletest-src
-                     ${CMAKE_BINARY_DIR}/googletest-build
-                     EXCLUDE_FROM_ALL)
+# Add googletest directly to our build. This defines
+# the gtest and gtest_main targets.
+add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
+                 ${CMAKE_CURRENT_BINARY_DIR}/googletest-build
+                 EXCLUDE_FROM_ALL)
 
-    # The gtest/gtest_main targets carry header search path
-    # dependencies automatically when using CMake 2.8.11 or
-    # later. Otherwise we have to add them here ourselves.
-    if (CMAKE_VERSION VERSION_LESS 2.8.11)
-      include_directories("${gtest_SOURCE_DIR}/include")
-    endif()
+# The gtest/gtest_main targets carry header search path
+# dependencies automatically when using CMake 2.8.11 or
+# later. Otherwise we have to add them here ourselves.
+if (CMAKE_VERSION VERSION_LESS 2.8.11)
+  include_directories("${gtest_SOURCE_DIR}/include")
+endif()
 
-    # Now simply link against gtest or gtest_main as needed. Eg
-    add_executable(example example.cpp)
-    target_link_libraries(example gtest_main)
-    add_test(NAME example_test COMMAND example)
+# Now simply link against gtest or gtest_main as needed. Eg
+add_executable(example example.cpp)
+target_link_libraries(example gtest_main)
+add_test(NAME example_test COMMAND example)
+```
 
 Note that this approach requires CMake 2.8.2 or later due to its use of the
 `ExternalProject_Add()` command. The above technique is discussed in more detail
@@ -188,47 +151,14 @@ Google Test already has a CMake option for this: `gtest_force_shared_crt`
 Enabling this option will make gtest link the runtimes dynamically too, and
 match the project in which it is included.
 
-### Legacy Build Scripts
+#### C++ Standard Version
 
-Before settling on CMake, we have been providing hand-maintained build
-projects/scripts for Visual Studio, Xcode, and Autotools. While we continue to
-provide them for convenience, they are not actively maintained any more. We
-highly recommend that you follow the instructions in the above sections to
-integrate Google Test with your existing build system.
-
-If you still need to use the legacy build scripts, here's how:
-
-The msvc\ folder contains two solutions with Visual C++ projects. Open the
-`gtest.sln` or `gtest-md.sln` file using Visual Studio, and you are ready to
-build Google Test the same way you build any Visual Studio project. Files that
-have names ending with -md use DLL versions of Microsoft runtime libraries (the
-/MD or the /MDd compiler option). Files without that suffix use static versions
-of the runtime libraries (the /MT or the /MTd option). Please note that one must
-use the same option to compile both gtest and the test code. If you use Visual
-Studio 2005 or above, we recommend the -md version as /MD is the default for new
-projects in these versions of Visual Studio.
-
-On Mac OS X, open the `gtest.xcodeproj` in the `xcode/` folder using Xcode.
-Build the "gtest" target. The universal binary framework will end up in your
-selected build directory (selected in the Xcode "Preferences..." -> "Building"
-pane and defaults to xcode/build). Alternatively, at the command line, enter:
-
-    xcodebuild
-
-This will build the "Release" configuration of gtest.framework in your default
-build location. See the "xcodebuild" man page for more information about
-building different configurations and building in different locations.
-
-If you wish to use the Google Test Xcode project with Xcode 4.x and above, you
-need to either:
-
-*   update the SDK configuration options in xcode/Config/General.xconfig.
-    Comment options `SDKROOT`, `MACOS_DEPLOYMENT_TARGET`, and `GCC_VERSION`. If
-    you choose this route you lose the ability to target earlier versions of
-    MacOS X.
-*   Install an SDK for an earlier version. This doesn't appear to be supported
-    by Apple, but has been reported to work
-    (http://stackoverflow.com/questions/5378518).
+An environment that supports C++11 is required in order to successfully build
+Google Test. One way to ensure this is to specify the standard in the top-level
+project, for example by using the `set(CMAKE_CXX_STANDARD 11)` command. If this
+is not feasible, for example in a C project using Google Test for validation,
+then it can be specified by adding it to the options for cmake via the
+`DCMAKE_CXX_FLAGS` option.
 
 ### Tweaking Google Test
 
@@ -239,41 +169,14 @@ command line. Generally, these macros are named like `GTEST_XYZ` and you define
 them to either 1 or 0 to enable or disable a certain feature.
 
 We list the most frequently used macros below. For a complete list, see file
-[include/gtest/internal/gtest-port.h](https://github.com/google/googletest/blob/master/include/gtest/internal/gtest-port.h).
-
-### Choosing a TR1 Tuple Library
-
-Some Google Test features require the C++ Technical Report 1 (TR1) tuple
-library, which is not yet available with all compilers. The good news is that
-Google Test implements a subset of TR1 tuple that's enough for its own need, and
-will automatically use this when the compiler doesn't provide TR1 tuple.
-
-Usually you don't need to care about which tuple library Google Test uses.
-However, if your project already uses TR1 tuple, you need to tell Google Test to
-use the same TR1 tuple library the rest of your project uses, or the two tuple
-implementations will clash. To do that, add
-
-    -DGTEST_USE_OWN_TR1_TUPLE=0
-
-to the compiler flags while compiling Google Test and your tests. If you want to
-force Google Test to use its own tuple library, just add
-
-    -DGTEST_USE_OWN_TR1_TUPLE=1
-
-to the compiler flags instead.
-
-If you don't want Google Test to use tuple at all, add
-
-    -DGTEST_HAS_TR1_TUPLE=0
-
-and all features using tuple will be disabled.
+[include/gtest/internal/gtest-port.h](https://github.com/google/googletest/blob/master/googletest/include/gtest/internal/gtest-port.h).
 
 ### Multi-threaded Tests
 
 Google Test is thread-safe where the pthread library is available. After
-`#include "gtest/gtest.h"`, you can check the `GTEST_IS_THREADSAFE` macro to see
-whether this is the case (yes if the macro is `#defined` to 1, no if it's
-undefined.).
+`#include "gtest/gtest.h"`, you can check the
+`GTEST_IS_THREADSAFE` macro to see whether this is the case (yes if the macro is
+`#defined` to 1, no if it's undefined.).
 
 If Google Test doesn't correctly detect whether pthread is available in your
 environment, you can force it with

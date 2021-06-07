@@ -213,7 +213,7 @@ TEST_P(ArfFreqTest, MinArfFreqTest) {
   }
 }
 
-VP9_INSTANTIATE_TEST_CASE(ArfFreqTest, ::testing::ValuesIn(kTestVectors),
-                          ::testing::ValuesIn(kEncodeVectors),
-                          ::testing::ValuesIn(kMinArfVectors));
+VP9_INSTANTIATE_TEST_SUITE(ArfFreqTest, ::testing::ValuesIn(kTestVectors),
+                           ::testing::ValuesIn(kEncodeVectors),
+                           ::testing::ValuesIn(kMinArfVectors));
 }  // namespace

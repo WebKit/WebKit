@@ -459,7 +459,7 @@ TEST_P(VpxMbPostProcDownTest, CheckLowFilterOutput) {
   SetRows(src_c_.TopLeftPixel(), rows_, cols_, src_c_.stride());
 
   unsigned char *expected_output = new unsigned char[rows_ * cols_];
-  ASSERT_TRUE(expected_output != NULL);
+  ASSERT_NE(expected_output, nullptr);
   SetRows(expected_output, rows_, cols_, cols_);
 
   RunFilterLevel(src_c_.TopLeftPixel(), rows_, cols_, src_c_.stride(), q2mbl(0),
@@ -511,62 +511,62 @@ TEST_P(VpxMbPostProcDownTest, DISABLED_Speed) {
   PrintMedian("16x16");
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     C, VpxPostProcDownAndAcrossMbRowTest,
     ::testing::Values(vpx_post_proc_down_and_across_mb_row_c));
 
-INSTANTIATE_TEST_CASE_P(C, VpxMbPostProcAcrossIpTest,
-                        ::testing::Values(vpx_mbpost_proc_across_ip_c));
+INSTANTIATE_TEST_SUITE_P(C, VpxMbPostProcAcrossIpTest,
+                         ::testing::Values(vpx_mbpost_proc_across_ip_c));
 
-INSTANTIATE_TEST_CASE_P(C, VpxMbPostProcDownTest,
-                        ::testing::Values(vpx_mbpost_proc_down_c));
+INSTANTIATE_TEST_SUITE_P(C, VpxMbPostProcDownTest,
+                         ::testing::Values(vpx_mbpost_proc_down_c));
 
 #if HAVE_SSE2
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     SSE2, VpxPostProcDownAndAcrossMbRowTest,
     ::testing::Values(vpx_post_proc_down_and_across_mb_row_sse2));
 
-INSTANTIATE_TEST_CASE_P(SSE2, VpxMbPostProcAcrossIpTest,
-                        ::testing::Values(vpx_mbpost_proc_across_ip_sse2));
+INSTANTIATE_TEST_SUITE_P(SSE2, VpxMbPostProcAcrossIpTest,
+                         ::testing::Values(vpx_mbpost_proc_across_ip_sse2));
 
-INSTANTIATE_TEST_CASE_P(SSE2, VpxMbPostProcDownTest,
-                        ::testing::Values(vpx_mbpost_proc_down_sse2));
+INSTANTIATE_TEST_SUITE_P(SSE2, VpxMbPostProcDownTest,
+                         ::testing::Values(vpx_mbpost_proc_down_sse2));
 #endif  // HAVE_SSE2
 
 #if HAVE_NEON
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     NEON, VpxPostProcDownAndAcrossMbRowTest,
     ::testing::Values(vpx_post_proc_down_and_across_mb_row_neon));
 
-INSTANTIATE_TEST_CASE_P(NEON, VpxMbPostProcAcrossIpTest,
-                        ::testing::Values(vpx_mbpost_proc_across_ip_neon));
+INSTANTIATE_TEST_SUITE_P(NEON, VpxMbPostProcAcrossIpTest,
+                         ::testing::Values(vpx_mbpost_proc_across_ip_neon));
 
-INSTANTIATE_TEST_CASE_P(NEON, VpxMbPostProcDownTest,
-                        ::testing::Values(vpx_mbpost_proc_down_neon));
+INSTANTIATE_TEST_SUITE_P(NEON, VpxMbPostProcDownTest,
+                         ::testing::Values(vpx_mbpost_proc_down_neon));
 #endif  // HAVE_NEON
 
 #if HAVE_MSA
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     MSA, VpxPostProcDownAndAcrossMbRowTest,
     ::testing::Values(vpx_post_proc_down_and_across_mb_row_msa));
 
-INSTANTIATE_TEST_CASE_P(MSA, VpxMbPostProcAcrossIpTest,
-                        ::testing::Values(vpx_mbpost_proc_across_ip_msa));
+INSTANTIATE_TEST_SUITE_P(MSA, VpxMbPostProcAcrossIpTest,
+                         ::testing::Values(vpx_mbpost_proc_across_ip_msa));
 
-INSTANTIATE_TEST_CASE_P(MSA, VpxMbPostProcDownTest,
-                        ::testing::Values(vpx_mbpost_proc_down_msa));
+INSTANTIATE_TEST_SUITE_P(MSA, VpxMbPostProcDownTest,
+                         ::testing::Values(vpx_mbpost_proc_down_msa));
 #endif  // HAVE_MSA
 
 #if HAVE_VSX
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     VSX, VpxPostProcDownAndAcrossMbRowTest,
     ::testing::Values(vpx_post_proc_down_and_across_mb_row_vsx));
 
-INSTANTIATE_TEST_CASE_P(VSX, VpxMbPostProcAcrossIpTest,
-                        ::testing::Values(vpx_mbpost_proc_across_ip_vsx));
+INSTANTIATE_TEST_SUITE_P(VSX, VpxMbPostProcAcrossIpTest,
+                         ::testing::Values(vpx_mbpost_proc_across_ip_vsx));
 
-INSTANTIATE_TEST_CASE_P(VSX, VpxMbPostProcDownTest,
-                        ::testing::Values(vpx_mbpost_proc_down_vsx));
+INSTANTIATE_TEST_SUITE_P(VSX, VpxMbPostProcDownTest,
+                         ::testing::Values(vpx_mbpost_proc_down_vsx));
 #endif  // HAVE_VSX
 
 }  // namespace

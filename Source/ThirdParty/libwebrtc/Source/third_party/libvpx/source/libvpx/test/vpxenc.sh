@@ -131,7 +131,7 @@ vpxenc_vp8_ivf() {
       --codec=vp8 \
       --limit="${TEST_FRAMES}" \
       --ivf \
-      --output="${output}"
+      --output="${output}" || return 1
 
     if [ ! -e "${output}" ]; then
       elog "Output file does not exist."
@@ -147,7 +147,7 @@ vpxenc_vp8_webm() {
     vpxenc $(yuv_input_hantro_collage) \
       --codec=vp8 \
       --limit="${TEST_FRAMES}" \
-      --output="${output}"
+      --output="${output}" || return 1
 
     if [ ! -e "${output}" ]; then
       elog "Output file does not exist."
@@ -162,7 +162,8 @@ vpxenc_vp8_webm_rt() {
     local output="${VPX_TEST_OUTPUT_DIR}/vp8_rt.webm"
     vpxenc $(yuv_input_hantro_collage) \
       $(vpxenc_rt_params vp8) \
-      --output="${output}"
+      --output="${output}" || return 1
+
     if [ ! -e "${output}" ]; then
       elog "Output file does not exist."
       return 1
@@ -178,7 +179,7 @@ vpxenc_vp8_webm_2pass() {
       --codec=vp8 \
       --limit="${TEST_FRAMES}" \
       --output="${output}" \
-      --passes=2
+      --passes=2 || return 1
 
     if [ ! -e "${output}" ]; then
       elog "Output file does not exist."
@@ -199,7 +200,7 @@ vpxenc_vp8_webm_lag10_frames20() {
       --lag-in-frames="${lag_frames}" \
       --output="${output}" \
       --auto-alt-ref=1 \
-      --passes=2
+      --passes=2 || return 1
 
     if [ ! -e "${output}" ]; then
       elog "Output file does not exist."
@@ -215,7 +216,7 @@ vpxenc_vp8_ivf_piped_input() {
       --codec=vp8 \
       --limit="${TEST_FRAMES}" \
       --ivf \
-      --output="${output}"
+      --output="${output}" || return 1
 
     if [ ! -e "${output}" ]; then
       elog "Output file does not exist."
@@ -233,7 +234,7 @@ vpxenc_vp9_ivf() {
       --limit="${TEST_FRAMES}" \
       "${passes}" \
       --ivf \
-      --output="${output}"
+      --output="${output}" || return 1
 
     if [ ! -e "${output}" ]; then
       elog "Output file does not exist."
@@ -251,7 +252,7 @@ vpxenc_vp9_webm() {
       --codec=vp9 \
       --limit="${TEST_FRAMES}" \
       "${passes}" \
-      --output="${output}"
+      --output="${output}" || return 1
 
     if [ ! -e "${output}" ]; then
       elog "Output file does not exist."
@@ -266,7 +267,7 @@ vpxenc_vp9_webm_rt() {
     local output="${VPX_TEST_OUTPUT_DIR}/vp9_rt.webm"
     vpxenc $(yuv_input_hantro_collage) \
       $(vpxenc_rt_params vp9) \
-      --output="${output}"
+      --output="${output}" || return 1
 
     if [ ! -e "${output}" ]; then
       elog "Output file does not exist."
@@ -290,7 +291,7 @@ vpxenc_vp9_webm_rt_multithread_tiled() {
           $(vpxenc_rt_params vp9) \
           --threads=${threads} \
           --tile-columns=${tile_cols} \
-          --output="${output}"
+          --output="${output}" || return 1
 
         if [ ! -e "${output}" ]; then
           elog "Output file does not exist."
@@ -318,7 +319,8 @@ vpxenc_vp9_webm_rt_multithread_tiled_frameparallel() {
           --threads=${threads} \
           --tile-columns=${tile_cols} \
           --frame-parallel=1 \
-          --output="${output}"
+          --output="${output}" || return 1
+
         if [ ! -e "${output}" ]; then
           elog "Output file does not exist."
           return 1
@@ -337,7 +339,7 @@ vpxenc_vp9_webm_2pass() {
       --codec=vp9 \
       --limit="${TEST_FRAMES}" \
       --output="${output}" \
-      --passes=2
+      --passes=2 || return 1
 
     if [ ! -e "${output}" ]; then
       elog "Output file does not exist."
@@ -356,7 +358,7 @@ vpxenc_vp9_ivf_lossless() {
       --ivf \
       --output="${output}" \
       "${passes}" \
-      --lossless=1
+      --lossless=1 || return 1
 
     if [ ! -e "${output}" ]; then
       elog "Output file does not exist."
@@ -376,7 +378,7 @@ vpxenc_vp9_ivf_minq0_maxq0() {
       --output="${output}" \
       "${passes}" \
       --min-q=0 \
-      --max-q=0
+      --max-q=0 || return 1
 
     if [ ! -e "${output}" ]; then
       elog "Output file does not exist."
@@ -398,7 +400,7 @@ vpxenc_vp9_webm_lag10_frames20() {
       --lag-in-frames="${lag_frames}" \
       --output="${output}" \
       "${passes}" \
-      --auto-alt-ref=1
+      --auto-alt-ref=1 || return 1
 
     if [ ! -e "${output}" ]; then
       elog "Output file does not exist."
@@ -417,7 +419,7 @@ vpxenc_vp9_webm_non_square_par() {
       --codec=vp9 \
       --limit="${TEST_FRAMES}" \
       "${passes}" \
-      --output="${output}"
+      --output="${output}" || return 1
 
     if [ ! -e "${output}" ]; then
       elog "Output file does not exist."
@@ -443,7 +445,7 @@ vpxenc_vp9_webm_sharpness() {
         --end-usage=q \
         --cq-level=40 \
         --output="${output}" \
-        "${passes}"
+        "${passes}" || return 1
 
       if [ ! -e "${output}" ]; then
         elog "Output file does not exist."

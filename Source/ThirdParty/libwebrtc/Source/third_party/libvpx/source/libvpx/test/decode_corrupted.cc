@@ -87,14 +87,14 @@ TEST_P(DecodeCorruptedFrameTest, DecodeCorruptedFrame) {
 }
 
 #if CONFIG_VP9
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     VP9, DecodeCorruptedFrameTest,
     ::testing::Values(
         static_cast<const libvpx_test::CodecFactory *>(&libvpx_test::kVP9)));
 #endif  // CONFIG_VP9
 
 #if CONFIG_VP8
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     VP8, DecodeCorruptedFrameTest,
     ::testing::Values(
         static_cast<const libvpx_test::CodecFactory *>(&libvpx_test::kVP8)));

@@ -150,8 +150,8 @@ TEST_P(AltRefAqSegmentTest, TestNoMisMatchAltRefAQ4) {
   ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
 }
 
-VP9_INSTANTIATE_TEST_CASE(AltRefAqSegmentTest,
-                          ::testing::Values(::libvpx_test::kOnePassGood,
-                                            ::libvpx_test::kTwoPassGood),
-                          ::testing::Range(2, 5));
+VP9_INSTANTIATE_TEST_SUITE(AltRefAqSegmentTest,
+                           ::testing::Values(::libvpx_test::kOnePassGood,
+                                             ::libvpx_test::kTwoPassGood),
+                           ::testing::Range(2, 5));
 }  // namespace
