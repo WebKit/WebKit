@@ -601,14 +601,14 @@ static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunc
     if (!searchRange)
         return { };
 
-    TextIterator it(*searchRange, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+    TextIterator it(*searchRange, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions);
     unsigned next = forwardSearchForBoundaryWithTextIterator(it, string, prefixLength, searchFunction);
     
     if (it.atEnd() && next == string.size())
         pos = makeDeprecatedLegacyPosition(searchRange->end);
     else if (next > prefixLength) {
         // Use the character iterator to translate the next value into a DOM position.
-        CharacterIterator charIt(*searchRange, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+        CharacterIterator charIt(*searchRange, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions);
         charIt.advance(next - prefixLength - 1);
         if (charIt.atEnd())
             return { };

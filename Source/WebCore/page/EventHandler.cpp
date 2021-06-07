@@ -615,7 +615,7 @@ static uint64_t textDistance(const Position& start, const Position& end)
     auto range = makeSimpleRange(start, end);
     if (!range)
         return 0;
-    return characterCount(*range, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+    return characterCount(*range, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions);
 }
 
 bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestResults& event)

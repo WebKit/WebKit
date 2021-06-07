@@ -1443,12 +1443,12 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
             startIndex = 0;
             if (visibleStart >= startOfParagraphToMove) {
                 if (auto rangeToSelectionStart = makeSimpleRange(startOfParagraphToMove, visibleStart))
-                    startIndex = characterCount(*rangeToSelectionStart, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+                    startIndex = characterCount(*rangeToSelectionStart, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions);
             }
             endIndex = 0;
             if (visibleEnd <= endOfParagraphToMove) {
                 if (auto rangeToSelectionEnd = makeSimpleRange(startOfParagraphToMove, visibleEnd))
-                    endIndex = characterCount(*rangeToSelectionEnd, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+                    endIndex = characterCount(*rangeToSelectionEnd, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions);
             }
         }
     }
@@ -1517,7 +1517,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     if (!editableRoot)
         editableRoot = &document();
 
-    auto destinationIndex = characterCount({ { *editableRoot, 0 }, *makeBoundaryPoint(destination) }, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+    auto destinationIndex = characterCount({ { *editableRoot, 0 }, *makeBoundaryPoint(destination) }, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions);
 
     setEndingSelection(VisibleSelection(destination, originalIsDirectional));
     ASSERT(endingSelection().isCaretOrRange());
@@ -1539,8 +1539,8 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
         // causes spaces to be collapsed during the move operation.  This results
         // in a call to rangeFromLocationAndLength with a location past the end
         // of the document (which will return null).
-        auto start = makeDeprecatedLegacyPosition(resolveCharacterLocation(makeRangeSelectingNodeContents(*editableRoot), destinationIndex + *startIndex, TextIteratorEmitsCharactersBetweenAllVisiblePositions));
-        auto end = makeDeprecatedLegacyPosition(resolveCharacterLocation(makeRangeSelectingNodeContents(*editableRoot), destinationIndex + *endIndex, TextIteratorEmitsCharactersBetweenAllVisiblePositions));
+        auto start = makeDeprecatedLegacyPosition(resolveCharacterLocation(makeRangeSelectingNodeContents(*editableRoot), destinationIndex + *startIndex, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions));
+        auto end = makeDeprecatedLegacyPosition(resolveCharacterLocation(makeRangeSelectingNodeContents(*editableRoot), destinationIndex + *endIndex, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions));
         setEndingSelection({ start, end, Affinity::Downstream, originalIsDirectional });
     }
 }

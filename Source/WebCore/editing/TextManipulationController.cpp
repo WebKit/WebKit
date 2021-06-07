@@ -155,7 +155,7 @@ static bool isNotSpace(UChar character)
 class ParagraphContentIterator {
 public:
     ParagraphContentIterator(const Position& start, const Position& end)
-        : m_iterator(*makeSimpleRange(start, end), TextIteratorIgnoresStyleVisibility)
+        : m_iterator(*makeSimpleRange(start, end), TextIteratorBehavior::IgnoresStyleVisibility)
         , m_node(start.firstNode())
         , m_pastEndNode(end.firstNode())
     {

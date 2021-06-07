@@ -596,7 +596,7 @@ private:
     std::optional<SimpleRange> markMisspellingsOrBadGrammar(const VisibleSelection&, bool checkSpelling);
     OptionSet<TextCheckingType> resolveTextCheckingTypeMask(const Node& rootEditableElement, OptionSet<TextCheckingType>);
 
-    WEBCORE_EXPORT String selectedText(TextIteratorBehavior) const;
+    WEBCORE_EXPORT String selectedText(TextIteratorBehaviors) const;
 
     void selectComposition();
     enum SetCompositionMode { ConfirmComposition, CancelComposition };

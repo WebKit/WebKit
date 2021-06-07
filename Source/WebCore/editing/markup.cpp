@@ -455,7 +455,7 @@ void StyledMarkupAccumulator::appendText(StringBuilder& out, const Text& text)
     
 String StyledMarkupAccumulator::renderedTextRespectingRange(const Text& text)
 {
-    TextIteratorBehavior behavior = TextIteratorDefaultBehavior;
+    TextIteratorBehaviors behaviors;
     Position start = &text == m_start.containerNode() ? m_start : firstPositionInNode(const_cast<Text*>(&text));
     Position end;
     if (&text == m_end.containerNode())
@@ -463,11 +463,11 @@ String StyledMarkupAccumulator::renderedTextRespectingRange(const Text& text)
     else {
         end = lastPositionInNode(const_cast<Text*>(&text));
         if (!m_end.isNull())
-            behavior = TextIteratorBehavesAsIfNodesFollowing;
+            behaviors.add(TextIteratorBehavior::BehavesAsIfNodesFollowing);
     }
 
     auto range = makeSimpleRange(start, end);
-    return range ? plainText(*range, behavior) : emptyString();
+    return range ? plainText(*range, behaviors) : emptyString();
 }
 
 String StyledMarkupAccumulator::textContentRespectingRange(const Text& text)

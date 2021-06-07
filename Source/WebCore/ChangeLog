@@ -1,3 +1,107 @@
+2021-06-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Turn TextIteratorBehaviorFlag into an enum class and wrap it in OptionSet
+        https://bugs.webkit.org/show_bug.cgi?id=226691
+
+        Reviewed by Darin Adler.
+
+        Modernize some editing code by turning `TextIteratorBehaviorFlag` into an enum class, `TextIteratorBehavior`,
+        with an explicit width of 16 bits. Additionally, since this is a bitmask, refactor various codepaths to use
+        `OptionSet<TextIteratorBehavior>` instead of the underlying type.
+
+        This gives us improved type safety when using this enum, and also narrows the width of this enum to 16 bits
+        (from 32). No change in behavior.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::traverseToOffsetInRange):
+        (WebCore::AXObjectCache::rangeMatchesTextNearRange):
+        (WebCore::AXObjectCache::nextBoundary):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::textIteratorBehaviorForTextRange const):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/atk/WebKitAccessibleHyperlink.cpp:
+        (rangeLengthForObject):
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (getSelectionOffsetsForObject):
+        * accessibility/atk/WebKitAccessibleUtil.cpp:
+        (objectFocusedAndCaretOffsetUnignored):
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::textIteratorBehaviorForTextRange const):
+
+        Fix this method to return the empty (default) option set instead of `false` (which was previously implicitly
+        converted to `TextIteratorDefaultBehavior`).
+
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyBlockStyle):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        * editing/Editing.cpp:
+        (WebCore::indexForVisiblePosition):
+        (WebCore::visiblePositionForIndex):
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectedText const):
+        (WebCore::Editor::selectedTextForDataTransfer const):
+        * editing/Editor.h:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        * editing/TextIterator.cpp:
+        (WebCore::isClippedByFrameAncestor):
+        (WebCore::TextIterator::TextIterator):
+        (WebCore::TextIterator::init):
+        (WebCore::firstChild):
+        (WebCore::nextSibling):
+        (WebCore::nextNode):
+        (WebCore::isDescendantOf):
+        (WebCore::parentNodeOrShadowHost):
+        (WebCore::TextIterator::advance):
+        (WebCore::TextIterator::handleTextNode):
+        (WebCore::TextIterator::handleTextRun):
+        (WebCore::TextIterator::handleTextNodeFirstLetter):
+        (WebCore::TextIterator::handleReplacedElement):
+        (WebCore::TextIterator::shouldRepresentNodeOffsetZero):
+        (WebCore::TextIterator::shouldEmitSpaceBeforeAndAfterNode):
+        (WebCore::TextIterator::handleNonTextNode):
+        (WebCore::TextIterator::exitNode):
+        (WebCore::TextIterator::emitText):
+        (WebCore::SimplifiedBackwardsTextIterator::handleNonTextNode):
+        (WebCore::SimplifiedBackwardsTextIterator::exitNode):
+        (WebCore::CharacterIterator::CharacterIterator):
+        (WebCore::characterCount):
+        (WebCore::resolveCharacterRange):
+        (WebCore::hasAnyPlainText):
+        (WebCore::plainText):
+        (WebCore::plainTextReplacingNoBreakSpace):
+        (WebCore::findIteratorOptions):
+        * editing/TextIterator.h:
+        (WebCore::characterCount):
+        (WebCore::characterRange):
+        (WebCore::resolveCharacterLocation):
+        (WebCore::resolveCharacterRange):
+        (WebCore::plainText):
+        (WebCore::hasAnyPlainText):
+        (WebCore::plainTextReplacingNoBreakSpace):
+        (WebCore::TextIterator::TextIterator):
+        (WebCore::CharacterIterator::CharacterIterator):
+        * editing/TextIteratorBehavior.h:
+
+        Add an alias for `OptionSet<TextIteratorBehavior>`, `TextIteratorBehaviors`, to help with readability when
+        specifying or consulting these flags. Additionally remove the `TextIteratorDefaultBehavior` enum value
+        altogether, since we can now just use the default constructor (`OptionSet<TextIteratorBehavior> { }`) to get a
+        set of empty options.
+
+        * editing/TextManipulationController.cpp:
+        (WebCore::ParagraphContentIterator::ParagraphContentIterator):
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::appendTrailingWhitespace):
+        * editing/VisibleUnits.cpp:
+        (WebCore::nextBoundary):
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::renderedTextRespectingRange):
+        * page/EventHandler.cpp:
+        (WebCore::textDistance):
+
 2021-06-06  Chris Dumez  <cdumez@apple.com>
 
         Flaky assertion hit in AudioSessionRoutingArbitratorProxy::endRoutingArbitration()

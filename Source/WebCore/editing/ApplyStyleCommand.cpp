@@ -248,8 +248,8 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle& style)
 
     auto scope = makeRangeSelectingNodeContents(*scopeRoot);
     auto range = *makeSimpleRange(visibleStart, visibleEnd);
-    auto startIndex = characterCount({ scope.start, range.start }, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
-    auto endIndex = characterCount({ scope.start, range.end }, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+    auto startIndex = characterCount({ scope.start, range.start }, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions);
+    auto endIndex = characterCount({ scope.start, range.end }, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions);
 
     VisiblePosition paragraphStart(startOfParagraph(visibleStart));
     VisiblePosition nextParagraphStart(endOfParagraph(paragraphStart).next());
@@ -280,8 +280,8 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle& style)
         nextParagraphStart = endOfParagraph(paragraphStart).next();
     }
     
-    auto startPosition = makeDeprecatedLegacyPosition(resolveCharacterLocation(scope, startIndex, TextIteratorEmitsCharactersBetweenAllVisiblePositions));
-    auto endPosition = makeDeprecatedLegacyPosition(resolveCharacterLocation(scope, endIndex, TextIteratorEmitsCharactersBetweenAllVisiblePositions));
+    auto startPosition = makeDeprecatedLegacyPosition(resolveCharacterLocation(scope, startIndex, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions));
+    auto endPosition = makeDeprecatedLegacyPosition(resolveCharacterLocation(scope, endIndex, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions));
     updateStartEnd(startPosition, endPosition);
 }
 

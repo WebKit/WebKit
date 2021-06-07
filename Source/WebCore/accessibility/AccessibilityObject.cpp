@@ -3182,17 +3182,17 @@ bool AccessibilityObject::pressedIsPresent() const
     return !getAttribute(aria_pressedAttr).isEmpty();
 }
 
-TextIteratorBehavior AccessibilityObject::textIteratorBehaviorForTextRange() const
+TextIteratorBehaviors AccessibilityObject::textIteratorBehaviorForTextRange() const
 {
-    TextIteratorBehavior behavior = TextIteratorIgnoresStyleVisibility;
+    TextIteratorBehaviors behaviors { TextIteratorBehavior::IgnoresStyleVisibility };
     
 #if USE(ATK)
     // We need to emit replaced elements for GTK, and present
     // them with the 'object replacement character' (0xFFFC).
-    behavior = static_cast<TextIteratorBehavior>(behavior | TextIteratorEmitsObjectReplacementCharacters);
+    behaviors.add(TextIteratorBehavior::EmitsObjectReplacementCharacters);
 #endif
     
-    return behavior;
+    return behaviors;
 }
     
 AccessibilityRole AccessibilityObject::buttonRoleType() const

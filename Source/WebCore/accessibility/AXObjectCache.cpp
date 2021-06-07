@@ -1919,7 +1919,10 @@ CharacterOffset AXObjectCache::traverseToOffsetInRange(const SimpleRange& range,
     bool finished = false;
     int lastStartOffset = 0;
     
-    TextIterator iterator(range, doNotEnterTextControls ? TextIteratorDefaultBehavior : TextIteratorEntersTextControls);
+    TextIteratorBehaviors behaviors;
+    if (!doNotEnterTextControls)
+        behaviors.add(TextIteratorBehavior::EntersTextControls);
+    TextIterator iterator(range, behaviors);
     
     // When the range has zero length, there might be replaced node or brTag that we need to increment the characterOffset.
     if (iterator.atEnd()) {
@@ -2077,7 +2080,7 @@ std::optional<SimpleRange> AXObjectCache::rangeMatchesTextNearRange(const Simple
     if (!searchRange || searchRange->collapsed())
         return std::nullopt;
 
-    auto targetOffset = characterCount({ searchRange->start, originalRange.start }, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+    auto targetOffset = characterCount({ searchRange->start, originalRange.start }, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions);
     return findClosestPlainText(*searchRange, matchText, { }, targetOffset);
 }
 
@@ -2715,7 +2718,7 @@ CharacterOffset AXObjectCache::nextBoundary(const CharacterOffset& characterOffs
         return { };
     CharacterOffset end = startOrEndCharacterOffsetForRange(searchRange, false);
     
-    TextIterator it(searchRange, TextIteratorEmitsObjectReplacementCharacters);
+    TextIterator it(searchRange, TextIteratorBehavior::EmitsObjectReplacementCharacters);
     unsigned next = forwardSearchForBoundaryWithTextIterator(it, string, prefixLength, searchFunction);
     
     if (it.atEnd() && next == string.size())

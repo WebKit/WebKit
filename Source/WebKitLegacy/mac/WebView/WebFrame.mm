@@ -572,7 +572,7 @@ static NSURL *createUniqueWebDataURL();
 {
     if (!range)
         return @"";
-    return plainText(makeSimpleRange(*core(range)), WebCore::TextIteratorDefaultBehavior, true);
+    return plainText(makeSimpleRange(*core(range)), { }, true);
 }
 
 - (OptionSet<WebCore::PaintBehavior>)_paintBehaviorForDestinationContext:(CGContextRef)context

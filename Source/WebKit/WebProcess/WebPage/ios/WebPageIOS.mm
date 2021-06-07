@@ -174,7 +174,7 @@ static String plainTextForContext(const std::optional<SimpleRange>& range)
 
 static String plainTextForDisplay(const SimpleRange& range)
 {
-    return WebCore::plainTextReplacingNoBreakSpace(range, TextIteratorDefaultBehavior, true);
+    return WebCore::plainTextReplacingNoBreakSpace(range, { }, true);
 }
 
 static String plainTextForDisplay(const std::optional<SimpleRange>& range)
@@ -2079,7 +2079,7 @@ static std::optional<SimpleRange> rangeNearPositionMatchesText(const VisiblePosi
     auto boundaryPoint = makeBoundaryPoint(position);
     if (!boundaryPoint)
         return std::nullopt;
-    return findClosestPlainText(range, matchText, { }, characterCount({ range.start, *boundaryPoint }, TextIteratorEmitsCharactersBetweenAllVisiblePositions));
+    return findClosestPlainText(range, matchText, { }, characterCount({ range.start, *boundaryPoint }, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions));
 }
 
 void WebPage::getRectsAtSelectionOffsetWithText(int32_t offset, const String& text, CompletionHandler<void(const Vector<WebCore::SelectionGeometry>&)>&& completionHandler)

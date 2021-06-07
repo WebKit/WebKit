@@ -964,10 +964,10 @@ VisibleSelection selectionForParagraphIteration(const VisibleSelection& original
     return newSelection;
 }
 
-// FIXME: indexForVisiblePosition and visiblePositionForIndex use TextIterators to convert between 
-// VisiblePositions and indices. But TextIterator iteration using TextIteratorEmitsCharactersBetweenAllVisiblePositions 
-// does not exactly match VisiblePosition iteration, so using them to preserve a selection during an editing 
-// opertion is unreliable. TextIterator's TextIteratorEmitsCharactersBetweenAllVisiblePositions mode needs to be fixed, 
+// FIXME: indexForVisiblePosition and visiblePositionForIndex use TextIterators to convert between
+// VisiblePositions and indices. But TextIterator iteration using TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions
+// does not exactly match VisiblePosition iteration, so using them to preserve a selection during an editing
+// opertion is unreliable. TextIterator's TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions mode needs to be fixed,
 // or these functions need to be changed to iterate using actual VisiblePositions.
 // FIXME: Deploy these functions everywhere that TextIterators are used to convert between VisiblePositions and indices.
 int indexForVisiblePosition(const VisiblePosition& visiblePosition, RefPtr<ContainerNode>& scope)
@@ -989,14 +989,17 @@ int indexForVisiblePosition(const VisiblePosition& visiblePosition, RefPtr<Conta
     }
 
     auto range = *makeSimpleRange(makeBoundaryPointBeforeNodeContents(*scope), position);
-    return characterCount(range, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+    return characterCount(range, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions);
 }
 
 // FIXME: Merge this function with the one above.
 int indexForVisiblePosition(Node& node, const VisiblePosition& visiblePosition, bool forSelectionPreservation)
 {
     auto range = makeSimpleRange(makeBoundaryPointBeforeNodeContents(node), visiblePosition);
-    return range ? characterCount(*range, forSelectionPreservation ? TextIteratorEmitsCharactersBetweenAllVisiblePositions : TextIteratorDefaultBehavior) : 0;
+    TextIteratorBehaviors behaviors;
+    if (forSelectionPreservation)
+        behaviors.add(TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions);
+    return range ? characterCount(*range, behaviors) : 0;
 }
 
 VisiblePosition visiblePositionForPositionWithOffset(const VisiblePosition& position, int offset)
@@ -1013,7 +1016,7 @@ VisiblePosition visiblePositionForIndex(int index, ContainerNode* scope)
 {
     if (!scope)
         return { };
-    return { makeDeprecatedLegacyPosition(resolveCharacterLocation(makeRangeSelectingNodeContents(*scope), index, TextIteratorEmitsCharactersBetweenAllVisiblePositions)) };
+    return { makeDeprecatedLegacyPosition(resolveCharacterLocation(makeRangeSelectingNodeContents(*scope), index, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions)) };
 }
 
 VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node& node, int index)

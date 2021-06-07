@@ -407,9 +407,9 @@ static void getSelectionOffsetsForObject(AccessibilityObject* coreObject, Visibl
 
     // Set values for start offsets and calculate initial range length.
     // These values might be adjusted later to cover special cases.
-    startOffset = webCoreOffsetToAtkOffset(coreObject, characterCount(rangeInParent, TextIteratorEmitsCharactersBetweenAllVisiblePositions));
+    startOffset = webCoreOffsetToAtkOffset(coreObject, characterCount(rangeInParent, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions));
     auto nodeRange = *makeSimpleRange(nodeRangeStart, nodeRangeEnd);
-    int rangeLength = characterCount(nodeRange, TextIteratorEmitsCharactersBetweenAllVisiblePositions);
+    int rangeLength = characterCount(nodeRange, TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions);
 
     // Special cases that are only relevant when working with *_END boundaries.
     if (selection.affinity() == Affinity::Upstream) {

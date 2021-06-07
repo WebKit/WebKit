@@ -568,7 +568,7 @@ private:
     Element* actionElement() const override;
     Path elementPath() const override { return pathAttributeValue(AXPropertyName::Path); };
     bool supportsPath() const override { return boolAttributeValue(AXPropertyName::SupportsPath); }
-    TextIteratorBehavior textIteratorBehaviorForTextRange() const override;
+    TextIteratorBehaviors textIteratorBehaviorForTextRange() const override;
     Widget* widget() const override;
     PlatformWidget platformWidget() const override;
     

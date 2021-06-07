@@ -1,3 +1,18 @@
+2021-06-06  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Turn TextIteratorBehaviorFlag into an enum class and wrap it in OptionSet
+        https://bugs.webkit.org/show_bug.cgi?id=226691
+
+        Reviewed by Darin Adler.
+
+        See WebCore/ChangeLog for more information.
+
+        * WebProcess/WebPage/ViewGestureGeometryCollector.cpp:
+        (WebKit::ViewGestureGeometryCollector::computeTextLegibilityScales):
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::plainTextForDisplay):
+        (WebKit::rangeNearPositionMatchesText):
+
 2021-06-06  Jean-Yves Avenard  <jya@apple.com>
 
         [GPUP][MSE] QuotaExceededError Exception not thrown even if the sum of totalTrackBufferSize and appendBuffer size exceeds maximumBufferSize

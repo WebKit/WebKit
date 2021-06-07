@@ -430,7 +430,7 @@ public:
     Path elementPath() const override { return Path(); }
     bool supportsPath() const override { return false; }
 
-    TextIteratorBehavior textIteratorBehaviorForTextRange() const override;
+    TextIteratorBehaviors textIteratorBehaviorForTextRange() const override;
     PlainTextRange selectedTextRange() const override { return { }; }
     int insertionPointLineNumber() const override { return -1; }
 

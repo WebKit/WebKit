@@ -193,7 +193,7 @@ ReplacementFragment::ReplacementFragment(DocumentFragment* fragment, const Visib
     }
     
     auto range = VisibleSelection::selectionFromContentsOfNode(holder.get()).toNormalizedRange();
-    String text = range ? plainText(*range, static_cast<TextIteratorBehavior>(TextIteratorEmitsOriginalText | TextIteratorIgnoresStyleVisibility)) : emptyString();
+    String text = range ? plainText(*range, { TextIteratorBehavior::EmitsOriginalText, TextIteratorBehavior::IgnoresStyleVisibility }) : emptyString();
 
     removeInterchangeNodes(holder.get());
     removeUnrenderedNodes(holder.get());

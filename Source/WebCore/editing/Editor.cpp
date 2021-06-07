@@ -3280,25 +3280,25 @@ void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection, O
 
 String Editor::selectedText() const
 {
-    TextIteratorBehavior behavior = TextIteratorDefaultBehavior;
+    TextIteratorBehaviors behaviors;
     if (m_document.settings().selectionAcrossShadowBoundariesEnabled())
-        behavior |= TextIteratorTraversesFlatTree;
-    return selectedText(behavior);
+        behaviors.add(TextIteratorBehavior::TraversesFlatTree);
+    return selectedText(behaviors);
 }
 
 String Editor::selectedTextForDataTransfer() const
 {
-    TextIteratorBehavior behavior = TextIteratorEmitsImageAltText;
+    TextIteratorBehaviors behaviors { TextIteratorBehavior::EmitsImageAltText };
     if (m_document.settings().selectionAcrossShadowBoundariesEnabled())
-        behavior |= TextIteratorTraversesFlatTree;
-    return selectedText(behavior);
+        behaviors.add(TextIteratorBehavior::TraversesFlatTree);
+    return selectedText(behaviors);
 }
 
-String Editor::selectedText(TextIteratorBehavior behavior) const
+String Editor::selectedText(TextIteratorBehaviors behaviors) const
 {
     // We remove '\0' characters because they are not visibly rendered to the user.
     auto range = m_document.selection().selection().firstRange();
-    return range ? plainText(*range, behavior).replaceWithLiteral('\0', "") : emptyString();
+    return range ? plainText(*range, behaviors).replaceWithLiteral('\0', "") : emptyString();
 }
 
 RefPtr<TextPlaceholderElement> Editor::insertTextPlaceholder(const IntSize& size)

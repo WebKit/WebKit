@@ -2020,10 +2020,10 @@ Element* AXIsolatedObject::actionElement() const
     return nullptr;
 }
 
-TextIteratorBehavior AXIsolatedObject::textIteratorBehaviorForTextRange() const
+TextIteratorBehaviors AXIsolatedObject::textIteratorBehaviorForTextRange() const
 {
     ASSERT_NOT_REACHED();
-    return false;
+    return { };
 }
 
 Widget* AXIsolatedObject::widget() const

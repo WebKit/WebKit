@@ -1172,7 +1172,7 @@ public:
     virtual Path elementPath() const = 0;
     virtual bool supportsPath() const = 0;
 
-    virtual TextIteratorBehavior textIteratorBehaviorForTextRange() const = 0;
+    virtual TextIteratorBehaviors textIteratorBehaviorForTextRange() const = 0;
     virtual PlainTextRange selectedTextRange() const = 0;
     virtual int insertionPointLineNumber() const = 0;
 

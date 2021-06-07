@@ -161,7 +161,7 @@ std::optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTe
     unsigned numberOfIterations = 0;
     unsigned totalSampledTextLength = 0;
 
-    for (TextIterator documentTextIterator { makeRangeSelectingNodeContents(*document), TextIteratorEntersTextControls }; !documentTextIterator.atEnd(); documentTextIterator.advance()) {
+    for (TextIterator documentTextIterator { makeRangeSelectingNodeContents(*document), TextIteratorBehavior::EntersTextControls }; !documentTextIterator.atEnd(); documentTextIterator.advance()) {
         if (++numberOfIterations >= maximumNumberOfTextRunsToConsider)
             break;
 
