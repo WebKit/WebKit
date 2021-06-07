@@ -1,3 +1,16 @@
+2021-06-07  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Unexpected scrolling when switching focus from a text input to a select element
+        https://bugs.webkit.org/show_bug.cgi?id=226657
+        <rdar://problem/78290515>
+
+        Reviewed by Tim Horton.
+
+        Add a layout test to exercise the bug.
+
+        * fast/forms/ios/form-control-refresh/select/focus-select-after-textfield-expected.txt: Added.
+        * fast/forms/ios/form-control-refresh/select/focus-select-after-textfield.html: Added.
+
 2021-06-06  Darin Adler  <darin@apple.com>
 
         Handle custom identifiers and strings separately, so we can quote strings correctly consistently

@@ -1,3 +1,46 @@
+2021-06-07  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] Unexpected scrolling when switching focus from a text input to a select element
+        https://bugs.webkit.org/show_bug.cgi?id=226657
+        <rdar://problem/78290515>
+
+        Reviewed by Tim Horton.
+
+        When switching focus from a text input to a select element, UIKit makes
+        deferred calls to `-[WKWebView inputView]` after the keyboard dismissal.
+        This method calls `-[WKContentView inputViewForWebView]`, which calls
+        `-[WKContentView _zoomToRevealFocusedElement]`. Consequently, these
+        methods can get invoked while the context menu (dropdown) is displayed
+        for a focused select element.
+
+        In this instance, the call should be idempotent, since the focused element
+        is fully visible in the viewport. However, since the context menu is visible
+        and overlaps the element, our logic incorrectly determines that the element
+        is obscured, leading to unexpected zooming/scrolling. To fix, we need to
+        correct the logic that determines the visible portion of the view.
+
+        Test: fast/forms/ios/form-control-refresh/select/focus-select-after-textfield.html
+
+        * UIProcess/API/ios/WKWebViewIOS.mm:
+        (-[WKWebView _zoomToFocusRect:selectionRect:fontSize:minimumScale:maximumScale:allowScaling:forceScroll:]):
+
+        Always use the window to determine the portion of the webview that is
+        visible, rather than relying on the root view controller's top-most
+        full-screen view controller's view.
+
+        The old logic worked fine in most cases, since the root view controller
+        and the top-most full-screen view controller are almost always the same.
+        Furthermore, the root view controller's view usually takes up the entire
+        window.
+
+        However, when the context menu is on screen, the top-most full-screen
+        view controller is an internal UIKit view controller
+        (_UIContextMenuActionsOnlyViewController), and the associated view
+        is the context menu view. This exposed a flaw in the existing logic, as
+        visibility detection could be performed by intersecting with an
+        incorrect view. In general, the top-most full-screen view is not a
+        reliable way to determine the visible portion of the webview.
+
 2021-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Signal "window-object-cleared" not emitted unless frame js context is get before

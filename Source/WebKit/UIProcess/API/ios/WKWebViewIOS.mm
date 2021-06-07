@@ -106,11 +106,6 @@ static int32_t deviceOrientationForUIInterfaceOrientation(UIInterfaceOrientation
 - (BOOL)_isHostedInAnotherProcess;
 @end
 
-@interface UIViewController (UIViewControllerInternal)
-- (UIViewController *)_rootAncestorViewController;
-- (UIViewController *)_viewControllerForSupportedInterfaceOrientations;
-@end
-
 @implementation WKWebView (WKViewInternalIOS)
 
 - (void)setFrame:(CGRect)frame
@@ -1237,14 +1232,8 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     UIWindow *window = [_scrollView window];
 
-    // Find the portion of the view that is visible on the screen.
-    UIViewController *topViewController = [[[_scrollView _viewControllerForAncestor] _rootAncestorViewController] _viewControllerForSupportedInterfaceOrientations];
-    UIView *fullScreenView = topViewController.view;
-    if (!fullScreenView)
-        fullScreenView = window;
-
     CGRect unobscuredScrollViewRectInWebViewCoordinates = UIEdgeInsetsInsetRect([self bounds], _obscuredInsets);
-    CGRect visibleScrollViewBoundsInWebViewCoordinates = CGRectIntersection(unobscuredScrollViewRectInWebViewCoordinates, [fullScreenView convertRect:[fullScreenView bounds] toView:self]);
+    CGRect visibleScrollViewBoundsInWebViewCoordinates = CGRectIntersection(unobscuredScrollViewRectInWebViewCoordinates, [window convertRect:window.bounds toView:self]);
     CGRect formAssistantFrameInWebViewCoordinates = [window convertRect:_inputViewBoundsInWindow toView:self];
     CGRect intersectionBetweenScrollViewAndFormAssistant = CGRectIntersection(visibleScrollViewBoundsInWebViewCoordinates, formAssistantFrameInWebViewCoordinates);
     CGSize visibleSize = visibleScrollViewBoundsInWebViewCoordinates.size;
