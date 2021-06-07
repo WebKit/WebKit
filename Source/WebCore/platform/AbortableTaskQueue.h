@@ -156,6 +156,7 @@ public:
             m_abortedOrResponseSet.notifyAll();
         });
         m_abortedOrResponseSet.wait(m_lock, [this, &response]() {
+            assertIsHeld(m_lock);
             return m_aborting || response;
         });
         return response;
