@@ -80,8 +80,8 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
-#if ENABLE(IMAGE_EXTRACTION)
-#include "ImageExtractionResult.h"
+#if ENABLE(IMAGE_ANALYSIS)
+#include "TextRecognitionResult.h"
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -1329,9 +1329,9 @@ bool HTMLElement::isImageOverlayText(const Node& node)
     return false;
 }
 
-#if ENABLE(IMAGE_EXTRACTION)
+#if ENABLE(IMAGE_ANALYSIS)
 
-void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result)
+void HTMLElement::updateWithTextRecognitionResult(TextRecognitionResult&& result)
 {
     RefPtr<HTMLDivElement> previousContainer;
     if (auto shadowRoot = userAgentShadowRoot(); shadowRoot && hasImageOverlay()) {
@@ -1511,7 +1511,7 @@ void HTMLElement::updateWithImageExtractionResult(ImageExtractionResult&& result
         frame->eventHandler().scheduleCursorUpdate();
 }
 
-#endif // ENABLE(IMAGE_EXTRACTION)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 #if PLATFORM(IOS_FAMILY)
 

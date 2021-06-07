@@ -521,7 +521,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
     case ContextMenuItemTagDictationAlternative:
         frame->editor().applyDictationAlternative(title);
         break;
-    case ContextMenuItemTagRevealImage:
+    case ContextMenuItemTagLookUpImage:
         // This should be handled at the client layer.
         ASSERT_NOT_REACHED();
         break;
@@ -830,8 +830,8 @@ void ContextMenuController::populate()
     ContextMenuItem SelectAllItem(ActionType, ContextMenuItemTagSelectAll, contextMenuItemTagSelectAll());
     ContextMenuItem InsertEmojiItem(ActionType, ContextMenuItemTagInsertEmoji, contextMenuItemTagInsertEmoji());
 #endif
-#if ENABLE(IMAGE_EXTRACTION)
-    ContextMenuItem RevealImageItem(ActionType, ContextMenuItemTagRevealImage, contextMenuItemTagRevealImage());
+#if ENABLE(IMAGE_ANALYSIS)
+    ContextMenuItem LookUpImageItem(ActionType, ContextMenuItemTagLookUpImage, contextMenuItemTagLookUpImage());
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WIN)
@@ -904,9 +904,9 @@ void ContextMenuController::populate()
             if (imageURL.isLocalFile() || image) {
                 appendItem(CopyImageItem, m_contextMenu.get());
 
-#if ENABLE(IMAGE_EXTRACTION)
+#if ENABLE(IMAGE_ANALYSIS)
                 if (image && !image->isAnimated())
-                    appendItem(RevealImageItem, m_contextMenu.get());
+                    appendItem(LookUpImageItem, m_contextMenu.get());
 #endif
             }
 #if PLATFORM(GTK)
@@ -1495,7 +1495,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             shouldEnable = m_context.hitTestResult().mediaHasAudio();
             shouldCheck = shouldEnable &&  m_context.hitTestResult().mediaMuted();
             break;
-        case ContextMenuItemTagRevealImage:
+        case ContextMenuItemTagLookUpImage:
         case ContextMenuItemTagTranslate:
             break;
     }

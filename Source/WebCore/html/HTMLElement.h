@@ -36,10 +36,7 @@ class FormNamedItem;
 class HTMLFormElement;
 class VisibleSelection;
 struct SimpleRange;
-
-#if ENABLE(IMAGE_EXTRACTION)
-struct ImageExtractionResult;
-#endif
+struct TextRecognitionResult;
 
 enum class EnterKeyHint : uint8_t;
 
@@ -141,8 +138,8 @@ public:
     WEBCORE_EXPORT static bool isImageOverlayText(const Node&);
     WEBCORE_EXPORT static bool isImageOverlayText(const Node*);
 
-#if ENABLE(IMAGE_EXTRACTION)
-    WEBCORE_EXPORT void updateWithImageExtractionResult(ImageExtractionResult&&);
+#if ENABLE(IMAGE_ANALYSIS)
+    WEBCORE_EXPORT void updateWithTextRecognitionResult(TextRecognitionResult&&);
 #endif
 
 #if PLATFORM(IOS_FAMILY)

@@ -147,7 +147,7 @@ enum ContextMenuAction {
     ContextMenuItemTagToggleVideoEnhancedFullscreen,
     ContextMenuItemTagAddHighlightToCurrentGroup,
     ContextMenuItemTagAddHighlightToNewGroup,
-    ContextMenuItemTagRevealImage,
+    ContextMenuItemTagLookUpImage,
     ContextMenuItemTagTranslate,
     ContextMenuItemBaseCustomTag = 5000,
     ContextMenuItemLastCustomTag = 5999,

@@ -1,3 +1,53 @@
+2021-06-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Upstream WebKit support for Live Text
+        https://bugs.webkit.org/show_bug.cgi?id=226706
+        <rdar://problem/78933684>
+
+        Reviewed by Tim Horton.
+
+        Rename `fast/images/image-extraction` to `fast/images/text-recognition`.
+
+        * TestExpectations:
+        * fast/images/text-recognition/basic-image-overlay-expected-mismatch.html: Renamed from LayoutTests/fast/images/image-extraction/basic-image-overlay-expected-mismatch.html.
+        * fast/images/text-recognition/basic-image-overlay.html: Renamed from LayoutTests/fast/images/image-extraction/basic-image-overlay.html.
+        * fast/images/text-recognition/click-link-with-image-overlay-expected.txt: Renamed from LayoutTests/fast/images/image-extraction/click-link-with-image-overlay-expected.txt.
+        * fast/images/text-recognition/click-link-with-image-overlay.html: Renamed from LayoutTests/fast/images/image-extraction/click-link-with-image-overlay.html.
+        * fast/images/text-recognition/image-overlay-creation-is-idempotent-expected.txt: Renamed from LayoutTests/fast/images/image-extraction/image-overlay-creation-is-idempotent-expected.txt.
+        * fast/images/text-recognition/image-overlay-creation-is-idempotent.html: Renamed from LayoutTests/fast/images/image-extraction/image-overlay-creation-is-idempotent.html.
+        * fast/images/text-recognition/image-overlay-in-image-with-zero-font-size-expected-mismatch.html: Renamed from LayoutTests/fast/images/image-extraction/image-overlay-in-image-with-zero-font-size-expected-mismatch.html.
+        * fast/images/text-recognition/image-overlay-in-image-with-zero-font-size.html: Renamed from LayoutTests/fast/images/image-extraction/image-overlay-in-image-with-zero-font-size.html.
+        * fast/images/text-recognition/image-overlay-with-selection-styles-expected.html: Renamed from LayoutTests/fast/images/image-extraction/image-overlay-with-selection-styles-expected.html.
+        * fast/images/text-recognition/image-overlay-with-selection-styles.html: Renamed from LayoutTests/fast/images/image-extraction/image-overlay-with-selection-styles.html.
+        * fast/images/text-recognition/ios/coalesce-selection-rects-in-image-overlay-expected.txt: Renamed from LayoutTests/fast/images/image-extraction/ios/coalesce-selection-rects-in-image-overlay-expected.txt.
+        * fast/images/text-recognition/ios/coalesce-selection-rects-in-image-overlay.html: Renamed from LayoutTests/fast/images/image-extraction/ios/coalesce-selection-rects-in-image-overlay.html.
+        * fast/images/text-recognition/ios/reselect-word-in-image-overlay-expected.txt: Renamed from LayoutTests/fast/images/image-extraction/ios/reselect-word-in-image-overlay-expected.txt.
+        * fast/images/text-recognition/ios/reselect-word-in-image-overlay.html: Renamed from LayoutTests/fast/images/image-extraction/ios/reselect-word-in-image-overlay.html.
+        * fast/images/text-recognition/ios/select-word-in-image-overlay-expected.txt: Renamed from LayoutTests/fast/images/image-extraction/ios/select-word-in-image-overlay-expected.txt.
+        * fast/images/text-recognition/ios/select-word-in-image-overlay-inside-link-expected.txt: Renamed from LayoutTests/fast/images/image-extraction/ios/select-word-in-image-overlay-inside-link-expected.txt.
+        * fast/images/text-recognition/ios/select-word-in-image-overlay-inside-link.html: Renamed from LayoutTests/fast/images/image-extraction/ios/select-word-in-image-overlay-inside-link.html.
+        * fast/images/text-recognition/ios/select-word-in-image-overlay.html: Renamed from LayoutTests/fast/images/image-extraction/ios/select-word-in-image-overlay.html.
+        * fast/images/text-recognition/ios/selection-rects-in-image-overlay-expected.txt: Renamed from LayoutTests/fast/images/image-extraction/ios/selection-rects-in-image-overlay-expected.txt.
+        * fast/images/text-recognition/ios/selection-rects-in-image-overlay.html: Renamed from LayoutTests/fast/images/image-extraction/ios/selection-rects-in-image-overlay.html.
+        * fast/images/text-recognition/mac/copy-image-overlay-text-with-context-menu-expected.txt: Renamed from LayoutTests/fast/images/image-extraction/mac/copy-image-overlay-text-with-context-menu-expected.txt.
+        * fast/images/text-recognition/mac/copy-image-overlay-text-with-context-menu.html: Renamed from LayoutTests/fast/images/image-extraction/mac/copy-image-overlay-text-with-context-menu.html.
+        * fast/images/text-recognition/mac/image-overlay-text-disables-app-highlight-menu-items-expected.txt: Renamed from LayoutTests/fast/images/image-extraction/mac/image-overlay-text-disables-app-highlight-menu-items-expected.txt.
+        * fast/images/text-recognition/mac/image-overlay-text-disables-app-highlight-menu-items.html: Renamed from LayoutTests/fast/images/image-extraction/mac/image-overlay-text-disables-app-highlight-menu-items.html.
+        * fast/images/text-recognition/mac/select-image-overlay-in-link-with-mouse-drag-expected.txt: Renamed from LayoutTests/fast/images/image-extraction/mac/select-image-overlay-in-link-with-mouse-drag-expected.txt.
+        * fast/images/text-recognition/mac/select-image-overlay-in-link-with-mouse-drag.html: Renamed from LayoutTests/fast/images/image-extraction/mac/select-image-overlay-in-link-with-mouse-drag.html.
+        * fast/images/text-recognition/mac/select-image-overlay-with-mouse-drag-2-expected.html: Renamed from LayoutTests/fast/images/image-extraction/mac/select-image-overlay-with-mouse-drag-2-expected.html.
+        * fast/images/text-recognition/mac/select-image-overlay-with-mouse-drag-2.html: Renamed from LayoutTests/fast/images/image-extraction/mac/select-image-overlay-with-mouse-drag-2.html.
+        * fast/images/text-recognition/mac/select-image-overlay-with-mouse-drag-does-not-fire-click-expected.txt: Renamed from LayoutTests/fast/images/image-extraction/mac/select-image-overlay-with-mouse-drag-does-not-fire-click-expected.txt.
+        * fast/images/text-recognition/mac/select-image-overlay-with-mouse-drag-does-not-fire-click.html: Renamed from LayoutTests/fast/images/image-extraction/mac/select-image-overlay-with-mouse-drag-does-not-fire-click.html.
+        * fast/images/text-recognition/mac/select-image-overlay-with-mouse-drag-expected-mismatch.html: Renamed from LayoutTests/fast/images/image-extraction/mac/select-image-overlay-with-mouse-drag-expected-mismatch.html.
+        * fast/images/text-recognition/mac/select-image-overlay-with-mouse-drag.html: Renamed from LayoutTests/fast/images/image-extraction/mac/select-image-overlay-with-mouse-drag.html.
+        * fast/images/text-recognition/mac/select-rotated-transparent-image-overlay-expected.html: Renamed from LayoutTests/fast/images/image-extraction/mac/select-rotated-transparent-image-overlay-expected.html.
+        * fast/images/text-recognition/mac/select-rotated-transparent-image-overlay.html: Renamed from LayoutTests/fast/images/image-extraction/mac/select-rotated-transparent-image-overlay.html.
+        * fast/images/text-recognition/mac/select-word-in-draggable-image-overlay-expected-mismatch.html: Renamed from LayoutTests/fast/images/image-extraction/mac/select-word-in-draggable-image-overlay-expected-mismatch.html.
+        * fast/images/text-recognition/mac/select-word-in-draggable-image-overlay.html: Renamed from LayoutTests/fast/images/image-extraction/mac/select-word-in-draggable-image-overlay.html.
+        * fast/images/text-recognition/mac/select-word-in-transparent-image-overlay-expected-mismatch.html: Renamed from LayoutTests/fast/images/image-extraction/mac/select-word-in-transparent-image-overlay-expected-mismatch.html.
+        * fast/images/text-recognition/mac/select-word-in-transparent-image-overlay.html: Renamed from LayoutTests/fast/images/image-extraction/mac/select-word-in-transparent-image-overlay.html.
+
 2021-06-07  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION (r272201): iPad render flashing on load

@@ -366,8 +366,8 @@ namespace WebCore {
     WEBCORE_EXPORT String genericTouchIDPromptTitle();
 #endif
 
-#if ENABLE(IMAGE_EXTRACTION)
-    WEBCORE_EXPORT String contextMenuItemTagRevealImage();
+#if ENABLE(IMAGE_ANALYSIS)
+    WEBCORE_EXPORT String contextMenuItemTagLookUpImage();
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES)

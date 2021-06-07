@@ -1,3 +1,19 @@
+2021-06-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Upstream WebKit support for Live Text
+        https://bugs.webkit.org/show_bug.cgi?id=226706
+        <rdar://problem/78933684>
+
+        Reviewed by Tim Horton.
+
+        Replace IMAGE_EXTRACTION with IMAGE_ANALYSIS.
+
+        * TestWebKitAPI/Tests/WebKit/InjectedBundleHitTest.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/DragAndDropTests.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/FindInPage.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKContentViewEditingActions.mm:
+        * TestWebKitAPI/Tests/mac/ImmediateActionTests.mm:
+
 2021-06-07  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Windows Python 2.7 fails to install tblib-1.7.0 due to "TypeError: environment can only contain strings"

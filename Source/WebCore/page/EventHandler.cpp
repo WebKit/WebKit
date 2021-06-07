@@ -324,8 +324,8 @@ bool EventHandler::eventLoopHandleMouseDragged(const MouseEventWithHitTestResult
 EventHandler::EventHandler(Frame& frame)
     : m_frame(frame)
     , m_hoverTimer(*this, &EventHandler::hoverTimerFired)
-#if ENABLE(IMAGE_EXTRACTION)
-    , m_imageExtractionTimer(*this, &EventHandler::imageExtractionTimerFired, 250_ms)
+#if ENABLE(IMAGE_ANALYSIS)
+    , m_textRecognitionHoverTimer(*this, &EventHandler::m_textRecognitionHoverTimerFired, 250_ms)
 #endif
     , m_autoscrollController(makeUnique<AutoscrollController>())
 #if !ENABLE(IOS_TOUCH_EVENTS)
@@ -367,8 +367,8 @@ void EventHandler::clear()
 #if ENABLE(CURSOR_VISIBILITY)
     cancelAutoHideCursorTimer();
 #endif
-#if ENABLE(IMAGE_EXTRACTION)
-    m_imageExtractionTimer.stop();
+#if ENABLE(IMAGE_ANALYSIS)
+    m_textRecognitionHoverTimer.stop();
 #endif
     m_resizeLayer = nullptr;
     clearElementUnderMouse();
@@ -1905,9 +1905,9 @@ bool EventHandler::mouseMoved(const PlatformMouseEvent& event)
     hitTestResult.setToNonUserAgentShadowAncestor();
     page->chrome().mouseDidMoveOverElement(hitTestResult, event.modifierFlags());
 
-#if ENABLE(IMAGE_EXTRACTION)
-    if (event.syntheticClickType() == NoTap && m_imageExtractionTimer.isActive())
-        m_imageExtractionTimer.restart();
+#if ENABLE(IMAGE_ANALYSIS)
+    if (event.syntheticClickType() == NoTap && m_textRecognitionHoverTimer.isActive())
+        m_textRecognitionHoverTimer.restart();
 #endif
 
     return result;
@@ -2539,14 +2539,14 @@ void EventHandler::updateMouseEventTargetNode(const AtomString& eventType, Node*
 
     m_elementUnderMouse = targetElement;
 
-#if ENABLE(IMAGE_EXTRACTION)
+#if ENABLE(IMAGE_ANALYSIS)
     if (platformMouseEvent.syntheticClickType() == NoTap) {
         if (m_elementUnderMouse && is<RenderImage>(m_elementUnderMouse->renderer()))
-            m_imageExtractionTimer.restart();
+            m_textRecognitionHoverTimer.restart();
         else
-            m_imageExtractionTimer.stop();
+            m_textRecognitionHoverTimer.stop();
     }
-#endif
+#endif // ENABLE(IMAGE_ANALYSIS)
 
     if (auto* page = m_frame.page())
         page->imageOverlayController().elementUnderMouseDidChange(m_frame, m_elementUnderMouse.get());
@@ -2607,8 +2607,8 @@ void EventHandler::updateMouseEventTargetNode(const AtomString& eventType, Node*
 
         // Event handling may have moved the element to a different document.
         if (m_elementUnderMouse && &m_elementUnderMouse->document() != m_frame.document()) {
-#if ENABLE(IMAGE_EXTRACTION)
-            m_imageExtractionTimer.stop();
+#if ENABLE(IMAGE_ANALYSIS)
+            m_textRecognitionHoverTimer.stop();
 #endif
             clearElementUnderMouse();
         }
@@ -3398,18 +3398,18 @@ void EventHandler::hoverTimerFired()
     }
 }
 
-#if ENABLE(IMAGE_EXTRACTION)
+#if ENABLE(IMAGE_ANALYSIS)
 
-void EventHandler::imageExtractionTimerFired()
+void EventHandler::m_textRecognitionHoverTimerFired()
 {
     if (!m_elementUnderMouse || !is<RenderImage>(m_elementUnderMouse->renderer()))
         return;
 
     if (auto* page = m_frame.page())
-        page->chrome().client().requestImageExtraction(*m_elementUnderMouse);
+        page->chrome().client().requestTextRecognition(*m_elementUnderMouse);
 }
 
-#endif // ENABLE(IMAGE_EXTRACTION)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 bool EventHandler::handleAccessKey(const PlatformKeyboardEvent& event)
 {

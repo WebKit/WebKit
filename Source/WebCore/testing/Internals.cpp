@@ -345,8 +345,8 @@
 #include "NavigatorMediaSession.h"
 #endif
 
-#if ENABLE(IMAGE_EXTRACTION)
-#include "ImageExtractionResult.h"
+#if ENABLE(IMAGE_ANALYSIS)
+#include "TextRecognitionResult.h"
 #endif
 
 using JSC::CallData;
@@ -5605,7 +5605,7 @@ MockPaymentCoordinator& Internals::mockPaymentCoordinator(Document& document)
 Internals::ImageOverlayLine::~ImageOverlayLine() = default;
 Internals::ImageOverlayText::~ImageOverlayText() = default;
 
-#if ENABLE(IMAGE_EXTRACTION)
+#if ENABLE(IMAGE_ANALYSIS)
 
 template<typename T>
 static FloatQuad getQuad(const T& overlayTextOrLine)
@@ -5618,26 +5618,26 @@ static FloatQuad getQuad(const T& overlayTextOrLine)
     };
 }
 
-static ImageExtractionLineData makeDataForLine(const Internals::ImageOverlayLine& line)
+static TextRecognitionLineData makeDataForLine(const Internals::ImageOverlayLine& line)
 {
     return {
         getQuad<Internals::ImageOverlayLine>(line),
-        line.children.map([](auto& textChild) -> ImageExtractionTextData {
+        line.children.map([](auto& textChild) -> TextRecognitionWordData {
             return { textChild.text, getQuad<Internals::ImageOverlayText>(textChild) };
         })
     };
 }
 
-#endif // ENABLE(IMAGE_EXTRACTION)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 void Internals::installImageOverlay(Element& element, Vector<ImageOverlayLine>&& lines)
 {
     if (!is<HTMLElement>(element))
         return;
 
-#if ENABLE(IMAGE_EXTRACTION)
-    downcast<HTMLElement>(element).updateWithImageExtractionResult(ImageExtractionResult {
-        lines.map([] (auto& line) -> ImageExtractionLineData {
+#if ENABLE(IMAGE_ANALYSIS)
+    downcast<HTMLElement>(element).updateWithTextRecognitionResult(TextRecognitionResult {
+        lines.map([] (auto& line) -> TextRecognitionLineData {
             return makeDataForLine(line);
         })
     });

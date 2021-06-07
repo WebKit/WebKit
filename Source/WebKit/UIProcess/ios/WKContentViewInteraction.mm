@@ -42,6 +42,8 @@
 #import "SmartMagnificationController.h"
 #import "TextChecker.h"
 #import "TextInputSPI.h"
+#import "TextRecognitionUpdateResult.h"
+#import "TextRecognitionUtilities.h"
 #import "UIKitSPI.h"
 #import "UserInterfaceIdiom.h"
 #import "WKActionSheetAssistant.h"
@@ -54,6 +56,7 @@
 #import "WKFormSelectControl.h"
 #import "WKFrameInfoInternal.h"
 #import "WKHighlightLongPressGestureRecognizer.h"
+#import "WKImageAnalysisGestureRecognizer.h"
 #import "WKImagePreviewViewController.h"
 #import "WKInspectorNodeSearchGestureRecognizer.h"
 #import "WKMouseGestureRecognizer.h"
@@ -92,6 +95,7 @@
 #import <CoreText/CTFont.h>
 #import <CoreText/CTFontDescriptor.h>
 #import <MobileCoreServices/UTCoreTypes.h>
+#import <UniformTypeIdentifiers/UTCoreTypes.h>
 #import <WebCore/AppHighlight.h>
 #import <WebCore/Color.h>
 #import <WebCore/ColorIOS.h>
@@ -117,6 +121,7 @@
 #import <WebCore/TextAlternativeWithRange.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextIndicatorWindow.h>
+#import <WebCore/TextRecognitionResult.h>
 #import <WebCore/TouchAction.h>
 #import <WebCore/UTIUtilities.h>
 #import <WebCore/VersionChecks.h>
@@ -141,10 +146,6 @@
 #import <wtf/cocoa/NSURLExtras.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/TextStream.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKContentViewInteractionAdditionsBefore.mm>
-#endif
 
 #if ENABLE(DRAG_SUPPORT)
 #import <WebCore/DragData.h>
@@ -173,7 +174,25 @@
 #import "PepperUICoreSPI.h"
 #endif
 
+#if ENABLE(IMAGE_ANALYSIS)
+
+// FIXME: This should be pulled out into a separate softlinking header (either in PAL or WebKit2).
+#import <VisionKitCore/VKImageAnalysis_WebKit.h>
+#import <VisionKitCore/VKImageAnalyzer.h>
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(VisionKitCore)
+SOFT_LINK_CLASS_OPTIONAL(VisionKitCore, VKImageAnalyzer)
+SOFT_LINK_CLASS_OPTIONAL(VisionKitCore, VKImageAnalyzerRequest)
+
+// FIXME: Remove this once <rdar://72480459> is in the SDK.
+@interface VKImageAnalyzerRequest (Staging_72480459)
+@property (nonatomic) NSURL *imageURL;
+@property (nonatomic) NSURL *pageURL;
+@end
+
+#endif // ENABLE(IMAGE_ANALYSIS)
+
 #import <pal/ios/ManagedConfigurationSoftLink.h>
+#import <pal/ios/QuickLookSoftLink.h>
 
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
 static NSString * const webkitShowLinkPreviewsPreferenceKey = @"WebKitShowLinkPreviews";
@@ -203,6 +222,20 @@ static NSString * const editablePointerRegionIdentifier = @"WKEditablePointerReg
 #endif // HAVE(PEPPER_UI_CORE)
 
 static void *WKContentViewKVOTransformContext = &WKContentViewKVOTransformContext;
+
+#if ENABLE(IMAGE_ANALYSIS)
+
+@interface WKContentView (ImageAnalysis) <WKImageAnalysisGestureRecognizerDelegate>
+@end
+
+#if USE(QUICK_LOOK)
+
+@interface WKContentView (ImageAnalysisPreview) <QLPreviewControllerDelegate, QLPreviewControllerDataSource, QLPreviewItemDataProvider>
+@end
+
+#endif // USE(QUICK_LOOK)
+
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 namespace WebKit {
 using namespace WebCore;
@@ -290,6 +323,38 @@ TextStream& operator<<(TextStream& stream, const WKSelectionDrawingInfo& info)
     stream.dumpProperty("selection clip rect", info.selectionClipRect);
     return stream;
 }
+
+#if ENABLE(IMAGE_ANALYSIS)
+
+class ImageAnalysisGestureDeferralToken final : public RefCounted<ImageAnalysisGestureDeferralToken> {
+public:
+    static RefPtr<ImageAnalysisGestureDeferralToken> create(WKContentView *view)
+    {
+        return adoptRef(*new ImageAnalysisGestureDeferralToken(view));
+    }
+
+    ~ImageAnalysisGestureDeferralToken()
+    {
+        if (auto view = m_view.get())
+            [view _endImageAnalysisGestureDeferral:m_shouldPreventTextSelection ? WebKit::ShouldPreventGestures::Yes : WebKit::ShouldPreventGestures::No];
+    }
+
+    void setShouldPreventTextSelection()
+    {
+        m_shouldPreventTextSelection = true;
+    }
+
+private:
+    ImageAnalysisGestureDeferralToken(WKContentView *view)
+        : m_view(view)
+    {
+    }
+
+    WeakObjCPtr<WKContentView> m_view;
+    bool m_shouldPreventTextSelection { false };
+};
+
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 } // namespace WebKit
 
@@ -812,11 +877,11 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _touchEndDeferringGestureRecognizerForSyntheticTapGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
     [_touchEndDeferringGestureRecognizerForSyntheticTapGestures setName:@"Deferrer for touch end (synthetic tap)"];
 
-#if ENABLE(IMAGE_EXTRACTION)
-    _imageExtractionDeferringGestureRecognizer = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
-    [_imageExtractionDeferringGestureRecognizer setName:@"Deferrer for image extraction"];
-    [_imageExtractionDeferringGestureRecognizer setImmediatelyFailsAfterTouchEnd:YES];
-    [_imageExtractionDeferringGestureRecognizer setEnabled:self._imageExtractionEnabled];
+#if ENABLE(IMAGE_ANALYSIS)
+    _imageAnalysisDeferringGestureRecognizer = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
+    [_imageAnalysisDeferringGestureRecognizer setName:@"Deferrer for image analysis"];
+    [_imageAnalysisDeferringGestureRecognizer setImmediatelyFailsAfterTouchEnd:YES];
+    [_imageAnalysisDeferringGestureRecognizer setEnabled:WebKit::isLiveTextEnabled()];
 #endif
 
     for (WKDeferringGestureRecognizer *gesture in self.deferringGestures) {
@@ -929,8 +994,8 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _isChangingFocus = NO;
     _isBlurringFocusedElement = NO;
 
-#if USE(UICONTEXTMENU) && ENABLE(IMAGE_EXTRACTION)
-    _contextMenuWasTriggeredByImageExtractionTimeout = NO;
+#if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS)
+    _contextMenuWasTriggeredByImageAnalysisTimeout = NO;
 #endif
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -945,8 +1010,8 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _page->process().updateTextCheckerState();
     _page->setScreenIsBeingCaptured([[[self window] screen] isCaptured]);
 
-#if ENABLE(IMAGE_EXTRACTION)
-    [self _setUpImageExtraction];
+#if ENABLE(IMAGE_ANALYSIS)
+    [self _setUpImageAnalysis];
 #endif
 
     _hasSetUpInteractions = YES;
@@ -989,8 +1054,8 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
     _treatAsContentEditableUntilNextEditorStateUpdate = NO;
 
-#if USE(UICONTEXTMENU) && ENABLE(IMAGE_EXTRACTION)
-    _contextMenuWasTriggeredByImageExtractionTimeout = NO;
+#if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS)
+    _contextMenuWasTriggeredByImageAnalysisTimeout = NO;
 #endif
 
     if (_interactionViewsContainerView) {
@@ -1111,8 +1176,8 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _dataListTextSuggestions = nil;
 #endif
 
-#if ENABLE(IMAGE_EXTRACTION)
-    [self _tearDownImageExtraction];
+#if ENABLE(IMAGE_ANALYSIS)
+    [self _tearDownImageAnalysis];
 #endif
 
     [self _removeContainerForContextMenuHintPreviews];
@@ -1824,8 +1889,8 @@ static WebCore::FloatQuad inflateQuad(const WebCore::FloatQuad& quad, float infl
     auto gestures = [NSMutableArray arrayWithCapacity:7];
     [gestures addObjectsFromArray:self._touchStartDeferringGestures];
     [gestures addObjectsFromArray:self._touchEndDeferringGestures];
-#if ENABLE(IMAGE_EXTRACTION)
-    [gestures addObject:_imageExtractionDeferringGestureRecognizer.get()];
+#if ENABLE(IMAGE_ANALYSIS)
+    [gestures addObject:_imageAnalysisDeferringGestureRecognizer.get()];
 #endif
     return gestures;
 }
@@ -2289,12 +2354,12 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class] && [otherGestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
         return YES;
 
-#if ENABLE(IMAGE_EXTRACTION)
-    if (gestureRecognizer == _imageExtractionDeferringGestureRecognizer)
-        return ![self shouldDeferGestureDueToImageExtraction:otherGestureRecognizer];
+#if ENABLE(IMAGE_ANALYSIS)
+    if (gestureRecognizer == _imageAnalysisDeferringGestureRecognizer)
+        return ![self shouldDeferGestureDueToImageAnalysis:otherGestureRecognizer];
 
-    if (otherGestureRecognizer == _imageExtractionDeferringGestureRecognizer)
-        return ![self shouldDeferGestureDueToImageExtraction:gestureRecognizer];
+    if (otherGestureRecognizer == _imageAnalysisDeferringGestureRecognizer)
+        return ![self shouldDeferGestureDueToImageAnalysis:gestureRecognizer];
 #endif
 
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _highlightLongPressGestureRecognizer.get(), _longPressGestureRecognizer.get()))
@@ -2350,8 +2415,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _doubleTapGestureRecognizer.get(), _doubleTapGestureRecognizerForDoubleClick.get()))
         return YES;
 
-#if ENABLE(IMAGE_EXTRACTION)
-    if (gestureRecognizer == _imageExtractionGestureRecognizer || gestureRecognizer == _imageExtractionTimeoutGestureRecognizer)
+#if ENABLE(IMAGE_ANALYSIS)
+    if (gestureRecognizer == _imageAnalysisGestureRecognizer || gestureRecognizer == _imageAnalysisTimeoutGestureRecognizer)
         return YES;
 #endif
 
@@ -2366,8 +2431,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if ([otherGestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
         return [(WKDeferringGestureRecognizer *)otherGestureRecognizer shouldDeferGestureRecognizer:gestureRecognizer];
 
-#if USE(UICONTEXTMENU) && ENABLE(IMAGE_EXTRACTION)
-    if (gestureRecognizer == _imageExtractionTimeoutGestureRecognizer && otherGestureRecognizer == [_contextMenuInteraction gestureRecognizerForFailureRelationships])
+#if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS)
+    if (gestureRecognizer == _imageAnalysisTimeoutGestureRecognizer && otherGestureRecognizer == [_contextMenuInteraction gestureRecognizerForFailureRelationships])
         return YES;
 #endif
 
@@ -2379,8 +2444,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
         return [(WKDeferringGestureRecognizer *)gestureRecognizer shouldDeferGestureRecognizer:otherGestureRecognizer];
 
-#if USE(UICONTEXTMENU) && ENABLE(IMAGE_EXTRACTION)
-    if (gestureRecognizer == [_contextMenuInteraction gestureRecognizerForFailureRelationships] && otherGestureRecognizer == _imageExtractionTimeoutGestureRecognizer)
+#if USE(UICONTEXTMENU) && ENABLE(IMAGE_ANALYSIS)
+    if (gestureRecognizer == [_contextMenuInteraction gestureRecognizerForFailureRelationships] && otherGestureRecognizer == _imageAnalysisTimeoutGestureRecognizer)
         return YES;
 #endif
 
@@ -2754,8 +2819,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
     if (![self ensurePositionInformationIsUpToDate:request])
         return NO;
 
-#if ENABLE(IMAGE_EXTRACTION)
-    if (_elementPendingImageExtraction && _positionInformation.imageElementContext == _elementPendingImageExtraction)
+#if ENABLE(IMAGE_ANALYSIS)
+    if (_elementPendingImageAnalysis && _positionInformation.imageElementContext == _elementPendingImageAnalysis)
         return YES;
 #endif
 
@@ -2832,8 +2897,8 @@ static inline bool isSamePair(UIGestureRecognizer *a, UIGestureRecognizer *b, UI
         return NO;
 #endif
 
-#if ENABLE(IMAGE_EXTRACTION)
-    if (_elementPendingImageExtraction && _positionInformation.imageElementContext == _elementPendingImageExtraction)
+#if ENABLE(IMAGE_ANALYSIS)
+    if (_elementPendingImageAnalysis && _positionInformation.imageElementContext == _elementPendingImageAnalysis)
         return YES;
 #endif
 
@@ -3784,8 +3849,8 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
         return baseWritingDirection != WebCore::WritingDirection::RightToLeft;
     }
 
-#if ENABLE(IMAGE_EXTRACTION)
-    if (WebKit::isImageExtractionAction(action) && !editorState.isContentEditable)
+#if ENABLE(IMAGE_ANALYSIS)
+    if ((action == @selector(captureTextFromCamera:) || action == @selector(_insertTextFromCamera:)) && !editorState.isContentEditable)
         return NO;
 #endif
 
@@ -3799,7 +3864,6 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
         return self.shouldAllowAppHighlightCreation && _page->appHighlightsVisibility() ? self : nil;
     if (action == @selector(createHighlightInNewGroupWithRange:))
         return self.shouldAllowAppHighlightCreation && !_page->appHighlightsVisibility() ? self : nil;
-    
 #endif
     return [_webView targetForAction:action withSender:sender];
 }
@@ -4576,8 +4640,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     // in the same location to trigger double-tap recognition.
     [self _setDoubleTapGesturesEnabled:NO];
     [_twoFingerDoubleTapGestureRecognizer _wk_cancel];
-#if ENABLE(IMAGE_EXTRACTION)
-    [self _cancelImageExtraction];
+#if ENABLE(IMAGE_ANALYSIS)
+    [self _cancelImageAnalysis];
 #endif
 }
 
@@ -7612,14 +7676,14 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     return WebCore::IOSApplication::isDataActivation();
 }
 
-#if ENABLE(IMAGE_EXTRACTION)
+#if ENABLE(IMAGE_ANALYSIS)
 
-- (BOOL)shouldDeferGestureDueToImageExtraction:(UIGestureRecognizer *)gesture
+- (BOOL)shouldDeferGestureDueToImageAnalysis:(UIGestureRecognizer *)gesture
 {
     return gesture == [_textInteractionAssistant loupeGesture] || gesture._wk_isTapAndAHalf || gesture == [_textInteractionAssistant forcePressGesture];
 }
 
-#endif // ENABLE(IMAGE_EXTRACTION)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 #if HAVE(PASTEBOARD_DATA_OWNER)
 
@@ -7828,9 +7892,9 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
     if (gestureRecognizer == _touchEventGestureRecognizer)
         return NO;
 
-#if ENABLE(IMAGE_EXTRACTION)
-    if (deferringGestureRecognizer == _imageExtractionDeferringGestureRecognizer)
-        return [self shouldDeferGestureDueToImageExtraction:gestureRecognizer];
+#if ENABLE(IMAGE_ANALYSIS)
+    if (deferringGestureRecognizer == _imageAnalysisDeferringGestureRecognizer)
+        return [self shouldDeferGestureDueToImageAnalysis:gestureRecognizer];
 #endif
 
     auto mayDelayResetOfContainingSubgraph = [&](UIGestureRecognizer *gesture) -> BOOL {
@@ -8724,9 +8788,9 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
     [self cleanUpDragSourceSessionState];
 
-    auto prepareForSession = [weakSelf = WeakObjCPtr<WKContentView>(self), session = retainPtr(session), completion = makeBlockPtr(completion)] (WebKit::ProceedWithImageExtraction proceedWithImageExtraction) {
+    auto prepareForSession = [weakSelf = WeakObjCPtr<WKContentView>(self), session = retainPtr(session), completion = makeBlockPtr(completion)] (WebKit::ProceedWithTextSelectionInImage ProceedWithTextSelectionInImage) {
         auto strongSelf = weakSelf.get();
-        if (!strongSelf || proceedWithImageExtraction == WebKit::ProceedWithImageExtraction::Yes)
+        if (!strongSelf || ProceedWithTextSelectionInImage == WebKit::ProceedWithTextSelectionInImage::Yes)
             return;
 
         auto dragOrigin = [session locationInView:strongSelf.get()];
@@ -8735,10 +8799,10 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
         RELEASE_LOG(DragAndDrop, "Drag session requested: %p at origin: {%.0f, %.0f}", session.get(), dragOrigin.x, dragOrigin.y);
     };
 
-#if ENABLE(IMAGE_EXTRACTION)
-    [self _doAfterPendingImageExtraction:prepareForSession];
+#if ENABLE(IMAGE_ANALYSIS)
+    [self _doAfterPendingImageAnalysis:prepareForSession];
 #else
-    prepareForSession(WebKit::ProceedWithImageExtraction::No);
+    prepareForSession(WebKit::ProceedWithTextSelectionInImage::No);
 #endif
 }
 
@@ -9644,30 +9708,30 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
-#if ENABLE(IMAGE_EXTRACTION)
+#if ENABLE(IMAGE_ANALYSIS)
 
-- (void)_endImageExtractionGestureDeferral:(WebKit::ShouldPreventGestures)shouldPreventGestures
+- (void)_endImageAnalysisGestureDeferral:(WebKit::ShouldPreventGestures)shouldPreventGestures
 {
-    [_imageExtractionDeferringGestureRecognizer endDeferral:shouldPreventGestures];
+    [_imageAnalysisDeferringGestureRecognizer endDeferral:shouldPreventGestures];
 }
 
-- (void)_doAfterPendingImageExtraction:(void(^)(WebKit::ProceedWithImageExtraction proceedWithImageExtraction))block
+- (void)_doAfterPendingImageAnalysis:(void(^)(WebKit::ProceedWithTextSelectionInImage ProceedWithTextSelectionInImage))block
 {
-    if (self.hasPendingImageExtractionRequest)
-        _actionsToPerformAfterPendingImageExtraction.append(makeBlockPtr(block));
+    if (self.hasPendingImageAnalysisRequest)
+        _actionsToPerformAfterPendingImageAnalysis.append(makeBlockPtr(block));
     else
-        block(WebKit::ProceedWithImageExtraction::No);
+        block(WebKit::ProceedWithTextSelectionInImage::No);
 }
 
-- (void)_invokeAllActionsToPerformAfterPendingImageExtraction:(WebKit::ProceedWithImageExtraction)proceedWithImageExtraction
+- (void)_invokeAllActionsToPerformAfterPendingImageAnalysis:(WebKit::ProceedWithTextSelectionInImage)ProceedWithTextSelectionInImage
 {
-    _pendingImageExtractionRequestIdentifier = std::nullopt;
-    _elementPendingImageExtraction = std::nullopt;
-    for (auto block : std::exchange(_actionsToPerformAfterPendingImageExtraction, { }))
-        block(proceedWithImageExtraction);
+    _pendingImageAnalysisRequestIdentifier = std::nullopt;
+    _elementPendingImageAnalysis = std::nullopt;
+    for (auto block : std::exchange(_actionsToPerformAfterPendingImageAnalysis, { }))
+        block(ProceedWithTextSelectionInImage);
 }
 
-#endif // ENABLE(IMAGE_EXTRACTION)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 - (void)setUpTextIndicator:(Ref<WebCore::TextIndicator>)textIndicator
 {
@@ -9729,6 +9793,447 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
         [strongSelf teardownTextIndicatorLayer];
     }];
 }
+
+#if ENABLE(IMAGE_ANALYSIS)
+
+#if USE(QUICK_LOOK)
+
+- (void)presentVisualSearchPreviewControllerForImage:(UIImage *)image imageURL:(NSURL *)imageURL title:(NSString *)title imageBounds:(CGRect)imageBounds appearanceActions:(QLPreviewControllerFirstTimeAppearanceActions)appearanceActions
+{
+    ASSERT(_hasSelectableTextInImage || _hasVisualSearchResults);
+
+    ASSERT(!_visualSearchPreviewController);
+    _visualSearchPreviewController = adoptNS([PAL::allocQLPreviewControllerInstance() init]);
+    [_visualSearchPreviewController setDelegate:self];
+    [_visualSearchPreviewController setDataSource:self];
+    [_visualSearchPreviewController setAppearanceActions:appearanceActions];
+    [_visualSearchPreviewController setModalPresentationStyle:UIModalPresentationOverFullScreen];
+
+    ASSERT(!_visualSearchPreviewImage);
+    _visualSearchPreviewImage = image;
+
+    ASSERT(!_visualSearchPreviewTitle);
+    _visualSearchPreviewTitle = title;
+
+    ASSERT(!_visualSearchPreviewImageURL);
+    _visualSearchPreviewImageURL = imageURL;
+
+    _visualSearchPreviewImageBounds = imageBounds;
+
+    UIViewController *currentPresentingViewController = [UIViewController _viewControllerForFullScreenPresentationFromView:self];
+    [currentPresentingViewController presentViewController:_visualSearchPreviewController.get() animated:YES completion:nil];
+}
+
+#pragma mark - QLPreviewControllerDelegate
+
+- (CGRect)previewController:(QLPreviewController *)controller frameForPreviewItem:(id <QLPreviewItem>)item inSourceView:(UIView **)outView
+{
+    *outView = self;
+    return _visualSearchPreviewImageBounds;
+}
+
+- (UIImage *)previewController:(QLPreviewController *)controller transitionImageForPreviewItem:(id <QLPreviewItem>)item contentRect:(CGRect *)outContentRect
+{
+    *outContentRect = CGRect { CGPointZero, _visualSearchPreviewImageBounds.size };
+    return _visualSearchPreviewImage.get();
+}
+
+- (void)previewControllerDidDismiss:(QLPreviewController *)controller
+{
+    ASSERT(controller == _visualSearchPreviewController);
+    _visualSearchPreviewController.clear();
+    _visualSearchPreviewImage.clear();
+    _visualSearchPreviewTitle.clear();
+    _visualSearchPreviewImageURL.clear();
+}
+
+#pragma mark - QLPreviewControllerDataSource
+
+- (NSInteger)numberOfPreviewItemsInPreviewController:(QLPreviewController *)controller
+{
+    ASSERT(controller == _visualSearchPreviewController);
+    return 1;
+}
+
+- (id <QLPreviewItem>)previewController:(QLPreviewController *)controller previewItemAtIndex:(NSInteger)index
+{
+    ASSERT(controller == _visualSearchPreviewController);
+    ASSERT(!index);
+    auto item = adoptNS([PAL::allocQLItemInstance() initWithDataProvider:self contentType:UTTypeTIFF.identifier previewTitle:_visualSearchPreviewTitle.get()]);
+    if ([item respondsToSelector:@selector(setPreviewOptions:)]) {
+        auto previewOptions = adoptNS([[NSMutableDictionary alloc] initWithCapacity:2]);
+        if (_visualSearchPreviewImageURL)
+            [previewOptions setObject:_visualSearchPreviewImageURL.get() forKey:@"imageURL"];
+        if (auto pageURL = URL { URL { }, _page->currentURL() }; !pageURL.isEmpty())
+            [previewOptions setObject:pageURL forKey:@"pageURL"];
+        if ([previewOptions count])
+            [item setPreviewOptions:previewOptions.get()];
+    }
+    return item.autorelease();
+}
+
+#pragma mark - QLPreviewItemDataProvider
+
+- (NSData *)provideDataForItem:(QLItem *)item
+{
+    ASSERT(_visualSearchPreviewImage);
+
+    auto data = adoptCF(CFDataCreateMutable(NULL, 0));
+    auto destination = adoptCF(CGImageDestinationCreateWithData(data.get(), (__bridge CFStringRef)UTTypeTIFF.identifier, 1, NULL));
+    CGImageDestinationAddImage(destination.get(), [_visualSearchPreviewImage CGImage], nil);
+    if (!CGImageDestinationFinalize(destination.get()))
+        return nil;
+
+    return data.bridgingAutorelease();
+}
+
+#pragma mark - WKActionSheetAssistantDelegate
+
+- (bool)actionSheetAssistant:(WKActionSheetAssistant *)assistant shouldIncludeShowTextActionForElement:(_WKActivatedElementInfo *)element
+{
+    return WebKit::isLiveTextEnabled() && _hasSelectableTextInImage;
+}
+
+- (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant showTextForImage:(UIImage *)image imageURL:(NSURL *)imageURL title:(NSString *)title imageBounds:(CGRect)imageBounds
+{
+    [self presentVisualSearchPreviewControllerForImage:image imageURL:imageURL title:title imageBounds:imageBounds appearanceActions:QLPreviewControllerFirstTimeAppearanceActionEnableVisualSearchDataDetection];
+}
+
+- (bool)actionSheetAssistant:(WKActionSheetAssistant *)assistant shouldIncludeLookUpImageActionForElement:(_WKActivatedElementInfo *)element
+{
+    return WebKit::isLiveTextEnabled() && _hasVisualSearchResults;
+}
+
+- (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant lookUpImage:(UIImage *)image imageURL:(NSURL *)imageURL title:(NSString *)title imageBounds:(CGRect)imageBounds
+{
+    [self presentVisualSearchPreviewControllerForImage:image imageURL:imageURL title:title imageBounds:imageBounds appearanceActions:QLPreviewControllerFirstTimeAppearanceActionEnableVisualSearchMode];
+}
+
+#endif // USE(QUICK_LOOK)
+
+#pragma mark - Image Extraction
+
+- (VKImageAnalyzer *)imageAnalyzer
+{
+    if (!_imageAnalyzer)
+        _imageAnalyzer = adoptNS([allocVKImageAnalyzerInstance() init]);
+    return _imageAnalyzer.get();
+}
+
+- (BOOL)hasPendingImageAnalysisRequest
+{
+    return !!_pendingImageAnalysisRequestIdentifier;
+}
+
+- (void)_setUpImageAnalysis
+{
+    if (!WebKit::isLiveTextEnabled())
+        return;
+
+    _pendingImageAnalysisRequestIdentifier = std::nullopt;
+    _isProceedingWithTextSelectionInImage = NO;
+    _elementPendingImageAnalysis = std::nullopt;
+    _imageAnalysisGestureRecognizer = adoptNS([[WKImageAnalysisGestureRecognizer alloc] initWithImageAnalysisGestureDelegate:self]);
+    [self addGestureRecognizer:_imageAnalysisGestureRecognizer.get()];
+    _imageAnalysisTimeoutGestureRecognizer = adoptNS([[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(imageAnalysisGestureDidTimeOut:)]);
+    [_imageAnalysisTimeoutGestureRecognizer setMinimumPressDuration:2.0];
+    [_imageAnalysisTimeoutGestureRecognizer setName:@"Image analysis timeout"];
+    [_imageAnalysisTimeoutGestureRecognizer setDelegate:self];
+    [self addGestureRecognizer:_imageAnalysisTimeoutGestureRecognizer.get()];
+#if USE(QUICK_LOOK)
+    _hasSelectableTextInImage = NO;
+    _hasVisualSearchResults = NO;
+#endif // USE(QUICK_LOOK)
+#if USE(UICONTEXTMENU)
+    _contextMenuForMachineReadableCode.clear();
+#endif // USE(UICONTEXTMENU)
+}
+
+- (void)_tearDownImageAnalysis
+{
+    if (!WebKit::isLiveTextEnabled())
+        return;
+
+    [_imageAnalysisGestureRecognizer setDelegate:nil];
+    [self removeGestureRecognizer:_imageAnalysisGestureRecognizer.get()];
+    _imageAnalysisGestureRecognizer = nil;
+    [_imageAnalysisTimeoutGestureRecognizer setDelegate:nil];
+    [self removeGestureRecognizer:_imageAnalysisTimeoutGestureRecognizer.get()];
+    _imageAnalysisTimeoutGestureRecognizer = nil;
+    _pendingImageAnalysisRequestIdentifier = std::nullopt;
+    _isProceedingWithTextSelectionInImage = NO;
+    _elementPendingImageAnalysis = std::nullopt;
+    [std::exchange(_imageAnalyzer, nil) cancelAllRequests];
+#if USE(QUICK_LOOK)
+    _hasSelectableTextInImage = NO;
+    _hasVisualSearchResults = NO;
+#endif // USE(QUICK_LOOK)
+#if USE(UICONTEXTMENU)
+    _contextMenuForMachineReadableCode.clear();
+#endif // USE(UICONTEXTMENU)
+    [self _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
+}
+
+- (void)_cancelImageAnalysis
+{
+    [_imageAnalyzer cancelAllRequests];
+    RELEASE_LOG_IF(self.hasPendingImageAnalysisRequest, Images, "Image analysis request %" PRIu64 " cancelled.", _pendingImageAnalysisRequestIdentifier->toUInt64());
+    _pendingImageAnalysisRequestIdentifier = std::nullopt;
+    _isProceedingWithTextSelectionInImage = NO;
+    _elementPendingImageAnalysis = std::nullopt;
+}
+
+- (RetainPtr<VKImageAnalyzerRequest>)createImageAnalysisRequest:(VKAnalysisTypes)analysisTypes image:(UIImage *)image imageURL:(NSURL *)imageURL
+{
+    auto request = adoptNS([allocVKImageAnalyzerRequestInstance() initWithImage:image orientation:VKImageOrientationUp requestType:analysisTypes]);
+    [request setImageURL:imageURL];
+    [request setPageURL:[NSURL _web_URLWithWTFString:_page->currentURL()]];
+    return request;
+}
+
+- (RetainPtr<VKImageAnalyzerRequest>)createImageAnalysisRequest:(VKAnalysisTypes)analysisTypes image:(UIImage *)image
+{
+    return [self createImageAnalysisRequest:analysisTypes image:image imageURL:_positionInformation.imageURL];
+}
+
+- (BOOL)validateImageAnalysisRequestIdentifier:(WebKit::ImageAnalysisRequestIdentifier)identifier
+{
+    if (_pendingImageAnalysisRequestIdentifier == identifier)
+        return YES;
+
+    if (!self.hasPendingImageAnalysisRequest) {
+        // Only invoke deferred image analysis blocks if there is no ongoing request; otherwise, this would
+        // cause these blocks to be invoked too early (i.e. in the middle of the new image analysis request).
+        [self _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
+    }
+
+    RELEASE_LOG(Images, "Image analysis request %" PRIu64 " invalidated.", identifier.toUInt64());
+    return NO;
+}
+
+#pragma mark - WKImageAnalysisGestureRecognizerDelegate
+
+- (void)requestTextRecognition:(NSURL *)imageURL imageData:(const WebKit::ShareableBitmap::Handle&)imageData completionHandler:(CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&)completion
+{
+    auto imageBitmap = WebKit::ShareableBitmap::create(imageData);
+    if (!imageBitmap) {
+        completion({ });
+        return;
+    }
+
+    auto cgImage = imageBitmap->makeCGImage();
+    if (!cgImage) {
+        completion({ });
+        return;
+    }
+
+    auto image = adoptNS([[UIImage alloc] initWithCGImage:cgImage.get()]);
+    if (!image) {
+        completion({ });
+        return;
+    }
+
+    auto request = [self createImageAnalysisRequest:VKAnalysisTypeText image:image.get()];
+    [[self imageAnalyzer] processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTFMove(completion)] (VKImageAnalysis *result, NSError *) mutable {
+        completion(WebKit::makeTextRecognitionResult(result));
+    }).get()];
+}
+
+- (void)imageAnalysisGestureDidBegin:(WKImageAnalysisGestureRecognizer *)gestureRecognizer
+{
+    ASSERT(WebKit::isLiveTextEnabled());
+
+    auto requestIdentifier = WebKit::ImageAnalysisRequestIdentifier::generate();
+
+    [_imageAnalyzer cancelAllRequests];
+    _pendingImageAnalysisRequestIdentifier = requestIdentifier;
+    _isProceedingWithTextSelectionInImage = NO;
+    _elementPendingImageAnalysis = std::nullopt;
+
+#if USE(QUICK_LOOK)
+    _hasSelectableTextInImage = NO;
+    _hasVisualSearchResults = NO;
+#endif // USE(QUICK_LOOK)
+
+#if USE(UICONTEXTMENU)
+    _contextMenuForMachineReadableCode.clear();
+#endif // USE(UICONTEXTMENU)
+
+    WebKit::InteractionInformationRequest request { WebCore::roundedIntPoint([gestureRecognizer locationInView:self]) };
+    request.includeImageData = true;
+    [self doAfterPositionInformationUpdate:[requestIdentifier = WTFMove(requestIdentifier), weakSelf = WeakObjCPtr<WKContentView>(self), gestureDeferralToken = WebKit::ImageAnalysisGestureDeferralToken::create(self)] (WebKit::InteractionInformationAtPosition information) mutable {
+        auto strongSelf = weakSelf.get();
+        if (![strongSelf validateImageAnalysisRequestIdentifier:requestIdentifier])
+            return;
+
+        bool shouldAnalyzeImageAtLocation = information.isImage && information.image && information.imageElementContext && !information.isAnimatedImage;
+        if (!strongSelf->_pendingImageAnalysisRequestIdentifier || !shouldAnalyzeImageAtLocation) {
+            [strongSelf _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
+            return;
+        }
+
+        auto cgImage = information.image->makeCGImageCopy();
+        if (!cgImage) {
+            [strongSelf _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
+            return;
+        }
+
+        auto image = adoptNS([[UIImage alloc] initWithCGImage:cgImage.get()]);
+        if (!image) {
+            [strongSelf _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
+            return;
+        }
+
+        RELEASE_LOG(Images, "Image analysis preflight gesture initiated (request %" PRIu64 ").", requestIdentifier.toUInt64());
+
+        strongSelf->_elementPendingImageAnalysis = information.imageElementContext;
+
+        auto requestLocation = information.request.point;
+        WebCore::ElementContext elementContext = *information.imageElementContext;
+
+        auto requestForTextSelection = [strongSelf createImageAnalysisRequest:VKAnalysisTypeText image:image.get()];
+        auto requestForContextMenu = [strongSelf createImageAnalysisRequest:VKAnalysisTypeVisualSearch | VKAnalysisTypeMachineReadableCode image:image.get()];
+
+        auto textAnalysisStartTime = MonotonicTime::now();
+        [[strongSelf imageAnalyzer] processRequest:requestForTextSelection.get() progressHandler:nil completionHandler:[requestIdentifier = WTFMove(requestIdentifier), weakSelf, elementContext, requestLocation, requestForContextMenu, gestureDeferralToken, textAnalysisStartTime] (VKImageAnalysis *result, NSError *error) mutable {
+            auto strongSelf = weakSelf.get();
+            if (![strongSelf validateImageAnalysisRequestIdentifier:requestIdentifier])
+                return;
+
+            BOOL hasTextResults = [result hasResultsForAnalysisTypes:VKAnalysisTypeText];
+            RELEASE_LOG(Images, "Image analysis completed in %.0f ms (request %" PRIu64 "; found text? %d)", (MonotonicTime::now() - textAnalysisStartTime).milliseconds(), requestIdentifier.toUInt64(), hasTextResults);
+
+            strongSelf->_page->updateWithTextRecognitionResult(WebKit::makeTextRecognitionResult(result), elementContext, requestLocation, [requestIdentifier = WTFMove(requestIdentifier), weakSelf, hasTextResults, requestForContextMenu, gestureDeferralToken] (WebKit::TextRecognitionUpdateResult updateResult) mutable {
+                auto strongSelf = weakSelf.get();
+                if (![strongSelf validateImageAnalysisRequestIdentifier:requestIdentifier])
+                    return;
+
+                if (updateResult == WebKit::TextRecognitionUpdateResult::Text) {
+                    strongSelf->_isProceedingWithTextSelectionInImage = YES;
+                    [strongSelf _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::Yes];
+                    return;
+                }
+
+                gestureDeferralToken->setShouldPreventTextSelection();
+
+                if (updateResult == WebKit::TextRecognitionUpdateResult::DataDetector) {
+                    [strongSelf _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
+                    return;
+                }
+
+                auto visualSearchAnalysisStartTime = MonotonicTime::now();
+                [[strongSelf imageAnalyzer] processRequest:requestForContextMenu.get() progressHandler:nil completionHandler:[requestIdentifier = WTFMove(requestIdentifier), weakSelf, hasTextResults, visualSearchAnalysisStartTime] (VKImageAnalysis *result, NSError *error) mutable {
+                    auto strongSelf = weakSelf.get();
+                    if (![strongSelf validateImageAnalysisRequestIdentifier:requestIdentifier])
+                        return;
+
+#if USE(QUICK_LOOK)
+                    BOOL hasVisualSearchResults = [result hasResultsForAnalysisTypes:VKAnalysisTypeVisualSearch];
+                    RELEASE_LOG(Images, "Image analysis completed in %.0f ms (request %" PRIu64 "; found visual search results? %d)", (MonotonicTime::now() - visualSearchAnalysisStartTime).milliseconds(), requestIdentifier.toUInt64(), hasVisualSearchResults);
+#else
+                    UNUSED_PARAM(visualSearchAnalysisStartTime);
+#endif
+                    if (!result || error) {
+                        [strongSelf _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
+                        return;
+                    }
+
+#if USE(QUICK_LOOK)
+                    strongSelf->_hasSelectableTextInImage = hasTextResults;
+                    strongSelf->_hasVisualSearchResults = hasVisualSearchResults;
+#else
+                    UNUSED_PARAM(hasTextResults);
+#endif
+#if USE(UICONTEXTMENU)
+                    strongSelf->_contextMenuForMachineReadableCode = [result hasResultsForAnalysisTypes:VKAnalysisTypeMachineReadableCode] ? result.mrcMenu : nil;
+#endif
+                    [strongSelf _invokeAllActionsToPerformAfterPendingImageAnalysis:WebKit::ProceedWithTextSelectionInImage::No];
+                }];
+            });
+        }];
+    } forRequest:request];
+}
+
+- (void)imageAnalysisGestureDidFail:(WKImageAnalysisGestureRecognizer *)gestureRecognizer
+{
+    [self _endImageAnalysisGestureDeferral:WebKit::ShouldPreventGestures::No];
+}
+
+- (void)imageAnalysisGestureDidTimeOut:(WKImageAnalysisGestureRecognizer *)gestureRecognizer
+{
+    if (!self._shouldUseContextMenus)
+        return;
+
+    if (self.hasPendingImageAnalysisRequest)
+        return;
+
+    if (gestureRecognizer.state != UIGestureRecognizerStateBegan)
+        return;
+
+    auto location = WebCore::roundedIntPoint([gestureRecognizer locationInView:self]);
+    WebKit::InteractionInformationRequest request { location };
+    request.includeImageData = true;
+    [self doAfterPositionInformationUpdate:[weakSelf = WeakObjCPtr<WKContentView>(self), location] (WebKit::InteractionInformationAtPosition info) {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf)
+            return;
+
+        if (!info.image)
+            return;
+
+        if ((!info.isImageOverlayText || !info.isSelected) && !strongSelf->_isProceedingWithTextSelectionInImage)
+            return;
+
+        auto cgImage = info.image->makeCGImageCopy();
+        if (!cgImage)
+            return;
+
+        auto image = adoptNS([[UIImage alloc] initWithCGImage:cgImage.get()]);
+        if (!image)
+            return;
+
+        RELEASE_LOG(Images, "Image analysis timeout gesture initiated.");
+        // FIXME: We need to implement some way to cache image analysis results per element, so that we don't end up
+        // making redundant image analysis requests for the same image data.
+
+        auto visualSearchAnalysisStartTime = MonotonicTime::now();
+        auto requestForContextMenu = [strongSelf createImageAnalysisRequest:VKAnalysisTypeVisualSearch | VKAnalysisTypeMachineReadableCode image:image.get()];
+        [[strongSelf imageAnalyzer] processRequest:requestForContextMenu.get() progressHandler:nil completionHandler:[weakSelf, location, visualSearchAnalysisStartTime] (VKImageAnalysis *result, NSError *error) {
+            auto strongSelf = weakSelf.get();
+            if (!strongSelf)
+                return;
+
+#if USE(QUICK_LOOK)
+            BOOL hasVisualSearchResults = [result hasResultsForAnalysisTypes:VKAnalysisTypeVisualSearch];
+            RELEASE_LOG(Images, "Image analysis completed in %.0f ms (found visual search results? %d)", (MonotonicTime::now() - visualSearchAnalysisStartTime).milliseconds(), hasVisualSearchResults);
+            strongSelf->_hasSelectableTextInImage = YES;
+            strongSelf->_hasVisualSearchResults = hasVisualSearchResults;
+#else
+            UNUSED_PARAM(visualSearchAnalysisStartTime);
+#endif
+
+#if USE(UICONTEXTMENU)
+            strongSelf->_contextMenuForMachineReadableCode = [result hasResultsForAnalysisTypes:VKAnalysisTypeMachineReadableCode] ? result.mrcMenu : nil;
+            strongSelf->_contextMenuWasTriggeredByImageAnalysisTimeout = YES;
+            [strongSelf->_contextMenuInteraction _presentMenuAtLocation:location];
+#else
+            UNUSED_PARAM(location);
+#endif
+        }];
+    } forRequest:request];
+}
+
+- (void)_insertTextFromCameraForWebView:(id)sender
+{
+    [super _insertTextFromCamera:sender];
+}
+
+- (void)captureTextFromCameraForWebView:(id)sender
+{
+    [super captureTextFromCamera:sender];
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WKContentViewInteractionAdditionsAfter.mm>
@@ -10236,10 +10741,10 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
 - (void)_contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location completion:(void(^)(UIContextMenuConfiguration *))completion
 {
-#if ENABLE(IMAGE_EXTRACTION)
-    BOOL triggeredByImageExtractionTimeout = std::exchange(_contextMenuWasTriggeredByImageExtractionTimeout, NO);
+#if ENABLE(IMAGE_ANALYSIS)
+    BOOL triggeredByImageAnalysisTimeout = std::exchange(_contextMenuWasTriggeredByImageAnalysisTimeout, NO);
 #else
-    BOOL triggeredByImageExtractionTimeout = NO;
+    BOOL triggeredByImageAnalysisTimeout = NO;
 #endif
 
     if (!_webView)
@@ -10248,9 +10753,9 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
     if (!self.webView.configuration._longPressActionsEnabled)
         return completion(nil);
 
-    auto getConfigurationAndContinue = [weakSelf = WeakObjCPtr<WKContentView>(self), interaction = retainPtr(interaction), completion = makeBlockPtr(completion), triggeredByImageExtractionTimeout] (WebKit::ProceedWithImageExtraction proceedWithImageExtraction) {
+    auto getConfigurationAndContinue = [weakSelf = WeakObjCPtr<WKContentView>(self), interaction = retainPtr(interaction), completion = makeBlockPtr(completion), triggeredByImageAnalysisTimeout] (WebKit::ProceedWithTextSelectionInImage ProceedWithTextSelectionInImage) {
         auto strongSelf = weakSelf.get();
-        if (!strongSelf || proceedWithImageExtraction == WebKit::ProceedWithImageExtraction::Yes) {
+        if (!strongSelf || ProceedWithTextSelectionInImage == WebKit::ProceedWithTextSelectionInImage::Yes) {
             completion(nil);
             return;
         }
@@ -10264,7 +10769,7 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         WebKit::InteractionInformationRequest request { WebCore::roundedIntPoint([interaction locationInView:strongSelf.get()]) };
         request.includeSnapshot = true;
         request.includeLinkIndicator = true;
-        request.disallowUserAgentShadowContent = triggeredByImageExtractionTimeout;
+        request.disallowUserAgentShadowContent = triggeredByImageAnalysisTimeout;
         request.linkIndicatorShouldHaveLegacyMargins = ![strongSelf _shouldUseContextMenus];
 
         [strongSelf doAfterPositionInformationUpdate:[weakSelf = WeakObjCPtr<WKContentView>(strongSelf.get()), completion] (WebKit::InteractionInformationAtPosition) {
@@ -10275,10 +10780,10 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
         } forRequest:request];
     };
 
-#if ENABLE(IMAGE_EXTRACTION)
-    [self _doAfterPendingImageExtraction:getConfigurationAndContinue];
+#if ENABLE(IMAGE_ANALYSIS)
+    [self _doAfterPendingImageAnalysis:getConfigurationAndContinue];
 #else
-    getConfigurationAndContinue(WebKit::ProceedWithImageExtraction::No);
+    getConfigurationAndContinue(WebKit::ProceedWithTextSelectionInImage::No);
 #endif
 }
 
@@ -10400,10 +10905,10 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
 
                 RetainPtr<NSArray<_WKElementAction *>> defaultActionsFromAssistant = [strongSelf->_actionSheetAssistant defaultActionsForImageSheet:elementInfo.get()];
                 auto actions = menuElementsFromDefaultActions(defaultActionsFromAssistant, elementInfo);
-#if ENABLE(IMAGE_EXTRACTION)
-                if (UIMenu *imageExtractionContextMenu = strongSelf->_imageExtractionContextMenu.get())
-                    [actions addObject:imageExtractionContextMenu];
-#endif // ENABLE(IMAGE_EXTRACTION)
+#if ENABLE(IMAGE_ANALYSIS)
+                if (UIMenu *menu = strongSelf->_contextMenuForMachineReadableCode.get())
+                    [actions addObject:menu];
+#endif // ENABLE(IMAGE_ANALYSIS)
                 return [UIMenu menuWithTitle:strongSelf->_positionInformation.title children:actions];
             };
 
@@ -10667,9 +11172,9 @@ static UIMenu *menuFromLegacyPreviewOrDefaultActions(UIViewController *previewVi
     _contextMenuHasRequestedLegacyData = NO;
     _contextMenuElementInfo = nullptr;
 
-#if ENABLE(IMAGE_EXTRACTION)
-    _imageExtractionContextMenu.clear();
-#endif // ENABLE(IMAGE_EXTRACTION)
+#if ENABLE(IMAGE_ANALYSIS)
+    _contextMenuForMachineReadableCode.clear();
+#endif // ENABLE(IMAGE_ANALYSIS)
 
     [animator addCompletion:[weakSelf = WeakObjCPtr<WKContentView>(self)] () {
         auto strongSelf = weakSelf.get();

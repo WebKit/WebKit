@@ -36,6 +36,7 @@
 #import <WebCore/FontAttributes.h>
 #import <WebCore/FontCustomPlatformData.h>
 #import <WebCore/ResourceRequest.h>
+#import <WebCore/TextRecognitionResult.h>
 #import <pal/spi/cf/CoreTextSPI.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -49,10 +50,6 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/WebCoreArgumentCodersCocoaAdditions.mm>
-#endif
-
-#if ENABLE(IMAGE_EXTRACTION)
-#import <WebCore/ImageExtractionResult.h>
 #endif
 
 #if ENABLE(APPLE_PAY)
@@ -684,14 +681,14 @@ bool ArgumentCoder<WebCore::MediaPlaybackTargetContext>::decodePlatformData(Deco
 }
 #endif
 
-#if ENABLE(IMAGE_EXTRACTION) && ENABLE(DATA_DETECTION)
+#if ENABLE(IMAGE_ANALYSIS) && ENABLE(DATA_DETECTION)
 
-void ArgumentCoder<WebCore::ImageExtractionDataDetectorInfo>::encodePlatformData(Encoder& encoder, const WebCore::ImageExtractionDataDetectorInfo& info)
+void ArgumentCoder<WebCore::TextRecognitionDataDetector>::encodePlatformData(Encoder& encoder, const WebCore::TextRecognitionDataDetector& info)
 {
     encoder << info.result.get();
 }
 
-bool ArgumentCoder<WebCore::ImageExtractionDataDetectorInfo>::decodePlatformData(Decoder& decoder, WebCore::ImageExtractionDataDetectorInfo& result)
+bool ArgumentCoder<WebCore::TextRecognitionDataDetector>::decodePlatformData(Decoder& decoder, WebCore::TextRecognitionDataDetector& result)
 {
     auto scannerResult = IPC::decode<DDScannerResult>(decoder, @[ PAL::getDDScannerResultClass() ]);
     if (!scannerResult)
@@ -701,6 +698,6 @@ bool ArgumentCoder<WebCore::ImageExtractionDataDetectorInfo>::decodePlatformData
     return true;
 }
 
-#endif // ENABLE(IMAGE_EXTRACTION) && ENABLE(DATA_DETECTION)
+#endif // ENABLE(IMAGE_ANALYSIS) && ENABLE(DATA_DETECTION)
 
 } // namespace IPC

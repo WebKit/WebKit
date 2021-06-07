@@ -73,7 +73,7 @@ TEST(WebKit, InvokeShareWithoutSelection)
     [webView waitForNextPresentationUpdate];
 }
 
-#if ENABLE(IMAGE_EXTRACTION) && ENABLE(APP_HIGHLIGHTS)
+#if ENABLE(IMAGE_ANALYSIS) && ENABLE(APP_HIGHLIGHTS)
 
 TEST(WebKit, AppHighlightsInImageOverlays)
 {
@@ -99,6 +99,6 @@ TEST(WebKit, AppHighlightsInImageOverlays)
     EXPECT_EQ([contentView targetForAction:createHighlightInNewGroupWithRangeSelector withSender:nil], contentView);
 }
 
-#endif // ENABLE(IMAGE_EXTRACTION) && ENABLE(APP_HIGHLIGHTS)
+#endif // ENABLE(IMAGE_ANALYSIS) && ENABLE(APP_HIGHLIGHTS)
 
 #endif // PLATFORM(IOS_FAMILY)

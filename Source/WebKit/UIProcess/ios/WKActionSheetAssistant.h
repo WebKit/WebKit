@@ -79,11 +79,11 @@ typedef NS_ENUM(NSInteger, _WKElementActionType);
 - (void)actionSheetAssistantDidDismissContextMenu:(WKActionSheetAssistant *)assistant;
 #endif
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant shareElementWithImage:(UIImage *)image rect:(CGRect)boundingRect;
-#if ENABLE(IMAGE_EXTRACTION)
-- (BOOL)actionSheetAssistant:(WKActionSheetAssistant *)assistant shouldIncludeImageExtractionActionForElement:(_WKActivatedElementInfo *)element;
-- (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant handleImageExtraction:(UIImage *)image imageURL:(NSURL *)imageURL title:(NSString *)title imageBounds:(CGRect)imageBounds;
-- (BOOL)actionSheetAssistant:(WKActionSheetAssistant *)assistant shouldIncludeRevealImageActionForElement:(_WKActivatedElementInfo *)element;
-- (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant handleRevealImage:(UIImage *)image imageURL:(NSURL *)imageURL title:(NSString *)title imageBounds:(CGRect)imageBounds;
+#if ENABLE(IMAGE_ANALYSIS)
+- (BOOL)actionSheetAssistant:(WKActionSheetAssistant *)assistant shouldIncludeShowTextActionForElement:(_WKActivatedElementInfo *)element;
+- (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant showTextForImage:(UIImage *)image imageURL:(NSURL *)imageURL title:(NSString *)title imageBounds:(CGRect)imageBounds;
+- (BOOL)actionSheetAssistant:(WKActionSheetAssistant *)assistant shouldIncludeLookUpImageActionForElement:(_WKActivatedElementInfo *)element;
+- (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant lookUpImage:(UIImage *)image imageURL:(NSURL *)imageURL title:(NSString *)title imageBounds:(CGRect)imageBounds;
 #endif
 @end
 

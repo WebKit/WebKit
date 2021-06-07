@@ -45,8 +45,8 @@
 #import "StringUtilities.h"
 #import "TextChecker.h"
 #import "WKBrowsingContextControllerInternal.h"
-#import "WKImageExtractionPreviewController.h"
 #import "WKSharingServicePickerDelegate.h"
+#import "WKVisualSearchPreviewController.h"
 #import "WebContextMenuProxyMac.h"
 #import "WebPageMessages.h"
 #import "WebPreferencesKeys.h"
@@ -109,6 +109,8 @@
 }
 @end // implementation WKPDFMenuTarget
 #endif
+
+#import <pal/mac/QuickLookUISoftLink.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -722,25 +724,65 @@ Color WebPageProxy::platformUnderPageBackgroundColor() const
 
 void WebPageProxy::beginPreviewPanelControl(QLPreviewPanel *panel)
 {
-#if ENABLE(IMAGE_EXTRACTION)
-    [m_imageExtractionPreviewController beginControl:panel];
+#if ENABLE(IMAGE_ANALYSIS)
+    [m_visualSearchPreviewController beginControl:panel];
 #endif
 }
 
 void WebPageProxy::endPreviewPanelControl(QLPreviewPanel *panel)
 {
-#if ENABLE(IMAGE_EXTRACTION)
-    if (auto controller = std::exchange(m_imageExtractionPreviewController, nil))
+#if ENABLE(IMAGE_ANALYSIS)
+    if (auto controller = std::exchange(m_visualSearchPreviewController, nil))
         [controller endControl:panel];
 #endif
 }
 
 void WebPageProxy::closeSharedPreviewPanelIfNecessary()
 {
-#if ENABLE(IMAGE_EXTRACTION)
-    [m_imageExtractionPreviewController closePanelIfNecessary];
+#if ENABLE(IMAGE_ANALYSIS)
+    [m_visualSearchPreviewController closePanelIfNecessary];
 #endif
 }
+
+#if ENABLE(IMAGE_ANALYSIS)
+
+void WebPageProxy::showImageInVisualSearchPreviewPanel(ShareableBitmap& imageBitmap, const String& tooltip, const URL& imageURL)
+{
+    if (!PAL::isQuickLookUIFrameworkAvailable() || !PAL::getQLPreviewPanelClass() || ![PAL::getQLItemClass() instancesRespondToSelector:@selector(initWithDataProvider:contentType:previewTitle:)])
+        return;
+
+    auto image = imageBitmap.makeCGImage();
+    if (!image)
+        return;
+
+    auto imageData = adoptCF(CFDataCreateMutable(kCFAllocatorDefault, 0));
+    auto destination = adoptCF(CGImageDestinationCreateWithData(imageData.get(), (__bridge CFStringRef)UTTypePNG.identifier, 1, nullptr));
+    if (!destination)
+        return;
+
+    CGImageDestinationAddImage(destination.get(), image.get(), nil);
+    if (!CGImageDestinationFinalize(destination.get()))
+        return;
+
+    m_visualSearchPreviewController = adoptNS([[WKVisualSearchPreviewController alloc] initWithPage:*this imageData:(__bridge NSData *)imageData.get() title:tooltip imageURL:imageURL]);
+
+    // When presenting the shared QLPreviewPanel, QuickLook will search the responder chain for a suitable panel controller.
+    // Make sure that we (by default) start the search at the web view, which knows how to vend the Visual Search preview
+    // controller as a delegate and data source for the preview panel.
+    pageClient().makeFirstResponder();
+
+    auto previewPanel = [PAL::getQLPreviewPanelClass() sharedPreviewPanel];
+    [previewPanel makeKeyAndOrderFront:nil];
+
+    if (![m_visualSearchPreviewController isControlling:previewPanel]) {
+        // The WebKit client may have overridden QLPreviewPanelController methods on the view without calling into the superclass.
+        // In this case, hand over control to the client and clear out our state eagerly, since we don't expect any further delegate
+        // calls once the preview panel is dismissed.
+        m_visualSearchPreviewController.clear();
+    }
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 } // namespace WebKit
 

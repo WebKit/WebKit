@@ -423,8 +423,8 @@ private:
     void changeUniversalAccessZoomFocus(const WebCore::IntRect&, const WebCore::IntRect&) final;
 #endif
 
-#if ENABLE(IMAGE_EXTRACTION)
-    void requestImageExtraction(WebCore::Element&, CompletionHandler<void(RefPtr<WebCore::Element>&&)>&& = { }) final;
+#if ENABLE(IMAGE_ANALYSIS)
+    void requestTextRecognition(WebCore::Element&, CompletionHandler<void(RefPtr<WebCore::Element>&&)>&& = { }) final;
 #endif
 
     bool needsImageOverlayControllerForSelectionPainting() const final

@@ -1,3 +1,191 @@
+2021-06-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Upstream WebKit support for Live Text
+        https://bugs.webkit.org/show_bug.cgi?id=226706
+        <rdar://problem/78933684>
+
+        Reviewed by Tim Horton.
+
+        See WebCore/ChangeLog for more details.
+
+        * Platform/cocoa/ImageExtractionUtilities.mm: Removed.
+        * Platform/cocoa/TextRecognitionUtilities.h: Renamed from Source/WebKit/Platform/cocoa/ImageExtractionUtilities.h.
+        * Platform/cocoa/TextRecognitionUtilities.mm: Added.
+
+        Rename ImageExtractionUtilities to TextRecognitionUtilities.
+
+        (WebKit::floatQuad):
+        (WebKit::floatQuads):
+        (WebKit::makeTextRecognitionResult):
+        (WebKit::isLiveTextEnabled):
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        (WebKit::toImpl):
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<WebCore::TextRecognitionDataDetector>::encodePlatformData):
+        (IPC::ArgumentCoder<WebCore::TextRecognitionDataDetector>::decodePlatformData):
+        (IPC::ArgumentCoder<WebCore::ImageExtractionDataDetectorInfo>::encodePlatformData): Deleted.
+        (IPC::ArgumentCoder<WebCore::ImageExtractionDataDetectorInfo>::decodePlatformData): Deleted.
+        * Shared/TextRecognitionUpdateResult.h: Renamed from Source/WebKit/Shared/ImageExtractionUpdateResult.h.
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<TextRecognitionDataDetector>::encode):
+        (IPC::ArgumentCoder<TextRecognitionDataDetector>::decode):
+        (IPC::ArgumentCoder<ImageExtractionDataDetectorInfo>::encode): Deleted.
+        (IPC::ArgumentCoder<ImageExtractionDataDetectorInfo>::decode): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+        * SourcesCocoa.txt:
+        * UIProcess/API/Cocoa/_WKElementAction.mm:
+        (+[_WKElementAction _elementActionWithType:customTitle:assistant:]):
+        (+[_WKElementAction imageForElementActionType:]):
+
+        Note that we need to keep the _WKElementActionTypeRevealImage SPI symbol, to avoid breaking MobileMail.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::handleContextMenuLookUpImage):
+        (WebKit::WebPageProxy::handleContextMenuRevealImage): Deleted.
+
+        Rename `handleContextMenuRevealImage` to `handleContextMenuLookUpImage`.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::ensureImageAnalyzer):
+        (WebKit::createImageAnalysisRequest):
+        (WebKit::WebViewImpl::requestTextRecognition):
+        (WebKit::WebViewImpl::computeHasVisualSearchResults):
+
+        Rename `computeCanRevealImage` to `computeHasVisualSearchResults`.
+
+        (WebKit::WebViewImpl::acceptsPreviewPanelControl):
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::requestTextRecognition):
+        (WebKit::PageClient::computeHasVisualSearchResults):
+        (WebKit::PageClient::requestImageExtraction): Deleted.
+        (WebKit::PageClient::computeCanRevealImage): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::contextMenuItemSelected):
+        (WebKit::WebPageProxy::requestTextRecognition):
+        (WebKit::WebPageProxy::computeHasVisualSearchResults):
+        (WebKit::WebPageProxy::updateWithTextRecognitionResult):
+        (WebKit::WebPageProxy::requestImageExtraction): Deleted.
+        (WebKit::WebPageProxy::computeCanRevealImage): Deleted.
+        (WebKit::WebPageProxy::updateWithImageExtractionResult): Deleted.
+
+        Rename `updateWithImageExtractionResult` to `updateWithTextRecognitionResult`.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::requestTextRecognition):
+        (WebKit::PageClientImpl::requestImageExtraction): Deleted.
+
+        Rename `requestImageExtraction` to `requestTextRecognition`.
+
+        * UIProcess/ios/WKActionSheetAssistant.h:
+        * UIProcess/ios/WKActionSheetAssistant.mm:
+        (-[WKActionSheetAssistant defaultActionsForLinkSheet:]):
+        (-[WKActionSheetAssistant defaultActionsForImageSheet:]):
+        (-[WKActionSheetAssistant handleElementActionWithType:element:needsInteraction:]):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setUpInteraction]):
+        (-[WKContentView cleanUpInteraction]):
+        (-[WKContentView deferringGestures]):
+        (-[WKContentView gestureRecognizer:shouldRecognizeSimultaneouslyWithGestureRecognizer:]):
+        (-[WKContentView gestureRecognizer:shouldRequireFailureOfGestureRecognizer:]):
+        (-[WKContentView gestureRecognizer:shouldBeRequiredToFailByGestureRecognizer:]):
+        (-[WKContentView hasSelectablePositionAtPoint:]):
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+        (-[WKContentView canPerformActionForWebView:withSender:]):
+        (-[WKContentView targetForAction:withSender:]):
+        (-[WKContentView _didStartProvisionalLoadForMainFrame]):
+        (-[WKContentView shouldDeferGestureDueToImageAnalysis:]):
+        (-[WKContentView deferringGestureRecognizer:shouldDeferOtherGestureRecognizer:]):
+        (-[WKContentView _dragInteraction:prepareForSession:completion:]):
+        (-[WKContentView _endImageAnalysisGestureDeferral:]):
+        (-[WKContentView _doAfterPendingImageAnalysis:]):
+        (-[WKContentView _invokeAllActionsToPerformAfterPendingImageAnalysis:]):
+        (-[WKContentView presentVisualSearchPreviewControllerForImage:imageURL:title:imageBounds:appearanceActions:]):
+        (-[WKContentView previewController:frameForPreviewItem:inSourceView:]):
+        (-[WKContentView previewController:transitionImageForPreviewItem:contentRect:]):
+        (-[WKContentView previewControllerDidDismiss:]):
+        (-[WKContentView numberOfPreviewItemsInPreviewController:]):
+        (-[WKContentView previewController:previewItemAtIndex:]):
+        (-[WKContentView provideDataForItem:]):
+        (-[WKContentView actionSheetAssistant:shouldIncludeShowTextActionForElement:]):
+        (-[WKContentView actionSheetAssistant:showTextForImage:imageURL:title:imageBounds:]):
+        (-[WKContentView actionSheetAssistant:shouldIncludeLookUpImageActionForElement:]):
+        (-[WKContentView actionSheetAssistant:lookUpImage:imageURL:title:imageBounds:]):
+        (-[WKContentView imageAnalyzer]):
+        (-[WKContentView hasPendingImageAnalysisRequest]):
+        (-[WKContentView _setUpImageAnalysis]):
+        (-[WKContentView _tearDownImageAnalysis]):
+        (-[WKContentView _cancelImageAnalysis]):
+        (-[WKContentView createImageAnalysisRequest:image:imageURL:]):
+        (-[WKContentView createImageAnalysisRequest:image:]):
+        (-[WKContentView validateImageAnalysisRequestIdentifier:]):
+        (-[WKContentView requestTextRecognition:imageData:completionHandler:]):
+        (-[WKContentView imageAnalysisGestureDidBegin:]):
+        (-[WKContentView imageAnalysisGestureDidFail:]):
+        (-[WKContentView imageAnalysisGestureDidTimeOut:]):
+        (-[WKContentView _insertTextFromCameraForWebView:]):
+        (-[WKContentView captureTextFromCameraForWebView:]):
+        (-[WKContentView _contextMenuInteraction:configurationForMenuAtLocation:completion:]):
+        (-[WKContentView continueContextMenuInteraction:]):
+        (-[WKContentView contextMenuInteraction:willEndForConfiguration:animator:]):
+        (-[WKContentView shouldDeferGestureDueToImageExtraction:]): Deleted.
+        (-[WKContentView _endImageExtractionGestureDeferral:]): Deleted.
+        (-[WKContentView _doAfterPendingImageExtraction:]): Deleted.
+        (-[WKContentView _invokeAllActionsToPerformAfterPendingImageExtraction:]): Deleted.
+        * UIProcess/ios/WKImageAnalysisGestureRecognizer.h: Renamed from Source/WebKit/UIProcess/ios/WKImageExtractionGestureRecognizer.h.
+        * UIProcess/ios/WKImageAnalysisGestureRecognizer.mm: Renamed from Source/WebKit/UIProcess/ios/WKImageExtractionGestureRecognizer.mm.
+        (-[WKImageAnalysisGestureRecognizer initWithImageAnalysisGestureDelegate:]):
+        (-[WKImageAnalysisGestureRecognizer setState:]):
+
+        Rename WKImageExtractionGestureRecognizer to WKImageAnalysisGestureRecognizer (along with all adjacent classes).
+
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::requestTextRecognition):
+        (WebKit::PageClientImpl::computeHasVisualSearchResults):
+        (WebKit::PageClientImpl::requestImageExtraction): Deleted.
+        (WebKit::PageClientImpl::computeCanRevealImage): Deleted.
+        * UIProcess/mac/WKVisualSearchPreviewController.h: Renamed from Source/WebKit/UIProcess/mac/WKImageExtractionPreviewController.h.
+        * UIProcess/mac/WKVisualSearchPreviewController.mm: Renamed from Source/WebKit/UIProcess/mac/WKImageExtractionPreviewController.mm.
+        (-[WKVisualSearchPreviewController initWithPage:imageData:title:imageURL:]):
+        (-[WKVisualSearchPreviewController beginControl:]):
+        (-[WKVisualSearchPreviewController endControl:]):
+        (-[WKVisualSearchPreviewController closePanelIfNecessary]):
+        (-[WKVisualSearchPreviewController isControlling:]):
+        (-[WKVisualSearchPreviewController provideDataForItem:]):
+        (-[WKVisualSearchPreviewController numberOfPreviewItemsInPreviewPanel:]):
+        (-[WKVisualSearchPreviewController previewPanel:previewItemAtIndex:]):
+        (-[WKVisualSearchPreviewController previewPanel:initialActivityForItem:]):
+
+        Rename `WKImageExtractionPreviewController` to `WKVisualSearchPreviewController`.
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::menuItemIdentifier):
+        (WebKit::WebContextMenuProxyMac::getContextMenuFromItems):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::beginPreviewPanelControl):
+        (WebKit::WebPageProxy::endPreviewPanelControl):
+        (WebKit::WebPageProxy::closeSharedPreviewPanelIfNecessary):
+        (WebKit::WebPageProxy::showImageInVisualSearchPreviewPanel):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::requestTextRecognition):
+        (WebKit::WebChromeClient::requestImageExtraction): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad):
+        (WebKit::WebPage::requestTextRecognition):
+        (WebKit::WebPage::updateWithTextRecognitionResult):
+        (WebKit::WebPage::requestImageExtraction): Deleted.
+        (WebKit::WebPage::updateWithImageExtractionResult): Deleted.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-06-07  Devin Rousso  <drousso@apple.com>
 
         Convert WebCore::SnapshotOptions into an enum class

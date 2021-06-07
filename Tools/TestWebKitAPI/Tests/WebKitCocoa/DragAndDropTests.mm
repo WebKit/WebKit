@@ -385,7 +385,7 @@ TEST(DragAndDropTests, ColorInputEvents)
 
 #endif // ENABLE(INPUT_TYPE_COLOR)
 
-#if ENABLE(IMAGE_EXTRACTION)
+#if ENABLE(IMAGE_ANALYSIS)
 
 TEST(DragAndDropTests, DragElementWithImageOverlay)
 {
@@ -432,6 +432,6 @@ TEST(DragAndDropTests, DragSelectedTextInImageOverlay)
     EXPECT_WK_STREQ(draggedText.get(), "foobar");
 }
 
-#endif // ENABLE(IMAGE_EXTRACTION)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 #endif // ENABLE(DRAG_SUPPORT) && !PLATFORM(MACCATALYST)

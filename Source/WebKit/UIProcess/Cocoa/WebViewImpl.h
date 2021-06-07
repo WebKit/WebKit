@@ -55,6 +55,7 @@ OBJC_CLASS NSMenu;
 OBJC_CLASS NSTextInputContext;
 OBJC_CLASS NSView;
 OBJC_CLASS QLPreviewPanel;
+OBJC_CLASS VKImageAnalyzer;
 OBJC_CLASS WKAccessibilitySettingsObserver;
 OBJC_CLASS WKBrowsingContextController;
 OBJC_CLASS WKDOMPasteMenuDelegate;
@@ -84,10 +85,6 @@ OBJC_CLASS WebPlaybackControlsManager;
 OBJC_CLASS WKPDFHUDView;
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebViewImplAdditionsBefore.h>
-#endif
-
 namespace API {
 class HitTestResult;
 class Object;
@@ -99,13 +96,10 @@ class DestinationColorSpace;
 class IntPoint;
 struct DataDetectorElementInfo;
 struct ShareDataWithParsedURL;
+struct TextRecognitionResult;
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
 struct TranslationContextMenuInfo;
-#endif
-
-#if ENABLE(IMAGE_EXTRACTION)
-struct ImageExtractionResult;
 #endif
 }
 
@@ -602,9 +596,9 @@ public:
     void forceRequestCandidatesForTesting();
     bool shouldRequestCandidates() const;
 
-#if ENABLE(IMAGE_EXTRACTION)
-    void requestImageExtraction(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&);
-    void computeCanRevealImage(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&&);
+#if ENABLE(IMAGE_ANALYSIS)
+    void requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
+    void computeHasVisualSearchResults(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&&);
 #endif
 
     bool acceptsPreviewPanelControl(QLPreviewPanel *);
@@ -751,6 +745,10 @@ private:
 
 #if ENABLE(DRAG_SUPPORT)
     void sendDragEndToPage(CGPoint endPoint, NSDragOperation);
+#endif
+
+#if ENABLE(IMAGE_ANALYSIS)
+    VKImageAnalyzer *ensureImageAnalyzer();
 #endif
 
     WeakObjCPtr<NSView<WebViewImplDelegate>> m_view;
@@ -900,8 +898,9 @@ private:
     RetainPtr<WKRevealItemPresenter> m_revealItemPresenter;
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebViewImplAdditionsAfter.h>
+#if ENABLE(IMAGE_ANALYSIS)
+    RefPtr<WorkQueue> m_imageAnalyzerQueue;
+    RetainPtr<VKImageAnalyzer> m_imageAnalyzer;
 #endif
 };
     

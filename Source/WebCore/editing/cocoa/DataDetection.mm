@@ -42,7 +42,6 @@
 #import "HTMLNames.h"
 #import "HTMLTextFormControlElement.h"
 #import "HitTestResult.h"
-#import "ImageExtractionResult.h"
 #import "NodeList.h"
 #import "NodeTraversal.h"
 #import "QualifiedName.h"
@@ -51,6 +50,7 @@
 #import "StyleProperties.h"
 #import "Text.h"
 #import "TextIterator.h"
+#import "TextRecognitionResult.h"
 #import "VisiblePosition.h"
 #import "VisibleUnits.h"
 #import <pal/spi/ios/DataDetectorsUISPI.h>
@@ -687,9 +687,9 @@ bool DataDetection::isDataDetectorElement(const Element& element)
     return is<HTMLAnchorElement>(element) && equalIgnoringASCIICase(element.attributeWithoutSynchronization(x_apple_data_detectorsAttr), "true");
 }
 
-#if ENABLE(IMAGE_EXTRACTION)
+#if ENABLE(IMAGE_ANALYSIS)
 
-Ref<HTMLElement> DataDetection::createElementForImageOverlay(Document& document, const ImageExtractionDataDetectorInfo& info)
+Ref<HTMLElement> DataDetection::createElementForImageOverlay(Document& document, const TextRecognitionDataDetector& info)
 {
     auto container = HTMLDivElement::create(document);
     if (auto frame = makeRefPtr(document.frame())) {
@@ -699,7 +699,7 @@ Ref<HTMLElement> DataDetection::createElementForImageOverlay(Document& document,
     return container;
 }
 
-#endif // ENABLE(IMAGE_EXTRACTION)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 } // namespace WebCore
 

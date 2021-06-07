@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.back {
+    background-size: contain;
+    background-image: url(../../resources/green-400x400.png);
+}
+
+.front {
+    opacity: 0;
+}
+
+body, html {
+    margin: 0;
+}
+
+.front, .back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 400px;
+    height: 400px;
+}
+</style>
+</head>
+<body>
+<div class="back"></div>
+<img class="front" src="../../resources/green-400x400.png"></img>
+<script>
+addEventListener("load", () => {
+    let image = document.querySelector("img");
+    internals.installImageOverlay(image, [
+        {
+            topLeft : new DOMPointReadOnly(0, 0),
+            topRight : new DOMPointReadOnly(1, 0),
+            bottomRight : new DOMPointReadOnly(1, 0.5),
+            bottomLeft : new DOMPointReadOnly(0, 0.5),
+            children: [
+                {
+                    text : "hello",
+                    topLeft : new DOMPointReadOnly(0, 0),
+                    topRight : new DOMPointReadOnly(1, 0),
+                    bottomRight : new DOMPointReadOnly(1, 0.5),
+                    bottomLeft : new DOMPointReadOnly(0, 0.5),
+                }
+            ]
+        }
+    ]);
+
+    getSelection().selectAllChildren(internals.shadowRoot(image).querySelector(".image-overlay-text"));
+});
+</script>
+</body>
+</html>

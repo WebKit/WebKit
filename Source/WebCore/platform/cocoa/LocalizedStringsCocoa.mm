@@ -312,11 +312,13 @@ String exitFullScreenButtonAccessibilityTitle()
 }
 #endif // PLATFORM(MAC)
 
-#if ENABLE(IMAGE_EXTRACTION)
-String contextMenuItemTagRevealImage()
+#if ENABLE(IMAGE_ANALYSIS)
+
+String contextMenuItemTagLookUpImage()
 {
-    return localizedNSString(@"Reveal Image");
+    return WEB_UI_STRING("Look Up", "Title for Look Up action button");
 }
+
 #endif
 
 } // namespace WebCore

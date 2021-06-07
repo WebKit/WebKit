@@ -79,10 +79,7 @@ SOFT_LINK_CLASS(WebContentAnalysis, WebFilterEvaluator);
 #endif
 
 #if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebPageProxyCocoaAdditionsBefore.mm>
-#endif
-
-#if USE(APPLE_INTERNAL_SDK)
+// FIXME: This additions file should be renamed to WebPageProxyAdditions.mm.
 #import <WebKitAdditions/WebPageProxyAdditions.h>
 #else
 #define WEB_PAGE_PROXY_ADDITIONS
@@ -615,18 +612,18 @@ SandboxExtension::HandleArray WebPageProxy::createNetworkExtensionsSandboxExtens
 }
 
 #if ENABLE(CONTEXT_MENUS)
-#if ENABLE(IMAGE_EXTRACTION)
+#if ENABLE(IMAGE_ANALYSIS)
 
-void WebPageProxy::handleContextMenuRevealImage()
+void WebPageProxy::handleContextMenuLookUpImage()
 {
     auto& result = m_activeContextMenuContextData.webHitTestResultData();
     if (!result.imageBitmap)
         return;
 
-    revealExtractedImageInPreviewPanel(*result.imageBitmap, result.toolTipText, URL { URL { }, result.absoluteImageURL });
+    showImageInVisualSearchPreviewPanel(*result.imageBitmap, result.toolTipText, URL { URL { }, result.absoluteImageURL });
 }
 
-#endif // ENABLE(IMAGE_EXTRACTION)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 #if HAVE(TRANSLATION_UI_SERVICES)
 

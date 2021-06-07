@@ -478,16 +478,16 @@ void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool 
     m_impl->doneWithKeyEvent(event.nativeEvent(), eventWasHandled);
 }
 
-#if ENABLE(IMAGE_EXTRACTION)
+#if ENABLE(IMAGE_ANALYSIS)
 
-void PageClientImpl::requestImageExtraction(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(ImageExtractionResult&&)>&& completion)
+void PageClientImpl::requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(TextRecognitionResult&&)>&& completion)
 {
-    m_impl->requestImageExtraction(imageURL, imageData, WTFMove(completion));
+    m_impl->requestTextRecognition(imageURL, imageData, WTFMove(completion));
 }
 
-void PageClientImpl::computeCanRevealImage(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&& completion)
+void PageClientImpl::computeHasVisualSearchResults(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&& completion)
 {
-    m_impl->computeCanRevealImage(imageURL, imageBitmap, WTFMove(completion));
+    m_impl->computeHasVisualSearchResults(imageURL, imageBitmap, WTFMove(completion));
 }
 
 #endif

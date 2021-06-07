@@ -43,7 +43,7 @@ class Document;
 class HTMLElement;
 class HitTestResult;
 class QualifiedName;
-struct ImageExtractionDataDetectorInfo;
+struct TextRecognitionDataDetector;
 
 struct DetectedItem {
     RetainPtr<DDActionContext> actionContext;
@@ -66,8 +66,8 @@ public:
     WEBCORE_EXPORT static bool requiresExtendedContext(Element&);
 #endif
 
-#if ENABLE(IMAGE_EXTRACTION)
-    static Ref<HTMLElement> createElementForImageOverlay(Document&, const ImageExtractionDataDetectorInfo&);
+#if ENABLE(IMAGE_ANALYSIS)
+    static Ref<HTMLElement> createElementForImageOverlay(Document&, const TextRecognitionDataDetector&);
 #endif
 
     static const String& dataDetectorURLProtocol();

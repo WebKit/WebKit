@@ -1462,7 +1462,7 @@ bool Quirks::shouldBypassUserGestureRequirementForWebAuthn() const
 }
 #endif
 
-#if ENABLE(IMAGE_EXTRACTION)
+#if ENABLE(IMAGE_ANALYSIS)
 
 bool Quirks::needsToForceUserSelectWhenInstallingImageOverlay() const
 {
@@ -1476,6 +1476,6 @@ bool Quirks::needsToForceUserSelectWhenInstallingImageOverlay() const
     return false;
 }
 
-#endif // ENABLE(IMAGE_EXTRACTION)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 }

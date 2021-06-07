@@ -553,6 +553,9 @@
 /* 'Website' name displayed when local documents have stored local data */
 "Local documents on your computer" = "Local documents on your computer";
 
+/* Title for Look Up action button */
+"Look Up" = "Look Up";
+
 /* Look Up in Dictionary context menu item */
 "Look Up in Dictionary" = "Look Up in Dictionary";
 
@@ -828,6 +831,9 @@
 
 /* menu item title */
 "Show Substitutions" = "Show Substitutions";
+
+/* Title for Show Text action button */
+"Show Text" = "Show Text";
 
 /* Title of the context menu item to show when PDFPlugin was used instead of a blocked plugin */
 "Show in blocked plug-in" = "Show in blocked plug-in";

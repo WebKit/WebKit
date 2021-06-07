@@ -1,6 +1,0 @@
-PASS initialSelectionRects.length is 1
-PASS selectionRectsAfterSelectingAll.length is 4
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

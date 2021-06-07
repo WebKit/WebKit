@@ -1,3 +1,101 @@
+2021-06-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Upstream WebKit support for Live Text
+        https://bugs.webkit.org/show_bug.cgi?id=226706
+        <rdar://problem/78933684>
+
+        Reviewed by Tim Horton.
+
+        Upstream WebKit support for the family of "live text" and visual intelligence features from WebKitAdditions.
+        This encompasses the following features on macOS 12 and iOS 15:
+
+        - Text selection and interaction in images.
+        - Data detectors in images.
+        - Visual search (Look Up) via context menu in images.
+
+        To do this, we rename the IMAGE_EXTRACTION feature flag (and any other similar symbol names that reference
+        "image extraction" in some capacity) to their real names in macOS and iOS:
+
+        - "Text recognition", in code that supports automatic OCR and data detectors in images.
+        - "Look Up", in code that references the context menu action to invoke visual search.
+        - "Visual Search", in code that manages QuickLook integration for invoking visual search.
+        - "Image analysis", in code that directly integrates with VKImageAnalyzer and VKImageAnalyzerRequest.
+
+        Tests: fast/images/text-recognition/basic-image-overlay.html
+               fast/images/text-recognition/click-link-with-image-overlay.html
+               fast/images/text-recognition/image-overlay-creation-is-idempotent.html
+               fast/images/text-recognition/image-overlay-in-image-with-zero-font-size.html
+               fast/images/text-recognition/image-overlay-with-selection-styles.html
+               fast/images/text-recognition/ios/coalesce-selection-rects-in-image-overlay.html
+               fast/images/text-recognition/ios/reselect-word-in-image-overlay.html
+               fast/images/text-recognition/ios/select-word-in-image-overlay-inside-link.html
+               fast/images/text-recognition/ios/select-word-in-image-overlay.html
+               fast/images/text-recognition/ios/selection-rects-in-image-overlay.html
+               fast/images/text-recognition/mac/copy-image-overlay-text-with-context-menu.html
+               fast/images/text-recognition/mac/image-overlay-text-disables-app-highlight-menu-items.html
+               fast/images/text-recognition/mac/select-image-overlay-in-link-with-mouse-drag.html
+               fast/images/text-recognition/mac/select-image-overlay-with-mouse-drag-2.html
+               fast/images/text-recognition/mac/select-image-overlay-with-mouse-drag-does-not-fire-click.html
+               fast/images/text-recognition/mac/select-image-overlay-with-mouse-drag.html
+               fast/images/text-recognition/mac/select-rotated-transparent-image-overlay.html
+               fast/images/text-recognition/mac/select-word-in-draggable-image-overlay.html
+               fast/images/text-recognition/mac/select-word-in-transparent-image-overlay.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/cocoa/DataDetection.h:
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::DataDetection::createElementForImageOverlay):
+        * en.lproj/Localizable.strings:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::updateWithTextRecognitionResult):
+        (WebCore::HTMLElement::updateWithImageExtractionResult): Deleted.
+        * html/HTMLElement.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::requestTextRecognition):
+        (WebCore::ChromeClient::requestImageExtraction): Deleted.
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        (WebCore::ContextMenuController::populate):
+        (WebCore::ContextMenuController::checkOrEnableIfNeeded const):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::clear):
+        (WebCore::EventHandler::mouseMoved):
+        (WebCore::EventHandler::updateMouseEventTargetNode):
+        (WebCore::EventHandler::m_textRecognitionHoverTimerFired):
+        (WebCore::EventHandler::imageExtractionTimerFired): Deleted.
+        * page/EventHandler.h:
+        * page/Quirks.cpp:
+        * page/Quirks.h:
+        * platform/ContextMenuItem.cpp:
+        (WebCore::isValidContextMenuAction):
+        * platform/ContextMenuItem.h:
+        * platform/LocalizedStrings.h:
+        * platform/TextRecognitionResult.h: Renamed from Source/WebCore/platform/ImageExtractionResult.h.
+
+        Rename the following:
+        - ImageExtractionResult => TextRecognitionResult
+        - ImageExtractionTextData => TextRecognitionWordData
+        - ImageExtractionLineData => TextRecognitionLineData
+        - ImageExtractionDataDetectorInfo => TextRecognitionDataDetector
+
+        (WebCore::TextRecognitionWordData::TextRecognitionWordData):
+        (WebCore::TextRecognitionWordData::encode const):
+        (WebCore::TextRecognitionWordData::decode):
+        (WebCore::TextRecognitionLineData::TextRecognitionLineData):
+        (WebCore::TextRecognitionDataDetector::TextRecognitionDataDetector):
+        (WebCore::TextRecognitionLineData::encode const):
+        (WebCore::TextRecognitionLineData::decode):
+        (WebCore::TextRecognitionResult::isEmpty const):
+        (WebCore::TextRecognitionResult::encode const):
+        (WebCore::TextRecognitionResult::decode):
+        * platform/cocoa/LocalizedStringsCocoa.mm:
+        (WebCore::contextMenuItemTagLookUpImage):
+        (WebCore::contextMenuItemTagRevealImage): Deleted.
+        * testing/Internals.cpp:
+        (WebCore::makeDataForLine):
+        (WebCore::Internals::installImageOverlay):
+
 2021-06-07  Eleni Maria Stea  <estea@igalia.com>
 
         Compile error by trying to fit a GCGLint64* to a GLint64*

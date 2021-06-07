@@ -1,5 +1,0 @@
-PASS editor.textContent is "foobar"
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

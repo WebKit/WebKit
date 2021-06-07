@@ -310,7 +310,7 @@ class RemoteLayerTreeTransaction;
 
 enum class FindOptions : uint16_t;
 enum class DragControllerAction : uint8_t;
-enum class ImageExtractionUpdateResult : uint8_t;
+enum class TextRecognitionUpdateResult : uint8_t;
 enum class SyntheticEditingCommandType : uint8_t;
 
 struct BackForwardListItemState;
@@ -1403,9 +1403,9 @@ public:
 
     void isPlayingMediaDidChange(WebCore::MediaProducer::MediaStateFlags);
 
-#if ENABLE(IMAGE_EXTRACTION)
-    void requestImageExtraction(WebCore::Element&, CompletionHandler<void(RefPtr<WebCore::Element>&&)>&&);
-    void updateWithImageExtractionResult(WebCore::ImageExtractionResult&&, const WebCore::ElementContext&, const WebCore::FloatPoint& location, CompletionHandler<void(ImageExtractionUpdateResult)>&&);
+#if ENABLE(IMAGE_ANALYSIS)
+    void requestTextRecognition(WebCore::Element&, CompletionHandler<void(RefPtr<WebCore::Element>&&)>&&);
+    void updateWithTextRecognitionResult(WebCore::TextRecognitionResult&&, const WebCore::ElementContext&, const WebCore::FloatPoint& location, CompletionHandler<void(TextRecognitionUpdateResult)>&&);
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
@@ -2347,9 +2347,9 @@ private:
     std::unique_ptr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
 #endif
 
-#if ENABLE(IMAGE_EXTRACTION)
-    Vector<std::pair<WeakPtr<WebCore::HTMLElement>, Vector<CompletionHandler<void(RefPtr<WebCore::Element>&&)>>>> m_elementsPendingImageExtraction;
-    WeakHashSet<WebCore::HTMLElement> m_elementsWithExtractedImages;
+#if ENABLE(IMAGE_ANALYSIS)
+    Vector<std::pair<WeakPtr<WebCore::HTMLElement>, Vector<CompletionHandler<void(RefPtr<WebCore::Element>&&)>>>> m_elementsPendingTextRecognition;
+    WeakHashSet<WebCore::HTMLElement> m_elementsWithTextRecognitionResults;
 #endif
 
 #if ENABLE(WEBXR) && PLATFORM(COCOA)

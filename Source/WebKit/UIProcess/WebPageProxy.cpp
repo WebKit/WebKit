@@ -66,7 +66,6 @@
 #include "EventDispatcherMessages.h"
 #include "FormDataReference.h"
 #include "FrameInfoData.h"
-#include "ImageExtractionUpdateResult.h"
 #include "LegacyGlobalSettings.h"
 #include "LoadParameters.h"
 #include "Logging.h"
@@ -94,6 +93,7 @@
 #include "SyntheticEditingCommandType.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
+#include "TextRecognitionUpdateResult.h"
 #include "URLSchemeTaskParameters.h"
 #include "UndoOrRedo.h"
 #include "UserMediaPermissionRequestProxy.h"
@@ -6896,9 +6896,9 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
         ++m_pendingLearnOrIgnoreWordMessageCount;
         break;
 
-    case ContextMenuItemTagRevealImage:
-#if ENABLE(IMAGE_EXTRACTION)
-        handleContextMenuRevealImage();
+    case ContextMenuItemTagLookUpImage:
+#if ENABLE(IMAGE_ANALYSIS)
+        handleContextMenuLookUpImage();
 #endif
         return;
 
@@ -8486,25 +8486,25 @@ void WebPageProxy::shouldAllowDeviceOrientationAndMotionAccess(FrameIdentifier f
 #endif
 
 
-#if ENABLE(IMAGE_EXTRACTION)
-void WebPageProxy::requestImageExtraction(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&& completionHandler)
+#if ENABLE(IMAGE_ANALYSIS)
+void WebPageProxy::requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completionHandler)
 {
-    pageClient().requestImageExtraction(imageURL, imageData, WTFMove(completionHandler));
+    pageClient().requestTextRecognition(imageURL, imageData, WTFMove(completionHandler));
 }
 
-void WebPageProxy::computeCanRevealImage(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&& completion)
+void WebPageProxy::computeHasVisualSearchResults(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&& completion)
 {
-    pageClient().computeCanRevealImage(imageURL, imageBitmap, WTFMove(completion));
+    pageClient().computeHasVisualSearchResults(imageURL, imageBitmap, WTFMove(completion));
 }
 
-void WebPageProxy::updateWithImageExtractionResult(ImageExtractionResult&& results, const ElementContext& context, const FloatPoint& location, CompletionHandler<void(ImageExtractionUpdateResult)>&& completionHandler)
+void WebPageProxy::updateWithTextRecognitionResult(TextRecognitionResult&& results, const ElementContext& context, const FloatPoint& location, CompletionHandler<void(TextRecognitionUpdateResult)>&& completionHandler)
 {
     if (!hasRunningProcess()) {
-        completionHandler(ImageExtractionUpdateResult::NoText);
+        completionHandler(TextRecognitionUpdateResult::NoText);
         return;
     }
 
-    sendWithAsyncReply(Messages::WebPage::UpdateWithImageExtractionResult(WTFMove(results), context, location), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::WebPage::UpdateWithTextRecognitionResult(WTFMove(results), context, location), WTFMove(completionHandler));
 }
 #endif
 

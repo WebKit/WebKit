@@ -40,7 +40,6 @@
 #include "FormDataReference.h"
 #include "FrameTreeNodeData.h"
 #include "GeolocationPermissionRequestManager.h"
-#include "ImageExtractionUpdateResult.h"
 #include "InjectUserScriptImmediately.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleScriptWorld.h"
@@ -67,6 +66,7 @@
 #include "ShareableBitmap.h"
 #include "ShareableBitmapUtilities.h"
 #include "SharedBufferDataReference.h"
+#include "TextRecognitionUpdateResult.h"
 #include "UserMediaPermissionRequestManager.h"
 #include "ViewGestureGeometryCollector.h"
 #include "VisitedLinkTableController.h"
@@ -360,8 +360,8 @@
 #endif
 #endif
 
-#if ENABLE(IMAGE_EXTRACTION)
-#include <WebCore/ImageExtractionResult.h>
+#if ENABLE(IMAGE_ANALYSIS)
+#include <WebCore/TextRecognitionResult.h>
 #endif
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
@@ -6281,13 +6281,13 @@ void WebPage::didCommitLoad(WebFrame* frame)
     ASSERT(!frame->coreFrame()->loader().stateMachine().creatingInitialEmptyDocument());
     unfreezeLayerTree(LayerTreeFreezeReason::ProcessSwap);
 
-#if ENABLE(IMAGE_EXTRACTION)
-    for (auto& [element, completionHandlers] : m_elementsPendingImageExtraction) {
+#if ENABLE(IMAGE_ANALYSIS)
+    for (auto& [element, completionHandlers] : m_elementsPendingTextRecognition) {
         for (auto& completionHandler : completionHandlers)
             completionHandler({ });
     }
-    m_elementsPendingImageExtraction.clear();
-    m_elementsWithExtractedImages.clear();
+    m_elementsPendingTextRecognition.clear();
+    m_elementsWithTextRecognitionResults.clear();
 #endif
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -7383,9 +7383,9 @@ void WebPage::removeMediaUsageManagerSession(MediaSessionIdentifier identifier)
 }
 #endif // ENABLE(MEDIA_USAGE)
 
-#if ENABLE(IMAGE_EXTRACTION)
+#if ENABLE(IMAGE_ANALYSIS)
 
-void WebPage::requestImageExtraction(WebCore::Element& element, CompletionHandler<void(RefPtr<WebCore::Element>&&)>&& completion)
+void WebPage::requestTextRecognition(WebCore::Element& element, CompletionHandler<void(RefPtr<WebCore::Element>&&)>&& completion)
 {
     if (!is<HTMLElement>(element)) {
         if (completion)
@@ -7393,7 +7393,7 @@ void WebPage::requestImageExtraction(WebCore::Element& element, CompletionHandle
         return;
     }
 
-    if (m_elementsWithExtractedImages.contains(element)) {
+    if (m_elementsWithTextRecognitionResults.contains(element)) {
         if (completion) {
             ASSERT(is<HTMLElement>(element));
             RefPtr<Element> imageOverlayHost;
@@ -7404,13 +7404,13 @@ void WebPage::requestImageExtraction(WebCore::Element& element, CompletionHandle
         return;
     }
 
-    auto matchIndex = m_elementsPendingImageExtraction.findMatching([&] (auto& elementAndCompletionHandlers) {
+    auto matchIndex = m_elementsPendingTextRecognition.findMatching([&] (auto& elementAndCompletionHandlers) {
         return elementAndCompletionHandlers.first == &element;
     });
 
     if (matchIndex != notFound) {
         if (completion)
-            m_elementsPendingImageExtraction[matchIndex].second.append(WTFMove(completion));
+            m_elementsPendingTextRecognition[matchIndex].second.append(WTFMove(completion));
         return;
     }
 
@@ -7440,15 +7440,15 @@ void WebPage::requestImageExtraction(WebCore::Element& element, CompletionHandle
     Vector<CompletionHandler<void(RefPtr<Element>&&)>> completionHandlers;
     if (completion)
         completionHandlers.append(WTFMove(completion));
-    m_elementsPendingImageExtraction.append({ makeWeakPtr(element), WTFMove(completionHandlers) });
+    m_elementsPendingTextRecognition.append({ makeWeakPtr(element), WTFMove(completionHandlers) });
 
     auto imageURL = element.document().completeURL(renderImage.cachedImage()->url().string());
-    sendWithAsyncReply(Messages::WebPageProxy::RequestImageExtraction(WTFMove(imageURL), WTFMove(bitmapHandle)), [webPage = makeWeakPtr(*this), weakElement = makeWeakPtr(element)] (auto&& result) {
+    sendWithAsyncReply(Messages::WebPageProxy::RequestTextRecognition(WTFMove(imageURL), WTFMove(bitmapHandle)), [webPage = makeWeakPtr(*this), weakElement = makeWeakPtr(element)] (auto&& result) {
         auto protectedPage = makeRefPtr(webPage.get());
         if (!protectedPage)
             return;
 
-        protectedPage->m_elementsPendingImageExtraction.removeAllMatching([&] (auto& elementAndCompletionHandlers) {
+        protectedPage->m_elementsPendingTextRecognition.removeAllMatching([&] (auto& elementAndCompletionHandlers) {
             auto& [element, completionHandlers] = elementAndCompletionHandlers;
             if (element)
                 return false;
@@ -7463,10 +7463,10 @@ void WebPage::requestImageExtraction(WebCore::Element& element, CompletionHandle
             return;
 
         auto& htmlElement = downcast<HTMLElement>(*protectedElement);
-        htmlElement.updateWithImageExtractionResult(WTFMove(result));
-        protectedPage->m_elementsWithExtractedImages.add(htmlElement);
+        htmlElement.updateWithTextRecognitionResult(WTFMove(result));
+        protectedPage->m_elementsWithTextRecognitionResults.add(htmlElement);
 
-        auto matchIndex = protectedPage->m_elementsPendingImageExtraction.findMatching([&] (auto& elementAndCompletionHandlers) {
+        auto matchIndex = protectedPage->m_elementsPendingTextRecognition.findMatching([&] (auto& elementAndCompletionHandlers) {
             return elementAndCompletionHandlers.first == &htmlElement;
         });
 
@@ -7474,22 +7474,22 @@ void WebPage::requestImageExtraction(WebCore::Element& element, CompletionHandle
             return;
 
         auto imageOverlayHost = htmlElement.hasImageOverlay() ? makeRefPtr(htmlElement) : nullptr;
-        for (auto& completionHandler : protectedPage->m_elementsPendingImageExtraction[matchIndex].second)
+        for (auto& completionHandler : protectedPage->m_elementsPendingTextRecognition[matchIndex].second)
             completionHandler(imageOverlayHost.copyRef());
 
-        protectedPage->m_elementsPendingImageExtraction.remove(matchIndex);
+        protectedPage->m_elementsPendingTextRecognition.remove(matchIndex);
     });
 }
 
-void WebPage::updateWithImageExtractionResult(ImageExtractionResult&& result, const ElementContext& context, const FloatPoint& location, CompletionHandler<void(ImageExtractionUpdateResult)>&& completionHandler)
+void WebPage::updateWithTextRecognitionResult(TextRecognitionResult&& result, const ElementContext& context, const FloatPoint& location, CompletionHandler<void(TextRecognitionUpdateResult)>&& completionHandler)
 {
     auto elementToUpdate = elementForContext(context);
     if (!is<HTMLElement>(elementToUpdate)) {
-        completionHandler(ImageExtractionUpdateResult::NoText);
+        completionHandler(TextRecognitionUpdateResult::NoText);
         return;
     }
 
-    downcast<HTMLElement>(*elementToUpdate).updateWithImageExtractionResult(WTFMove(result));
+    downcast<HTMLElement>(*elementToUpdate).updateWithTextRecognitionResult(WTFMove(result));
     auto hitTestResult = corePage()->mainFrame().eventHandler().hitTestResultAtPoint(roundedIntPoint(location), {
         HitTestRequest::Type::ReadOnly,
         HitTestRequest::Type::Active,
@@ -7499,23 +7499,23 @@ void WebPage::updateWithImageExtractionResult(ImageExtractionResult&& result, co
     auto nodeAtLocation = makeRefPtr(hitTestResult.innerNonSharedNode());
     auto updateResult = ([&] {
         if (!nodeAtLocation || nodeAtLocation->shadowHost() != elementToUpdate || !HTMLElement::isInsideImageOverlay(*nodeAtLocation))
-            return ImageExtractionUpdateResult::NoText;
+            return TextRecognitionUpdateResult::NoText;
 
 #if ENABLE(DATA_DETECTION)
         if (findDataDetectionResultElementInImageOverlay(location, downcast<HTMLElement>(*elementToUpdate)))
-            return ImageExtractionUpdateResult::DataDetector;
+            return TextRecognitionUpdateResult::DataDetector;
 #endif
 
         if (HTMLElement::isImageOverlayText(*nodeAtLocation))
-            return ImageExtractionUpdateResult::Text;
+            return TextRecognitionUpdateResult::Text;
 
-        return ImageExtractionUpdateResult::NoText;
+        return TextRecognitionUpdateResult::NoText;
     })();
 
     completionHandler(updateResult);
 }
 
-#endif // ENABLE(IMAGE_EXTRACTION)
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
 void WebPage::showMediaControlsContextMenu(FloatRect&& targetFrame, Vector<MediaControlsContextMenuItem>&& items, CompletionHandler<void(MediaControlsContextMenuItem::ID)>&& completionHandler)

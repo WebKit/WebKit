@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<script src="../../../resources/js-test.js"></script>
+<body>
+<img src="../resources/green-400x400.png"></img>
+<script>
+addEventListener("load", () => {
+    image = document.querySelector("img");
+    for (let i = 0; i < 10; ++i) {
+        internals.installImageOverlay(image, [
+            {
+                topLeft : new DOMPointReadOnly(0.5, 0.5),
+                topRight : new DOMPointReadOnly(1, 0.5),
+                bottomRight : new DOMPointReadOnly(1, 1),
+                bottomLeft : new DOMPointReadOnly(0.5, 1),
+                children: [
+                    {
+                        text : "Hello",
+                        topLeft : new DOMPointReadOnly(0.5, 0.5),
+                        topRight : new DOMPointReadOnly(1, 0.5),
+                        bottomRight : new DOMPointReadOnly(1, 1),
+                        bottomLeft : new DOMPointReadOnly(0.5, 1),
+                    }
+                ],
+            }
+        ]);
+    }
+    shouldBe("internals.shadowRoot(image).childElementCount", "2");
+});
+</script>
+</body>
+</html>

@@ -52,6 +52,7 @@
 #import "StringUtilities.h"
 #import "TextChecker.h"
 #import "TextCheckerState.h"
+#import "TextRecognitionUtilities.h"
 #import "TiledCoreAnimationDrawingAreaProxy.h"
 #import "UIGamepadProvider.h"
 #import "UndoOrRedo.h"
@@ -60,7 +61,6 @@
 #import "WKEditCommand.h"
 #import "WKErrorInternal.h"
 #import "WKFullScreenWindowController.h"
-#import "WKImageExtractionPreviewController.h"
 #import "WKImmediateActionController.h"
 #import "WKNSURLExtras.h"
 #import "WKPDFHUDView.h"
@@ -70,6 +70,7 @@
 #import <WebKit/WKShareSheet.h>
 #import "WKTextInputWindowController.h"
 #import "WKViewLayoutStrategy.h"
+#import "WKVisualSearchPreviewController.h"
 #import "WKWebViewInternal.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebBackForwardList.h>
@@ -98,7 +99,6 @@
 #import <WebCore/Editor.h>
 #import <WebCore/FontAttributeChanges.h>
 #import <WebCore/FontAttributes.h>
-#import <WebCore/ImageExtractionResult.h>
 #import <WebCore/KeypressCommand.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/LoaderNSURLExtras.h>
@@ -108,6 +108,7 @@
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/PromisedAttachmentInfo.h>
 #import <WebCore/TextAlternativeWithRange.h>
+#import <WebCore/TextRecognitionResult.h>
 #import <WebCore/TextUndoInsertionMarkupMac.h>
 #import <WebCore/TranslationContextMenuInfo.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
@@ -144,6 +145,12 @@
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 #include "MediaSessionCoordinatorProxyPrivate.h"
 #endif
+
+#if ENABLE(IMAGE_ANALYSIS)
+#import <VisionKitCore/VKImageAnalysis_WebKit.h>
+#import <VisionKitCore/VKImageAnalyzer.h>
+#import <VisionKitCore/VKQuad.h>
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 #if HAVE(TRANSLATION_UI_SERVICES)
 #import <TranslationUIServices/LTUITranslationViewController.h>
@@ -182,9 +189,85 @@ WTF_DECLARE_CF_TYPE_TRAIT(CGImage);
 @end
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebViewImplAdditions.mm>
-#endif
+#if ENABLE(IMAGE_ANALYSIS)
+
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(VisionKitCore)
+SOFT_LINK_CLASS_OPTIONAL(VisionKitCore, VKImageAnalyzer)
+SOFT_LINK_CLASS_OPTIONAL(VisionKitCore, VKImageAnalyzerRequest)
+
+// FIXME: Remove this once <rdar://72480459> is in the SDK.
+@interface VKImageAnalyzerRequest (Staging_72480459)
+@property (nonatomic) NSURL *imageURL;
+@property (nonatomic) NSURL *pageURL;
+@end
+
+namespace WebKit {
+
+VKImageAnalyzer *WebViewImpl::ensureImageAnalyzer()
+{
+    if (!m_imageAnalyzer) {
+        m_imageAnalyzerQueue = WorkQueue::create("WebKit image analyzer queue");
+        m_imageAnalyzer = adoptNS([allocVKImageAnalyzerInstance() init]);
+        [m_imageAnalyzer setCallbackQueue:m_imageAnalyzerQueue->dispatchQueue()];
+    }
+    return m_imageAnalyzer.get();
+}
+
+static RetainPtr<VKImageAnalyzerRequest> createImageAnalysisRequest(CGImageRef image, const URL& imageURL, const URL& pageURL, VKAnalysisTypes types)
+{
+    auto request = adoptNS([allocVKImageAnalyzerRequestInstance() initWithCGImage:image orientation:VKImageOrientationUp requestType:types]);
+    [request setImageURL:imageURL];
+    [request setPageURL:pageURL];
+    return request;
+}
+
+void WebViewImpl::requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completion)
+{
+    if (!isLiveTextEnabled()) {
+        completion({ });
+        return;
+    }
+
+    auto imageBitmap = ShareableBitmap::create(imageData);
+    if (!imageBitmap) {
+        completion({ });
+        return;
+    }
+
+    auto cgImage = imageBitmap->makeCGImage();
+    auto request = createImageAnalysisRequest(cgImage.get(), imageURL, [NSURL _web_URLWithWTFString:m_page->currentURL()], VKAnalysisTypeText);
+    auto startTime = MonotonicTime::now();
+    [ensureImageAnalyzer() processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTFMove(completion), startTime] (VKImageAnalysis *analysis, NSError *) mutable {
+        callOnMainRunLoop([completion = WTFMove(completion), result = makeTextRecognitionResult(analysis), startTime] () mutable {
+            RELEASE_LOG(Images, "Image analysis completed in %.0f ms (found text? %d)", (MonotonicTime::now() - startTime).milliseconds(), !result.isEmpty());
+            completion(WTFMove(result));
+        });
+    }).get()];
+}
+
+void WebViewImpl::computeHasVisualSearchResults(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&& completion)
+{
+    if (!isLiveTextEnabled()) {
+        completion(false);
+        return;
+    }
+
+    auto cgImage = imageBitmap.makeCGImage();
+    auto request = createImageAnalysisRequest(cgImage.get(), imageURL, [NSURL _web_URLWithWTFString:m_page->currentURL()], VKAnalysisTypeVisualSearch);
+    auto startTime = MonotonicTime::now();
+    [ensureImageAnalyzer() processRequest:request.get() progressHandler:nil completionHandler:makeBlockPtr([completion = WTFMove(completion), startTime] (VKImageAnalysis *analysis, NSError *) mutable {
+        BOOL result = [analysis hasResultsForAnalysisTypes:VKAnalysisTypeVisualSearch];
+        CFRunLoopPerformBlock(CFRunLoopGetMain(), (__bridge CFStringRef)NSEventTrackingRunLoopMode, makeBlockPtr([completion = WTFMove(completion), result, startTime] () mutable {
+            RELEASE_LOG(Images, "Image analysis completed in %.0f ms (found visual search results? %d)", (MonotonicTime::now() - startTime).milliseconds(), result);
+            completion(result);
+        }).get());
+        CFRunLoopWakeUp(CFRunLoopGetMain());
+    }).get()];
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 @interface WKAccessibilitySettingsObserver : NSObject {
     WebKit::WebViewImpl *_impl;
@@ -5717,8 +5800,8 @@ void WebViewImpl::handleContextMenuTranslation(const WebCore::TranslationContext
 
 bool WebViewImpl::acceptsPreviewPanelControl(QLPreviewPanel *)
 {
-#if ENABLE(IMAGE_EXTRACTION)
-    return !!m_page->imageExtractionPreviewController();
+#if ENABLE(IMAGE_ANALYSIS)
+    return !!m_page->visualSearchPreviewController();
 #else
     return false;
 #endif

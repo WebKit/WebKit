@@ -1,3 +1,13 @@
+2021-06-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Upstream WebKit support for Live Text
+        https://bugs.webkit.org/show_bug.cgi?id=226706
+        <rdar://problem/78933684>
+
+        Reviewed by Tim Horton.
+
+        * WebView/WebHTMLView.mm: Replace IMAGE_EXTRACTION with IMAGE_ANALYSIS.
+
 2021-06-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Turn TextIteratorBehaviorFlag into an enum class and wrap it in OptionSet

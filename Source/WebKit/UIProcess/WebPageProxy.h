@@ -231,6 +231,7 @@ OBJC_CLASS NSTextAlternatives;
 OBJC_CLASS NSView;
 OBJC_CLASS QLPreviewPanel;
 OBJC_CLASS WKQLThumbnailLoadOperation;
+OBJC_CLASS WKVisualSearchPreviewController;
 OBJC_CLASS WKWebView;
 OBJC_CLASS _WKRemoteObjectRegistry;
 #endif
@@ -297,12 +298,9 @@ struct ShareData;
 struct SpeechRecognitionError;
 struct TextAlternativeWithRange;
 struct TextCheckingResult;
+struct TextRecognitionResult;
 struct ViewportAttributes;
 struct WindowFeatures;
-
-#if ENABLE(IMAGE_EXTRACTION)
-struct ImageExtractionResult;
-#endif
 
 #if HAVE(PASTEBOARD_DATA_OWNER)
 enum class DataOwnerType : uint8_t;
@@ -407,7 +405,7 @@ struct WebNavigationDataStore;
 struct WebPopupItem;
 struct WebSpeechSynthesisVoice;
 
-enum class ImageExtractionUpdateResult : uint8_t;
+enum class TextRecognitionUpdateResult : uint8_t;
 enum class NegotiatedLegacyTLS : bool;
 enum class ProcessSwapRequestedByClient : bool;
 enum class UndoOrRedo : bool;
@@ -1664,10 +1662,10 @@ public:
     void shouldAllowDeviceOrientationAndMotionAccess(WebCore::FrameIdentifier, FrameInfoData&&, bool mayPrompt, CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>&&);
 #endif
 
-#if ENABLE(IMAGE_EXTRACTION)
-    void requestImageExtraction(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&);
-    void updateWithImageExtractionResult(WebCore::ImageExtractionResult&&, const WebCore::ElementContext&, const WebCore::FloatPoint& location, CompletionHandler<void(ImageExtractionUpdateResult)>&&);
-    void computeCanRevealImage(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&&);
+#if ENABLE(IMAGE_ANALYSIS)
+    void requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
+    void updateWithTextRecognitionResult(WebCore::TextRecognitionResult&&, const WebCore::ElementContext&, const WebCore::FloatPoint& location, CompletionHandler<void(TextRecognitionUpdateResult)>&&);
+    void computeHasVisualSearchResults(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&&);
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
@@ -1911,8 +1909,8 @@ public:
 
     void dispatchWheelEventWithoutScrolling(const WebWheelEvent&, CompletionHandler<void(bool)>&&);
 
-#if ENABLE(IMAGE_EXTRACTION) && ENABLE(CONTEXT_MENUS)
-    void handleContextMenuRevealImage();
+#if ENABLE(IMAGE_ANALYSIS) && ENABLE(CONTEXT_MENUS)
+    void handleContextMenuLookUpImage();
 #endif
 
 #if USE(APPKIT)
@@ -1943,6 +1941,10 @@ public:
 #endif
 
     bool isRunningModalJavaScriptDialog() const { return m_isRunningModalJavaScriptDialog; }
+
+#if ENABLE(IMAGE_ANALYSIS) && PLATFORM(MAC)
+    WKVisualSearchPreviewController *visualSearchPreviewController() const { return m_visualSearchPreviewController.get(); }
+#endif
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
@@ -2491,6 +2493,10 @@ private:
     void didUpdateEditorState(const EditorState& oldEditorState, const EditorState& newEditorState);
 
     void runModalJavaScriptDialog(RefPtr<WebFrameProxy>&&, FrameInfoData&&, const String& message, CompletionHandler<void(WebPageProxy&, WebFrameProxy*, FrameInfoData&&, const String&, CompletionHandler<void()>&&)>&&);
+
+#if ENABLE(IMAGE_ANALYSIS) && PLATFORM(MAC)
+    void showImageInVisualSearchPreviewPanel(ShareableBitmap& imageBitmap, const String& tooltip, const URL& imageURL);
+#endif
 
     const Identifier m_identifier;
     WebCore::PageIdentifier m_webPageID;
@@ -3041,6 +3047,10 @@ private:
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/WebPageProxyAdditionsAfter.h>
+#endif
+
+#if ENABLE(IMAGE_ANALYSIS) && PLATFORM(MAC)
+    RetainPtr<WKVisualSearchPreviewController> m_visualSearchPreviewController;
 #endif
 };
 

@@ -87,6 +87,7 @@ struct ContactInfo;
 struct ContactsRequestData;
 struct PromisedAttachmentInfo;
 struct ShareDataWithParsedURL;
+struct TextRecognitionResult;
 enum class DOMPasteAccessResponse : uint8_t;
 enum class MouseEventPolicy : uint8_t;
 enum class RouteSharingPolicy : uint8_t;
@@ -94,10 +95,6 @@ enum class TextIndicatorDismissalAnimation : uint8_t;
 
 #if ENABLE(DRAG_SUPPORT)
 struct DragItem;
-#endif
-
-#if ENABLE(IMAGE_EXTRACTION)
-struct ImageExtractionResult;
 #endif
 }
 
@@ -109,6 +106,8 @@ class WebOpenPanelResultListenerProxy;
 class WebPageProxy;
 }
 
+@class QLPreviewController;
+@class VKImageAnalyzer;
 @class WebEvent;
 @class WebTextIndicatorLayer;
 @class WKActionSheetAssistant;
@@ -118,6 +117,7 @@ class WebPageProxy;
 @class WKFormInputSession;
 @class WKFormSelectControl;
 @class WKHighlightLongPressGestureRecognizer;
+@class WKImageAnalysisGestureRecognizer;
 @class WKMouseGestureRecognizer;
 @class WKInspectorNodeSearchGestureRecognizer;
 @class WKTextRange;
@@ -139,10 +139,6 @@ class WebPageProxy;
 #endif
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKContentViewInteractionAdditionsBefore.h>
-#endif
-
 typedef void (^UIWKAutocorrectionCompletionHandler)(UIWKAutocorrectionRects *rectsForInput);
 typedef void (^UIWKAutocorrectionContextHandler)(UIWKAutocorrectionContext *autocorrectionContext);
 typedef void (^UIWKDictationContextHandler)(NSString *selectedText, NSString *beforeText, NSString *afterText);
@@ -152,12 +148,16 @@ typedef void (^UIWKSelectionWithDirectionCompletionHandler)(BOOL selectionEndIsM
 typedef BlockPtr<void(WebKit::InteractionInformationAtPosition)> InteractionInformationCallback;
 typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationCallback> InteractionInformationRequestAndCallback;
 
-#if !defined(FOR_EACH_ADDITIONAL_WKCONTENTVIEW_ACTION)
-#define FOR_EACH_ADDITIONAL_WKCONTENTVIEW_ACTION(M)
+#if ENABLE(IMAGE_ANALYSIS)
+#define FOR_EACH_INSERT_TEXT_FROM_CAMERA_WKCONTENTVIEW_ACTION(M) \
+    M(_insertTextFromCamera) \
+    M(captureTextFromCamera)
+#else
+#define FOR_EACH_INSERT_TEXT_FROM_CAMERA_WKCONTENTVIEW_ACTION(M)
 #endif
 
 #define FOR_EACH_WKCONTENTVIEW_ACTION(M) \
-    FOR_EACH_ADDITIONAL_WKCONTENTVIEW_ACTION(M) \
+    FOR_EACH_INSERT_TEXT_FROM_CAMERA_WKCONTENTVIEW_ACTION(M) \
     M(_addShortcut) \
     M(_define) \
     M(_lookup) \
@@ -228,13 +228,13 @@ struct WKAutoCorrectionData {
     CGRect textLastRect;
 };
 
-enum class ProceedWithImageExtraction : bool {
+enum class ProceedWithTextSelectionInImage : bool {
     No,
     Yes
 };
 
-enum ImageExtractionRequestIdentifierType { };
-using ImageExtractionRequestIdentifier = ObjectIdentifier<ImageExtractionRequestIdentifierType>;
+enum ImageAnalysisRequestIdentifierType { };
+using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIdentifierType>;
 
 }
 
@@ -256,8 +256,8 @@ using ImageExtractionRequestIdentifier = ObjectIdentifier<ImageExtractionRequest
     RetainPtr<WKDeferringGestureRecognizer> _touchEndDeferringGestureRecognizerForImmediatelyResettableGestures;
     RetainPtr<WKDeferringGestureRecognizer> _touchEndDeferringGestureRecognizerForDelayedResettableGestures;
     RetainPtr<WKDeferringGestureRecognizer> _touchEndDeferringGestureRecognizerForSyntheticTapGestures;
-#if ENABLE(IMAGE_EXTRACTION)
-    RetainPtr<WKDeferringGestureRecognizer> _imageExtractionDeferringGestureRecognizer;
+#if ENABLE(IMAGE_ANALYSIS)
+    RetainPtr<WKDeferringGestureRecognizer> _imageAnalysisDeferringGestureRecognizer;
 #endif
     std::unique_ptr<WebKit::GestureRecognizerConsistencyEnforcer> _gestureRecognizerConsistencyEnforcer;
     RetainPtr<UIWebTouchEventsGestureRecognizer> _touchEventGestureRecognizer;
@@ -483,22 +483,28 @@ using ImageExtractionRequestIdentifier = ObjectIdentifier<ImageExtractionRequest
 
     Vector<BlockPtr<void()>> _actionsToPerformAfterResettingSingleTapGestureRecognizer;
 
-#if ENABLE(IMAGE_EXTRACTION)
-    RetainPtr<WKImageExtractionGestureRecognizer> _imageExtractionGestureRecognizer;
-    RetainPtr<UILongPressGestureRecognizer> _imageExtractionTimeoutGestureRecognizer;
-    std::optional<WebKit::ImageExtractionRequestIdentifier> _pendingImageExtractionRequestIdentifier;
-    std::optional<WebCore::ElementContext> _elementPendingImageExtraction;
-    Vector<BlockPtr<void(WebKit::ProceedWithImageExtraction)>> _actionsToPerformAfterPendingImageExtraction;
+#if ENABLE(IMAGE_ANALYSIS)
+    RetainPtr<WKImageAnalysisGestureRecognizer> _imageAnalysisGestureRecognizer;
+    RetainPtr<UILongPressGestureRecognizer> _imageAnalysisTimeoutGestureRecognizer;
+    std::optional<WebKit::ImageAnalysisRequestIdentifier> _pendingImageAnalysisRequestIdentifier;
+    std::optional<WebCore::ElementContext> _elementPendingImageAnalysis;
+    Vector<BlockPtr<void(WebKit::ProceedWithTextSelectionInImage)>> _actionsToPerformAfterPendingImageAnalysis;
 #if USE(UICONTEXTMENU)
-    RetainPtr<UIMenu> _imageExtractionContextMenu;
-    BOOL _contextMenuWasTriggeredByImageExtractionTimeout;
+    RetainPtr<UIMenu> _contextMenuForMachineReadableCode;
+    BOOL _contextMenuWasTriggeredByImageAnalysisTimeout;
 #endif // USE(UICONTEXTMENU)
-    BOOL _isProceedingWithImageExtraction;
-#endif // ENABLE(IMAGE_EXTRACTION)
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKContentViewInteractionAdditionsAfter.h>
-#endif
+    BOOL _isProceedingWithTextSelectionInImage;
+    RetainPtr<VKImageAnalyzer> _imageAnalyzer;
+#if USE(QUICK_LOOK)
+    RetainPtr<QLPreviewController> _visualSearchPreviewController;
+    RetainPtr<UIImage> _visualSearchPreviewImage;
+    RetainPtr<NSURL> _visualSearchPreviewImageURL;
+    RetainPtr<NSString> _visualSearchPreviewTitle;
+    CGRect _visualSearchPreviewImageBounds;
+    BOOL _hasSelectableTextInImage;
+    BOOL _hasVisualSearchResults;
+#endif // USE(QUICK_LOOK)
+#endif // ENABLE(IMAGE_ANALYSIS)
 }
 
 @end
@@ -729,9 +735,9 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)setUpAppHighlightMenusIfNeeded;
 #endif
 
-#if ENABLE(IMAGE_EXTRACTION)
-- (void)_endImageExtractionGestureDeferral:(WebKit::ShouldPreventGestures)shouldPreventGestures;
-- (void)requestImageExtraction:(NSURL *)imageURL imageData:(const WebKit::ShareableBitmap::Handle&)imageData completionHandler:(CompletionHandler<void(WebCore::ImageExtractionResult&&)>&&)completion;
+#if ENABLE(IMAGE_ANALYSIS)
+- (void)_endImageAnalysisGestureDeferral:(WebKit::ShouldPreventGestures)shouldPreventGestures;
+- (void)requestTextRecognition:(NSURL *)imageURL imageData:(const WebKit::ShareableBitmap::Handle&)imageData completionHandler:(CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&)completion;
 #endif
 
 @end

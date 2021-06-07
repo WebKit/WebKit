@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+img {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+a {
+    display: inline-block;
+}
+</style>
+</head>
+<body>
+<a href="http://localhost:54321" onclick="event.preventDefault()">
+    <img src="../../resources/green-400x400.png"></img>
+</a>
+<script>
+jsTestIsAsync = true;
+addEventListener("load", async () => {
+    let image = document.querySelector("img");
+    internals.installImageOverlay(image, [
+        {
+            topLeft : new DOMPointReadOnly(0, 0),
+            topRight : new DOMPointReadOnly(1, 0),
+            bottomRight : new DOMPointReadOnly(1, 0.25),
+            bottomLeft : new DOMPointReadOnly(0, 0.25),
+            children: [
+                {
+                    text : "hello",
+                    topLeft : new DOMPointReadOnly(0, 0),
+                    topRight : new DOMPointReadOnly(1, 0),
+                    bottomRight : new DOMPointReadOnly(1, 0.25),
+                    bottomLeft : new DOMPointReadOnly(0, 0.25),
+                }
+            ],
+        }
+    ]);
+    await UIHelper.longPressAtPoint(200, 50);
+    selectionRects = await UIHelper.waitForSelectionToAppear();
+    shouldBe("selectionRects.length", "1");
+    finishJSTest();
+});
+</script>
+</body>
+</html>
