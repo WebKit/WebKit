@@ -25,15 +25,14 @@
 
 #pragma once
 
-#include "ContextDestructionObserver.h"
-#include "EventLoop.h"
 #include "GenericTaskQueue.h"
-#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
-class DeferrableTaskBase : public CanMakeWeakPtr<DeferrableTaskBase> {
+class MainThreadDeferrableTask : public CanMakeWeakPtr<MainThreadDeferrableTask> {
 public:
+    MainThreadDeferrableTask() = default;
+
     void close()
     {
         cancelTask();
@@ -48,67 +47,27 @@ public:
 
     bool isPending() const { return m_isPending; }
 
-protected:
-    ~DeferrableTaskBase() = default;
-    bool isClosed() const { return m_isClosed; }
-    void setIsPending(bool isPending) { m_isPending = isPending; }
-
-private:
-    bool m_isPending { false };
-    bool m_isClosed { false };
-};
-
-class MainThreadDeferrableTask : public DeferrableTaskBase {
-public:
-    MainThreadDeferrableTask()
-        : m_dispatcher()
-    { }
-
     void scheduleTask(Function<void()>&& task)
     {
-        if (isClosed())
+        if (m_isClosed)
             return;
 
         cancelTask();
 
-        setIsPending(true);
+        m_isPending = true;
         m_dispatcher.postTask([weakThis = makeWeakPtr(*this), task = WTFMove(task)] {
             if (!weakThis)
                 return;
             ASSERT(weakThis->isPending());
-            weakThis->setIsPending(false);
+            weakThis->m_isPending = false;
             task();
         });
     }
 
 private:
     MainThreadTaskDispatcher m_dispatcher;
+    bool m_isPending { false };
+    bool m_isClosed { false };
 };
 
-// Similar to DeferrableTask but based on the HTML event loop.
-class EventLoopDeferrableTask : public DeferrableTaskBase, private ContextDestructionObserver {
-public:
-    EventLoopDeferrableTask(ScriptExecutionContext* context)
-        : ContextDestructionObserver(context)
-    { }
-
-    // FIXME: Pass TaskSource instead of assuming TaskSource::MediaElement.
-    void scheduleTask(Function<void()>&& task)
-    {
-        if (isClosed() || !scriptExecutionContext())
-            return;
-
-        cancelTask();
-
-        setIsPending(true);
-        scriptExecutionContext()->eventLoop().queueTask(TaskSource::MediaElement, [weakThis = makeWeakPtr(*this), task = WTFMove(task)] {
-            if (!weakThis)
-                return;
-            ASSERT(weakThis->isPending());
-            weakThis->setIsPending(false);
-            task();
-        });
-    }
-};
-
-}
+} // namespace WebCore

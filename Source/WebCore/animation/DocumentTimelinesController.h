@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include "DeferrableTask.h"
 #include "ReducedResolutionSeconds.h"
 #include "Timer.h"
+#include <wtf/CancellableTask.h>
 #include <wtf/Markable.h>
 #include <wtf/Seconds.h>
 #include <wtf/WeakHashSet.h>
@@ -67,7 +67,7 @@ private:
     void maybeClearCachedCurrentTime();
 
     WeakHashSet<DocumentTimeline> m_timelines;
-    EventLoopDeferrableTask m_currentTimeClearingTask;
+    CancellableTask::Handle m_currentTimeClearingTask;
     Document& m_document;
     Markable<Seconds, Seconds::MarkableTraits> m_cachedCurrentTime;
     bool m_isSuspended { false };

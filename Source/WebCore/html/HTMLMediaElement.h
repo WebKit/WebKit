@@ -31,7 +31,6 @@
 #include "AudioTrack.h"
 #include "AutoplayEvent.h"
 #include "CaptionUserPreferences.h"
-#include "DeferrableTask.h"
 #include "EventLoopEventQueue.h"
 #include "HTMLElement.h"
 #include "HTMLMediaElementEnums.h"
@@ -941,20 +940,20 @@ private:
     Timer m_scanTimer;
     Timer m_playbackControlsManagerBehaviorRestrictionsTimer;
     Timer m_seekToPlaybackPositionEndedTimer;
-    EventLoopDeferrableTask m_configureTextTracksTask;
-    EventLoopDeferrableTask m_checkPlaybackTargetCompatibilityTask;
-    EventLoopDeferrableTask m_updateMediaStateTask;
-    EventLoopDeferrableTask m_mediaEngineUpdatedTask;
-    EventLoopDeferrableTask m_updatePlayStateTask;
-    EventLoopDeferrableTask m_resumeTask;
-    EventLoopDeferrableTask m_seekTask;
-    EventLoopDeferrableTask m_playbackControlsManagerBehaviorRestrictionsTask;
-    EventLoopDeferrableTask m_bufferedTimeRangesChangedTask;
+    CancellableTask::Handle m_configureTextTracksTask;
+    CancellableTask::Handle m_checkPlaybackTargetCompatibilityTask;
+    CancellableTask::Handle m_updateMediaStateTask;
+    CancellableTask::Handle m_mediaEngineUpdatedTask;
+    CancellableTask::Handle m_updatePlayStateTask;
+    CancellableTask::Handle m_resumeTask;
+    CancellableTask::Handle m_seekTask;
+    CancellableTask::Handle m_playbackControlsManagerBehaviorRestrictionsTask;
+    CancellableTask::Handle m_bufferedTimeRangesChangedTask;
     EventLoopTaskQueue m_resourceSelectionTaskQueue;
     RefPtr<TimeRanges> m_playedTimeRanges;
     UniqueRef<EventLoopEventQueue> m_asyncEventQueue;
 #if PLATFORM(IOS_FAMILY)
-    EventLoopDeferrableTask m_volumeRevertTask;
+    CancellableTask::Handle m_volumeRevertTask;
 #endif
 
     PlayPromiseVector m_pendingPlayPromises;

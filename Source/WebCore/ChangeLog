@@ -1,3 +1,41 @@
+2021-06-06  Chris Dumez  <cdumez@apple.com>
+
+        Stop using legacy EventLoopDeferrableTask
+        https://bugs.webkit.org/show_bug.cgi?id=226700
+
+        Reviewed by Darin Adler.
+
+        Stop using legacy EventLoopDeferrableTask and drop the class entirely. Call sites are
+        now using the HTML event loop directly and using WTF::CancellableTask to wrap the task
+        they schedule. This achieves the same result as EventLoopDeferrableTask but is more
+        lightweight and flexible.
+
+        * animation/DocumentTimelinesController.cpp:
+        (WebCore::DocumentTimelinesController::DocumentTimelinesController):
+        (WebCore::DocumentTimelinesController::detachFromDocument):
+        (WebCore::DocumentTimelinesController::cacheCurrentTime):
+        * animation/DocumentTimelinesController.h:
+        * dom/ActiveDOMObject.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::scheduleCheckPlaybackTargetCompatability):
+        (WebCore::HTMLMediaElement::seekWithTolerance):
+        (WebCore::HTMLMediaElement::setVolume):
+        (WebCore::HTMLMediaElement::scheduleConfigureTextTracks):
+        (WebCore::HTMLMediaElement::scheduleMediaEngineWasUpdated):
+        (WebCore::HTMLMediaElement::scheduleUpdatePlayState):
+        (WebCore::HTMLMediaElement::cancelPendingTasks):
+        (WebCore::HTMLMediaElement::closeTaskQueues):
+        (WebCore::HTMLMediaElement::suspend):
+        (WebCore::HTMLMediaElement::resume):
+        (WebCore::HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured):
+        (WebCore::HTMLMediaElement::mediaPlayerBufferedTimeRangesChanged):
+        (WebCore::HTMLMediaElement::scheduleUpdateMediaState):
+        (WebCore::HTMLMediaElement::playbackControlsManagerBehaviorRestrictionsTimerFired):
+        * html/HTMLMediaElement.h:
+        * platform/DeferrableTask.h:
+
 2021-06-06  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Turn TextIteratorBehaviorFlag into an enum class and wrap it in OptionSet

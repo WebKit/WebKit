@@ -29,6 +29,7 @@
 #include "ContextDestructionObserver.h"
 #include "TaskSource.h"
 #include <wtf/Assertions.h>
+#include <wtf/CancellableTask.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/RefCounted.h>
@@ -108,6 +109,17 @@ public:
         object.queueTaskInEventLoop(source, [protectedObject = makeRef(object), activity = object.ActiveDOMObject::makePendingActivity(object), task = WTFMove(task)] () {
             task();
         });
+    }
+
+    template<typename T>
+    static CancellableTask::Handle queueCancellableTaskKeepingObjectAlive(T& object, TaskSource source, Function<void()>&& task)
+    {
+        CancellableTask cancellableTask(WTFMove(task));
+        auto taskHandle = cancellableTask.createHandle();
+        object.queueTaskInEventLoop(source, [protectedObject = makeRef(object), activity = object.ActiveDOMObject::makePendingActivity(object), cancellableTask = WTFMove(cancellableTask)]() mutable {
+            cancellableTask();
+        });
+        return taskHandle;
     }
 
     template<typename EventTargetType, typename EventType>

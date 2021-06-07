@@ -394,20 +394,8 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document& docum
     , m_scanTimer(*this, &HTMLMediaElement::scanTimerFired)
     , m_playbackControlsManagerBehaviorRestrictionsTimer(*this, &HTMLMediaElement::playbackControlsManagerBehaviorRestrictionsTimerFired)
     , m_seekToPlaybackPositionEndedTimer(*this, &HTMLMediaElement::seekToPlaybackPositionEndedTimerFired)
-    , m_configureTextTracksTask(&document)
-    , m_checkPlaybackTargetCompatibilityTask(&document)
-    , m_updateMediaStateTask(&document)
-    , m_mediaEngineUpdatedTask(&document)
-    , m_updatePlayStateTask(&document)
-    , m_resumeTask(&document)
-    , m_seekTask(&document)
-    , m_playbackControlsManagerBehaviorRestrictionsTask(&document)
-    , m_bufferedTimeRangesChangedTask(&document)
     , m_resourceSelectionTaskQueue(&document)
     , m_asyncEventQueue(EventLoopEventQueue::create(*this))
-#if PLATFORM(IOS_FAMILY)
-    , m_volumeRevertTask(&document)
-#endif
     , m_lastTimeUpdateEventMovieTime(MediaTime::positiveInfiniteTime())
     , m_firstTimePlaying(true)
     , m_playing(false)
@@ -579,9 +567,9 @@ HTMLMediaElement::~HTMLMediaElement()
     if (m_isolatedWorld)
         m_isolatedWorld->clearWrappers();
 
-    m_seekTask.close();
-    m_resumeTask.close();
-    m_playbackControlsManagerBehaviorRestrictionsTask.close();
+    m_seekTask.cancel();
+    m_resumeTask.cancel();
+    m_playbackControlsManagerBehaviorRestrictionsTask.cancel();
     m_resourceSelectionTaskQueue.close();
 
     m_completelyLoaded = true;
@@ -996,7 +984,7 @@ void HTMLMediaElement::scheduleCheckPlaybackTargetCompatability()
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_checkPlaybackTargetCompatibilityTask.scheduleTask([this] {
+    m_checkPlaybackTargetCompatibilityTask = queueCancellableTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this] {
         checkPlaybackTargetCompatibility();
     });
 }
@@ -2975,7 +2963,7 @@ void HTMLMediaElement::seekWithTolerance(const MediaTime& inTime, const MediaTim
     // it is running to complete.
     if (m_seekTask.isPending()) {
         INFO_LOG(LOGIDENTIFIER, "cancelling pending seeks");
-        m_seekTask.cancelTask();
+        m_seekTask.cancel();
         if (m_pendingSeek) {
             now = m_pendingSeek->now;
             m_pendingSeek = nullptr;
@@ -2997,7 +2985,7 @@ void HTMLMediaElement::seekWithTolerance(const MediaTime& inTime, const MediaTim
     m_pendingSeek = makeUnique<PendingSeek>(now, time, negativeTolerance, positiveTolerance);
     if (fromDOM) {
         INFO_LOG(LOGIDENTIFIER, "enqueuing seek from ", now, " to ", time);
-        m_seekTask.scheduleTask(std::bind(&HTMLMediaElement::seekTask, this));
+        m_seekTask = queueCancellableTaskKeepingObjectAlive(*this, TaskSource::MediaElement, std::bind(&HTMLMediaElement::seekTask, this));
     } else
         seekTask();
 
@@ -3712,7 +3700,7 @@ ExceptionOr<void> HTMLMediaElement::setVolume(double volume)
     if (m_volumeRevertTask.isPending())
         return { };
 
-    m_volumeRevertTask.scheduleTask([this, oldVolume] {
+    m_volumeRevertTask = queueCancellableTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this, oldVolume] {
         m_volume = oldVolume;
     });
 
@@ -4502,7 +4490,7 @@ void HTMLMediaElement::scheduleConfigureTextTracks()
 
     auto logSiteIdentifier = LOGIDENTIFIER;
     ALWAYS_LOG(logSiteIdentifier, "task scheduled");
-    m_configureTextTracksTask.scheduleTask([this, logSiteIdentifier] {
+    m_configureTextTracksTask = queueCancellableTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this, logSiteIdentifier] {
         UNUSED_PARAM(logSiteIdentifier);
         ALWAYS_LOG(logSiteIdentifier, "lambda(), task fired");
         Ref<HTMLMediaElement> protectedThis(*this); // configureTextTracks calls methods that can trigger arbitrary DOM mutations.
@@ -5050,7 +5038,7 @@ void HTMLMediaElement::scheduleMediaEngineWasUpdated()
 
     auto logSiteIdentifier = LOGIDENTIFIER;
     ALWAYS_LOG(logSiteIdentifier, "task scheduled");
-    m_mediaEngineUpdatedTask.scheduleTask([this, logSiteIdentifier] {
+    m_mediaEngineUpdatedTask = queueCancellableTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this, logSiteIdentifier] {
         UNUSED_PARAM(logSiteIdentifier);
         ALWAYS_LOG(logSiteIdentifier, "lambda(), task fired");
         Ref<HTMLMediaElement> protectedThis(*this); // mediaEngineWasUpdated calls methods that can trigger arbitrary DOM mutations.
@@ -5343,7 +5331,7 @@ void HTMLMediaElement::scheduleUpdatePlayState()
 
     auto logSiteIdentifier = LOGIDENTIFIER;
     ALWAYS_LOG(logSiteIdentifier, "task scheduled");
-    m_updatePlayStateTask.scheduleTask([this, logSiteIdentifier] {
+    m_updatePlayStateTask = queueCancellableTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this, logSiteIdentifier] {
         UNUSED_PARAM(logSiteIdentifier);
         ALWAYS_LOG(logSiteIdentifier, "lambda(), task fired");
         Ref<HTMLMediaElement> protectedThis(*this); // updatePlayState calls methods that can trigger arbitrary DOM mutations.
@@ -5475,13 +5463,16 @@ void HTMLMediaElement::stopPeriodicTimers()
 
 void HTMLMediaElement::cancelPendingTasks()
 {
-    m_configureTextTracksTask.cancelTask();
-    m_checkPlaybackTargetCompatibilityTask.cancelTask();
-    m_updateMediaStateTask.cancelTask();
-    m_mediaEngineUpdatedTask.cancelTask();
-    m_updatePlayStateTask.cancelTask();
+    m_configureTextTracksTask.cancel();
+    m_checkPlaybackTargetCompatibilityTask.cancel();
+    m_updateMediaStateTask.cancel();
+    m_mediaEngineUpdatedTask.cancel();
+    m_updatePlayStateTask.cancel();
+    m_resumeTask.cancel();
+    m_seekTask.cancel();
+    m_playbackControlsManagerBehaviorRestrictionsTask.cancel();
 #if PLATFORM(IOS_FAMILY)
-    m_volumeRevertTask.cancelTask();
+    m_volumeRevertTask.cancel();
 #endif
 }
 
@@ -5637,21 +5628,9 @@ void HTMLMediaElement::stopWithoutDestroyingMediaPlayer()
 
 void HTMLMediaElement::closeTaskQueues()
 {
-    m_configureTextTracksTask.close();
-    m_checkPlaybackTargetCompatibilityTask.close();
-    m_updateMediaStateTask.close();
-    m_mediaEngineUpdatedTask.close();
-    m_updatePlayStateTask.close();
-    m_resumeTask.close();
-    m_seekTask.close();
-    m_playbackControlsManagerBehaviorRestrictionsTask.close();
-    m_seekTask.close();
-    m_resumeTask.close();
+    cancelPendingTasks();
     m_resourceSelectionTaskQueue.close();
     m_asyncEventQueue->close();
-#if PLATFORM(IOS_FAMILY)
-    m_volumeRevertTask.close();
-#endif
 }
 
 void HTMLMediaElement::contextDestroyed()
@@ -5685,7 +5664,7 @@ void HTMLMediaElement::suspend(ReasonForSuspension reason)
     ALWAYS_LOG(LOGIDENTIFIER);
     Ref<HTMLMediaElement> protectedThis(*this);
 
-    m_resumeTask.cancelTask();
+    m_resumeTask.cancel();
 
     switch (reason) {
     case ReasonForSuspension::BackForwardCache:
@@ -5724,7 +5703,7 @@ void HTMLMediaElement::resume()
         //  MEDIA_ERR_ABORTED while the abortEvent is being sent, but cleared immediately afterwards).
         // This behavior is not specified but it seems like a sensible thing to do.
         // As it is not safe to immedately start loading now, let's schedule a load.
-        m_resumeTask.scheduleTask(std::bind(&HTMLMediaElement::prepareForLoad, this));
+        m_resumeTask = queueCancellableTaskKeepingObjectAlive(*this, TaskSource::MediaElement, std::bind(&HTMLMediaElement::prepareForLoad, this));
     }
 
     updateRenderer();
@@ -6636,7 +6615,7 @@ void HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured(ReconfigureMod
     }
 
     m_processingPreferenceChange = true;
-    m_configureTextTracksTask.cancelTask();
+    m_configureTextTracksTask.cancel();
     if (mode == Immediately) {
         Ref<HTMLMediaElement> protectedThis(*this); // configureTextTracks calls methods that can trigger arbitrary DOM mutations.
         configureTextTracks();
@@ -7157,7 +7136,7 @@ void HTMLMediaElement::mediaPlayerBufferedTimeRangesChanged()
 
     auto logSiteIdentifier = LOGIDENTIFIER;
     ALWAYS_LOG(logSiteIdentifier, "task scheduled");
-    m_bufferedTimeRangesChangedTask.scheduleTask([this, logSiteIdentifier] {
+    m_bufferedTimeRangesChangedTask = queueCancellableTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this, logSiteIdentifier] {
         UNUSED_PARAM(logSiteIdentifier);
         ALWAYS_LOG(logSiteIdentifier, "lambda(), task fired");
         if (!m_player || !m_textTracks)
@@ -7788,7 +7767,7 @@ void HTMLMediaElement::scheduleUpdateMediaState()
 
     auto logSiteIdentifier = LOGIDENTIFIER;
     ALWAYS_LOG(logSiteIdentifier, "task scheduled");
-    m_updateMediaStateTask.scheduleTask([this, logSiteIdentifier] {
+    m_updateMediaStateTask = queueCancellableTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this, logSiteIdentifier] {
         UNUSED_PARAM(logSiteIdentifier);
         ALWAYS_LOG(logSiteIdentifier, "lambda(), task fired");
         Ref<HTMLMediaElement> protectedThis(*this); // updateMediaState calls methods that can trigger arbitrary DOM mutations.
@@ -8062,14 +8041,13 @@ void HTMLMediaElement::playbackControlsManagerBehaviorRestrictionsTimerFired()
     if (!mediaSession().hasBehaviorRestriction(MediaElementSession::RequireUserGestureToControlControlsManager))
         return;
 
-    RefPtr<HTMLMediaElement> protectedThis(this);
-    m_playbackControlsManagerBehaviorRestrictionsTask.scheduleTask([protectedThis] () {
-        auto& mediaElementSession = protectedThis->mediaSession();
-        if (protectedThis->isPlaying() || mediaElementSession.state() == PlatformMediaSession::Autoplaying || mediaElementSession.state() == PlatformMediaSession::Playing)
+    m_playbackControlsManagerBehaviorRestrictionsTask = queueCancellableTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this] () {
+        auto& mediaElementSession = mediaSession();
+        if (isPlaying() || mediaElementSession.state() == PlatformMediaSession::Autoplaying || mediaElementSession.state() == PlatformMediaSession::Playing)
             return;
 
         mediaElementSession.addBehaviorRestriction(MediaElementSession::RequirePlaybackToControlControlsManager);
-        protectedThis->schedulePlaybackControlsManagerUpdate();
+        schedulePlaybackControlsManagerUpdate();
     });
 }
 

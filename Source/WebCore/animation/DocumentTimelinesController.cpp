@@ -43,8 +43,7 @@
 namespace WebCore {
 
 DocumentTimelinesController::DocumentTimelinesController(Document& document)
-    : m_currentTimeClearingTask(&document)
-    , m_document(document)
+    : m_document(document)
 {
     if (auto* page = document.page()) {
         if (page->settings().hiddenPageCSSAnimationSuspensionEnabled() && !page->isVisible())
@@ -54,6 +53,7 @@ DocumentTimelinesController::DocumentTimelinesController(Document& document)
 
 DocumentTimelinesController::~DocumentTimelinesController()
 {
+    m_currentTimeClearingTask.cancel();
 }
 
 void DocumentTimelinesController::addTimeline(DocumentTimeline& timeline)
@@ -73,7 +73,7 @@ void DocumentTimelinesController::removeTimeline(DocumentTimeline& timeline)
 
 void DocumentTimelinesController::detachFromDocument()
 {
-    m_currentTimeClearingTask.close();
+    m_currentTimeClearingTask.cancel();
 
     while (!m_timelines.computesEmpty())
         m_timelines.begin()->detachFromDocument();
@@ -233,8 +233,11 @@ void DocumentTimelinesController::cacheCurrentTime(ReducedResolutionSeconds newC
     // animations, so we schedule the invalidation task and register a whenIdle callback on the VM, which will
     // fire syncronously if no JS is running.
     m_waitingOnVMIdle = true;
-    if (!m_currentTimeClearingTask.isPending())
-        m_currentTimeClearingTask.scheduleTask(std::bind(&DocumentTimelinesController::maybeClearCachedCurrentTime, this));
+    if (!m_currentTimeClearingTask.isPending()) {
+        CancellableTask task(std::bind(&DocumentTimelinesController::maybeClearCachedCurrentTime, this));
+        m_currentTimeClearingTask = task.createHandle();
+        m_document.eventLoop().queueTask(TaskSource::InternalAsyncTask, WTFMove(task));
+    }
     // We extent the associated Document's lifecycle until the VM became idle since the DocumentTimelinesController
     // is owned by the Document.
     m_document.vm().whenIdle([this, protectedDocument = makeRefPtr(m_document)]() {

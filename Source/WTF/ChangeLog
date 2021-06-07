@@ -1,3 +1,29 @@
+2021-06-06  Chris Dumez  <cdumez@apple.com>
+
+        Stop using legacy EventLoopDeferrableTask
+        https://bugs.webkit.org/show_bug.cgi?id=226700
+
+        Reviewed by Darin Adler.
+
+        Introduce new WTF::CancellableTask type which is a wrapper around a WTF::Function.
+        It can create a handle for the task and this handle can be used to check if the
+        task is still pending and to cancel it. This is useful when scheduling tasks in the
+        event loop for example as there are cases where we need to know if a task we
+        scheduled is still pending (to avoid double scheduling) or where we need to cancel
+        a previously scheduled task.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/CancellableTask.h: Added.
+        (WTF::CancellableTask::CancellableTask):
+        (WTF::CancellableTask::operator()):
+        (WTF::CancellableTask::isPending const):
+        (WTF::CancellableTask::cancel):
+        (WTF::CancellableTask::Handle::Handle):
+        (WTF::CancellableTask::Handle::isPending const):
+        (WTF::CancellableTask::Handle::cancel):
+        (WTF::CancellableTask::createHandle):
+
 2021-06-04  Chris Dumez  <cdumez@apple.com>
 
         FileSystem::readFromFile() should return data as `void*`
