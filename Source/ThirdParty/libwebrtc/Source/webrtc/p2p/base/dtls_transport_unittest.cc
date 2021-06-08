@@ -52,7 +52,7 @@ void SetRemoteFingerprintFromCert(
   std::unique_ptr<rtc::SSLFingerprint> fingerprint =
       rtc::SSLFingerprint::CreateFromCertificate(*cert);
   if (modify_digest) {
-    ++fingerprint->digest[0];
+    ++fingerprint->digest.MutableData()[0];
   }
   // Even if digest is verified to be incorrect, should fail asynchrnously.
   EXPECT_TRUE(transport->SetRemoteFingerprint(
@@ -86,10 +86,9 @@ class DtlsTestClient : public sigslot::has_slots<> {
     fake_ice_transport_->SignalReadPacket.connect(
         this, &DtlsTestClient::OnFakeIceTransportReadPacket);
 
-    dtls_transport_ = std::make_unique<DtlsTransport>(fake_ice_transport_.get(),
-                                                      webrtc::CryptoOptions(),
-                                                      /*event_log=*/nullptr);
-    dtls_transport_->SetSslMaxProtocolVersion(ssl_max_version_);
+    dtls_transport_ = std::make_unique<DtlsTransport>(
+        fake_ice_transport_.get(), webrtc::CryptoOptions(),
+        /*event_log=*/nullptr, ssl_max_version_);
     // Note: Certificate may be null here if testing passthrough.
     dtls_transport_->SetLocalCertificate(certificate_);
     dtls_transport_->SignalWritableState.connect(

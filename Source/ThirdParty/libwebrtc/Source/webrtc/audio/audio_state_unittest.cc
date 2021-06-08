@@ -11,6 +11,7 @@
 #include "audio/audio_state.h"
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "call/test/mock_audio_send_stream.h"
@@ -26,28 +27,105 @@ namespace {
 
 using ::testing::_;
 using ::testing::Matcher;
+using ::testing::NiceMock;
+using ::testing::StrictMock;
+using ::testing::Values;
 
 constexpr int kSampleRate = 16000;
 constexpr int kNumberOfChannels = 1;
 
+struct FakeAsyncAudioProcessingHelper {
+  class FakeTaskQueue : public StrictMock<TaskQueueBase> {
+   public:
+    FakeTaskQueue() = default;
+
+    void Delete() override { delete this; }
+    void PostTask(std::unique_ptr<QueuedTask> task) override {
+      std::move(task)->Run();
+    }
+    MOCK_METHOD(void,
+                PostDelayedTask,
+                (std::unique_ptr<QueuedTask> task, uint32_t milliseconds),
+                (override));
+  };
+
+  class FakeTaskQueueFactory : public TaskQueueFactory {
+   public:
+    FakeTaskQueueFactory() = default;
+    ~FakeTaskQueueFactory() override = default;
+    std::unique_ptr<TaskQueueBase, TaskQueueDeleter> CreateTaskQueue(
+        absl::string_view name,
+        Priority priority) const override {
+      return std::unique_ptr<webrtc::TaskQueueBase, webrtc::TaskQueueDeleter>(
+          new FakeTaskQueue());
+    }
+  };
+
+  class MockAudioFrameProcessor : public AudioFrameProcessor {
+   public:
+    ~MockAudioFrameProcessor() override = default;
+
+    MOCK_METHOD(void, ProcessCalled, ());
+    MOCK_METHOD(void, SinkSet, ());
+    MOCK_METHOD(void, SinkCleared, ());
+
+    void Process(std::unique_ptr<AudioFrame> frame) override {
+      ProcessCalled();
+      sink_callback_(std::move(frame));
+    }
+
+    void SetSink(OnAudioFrameCallback sink_callback) override {
+      sink_callback_ = std::move(sink_callback);
+      if (sink_callback_ == nullptr)
+        SinkCleared();
+      else
+        SinkSet();
+    }
+
+   private:
+    OnAudioFrameCallback sink_callback_;
+  };
+
+  NiceMock<MockAudioFrameProcessor> audio_frame_processor_;
+  FakeTaskQueueFactory task_queue_factory_;
+
+  rtc::scoped_refptr<AsyncAudioProcessing::Factory> CreateFactory() {
+    return rtc::make_ref_counted<AsyncAudioProcessing::Factory>(
+        audio_frame_processor_, task_queue_factory_);
+  }
+};
+
 struct ConfigHelper {
-  explicit ConfigHelper(bool use_null_audio_processing)
+  struct Params {
+    bool use_null_audio_processing;
+    bool use_async_audio_processing;
+  };
+
+  explicit ConfigHelper(const Params& params)
       : audio_mixer(AudioMixerImpl::Create()) {
     audio_state_config.audio_mixer = audio_mixer;
     audio_state_config.audio_processing =
-        use_null_audio_processing
+        params.use_null_audio_processing
             ? nullptr
-            : new rtc::RefCountedObject<
-                  testing::NiceMock<MockAudioProcessing>>();
+            : rtc::make_ref_counted<testing::NiceMock<MockAudioProcessing>>();
     audio_state_config.audio_device_module =
-        new rtc::RefCountedObject<MockAudioDeviceModule>();
+        rtc::make_ref_counted<NiceMock<MockAudioDeviceModule>>();
+    if (params.use_async_audio_processing) {
+      audio_state_config.async_audio_processing_factory =
+          async_audio_processing_helper_.CreateFactory();
+    }
   }
   AudioState::Config& config() { return audio_state_config; }
   rtc::scoped_refptr<AudioMixer> mixer() { return audio_mixer; }
+  NiceMock<FakeAsyncAudioProcessingHelper::MockAudioFrameProcessor>&
+  mock_audio_frame_processor() {
+    return async_audio_processing_helper_.audio_frame_processor_;
+  }
 
  private:
   AudioState::Config audio_state_config;
   rtc::scoped_refptr<AudioMixer> audio_mixer;
+  FakeAsyncAudioProcessingHelper async_audio_processing_helper_;
 };
 
 class FakeAudioSource : public AudioMixer::Source {
@@ -93,184 +171,200 @@ std::vector<uint32_t> ComputeChannelLevels(AudioFrame* audio_frame) {
 }
 }  // namespace
 
-TEST(AudioStateTest, Create) {
-  for (bool use_null_audio_processing : {false, true}) {
-    ConfigHelper helper(use_null_audio_processing);
-    auto audio_state = AudioState::Create(helper.config());
-    EXPECT_TRUE(audio_state.get());
-  }
+class AudioStateTest : public ::testing::TestWithParam<ConfigHelper::Params> {};
+
+TEST_P(AudioStateTest, Create) {
+  ConfigHelper helper(GetParam());
+  auto audio_state = AudioState::Create(helper.config());
+  EXPECT_TRUE(audio_state.get());
 }
 
-TEST(AudioStateTest, ConstructDestruct) {
-  for (bool use_null_audio_processing : {false, true}) {
-    ConfigHelper helper(use_null_audio_processing);
-    rtc::scoped_refptr<internal::AudioState> audio_state(
-        new rtc::RefCountedObject<internal::AudioState>(helper.config()));
-  }
+TEST_P(AudioStateTest, ConstructDestruct) {
+  ConfigHelper helper(GetParam());
+  rtc::scoped_refptr<internal::AudioState> audio_state(
+      rtc::make_ref_counted<internal::AudioState>(helper.config()));
 }
 
-TEST(AudioStateTest, RecordedAudioArrivesAtSingleStream) {
-  for (bool use_null_audio_processing : {false, true}) {
-    ConfigHelper helper(use_null_audio_processing);
-    rtc::scoped_refptr<internal::AudioState> audio_state(
-        new rtc::RefCountedObject<internal::AudioState>(helper.config()));
+TEST_P(AudioStateTest, RecordedAudioArrivesAtSingleStream) {
+  ConfigHelper helper(GetParam());
 
-    MockAudioSendStream stream;
-    audio_state->AddSendingStream(&stream, 8000, 2);
-
-    EXPECT_CALL(
-        stream,
-        SendAudioDataForMock(::testing::AllOf(
-            ::testing::Field(&AudioFrame::sample_rate_hz_, ::testing::Eq(8000)),
-            ::testing::Field(&AudioFrame::num_channels_, ::testing::Eq(2u)))))
-        .WillOnce(
-            // Verify that channels are not swapped by default.
-            ::testing::Invoke([](AudioFrame* audio_frame) {
-              auto levels = ComputeChannelLevels(audio_frame);
-              EXPECT_LT(0u, levels[0]);
-              EXPECT_EQ(0u, levels[1]);
-            }));
-    MockAudioProcessing* ap = use_null_audio_processing
-                                  ? nullptr
-                                  : static_cast<MockAudioProcessing*>(
-                                        audio_state->audio_processing());
-    if (ap) {
-      EXPECT_CALL(*ap, set_stream_delay_ms(0));
-      EXPECT_CALL(*ap, set_stream_key_pressed(false));
-      EXPECT_CALL(*ap, ProcessStream(_, _, _, Matcher<int16_t*>(_)));
-    }
-
-    constexpr int kSampleRate = 16000;
-    constexpr size_t kNumChannels = 2;
-    auto audio_data = Create10msTestData(kSampleRate, kNumChannels);
-    uint32_t new_mic_level = 667;
-    audio_state->audio_transport()->RecordedDataIsAvailable(
-        &audio_data[0], kSampleRate / 100, kNumChannels * 2, kNumChannels,
-        kSampleRate, 0, 0, 0, false, new_mic_level);
-    EXPECT_EQ(667u, new_mic_level);
-
-    audio_state->RemoveSendingStream(&stream);
+  if (GetParam().use_async_audio_processing) {
+    EXPECT_CALL(helper.mock_audio_frame_processor(), SinkSet);
+    EXPECT_CALL(helper.mock_audio_frame_processor(), ProcessCalled);
+    EXPECT_CALL(helper.mock_audio_frame_processor(), SinkCleared);
   }
+
+  rtc::scoped_refptr<internal::AudioState> audio_state(
+      rtc::make_ref_counted<internal::AudioState>(helper.config()));
+
+  MockAudioSendStream stream;
+  audio_state->AddSendingStream(&stream, 8000, 2);
+
+  EXPECT_CALL(
+      stream,
+      SendAudioDataForMock(::testing::AllOf(
+          ::testing::Field(&AudioFrame::sample_rate_hz_, ::testing::Eq(8000)),
+          ::testing::Field(&AudioFrame::num_channels_, ::testing::Eq(2u)))))
+      .WillOnce(
+          // Verify that channels are not swapped by default.
+          ::testing::Invoke([](AudioFrame* audio_frame) {
+            auto levels = ComputeChannelLevels(audio_frame);
+            EXPECT_LT(0u, levels[0]);
+            EXPECT_EQ(0u, levels[1]);
+          }));
+  MockAudioProcessing* ap =
+      GetParam().use_null_audio_processing
+          ? nullptr
+          : static_cast<MockAudioProcessing*>(audio_state->audio_processing());
+  if (ap) {
+    EXPECT_CALL(*ap, set_stream_delay_ms(0));
+    EXPECT_CALL(*ap, set_stream_key_pressed(false));
+    EXPECT_CALL(*ap, ProcessStream(_, _, _, Matcher<int16_t*>(_)));
+  }
+
+  constexpr int kSampleRate = 16000;
+  constexpr size_t kNumChannels = 2;
+  auto audio_data = Create10msTestData(kSampleRate, kNumChannels);
+  uint32_t new_mic_level = 667;
+  audio_state->audio_transport()->RecordedDataIsAvailable(
+      &audio_data[0], kSampleRate / 100, kNumChannels * 2, kNumChannels,
+      kSampleRate, 0, 0, 0, false, new_mic_level);
+  EXPECT_EQ(667u, new_mic_level);
+
+  audio_state->RemoveSendingStream(&stream);
 }
 
-TEST(AudioStateTest, RecordedAudioArrivesAtMultipleStreams) {
-  for (bool use_null_audio_processing : {false, true}) {
-    ConfigHelper helper(use_null_audio_processing);
-    rtc::scoped_refptr<internal::AudioState> audio_state(
-        new rtc::RefCountedObject<internal::AudioState>(helper.config()));
+TEST_P(AudioStateTest, RecordedAudioArrivesAtMultipleStreams) {
+  ConfigHelper helper(GetParam());
 
-    MockAudioSendStream stream_1;
-    MockAudioSendStream stream_2;
-    audio_state->AddSendingStream(&stream_1, 8001, 2);
-    audio_state->AddSendingStream(&stream_2, 32000, 1);
-
-    EXPECT_CALL(
-        stream_1,
-        SendAudioDataForMock(::testing::AllOf(
-            ::testing::Field(&AudioFrame::sample_rate_hz_,
-                             ::testing::Eq(16000)),
-            ::testing::Field(&AudioFrame::num_channels_, ::testing::Eq(1u)))))
-        .WillOnce(
-            // Verify that there is output signal.
-            ::testing::Invoke([](AudioFrame* audio_frame) {
-              auto levels = ComputeChannelLevels(audio_frame);
-              EXPECT_LT(0u, levels[0]);
-            }));
-    EXPECT_CALL(
-        stream_2,
-        SendAudioDataForMock(::testing::AllOf(
-            ::testing::Field(&AudioFrame::sample_rate_hz_,
-                             ::testing::Eq(16000)),
-            ::testing::Field(&AudioFrame::num_channels_, ::testing::Eq(1u)))))
-        .WillOnce(
-            // Verify that there is output signal.
-            ::testing::Invoke([](AudioFrame* audio_frame) {
-              auto levels = ComputeChannelLevels(audio_frame);
-              EXPECT_LT(0u, levels[0]);
-            }));
-    MockAudioProcessing* ap =
-        static_cast<MockAudioProcessing*>(audio_state->audio_processing());
-    if (ap) {
-      EXPECT_CALL(*ap, set_stream_delay_ms(5));
-      EXPECT_CALL(*ap, set_stream_key_pressed(true));
-      EXPECT_CALL(*ap, ProcessStream(_, _, _, Matcher<int16_t*>(_)));
-    }
-
-    constexpr int kSampleRate = 16000;
-    constexpr size_t kNumChannels = 1;
-    auto audio_data = Create10msTestData(kSampleRate, kNumChannels);
-    uint32_t new_mic_level = 667;
-    audio_state->audio_transport()->RecordedDataIsAvailable(
-        &audio_data[0], kSampleRate / 100, kNumChannels * 2, kNumChannels,
-        kSampleRate, 5, 0, 0, true, new_mic_level);
-    EXPECT_EQ(667u, new_mic_level);
-
-    audio_state->RemoveSendingStream(&stream_1);
-    audio_state->RemoveSendingStream(&stream_2);
+  if (GetParam().use_async_audio_processing) {
+    EXPECT_CALL(helper.mock_audio_frame_processor(), SinkSet);
+    EXPECT_CALL(helper.mock_audio_frame_processor(), ProcessCalled);
+    EXPECT_CALL(helper.mock_audio_frame_processor(), SinkCleared);
   }
+
+  rtc::scoped_refptr<internal::AudioState> audio_state(
+      rtc::make_ref_counted<internal::AudioState>(helper.config()));
+
+  MockAudioSendStream stream_1;
+  MockAudioSendStream stream_2;
+  audio_state->AddSendingStream(&stream_1, 8001, 2);
+  audio_state->AddSendingStream(&stream_2, 32000, 1);
+
+  EXPECT_CALL(
+      stream_1,
+      SendAudioDataForMock(::testing::AllOf(
+          ::testing::Field(&AudioFrame::sample_rate_hz_, ::testing::Eq(16000)),
+          ::testing::Field(&AudioFrame::num_channels_, ::testing::Eq(1u)))))
+      .WillOnce(
+          // Verify that there is output signal.
+          ::testing::Invoke([](AudioFrame* audio_frame) {
+            auto levels = ComputeChannelLevels(audio_frame);
+            EXPECT_LT(0u, levels[0]);
+          }));
+  EXPECT_CALL(
+      stream_2,
+      SendAudioDataForMock(::testing::AllOf(
+          ::testing::Field(&AudioFrame::sample_rate_hz_, ::testing::Eq(16000)),
+          ::testing::Field(&AudioFrame::num_channels_, ::testing::Eq(1u)))))
+      .WillOnce(
+          // Verify that there is output signal.
+          ::testing::Invoke([](AudioFrame* audio_frame) {
+            auto levels = ComputeChannelLevels(audio_frame);
+            EXPECT_LT(0u, levels[0]);
+          }));
+  MockAudioProcessing* ap =
+      static_cast<MockAudioProcessing*>(audio_state->audio_processing());
+  if (ap) {
+    EXPECT_CALL(*ap, set_stream_delay_ms(5));
+    EXPECT_CALL(*ap, set_stream_key_pressed(true));
+    EXPECT_CALL(*ap, ProcessStream(_, _, _, Matcher<int16_t*>(_)));
+  }
+
+  constexpr int kSampleRate = 16000;
+  constexpr size_t kNumChannels = 1;
+  auto audio_data = Create10msTestData(kSampleRate, kNumChannels);
+  uint32_t new_mic_level = 667;
+  audio_state->audio_transport()->RecordedDataIsAvailable(
+      &audio_data[0], kSampleRate / 100, kNumChannels * 2, kNumChannels,
+      kSampleRate, 5, 0, 0, true, new_mic_level);
+  EXPECT_EQ(667u, new_mic_level);
+
+  audio_state->RemoveSendingStream(&stream_1);
+  audio_state->RemoveSendingStream(&stream_2);
 }
 
-TEST(AudioStateTest, EnableChannelSwap) {
+TEST_P(AudioStateTest, EnableChannelSwap) {
   constexpr int kSampleRate = 16000;
   constexpr size_t kNumChannels = 2;
 
-  for (bool use_null_audio_processing : {false, true}) {
-    ConfigHelper helper(use_null_audio_processing);
-    rtc::scoped_refptr<internal::AudioState> audio_state(
-        new rtc::RefCountedObject<internal::AudioState>(helper.config()));
+  ConfigHelper helper(GetParam());
 
-    audio_state->SetStereoChannelSwapping(true);
-
-    MockAudioSendStream stream;
-    audio_state->AddSendingStream(&stream, kSampleRate, kNumChannels);
-
-    EXPECT_CALL(stream, SendAudioDataForMock(_))
-        .WillOnce(
-            // Verify that channels are swapped.
-            ::testing::Invoke([](AudioFrame* audio_frame) {
-              auto levels = ComputeChannelLevels(audio_frame);
-              EXPECT_EQ(0u, levels[0]);
-              EXPECT_LT(0u, levels[1]);
-            }));
-
-    auto audio_data = Create10msTestData(kSampleRate, kNumChannels);
-    uint32_t new_mic_level = 667;
-    audio_state->audio_transport()->RecordedDataIsAvailable(
-        &audio_data[0], kSampleRate / 100, kNumChannels * 2, kNumChannels,
-        kSampleRate, 0, 0, 0, false, new_mic_level);
-    EXPECT_EQ(667u, new_mic_level);
-
-    audio_state->RemoveSendingStream(&stream);
+  if (GetParam().use_async_audio_processing) {
+    EXPECT_CALL(helper.mock_audio_frame_processor(), SinkSet);
+    EXPECT_CALL(helper.mock_audio_frame_processor(), ProcessCalled);
+    EXPECT_CALL(helper.mock_audio_frame_processor(), SinkCleared);
   }
+
+  rtc::scoped_refptr<internal::AudioState> audio_state(
+      rtc::make_ref_counted<internal::AudioState>(helper.config()));
+
+  audio_state->SetStereoChannelSwapping(true);
+
+  MockAudioSendStream stream;
+  audio_state->AddSendingStream(&stream, kSampleRate, kNumChannels);
+
+  EXPECT_CALL(stream, SendAudioDataForMock(_))
+      .WillOnce(
+          // Verify that channels are swapped.
+          ::testing::Invoke([](AudioFrame* audio_frame) {
+            auto levels = ComputeChannelLevels(audio_frame);
+            EXPECT_EQ(0u, levels[0]);
+            EXPECT_LT(0u, levels[1]);
+          }));
+
+  auto audio_data = Create10msTestData(kSampleRate, kNumChannels);
+  uint32_t new_mic_level = 667;
+  audio_state->audio_transport()->RecordedDataIsAvailable(
+      &audio_data[0], kSampleRate / 100, kNumChannels * 2, kNumChannels,
+      kSampleRate, 0, 0, 0, false, new_mic_level);
+  EXPECT_EQ(667u, new_mic_level);
+
+  audio_state->RemoveSendingStream(&stream);
 }
 
-TEST(AudioStateTest,
-     QueryingTransportForAudioShouldResultInGetAudioCallOnMixerSource) {
-  for (bool use_null_audio_processing : {false, true}) {
-    ConfigHelper helper(use_null_audio_processing);
-    auto audio_state = AudioState::Create(helper.config());
+TEST_P(AudioStateTest,
+       QueryingTransportForAudioShouldResultInGetAudioCallOnMixerSource) {
+  ConfigHelper helper(GetParam());
+  auto audio_state = AudioState::Create(helper.config());
 
-    FakeAudioSource fake_source;
-    helper.mixer()->AddSource(&fake_source);
+  FakeAudioSource fake_source;
+  helper.mixer()->AddSource(&fake_source);
 
-    EXPECT_CALL(fake_source, GetAudioFrameWithInfo(_, _))
-        .WillOnce(
-            ::testing::Invoke([](int sample_rate_hz, AudioFrame* audio_frame) {
-              audio_frame->sample_rate_hz_ = sample_rate_hz;
-              audio_frame->samples_per_channel_ = sample_rate_hz / 100;
-              audio_frame->num_channels_ = kNumberOfChannels;
-              return AudioMixer::Source::AudioFrameInfo::kNormal;
-            }));
+  EXPECT_CALL(fake_source, GetAudioFrameWithInfo(_, _))
+      .WillOnce(
+          ::testing::Invoke([](int sample_rate_hz, AudioFrame* audio_frame) {
+            audio_frame->sample_rate_hz_ = sample_rate_hz;
+            audio_frame->samples_per_channel_ = sample_rate_hz / 100;
+            audio_frame->num_channels_ = kNumberOfChannels;
+            return AudioMixer::Source::AudioFrameInfo::kNormal;
+          }));
 
-    int16_t audio_buffer[kSampleRate / 100 * kNumberOfChannels];
-    size_t n_samples_out;
-    int64_t elapsed_time_ms;
-    int64_t ntp_time_ms;
-    audio_state->audio_transport()->NeedMorePlayData(
-        kSampleRate / 100, kNumberOfChannels * 2, kNumberOfChannels,
-        kSampleRate, audio_buffer, n_samples_out, &elapsed_time_ms,
-        &ntp_time_ms);
-  }
+  int16_t audio_buffer[kSampleRate / 100 * kNumberOfChannels];
+  size_t n_samples_out;
+  int64_t elapsed_time_ms;
+  int64_t ntp_time_ms;
+  audio_state->audio_transport()->NeedMorePlayData(
+      kSampleRate / 100, kNumberOfChannels * 2, kNumberOfChannels, kSampleRate,
+      audio_buffer, n_samples_out, &elapsed_time_ms, &ntp_time_ms);
 }
+
+INSTANTIATE_TEST_SUITE_P(AudioStateTest,
+                         AudioStateTest,
+                         Values(ConfigHelper::Params({false, false}),
+                                ConfigHelper::Params({true, false}),
+                                ConfigHelper::Params({false, true}),
+                                ConfigHelper::Params({true, true})));
+
 }  // namespace test
 }  // namespace webrtc

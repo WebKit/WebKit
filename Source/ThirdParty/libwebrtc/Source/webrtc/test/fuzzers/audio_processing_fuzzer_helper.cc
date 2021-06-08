@@ -16,6 +16,7 @@
 #include <limits>
 
 #include "api/audio/audio_frame.h"
+#include "modules/audio_processing/include/audio_frame_proxies.h"
 #include "modules/audio_processing/include/audio_processing.h"
 #include "rtc_base/checks.h"
 
@@ -130,9 +131,9 @@ void FuzzAudioProcessing(test::FuzzDataHelper* fuzz_data,
       GenerateFixedFrame(fuzz_data, input_rate, num_channels, &fixed_frame);
 
       if (is_capture) {
-        apm_return_code = apm->ProcessStream(&fixed_frame);
+        apm_return_code = ProcessAudioFrame(apm.get(), &fixed_frame);
       } else {
-        apm_return_code = apm->ProcessReverseStream(&fixed_frame);
+        apm_return_code = ProcessReverseAudioFrame(apm.get(), &fixed_frame);
       }
     }
 

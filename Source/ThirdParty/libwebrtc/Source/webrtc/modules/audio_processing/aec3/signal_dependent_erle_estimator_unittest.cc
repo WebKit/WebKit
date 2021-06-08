@@ -172,7 +172,7 @@ TEST_P(SignalDependentErleEstimatorMultiChannel, SweepSettings) {
           for (size_t n = 0; n < 10; ++n) {
             inputs.Update();
             s.Update(inputs.GetRenderBuffer(), inputs.GetH2(), inputs.GetX2(),
-                     inputs.GetY2(), inputs.GetE2(), average_erle,
+                     inputs.GetY2(), inputs.GetE2(), average_erle, average_erle,
                      inputs.GetConvergedFilters());
           }
         }
@@ -201,7 +201,7 @@ TEST_P(SignalDependentErleEstimatorMultiChannel, LongerRun) {
   for (size_t n = 0; n < 200; ++n) {
     inputs.Update();
     s.Update(inputs.GetRenderBuffer(), inputs.GetH2(), inputs.GetX2(),
-             inputs.GetY2(), inputs.GetE2(), average_erle,
+             inputs.GetY2(), inputs.GetE2(), average_erle, average_erle,
              inputs.GetConvergedFilters());
   }
 }

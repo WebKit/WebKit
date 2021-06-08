@@ -97,9 +97,6 @@ max-line-length=80
 # Maximum number of lines in a module
 max-module-lines=1000
 
-# We use two spaces for indents, instead of the usual four spaces or tab.
-indent-string='  '
-
 
 [BASIC]
 

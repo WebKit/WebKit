@@ -32,7 +32,8 @@ namespace webrtc {
 // window using criteria provided by application specific
 // FullScreenApplicationHandler.
 
-class FullScreenWindowDetector : public rtc::RefCountedBase {
+class FullScreenWindowDetector
+    : public rtc::RefCountedNonVirtual<FullScreenWindowDetector> {
  public:
   using ApplicationHandlerFactory =
       std::function<std::unique_ptr<FullScreenApplicationHandler>(

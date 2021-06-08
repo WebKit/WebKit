@@ -160,9 +160,6 @@ using AudioBweIntegrationTest = CallTest;
 // TODO(tschumim): This test is flaky when run on android and mac. Re-enable the
 // test for when the issue is fixed.
 TEST_F(AudioBweIntegrationTest, DISABLED_NoBandwidthDropAfterDtx) {
-  webrtc::test::ScopedFieldTrials override_field_trials(
-      "WebRTC-Audio-SendSideBwe/Enabled/"
-      "WebRTC-SendSideBwe-WithOverhead/Enabled/");
   NoBandwidthDropAfterDtx test;
   RunBaseTest(&test);
 }

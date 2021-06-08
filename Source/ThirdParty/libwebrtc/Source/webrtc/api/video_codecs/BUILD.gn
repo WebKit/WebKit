@@ -15,6 +15,8 @@ if (is_android) {
 rtc_library("video_codecs_api") {
   visibility = [ "*" ]
   sources = [
+    "h264_profile_level_id.cc",
+    "h264_profile_level_id.h",
     "sdp_video_format.cc",
     "sdp_video_format.h",
     "spatial_layer.cc",
@@ -23,7 +25,6 @@ rtc_library("video_codecs_api") {
     "video_codec.h",
     "video_decoder.cc",
     "video_decoder.h",
-    "video_decoder_factory.cc",
     "video_decoder_factory.h",
     "video_encoder.cc",
     "video_encoder.h",
@@ -35,11 +36,14 @@ rtc_library("video_codecs_api") {
     "vp8_frame_config.h",
     "vp8_temporal_layers.cc",
     "vp8_temporal_layers.h",
+    "vp9_profile.cc",
+    "vp9_profile.h",
   ]
 
   deps = [
     "..:fec_controller_api",
     "..:scoped_refptr",
+    "../../api:array_view",
     "../../modules/video_coding:codec_globals_headers",
     "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
@@ -137,8 +141,7 @@ rtc_library("rtc_software_fallback_wrappers") {
   deps = [
     ":video_codecs_api",
     "..:fec_controller_api",
-    "../../api/video:video_frame_i420",
-    "../../media:rtc_h264_profile_id",
+    "../../api/video:video_frame",
     "../../media:rtc_media_base",
     "../../modules/video_coding:video_codec_interface",
     "../../modules/video_coding:video_coding_utility",

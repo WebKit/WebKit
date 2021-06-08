@@ -10,7 +10,7 @@
 
 #import "ARDAppEngineClient.h"
 
-#import <WebRTC/RTCLogging.h>
+#import "sdk/objc/base/RTCLogging.h"
 
 #import "ARDJoinResponse.h"
 #import "ARDMessageResponse.h"

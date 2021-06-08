@@ -17,10 +17,10 @@
 #include <memory>
 #include <vector>
 
+#include "api/sequence_checker.h"
 #include "modules/video_capture/video_capture_impl.h"
 #include "modules/video_capture/windows/help_functions_ds.h"
 #include "rtc_base/thread_annotations.h"
-#include "rtc_base/thread_checker.h"
 
 namespace webrtc {
 namespace videocapturemodule {
@@ -89,8 +89,8 @@ class CaptureInputPin : public IMemInputPin, public IPin {
   STDMETHOD(ReceiveCanBlock)() override;
   // clang-format on
 
-  rtc::ThreadChecker main_checker_;
-  rtc::ThreadChecker capture_checker_;
+  SequenceChecker main_checker_;
+  SequenceChecker capture_checker_;
 
   VideoCaptureCapability requested_capability_ RTC_GUARDED_BY(main_checker_);
   // Accessed on the main thread when Filter()->IsStopped() (capture thread not
@@ -147,7 +147,7 @@ class CaptureSinkFilter : public IBaseFilter {
   virtual ~CaptureSinkFilter();
 
  private:
-  rtc::ThreadChecker main_checker_;
+  SequenceChecker main_checker_;
   const rtc::scoped_refptr<ComRefCount<CaptureInputPin>> input_pin_;
   VideoCaptureImpl* const capture_observer_;
   FILTER_INFO info_ RTC_GUARDED_BY(main_checker_) = {};

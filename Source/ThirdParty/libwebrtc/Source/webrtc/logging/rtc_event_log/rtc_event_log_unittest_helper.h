@@ -45,6 +45,7 @@
 #include "logging/rtc_event_log/rtc_event_log_parser.h"
 #include "logging/rtc_event_log/rtc_stream_config.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
+#include "modules/rtp_rtcp/source/rtcp_packet/bye.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/extended_reports.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/fir.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/loss_notification.h"
@@ -93,6 +94,7 @@ class EventGenerator {
   rtcp::Remb NewRemb();
   rtcp::Fir NewFir();
   rtcp::Pli NewPli();
+  rtcp::Bye NewBye();
   rtcp::TransportFeedback NewTransportFeedback();
   rtcp::LossNotification NewLossNotification();
 
@@ -275,6 +277,9 @@ class EventVerifier {
   void VerifyLoggedPli(int64_t log_time_us,
                        const rtcp::Pli& original_pli,
                        const LoggedRtcpPacketPli& logged_pli);
+  void VerifyLoggedBye(int64_t log_time_us,
+                       const rtcp::Bye& original_bye,
+                       const LoggedRtcpPacketBye& logged_bye);
   void VerifyLoggedNack(int64_t log_time_us,
                         const rtcp::Nack& original_nack,
                         const LoggedRtcpPacketNack& logged_nack);

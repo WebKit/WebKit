@@ -36,6 +36,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.appspot.apprtc.AppRTCClient.SignalingParameters;
 import org.appspot.apprtc.RecordedAudioToFileController;
+import org.webrtc.AddIceObserver;
 import org.webrtc.AudioSource;
 import org.webrtc.AudioTrack;
 import org.webrtc.CameraVideoCapturer;
@@ -94,6 +95,8 @@ public class PeerConnectionClient {
   private static final String VIDEO_CODEC_H264 = "H264";
   private static final String VIDEO_CODEC_H264_BASELINE = "H264 Baseline";
   private static final String VIDEO_CODEC_H264_HIGH = "H264 High";
+  private static final String VIDEO_CODEC_AV1 = "AV1";
+  private static final String VIDEO_CODEC_AV1_SDP_CODEC_NAME = "AV1X";
   private static final String AUDIO_CODEC_OPUS = "opus";
   private static final String AUDIO_CODEC_ISAC = "ISAC";
   private static final String VIDEO_CODEC_PARAM_START_BITRATE = "x-google-start-bitrate";
@@ -824,7 +827,16 @@ public class PeerConnectionClient {
         if (queuedRemoteCandidates != null) {
           queuedRemoteCandidates.add(candidate);
         } else {
-          peerConnection.addIceCandidate(candidate);
+          peerConnection.addIceCandidate(candidate, new AddIceObserver() {
+            @Override
+            public void onAddSuccess() {
+              Log.d(TAG, "Candidate " + candidate + " successfully added.");
+            }
+            @Override
+            public void onAddFailure(String error) {
+              Log.d(TAG, "Candidate " + candidate + " addition failed: " + error);
+            }
+          });
         }
       }
     });
@@ -976,6 +988,8 @@ public class PeerConnectionClient {
         return VIDEO_CODEC_VP8;
       case VIDEO_CODEC_VP9:
         return VIDEO_CODEC_VP9;
+      case VIDEO_CODEC_AV1:
+        return VIDEO_CODEC_AV1_SDP_CODEC_NAME;
       case VIDEO_CODEC_H264_HIGH:
       case VIDEO_CODEC_H264_BASELINE:
         return VIDEO_CODEC_H264;
@@ -1146,7 +1160,16 @@ public class PeerConnectionClient {
     if (queuedRemoteCandidates != null) {
       Log.d(TAG, "Add " + queuedRemoteCandidates.size() + " remote candidates");
       for (IceCandidate candidate : queuedRemoteCandidates) {
-        peerConnection.addIceCandidate(candidate);
+        peerConnection.addIceCandidate(candidate, new AddIceObserver() {
+          @Override
+          public void onAddSuccess() {
+            Log.d(TAG, "Candidate " + candidate + " successfully added.");
+          }
+          @Override
+          public void onAddFailure(String error) {
+            Log.d(TAG, "Candidate " + candidate + " addition failed: " + error);
+          }
+        });
       }
       queuedRemoteCandidates = null;
     }

@@ -60,7 +60,7 @@ I420Buffer::~I420Buffer() {}
 
 // static
 rtc::scoped_refptr<I420Buffer> I420Buffer::Create(int width, int height) {
-  return new rtc::RefCountedObject<I420Buffer>(width, height);
+  return rtc::make_ref_counted<I420Buffer>(width, height);
 }
 
 // static
@@ -69,8 +69,8 @@ rtc::scoped_refptr<I420Buffer> I420Buffer::Create(int width,
                                                   int stride_y,
                                                   int stride_u,
                                                   int stride_v) {
-  return new rtc::RefCountedObject<I420Buffer>(width, height, stride_y,
-                                               stride_u, stride_v);
+  return rtc::make_ref_counted<I420Buffer>(width, height, stride_y, stride_u,
+                                           stride_v);
 }
 
 // static

@@ -14,7 +14,6 @@
 #if !defined(WEBRTC_WEBKIT_BUILD)
 #include <ctype.h>
 #endif // !defined(WEBRTC_WEBKIT_BUILD)
-
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>

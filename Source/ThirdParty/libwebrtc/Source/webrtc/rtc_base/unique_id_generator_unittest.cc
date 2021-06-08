@@ -15,6 +15,7 @@
 
 #include "absl/algorithm/container.h"
 #include "api/array_view.h"
+#include "api/task_queue/task_queue_base.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/helpers.h"
 #include "test/gmock.h"
@@ -23,6 +24,21 @@ using ::testing::IsEmpty;
 using ::testing::Test;
 
 namespace rtc {
+namespace {
+// Utility class that registers itself as the currently active task queue.
+class FakeTaskQueue : public webrtc::TaskQueueBase {
+ public:
+  FakeTaskQueue() : task_queue_setter_(this) {}
+
+  void Delete() override {}
+  void PostTask(std::unique_ptr<webrtc::QueuedTask> task) override {}
+  void PostDelayedTask(std::unique_ptr<webrtc::QueuedTask> task,
+                       uint32_t milliseconds) override {}
+
+ private:
+  CurrentTaskQueueSetter task_queue_setter_;
+};
+}  // namespace
 
 template <typename Generator>
 class UniqueIdGeneratorTest : public Test {};
@@ -147,5 +163,40 @@ TYPED_TEST(UniqueIdGeneratorTest,
   Generator generator2(known_values);
   EXPECT_FALSE(generator2.AddKnownId(id));
 }
+
+// Tests that it's OK to construct the generator in one execution environment
+// (thread/task queue) but use it in another.
+TEST(UniqueNumberGenerator, UsedOnSecondaryThread) {
+  const auto* current_tq = webrtc::TaskQueueBase::Current();
+  // Construct the generator before `fake_task_queue` to ensure that it is
+  // constructed in a different execution environment than what
+  // `fake_task_queue` will represent.
+  UniqueNumberGenerator<uint32_t> generator;
+
+  FakeTaskQueue fake_task_queue;
+  // Sanity check to make sure we're in a different runtime environment.
+  ASSERT_NE(current_tq, webrtc::TaskQueueBase::Current());
+
+  // Generating an id should be fine in this context.
+  generator.GenerateNumber();
+}
+
+#if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
+TEST(UniqueNumberGeneratorDeathTest, FailsWhenUsedInWrongContext) {
+  // Instantiate the generator before the `loop`. This ensures that
+  // thread/sequence checkers will pick up a different thread environment than
+  // `fake_task_queue` will represent.
+  UniqueNumberGenerator<uint32_t> generator;
+  // Generate an ID on the current thread. This causes the generator to attach
+  // to the current thread context.
+  generator.GenerateNumber();
+
+  // Instantiate a fake task queue that will register itself as the current tq.
+  FakeTaskQueue fake_task_queue;
+
+  // Attempting to generate an id should now trigger a dcheck.
+  EXPECT_DEATH(generator.GenerateNumber(), "");
+}
+#endif
 
 }  // namespace rtc

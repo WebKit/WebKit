@@ -22,7 +22,7 @@ namespace webrtc {
 class FakeVideoTrackSource : public VideoTrackSource {
  public:
   static rtc::scoped_refptr<FakeVideoTrackSource> Create(bool is_screencast) {
-    return new rtc::RefCountedObject<FakeVideoTrackSource>(is_screencast);
+    return rtc::make_ref_counted<FakeVideoTrackSource>(is_screencast);
   }
 
   static rtc::scoped_refptr<FakeVideoTrackSource> Create() {

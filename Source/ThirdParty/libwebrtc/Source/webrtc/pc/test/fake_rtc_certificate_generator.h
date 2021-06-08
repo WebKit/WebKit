@@ -83,7 +83,7 @@ static const rtc::RTCCertificatePEM kRsaPems[] = {
 
 // ECDSA with EC_NIST_P256.
 // These PEM strings were created by generating an identity with
-// |SSLIdentity::Generate| and invoking |identity->PrivateKeyToPEMString()|,
+// |SSLIdentity::Create| and invoking |identity->PrivateKeyToPEMString()|,
 // |identity->PublicKeyToPEMString()| and
 // |identity->certificate().ToPEMString()|.
 static const rtc::RTCCertificatePEM kEcdsaPems[] = {

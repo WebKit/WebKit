@@ -27,8 +27,8 @@ a list of files (e.g., the list of files in a patch on a trybot):
 mb analyze -c chromium_linux_rel //out/Release input.json output.json
 ```
 
-Either the `-c/--config` flag or the `-m/--master` and `-b/--builder` flags
-must be specified so that `mb` can figure out which config to use.
+Either the `-c/--config` flag or the `-m/--builder-group` and `-b/--builder`
+flags must be specified so that `mb` can figure out which config to use.
 
 The first positional argument must be a GN-style "source-absolute" path
 to the build directory.
@@ -90,15 +90,16 @@ differences can be subtle.  We won't even go into how the `targets` and
 `build_targets` differ from each other or from `compile_targets` and
 `test_targets`.
 
-The `-b/--builder`, `-c/--config`, `-f/--config-file`, `-m/--master`,
+The `-b/--builder`, `-c/--config`, `-f/--config-file`, `-m/--builder-group`,
 `-q/--quiet`, and `-v/--verbose` flags work as documented for `mb gen`.
 
 ### `mb audit`
 
 `mb audit` is used to track the progress of the GYP->GN migration. You can
-use it to check a single master, or all the masters we care about. See
-`mb help audit` for more details (most people are not expected to care about
-this).
+use it to check a single builder group, or all the builder groups we care
+about.
+See `mb help audit` for more details (most people are not expected to care
+about this).
 
 ### `mb gen`
 
@@ -111,8 +112,8 @@ a directory, then runs GYP or GN as appropriate:
 % mb gen -c linux_rel_trybot //out/Release
 ```
 
-Either the `-c/--config` flag or the `-m/--master` and `-b/--builder` flags
-must be specified so that `mb` can figure out which config to use. The
+Either the `-c/--config` flag or the `-m/--builder-group` and `-b/--builder`
+flags must be specified so that `mb` can figure out which config to use. The
 `--phase` flag must also be used with builders that have multiple
 build/compile steps (and only with those builders).
 
@@ -149,7 +150,7 @@ Produces help output on the other subcommands
 Prints what command will be run by `mb gen` (like `mb gen -n` but does
 not require you to specify a path).
 
-The `-b/--builder`, `-c/--config`, `-f/--config-file`, `-m/--master`,
+The `-b/--builder`, `-c/--config`, `-f/--config-file`, `-m/--builder-group`,
 `--phase`, `-q/--quiet`, and `-v/--verbose` flags work as documented for
 `mb gen`.
 
@@ -198,11 +199,11 @@ listed here, and so by using the configs in this file you can avoid
 having to juggle long lists of GYP_DEFINES and gn args by hand.
 
 `mb_config.pyl` is structured as a file containing a single PYthon Literal
-expression: a dictionary with three main keys, `masters`, `configs` and
+expression: a dictionary with three main keys, `builder_groups`, `configs` and
 `mixins`.
 
-The `masters` key contains a nested series of dicts containing mappings
-of master -> builder -> config . This allows us to isolate the buildbot
+The `builder_groups` key contains a nested series of dicts containing mappings
+of builder group -> builder -> config . This allows us to isolate the buildbot
 recipes from the actual details of the configs. The config should either
 be a single string value representing a key in the `configs` dictionary,
 or a list of strings, each of which is a key in the `configs` dictionary;

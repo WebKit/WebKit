@@ -451,6 +451,20 @@ TEST(ArrayViewTest, TestIterationEmpty) {
   }
 }
 
+TEST(ArrayViewTest, TestReverseIterationEmpty) {
+  // Variable-size.
+  ArrayView<std::vector<std::vector<std::vector<std::string>>>> av;
+  EXPECT_EQ(av.rbegin(), av.rend());
+  EXPECT_EQ(av.crbegin(), av.crend());
+  EXPECT_TRUE(av.empty());
+
+  // Fixed-size.
+  ArrayView<std::vector<std::vector<std::vector<std::string>>>, 0> af;
+  EXPECT_EQ(af.begin(), af.end());
+  EXPECT_EQ(af.cbegin(), af.cend());
+  EXPECT_TRUE(af.empty());
+}
+
 TEST(ArrayViewTest, TestIterationVariable) {
   char arr[] = "Arrr!";
   ArrayView<char> av(arr);
@@ -472,6 +486,25 @@ TEST(ArrayViewTest, TestIterationVariable) {
   }
 }
 
+TEST(ArrayViewTest, TestReverseIterationVariable) {
+  char arr[] = "Arrr!";
+  ArrayView<char> av(arr);
+  EXPECT_EQ('\0', *av.rbegin());
+  EXPECT_EQ('\0', *av.crbegin());
+  EXPECT_EQ('A', *(av.rend() - 1));
+  EXPECT_EQ('A', *(av.crend() - 1));
+
+  const char* cit = av.cend() - 1;
+  for (auto crit = av.crbegin(); crit != av.crend(); ++crit, --cit) {
+    EXPECT_EQ(*cit, *crit);
+  }
+
+  char* it = av.end() - 1;
+  for (auto rit = av.rbegin(); rit != av.rend(); ++rit, --it) {
+    EXPECT_EQ(*it, *rit);
+  }
+}
+
 TEST(ArrayViewTest, TestIterationFixed) {
   char arr[] = "Arrr!";
   ArrayView<char, 6> av(arr);
@@ -490,6 +523,25 @@ TEST(ArrayViewTest, TestIterationFixed) {
     EXPECT_EQ(arr + i, &e);
     // e = 'q' + i;  // Compile error, because e is a const char&.
     ++i;
+  }
+}
+
+TEST(ArrayViewTest, TestReverseIterationFixed) {
+  char arr[] = "Arrr!";
+  ArrayView<char, 6> av(arr);
+  EXPECT_EQ('\0', *av.rbegin());
+  EXPECT_EQ('\0', *av.crbegin());
+  EXPECT_EQ('A', *(av.rend() - 1));
+  EXPECT_EQ('A', *(av.crend() - 1));
+
+  const char* cit = av.cend() - 1;
+  for (auto crit = av.crbegin(); crit != av.crend(); ++crit, --cit) {
+    EXPECT_EQ(*cit, *crit);
+  }
+
+  char* it = av.end() - 1;
+  for (auto rit = av.rbegin(); rit != av.rend(); ++rit, --it) {
+    EXPECT_EQ(*it, *rit);
   }
 }
 

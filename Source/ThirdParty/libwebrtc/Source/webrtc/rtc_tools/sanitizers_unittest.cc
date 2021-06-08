@@ -110,7 +110,7 @@ void DataRace() {
   thread2.Join();
   // TSan seems to mess with gtest's death detection.
   // Fail intentionally, and rely on detecting the error message.
-  RTC_CHECK(false);
+  RTC_CHECK_NOTREACHED();
 }
 
 TEST(SanitizersDeathTest, ThreadSanitizer) {

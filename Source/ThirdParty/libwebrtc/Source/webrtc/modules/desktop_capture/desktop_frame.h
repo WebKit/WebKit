@@ -29,7 +29,7 @@ const float kStandardDPI = 96.0f;
 // DesktopFrame represents a video frame captured from the screen.
 class RTC_EXPORT DesktopFrame {
  public:
-  // DesktopFrame objects always hold RGBA data.
+  // DesktopFrame objects always hold BGRA data.
   static const int kBytesPerPixel = 4;
 
   virtual ~DesktopFrame();
@@ -71,6 +71,15 @@ class RTC_EXPORT DesktopFrame {
   // unknown.
   const DesktopVector& dpi() const { return dpi_; }
   void set_dpi(const DesktopVector& dpi) { dpi_ = dpi; }
+
+  // Indicates if this frame may have the mouse cursor in it. Capturers that
+  // support cursor capture may set this to true. If the cursor was
+  // outside of the captured area, this may be true even though the cursor is
+  // not in the image.
+  bool may_contain_cursor() const { return may_contain_cursor_; }
+  void set_may_contain_cursor(bool may_contain_cursor) {
+    may_contain_cursor_ = may_contain_cursor;
+  }
 
   // Time taken to capture the frame in milliseconds.
   int64_t capture_time_ms() const { return capture_time_ms_; }
@@ -150,6 +159,7 @@ class RTC_EXPORT DesktopFrame {
   DesktopRegion updated_region_;
   DesktopVector top_left_;
   DesktopVector dpi_;
+  bool may_contain_cursor_ = false;
   int64_t capture_time_ms_;
   uint32_t capturer_id_;
   std::vector<uint8_t> icc_profile_;

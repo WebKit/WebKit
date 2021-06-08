@@ -19,6 +19,7 @@
 #include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/scoped_refptr.h"
+#include "api/sequence_checker.h"
 #include "api/task_queue/default_task_queue_factory.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "modules/audio_device/audio_device_impl.h"
@@ -31,16 +32,14 @@
 #include "rtc_base/race_checker.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
-#include "rtc_base/thread_checker.h"
 #include "rtc_base/time_utils.h"
-#include "system_wrappers/include/sleep.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #ifdef WEBRTC_WIN
 #include "modules/audio_device/include/audio_device_factory.h"
 #include "modules/audio_device/win/core_audio_utility_win.h"
-
-#endif
+#include "rtc_base/win/scoped_com_initializer.h"
+#endif  // WEBRTC_WIN
 
 using ::testing::_;
 using ::testing::AtLeast;
@@ -318,8 +317,8 @@ class LatencyAudioStream : public AudioStream {
 
   Mutex lock_;
   rtc::RaceChecker race_checker_;
-  rtc::ThreadChecker read_thread_checker_;
-  rtc::ThreadChecker write_thread_checker_;
+  SequenceChecker read_thread_checker_;
+  SequenceChecker write_thread_checker_;
 
   absl::optional<int64_t> pulse_time_ RTC_GUARDED_BY(lock_);
   std::vector<int> latencies_ RTC_GUARDED_BY(race_checker_);
@@ -597,8 +596,8 @@ class MAYBE_AudioDeviceTest
       // We must initialize the COM library on a thread before we calling any of
       // the library functions. All COM functions in the ADM will return
       // CO_E_NOTINITIALIZED otherwise.
-      com_initializer_ = std::make_unique<webrtc_win::ScopedCOMInitializer>(
-          webrtc_win::ScopedCOMInitializer::kMTA);
+      com_initializer_ =
+          std::make_unique<ScopedCOMInitializer>(ScopedCOMInitializer::kMTA);
       EXPECT_TRUE(com_initializer_->Succeeded());
       EXPECT_TRUE(webrtc_win::core_audio_utility::IsSupported());
       EXPECT_TRUE(webrtc_win::core_audio_utility::IsMMCSSSupported());
@@ -657,7 +656,7 @@ class MAYBE_AudioDeviceTest
  private:
 #ifdef WEBRTC_WIN
   // Windows Core Audio based ADM needs to run on a COM initialized thread.
-  std::unique_ptr<webrtc_win::ScopedCOMInitializer> com_initializer_;
+  std::unique_ptr<ScopedCOMInitializer> com_initializer_;
 #endif
   AudioDeviceModule::AudioLayer audio_layer_;
   std::unique_ptr<TaskQueueFactory> task_queue_factory_;
@@ -692,8 +691,7 @@ TEST(MAYBE_AudioDeviceTestWin, ConstructDestructWithFactory) {
   // CreateWindowsCoreAudioAudioDeviceModule() can be used on Windows and that
   // it sets the audio layer to kWindowsCoreAudio2 implicitly. Note that, the
   // new ADM for Windows must be created on a COM thread.
-  webrtc_win::ScopedCOMInitializer com_initializer(
-      webrtc_win::ScopedCOMInitializer::kMTA);
+  ScopedCOMInitializer com_initializer(ScopedCOMInitializer::kMTA);
   EXPECT_TRUE(com_initializer.Succeeded());
   audio_device =
       CreateWindowsCoreAudioAudioDeviceModule(task_queue_factory.get());

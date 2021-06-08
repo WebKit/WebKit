@@ -14,6 +14,7 @@
 #include <memory>
 #include <vector>
 
+#include "api/test/network_emulation_manager.h"
 #include "rtc_base/copy_on_write_buffer.h"
 #include "system_wrappers/include/clock.h"
 #include "test/network/network_emulation.h"
@@ -23,26 +24,27 @@ namespace test {
 
 // Represents the endpoint for cross traffic that is going through the network.
 // It can be used to emulate unexpected network load.
-class TrafficRoute {
+class CrossTrafficRouteImpl final : public CrossTrafficRoute {
  public:
-  TrafficRoute(Clock* clock,
-               EmulatedNetworkReceiverInterface* receiver,
-               EmulatedEndpoint* endpoint);
-  ~TrafficRoute();
+  CrossTrafficRouteImpl(Clock* clock,
+                        EmulatedNetworkReceiverInterface* receiver,
+                        EmulatedEndpointImpl* endpoint);
+  ~CrossTrafficRouteImpl();
 
   // Triggers sending of dummy packets with size |packet_size| bytes.
-  void TriggerPacketBurst(size_t num_packets, size_t packet_size);
+  void TriggerPacketBurst(size_t num_packets, size_t packet_size) override;
   // Sends a packet over the nodes and runs |action| when it has been delivered.
-  void NetworkDelayedAction(size_t packet_size, std::function<void()> action);
+  void NetworkDelayedAction(size_t packet_size,
+                            std::function<void()> action) override;
 
-  void SendPacket(size_t packet_size);
+  void SendPacket(size_t packet_size) override;
 
  private:
   void SendPacket(size_t packet_size, uint16_t dest_port);
 
   Clock* const clock_;
   EmulatedNetworkReceiverInterface* const receiver_;
-  EmulatedEndpoint* const endpoint_;
+  EmulatedEndpointImpl* const endpoint_;
 
   uint16_t null_receiver_port_;
   std::unique_ptr<EmulatedNetworkReceiverInterface> null_receiver_;

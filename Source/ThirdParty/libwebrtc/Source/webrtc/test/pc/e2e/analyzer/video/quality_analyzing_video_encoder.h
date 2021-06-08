@@ -25,7 +25,6 @@
 #include "api/video_codecs/video_encoder_factory.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "test/pc/e2e/analyzer/video/encoded_image_data_injector.h"
-#include "test/pc/e2e/analyzer/video/id_generator.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
@@ -55,11 +54,7 @@ constexpr int kAnalyzeAnySpatialStream = -1;
 class QualityAnalyzingVideoEncoder : public VideoEncoder,
                                      public EncodedImageCallback {
  public:
-  // Creates analyzing encoder. |id| is unique coding entity id, that will
-  // be used to distinguish all encoders and decoders inside
-  // EncodedImageDataInjector and EncodedImageIdExtracor.
   QualityAnalyzingVideoEncoder(
-      int id,
       absl::string_view peer_name,
       std::unique_ptr<VideoEncoder> delegate,
       double bitrate_multiplier,
@@ -139,7 +134,6 @@ class QualityAnalyzingVideoEncoder : public VideoEncoder,
   bool ShouldDiscard(uint16_t frame_id, const EncodedImage& encoded_image)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(lock_);
 
-  const int id_;
   const std::string peer_name_;
   std::unique_ptr<VideoEncoder> delegate_;
   const double bitrate_multiplier_;
@@ -176,7 +170,6 @@ class QualityAnalyzingVideoEncoderFactory : public VideoEncoderFactory {
       std::unique_ptr<VideoEncoderFactory> delegate,
       double bitrate_multiplier,
       std::map<std::string, absl::optional<int>> stream_required_spatial_index,
-      IdGenerator<int>* id_generator,
       EncodedImageDataInjector* injector,
       VideoQualityAnalyzerInterface* analyzer);
   ~QualityAnalyzingVideoEncoderFactory() override;
@@ -193,7 +186,6 @@ class QualityAnalyzingVideoEncoderFactory : public VideoEncoderFactory {
   std::unique_ptr<VideoEncoderFactory> delegate_;
   const double bitrate_multiplier_;
   std::map<std::string, absl::optional<int>> stream_required_spatial_index_;
-  IdGenerator<int>* const id_generator_;
   EncodedImageDataInjector* const injector_;
   VideoQualityAnalyzerInterface* const analyzer_;
 };

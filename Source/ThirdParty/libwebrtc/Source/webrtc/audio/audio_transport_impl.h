@@ -11,11 +11,13 @@
 #ifndef AUDIO_AUDIO_TRANSPORT_IMPL_H_
 #define AUDIO_AUDIO_TRANSPORT_IMPL_H_
 
+#include <memory>
 #include <vector>
 
 #include "api/audio/audio_mixer.h"
 #include "api/scoped_refptr.h"
 #include "common_audio/resampler/include/push_resampler.h"
+#include "modules/async_audio_processing/async_audio_processing.h"
 #include "modules/audio_device/include/audio_device.h"
 #include "modules/audio_processing/include/audio_processing.h"
 #include "modules/audio_processing/typing_detection.h"
@@ -28,7 +30,10 @@ class AudioSender;
 
 class AudioTransportImpl : public AudioTransport {
  public:
-  AudioTransportImpl(AudioMixer* mixer, AudioProcessing* audio_processing);
+  AudioTransportImpl(
+      AudioMixer* mixer,
+      AudioProcessing* audio_processing,
+      AsyncAudioProcessing::Factory* async_audio_processing_factory);
 
   AudioTransportImpl() = delete;
   AudioTransportImpl(const AudioTransportImpl&) = delete;
@@ -71,10 +76,16 @@ class AudioTransportImpl : public AudioTransport {
   bool typing_noise_detected() const;
 
  private:
+  void SendProcessedData(std::unique_ptr<AudioFrame> audio_frame);
+
   // Shared.
   AudioProcessing* audio_processing_ = nullptr;
 
   // Capture side.
+
+  // Thread-safe.
+  const std::unique_ptr<AsyncAudioProcessing> async_audio_processing_;
+
   mutable Mutex capture_lock_;
   std::vector<AudioSender*> audio_senders_ RTC_GUARDED_BY(capture_lock_);
   int send_sample_rate_hz_ RTC_GUARDED_BY(capture_lock_) = 8000;
@@ -85,6 +96,7 @@ class AudioTransportImpl : public AudioTransport {
   TypingDetection typing_detection_;
 
   // Render side.
+
   rtc::scoped_refptr<AudioMixer> mixer_;
   AudioFrame mixed_frame_;
   // Converts mixed audio to the audio device output rate.

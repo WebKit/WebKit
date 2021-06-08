@@ -56,14 +56,11 @@ bool RTCStatsReport::ConstIterator::operator!=(
 
 rtc::scoped_refptr<RTCStatsReport> RTCStatsReport::Create(
     int64_t timestamp_us) {
-  return rtc::scoped_refptr<RTCStatsReport>(
-      new rtc::RefCountedObject<RTCStatsReport>(timestamp_us));
+  return rtc::scoped_refptr<RTCStatsReport>(new RTCStatsReport(timestamp_us));
 }
 
 RTCStatsReport::RTCStatsReport(int64_t timestamp_us)
     : timestamp_us_(timestamp_us) {}
-
-RTCStatsReport::~RTCStatsReport() {}
 
 rtc::scoped_refptr<RTCStatsReport> RTCStatsReport::Copy() const {
   rtc::scoped_refptr<RTCStatsReport> copy = Create(timestamp_us_);
@@ -98,13 +95,12 @@ std::unique_ptr<const RTCStats> RTCStatsReport::Take(const std::string& id) {
   return stats;
 }
 
-void RTCStatsReport::TakeMembersFrom(
-    rtc::scoped_refptr<RTCStatsReport> victim) {
-  for (StatsMap::iterator it = victim->stats_.begin();
-       it != victim->stats_.end(); ++it) {
+void RTCStatsReport::TakeMembersFrom(rtc::scoped_refptr<RTCStatsReport> other) {
+  for (StatsMap::iterator it = other->stats_.begin(); it != other->stats_.end();
+       ++it) {
     AddStats(std::unique_ptr<const RTCStats>(it->second.release()));
   }
-  victim->stats_.clear();
+  other->stats_.clear();
 }
 
 RTCStatsReport::ConstIterator RTCStatsReport::begin() const {

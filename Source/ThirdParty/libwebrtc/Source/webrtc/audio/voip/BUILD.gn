@@ -67,6 +67,7 @@ rtc_library("audio_ingress") {
     "../../api:transport_api",
     "../../api/audio:audio_mixer_api",
     "../../api/audio_codecs:audio_codecs_api",
+    "../../api/voip:voip_api",
     "../../modules/audio_coding",
     "../../modules/rtp_rtcp",
     "../../modules/rtp_rtcp:rtp_rtcp_format",
@@ -78,6 +79,7 @@ rtc_library("audio_ingress") {
     "../../rtc_base/synchronization:mutex",
     "../utility:audio_frame_operations",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_library("audio_egress") {
@@ -87,6 +89,7 @@ rtc_library("audio_egress") {
   ]
   deps = [
     "..:audio",
+    "../../api:sequence_checker",
     "../../api/audio_codecs:audio_codecs_api",
     "../../api/task_queue",
     "../../call:audio_sender_interface",
@@ -95,7 +98,6 @@ rtc_library("audio_egress") {
     "../../modules/rtp_rtcp:rtp_rtcp_format",
     "../../rtc_base:logging",
     "../../rtc_base:rtc_task_queue",
-    "../../rtc_base:thread_checker",
     "../../rtc_base:timeutils",
     "../../rtc_base/synchronization:mutex",
     "../../rtc_base/system:no_unique_address",

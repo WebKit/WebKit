@@ -20,12 +20,13 @@ rtc_library("aligned_malloc") {
   deps = [ "..:checks" ]
 }
 
+# Test only utility.
 rtc_library("fifo_buffer") {
+  testonly = true
   visibility = [
-    "../../p2p:rtc_p2p",
+    ":unittests",
     "..:rtc_base_tests_utils",
     "..:rtc_base_unittests",
-    ":unittests",
   ]
   sources = [
     "fifo_buffer.cc",
@@ -33,7 +34,10 @@ rtc_library("fifo_buffer") {
   ]
   deps = [
     "..:rtc_base",
+    "..:threading",
     "../synchronization:mutex",
+    "../task_utils:pending_task_safety_flag",
+    "../task_utils:to_queued_task",
   ]
 }
 

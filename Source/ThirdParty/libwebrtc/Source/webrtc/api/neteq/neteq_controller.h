@@ -97,6 +97,15 @@ class NetEqController {
     size_t sync_buffer_samples;
   };
 
+  struct PacketArrivedInfo {
+    size_t packet_length_samples;
+    uint32_t main_timestamp;
+    uint16_t main_sequence_number;
+    bool is_cng_or_dtmf;
+    bool is_dtx;
+    bool buffer_flush;
+  };
+
   virtual ~NetEqController() = default;
 
   // Resets object to a clean state.
@@ -156,12 +165,13 @@ class NetEqController {
 
   // Notify the NetEqController that a packet has arrived. Returns the relative
   // arrival delay, if it can be computed.
-  virtual absl::optional<int> PacketArrived(bool last_cng_or_dtmf,
-                                            size_t packet_length_samples,
+  virtual absl::optional<int> PacketArrived(int fs_hz,
                                             bool should_update_stats,
-                                            uint16_t main_sequence_number,
-                                            uint32_t main_timestamp,
-                                            int fs_hz) = 0;
+                                            const PacketArrivedInfo& info) = 0;
+
+  // Notify the NetEqController that we are currently in muted state.
+  // TODO(ivoc): Make pure virtual when downstream is updated.
+  virtual void NotifyMutedState() {}
 
   // Returns true if a peak was found.
   virtual bool PeakFound() const = 0;

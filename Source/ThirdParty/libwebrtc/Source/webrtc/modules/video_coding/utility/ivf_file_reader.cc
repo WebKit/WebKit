@@ -164,14 +164,13 @@ absl::optional<EncodedImage> IvfFileReader::NextFrame() {
     image.SetTimestamp(static_cast<uint32_t>(current_timestamp));
   }
   image.SetEncodedData(payload);
-  image.SetSpatialIndex(static_cast<int>(layer_sizes.size()));
+  image.SetSpatialIndex(static_cast<int>(layer_sizes.size()) - 1);
   for (size_t i = 0; i < layer_sizes.size(); ++i) {
     image.SetSpatialLayerFrameSize(static_cast<int>(i), layer_sizes[i]);
   }
   if (is_first_frame) {
     image._frameType = VideoFrameType::kVideoFrameKey;
   }
-  image._completeFrame = true;
 
   return image;
 }

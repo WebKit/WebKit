@@ -403,7 +403,7 @@ absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> VideoRtpDepacketizerH265:
 
   ParsedRtpPayload parsed_payload;
 
-  uint8_t* payload_data = rtp_payload.data();
+  const uint8_t* payload_data = rtp_payload.data();
 
   offset_ = 0;
   length_ = payload_data_length;

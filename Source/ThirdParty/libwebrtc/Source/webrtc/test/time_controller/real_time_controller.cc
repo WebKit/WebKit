@@ -11,7 +11,6 @@
 
 #include "api/task_queue/default_task_queue_factory.h"
 #include "rtc_base/null_socket_server.h"
-#include "system_wrappers/include/sleep.h"
 
 namespace webrtc {
 namespace {

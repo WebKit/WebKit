@@ -25,7 +25,7 @@
 #include "modules/desktop_capture/win/dxgi_adapter_duplicator.h"
 #include "modules/desktop_capture/win/dxgi_context.h"
 #include "modules/desktop_capture/win/dxgi_frame.h"
-#include "rtc_base/deprecated/recursive_critical_section.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 
@@ -142,95 +142,103 @@ class DxgiDuplicatorController {
   Result DoDuplicate(DxgiFrame* frame, int monitor_id);
 
   // Unload all the DXGI components and releases the resources. This function
-  // wraps Deinitialize() with |lock_|.
+  // wraps Deinitialize() with |mutex_|.
   void Unload();
 
   // Unregisters Context from this instance and all DxgiAdapterDuplicator(s)
   // it owns.
   void Unregister(const Context* const context);
 
-  // All functions below should be called in |lock_| locked scope and should be
+  // All functions below should be called in |mutex_| locked scope and should be
   // after a successful Initialize().
 
   // If current instance has not been initialized, executes DoInitialize()
   // function, and returns initialize result. Otherwise directly returns true.
   // This function may calls Deinitialize() if initialization failed.
-  bool Initialize();
+  bool Initialize() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // Does the real initialization work, this function should only be called in
   // Initialize().
-  bool DoInitialize();
+  bool DoInitialize() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // Clears all COM components referred by this instance. So next Duplicate()
   // call will eventually initialize this instance again.
-  void Deinitialize();
+  void Deinitialize() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // A helper function to check whether a Context has been expired.
-  bool ContextExpired(const Context* const context) const;
+  bool ContextExpired(const Context* const context) const
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // Updates Context if needed.
-  void Setup(Context* context);
+  void Setup(Context* context) RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   bool DoDuplicateUnlocked(Context* context,
                            int monitor_id,
-                           SharedDesktopFrame* target);
+                           SharedDesktopFrame* target)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // Captures all monitors.
-  bool DoDuplicateAll(Context* context, SharedDesktopFrame* target);
+  bool DoDuplicateAll(Context* context, SharedDesktopFrame* target)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // Captures one monitor.
   bool DoDuplicateOne(Context* context,
                       int monitor_id,
-                      SharedDesktopFrame* target);
+                      SharedDesktopFrame* target)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // The minimum GetNumFramesCaptured() returned by |duplicators_|.
-  int64_t GetNumFramesCaptured() const;
+  int64_t GetNumFramesCaptured() const RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // Returns a DesktopSize to cover entire |desktop_rect_|.
-  DesktopSize desktop_size() const;
+  DesktopSize desktop_size() const RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // Returns the size of one screen. |id| should be >= 0. If system does not
   // support DXGI based capturer, or |id| is greater than the total screen count
   // of all the Duplicators, this function returns an empty DesktopRect.
-  DesktopRect ScreenRect(int id) const;
+  DesktopRect ScreenRect(int id) const RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
-  int ScreenCountUnlocked() const;
+  int ScreenCountUnlocked() const RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
-  void GetDeviceNamesUnlocked(std::vector<std::string>* output) const;
+  void GetDeviceNamesUnlocked(std::vector<std::string>* output) const
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // Returns the desktop size of the selected screen |monitor_id|. Setting
   // |monitor_id| < 0 to return the entire screen size.
-  DesktopSize SelectedDesktopSize(int monitor_id) const;
+  DesktopSize SelectedDesktopSize(int monitor_id) const
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // Retries DoDuplicateAll() for several times until GetNumFramesCaptured() is
   // large enough. Returns false if DoDuplicateAll() returns false, or
   // GetNumFramesCaptured() has never reached the requirement.
   // According to http://crbug.com/682112, dxgi capturer returns a black frame
   // during first several capture attempts.
-  bool EnsureFrameCaptured(Context* context, SharedDesktopFrame* target);
+  bool EnsureFrameCaptured(Context* context, SharedDesktopFrame* target)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // Moves |desktop_rect_| and all underlying |duplicators_|, putting top left
   // corner of the desktop at (0, 0). This is necessary because DXGI_OUTPUT_DESC
   // may return negative coordinates. Called from DoInitialize() after all
   // DxgiAdapterDuplicator and DxgiOutputDuplicator instances are initialized.
-  void TranslateRect();
+  void TranslateRect() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // The count of references which are now "living".
   std::atomic_int refcount_;
 
   // This lock must be locked whenever accessing any of the following objects.
-  rtc::RecursiveCriticalSection lock_;
+  Mutex mutex_;
 
   // A self-incremented integer to compare with the one in Context. It ensures
   // a Context instance is always initialized after DxgiDuplicatorController.
-  int identity_ = 0;
-  DesktopRect desktop_rect_;
-  DesktopVector dpi_;
-  std::vector<DxgiAdapterDuplicator> duplicators_;
-  D3dInfo d3d_info_;
-  DisplayConfigurationMonitor display_configuration_monitor_;
+  int identity_ RTC_GUARDED_BY(mutex_) = 0;
+  DesktopRect desktop_rect_ RTC_GUARDED_BY(mutex_);
+  DesktopVector dpi_ RTC_GUARDED_BY(mutex_);
+  std::vector<DxgiAdapterDuplicator> duplicators_ RTC_GUARDED_BY(mutex_);
+  D3dInfo d3d_info_ RTC_GUARDED_BY(mutex_);
+  DisplayConfigurationMonitor display_configuration_monitor_
+      RTC_GUARDED_BY(mutex_);
   // A number to indicate how many succeeded duplications have been performed.
-  uint32_t succeeded_duplications_ = 0;
+  uint32_t succeeded_duplications_ RTC_GUARDED_BY(mutex_) = 0;
 };
 
 }  // namespace webrtc

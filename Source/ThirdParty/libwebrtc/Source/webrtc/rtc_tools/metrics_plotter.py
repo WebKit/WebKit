@@ -39,52 +39,59 @@ MICROSECONDS_IN_SECOND = 1e6
 
 
 def main():
-  parser = argparse.ArgumentParser(
-      description='Plots metrics exported from WebRTC perf tests')
-  parser.add_argument('-m', '--metrics', type=str, nargs='*',
-      help='Metrics to plot. If nothing specified then will plot all available')
-  args = parser.parse_args()
+    parser = argparse.ArgumentParser(
+        description='Plots metrics exported from WebRTC perf tests')
+    parser.add_argument(
+        '-m',
+        '--metrics',
+        type=str,
+        nargs='*',
+        help=
+        'Metrics to plot. If nothing specified then will plot all available')
+    args = parser.parse_args()
 
-  metrics_to_plot = set()
-  if args.metrics:
-    for metric in args.metrics:
-      metrics_to_plot.add(metric)
+    metrics_to_plot = set()
+    if args.metrics:
+        for metric in args.metrics:
+            metrics_to_plot.add(metric)
 
-  metrics = []
-  for line in fileinput.input('-'):
-    line = line.strip()
-    if line.startswith(LINE_PREFIX):
-      line = line.replace(LINE_PREFIX, '')
-      metrics.append(json.loads(line))
-    else:
-      print line
+    metrics = []
+    for line in fileinput.input('-'):
+        line = line.strip()
+        if line.startswith(LINE_PREFIX):
+            line = line.replace(LINE_PREFIX, '')
+            metrics.append(json.loads(line))
+        else:
+            print line
 
-  for metric in metrics:
-    if len(metrics_to_plot) > 0 and metric[GRAPH_NAME] not in metrics_to_plot:
-      continue
+    for metric in metrics:
+        if len(metrics_to_plot
+               ) > 0 and metric[GRAPH_NAME] not in metrics_to_plot:
+            continue
 
-    figure = plt.figure()
-    figure.canvas.set_window_title(metric[TRACE_NAME])
+        figure = plt.figure()
+        figure.canvas.set_window_title(metric[TRACE_NAME])
 
-    x_values = []
-    y_values = []
-    start_x = None
-    samples = metric['samples']
-    samples.sort(key=lambda x: x['time'])
-    for sample in samples:
-      if start_x is None:
-        start_x = sample['time']
-      # Time is us, we want to show it in seconds.
-      x_values.append((sample['time'] - start_x) / MICROSECONDS_IN_SECOND)
-      y_values.append(sample['value'])
+        x_values = []
+        y_values = []
+        start_x = None
+        samples = metric['samples']
+        samples.sort(key=lambda x: x['time'])
+        for sample in samples:
+            if start_x is None:
+                start_x = sample['time']
+            # Time is us, we want to show it in seconds.
+            x_values.append(
+                (sample['time'] - start_x) / MICROSECONDS_IN_SECOND)
+            y_values.append(sample['value'])
 
-    plt.ylabel('%s (%s)' % (metric[GRAPH_NAME], metric[UNITS]))
-    plt.xlabel('time (s)')
-    plt.title(metric[GRAPH_NAME])
-    plt.plot(x_values, y_values)
+        plt.ylabel('%s (%s)' % (metric[GRAPH_NAME], metric[UNITS]))
+        plt.xlabel('time (s)')
+        plt.title(metric[GRAPH_NAME])
+        plt.plot(x_values, y_values)
 
-  plt.show()
+    plt.show()
 
 
 if __name__ == '__main__':
-  main()
+    main()

@@ -10,7 +10,10 @@
 
 #include <queue>
 
+#include "api/test/network_emulation/create_cross_traffic.h"
+#include "api/test/network_emulation/cross_traffic.h"
 #include "api/transport/goog_cc_factory.h"
+#include "api/units/data_rate.h"
 #include "logging/rtc_event_log/mock/mock_rtc_event_log.h"
 #include "test/field_trial.h"
 #include "test/gtest.h"
@@ -546,8 +549,9 @@ DataRate AverageBitrateAfterCrossInducedLoss(std::string name) {
   s.RunFor(TimeDelta::Seconds(10));
   for (int i = 0; i < 4; ++i) {
     // Sends TCP cross traffic inducing loss.
-    auto* tcp_traffic =
-        s.net()->StartFakeTcpCrossTraffic(send_net, ret_net, FakeTcpConfig());
+    auto* tcp_traffic = s.net()->StartCrossTraffic(CreateFakeTcpCrossTraffic(
+        s.net()->CreateRoute(send_net), s.net()->CreateRoute(ret_net),
+        FakeTcpConfig()));
     s.RunFor(TimeDelta::Seconds(2));
     // Allow the ccongestion controller to recover.
     s.net()->StopCrossTraffic(tcp_traffic);
@@ -568,22 +572,21 @@ DataRate AverageBitrateAfterCrossInducedLoss(std::string name) {
 }
 
 TEST_F(GoogCcNetworkControllerTest,
-       NoLossBasedRecoversSlowerAfterCrossInducedLoss) {
+       LossBasedRecoversFasterAfterCrossInducedLoss) {
   // This test acts as a reference for the test below, showing that without the
   // trial, we have worse behavior.
-  DataRate average_bitrate =
+  DataRate average_bitrate_without_loss_based =
       AverageBitrateAfterCrossInducedLoss("googcc_unit/no_cross_loss_based");
-  RTC_DCHECK_LE(average_bitrate, DataRate::KilobitsPerSec(650));
-}
 
-TEST_F(GoogCcNetworkControllerTest,
-       LossBasedRecoversFasterAfterCrossInducedLoss) {
   // We recover bitrate better when subject to loss spikes from cross traffic
   // when loss based controller is used.
   ScopedFieldTrials trial("WebRTC-Bwe-LossBasedControl/Enabled/");
-  DataRate average_bitrate =
+  SetUp();
+  DataRate average_bitrate_with_loss_based =
       AverageBitrateAfterCrossInducedLoss("googcc_unit/cross_loss_based");
-  RTC_DCHECK_GE(average_bitrate, DataRate::KilobitsPerSec(750));
+
+  EXPECT_GE(average_bitrate_with_loss_based,
+            average_bitrate_without_loss_based * 1.1);
 }
 
 TEST_F(GoogCcNetworkControllerTest, LossBasedEstimatorCapsRateAtModerateLoss) {
@@ -698,7 +701,7 @@ TEST_F(GoogCcNetworkControllerTest, DetectsHighRateInSafeResetTrial) {
       {s.CreateSimulationNode(NetworkSimulationConfig())});
   s.CreateVideoStream(route->forward(), VideoStreamConfig());
   // Allow the controller to stabilize.
-  s.RunFor(TimeDelta::Millis(1000));
+  s.RunFor(TimeDelta::Millis(2000));
   EXPECT_NEAR(client->send_bandwidth().kbps(), kInitialLinkCapacity.kbps(), 50);
   s.ChangeRoute(route->forward(), {new_net});
   // Allow new settings to propagate, but not probes to be received.
@@ -836,13 +839,44 @@ TEST_F(GoogCcNetworkControllerTest, IsFairToTCP) {
   auto* route = s.CreateRoutes(
       client, send_net, s.CreateClient("return", CallClientConfig()), ret_net);
   s.CreateVideoStream(route->forward(), VideoStreamConfig());
-  s.net()->StartFakeTcpCrossTraffic(send_net, ret_net, FakeTcpConfig());
+  s.net()->StartCrossTraffic(CreateFakeTcpCrossTraffic(
+      s.net()->CreateRoute(send_net), s.net()->CreateRoute(ret_net),
+      FakeTcpConfig()));
   s.RunFor(TimeDelta::Seconds(10));
 
   // Currently only testing for the upper limit as we in practice back out
   // quite a lot in this scenario. If this behavior is fixed, we should add a
   // lower bound to ensure it stays fixed.
   EXPECT_LT(client->send_bandwidth().kbps(), 750);
+}
+
+TEST(GoogCcScenario, RampupOnRembCapLifted) {
+  ScopedFieldTrials trial("WebRTC-Bwe-ReceiverLimitCapsOnly/Enabled/");
+  Scenario s("googcc_unit/rampup_ramb_cap_lifted");
+  NetworkSimulationConfig net_conf;
+  net_conf.bandwidth = DataRate::KilobitsPerSec(2000);
+  net_conf.delay = TimeDelta::Millis(50);
+  auto* client = s.CreateClient("send", [&](CallClientConfig* c) {
+    c->transport.rates.start_rate = DataRate::KilobitsPerSec(1000);
+  });
+  auto send_net = {s.CreateSimulationNode(net_conf)};
+  auto ret_net = {s.CreateSimulationNode(net_conf)};
+  auto* route = s.CreateRoutes(
+      client, send_net, s.CreateClient("return", CallClientConfig()), ret_net);
+  s.CreateVideoStream(route->forward(), VideoStreamConfig());
+
+  s.RunFor(TimeDelta::Seconds(10));
+  EXPECT_GT(client->send_bandwidth().kbps(), 1500);
+
+  DataRate RembLimit = DataRate::KilobitsPerSec(250);
+  client->SetRemoteBitrate(RembLimit);
+  s.RunFor(TimeDelta::Seconds(1));
+  EXPECT_EQ(client->send_bandwidth(), RembLimit);
+
+  DataRate RembLimitLifted = DataRate::KilobitsPerSec(10000);
+  client->SetRemoteBitrate(RembLimitLifted);
+  s.RunFor(TimeDelta::Seconds(10));
+  EXPECT_GT(client->send_bandwidth().kbps(), 1500);
 }
 
 }  // namespace test

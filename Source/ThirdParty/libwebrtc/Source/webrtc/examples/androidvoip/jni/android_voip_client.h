@@ -141,7 +141,7 @@ class AndroidVoipClient : public webrtc::Transport,
       : voip_thread_(rtc::Thread::CreateWithSocketServer()),
         j_voip_client_(env, j_voip_client) {}
 
-  bool Init(JNIEnv* env,
+  void Init(JNIEnv* env,
             const webrtc::JavaParamRef<jobject>& application_context);
 
   // Overloaded methods having native C++ variables as arguments.

@@ -57,6 +57,8 @@ class TriageHelper {
                                PacketDirection direction);
   void Print(FILE* file);
 
+  void ProcessAlerts(std::function<void(int, float, std::string)> f);
+
  private:
   AnalyzerConfig config_;
   std::map<TriageAlertType, TriageAlert> triage_alerts_;

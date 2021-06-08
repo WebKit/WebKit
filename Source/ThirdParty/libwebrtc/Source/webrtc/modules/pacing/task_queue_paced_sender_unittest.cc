@@ -157,6 +157,7 @@ namespace test {
     pacer.SetPacingRates(
         DataRate::BitsPerSec(kDefaultPacketSize * 8 * kPacketsToSend),
         DataRate::Zero());
+    pacer.EnsureStarted();
     pacer.EnqueuePackets(
         GeneratePackets(RtpPacketMediaType::kVideo, kPacketsToSend));
 
@@ -196,6 +197,7 @@ namespace test {
     const DataRate kPacingRate =
         DataRate::BitsPerSec(kDefaultPacketSize * 8 * kPacketsPerSecond);
     pacer.SetPacingRates(kPacingRate, DataRate::Zero());
+    pacer.EnsureStarted();
 
     // Send some initial packets to be rid of any probes.
     EXPECT_CALL(packet_router, SendPacket).Times(kPacketsPerSecond);
@@ -247,6 +249,7 @@ namespace test {
     const TimeDelta kPacketPacingTime = kPacketSize / kPacingDataRate;
 
     pacer.SetPacingRates(kPacingDataRate, DataRate::Zero());
+    pacer.EnsureStarted();
 
     // Add some initial video packets, only one should be sent.
     EXPECT_CALL(packet_router, SendPacket);
@@ -280,6 +283,7 @@ namespace test {
     const DataRate kPacingDataRate = kPacketSize / kPacketPacingTime;
 
     pacer.SetPacingRates(kPacingDataRate, DataRate::Zero());
+    pacer.EnsureStarted();
 
     // Add 10 packets. The first should be sent immediately since the buffers
     // are clear.
@@ -316,6 +320,7 @@ namespace test {
     const DataRate kPacingDataRate = kPacketSize / kPacketPacingTime;
 
     pacer.SetPacingRates(kPacingDataRate, DataRate::Zero());
+    pacer.EnsureStarted();
 
     // Add 10 packets. The first should be sent immediately since the buffers
     // are clear. This will also trigger the probe to start.
@@ -342,6 +347,7 @@ namespace test {
         kCoalescingWindow);
     const DataRate kPacingDataRate = DataRate::KilobitsPerSec(300);
     pacer.SetPacingRates(kPacingDataRate, DataRate::Zero());
+    pacer.EnsureStarted();
 
     const TimeDelta kMinTimeBetweenStatsUpdates = TimeDelta::Millis(1);
 
@@ -388,6 +394,7 @@ namespace test {
     size_t num_expected_stats_updates = 0;
     EXPECT_EQ(pacer.num_stats_updates_, num_expected_stats_updates);
     pacer.SetPacingRates(kPacingDataRate, DataRate::Zero());
+    pacer.EnsureStarted();
     time_controller.AdvanceTime(kMinTimeBetweenStatsUpdates);
     // Updating pacing rates refreshes stats.
     EXPECT_EQ(pacer.num_stats_updates_, ++num_expected_stats_updates);
@@ -443,6 +450,7 @@ namespace test {
     const TimeDelta kPacketPacingTime = TimeDelta::Millis(4);
     const DataRate kPacingDataRate = kPacketSize / kPacketPacingTime;
     pacer.SetPacingRates(kPacingDataRate, /*padding_rate=*/DataRate::Zero());
+    pacer.EnsureStarted();
     EXPECT_CALL(packet_router, FetchFec).WillRepeatedly([]() {
       return std::vector<std::unique_ptr<RtpPacketToSend>>();
     });
@@ -469,6 +477,7 @@ namespace test {
 
     // Expected size for each probe in a cluster is twice the expected bits
     // sent during min_probe_delta.
+    // Expect one additional call since probe always starts with a small
     const TimeDelta kProbeTimeDelta = TimeDelta::Millis(2);
     const DataSize kProbeSize = kProbeRate * kProbeTimeDelta;
     const size_t kNumPacketsInProbe =
@@ -477,7 +486,7 @@ namespace test {
         packet_router,
         SendPacket(_, ::testing::Field(&PacedPacketInfo::probe_cluster_id,
                                        kProbeClusterId)))
-        .Times(kNumPacketsInProbe);
+        .Times(kNumPacketsInProbe + 1);
 
     pacer.EnqueuePackets(
         GeneratePackets(RtpPacketMediaType::kVideo, kNumPacketsInProbe));
@@ -513,6 +522,7 @@ namespace test {
     const TimeDelta kPacketPacingTime = TimeDelta::Millis(4);
     const DataRate kPacingDataRate = kPacketSize / kPacketPacingTime;
     pacer.SetPacingRates(kPacingDataRate, /*padding_rate=*/DataRate::Zero());
+    pacer.EnsureStarted();
     EXPECT_CALL(packet_router, FetchFec).WillRepeatedly([]() {
       return std::vector<std::unique_ptr<RtpPacketToSend>>();
     });
@@ -546,7 +556,38 @@ namespace test {
     time_controller.AdvanceTime(kMinProbeDelta);
 
     // Verify the amount of probing data sent.
-    EXPECT_EQ(data_sent, kProbingRate * TimeDelta::Millis(1));
+    // Probe always starts with a small (1 byte) padding packet that's not
+    // counted into the probe rate here.
+    EXPECT_EQ(data_sent,
+              kProbingRate * TimeDelta::Millis(1) + DataSize::Bytes(1));
+  }
+
+  TEST(TaskQueuePacedSenderTest, NoStatsUpdatesBeforeStart) {
+    const TimeDelta kCoalescingWindow = TimeDelta::Millis(5);
+    GlobalSimulatedTimeController time_controller(Timestamp::Millis(1234));
+    MockPacketRouter packet_router;
+    TaskQueuePacedSenderForTest pacer(
+        time_controller.GetClock(), &packet_router,
+        /*event_log=*/nullptr,
+        /*field_trials=*/nullptr, time_controller.GetTaskQueueFactory(),
+        kCoalescingWindow);
+    const DataRate kPacingDataRate = DataRate::KilobitsPerSec(300);
+    pacer.SetPacingRates(kPacingDataRate, DataRate::Zero());
+
+    const TimeDelta kMinTimeBetweenStatsUpdates = TimeDelta::Millis(1);
+
+    // Nothing inserted, no stats updates yet.
+    EXPECT_EQ(pacer.num_stats_updates_, 0u);
+
+    // Insert one packet, stats should not be updated.
+    pacer.EnqueuePackets(GeneratePackets(RtpPacketMediaType::kVideo, 1));
+    time_controller.AdvanceTime(TimeDelta::Zero());
+    EXPECT_EQ(pacer.num_stats_updates_, 0u);
+
+    // Advance time of the min stats update interval, and trigger a
+    // refresh - stats should not be updated still.
+    time_controller.AdvanceTime(kMinTimeBetweenStatsUpdates);
+    EXPECT_EQ(pacer.num_stats_updates_, 0u);
   }
 }  // namespace test
 }  // namespace webrtc

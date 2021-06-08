@@ -27,60 +27,16 @@ TEST(KeyframeIntervalSettingsTest, ParsesMinKeyframeSendIntervalMs) {
             100);
 }
 
-TEST(KeyframeIntervalSettingsTest, ParsesMaxWaitForKeyframeMs) {
-  EXPECT_FALSE(
-      KeyframeIntervalSettings::ParseFromFieldTrials().MaxWaitForKeyframeMs());
-
-  test::ScopedFieldTrials field_trials(
-      "WebRTC-KeyframeInterval/max_wait_for_keyframe_ms:100/");
-  EXPECT_EQ(
-      KeyframeIntervalSettings::ParseFromFieldTrials().MaxWaitForKeyframeMs(),
-      100);
-}
-
-TEST(KeyframeIntervalSettingsTest, ParsesMaxWaitForFrameMs) {
-  EXPECT_FALSE(
-      KeyframeIntervalSettings::ParseFromFieldTrials().MaxWaitForFrameMs());
-
-  test::ScopedFieldTrials field_trials(
-      "WebRTC-KeyframeInterval/max_wait_for_frame_ms:100/");
-  EXPECT_EQ(
-      KeyframeIntervalSettings::ParseFromFieldTrials().MaxWaitForFrameMs(),
-      100);
-}
-
-TEST(KeyframeIntervalSettingsTest, ParsesAllValues) {
-  test::ScopedFieldTrials field_trials(
-      "WebRTC-KeyframeInterval/"
-      "min_keyframe_send_interval_ms:100,"
-      "max_wait_for_keyframe_ms:101,"
-      "max_wait_for_frame_ms:102/");
-  EXPECT_EQ(KeyframeIntervalSettings::ParseFromFieldTrials()
-                .MinKeyframeSendIntervalMs(),
-            100);
-  EXPECT_EQ(
-      KeyframeIntervalSettings::ParseFromFieldTrials().MaxWaitForKeyframeMs(),
-      101);
-  EXPECT_EQ(
-      KeyframeIntervalSettings::ParseFromFieldTrials().MaxWaitForFrameMs(),
-      102);
-}
-
-TEST(KeyframeIntervalSettingsTest, DoesNotParseAllValuesWhenIncorrectlySet) {
-  EXPECT_FALSE(
-      KeyframeIntervalSettings::ParseFromFieldTrials().MaxWaitForFrameMs());
-
-  test::ScopedFieldTrials field_trials(
-      "WebRTC-KeyframeInterval/"
-      "min_keyframe_send_interval_ms:a,"
-      "max_wait_for_keyframe_ms:b,"
-      "max_wait_for_frame_ms:c/");
+TEST(KeyframeIntervalSettingsTest, DoesNotParseIncorrectValues) {
   EXPECT_FALSE(KeyframeIntervalSettings::ParseFromFieldTrials()
                    .MinKeyframeSendIntervalMs());
-  EXPECT_FALSE(
-      KeyframeIntervalSettings::ParseFromFieldTrials().MaxWaitForKeyframeMs());
-  EXPECT_FALSE(
-      KeyframeIntervalSettings::ParseFromFieldTrials().MaxWaitForFrameMs());
+
+  test::ScopedFieldTrials field_trials(
+      "WebRTC-KeyframeInterval/min_keyframe_send_interval_ms:a/");
+  EXPECT_FALSE(KeyframeIntervalSettings::ParseFromFieldTrials()
+                   .MinKeyframeSendIntervalMs());
+  EXPECT_FALSE(KeyframeIntervalSettings::ParseFromFieldTrials()
+                   .MinKeyframeSendIntervalMs());
 }
 
 }  // namespace

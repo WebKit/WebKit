@@ -23,7 +23,7 @@ VideoFrame FakeNativeBuffer::CreateFrame(int width,
                                          VideoRotation rotation) {
   return VideoFrame::Builder()
       .set_video_frame_buffer(
-          new rtc::RefCountedObject<FakeNativeBuffer>(width, height))
+          rtc::make_ref_counted<FakeNativeBuffer>(width, height))
       .set_timestamp_rtp(timestamp)
       .set_timestamp_ms(render_time_ms)
       .set_rotation(rotation)

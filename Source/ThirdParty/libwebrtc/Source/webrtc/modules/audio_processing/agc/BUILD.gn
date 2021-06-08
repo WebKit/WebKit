@@ -33,7 +33,6 @@ rtc_library("agc") {
     "../../../rtc_base:safe_minmax",
     "../../../system_wrappers:field_trial",
     "../../../system_wrappers:metrics",
-    "../agc2:level_estimation_agc",
     "../vad",
   ]
   absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]

@@ -13,6 +13,7 @@
 #include "api/rtc_event_log/rtc_event.h"
 #include "logging/rtc_event_log/events/rtc_event_bwe_update_loss_based.h"
 #include "logging/rtc_event_log/mock/mock_rtc_event_log.h"
+#include "test/explicit_key_value_config.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -36,7 +37,8 @@ MATCHER(LossBasedBweUpdateWithBitrateAndLossFraction, "") {
 
 void TestProbing(bool use_delay_based) {
   ::testing::NiceMock<MockRtcEventLog> event_log;
-  SendSideBandwidthEstimation bwe(&event_log);
+  test::ExplicitKeyValueConfig key_value_config("");
+  SendSideBandwidthEstimation bwe(&key_value_config, &event_log);
   int64_t now_ms = 0;
   bwe.SetMinMaxBitrate(DataRate::BitsPerSec(100000),
                        DataRate::BitsPerSec(1500000));
@@ -88,7 +90,8 @@ TEST(SendSideBweTest, DoesntReapplyBitrateDecreaseWithoutFollowingRemb) {
   EXPECT_CALL(event_log,
               LogProxy(LossBasedBweUpdateWithBitrateAndLossFraction()))
       .Times(1);
-  SendSideBandwidthEstimation bwe(&event_log);
+  test::ExplicitKeyValueConfig key_value_config("");
+  SendSideBandwidthEstimation bwe(&key_value_config, &event_log);
   static const int kMinBitrateBps = 100000;
   static const int kInitialBitrateBps = 1000000;
   int64_t now_ms = 1000;
@@ -138,7 +141,8 @@ TEST(SendSideBweTest, DoesntReapplyBitrateDecreaseWithoutFollowingRemb) {
 
 TEST(SendSideBweTest, SettingSendBitrateOverridesDelayBasedEstimate) {
   ::testing::NiceMock<MockRtcEventLog> event_log;
-  SendSideBandwidthEstimation bwe(&event_log);
+  test::ExplicitKeyValueConfig key_value_config("");
+  SendSideBandwidthEstimation bwe(&key_value_config, &event_log);
   static const int kMinBitrateBps = 10000;
   static const int kMaxBitrateBps = 10000000;
   static const int kInitialBitrateBps = 300000;
@@ -161,6 +165,19 @@ TEST(SendSideBweTest, SettingSendBitrateOverridesDelayBasedEstimate) {
   bwe.SetSendBitrate(DataRate::BitsPerSec(kForcedHighBitrate),
                      Timestamp::Millis(now_ms));
   EXPECT_EQ(bwe.target_rate().bps(), kForcedHighBitrate);
+}
+
+TEST(RttBasedBackoff, DefaultEnabled) {
+  test::ExplicitKeyValueConfig key_value_config("");
+  RttBasedBackoff rtt_backoff(&key_value_config);
+  EXPECT_TRUE(rtt_backoff.rtt_limit_.IsFinite());
+}
+
+TEST(RttBasedBackoff, CanBeDisabled) {
+  test::ExplicitKeyValueConfig key_value_config(
+      "WebRTC-Bwe-MaxRttLimit/Disabled/");
+  RttBasedBackoff rtt_backoff(&key_value_config);
+  EXPECT_TRUE(rtt_backoff.rtt_limit_.IsPlusInfinity());
 }
 
 }  // namespace webrtc

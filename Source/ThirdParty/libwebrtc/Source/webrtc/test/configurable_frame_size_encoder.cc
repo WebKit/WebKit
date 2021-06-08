@@ -50,7 +50,6 @@ int32_t ConfigurableFrameSizeEncoder::Encode(
   auto buffer = EncodedImageBuffer::Create(current_frame_size_);
   memset(buffer->data(), 0, current_frame_size_);
   encodedImage.SetEncodedData(buffer);
-  encodedImage._completeFrame = true;
   encodedImage._encodedHeight = inputImage.height();
   encodedImage._encodedWidth = inputImage.width();
   encodedImage._frameType = VideoFrameType::kVideoFrameKey;

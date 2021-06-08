@@ -99,11 +99,11 @@ class FilterAnalyzer {
                 int delay_blocks);
 
    private:
-    bool significant_peak_ = false;
-    float filter_floor_accum_ = 0.f;
-    float filter_secondary_peak_ = 0.f;
-    size_t filter_floor_low_limit_ = 0;
-    size_t filter_floor_high_limit_ = 0;
+    bool significant_peak_;
+    float filter_floor_accum_;
+    float filter_secondary_peak_;
+    size_t filter_floor_low_limit_;
+    size_t filter_floor_high_limit_;
     const float active_render_threshold_;
     size_t consistent_estimate_counter_ = 0;
     int consistent_delay_reference_ = -10;
@@ -122,8 +122,8 @@ class FilterAnalyzer {
       consistent_filter_detector.Reset();
     }
 
-    float gain = 0.f;
-    size_t peak_index = 0;
+    float gain;
+    size_t peak_index;
     int filter_length_blocks;
     bool consistent_estimate = false;
     ConsistentFilterDetector consistent_filter_detector;

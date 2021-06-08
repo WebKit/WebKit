@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "absl/types/optional.h"
+#include "api/sequence_checker.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/timestamp.h"
 #include "call/video_receive_stream.h"
@@ -27,11 +28,9 @@
 #include "rtc_base/numerics/sample_counter.h"
 #include "rtc_base/rate_statistics.h"
 #include "rtc_base/rate_tracker.h"
-#include "rtc_base/synchronization/sequence_checker.h"
 #include "rtc_base/system/no_unique_address.h"
 #include "rtc_base/task_utils/pending_task_safety_flag.h"
 #include "rtc_base/thread_annotations.h"
-#include "rtc_base/thread_checker.h"
 #include "video/quality_threshold.h"
 #include "video/stats_counter.h"
 #include "video/video_quality_observer2.h"
@@ -215,7 +214,7 @@ class ReceiveStatisticsProxy : public VCMReceiveStatisticsCallback,
   ScopedTaskSafety task_safety_;
 
   RTC_NO_UNIQUE_ADDRESS SequenceChecker decode_queue_;
-  rtc::ThreadChecker main_thread_;
+  SequenceChecker main_thread_;
   RTC_NO_UNIQUE_ADDRESS SequenceChecker incoming_render_queue_;
 };
 

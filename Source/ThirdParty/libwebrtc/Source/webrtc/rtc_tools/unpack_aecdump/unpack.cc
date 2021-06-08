@@ -81,6 +81,10 @@ ABSL_FLAG(bool,
           text,
           false,
           "Write non-audio files as text files instead of binary files.");
+ABSL_FLAG(bool,
+          use_init_suffix,
+          false,
+          "Use init index instead of capture frame count as file name suffix.");
 
 #define PRINT_CONFIG(field_name)                                         \
   if (msg.has_##field_name()) {                                          \
@@ -224,6 +228,16 @@ std::vector<RuntimeSettingWriter> RuntimeSettingWriters() {
           })};
 }
 
+std::string GetWavFileIndex(int init_index, int frame_count) {
+  rtc::StringBuilder suffix;
+  if (absl::GetFlag(FLAGS_use_init_suffix)) {
+    suffix << "_" << init_index;
+  } else {
+    suffix << frame_count;
+  }
+  return suffix.str();
+}
+
 }  // namespace
 
 int do_main(int argc, char* argv[]) {
@@ -243,6 +257,7 @@ int do_main(int argc, char* argv[]) {
 
   Event event_msg;
   int frame_count = 0;
+  int init_count = 0;
   size_t reverse_samples_per_channel = 0;
   size_t input_samples_per_channel = 0;
   size_t output_samples_per_channel = 0;
@@ -452,9 +467,11 @@ int do_main(int argc, char* argv[]) {
         return 1;
       }
 
+      ++init_count;
       const Init msg = event_msg.init();
       // These should print out zeros if they're missing.
-      fprintf(settings_file, "Init at frame: %d\n", frame_count);
+      fprintf(settings_file, "Init #%d at frame: %d\n", init_count,
+              frame_count);
       int input_sample_rate = msg.sample_rate();
       fprintf(settings_file, "  Input sample rate: %d\n", input_sample_rate);
       int output_sample_rate = msg.output_sample_rate();
@@ -495,24 +512,24 @@ int do_main(int argc, char* argv[]) {
       if (!absl::GetFlag(FLAGS_raw)) {
         // The WAV files need to be reset every time, because they cant change
         // their sample rate or number of channels.
+
+        std::string suffix = GetWavFileIndex(init_count, frame_count);
         rtc::StringBuilder reverse_name;
-        reverse_name << absl::GetFlag(FLAGS_reverse_file) << frame_count
-                     << ".wav";
+        reverse_name << absl::GetFlag(FLAGS_reverse_file) << suffix << ".wav";
         reverse_wav_file.reset(new WavWriter(
             reverse_name.str(), reverse_sample_rate, num_reverse_channels));
         rtc::StringBuilder input_name;
-        input_name << absl::GetFlag(FLAGS_input_file) << frame_count << ".wav";
+        input_name << absl::GetFlag(FLAGS_input_file) << suffix << ".wav";
         input_wav_file.reset(new WavWriter(input_name.str(), input_sample_rate,
                                            num_input_channels));
         rtc::StringBuilder output_name;
-        output_name << absl::GetFlag(FLAGS_output_file) << frame_count
-                    << ".wav";
+        output_name << absl::GetFlag(FLAGS_output_file) << suffix << ".wav";
         output_wav_file.reset(new WavWriter(
             output_name.str(), output_sample_rate, num_output_channels));
 
         if (WritingCallOrderFile()) {
           rtc::StringBuilder callorder_name;
-          callorder_name << absl::GetFlag(FLAGS_callorder_file) << frame_count
+          callorder_name << absl::GetFlag(FLAGS_callorder_file) << suffix
                          << ".char";
           callorder_char_file = OpenFile(callorder_name.str(), "wb");
         }

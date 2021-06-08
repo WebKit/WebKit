@@ -61,7 +61,9 @@ class VideoDecoderProxyFactory final : public VideoDecoderFactory {
       return decoder_->RegisterDecodeCompleteCallback(callback);
     }
     int32_t Release() override { return decoder_->Release(); }
-    bool PrefersLateDecoding() const { return decoder_->PrefersLateDecoding(); }
+    DecoderInfo GetDecoderInfo() const override {
+      return decoder_->GetDecoderInfo();
+    }
     const char* ImplementationName() const override {
       return decoder_->ImplementationName();
     }

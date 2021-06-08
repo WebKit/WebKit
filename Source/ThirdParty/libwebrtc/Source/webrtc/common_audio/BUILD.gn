@@ -335,7 +335,7 @@ if (rtc_build_with_neon) {
   }
 }
 
-if (rtc_include_tests) {
+if (rtc_include_tests && !build_with_chromium) {
   rtc_test("common_audio_unittests") {
     visibility += webrtc_default_visibility
     testonly = true

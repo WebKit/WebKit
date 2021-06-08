@@ -318,6 +318,10 @@ struct RTC_EXPORT RtpExtension {
       "https://aomediacodec.github.io/av1-rtp-spec/"
       "#dependency-descriptor-rtp-header-extension";
 
+  // Experimental extension for signalling target bitrate per layer.
+  static constexpr char kVideoLayersAllocationUri[] =
+      "http://www.webrtc.org/experiments/rtp-hdrext/video-layers-allocation00";
+
   // Header extension for transport sequence number, see url for details:
   // http://www.ietf.org/id/draft-holmer-rmcat-transport-wide-cc-extensions
   static constexpr char kTransportSequenceNumberUri[] =
@@ -348,6 +352,10 @@ struct RTC_EXPORT RtpExtension {
       "urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id";
   static constexpr char kRepairedRidUri[] =
       "urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id";
+
+  // Header extension to propagate webrtc::VideoFrame id field
+  static constexpr char kVideoFrameTrackingIdUri[] =
+      "http://www.webrtc.org/experiments/rtp-hdrext/video-frame-tracking-id";
 
   // Inclusive min and max IDs for two-byte header extensions and one-byte
   // header extensions, per RFC8285 Section 4.2-4.3.
@@ -460,6 +468,9 @@ struct RTC_EXPORT RtpEncodingParameters {
 
   // For video, scale the resolution down by this factor.
   absl::optional<double> scale_resolution_down_by;
+
+  // https://w3c.github.io/webrtc-svc/#rtcrtpencodingparameters
+  absl::optional<std::string> scalability_mode;
 
   // For an RtpSender, set to true to cause this encoding to be encoded and
   // sent, and false for it not to be encoded and sent. This allows control

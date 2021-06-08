@@ -12,9 +12,9 @@
 
 #import <AVFoundation/AVFoundation.h>
 
-#import <WebRTC/RTCEAGLVideoView.h>
+#import "sdk/objc/components/renderer/opengl/RTCEAGLVideoView.h"
 #if defined(RTC_SUPPORTS_METAL)
-#import <WebRTC/RTCMTLVideoView.h>
+#import "sdk/objc/components/renderer/metal/RTCMTLVideoView.h"  // nogncheck
 #endif
 
 #import "UIImage+ARDUtilities.h"

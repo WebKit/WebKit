@@ -79,6 +79,13 @@ int32_t FakeVp8Decoder::Release() {
 }
 
 const char* FakeVp8Decoder::kImplementationName = "fake_vp8_decoder";
+VideoDecoder::DecoderInfo FakeVp8Decoder::GetDecoderInfo() const {
+  DecoderInfo info;
+  info.implementation_name = kImplementationName;
+  info.is_hardware_accelerated = false;
+  return info;
+}
+
 const char* FakeVp8Decoder::ImplementationName() const {
   return kImplementationName;
 }

@@ -22,14 +22,14 @@
 #include "api/units/time_delta.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_encoder.h"
-#include "modules/video_coding/codecs/av1/create_scalability_structure.h"
 #include "modules/video_coding/codecs/av1/libaom_av1_decoder.h"
 #include "modules/video_coding/codecs/av1/libaom_av1_encoder.h"
-#include "modules/video_coding/codecs/av1/scalable_video_controller.h"
-#include "modules/video_coding/codecs/av1/scalable_video_controller_no_layering.h"
 #include "modules/video_coding/codecs/test/encoded_video_frame_producer.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/include/video_error_codes.h"
+#include "modules/video_coding/svc/create_scalability_structure.h"
+#include "modules/video_coding/svc/scalable_video_controller.h"
+#include "modules/video_coding/svc/scalable_video_controller_no_layering.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -55,6 +55,7 @@ constexpr int kFramerate = 30;
 
 VideoCodec DefaultCodecSettings() {
   VideoCodec codec_settings;
+  codec_settings.SetScalabilityMode("NONE");
   codec_settings.width = kWidth;
   codec_settings.height = kHeight;
   codec_settings.maxFramerate = kFramerate;
@@ -179,14 +180,13 @@ struct SvcTestParam {
 class LibaomAv1SvcTest : public ::testing::TestWithParam<SvcTestParam> {};
 
 TEST_P(LibaomAv1SvcTest, EncodeAndDecodeAllDecodeTargets) {
-  std::unique_ptr<ScalableVideoController> svc_controller =
-      CreateScalabilityStructure(GetParam().name);
-  size_t num_decode_targets =
-      svc_controller->DependencyStructure().num_decode_targets;
+  size_t num_decode_targets = CreateScalabilityStructure(GetParam().name)
+                                  ->DependencyStructure()
+                                  .num_decode_targets;
 
-  std::unique_ptr<VideoEncoder> encoder =
-      CreateLibaomAv1Encoder(std::move(svc_controller));
+  std::unique_ptr<VideoEncoder> encoder = CreateLibaomAv1Encoder();
   VideoCodec codec_settings = DefaultCodecSettings();
+  codec_settings.SetScalabilityMode(GetParam().name);
   ASSERT_EQ(encoder->InitEncode(&codec_settings, DefaultEncoderSettings()),
             WEBRTC_VIDEO_CODEC_OK);
   std::vector<EncodedVideoFrameProducer::EncodedFrame> encoded_frames =
@@ -251,10 +251,10 @@ TEST_P(LibaomAv1SvcTest, SetRatesMatchMeasuredBitrate) {
                           kv.second.bps());
   }
 
-  std::unique_ptr<VideoEncoder> encoder =
-      CreateLibaomAv1Encoder(CreateScalabilityStructure(param.name));
+  std::unique_ptr<VideoEncoder> encoder = CreateLibaomAv1Encoder();
   ASSERT_TRUE(encoder);
   VideoCodec codec_settings = DefaultCodecSettings();
+  codec_settings.SetScalabilityMode(param.name);
   codec_settings.maxBitrate = allocation.get_sum_kbps();
   codec_settings.maxFramerate = 30;
   ASSERT_EQ(encoder->InitEncode(&codec_settings, DefaultEncoderSettings()),
@@ -315,6 +315,7 @@ INSTANTIATE_TEST_SUITE_P(
            SvcTestParam{"L3T1", /*num_frames_to_generate=*/3},
            SvcTestParam{"L3T3", /*num_frames_to_generate=*/8},
            SvcTestParam{"S2T1", /*num_frames_to_generate=*/3},
+           SvcTestParam{"S3T3", /*num_frames_to_generate=*/8},
            SvcTestParam{"L2T2", /*num_frames_to_generate=*/4},
            SvcTestParam{"L2T2_KEY", /*num_frames_to_generate=*/4},
            SvcTestParam{"L2T2_KEY_SHIFT",

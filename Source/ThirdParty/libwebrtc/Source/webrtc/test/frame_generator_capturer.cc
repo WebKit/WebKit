@@ -31,7 +31,7 @@ namespace test {
 namespace {
 std::string TransformFilePath(std::string path) {
   static const std::string resource_prefix = "res://";
-  int ext_pos = path.rfind(".");
+  int ext_pos = path.rfind('.');
   if (ext_pos < 0) {
     return test::ResourcePath(path, "yuv");
   } else if (absl::StartsWith(path, resource_prefix)) {

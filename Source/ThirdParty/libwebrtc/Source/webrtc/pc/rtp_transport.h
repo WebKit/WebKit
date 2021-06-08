@@ -11,11 +11,22 @@
 #ifndef PC_RTP_TRANSPORT_H_
 #define PC_RTP_TRANSPORT_H_
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include <string>
 
+#include "absl/types/optional.h"
 #include "call/rtp_demuxer.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
+#include "p2p/base/packet_transport_internal.h"
 #include "pc/rtp_transport_internal.h"
+#include "pc/session_description.h"
+#include "rtc_base/async_packet_socket.h"
+#include "rtc_base/copy_on_write_buffer.h"
+#include "rtc_base/network/sent_packet.h"
+#include "rtc_base/network_route.h"
+#include "rtc_base/socket.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 
 namespace rtc {

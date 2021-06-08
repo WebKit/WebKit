@@ -37,7 +37,8 @@ rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
     std::unique_ptr<VideoEncoderFactory> video_encoder_factory,
     std::unique_ptr<VideoDecoderFactory> video_decoder_factory,
     rtc::scoped_refptr<AudioMixer> audio_mixer,
-    rtc::scoped_refptr<AudioProcessing> audio_processing) {
+    rtc::scoped_refptr<AudioProcessing> audio_processing,
+    AudioFrameProcessor* audio_frame_processor) {
   PeerConnectionFactoryDependencies dependencies;
   dependencies.network_thread = network_thread;
   dependencies.worker_thread = worker_thread;
@@ -53,6 +54,7 @@ rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
   media_dependencies.adm = std::move(default_adm);
   media_dependencies.audio_encoder_factory = std::move(audio_encoder_factory);
   media_dependencies.audio_decoder_factory = std::move(audio_decoder_factory);
+  media_dependencies.audio_frame_processor = audio_frame_processor;
   if (audio_processing) {
     media_dependencies.audio_processing = std::move(audio_processing);
   } else {

@@ -116,10 +116,10 @@ void NetworkQualityMetricsReporter::ReportStats(
       "average_send_rate", network_label,
       stats->PacketsSent() >= 2 ? stats->AverageSendRate().bytes_per_sec() : 0,
       "bytesPerSecond");
-  ReportResult("bytes_dropped", network_label, stats->BytesDropped().bytes(),
-               "sizeInBytes");
-  ReportResult("packets_dropped", network_label, stats->PacketsDropped(),
-               "unitless");
+  ReportResult("bytes_discarded_no_receiver", network_label,
+               stats->BytesDropped().bytes(), "sizeInBytes");
+  ReportResult("packets_discarded_no_receiver", network_label,
+               stats->PacketsDropped(), "unitless");
   ReportResult("bytes_received", network_label, stats->BytesReceived().bytes(),
                "sizeInBytes");
   ReportResult("packets_received", network_label, stats->PacketsReceived(),

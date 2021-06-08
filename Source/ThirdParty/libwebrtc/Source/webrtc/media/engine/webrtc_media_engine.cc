@@ -38,7 +38,8 @@ std::unique_ptr<MediaEngineInterface> CreateMediaEngine(
       std::move(dependencies.audio_encoder_factory),
       std::move(dependencies.audio_decoder_factory),
       std::move(dependencies.audio_mixer),
-      std::move(dependencies.audio_processing), trials);
+      std::move(dependencies.audio_processing),
+      dependencies.audio_frame_processor, trials);
 #ifdef HAVE_WEBRTC_VIDEO
   auto video_engine = std::make_unique<WebRtcVideoEngine>(
       std::move(dependencies.video_encoder_factory),

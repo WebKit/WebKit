@@ -53,9 +53,9 @@ class MockChannelSend {
 TEST(ChannelSendFrameTransformerDelegateTest,
      RegisterTransformedFrameCallbackOnInit) {
   rtc::scoped_refptr<MockFrameTransformer> mock_frame_transformer =
-      new rtc::RefCountedObject<MockFrameTransformer>();
+      rtc::make_ref_counted<MockFrameTransformer>();
   rtc::scoped_refptr<ChannelSendFrameTransformerDelegate> delegate =
-      new rtc::RefCountedObject<ChannelSendFrameTransformerDelegate>(
+      rtc::make_ref_counted<ChannelSendFrameTransformerDelegate>(
           ChannelSendFrameTransformerDelegate::SendFrameCallback(),
           mock_frame_transformer, nullptr);
   EXPECT_CALL(*mock_frame_transformer, RegisterTransformedFrameCallback);
@@ -67,9 +67,9 @@ TEST(ChannelSendFrameTransformerDelegateTest,
 TEST(ChannelSendFrameTransformerDelegateTest,
      UnregisterTransformedFrameCallbackOnReset) {
   rtc::scoped_refptr<MockFrameTransformer> mock_frame_transformer =
-      new rtc::RefCountedObject<MockFrameTransformer>();
+      rtc::make_ref_counted<MockFrameTransformer>();
   rtc::scoped_refptr<ChannelSendFrameTransformerDelegate> delegate =
-      new rtc::RefCountedObject<ChannelSendFrameTransformerDelegate>(
+      rtc::make_ref_counted<ChannelSendFrameTransformerDelegate>(
           ChannelSendFrameTransformerDelegate::SendFrameCallback(),
           mock_frame_transformer, nullptr);
   EXPECT_CALL(*mock_frame_transformer, UnregisterTransformedFrameCallback);
@@ -82,10 +82,10 @@ TEST(ChannelSendFrameTransformerDelegateTest,
      TransformRunsChannelSendCallback) {
   TaskQueueForTest channel_queue("channel_queue");
   rtc::scoped_refptr<MockFrameTransformer> mock_frame_transformer =
-      new rtc::RefCountedObject<NiceMock<MockFrameTransformer>>();
+      rtc::make_ref_counted<NiceMock<MockFrameTransformer>>();
   MockChannelSend mock_channel;
   rtc::scoped_refptr<ChannelSendFrameTransformerDelegate> delegate =
-      new rtc::RefCountedObject<ChannelSendFrameTransformerDelegate>(
+      rtc::make_ref_counted<ChannelSendFrameTransformerDelegate>(
           mock_channel.callback(), mock_frame_transformer, &channel_queue);
   rtc::scoped_refptr<TransformedFrameCallback> callback;
   EXPECT_CALL(*mock_frame_transformer, RegisterTransformedFrameCallback)
@@ -112,10 +112,10 @@ TEST(ChannelSendFrameTransformerDelegateTest,
      OnTransformedDoesNotRunChannelSendCallbackAfterReset) {
   TaskQueueForTest channel_queue("channel_queue");
   rtc::scoped_refptr<MockFrameTransformer> mock_frame_transformer =
-      new rtc::RefCountedObject<testing::NiceMock<MockFrameTransformer>>();
+      rtc::make_ref_counted<testing::NiceMock<MockFrameTransformer>>();
   MockChannelSend mock_channel;
   rtc::scoped_refptr<ChannelSendFrameTransformerDelegate> delegate =
-      new rtc::RefCountedObject<ChannelSendFrameTransformerDelegate>(
+      rtc::make_ref_counted<ChannelSendFrameTransformerDelegate>(
           mock_channel.callback(), mock_frame_transformer, &channel_queue);
 
   delegate->Reset();

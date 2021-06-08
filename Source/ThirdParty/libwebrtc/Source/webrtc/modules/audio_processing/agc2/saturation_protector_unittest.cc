@@ -10,181 +10,166 @@
 
 #include "modules/audio_processing/agc2/saturation_protector.h"
 
-#include <algorithm>
-
 #include "modules/audio_processing/agc2/agc2_common.h"
 #include "modules/audio_processing/logging/apm_data_dumper.h"
 #include "rtc_base/gunit.h"
-#include "test/gmock.h"
 
 namespace webrtc {
 namespace {
 
-constexpr float kInitialMarginDb = 20.f;
+constexpr float kInitialHeadroomDb = 20.0f;
+constexpr float kNoExtraHeadroomDb = 0.0f;
+constexpr int kNoAdjacentSpeechFramesRequired = 1;
+constexpr float kMaxSpeechProbability = 1.0f;
 
-using saturation_protector_impl::RingBuffer;
-
-SaturationProtectorState CreateSaturationProtectorState() {
-  SaturationProtectorState state;
-  ResetSaturationProtectorState(kInitialMarginDb, state);
-  return state;
-}
-
-// Updates `state` for `num_iterations` times with constant speech level and
-// peak powers and returns the maximum margin.
+// Calls `Analyze(speech_probability, peak_dbfs, speech_level_dbfs)`
+// `num_iterations` times on `saturation_protector` and return the largest
+// headroom difference between two consecutive calls.
 float RunOnConstantLevel(int num_iterations,
-                         float speech_peak_dbfs,
+                         float speech_probability,
+                         float peak_dbfs,
                          float speech_level_dbfs,
-                         SaturationProtectorState& state) {
-  float last_margin = state.margin_db;
-  float max_difference = 0.f;
+                         SaturationProtector& saturation_protector) {
+  float last_headroom = saturation_protector.HeadroomDb();
+  float max_difference = 0.0f;
   for (int i = 0; i < num_iterations; ++i) {
-    UpdateSaturationProtectorState(speech_peak_dbfs, speech_level_dbfs, state);
-    const float new_margin = state.margin_db;
+    saturation_protector.Analyze(speech_probability, peak_dbfs,
+                                 speech_level_dbfs);
+    const float new_headroom = saturation_protector.HeadroomDb();
     max_difference =
-        std::max(max_difference, std::abs(new_margin - last_margin));
-    last_margin = new_margin;
+        std::max(max_difference, std::fabs(new_headroom - last_headroom));
+    last_headroom = new_headroom;
   }
   return max_difference;
 }
 
-}  // namespace
-
-TEST(AutomaticGainController2SaturationProtector, RingBufferInit) {
-  RingBuffer b;
-  EXPECT_EQ(b.Size(), 0);
-  EXPECT_FALSE(b.Front().has_value());
-}
-
-TEST(AutomaticGainController2SaturationProtector, RingBufferPushBack) {
-  RingBuffer b;
-  constexpr float kValue = 123.f;
-  b.PushBack(kValue);
-  EXPECT_EQ(b.Size(), 1);
-  ASSERT_TRUE(b.Front().has_value());
-  EXPECT_EQ(b.Front().value(), kValue);
-}
-
-TEST(AutomaticGainController2SaturationProtector, RingBufferReset) {
-  RingBuffer b;
-  b.PushBack(123.f);
-  b.Reset();
-  EXPECT_EQ(b.Size(), 0);
-  EXPECT_FALSE(b.Front().has_value());
-}
-
-// Checks that the front value does not change until the ring buffer gets full.
-TEST(AutomaticGainController2SaturationProtector,
-     RingBufferFrontUntilBufferIsFull) {
-  RingBuffer b;
-  constexpr float kValue = 123.f;
-  b.PushBack(kValue);
-  for (int i = 1; i < b.Capacity(); ++i) {
-    EXPECT_EQ(b.Front().value(), kValue);
-    b.PushBack(kValue + i);
-  }
-}
-
-// Checks that when the buffer is full it behaves as a shift register.
-TEST(AutomaticGainController2SaturationProtector,
-     FullRingBufferFrontIsDelayed) {
-  RingBuffer b;
-  // Fill the buffer.
-  for (int i = 0; i < b.Capacity(); ++i) {
-    b.PushBack(i);
-  }
-  // The ring buffer should now behave as a shift register with a delay equal to
-  // its capacity.
-  for (int i = b.Capacity(); i < 2 * b.Capacity() + 1; ++i) {
-    EXPECT_EQ(b.Front().value(), i - b.Capacity());
-    b.PushBack(i);
-  }
-}
-
-// Checks that a state after reset equals a state after construction.
-TEST(AutomaticGainController2SaturationProtector, ResetState) {
-  SaturationProtectorState init_state;
-  ResetSaturationProtectorState(kInitialMarginDb, init_state);
-
-  SaturationProtectorState state;
-  ResetSaturationProtectorState(kInitialMarginDb, state);
-  RunOnConstantLevel(/*num_iterations=*/10, /*speech_level_dbfs=*/-20.f,
-                     /*speech_peak_dbfs=*/-10.f, state);
-  ASSERT_NE(init_state, state);  // Make sure that there are side-effects.
-  ResetSaturationProtectorState(kInitialMarginDb, state);
-
-  EXPECT_EQ(init_state, state);
+// Checks that the returned headroom value is correctly reset.
+TEST(GainController2SaturationProtector, Reset) {
+  ApmDataDumper apm_data_dumper(0);
+  auto saturation_protector = CreateSaturationProtector(
+      kInitialHeadroomDb, kNoExtraHeadroomDb, kNoAdjacentSpeechFramesRequired,
+      &apm_data_dumper);
+  const float initial_headroom_db = saturation_protector->HeadroomDb();
+  RunOnConstantLevel(/*num_iterations=*/10, kMaxSpeechProbability,
+                     /*peak_dbfs=*/0.0f,
+                     /*speech_level_dbfs=*/-10.0f, *saturation_protector);
+  // Make sure that there are side-effects.
+  ASSERT_NE(initial_headroom_db, saturation_protector->HeadroomDb());
+  saturation_protector->Reset();
+  EXPECT_EQ(initial_headroom_db, saturation_protector->HeadroomDb());
 }
 
 // Checks that the estimate converges to the ratio between peaks and level
 // estimator values after a while.
-TEST(AutomaticGainController2SaturationProtector,
-     ProtectorEstimatesCrestRatio) {
+TEST(GainController2SaturationProtector, EstimatesCrestRatio) {
   constexpr int kNumIterations = 2000;
-  constexpr float kPeakLevel = -20.f;
-  constexpr float kCrestFactor = kInitialMarginDb + 1.f;
-  constexpr float kSpeechLevel = kPeakLevel - kCrestFactor;
-  const float kMaxDifference = 0.5f * std::abs(kInitialMarginDb - kCrestFactor);
+  constexpr float kPeakLevelDbfs = -20.0f;
+  constexpr float kCrestFactorDb = kInitialHeadroomDb + 1.0f;
+  constexpr float kSpeechLevelDbfs = kPeakLevelDbfs - kCrestFactorDb;
+  const float kMaxDifferenceDb =
+      0.5f * std::fabs(kInitialHeadroomDb - kCrestFactorDb);
 
-  auto state = CreateSaturationProtectorState();
-  RunOnConstantLevel(kNumIterations, kPeakLevel, kSpeechLevel, state);
-
-  EXPECT_NEAR(state.margin_db, kCrestFactor, kMaxDifference);
+  ApmDataDumper apm_data_dumper(0);
+  auto saturation_protector = CreateSaturationProtector(
+      kInitialHeadroomDb, kNoExtraHeadroomDb, kNoAdjacentSpeechFramesRequired,
+      &apm_data_dumper);
+  RunOnConstantLevel(kNumIterations, kMaxSpeechProbability, kPeakLevelDbfs,
+                     kSpeechLevelDbfs, *saturation_protector);
+  EXPECT_NEAR(saturation_protector->HeadroomDb(), kCrestFactorDb,
+              kMaxDifferenceDb);
 }
 
-// Checks that the margin does not change too quickly.
-TEST(AutomaticGainController2SaturationProtector, ChangeSlowly) {
+// Checks that the extra headroom is applied.
+TEST(GainController2SaturationProtector, ExtraHeadroomApplied) {
+  constexpr float kExtraHeadroomDb = 5.1234f;
+  constexpr int kNumIterations = 10;
+  constexpr float kPeakLevelDbfs = -20.0f;
+  constexpr float kSpeechLevelDbfs = kPeakLevelDbfs - 15.0f;
+
+  ApmDataDumper apm_data_dumper(0);
+
+  auto saturation_protector_no_extra = CreateSaturationProtector(
+      kInitialHeadroomDb, kNoExtraHeadroomDb, kNoAdjacentSpeechFramesRequired,
+      &apm_data_dumper);
+  for (int i = 0; i < kNumIterations; ++i) {
+    saturation_protector_no_extra->Analyze(kMaxSpeechProbability,
+                                           kPeakLevelDbfs, kSpeechLevelDbfs);
+  }
+
+  auto saturation_protector_extra = CreateSaturationProtector(
+      kInitialHeadroomDb, kExtraHeadroomDb, kNoAdjacentSpeechFramesRequired,
+      &apm_data_dumper);
+  for (int i = 0; i < kNumIterations; ++i) {
+    saturation_protector_extra->Analyze(kMaxSpeechProbability, kPeakLevelDbfs,
+                                        kSpeechLevelDbfs);
+  }
+
+  EXPECT_EQ(saturation_protector_no_extra->HeadroomDb() + kExtraHeadroomDb,
+            saturation_protector_extra->HeadroomDb());
+}
+
+// Checks that the headroom does not change too quickly.
+TEST(GainController2SaturationProtector, ChangeSlowly) {
   constexpr int kNumIterations = 1000;
-  constexpr float kPeakLevel = -20.f;
-  constexpr float kCrestFactor = kInitialMarginDb - 5.f;
-  constexpr float kOtherCrestFactor = kInitialMarginDb;
-  constexpr float kSpeechLevel = kPeakLevel - kCrestFactor;
-  constexpr float kOtherSpeechLevel = kPeakLevel - kOtherCrestFactor;
+  constexpr float kPeakLevelDbfs = -20.f;
+  constexpr float kCrestFactorDb = kInitialHeadroomDb - 5.f;
+  constexpr float kOtherCrestFactorDb = kInitialHeadroomDb;
+  constexpr float kSpeechLevelDbfs = kPeakLevelDbfs - kCrestFactorDb;
+  constexpr float kOtherSpeechLevelDbfs = kPeakLevelDbfs - kOtherCrestFactorDb;
 
-  auto state = CreateSaturationProtectorState();
-  float max_difference =
-      RunOnConstantLevel(kNumIterations, kPeakLevel, kSpeechLevel, state);
-  max_difference = std::max(
-      RunOnConstantLevel(kNumIterations, kPeakLevel, kOtherSpeechLevel, state),
-      max_difference);
-
+  ApmDataDumper apm_data_dumper(0);
+  auto saturation_protector = CreateSaturationProtector(
+      kInitialHeadroomDb, kNoExtraHeadroomDb, kNoAdjacentSpeechFramesRequired,
+      &apm_data_dumper);
+  float max_difference_db =
+      RunOnConstantLevel(kNumIterations, kMaxSpeechProbability, kPeakLevelDbfs,
+                         kSpeechLevelDbfs, *saturation_protector);
+  max_difference_db = std::max(
+      RunOnConstantLevel(kNumIterations, kMaxSpeechProbability, kPeakLevelDbfs,
+                         kOtherSpeechLevelDbfs, *saturation_protector),
+      max_difference_db);
   constexpr float kMaxChangeSpeedDbPerSecond = 0.5f;  // 1 db / 2 seconds.
-  EXPECT_LE(max_difference,
+  EXPECT_LE(max_difference_db,
             kMaxChangeSpeedDbPerSecond / 1000 * kFrameDurationMs);
 }
 
-// Checks that there is a delay between input change and margin adaptations.
-TEST(AutomaticGainController2SaturationProtector, AdaptToDelayedChanges) {
-  constexpr int kDelayIterations = kFullBufferSizeMs / kFrameDurationMs;
-  constexpr float kInitialSpeechLevelDbfs = -30.f;
-  constexpr float kLaterSpeechLevelDbfs = -15.f;
+class SaturationProtectorParametrization
+    : public ::testing::TestWithParam<int> {
+ protected:
+  int adjacent_speech_frames_threshold() const { return GetParam(); }
+};
 
-  auto state = CreateSaturationProtectorState();
-  // First run on initial level.
-  float max_difference = RunOnConstantLevel(
-      kDelayIterations, kInitialSpeechLevelDbfs + kInitialMarginDb,
-      kInitialSpeechLevelDbfs, state);
-  // Then peak changes, but not RMS.
-  max_difference =
-      std::max(RunOnConstantLevel(kDelayIterations,
-                                  kLaterSpeechLevelDbfs + kInitialMarginDb,
-                                  kInitialSpeechLevelDbfs, state),
-               max_difference);
-  // Then both change.
-  max_difference =
-      std::max(RunOnConstantLevel(kDelayIterations,
-                                  kLaterSpeechLevelDbfs + kInitialMarginDb,
-                                  kLaterSpeechLevelDbfs, state),
-               max_difference);
-
-  // The saturation protector expects that the RMS changes roughly
-  // 'kFullBufferSizeMs' after peaks change. This is to account for delay
-  // introduced by the level estimator. Therefore, the input above is 'normal'
-  // and 'expected', and shouldn't influence the margin by much.
-  const float total_difference = std::abs(state.margin_db - kInitialMarginDb);
-
-  EXPECT_LE(total_difference, 0.05f);
-  EXPECT_LE(max_difference, 0.01f);
+TEST_P(SaturationProtectorParametrization, DoNotAdaptToShortSpeechSegments) {
+  ApmDataDumper apm_data_dumper(0);
+  auto saturation_protector = CreateSaturationProtector(
+      kInitialHeadroomDb, kNoExtraHeadroomDb,
+      adjacent_speech_frames_threshold(), &apm_data_dumper);
+  const float initial_headroom_db = saturation_protector->HeadroomDb();
+  RunOnConstantLevel(/*num_iterations=*/adjacent_speech_frames_threshold() - 1,
+                     kMaxSpeechProbability,
+                     /*peak_dbfs=*/0.0f,
+                     /*speech_level_dbfs=*/-10.0f, *saturation_protector);
+  // No adaptation expected.
+  EXPECT_EQ(initial_headroom_db, saturation_protector->HeadroomDb());
 }
 
+TEST_P(SaturationProtectorParametrization, AdaptToEnoughSpeechSegments) {
+  ApmDataDumper apm_data_dumper(0);
+  auto saturation_protector = CreateSaturationProtector(
+      kInitialHeadroomDb, kNoExtraHeadroomDb,
+      adjacent_speech_frames_threshold(), &apm_data_dumper);
+  const float initial_headroom_db = saturation_protector->HeadroomDb();
+  RunOnConstantLevel(/*num_iterations=*/adjacent_speech_frames_threshold() + 1,
+                     kMaxSpeechProbability,
+                     /*peak_dbfs=*/0.0f,
+                     /*speech_level_dbfs=*/-10.0f, *saturation_protector);
+  // Adaptation expected.
+  EXPECT_NE(initial_headroom_db, saturation_protector->HeadroomDb());
+}
+
+INSTANTIATE_TEST_SUITE_P(GainController2,
+                         SaturationProtectorParametrization,
+                         ::testing::Values(2, 9, 17));
+
+}  // namespace
 }  // namespace webrtc

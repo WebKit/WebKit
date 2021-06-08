@@ -53,15 +53,13 @@ std::pair<uint32_t, uint32_t> GetMinMaxBitratesBps(const VideoCodec& codec,
 }  // namespace
 
 QualityAnalyzingVideoEncoder::QualityAnalyzingVideoEncoder(
-    int id,
     absl::string_view peer_name,
     std::unique_ptr<VideoEncoder> delegate,
     double bitrate_multiplier,
     std::map<std::string, absl::optional<int>> stream_required_spatial_index,
     EncodedImageDataInjector* injector,
     VideoQualityAnalyzerInterface* analyzer)
-    : id_(id),
-      peer_name_(peer_name),
+    : peer_name_(peer_name),
       delegate_(std::move(delegate)),
       bitrate_multiplier_(bitrate_multiplier),
       stream_required_spatial_index_(std::move(stream_required_spatial_index)),
@@ -287,7 +285,7 @@ EncodedImageCallback::Result QualityAnalyzingVideoEncoder::OnEncodedImage(
   // it) or b) a new buffer (in such case injector will be responsible for
   // deleting it).
   const EncodedImage& image =
-      injector_->InjectData(frame_id, discard, encoded_image, id_);
+      injector_->InjectData(frame_id, discard, encoded_image);
   {
     MutexLock lock(&lock_);
     RTC_DCHECK(delegate_callback_);
@@ -352,14 +350,12 @@ QualityAnalyzingVideoEncoderFactory::QualityAnalyzingVideoEncoderFactory(
     std::unique_ptr<VideoEncoderFactory> delegate,
     double bitrate_multiplier,
     std::map<std::string, absl::optional<int>> stream_required_spatial_index,
-    IdGenerator<int>* id_generator,
     EncodedImageDataInjector* injector,
     VideoQualityAnalyzerInterface* analyzer)
     : peer_name_(peer_name),
       delegate_(std::move(delegate)),
       bitrate_multiplier_(bitrate_multiplier),
       stream_required_spatial_index_(std::move(stream_required_spatial_index)),
-      id_generator_(id_generator),
       injector_(injector),
       analyzer_(analyzer) {}
 QualityAnalyzingVideoEncoderFactory::~QualityAnalyzingVideoEncoderFactory() =
@@ -380,8 +376,7 @@ std::unique_ptr<VideoEncoder>
 QualityAnalyzingVideoEncoderFactory::CreateVideoEncoder(
     const SdpVideoFormat& format) {
   return std::make_unique<QualityAnalyzingVideoEncoder>(
-      id_generator_->GetNextId(), peer_name_,
-      delegate_->CreateVideoEncoder(format), bitrate_multiplier_,
+      peer_name_, delegate_->CreateVideoEncoder(format), bitrate_multiplier_,
       stream_required_spatial_index_, injector_, analyzer_);
 }
 

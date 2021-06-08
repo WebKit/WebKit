@@ -9,7 +9,6 @@
 import("../../webrtc.gni")
 
 rtc_library("remote_bitrate_estimator") {
-  visibility = [ "*" ]
   sources = [
     "aimd_rate_control.cc",
     "aimd_rate_control.h",
@@ -22,6 +21,8 @@ rtc_library("remote_bitrate_estimator") {
     "overuse_detector.h",
     "overuse_estimator.cc",
     "overuse_estimator.h",
+    "packet_arrival_map.cc",
+    "packet_arrival_map.h",
     "remote_bitrate_estimator_abs_send_time.cc",
     "remote_bitrate_estimator_abs_send_time.h",
     "remote_bitrate_estimator_single_stream.cc",
@@ -107,6 +108,7 @@ if (rtc_include_tests) {
       "aimd_rate_control_unittest.cc",
       "inter_arrival_unittest.cc",
       "overuse_detector_unittest.cc",
+      "packet_arrival_map_test.cc",
       "remote_bitrate_estimator_abs_send_time_unittest.cc",
       "remote_bitrate_estimator_single_stream_unittest.cc",
       "remote_bitrate_estimator_unittest_helper.cc",

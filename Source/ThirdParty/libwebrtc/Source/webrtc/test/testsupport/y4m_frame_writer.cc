@@ -41,7 +41,7 @@ bool Y4mFrameWriterImpl::Init() {
   return true;
 }
 
-bool Y4mFrameWriterImpl::WriteFrame(uint8_t* frame_buffer) {
+bool Y4mFrameWriterImpl::WriteFrame(const uint8_t* frame_buffer) {
   if (output_file_ == nullptr) {
     fprintf(stderr,
             "Y4mFrameWriterImpl is not initialized (output file is NULL)\n");

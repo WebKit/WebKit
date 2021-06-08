@@ -166,6 +166,36 @@ TEST_P(PeerConnectionHeaderExtensionTest, OffersUnstoppedModifiedExtensions) {
                           Field(&RtpExtension::uri, "uri3")));
 }
 
+TEST_P(PeerConnectionHeaderExtensionTest, NegotiatedExtensionsAreAccessible) {
+  cricket::MediaType media_type;
+  SdpSemantics semantics;
+  std::tie(media_type, semantics) = GetParam();
+  if (semantics != SdpSemantics::kUnifiedPlan)
+    return;
+  std::unique_ptr<PeerConnectionWrapper> pc1 =
+      CreatePeerConnection(media_type, semantics);
+  auto transceiver1 = pc1->AddTransceiver(media_type);
+  auto modified_extensions = transceiver1->HeaderExtensionsToOffer();
+  modified_extensions[3].direction = RtpTransceiverDirection::kStopped;
+  transceiver1->SetOfferedRtpHeaderExtensions(modified_extensions);
+  auto offer = pc1->CreateOfferAndSetAsLocal(
+      PeerConnectionInterface::RTCOfferAnswerOptions());
+
+  std::unique_ptr<PeerConnectionWrapper> pc2 =
+      CreatePeerConnection(media_type, semantics);
+  auto transceiver2 = pc2->AddTransceiver(media_type);
+  pc2->SetRemoteDescription(std::move(offer));
+  auto answer = pc2->CreateAnswerAndSetAsLocal(
+      PeerConnectionInterface::RTCOfferAnswerOptions());
+  pc1->SetRemoteDescription(std::move(answer));
+
+  // PC1 has exts 2-4 unstopped and PC2 has exts 1-3 unstopped -> ext 2, 3
+  // survives.
+  EXPECT_THAT(transceiver1->HeaderExtensionsNegotiated(),
+              ElementsAre(Field(&RtpHeaderExtensionCapability::uri, "uri2"),
+                          Field(&RtpHeaderExtensionCapability::uri, "uri3")));
+}
+
 INSTANTIATE_TEST_SUITE_P(
     ,
     PeerConnectionHeaderExtensionTest,

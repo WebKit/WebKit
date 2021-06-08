@@ -13,9 +13,11 @@
 
 #include <functional>
 #include <memory>
+#include <string>
 #include <vector>
 
 #include "api/array_view.h"
+#include "api/test/network_emulation/cross_traffic.h"
 #include "api/test/network_emulation/network_emulation_interfaces.h"
 #include "api/test/simulated_network.h"
 #include "api/test/time_controller.h"
@@ -54,6 +56,8 @@ struct EmulatedEndpointConfig {
     kDebug
   };
 
+  // If specified will be used to name endpoint for logging purposes.
+  absl::optional<std::string> name = absl::nullopt;
   IpAddressFamily generated_ip_family = IpAddressFamily::kIpv4;
   // If specified will be used as IP address for endpoint node. Must be unique
   // among all created nodes.
@@ -64,8 +68,47 @@ struct EmulatedEndpointConfig {
   // Network type which will be used to represent endpoint to WebRTC.
   rtc::AdapterType type = rtc::AdapterType::ADAPTER_TYPE_UNKNOWN;
   StatsGatheringMode stats_gathering_mode = StatsGatheringMode::kDefault;
+  // Allow endpoint to send packets specifying source IP address different to
+  // the current endpoint IP address. If false endpoint will crash if attempt
+  // to send such packet will be done.
+  bool allow_send_packet_with_different_source_ip = false;
+  // Allow endpoint to receive packet with destination IP address different to
+  // the current endpoint IP address. If false endpoint will crash if such
+  // packet will arrive.
+  bool allow_receive_packets_with_different_dest_ip = false;
 };
 
+struct EmulatedTURNServerConfig {
+  EmulatedEndpointConfig client_config;
+  EmulatedEndpointConfig peer_config;
+};
+
+// EmulatedTURNServer is an abstraction for a TURN server.
+class EmulatedTURNServerInterface {
+ public:
+  struct IceServerConfig {
+    std::string username;
+    std::string password;
+    std::string url;
+  };
+
+  virtual ~EmulatedTURNServerInterface() {}
+
+  // Get an IceServer configuration suitable to add to a PeerConnection.
+  virtual IceServerConfig GetIceServerConfig() const = 0;
+
+  // Get non-null client endpoint, an endpoint that accepts TURN allocations.
+  // This shall typically be connected to one or more webrtc endpoint.
+  virtual EmulatedEndpoint* GetClientEndpoint() const = 0;
+
+  // Returns socket address, which client should use to connect to TURN server
+  // and do TURN allocation.
+  virtual rtc::SocketAddress GetClientEndpointAddress() const = 0;
+
+  // Get non-null peer endpoint, that is "connected to the internet".
+  // This shall typically be connected to another TURN server.
+  virtual EmulatedEndpoint* GetPeerEndpoint() const = 0;
+};
 
 // Provide interface to obtain all required objects to inject network emulation
 // layer into PeerConnection. Also contains information about network interfaces
@@ -120,8 +163,9 @@ class NetworkEmulationManager {
       Builder& capacity_Mbps(int link_capacity_Mbps);
       Builder& loss(double loss_rate);
       Builder& packet_queue_length(int max_queue_length_in_packets);
-      SimulatedNetworkNode Build() const;
-      SimulatedNetworkNode Build(NetworkEmulationManager* net) const;
+      SimulatedNetworkNode Build(uint64_t random_seed = 1) const;
+      SimulatedNetworkNode Build(NetworkEmulationManager* net,
+                                 uint64_t random_seed = 1) const;
 
      private:
       NetworkEmulationManager* const net_;
@@ -131,11 +175,19 @@ class NetworkEmulationManager {
   virtual ~NetworkEmulationManager() = default;
 
   virtual TimeController* time_controller() = 0;
+  // Returns a mode in which underlying time controller operates.
+  virtual TimeMode time_mode() const = 0;
 
   // Creates an emulated network node, which represents single network in
-  // the emulated network layer.
+  // the emulated network layer. Uses default implementation on network behavior
+  // which can be configured with |config|. |random_seed| can be provided to
+  // alter randomization behavior.
   virtual EmulatedNetworkNode* CreateEmulatedNode(
-      BuiltInNetworkBehaviorConfig config) = 0;
+      BuiltInNetworkBehaviorConfig config,
+      uint64_t random_seed = 1) = 0;
+  // Creates an emulated network node, which represents single network in
+  // the emulated network layer. |network_behavior| determines how created node
+  // will forward incoming packets to the next receiver.
   virtual EmulatedNetworkNode* CreateEmulatedNode(
       std::unique_ptr<NetworkBehaviorInterface> network_behavior) = 0;
 
@@ -182,9 +234,39 @@ class NetworkEmulationManager {
   virtual EmulatedRoute* CreateRoute(
       const std::vector<EmulatedNetworkNode*>& via_nodes) = 0;
 
+  // Creates a default route between endpoints going through specified network
+  // nodes. Default route is used for packet when there is no known route for
+  // packet's destination IP.
+  //
+  // This route is single direction only and describe how traffic that was
+  // sent by network interface |from| have to be delivered in case if routing
+  // was unspecified. Return object can be used to remove created route. The
+  // route must contains at least one network node inside it.
+  //
+  // Assume that E{0-9} are endpoints and N{0-9} are network nodes, then
+  // creation of the route have to follow these rules:
+  //   1. A route consists of a source endpoint, an ordered list of one or
+  //      more network nodes, and a destination endpoint.
+  //   2. If (E1, ..., E2) is a route, then E1 != E2.
+  //      In other words, the source and the destination may not be the same.
+  //   3. Given two simultaneously existing routes (E1, ..., E2) and
+  //      (E3, ..., E4), either E1 != E3 or E2 != E4.
+  //      In other words, there may be at most one route from any given source
+  //      endpoint to any given destination endpoint.
+  //   4. Given two simultaneously existing routes (E1, ..., N1, ..., E2)
+  //      and (E3, ..., N2, ..., E4), either N1 != N2 or E2 != E4.
+  //      In other words, a network node may not belong to two routes that lead
+  //      to the same destination endpoint.
+  //   5. Any node N can belong to only one default route.
+  virtual EmulatedRoute* CreateDefaultRoute(
+      EmulatedEndpoint* from,
+      const std::vector<EmulatedNetworkNode*>& via_nodes,
+      EmulatedEndpoint* to) = 0;
+
   // Removes route previously created by CreateRoute(...).
   // Caller mustn't call this function with route, that have been already
-  // removed earlier.
+  // removed earlier. Removing a route that is currently in use will lead to
+  // packets being dropped.
   virtual void ClearRoute(EmulatedRoute* route) = 0;
 
   // Creates a simulated TCP connection using |send_route| for traffic and
@@ -193,6 +275,20 @@ class NetworkEmulationManager {
   // TODO(srte): Handle clearing of the routes involved.
   virtual TcpMessageRoute* CreateTcpRoute(EmulatedRoute* send_route,
                                           EmulatedRoute* ret_route) = 0;
+
+  // Creates a route over the given |via_nodes|. Returns an object that can be
+  // used to emulate network load with cross traffic over the created route.
+  virtual CrossTrafficRoute* CreateCrossTrafficRoute(
+      const std::vector<EmulatedNetworkNode*>& via_nodes) = 0;
+
+  // Starts generating cross traffic using given |generator|. Takes ownership
+  // over the generator.
+  virtual CrossTrafficGenerator* StartCrossTraffic(
+      std::unique_ptr<CrossTrafficGenerator> generator) = 0;
+
+  // Stops generating cross traffic that was started using given |generator|.
+  // The |generator| shouldn't be used after and the reference may be invalid.
+  virtual void StopCrossTraffic(CrossTrafficGenerator* generator) = 0;
 
   // Creates EmulatedNetworkManagerInterface which can be used then to inject
   // network emulation layer into PeerConnection. |endpoints| - are available
@@ -207,9 +303,16 @@ class NetworkEmulationManager {
   // |stats_callback|. Callback will be executed on network emulation
   // internal task queue.
   virtual void GetStats(
-      rtc::ArrayView<EmulatedEndpoint*> endpoints,
+      rtc::ArrayView<EmulatedEndpoint* const> endpoints,
       std::function<void(std::unique_ptr<EmulatedNetworkStats>)>
           stats_callback) = 0;
+
+  // Create a EmulatedTURNServer.
+  // The TURN server has 2 endpoints that need to be connected with routes,
+  // - GetClientEndpoint() - the endpoint that accepts TURN allocations.
+  // - GetPeerEndpoint() - the endpoint that is "connected to the internet".
+  virtual EmulatedTURNServerInterface* CreateTURNServer(
+      EmulatedTURNServerConfig config) = 0;
 };
 
 }  // namespace webrtc

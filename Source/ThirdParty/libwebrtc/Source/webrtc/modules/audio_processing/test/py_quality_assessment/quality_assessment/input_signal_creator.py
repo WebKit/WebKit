@@ -5,7 +5,6 @@
 # tree. An additional intellectual property rights grant can be found
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
-
 """Input signal creator module.
 """
 
@@ -14,12 +13,12 @@ from . import signal_processing
 
 
 class InputSignalCreator(object):
-  """Input signal creator class.
+    """Input signal creator class.
   """
 
-  @classmethod
-  def Create(cls, name, raw_params):
-    """Creates a input signal and its metadata.
+    @classmethod
+    def Create(cls, name, raw_params):
+        """Creates a input signal and its metadata.
 
     Args:
       name: Input signal creator name.
@@ -28,29 +27,30 @@ class InputSignalCreator(object):
     Returns:
       (AudioSegment, dict) tuple.
     """
-    try:
-      signal = {}
-      params = {}
+        try:
+            signal = {}
+            params = {}
 
-      if name == 'pure_tone':
-        params['frequency'] = float(raw_params[0])
-        params['duration'] = int(raw_params[1])
-        signal = cls._CreatePureTone(params['frequency'], params['duration'])
-      else:
-        raise exceptions.InputSignalCreatorException(
-            'Invalid input signal creator name')
+            if name == 'pure_tone':
+                params['frequency'] = float(raw_params[0])
+                params['duration'] = int(raw_params[1])
+                signal = cls._CreatePureTone(params['frequency'],
+                                             params['duration'])
+            else:
+                raise exceptions.InputSignalCreatorException(
+                    'Invalid input signal creator name')
 
-      # Complete metadata.
-      params['signal'] = name
+            # Complete metadata.
+            params['signal'] = name
 
-      return signal, params
-    except (TypeError, AssertionError) as e:
-      raise exceptions.InputSignalCreatorException(
-          'Invalid signal creator parameters: {}'.format(e))
+            return signal, params
+        except (TypeError, AssertionError) as e:
+            raise exceptions.InputSignalCreatorException(
+                'Invalid signal creator parameters: {}'.format(e))
 
-  @classmethod
-  def _CreatePureTone(cls, frequency, duration):
-    """
+    @classmethod
+    def _CreatePureTone(cls, frequency, duration):
+        """
     Generates a pure tone at 48000 Hz.
 
     Args:
@@ -60,8 +60,9 @@ class InputSignalCreator(object):
     Returns:
       AudioSegment instance.
     """
-    assert 0 < frequency <= 24000
-    assert duration > 0
-    template = signal_processing.SignalProcessingUtils.GenerateSilence(duration)
-    return signal_processing.SignalProcessingUtils.GeneratePureTone(
-        template, frequency)
+        assert 0 < frequency <= 24000
+        assert duration > 0
+        template = signal_processing.SignalProcessingUtils.GenerateSilence(
+            duration)
+        return signal_processing.SignalProcessingUtils.GeneratePureTone(
+            template, frequency)

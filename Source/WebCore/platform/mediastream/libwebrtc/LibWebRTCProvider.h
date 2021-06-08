@@ -104,6 +104,7 @@ public:
     static void callOnWebRTCNetworkThread(Function<void()>&&);
     static void callOnWebRTCSignalingThread(Function<void()>&&);
     static bool hasWebRTCThreads();
+    static rtc::Thread& signalingThread();
 
     // Used for mock testing
     void setPeerConnectionFactory(rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>&&);

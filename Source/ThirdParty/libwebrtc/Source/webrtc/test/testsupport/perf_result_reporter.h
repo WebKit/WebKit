@@ -14,6 +14,7 @@
 #include <string>
 #include <unordered_map>
 
+#include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "test/testsupport/perf_test.h"
@@ -61,34 +62,34 @@ struct MetricInfo {
 // as separate subtests (e.g. next to bwe_15s).
 class PerfResultReporter {
  public:
-  PerfResultReporter(const std::string& metric_basename,
-                     const std::string& story_name);
+  PerfResultReporter(absl::string_view metric_basename,
+                     absl::string_view story_name);
   ~PerfResultReporter();
 
-  void RegisterMetric(const std::string& metric_suffix, Unit unit);
-  void RegisterMetric(const std::string& metric_suffix,
+  void RegisterMetric(absl::string_view metric_suffix, Unit unit);
+  void RegisterMetric(absl::string_view metric_suffix,
                       Unit unit,
                       ImproveDirection improve_direction);
-  void AddResult(const std::string& metric_suffix, size_t value) const;
-  void AddResult(const std::string& metric_suffix, double value) const;
+  void AddResult(absl::string_view metric_suffix, size_t value) const;
+  void AddResult(absl::string_view metric_suffix, double value) const;
 
-  void AddResultList(const std::string& metric_suffix,
+  void AddResultList(absl::string_view metric_suffix,
                      rtc::ArrayView<const double> values) const;
 
   // Users should prefer AddResultList if possible, as otherwise the min/max
   // values reported on the perf dashboard aren't useful.
   // |mean_and_error| should be a comma-separated string of mean then
   // error/stddev, e.g. "2.4,0.5".
-  void AddResultMeanAndError(const std::string& metric_suffix,
+  void AddResultMeanAndError(absl::string_view metric_suffix,
                              const double mean,
                              const double error);
 
   // Returns the metric info if it has been registered.
   absl::optional<MetricInfo> GetMetricInfo(
-      const std::string& metric_suffix) const;
+      absl::string_view metric_suffix) const;
 
  private:
-  MetricInfo GetMetricInfoOrFail(const std::string& metric_suffix) const;
+  MetricInfo GetMetricInfoOrFail(absl::string_view metric_suffix) const;
 
   std::string metric_basename_;
   std::string story_name_;

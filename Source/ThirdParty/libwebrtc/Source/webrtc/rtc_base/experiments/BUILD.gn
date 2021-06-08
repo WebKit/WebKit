@@ -130,6 +130,20 @@ rtc_library("cpu_speed_experiment") {
   absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
+rtc_library("encoder_info_settings") {
+  sources = [
+    "encoder_info_settings.cc",
+    "encoder_info_settings.h",
+  ]
+  deps = [
+    ":field_trial_parser",
+    "../:rtc_base_approved",
+    "../../api/video_codecs:video_codecs_api",
+    "../../system_wrappers:field_trial",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+}
+
 rtc_library("rtt_mult_experiment") {
   sources = [
     "rtt_mult_experiment.cc",
@@ -217,13 +231,14 @@ rtc_library("min_video_bitrate_experiment") {
   absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
-if (rtc_include_tests) {
+if (rtc_include_tests && !build_with_chromium) {
   rtc_library("experiments_unittests") {
     testonly = true
 
     sources = [
       "balanced_degradation_settings_unittest.cc",
       "cpu_speed_experiment_unittest.cc",
+      "encoder_info_settings_unittest.cc",
       "field_trial_list_unittest.cc",
       "field_trial_parser_unittest.cc",
       "field_trial_units_unittest.cc",
@@ -241,6 +256,7 @@ if (rtc_include_tests) {
     deps = [
       ":balanced_degradation_settings",
       ":cpu_speed_experiment",
+      ":encoder_info_settings",
       ":field_trial_parser",
       ":keyframe_interval_settings_experiment",
       ":min_video_bitrate_experiment",

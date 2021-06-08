@@ -49,7 +49,7 @@ struct DataReader {
   size_t offset_ = 0;
 };
 
-class FuzzyFrameObject : public video_coding::EncodedFrame {
+class FuzzyFrameObject : public EncodedFrame {
  public:
   FuzzyFrameObject() {}
   ~FuzzyFrameObject() {}
@@ -77,11 +77,11 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   while (reader.MoreToRead()) {
     if (reader.GetNum<uint8_t>() % 2) {
       std::unique_ptr<FuzzyFrameObject> frame(new FuzzyFrameObject());
-      frame->id.picture_id = reader.GetNum<int64_t>();
-      frame->id.spatial_layer = reader.GetNum<uint8_t>() % 5;
+      frame->SetId(reader.GetNum<int64_t>());
+      frame->SetSpatialIndex(reader.GetNum<uint8_t>() % 5);
       frame->SetTimestamp(reader.GetNum<uint32_t>());
-      frame->num_references = reader.GetNum<uint8_t>() %
-                              video_coding::EncodedFrame::kMaxFrameReferences;
+      frame->num_references =
+          reader.GetNum<uint8_t>() % EncodedFrame::kMaxFrameReferences;
 
       for (size_t r = 0; r < frame->num_references; ++r)
         frame->references[r] = reader.GetNum<int64_t>();
@@ -98,7 +98,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
           frame_buffer.NextFrame(
               max_wait_time_ms, keyframe_required, &task_queue,
               [&next_frame_task_running](
-                  std::unique_ptr<video_coding::EncodedFrame> frame,
+                  std::unique_ptr<EncodedFrame> frame,
                   video_coding::FrameBuffer::ReturnReason res) {
                 next_frame_task_running = false;
               });

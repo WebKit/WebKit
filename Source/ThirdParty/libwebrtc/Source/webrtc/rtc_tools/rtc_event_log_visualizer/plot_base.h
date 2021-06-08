@@ -15,7 +15,7 @@
 #include <utility>
 #include <vector>
 
-#include "rtc_base/deprecation.h"
+#include "absl/base/attributes.h"
 #include "rtc_base/ignore_wundef.h"
 
 RTC_PUSH_IGNORING_WUNDEF()
@@ -101,8 +101,8 @@ class Plot {
  public:
   virtual ~Plot() {}
 
-  // Deprecated. Use PrintPythonCode() or ExportProtobuf() instead.
-  RTC_DEPRECATED virtual void Draw() {}
+  ABSL_DEPRECATED("Use PrintPythonCode() or ExportProtobuf() instead.")
+  virtual void Draw() {}
 
   // Sets the lower x-axis limit to min_value (if left_margin == 0).
   // Sets the upper x-axis limit to max_value (if right_margin == 0).
@@ -189,8 +189,8 @@ class PlotCollection {
  public:
   virtual ~PlotCollection() {}
 
-  // Deprecated. Use PrintPythonCode() or ExportProtobuf() instead.
-  RTC_DEPRECATED virtual void Draw() {}
+  ABSL_DEPRECATED("Use PrintPythonCode() or ExportProtobuf() instead.")
+  virtual void Draw() {}
 
   virtual Plot* AppendNewPlot();
 

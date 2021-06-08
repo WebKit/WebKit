@@ -56,7 +56,6 @@ using cricket::Candidate;
 using cricket::ContentGroup;
 using cricket::ContentInfo;
 using cricket::CryptoParams;
-using cricket::DataCodec;
 using cricket::ICE_CANDIDATE_COMPONENT_RTCP;
 using cricket::ICE_CANDIDATE_COMPONENT_RTP;
 using cricket::kFecSsrcGroupSemantics;
@@ -65,7 +64,6 @@ using cricket::MediaProtocolType;
 using cricket::RELAY_PORT_TYPE;
 using cricket::RidDescription;
 using cricket::RidDirection;
-using cricket::RtpDataContentDescription;
 using cricket::SctpDataContentDescription;
 using cricket::SessionDescription;
 using cricket::SimulcastDescription;
@@ -153,6 +151,7 @@ static const char kSdpFullString[] =
     "o=- 18446744069414584320 18446462598732840960 IN IP4 127.0.0.1\r\n"
     "s=-\r\n"
     "t=0 0\r\n"
+    "a=extmap-allow-mixed\r\n"
     "a=msid-semantic: WMS local_stream_1\r\n"
     "m=audio 2345 RTP/SAVPF 111 103 104\r\n"
     "c=IN IP4 74.125.127.126\r\n"
@@ -223,6 +222,7 @@ static const char kSdpString[] =
     "o=- 18446744069414584320 18446462598732840960 IN IP4 127.0.0.1\r\n"
     "s=-\r\n"
     "t=0 0\r\n"
+    "a=extmap-allow-mixed\r\n"
     "a=msid-semantic: WMS local_stream_1\r\n"
     "m=audio 9 RTP/SAVPF 111 103 104\r\n"
     "c=IN IP4 0.0.0.0\r\n"
@@ -260,22 +260,6 @@ static const char kSdpString[] =
     "a=ssrc:3 msid:local_stream_1 video_track_id_1\r\n"
     "a=ssrc:3 mslabel:local_stream_1\r\n"
     "a=ssrc:3 label:video_track_id_1\r\n";
-
-static const char kSdpRtpDataChannelString[] =
-    "m=application 9 RTP/SAVPF 101\r\n"
-    "c=IN IP4 0.0.0.0\r\n"
-    "a=rtcp:9 IN IP4 0.0.0.0\r\n"
-    "a=ice-ufrag:ufrag_data\r\n"
-    "a=ice-pwd:pwd_data\r\n"
-    "a=mid:data_content_name\r\n"
-    "a=sendrecv\r\n"
-    "a=crypto:1 AES_CM_128_HMAC_SHA1_80 "
-    "inline:FvLcvU2P3ZWmQxgPAgcDu7Zl9vftYElFOjEzhWs5\r\n"
-    "a=rtpmap:101 google-data/90000\r\n"
-    "a=ssrc:10 cname:data_channel_cname\r\n"
-    "a=ssrc:10 msid:data_channel data_channeld0\r\n"
-    "a=ssrc:10 mslabel:data_channel\r\n"
-    "a=ssrc:10 label:data_channeld0\r\n";
 
 // draft-ietf-mmusic-sctp-sdp-03
 static const char kSdpSctpDataChannelString[] =
@@ -373,6 +357,7 @@ static const char kBundleOnlySdpFullString[] =
     "o=- 18446744069414584320 18446462598732840960 IN IP4 127.0.0.1\r\n"
     "s=-\r\n"
     "t=0 0\r\n"
+    "a=extmap-allow-mixed\r\n"
     "a=group:BUNDLE audio_content_name video_content_name\r\n"
     "a=msid-semantic: WMS local_stream_1\r\n"
     "m=audio 2345 RTP/SAVPF 111 103 104\r\n"
@@ -433,6 +418,7 @@ static const char kPlanBSdpFullString[] =
     "o=- 18446744069414584320 18446462598732840960 IN IP4 127.0.0.1\r\n"
     "s=-\r\n"
     "t=0 0\r\n"
+    "a=extmap-allow-mixed\r\n"
     "a=msid-semantic: WMS local_stream_1 local_stream_2\r\n"
     "m=audio 2345 RTP/SAVPF 111 103 104\r\n"
     "c=IN IP4 74.125.127.126\r\n"
@@ -516,6 +502,7 @@ static const char kUnifiedPlanSdpFullString[] =
     "o=- 18446744069414584320 18446462598732840960 IN IP4 127.0.0.1\r\n"
     "s=-\r\n"
     "t=0 0\r\n"
+    "a=extmap-allow-mixed\r\n"
     "a=msid-semantic: WMS local_stream_1\r\n"
     // Audio track 1, stream 1 (with candidates).
     "m=audio 2345 RTP/SAVPF 111 103 104\r\n"
@@ -628,6 +615,7 @@ static const char kUnifiedPlanSdpFullStringWithSpecialMsid[] =
     "o=- 18446744069414584320 18446462598732840960 IN IP4 127.0.0.1\r\n"
     "s=-\r\n"
     "t=0 0\r\n"
+    "a=extmap-allow-mixed\r\n"
     "a=msid-semantic: WMS local_stream_1\r\n"
     // Audio track 1, with 1 stream id.
     "m=audio 2345 RTP/SAVPF 111 103 104\r\n"
@@ -900,12 +888,6 @@ static const uint32_t kVideoTrack3Ssrc = 6;
 static const char kAudioTrackId3[] = "audio_track_id_3";
 static const uint32_t kAudioTrack3Ssrc = 7;
 
-// DataChannel
-static const char kDataChannelLabel[] = "data_channel";
-static const char kDataChannelMsid[] = "data_channeld0";
-static const char kDataChannelCname[] = "data_channel_cname";
-static const uint32_t kDataChannelSsrc = 10;
-
 // Candidate
 static const char kDummyMid[] = "dummy_mid";
 static const int kDummyIndex = 123;
@@ -938,15 +920,16 @@ static void Replace(const std::string& line,
   absl::StrReplaceAll({{line, newlines}}, message);
 }
 
-// Expect fail to parase |bad_sdp| and expect |bad_part| be part of the error
-// message.
+// Expect a parse failure on the line containing |bad_part| when attempting to
+// parse |bad_sdp|.
 static void ExpectParseFailure(const std::string& bad_sdp,
                                const std::string& bad_part) {
   JsepSessionDescription desc(kDummyType);
   SdpParseError error;
   bool ret = webrtc::SdpDeserialize(bad_sdp, &desc, &error);
-  EXPECT_FALSE(ret);
-  EXPECT_NE(std::string::npos, error.line.find(bad_part.c_str()));
+  ASSERT_FALSE(ret);
+  EXPECT_NE(std::string::npos, error.line.find(bad_part.c_str()))
+      << "Did not find " << bad_part << " in " << error.line;
 }
 
 // Expect fail to parse kSdpFullString if replace |good_part| with |bad_part|.
@@ -1459,11 +1442,6 @@ class WebRtcSdpTest : public ::testing::Test {
               simulcast2.receive_layers().size());
   }
 
-  void CompareRtpDataContentDescription(const RtpDataContentDescription* dcd1,
-                                        const RtpDataContentDescription* dcd2) {
-    CompareMediaContentDescription<RtpDataContentDescription>(dcd1, dcd2);
-  }
-
   void CompareSctpDataContentDescription(
       const SctpDataContentDescription* dcd1,
       const SctpDataContentDescription* dcd2) {
@@ -1514,14 +1492,6 @@ class WebRtcSdpTest : public ::testing::Test {
         const SctpDataContentDescription* scd2 =
             c2.media_description()->as_sctp();
         CompareSctpDataContentDescription(scd1, scd2);
-      } else {
-        if (IsDataContent(&c1)) {
-          const RtpDataContentDescription* dcd1 =
-              c1.media_description()->as_rtp_data();
-          const RtpDataContentDescription* dcd2 =
-              c2.media_description()->as_rtp_data();
-          CompareRtpDataContentDescription(dcd1, dcd2);
-        }
       }
 
       CompareSimulcastDescription(
@@ -1809,28 +1779,6 @@ class WebRtcSdpTest : public ::testing::Test {
         kDataContentName, TransportDescription(kUfragData, kPwdData)));
   }
 
-  void AddRtpDataChannel() {
-    std::unique_ptr<RtpDataContentDescription> data(
-        new RtpDataContentDescription());
-    data_desc_ = data.get();
-
-    data_desc_->AddCodec(DataCodec(101, "google-data"));
-    StreamParams data_stream;
-    data_stream.id = kDataChannelMsid;
-    data_stream.cname = kDataChannelCname;
-    data_stream.set_stream_ids({kDataChannelLabel});
-    data_stream.ssrcs.push_back(kDataChannelSsrc);
-    data_desc_->AddStream(data_stream);
-    data_desc_->AddCrypto(
-        CryptoParams(1, "AES_CM_128_HMAC_SHA1_80",
-                     "inline:FvLcvU2P3ZWmQxgPAgcDu7Zl9vftYElFOjEzhWs5", ""));
-    data_desc_->set_protocol(cricket::kMediaProtocolSavpf);
-    desc_.AddContent(kDataContentName, MediaProtocolType::kRtp,
-                     std::move(data));
-    desc_.AddTransportInfo(TransportInfo(
-        kDataContentName, TransportDescription(kUfragData, kPwdData)));
-  }
-
   bool TestDeserializeDirection(RtpTransceiverDirection direction) {
     std::string new_sdp = kSdpFullString;
     ReplaceDirection(direction, &new_sdp);
@@ -1958,7 +1906,8 @@ class WebRtcSdpTest : public ::testing::Test {
     os.clear();
     os.str("");
     // Pl type 100 preferred.
-    os << "m=video 9 RTP/SAVPF 99 95\r\n"
+    os << "m=video 9 RTP/SAVPF 99 95 96\r\n"
+          "a=rtpmap:96 VP9/90000\r\n"  // out-of-order wrt the m= line.
           "a=rtpmap:99 VP8/90000\r\n"
           "a=rtpmap:95 RTX/90000\r\n"
           "a=fmtp:95 apt=99;\r\n";
@@ -2006,6 +1955,10 @@ class WebRtcSdpTest : public ::testing::Test {
     EXPECT_EQ("RTX", rtx.name);
     EXPECT_EQ(95, rtx.id);
     VerifyCodecParameter(rtx.params, "apt", vp8.id);
+    // VP9 is listed last in the m= line so should come after VP8 and RTX.
+    cricket::VideoCodec vp9 = vcd->codecs()[2];
+    EXPECT_EQ("VP9", vp9.name);
+    EXPECT_EQ(96, vp9.id);
   }
 
   void TestDeserializeRtcpFb(JsepSessionDescription* jdesc_output,
@@ -2096,7 +2049,6 @@ class WebRtcSdpTest : public ::testing::Test {
   SessionDescription desc_;
   AudioContentDescription* audio_desc_;
   VideoContentDescription* video_desc_;
-  RtpDataContentDescription* data_desc_;
   SctpDataContentDescription* sctp_desc_;
   Candidates candidates_;
   std::unique_ptr<IceCandidateInterface> jcandidate_;
@@ -2172,17 +2124,21 @@ TEST_F(WebRtcSdpTest, SerializeSessionDescriptionWithoutCandidates) {
   EXPECT_EQ(std::string(kSdpString), message);
 }
 
-TEST_F(WebRtcSdpTest, SerializeSessionDescriptionWithBundle) {
-  ContentGroup group(cricket::GROUP_TYPE_BUNDLE);
-  group.AddContentName(kAudioContentName);
-  group.AddContentName(kVideoContentName);
-  desc_.AddGroup(group);
+TEST_F(WebRtcSdpTest, SerializeSessionDescriptionWithBundles) {
+  ContentGroup group1(cricket::GROUP_TYPE_BUNDLE);
+  group1.AddContentName(kAudioContentName);
+  group1.AddContentName(kVideoContentName);
+  desc_.AddGroup(group1);
+  ContentGroup group2(cricket::GROUP_TYPE_BUNDLE);
+  group2.AddContentName(kAudioContentName2);
+  desc_.AddGroup(group2);
   ASSERT_TRUE(jdesc_.Initialize(desc_.Clone(), jdesc_.session_id(),
                                 jdesc_.session_version()));
   std::string message = webrtc::SdpSerialize(jdesc_);
   std::string sdp_with_bundle = kSdpFullString;
   InjectAfter(kSessionTime,
-              "a=group:BUNDLE audio_content_name video_content_name\r\n",
+              "a=group:BUNDLE audio_content_name video_content_name\r\n"
+              "a=group:BUNDLE audio_content_name_2\r\n",
               &sdp_with_bundle);
   EXPECT_EQ(sdp_with_bundle, message);
 }
@@ -2262,18 +2218,6 @@ TEST_F(WebRtcSdpTest, SerializeSessionDescriptionWithAudioVideoRejected) {
   EXPECT_TRUE(TestSerializeRejected(true, true));
 }
 
-TEST_F(WebRtcSdpTest, SerializeSessionDescriptionWithRtpDataChannel) {
-  AddRtpDataChannel();
-  JsepSessionDescription jsep_desc(kDummyType);
-
-  MakeDescriptionWithoutCandidates(&jsep_desc);
-  std::string message = webrtc::SdpSerialize(jsep_desc);
-
-  std::string expected_sdp = kSdpString;
-  expected_sdp.append(kSdpRtpDataChannelString);
-  EXPECT_EQ(expected_sdp, message);
-}
-
 TEST_F(WebRtcSdpTest, SerializeSessionDescriptionWithSctpDataChannel) {
   bool use_sctpmap = true;
   AddSctpDataChannel(use_sctpmap);
@@ -2317,22 +2261,6 @@ TEST_F(WebRtcSdpTest, SerializeWithSctpDataChannelAndNewPort) {
       {{rtc::ToString(kDefaultSctpPort), rtc::ToString(kNewPort)}},
       &expected_sdp);
 
-  EXPECT_EQ(expected_sdp, message);
-}
-
-TEST_F(WebRtcSdpTest, SerializeSessionDescriptionWithDataChannelAndBandwidth) {
-  JsepSessionDescription jsep_desc(kDummyType);
-  AddRtpDataChannel();
-  data_desc_->set_bandwidth(100 * 1000);
-  data_desc_->set_bandwidth_type("AS");
-  MakeDescriptionWithoutCandidates(&jsep_desc);
-  std::string message = webrtc::SdpSerialize(jsep_desc);
-
-  std::string expected_sdp = kSdpString;
-  expected_sdp.append(kSdpRtpDataChannelString);
-  // Serializing data content shouldn't ignore bandwidth settings.
-  InjectAfter("m=application 9 RTP/SAVPF 101\r\nc=IN IP4 0.0.0.0\r\n",
-              "b=AS:100\r\n", &expected_sdp);
   EXPECT_EQ(expected_sdp, message);
 }
 
@@ -2752,10 +2680,9 @@ TEST_F(WebRtcSdpTest, DeserializeSessionDescriptionWithoutMsid) {
 TEST_F(WebRtcSdpTest, DeserializeSessionDescriptionWithExtmapAllowMixed) {
   jdesc_.description()->set_extmap_allow_mixed(true);
   std::string sdp_with_extmap_allow_mixed = kSdpFullString;
-  InjectAfter("t=0 0\r\n", kExtmapAllowMixed, &sdp_with_extmap_allow_mixed);
   // Deserialize
   JsepSessionDescription jdesc_deserialized(kDummyType);
-  EXPECT_TRUE(SdpDeserialize(sdp_with_extmap_allow_mixed, &jdesc_deserialized));
+  ASSERT_TRUE(SdpDeserialize(sdp_with_extmap_allow_mixed, &jdesc_deserialized));
   // Verify
   EXPECT_TRUE(CompareSessionDescription(jdesc_, jdesc_deserialized));
 }
@@ -2763,9 +2690,10 @@ TEST_F(WebRtcSdpTest, DeserializeSessionDescriptionWithExtmapAllowMixed) {
 TEST_F(WebRtcSdpTest, DeserializeSessionDescriptionWithoutExtmapAllowMixed) {
   jdesc_.description()->set_extmap_allow_mixed(false);
   std::string sdp_without_extmap_allow_mixed = kSdpFullString;
+  Replace(kExtmapAllowMixed, "", &sdp_without_extmap_allow_mixed);
   // Deserialize
   JsepSessionDescription jdesc_deserialized(kDummyType);
-  EXPECT_TRUE(
+  ASSERT_TRUE(
       SdpDeserialize(sdp_without_extmap_allow_mixed, &jdesc_deserialized));
   // Verify
   EXPECT_TRUE(CompareSessionDescription(jdesc_, jdesc_deserialized));
@@ -2906,21 +2834,6 @@ TEST_F(WebRtcSdpTest, DeserializeInvalidCandidiate) {
   EXPECT_FALSE(SdpDeserializeCandidate(kSdpTcpInvalidCandidate, &jcandidate));
 }
 
-TEST_F(WebRtcSdpTest, DeserializeSdpWithRtpDataChannels) {
-  AddRtpDataChannel();
-  JsepSessionDescription jdesc(kDummyType);
-  ASSERT_TRUE(jdesc.Initialize(desc_.Clone(), kSessionId, kSessionVersion));
-
-  std::string sdp_with_data = kSdpString;
-  sdp_with_data.append(kSdpRtpDataChannelString);
-  JsepSessionDescription jdesc_output(kDummyType);
-
-  // Deserialize
-  EXPECT_TRUE(SdpDeserialize(sdp_with_data, &jdesc_output));
-  // Verify
-  EXPECT_TRUE(CompareSessionDescription(jdesc, jdesc_output));
-}
-
 TEST_F(WebRtcSdpTest, DeserializeSdpWithSctpDataChannels) {
   bool use_sctpmap = true;
   AddSctpDataChannel(use_sctpmap);
@@ -2991,7 +2904,8 @@ TEST_F(WebRtcSdpTest, DeserializeSdpWithSctpDataChannelsButWrongMediaType) {
   JsepSessionDescription jdesc_output(kDummyType);
   EXPECT_TRUE(SdpDeserialize(sdp, &jdesc_output));
 
-  EXPECT_EQ(0u, jdesc_output.description()->contents().size());
+  EXPECT_EQ(1u, jdesc_output.description()->contents().size());
+  EXPECT_TRUE(jdesc_output.description()->contents()[0].rejected);
 }
 
 // Helper function to set the max-message-size parameter in the
@@ -3080,8 +2994,9 @@ TEST_F(WebRtcSdpTest, DeserializeSdpWithRtpmapAttribute) {
 }
 
 TEST_F(WebRtcSdpTest, DeserializeSdpWithStrangeApplicationProtocolNames) {
-  static const char* bad_strings[] = {"DTLS/SCTPRTP/", "obviously-bogus",
-                                      "UDP/TL/RTSP/SAVPF", "UDP/TL/RTSP/S"};
+  static const char* bad_strings[] = {
+      "DTLS/SCTPRTP/", "obviously-bogus",   "UDP/TL/RTSP/SAVPF",
+      "UDP/TL/RTSP/S", "DTLS/SCTP/RTP/FOO", "obviously-bogus/RTP/"};
   for (auto proto : bad_strings) {
     std::string sdp_with_data = kSdpString;
     sdp_with_data.append("m=application 9 ");
@@ -3090,18 +3005,6 @@ TEST_F(WebRtcSdpTest, DeserializeSdpWithStrangeApplicationProtocolNames) {
     JsepSessionDescription jdesc_output(kDummyType);
     EXPECT_FALSE(SdpDeserialize(sdp_with_data, &jdesc_output))
         << "Parsing should have failed on " << proto;
-  }
-  // The following strings are strange, but acceptable as RTP.
-  static const char* weird_strings[] = {"DTLS/SCTP/RTP/FOO",
-                                        "obviously-bogus/RTP/"};
-  for (auto proto : weird_strings) {
-    std::string sdp_with_data = kSdpString;
-    sdp_with_data.append("m=application 9 ");
-    sdp_with_data.append(proto);
-    sdp_with_data.append(" 47\r\n");
-    JsepSessionDescription jdesc_output(kDummyType);
-    EXPECT_TRUE(SdpDeserialize(sdp_with_data, &jdesc_output))
-        << "Parsing should have succeeded on " << proto;
   }
 }
 
@@ -3158,21 +3061,6 @@ TEST_F(WebRtcSdpTest,
 
   EXPECT_TRUE(SdpDeserialize(sdp_with_data, &jdesc_output));
   EXPECT_TRUE(CompareSessionDescription(jdesc, jdesc_output));
-}
-
-TEST_F(WebRtcSdpTest, DeserializeSdpWithRtpDataChannelsAndBandwidth) {
-  // We want to test that deserializing data content limits bandwidth
-  // settings (it should never be greater than the default).
-  // This should prevent someone from using unlimited data bandwidth through
-  // JS and "breaking the Internet".
-  // See: https://code.google.com/p/chromium/issues/detail?id=280726
-  std::string sdp_with_bandwidth = kSdpString;
-  sdp_with_bandwidth.append(kSdpRtpDataChannelString);
-  InjectAfter("a=mid:data_content_name\r\n", "b=AS:100\r\n",
-              &sdp_with_bandwidth);
-  JsepSessionDescription jdesc_with_bandwidth(kDummyType);
-
-  EXPECT_FALSE(SdpDeserialize(sdp_with_bandwidth, &jdesc_with_bandwidth));
 }
 
 TEST_F(WebRtcSdpTest, DeserializeSdpWithSctpDataChannelsAndBandwidth) {
@@ -4051,24 +3939,6 @@ TEST_F(WebRtcSdpTest, SerializeBothMediaSectionAndSsrcAttributeMsid) {
   EXPECT_NE(std::string::npos, sdp.find(kSsrcAttributeMsidLine));
 }
 
-// Regression test for heap overflow bug:
-// https://bugs.chromium.org/p/chromium/issues/detail?id=647916
-TEST_F(WebRtcSdpTest, DeserializeSctpPortInVideoDescription) {
-  // The issue occurs when the sctp-port attribute is found in a video
-  // description. The actual heap overflow occurs when parsing the fmtp line.
-  static const char kSdpWithSctpPortInVideoDescription[] =
-      "v=0\r\n"
-      "o=- 18446744069414584320 18446462598732840960 IN IP4 127.0.0.1\r\n"
-      "s=-\r\n"
-      "t=0 0\r\n"
-      "m=video 9 UDP/DTLS/SCTP 120\r\n"
-      "a=sctp-port 5000\r\n"
-      "a=fmtp:108 foo=10\r\n";
-
-  ExpectParseFailure(std::string(kSdpWithSctpPortInVideoDescription),
-                     "sctp-port");
-}
-
 // Regression test for integer overflow bug:
 // https://bugs.chromium.org/p/chromium/issues/detail?id=648071
 TEST_F(WebRtcSdpTest, DeserializeLargeBandwidthLimit) {
@@ -4725,21 +4595,71 @@ TEST_F(WebRtcSdpTest, DeserializeSessionDescriptionWithoutCname) {
 }
 
 TEST_F(WebRtcSdpTest, DeserializeSdpWithUnsupportedMediaType) {
-  bool use_sctpmap = true;
-  AddSctpDataChannel(use_sctpmap);
-  JsepSessionDescription jdesc(kDummyType);
-  ASSERT_TRUE(jdesc.Initialize(desc_.Clone(), kSessionId, kSessionVersion));
-
   std::string sdp = kSdpSessionString;
   sdp +=
       "m=bogus 9 RTP/SAVPF 0 8\r\n"
-      "c=IN IP4 0.0.0.0\r\n";
+      "c=IN IP4 0.0.0.0\r\n"
+      "a=mid:bogusmid\r\n";
   sdp +=
       "m=audio/something 9 RTP/SAVPF 0 8\r\n"
-      "c=IN IP4 0.0.0.0\r\n";
+      "c=IN IP4 0.0.0.0\r\n"
+      "a=mid:somethingmid\r\n";
 
   JsepSessionDescription jdesc_output(kDummyType);
   EXPECT_TRUE(SdpDeserialize(sdp, &jdesc_output));
 
-  EXPECT_EQ(0u, jdesc_output.description()->contents().size());
+  ASSERT_EQ(2u, jdesc_output.description()->contents().size());
+  ASSERT_NE(nullptr, jdesc_output.description()
+                         ->contents()[0]
+                         .media_description()
+                         ->as_unsupported());
+  ASSERT_NE(nullptr, jdesc_output.description()
+                         ->contents()[1]
+                         .media_description()
+                         ->as_unsupported());
+
+  EXPECT_TRUE(jdesc_output.description()->contents()[0].rejected);
+  EXPECT_TRUE(jdesc_output.description()->contents()[1].rejected);
+
+  EXPECT_EQ(jdesc_output.description()->contents()[0].name, "bogusmid");
+  EXPECT_EQ(jdesc_output.description()->contents()[1].name, "somethingmid");
+}
+
+TEST_F(WebRtcSdpTest, MediaTypeProtocolMismatch) {
+  std::string sdp =
+      "v=0\r\n"
+      "o=- 18446744069414584320 18446462598732840960 IN IP4 127.0.0.1\r\n"
+      "s=-\r\n"
+      "t=0 0\r\n";
+
+  ExpectParseFailure(std::string(sdp + "m=audio 9 UDP/DTLS/SCTP 120\r\n"),
+                     "m=audio");
+  ExpectParseFailure(std::string(sdp + "m=video 9 UDP/DTLS/SCTP 120\r\n"),
+                     "m=video");
+  ExpectParseFailure(std::string(sdp + "m=video 9 SOMETHING 120\r\n"),
+                     "m=video");
+  ExpectParseFailure(std::string(sdp + "m=application 9 SOMETHING 120\r\n"),
+                     "m=application");
+}
+
+// Regression test for:
+// https://bugs.chromium.org/p/chromium/issues/detail?id=1171965
+TEST_F(WebRtcSdpTest, SctpPortInUnsupportedContent) {
+  std::string sdp =
+      "v=0\r\n"
+      "o=- 18446744069414584320 18446462598732840960 IN IP4 127.0.0.1\r\n"
+      "s=-\r\n"
+      "t=0 0\r\n"
+      "m=o 1 DTLS/SCTP 5000\r\n"
+      "a=sctp-port\r\n";
+
+  JsepSessionDescription jdesc_output(kDummyType);
+  EXPECT_TRUE(SdpDeserialize(sdp, &jdesc_output));
+}
+
+TEST_F(WebRtcSdpTest, IllegalMidCharacterValue) {
+  std::string sdp = kSdpString;
+  // [ is an illegal token value.
+  Replace("a=mid:", "a=mid:[]", &sdp);
+  ExpectParseFailure(std::string(sdp), "a=mid:[]");
 }

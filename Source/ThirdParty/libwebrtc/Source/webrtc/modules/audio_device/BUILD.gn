@@ -51,7 +51,6 @@ rtc_source_set("audio_device_api") {
     "../../api:scoped_refptr",
     "../../api/task_queue",
     "../../rtc_base:checks",
-    "../../rtc_base:deprecation",
     "../../rtc_base:rtc_base_approved",
     "../../rtc_base:stringutils",
   ]
@@ -68,6 +67,7 @@ rtc_library("audio_device_buffer") {
   deps = [
     ":audio_device_api",
     "../../api:array_view",
+    "../../api:sequence_checker",
     "../../api/task_queue",
     "../../common_audio:common_audio_c",
     "../../rtc_base:checks",
@@ -164,12 +164,12 @@ rtc_library("audio_device_impl") {
     "../../api:array_view",
     "../../api:refcountedbase",
     "../../api:scoped_refptr",
+    "../../api:sequence_checker",
     "../../api/task_queue",
     "../../common_audio",
     "../../common_audio:common_audio_c",
     "../../rtc_base",
     "../../rtc_base:checks",
-    "../../rtc_base:deprecation",
     "../../rtc_base:rtc_base_approved",
     "../../rtc_base:rtc_task_queue",
     "../../rtc_base/synchronization:mutex",
@@ -181,6 +181,7 @@ rtc_library("audio_device_impl") {
     "../../system_wrappers:metrics",
     "../utility",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/base:core_headers" ]
   if (rtc_include_internal_audio_device && is_ios) {
     deps += [ "../../sdk:audio_device" ]
   }
@@ -351,6 +352,7 @@ if (is_mac) {
 }
 
 rtc_source_set("mock_audio_device") {
+  visibility = [ "*" ]
   testonly = true
   sources = [
     "include/mock_audio_device.h",
@@ -366,7 +368,7 @@ rtc_source_set("mock_audio_device") {
   ]
 }
 
-if (rtc_include_tests) {
+if (rtc_include_tests && !build_with_chromium) {
   rtc_library("audio_device_unittests") {
     testonly = true
 
@@ -381,6 +383,7 @@ if (rtc_include_tests) {
       ":mock_audio_device",
       "../../api:array_view",
       "../../api:scoped_refptr",
+      "../../api:sequence_checker",
       "../../api/task_queue",
       "../../api/task_queue:default_task_queue_factory",
       "../../common_audio",

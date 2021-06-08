@@ -14,12 +14,34 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include "absl/strings/match.h"
+#include "modules/desktop_capture/win/screen_capture_utils.h"
+#include "modules/desktop_capture/win/window_capture_utils.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/logging.h"  // For RTC_LOG_GLE
 #include "rtc_base/string_utils.h"
 
 namespace webrtc {
 namespace {
+
+// Utility function to verify that |window| has class name equal to |class_name|
+bool CheckWindowClassName(HWND window, const wchar_t* class_name) {
+  const size_t classNameLength = wcslen(class_name);
+
+  // https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-wndclassa
+  // says lpszClassName field in WNDCLASS is limited by 256 symbols, so we don't
+  // need to have a buffer bigger than that.
+  constexpr size_t kMaxClassNameLength = 256;
+  WCHAR buffer[kMaxClassNameLength];
+
+  const int length = ::GetClassNameW(window, buffer, kMaxClassNameLength);
+  if (length <= 0)
+    return false;
+
+  if (static_cast<size_t>(length) != classNameLength)
+    return false;
+  return wcsncmp(buffer, class_name, classNameLength) == 0;
+}
 
 std::string WindowText(HWND window) {
   size_t len = ::GetWindowTextLength(window);
@@ -146,20 +168,7 @@ class FullScreenPowerPointHandler : public FullScreenApplicationHandler {
   }
 
   bool IsEditorWindow(HWND window) const {
-    constexpr WCHAR kScreenClassName[] = L"PPTFrameClass";
-    constexpr size_t kScreenClassNameLength = arraysize(kScreenClassName) - 1;
-
-    // We need to verify that window class is equal to |kScreenClassName|.
-    // To do that we need a buffer large enough to include a null terminated
-    // string one code point bigger than |kScreenClassName|. It will help us to
-    // check that size of class name string returned by GetClassNameW is equal
-    // to |kScreenClassNameLength| not being limited by size of buffer (case
-    // when |kScreenClassName| is a prefix for class name string).
-    WCHAR buffer[arraysize(kScreenClassName) + 3];
-    const int length = ::GetClassNameW(window, buffer, arraysize(buffer));
-    if (length != kScreenClassNameLength)
-      return false;
-    return wcsncmp(buffer, kScreenClassName, kScreenClassNameLength) == 0;
+    return CheckWindowClassName(window, L"PPTFrameClass");
   }
 
   bool IsSlideShowWindow(HWND window) const {
@@ -167,6 +176,74 @@ class FullScreenPowerPointHandler : public FullScreenApplicationHandler {
     const bool min_box = WS_MINIMIZEBOX & style;
     const bool max_box = WS_MAXIMIZEBOX & style;
     return !min_box && !max_box;
+  }
+};
+
+class OpenOfficeApplicationHandler : public FullScreenApplicationHandler {
+ public:
+  explicit OpenOfficeApplicationHandler(DesktopCapturer::SourceId sourceId)
+      : FullScreenApplicationHandler(sourceId) {}
+
+  DesktopCapturer::SourceId FindFullScreenWindow(
+      const DesktopCapturer::SourceList& window_list,
+      int64_t timestamp) const override {
+    if (window_list.empty())
+      return 0;
+
+    DWORD process_id = WindowProcessId(reinterpret_cast<HWND>(GetSourceId()));
+
+    DesktopCapturer::SourceList app_windows =
+        GetProcessWindows(window_list, process_id, nullptr);
+
+    DesktopCapturer::SourceList document_windows;
+    std::copy_if(
+        app_windows.begin(), app_windows.end(),
+        std::back_inserter(document_windows),
+        [this](const DesktopCapturer::Source& x) { return IsEditorWindow(x); });
+
+    // Check if we have only one document window, otherwise it's not possible
+    // to securely match a document window and a slide show window which has
+    // empty title.
+    if (document_windows.size() != 1) {
+      return 0;
+    }
+
+    // Check if document window has been selected as a source
+    if (document_windows.front().id != GetSourceId()) {
+      return 0;
+    }
+
+    // Check if we have a slide show window.
+    auto slide_show_window =
+        std::find_if(app_windows.begin(), app_windows.end(),
+                     [this](const DesktopCapturer::Source& x) {
+                       return IsSlideShowWindow(x);
+                     });
+
+    if (slide_show_window == app_windows.end())
+      return 0;
+
+    return slide_show_window->id;
+  }
+
+ private:
+  bool IsEditorWindow(const DesktopCapturer::Source& source) const {
+    if (source.title.empty()) {
+      return false;
+    }
+
+    return CheckWindowClassName(reinterpret_cast<HWND>(source.id), L"SALFRAME");
+  }
+
+  bool IsSlideShowWindow(const DesktopCapturer::Source& source) const {
+    // Check title size to filter out a Presenter Control window which shares
+    // window class with Slide Show window but has non empty title.
+    if (!source.title.empty()) {
+      return false;
+    }
+
+    return CheckWindowClassName(reinterpret_cast<HWND>(source.id),
+                                L"SALTMPSUBFRAME");
   }
 };
 
@@ -193,13 +270,17 @@ std::wstring GetPathByWindowId(HWND window_id) {
 std::unique_ptr<FullScreenApplicationHandler>
 CreateFullScreenWinApplicationHandler(DesktopCapturer::SourceId source_id) {
   std::unique_ptr<FullScreenApplicationHandler> result;
-  std::wstring exe_path = GetPathByWindowId(reinterpret_cast<HWND>(source_id));
+  HWND hwnd = reinterpret_cast<HWND>(source_id);
+  std::wstring exe_path = GetPathByWindowId(hwnd);
   std::wstring file_name = FileNameFromPath(exe_path);
   std::transform(file_name.begin(), file_name.end(), file_name.begin(),
                  std::towupper);
 
   if (file_name == L"POWERPNT.EXE") {
     result = std::make_unique<FullScreenPowerPointHandler>(source_id);
+  } else if (file_name == L"SOFFICE.BIN" &&
+             absl::EndsWith(WindowText(hwnd), "OpenOffice Impress")) {
+    result = std::make_unique<OpenOfficeApplicationHandler>(source_id);
   }
 
   return result;

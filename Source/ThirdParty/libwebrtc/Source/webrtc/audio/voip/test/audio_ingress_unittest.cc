@@ -134,9 +134,10 @@ TEST_F(AudioIngressTest, GetAudioFrameAfterRtpReceived) {
   EXPECT_EQ(audio_frame.elapsed_time_ms_, 0);
 }
 
-TEST_F(AudioIngressTest, GetSpeechOutputLevelFullRange) {
-  // Per audio_level's kUpdateFrequency, we need 11 RTP to get audio level.
-  constexpr int kNumRtp = 11;
+TEST_F(AudioIngressTest, TestSpeechOutputLevelAndEnergyDuration) {
+  // Per audio_level's kUpdateFrequency, we need more than 10 audio samples to
+  // get audio level from output source.
+  constexpr int kNumRtp = 6;
   int rtp_count = 0;
   rtc::Event event;
   auto handle_rtp = [&](const uint8_t* packet, size_t length, Unused) {
@@ -151,15 +152,21 @@ TEST_F(AudioIngressTest, GetSpeechOutputLevelFullRange) {
     egress_->SendAudioData(GetAudioFrame(i));
     fake_clock_.AdvanceTimeMilliseconds(10);
   }
-  event.Wait(/*ms=*/1000);
+  event.Wait(/*give_up_after_ms=*/1000);
 
-  for (int i = 0; i < kNumRtp; ++i) {
+  for (int i = 0; i < kNumRtp * 2; ++i) {
     AudioFrame audio_frame;
     EXPECT_EQ(
         ingress_->GetAudioFrameWithInfo(kPcmuFormat.clockrate_hz, &audio_frame),
         AudioMixer::Source::AudioFrameInfo::kNormal);
   }
-  EXPECT_EQ(ingress_->GetSpeechOutputLevelFullRange(), kAudioLevel);
+  EXPECT_EQ(ingress_->GetOutputAudioLevel(), kAudioLevel);
+
+  constexpr double kExpectedEnergy = 0.00016809565587789564;
+  constexpr double kExpectedDuration = 0.11999999999999998;
+
+  EXPECT_DOUBLE_EQ(ingress_->GetOutputTotalEnergy(), kExpectedEnergy);
+  EXPECT_DOUBLE_EQ(ingress_->GetOutputTotalDuration(), kExpectedDuration);
 }
 
 TEST_F(AudioIngressTest, PreferredSampleRate) {
@@ -179,6 +186,49 @@ TEST_F(AudioIngressTest, PreferredSampleRate) {
       ingress_->GetAudioFrameWithInfo(kPcmuFormat.clockrate_hz, &audio_frame),
       AudioMixer::Source::AudioFrameInfo::kNormal);
   EXPECT_EQ(ingress_->PreferredSampleRate(), kPcmuFormat.clockrate_hz);
+}
+
+// This test highlights the case where caller invokes StopPlay() which then
+// AudioIngress should play silence frame afterwards.
+TEST_F(AudioIngressTest, GetMutedAudioFrameAfterRtpReceivedAndStopPlay) {
+  // StopPlay before we start sending RTP packet with sine wave.
+  ingress_->StopPlay();
+
+  // Send 6 RTP packets to generate more than 100 ms audio sample to get
+  // valid speech level.
+  constexpr int kNumRtp = 6;
+  int rtp_count = 0;
+  rtc::Event event;
+  auto handle_rtp = [&](const uint8_t* packet, size_t length, Unused) {
+    ingress_->ReceivedRTPPacket(rtc::ArrayView<const uint8_t>(packet, length));
+    if (++rtp_count == kNumRtp) {
+      event.Set();
+    }
+    return true;
+  };
+  EXPECT_CALL(transport_, SendRtp).WillRepeatedly(Invoke(handle_rtp));
+  for (int i = 0; i < kNumRtp * 2; i++) {
+    egress_->SendAudioData(GetAudioFrame(i));
+    fake_clock_.AdvanceTimeMilliseconds(10);
+  }
+  event.Wait(/*give_up_after_ms=*/1000);
+
+  for (int i = 0; i < kNumRtp * 2; ++i) {
+    AudioFrame audio_frame;
+    EXPECT_EQ(
+        ingress_->GetAudioFrameWithInfo(kPcmuFormat.clockrate_hz, &audio_frame),
+        AudioMixer::Source::AudioFrameInfo::kMuted);
+    const int16_t* audio_data = audio_frame.data();
+    size_t length =
+        audio_frame.samples_per_channel_ * audio_frame.num_channels_;
+    for (size_t j = 0; j < length; ++j) {
+      EXPECT_EQ(audio_data[j], 0);
+    }
+  }
+
+  // Now we should still see valid speech output level as StopPlay won't affect
+  // the measurement.
+  EXPECT_EQ(ingress_->GetOutputAudioLevel(), kAudioLevel);
 }
 
 }  // namespace

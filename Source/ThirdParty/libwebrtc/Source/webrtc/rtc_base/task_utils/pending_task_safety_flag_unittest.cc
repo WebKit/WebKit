@@ -156,8 +156,27 @@ TEST(PendingTaskSafetyFlagTest, PendingTaskDropped) {
   blocker.Set();
 
   // Run an empty task on tq1 to flush all the queued tasks.
-  tq1.SendTask([]() {}, RTC_FROM_HERE);
+  tq1.WaitForPreviouslyPostedTasks();
   ASSERT_FALSE(owner);
   EXPECT_FALSE(stuff_done);
 }
+
+TEST(PendingTaskSafetyFlagTest, PendingTaskNotAliveInitialized) {
+  TaskQueueForTest tq("PendingTaskNotAliveInitialized");
+
+  // Create a new flag that initially not `alive`.
+  auto flag = PendingTaskSafetyFlag::CreateDetachedInactive();
+  tq.SendTask([&flag]() { EXPECT_FALSE(flag->alive()); }, RTC_FROM_HERE);
+
+  bool task_1_ran = false;
+  bool task_2_ran = false;
+  tq.PostTask(ToQueuedTask(flag, [&task_1_ran]() { task_1_ran = true; }));
+  tq.PostTask([&flag]() { flag->SetAlive(); });
+  tq.PostTask(ToQueuedTask(flag, [&task_2_ran]() { task_2_ran = true; }));
+
+  tq.WaitForPreviouslyPostedTasks();
+  EXPECT_FALSE(task_1_ran);
+  EXPECT_TRUE(task_2_ran);
+}
+
 }  // namespace webrtc

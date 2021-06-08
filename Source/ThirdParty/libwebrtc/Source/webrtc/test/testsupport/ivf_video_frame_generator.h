@@ -15,6 +15,7 @@
 #include <string>
 
 #include "absl/types/optional.h"
+#include "api/sequence_checker.h"
 #include "api/test/frame_generator_interface.h"
 #include "api/video/video_codec_type.h"
 #include "api/video/video_frame.h"
@@ -22,7 +23,6 @@
 #include "modules/video_coding/utility/ivf_file_reader.h"
 #include "rtc_base/event.h"
 #include "rtc_base/synchronization/mutex.h"
-#include "rtc_base/synchronization/sequence_checker.h"
 
 namespace webrtc {
 namespace test {

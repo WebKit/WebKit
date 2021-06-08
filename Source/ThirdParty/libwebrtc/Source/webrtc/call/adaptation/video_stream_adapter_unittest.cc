@@ -23,6 +23,7 @@
 #include "call/adaptation/encoder_settings.h"
 #include "call/adaptation/test/fake_frame_rate_provider.h"
 #include "call/adaptation/test/fake_resource.h"
+#include "call/adaptation/test/fake_video_stream_input_state_provider.h"
 #include "call/adaptation/video_source_restrictions.h"
 #include "call/adaptation/video_stream_input_state.h"
 #include "rtc_base/string_encode.h"
@@ -58,28 +59,6 @@ std::string BalancedFieldTrialConfig() {
          rtc::ToString(kBalancedMediumFrameRateFps) + "|" +
          rtc::ToString(kBalancedHighFrameRateFps) + "/";
 }
-
-class FakeVideoStreamInputStateProvider : public VideoStreamInputStateProvider {
- public:
-  FakeVideoStreamInputStateProvider()
-      : VideoStreamInputStateProvider(nullptr) {}
-  virtual ~FakeVideoStreamInputStateProvider() = default;
-
-  void SetInputState(int input_pixels,
-                     int input_fps,
-                     int min_pixels_per_frame) {
-    VideoStreamInputState input_state;
-    input_state.set_has_input(true);
-    input_state.set_frame_size_pixels(input_pixels);
-    input_state.set_frames_per_second(input_fps);
-    input_state.set_min_pixels_per_frame(min_pixels_per_frame);
-    fake_input_state_ = input_state;
-  }
-  VideoStreamInputState InputState() override { return fake_input_state_; }
-
- private:
-  VideoStreamInputState fake_input_state_;
-};
 
 // Responsible for adjusting the inputs to VideoStreamAdapter (SetInput), such
 // as pixels and frame rate, according to the most recent source restrictions.

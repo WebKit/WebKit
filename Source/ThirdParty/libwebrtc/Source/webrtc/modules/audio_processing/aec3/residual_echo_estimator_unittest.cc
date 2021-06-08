@@ -100,7 +100,7 @@ TEST_P(ResidualEchoEstimatorMultiChannel, BasicTest) {
                      output);
 
     estimator.Estimate(aec_state, *render_delay_buffer->GetRenderBuffer(),
-                       S2_linear, Y2, R2);
+                       S2_linear, Y2, /*dominant_nearend=*/false, R2);
   }
 }
 

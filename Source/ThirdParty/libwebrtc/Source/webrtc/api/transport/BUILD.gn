@@ -33,7 +33,6 @@ rtc_library("network_control") {
 
   deps = [
     ":webrtc_key_value_config",
-    "../../rtc_base:deprecation",
     "../rtc_event_log",
     "../units:data_rate",
     "../units:data_size",
@@ -89,8 +88,8 @@ rtc_library("goog_cc") {
     ":webrtc_key_value_config",
     "..:network_state_predictor_api",
     "../../modules/congestion_controller/goog_cc",
-    "../../rtc_base:deprecation",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/base:core_headers" ]
 }
 
 rtc_source_set("sctp_transport_factory_interface") {
@@ -106,10 +105,14 @@ rtc_source_set("stun_types") {
   ]
 
   deps = [
+    "../../api:array_view",
     "../../rtc_base:checks",
+    "../../rtc_base:ip_address",
     "../../rtc_base:rtc_base",
     "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:socket_address",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }
 
 if (rtc_include_tests) {
@@ -145,6 +148,7 @@ if (rtc_include_tests) {
       ":stun_types",
       "../../rtc_base",
       "../../rtc_base:rtc_base_approved",
+      "../../rtc_base:socket_address",
       "../../test:test_support",
       "//testing/gtest",
     ]

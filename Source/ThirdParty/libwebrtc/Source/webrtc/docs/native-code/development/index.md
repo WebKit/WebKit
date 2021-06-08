@@ -98,6 +98,12 @@ configuration untouched (stored in the args.gn file), do:
 $ gn clean out/Default
 ```
 
+To build the fuzzers residing in the [test/fuzzers][fuzzers] directory, use
+```
+$ gn gen out/fuzzers --args='use_libfuzzer=true optimize_for_fuzzing=true'
+```
+Depending on the fuzzer additional arguments like `is_asan`, `is_msan` or `is_ubsan_security` might be required.
+
 See the [GN][gn-doc] documentation for all available options. There are also more
 platform specific tips on the [Android][webrtc-android-development] and
 [iOS][webrtc-ios-development] instructions.
@@ -112,6 +118,14 @@ For [Ninja][ninja] project files generated in `out/Default`:
 ```
 $ ninja -C out/Default
 ```
+
+To build everything in the generated folder (`out/Default`):
+
+```
+$ ninja all -C out/Default
+```
+
+See [Ninja build rules][ninja-build-rules] to read more about difference between `ninja` and `ninja all`.
 
 
 ## Using Another Build System
@@ -134,10 +148,10 @@ $ git branch -r
 ```
 
 To create a local branch tracking a remote release branch (in this example,
-the 43 branch):
+the branch corresponding to Chrome M80):
 
 ```
-$ git checkout -b my_branch refs/remotes/branch-heads/43
+$ git checkout -b my_branch refs/remotes/branch-heads/3987
 $ gclient sync
 ```
 
@@ -159,11 +173,13 @@ $ # verify the current branch becomes REMOTE:origin/master
 
 The above is untested and unsupported, but it might help.
 
-Commit log for the branch: [https://webrtc.googlesource.com/src/+log/branch-heads/43][m43-log]
-To browse it: [https://webrtc.googlesource.com/src/+/branch-heads/43][m43]
+Commit log for the branch: [https://webrtc.googlesource.com/src/+log/branch-heads/3987][m80-log]
+To browse it: [https://webrtc.googlesource.com/src/+/branch-heads/3987][m80]
 
 For more details, read Chromium's [Working with Branches][chromium-work-branches] and
 [Working with Release Branches][chromium-work-release-branches] pages.
+To find the branch corresponding to a Chrome release check the
+[Chromium Dashboard][https://chromiumdash.appspot.com/branches].
 
 
 ## Contributing Patches
@@ -254,6 +270,7 @@ Target name `turnserver`. Used for unit tests.
 
 
 [ninja]: https://ninja-build.org/
+[ninja-build-rules]: https://gn.googlesource.com/gn/+/master/docs/reference.md#the-all-and-default-rules
 [gn]: https://gn.googlesource.com/gn/+/master/README.md
 [gn-doc]: https://gn.googlesource.com/gn/+/master/docs/reference.md#IDE-options
 [webrtc-android-development]: https://webrtc.googlesource.com/src/+/refs/heads/master/docs/native-code/android/index.md
@@ -264,5 +281,6 @@ Target name `turnserver`. Used for unit tests.
 [depot-tools]: http://commondatastorage.googleapis.com/chrome-infra-docs/flat/depot_tools/docs/html/depot_tools_tutorial.html#_setting_up
 [rfc-5389]: https://tools.ietf.org/html/rfc5389
 [rfc-5766]: https://tools.ietf.org/html/rfc5766
-[m43-log]: https://webrtc.googlesource.com/src/+log/branch-heads/43
-[m43]: https://webrtc.googlesource.com/src/+/branch-heads/43
+[m80-log]: https://webrtc.googlesource.com/src/+log/branch-heads/3987
+[m80]: https://webrtc.googlesource.com/src/+/branch-heads/3987
+[fuzzers]: https://chromium.googlesource.com/external/webrtc/+/refs/heads/master/test/fuzzers/

@@ -323,25 +323,15 @@ TEST(SocketAddressTest, TestToSensitiveString) {
   EXPECT_EQ("1.2.3.4", addr_v4.HostAsURIString());
   EXPECT_EQ("1.2.3.4:5678", addr_v4.ToString());
 
-#if defined(NDEBUG)
   EXPECT_EQ("1.2.3.x", addr_v4.HostAsSensitiveURIString());
   EXPECT_EQ("1.2.3.x:5678", addr_v4.ToSensitiveString());
-#else
-  EXPECT_EQ("1.2.3.4", addr_v4.HostAsSensitiveURIString());
-  EXPECT_EQ("1.2.3.4:5678", addr_v4.ToSensitiveString());
-#endif  // defined(NDEBUG)
 
   SocketAddress addr_v6(kTestV6AddrString, 5678);
   EXPECT_EQ("[" + kTestV6AddrString + "]", addr_v6.HostAsURIString());
   EXPECT_EQ(kTestV6AddrFullString, addr_v6.ToString());
-#if defined(NDEBUG)
   EXPECT_EQ("[" + kTestV6AddrAnonymizedString + "]",
             addr_v6.HostAsSensitiveURIString());
   EXPECT_EQ(kTestV6AddrFullAnonymizedString, addr_v6.ToSensitiveString());
-#else
-  EXPECT_EQ("[" + kTestV6AddrString + "]", addr_v6.HostAsSensitiveURIString());
-  EXPECT_EQ(kTestV6AddrFullString, addr_v6.ToSensitiveString());
-#endif  // defined(NDEBUG)
 }
 
 }  // namespace rtc

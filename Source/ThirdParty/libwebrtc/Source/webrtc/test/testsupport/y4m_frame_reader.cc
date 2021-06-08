@@ -40,9 +40,9 @@ Y4mFrameReaderImpl::~Y4mFrameReaderImpl() {
 }
 
 bool Y4mFrameReaderImpl::Init() {
-  if (width_ <= 0 || height_ <= 0) {
-    fprintf(stderr, "Frame width and height must be >0, was %d x %d\n", width_,
-            height_);
+  if (input_width_ <= 0 || input_height_ <= 0) {
+    fprintf(stderr, "Frame width and height must be >0, was %d x %d\n",
+            input_width_, input_height_);
     return false;
   }
   input_file_ = fopen(input_filename_.c_str(), "rb");

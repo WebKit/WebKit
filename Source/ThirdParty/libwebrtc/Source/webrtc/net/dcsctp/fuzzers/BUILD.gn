@@ -1,0 +1,50 @@
+# Copyright (c) 2021 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_library("dcsctp_fuzzers") {
+  testonly = true
+  deps = [
+    "../../../api:array_view",
+    "../../../rtc_base",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../common:math",
+    "../packet:chunk",
+    "../packet:error_cause",
+    "../packet:parameter",
+    "../public:socket",
+    "../public:types",
+    "../socket:dcsctp_socket",
+  ]
+  sources = [
+    "dcsctp_fuzzers.cc",
+    "dcsctp_fuzzers.h",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("dcsctp_fuzzers_unittests") {
+    testonly = true
+
+    deps = [
+      ":dcsctp_fuzzers",
+      "../../../api:array_view",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:gunit_helpers",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../test:test_support",
+      "../packet:sctp_packet",
+      "../public:socket",
+      "../socket:dcsctp_socket",
+      "../testing:testing_macros",
+    ]
+    sources = [ "dcsctp_fuzzers_test.cc" ]
+  }
+}

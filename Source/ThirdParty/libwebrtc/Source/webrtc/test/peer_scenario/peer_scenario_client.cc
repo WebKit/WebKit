@@ -241,7 +241,9 @@ PeerScenarioClient::PeerScenarioClient(
   pc_deps.allocator->set_flags(pc_deps.allocator->flags() |
                                cricket::PORTALLOCATOR_DISABLE_TCP);
   peer_connection_ =
-      pc_factory_->CreatePeerConnection(config.rtc_config, std::move(pc_deps));
+      pc_factory_
+          ->CreatePeerConnectionOrError(config.rtc_config, std::move(pc_deps))
+          .MoveValue();
   if (log_writer_factory_) {
     peer_connection_->StartRtcEventLog(log_writer_factory_->Create(".rtc.dat"),
                                        /*output_period_ms=*/1000);

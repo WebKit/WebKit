@@ -72,10 +72,10 @@ DeviceInfoDS::DeviceInfoDS()
       // Details: hr = 0x80010106 <=> "Cannot change thread mode after it is
       // set".
       //
-      RTC_LOG(LS_INFO) << __FUNCTION__
-                       << ": CoInitializeEx(NULL, COINIT_APARTMENTTHREADED)"
-                          " => RPC_E_CHANGED_MODE, error 0x"
-                       << rtc::ToHex(hr);
+      RTC_DLOG(LS_INFO) << __FUNCTION__
+                        << ": CoInitializeEx(NULL, COINIT_APARTMENTTHREADED)"
+                           " => RPC_E_CHANGED_MODE, error 0x"
+                        << rtc::ToHex(hr);
     }
   }
 }
@@ -99,7 +99,7 @@ int32_t DeviceInfoDS::Init() {
   return 0;
 }
 uint32_t DeviceInfoDS::NumberOfDevices() {
-  ReadLockScoped cs(_apiLock);
+  MutexLock lock(&_apiLock);
   return GetDeviceInfo(0, 0, 0, 0, 0, 0, 0);
 }
 
@@ -110,7 +110,7 @@ int32_t DeviceInfoDS::GetDeviceName(uint32_t deviceNumber,
                                     uint32_t deviceUniqueIdUTF8Length,
                                     char* productUniqueIdUTF8,
                                     uint32_t productUniqueIdUTF8Length) {
-  ReadLockScoped cs(_apiLock);
+  MutexLock lock(&_apiLock);
   const int32_t result = GetDeviceInfo(
       deviceNumber, deviceNameUTF8, deviceNameLength, deviceUniqueIdUTF8,
       deviceUniqueIdUTF8Length, productUniqueIdUTF8, productUniqueIdUTF8Length);
@@ -203,7 +203,7 @@ int32_t DeviceInfoDS::GetDeviceInfo(uint32_t deviceNumber,
     }
   }
   if (deviceNameLength) {
-    RTC_LOG(LS_INFO) << __FUNCTION__ << " " << deviceNameUTF8;
+    RTC_DLOG(LS_INFO) << __FUNCTION__ << " " << deviceNameUTF8;
   }
   return index;
 }
@@ -287,7 +287,7 @@ IBaseFilter* DeviceInfoDS::GetDeviceFilter(const char* deviceUniqueIdUTF8,
 int32_t DeviceInfoDS::GetWindowsCapability(
     const int32_t capabilityIndex,
     VideoCaptureCapabilityWindows& windowsCapability) {
-  ReadLockScoped cs(_apiLock);
+  MutexLock lock(&_apiLock);
 
   if (capabilityIndex < 0 || static_cast<size_t>(capabilityIndex) >=
                                  _captureCapabilitiesWindows.size()) {
@@ -584,7 +584,7 @@ int32_t DeviceInfoDS::DisplayCaptureSettingsDialogBox(
     void* parentWindow,
     uint32_t positionX,
     uint32_t positionY) {
-  ReadLockScoped cs(_apiLock);
+  MutexLock lock(&_apiLock);
   HWND window = (HWND)parentWindow;
 
   IBaseFilter* filter = GetDeviceFilter(deviceUniqueIdUTF8, NULL, 0);

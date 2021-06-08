@@ -24,6 +24,11 @@ rtc_library("audio_frame_api") {
   ]
 }
 
+rtc_source_set("audio_frame_processor") {
+  visibility = [ "*" ]
+  sources = [ "audio_frame_processor.h" ]
+}
+
 rtc_source_set("audio_mixer_api") {
   visibility = [ "*" ]
   sources = [ "audio_mixer.h" ]

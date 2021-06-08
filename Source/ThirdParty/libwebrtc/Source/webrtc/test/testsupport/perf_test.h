@@ -15,6 +15,7 @@
 #include <string>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "api/array_view.h"
 #include "api/numerics/samples_stats_counter.h"
 
@@ -45,11 +46,11 @@ enum class ImproveDirection {
 //
 // The binary this runs in must be hooked up as a perf test in the WebRTC
 // recipes for this to actually be uploaded to chromeperf.appspot.com.
-void PrintResult(const std::string& measurement,
-                 const std::string& modifier,
-                 const std::string& user_story,
+void PrintResult(absl::string_view measurement,
+                 absl::string_view modifier,
+                 absl::string_view user_story,
                  const double value,
-                 const std::string& units,
+                 absl::string_view units,
                  bool important,
                  ImproveDirection improve_direction = ImproveDirection::kNone);
 
@@ -58,12 +59,12 @@ void PrintResult(const std::string& measurement,
 // standard deviation (or other error metric) of the measurement.
 // DEPRECATED: soon unsupported.
 void PrintResultMeanAndError(
-    const std::string& measurement,
-    const std::string& modifier,
-    const std::string& user_story,
+    absl::string_view measurement,
+    absl::string_view modifier,
+    absl::string_view user_story,
     const double mean,
     const double error,
-    const std::string& units,
+    absl::string_view units,
     bool important,
     ImproveDirection improve_direction = ImproveDirection::kNone);
 
@@ -72,21 +73,21 @@ void PrintResultMeanAndError(
 // post-processing step might produce plots of their mean and standard
 // deviation.
 void PrintResultList(
-    const std::string& measurement,
-    const std::string& modifier,
-    const std::string& user_story,
+    absl::string_view measurement,
+    absl::string_view modifier,
+    absl::string_view user_story,
     rtc::ArrayView<const double> values,
-    const std::string& units,
+    absl::string_view units,
     bool important,
     ImproveDirection improve_direction = ImproveDirection::kNone);
 
 // Like PrintResult(), but prints a (mean, standard deviation) from stats
 // counter. Also add specified metric to the plotable metrics output.
-void PrintResult(const std::string& measurement,
-                 const std::string& modifier,
-                 const std::string& user_story,
+void PrintResult(absl::string_view measurement,
+                 absl::string_view modifier,
+                 absl::string_view user_story,
                  const SamplesStatsCounter& counter,
-                 const std::string& units,
+                 absl::string_view units,
                  const bool important,
                  ImproveDirection improve_direction = ImproveDirection::kNone);
 

@@ -20,6 +20,7 @@
 #include "api/crypto/crypto_options.h"
 #include "api/rtp_parameters.h"
 #include "api/scoped_refptr.h"
+#include "api/sequence_checker.h"
 #include "api/video_codecs/video_codec.h"
 #include "call/rtp_transport_controller_send_interface.h"
 #include "call/video_send_stream.h"
@@ -32,8 +33,6 @@
 #include "rtc_base/experiments/rate_control_settings.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
-#include "rtc_base/synchronization/sequence_checker.h"
-#include "rtc_base/thread_checker.h"
 #include "rtc_base/trace_event.h"
 #include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/field_trial.h"
@@ -48,6 +47,13 @@ static constexpr int kMaxVbaSizeDifferencePercent = 10;
 static constexpr int64_t kMaxVbaThrottleTimeMs = 500;
 
 constexpr TimeDelta kEncoderTimeOut = TimeDelta::Seconds(2);
+
+// When send-side BWE is used a stricter 1.1x pacing factor is used, rather than
+// the 2.5x which is used with receive-side BWE. Provides a more careful
+// bandwidth rampup with less risk of overshoots causing adverse effects like
+// packet loss. Not used for receive side BWE, since there we lack the probing
+// feature and so may result in too slow initial rampup.
+static constexpr double kStrictPacingMultiplier = 1.1;
 
 bool TransportSeqNumExtensionConfigured(const VideoSendStream::Config& config) {
   const std::vector<RtpExtension>& extensions = config.rtp.extensions;
@@ -140,7 +146,6 @@ RtpSenderObservers CreateObservers(RtcpRttStats* call_stats,
   observers.rtcp_rtt_stats = call_stats;
   observers.intra_frame_callback = encoder_feedback;
   observers.rtcp_loss_notification_observer = encoder_feedback;
-  observers.rtcp_stats = stats_proxy;
   observers.report_block_data_observer = stats_proxy;
   observers.rtp_stats = stats_proxy;
   observers.bitrate_observer = stats_proxy;
@@ -175,7 +180,7 @@ bool SameStreamsEnabled(const VideoBitrateAllocation& lhs,
 }  // namespace
 
 PacingConfig::PacingConfig()
-    : pacing_factor("factor", PacedSender::kDefaultPaceMultiplier),
+    : pacing_factor("factor", kStrictPacingMultiplier),
       max_pacing_delay("max_delay",
                        TimeDelta::Millis(PacedSender::kMaxQueueLengthMs)) {
   ParseFieldTrial({&pacing_factor, &max_pacing_delay},
@@ -396,7 +401,7 @@ void VideoSendStreamImpl::StartupVideoSendStream() {
 
 void VideoSendStreamImpl::Stop() {
   RTC_DCHECK_RUN_ON(worker_queue_);
-  RTC_LOG(LS_INFO) << "VideoSendStream::Stop";
+  RTC_LOG(LS_INFO) << "VideoSendStreamImpl::Stop";
   if (!rtp_video_sender_->IsActive())
     return;
   TRACE_EVENT_INSTANT0("webrtc", "VideoSendStream::Stop");
@@ -470,6 +475,13 @@ void VideoSendStreamImpl::OnBitrateAllocationUpdated(
     // Send bitrate allocation metadata only if encoder is not paused.
     rtp_video_sender_->OnBitrateAllocationUpdated(allocation);
   }
+}
+
+void VideoSendStreamImpl::OnVideoLayersAllocationUpdated(
+    VideoLayersAllocation allocation) {
+  // OnVideoLayersAllocationUpdated is handled on the encoder task queue in
+  // order to not race with OnEncodedImage callbacks.
+  rtp_video_sender_->OnVideoLayersAllocationUpdated(allocation);
 }
 
 void VideoSendStreamImpl::SignalEncoderActive() {

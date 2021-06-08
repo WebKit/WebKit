@@ -77,8 +77,8 @@ SignalingRoute PeerScenario::ConnectSignaling(
     PeerScenarioClient* callee,
     std::vector<EmulatedNetworkNode*> send_link,
     std::vector<EmulatedNetworkNode*> ret_link) {
-  return SignalingRoute(caller, callee, net_.CreateTrafficRoute(send_link),
-                        net_.CreateTrafficRoute(ret_link));
+  return SignalingRoute(caller, callee, net_.CreateCrossTrafficRoute(send_link),
+                        net_.CreateCrossTrafficRoute(ret_link));
 }
 
 void PeerScenario::SimpleConnection(

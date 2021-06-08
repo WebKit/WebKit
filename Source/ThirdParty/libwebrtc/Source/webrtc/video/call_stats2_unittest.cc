@@ -38,7 +38,10 @@ class MockStatsObserver : public CallStatsObserver {
 
 class CallStats2Test : public ::testing::Test {
  public:
-  CallStats2Test() { process_thread_->Start(); }
+  CallStats2Test() {
+    call_stats_.EnsureStarted();
+    process_thread_->Start();
+  }
 
   ~CallStats2Test() override { process_thread_->Stop(); }
 

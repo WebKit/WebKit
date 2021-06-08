@@ -26,15 +26,6 @@
 
 namespace webrtc {
 
-void TriageHelper::Print(FILE* file) {
-  fprintf(file, "========== TRIAGE NOTIFICATIONS ==========\n");
-  for (const auto& alert : triage_alerts_) {
-    fprintf(file, "%d %s. First occurrence at %3.3lf\n", alert.second.count,
-            alert.second.explanation.c_str(), alert.second.first_occurrence);
-  }
-  fprintf(file, "========== END TRIAGE NOTIFICATIONS ==========\n");
-}
-
 void TriageHelper::AnalyzeStreamGaps(const ParsedRtcEventLog& parsed_log,
                                      PacketDirection direction) {
   // With 100 packets/s (~800kbps), false positives would require 10 s without
@@ -221,6 +212,23 @@ void TriageHelper::AnalyzeLog(const ParsedRtcEventLog& parsed_log) {
   if (avg_outgoing_loss > kMaxLossFraction) {
     Alert(TriageAlertType::kOutgoingHighLoss, first_occurrence,
           "More than 5% of outgoing packets lost.");
+  }
+}
+
+void TriageHelper::Print(FILE* file) {
+  fprintf(file, "========== TRIAGE NOTIFICATIONS ==========\n");
+  for (const auto& alert : triage_alerts_) {
+    fprintf(file, "%d %s. First occurrence at %3.3lf\n", alert.second.count,
+            alert.second.explanation.c_str(), alert.second.first_occurrence);
+  }
+  fprintf(file, "========== END TRIAGE NOTIFICATIONS ==========\n");
+}
+
+void TriageHelper::ProcessAlerts(
+    std::function<void(int, float, std::string)> f) {
+  for (const auto& alert : triage_alerts_) {
+    f(alert.second.count, alert.second.first_occurrence,
+      alert.second.explanation);
   }
 }
 

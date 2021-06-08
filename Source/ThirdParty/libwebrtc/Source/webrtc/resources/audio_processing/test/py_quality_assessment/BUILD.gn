@@ -8,7 +8,7 @@
 
 import("../../../../webrtc.gni")
 
-if (rtc_include_tests) {
+if (rtc_include_tests && !build_with_chromium) {
   copy("noise_tracks") {
     testonly = true
     sources = [ "noise_tracks/city.wav" ]

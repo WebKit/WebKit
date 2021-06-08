@@ -24,5 +24,6 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   std::unique_ptr<cricket::IceMessage> stun_msg(new cricket::IceMessage());
   rtc::ByteBufferReader buf(message, size);
   stun_msg->Read(&buf);
+  stun_msg->ValidateMessageIntegrity("");
 }
 }  // namespace webrtc

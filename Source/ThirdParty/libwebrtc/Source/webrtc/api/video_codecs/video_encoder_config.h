@@ -64,6 +64,8 @@ struct VideoStream {
   // between multiple streams.
   absl::optional<double> bitrate_priority;
 
+  absl::optional<std::string> scalability_mode;
+
   // If this stream is enabled by the user, or not.
   bool active;
 };
@@ -178,6 +180,9 @@ class VideoEncoderConfig {
 
   // Legacy Google conference mode flag for simulcast screenshare
   bool legacy_conference_mode;
+
+  // Indicates whether quality scaling can be used or not.
+  bool is_quality_scaling_allowed;
 
  private:
   // Access to the copy constructor is private to force use of the Copy()
