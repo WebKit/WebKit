@@ -1,3 +1,12 @@
+2021-06-07  Jean-Yves Avenard  <jya@apple.com>
+
+        Update jya's email address
+        https://bugs.webkit.org/show_bug.cgi?id=226752
+
+        Reviewed by Tim Horton.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2021-06-07  Alex Christensen  <achristensen@webkit.org>
 
         Adopt SecTrustGetCertificateAtIndex replacement where available
