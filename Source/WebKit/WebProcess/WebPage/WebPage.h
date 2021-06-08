@@ -1356,10 +1356,10 @@ public:
 
 #if PLATFORM(IOS_FAMILY)
     // This excludes layout overflow, includes borders.
-    static WebCore::IntRect rootViewBoundsForElement(const WebCore::Element&);
+    static WebCore::IntRect rootViewBounds(const WebCore::Node&);
     // These include layout overflow for overflow:visible elements, but exclude borders.
-    static WebCore::IntRect absoluteInteractionBoundsForElement(const WebCore::Element&);
-    static WebCore::IntRect rootViewInteractionBoundsForElement(const WebCore::Element&);
+    static WebCore::IntRect absoluteInteractionBounds(const WebCore::Node&);
+    static WebCore::IntRect rootViewInteractionBounds(const WebCore::Node&);
 
     InteractionInformationAtPosition positionInformation(const InteractionInformationRequest&);
     

@@ -344,7 +344,7 @@ void WebPage::getPlatformEditorState(Frame& frame, EditorState& result) const
         }
 
         if (auto editableRootOrFormControl = makeRefPtr(enclosingTextFormControl(selection.start()) ?: selection.rootEditableElement())) {
-            postLayoutData.selectionClipRect = rootViewInteractionBoundsForElement(*editableRootOrFormControl);
+            postLayoutData.selectionClipRect = rootViewInteractionBounds(*editableRootOrFormControl);
             postLayoutData.editableRootIsTransparentOrFullyClipped = result.isContentEditable && isTransparentOrFullyClipped(*editableRootOrFormControl);
         }
         computeEditableRootHasContentAndPlainText(selection, postLayoutData);
@@ -839,14 +839,14 @@ void WebPage::didFinishContentChangeObserving(WKContentChange observedContentCha
 static bool isProbablyMeaningfulClick(Node& clickNode)
 {
     auto frame = makeRefPtr(clickNode.document().frame());
-    if (!is<Element>(clickNode) || !clickNode.isConnected() || !frame)
+    if (!frame || !clickNode.isConnected())
         return true;
 
-    if (is<HTMLBodyElement>(clickNode))
+    if (is<HTMLBodyElement>(clickNode) || is<Document>(clickNode) || clickNode.document().documentElement() == &clickNode)
         return false;
 
     if (auto view = makeRefPtr(frame->mainFrame().view())) {
-        auto elementBounds = WebPage::rootViewBoundsForElement(downcast<Element>(clickNode));
+        auto elementBounds = WebPage::rootViewInteractionBounds(clickNode);
         auto unobscuredRect = view->unobscuredContentRect();
         if (elementBounds.width() >= unobscuredRect.width() / 2 && elementBounds.height() >= unobscuredRect.height() / 2)
             return false;
@@ -1005,7 +1005,7 @@ void WebPage::insertDroppedImagePlaceholders(const Vector<IntSize>& imageSizes, 
 {
     m_page->dragController().insertDroppedImagePlaceholdersAtCaret(imageSizes);
     auto placeholderRects = m_page->dragController().droppedImagePlaceholders().map([&] (auto& element) {
-        return rootViewBoundsForElement(element);
+        return rootViewBounds(element);
     });
 
     auto imagePlaceholderRange = m_page->dragController().droppedImagePlaceholderRange();
@@ -1360,10 +1360,10 @@ static IntRect elementBoundsInFrame(const Frame& frame, const Element& focusedEl
     frame.document()->updateLayoutIgnorePendingStylesheets();
     
     if (focusedElement.hasTagName(HTMLNames::textareaTag) || focusedElement.hasTagName(HTMLNames::inputTag) || focusedElement.hasTagName(HTMLNames::selectTag))
-        return WebPage::absoluteInteractionBoundsForElement(focusedElement);
+        return WebPage::absoluteInteractionBounds(focusedElement);
 
     if (auto* rootEditableElement = focusedElement.rootEditableElement())
-        return WebPage::absoluteInteractionBoundsForElement(*rootEditableElement);
+        return WebPage::absoluteInteractionBounds(*rootEditableElement);
 
     return { };
 }
@@ -1678,34 +1678,34 @@ static std::optional<SimpleRange> rangeAtWordBoundaryForPosition(Frame* frame, c
     return makeSimpleRange(base, extent);
 }
 
-IntRect WebPage::rootViewBoundsForElement(const Element& element)
+IntRect WebPage::rootViewBounds(const Node& node)
 {
-    auto* frame = element.document().frame();
+    auto frame = makeRefPtr(node.document().frame());
     if (!frame)
         return { };
 
-    auto* view = frame->view();
+    auto view = makeRefPtr(frame->view());
     if (!view)
         return { };
 
-    auto* renderer = element.renderer();
+    auto* renderer = node.renderer();
     if (!renderer)
         return { };
 
     return view->contentsToRootView(renderer->absoluteBoundingBoxRect());
 }
 
-IntRect WebPage::absoluteInteractionBoundsForElement(const Element& element)
+IntRect WebPage::absoluteInteractionBounds(const Node& node)
 {
-    auto* frame = element.document().frame();
+    auto frame = makeRefPtr(node.document().frame());
     if (!frame)
         return { };
 
-    auto* view = frame->view();
+    auto view = makeRefPtr(frame->view());
     if (!view)
         return { };
 
-    auto* renderer = element.renderer();
+    auto* renderer = node.renderer();
     if (!renderer)
         return { };
 
@@ -1730,17 +1730,17 @@ IntRect WebPage::absoluteInteractionBoundsForElement(const Element& element)
     return enclosingIntRect(boundingBox);
 }
 
-IntRect WebPage::rootViewInteractionBoundsForElement(const Element& element)
+IntRect WebPage::rootViewInteractionBounds(const Node& node)
 {
-    auto* frame = element.document().frame();
+    auto frame = makeRefPtr(node.document().frame());
     if (!frame)
         return { };
 
-    auto* view = frame->view();
+    auto view = makeRefPtr(frame->view());
     if (!view)
         return { };
 
-    return view->contentsToRootView(absoluteInteractionBoundsForElement(element));
+    return view->contentsToRootView(absoluteInteractionBounds(node));
 }
 
 void WebPage::clearSelection()
@@ -1757,7 +1757,7 @@ void WebPage::dispatchSyntheticMouseEventsForSelectionGesture(SelectionTouch tou
 
     IntRect focusedElementRect;
     if (m_focusedElement)
-        focusedElementRect = rootViewInteractionBoundsForElement(*m_focusedElement);
+        focusedElementRect = rootViewInteractionBounds(*m_focusedElement);
 
     if (focusedElementRect.isEmpty())
         return;
@@ -3242,7 +3242,7 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
         information.elementContext = WTFMove(*elementContext);
 
     if (auto* renderer = focusedElement->renderer()) {
-        information.interactionRect = rootViewInteractionBoundsForElement(*focusedElement);
+        information.interactionRect = rootViewInteractionBounds(*focusedElement);
         information.nodeFontSize = renderer->style().fontDescription().computedSize();
 
         bool inFixed = false;
@@ -3269,11 +3269,11 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
     information.allowsUserScaling = m_viewportConfiguration.allowsUserScaling();
     information.allowsUserScalingIgnoringAlwaysScalable = m_viewportConfiguration.allowsUserScalingIgnoringAlwaysScalable();
     if (auto* nextElement = nextAssistableElement(focusedElement.get(), *m_page, true)) {
-        information.nextNodeRect = rootViewBoundsForElement(*nextElement);
+        information.nextNodeRect = rootViewBounds(*nextElement);
         information.hasNextNode = true;
     }
     if (auto* previousElement = nextAssistableElement(focusedElement.get(), *m_page, false)) {
-        information.previousNodeRect = rootViewBoundsForElement(*previousElement);
+        information.previousNodeRect = rootViewBounds(*previousElement);
         information.hasPreviousNode = true;
     }
     information.focusedElementIdentifier = m_currentFocusedElementIdentifier;

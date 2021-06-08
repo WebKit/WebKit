@@ -1,3 +1,14 @@
+2021-06-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Safari tab pill should toggle visibility when tapping on article text on adventure.com
+        https://bugs.webkit.org/show_bug.cgi?id=226775
+        rdar://78826820
+
+        Reviewed by Tim Horton and Devin Rousso.
+
+        * fast/events/ios/non-meaningful-click-when-tapping-document-expected.txt: Added.
+        * fast/events/ios/non-meaningful-click-when-tapping-document.html: Added.
+
 2021-06-08  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Unreviewed test gardening. Update GTK baselines of several ARIA tests.
