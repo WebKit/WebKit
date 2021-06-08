@@ -1,3 +1,19 @@
+2021-06-08  Frédéric Wang  <fwang@igalia.com>
+
+        Crash in InsertParagraphSeparatorCommand::doApply
+        https://bugs.webkit.org/show_bug.cgi?id=226527
+
+        Reviewed by Ryosuke Niwa.
+
+        After r273375 and r278002, it is possible that InsertParagraphSeparatorCommand::doApply is
+        confused by a display: table start block, leading to nullptr crash in the rest of the
+        function. This patch just excludes that case in order to work around that kind of issue.
+
+        Test: fast/editing/insert-paragraph-with-img-in-table-crash.html
+
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+
 2021-06-07  Alex Christensen  <achristensen@webkit.org>
 
         Adopt SecTrustGetCertificateAtIndex replacement where available

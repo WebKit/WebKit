@@ -1,3 +1,19 @@
+2021-06-08  Frédéric Wang  <fwang@igalia.com>
+
+        Crash in InsertParagraphSeparatorCommand::doApply
+        https://bugs.webkit.org/show_bug.cgi?id=226527
+
+        Reviewed by Ryosuke Niwa.
+
+        Add regression test.
+
+        * fast/editing/insert-paragraph-with-img-in-table-crash-expected.txt: Added.
+        * fast/editing/insert-paragraph-with-img-in-table-crash.html: Added. Note that not having a
+        new line at the end of the HTML file is required to make the test crash without the patch.
+        * fast/editing/insert-paragraph-with-text-in-table-crash-expected.txt: Added.
+        * fast/editing/insert-paragraph-with-text-in-table-crash.html: Added.
+
+
 2021-06-07  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Unreviewed, reland r276592 with a fix for put() override in prototype chain of a JSProxy
