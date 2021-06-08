@@ -1,3 +1,10 @@
+2021-06-08  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed Windows build fix after r278619.
+
+        * platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.cpp:
+        (WebCore::CDMSessionAVFoundationCF::generateKeyRequest):
+
 2021-06-08  Devin Rousso  <drousso@apple.com>
 
         [Modern Media Controls] Don't show Playback Speed when up-to-date Live Boadcasts

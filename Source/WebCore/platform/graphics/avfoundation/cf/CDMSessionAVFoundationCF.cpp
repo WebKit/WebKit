@@ -78,7 +78,7 @@ RefPtr<Uint8Array> CDMSessionAVFoundationCF::generateKeyRequest(const String&, U
 
     auto assetStr = keyID.utf8();
     auto assetID = adoptCF(CFDataCreateMutable(kCFAllocatorDefault, assetStr.length()));
-    CFDataAppendBytes(assetID.get(), assetStr.dataAsUIntPtr(), assetStr.length());
+    CFDataAppendBytes(assetID.get(), assetStr.dataAsUInt8Ptr(), assetStr.length());
 
     CFErrorRef cfError = nullptr;
     auto keyRequest = adoptCF(AVCFAssetResourceLoadingRequestCreateStreamingContentKeyRequestDataForApp(m_request.get(), certificateData.get(), assetID.get(), nullptr, &cfError));
