@@ -1,3 +1,22 @@
+2021-06-08  Sam Weinig  <weinig@apple.com>
+
+        Move some hand rolled CSSProperty predicates to be generated based on new CSSProperties.json properties
+        https://bugs.webkit.org/show_bug.cgi?id=226768
+
+        Reviewed by Antti Koivisto.
+
+        Replace hand rolled isDescriptorOnly, isDirectionAwareProperty and isColorProperty
+        functions with generated versions using new "color-property", "direction-aware-property"
+        and "descriptor-only" properties in CSSProperties.json.
+
+        * css/CSSProperties.json:
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isDescriptorOnly): Deleted.
+        (WebCore::CSSProperty::isDirectionAwareProperty): Deleted.
+        (WebCore::CSSProperty::isColorProperty): Deleted.
+        * css/makeprop.pl:
+        (addProperty):
+
 2021-06-08  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION (r256095): Adding a border-radius, border, or box-shadow breaks animations from scale(0)

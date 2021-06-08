@@ -1,3 +1,14 @@
+2021-06-08  Sam Weinig  <weinig@apple.com>
+
+        Move some hand rolled CSSProperty predicates to be generated based on new CSSProperties.json properties
+        https://bugs.webkit.org/show_bug.cgi?id=226768
+
+        Reviewed by Antti Koivisto.
+
+        * Scripts/webkitpy/style/checkers/jsonchecker.py:
+        (JSONCSSPropertiesChecker.check_codegen_properties):
+        Add new codegen properties to the checker.
+
 2021-06-08  Philippe Normand  <pnormand@igalia.com>
 
         [Flatpak SDK] Enable network access in the WPE build sandbox

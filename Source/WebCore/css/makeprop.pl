@@ -65,8 +65,11 @@ my @internalProprerties;
 my %runtimeFlags;
 my %settingsFlags;
 my $numPredefinedProperties = 2;
-my %nameIsInherited;
+my %nameIsColorProperty;
+my %nameIsDescriptorOnly;
+my %nameIsDirectionAwareProperty;
 my %nameIsHighPriority;
+my %nameIsInherited;
 my %namePriorityShouldSink;
 my %propertiesWithStyleBuilderOptions;
 my %styleBuilderOptions = (
@@ -257,6 +260,12 @@ sub addProperty($$)
                     $runtimeFlags{$name} = $codegenProperties->{"runtime-flag"};
                 } elsif ($codegenOptionName eq "settings-flag") {
                     $settingsFlags{$name} = $codegenProperties->{"settings-flag"};
+                } elsif ($codegenOptionName eq "color-property") {
+                    $nameIsColorProperty{$name} = 1;
+                } elsif ($codegenOptionName eq "direction-aware-property") {
+                    $nameIsDirectionAwareProperty{$name} = 1;
+                } elsif ($codegenOptionName eq "descriptor-only") {
+                    $nameIsDescriptorOnly{$name} = 1;
                 } else {
                     die "Unrecognized codegen property \"$codegenOptionName\" for $name property.";
                 }
@@ -512,7 +521,7 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID id)
     
 CSSPropertyID getRelatedPropertyId(CSSPropertyID id)
 {
-    switch(id) {
+    switch (id) {
 EOF
 for my $name (@names) {
     if (!$relatedProperty{$name}) {
@@ -544,6 +553,60 @@ for my $name (@names) {
 print GPERF << "EOF";
     default:
         return { };
+    }
+}
+
+bool CSSProperty::isColorProperty(CSSPropertyID id)
+{
+    switch (id) {
+EOF
+for my $name (@names) {
+    if (!$nameIsColorProperty{$name}) {
+        next;
+    }
+    print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
+}
+
+print GPERF << "EOF";
+        return true;
+    default:
+        return false;
+    }
+}
+
+bool CSSProperty::isDirectionAwareProperty(CSSPropertyID id)
+{
+    switch (id) {
+EOF
+for my $name (@names) {
+    if (!$nameIsDirectionAwareProperty{$name}) {
+        next;
+    }
+    print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
+}
+
+print GPERF << "EOF";
+        return true;
+    default:
+        return false;
+    }
+}
+
+bool CSSProperty::isDescriptorOnly(CSSPropertyID id)
+{
+    switch (id) {
+EOF
+for my $name (@names) {
+    if (!$nameIsDescriptorOnly{$name}) {
+        next;
+    }
+    print GPERF "    case CSSPropertyID::CSSProperty" . $nameToId{$name} . ":\n";
+}
+
+print GPERF << "EOF";
+        return true;
+    default:
+        return false;
     }
 }
 
