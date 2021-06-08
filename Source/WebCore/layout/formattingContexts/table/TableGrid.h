@@ -73,8 +73,11 @@ public:
         void setLogicalWidth(LayoutUnit);
         LayoutUnit logicalWidth() const;
 
-        void setFixedWidth(LayoutUnit fixedValue) { m_fixedWidth = fixedValue; }
+        void setFixedWidth(LayoutUnit fixedValue);
         std::optional<LayoutUnit> fixedWidth() const { return m_fixedWidth; }
+
+        void setPercent(float);
+        std::optional<float> percent() const { return m_percent; }
 
         const ContainerBox* box() const { return m_layoutBox.get(); }
 
@@ -82,6 +85,7 @@ public:
         LayoutUnit m_computedLogicalWidth;
         LayoutUnit m_computedLogicalLeft;
         std::optional<LayoutUnit> m_fixedWidth;
+        std::optional<float> m_percent;
         WeakPtr<const ContainerBox> m_layoutBox;
 
 #if ASSERT_ENABLED
@@ -229,6 +233,19 @@ private:
     std::optional<IntrinsicWidthConstraints> m_intrinsicWidthConstraints;
     std::optional<Edges> m_collapsedBorder;
 };
+
+
+inline void TableGrid::Column::setFixedWidth(LayoutUnit fixedValue)
+{
+    ASSERT(!m_percent);
+    m_fixedWidth = fixedValue;
+}
+
+inline void TableGrid::Column::setPercent(float percent)
+{
+    ASSERT(!m_fixedWidth);
+    m_percent = percent;
+}
 
 }
 }

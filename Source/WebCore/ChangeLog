@@ -1,3 +1,93 @@
+2021-06-08  Alan Bujtas  <zalan@apple.com>
+
+        [LFC][TFC] Add initial percent value support for columns
+        https://bugs.webkit.org/show_bug.cgi?id=226751
+
+        Reviewed by Simon Fraser.
+
+        This patch adds the initial support for content like this:
+        <table>
+          <tr>
+            <td style="width: 10%"></td><td style="width: 90%"></td>
+          </tr>
+        </table>
+
+        Percent values work in mysterious ways in cases when the table has no fixed width.
+
+        1. The smaller the percent value is, the wider the table may become.
+
+         Percent values are resolved against the cell's border box (so essentially they are resolved
+         against their own content as opposed to the table/containing block) and the formula is slightly different.
+
+            <td style="padding: 5px; width: 20%;"></td> : produces a 10px wide border box (horizontal border: 0px, padding: 10px, content: 0px).
+              The maximum constraint is resolved to 50px (width / percent * 100)
+            <td style="padding: 5px; width: 100%;"></td> : produces a 10px wide border box and the maximum constraint is resolved to 10px. 
+
+          This maximum constraint value turns into the available width for the table content and becomes the final table width.
+
+        2. With multiple rows, we pick the highest _percent_ value for each column (as opposed to the resolved values).
+
+              <tr><td style="width: 20%"></td></tr> (assum same 5px padding on both sides)
+              <tr><td style="width: 80%"></td></tr>
+
+          While the second row's cell has a higher maximum constraint value (50px see #1) since we only look at the raw percent values,
+          this content only produces a 12.5px wide table.
+
+        3. The percent values do not accumulate across columns but instead we pick the largest one to represent the entire table's max constraint width.
+
+            <tr><td style="width: 60%"></td><td style="width: 40%"></td></tr>
+
+          60% resolves to 16.6px
+          40% resolves to 25px and we use the 25px value as the width for the entire table (and not 16.6px + 25px).
+
+        4. Since we pick the highest percent values across rows for each columns, we may end up with > 100%.
+          In such cases we start dropping percent values for subsequent columns:
+
+            <tr><td style="width: 20%;"></td><td style="width: 80%;"></td></tr>
+            <tr><td style="width: 60%;"></td><td style="width: 10%;"></td></tr>
+
+          First column width is max(20%, 60%) -> 60%
+          Second column width is max(80%, 10%) -> 80%
+          As we limit the accumulated percent value to 100%, the final column percent values are 60% and 40% (and not 80%).
+          Now the 60% is resolved to 16.6px and the 40% is resolved to 25px and since we don't accumulate these values (see #3)
+          the final table width is 25px (based on a percent value which is not even in the markup).
+
+        5. While the smaller percent values produce wider tables (see #1), during the available space distribution
+          columns with smaller percent values get assigned less space.
+
+            <tr><td style="width: 1%"></td><td style="width: 99%"></td></tr>
+
+          This content produces a 1000px wide table due to the small (1%) percent value (see #1 #2 and #3).
+          When we distribute the available space (1000px), the first cell gets only 10px (1%) while the second cell ends up with 990px (99%).
+
+        (and this is the cherry on top (not included in this patch):
+         Imagine the following scenario:
+           1. the accumulated column percent value > 100% (let's say 80% and 30%)
+           2. as we reach the 100% while walking the columns one by one (see #4), the remaining percent value becomes 0%.
+           3. In order to avoid division by 0, we pick a very small epsilon value to run the formula.
+           4. Now this very small percent value produces a large resolved value (see #2) which means
+
+            <tr><td style="width: 100%"></td></tr>
+
+            produces a 10px wide table
+
+            <tr><td style="width: 100%"></td><td style="width: 1%"></td></tr> <- note the 1%
+
+            produces a very very very wide table.
+        )
+
+        Test: fast/layoutformattingcontext/table-with-percent-columns-only-no-content.html
+
+        * layout/formattingContexts/table/TableFormattingContext.cpp:
+        (WebCore::Layout::TableFormattingContext::computedIntrinsicWidthConstraints):
+        (WebCore::Layout::TableFormattingContext::computedPreferredWidthForColumns):
+        * layout/formattingContexts/table/TableGrid.h:
+        (WebCore::Layout::TableGrid::Column::percent const):
+        (WebCore::Layout::TableGrid::Column::setFixedWidth):
+        (WebCore::Layout::TableGrid::Column::setPercent):
+        * layout/formattingContexts/table/TableLayout.cpp:
+        (WebCore::Layout::TableFormattingContext::TableLayout::distributedHorizontalSpace):
+
 2021-06-08  Jean-Yves Avenard  <jya@apple.com>
 
         [MSE] Rework handling of SourceBuffer's buffer full.

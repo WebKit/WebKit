@@ -247,8 +247,11 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
         float minimumWidth = slot.widthConstraints().minimum;
         float maximumWidth = slot.widthConstraints().maximum;
 
-        if (auto fixedWidth = m_grid.columns().list()[columnIndex].fixedWidth())
+        auto& column = m_grid.columns().list()[columnIndex];
+        if (auto fixedWidth = column.fixedWidth())
             maximumWidth = std::max<float>(minimumWidth, *fixedWidth);
+        else if (auto percent = column.percent())
+            maximumWidth = std::max(minimumWidth, *percent * availableHorizontalSpace / 100.0f);
 
         if (columnWidthBalancingBase == ColumnWidthBalancingBase::MinimumWidth) {
             ASSERT(maximumWidth >= minimumWidth);
