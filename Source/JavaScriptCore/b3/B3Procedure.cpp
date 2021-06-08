@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -432,51 +432,6 @@ void Procedure::setNumEntrypoints(unsigned numEntrypoints)
 {
     m_numEntrypoints = numEntrypoints;
     m_code->setNumEntrypoints(numEntrypoints);
-}
-
-void Procedure::freeUnneededB3ValuesAfterLowering()
-{
-    // We cannot clear m_stackSlots() or m_tuples here, as they are unfortunately modified and read respectively by Air.
-    m_variables.clearAll();
-    m_blocks.clear();
-    m_cfg = nullptr;
-    m_dominators = nullptr;
-    m_naturalLoops = nullptr;
-    m_backwardsCFG = nullptr;
-    m_backwardsDominators = nullptr;
-    m_fastConstants.clear();
-
-    if (m_code->shouldPreserveB3Origins())
-        return;
-
-    BitVector valuesToPreserve;
-    valuesToPreserve.ensureSize(m_values.size());
-    for (Value* value : m_values) {
-        switch (value->opcode()) {
-        // Ideally we would also be able to get rid of all of those.
-        // But Air currently relies on these origins being preserved, see https://bugs.webkit.org/show_bug.cgi?id=194040
-        case WasmBoundsCheck:
-            valuesToPreserve.quickSet(value->index());
-            break;
-        case CCall:
-        case Patchpoint:
-        case CheckAdd:
-        case CheckSub:
-        case CheckMul:
-        case Check:
-            valuesToPreserve.quickSet(value->index());
-            for (Value* child : value->children())
-                valuesToPreserve.quickSet(child->index());
-            break;
-        default:
-            break;
-        }
-    }
-    for (Value* value : m_values) {
-        if (!valuesToPreserve.quickGet(value->index()))
-            m_values.remove(value);
-    }
-    m_values.packIndices();
 }
 
 } } // namespace JSC::B3

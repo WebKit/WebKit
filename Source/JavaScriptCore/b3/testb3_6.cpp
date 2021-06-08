@@ -2767,8 +2767,6 @@ void testTrappingStoreElimination()
         root->appendNew<Const32Value>(proc, Origin(), 44),
         ptr);
     root->appendNew<Value>(proc, Return, Origin());
-    // We'll look at the values after compiling
-    proc.code().forcePreservationOfB3Origins();
     compileAndRun<int>(proc);
     unsigned storeCount = 0;
     for (Value* value : proc.values()) {

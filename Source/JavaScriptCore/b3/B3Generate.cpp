@@ -133,7 +133,6 @@ void generateToAir(Procedure& procedure)
     }
 
     lowerToAir(procedure);
-    procedure.freeUnneededB3ValuesAfterLowering();
 }
 
 } } // namespace JSC::B3

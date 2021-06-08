@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -214,12 +214,11 @@ static void generateWithAlreadyAllocatedRegisters(Code& code, CCallHelpers& jit)
 
     PCToOriginMap& pcToOriginMap = code.proc().pcToOriginMap();
     auto addItem = [&] (Inst& inst) {
-        if (!code.shouldPreserveB3Origins())
-            return;
-        if (inst.origin)
-            pcToOriginMap.appendItem(jit.labelIgnoringWatchpoints(), inst.origin->origin());
-        else
+        if (!inst.origin) {
             pcToOriginMap.appendItem(jit.labelIgnoringWatchpoints(), Origin());
+            return;
+        }
+        pcToOriginMap.appendItem(jit.labelIgnoringWatchpoints(), inst.origin->origin());
     };
 
     Disassembler* disassembler = code.disassembler();

@@ -63,9 +63,6 @@ State::State(Graph& graph)
 
     proc = makeUnique<Procedure>();
 
-    if (graph.m_vm.shouldBuilderPCToCodeOriginMapping())
-        proc->setNeedsPCToOriginMap();
-
     proc->setOriginPrinter(
         [] (PrintStream& out, B3::Origin origin) {
             out.print(bitwise_cast<Node*>(origin.data()));

@@ -1,3 +1,20 @@
+2021-06-07  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, reverting r278371 and r278463.
+        https://bugs.webkit.org/show_bug.cgi?id=226749
+
+        Break dumpDisassembly in JetStream2
+
+        Reverted changesets:
+
+        "We should drop B3 values while running Air"
+        https://bugs.webkit.org/show_bug.cgi?id=226187
+        https://trac.webkit.org/changeset/278371
+
+        "Drop the FTL(DFG) graph after lowering to B3"
+        https://bugs.webkit.org/show_bug.cgi?id=226556
+        https://trac.webkit.org/changeset/278463
+
 2021-06-07  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Window should behave like a legacy platform object without indexed setter

@@ -1074,8 +1074,6 @@ public:
         m_catchEntrypoints.append(CatchEntrypointData { machineCode, FixedVector<FlushFormat>(WTFMove(argumentFormats)), bytecodeIndex });
     }
 
-    void freeDFGIRAfterLowering();
-
     StackCheck m_stackChecker;
     VM& m_vm;
     Plan& m_plan;
