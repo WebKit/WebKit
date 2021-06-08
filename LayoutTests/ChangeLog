@@ -1,5 +1,24 @@
 2021-06-08  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK] Unreviewed test gardening. Update GTK baselines of several ARIA tests.
+
+        These tests are marked as flaky under bug webkit.org/b/182761.
+
+        The GTK post-commit bot reports these tests have been consistently
+        failing for the last 4000 revisions, so at least their baselines
+        should be updated. I won't remove the tests from test expectations for
+        now.
+
+        * accessibility/gtk/aria-busy-changed-notification-expected.txt:
+        * accessibility/gtk/aria-current-changed-notification-expected.txt:
+        * accessibility/gtk/aria-disabled-changed-notification-expected.txt:
+        * accessibility/gtk/aria-expanded-changed-notification-expected.txt:
+        * accessibility/gtk/aria-pressed-changed-notification-expected.txt:
+        * accessibility/gtk/aria-readonly-changed-notification-expected.txt:
+        * accessibility/gtk/aria-required-changed-notification-expected.txt:
+
+2021-06-08  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Unreviewed test gardening. Remove obsolete GTK baseline for WPT test 'createImageBitmap-serializable.html'.
 
         * platform/glib/TestExpectations:
