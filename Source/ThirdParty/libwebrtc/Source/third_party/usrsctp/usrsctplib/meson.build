@@ -1,8 +1,13 @@
 # Project definition
 project('usrsctplib', 'c',
-    version: '1.0.0',
+    version: '0.9.5.0',
     default_options: ['c_std=c99'],
     meson_version: '>=0.49.0')
+
+# Shared library API and ABI versions
+# Notice: shared library version must be in X.Y.Z format only
+soversion_full = '2.0.0'
+soversion_short = '2'
 
 # Set compiler warning flags
 compiler = meson.get_compiler('c')
@@ -186,7 +191,8 @@ else
         dependencies: dependencies,
         include_directories: include_dirs,
         install: true,
-        version: meson.project_version())
+        version: soversion_full,
+        soversion: soversion_short)
 endif
 
 # Declare dependency

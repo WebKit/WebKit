@@ -98,23 +98,42 @@ sctp_userspace_set_threadname(const char *name)
 int
 sctp_userspace_get_mtu_from_ifn(uint32_t if_index, int af)
 {
+#if defined(INET) || defined(INET6)
 	struct ifreq ifr;
 	int fd;
+#endif
+	int mtu;
 
-	memset(&ifr, 0, sizeof(struct ifreq));
-	if (if_indextoname(if_index, ifr.ifr_name) != NULL) {
-		/* TODO can I use the raw socket here and not have to open a new one with each query? */
-		if ((fd = socket(af, SOCK_DGRAM, 0)) < 0)
-			return (0);
-		if (ioctl(fd, SIOCGIFMTU, &ifr) < 0) {
+	switch (af) {
+#if defined(INET)
+	case AF_INET:
+#endif
+#if defined(INET6)
+	case AF_INET6:
+#endif
+#if defined(INET) || defined(INET6)
+		memset(&ifr, 0, sizeof(struct ifreq));
+		mtu = 0;
+		if (if_indextoname(if_index, ifr.ifr_name) != NULL) {
+			/* TODO can I use the raw socket here and not have to open a new one with each query? */
+			if ((fd = socket(af, SOCK_DGRAM, 0)) < 0) {
+				break;
+			}
+			if (ioctl(fd, SIOCGIFMTU, &ifr) >= 0) {
+				mtu = ifr.ifr_mtu;
+			}
 			close(fd);
-			return (0);
 		}
-		close(fd);
-		return ifr.ifr_mtu;
-	} else {
-		return (0);
+		break;
+#endif
+	case AF_CONN:
+		mtu = 1280;
+		break;
+	default:
+		mtu = 0;
+		break;
 	}
+	return (mtu);
 }
 #endif
 
@@ -143,41 +162,60 @@ timingsafe_bcmp(const void *b1, const void *b2, size_t n)
 int
 sctp_userspace_get_mtu_from_ifn(uint32_t if_index, int af)
 {
+#if defined(INET) || defined(INET6)
 	PIP_ADAPTER_ADDRESSES pAdapterAddrs, pAdapt;
 	DWORD AdapterAddrsSize, Err;
-	int ret;
+#endif
+	int mtu;
 
-	ret = 0;
-	AdapterAddrsSize = 0;
-	pAdapterAddrs = NULL;
-	if ((Err = GetAdaptersAddresses(AF_UNSPEC, 0, NULL, NULL, &AdapterAddrsSize)) != 0) {
-		if ((Err != ERROR_BUFFER_OVERFLOW) && (Err != ERROR_INSUFFICIENT_BUFFER)) {
-			SCTPDBG(SCTP_DEBUG_USR, "GetAdaptersAddresses() sizing failed with error code %d, AdapterAddrsSize = %d\n", Err, AdapterAddrsSize);
-			ret = -1;
+	switch (af) {
+#if defined(INET)
+	case AF_INET:
+#endif
+#if defined(INET6)
+	case AF_INET6:
+#endif
+#if defined(INET) || defined(INET6)
+		mtu = 0;
+		AdapterAddrsSize = 0;
+		pAdapterAddrs = NULL;
+		if ((Err = GetAdaptersAddresses(AF_UNSPEC, 0, NULL, NULL, &AdapterAddrsSize)) != 0) {
+			if ((Err != ERROR_BUFFER_OVERFLOW) && (Err != ERROR_INSUFFICIENT_BUFFER)) {
+				SCTPDBG(SCTP_DEBUG_USR, "GetAdaptersAddresses() sizing failed with error code %d, AdapterAddrsSize = %d\n", Err, AdapterAddrsSize);
+				mtu = -1;
+				goto cleanup;
+			}
+		}
+		if ((pAdapterAddrs = (PIP_ADAPTER_ADDRESSES) GlobalAlloc(GPTR, AdapterAddrsSize)) == NULL) {
+			SCTPDBG(SCTP_DEBUG_USR, "Memory allocation error!\n");
+			mtu = -1;
 			goto cleanup;
 		}
-	}
-	if ((pAdapterAddrs = (PIP_ADAPTER_ADDRESSES) GlobalAlloc(GPTR, AdapterAddrsSize)) == NULL) {
-		SCTPDBG(SCTP_DEBUG_USR, "Memory allocation error!\n");
-		ret = -1;
-		goto cleanup;
-	}
-	if ((Err = GetAdaptersAddresses(AF_UNSPEC, 0, NULL, pAdapterAddrs, &AdapterAddrsSize)) != ERROR_SUCCESS) {
-		SCTPDBG(SCTP_DEBUG_USR, "GetAdaptersAddresses() failed with error code %d\n", Err);
-		ret = -1;
-		goto cleanup;
-	}
-	for (pAdapt = pAdapterAddrs; pAdapt; pAdapt = pAdapt->Next) {
-		if (pAdapt->IfIndex == if_index) {
-			ret = pAdapt->Mtu;
-			break;
+		if ((Err = GetAdaptersAddresses(AF_UNSPEC, 0, NULL, pAdapterAddrs, &AdapterAddrsSize)) != ERROR_SUCCESS) {
+			SCTPDBG(SCTP_DEBUG_USR, "GetAdaptersAddresses() failed with error code %d\n", Err);
+			mtu = -1;
+			goto cleanup;
 		}
+		for (pAdapt = pAdapterAddrs; pAdapt; pAdapt = pAdapt->Next) {
+			if (pAdapt->IfIndex == if_index) {
+				mtu = pAdapt->Mtu;
+				break;
+			}
+		}
+	cleanup:
+		if (pAdapterAddrs != NULL) {
+			GlobalFree(pAdapterAddrs);
+		}
+		break;
+#endif
+	case AF_CONN:
+		mtu = 1280;
+		break;
+	default:
+		mtu = 0;
+		break;
 	}
-cleanup:
-	if (pAdapterAddrs != NULL) {
-		GlobalFree(pAdapterAddrs);
-	}
-	return (ret);
+	return (mtu);
 }
 
 void

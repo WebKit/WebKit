@@ -34,7 +34,7 @@
 
 #if defined(__FreeBSD__) && !defined(__Userspace__)
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/sys/netinet/sctp_structs.h 365071 2020-09-01 21:19:14Z mjg $");
+__FBSDID("$FreeBSD$");
 #endif
 
 #ifndef _NETINET_SCTP_STRUCTS_H_
@@ -598,6 +598,20 @@ struct sctp_stream_in {
 TAILQ_HEAD(sctpwheel_listhead, sctp_stream_out);
 TAILQ_HEAD(sctplist_listhead, sctp_stream_queue_pending);
 
+/*
+ * This union holds all data necessary for
+ * different stream schedulers.
+ */
+struct scheduling_data {
+	struct sctp_stream_out *locked_on_sending;
+	/* circular looking for output selection */
+	struct sctp_stream_out *last_out_stream;
+	union {
+		struct sctpwheel_listhead wheel;
+		struct sctplist_listhead list;
+	} out;
+};
+
 /* Round-robin schedulers */
 struct ss_rr {
 	/* next link in wheel */
@@ -621,20 +635,6 @@ struct ss_fb {
 };
 
 /*
- * This union holds all data necessary for
- * different stream schedulers.
- */
-struct scheduling_data {
-	struct sctp_stream_out *locked_on_sending;
-	/* circular looking for output selection */
-	struct sctp_stream_out *last_out_stream;
-	union {
-		struct sctpwheel_listhead wheel;
-		struct sctplist_listhead list;
-	} out;
-};
-
-/*
  * This union holds all parameters per stream
  * necessary for different stream schedulers.
  */
@@ -650,8 +650,6 @@ union scheduling_parameters {
 #define SCTP_STREAM_OPEN             0x02
 #define SCTP_STREAM_RESET_PENDING    0x03
 #define SCTP_STREAM_RESET_IN_FLIGHT  0x04
-
-#define SCTP_MAX_STREAMS_AT_ONCE_RESET 200
 
 /* This struct is used to track the traffic on outbound streams */
 struct sctp_stream_out {
@@ -675,6 +673,8 @@ struct sctp_stream_out {
 	uint8_t last_msg_incomplete;
 	uint8_t state;
 };
+
+#define SCTP_MAX_STREAMS_AT_ONCE_RESET 200
 
 /* used to keep track of the addresses yet to try to add/delete */
 TAILQ_HEAD(sctp_asconf_addrhead, sctp_asconf_addr);

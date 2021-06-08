@@ -34,22 +34,35 @@
 # INCLUDE MODULES AND SETTINGS
 #################################################
 
-set(VERSION "1.0.0")
+set(VERSION "0.9.5.0")
+
+# Shared library API and ABI versions
+# Notice: shared library version must be in X.Y.Z format only
+set(SOVERSION_FULL "2.0.0")
+set(SOVERSION_SHORT "2")
 
 include(GNUInstallDirs)
-set(prefix 					${CMAKE_INSTALL_PREFIX})
-set(exec_prefix 			${prefix})
-set(libdir 					${exec_prefix}/${CMAKE_INSTALL_LIBDIR})
-set(includedir 				${prefix}/${CMAKE_INSTALL_INCLUDEDIR}/usrsctp)
+set(prefix ${CMAKE_INSTALL_PREFIX})
+set(exec_prefix ${prefix})
+set(libdir ${exec_prefix}/${CMAKE_INSTALL_LIBDIR})
+set(includedir ${prefix}/${CMAKE_INSTALL_INCLUDEDIR})
 
 set(CMAKE_REQUIRED_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR})
-set(CMAKE_MACOSX_RPATH 		1)
+set(CMAKE_MACOSX_RPATH 1)
 
 include(CheckCCompilerFlag)
+
+
+option(SCTP_USE_MBEDTLS_SHA1 "Build with mbedtls sha1 support." OFF)
 
 add_definitions(-D__Userspace__)
 add_definitions(-DSCTP_SIMPLE_ALLOCATOR)
 add_definitions(-DSCTP_PROCESS_LEVEL_LOCKS)
+
+if(SCTP_USE_MBEDTLS_SHA1)
+	add_definitions(-DSCTP_USE_MBEDTLS_SHA1)
+	find_package(MbedTLS REQUIRED)
+endif()
 
 
 #################################################
@@ -171,13 +184,22 @@ add_library(usrsctp ${usrsctp_sources} ${usrsctp_headers})
 
 target_include_directories(usrsctp PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
+if(SCTP_USE_MBEDTLS_SHA1)
+	target_include_directories(usrsctp PRIVATE ${MBEDTLS_INCLUDE_DIRS})
+endif()
+
 if (WIN32)
 	message(STATUS "link library: ws2_32")
 	target_link_libraries(usrsctp ws2_32 iphlpapi)
 endif ()
 
+if(SCTP_USE_MBEDTLS_SHA1)
+	target_link_libraries(usrsctp PRIVATE ${MBEDTLS_LIBRARIES})
+endif()
+
+
 set_target_properties(usrsctp PROPERTIES IMPORT_SUFFIX "_import.lib")
-set_target_properties(usrsctp PROPERTIES SOVERSION 1 VERSION 1.0.0)
+set_target_properties(usrsctp PROPERTIES SOVERSION ${SOVERSION_SHORT} VERSION ${SOVERSION_FULL})
 
 #################################################
 # INSTALL LIBRARY AND HEADER

@@ -34,7 +34,7 @@
 
 #if defined(__FreeBSD__) && !defined(__Userspace__)
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/sys/netinet/sctp_indata.c 367520 2020-11-09 13:12:07Z tuexen $");
+__FBSDID("$FreeBSD$");
 #endif
 
 #include <netinet/sctp_os.h>
@@ -838,7 +838,7 @@ restart:
 			}
 			memset(nc, 0, sizeof(struct sctp_queued_to_read));
 			TAILQ_REMOVE(&control->reasm, chk, sctp_next);
-			sctp_add_chk_to_control(control, strm, stcb, asoc, chk, SCTP_READ_LOCK_NOT_HELD);
+			sctp_add_chk_to_control(control, strm, stcb, asoc, chk, inp_read_lock_held);
 			fsn++;
 			cnt_added++;
 			chk = NULL;
@@ -927,7 +927,7 @@ restart:
 	}
 	if (cnt_added && strm->pd_api_started) {
 #if defined(__Userspace__)
-		sctp_invoke_recv_callback(stcb->sctp_ep, stcb, control, SCTP_READ_LOCK_NOT_HELD);
+		sctp_invoke_recv_callback(stcb->sctp_ep, stcb, control, inp_read_lock_held);
 #endif
 		sctp_wakeup_the_read_socket(stcb->sctp_ep, stcb, SCTP_SO_NOT_LOCKED);
 	}

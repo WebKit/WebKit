@@ -34,7 +34,7 @@
 
 #if defined(__FreeBSD__) && !defined(__Userspace__)
 #include <sys/cdefs.h>
-__FBSDID("$FreeBSD: head/sys/netinet6/sctp6_usrreq.c 365071 2020-09-01 21:19:14Z mjg $");
+__FBSDID("$FreeBSD$");
 #endif
 
 #include <netinet/sctp_os.h>
@@ -259,13 +259,14 @@ sctp6_input(struct mbuf **i_pak, int *offp, int proto)
 	if (IN6_IS_ADDR_MULTICAST(&ip6->ip6_dst)) {
 		goto out;
 	}
-	ecn_bits = ((ntohl(ip6->ip6_flow) >> 20) & 0x000000ff);
 #if defined(__FreeBSD__)
+	ecn_bits = IPV6_TRAFFIC_CLASS(ip6);
 	if (m->m_pkthdr.csum_flags & CSUM_SCTP_VALID) {
 		SCTP_STAT_INCR(sctps_recvhwcrc);
 		compute_crc = 0;
 	} else {
 #else
+	ecn_bits = ((ntohl(ip6->ip6_flow) >> 20) & 0x000000ff);
 	if (SCTP_BASE_SYSCTL(sctp_no_csum_on_loopback) &&
 	    (IN6_ARE_ADDR_EQUAL(&src.sin6_addr, &dst.sin6_addr))) {
 		SCTP_STAT_INCR(sctps_recvhwcrc);
@@ -654,9 +655,10 @@ out:
 	return (error);
 }
 
-SYSCTL_PROC(_net_inet6_sctp6, OID_AUTO, getcred, CTLTYPE_OPAQUE | CTLFLAG_RW,
-    0, 0,
-    sctp6_getcred, "S,ucred", "Get the ucred of a SCTP6 connection");
+SYSCTL_PROC(_net_inet6_sctp6, OID_AUTO, getcred,
+    CTLTYPE_OPAQUE | CTLFLAG_RW | CTLFLAG_NEEDGIANT,
+    0, 0, sctp6_getcred, "S,ucred",
+    "Get the ucred of a SCTP6 connection");
 #endif
 
 /* This is the same as the sctp_abort() could be made common */
@@ -1007,6 +1009,46 @@ sctp6_send(struct socket *so, int flags, struct mbuf *m, struct mbuf *nam,
 		SCTP_LTRACE_ERR_RET(inp, NULL, NULL, SCTP_FROM_SCTP6_USRREQ, EDESTADDRREQ);
 		return (EDESTADDRREQ);
 	}
+	switch (addr->sa_family) {
+#ifdef INET
+	case AF_INET:
+#if defined(HAVE_SA_LEN)
+		if (addr->sa_len != sizeof(struct sockaddr_in)) {
+			if (control) {
+				SCTP_RELEASE_PKT(control);
+				control = NULL;
+			}
+			SCTP_RELEASE_PKT(m);
+			SCTP_LTRACE_ERR_RET(inp, NULL, NULL, SCTP_FROM_SCTP6_USRREQ, EINVAL);
+			return (EINVAL);
+		}
+#endif
+		break;
+#endif
+#ifdef INET6
+	case AF_INET6:
+#if defined(HAVE_SA_LEN)
+		if (addr->sa_len != sizeof(struct sockaddr_in6)) {
+			if (control) {
+				SCTP_RELEASE_PKT(control);
+				control = NULL;
+			}
+			SCTP_RELEASE_PKT(m);
+			SCTP_LTRACE_ERR_RET(inp, NULL, NULL, SCTP_FROM_SCTP6_USRREQ, EINVAL);
+			return (EINVAL);
+		}
+#endif
+		break;
+#endif
+	default:
+		if (control) {
+			SCTP_RELEASE_PKT(control);
+			control = NULL;
+		}
+		SCTP_RELEASE_PKT(m);
+		SCTP_LTRACE_ERR_RET(inp, NULL, NULL, SCTP_FROM_SCTP6_USRREQ, EINVAL);
+		return (EINVAL);
+	}
 #ifdef INET
 	sin6 = (struct sockaddr_in6 *)addr;
 	if (SCTP_IPV6_V6ONLY(inp)) {
@@ -1015,10 +1057,20 @@ sctp6_send(struct socket *so, int flags, struct mbuf *m, struct mbuf *nam,
 		 * v4 addr or v4-mapped addr
 		 */
 		if (addr->sa_family == AF_INET) {
+			if (control) {
+				SCTP_RELEASE_PKT(control);
+				control = NULL;
+			}
+			SCTP_RELEASE_PKT(m);
 			SCTP_LTRACE_ERR_RET(inp, NULL, NULL, SCTP_FROM_SCTP6_USRREQ, EINVAL);
 			return (EINVAL);
 		}
 		if (IN6_IS_ADDR_V4MAPPED(&sin6->sin6_addr)) {
+			if (control) {
+				SCTP_RELEASE_PKT(control);
+				control = NULL;
+			}
+			SCTP_RELEASE_PKT(m);
 			SCTP_LTRACE_ERR_RET(inp, NULL, NULL, SCTP_FROM_SCTP6_USRREQ, EINVAL);
 			return (EINVAL);
 		}

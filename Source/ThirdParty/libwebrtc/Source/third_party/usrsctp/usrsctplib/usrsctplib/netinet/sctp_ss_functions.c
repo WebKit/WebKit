@@ -589,7 +589,7 @@ sctp_ss_prio_set_value(struct sctp_tcb *stcb, struct sctp_association *asoc,
 
 /*
  * Fair bandwidth algorithm.
- * Maintains an equal troughput per stream.
+ * Maintains an equal throughput per stream.
  */
 static void
 sctp_ss_fb_clear(struct sctp_tcb *stcb, struct sctp_association *asoc,
