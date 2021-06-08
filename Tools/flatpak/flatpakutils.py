@@ -569,10 +569,18 @@ class WebkitFlatpak:
         if self.gdb is None and '--gdb' in sys.argv:
             self.gdb = True
 
-        self.build_root = os.path.join(self.source_root, 'WebKitBuild')
-        self.build_path = os.path.join(self.build_root, self.platform, self.build_type)
+        base_build_dir = 'WebKitBuild'
+
+        # This path doesn't take $WEBKIT_OUTPUTDIR in account because the standalone toolchains
+        # paths depend on it and those are also hard-coded in the generated sccache config.
+        self.build_root = os.path.join(self.source_root, base_build_dir)
+
         self.config_file = os.path.join(self.flatpak_build_path, 'webkit_flatpak_config.json')
         self.sccache_config_file = os.path.join(self.flatpak_build_path, 'sccache.toml')
+
+        build_root = os.environ.get("WEBKIT_OUTPUTDIR", self.source_root)
+        self.build_path = os.path.join(build_root, base_build_dir, self.platform, self.build_type)
+        _log.debug("Building %s port in %s" % (self.platform, self.build_path))
 
         self.toolchains_directory = os.path.join(self.build_root, "Toolchains")
         if not os.path.isdir(self.toolchains_directory):
@@ -910,9 +918,12 @@ class WebkitFlatpak:
         for envvar, value in sandbox_environment.items():
             flatpak_command.append("--env=%s=%s" % (envvar, value))
 
+        # $WEBKIT_OUTPUTDIR is not forwarded in the build sandbox because the host build path is
+        # always bind-mounted to /app in the sandbox.
+        env_vars_to_drop = ("WEBKIT_OUTPUTDIR", "LANGUAGE")
         flatpak_env = os.environ.copy()
         for envvar in list(flatpak_env.keys()):
-            if envvar.startswith("LC_") or envvar == "LANGUAGE":
+            if envvar.startswith("LC_") or envvar in env_vars_to_drop:
                 del flatpak_env[envvar]
                 if self.flatpak_version >= (1, 10, 0):
                     flatpak_command.append("--unset-env=%s" % envvar)
