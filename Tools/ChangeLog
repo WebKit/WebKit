@@ -1,3 +1,37 @@
+2021-06-08  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        run-webkit-tests: TaskPool reports PicklingError for Windows Python
+        https://bugs.webkit.org/show_bug.cgi?id=226710
+
+        Reviewed by Jonathan Bedard.
+
+        Since r278454 changed run-webkit-tests to use TaskPool,
+        run-webkit-tests reported PicklingError for Windows Python. It
+        couldn't pickle Port object. This issue happened on multi-core PC,
+        but on single CPU tester bot machines.
+
+        WrappedPopen couldn't be pickled because it was defined as an
+        inner class. It should be defined at the top-level.
+
+        The instance variables _web_platform_test_server,
+        _websocket_server_temporary_directory, and
+        _websocket_secure_server of Port object aren't pickleable. Make
+        them class variables.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (WrappedPopen):
+        (Executive.WrappedPopen):
+        * Scripts/webkitpy/port/base.py:
+        (Port):
+        (Port.__init__):
+        (Port.ports_to_forward):
+        (Port.is_websocket_server_running):
+        (Port.is_wpt_server_running):
+        (Port.start_websocket_server):
+        (Port.start_web_platform_test_server):
+        (Port.stop_websocket_server):
+        (Port.stop_web_platform_test_server):
+
 2021-06-08  Antti Koivisto  <antti@apple.com>
 
         Factor MarkedText collection out of LegacyInlineTextBox

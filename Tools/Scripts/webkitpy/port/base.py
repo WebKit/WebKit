@@ -82,6 +82,9 @@ class Port(object):
     DEFAULT_DEVICE_TYPES = []
 
     helper = None
+    _web_platform_test_server = None
+    _websocket_secure_server = None
+    _websocket_server = None
 
     @classmethod
     def determine_full_port_name(cls, host, options, port_name):
@@ -118,9 +121,6 @@ class Port(object):
         self.pretty_patch = PrettyPatch(self._executive, self.path_from_webkit_base(), self._filesystem)
 
         self._http_server = None
-        self._websocket_server = None
-        self._websocket_secure_server = None
-        self._web_platform_test_server = None
         self._image_differ = None
         self._server_process_constructor = server_process.ServerProcess  # overridable for testing
         self._test_runner_process_constructor = server_process.ServerProcess
@@ -863,12 +863,12 @@ class Port(object):
         ports = []
         if self._http_server:
             ports.extend(self._http_server.ports_to_forward())
-        if self._websocket_server:
-            ports.extend(self._websocket_server.ports_to_forward())
-        if self._websocket_server:
-            ports.extend(self._websocket_secure_server.ports_to_forward())
-        if self._web_platform_test_server:
-            ports.extend(self._web_platform_test_server.ports_to_forward())
+        if Port._websocket_server:
+            ports.extend(Port._websocket_server.ports_to_forward())
+        if Port._websocket_server:
+            ports.extend(Port._websocket_secure_server.ports_to_forward())
+        if Port._web_platform_test_server:
+            ports.extend(Port._web_platform_test_server.ports_to_forward())
         return ports
 
     def start_http_server(self, additional_dirs=None):
@@ -894,12 +894,12 @@ class Port(object):
         return http_server_base.is_http_server_running()
 
     def is_websocket_server_running(self):
-        if self._websocket_server:
+        if Port._websocket_server:
             return True
         return websocket_server.is_web_socket_server_running()
 
     def is_wpt_server_running(self):
-        if self._web_platform_test_server:
+        if Port._web_platform_test_server:
             return True
         return web_platform_test_server.is_wpt_server_running(self)
 
@@ -907,14 +907,14 @@ class Port(object):
         """Start a web server. Raise an error if it can't start or is already running.
 
         Ports can stub this out if they don't need a websocket server to be running."""
-        assert not self._websocket_server, 'Already running a websocket server.'
+        assert not Port._websocket_server, 'Already running a websocket server.'
 
         server = websocket_server.PyWebSocket(self, self.results_directory())
         server.start()
-        self._websocket_server = server
+        Port._websocket_server = server
 
         websocket_server_temporary_directory = self._filesystem.mkdtemp(prefix='webkitpy-websocket-server')
-        self._websocket_server_temporary_directory = websocket_server_temporary_directory
+        Port._websocket_server_temporary_directory = websocket_server_temporary_directory
 
         pem_file = self._filesystem.join(self.layout_tests_dir(), "http", "conf", "webkit-httpd.pem")
         pem = pemfile.load(self._filesystem, pem_file)
@@ -923,16 +923,16 @@ class Port(object):
         private_key_file = self._filesystem.join(str(websocket_server_temporary_directory), 'webkit-httpd.key')
         self._filesystem.write_text_file(private_key_file, pem.private_key)
 
-        secure_server = self._websocket_secure_server = websocket_server.PyWebSocket(self, self.results_directory(),
+        secure_server = Port._websocket_secure_server = websocket_server.PyWebSocket(self, self.results_directory(),
             use_tls=True, port=websocket_server.PyWebSocket.DEFAULT_WSS_PORT, private_key=private_key_file, certificate=certificate_file)
         secure_server.start()
-        self._websocket_secure_server = secure_server
+        Port._websocket_secure_server = secure_server
 
     def start_web_platform_test_server(self, additional_dirs=None, number_of_servers=None):
-        assert not self._web_platform_test_server, 'Already running a Web Platform Test server.'
+        assert not Port._web_platform_test_server, 'Already running a Web Platform Test server.'
 
-        self._web_platform_test_server = web_platform_test_server.WebPlatformTestServer(self, "wptwk")
-        self._web_platform_test_server.start()
+        Port._web_platform_test_server = web_platform_test_server.WebPlatformTestServer(self, "wptwk")
+        Port._web_platform_test_server.start()
 
     def web_platform_test_server_doc_root(self):
         return web_platform_test_server.doc_root(self).replace('\\', self.TEST_PATH_SEPARATOR) + self.TEST_PATH_SEPARATOR
@@ -971,19 +971,19 @@ class Port(object):
 
     def stop_websocket_server(self):
         """Shut down the websocket server if it is running. Do nothing if it isn't."""
-        if self._websocket_server:
-            self._websocket_server.stop()
-            self._websocket_server = None
-        if self._websocket_secure_server:
-            self._websocket_secure_server.stop()
-            self._websocket_secure_server = None
-        if self._websocket_server_temporary_directory:
-            self._filesystem.rmtree(str(self._websocket_server_temporary_directory))
+        if Port._websocket_server:
+            Port._websocket_server.stop()
+            Port._websocket_server = None
+        if Port._websocket_secure_server:
+            Port._websocket_secure_server.stop()
+            Port._websocket_secure_server = None
+        if Port._websocket_server_temporary_directory:
+            self._filesystem.rmtree(str(Port._websocket_server_temporary_directory))
 
     def stop_web_platform_test_server(self):
-        if self._web_platform_test_server:
-            self._web_platform_test_server.stop()
-            self._web_platform_test_server = None
+        if Port._web_platform_test_server:
+            Port._web_platform_test_server.stop()
+            Port._web_platform_test_server = None
 
     def exit_code_from_summarized_results(self, unexpected_results):
         """Given summarized results, compute the exit code to be returned by new-run-webkit-tests.
