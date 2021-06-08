@@ -240,6 +240,7 @@ set(WTF_PUBLIC_HEADERS
     SmallSet.h
     SoftLinking.h
     SortedArrayMap.h
+    Span.h
     SpanningTree.h
     Spectrum.h
     StackBounds.h

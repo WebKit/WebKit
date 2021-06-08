@@ -1,5 +1,18 @@
 2021-06-08  Sam Weinig  <weinig@apple.com>
 
+        Add copy of std::span so that we can use it pre-moving to c++20
+        https://bugs.webkit.org/show_bug.cgi?id=226351
+
+        Reviewed by Alex Christensen.
+
+        Add basic WTF::Span test to make sure things compile and work.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/Span.cpp: Added.
+
+2021-06-08  Sam Weinig  <weinig@apple.com>
+
         Move some hand rolled CSSProperty predicates to be generated based on new CSSProperties.json properties
         https://bugs.webkit.org/show_bug.cgi?id=226768
 
