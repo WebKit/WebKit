@@ -1,3 +1,18 @@
+2021-06-08  Antoine Quint  <graouts@webkit.org>
+
+        REGRESSION (r256095): Adding a border-radius, border, or box-shadow breaks animations from scale(0)
+        https://bugs.webkit.org/show_bug.cgi?id=218371
+        <rdar://problem/70906316>
+
+        Reviewed by Simon Fraser.
+
+        When computing an animation's transform extent, we must account for implicit keyframes.
+
+        Test: webanimations/accelerated-transform-animation-to-scale-zero-with-implicit-from-keyframe.html
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::computeExtentOfTransformAnimation const):
+
 2021-06-08  Youenn Fablet  <youenn@apple.com> and Victor M. Jaquez L. <vjaquez@igalia.com>
 
         Update libwebrtc to M92
