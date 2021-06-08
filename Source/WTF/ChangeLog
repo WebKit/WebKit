@@ -1,3 +1,37 @@
+2021-06-07  Chris Dumez  <cdumez@apple.com>
+
+        Drop legacy MainThreadTaskQueue & EventLoopTaskQueue classes
+        https://bugs.webkit.org/show_bug.cgi?id=226734
+
+        Reviewed by Ryosuke Niwa.
+
+        We recently introduced the WTF::CancellableTask in order to be able to cancel
+        a pending task in the event loop, and/or check if the task is still pending.
+        It worked great as a replacement for EventLoopDeferrableTask. However, it was
+        insufficient as a replacement for task queues (such as MainThreadTaskQueue &
+        EventLoopTaskQueue) since there was no convenient way to cancel a group of
+        tasks. To address this, I am introducing WTF::TaskCancellationGroup. Whenever one
+        needs to create a CancellableTask, it now needs to provide a TaskCancellationGroup.
+        Several CancellableTask objects can share the same TaskCancellationGroup. Code now
+        now schedule one or more CancellableTasks on the event loop and hold on
+        to a TaskCancellationGroup. If they need to cancel those tasks, they can simply
+        call cancel() on the TaskCancellationGroup. They can also check if previously
+        scheduled tasks are still pending via TaskCancellationGroup::hasPendingTask().
+
+        * wtf/CancellableTask.h:
+        (WTF::TaskCancellationGroup::TaskCancellationGroup):
+        (WTF::TaskCancellationGroup::cancel):
+        (WTF::TaskCancellationGroup::hasPendingTask const):
+        (WTF::TaskCancellationGroup::Impl::cancel):
+        (WTF::TaskCancellationGroup::Impl::hasPendingTask const):
+        (WTF::TaskCancellationGroup::Handle::isCancelled const):
+        (WTF::TaskCancellationGroup::Handle::Handle):
+        (WTF::TaskCancellationGroup::createHandle):
+        (WTF::CancellableTask::CancellableTask):
+        (WTF::CancellableTask::operator()):
+        * wtf/WeakPtr.h:
+        (WTF::WeakPtrFactory::weakPtrCount const):
+
 2021-06-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Upstream WebKit support for Live Text

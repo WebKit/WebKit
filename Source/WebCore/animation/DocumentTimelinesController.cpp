@@ -51,10 +51,7 @@ DocumentTimelinesController::DocumentTimelinesController(Document& document)
     }
 }
 
-DocumentTimelinesController::~DocumentTimelinesController()
-{
-    m_currentTimeClearingTask.cancel();
-}
+DocumentTimelinesController::~DocumentTimelinesController() = default;
 
 void DocumentTimelinesController::addTimeline(DocumentTimeline& timeline)
 {
@@ -73,7 +70,7 @@ void DocumentTimelinesController::removeTimeline(DocumentTimeline& timeline)
 
 void DocumentTimelinesController::detachFromDocument()
 {
-    m_currentTimeClearingTask.cancel();
+    m_currentTimeClearingTaskCancellationGroup.cancel();
 
     while (!m_timelines.computesEmpty())
         m_timelines.begin()->detachFromDocument();
@@ -233,9 +230,8 @@ void DocumentTimelinesController::cacheCurrentTime(ReducedResolutionSeconds newC
     // animations, so we schedule the invalidation task and register a whenIdle callback on the VM, which will
     // fire syncronously if no JS is running.
     m_waitingOnVMIdle = true;
-    if (!m_currentTimeClearingTask.isPending()) {
-        CancellableTask task(std::bind(&DocumentTimelinesController::maybeClearCachedCurrentTime, this));
-        m_currentTimeClearingTask = task.createHandle();
+    if (!m_currentTimeClearingTaskCancellationGroup.hasPendingTask()) {
+        CancellableTask task(m_currentTimeClearingTaskCancellationGroup, std::bind(&DocumentTimelinesController::maybeClearCachedCurrentTime, this));
         m_document.eventLoop().queueTask(TaskSource::InternalAsyncTask, WTFMove(task));
     }
     // We extent the associated Document's lifecycle until the VM became idle since the DocumentTimelinesController
@@ -252,7 +248,7 @@ void DocumentTimelinesController::maybeClearCachedCurrentTime()
     // JS or waiting on all current animation updating code to have completed. This is so that
     // we're guaranteed to have a consistent current time reported for all work happening in a given
     // JS frame or throughout updating animations in WebCore.
-    if (!m_isSuspended && !m_waitingOnVMIdle && !m_currentTimeClearingTask.isPending())
+    if (!m_isSuspended && !m_waitingOnVMIdle && !m_currentTimeClearingTaskCancellationGroup.hasPendingTask())
         m_cachedCurrentTime = std::nullopt;
 }
 

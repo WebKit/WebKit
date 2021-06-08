@@ -1034,7 +1034,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/FileMonitor.h
     platform/FileStreamClient.h
     platform/FloatConversion.h
-    platform/GenericTaskQueue.h
     platform/HostWindow.h
     platform/KeyedCoding.h
     platform/KeypressCommand.h

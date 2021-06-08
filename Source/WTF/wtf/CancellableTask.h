@@ -31,59 +31,62 @@
 
 namespace WTF {
 
-namespace Detail {
-struct CancellableTaskImpl : public CanMakeWeakPtr<CancellableTaskImpl> {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    explicit CancellableTaskImpl(Function<void()>&& task) : task(WTFMove(task)) { }
-    Function<void()> task;
-};
-}
+class CancellableTask;
 
-class CancellableTask {
+class TaskCancellationGroup : public CanMakeWeakPtr<TaskCancellationGroup> {
 public:
-    explicit CancellableTask(Function<void()>&&);
+    TaskCancellationGroup() : m_impl(makeUniqueRef<Impl>()) { }
+    void cancel() { m_impl->cancel(); }
+    bool hasPendingTask() const { return m_impl->hasPendingTask(); }
 
-    void operator()();
-    bool isPending() const { return !!m_taskWrapper->task; }
-    void cancel() { m_taskWrapper->task = nullptr; }
+private:
+    friend class CancellableTask;
+    class Impl : public CanMakeWeakPtr<Impl> {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        void cancel() { weakPtrFactory().revokeAll(); }
+        bool hasPendingTask() const { return weakPtrFactory().weakPtrCount(); }
+    };
 
     class Handle {
     public:
-        Handle() = default;
-        bool isPending() const { return m_taskWrapper && m_taskWrapper->task; }
-        void cancel();
+        bool isCancelled() const { return !m_impl; }
+        void clear() { m_impl = nullptr; }
     private:
-        friend class CancellableTask;
-        explicit Handle(Detail::CancellableTaskImpl&);
-        WeakPtr<Detail::CancellableTaskImpl> m_taskWrapper;
+        friend class TaskCancellationGroup;
+        explicit Handle(Impl& impl) : m_impl(makeWeakPtr(impl)) { }
+        WeakPtr<Impl> m_impl;
     };
+    Handle createHandle() { return Handle { m_impl }; }
 
-    Handle createHandle() { return Handle { m_taskWrapper.get() }; }
-
-private:
-    UniqueRef<Detail::CancellableTaskImpl> m_taskWrapper;
+    UniqueRef<Impl> m_impl;
 };
 
-inline CancellableTask::CancellableTask(Function<void()>&& task)
-    : m_taskWrapper(makeUniqueRef<Detail::CancellableTaskImpl>(WTFMove(task)))
+class CancellableTask {
+public:
+    CancellableTask(TaskCancellationGroup&, Function<void()>&&);
+    void operator()();
+
+private:
+    TaskCancellationGroup::Handle m_cancellationGroup;
+    Function<void()> m_task;
+};
+
+inline CancellableTask::CancellableTask(TaskCancellationGroup& cancellationGroup, Function<void()>&& task)
+    : m_cancellationGroup(cancellationGroup.createHandle())
+    , m_task(WTFMove(task))
 { }
 
 inline void CancellableTask::operator()()
 {
-    if (auto task = std::exchange(m_taskWrapper->task, nullptr))
-        task();
-}
+    if (m_cancellationGroup.isCancelled())
+        return;
 
-inline CancellableTask::Handle::Handle(Detail::CancellableTaskImpl& task)
-    : m_taskWrapper(makeWeakPtr(task))
-{ }
-
-inline void CancellableTask::Handle::cancel()
-{
-    if (m_taskWrapper)
-        m_taskWrapper->task = nullptr;
+    m_cancellationGroup.clear();
+    m_task();
 }
 
 } // namespace WTF
 
 using WTF::CancellableTask;
+using WTF::TaskCancellationGroup;

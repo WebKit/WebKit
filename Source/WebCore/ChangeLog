@@ -1,3 +1,63 @@
+2021-06-07  Chris Dumez  <cdumez@apple.com>
+
+        Drop legacy MainThreadTaskQueue & EventLoopTaskQueue classes
+        https://bugs.webkit.org/show_bug.cgi?id=226734
+
+        Reviewed by Ryosuke Niwa.
+
+        Drop legacy MainThreadTaskQueue & EventLoopTaskQueue classes. Code that was using MainThreadTaskQueue
+        is now calling callOnMainThread() directly. Call that was using EventLoopTaskQueue is now using the
+        HTML event loop directly. If said code needed to cancel tasks or check if a previously scheduled task
+        is still pending, it now relies on WTF::CancellableTask / WTF::TaskCancellationGroup to do so.
+
+        * Headers.cmake:
+        * Modules/encryptedmedia/MediaKeySystemAccess.cpp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/DocumentTimelinesController.cpp:
+        (WebCore::DocumentTimelinesController::cacheCurrentTime):
+        (WebCore::DocumentTimelinesController::maybeClearCachedCurrentTime):
+        * animation/DocumentTimelinesController.h:
+        * dom/ActiveDOMObject.h:
+        * dom/Document.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::scheduleNextSourceChild):
+        (WebCore::HTMLMediaElement::scheduleCheckPlaybackTargetCompatability):
+        (WebCore::HTMLMediaElement::seekWithTolerance):
+        (WebCore::HTMLMediaElement::setVolume):
+        (WebCore::HTMLMediaElement::scheduleConfigureTextTracks):
+        (WebCore::HTMLMediaElement::scheduleMediaEngineWasUpdated):
+        (WebCore::HTMLMediaElement::scheduleUpdatePlayState):
+        (WebCore::HTMLMediaElement::cancelPendingTasks):
+        (WebCore::HTMLMediaElement::clearMediaPlayer):
+        (WebCore::HTMLMediaElement::closeTaskQueues):
+        (WebCore::HTMLMediaElement::suspend):
+        (WebCore::HTMLMediaElement::resume):
+        (WebCore::HTMLMediaElement::virtualHasPendingActivity const):
+        (WebCore::HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured):
+        (WebCore::HTMLMediaElement::mediaPlayerBufferedTimeRangesChanged):
+        (WebCore::HTMLMediaElement::scheduleUpdateMediaState):
+        (WebCore::HTMLMediaElement::playbackControlsManagerBehaviorRestrictionsTimerFired):
+        * html/HTMLMediaElement.h:
+        * platform/GenericTaskQueue.h: Removed.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (-[WebCoreAVFMovieObserver metadataLoaded]):
+        (-[WebCoreAVFMovieObserver didEnd:]):
+        (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]):
+        (-[WebCoreAVFMovieObserver legibleOutput:didOutputAttributedStrings:nativeSampleBuffers:forItemTime:]):
+        (-[WebCoreAVFMovieObserver outputSequenceWasFlushed:]):
+        (-[WebCoreAVFMovieObserver metadataOutput:didOutputTimedMetadataGroups:fromPlayerItemTrack:]):
+        (-[WebCoreAVFMovieObserver metadataCollector:didCollectDateRangeMetadataGroups:indexesOfNewGroups:indexesOfModifiedGroups:]):
+        (-[WebCoreAVFLoaderDelegate resourceLoader:shouldWaitForLoadingOfRequestedResource:]):
+        (-[WebCoreAVFLoaderDelegate resourceLoader:didCancelLoadingRequest:]):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::~SourceBufferPrivateAVFObjC):
+        (WebCore::SourceBufferPrivateAVFObjC::didParseInitializationData):
+        (WebCore::SourceBufferPrivateAVFObjC::abort):
+        * platform/mediastream/ios/AVAudioSessionCaptureDeviceManager.h:
+
 2021-06-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Upstream WebKit support for Live Text

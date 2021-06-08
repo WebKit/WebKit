@@ -112,14 +112,12 @@ public:
     }
 
     template<typename T>
-    static CancellableTask::Handle queueCancellableTaskKeepingObjectAlive(T& object, TaskSource source, Function<void()>&& task)
+    static void queueCancellableTaskKeepingObjectAlive(T& object, TaskSource source, TaskCancellationGroup& cancellationGroup, Function<void()>&& task)
     {
-        CancellableTask cancellableTask(WTFMove(task));
-        auto taskHandle = cancellableTask.createHandle();
+        CancellableTask cancellableTask(cancellationGroup, WTFMove(task));
         object.queueTaskInEventLoop(source, [protectedObject = makeRef(object), activity = object.ActiveDOMObject::makePendingActivity(object), cancellableTask = WTFMove(cancellableTask)]() mutable {
             cancellableTask();
         });
-        return taskHandle;
     }
 
     template<typename EventTargetType, typename EventType>

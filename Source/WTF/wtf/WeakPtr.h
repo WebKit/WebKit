@@ -185,6 +185,8 @@ public:
         m_impl = nullptr;
     }
 
+    unsigned weakPtrCount() const { return m_impl ? m_impl->refCount() - 1 : 0; }
+
 #if ASSERT_ENABLED
     bool isInitialized() const { return m_impl; }
 #endif

@@ -940,20 +940,20 @@ private:
     Timer m_scanTimer;
     Timer m_playbackControlsManagerBehaviorRestrictionsTimer;
     Timer m_seekToPlaybackPositionEndedTimer;
-    CancellableTask::Handle m_configureTextTracksTask;
-    CancellableTask::Handle m_checkPlaybackTargetCompatibilityTask;
-    CancellableTask::Handle m_updateMediaStateTask;
-    CancellableTask::Handle m_mediaEngineUpdatedTask;
-    CancellableTask::Handle m_updatePlayStateTask;
-    CancellableTask::Handle m_resumeTask;
-    CancellableTask::Handle m_seekTask;
-    CancellableTask::Handle m_playbackControlsManagerBehaviorRestrictionsTask;
-    CancellableTask::Handle m_bufferedTimeRangesChangedTask;
-    EventLoopTaskQueue m_resourceSelectionTaskQueue;
+    TaskCancellationGroup m_configureTextTracksTaskCancellationGroup;
+    TaskCancellationGroup m_checkPlaybackTargetCompatibilityTaskCancellationGroup;
+    TaskCancellationGroup m_updateMediaStateTaskCancellationGroup;
+    TaskCancellationGroup m_mediaEngineUpdatedTaskCancellationGroup;
+    TaskCancellationGroup m_updatePlayStateTaskCancellationGroup;
+    TaskCancellationGroup m_resumeTaskCancellationGroup;
+    TaskCancellationGroup m_seekTaskCancellationGroup;
+    TaskCancellationGroup m_playbackControlsManagerBehaviorRestrictionsTaskCancellationGroup;
+    TaskCancellationGroup m_bufferedTimeRangesChangedTaskCancellationGroup;
+    TaskCancellationGroup m_resourceSelectionTaskCancellationGroup;
     RefPtr<TimeRanges> m_playedTimeRanges;
     UniqueRef<EventLoopEventQueue> m_asyncEventQueue;
 #if PLATFORM(IOS_FAMILY)
-    CancellableTask::Handle m_volumeRevertTask;
+    TaskCancellationGroup m_volumeRevertTaskCancellationGroup;
 #endif
 
     PlayPromiseVector m_pendingPlayPromises;
