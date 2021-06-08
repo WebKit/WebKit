@@ -127,8 +127,7 @@ static bool hasNonInlineOrReplacedElements(const SimpleRange& range)
 
 static SnapshotOptions snapshotOptionsForTextIndicatorOptions(OptionSet<TextIndicatorOption> options)
 {
-    SnapshotOptions snapshotOptions;
-    snapshotOptions.flags.add(SnapshotFlags::PaintWithIntegralScaleFactor);
+    SnapshotOptions snapshotOptions { { SnapshotFlags::PaintWithIntegralScaleFactor }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
 
     if (!options.contains(TextIndicatorOption::PaintAllContent)) {
         if (options.contains(TextIndicatorOption::PaintBackgrounds))
@@ -162,14 +161,14 @@ static bool takeSnapshots(TextIndicatorData& data, Frame& frame, IntRect snapsho
 
     if (data.options.contains(TextIndicatorOption::IncludeSnapshotWithSelectionHighlight)) {
         float snapshotScaleFactor;
-        data.contentImageWithHighlight = takeSnapshot(frame, snapshotRect, { }, snapshotScaleFactor, clipRectsInDocumentCoordinates);
+        data.contentImageWithHighlight = takeSnapshot(frame, snapshotRect, { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() }, snapshotScaleFactor, clipRectsInDocumentCoordinates);
         ASSERT(!data.contentImageWithHighlight || data.contentImageScaleFactor >= snapshotScaleFactor);
     }
 
     if (data.options.contains(TextIndicatorOption::IncludeSnapshotOfAllVisibleContentWithoutSelection)) {
         float snapshotScaleFactor;
         auto snapshotRect = frame.view()->visibleContentRect();
-        data.contentImageWithoutSelection = takeSnapshot(frame, snapshotRect, { { SnapshotFlags::PaintEverythingExcludingSelection } }, snapshotScaleFactor, { });
+        data.contentImageWithoutSelection = takeSnapshot(frame, snapshotRect, { { SnapshotFlags::PaintEverythingExcludingSelection }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() }, snapshotScaleFactor, { });
         data.contentImageWithoutSelectionRectInRootViewCoordinates = frame.view()->contentsToRootView(snapshotRect);
     }
     

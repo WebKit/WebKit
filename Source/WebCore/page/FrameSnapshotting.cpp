@@ -31,7 +31,6 @@
 #include "config.h"
 #include "FrameSnapshotting.h"
 
-#include "DestinationColorSpace.h"
 #include "Document.h"
 #include "FloatRect.h"
 #include "Frame.h"
@@ -40,7 +39,6 @@
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "Page.h"
-#include "PixelFormat.h"
 #include "RenderObject.h"
 #include "Settings.h"
 #include <wtf/OptionSet.h>
@@ -114,7 +112,7 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(Frame& frame, const IntRect& image
     if (options.flags.contains(SnapshotFlags::PaintWithIntegralScaleFactor))
         scaleFactor = ceilf(scaleFactor);
 
-    auto buffer = ImageBuffer::create(imageRect.size(), RenderingMode::Unaccelerated, scaleFactor, options.colorSpace.value_or(DestinationColorSpace::SRGB()), options.pixelFormat.value_or(PixelFormat::BGRA8));
+    auto buffer = ImageBuffer::create(imageRect.size(), RenderingMode::Unaccelerated, scaleFactor, options.colorSpace, options.pixelFormat);
     if (!buffer)
         return nullptr;
     buffer->context().translate(-imageRect.x(), -imageRect.y());

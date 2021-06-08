@@ -1072,7 +1072,7 @@ Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotNode(Protocol::DOM::
     if (!node)
         return makeUnexpected(errorString);
 
-    auto snapshot = WebCore::snapshotNode(m_inspectedPage.mainFrame(), *node);
+    auto snapshot = WebCore::snapshotNode(m_inspectedPage.mainFrame(), *node, { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() });
     if (!snapshot)
         return makeUnexpected("Could not capture snapshot"_s);
 
@@ -1081,7 +1081,7 @@ Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotNode(Protocol::DOM::
 
 Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotRect(int x, int y, int width, int height, Protocol::Page::CoordinateSystem coordinateSystem)
 {
-    SnapshotOptions options;
+    SnapshotOptions options { { }, PixelFormat::BGRA8, DestinationColorSpace::SRGB() };
     if (coordinateSystem == Protocol::Page::CoordinateSystem::Viewport)
         options.flags.add(SnapshotFlags::InViewCoordinates);
 
