@@ -52,7 +52,7 @@
 /* visible name of the network process. The argument is the application name. */
 "%@ Networking" = "%@ Networking";
 
-/* SDH (i.e. deaf and/or hard of hearing) text track display name format that includes the language and/or locale (e.g. 'English SDH').  */
+/* SDH (i.e. deaf and/or hard of hearing) text track display name format that includes the language and/or locale (e.g. 'English SDH'). */
 "%@ SDH (text track)" = "%@ SDH";
 
 /* Visible name of Service Worker process. The argument is the application name. */
@@ -269,7 +269,7 @@
 "Click to restart" = "Click to restart";
 
 /* Display name for audio track kind 'commentary'. */
-"Commentary (audio track)" = "%@ Commentary";
+"Commentary (audio track)" = "Commentary";
 
 /* WKErrorContentRuleListStoreCompileFailed description */
 "Compiling a WKContentRuleList failed" = "Compiling a WKContentRuleList failed";

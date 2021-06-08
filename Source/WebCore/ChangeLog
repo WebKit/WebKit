@@ -1,3 +1,15 @@
+2021-06-07  Devin Rousso  <drousso@apple.com>
+
+        Fix localized strings after r278202
+        https://bugs.webkit.org/show_bug.cgi?id=226742
+
+        Reviewed by Eric Carlson.
+
+        * Scripts/extract-localizable-strings.pl:
+        Add support for `WEB_UI_CFSTRING_KEY`.
+
+        * en.lproj/Localizable.strings:
+
 2021-06-07  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Window should behave like a legacy platform object without indexed setter
