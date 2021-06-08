@@ -231,10 +231,10 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request, WasBlockingCo
 #else
     g_signal_connect(m_soupMessage.get(), "authenticate", G_CALLBACK(authenticateCallback), this);
     g_signal_connect(m_soupMessage.get(), "accept-certificate", G_CALLBACK(acceptCertificateCallback), this);
+    g_signal_connect(m_soupMessage.get(), "got-body", G_CALLBACK(gotBodyCallback), this);
     if (shouldCaptureExtraNetworkLoadMetrics()) {
         g_signal_connect(m_soupMessage.get(), "wrote-headers", G_CALLBACK(wroteHeadersCallback), this);
         g_signal_connect(m_soupMessage.get(), "wrote-body", G_CALLBACK(wroteBodyCallback), this);
-        g_signal_connect(m_soupMessage.get(), "got-body", G_CALLBACK(gotBodyCallback), this);
     }
 #endif
     g_signal_connect(m_soupMessage.get(), "restarted", G_CALLBACK(restartedCallback), this);
@@ -1177,7 +1177,7 @@ void NetworkDataTaskSoup::wroteBodyCallback(SoupMessage* soupMessage, NetworkDat
 
 void NetworkDataTaskSoup::gotBodyCallback(SoupMessage* soupMessage, NetworkDataTaskSoup* task)
 {
-    if (task->state() == State::Canceling || task->state() == State::Completed || !task->m_client) {
+    if (task->state() == State::Canceling || task->state() == State::Completed || (!task->m_client && !task->isDownload())) {
         task->clearRequest();
         return;
     }
