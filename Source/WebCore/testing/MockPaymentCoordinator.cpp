@@ -28,9 +28,10 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "ApplePayPaymentMethodModeUpdate.h"
+#include "ApplePayCouponCodeUpdate.h"
 #include "ApplePayPaymentMethodUpdate.h"
 #include "ApplePaySessionPaymentRequest.h"
+#include "ApplePayShippingContactEditingMode.h"
 #include "ApplePayShippingContactUpdate.h"
 #include "ApplePayShippingMethodUpdate.h"
 #include "MockApplePaySetupFeature.h"
@@ -113,6 +114,13 @@ bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
     m_installmentConfiguration = request.installmentConfiguration().applePayInstallmentConfiguration();
 #endif
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    m_supportsCouponCode = request.supportsCouponCode();
+    m_couponCode = request.couponCode();
+#endif
+#if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
+    m_shippingContactEditingMode = request.shippingContactEditingMode();
+#endif
 #if defined(MockPaymentCoordinatorAdditions_showPaymentUI)
     MockPaymentCoordinatorAdditions_showPaymentUI
 #endif
@@ -180,23 +188,23 @@ void MockPaymentCoordinator::completePaymentMethodSelection(std::optional<AppleP
 #endif
 }
 
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
 
-void MockPaymentCoordinator::completePaymentMethodModeChange(std::optional<ApplePayPaymentMethodModeUpdate>&& paymentMethodModeUpdate)
+void MockPaymentCoordinator::completeCouponCodeChange(std::optional<ApplePayCouponCodeUpdate>&& couponCodeUpdate)
 {
-    if (!paymentMethodModeUpdate)
+    if (!couponCodeUpdate)
         return;
 
-    m_total = WTFMove(paymentMethodModeUpdate->newTotal);
-    m_lineItems = WTFMove(paymentMethodModeUpdate->newLineItems);
-    m_errors = convert(WTFMove(paymentMethodModeUpdate->errors));
-    m_shippingMethods = WTFMove(paymentMethodModeUpdate->newShippingMethods);
-#if defined(MockPaymentCoordinatorAdditions_completePaymentMethodModeChange)
-    MockPaymentCoordinatorAdditions_completePaymentMethodModeChange
+    m_total = WTFMove(couponCodeUpdate->newTotal);
+    m_lineItems = WTFMove(couponCodeUpdate->newLineItems);
+    m_errors = convert(WTFMove(couponCodeUpdate->errors));
+    m_shippingMethods = WTFMove(couponCodeUpdate->newShippingMethods);
+#if defined(MockPaymentCoordinatorAdditions_completeCouponCodeChange)
+    MockPaymentCoordinatorAdditions_completeCouponCodeChange
 #endif
 }
 
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#endif // ENABLE(APPLE_PAY_COUPON_CODE)
 
 void MockPaymentCoordinator::changeShippingOption(String&& shippingOption)
 {
@@ -213,6 +221,17 @@ void MockPaymentCoordinator::changePaymentMethod(ApplePayPaymentMethod&& payment
         page->paymentCoordinator().didSelectPaymentMethod(MockPaymentMethod { WTFMove(paymentMethod) });
     });
 }
+
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+
+void MockPaymentCoordinator::changeCouponCode(String&& couponCode)
+{
+    dispatchIfShowing([page = &m_page, couponCode = WTFMove(couponCode)]() mutable {
+        page->paymentCoordinator().didChangeCouponCode(WTFMove(couponCode));
+    });
+}
+
+#endif // ENABLE(APPLE_PAY_COUPON_CODE)
 
 void MockPaymentCoordinator::acceptPayment()
 {

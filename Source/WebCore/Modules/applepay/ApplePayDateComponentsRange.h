@@ -25,56 +25,44 @@
 
 #pragma once
 
-#if ENABLE(APPLE_PAY)
+#if ENABLE(APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/ApplePayLineItemDataAdditions.h>
-#endif
+#include "ApplePayDateComponents.h"
 
 namespace WebCore {
 
-struct ApplePayLineItemData {
-#if defined(ApplePayLineItemDataAdditions_members)
-    ApplePayLineItemDataAdditions_members
-#endif
+struct ApplePayDateComponentsRange {
+    ApplePayDateComponents startDateComponents;
+    ApplePayDateComponents endDateComponents;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ApplePayLineItemData> decode(Decoder&);
-
-    template<class Decoder> WARN_UNUSED_RETURN bool decodeData(Decoder&);
+    template<class Decoder> static std::optional<ApplePayDateComponentsRange> decode(Decoder&);
 };
 
 template<class Encoder>
-void ApplePayLineItemData::encode(Encoder& encoder) const
+void ApplePayDateComponentsRange::encode(Encoder& encoder) const
 {
-#if defined(ApplePayLineItemDataAdditions_encode)
-    ApplePayLineItemDataAdditions_encode
-#else
-    UNUSED_PARAM(encoder);
-#endif
+    encoder << startDateComponents;
+    encoder << endDateComponents;
 }
 
 template<class Decoder>
-std::optional<ApplePayLineItemData> ApplePayLineItemData::decode(Decoder& decoder)
+std::optional<ApplePayDateComponentsRange> ApplePayDateComponentsRange::decode(Decoder& decoder)
 {
-    ApplePayLineItemData result;
-    if (!result.decodeData(decoder))
-        return std::nullopt;
-    return result;
-}
+#define DECODE(name, type) \
+    std::optional<type> name; \
+    decoder >> name; \
+    if (!name) \
+        return std::nullopt; \
 
-template<class Decoder>
-bool ApplePayLineItemData::decodeData(Decoder& decoder)
-{
-#if defined(ApplePayLineItemDataAdditions_decodeData)
-    ApplePayLineItemDataAdditions_decodeData
-#else
-    UNUSED_PARAM(decoder);
-#endif
+    DECODE(startDateComponents, ApplePayDateComponents)
+    DECODE(endDateComponents, ApplePayDateComponents)
 
-    return true;
+#undef DECODE
+
+    return {{ WTFMove(*startDateComponents), WTFMove(*endDateComponents) }};
 }
 
 } // namespace WebCore
 
-#endif // ENABLE(APPLE_PAY)
+#endif // ENABLE(APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)

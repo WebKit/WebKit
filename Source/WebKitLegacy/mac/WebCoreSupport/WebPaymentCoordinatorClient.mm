@@ -84,13 +84,13 @@ void WebPaymentCoordinatorClient::completePaymentMethodSelection(std::optional<W
 {
 }
 
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
 
-void WebPaymentCoordinatorClient::completePaymentMethodModeChange(std::optional<WebCore::ApplePayPaymentMethodModeUpdate>&&)
+void WebPaymentCoordinatorClient::completeCouponCodeChange(std::optional<WebCore::ApplePayCouponCodeUpdate>&&)
 {
 }
 
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#endif // ENABLE(APPLE_PAY_COUPON_CODE)
 
 void WebPaymentCoordinatorClient::completePaymentSession(std::optional<WebCore::PaymentAuthorizationResult>&&)
 {

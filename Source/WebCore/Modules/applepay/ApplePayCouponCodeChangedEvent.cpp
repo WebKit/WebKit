@@ -23,7 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=APPLE_PAY,
-] dictionary ApplePayLineItemData {
-};
+#include "config.h"
+#include "ApplePayCouponCodeChangedEvent.h"
+
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+
+#include <wtf/IsoMallocInlines.h>
+
+namespace WebCore {
+
+WTF_MAKE_ISO_ALLOCATED_IMPL(ApplePayCouponCodeChangedEvent);
+
+ApplePayCouponCodeChangedEvent::ApplePayCouponCodeChangedEvent(const AtomString& type, String&& couponCode)
+    : Event(type, CanBubble::No, IsCancelable::No)
+    , m_couponCode(WTFMove(couponCode))
+{
+}
+
+ApplePayCouponCodeChangedEvent::~ApplePayCouponCodeChangedEvent() = default;
+
+EventInterface ApplePayCouponCodeChangedEvent::eventInterface() const
+{
+    return ApplePayCouponCodeChangedEventInterfaceType;
+}
+
+} // namespace WebCore
+
+#endif // ENABLE(APPLE_PAY_COUPON_CODE)

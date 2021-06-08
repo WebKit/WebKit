@@ -23,9 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=APPLE_PAY_PAYMENT_METHOD_MODE,
-    ExportMacro=WEBCORE_EXPORT,
-    JSGenerateToJSObject,
-] dictionary ApplePayPaymentMethodModeDetails {
+#pragma once
+
+#if ENABLE(APPLE_PAY_RECURRING_LINE_ITEM)
+
+#include <wtf/Forward.h>
+
+namespace WebCore {
+
+enum class ApplePayRecurringPaymentDateUnit {
+    Year,
+    Month,
+    Day,
+    Hour,
+    Minute,
 };
+
+} // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ApplePayRecurringPaymentDateUnit> {
+    using values = EnumValues<
+        WebCore::ApplePayRecurringPaymentDateUnit,
+        WebCore::ApplePayRecurringPaymentDateUnit::Year,
+        WebCore::ApplePayRecurringPaymentDateUnit::Month,
+        WebCore::ApplePayRecurringPaymentDateUnit::Day,
+        WebCore::ApplePayRecurringPaymentDateUnit::Hour,
+        WebCore::ApplePayRecurringPaymentDateUnit::Minute
+    >;
+};
+
+} // namespace WTF
+
+#endif // ENABLE(APPLE_PAY_RECURRING_LINE_ITEM)

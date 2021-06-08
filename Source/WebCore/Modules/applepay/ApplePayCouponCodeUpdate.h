@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
 
 #include "ApplePayDetailsUpdateBase.h"
 #include "ApplePayError.h"
@@ -35,17 +35,17 @@
 
 namespace WebCore {
 
-struct ApplePayPaymentMethodModeUpdate final : public ApplePayDetailsUpdateBase {
+struct ApplePayCouponCodeUpdate final : public ApplePayDetailsUpdateBase {
     Vector<RefPtr<ApplePayError>> errors;
 
     Vector<ApplePayShippingMethod> newShippingMethods;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ApplePayPaymentMethodModeUpdate> decode(Decoder&);
+    template<class Decoder> static std::optional<ApplePayCouponCodeUpdate> decode(Decoder&);
 };
 
 template<class Encoder>
-void ApplePayPaymentMethodModeUpdate::encode(Encoder& encoder) const
+void ApplePayCouponCodeUpdate::encode(Encoder& encoder) const
 {
     ApplePayDetailsUpdateBase::encode(encoder);
     encoder << errors;
@@ -53,9 +53,9 @@ void ApplePayPaymentMethodModeUpdate::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-std::optional<ApplePayPaymentMethodModeUpdate> ApplePayPaymentMethodModeUpdate::decode(Decoder& decoder)
+std::optional<ApplePayCouponCodeUpdate> ApplePayCouponCodeUpdate::decode(Decoder& decoder)
 {
-    ApplePayPaymentMethodModeUpdate result;
+    ApplePayCouponCodeUpdate result;
 
     if (!result.decodeBase(decoder))
         return std::nullopt;
@@ -77,4 +77,4 @@ std::optional<ApplePayPaymentMethodModeUpdate> ApplePayPaymentMethodModeUpdate::
 
 } // namespace WebCore
 
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#endif // ENABLE(APPLE_PAY_COUPON_CODE)

@@ -40,4 +40,9 @@
     sequence<DOMString> supportedCountries;
 
     [Conditional=APPLE_PAY_INSTALLMENTS] ApplePayInstallmentConfiguration installmentConfiguration;
+
+    [Conditional=APPLE_PAY_COUPON_CODE] boolean supportsCouponCode;
+    [Conditional=APPLE_PAY_COUPON_CODE] DOMString couponCode;
+
+    [Conditional=APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE] ApplePayShippingContactEditingMode shippingContactEditingMode;
 };

@@ -201,6 +201,13 @@ void ArgumentCoder<WebCore::ApplePaySessionPaymentRequest>::encode(Encoder& enco
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
     encoder << request.installmentConfiguration();
 #endif
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    encoder << request.supportsCouponCode();
+    encoder << request.couponCode();
+#endif
+#if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
+    encoder << request.shippingContactEditingMode();
+#endif
 #if defined(WebCoreArgumentCodersCocoaAdditions_ApplePaySessionPaymentRequest_encode)
     WebCoreArgumentCodersCocoaAdditions_ApplePaySessionPaymentRequest_encode
 #endif
@@ -293,6 +300,28 @@ bool ArgumentCoder<WebCore::ApplePaySessionPaymentRequest>::decode(Decoder& deco
         return false;
 
     request.setInstallmentConfiguration(WTFMove(*installmentConfiguration));
+#endif
+
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    std::optional<std::optional<bool>> supportsCouponCode;
+    decoder >> supportsCouponCode;
+    if (!supportsCouponCode)
+        return false;
+    request.setSupportsCouponCode(WTFMove(*supportsCouponCode));
+
+    std::optional<String> couponCode;
+    decoder >> couponCode;
+    if (!couponCode)
+        return false;
+    request.setCouponCode(WTFMove(*couponCode));
+#endif
+
+#if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
+    std::optional<std::optional<WebCore::ApplePayShippingContactEditingMode>> shippingContactEditingMode;
+    decoder >> shippingContactEditingMode;
+    if (!shippingContactEditingMode)
+        return false;
+    request.setShippingContactEditingMode(WTFMove(*shippingContactEditingMode));
 #endif
 
 #if defined(WebCoreArgumentCodersCocoaAdditions_ApplePaySessionPaymentRequest_decode)

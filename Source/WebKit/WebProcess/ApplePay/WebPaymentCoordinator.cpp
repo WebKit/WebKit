@@ -36,7 +36,7 @@
 #include "WebPaymentCoordinatorMessages.h"
 #include "WebPaymentCoordinatorProxyMessages.h"
 #include "WebProcess.h"
-#include <WebCore/ApplePayPaymentMethodModeUpdate.h>
+#include <WebCore/ApplePayCouponCodeUpdate.h>
 #include <WebCore/ApplePayPaymentMethodUpdate.h>
 #include <WebCore/ApplePayShippingContactUpdate.h>
 #include <WebCore/ApplePayShippingMethodUpdate.h>
@@ -128,14 +128,14 @@ void WebPaymentCoordinator::completePaymentMethodSelection(std::optional<WebCore
     send(Messages::WebPaymentCoordinatorProxy::CompletePaymentMethodSelection(WTFMove(update)));
 }
 
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
 
-void WebPaymentCoordinator::completePaymentMethodModeChange(std::optional<WebCore::ApplePayPaymentMethodModeUpdate>&& update)
+void WebPaymentCoordinator::completeCouponCodeChange(std::optional<WebCore::ApplePayCouponCodeUpdate>&& update)
 {
-    send(Messages::WebPaymentCoordinatorProxy::CompletePaymentMethodModeChange(WTFMove(update)));
+    send(Messages::WebPaymentCoordinatorProxy::CompleteCouponCodeChange(WTFMove(update)));
 }
 
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#endif // ENABLE(APPLE_PAY_COUPON_CODE)
 
 void WebPaymentCoordinator::completePaymentSession(std::optional<WebCore::PaymentAuthorizationResult>&& result)
 {
@@ -216,14 +216,14 @@ void WebPaymentCoordinator::didSelectPaymentMethod(const WebCore::PaymentMethod&
     paymentCoordinator().didSelectPaymentMethod(paymentMethod);
 }
 
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
 
-void WebPaymentCoordinator::didChangePaymentMethodMode(String&& paymentMethodMode)
+void WebPaymentCoordinator::didChangeCouponCode(String&& couponCode)
 {
-    paymentCoordinator().didChangePaymentMethodMode(WTFMove(paymentMethodMode));
+    paymentCoordinator().didChangeCouponCode(WTFMove(couponCode));
 }
 
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#endif // ENABLE(APPLE_PAY_COUPON_CODE)
 
 void WebPaymentCoordinator::didCancelPaymentSession(WebCore::PaymentSessionError&& sessionError)
 {

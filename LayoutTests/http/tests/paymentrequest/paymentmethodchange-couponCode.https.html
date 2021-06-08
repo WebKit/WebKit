@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Tests for `couponCode` being provided via `"paymentmethodchange"`.</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+setup({ explicit_done: true, explicit_timeout: true });
+
+user_activation_test(async (test) => {
+    let request = new PaymentRequest([validPaymentMethod()], validPaymentDetails());
+    request.addEventListener("merchantvalidation", (event) => {
+        event.complete({ });
+    });
+    request.addEventListener("shippingaddresschange", (event) => {
+        assert_equals(internals.mockPaymentCoordinator.couponCode, null, "check that the `couponCode` starts as `null`");
+        event.updateWith({ });
+        internals.mockPaymentCoordinator.changeCouponCode("TEST");
+    });
+    request.addEventListener("paymentmethodchange", (event) => {
+        assert_equals(event.methodDetails.couponCode, "TEST", "check that `methodDetails` contains the `couponCode`");
+        event.updateWith({ });
+        internals.mockPaymentCoordinator.acceptPayment();
+    });
+
+    let response = await request.show();
+    await response.complete("success");
+}, "Should propagate `couponCode` if provided.");
+
+done();
+</script>
+

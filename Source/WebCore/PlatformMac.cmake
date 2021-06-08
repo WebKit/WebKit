@@ -449,21 +449,23 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/airplay/WebMediaSessionManager.h
     Modules/airplay/WebMediaSessionManagerClient.h
 
+    Modules/applepay/ApplePayCouponCodeUpdate.h
+    Modules/applepay/ApplePayDateComponents.h
+    Modules/applepay/ApplePayDateComponentsRange.h
     Modules/applepay/ApplePayDetailsUpdateBase.h
     Modules/applepay/ApplePayDetailsUpdateData.h
     Modules/applepay/ApplePayError.h
     Modules/applepay/ApplePayErrorCode.h
     Modules/applepay/ApplePayErrorContactField.h
     Modules/applepay/ApplePayLineItem.h
-    Modules/applepay/ApplePayLineItemData.h
-    Modules/applepay/ApplePayPaymentMethodModeDetails.h
-    Modules/applepay/ApplePayPaymentMethodModeUpdate.h
     Modules/applepay/ApplePayPaymentMethodUpdate.h
+    Modules/applepay/ApplePayPaymentTiming.h
+    Modules/applepay/ApplePayRecurringPaymentDateUnit.h
     Modules/applepay/ApplePaySetupConfiguration.h
     Modules/applepay/ApplePaySetupFeatureWebCore.h
+    Modules/applepay/ApplePayShippingContactEditingMode.h
     Modules/applepay/ApplePayShippingContactUpdate.h
     Modules/applepay/ApplePayShippingMethod.h
-    Modules/applepay/ApplePayShippingMethodData.h
     Modules/applepay/ApplePayShippingMethodUpdate.h
     Modules/applepay/PaymentInstallmentConfigurationWebCore.h
     Modules/applepay/PaymentSessionError.h
@@ -735,6 +737,11 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 list(APPEND WebCore_IDL_FILES
     Modules/applepay/ApplePayCancelEvent.idl
     Modules/applepay/ApplePayContactField.idl
+    Modules/applepay/ApplePayCouponCodeChangedEvent.idl
+    Modules/applepay/ApplePayCouponCodeDetails.idl
+    Modules/applepay/ApplePayCouponCodeUpdate.idl
+    Modules/applepay/ApplePayDateComponents.idl
+    Modules/applepay/ApplePayDateComponentsRange.idl
     Modules/applepay/ApplePayDetailsUpdateBase.idl
     Modules/applepay/ApplePayDetailsUpdateData.idl
     Modules/applepay/ApplePayError.idl
@@ -745,20 +752,19 @@ list(APPEND WebCore_IDL_FILES
     Modules/applepay/ApplePayInstallmentConfiguration.idl
     Modules/applepay/ApplePayInstallmentRetailChannel.idl
     Modules/applepay/ApplePayLineItem.idl
-    Modules/applepay/ApplePayLineItemData.idl
     Modules/applepay/ApplePayMerchantCapability.idl
     Modules/applepay/ApplePayPayment.idl
     Modules/applepay/ApplePayPaymentAuthorizationResult.idl
     Modules/applepay/ApplePayPaymentAuthorizedEvent.idl
     Modules/applepay/ApplePayPaymentContact.idl
     Modules/applepay/ApplePayPaymentMethod.idl
-    Modules/applepay/ApplePayPaymentMethodModeDetails.idl
-    Modules/applepay/ApplePayPaymentMethodModeUpdate.idl
     Modules/applepay/ApplePayPaymentMethodSelectedEvent.idl
     Modules/applepay/ApplePayPaymentMethodType.idl
     Modules/applepay/ApplePayPaymentMethodUpdate.idl
     Modules/applepay/ApplePayPaymentPass.idl
     Modules/applepay/ApplePayPaymentRequest.idl
+    Modules/applepay/ApplePayPaymentTiming.idl
+    Modules/applepay/ApplePayRecurringPaymentDateUnit.idl
     Modules/applepay/ApplePayRequestBase.idl
     Modules/applepay/ApplePaySession.idl
     Modules/applepay/ApplePaySessionError.idl
@@ -767,10 +773,10 @@ list(APPEND WebCore_IDL_FILES
     Modules/applepay/ApplePaySetupFeature.idl
     Modules/applepay/ApplePaySetupFeatureState.idl
     Modules/applepay/ApplePaySetupFeatureType.idl
+    Modules/applepay/ApplePayShippingContactEditingMode.idl
     Modules/applepay/ApplePayShippingContactSelectedEvent.idl
     Modules/applepay/ApplePayShippingContactUpdate.idl
     Modules/applepay/ApplePayShippingMethod.idl
-    Modules/applepay/ApplePayShippingMethodData.idl
     Modules/applepay/ApplePayShippingMethodSelectedEvent.idl
     Modules/applepay/ApplePayShippingMethodUpdate.idl
     Modules/applepay/ApplePayValidateMerchantEvent.idl

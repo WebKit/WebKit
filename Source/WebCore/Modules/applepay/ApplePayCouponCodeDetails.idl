@@ -24,9 +24,9 @@
  */
 
 [
-    Conditional=APPLE_PAY_PAYMENT_METHOD_MODE,
-] dictionary ApplePayPaymentMethodModeUpdate : ApplePayDetailsUpdateBase {
-    sequence<ApplePayError> errors;
-
-    sequence<ApplePayShippingMethod> newShippingMethods;
+    Conditional=APPLE_PAY_COUPON_CODE,
+    ExportMacro=WEBCORE_EXPORT,
+    JSGenerateToJSObject,
+] dictionary ApplePayCouponCodeDetails {
+    DOMString couponCode;
 };

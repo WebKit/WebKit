@@ -51,9 +51,7 @@ class Payment;
 class PaymentContact;
 class PaymentMerchantSession;
 class PaymentMethod;
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-struct ApplePayPaymentMethodModeUpdate;
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+struct ApplePayCouponCodeUpdate;
 struct ApplePayPaymentMethodUpdate;
 struct ApplePayShippingContactUpdate;
 struct ApplePayShippingMethod;
@@ -120,9 +118,9 @@ private:
     void presenterDidSelectPaymentMethod(PaymentAuthorizationPresenter&, const WebCore::PaymentMethod&) final;
     void presenterDidSelectShippingContact(PaymentAuthorizationPresenter&, const WebCore::PaymentContact&) final;
     void presenterDidSelectShippingMethod(PaymentAuthorizationPresenter&, const WebCore::ApplePayShippingMethod&) final;
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    void presenterDidChangePaymentMethodMode(PaymentAuthorizationPresenter&, const String& paymentMethodMode) final;
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    void presenterDidChangeCouponCode(PaymentAuthorizationPresenter&, const String& couponCode) final;
+#endif
     void presenterWillValidateMerchant(PaymentAuthorizationPresenter&, const URL&) final;
 
     // Message handlers
@@ -134,9 +132,9 @@ private:
     void completeShippingMethodSelection(std::optional<WebCore::ApplePayShippingMethodUpdate>&&);
     void completeShippingContactSelection(std::optional<WebCore::ApplePayShippingContactUpdate>&&);
     void completePaymentMethodSelection(std::optional<WebCore::ApplePayPaymentMethodUpdate>&&);
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    void completePaymentMethodModeChange(std::optional<WebCore::ApplePayPaymentMethodModeUpdate>&&);
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    void completeCouponCodeChange(std::optional<WebCore::ApplePayCouponCodeUpdate>&&);
+#endif
     void completePaymentSession(const std::optional<WebCore::PaymentAuthorizationResult>&);
     void abortPaymentSession();
     void cancelPaymentSession();
@@ -162,9 +160,9 @@ private:
     void platformCompleteShippingMethodSelection(std::optional<WebCore::ApplePayShippingMethodUpdate>&&);
     void platformCompleteShippingContactSelection(std::optional<WebCore::ApplePayShippingContactUpdate>&&);
     void platformCompletePaymentMethodSelection(std::optional<WebCore::ApplePayPaymentMethodUpdate>&&);
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    void platformCompletePaymentMethodModeChange(std::optional<WebCore::ApplePayPaymentMethodModeUpdate>&&);
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    void platformCompleteCouponCodeChange(std::optional<WebCore::ApplePayCouponCodeUpdate>&&);
+#endif
     void platformCompletePaymentSession(const std::optional<WebCore::PaymentAuthorizationResult>&);
     void platformHidePaymentUI();
 #if PLATFORM(COCOA)
@@ -196,10 +194,10 @@ private:
         // PaymentMethodSelected - Dispatching the paymentmethodselected event and waiting for a reply.
         PaymentMethodSelected,
 
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-        // PaymentMethodSelected - Dispatching the paymentmethodmodechanged event and waiting for a reply.
-        PaymentMethodModeChanged,
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+        // CouponCodeChanged - Dispatching the couponcodechanged event and waiting for a reply.
+        CouponCodeChanged,
+#endif
 
         // Completing - Completing the payment and waiting for presenterDidFinish to be called.
         Completing,

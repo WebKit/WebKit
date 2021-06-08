@@ -87,9 +87,9 @@ private:
     void didSelectShippingMethod(const ApplePayShippingMethod&) final;
     void didSelectShippingContact(const PaymentContact&) final;
     void didSelectPaymentMethod(const PaymentMethod&) final;
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    void didChangePaymentMethodMode(String&& paymentMethodMode) final;
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    void didChangeCouponCode(String&& couponCode) final;
+#endif
     void didCancelPaymentSession(PaymentSessionError&&) final;
 
     PaymentRequest::MethodIdentifier m_identifier;
@@ -102,9 +102,9 @@ private:
         ShippingAddress,
         ShippingOption,
         PaymentMethod,
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-        PaymentMethodMode,
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+        CouponCode,
+#endif
     } m_updateState { UpdateState::None };
 };
 

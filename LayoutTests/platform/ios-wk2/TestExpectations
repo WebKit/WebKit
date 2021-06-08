@@ -60,6 +60,13 @@ webkit.org/b/212975 http/tests/ssl/applepay/PaymentRequest.https.html [ Pass Tim
 webkit.org/b/212998 http/tests/ssl/applepay/ApplePayInstallmentItems.https.html [ Failure ]
 
 http/tests/paymentrequest [ Pass ]
+http/tests/paymentrequest/ApplePayModifier-additionalLineItems.https.html [ Skip ]
+http/tests/paymentrequest/ApplePayModifier-additionalShippingMethods.https.html [ Skip ]
+http/tests/paymentrequest/ApplePayModifier-total.https.html [ Skip ]
+http/tests/paymentrequest/paymentmethodchange-couponCode.https.html [ Skip ]
+http/tests/paymentrequest/paymentrequest-couponCode.https.html [ Skip ]
+http/tests/paymentrequest/paymentrequest-shippingContactEditingMode.https.html [ Skip ]
+http/tests/paymentrequest/paymentrequest-supportsCouponCode.https.html [ Skip ]
 imported/w3c/web-platform-tests/payment-request [ Pass ]
 webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/allowpaymentrequest-attribute-cross-origin-bc-containers.https.html [ Skip ]
 webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/no-attribute-cross-origin-bc-containers.https.html [ Skip ]

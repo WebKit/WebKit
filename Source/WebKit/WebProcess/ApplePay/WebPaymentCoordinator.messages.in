@@ -31,9 +31,9 @@ messages -> WebPaymentCoordinator NotRefCounted {
     DidSelectShippingMethod(struct WebCore::ApplePayShippingMethod shippingMethod)
     DidSelectShippingContact(WebCore::PaymentContact shippingContact)
     DidSelectPaymentMethod(WebCore::PaymentMethod paymentMethod)
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    DidChangePaymentMethodMode(String paymentMethodMode)
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    DidChangeCouponCode(String couponCode)
+#endif
     DidCancelPaymentSession(WebCore::PaymentSessionError sessionError)
 }
 

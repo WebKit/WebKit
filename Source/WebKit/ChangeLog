@@ -1,3 +1,63 @@
+2021-06-08  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] upstream new features
+        https://bugs.webkit.org/show_bug.cgi?id=226740
+        <rdar://problem/78963132>
+
+        Reviewed by Andy Estes.
+
+         - recurring line items (`HAVE_PASSKIT_RECURRING_SUMMARY_ITEM` and `ENABLE_APPLE_PAY_RECURRING_LINE_ITEM`)
+         - deferred line items (`HAVE_PASSKIT_DEFERRED_SUMMARY_ITEM` and `ENABLE_APPLE_PAY_DEFERRED_LINE_ITEM`)
+         - estimated shipping dates (`HAVE_PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE` and `ENABLE_APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE`)
+         - coupon code entry (`HAVE_PASSKIT_COUPON_CODE` and `ENABLE_APPLE_PAY_COUPON_CODE`)
+         - shipped vs in-store pickup (`HAVE_PASSKIT_SHIPPING_CONTACT_EDITING_MODE` and `ENABLE_APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE`)
+
+         * Platform/cocoa/PaymentAuthorizationViewController.mm:
+         (-[WKPaymentAuthorizationViewControllerDelegate paymentAuthorizationViewController:didChangeCouponCode:handler:]): Added.
+         * Platform/ios/PaymentAuthorizationController.mm:
+         (-[WKPaymentAuthorizationControllerDelegate paymentAuthorizationController:didChangeCouponCode:handler:]): Added.
+        * Platform/cocoa/PaymentAuthorizationPresenter.h:
+        * Platform/cocoa/PaymentAuthorizationPresenter.mm:
+        (WebKit::toPKPaymentErrorCode):
+        (WebKit::PaymentAuthorizationPresenter::completeCouponCodeChange): Renamed from `WebKit::PaymentAuthorizationPresenter::completePaymentMethodModeChange`.
+        * Platform/cocoa/WKPaymentAuthorizationDelegate.h:
+        * Platform/cocoa/WKPaymentAuthorizationDelegate.mm:
+        (-[WKPaymentAuthorizationDelegate completeCouponCodeChange:]): Added.
+        (toDateComponents): Added.
+        (toDateComponentsRange): Added.
+        (toShippingMethod):
+        (-[WKPaymentAuthorizationDelegate _didChangeCouponCode:completion:]): Added.
+        Add plumbing from/to PassKit for coupon code changes.
+
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.messages.in:
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.h:
+        * Shared/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::completeCouponCodeChange): Renamed from `WebKit::WebPaymentCoordinatorProxy::completePaymentMethodModeChange`.
+        (WebKit::WebPaymentCoordinatorProxy::presenterDidChangeCouponCode): Renamed from `WebKit::WebPaymentCoordinatorProxy::presenterDidChangePaymentMethodMode`.
+        (WebKit::WebPaymentCoordinatorProxy::canBegin const):
+        (WebKit::WebPaymentCoordinatorProxy::canCancel const):
+        (WebKit::WebPaymentCoordinatorProxy::canCompletePayment const):
+        (WebKit::WebPaymentCoordinatorProxy::canAbort const):
+        * Shared/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::toNSDateComponents): Added.
+        (WebKit::toPKDateComponentsRange): Added.
+        (WebKit::toPKShippingMethod):
+        (WebKit::toPKShippingContactEditingMode): Added.
+        (WebKit::WebPaymentCoordinatorProxy::platformPaymentRequest):
+        (WebKit::WebPaymentCoordinatorProxy::platformCompleteCouponCodeChange): Renamed from `WebKit::WebPaymentCoordinatorProxy::platformCompletePaymentMethodModeChange`.
+        Convert PassKit objects to/from WebCore objects.
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<WebCore::ApplePaySessionPaymentRequest>::encode):
+        (IPC::ArgumentCoder<WebCore::ApplePaySessionPaymentRequest>::decode):
+
+        * WebProcess/ApplePay/WebPaymentCoordinator.messages.in:
+        * WebProcess/ApplePay/WebPaymentCoordinator.h:
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        (WebKit::WebPaymentCoordinator::completeCouponCodeChange): Renamed from `WebKit::WebPaymentCoordinator::completePaymentMethodModeChange`.
+        (WebKit::WebPaymentCoordinator::didChangeCouponCode): Renamed from `WebKit::WebPaymentCoordinator::didChangePaymentMethodMode`.
+        Plumbing into/from WebCore.
+
 2021-06-08  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r278609.

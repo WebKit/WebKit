@@ -35,9 +35,9 @@ messages -> WebPaymentCoordinatorProxy NotRefCounted {
     CompleteShippingMethodSelection(std::optional<WebCore::ApplePayShippingMethodUpdate> update)
     CompleteShippingContactSelection(std::optional<WebCore::ApplePayShippingContactUpdate> update)
     CompletePaymentMethodSelection(std::optional<WebCore::ApplePayPaymentMethodUpdate> update)
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    CompletePaymentMethodModeChange(std::optional<WebCore::ApplePayPaymentMethodModeUpdate> update)
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    CompleteCouponCodeChange(std::optional<WebCore::ApplePayCouponCodeUpdate> update)
+#endif
     CompletePaymentSession(std::optional<WebCore::PaymentAuthorizationResult> result)
     AbortPaymentSession()
     CancelPaymentSession()

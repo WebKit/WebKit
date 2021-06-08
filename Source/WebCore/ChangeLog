@@ -1,3 +1,156 @@
+2021-06-08  Devin Rousso  <drousso@apple.com>
+
+        [Payment Request] upstream new features
+        https://bugs.webkit.org/show_bug.cgi?id=226740
+        <rdar://problem/78963132>
+
+        Reviewed by Andy Estes.
+
+         - recurring line items (`HAVE_PASSKIT_RECURRING_SUMMARY_ITEM` and `ENABLE_APPLE_PAY_RECURRING_LINE_ITEM`)
+         - deferred line items (`HAVE_PASSKIT_DEFERRED_SUMMARY_ITEM` and `ENABLE_APPLE_PAY_DEFERRED_LINE_ITEM`)
+         - estimated shipping dates (`HAVE_PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE` and `ENABLE_APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE`)
+         - coupon code entry (`HAVE_PASSKIT_COUPON_CODE` and `ENABLE_APPLE_PAY_COUPON_CODE`)
+         - shipped vs in-store pickup (`HAVE_PASSKIT_SHIPPING_CONTACT_EDITING_MODE` and `ENABLE_APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE`)
+
+        Tests: http/tests/paymentrequest/ApplePayModifier-additionalLineItems.https.html
+               http/tests/paymentrequest/ApplePayModifier-additionalShippingMethods.https.html
+               http/tests/paymentrequest/ApplePayModifier-total.https.html
+               http/tests/paymentrequest/paymentmethodchange-couponCode.https.html
+               http/tests/paymentrequest/paymentrequest-couponCode.https.html
+               http/tests/paymentrequest/paymentrequest-shippingContactEditingMode.https.html
+               http/tests/paymentrequest/paymentrequest-supportsCouponCode.https.html
+
+        * Modules/applepay/ApplePayCouponCodeUpdate.idl: Copied from Source/WebCore/Modules/applepay/ApplePayPaymentMethodModeUpdate.idl.
+        * Modules/applepay/ApplePayCouponCodeUpdate.h: Renamed from Source/WebCore/Modules/applepay/ApplePayPaymentMethodModeUpdate.h.
+        (WebCore::ApplePayCouponCodeUpdate::encode const):
+        (WebCore::ApplePayCouponCodeUpdate::decode):
+        Object used to update the payment request via `ApplePaySession.prototype.completeCouponCodeChange`
+        when responding to the user modifying the coupon code.
+
+        * Modules/applepay/ApplePayErrorCode.idl:
+        * Modules/applepay/ApplePayErrorCode.h:
+        Add `"couponCodeInvalid"` and `"couponCodeExpired"`.
+
+        * Modules/applepay/ApplePayLineItem.idl:
+        * Modules/applepay/ApplePayLineItem.h:
+        (WebCore::ApplePayLineItem::encode const):
+        (WebCore::ApplePayLineItem::decode):
+        * Modules/applepay/ApplePayPaymentTiming.idl: Added.
+        * Modules/applepay/ApplePayPaymentTiming.h: Added.
+        * Modules/applepay/ApplePayRecurringPaymentDateUnit.idl: Added.
+        * Modules/applepay/ApplePayRecurringPaymentDateUnit.h: Added.
+        Add members that indicate whether this line item is immediate, recurring, or deferred.
+        Depending on that timing, additional members are added for further configuration (e.g. the
+        start and/or end date of a recurring payment, it's frequency, etc.).
+
+        * Modules/applepay/ApplePayShippingMethod.idl:
+        * Modules/applepay/ApplePayShippingMethod.h:
+        (WebCore::ApplePayShippingMethod::encode const):
+        (WebCore::ApplePayShippingMethod::decode):
+        * Modules/applepay/ApplePayDateComponentsRange.idl: Added.
+        * Modules/applepay/ApplePayDateComponentsRange.h: Added.
+        (WebCore::ApplePayDateComponentsRange::encode const):
+        (WebCore::ApplePayDateComponentsRange::decode):
+        * Modules/applepay/ApplePayDateComponents.idl: Added.
+        * Modules/applepay/ApplePayDateComponents.h: Added.
+        (WebCore::ApplePayDateComponents::encode const):
+        (WebCore::ApplePayDateComponents::decode):
+        Add members that can be used to indicate the estimated shipping dates for this shipping method.
+
+        * Modules/applepay/ApplePayRequestBase.idl:
+        * Modules/applepay/ApplePayRequestBase.h:
+        * Modules/applepay/ApplePayRequestBase.cpp:
+        (WebCore::convertAndValidate):
+        * Modules/applepay/ApplePaySessionPaymentRequest.h:
+        (WebCore::ApplePaySessionPaymentRequest::supportsCouponCode const): Added.
+        (WebCore::ApplePaySessionPaymentRequest::setSupportsCouponCode): Added.
+        (WebCore::ApplePaySessionPaymentRequest::couponCode const): Added.
+        (WebCore::ApplePaySessionPaymentRequest::setCouponCode): Added.
+        (WebCore::ApplePaySessionPaymentRequest::shippingContactEditingMode const): Added.
+        (WebCore::ApplePaySessionPaymentRequest::setShippingContactEditingMode): Added.
+        * Modules/applepay/ApplePayShippingContactEditingMode.idl: Added.
+        * Modules/applepay/ApplePayShippingContactEditingMode.h: Added.
+        Add members that indicate:
+         - whether this payment request supports a coupon code at all
+         - the initial coupon code (assuming the above)
+         - whether this payment request allows editing the shipping contact (i.e. in-store pickup does not)
+
+         * dom/EventNames.h:
+         * dom/EventNames.in:
+        * Modules/applepay/ApplePayCouponCodeChangedEvent.idl: Added.
+        * Modules/applepay/ApplePayCouponCodeChangedEvent.h: Added.
+        * Modules/applepay/ApplePayCouponCodeChangedEvent.cpp: Added.
+        (WebCore::ApplePayCouponCodeChangedEvent::ApplePayCouponCodeChangedEvent):
+        (WebCore::ApplePayCouponCodeChangedEvent::eventInterface const):
+        Add a `"couponcodechange"` event that is dispatched whenever the user modifies the coupon code for an `ApplePaySession`.
+
+        * Modules/applepay/ApplePayCouponCodeDetails.idl: Copied from Source/WebCore/Modules/applepay/ApplePayPaymentMethodModeDetails.idl.
+        * Modules/applepay/ApplePayCouponCodeDetails.h: Copied from Source/WebCore/Modules/applepay/ApplePayPaymentMethodModeUpdate.idl.
+        Used as the `object methodData` when a `PaymentMethodChangeEvent` is dispatched for a `PaymentRequest`.
+
+        * Modules/applepay/ApplePaySession.idl:
+        * Modules/applepay/ApplePaySession.h:
+        * Modules/applepay/ApplePaySession.cpp:
+        (WebCore::convertAndValidate):
+        (WebCore::ApplePaySession::completeCouponCodeChange): Added.
+        (WebCore::ApplePaySession::didChangeCouponCode): Renamed from `WebCore::ApplePaySession::didChangePaymentMethodMode`.
+        (WebCore::ApplePaySession::canSuspendWithoutCanceling const):
+        (WebCore::ApplePaySession::canBegin const):
+        (WebCore::ApplePaySession::canAbort const):
+        (WebCore::ApplePaySession::canCancel const):
+        (WebCore::ApplePaySession::canCompleteShippingMethodSelection const):
+        (WebCore::ApplePaySession::canCompleteShippingContactSelection const):
+        (WebCore::ApplePaySession::canCompletePaymentMethodSelection const):
+        (WebCore::ApplePaySession::canCompleteCouponCodeChange const): Renamed from `WebCore::ApplePaySession::canCompletePaymentMethodModeChange const`.
+        (WebCore::ApplePaySession::canCompletePayment const):
+        (WebCore::ApplePaySession::isFinalState const):
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.h:
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::ApplePayPaymentHandler::paymentMethodUpdated):
+        (WebCore::ApplePayPaymentHandler::didChangeCouponCode): Renamed from `WebCore::ApplePayPaymentHandler::didChangePaymentMethodMode`.
+        Add methods for JS to call and state logic to handle coupon code changes.
+
+        * Modules/applepay/PaymentCoordinator.h:
+        * Modules/applepay/PaymentCoordinator.cpp:
+        (WebCore::PaymentCoordinator::completeCouponCodeChange): Renamed from `WebCore::PaymentCoordinator::completePaymentMethodModeChange`.
+        (WebCore::PaymentCoordinator::didChangeCouponCode): Renamed from `WebCore::PaymentCoordinator::didChangePaymentMethodMode`.
+        * Modules/applepay/PaymentCoordinatorClient.h:
+        * loader/EmptyClients.cpp:
+        (WebCore::EmptyPaymentCoordinatorClient::completeCouponCodeChange): Renamed from `WebCore::EmptyPaymentCoordinatorClient::completePaymentMethodModeChange`.
+        Plumbing up to WebKit.
+
+        * Modules/applepay/cocoa/PaymentSummaryItemsCocoa.mm:
+        (WebCore::toDate): Added.
+        (WebCore::toCalendarUnit): Added.
+        (WebCore::toPKPaymentSummaryItem):
+        Convert WebCore objects to PassKit objects.
+
+        * testing/MockPaymentCoordinator.idl:
+        * testing/MockPaymentCoordinator.h:
+        * testing/MockPaymentCoordinator.cpp:
+        (WebCore::MockPaymentCoordinator::showPaymentUI):
+        (WebCore::MockPaymentCoordinator::completeCouponCodeChange): Renamed from `WebCore::MockPaymentCoordinator::completePaymentMethodModeChange`.
+        (WebCore::MockPaymentCoordinator::changeCouponCode): Added.
+
+        * Modules/applepay/cocoa/PaymentAPIVersionCocoa.mm:
+        (WebCore::PaymentAPIVersion::current):
+
+        * Modules/applepay/PaymentHeaders.h:
+        * Modules/applepay/PaymentSession.h:
+
+        * Modules/applepay/ApplePayLineItemData.idl: Removed.
+        * Modules/applepay/ApplePayLineItemData.h: Removed.
+        * Modules/applepay/ApplePayShippingMethodData.idl: Removed.
+        * Modules/applepay/ApplePayShippingMethodData.h: Removed.
+        Remove unnecessary base types after r275169.
+
+        * PlatformMac.cmake:
+        * SourcesCocoa.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * DerivedSources-input.xcfilelist:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+
 2021-06-08  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         Unreviewed, fix build after r278621

@@ -44,6 +44,7 @@ WebKitTransitionEvent
 WheelEvent
 XMLHttpRequestProgressEvent
 ApplePayCancelEvent conditional=APPLE_PAY
+ApplePayCouponCodeChangedEvent conditional=APPLE_PAY_COUPON_CODE
 ApplePayPaymentAuthorizedEvent conditional=APPLE_PAY
 ApplePayPaymentMethodSelectedEvent conditional=APPLE_PAY
 ApplePayShippingContactSelectedEvent conditional=APPLE_PAY

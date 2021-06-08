@@ -36,7 +36,7 @@
 #import "WebPaymentCoordinatorProxy.h"
 #import "WebPaymentCoordinatorProxyMessages.h"
 #import "WebProcessProxy.h"
-#import <WebCore/ApplePayPaymentMethodModeUpdate.h>
+#import <WebCore/ApplePayCouponCodeUpdate.h>
 #import <WebCore/ApplePayPaymentMethodUpdate.h>
 #import <WebCore/ApplePayShippingContactUpdate.h>
 #import <WebCore/ApplePayShippingMethod.h>
@@ -165,16 +165,59 @@ static PKShippingType toPKShippingType(WebCore::ApplePaySessionPaymentRequest::S
     }
 }
 
+#if HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
+
+static RetainPtr<NSDateComponents> toNSDateComponents(const WebCore::ApplePayDateComponents& dateComponents)
+{
+    auto result = adoptNS([[NSDateComponents alloc] init]);
+    [result setCalendar:[NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian]];
+    if (dateComponents.years)
+        [result setYear:*dateComponents.years];
+    if (dateComponents.months)
+        [result setMonth:*dateComponents.months];
+    if (dateComponents.days)
+        [result setDay:*dateComponents.days];
+    if (dateComponents.hours)
+        [result setHour:*dateComponents.hours];
+    return result;
+}
+
+static RetainPtr<PKDateComponentsRange> toPKDateComponentsRange(const WebCore::ApplePayDateComponentsRange& dateComponentsRange)
+{
+    return adoptNS([PAL::allocPKDateComponentsRangeInstance() initWithStartDateComponents:toNSDateComponents(dateComponentsRange.startDateComponents).get() endDateComponents:toNSDateComponents(dateComponentsRange.endDateComponents).get()]);
+}
+
+#endif // HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
+
 PKShippingMethod *toPKShippingMethod(const WebCore::ApplePayShippingMethod& shippingMethod)
 {
     PKShippingMethod *result = [PAL::getPKShippingMethodClass() summaryItemWithLabel:shippingMethod.label amount:toDecimalNumber(shippingMethod.amount)];
     [result setIdentifier:shippingMethod.identifier];
     [result setDetail:shippingMethod.detail];
-#if defined(WebPaymentCoordinatorProxyCocoaAdditions_toPKShippingMethod)
-    WebPaymentCoordinatorProxyCocoaAdditions_toPKShippingMethod
+#if HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
+    if (auto& dateComponentsRange = shippingMethod.dateComponentsRange)
+        [result setDateComponentsRange:toPKDateComponentsRange(*dateComponentsRange).get()];
 #endif
     return result;
 }
+
+#if HAVE(PASSKIT_SHIPPING_CONTACT_EDITING_MODE)
+
+static PKShippingContactEditingMode toPKShippingContactEditingMode(WebCore::ApplePayShippingContactEditingMode shippingContactEditingMode)
+{
+    switch (shippingContactEditingMode) {
+    case WebCore::ApplePayShippingContactEditingMode::Enabled:
+        return PKShippingContactEditingModeEnabled;
+
+    case WebCore::ApplePayShippingContactEditingMode::StorePickup:
+        return PKShippingContactEditingModeStorePickup;
+    }
+
+    ASSERT_NOT_REACHED();
+    return PKShippingContactEditingModeEnabled;
+}
+
+#endif // HAVE(PASSKIT_SHIPPING_CONTACT_EDITING_MODE)
 
 static RetainPtr<NSSet> toNSSet(const Vector<String>& strings)
 {
@@ -265,6 +308,19 @@ RetainPtr<PKPaymentRequest> WebPaymentCoordinatorProxy::platformPaymentRequest(c
     }
 #endif
 
+#if HAVE(PASSKIT_COUPON_CODE)
+    if (auto supportsCouponCode = paymentRequest.supportsCouponCode())
+        [result setSupportsCouponCode:*supportsCouponCode];
+
+    if (auto& couponCode = paymentRequest.couponCode(); !couponCode.isNull())
+        [result setCouponCode:couponCode];
+#endif
+
+#if HAVE(PASSKIT_SHIPPING_CONTACT_EDITING_MODE)
+    if (auto& shippingContactEditingMode = paymentRequest.shippingContactEditingMode())
+        [result setShippingContactEditingMode:toPKShippingContactEditingMode(*shippingContactEditingMode)];
+#endif
+
 #if defined(WebPaymentCoordinatorProxyCocoaAdditions_platformPaymentRequest)
     WebPaymentCoordinatorProxyCocoaAdditions_platformPaymentRequest
 #endif
@@ -297,14 +353,14 @@ void WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection(std::opt
     m_authorizationPresenter->completePaymentMethodSelection(WTFMove(update));
 }
 
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
 
-void WebPaymentCoordinatorProxy::platformCompletePaymentMethodModeChange(std::optional<WebCore::ApplePayPaymentMethodModeUpdate>&& update)
+void WebPaymentCoordinatorProxy::platformCompleteCouponCodeChange(std::optional<WebCore::ApplePayCouponCodeUpdate>&& update)
 {
-    m_authorizationPresenter->completePaymentMethodModeChange(WTFMove(update));
+    m_authorizationPresenter->completeCouponCodeChange(WTFMove(update));
 }
 
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#endif // ENABLE(APPLE_PAY_COUPON_CODE)
 
 void WebPaymentCoordinatorProxy::getSetupFeatures(const PaymentSetupConfiguration& configuration, Messages::WebPaymentCoordinatorProxy::GetSetupFeatures::AsyncReply&& reply)
 {

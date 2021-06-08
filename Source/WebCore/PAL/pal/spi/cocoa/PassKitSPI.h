@@ -59,7 +59,17 @@ WTF_EXTERN_C_END
 #import <PassKit/PKPaymentRequest_Private.h>
 #endif
 
-#import <WebKitAdditions/PassKitSPIAdditions.h>
+#if HAVE(PASSKIT_RECURRING_SUMMARY_ITEM)
+#import <PassKitCore/PKRecurringPaymentSummaryItem.h>
+#endif
+
+#if HAVE(PASSKIT_DEFERRED_SUMMARY_ITEM)
+#import <PassKitCore/PKDeferredPaymentSummaryItem.h>
+#endif
+
+#if HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
+#import <PassKitCore/PKDateComponentsRange.h>
+#endif
 
 #else
 

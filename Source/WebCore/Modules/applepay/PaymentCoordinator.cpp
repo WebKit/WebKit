@@ -28,7 +28,7 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "ApplePayPaymentMethodModeUpdate.h"
+#include "ApplePayCouponCodeUpdate.h"
 #include "ApplePayPaymentMethodUpdate.h"
 #include "ApplePayShippingContactUpdate.h"
 #include "ApplePayShippingMethod.h"
@@ -154,16 +154,16 @@ void PaymentCoordinator::completePaymentMethodSelection(std::optional<ApplePayPa
     m_client.completePaymentMethodSelection(WTFMove(update));
 }
 
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
 
-void PaymentCoordinator::completePaymentMethodModeChange(std::optional<ApplePayPaymentMethodModeUpdate>&& update)
+void PaymentCoordinator::completeCouponCodeChange(std::optional<ApplePayCouponCodeUpdate>&& update)
 {
     ASSERT(m_activeSession);
-    RELEASE_LOG_IF_ALLOWED("completePaymentMethodModeChange()");
-    m_client.completePaymentMethodModeChange(WTFMove(update));
+    RELEASE_LOG_IF_ALLOWED("completeCouponCodeChange()");
+    m_client.completeCouponCodeChange(WTFMove(update));
 }
 
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#endif // ENABLE(APPLE_PAY_COUPON_CODE)
 
 void PaymentCoordinator::completePaymentSession(std::optional<PaymentAuthorizationResult>&& result)
 {
@@ -249,20 +249,20 @@ void PaymentCoordinator::didSelectShippingContact(const PaymentContact& shipping
     m_activeSession->didSelectShippingContact(shippingContact);
 }
 
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
 
-void PaymentCoordinator::didChangePaymentMethodMode(String&& paymentMethodMode)
+void PaymentCoordinator::didChangeCouponCode(String&& couponCode)
 {
     if (!m_activeSession) {
         // It's possible that the payment has been aborted already.
         return;
     }
 
-    RELEASE_LOG_IF_ALLOWED("didChangePaymentMethodMode()");
-    m_activeSession->didChangePaymentMethodMode(WTFMove(paymentMethodMode));
+    RELEASE_LOG_IF_ALLOWED("didChangeCouponCode()");
+    m_activeSession->didChangeCouponCode(WTFMove(couponCode));
 }
 
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#endif // ENABLE(APPLE_PAY_COUPON_CODE)
 
 void PaymentCoordinator::didCancelPaymentSession(PaymentSessionError&& error)
 {

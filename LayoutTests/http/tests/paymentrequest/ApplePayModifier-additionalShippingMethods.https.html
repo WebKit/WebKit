@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Tests for providing `additionalShippingMethods` as part of `ApplePayModifier`.</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+setup({ explicit_done: true, explicit_timeout: true });
+
+const shippingMethod = {
+    amount: "10.00",
+    detail: "detail",
+    identifier: "identifier",
+    label: "label",
+    dateComponentsRange: {
+        startDateComponents: { days: 5 },
+        endDateComponents: { days: 10 },
+    },
+};
+
+function validPaymentDetailsWithModifierThatHasAdditionalShippingOptions(additionalShippingMethods) {
+    let details = validPaymentDetails();
+    if (additionalShippingMethods)
+        details.modifiers = [ { supportedMethods: "https://apple.com/apple-pay", data: { additionalShippingMethods } } ];
+    return details;
+}
+
+function testPaymentShippingOptionData(description, {additionalShippingMethods, expectedShippingMethods}) {
+    user_activation_test(async (test) => {
+        let request = new PaymentRequest([validPaymentMethod()], validPaymentDetailsWithModifierThatHasAdditionalShippingOptions(additionalShippingMethods), { requestShipping: true });
+        request.addEventListener("merchantvalidation", (event) => {
+            event.complete({ });
+        });
+        request.addEventListener("shippingaddresschange", (event) => {
+            event.updateWith({ });
+            internals.mockPaymentCoordinator.acceptPayment();
+        });
+
+        let response = await request.show();
+
+        let actualShippingMethods = internals.mockPaymentCoordinator.shippingMethods;
+        assert_equals(actualShippingMethods.length, expectedShippingMethods.length, `check that there are ${expectedShippingMethods.length} shipping methods`);
+        for (let i = 0; i < actualShippingMethods.length; ++i) {
+            let actualShippingMethod = actualShippingMethods[i];
+            let expectedShippingMethod = expectedShippingMethods[i];
+
+            assert_equals(actualShippingMethod.amount, expectedShippingMethod.amount, `check that the \`amount\` matches for shipping method ${i}`);
+            assert_equals(actualShippingMethod.detail, expectedShippingMethod.detail, `check that the \`detail\` matches for shipping method ${i}`);
+            assert_equals(actualShippingMethod.identifier, expectedShippingMethod.identifier, `check that the \`identifier\` matches for shipping method ${i}`);
+            assert_equals(actualShippingMethod.label, expectedShippingMethod.label, `check that the \`label\` matches for shipping method ${i}`);
+            if (expectedShippingMethod.dateComponentsRange)
+                assert_object_equals(actualShippingMethod.dateComponentsRange, expectedShippingMethod.dateComponentsRange, `check that the \`dateComponentsRange\` matches for shipping method ${i}`);
+            else
+                assert_equals(actualShippingMethod.dateComponentsRange, expectedShippingMethod.dateComponentsRange, `check that the \`dateComponentsRange\` matches for shipping method ${i}`);
+        }
+
+        await response.complete("success");
+    }, description);
+}
+
+testPaymentShippingOptionData("Should not have any shipping options if `additionalShippingMethods` is not provided.", {
+    additionalShippingMethods: undefined,
+    expectedShippingMethods: [ ],
+});
+testPaymentShippingOptionData("Should not have any shipping options if `additionalShippingMethods` is empty.", {
+    additionalShippingMethods: [ ],
+    expectedShippingMethods: [ ],
+});
+testPaymentShippingOptionData("Should propagate `dateComponentsRange` if provided.", {
+    additionalShippingMethods: [ shippingMethod ],
+    expectedShippingMethods: [ shippingMethod ],
+});
+
+done();
+</script>
+

@@ -52,6 +52,7 @@
     undefined completeShippingMethodSelection(ApplePayShippingMethodUpdate update);
     undefined completeShippingContactSelection(ApplePayShippingContactUpdate update);
     undefined completePaymentMethodSelection(ApplePayPaymentMethodUpdate update);
+    [Conditional=APPLE_PAY_COUPON_CODE] undefined completeCouponCodeChange(ApplePayCouponCodeUpdate update);
     undefined completePayment(ApplePayPaymentAuthorizationResult result);
 
     undefined completeShippingMethodSelection(unsigned short status, ApplePayLineItem newTotal, sequence<ApplePayLineItem> newLineItems);
@@ -64,5 +65,6 @@
     attribute EventHandler onpaymentauthorized;
     attribute EventHandler onshippingmethodselected;
     attribute EventHandler onshippingcontactselected;
+    [Conditional=APPLE_PAY_COUPON_CODE] attribute EventHandler oncouponcodechanged;
     attribute EventHandler oncancel;
 };

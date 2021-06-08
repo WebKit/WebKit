@@ -31,6 +31,7 @@
 #include "ApplePayInstallmentConfigurationWebCore.h"
 #include "ApplePayMerchantCapability.h"
 #include "ApplePayPaymentContact.h"
+#include "ApplePayShippingContactEditingMode.h"
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/ApplePayRequestBaseAdditions.h>
@@ -57,6 +58,15 @@ struct ApplePayRequestBase {
 
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
     std::optional<ApplePayInstallmentConfiguration> installmentConfiguration;
+#endif
+
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    std::optional<bool> supportsCouponCode;
+    String couponCode;
+#endif
+
+#if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
+    std::optional<ApplePayShippingContactEditingMode> shippingContactEditingMode;
 #endif
 
 #if defined(ApplePayRequestBaseAdditions_members)

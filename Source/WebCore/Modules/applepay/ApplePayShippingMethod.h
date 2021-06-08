@@ -27,16 +27,21 @@
 
 #if ENABLE(APPLE_PAY)
 
-#include "ApplePayShippingMethodData.h"
+#include "ApplePayDateComponentsRange.h"
+#include <optional>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-struct ApplePayShippingMethod final : public ApplePayShippingMethodData {
+struct ApplePayShippingMethod final {
     String label;
     String detail;
     String amount;
     String identifier;
+
+#if ENABLE(APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
+    std::optional<ApplePayDateComponentsRange> dateComponentsRange;
+#endif
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ApplePayShippingMethod> decode(Decoder&);
@@ -45,36 +50,43 @@ struct ApplePayShippingMethod final : public ApplePayShippingMethodData {
 template<class Encoder>
 void ApplePayShippingMethod::encode(Encoder& encoder) const
 {
-    ApplePayShippingMethodData::encode(encoder);
     encoder << label;
     encoder << detail;
     encoder << amount;
     encoder << identifier;
+#if ENABLE(APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
+    encoder << dateComponentsRange;
+#endif
 }
 
 template<class Decoder>
 std::optional<ApplePayShippingMethod> ApplePayShippingMethod::decode(Decoder& decoder)
 {
-    ApplePayShippingMethod result;
-
-    if (!result.decodeData(decoder))
-        return std::nullopt;
-
 #define DECODE(name, type) \
     std::optional<type> name; \
     decoder >> name; \
     if (!name) \
         return std::nullopt; \
-    result.name = WTFMove(*name); \
 
     DECODE(label, String)
     DECODE(detail, String)
     DECODE(amount, String)
     DECODE(identifier, String)
+#if ENABLE(APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
+    DECODE(dateComponentsRange, std::optional<ApplePayDateComponentsRange>)
+#endif
 
 #undef DECODE
 
-    return result;
+    return { {
+        WTFMove(*label),
+        WTFMove(*detail),
+        WTFMove(*amount),
+        WTFMove(*identifier),
+#if ENABLE(APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
+        WTFMove(*dateComponentsRange),
+#endif
+    } };
 }
 
 } // namespace WebCore

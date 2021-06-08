@@ -68,9 +68,9 @@ private:
     void completeShippingMethodSelection(std::optional<WebCore::ApplePayShippingMethodUpdate>&&) override;
     void completeShippingContactSelection(std::optional<WebCore::ApplePayShippingContactUpdate>&&) override;
     void completePaymentMethodSelection(std::optional<WebCore::ApplePayPaymentMethodUpdate>&&) override;
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    void completePaymentMethodModeChange(std::optional<WebCore::ApplePayPaymentMethodModeUpdate>&&) override;
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    void completeCouponCodeChange(std::optional<WebCore::ApplePayCouponCodeUpdate>&&) override;
+#endif
     void completePaymentSession(std::optional<WebCore::PaymentAuthorizationResult>&&) override;
 
     void abortPaymentSession() override;
@@ -102,9 +102,9 @@ private:
     void didSelectShippingMethod(const WebCore::ApplePayShippingMethod&);
     void didSelectShippingContact(const WebCore::PaymentContact&);
     void didSelectPaymentMethod(const WebCore::PaymentMethod&);
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    void didChangePaymentMethodMode(String&& paymentMethodMode);
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    void didChangeCouponCode(String&& couponCode);
+#endif
     void didCancelPaymentSession(WebCore::PaymentSessionError&&);
 
     WebCore::PaymentCoordinator& paymentCoordinator();

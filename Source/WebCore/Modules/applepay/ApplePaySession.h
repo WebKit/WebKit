@@ -54,13 +54,11 @@ class PaymentContact;
 class PaymentCoordinator;
 class PaymentMethod;
 enum class PaymentAuthorizationStatus;
+struct ApplePayCouponCodeUpdate;
 struct ApplePayLineItem;
 struct ApplePayPaymentRequest;
 struct ApplePayShippingMethod;
 struct ApplePayPaymentAuthorizationResult;
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-struct ApplePayPaymentMethodModeUpdate;
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
 struct ApplePayPaymentMethodUpdate;
 struct ApplePayShippingContactUpdate;
 struct ApplePayShippingMethodUpdate;
@@ -91,6 +89,9 @@ public:
     ExceptionOr<void> completeShippingMethodSelection(ApplePayShippingMethodUpdate&&);
     ExceptionOr<void> completeShippingContactSelection(ApplePayShippingContactUpdate&&);
     ExceptionOr<void> completePaymentMethodSelection(ApplePayPaymentMethodUpdate&&);
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    ExceptionOr<void> completeCouponCodeChange(ApplePayCouponCodeUpdate&&);
+#endif
     ExceptionOr<void> completePayment(ApplePayPaymentAuthorizationResult&&);
 
     // Old functions.
@@ -126,9 +127,9 @@ private:
     void didSelectShippingMethod(const ApplePayShippingMethod&) override;
     void didSelectShippingContact(const PaymentContact&) override;
     void didSelectPaymentMethod(const PaymentMethod&) override;
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    void didChangePaymentMethodMode(String&& paymentMethodMode) override;
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    void didChangeCouponCode(String&& couponCode) override;
+#endif
     void didCancelPaymentSession(PaymentSessionError&&) override;
 
     PaymentCoordinator& paymentCoordinator() const;
@@ -140,9 +141,9 @@ private:
     bool canCompleteShippingMethodSelection() const;
     bool canCompleteShippingContactSelection() const;
     bool canCompletePaymentMethodSelection() const;
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    bool canCompletePaymentMethodModeChange() const;
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    bool canCompleteCouponCodeChange() const;
+#endif
     bool canCompletePayment() const;
     bool canSuspendWithoutCanceling() const;
 
@@ -155,9 +156,9 @@ private:
         ShippingMethodSelected,
         ShippingContactSelected,
         PaymentMethodSelected,
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-        PaymentMethodModeChanged,
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+        CouponCodeChanged,
+#endif
         CancelRequested,
         Authorized,
         Completed,

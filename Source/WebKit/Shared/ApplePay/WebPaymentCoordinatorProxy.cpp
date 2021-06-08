@@ -33,7 +33,7 @@
 #include "WebPaymentCoordinatorMessages.h"
 #include "WebPaymentCoordinatorProxyMessages.h"
 #include "WebProcessProxy.h"
-#include <WebCore/ApplePayPaymentMethodModeUpdate.h>
+#include <WebCore/ApplePayCouponCodeUpdate.h>
 #include <WebCore/ApplePayPaymentMethodUpdate.h>
 #include <WebCore/ApplePayShippingContactUpdate.h>
 #include <WebCore/ApplePayShippingMethodUpdate.h>
@@ -168,21 +168,21 @@ void WebPaymentCoordinatorProxy::completePaymentMethodSelection(std::optional<We
     m_state = State::Active;
 }
 
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
 
-void WebPaymentCoordinatorProxy::completePaymentMethodModeChange(std::optional<WebCore::ApplePayPaymentMethodModeUpdate>&& update)
+void WebPaymentCoordinatorProxy::completeCouponCodeChange(std::optional<WebCore::ApplePayCouponCodeUpdate>&& update)
 {
     // It's possible that the payment has been canceled already.
     if (m_state == State::Idle)
         return;
 
-    MESSAGE_CHECK(m_state == State::PaymentMethodModeChanged);
+    MESSAGE_CHECK(m_state == State::CouponCodeChanged);
 
-    platformCompletePaymentMethodModeChange(WTFMove(update));
+    platformCompleteCouponCodeChange(WTFMove(update));
     m_state = State::Active;
 }
 
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#endif // ENABLE(APPLE_PAY_COUPON_CODE)
 
 void WebPaymentCoordinatorProxy::completePaymentSession(const std::optional<WebCore::PaymentAuthorizationResult>& result)
 {
@@ -246,17 +246,17 @@ void WebPaymentCoordinatorProxy::presenterDidSelectShippingMethod(PaymentAuthori
     send(Messages::WebPaymentCoordinator::DidSelectShippingMethod(shippingMethod));
 }
 
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
 
-void WebPaymentCoordinatorProxy::presenterDidChangePaymentMethodMode(PaymentAuthorizationPresenter&, const String& paymentMethodMode)
+void WebPaymentCoordinatorProxy::presenterDidChangeCouponCode(PaymentAuthorizationPresenter&, const String& couponCode)
 {
     ASSERT(m_state == State::Active);
 
-    m_state = State::PaymentMethodModeChanged;
-    send(Messages::WebPaymentCoordinator::DidChangePaymentMethodMode(paymentMethodMode));
+    m_state = State::CouponCodeChanged;
+    send(Messages::WebPaymentCoordinator::DidChangeCouponCode(couponCode));
 }
 
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#endif // ENABLE(APPLE_PAY_COUPON_CODE)
 
 void WebPaymentCoordinatorProxy::presenterDidSelectShippingContact(PaymentAuthorizationPresenter&, const WebCore::PaymentContact& shippingContact)
 {
@@ -287,9 +287,9 @@ bool WebPaymentCoordinatorProxy::canBegin() const
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    case State::PaymentMethodModeChanged:
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    case State::CouponCodeChanged:
+#endif
         return false;
     }
 }
@@ -303,9 +303,9 @@ bool WebPaymentCoordinatorProxy::canCancel() const
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    case State::PaymentMethodModeChanged:
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    case State::CouponCodeChanged:
+#endif
         return true;
 
     case State::Completing:
@@ -327,9 +327,9 @@ bool WebPaymentCoordinatorProxy::canCompletePayment() const
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    case State::PaymentMethodModeChanged:
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    case State::CouponCodeChanged:
+#endif
         return false;
     }
 }
@@ -343,9 +343,9 @@ bool WebPaymentCoordinatorProxy::canAbort() const
     case State::ShippingMethodSelected:
     case State::ShippingContactSelected:
     case State::PaymentMethodSelected:
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    case State::PaymentMethodModeChanged:
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    case State::CouponCodeChanged:
+#endif
         return true;
 
     case State::Completing:

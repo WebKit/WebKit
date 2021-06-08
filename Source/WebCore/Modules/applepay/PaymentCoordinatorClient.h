@@ -37,9 +37,7 @@ namespace WebCore {
 
 class Document;
 class PaymentMerchantSession;
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-struct ApplePayPaymentMethodModeUpdate;
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+struct ApplePayCouponCodeUpdate;
 struct ApplePayPaymentMethodUpdate;
 struct ApplePaySetupConfiguration;
 struct ApplePayShippingContactUpdate;
@@ -60,9 +58,9 @@ public:
     virtual void completeShippingMethodSelection(std::optional<ApplePayShippingMethodUpdate>&&) = 0;
     virtual void completeShippingContactSelection(std::optional<ApplePayShippingContactUpdate>&&) = 0;
     virtual void completePaymentMethodSelection(std::optional<ApplePayPaymentMethodUpdate>&&) = 0;
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    virtual void completePaymentMethodModeChange(std::optional<ApplePayPaymentMethodModeUpdate>&&) = 0;
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    virtual void completeCouponCodeChange(std::optional<ApplePayCouponCodeUpdate>&&) = 0;
+#endif
     virtual void completePaymentSession(std::optional<PaymentAuthorizationResult>&&) = 0;
     virtual void abortPaymentSession() = 0;
     virtual void cancelPaymentSession() = 0;

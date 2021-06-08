@@ -33,10 +33,6 @@
 #import <WebCore/PaymentMethod.h>
 #import <WebCore/PaymentSessionError.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WKPaymentAuthorizationDelegateAdditions.mm>
-#endif
-
 @implementation WKPaymentAuthorizationDelegate {
     RetainPtr<NSArray<PKPaymentSummaryItem *>> _summaryItems;
     RetainPtr<NSArray<PKShippingMethod *>> _shippingMethods;
@@ -47,8 +43,8 @@
     WebKit::DidSelectPaymentMethodCompletion _didSelectPaymentMethodCompletion;
     WebKit::DidSelectShippingContactCompletion _didSelectShippingContactCompletion;
     WebKit::DidSelectShippingMethodCompletion _didSelectShippingMethodCompletion;
-#if defined(WKPaymentAuthorizationDelegateAdditions_implementation_members)
-    WKPaymentAuthorizationDelegateAdditions_implementation_members
+#if HAVE(PASSKIT_COUPON_CODE)
+    WebKit::DidChangeCouponCodeCompletion _didChangeCouponCodeCompletion;
 #endif
 }
 
@@ -94,9 +90,17 @@
     std::exchange(_didSelectShippingMethodCompletion, nil)(update.get());
 }
 
-#if defined(WKPaymentAuthorizationDelegateAdditions_implementation_public)
-    WKPaymentAuthorizationDelegateAdditions_implementation_public
-#endif
+#if HAVE(PASSKIT_COUPON_CODE)
+
+- (void)completeCouponCodeChange:(PKPaymentRequestCouponCodeUpdate *)couponCodeUpdate
+{
+    PKPaymentRequestCouponCodeUpdate *update = couponCodeUpdate ?: adoptNS([PAL::allocPKPaymentRequestCouponCodeUpdateInstance() initWithErrors:@[] paymentSummaryItems:_summaryItems.get() shippingMethods:_shippingMethods.get()]).autorelease();
+    _summaryItems = adoptNS([update.paymentSummaryItems copy]);
+    _shippingMethods = adoptNS([update.shippingMethods copy]);
+    std::exchange(_didChangeCouponCodeCompletion, nil)(update);
+}
+
+#endif // HAVE(PASSKIT_COUPON_CODE)
 
 - (void)invalidate
 {
@@ -185,6 +189,32 @@
     presenter->client().presenterDidSelectShippingContact(*presenter, WebCore::PaymentContact(contact));
 }
 
+#if HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
+
+static WebCore::ApplePayDateComponents toDateComponents(NSDateComponents *dateComponents)
+{
+    ASSERT(dateComponents);
+
+    WebCore::ApplePayDateComponents result;
+    result.years = dateComponents.year;
+    result.months = dateComponents.month;
+    result.days = dateComponents.day;
+    result.hours = dateComponents.hour;
+    return result;
+}
+
+static WebCore::ApplePayDateComponentsRange toDateComponentsRange(PKDateComponentsRange *dateComponentsRange)
+{
+    ASSERT(dateComponentsRange);
+
+    WebCore::ApplePayDateComponentsRange result;
+    result.startDateComponents = toDateComponents(dateComponentsRange.startDateComponents);
+    result.endDateComponents = toDateComponents(dateComponentsRange.endDateComponents);
+    return result;
+}
+
+#endif // HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
+
 static WebCore::ApplePayShippingMethod toShippingMethod(PKShippingMethod *shippingMethod)
 {
     ASSERT(shippingMethod);
@@ -194,8 +224,9 @@ static WebCore::ApplePayShippingMethod toShippingMethod(PKShippingMethod *shippi
     result.detail = shippingMethod.detail;
     result.identifier = shippingMethod.identifier;
     result.label = shippingMethod.label;
-#if defined(WKPaymentAuthorizationDelegateAdditions_toShippingMethod)
-    WKPaymentAuthorizationDelegateAdditions_toShippingMethod
+#if HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
+    if (shippingMethod.dateComponentsRange)
+        result.dateComponentsRange = toDateComponentsRange(shippingMethod.dateComponentsRange);
 #endif
     return result;
 }
@@ -212,9 +243,21 @@ static WebCore::ApplePayShippingMethod toShippingMethod(PKShippingMethod *shippi
     presenter->client().presenterDidSelectShippingMethod(*presenter, toShippingMethod(shippingMethod));
 }
 
-#if defined(WKPaymentAuthorizationDelegateAdditions_implementation_protected)
-    WKPaymentAuthorizationDelegateAdditions_implementation_protected
-#endif
+#if HAVE(PASSKIT_COUPON_CODE)
+
+- (void)_didChangeCouponCode:(NSString *)couponCode completion:(void (^)(PKPaymentRequestCouponCodeUpdate *update))completion
+{
+    ASSERT(!_didChangeCouponCodeCompletion);
+    _didChangeCouponCodeCompletion = completion;
+
+    auto presenter = _presenter.get();
+    if (!presenter)
+        return [self completeCouponCodeChange:nil];
+
+    presenter->client().presenterDidChangeCouponCode(*presenter, couponCode);
+}
+
+#endif // HAVE(PASSKIT_COUPON_CODE)
 
 - (void) NO_RETURN_DUE_TO_ASSERT _getPaymentServicesMerchantURL:(void(^)(NSURL *, NSError *))completion
 {

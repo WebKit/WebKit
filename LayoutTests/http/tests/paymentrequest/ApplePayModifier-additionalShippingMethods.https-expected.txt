@@ -1,0 +1,5 @@
+
+PASS Should not have any shipping options if `additionalShippingMethods` is not provided.
+PASS Should not have any shipping options if `additionalShippingMethods` is empty.
+PASS Should propagate `dateComponentsRange` if provided.
+

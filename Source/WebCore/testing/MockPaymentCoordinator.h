@@ -30,6 +30,7 @@
 #include "ApplePayInstallmentConfigurationWebCore.h"
 #include "ApplePayLineItem.h"
 #include "ApplePaySetupConfiguration.h"
+#include "ApplePayShippingContactEditingMode.h"
 #include "ApplePayShippingMethod.h"
 #include "MockPaymentAddress.h"
 #include "MockPaymentContactFields.h"
@@ -56,6 +57,9 @@ public:
     void setShippingAddress(MockPaymentAddress&& shippingAddress) { m_shippingAddress = WTFMove(shippingAddress); }
     void changeShippingOption(String&& shippingOption);
     void changePaymentMethod(ApplePayPaymentMethod&&);
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    void changeCouponCode(String&& couponCode);
+#endif
     void acceptPayment();
     void cancelPayment();
 
@@ -76,6 +80,15 @@ public:
     ApplePayInstallmentConfiguration installmentConfiguration() const { return m_installmentConfiguration; }
 #endif
 
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    std::optional<bool> supportsCouponCode() const { return m_supportsCouponCode; }
+    const String& couponCode() const { return m_couponCode; }
+#endif
+
+#if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
+    std::optional<ApplePayShippingContactEditingMode> shippingContactEditingMode() const { return m_shippingContactEditingMode; }
+#endif
+
     void ref() const { }
     void deref() const { }
 
@@ -89,9 +102,9 @@ private:
     void completeShippingMethodSelection(std::optional<ApplePayShippingMethodUpdate>&&) final;
     void completeShippingContactSelection(std::optional<ApplePayShippingContactUpdate>&&) final;
     void completePaymentMethodSelection(std::optional<ApplePayPaymentMethodUpdate>&&) final;
-#if ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
-    void completePaymentMethodModeChange(std::optional<ApplePayPaymentMethodModeUpdate>&&) final;
-#endif // ENABLE(APPLE_PAY_PAYMENT_METHOD_MODE)
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    void completeCouponCodeChange(std::optional<ApplePayCouponCodeUpdate>&&) final;
+#endif
     void completePaymentSession(std::optional<PaymentAuthorizationResult>&&) final;
     void abortPaymentSession() final;
     void cancelPaymentSession() final;
@@ -120,6 +133,13 @@ private:
     bool m_supportsUnrestrictedApplePay { true };
 #if ENABLE(APPLE_PAY_INSTALLMENTS)
     ApplePayInstallmentConfiguration m_installmentConfiguration;
+#endif
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    std::optional<bool> m_supportsCouponCode;
+    String m_couponCode;
+#endif
+#if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
+    std::optional<ApplePayShippingContactEditingMode> m_shippingContactEditingMode;
 #endif
     ApplePaySetupConfiguration m_setupConfiguration;
     Vector<Ref<ApplePaySetupFeature>> m_setupFeatures;
