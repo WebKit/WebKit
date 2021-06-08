@@ -1,3 +1,19 @@
+2021-06-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r278391): [SOUP] Test fast/dom/webtiming.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=226726
+
+        Reviewed by Michael Catanzaro.
+
+        We need to set network metrics on response even for non HTTP loads now.
+
+        Fixes fast/dom/webtiming.html
+
+        * NetworkProcess/soup/NetworkDataTaskSoup.cpp:
+        (WebKit::NetworkDataTaskSoup::resume):
+        (WebKit::NetworkDataTaskSoup::didSendRequest):
+        (WebKit::NetworkDataTaskSoup::dispatchDidReceiveResponse):
+
 2021-06-07  Alex Christensen  <achristensen@webkit.org>
 
         Adopt SecTrustGetCertificateAtIndex replacement where available

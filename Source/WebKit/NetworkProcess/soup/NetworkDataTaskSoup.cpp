@@ -327,6 +327,7 @@ void NetworkDataTaskSoup::resume()
     }
 
     if (m_file && !m_cancellable) {
+        m_networkLoadMetrics.fetchStart = MonotonicTime::now();
         m_cancellable = adoptGRef(g_cancellable_new());
         g_file_query_info_async(m_file.get(), G_FILE_ATTRIBUTE_STANDARD_TYPE "," G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE "," G_FILE_ATTRIBUTE_STANDARD_SIZE,
             G_FILE_QUERY_INFO_NONE, RunLoopSourcePriority::AsyncIONetwork, m_cancellable.get(), reinterpret_cast<GAsyncReadyCallback>(fileQueryInfoCallback), protectedThis.leakRef());
@@ -334,6 +335,7 @@ void NetworkDataTaskSoup::resume()
     }
 
     if (m_currentRequest.url().protocolIsData() && !m_cancellable) {
+        m_networkLoadMetrics.fetchStart = MonotonicTime::now();
         m_cancellable = adoptGRef(g_cancellable_new());
         DataURLDecoder::decode(m_currentRequest.url(), { }, DataURLDecoder::Mode::Legacy, [this, protectedThis = WTFMove(protectedThis)](auto decodeResult) mutable {
             if (m_state == State::Canceling || m_state == State::Completed || !m_client) {
@@ -481,14 +483,15 @@ void NetworkDataTaskSoup::didSendRequest(GRefPtr<GInputStream>&& inputStream)
     m_networkLoadMetrics.responseStart = MonotonicTime::now();
 #endif
 
-    // FIXME: This cannot be eliminated until other code no longer relies on ResourceResponse's NetworkLoadMetrics.
-    m_response.setDeprecatedNetworkLoadMetrics(Box<NetworkLoadMetrics>::create(m_networkLoadMetrics));
     dispatchDidReceiveResponse();
 }
 
 void NetworkDataTaskSoup::dispatchDidReceiveResponse()
 {
     ASSERT(!m_response.isNull());
+
+    // FIXME: This cannot be eliminated until other code no longer relies on ResourceResponse's NetworkLoadMetrics.
+    m_response.setDeprecatedNetworkLoadMetrics(Box<NetworkLoadMetrics>::create(m_networkLoadMetrics));
 
     didReceiveResponse(ResourceResponse(m_response), NegotiatedLegacyTLS::No, [this, protectedThis = makeRef(*this)](PolicyAction policyAction) {
         if (m_state == State::Canceling || m_state == State::Completed) {
