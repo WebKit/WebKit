@@ -1,3 +1,45 @@
+2021-06-08  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Update baselines of tests marked a text flaky.
+
+        Removed tests that are now passing from test expectations.
+
+        * platform/glib/TestExpectations:
+        * platform/glib/fast/css/acid2-pixel-expected.txt: Renamed from LayoutTests/platform/wpe/fast/css/acid2-pixel-expected.txt.
+        * platform/glib/http/tests/websocket/tests/hybi/workers/close-expected.txt: Removed.
+        * platform/glib/imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.https.worker-expected.txt:
+        * platform/glib/imported/w3c/web-platform-tests/html/canvas/element/imagebitmap/createImageBitmap-serializable-expected.txt:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/editing/input/caret-at-the-edge-of-contenteditable-expected.txt:
+        * platform/gtk/editing/pasteboard/4989774-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-4038267-fix-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-line-endings-001-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-line-endings-002-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-line-endings-006-expected.txt:
+        * platform/gtk/fast/css/acid2-expected.txt:
+        * platform/gtk/fast/css/acid2-pixel-expected.txt: Removed.
+        * platform/gtk/fast/css/resize-corner-tracking-expected.txt:
+        * platform/gtk/fast/forms/validation-message-appearance-expected.txt:
+        * platform/gtk/fast/overflow/hit-test-overflow-controls-expected.txt:
+        * platform/gtk/http/tests/security/video-cross-origin-accessfailure-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-07-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-12-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-15-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-16-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-17-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-19-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-30-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-33-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-36-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-37-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-40-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-41-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-46-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-82-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/struct-dom-06-b-expected.txt:
+        * platform/gtk/svg/custom/circular-marker-reference-4-expected.txt: Removed.
+        * platform/gtk/tables/mozilla/bugs/bug4527-expected.txt:
+
 2021-06-08  Antti Koivisto  <antti@apple.com>
 
         `text-decoration: underline` is not applied to web component

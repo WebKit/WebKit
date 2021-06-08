@@ -3,7 +3,7 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (31,1) size 407x276 [transform={m=((1.30,0.00)(0.00,1.30)) t=(20.00,0.00)}]
-      RenderSVGPath {path} at (240,51) size 54x197 [stroke={[type=SOLID] [color=#B4B4B4]}] [data="M 210 40 C 210 40 210 100 170 190"]
+      RenderSVGPath {path} at (240,52) size 54x196 [stroke={[type=SOLID] [color=#B4B4B4]}] [data="M 210 40 C 210 40 210 100 170 190"]
       RenderSVGPath {path} at (242,226) size 14x19 [fill={[type=SOLID] [color=#B4B4B4]}] [data="M 171 188 L 181 178 L 171 174 Z"]
       RenderSVGPath {polyline} at (278,26) size 30x52 [stroke={[type=SOLID] [color=#B4B4B4] [stroke width=2.00]}] [points="200 20 200 40 220 40 220 60"]
       RenderSVGPath {polyline} at (211,216) size 51x61 [transform={m=((0.97,0.26)(-0.26,0.97)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#B4B4B4] [stroke width=9.00]}] [points="200 120 200 140 220 140 220 160"]

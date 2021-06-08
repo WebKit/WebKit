@@ -908,15 +908,10 @@ webkit.org/b/210849 compositing/overflow/rtl-scrollbar-layer-positioning.html [ 
 
 webkit.org/b/210850 compositing/tiling/coverage-adjustment-secondary-quad-mapping.html [ Failure ]
 
-# Failing in test bots. Started failing since r260615.
-webkit.org/b/210968 fast/css/resize-corner-tracking.html [ Failure ImageOnlyFailure Pass ]
-
 webkit.org/b/210239 fast/canvas/webgl/index-validation-with-subsequent-draws.html [ Failure ]
 
 webkit.org/b/211501 compositing/iframes/border-radius-composited-frame.html [ ImageOnlyFailure ]
 webkit.org/b/211501 compositing/iframes/border-uneven-radius-composited-frame.html [ ImageOnlyFailure ]
-
-webkit.org/b/211693 editing/input/caret-at-the-edge-of-contenteditable.html [ Failure Pass ]
 
 # The first one is also crashing for both GTK and WPE debug
 webkit.org/b/211887 [ Release ] fast/canvas/webgl/tex-sub-image-2d-bad-args.html [ Failure ]
@@ -1008,34 +1003,17 @@ webkit.org/b/225921 printing/print-close-crash.html [ Crash ]
 
 webkit.org/b/122481 svg/animations/svglengthlist-animation-3.html [ Failure Pass ]
 
-webkit.org/b/62204 svg/custom/circular-marker-reference-4.svg [ Failure Pass ]
-
 webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-03-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-05-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-06-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-07-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-08-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-10-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-11-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-12-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-15-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-16-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-17-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-19-t.svg [ Failure Pass ]
 webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-22-b.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-28-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-30-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-32-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-33-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-36-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-37-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-40-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-41-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-46-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-81-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-82-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-85-t.svg [ Failure Pass ]
-webkit.org/b/89650 svg/W3C-SVG-1.1/struct-dom-06-b.svg [ Failure Pass ]
 
 webkit.org/b/114735 svg/filters/filter-hidden-content.svg [ Failure Pass ]
 
@@ -1045,16 +1023,12 @@ webkit.org/b/116961 perf/show-hide-table-rows.html [ Failure Pass ]
 webkit.org/b/119253 [ Debug ] js/dfg-osr-entry-hoisted-clobbered-structure-check.html [ Timeout Pass ]
 webkit.org/b/119253 [ Debug ] fast/media/update-media-query-css-parser.html [ Timeout Pass ]
 
-webkit.org/b/126432 fast/css/acid2-pixel.html [ Failure Pass ]
-webkit.org/b/126432 fast/css/acid2.html [ Failure Pass ]
-
 webkit.org/b/127742 fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure Pass ]
 
 # Tests showing flakiness in the bot
 webkit.org/b/132182 css3/calc/transitions-dependent.html [ Failure ]
 
 # Fast overflow.
-webkit.org/b/132258 fast/overflow/hit-test-overflow-controls.html [ Failure ImageOnlyFailure Pass ]
 
 webkit.org/b/136066 animations/fill-mode-iteration-count-non-integer.html [ Timeout Pass ]
 
@@ -1094,8 +1068,6 @@ webkit.org/b/170337 fast/repaint/obscured-background-no-repaint.html [ Pass Fail
 webkit.org/b/171600 css3/filters/composited-during-animation-layertree.html [ Pass Failure ]
 
 webkit.org/b/172283 inspector/worker/debugger-multiple-targets-pause.html [ Timeout Pass Failure ]
-
-webkit.org/b/176105 http/tests/security/video-cross-origin-accessfailure.html [ Pass Failure ]
 
 webkit.org/b/176757 fast/hidpi/filters-invert.html [ Pass ImageOnlyFailure ]
 webkit.org/b/176757 fast/hidpi/filters-multiple.html [ Pass ImageOnlyFailure ]
@@ -1153,16 +1125,12 @@ webkit.org/b/191680 editing/pasteboard/copy-paste-first-line-in-textarea.html [ 
 
 webkit.org/b/178705 webkit.org/b/169917 webgl/1.0.3/conformance/rendering/multisample-corruption.html [ Pass Failure Timeout ]
 
-webkit.org/b/193315 editing/pasteboard/paste-line-endings-006.html [ Failure Pass ]
-
 webkit.org/b/193311 fast/images/decode-render-animated-image.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/193490 [ Debug ] animations/play-state-suspend.html [ Pass Failure ]
 
 webkit.org/b/128255 compositing/columns/composited-lr-paginated-repaint.html [ Pass Failure ]
 webkit.org/b/128255 compositing/columns/composited-rl-paginated-repaint.html [ Pass Failure ]
-
-webkit.org/b/194381 editing/pasteboard/paste-4038267-fix.html [ Failure Pass ]
 
 webkit.org/b/194382 mathml/presentation/stretchy-depth-height-symmetric.html [ Failure ]
 
@@ -1171,10 +1139,6 @@ webkit.org/b/195466 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/197713 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-image-cache.https.html [ Pass Failure ]
 
 webkit.org/b/197256 http/tests/security/sandboxed-iframe-ALLOWED-modals.html [ Crash Pass ]
-
-webkit.org/b/198828 editing/pasteboard/4989774.html [ Failure Pass ]
-webkit.org/b/198828 editing/pasteboard/paste-line-endings-002.html [ Failure Pass ]
-webkit.org/b/198828 editing/pasteboard/paste-line-endings-001.html [ Failure Pass ]
 
 webkit.org/b/170484 swipe/main-frame-pinning-requirement.html [ Pass Failure Timeout ]
 
@@ -1221,8 +1185,6 @@ webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-transfor
 webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-transform-bad-flag-002.xht [ ImageOnlyFailure Pass ]
 webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-transform-hmtx-003.xht [ ImageOnlyFailure Pass ]
 webkit.org/b/208809 imported/w3c/web-platform-tests/css/WOFF2/tabledata-transform-hmtx-004.xht [ ImageOnlyFailure Pass ]
-
-webkit.org/b/211834 tables/mozilla/bugs/bug4527.html [ Failure Pass ]
 
 webkit.org/b/211836 imported/w3c/web-platform-tests/fetch/api/abort/general.any.worker.html [ Failure Pass ]
 
