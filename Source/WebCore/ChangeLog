@@ -1,3 +1,28 @@
+2021-06-08  Antti Koivisto  <antti@apple.com>
+
+        `text-decoration: underline` is not applied to web component
+        https://bugs.webkit.org/show_bug.cgi?id=226724
+        <rdar://problem/78987286>
+
+        Reviewed by Ryosuke Niwa.
+
+        'text-decoration' is not an inherited property in itself but its effective value
+        behaves as it was. We fail to inherit this effective value into author shadow trees.
+
+        Test case by Jeroen Zwartepoorte.
+
+        Test: fast/shadow-dom/effective-text-decoration-inheritance.html
+
+        * style/StyleAdjuster.cpp:
+        (WebCore::Style::shouldInheritEffectiveTextDecorations):
+
+        Test for user agent shadow tree, not a shadow tree in general.
+        Also inverse the logic and refactor a bit.
+
+        (WebCore::Style::Adjuster::adjust const):
+        (WebCore::Style::isAtShadowBoundary): Deleted.
+        (WebCore::Style::doesNotInheritTextDecoration): Deleted.
+
 2021-06-08  Frédéric Wang  <fwang@igalia.com>
 
         Crash in InsertParagraphSeparatorCommand::doApply

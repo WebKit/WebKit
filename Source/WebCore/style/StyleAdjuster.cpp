@@ -141,20 +141,33 @@ static DisplayType equivalentBlockDisplay(const RenderStyle& style, const Docume
     return DisplayType::Block;
 }
 
-static inline bool isAtShadowBoundary(const Element& element)
+static bool shouldInheritTextDecorationsInEffect(const RenderStyle& style, const Element* element)
 {
-    auto* parentNode = element.parentNode();
-    return parentNode && parentNode->isShadowRoot();
-}
+    if (style.isFloating() || style.hasOutOfFlowPosition())
+        return false;
 
-// CSS requires text-decoration to be reset at each DOM element for tables,
-// inline blocks, inline tables, shadow DOM crossings, floating elements,
-// and absolute or relatively positioned elements.
-static bool doesNotInheritTextDecoration(const RenderStyle& style, const Element* element)
-{
-    return style.display() == DisplayType::Table || style.display() == DisplayType::InlineTable
-        || style.display() == DisplayType::InlineBlock || style.display() == DisplayType::InlineBox || (element && isAtShadowBoundary(*element))
-        || style.isFloating() || style.hasOutOfFlowPosition();
+    auto isAtUserAgentShadowBoundary = [&] {
+        if (!element)
+            return false;
+        auto* parentNode = element->parentNode();
+        return parentNode && parentNode->isUserAgentShadowRoot();
+    }();
+
+    // There is no other good way to prevent decorations from affecting user agent shadow trees.
+    if (isAtUserAgentShadowBoundary)
+        return false;
+
+    switch (style.display()) {
+    case DisplayType::Table:
+    case DisplayType::InlineTable:
+    case DisplayType::InlineBlock:
+    case DisplayType::InlineBox:
+        return false;
+    default:
+        break;
+    };
+
+    return true;
 }
 
 static bool isScrollableOverflow(Overflow overflow)
@@ -393,10 +406,10 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         }
     }
 
-    if (doesNotInheritTextDecoration(style, m_element))
-        style.setTextDecorationsInEffect(style.textDecoration());
-    else
+    if (shouldInheritTextDecorationsInEffect(style, m_element))
         style.addToTextDecorationsInEffect(style.textDecoration());
+    else
+        style.setTextDecorationsInEffect(style.textDecoration());
 
     // If either overflow value is not visible, change to auto.
     if (style.overflowX() == Overflow::Visible && style.overflowY() != Overflow::Visible) {
