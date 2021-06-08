@@ -148,13 +148,14 @@ static void encodeNSError(Encoder& encoder, NSError *nsError)
     id peerCertificateChain = [userInfo objectForKey:@"NSErrorPeerCertificateChainKey"];
     if (!peerCertificateChain) {
         if (SecTrustRef peerTrust = (__bridge SecTrustRef)[userInfo objectForKey:NSURLErrorFailingURLPeerTrustErrorKey]) {
+#if HAVE(SEC_TRUST_COPY_CERTIFICATE_CHAIN)
+            peerCertificateChain = (__bridge NSArray *)adoptCF(SecTrustCopyCertificateChain(peerTrust)).autorelease();
+#else
             CFIndex count = SecTrustGetCertificateCount(peerTrust);
             peerCertificateChain = [NSMutableArray arrayWithCapacity:count];
-            // FIXME: Adopt replacement where available.
-            ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             for (CFIndex i = 0; i < count; ++i)
                 [peerCertificateChain addObject:(__bridge id)SecTrustGetCertificateAtIndex(peerTrust, i)];
-            ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
         }
     }
     ASSERT(!peerCertificateChain || [peerCertificateChain isKindOfClass:[NSArray class]]);

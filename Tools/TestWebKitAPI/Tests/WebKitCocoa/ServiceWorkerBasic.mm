@@ -32,6 +32,7 @@
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
 #import "TestWKWebView.h"
+#import <WebCore/CertificateInfo.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKURLSchemeHandler.h>
@@ -2112,11 +2113,16 @@ static bool isTestServerTrust(SecTrustRef trust)
         return false;
     if (SecTrustGetCertificateCount(trust) != 1)
         return false;
-    // FIXME: Adopt replacement where available.
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (![adoptNS((NSString *)SecCertificateCopySubjectSummary(SecTrustGetCertificateAtIndex(trust, 0))) isEqualToString:@"Me"])
+
+#if HAVE(SEC_TRUST_COPY_CERTIFICATE_CHAIN)
+    auto chain = adoptCF(SecTrustCopyCertificateChain(trust));
+    auto certificate = checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(chain.get(), 0));
+#else
+    auto certificate = SecTrustGetCertificateAtIndex(trust, 0);
+#endif
+    if (![adoptNS((NSString *)SecCertificateCopySubjectSummary(certificate)) isEqualToString:@"Me"])
         return false;
-    ALLOW_DEPRECATED_DECLARATIONS_END
+
     return true;
 }
 

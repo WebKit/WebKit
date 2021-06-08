@@ -424,10 +424,12 @@ static void verifyCertificateAndPublicKey(SecTrustRef trust)
     });
     
     EXPECT_EQ(1, SecTrustGetCertificateCount(trust));
-    // FIXME: Adopt replacement where available.
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+
+#if HAVE(SEC_TRUST_COPY_CERTIFICATE_CHAIN)
+    auto certificate = adoptCF(CFArrayGetValueAtIndex(adoptCF(SecTrustCopyCertificateChain(trust)).get(), 0));
+#else
     auto certificate = adoptCF(SecCertificateCopyData(SecTrustGetCertificateAtIndex(trust, 0)));
-    ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
     compareData(certificate, {
         0x30, 0x82, 0x02, 0x58, 0x30, 0x82, 0x01, 0xc1, 0xa0, 0x03, 0x02, 0x01, 0x02, 0x02, 0x09, 0x00,
         0xfb, 0xb0, 0x4c, 0x2e, 0xab, 0x10, 0x9b, 0x0c, 0x30, 0x0d, 0x06, 0x09, 0x2a, 0x86, 0x48, 0x86,

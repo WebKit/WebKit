@@ -36,15 +36,19 @@
 namespace WebKit {
 using namespace WebCore;
 
-static SecCertificateRef leafCertificate(const CertificateInfo& certificateInfo)
+static RetainPtr<SecCertificateRef> leafCertificate(const CertificateInfo& certificateInfo)
 {
 #if HAVE(SEC_TRUST_SERIALIZATION)
-    // FIXME: Adopt replacement where available.
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+
+#if HAVE(SEC_TRUST_COPY_CERTIFICATE_CHAIN)
+    if (certificateInfo.type() == CertificateInfo::Type::Trust)
+        return checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(adoptCF(SecTrustCopyCertificateChain(certificateInfo.trust())).get(), 0));
+#else
     if (certificateInfo.type() == CertificateInfo::Type::Trust)
         return SecTrustGetCertificateAtIndex(certificateInfo.trust(), 0);
-    ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
+#endif // HAVE(SEC_TRUST_COPY_CERTIFICATE_CHAIN)
+
+#endif // HAVE(SEC_TRUST_SERIALIZATION)
     ASSERT(certificateInfo.type() == CertificateInfo::Type::CertificateChain);
     ASSERT(CFArrayGetCount(certificateInfo.certificateChain()));
     return checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(certificateInfo.certificateChain(), 0));
@@ -58,16 +62,17 @@ static NSArray *chain(const CertificateInfo& certificateInfo)
         if (count < 2)
             return nil;
 
+#if HAVE(SEC_TRUST_COPY_CERTIFICATE_CHAIN)
+        return (__bridge NSArray *)adoptCF(SecTrustCopyCertificateChain(certificateInfo.trust())).autorelease();
+#else
         NSMutableArray *array = [NSMutableArray array];
-        // FIXME: Adopt replacement where available.
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         for (CFIndex i = 1; i < count; ++i)
             [array addObject:(id)SecTrustGetCertificateAtIndex(certificateInfo.trust(), i)];
-        ALLOW_DEPRECATED_DECLARATIONS_END
 
         return array;
+#endif // HAVE(SEC_TRUST_COPY_CERTIFICATE_CHAIN)
     }
-#endif
+#endif // HAVE(SEC_TRUST_SERIALIZATION)
     ASSERT(certificateInfo.type() == CertificateInfo::Type::CertificateChain);
     CFIndex chainCount = CFArrayGetCount(certificateInfo.certificateChain());
     return chainCount > 1 ? [(__bridge NSArray *)certificateInfo.certificateChain() subarrayWithRange:NSMakeRange(1, chainCount - 1)] : nil;
@@ -80,7 +85,7 @@ WebCredential::WebCredential(WebCertificateInfo* certificateInfo)
 
     // The passed-in certificate chain includes the identity certificate at index 0, and additional certificates starting at index 1.
     SecIdentityRef identity;
-    OSStatus result = SecIdentityCreateWithCertificate(NULL, leafCertificate(certificateInfo->certificateInfo()), &identity);
+    OSStatus result = SecIdentityCreateWithCertificate(NULL, leafCertificate(certificateInfo->certificateInfo()).get(), &identity);
     if (result != errSecSuccess) {
         LOG_ERROR("Unable to create SecIdentityRef with certificate - %i", result);
         return;

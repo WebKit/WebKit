@@ -1,3 +1,14 @@
+2021-06-07  Alex Christensen  <achristensen@webkit.org>
+
+        Adopt SecTrustGetCertificateAtIndex replacement where available
+        https://bugs.webkit.org/show_bug.cgi?id=225893
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Challenge.mm:
+        (verifyCertificateAndPublicKey):
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
 2021-06-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Upstream WebKit support for Live Text
