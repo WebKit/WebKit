@@ -765,6 +765,11 @@ class WebkitFlatpak:
                 if e.errno != errno.EEXIST:
                     raise e
 
+        share_network_option = "--share=network"
+
+        if self.platform == 'WPE':
+            flatpak_command.append(share_network_option)
+
         if not building:
             flatpak_command.extend([
                 "--device=all",
@@ -841,7 +846,6 @@ class WebkitFlatpak:
             if var_tokens[0] in env_var_prefixes_to_keep or envvar in env_vars_to_keep or envvar_in_suffixes_to_keep(envvar) or (not os.environ.get('GST_BUILD_PATH') and var_tokens[0] == "GST"):
                 sandbox_environment[envvar] = value
 
-        share_network_option = "--share=network"
         remote_sccache_configs = set(["SCCACHE_REDIS", "SCCACHE_BUCKET", "SCCACHE_MEMCACHED",
                                       "SCCACHE_GCS_BUCKET", "SCCACHE_AZURE_CONNECTION_STRING",
                                       "WEBKIT_USE_SCCACHE"])
@@ -870,9 +874,7 @@ class WebkitFlatpak:
 
         if self.use_icecream and not skip_icc:
             _log.debug('Enabling the icecream compiler')
-            if share_network_option not in flatpak_command:
-                flatpak_command.append(share_network_option)
-            flatpak_command.append("--filesystem=home")
+            flatpak_command.extend([share_network_option, "--filesystem=home"])
 
             n_cores = multiprocessing.cpu_count() * 3
             _log.debug('Following icecream recommendation for the number of cores to use: %d' % n_cores)
@@ -952,11 +954,14 @@ class WebkitFlatpak:
         if display:
             flatpak_env["WEBKIT_FLATPAK_DISPLAY"] = display
 
+        # FIXME: Remove duplicate values from the flatpak command.
+        command = flatpak_command
+
         if gather_output:
-            return run_sanitized(flatpak_command, gather_output=True, ignore_stderr=True, env=flatpak_env)
+            return run_sanitized(command, gather_output=True, ignore_stderr=True, env=flatpak_env)
 
         try:
-            return self.execute_command(flatpak_command, stdout=stdout, env=flatpak_env, keep_signals=keep_signals)
+            return self.execute_command(command, stdout=stdout, env=flatpak_env, keep_signals=keep_signals)
         except KeyboardInterrupt:
             return 0
 

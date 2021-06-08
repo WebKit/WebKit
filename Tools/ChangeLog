@@ -1,3 +1,14 @@
+2021-06-08  Philippe Normand  <pnormand@igalia.com>
+
+        [Flatpak SDK] Enable network access in the WPE build sandbox
+        https://bugs.webkit.org/show_bug.cgi?id=225914
+
+        Reviewed by Michael Catanzaro.
+
+        * flatpak/flatpakutils.py:
+        (WebkitFlatpak.run_in_sandbox): Allow network access for WPE build jobs, so that CMake is
+        able to git checkout Cog from github.
+
 2021-06-08  Jean-Yves Avenard  <jya@apple.com>
 
         Update jya's email address
