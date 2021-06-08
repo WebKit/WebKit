@@ -464,6 +464,7 @@ bool ProxyObject::put(JSCell* cell, JSGlobalObject* globalObject, PropertyName p
 {
     VM& vm = globalObject->vm();
     slot.disableCaching();
+    slot.setIsTaintedByOpaqueObject();
 
     ProxyObject* thisObject = jsCast<ProxyObject*>(cell);
     auto performDefaultPut = [&] () {

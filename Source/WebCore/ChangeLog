@@ -1,3 +1,27 @@
+2021-06-07  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Unreviewed, reland r276592 with a fix for put() override in prototype chain of a JSProxy
+        https://bugs.webkit.org/show_bug.cgi?id=226185
+
+        Tests: js/dom/script-tests/reflect-set-onto-dom.js
+               imported/w3c/web-platform-tests/WebIDL/ecmascript-binding/interface-object-set-receiver.html
+               http/tests/security/cross-frame-access-object-getPrototypeOf-in-put.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::put):
+        (WebCore::JSDOMWindow::doPutPropertySecurityCheck): Deleted.
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::doPutPropertySecurityCheck): Deleted.
+        * bindings/js/JSRemoteDOMWindowCustom.cpp:
+        (WebCore::JSRemoteDOMWindow::put):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GeneratePut):
+        (GenerateHeader):
+        * bindings/scripts/test/JS/*: Updated.
+        * bridge/objc/objc_runtime.h:
+        * bridge/runtime_array.h:
+        * bridge/runtime_object.h:
+
 2021-06-07  Devin Rousso  <drousso@apple.com>
 
         Fix localized strings after r278202

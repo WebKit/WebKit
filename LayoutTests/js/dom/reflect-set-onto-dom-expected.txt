@@ -93,13 +93,13 @@ PASS Reflect.get(document.body.dataset, "cocoa") is "sweet"
 PASS Reflect.set(document.body.dataset, "cocoa-cappuccino", "sweet") threw exception SyntaxError: The string did not match the expected pattern..
 PASS Reflect.set(document.body.dataset, 0, "sweet") is true
 PASS Reflect.get(document.body.dataset, 0) is "sweet"
-DOMStringMap ignores the receiver. These putDelegate only work with ::put (not ::defineOwnProperty). So they behave as the special setter, we should not fallback to the OrdinarySet.
+DOMStringMap falls back to OrdinarySet if receiver is altered.
 PASS Reflect.set(document.body.dataset, "cocoa", "ok", receiver) is true
-PASS Reflect.get(document.body.dataset, "cocoa") is "ok"
-PASS Reflect.get(receiver, "cocoa") is undefined
+PASS Reflect.get(document.body.dataset, "cocoa") is "sweet"
+PASS Reflect.get(receiver, "cocoa") is "ok"
 PASS Reflect.set(document.body.dataset, 0, "ok", receiver) is true
-PASS Reflect.get(document.body.dataset, 0) is "ok"
-PASS Reflect.get(receiver, 0) is undefined
+PASS Reflect.get(document.body.dataset, 0) is "sweet"
+PASS Reflect.get(receiver, 0) is "ok"
 CustomIndexedSetter
 PASS Reflect.get(select, 0).value is "cocoa"
 PASS Reflect.get(select, "length") is 3
@@ -111,10 +111,10 @@ PASS Reflect.get(select, "length") is 42
 PASS Reflect.set(select, 44, option2) is true
 PASS Reflect.get(select, 44).value is "kilimanjaro"
 PASS Reflect.set(select, 20, "Kilimanjaro") threw exception TypeError: Type error.
-CustomIndexedSetter ignores the receiver. These methods only work with ::put (not ::defineOwnProperty). So they behave as the special setter, we should not fallback to the OrdinarySet.
+CustomIndexedSetter falls back to OrdinarySet if receiver is altered.
 PASS Reflect.set(select, 0, option3, receiver) is true
-PASS Reflect.get(receiver, 0) is undefined
-PASS Reflect.get(select, 0) is option3
+PASS Reflect.get(receiver, 0) is option3
+PASS Reflect.get(select, 0) is select.children[0]
 PASS successfullyParsed is true
 
 TEST COMPLETE

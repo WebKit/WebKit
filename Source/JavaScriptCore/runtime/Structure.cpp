@@ -190,11 +190,6 @@ void Structure::validateFlags()
     if (overridesGetOwnPropertySlotByIndex)
         RELEASE_ASSERT(typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero());
 
-    bool overridesPutPropertySecurityCheck =
-        methodTable.doPutPropertySecurityCheck != JSObject::doPutPropertySecurityCheck
-        && methodTable.doPutPropertySecurityCheck != JSCell::doPutPropertySecurityCheck;
-    RELEASE_ASSERT(overridesPutPropertySecurityCheck == typeInfo().hasPutPropertySecurityCheck());
-
     bool overridesGetOwnPropertyNames =
         methodTable.getOwnPropertyNames != JSObject::getOwnPropertyNames
         && methodTable.getOwnPropertyNames != JSCell::getOwnPropertyNames;
@@ -209,6 +204,11 @@ void Structure::validateFlags()
         methodTable.getPrototype != static_cast<MethodTable::GetPrototypeFunctionPtr>(JSObject::getPrototype)
         && methodTable.getPrototype != JSCell::getPrototype;
     RELEASE_ASSERT(overridesGetPrototype == typeInfo().overridesGetPrototype());
+
+    bool overridesPut =
+        methodTable.put != JSObject::put
+        && methodTable.put != JSCell::put;
+    RELEASE_ASSERT(overridesPut == typeInfo().overridesPut());
 }
 #else
 inline void Structure::validateFlags() { }

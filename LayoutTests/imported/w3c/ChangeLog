@@ -1,5 +1,16 @@
 2021-06-07  Alexey Shvayka  <shvaikalesh@gmail.com>
 
+        Unreviewed, reland r276592 with a fix for put() override in prototype chain of a JSProxy
+        https://bugs.webkit.org/show_bug.cgi?id=226185
+
+        * web-platform-tests/WebIDL/ecmascript-binding/global-object-implicit-this-value.any-expected.txt:
+        * web-platform-tests/WebIDL/ecmascript-binding/interface-object-set-receiver-expected.txt: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/interface-object-set-receiver.html: Added.
+        * web-platform-tests/WebIDL/ecmascript-binding/interface-prototype-constructor-set-receiver-expected.txt:
+        * web-platform-tests/WebIDL/ecmascript-binding/interface-prototype-constructor-set-receiver.html:
+
+2021-06-07  Alexey Shvayka  <shvaikalesh@gmail.com>
+
         Window should behave like a legacy platform object without indexed setter
         https://bugs.webkit.org/show_bug.cgi?id=225894
 

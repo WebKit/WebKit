@@ -26,28 +26,10 @@
 #include "config.h"
 #include "CustomGetterSetter.h"
 
-#include "JSCJSValueInlines.h"
-#include <wtf/Assertions.h>
-
 namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(CustomGetterSetter);
 
 const ClassInfo CustomGetterSetter::s_info = { "CustomGetterSetter", nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(CustomGetterSetter) };
-
-TriState callCustomSetter(JSGlobalObject* globalObject, CustomGetterSetter::CustomSetter setter, bool isAccessor, JSObject* slotBase, JSValue thisValue, JSValue value, PropertyName propertyName)
-{
-    if (isAccessor) {
-        if (!setter)
-            return TriState::False;
-        setter(globalObject, JSValue::encode(thisValue), JSValue::encode(value), propertyName);
-        // Always return true if there is a setter and it is observed as an accessor to users.
-        return TriState::True;
-    }
-
-    if (!setter)
-        return TriState::Indeterminate;
-    return triState(setter(globalObject, JSValue::encode(slotBase), JSValue::encode(value), propertyName));
-}
 
 } // namespace JSC

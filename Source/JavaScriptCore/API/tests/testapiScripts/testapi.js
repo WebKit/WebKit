@@ -246,6 +246,16 @@ shouldThrow("(0, MyObject[Symbol.toPrimitive])('default')");
 MyObject[Symbol.toPrimitive] = () => null;
 shouldBe("MyObject[Symbol.toPrimitive]('bar')", null);
 
+var MyObjectHeir = Object.create(MyObject);
+MyObjectHeir.throwOnSet = 22;
+var MyObjectHeirThrowOnSetDescriptor = Object.getOwnPropertyDescriptor(MyObjectHeir, "throwOnSet");
+shouldBe("typeof MyObjectHeirThrowOnSetDescriptor", "object");
+shouldBe("MyObjectHeirThrowOnSetDescriptor.value", 22);
+shouldBe("MyObjectHeirThrowOnSetDescriptor.writable", true);
+shouldBe("MyObjectHeirThrowOnSetDescriptor.enumerable", true);
+shouldBe("MyObjectHeirThrowOnSetDescriptor.configurable", true);
+shouldThrow("MyObject.throwOnSet = 22");
+
 derived = new Derived();
 
 shouldBe("derived instanceof Derived", true);

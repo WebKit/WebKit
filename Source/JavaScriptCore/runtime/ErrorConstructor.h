@@ -30,6 +30,7 @@ class GetterSetter;
 class ErrorConstructor final : public InternalFunction {
 public:
     using Base = InternalFunction;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesPut;
 
     static ErrorConstructor* create(VM& vm, Structure* structure, ErrorPrototype* errorPrototype, GetterSetter*)
     {

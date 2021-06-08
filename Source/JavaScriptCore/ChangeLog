@@ -1,5 +1,114 @@
 2021-06-07  Alexey Shvayka  <shvaikalesh@gmail.com>
 
+        Unreviewed, reland r276592 with a fix for put() override in prototype chain of a JSProxy
+        https://bugs.webkit.org/show_bug.cgi?id=226185
+
+        The API test added in r278366 revealed a flaw in JSObject::definePropertyOnReceiver()
+        that caused putDirectInternal() to be performed on a JSProxy instead of it's target.
+        Remedies that via a type check, ensuring the test and iOS apps are functional.
+
+        The issue was originally missed because the prototype chain of a global object is immutable
+        and none of the global object's prototypes override put(). OpaqueJSClass::prototype() sets
+        the [[Prototype]] directly, ignoring the IsImmutablePrototypeExoticObject type info flag.
+
+        Also, excludes an invariant from the original patch that required put() to be overriden
+        when implementing custom [[DefineOwnProperty]]. It is now broken by WindowProperties object.
+
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::put):
+        * API/tests/testapiScripts/testapi.js:
+        * debugger/DebuggerScope.h:
+        * runtime/ClassInfo.h:
+        * runtime/ClonedArguments.h:
+        * runtime/CustomGetterSetter.cpp:
+        (JSC::callCustomSetter): Deleted.
+        * runtime/CustomGetterSetter.h:
+        * runtime/ErrorConstructor.h:
+        * runtime/ErrorInstance.h:
+        * runtime/GenericArguments.h:
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::put):
+        * runtime/GetterSetter.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::put):
+        * runtime/JSArray.h:
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::put): Deleted.
+        * runtime/JSArrayBufferView.h:
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::putToPrimitive):
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::doPutPropertySecurityCheck): Deleted.
+        * runtime/JSCell.h:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::put):
+        * runtime/JSFunction.h:
+        * runtime/JSGenericTypedArrayView.h:
+        * runtime/JSGlobalLexicalEnvironment.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::put):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSLexicalEnvironment.h:
+        * runtime/JSModuleEnvironment.h:
+        * runtime/JSModuleNamespaceObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertySlot):
+        (JSC::JSObject::putInlineSlow):
+        (JSC::definePropertyOnReceiverSlow):
+        (JSC::JSObject::definePropertyOnReceiver):
+        (JSC::JSObject::putInlineFastReplacingStaticPropertyIfNeeded):
+        (JSC::JSObject::doPutPropertySecurityCheck): Deleted.
+        (JSC::JSObject::prototypeChainMayInterceptStoreTo): Deleted.
+        * runtime/JSObject.h:
+        (JSC::JSObject::putByIndexInline):
+        (JSC::JSObject::hasNonReifiedStaticProperties):
+        (JSC::JSObject::getOwnPropertySlot):
+        (JSC::JSObject::putDirect):
+        (JSC::JSObject::doPutPropertySecurityCheck): Deleted.
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::canPerformFastPutInlineExcludingProto):
+        (JSC::JSObject::putInlineForJSObject):
+        (JSC::JSObject::putInlineFast):
+        (JSC::JSObject::putDirectInternal):
+        * runtime/JSProxy.h:
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::hasStaticPropertyTable const):
+        (JSC::TypeInfo::overridesPut const):
+        (JSC::TypeInfo::getOwnPropertySlotMayBeWrongAboutDontEnum const):
+        (JSC::TypeInfo::hasPutPropertySecurityCheck const): Deleted.
+        * runtime/Lookup.h:
+        (JSC::putEntry): Deleted.
+        (JSC::lookupPut): Deleted.
+        * runtime/PropertySlot.h:
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::put):
+        * runtime/ProxyObject.h:
+        * runtime/PutPropertySlot.h:
+        (JSC::PutPropertySlot::PutPropertySlot):
+        (JSC::PutPropertySlot::context const):
+        (JSC::PutPropertySlot::isTaintedByOpaqueObject const):
+        (JSC::PutPropertySlot::setIsTaintedByOpaqueObject):
+        * runtime/ReflectObject.cpp:
+        (JSC::JSC_DEFINE_HOST_FUNCTION):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::put):
+        * runtime/RegExpObject.h:
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::put):
+        * runtime/StringObject.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        (JSC::StringPrototype::create):
+        * runtime/StringPrototype.h:
+        * runtime/Structure.cpp:
+        (JSC::Structure::validateFlags):
+        * runtime/Structure.h:
+        (JSC::Structure::hasNonReifiedStaticProperties const):
+        * tools/JSDollarVM.cpp:
+
+2021-06-07  Alexey Shvayka  <shvaikalesh@gmail.com>
+
         Introduce LexicalScopeFeatures to enable future bytecode optimizations
         https://bugs.webkit.org/show_bug.cgi?id=224072
 

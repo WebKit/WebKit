@@ -1,3 +1,10 @@
+2021-06-07  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Unreviewed, reland r276592 with a fix for put() override in prototype chain of a JSProxy
+        https://bugs.webkit.org/show_bug.cgi?id=226185
+
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+
 2021-06-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Upstream WebKit support for Live Text

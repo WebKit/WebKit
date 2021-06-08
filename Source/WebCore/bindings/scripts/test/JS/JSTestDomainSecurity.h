@@ -39,7 +39,6 @@ public:
     static JSC::JSObject* createPrototype(JSC::VM&, JSDOMGlobalObject&);
     static JSC::JSObject* prototype(JSC::VM&, JSDOMGlobalObject&);
     static TestDomainSecurity* toWrapped(JSC::VM&, JSC::JSValue);
-    static void doPutPropertySecurityCheck(JSC::JSObject*, JSC::JSGlobalObject*, JSC::PropertyName, JSC::PutPropertySlot&);
     static void destroy(JSC::JSCell*);
 
     DECLARE_INFO;
@@ -59,7 +58,7 @@ public:
     static JSC::IsoSubspace* subspaceForImpl(JSC::VM& vm);
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 public:
-    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasPutPropertySecurityCheck | JSC::HasStaticPropertyTable;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 protected:
     JSTestDomainSecurity(JSC::Structure*, JSDOMGlobalObject&, Ref<TestDomainSecurity>&&);
 
