@@ -1489,6 +1489,11 @@ unsigned ByteCodeParser::inliningCost(CallVariant callee, int argumentCountInclu
         return UINT_MAX;
     }
 
+    if (codeBlock->globalObject() != m_codeBlock->globalObject()) {
+        VERBOSE_LOG("    Failing because global object does not match.\n");
+        return UINT_MAX;
+    }
+
     if (!Options::useArityFixupInlining()) {
         if (codeBlock->numParameters() > argumentCountIncludingThis) {
             VERBOSE_LOG("    Failing because of arity mismatch.\n");

@@ -1,3 +1,14 @@
+2021-06-08  Russell Epstein  <repstein@apple.com>
+
+        Apply patch. rdar://problem/78628017
+
+    2021-05-28  Filip Pizlo  <fpizlo@apple.com>
+
+            rdar://78628017 (Disable cross-global-object inlining)
+
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::inliningCost):
+
 2021-04-26  Russell Epstein  <repstein@apple.com>
 
         Cherry-pick r276527. rdar://problem/77160646
