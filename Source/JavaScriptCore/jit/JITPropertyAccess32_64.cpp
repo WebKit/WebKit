@@ -1014,7 +1014,7 @@ void JIT::emit_op_resolve_scope(const Instruction* currentInstruction)
         case Dynamic:
             addSlowCase(jump());
             break;
-        case LocalClosureVar:
+        case ResolvedClosureVar:
         case UnresolvedProperty:
         case UnresolvedPropertyWithVarInjectionChecks:
             RELEASE_ASSERT_NOT_REACHED();
@@ -1153,7 +1153,7 @@ void JIT::emit_op_get_from_scope(const Instruction* currentInstruction)
             addSlowCase(jump());
             break;
         case ModuleVar:
-        case LocalClosureVar:
+        case ResolvedClosureVar:
         case UnresolvedProperty:
         case UnresolvedPropertyWithVarInjectionChecks:
             RELEASE_ASSERT_NOT_REACHED();
@@ -1299,7 +1299,7 @@ void JIT::emit_op_put_to_scope(const Instruction* currentInstruction)
                 emitPutGlobalVariable(bitwise_cast<JSValue*>(*operandSlot), value, metadata.m_watchpointSet);
             break;
         }
-        case LocalClosureVar:
+        case ResolvedClosureVar:
         case ClosureVar:
         case ClosureVarWithVarInjectionChecks:
             emitWriteBarrier(scope, value, ShouldFilterValue);

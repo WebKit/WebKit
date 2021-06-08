@@ -1705,7 +1705,7 @@ void JIT::emit_op_resolve_scope(const Instruction* currentInstruction)
         case Dynamic:
             addSlowCase(jump());
             break;
-        case LocalClosureVar:
+        case ResolvedClosureVar:
         case UnresolvedProperty:
         case UnresolvedPropertyWithVarInjectionChecks:
             RELEASE_ASSERT_NOT_REACHED();
@@ -1885,7 +1885,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpResolveScopeThunk(ResolveTy
         case Dynamic:
             slowCase.append(jump());
             break;
-        case LocalClosureVar:
+        case ResolvedClosureVar:
         case ModuleVar:
         case UnresolvedProperty:
         case UnresolvedPropertyWithVarInjectionChecks:
@@ -2093,7 +2093,7 @@ void JIT::emit_op_get_from_scope(const Instruction* currentInstruction)
         case Dynamic:
             addSlowCase(jump());
             break;
-        case LocalClosureVar:
+        case ResolvedClosureVar:
         case ModuleVar:
         case UnresolvedProperty:
         case UnresolvedPropertyWithVarInjectionChecks:
@@ -2307,7 +2307,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpGetFromScopeThunk(ResolveTy
         case Dynamic:
             slowCase.append(jump());
             break;
-        case LocalClosureVar:
+        case ResolvedClosureVar:
         case ModuleVar:
         case UnresolvedProperty:
         case UnresolvedPropertyWithVarInjectionChecks:
@@ -2520,7 +2520,7 @@ void JIT::emit_op_put_to_scope(const Instruction* currentInstruction)
             emitWriteBarrier(constantScope, value, ShouldFilterValue);
             break;
         }
-        case LocalClosureVar:
+        case ResolvedClosureVar:
         case ClosureVar:
         case ClosureVarWithVarInjectionChecks:
             emitVarInjectionCheck(needsVarInjectionChecks(resolveType));

@@ -4246,7 +4246,7 @@ bool ByteCodeParser::needsDynamicLookup(ResolveType type, OpcodeID opcode)
     case GlobalProperty:    
     case GlobalLexicalVar:
     case ClosureVar:
-    case LocalClosureVar:
+    case ResolvedClosureVar:
     case ModuleVar:
         return false;
 
@@ -7643,7 +7643,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 case ModuleVar:
                     lexicalEnvironment = metadata.m_lexicalEnvironment.get();
                     break;
-                case LocalClosureVar:
+                case ResolvedClosureVar:
                 case ClosureVar:
                 case ClosureVarWithVarInjectionChecks:
                     symbolTable = metadata.m_symbolTable.get();
@@ -7690,7 +7690,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 set(bytecode.m_dst, weakJSConstant(lexicalEnvironment));
                 break;
             }
-            case LocalClosureVar:
+            case ResolvedClosureVar:
             case ClosureVar:
             case ClosureVarWithVarInjectionChecks: {
                 Node* localBase = get(bytecode.m_scope);
@@ -7871,7 +7871,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 set(bytecode.m_dst, value);
                 break;
             }
-            case LocalClosureVar:
+            case ResolvedClosureVar:
             case ClosureVar:
             case ClosureVarWithVarInjectionChecks: {
                 Node* scopeNode = get(bytecode.m_scope);
@@ -7929,7 +7929,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
                 getPutInfo = metadata.m_getPutInfo;
                 resolveType = getPutInfo.resolveType();
-                if (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks || resolveType == LocalClosureVar || resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)
+                if (resolveType == GlobalVar || resolveType == GlobalVarWithVarInjectionChecks || resolveType == ResolvedClosureVar || resolveType == GlobalLexicalVar || resolveType == GlobalLexicalVarWithVarInjectionChecks)
                     watchpoints = metadata.m_watchpointSet;
                 else if (resolveType != UnresolvedProperty && resolveType != UnresolvedPropertyWithVarInjectionChecks)
                     structure = metadata.m_structure.get();
@@ -7995,7 +7995,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 addToGraph(Phantom, get(bytecode.m_scope));
                 break;
             }
-            case LocalClosureVar:
+            case ResolvedClosureVar:
             case ClosureVar:
             case ClosureVarWithVarInjectionChecks: {
                 Node* scopeNode = get(bytecode.m_scope);

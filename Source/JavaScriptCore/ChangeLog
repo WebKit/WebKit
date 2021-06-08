@@ -1,3 +1,70 @@
+2021-06-06  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use ResolvedClosureVar to get brand from scope
+        https://bugs.webkit.org/show_bug.cgi?id=226677
+        rdar://78802869
+
+        Reviewed by Saam Barati.
+
+        Private brand lookup is doing wrong way to get scope.
+
+            1. op_resolve_scope with private name (e.g. #x)
+            2. then, doing op_get_from_scope with (1)'s scope with different name (e.g. @privateBrand)
+
+        This is wrong in JSC. We resolve scope at link-time in CodeBlock. So we need to ensure that both op_resolve_scope and op_get_from_scope
+        starts with the current scope-register. As a result, private-brand lookup is broken right now. Let's see the buggy case.
+
+            class D {
+              #x() {}
+              m() {
+                class C {
+                  #yy;
+                  #z() { }
+                  a() {
+                    this.#x(); // <===== This point.
+                  }
+                }
+                let c = new C();
+                c.a();
+              }
+            }
+
+        In the above point, we first lookup the scope with #x, and we get the D's class-scope. But our get_from_scope is using privateBrand, and
+        privateBrand property exists too in C's class-scope too since C also has #yy and #z. As a result, CodeBlock linking configures the offset for
+        C's class-scope in get_from_scope. And this offset is different from D's class-scope's privateBrand.
+
+        Only allowed case for the above usage is ResolvedClosureVar. And generatorification uses it too. In this patch,
+
+        1. We ensure that class-scope (with private name) must have @privateBrand and @privateClassBrand with offset 1 and 0.
+        2. Use ResolvedClosureVar with the above pre-defined offset
+
+        Since CodeBlock's linking does not resolve the scope for get_from_scope if it is ResolvedClosureVar, we can just perform the desired ResolvedClosureVar lookup
+        with the given scope with the compiled offset.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::instantiateLexicalVariables):
+        (JSC::BytecodeGenerator::pushLexicalScope):
+        (JSC::BytecodeGenerator::pushLexicalScopeInternal):
+        (JSC::BytecodeGenerator::emitCreatePrivateBrand):
+        (JSC::BytecodeGenerator::emitGetPrivateBrand):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BaseDotNode::emitGetPropertyValue):
+        (JSC::BaseDotNode::emitPutProperty):
+        (JSC::PostfixNode::emitDot):
+        (JSC::PrefixNode::emitDot):
+        (JSC::InNode::emitBytecode):
+        (JSC::BlockNode::emitBytecode):
+        (JSC::ForNode::emitBytecode):
+        (JSC::ForInNode::emitBytecode):
+        (JSC::ForOfNode::emitBytecode):
+        (JSC::SwitchNode::emitBytecode):
+        (JSC::ClassExprNode::emitBytecode):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseClass):
+        * parser/VariableEnvironment.h:
+
 2021-06-07  Alexey Shvayka  <shvaikalesh@gmail.com>
 
         Unreviewed, reland r276592 with a fix for put() override in prototype chain of a JSProxy

@@ -3045,11 +3045,11 @@ JSC_DEFINE_JIT_OPERATION(operationPutToScope, void, (JSGlobalObject* globalObjec
     // ModuleVar does not keep the scope register value alive in DFG.
     ASSERT(getPutInfo.resolveType() != ModuleVar);
 
-    if (getPutInfo.resolveType() == LocalClosureVar) {
+    if (getPutInfo.resolveType() == ResolvedClosureVar) {
         JSLexicalEnvironment* environment = jsCast<JSLexicalEnvironment*>(scope);
         environment->variableAt(ScopeOffset(metadata.m_operand)).set(vm, environment, value);
         if (WatchpointSet* set = metadata.m_watchpointSet)
-            set->touch(vm, "Executed op_put_scope<LocalClosureVar>");
+            set->touch(vm, "Executed op_put_scope<ResolvedClosureVar>");
         return;
     }
 

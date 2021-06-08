@@ -840,8 +840,8 @@ namespace JSC {
         static constexpr bool thunkIsUsedForOpGetFromScope(ResolveType resolveType)
         {
             // GlobalVar because it is more efficient to emit inline than use a thunk.
-            // LocalClosureVar and ModuleVar because we don't use these types with op_get_from_scope.
-            return !(resolveType == GlobalVar || resolveType == LocalClosureVar || resolveType == ModuleVar);
+            // ResolvedClosureVar and ModuleVar because we don't use these types with op_get_from_scope.
+            return !(resolveType == GlobalVar || resolveType == ResolvedClosureVar || resolveType == ModuleVar);
         }
 
 #define DECLARE_GET_FROM_SCOPE_GENERATOR(resolveType) \
@@ -854,8 +854,8 @@ namespace JSC {
         static constexpr bool thunkIsUsedForOpResolveScope(ResolveType resolveType)
         {
             // ModuleVar because it is more efficient to emit inline than use a thunk.
-            // LocalClosureVar because we don't use these types with op_resolve_scope.
-            return !(resolveType == LocalClosureVar || resolveType == ModuleVar);
+            // ResolvedClosureVar because we don't use these types with op_resolve_scope.
+            return !(resolveType == ResolvedClosureVar || resolveType == ModuleVar);
         }
 
 #define DECLARE_RESOLVE_SCOPE_GENERATOR(resolveType) \

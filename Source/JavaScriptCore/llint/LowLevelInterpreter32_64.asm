@@ -2582,7 +2582,7 @@ llintOpWithMetadata(op_put_to_scope, OpPutToScope, macro (size, get, dispatch, m
         storei t3, JSLexicalEnvironment_variables + PayloadOffset[t0, t1, 8]
     end
 
-    macro putLocalClosureVar()
+    macro putResolvedClosureVar()
         get(m_value, t1)
         loadConstantOrVariable(size, t1, t2, t3)
         loadp OpPutToScope::Metadata::m_watchpointSet[t5], t1
@@ -2609,10 +2609,10 @@ llintOpWithMetadata(op_put_to_scope, OpPutToScope, macro (size, get, dispatch, m
     loadi OpPutToScope::Metadata::m_getPutInfo + GetPutInfo::m_operand[t5], t0
     andi ResolveTypeMask, t0
 
-#pLocalClosureVar:
-    bineq t0, LocalClosureVar, .pGlobalProperty
+#pResolvedClosureVar:
+    bineq t0, ResolvedClosureVar, .pGlobalProperty
     loadVariable(get, m_scope, t2, t1, t0)
-    putLocalClosureVar()
+    putResolvedClosureVar()
     writeBarrierOnOperands(size, get, m_scope, m_value)
     dispatch()
 

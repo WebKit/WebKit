@@ -3146,25 +3146,26 @@ parseMethod:
     info.endOffset = tokenLocation().endOffset - 1;
     consumeOrFail(CLOSEBRACE, "Expected a closing '}' after a class body");
 
-    if (declaresPrivateMethod || declaresPrivateAccessor) {
-        Identifier privateBrandIdentifier = m_vm.propertyNames->builtinNames().privateBrandPrivateName();
-        DeclarationResultMask declarationResult = classScope->declareLexicalVariable(&privateBrandIdentifier, true);
-        ASSERT_UNUSED(declarationResult, declarationResult == DeclarationResult::Valid);
-        classScope->useVariable(&privateBrandIdentifier, false);
-        classScope->addClosedVariableCandidateUnconditionally(privateBrandIdentifier.impl());
+    if (declaresPrivateMethod || declaresPrivateAccessor || declaresStaticPrivateMethod || declaresStaticPrivateAccessor) {
+        {
+            Identifier privateBrandIdentifier = m_vm.propertyNames->builtinNames().privateBrandPrivateName();
+            DeclarationResultMask declarationResult = classScope->declareLexicalVariable(&privateBrandIdentifier, true);
+            ASSERT_UNUSED(declarationResult, declarationResult == DeclarationResult::Valid);
+            classScope->useVariable(&privateBrandIdentifier, false);
+            classScope->addClosedVariableCandidateUnconditionally(privateBrandIdentifier.impl());
+        }
+        {
+            Identifier privateClassBrandIdentifier = m_vm.propertyNames->builtinNames().privateClassBrandPrivateName();
+            DeclarationResultMask declarationResult = classScope->declareLexicalVariable(&privateClassBrandIdentifier, true);
+            ASSERT_UNUSED(declarationResult, declarationResult == DeclarationResult::Valid);
+            classScope->useVariable(&privateClassBrandIdentifier, false);
+            classScope->addClosedVariableCandidateUnconditionally(privateClassBrandIdentifier.impl());
+        }
     }
 
     if constexpr (std::is_same_v<TreeBuilder, ASTBuilder>) {
         if (classElements)
             classElements->setHasPrivateAccessors(declaresPrivateAccessor || declaresStaticPrivateAccessor);
-    }
-
-    if (declaresStaticPrivateMethod || declaresPrivateAccessor) {
-        Identifier privateClassBrandIdentifier = m_vm.propertyNames->builtinNames().privateClassBrandPrivateName();
-        DeclarationResultMask declarationResult = classScope->declareLexicalVariable(&privateClassBrandIdentifier, true);
-        ASSERT_UNUSED(declarationResult, declarationResult == DeclarationResult::Valid);
-        classScope->useVariable(&privateClassBrandIdentifier, false);
-        classScope->addClosedVariableCandidateUnconditionally(privateClassBrandIdentifier.impl());
     }
 
     if (Options::usePrivateClassFields()) {

@@ -44,7 +44,7 @@ enum ResolveMode {
     v(GlobalVar) \
     v(GlobalLexicalVar) \
     v(ClosureVar) \
-    v(LocalClosureVar) \
+    v(ResolvedClosureVar) \
     v(ModuleVar) \
     v(GlobalPropertyWithVarInjectionChecks) \
     v(GlobalVarWithVarInjectionChecks) \
@@ -60,7 +60,7 @@ enum ResolveType : unsigned {
     GlobalVar,
     GlobalLexicalVar,
     ClosureVar,
-    LocalClosureVar,
+    ResolvedClosureVar,
     ModuleVar,
 
     // Ditto, but at least one intervening scope used non-strict eval, which
@@ -102,7 +102,7 @@ ALWAYS_INLINE const char* resolveTypeName(ResolveType type)
         "GlobalVar",
         "GlobalLexicalVar",
         "ClosureVar",
-        "LocalClosureVar",
+        "ResolvedClosureVar",
         "ModuleVar",
         "GlobalPropertyWithVarInjectionChecks",
         "GlobalVarWithVarInjectionChecks",
@@ -151,7 +151,7 @@ ALWAYS_INLINE ResolveType makeType(ResolveType type, bool needsVarInjectionCheck
     case GlobalLexicalVar:
         return GlobalLexicalVarWithVarInjectionChecks;
     case ClosureVar:
-    case LocalClosureVar:
+    case ResolvedClosureVar:
         return ClosureVarWithVarInjectionChecks;
     case UnresolvedProperty:
         return UnresolvedPropertyWithVarInjectionChecks;
@@ -176,7 +176,7 @@ ALWAYS_INLINE bool needsVarInjectionChecks(ResolveType type)
     case GlobalVar:
     case GlobalLexicalVar:
     case ClosureVar:
-    case LocalClosureVar:
+    case ResolvedClosureVar:
     case ModuleVar:
     case UnresolvedProperty:
         return false;
