@@ -280,6 +280,11 @@ String makeThisTypeErrorMessage(const char* interfaceName, const char* functionN
     return makeString("Can only call ", interfaceName, '.', functionName, " on instances of ", interfaceName);
 }
 
+String makeUnsupportedIndexedSetterErrorMessage(const char* interfaceName)
+{
+    return makeString("Failed to set an indexed property on ", interfaceName, ": Indexed property setter is not supported.");
+}
+
 EncodedJSValue throwThisTypeError(JSC::JSGlobalObject& lexicalGlobalObject, JSC::ThrowScope& scope, const char* interfaceName, const char* functionName)
 {
     return throwTypeError(lexicalGlobalObject, scope, makeThisTypeErrorMessage(interfaceName, functionName));

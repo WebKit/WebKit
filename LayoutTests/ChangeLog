@@ -1,3 +1,21 @@
+2021-06-07  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Window should behave like a legacy platform object without indexed setter
+        https://bugs.webkit.org/show_bug.cgi?id=225894
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/Window/orphaned-frame-access.html:
+        * fast/frames/iframe-detached-window-still-writable-eval-expected.txt:
+        * fast/frames/iframe-detached-window-still-writable-eval.html:
+        * http/tests/security/cross-frame-access-delete-expected.txt:
+        * http/tests/security/resources/cross-frame-iframe-for-delete-test.html:
+        * js/dom/dfg-ensure-array-storage-on-window-expected.txt:
+        * js/dom/indexed-setter-on-global-object-expected.txt:
+        * js/dom/script-tests/dfg-ensure-array-storage-on-window.js:
+        * js/dom/script-tests/dfg-ensure-non-array-array-storage-on-window.js:
+        * js/dom/script-tests/indexed-setter-on-global-object.js:
+
 2021-06-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Upstream WebKit support for Live Text

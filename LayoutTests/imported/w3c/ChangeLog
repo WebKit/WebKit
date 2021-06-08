@@ -1,3 +1,17 @@
+2021-06-07  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Window should behave like a legacy platform object without indexed setter
+        https://bugs.webkit.org/show_bug.cgi?id=225894
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/html/browsers/the-window-object/window-indexed-properties-delete-no-cache-expected.txt: Added.
+        * web-platform-tests/html/browsers/the-window-object/window-indexed-properties-delete-no-cache.html: Added.
+        * web-platform-tests/html/browsers/the-window-object/window-indexed-properties-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/window-indexed-properties-strict-expected.txt:
+        * web-platform-tests/html/browsers/the-window-object/window-indexed-properties-strict.html:
+        * web-platform-tests/html/browsers/the-window-object/window-indexed-properties.html:
+
 2021-06-07  Imanol Fernandez  <ifernandez@igalia.com>
 
         Use 3D points to map the WebXRBoundedReferenceSpace bounds transform

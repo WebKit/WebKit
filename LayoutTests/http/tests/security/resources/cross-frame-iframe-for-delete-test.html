@@ -26,7 +26,7 @@
             log("\n----- tests for deleting the properties of window, window.history, and window.location cross-domain -----\n");
 
             shouldBe("window.existingProperty", "'test value'");
-            shouldBe("window[1]", "'test value'");
+            shouldBe("window[1]", "undefined");
             shouldBe("window.history.existingProperty", "'test value'");
             shouldBe("window.history[1]", "'test value'");
             shouldBe("window.location.existingProperty", "'test value'");

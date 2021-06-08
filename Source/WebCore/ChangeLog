@@ -1,3 +1,55 @@
+2021-06-07  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Window should behave like a legacy platform object without indexed setter
+        https://bugs.webkit.org/show_bug.cgi?id=225894
+
+        Reviewed by Darin Adler.
+
+        This change fixes major interop issue by disallowing expando indexed properties on WindowProxy,
+        raising TypeError only when needed, which aligns WebKit with Blink and Gecko.
+
+        While [[DefineOwnProperty]] [1] and [[Delete]] [2] methods of WindowProxy are implemented
+        precisely per spec, current [[Set]] [3] algorithm seems to allow invoking setters from
+        the prototype chain. Blink and Gecko implement stricter semantics by failing early rather
+        than traversing the prototype chain, as does this patch.
+
+        To avoid breaking native apps that either add expando indexed properties to WindowProxy, or
+        more likely read / write indices of sloppy function's |this| value, which accidently happens
+        to be a WindowProxy, the new behavior is introduced only for web content and newly-built apps.
+
+        Since unlike putByIndex(), deletePropertyByIndex() might be invoked with UINT_MAX, which is
+        not an array index [4], isIndex() check is required. In future, JSC will be fixed to remove
+        such checks from all indexed overrides.
+
+        DeletePropertySlot::disableCaching() is not called because indexed deletes are not currently
+        repatched, and once they are, cacheability should be inferred from added type info flags.
+
+        Also, removes extra jsDOMWindowGetOwnPropertySlotRestrictedAccess() call for indices, which
+        is missing from the spec [5]; this is unobservable.
+
+        [1] https://html.spec.whatwg.org/multipage/window-object.html#windowproxy-defineownproperty (step 2.1)
+        [2] https://html.spec.whatwg.org/multipage/window-object.html#windowproxy-delete (step 2.1)
+        [3] https://html.spec.whatwg.org/multipage/window-object.html#windowproxy-set (step 3)
+        [4] https://tc39.es/ecma262/#array-index
+        [5] https://html.spec.whatwg.org/multipage/window-object.html#windowproxy-getownproperty (step 2.5.2)
+
+        Tests: imported/w3c/web-platform-tests/html/browsers/the-window-object/window-indexed-properties-delete-no-cache.html
+               imported/w3c/web-platform-tests/html/browsers/the-window-object/window-indexed-properties.html
+               imported/w3c/web-platform-tests/html/browsers/the-window-object/window-indexed-properties-strict.html
+
+        * bindings/js/JSDOMExceptionHandling.cpp:
+        (WebCore::makeUnsupportedIndexedSetterErrorMessage):
+        * bindings/js/JSDOMExceptionHandling.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::allowsLegacyExpandoIndexedProperties):
+        (WebCore::JSDOMWindow::getOwnPropertySlotByIndex): Remove outdated comments.
+        (WebCore::JSDOMWindow::put):
+        (WebCore::JSDOMWindow::putByIndex): Release scope when calling Base::putByIndex(), which could throw.
+        (WebCore::JSDOMWindow::deleteProperty):
+        (WebCore::JSDOMWindow::deletePropertyByIndex):
+        (WebCore::JSDOMWindow::defineOwnProperty):
+        * platform/cocoa/VersionChecks.h:
+
 2021-06-07  Chris Dumez  <cdumez@apple.com>
 
         Drop legacy MainThreadTaskQueue & EventLoopTaskQueue classes

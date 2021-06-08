@@ -23,4 +23,4 @@ while (!dfgCompiled({f:foo, compiles:2}))
 var w = this;
 w[0] = 1;
 w.length = 1;
-shouldBe("foo(w)", "1");
+shouldBe("foo(w)", "NaN");
