@@ -42,8 +42,8 @@ messages -> RemoteSourceBufferProxy NotRefCounted {
     ClearTrackBuffers()
     SetAllTrackBuffersNeedRandomAccess()
     RemoveCodedFrames(MediaTime start, MediaTime end, MediaTime currentTime, bool isEnded) -> (WebCore::PlatformTimeRanges buffered, uint64_t totalTrackBufferSizeInBytes) Async
-    EvictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, MediaTime currentTime, MediaTime duration, bool isEnded) -> (bool bufferFull, uint64_t totalTrackBufferSizeInBytes) Synchronous
-    ReenqueueMediaIfNeeded(MediaTime currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize) -> (bool bufferFull) Async
+    EvictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, MediaTime currentTime, MediaTime duration, bool isEnded) -> (uint64_t totalTrackBufferSizeInBytes) Synchronous
+    ReenqueueMediaIfNeeded(MediaTime currentMediaTime)
     SetGroupStartTimestamp(MediaTime timestamp)
     SetGroupStartTimestampToEndTimestamp()
     SetShouldGenerateTimestamps(bool shouldGenerateTimestamps)

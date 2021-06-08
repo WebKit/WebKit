@@ -35,6 +35,7 @@
 #include "SampleMap.h"
 #include "SourceBufferPrivateClient.h"
 #include "TimeRanges.h"
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/MediaTime.h>
 #include <wtf/StringPrintStream.h>
 
@@ -419,7 +420,7 @@ void SourceBufferPrivate::reenqueueMediaForTime(TrackBuffer& trackBuffer, const 
     trackBuffer.needsReenqueueing = false;
 }
 
-void SourceBufferPrivate::reenqueueMediaIfNeeded(const MediaTime& currentTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize)
+void SourceBufferPrivate::reenqueueMediaIfNeeded(const MediaTime& currentTime)
 {
     for (auto& trackBufferPair : m_trackBufferMap) {
         TrackBuffer& trackBuffer = trackBufferPair.value;
@@ -431,9 +432,6 @@ void SourceBufferPrivate::reenqueueMediaIfNeeded(const MediaTime& currentTime, u
         } else
             provideMediaData(trackBuffer, trackID);
     }
-
-    if (totalTrackBufferSizeInBytes() + pendingAppendDataCapacity > maximumBufferSize)
-        m_bufferFull = true;
 }
 
 static WARN_UNUSED_RETURN bool decodeTimeComparator(const PresentationOrderSampleMap::MapType::value_type& a, const PresentationOrderSampleMap::MapType::value_type& b)
@@ -628,7 +626,7 @@ void SourceBufferPrivate::removeCodedFrames(const MediaTime& start, const MediaT
     completionHandler();
 }
 
-void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded)
+void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded)
 {
     // 3.5.13 Coded Frame Eviction Algorithm
     // http://www.w3.org/TR/media-source/#sourcebuffer-coded-frame-eviction
@@ -639,7 +637,7 @@ void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t pendin
     // This algorithm is run to free up space in this source buffer when new data is appended.
     // 1. Let new data equal the data that is about to be appended to this SourceBuffer.
     // 2. If the buffer full flag equals false, then abort these steps.
-    if (!m_bufferFull && totalTrackBufferSizeInBytes() + pendingAppendDataCapacity + newDataSize < maximumBufferSize)
+    if (!isBufferFullFor(newDataSize, maximumBufferSize))
         return;
 
     // 3. Let removal ranges equal a list of presentation time ranges that can be evicted from
@@ -661,8 +659,7 @@ void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t pendin
         // 4. For each range in removal ranges, run the coded frame removal algorithm with start and
         // end equal to the removal range start and end timestamp respectively.
         removeCodedFrames(rangeStart, std::min(rangeEnd, maximumRangeEnd), currentTime, isEnded);
-        if (totalTrackBufferSizeInBytes() + pendingAppendDataCapacity + newDataSize < maximumBufferSize) {
-            m_bufferFull = false;
+        if (!isBufferFullFor(newDataSize, maximumBufferSize)) {
             break;
         }
 
@@ -670,7 +667,7 @@ void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t pendin
         rangeEnd += thirtySeconds;
     }
 
-    if (!m_bufferFull) {
+    if (!isBufferFullFor(newDataSize, maximumBufferSize)) {
 #if !RELEASE_LOG_DISABLED
         DEBUG_LOG(LOGIDENTIFIER, "evicted ", initialBufferedSize - totalTrackBufferSizeInBytes());
 #endif
@@ -705,8 +702,7 @@ void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t pendin
         // end equal to the removal range start and end timestamp respectively.
         removeCodedFrames(std::max(minimumRangeStart, rangeStart), rangeEnd, currentTime, isEnded);
 
-        if (totalTrackBufferSizeInBytes() + pendingAppendDataCapacity + newDataSize < maximumBufferSize) {
-            m_bufferFull = false;
+        if (!isBufferFullFor(newDataSize, maximumBufferSize)) {
             break;
         }
 
@@ -715,11 +711,20 @@ void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t pendin
     }
 
 #if !RELEASE_LOG_DISABLED
-    if (m_bufferFull)
+    if (isBufferFullFor(newDataSize, maximumBufferSize))
         ERROR_LOG(LOGIDENTIFIER, "FAILED to free enough after evicting ", initialBufferedSize - totalTrackBufferSizeInBytes());
     else
         DEBUG_LOG(LOGIDENTIFIER, "evicted ", initialBufferedSize - totalTrackBufferSizeInBytes());
 #endif
+}
+
+bool SourceBufferPrivate::isBufferFullFor(uint64_t requiredSize, uint64_t maximumBufferSize)
+{
+    auto totalRequired = checkedSum<uint64_t>(totalTrackBufferSizeInBytes(), requiredSize);
+    if (totalRequired.hasOverflowed())
+        return true;
+
+    return totalRequired >= maximumBufferSize;
 }
 
 uint64_t SourceBufferPrivate::totalTrackBufferSizeInBytes() const

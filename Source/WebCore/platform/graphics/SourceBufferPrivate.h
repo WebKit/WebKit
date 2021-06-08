@@ -77,7 +77,7 @@ public:
 
     WEBCORE_EXPORT virtual void setMediaSourceEnded(bool);
     virtual void setMode(SourceBufferAppendMode mode) { m_appendMode = mode; }
-    WEBCORE_EXPORT virtual void reenqueueMediaIfNeeded(const MediaTime& currentMediaTime, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize);
+    WEBCORE_EXPORT virtual void reenqueueMediaIfNeeded(const MediaTime& currentMediaTime);
     WEBCORE_EXPORT virtual void addTrackBuffer(const AtomString& trackId, RefPtr<MediaDescription>&&);
     WEBCORE_EXPORT virtual void resetTrackBuffers();
     WEBCORE_EXPORT virtual void clearTrackBuffers();
@@ -87,7 +87,7 @@ public:
     virtual void setShouldGenerateTimestamps(bool flag) { m_shouldGenerateTimestamps = flag; }
     WEBCORE_EXPORT virtual void updateBufferedFromTrackBuffers(bool sourceIsEnded);
     WEBCORE_EXPORT virtual void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime, bool isEnded, CompletionHandler<void()>&& = [] { });
-    WEBCORE_EXPORT virtual void evictCodedFrames(uint64_t newDataSize, uint64_t pendingAppendDataCapacity, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded);
+    WEBCORE_EXPORT virtual void evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, const MediaTime& duration, bool isEnded);
     WEBCORE_EXPORT virtual uint64_t totalTrackBufferSizeInBytes() const;
     WEBCORE_EXPORT virtual void resetTimestampOffsetInTrackBuffers();
     virtual void startChangingType() { m_pendingInitializationSegmentForChangeType = true; }
@@ -102,7 +102,7 @@ public:
 
     const TimeRanges* buffered() const { return m_buffered.get(); }
 
-    bool bufferFull() const { return m_bufferFull; }
+    bool isBufferFullFor(uint64_t requiredSize, uint64_t maximumBufferSize);
 
     // Methods used by MediaSourcePrivate
     bool hasAudio() const { return m_hasAudio; }
@@ -167,7 +167,6 @@ protected:
     WEBCORE_EXPORT void didReceiveInitializationSegment(SourceBufferPrivateClient::InitializationSegment&&, CompletionHandler<void()>&&);
     WEBCORE_EXPORT void didReceiveSample(Ref<MediaSample>&&);
     WEBCORE_EXPORT void setBufferedRanges(const PlatformTimeRanges&);
-    void setBufferFull(bool bufferFull) { m_bufferFull = bufferFull; }
     void provideMediaData(const AtomString& trackID);
 
     SourceBufferPrivateClient* m_client { nullptr };
@@ -201,7 +200,6 @@ private:
     MediaTime m_groupStartTimestamp { MediaTime::invalidTime() };
     MediaTime m_groupEndTimestamp { MediaTime::zeroTime() };
 
-    bool m_bufferFull { false };
     bool m_isMediaSourceEnded { false };
     RefPtr<TimeRanges> m_buffered;
 };

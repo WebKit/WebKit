@@ -1,3 +1,23 @@
+2021-06-08  Jean-Yves Avenard  <jya@apple.com>
+
+        [MSE] Rework handling of SourceBuffer's buffer full.
+        https://bugs.webkit.org/show_bug.cgi?id=226711
+        <rdar://problem/78937909>
+
+        Reviewed by Jer Noble.
+
+        * GPUProcess/media/RemoteSourceBufferProxy.cpp:
+        (WebKit::RemoteSourceBufferProxy::evictCodedFrames):
+        (WebKit::RemoteSourceBufferProxy::reenqueueMediaIfNeeded):
+        * GPUProcess/media/RemoteSourceBufferProxy.h:
+        * GPUProcess/media/RemoteSourceBufferProxy.messages.in: Remove capacity and
+        buffer full references from all methods; relying on the totalTrackBufferSizeInBytes
+        instead.
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.cpp:
+        (WebKit::SourceBufferPrivateRemote::evictCodedFrames):
+        (WebKit::SourceBufferPrivateRemote::reenqueueMediaIfNeeded):
+        * WebProcess/GPU/media/SourceBufferPrivateRemote.h:
+
 2021-06-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.33.2 release

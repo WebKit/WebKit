@@ -1,3 +1,63 @@
+2021-06-08  Jean-Yves Avenard  <jya@apple.com>
+
+        [MSE] Rework handling of SourceBuffer's buffer full.
+        https://bugs.webkit.org/show_bug.cgi?id=226711
+        <rdar://problem/78937909>
+
+        Reviewed by Jer Noble.
+
+        Bug 225630 modified the handling of the Source Buffer "buffer full" algorithm.
+        Per spec, we are to reject a buffer only once we know that the source buffer is full.
+        The first appendBuffer should always complete.
+        https://w3c.github.io/media-source/#sourcebuffer-buffer-full-flag
+        "The buffer full flag keeps track of whether appendBuffer() is allowed to accept
+         more bytes. It is set to false when the SourceBuffer object is created and gets
+         updated as data is appended and removed."
+
+        "buffer full flag" only gets modified to true in the 3.5.1 Segment Parser Loop
+        algorithm, step 6.3
+        https://w3c.github.io/media-source/#sourcebuffer-segment-parser-loop
+        "If this SourceBuffer is full and cannot accept more media data, then set the
+         buffer full flag to true."
+
+        On the 2nd call to the appendBuffer, in the Prepare Append algorithm, step 3.5.4.6:
+        https://w3c.github.io/media-source/#sourcebuffer-prepare-append
+
+        "If the buffer full flag equals true, then throw a QuotaExceededError exception
+         and abort these steps."
+
+        This change moves the check of the source buffer size back into SourceBufferPrivate
+        so that checking if we have sufficient space or not is hidden from the SourceBuffer.
+        Rather than deal with a single "buffer full" flag, we use instead a isBufferFullFor()
+        method which allows to easily swap between the previous per-spec behaviour and the
+        one introduced by bug 225630 as it does present some advantages.
+        We can always determine if we have sufficient space by checking the current source
+        buffer memory size and the requested limit.
+        The previous algorithm took into consideration the allocated capacity of the
+        temporary SourceBuffer::m_pendingAppendData ; this approach was flawed in that we
+        always checked if m_pendingAppendData.capacity + newDataSize would fit in the
+        source buffer. However newDataSize would always happen to fit within the existing
+        capacity, so it was accounted for twice.
+        We remove check on the capacity allocated as it simplifies the code a great deal,
+        and avoid the piggy-backing of unrelated methods (such as
+        SourceBufferPrivate::reenqueueMediaIfNeeded that ended up also checking capacity)
+
+        This change is already covered with existing tests.
+
+        * Modules/mediasource/SourceBuffer.cpp: call new isBufferFullFor to check if
+        sufficient is available.
+        (WebCore::SourceBuffer::appendBufferInternal):
+        (WebCore::SourceBuffer::sourceBufferPrivateAppendComplete):
+        * platform/graphics/SourceBufferPrivate.h: Add isBufferFullFor method
+        remove m_bufferFull member.
+        * platform/graphics/SourceBufferPrivate.cpp:
+        (WebCore::SourceBufferPrivate::reenqueueMediaIfNeeded): remove reference to
+        buffer capacity
+        (WebCore::SourceBufferPrivate::evictCodedFrames): remove reference to
+        buffer capacity
+        (WebCore::SourceBufferPrivate::isBufferFullFor): To get per-spec behaviour
+        we only need to stop checking the value of the requiredSize argument.
+
 2021-06-08  Antti Koivisto  <antti@apple.com>
 
         `text-decoration: underline` is not applied to web component
