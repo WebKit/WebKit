@@ -131,7 +131,7 @@ Vector<StyledMarkedText> subdivideAndResolveStyle(const Vector<MarkedText>& text
         return { styledMarkedText };
     }
 
-    auto markedTexts = subdivide(textsToSubdivide);
+    auto markedTexts = MarkedText::subdivide(textsToSubdivide);
     ASSERT(!markedTexts.isEmpty());
     if (UNLIKELY(markedTexts.isEmpty()))
         return { };

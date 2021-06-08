@@ -1,3 +1,13 @@
+2021-06-08  Antti Koivisto  <antti@apple.com>
+
+        Factor MarkedText collection out of LegacyInlineTextBox
+        https://bugs.webkit.org/show_bug.cgi?id=226731
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/Tests/WebCore/MarkedText.cpp:
+        (TestWebKitAPI::TEST):
+
 2021-06-08  Sam Weinig  <weinig@apple.com>
 
         Add copy of std::span so that we can use it pre-moving to c++20

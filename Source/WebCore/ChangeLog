@@ -1,3 +1,35 @@
+2021-06-08  Antti Koivisto  <antti@apple.com>
+
+        Factor MarkedText collection out of LegacyInlineTextBox
+        https://bugs.webkit.org/show_bug.cgi?id=226731
+
+        Reviewed by Sam Weinig.
+
+        Move more code out from the legacy inline classes.
+
+        * rendering/LegacyInlineTextBox.cpp:
+        (WebCore::LegacyInlineTextBox::paint):
+        (WebCore::LegacyInlineTextBox::hasMarkers const):
+        (WebCore::LegacyInlineTextBox::paintPlatformDocumentMarkers):
+        (WebCore::LegacyInlineTextBox::calculateUnionOfAllDocumentMarkerBounds const):
+        (WebCore::LegacyInlineTextBox::paintMarkedTexts):
+        (WebCore::LegacyInlineTextBox::highlightStartEnd const): Deleted.
+        (WebCore::LegacyInlineTextBox::collectMarkedTextsForDraggedContent): Deleted.
+        (WebCore::LegacyInlineTextBox::collectMarkedTextsForDocumentMarkers const): Deleted.
+        (WebCore::LegacyInlineTextBox::collectMarkedTextsForHighlights const): Deleted.
+        * rendering/LegacyInlineTextBox.h:
+        (WebCore::LegacyInlineTextBox::paintMarkedTexts):
+        * rendering/MarkedText.cpp:
+        (WebCore::MarkedText::subdivide):
+        (WebCore::MarkedText::collectForHighlights):
+        (WebCore::MarkedText::collectForDocumentMarkers):
+        (WebCore::MarkedText::collectForDraggedContent):
+        (WebCore::subdivide): Deleted.
+        * rendering/MarkedText.h:
+        (WebCore::MarkedText::operator== const):
+        * rendering/MarkedTextStyle.cpp:
+        (WebCore::subdivideAndResolveStyle):
+
 2021-06-08  Truitt Savell  <tsavell@apple.com>
 
         Unreviewed, reverting r278609.
