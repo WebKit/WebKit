@@ -1,3 +1,18 @@
+2021-06-08  Razvan Caliman  <rcaliman@apple.com>
+
+        Web Inspector: Styles panel slow to render when inspecting node with many inherited CSS variables
+        https://bugs.webkit.org/show_bug.cgi?id=225972
+        <rdar://problem/78211185>
+
+        Reviewed by Devin Rousso.
+
+        Add tests for logic to aggregate used CSS variables in Web Inspector.
+
+        * inspector/css/findVariableNames-expected.txt: Added.
+        * inspector/css/findVariableNames.html: Added.
+        * inspector/css/usedCSSVariables-expected.txt: Added.
+        * inspector/css/usedCSSVariables.html: Added.
+
 2021-06-08  Alan Bujtas  <zalan@apple.com>
 
         [LFC][TFC] Add initial percent value support for columns

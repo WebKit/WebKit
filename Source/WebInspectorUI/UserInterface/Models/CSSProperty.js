@@ -49,6 +49,39 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         return name.startsWith("--");
     }
 
+    // FIXME: <https://webkit.org/b/226647> This naively collects variable-like names used in values. It should be hardened.
+    static findVariableNames(string)
+    {
+        const prefix = "var(--";
+        let prefixCursor = 0;
+        let cursor = 0;
+        let nameStartIndex = 0;
+        let names = [];
+
+        function isTerminatingChar(char) {
+            return char === ")" || char === "," || char === " " || char === "\n" || char === "\t";
+        }
+
+        while (cursor < string.length) {
+            if (nameStartIndex && isTerminatingChar(string.charAt(cursor))) {
+                names.push("--" + string.substring(nameStartIndex, cursor));
+                nameStartIndex = 0;
+            }
+
+            if (prefixCursor === prefix.length) {
+                prefixCursor = 0;
+                nameStartIndex = cursor;
+            }
+
+            if (string.charAt(cursor) === prefix.charAt(prefixCursor))
+                prefixCursor++;
+
+            cursor++;
+        }
+
+        return names;
+    }
+
     // Public
 
     get ownerStyle()

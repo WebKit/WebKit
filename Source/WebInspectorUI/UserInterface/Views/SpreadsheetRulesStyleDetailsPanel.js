@@ -203,6 +203,12 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         this.nodeStyles.addRule(this._newRuleSelector, text);
     }
 
+    spreadsheetCSSStyleDeclarationSectionSetAllPropertyVisibilityMode(section, propertyVisibilityMode)
+    {
+        for (let section of this._sections)
+            section.propertyVisibilityMode = propertyVisibilityMode;
+    }
+
     // Protected
 
     layout()
