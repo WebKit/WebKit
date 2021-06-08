@@ -35,6 +35,7 @@
 #include "RenderText.h"
 #include "RenderedDocumentMarker.h"
 #include "RuntimeEnabledFeatures.h"
+#include "TextBoxSelectableRange.h"
 #include <algorithm>
 #include <wtf/HashSet.h>
 
