@@ -84,7 +84,7 @@ RefPtr<SharedBuffer> ShareableResource::wrapInSharedBuffer()
 
 #if USE(CF)
     auto deallocator = createShareableResourceDeallocator(this);
-    auto cfData = adoptCF(CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(data()), static_cast<CFIndex>(size()), deallocator.get()));
+    auto cfData = adoptCF(CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, data(), static_cast<CFIndex>(size()), deallocator.get()));
     return SharedBuffer::create(cfData.get());
 #elif USE(GLIB)
     GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_with_free_func(data(), size(), [](void* data) {

@@ -333,7 +333,7 @@ String TextResourceDecoder::textFromUTF8(const unsigned char* data, unsigned len
     auto decoder = TextResourceDecoder::create("text/plain", "UTF-8");
     if (shouldPrependBOM(data, length))
         decoder->decode("\xef\xbb\xbf", 3);
-    return decoder->decodeAndFlush(reinterpret_cast<const char*>(data), length);
+    return decoder->decodeAndFlush(data, length);
 }
 
 void TextResourceDecoder::setEncoding(const TextEncoding& encoding, EncodingSource source)

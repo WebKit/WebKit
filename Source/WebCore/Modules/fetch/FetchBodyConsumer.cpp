@@ -278,7 +278,7 @@ void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, const String& co
             if (auto chunk = result.returnValue())
                 data->append(chunk->data, chunk->size);
             else
-                resolveWithTypeAndData(WTFMove(promise), type, contentType, reinterpret_cast<const unsigned char*>(data->data()), data->size());
+                resolveWithTypeAndData(WTFMove(promise), type, contentType, data->data(), data->size());
         });
         m_sink->pipeFrom(*stream);
         return;
@@ -355,7 +355,7 @@ Ref<Blob> FetchBodyConsumer::takeAsBlob(ScriptExecutionContext* context)
         return Blob::create(context, Vector<uint8_t>(), Blob::normalizedContentType(m_contentType));
 
     // FIXME: We should try to move m_buffer to Blob without doing extra copy.
-    return blobFromData(context, reinterpret_cast<const unsigned char*>(m_buffer->data()), m_buffer->size(), m_contentType);
+    return blobFromData(context, m_buffer->data(), m_buffer->size(), m_contentType);
 }
 
 String FetchBodyConsumer::takeAsText()
@@ -364,7 +364,7 @@ String FetchBodyConsumer::takeAsText()
     if (!m_buffer)
         return String();
 
-    auto text = TextResourceDecoder::textFromUTF8(reinterpret_cast<const unsigned char*>(m_buffer->data()), m_buffer->size());
+    auto text = TextResourceDecoder::textFromUTF8(m_buffer->data(), m_buffer->size());
     m_buffer = nullptr;
     return text;
 }

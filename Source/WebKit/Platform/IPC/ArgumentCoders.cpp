@@ -82,7 +82,7 @@ void ArgumentCoder<CString>::encode(Encoder& encoder, const CString& string)
 
     uint32_t length = string.length();
     encoder << length;
-    encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.data()), length, 1);
+    encoder.encodeFixedLengthData(string.dataAsUInt8Ptr(), length, 1);
 }
 
 WARN_UNUSED_RETURN bool ArgumentCoder<CString>::decode(Decoder& decoder, CString& result)
@@ -125,7 +125,7 @@ void ArgumentCoder<String>::encode(Encoder& encoder, const String& string)
     encoder << length << is8Bit;
 
     if (is8Bit)
-        encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.characters8()), length * sizeof(LChar), alignof(LChar));
+        encoder.encodeFixedLengthData(string.characters8(), length * sizeof(LChar), alignof(LChar));
     else
         encoder.encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.characters16()), length * sizeof(UChar), alignof(UChar));
 }

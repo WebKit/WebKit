@@ -74,11 +74,11 @@ RefPtr<Uint8Array> CDMSessionAVFoundationCF::generateKeyRequest(const String&, U
     }
 
     auto certificateData = adoptCF(CFDataCreateMutable(kCFAllocatorDefault, certificate->byteLength()));
-    CFDataAppendBytes(certificateData.get(), reinterpret_cast<const UInt8*>(certificate->baseAddress()), certificate->byteLength());
+    CFDataAppendBytes(certificateData.get(), certificate->data(), certificate->byteLength());
 
     auto assetStr = keyID.utf8();
     auto assetID = adoptCF(CFDataCreateMutable(kCFAllocatorDefault, assetStr.length()));
-    CFDataAppendBytes(assetID.get(), reinterpret_cast<const UInt8*>(assetStr.data()), assetStr.length());
+    CFDataAppendBytes(assetID.get(), assetStr.dataAsUIntPtr(), assetStr.length());
 
     CFErrorRef cfError = nullptr;
     auto keyRequest = adoptCF(AVCFAssetResourceLoadingRequestCreateStreamingContentKeyRequestDataForApp(m_request.get(), certificateData.get(), assetID.get(), nullptr, &cfError));
@@ -110,7 +110,7 @@ void CDMSessionAVFoundationCF::releaseKeys()
 bool CDMSessionAVFoundationCF::update(Uint8Array* key, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode)
 {
     auto keyData = adoptCF(CFDataCreateMutable(kCFAllocatorDefault, key->byteLength()));
-    CFDataAppendBytes(keyData.get(), reinterpret_cast<const UInt8*>(key->baseAddress()), key->byteLength());
+    CFDataAppendBytes(keyData.get(), key->data(), key->byteLength());
 
     AVCFAssetResourceLoadingRequestFinishLoadingWithResponse(m_request.get(), nullptr, keyData.get(), nullptr);
 

@@ -397,7 +397,7 @@ ExceptionOr<void> DOMPatchSupport::innerPatchChildren(ContainerNode& parentNode,
 static void addStringToSHA1(SHA1& sha1, const String& string)
 {
     CString cString = string.utf8();
-    sha1.addBytes(reinterpret_cast<const uint8_t*>(cString.data()), cString.length());
+    sha1.addBytes(cString.dataAsUInt8Ptr(), cString.length());
 }
 
 std::unique_ptr<DOMPatchSupport::Digest> DOMPatchSupport::createDigest(Node& node, UnusedNodesMap* unusedNodesMap)

@@ -61,7 +61,7 @@ void SocketStreamHandle::sendHandshake(CString&& handshake, std::optional<Cookie
 {
     if (m_state == Connecting || m_state == Closing)
         return completionHandler(false, false);
-    platformSendHandshake(reinterpret_cast<const uint8_t*>(handshake.data()), handshake.length(), WTFMove(headerFieldProxy), WTFMove(completionHandler));
+    platformSendHandshake(handshake.dataAsUInt8Ptr(), handshake.length(), WTFMove(headerFieldProxy), WTFMove(completionHandler));
 }
 
 void SocketStreamHandle::close()

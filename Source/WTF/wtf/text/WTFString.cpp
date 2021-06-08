@@ -660,7 +660,7 @@ CString String::latin1() const
         return CString("", 0);
 
     if (is8Bit())
-        return CString(reinterpret_cast<const char*>(this->characters8()), length);
+        return CString(this->characters8(), length);
 
     const UChar* characters = this->characters16();
 

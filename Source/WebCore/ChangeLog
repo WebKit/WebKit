@@ -1,3 +1,101 @@
+2021-06-08  Chris Dumez  <cdumez@apple.com>
+
+        Reduce use of reinterpret_cast<> in the codebase
+        https://bugs.webkit.org/show_bug.cgi?id=226743
+
+        Reviewed by Darin Adler.
+
+        * Modules/encryptedmedia/legacy/LegacyCDMSessionClearKey.cpp:
+        (WebCore::CDMSessionClearKey::generateKeyRequest):
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::take):
+        * Modules/fetch/FetchBodyConsumer.cpp:
+        (WebCore::FetchBodyConsumer::resolve):
+        (WebCore::FetchBodyConsumer::takeAsBlob):
+        (WebCore::FetchBodyConsumer::takeAsText):
+        * Modules/mediastream/RTCDataChannelRemoteHandler.cpp:
+        (WebCore::RTCDataChannelRemoteHandler::readyToSend):
+        (WebCore::RTCDataChannelRemoteHandler::sendStringData):
+        (WebCore::RTCDataChannelRemoteHandler::sendRawData):
+        * Modules/webaudio/MediaStreamAudioSourceGStreamer.cpp:
+        (WebCore::copyBusData):
+        * Modules/webauthn/AuthenticatorResponseData.h:
+        (WebCore::encodeArrayBuffer):
+        (WebCore::decodeArrayBuffer):
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::startClosingHandshake):
+        (WebCore::WebSocketChannel::processOutgoingFrameQueue):
+        * Modules/websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::getExpectedWebSocketAccept):
+        (WebCore::headerHasValidHTTPVersion):
+        * bindings/js/ScriptBufferSourceProvider.h:
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneDeserializer::readString):
+        * contentextensions/SerializedNFA.cpp:
+        (WebCore::ContentExtensions::SerializedNFA::pointerAtOffsetInFile const):
+        * dom/Node.cpp:
+        (WebCore::hashPointer):
+        * dom/TextEncoder.cpp:
+        (WebCore::TextEncoder::encode const):
+        * dom/TextEncoderStreamEncoder.cpp:
+        (WebCore::TextEncoderStreamEncoder::flush):
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::sanitizeMarkupWithArchive):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::texImageArrayBufferViewHelper):
+        * inspector/DOMPatchSupport.cpp:
+        (WebCore::addStringToSHA1):
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::textFromUTF8):
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::script):
+        * page/cocoa/ResourceUsageOverlayCocoa.mm:
+        (WebCore::showText):
+        * platform/SharedBufferChunkReader.cpp:
+        (WebCore::SharedBufferChunkReader::nextChunk):
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore::SharedBuffer::createCFData const):
+        * platform/generic/KeyedEncoderGeneric.cpp:
+        (WebCore::KeyedEncoderGeneric::encodeString):
+        * platform/graphics/GraphicsContextGL.cpp:
+        (WebCore::GraphicsContextGL::packImageData):
+        * platform/graphics/ImageBufferBackend.cpp:
+        (WebCore::ImageBufferBackend::getPixelBuffer const):
+        (WebCore::ImageBufferBackend::putPixelBuffer):
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::InbandTextTrackPrivateAVF::processNativeSamples):
+        * platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.cpp:
+        (WebCore::CDMSessionAVFoundationCF::generateKeyRequest):
+        (WebCore::CDMSessionAVFoundationCF::update):
+        * platform/graphics/avfoundation/cf/InbandTextTrackPrivateAVCF.cpp:
+        (WebCore::InbandTextTrackPrivateAVCF::readNativeSampleBuffer):
+        * platform/graphics/displaylists/DisplayListItemBuffer.cpp:
+        (WebCore::DisplayList::ItemBuffer::createItemBuffer):
+        * platform/graphics/displaylists/DisplayListIterator.cpp:
+        (WebCore::DisplayList::DisplayList::Iterator::updateCurrentItem):
+        * platform/image-decoders/gif/GIFImageReader.h:
+        (GIFImageReader::data const):
+        * platform/mac/SSLKeyGeneratorMac.mm:
+        (WebCore::signedPublicKeyAndChallengeString):
+        * platform/mediastream/RealtimeMediaSourceCenter.cpp:
+        (WebCore::addStringToSHA1):
+        * platform/network/FormDataBuilder.cpp:
+        (WebCore::FormDataBuilder::encodeStringAsFormData):
+        * platform/network/SocketStreamHandle.cpp:
+        (WebCore::SocketStreamHandle::sendHandshake):
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        * platform/network/cf/ResourceRequestCFNet.h:
+        (WebCore::httpHeaderValueUsingSuitableEncoding):
+        * platform/network/cf/SocketStreamHandleImplCFNet.cpp:
+        (WebCore::SocketStreamHandleImpl::platformSendInternal):
+        * platform/network/curl/CurlCacheEntry.cpp:
+        (WebCore::CurlCacheEntry::generateBaseFilename):
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::columnBlobView):
+        * testing/MockCDMFactory.cpp:
+        (WebCore::MockCDM::sanitizeResponse const):
+
 2021-06-08  Devin Rousso  <drousso@apple.com>
 
         [Modern Media Controls] upstream new features

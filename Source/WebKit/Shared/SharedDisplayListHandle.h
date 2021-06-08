@@ -48,7 +48,7 @@ public:
     const SharedMemory& sharedMemory() const { return m_sharedMemory.get(); }
 
     WebCore::DisplayList::ItemBufferIdentifier identifier() const { return m_identifier; }
-    uint8_t* data() const { return reinterpret_cast<uint8_t*>(sharedMemory().data()); }
+    uint8_t* data() const { return static_cast<uint8_t*>(sharedMemory().data()); }
 
     uint64_t unreadBytes()
     {

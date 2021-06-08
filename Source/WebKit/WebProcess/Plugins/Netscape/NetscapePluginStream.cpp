@@ -117,7 +117,7 @@ void NetscapePluginStream::sendJavaScriptStream(const String& result)
     if (!start(m_requestURLString, resultCString.length(), 0, "text/plain", ""))
         return;
 
-    deliverData(reinterpret_cast<const uint8_t*>(resultCString.data()), resultCString.length());
+    deliverData(resultCString.dataAsUInt8Ptr(), resultCString.length());
     stop(NPRES_DONE);
 }
 

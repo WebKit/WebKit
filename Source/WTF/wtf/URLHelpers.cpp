@@ -822,7 +822,7 @@ static String escapeUnsafeCharacters(const String& sourceBuffer)
 
 String userVisibleURL(const CString& url)
 {
-    auto* before = reinterpret_cast<const unsigned char*>(url.data());
+    auto* before = url.dataAsUInt8Ptr();
     int length = url.length();
 
     if (!length)

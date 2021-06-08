@@ -495,7 +495,7 @@ void WebSocketChannel::startClosingHandshake(int code, const String& reason)
         buf.append(highByte);
         buf.append(lowByte);
         auto reasonUTF8 = reason.utf8();
-        buf.append(reinterpret_cast<const uint8_t*>(reasonUTF8.data()), reasonUTF8.length());
+        buf.append(reasonUTF8.dataAsUInt8Ptr(), reasonUTF8.length());
     }
     enqueueRawFrame(WebSocketFrame::OpCodeClose, buf.data(), buf.size());
     Ref<WebSocketChannel> protectedThis(*this); // An attempt to send closing handshake may fail, which will get the channel closed and dereferenced.
@@ -743,7 +743,7 @@ void WebSocketChannel::processOutgoingFrameQueue()
         auto frame = m_outgoingFrameQueue.takeFirst();
         switch (frame->frameType) {
         case QueuedFrameTypeString: {
-            sendFrame(frame->opCode, reinterpret_cast<const uint8_t*>(frame->stringData.data()), frame->stringData.length(), [this, protectedThis = makeRef(*this)] (bool success) {
+            sendFrame(frame->opCode, frame->stringData.dataAsUInt8Ptr(), frame->stringData.length(), [this, protectedThis = makeRef(*this)] (bool success) {
                 if (!success)
                     fail("Failed to send WebSocket frame.");
             });

@@ -203,7 +203,7 @@ public:
 
     T* allocate(size_t count)
     {
-        return reinterpret_cast<T*>(fastMalloc(sizeof(T) * count));
+        return static_cast<T*>(fastMalloc(sizeof(T) * count));
     }
 
     void deallocate(T* pointer, size_t)

@@ -486,7 +486,7 @@ static String sanitizeMarkupWithArchive(Frame& frame, Document& destinationDocum
         CString utf8 = subframeMarkup.utf8();
         Vector<uint8_t> blobBuffer;
         blobBuffer.reserveCapacity(utf8.length());
-        blobBuffer.append(reinterpret_cast<const uint8_t*>(utf8.data()), utf8.length());
+        blobBuffer.append(utf8.dataAsUInt8Ptr(), utf8.length());
         auto blob = Blob::create(&destinationDocument, WTFMove(blobBuffer), type);
 
         String subframeBlobURL = DOMURL::createObjectURL(destinationDocument, blob);

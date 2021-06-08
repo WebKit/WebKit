@@ -757,7 +757,7 @@ bool GraphicsContextGL::packImageData(Image* image, const void* pixels, GCGLenum
         return false;
     data.resize(packedSize);
 
-    if (!packPixels(reinterpret_cast<const uint8_t*>(pixels), sourceFormat, sourceImageWidth, sourceImageHeight, sourceImageSubRectangle, depth, sourceUnpackAlignment, unpackImageHeight, format, type, alphaOp, data.data(), flipY))
+    if (!packPixels(static_cast<const uint8_t*>(pixels), sourceFormat, sourceImageWidth, sourceImageHeight, sourceImageSubRectangle, depth, sourceUnpackAlignment, unpackImageHeight, format, type, alphaOp, data.data(), flipY))
         return false;
     if (ImageObserver* observer = image->imageObserver())
         observer->didDraw(*image);

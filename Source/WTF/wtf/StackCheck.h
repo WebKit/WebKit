@@ -57,7 +57,7 @@ public:
             // then we either need to:
             // 1. break the interval into smaller pieces (i.e. insert more checks), or
             // 2. use a larger reservedZone size.
-            uint8_t* currentStackCheckpoint = reinterpret_cast<uint8_t*>(currentStackPointer());
+            uint8_t* currentStackCheckpoint = static_cast<uint8_t*>(currentStackPointer());
             uint8_t* previousStackCheckpoint = m_checker.m_lastStackCheckpoint;
             RELEASE_ASSERT(previousStackCheckpoint - currentStackCheckpoint > 0);
             RELEASE_ASSERT(previousStackCheckpoint - currentStackCheckpoint < static_cast<ptrdiff_t>(m_checker.m_reservedZone));
@@ -87,7 +87,7 @@ public:
         : m_stackLimit(bounds.recursionLimit(minReservedZone))
 #if VERIFY_STACK_CHECK_RESERVED_ZONE_SIZE
         , m_ownerThread(&Thread::current())
-        , m_lastStackCheckpoint(reinterpret_cast<uint8_t*>(currentStackPointer()))
+        , m_lastStackCheckpoint(static_cast<uint8_t*>(currentStackPointer()))
         , m_reservedZone(minReservedZone)
 #endif
     { }

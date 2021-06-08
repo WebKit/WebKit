@@ -94,7 +94,7 @@ static void hashString(SHA1& sha1, const String& string)
     }
     auto cString = string.utf8();
     // Include terminating null byte.
-    sha1.addBytes(reinterpret_cast<const uint8_t*>(cString.data()), cString.length() + 1);
+    sha1.addBytes(cString.dataAsUInt8Ptr(), cString.length() + 1);
 }
 
 Key::HashType Key::computeHash(const Salt& salt) const

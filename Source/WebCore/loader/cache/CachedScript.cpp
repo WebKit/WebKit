@@ -62,7 +62,7 @@ StringView CachedScript::script()
     if (m_decodingState == NeverDecoded
         && TextEncoding(encoding()).isByteBasedEncoding()
         && m_data->size()
-        && charactersAreAllASCII(reinterpret_cast<const LChar*>(m_data->data()), m_data->size())) {
+        && charactersAreAllASCII(m_data->data(), m_data->size())) {
 
         m_decodingState = DataAndDecodedStringHaveSameBytes;
 
@@ -70,11 +70,11 @@ StringView CachedScript::script()
         setDecodedSize(0);
         m_decodedDataDeletionTimer.stop();
 
-        m_scriptHash = StringHasher::computeHashAndMaskTop8Bits(reinterpret_cast<const LChar*>(m_data->data()), m_data->size());
+        m_scriptHash = StringHasher::computeHashAndMaskTop8Bits(m_data->data(), m_data->size());
     }
 
     if (m_decodingState == DataAndDecodedStringHaveSameBytes)
-        return { reinterpret_cast<const LChar*>(m_data->data()), static_cast<unsigned>(m_data->size()) };
+        return { m_data->data(), static_cast<unsigned>(m_data->size()) };
 
     if (!m_script) {
         m_script = m_decoder->decodeAndFlush(m_data->data(), encodedSize());

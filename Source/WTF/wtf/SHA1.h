@@ -51,8 +51,7 @@ public:
     }
     void addBytes(const CString& input)
     {
-        const char* string = input.data();
-        addBytes(reinterpret_cast<const uint8_t*>(string), input.length());
+        addBytes(input.dataAsUInt8Ptr(), input.length());
     }
     WTF_EXPORT_PRIVATE void addBytes(const uint8_t* input, size_t length);
 

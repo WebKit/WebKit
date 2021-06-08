@@ -80,7 +80,7 @@ void RTCDataChannelRemoteHandler::readyToSend()
     m_isReadyToSend = true;
 
     for (auto& message : m_pendingMessages)
-        m_connection->sendData(m_remoteIdentifier, message.isRaw, reinterpret_cast<const unsigned char*>(message.buffer->data()), message.buffer->size());
+        m_connection->sendData(m_remoteIdentifier, message.isRaw, message.buffer->data(), message.buffer->size());
     m_pendingMessages.clear();
 
     if (m_isPendingClose)
@@ -100,7 +100,7 @@ bool RTCDataChannelRemoteHandler::sendStringData(const CString& text)
         m_pendingMessages.append(Message { false, SharedBuffer::create(text.data(), text.length()) });
         return true;
     }
-    m_connection->sendData(m_remoteIdentifier, false, reinterpret_cast<const unsigned char*>(text.data()), text.length());
+    m_connection->sendData(m_remoteIdentifier, false, text.dataAsUInt8Ptr(), text.length());
     return true;
 }
 
@@ -110,7 +110,7 @@ bool RTCDataChannelRemoteHandler::sendRawData(const uint8_t* data, size_t size)
         m_pendingMessages.append(Message { true, SharedBuffer::create(data, size) });
         return true;
     }
-    m_connection->sendData(m_remoteIdentifier, true, reinterpret_cast<const unsigned char*>(data), size);
+    m_connection->sendData(m_remoteIdentifier, true, data, size);
     return true;
 }
 

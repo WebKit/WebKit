@@ -102,11 +102,11 @@ static String generateSecWebSocketKey()
 
 String WebSocketHandshake::getExpectedWebSocketAccept(const String& secWebSocketKey)
 {
-    static const char* const webSocketKeyGUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+    constexpr uint8_t webSocketKeyGUID[] = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
     SHA1 sha1;
     CString keyData = secWebSocketKey.ascii();
-    sha1.addBytes(reinterpret_cast<const uint8_t*>(keyData.data()), keyData.length());
-    sha1.addBytes(reinterpret_cast<const uint8_t*>(webSocketKeyGUID), strlen(webSocketKeyGUID));
+    sha1.addBytes(keyData.dataAsUInt8Ptr(), keyData.length());
+    sha1.addBytes(webSocketKeyGUID, std::size(webSocketKeyGUID) - 1);
     SHA1::Digest hash;
     sha1.computeHash(hash);
     return base64EncodeToString(hash.data(), SHA1::hashSize);
@@ -328,13 +328,12 @@ URL WebSocketHandshake::httpURLForAuthenticationAndCookies() const
 // "The HTTP version MUST be at least 1.1."
 static inline bool headerHasValidHTTPVersion(StringView httpStatusLine)
 {
-    const char* httpVersionStaticPreambleLiteral = "HTTP/";
-    StringView httpVersionStaticPreamble(reinterpret_cast<const LChar*>(httpVersionStaticPreambleLiteral), strlen(httpVersionStaticPreambleLiteral));
-    if (!httpStatusLine.startsWith(httpVersionStaticPreamble))
+    constexpr char preamble[] = "HTTP/";
+    if (!httpStatusLine.startsWith(preamble))
         return false;
 
     // Check that there is a version number which should be at least three characters after "HTTP/"
-    unsigned preambleLength = httpVersionStaticPreamble.length();
+    unsigned preambleLength = strlen(preamble);
     if (httpStatusLine.length() < preambleLength + 3)
         return false;
 

@@ -107,7 +107,7 @@ void RemoteMediaRecorder::videoSampleAvailable(WebCore::RemoteVideoSample&& remo
 void RemoteMediaRecorder::fetchData(CompletionHandler<void(IPC::DataReference&&, double)>&& completionHandler)
 {
     m_writer->fetchData([completionHandler = WTFMove(completionHandler)](auto&& data, auto timeCode) mutable {
-        auto* pointer = reinterpret_cast<const uint8_t*>(data ? data->data() : nullptr);
+        auto* pointer = data ? data->data() : nullptr;
         completionHandler(IPC::DataReference { pointer, data ? data->size() : 0 }, timeCode);
     });
 }

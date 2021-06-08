@@ -211,7 +211,7 @@ void addKeyValuePairAsFormData(Vector<char>& buffer, const Vector<uint8_t>& key,
 
 void encodeStringAsFormData(Vector<char>& buffer, const CString& string)
 {
-    appendFormURLEncoded(buffer, reinterpret_cast<const uint8_t*>(string.data()), string.length());
+    appendFormURLEncoded(buffer, string.dataAsUInt8Ptr(), string.length());
 }
 
 }

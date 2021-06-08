@@ -77,7 +77,7 @@ void RedirectSOAuthorizationSession::completeInternal(const ResourceResponse& re
         if (!navigationAction->isProcessingUserGesture()) {
             page->setShouldSuppressSOAuthorizationInNextNavigationPolicyDecision();
             auto html = makeString("<script>location = '", response.httpHeaderFields().get(HTTPHeaderName::Location), "'</script>").utf8();
-            auto data = IPC::DataReference(reinterpret_cast<const uint8_t*>(html.data()), html.length());
+            auto data = IPC::DataReference(html.dataAsUInt8Ptr(), html.length());
             page->loadData(data, "text/html"_s, "UTF-8"_s, navigationAction->request().url().string(), nullptr, navigationAction->shouldOpenExternalURLsPolicy());
             return;
         }

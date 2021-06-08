@@ -130,7 +130,7 @@ bool HTTPParser::readLine(String& line)
     if (position == notFound || position + 1 == length || m_buffer[position + 1] != 0x0a)
         return false;
 
-    line = String::fromUTF8(reinterpret_cast<char*>(m_buffer.data()), position);
+    line = String::fromUTF8(m_buffer.data(), position);
     if (line.isNull())
         LOG_ERROR("Client error: invalid encoding in HTTP header.");
 

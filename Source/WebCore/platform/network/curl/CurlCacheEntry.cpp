@@ -211,7 +211,7 @@ void CurlCacheEntry::didFinishLoading()
 void CurlCacheEntry::generateBaseFilename(const CString& url)
 {
     SHA1 sha1;
-    sha1.addBytes(reinterpret_cast<const uint8_t*>(url.data()), url.length());
+    sha1.addBytes(url.dataAsUInt8Ptr(), url.length());
 
     SHA1::Digest sum;
     sha1.computeHash(sum);

@@ -304,7 +304,7 @@ auto SQLiteStatement::columnBlobView(int col) -> BlobView
     if (blobSize <= 0)
         return { };
 
-    return { reinterpret_cast<const uint8_t*>(blob), static_cast<size_t>(blobSize) };
+    return { static_cast<const uint8_t*>(blob), static_cast<size_t>(blobSize) };
 }
 
 bool SQLiteStatement::hasStartedStepping()

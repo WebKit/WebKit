@@ -52,12 +52,12 @@ public:
             return emptyString();
 
         if (!m_containsOnlyASCII) {
-            m_containsOnlyASCII = charactersAreAllASCII(reinterpret_cast<const LChar*>(m_scriptBuffer.buffer()->data()), m_scriptBuffer.buffer()->size());
+            m_containsOnlyASCII = charactersAreAllASCII(m_scriptBuffer.buffer()->data(), m_scriptBuffer.buffer()->size());
             if (*m_containsOnlyASCII)
-                m_scriptHash = StringHasher::computeHashAndMaskTop8Bits(reinterpret_cast<const LChar*>(m_scriptBuffer.buffer()->data()), m_scriptBuffer.buffer()->size());
+                m_scriptHash = StringHasher::computeHashAndMaskTop8Bits(m_scriptBuffer.buffer()->data(), m_scriptBuffer.buffer()->size());
         }
         if (*m_containsOnlyASCII)
-            return { reinterpret_cast<const LChar*>(m_scriptBuffer.buffer()->data()), static_cast<unsigned>(m_scriptBuffer.buffer()->size()) };
+            return { m_scriptBuffer.buffer()->data(), static_cast<unsigned>(m_scriptBuffer.buffer()->size()) };
 
         if (!m_cachedScriptString) {
             m_cachedScriptString = m_scriptBuffer.toString();

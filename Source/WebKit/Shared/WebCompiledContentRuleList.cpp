@@ -46,7 +46,7 @@ WebCompiledContentRuleList::~WebCompiledContentRuleList()
 
 bool WebCompiledContentRuleList::conditionsApplyOnlyToDomain() const
 {
-    return *reinterpret_cast<const uint32_t*>(reinterpret_cast<const uint8_t*>(m_data.data->data()) + m_data.conditionsApplyOnlyToDomainOffset);
+    return *reinterpret_cast<const uint32_t*>(static_cast<const uint8_t*>(m_data.data->data()) + m_data.conditionsApplyOnlyToDomainOffset);
 }
 
 const WebCore::ContentExtensions::DFABytecode* WebCompiledContentRuleList::filtersWithoutConditionsBytecode() const
