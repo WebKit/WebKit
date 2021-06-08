@@ -409,10 +409,10 @@ namespace JSC {
     public:
         typedef DeclarationStacks::FunctionStack FunctionStack;
 
-        BytecodeGenerator(VM&, ProgramNode*, UnlinkedProgramCodeBlock*, OptionSet<CodeGenerationMode>, const RefPtr<TDZEnvironmentLink>&, const PrivateNameEnvironment*, ECMAMode);
-        BytecodeGenerator(VM&, FunctionNode*, UnlinkedFunctionCodeBlock*, OptionSet<CodeGenerationMode>, const RefPtr<TDZEnvironmentLink>&, const PrivateNameEnvironment*, ECMAMode);
-        BytecodeGenerator(VM&, EvalNode*, UnlinkedEvalCodeBlock*, OptionSet<CodeGenerationMode>, const RefPtr<TDZEnvironmentLink>&, const PrivateNameEnvironment*, ECMAMode);
-        BytecodeGenerator(VM&, ModuleProgramNode*, UnlinkedModuleProgramCodeBlock*, OptionSet<CodeGenerationMode>, const RefPtr<TDZEnvironmentLink>&, const PrivateNameEnvironment*, ECMAMode);
+        BytecodeGenerator(VM&, ProgramNode*, UnlinkedProgramCodeBlock*, OptionSet<CodeGenerationMode>, const RefPtr<TDZEnvironmentLink>&, const PrivateNameEnvironment*);
+        BytecodeGenerator(VM&, FunctionNode*, UnlinkedFunctionCodeBlock*, OptionSet<CodeGenerationMode>, const RefPtr<TDZEnvironmentLink>&, const PrivateNameEnvironment*);
+        BytecodeGenerator(VM&, EvalNode*, UnlinkedEvalCodeBlock*, OptionSet<CodeGenerationMode>, const RefPtr<TDZEnvironmentLink>&, const PrivateNameEnvironment*);
+        BytecodeGenerator(VM&, ModuleProgramNode*, UnlinkedModuleProgramCodeBlock*, OptionSet<CodeGenerationMode>, const RefPtr<TDZEnvironmentLink>&, const PrivateNameEnvironment*);
 
         ~BytecodeGenerator();
         
@@ -426,6 +426,7 @@ namespace JSC {
         bool needsToUpdateArrowFunctionContext() const { return m_needsToUpdateArrowFunctionContext; }
         bool usesEval() const { return m_scopeNode->usesEval(); }
         bool usesThis() const { return m_scopeNode->usesThis(); }
+        LexicalScopeFeatures lexicalScopeFeatures() const { return m_scopeNode->lexicalScopeFeatures(); }
         PrivateBrandRequirement privateBrandRequirement() const { return m_codeBlock->privateBrandRequirement(); }
         ConstructorKind constructorKind() const { return m_codeBlock->constructorKind(); }
         SuperBinding superBinding() const { return m_codeBlock->superBinding(); }
@@ -433,14 +434,14 @@ namespace JSC {
         NeedsClassFieldInitializer needsClassFieldInitializer() const { return m_codeBlock->needsClassFieldInitializer(); }
 
         template<typename Node, typename UnlinkedCodeBlock>
-        static ParserError generate(VM& vm, Node* node, const SourceCode& sourceCode, UnlinkedCodeBlock* unlinkedCodeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const RefPtr<TDZEnvironmentLink>& parentScopeTDZVariables, const PrivateNameEnvironment* privateNameEnvironment, ECMAMode ecmaMode)
+        static ParserError generate(VM& vm, Node* node, const SourceCode& sourceCode, UnlinkedCodeBlock* unlinkedCodeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const RefPtr<TDZEnvironmentLink>& parentScopeTDZVariables, const PrivateNameEnvironment* privateNameEnvironment)
         {
             MonotonicTime before;
             if (UNLIKELY(Options::reportBytecodeCompileTimes()))
                 before = MonotonicTime::now();
 
             DeferGC deferGC(vm.heap);
-            auto bytecodeGenerator = makeUnique<BytecodeGenerator>(vm, node, unlinkedCodeBlock, codeGenerationMode, parentScopeTDZVariables, privateNameEnvironment, ecmaMode);
+            auto bytecodeGenerator = makeUnique<BytecodeGenerator>(vm, node, unlinkedCodeBlock, codeGenerationMode, parentScopeTDZVariables, privateNameEnvironment);
             auto result = bytecodeGenerator->generate();
 
             if (UNLIKELY(Options::reportBytecodeCompileTimes())) {

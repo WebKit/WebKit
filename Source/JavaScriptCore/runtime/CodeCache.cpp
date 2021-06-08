@@ -87,11 +87,9 @@ UnlinkedCodeBlockType* generateUnlinkedCodeBlockImpl(VM& vm, const SourceCode& s
     bool endColumnIsOnStartLine = !lineCount;
     unsigned unlinkedEndColumn = rootNode->endColumn();
     unsigned endColumn = unlinkedEndColumn + (endColumnIsOnStartLine ? startColumn : 1);
-    unsigned arrowContextFeature = isArrowFunctionContext ? ArrowFunctionContextFeature : 0;
     if (executable)
-        executable->recordParse(rootNode->features() | arrowContextFeature, rootNode->hasCapturedVariables(), rootNode->lastLine(), endColumn);
+        executable->recordParse(rootNode->features(), rootNode->lexicalScopeFeatures(), rootNode->hasCapturedVariables(), rootNode->lastLine(), endColumn);
 
-    ECMAMode ecmaMode = rootNode->features() & StrictModeFeature ? ECMAMode::strict() : ECMAMode::sloppy();
     NeedsClassFieldInitializer needsClassFieldInitializer = NeedsClassFieldInitializer::No;
     PrivateBrandRequirement privateBrandRequirement = PrivateBrandRequirement::None;
     if constexpr (std::is_same_v<ExecutableType, DirectEvalExecutable>) {
@@ -101,7 +99,7 @@ UnlinkedCodeBlockType* generateUnlinkedCodeBlockImpl(VM& vm, const SourceCode& s
     ExecutableInfo executableInfo(false, privateBrandRequirement, false, ConstructorKind::None, scriptMode, SuperBinding::NotNeeded, CacheTypes<UnlinkedCodeBlockType>::parseMode, derivedContextType, needsClassFieldInitializer, isArrowFunctionContext, false, evalContextType);
 
     UnlinkedCodeBlockType* unlinkedCodeBlock = UnlinkedCodeBlockType::create(vm, executableInfo, codeGenerationMode);
-    unlinkedCodeBlock->recordParse(rootNode->features(), rootNode->hasCapturedVariables(), lineCount, unlinkedEndColumn);
+    unlinkedCodeBlock->recordParse(rootNode->features(), rootNode->lexicalScopeFeatures(), rootNode->hasCapturedVariables(), lineCount, unlinkedEndColumn);
     if (!source.provider()->sourceURLDirective().isNull())
         unlinkedCodeBlock->setSourceURLDirective(source.provider()->sourceURLDirective());
     if (!source.provider()->sourceMappingURLDirective().isNull())
@@ -110,7 +108,7 @@ UnlinkedCodeBlockType* generateUnlinkedCodeBlockImpl(VM& vm, const SourceCode& s
     RefPtr<TDZEnvironmentLink> parentVariablesUnderTDZ;
     if (variablesUnderTDZ)
         parentVariablesUnderTDZ = TDZEnvironmentLink::create(vm.m_compactVariableMap->get(*variablesUnderTDZ), nullptr);
-    error = BytecodeGenerator::generate(vm, rootNode.get(), source, unlinkedCodeBlock, codeGenerationMode, parentVariablesUnderTDZ, privateNameEnvironment, ecmaMode);
+    error = BytecodeGenerator::generate(vm, rootNode.get(), source, unlinkedCodeBlock, codeGenerationMode, parentVariablesUnderTDZ, privateNameEnvironment);
 
     if (error.isValid())
         return nullptr;
@@ -167,7 +165,7 @@ UnlinkedCodeBlockType* CodeCache::getUnlinkedGlobalCodeBlock(VM& vm, ExecutableT
         unsigned startColumn = unlinkedCodeBlock->startColumn() + source.startColumn().oneBasedInt();
         bool endColumnIsOnStartLine = !lineCount;
         unsigned endColumn = unlinkedCodeBlock->endColumn() + (endColumnIsOnStartLine ? startColumn : 1);
-        executable->recordParse(unlinkedCodeBlock->codeFeatures(), unlinkedCodeBlock->hasCapturedVariables(), source.firstLine().oneBasedInt() + lineCount, endColumn);
+        executable->recordParse(unlinkedCodeBlock->codeFeatures(), unlinkedCodeBlock->lexicalScopeFeatures(), unlinkedCodeBlock->hasCapturedVariables(), source.firstLine().oneBasedInt() + lineCount, endColumn);
         if (unlinkedCodeBlock->sourceURLDirective())
             source.provider()->setSourceURLDirective(unlinkedCodeBlock->sourceURLDirective());
         if (unlinkedCodeBlock->sourceMappingURLDirective())

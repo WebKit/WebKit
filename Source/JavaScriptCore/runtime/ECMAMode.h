@@ -37,6 +37,7 @@ struct ECMAMode {
 
 public:
     static constexpr ECMAMode fromByte(uint8_t byte) { return ECMAMode(byte); }
+    static constexpr ECMAMode fromBool(bool isStrict) { return isStrict ? strict() : sloppy(); }
     static constexpr ECMAMode strict() { return ECMAMode(StrictMode); }
     static constexpr ECMAMode sloppy() { return ECMAMode(SloppyMode); }
 

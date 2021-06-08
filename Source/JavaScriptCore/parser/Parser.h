@@ -147,7 +147,7 @@ struct Scope {
     WTF_MAKE_NONCOPYABLE(Scope);
 
 public:
-    Scope(const VM& vm, bool isFunction, bool isGenerator, bool strictMode, bool isArrowFunction, bool isAsyncFunction)
+    Scope(const VM& vm, LexicalScopeFeatures lexicalScopeFeatures, bool isFunction, bool isGenerator, bool isArrowFunction, bool isAsyncFunction)
         : m_vm(vm)
         , m_shadowsArguments(false)
         , m_usesEval(false)
@@ -156,7 +156,7 @@ public:
         , m_needsSuperBinding(false)
         , m_allowsVarDeclarations(true)
         , m_allowsLexicalDeclarations(true)
-        , m_strictMode(strictMode)
+        , m_lexicalScopeFeatures(lexicalScopeFeatures)
         , m_isFunction(isFunction)
         , m_isGenerator(isGenerator)
         , m_isGeneratorBoundary(false)
@@ -756,8 +756,9 @@ public:
             capturedVariables.add(impl);
         }
     }
-    void setStrictMode() { m_strictMode = true; }
-    bool strictMode() const { return m_strictMode; }
+    LexicalScopeFeatures lexicalScopeFeatures() const { return m_lexicalScopeFeatures; }
+    void setStrictMode() { m_lexicalScopeFeatures |= StrictModeLexicalFeature; }
+    bool strictMode() const { return m_lexicalScopeFeatures & StrictModeLexicalFeature; }
     bool isValidStrictMode() const { return m_isValidStrictMode; }
     bool shadowsArguments() const { return m_shadowsArguments; }
     void setHasNonSimpleParameterList()
@@ -780,7 +781,7 @@ public:
     {
         ASSERT(m_isFunction);
         parameters.usesEval = m_usesEval;
-        parameters.strictMode = m_strictMode;
+        parameters.lexicalScopeFeatures = m_lexicalScopeFeatures;
         parameters.needsFullActivation = m_needsFullActivation;
         parameters.innerArrowFunctionFeatures = m_innerArrowFunctionFeatures;
         parameters.needsSuperBinding = m_needsSuperBinding;
@@ -804,7 +805,7 @@ public:
     {
         ASSERT(m_isFunction);
         m_usesEval = info->usesEval;
-        m_strictMode = info->strictMode;
+        m_lexicalScopeFeatures = info->lexicalScopeFeatures();
         m_innerArrowFunctionFeatures = info->innerArrowFunctionFeatures;
         m_needsFullActivation = info->needsFullActivation;
         m_needsSuperBinding = info->needsSuperBinding;
@@ -904,7 +905,7 @@ private:
     bool m_needsSuperBinding;
     bool m_allowsVarDeclarations;
     bool m_allowsLexicalDeclarations;
-    bool m_strictMode;
+    LexicalScopeFeatures m_lexicalScopeFeatures;
     bool m_isFunction;
     bool m_isGenerator;
     bool m_isGeneratorBoundary;
@@ -1325,19 +1326,19 @@ private:
 
     ScopeRef pushScope()
     {
+        LexicalScopeFeatures lexicalScopeFeatures = NoLexicalFeatures;
         bool isFunction = false;
-        bool isStrict = false;
         bool isGenerator = false;
         bool isArrowFunction = false;
         bool isAsyncFunction = false;
         if (!m_scopeStack.isEmpty()) {
-            isStrict = m_scopeStack.last().strictMode();
+            lexicalScopeFeatures = m_scopeStack.last().lexicalScopeFeatures();
             isFunction = m_scopeStack.last().isFunction();
             isGenerator = m_scopeStack.last().isGenerator();
             isArrowFunction = m_scopeStack.last().isArrowFunction();
             isAsyncFunction = m_scopeStack.last().isAsyncFunction();
         }
-        m_scopeStack.constructAndAppend(m_vm, isFunction, isGenerator, isStrict, isArrowFunction, isAsyncFunction);
+        m_scopeStack.constructAndAppend(m_vm, lexicalScopeFeatures, isFunction, isGenerator, isArrowFunction, isAsyncFunction);
         return currentScope();
     }
 
@@ -1671,6 +1672,7 @@ private:
     void endLoop() { currentScope()->endLoop(); }
     void startSwitch() { currentScope()->startSwitch(); }
     void endSwitch() { currentScope()->endSwitch(); }
+    LexicalScopeFeatures lexicalScopeFeatures() { return currentScope()->lexicalScopeFeatures(); }
     void setStrictMode() { currentScope()->setStrictMode(); }
     bool strictMode() { return currentScope()->strictMode(); }
     bool isValidStrictMode()
@@ -2177,6 +2179,7 @@ std::unique_ptr<ParsedNode> Parser<LexerType>::parse(ParserError& error, const I
                                     parseResult.value().parameters,
                                     *m_source,
                                     parseResult.value().features,
+                                    currentScope()->lexicalScopeFeatures(),
                                     currentScope()->innerArrowFunctionFeatures(),
                                     parseResult.value().numConstants,
                                     WTFMove(m_moduleScopeData));

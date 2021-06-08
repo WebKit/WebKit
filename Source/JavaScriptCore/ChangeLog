@@ -1,3 +1,132 @@
+2021-06-07  Alexey Shvayka  <shvaikalesh@gmail.com>
+
+        Introduce LexicalScopeFeatures to enable future bytecode optimizations
+        https://bugs.webkit.org/show_bug.cgi?id=224072
+
+        Reviewed by Keith Miller.
+
+        Before this patch, BytecodeGenerator was capable of reasoning about the presence of `with`
+        statements, direct `eval`, or any other code features only within the current executable:
+
+            ```
+            with (foo) {
+                (function() {
+                    // There was no way to detect WithScope during generation of this function.
+                })();
+            }
+            ```
+
+        This change is required for op_to_this rewrite (#225397): if FunctionCallResolveNode and
+        friends knew there is no WithScope, op_call could be emitted with |this| value of
+        `undefined` as per spec [1], instead of resolved scope. This would:
+          - simplify op_to_this on all tiers, likely resulting in minor perf boost;
+          - save 1 instruction per strict function by removing op_to_this;
+          - remove toThis() from the method table and ~30 its call sites from built-ins;
+          - fix built-in methods that were observably lacking toThis();
+          - fix __proto__ getter / setter called on global scope;
+          - fix WebIDL accessors called with |this| value of `undefined` and `null`.
+
+        Also, if ResolveNode knew that unforgeable global properties are not shadowed and there
+        is no `with` statement or sloppy mode direct `eval`, then `undefined` / `Infinity` / `NaN`
+        lookups could be constant-folded. This would save up to 3 bytecode ops per each usage
+        and allow emitting op_is_undefined_or_null for `x === undefined || x === null`.
+        V8 performs this optimization [2].
+
+        This patch introduces LexicalScopeFeatures to allow passing such information from Parser
+        to BytecodeGenerator with a minimal code diff. These features are kept separate from
+        CodeFeature to simplify reasoning about feature's scope and because we need to propagate
+        lexical features from parent to child scope.
+
+        Strict mode is the first use case of LexicalScopeFeatures, which this change carefully
+        fits into existing abstractions without increasing their memory usage even by 1 byte.
+
+        [1]: https://tc39.es/ecma262/#sec-evaluatecall (step 2)
+        [2]: https://medium.com/@bmeurer/sometimes-undefined-is-defined-7701e1c9eff8
+
+        * builtins/BuiltinExecutables.cpp:
+        (JSC::BuiltinExecutables::createExecutable):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::recordParse):
+        (JSC::UnlinkedCodeBlock::lexicalScopeFeatures const):
+        * bytecode/UnlinkedFunctionExecutable.cpp:
+        (JSC::generateUnlinkedFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        (JSC::UnlinkedFunctionExecutable::setInvalidTypeProfilingOffsets):
+        * bytecode/UnlinkedFunctionExecutable.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitNewClassFieldInitializerFunction):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::lexicalScopeFeatures const):
+        (JSC::BytecodeGenerator::generate):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createFunctionMetadata):
+        * parser/Nodes.cpp:
+        (JSC::ScopeNode::ScopeNode):
+        (JSC::ProgramNode::ProgramNode):
+        (JSC::ModuleProgramNode::ModuleProgramNode):
+        (JSC::EvalNode::EvalNode):
+        (JSC::FunctionMetadataNode::FunctionMetadataNode):
+        (JSC::FunctionMetadataNode::operator== const):
+        (JSC::FunctionMetadataNode::dump const):
+        (JSC::FunctionNode::FunctionNode):
+        * parser/Nodes.h:
+        (JSC::ScopeNode::lexicalScopeFeatures):
+        (JSC::ScopeNode::isStrictMode const):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parseInner):
+        (JSC::Parser<LexerType>::parseGeneratorFunctionSourceElements):
+        (JSC::Parser<LexerType>::parseAsyncFunctionSourceElements):
+        (JSC::Parser<LexerType>::parseAsyncGeneratorFunctionSourceElements):
+        (JSC::Parser<LexerType>::parseFunctionBody):
+        (JSC::Parser<LexerType>::parseFunctionInfo):
+        * parser/Parser.h:
+        (JSC::Scope::Scope):
+        (JSC::Scope::lexicalScopeFeatures const):
+        (JSC::Scope::setStrictMode):
+        (JSC::Scope::strictMode const):
+        (JSC::Scope::fillParametersForSourceProviderCache):
+        (JSC::Scope::restoreFromSourceProviderCache):
+        (JSC::Parser::pushScope):
+        (JSC::Parser::lexicalScopeFeatures):
+        (JSC::Parser<LexerType>::parse):
+        * parser/ParserModes.h:
+        * parser/SourceProviderCacheItem.h:
+        (JSC::SourceProviderCacheItem::lexicalScopeFeatures const):
+        (JSC::SourceProviderCacheItem::SourceProviderCacheItem):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createFunctionMetadata):
+        * runtime/CachedBytecode.cpp:
+        (JSC::CachedBytecode::addFunctionUpdate):
+        * runtime/CachedTypes.cpp:
+        (JSC::CachedFunctionExecutable::lexicalScopeFeatures const):
+        (JSC::CachedCodeBlock::lexicalScopeFeatures const):
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        (JSC::CachedFunctionExecutable::encode):
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        (JSC::CachedCodeBlock<CodeBlockType>::encode):
+        (JSC::CachedFunctionExecutable::isInStrictContext const): Deleted.
+        * runtime/CachedTypes.h:
+        * runtime/CodeCache.cpp:
+        (JSC::generateUnlinkedCodeBlockImpl):
+        (JSC::CodeCache::getUnlinkedGlobalCodeBlock):
+        * runtime/ECMAMode.h:
+        (JSC::ECMAMode::fromBool):
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::FunctionExecutable):
+        * runtime/GlobalExecutable.h:
+        (JSC::GlobalExecutable::recordParse):
+        (JSC::GlobalExecutable::GlobalExecutable):
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::ScriptExecutable):
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        (JSC::ScriptExecutable::recordParse):
+        * runtime/ScriptExecutable.h:
+        (JSC::ScriptExecutable::isInStrictContext const):
+        (JSC::ScriptExecutable::recordParse):
+
 2021-06-07  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, reverting r278371 and r278463.

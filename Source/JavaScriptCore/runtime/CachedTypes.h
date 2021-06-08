@@ -46,6 +46,7 @@ enum class SourceCodeType;
 // cache, since this will only be filled in when we parse the function
 struct CachedFunctionExecutableMetadata {
     CodeFeatures m_features;
+    LexicalScopeFeatures m_lexicalScopeFeatures;
     bool m_hasCapturedVariables;
 };
 

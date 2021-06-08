@@ -289,7 +289,7 @@ ParserError BytecodeGenerator::generate()
     return ParserError(ParserError::ErrorNone);
 }
 
-BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedProgramCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const RefPtr<TDZEnvironmentLink>& parentScopeTDZVariables, const PrivateNameEnvironment*, ECMAMode ecmaMode)
+BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedProgramCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const RefPtr<TDZEnvironmentLink>& parentScopeTDZVariables, const PrivateNameEnvironment*)
     : BytecodeGeneratorBase(makeUnique<UnlinkedCodeBlockGenerator>(vm, codeBlock), CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters())
     , m_codeGenerationMode(codeGenerationMode)
     , m_scopeNode(programNode)
@@ -302,7 +302,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
     , m_usesNonStrictEval(false)
     , m_inTailPosition(false)
     , m_needsToUpdateArrowFunctionContext(programNode->usesArrowFunction() || programNode->usesEval())
-    , m_ecmaMode(ecmaMode)
+    , m_ecmaMode(ECMAMode::fromBool(programNode->isStrictMode()))
 {
     ASSERT_UNUSED(parentScopeTDZVariables, !parentScopeTDZVariables);
 
@@ -336,7 +336,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ProgramNode* programNode, UnlinkedP
     }
 }
 
-BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, UnlinkedFunctionCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const RefPtr<TDZEnvironmentLink>& parentScopeTDZVariables, const PrivateNameEnvironment* parentPrivateNameEnvironment, ECMAMode ecmaMode)
+BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, UnlinkedFunctionCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const RefPtr<TDZEnvironmentLink>& parentScopeTDZVariables, const PrivateNameEnvironment* parentPrivateNameEnvironment)
     : BytecodeGeneratorBase(makeUnique<UnlinkedCodeBlockGenerator>(vm, codeBlock), CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters())
     , m_codeGenerationMode(codeGenerationMode)
     , m_scopeNode(functionNode)
@@ -346,7 +346,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
     , m_isBuiltinFunction(codeBlock->isBuiltinFunction())
-    , m_usesNonStrictEval(functionNode->usesEval() && !ecmaMode.isStrict())
+    , m_usesNonStrictEval(functionNode->usesEval() && !functionNode->isStrictMode())
     // FIXME: We should be able to have tail call elimination with the profiler
     // enabled. This is currently not possible because the profiler expects
     // op_will_call / op_did_call pairs before and after a call, which are not
@@ -354,11 +354,12 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     // https://bugs.webkit.org/show_bug.cgi?id=148819
     //
     // Note that we intentionally enable tail call for naked constructors since it does not have special code for "return".
-    , m_inTailPosition(Options::useTailCalls() && !isConstructor() && constructorKind() == ConstructorKind::None && ecmaMode.isStrict())
+    , m_inTailPosition(Options::useTailCalls() && !isConstructor() && constructorKind() == ConstructorKind::None && functionNode->isStrictMode())
     , m_needsToUpdateArrowFunctionContext(functionNode->usesArrowFunction() || functionNode->usesEval())
-    , m_ecmaMode(ecmaMode)
+    , m_ecmaMode(ECMAMode::fromBool(functionNode->isStrictMode()))
     , m_derivedContextType(codeBlock->derivedContextType())
 {
+    ECMAMode ecmaMode = m_ecmaMode;
     pushPrivateAccessNames(parentPrivateNameEnvironment);
 
     SymbolTable* functionSymbolTable = SymbolTable::create(m_vm);
@@ -844,7 +845,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     pushLexicalScope(m_scopeNode, TDZCheckOptimization::Optimize, NestedScopeType::IsNotNested, nullptr, shouldInitializeBlockScopedFunctions);
 }
 
-BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const RefPtr<TDZEnvironmentLink>& parentScopeTDZVariables, const PrivateNameEnvironment* parentPrivateNameEnvironment, ECMAMode ecmaMode)
+BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const RefPtr<TDZEnvironmentLink>& parentScopeTDZVariables, const PrivateNameEnvironment* parentPrivateNameEnvironment)
     : BytecodeGeneratorBase(makeUnique<UnlinkedCodeBlockGenerator>(vm, codeBlock), CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters())
     , m_codeGenerationMode(codeGenerationMode)
     , m_scopeNode(evalNode)
@@ -854,10 +855,10 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
     , m_isBuiltinFunction(false)
-    , m_usesNonStrictEval(evalNode->usesEval() && !ecmaMode.isStrict())
+    , m_usesNonStrictEval(evalNode->usesEval() && !evalNode->isStrictMode())
     , m_inTailPosition(false)
     , m_needsToUpdateArrowFunctionContext(evalNode->usesArrowFunction() || evalNode->usesEval())
-    , m_ecmaMode(ecmaMode)
+    , m_ecmaMode(ECMAMode::fromBool(evalNode->isStrictMode()))
     , m_derivedContextType(codeBlock->derivedContextType())
 {
     m_codeBlock->setNumParameters(1);
@@ -909,7 +910,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, EvalNode* evalNode, UnlinkedEvalCod
     pushLexicalScope(m_scopeNode, TDZCheckOptimization::Optimize, NestedScopeType::IsNotNested, nullptr, shouldInitializeBlockScopedFunctions);
 }
 
-BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNode, UnlinkedModuleProgramCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const RefPtr<TDZEnvironmentLink>& parentScopeTDZVariables, const PrivateNameEnvironment*, ECMAMode ecmaMode)
+BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNode, UnlinkedModuleProgramCodeBlock* codeBlock, OptionSet<CodeGenerationMode> codeGenerationMode, const RefPtr<TDZEnvironmentLink>& parentScopeTDZVariables, const PrivateNameEnvironment*)
     : BytecodeGeneratorBase(makeUnique<UnlinkedCodeBlockGenerator>(vm, codeBlock), CodeBlock::llintBaselineCalleeSaveSpaceAsVirtualRegisters())
     , m_codeGenerationMode(codeGenerationMode)
     , m_scopeNode(moduleProgramNode)
@@ -922,7 +923,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, ModuleProgramNode* moduleProgramNod
     , m_usesNonStrictEval(false)
     , m_inTailPosition(false)
     , m_needsToUpdateArrowFunctionContext(moduleProgramNode->usesArrowFunction() || moduleProgramNode->usesEval())
-    , m_ecmaMode(ecmaMode)
+    , m_ecmaMode(ECMAMode::strict())
 {
     ASSERT_UNUSED(parentScopeTDZVariables, !parentScopeTDZVariables);
 
@@ -3269,8 +3270,7 @@ RegisterID* BytecodeGenerator::emitNewClassFieldInitializerFunction(RegisterID* 
     SourceParseMode parseMode = SourceParseMode::ClassFieldInitializerMode;
     ConstructAbility constructAbility = ConstructAbility::CannotConstruct;
 
-    const bool alwaysStrictInClass = true;
-    FunctionMetadataNode metadata(parserArena(), JSTokenLocation(), JSTokenLocation(), 0, 0, 0, 0, 0, alwaysStrictInClass, ConstructorKind::None, superBinding, 0, parseMode, false);
+    FunctionMetadataNode metadata(parserArena(), JSTokenLocation(), JSTokenLocation(), 0, 0, 0, 0, 0, StrictModeLexicalFeature, ConstructorKind::None, superBinding, 0, parseMode, false);
     metadata.finishParsing(m_scopeNode->source(), Identifier(), FunctionMode::MethodDefinition);
     auto initializer = UnlinkedFunctionExecutable::create(m_vm, m_scopeNode->source(), &metadata, isBuiltinFunction() ? UnlinkedBuiltinFunction : UnlinkedNormalFunction, constructAbility, scriptMode(), WTFMove(variablesUnderTDZ), WTFMove(parentPrivateNameEnvironment), newDerivedContextType, NeedsClassFieldInitializer::No, PrivateBrandRequirement::None);
     initializer->setClassFieldLocations(WTFMove(classFieldLocations));

@@ -65,7 +65,7 @@ static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
     }
 
     function->finishParsing(executable->name(), executable->functionMode());
-    executable->recordParse(function->features(), function->hasCapturedVariables());
+    executable->recordParse(function->features(), function->lexicalScopeFeatures(), function->hasCapturedVariables());
 
     bool isClassContext = executable->superBinding() == SuperBinding::Needed || executable->parseMode() == SourceParseMode::ClassFieldInitializerMode;
 
@@ -73,8 +73,7 @@ static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
 
     auto parentScopeTDZVariables = executable->parentScopeTDZVariables();
     const PrivateNameEnvironment* parentPrivateNameEnvironment = executable->parentPrivateNameEnvironment();
-    ECMAMode ecmaMode = executable->isInStrictContext() ? ECMAMode::strict() : ECMAMode::sloppy();
-    error = BytecodeGenerator::generate(vm, function.get(), source, result, codeGenerationMode, parentScopeTDZVariables, parentPrivateNameEnvironment, ecmaMode);
+    error = BytecodeGenerator::generate(vm, function.get(), source, result, codeGenerationMode, parentScopeTDZVariables, parentPrivateNameEnvironment);
 
     if (error.isValid())
         return nullptr;
@@ -85,7 +84,7 @@ static UnlinkedFunctionCodeBlock* generateUnlinkedFunctionCodeBlock(
 UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM& vm, Structure* structure, const SourceCode& parentSource, FunctionMetadataNode* node, UnlinkedFunctionKind kind, ConstructAbility constructAbility, JSParserScriptMode scriptMode, RefPtr<TDZEnvironmentLink> parentScopeTDZVariables, std::optional<PrivateNameEnvironment> parentPrivateNameEnvironment, DerivedContextType derivedContextType, NeedsClassFieldInitializer needsClassFieldInitializer, PrivateBrandRequirement privateBrandRequirement, bool isBuiltinDefaultClassConstructor)
     : Base(vm, structure)
     , m_firstLineOffset(node->firstLine() - parentSource.firstLine().oneBasedInt())
-    , m_isInStrictContext(node->isInStrictContext())
+    , m_isGeneratedFromCache(false)
     , m_lineCount(node->lastLine() - node->firstLine())
     , m_hasCapturedVariables(false)
     , m_unlinkedFunctionNameStart(node->functionNameStart() - parentSource.startOffset())
@@ -101,16 +100,16 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(VM& vm, Structure* struct
     , m_parametersStartOffset(node->parametersStart())
     , m_isCached(false)
     , m_typeProfilingStartOffset(node->functionKeywordStart())
+    , m_needsClassFieldInitializer(static_cast<unsigned>(needsClassFieldInitializer))
     , m_typeProfilingEndOffset(node->startStartOffset() + node->source().length() - 1)
     , m_parameterCount(node->parameterCount())
     , m_privateBrandRequirement(static_cast<unsigned>(privateBrandRequirement))
     , m_features(0)
-    , m_sourceParseMode(node->parseMode())
     , m_constructorKind(static_cast<unsigned>(node->constructorKind()))
+    , m_sourceParseMode(node->parseMode())
+    , m_lexicalScopeFeatures(node->lexicalScopeFeatures())
     , m_functionMode(static_cast<unsigned>(node->functionMode()))
     , m_derivedContextType(static_cast<unsigned>(derivedContextType))
-    , m_isGeneratedFromCache(false)
-    , m_needsClassFieldInitializer(static_cast<unsigned>(needsClassFieldInitializer))
     , m_unlinkedCodeBlockForCall()
     , m_unlinkedCodeBlockForConstruct()
     , m_name(node->ident())
@@ -290,7 +289,7 @@ UnlinkedFunctionExecutable::RareData& UnlinkedFunctionExecutable::ensureRareData
 
 void UnlinkedFunctionExecutable::setInvalidTypeProfilingOffsets()
 {
-    m_typeProfilingStartOffset = std::numeric_limits<unsigned>::max();
+    m_typeProfilingStartOffset = INT32_MAX;
     m_typeProfilingEndOffset = std::numeric_limits<unsigned>::max();
 }
 
