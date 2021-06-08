@@ -316,7 +316,7 @@ void RtpRtcpEndToEndTest::TestRtpStatePreservation(
         }
 
         GetVideoEncoderConfig()->video_stream_factory =
-            rtc::make_ref_counted<VideoStreamFactory>();
+            new rtc::RefCountedObject<VideoStreamFactory>();
         // Use the same total bitrates when sending a single stream to avoid
         // lowering the bitrate estimate and requiring a subsequent rampup.
         one_stream = GetVideoEncoderConfig()->Copy();

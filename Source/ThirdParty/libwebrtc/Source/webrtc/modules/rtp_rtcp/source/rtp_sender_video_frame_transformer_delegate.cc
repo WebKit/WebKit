@@ -129,11 +129,17 @@ void RTPSenderVideoFrameTransformerDelegate::OnTransformedFrame(
     std::unique_ptr<TransformableFrameInterface> frame) {
   MutexLock lock(&sender_lock_);
 
-  // The encoder queue normally gets destroyed after the sender;
-  // however, it might still be null by the time a previously queued frame
-  // arrives.
-  if (!sender_ || !encoder_queue_)
+  // The encoder queue gets destroyed after the sender; as long as the sender is
+  // alive, it's safe to post.
+  if (!sender_)
     return;
+
+#if defined(WEBRTC_WEBKIT_BUILD)
+  // In case we recreate webrtc streams, the new delegate may be requested to process frames from the previous delegate.
+  if (!encoder_queue_)
+    return;
+#endif
+
   rtc::scoped_refptr<RTPSenderVideoFrameTransformerDelegate> delegate = this;
   encoder_queue_->PostTask(ToQueuedTask(
       [delegate = std::move(delegate), frame = std::move(frame)]() mutable {
@@ -163,14 +169,7 @@ void RTPSenderVideoFrameTransformerDelegate::SetVideoStructureUnderLock(
     const FrameDependencyStructure* video_structure) {
   MutexLock lock(&sender_lock_);
   RTC_CHECK(sender_);
-  sender_->SetVideoStructureAfterTransformation(video_structure);
-}
-
-void RTPSenderVideoFrameTransformerDelegate::SetVideoLayersAllocationUnderLock(
-    VideoLayersAllocation allocation) {
-  MutexLock lock(&sender_lock_);
-  RTC_CHECK(sender_);
-  sender_->SetVideoLayersAllocationAfterTransformation(std::move(allocation));
+  sender_->SetVideoStructureUnderLock(video_structure);
 }
 
 void RTPSenderVideoFrameTransformerDelegate::Reset() {

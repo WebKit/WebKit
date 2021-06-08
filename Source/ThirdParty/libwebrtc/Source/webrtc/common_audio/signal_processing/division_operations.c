@@ -98,7 +98,8 @@ int32_t WebRtcSpl_DivResultInQ31(int32_t num, int32_t den)
     return div;
 }
 
-int32_t WebRtcSpl_DivW32HiLow(int32_t num, int16_t den_hi, int16_t den_low)
+int32_t RTC_NO_SANITIZE("signed-integer-overflow")  // bugs.webrtc.org/5486
+WebRtcSpl_DivW32HiLow(int32_t num, int16_t den_hi, int16_t den_low)
 {
     int16_t approx, tmp_hi, tmp_low, num_hi, num_low;
     int32_t tmpW32;
@@ -110,8 +111,8 @@ int32_t WebRtcSpl_DivW32HiLow(int32_t num, int16_t den_hi, int16_t den_low)
     tmpW32 = (den_hi * approx << 1) + ((den_low * approx >> 15) << 1);
     // tmpW32 = den * approx
 
-    // result in Q30 (tmpW32 = 2.0-(den*approx))
-    tmpW32 = (int32_t)((int64_t)0x7fffffffL - tmpW32);
+    tmpW32 = (int32_t)0x7fffffffL - tmpW32; // result in Q30 (tmpW32 = 2.0-(den*approx))
+    // UBSan: 2147483647 - -2 cannot be represented in type 'int'
 
     // Store tmpW32 in hi and low format
     tmp_hi = (int16_t)(tmpW32 >> 16);

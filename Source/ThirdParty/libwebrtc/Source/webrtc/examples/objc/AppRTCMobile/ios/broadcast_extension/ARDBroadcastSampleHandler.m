@@ -15,8 +15,8 @@
 #import "ARDExternalSampleCapturer.h"
 #import "ARDSettingsModel.h"
 
-#import "sdk/objc/api/logging/RTCCallbackLogger.h"
-#import "sdk/objc/base/RTCLogging.h"
+#import <WebRTC/RTCCallbackLogger.h>
+#import <WebRTC/RTCLogging.h>
 
 @implementation ARDBroadcastSampleHandler {
   ARDAppClient *_client;

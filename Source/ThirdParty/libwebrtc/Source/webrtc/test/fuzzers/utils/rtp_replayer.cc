@@ -24,7 +24,6 @@
 #include "test/fake_decoder.h"
 #include "test/rtp_file_reader.h"
 #include "test/rtp_header_parser.h"
-#include "test/run_loop.h"
 
 namespace webrtc {
 namespace test {
@@ -44,7 +43,6 @@ void RtpReplayer::Replay(
     std::vector<VideoReceiveStream::Config> receive_stream_configs,
     const uint8_t* rtp_dump_data,
     size_t rtp_dump_size) {
-  RunLoop loop;
   rtc::ScopedBaseFakeClock fake_clock;
 
   // Work around: webrtc calls webrtc::Random(clock.TimeInMicroseconds())
@@ -113,6 +111,7 @@ void RtpReplayer::SetupVideoStreams(
     for (auto& decoder : receive_config.decoders) {
       decoder = test::CreateMatchingDecoder(decoder.payload_type,
                                             decoder.video_format.name);
+      decoder.decoder_factory = stream_state->decoder_factory.get();
     }
 
     // Create the window to display the rendered video.
@@ -120,7 +119,6 @@ void RtpReplayer::SetupVideoStreams(
         test::VideoRenderer::Create("Fuzzing WebRTC Video Config", 640, 480));
     // Create a receive stream for this config.
     receive_config.renderer = stream_state->sinks.back().get();
-    receive_config.decoder_factory = stream_state->decoder_factory.get();
     stream_state->receive_streams.emplace_back(
         call->CreateVideoReceiveStream(std::move(receive_config)));
   }

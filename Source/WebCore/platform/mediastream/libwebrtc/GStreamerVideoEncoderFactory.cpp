@@ -272,10 +272,11 @@ public:
         m_encodedFrame._encodedWidth = resolution->width();
         m_encodedFrame._encodedHeight = resolution->height();
         m_encodedFrame._frameType = GST_BUFFER_FLAG_IS_SET(encodedBuffer, GST_BUFFER_FLAG_DELTA_UNIT) ? webrtc::VideoFrameType::kVideoFrameDelta : webrtc::VideoFrameType::kVideoFrameKey;
+        m_encodedFrame._completeFrame = true;
         m_encodedFrame.capture_time_ms_ = frame.render_time_ms();
         m_encodedFrame.SetTimestamp(frame.timestamp());
 
-        GST_LOG_OBJECT(m_pipeline.get(), "Got buffer capture_time_ms: %" G_GINT64_FORMAT " _timestamp: %u",
+        GST_LOG_OBJECT(m_pipeline.get(), "Got buffer capture_time_ms: %" G_GINT64_FORMAT  " _timestamp: %u",
             m_encodedFrame.capture_time_ms_, m_encodedFrame.Timestamp());
 
         webrtc::CodecSpecificInfo codecInfo;
@@ -398,7 +399,7 @@ std::unique_ptr<webrtc::VideoEncoder> GStreamerVideoEncoderFactory::CreateVideoE
 
     if (format.name == cricket::kVp8CodecName) {
         GST_INFO("Using VP8 Encoder from LibWebRTC.");
-        return makeUniqueWithoutFastMallocCheck<webrtc::LibvpxVp8Encoder>(webrtc::LibvpxInterface::Create(), webrtc::VP8Encoder::Settings());
+        return makeUniqueWithoutFastMallocCheck<webrtc::LibvpxVp8Encoder>(webrtc::LibvpxInterface::CreateEncoder(), webrtc::VP8Encoder::Settings());
     }
 
     if (format.name == cricket::kH264CodecName) {

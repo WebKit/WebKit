@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "absl/memory/memory.h"
+#include "rtc_base/deprecation.h"
 #include "rtc_base/ssl_certificate.h"
 #include "rtc_base/ssl_identity.h"
 #include "rtc_base/stream.h"
@@ -92,11 +93,11 @@ bool IsGcmCryptoSuiteName(const std::string& crypto_suite);
 enum SSLRole { SSL_CLIENT, SSL_SERVER };
 enum SSLMode { SSL_MODE_TLS, SSL_MODE_DTLS };
 
-// Note: TLS_10, TLS_11, and DTLS_10 will all be ignored, and only DTLS1_2 will
-// be accepted unless the trial flag WebRTC-LegacyTlsProtocols/Enabled/ is
-// passed in or an explicit override is used. Support for the legacy protocol
-// versions will be completely removed in the future.
-// See https://bugs.webrtc.org/10261.
+// Note: TLS_10, TLS_11, and DTLS_10 will all be ignored, and only
+// DTLS1_2 will be accepted, if the trial flag
+// WebRTC-LegacyTlsProtocols/Disabled/ is passed in. Support for these
+// protocol versions will be completely removed in M84 or later.
+// TODO(https://bugs.webrtc.org/10261).
 enum SSLProtocolVersion {
   SSL_PROTOCOL_NOT_GIVEN = -1,
   SSL_PROTOCOL_TLS_10 = 0,
@@ -118,7 +119,7 @@ enum { SSE_MSG_TRUNC = 0xff0001 };
 // Used to send back UMA histogram value. Logged when Dtls handshake fails.
 enum class SSLHandshakeError { UNKNOWN, INCOMPATIBLE_CIPHERSUITE, MAX_VALUE };
 
-class SSLStreamAdapter : public StreamInterface, public sigslot::has_slots<> {
+class SSLStreamAdapter : public StreamAdapterInterface {
  public:
   // Instantiate an SSLStreamAdapter wrapping the given stream,
   // (using the selected implementation for the platform).
@@ -126,8 +127,8 @@ class SSLStreamAdapter : public StreamInterface, public sigslot::has_slots<> {
   static std::unique_ptr<SSLStreamAdapter> Create(
       std::unique_ptr<StreamInterface> stream);
 
-  SSLStreamAdapter() = default;
-  ~SSLStreamAdapter() override = default;
+  explicit SSLStreamAdapter(std::unique_ptr<StreamInterface> stream);
+  ~SSLStreamAdapter() override;
 
   // Specify our SSL identity: key and certificate. SSLStream takes ownership
   // of the SSLIdentity object and will free it when appropriate. Should be

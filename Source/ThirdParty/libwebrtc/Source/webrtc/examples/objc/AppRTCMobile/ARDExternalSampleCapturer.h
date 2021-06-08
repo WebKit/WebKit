@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import "sdk/objc/base/RTCVideoCapturer.h"
+#import <WebRTC/RTCVideoCapturer.h>
 
 @protocol ARDExternalSampleDelegate <NSObject>
 - (void)didCaptureSampleBuffer:(CMSampleBufferRef)sampleBuffer;

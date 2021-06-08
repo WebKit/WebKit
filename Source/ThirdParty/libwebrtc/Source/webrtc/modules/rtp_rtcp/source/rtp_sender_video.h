@@ -20,12 +20,10 @@
 #include "api/array_view.h"
 #include "api/frame_transformer_interface.h"
 #include "api/scoped_refptr.h"
-#include "api/sequence_checker.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "api/video/video_codec_type.h"
 #include "api/video/video_frame_type.h"
-#include "api/video/video_layers_allocation.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/absolute_capture_time_sender.h"
 #include "modules/rtp_rtcp/source/active_decode_targets_helper.h"
@@ -38,6 +36,7 @@
 #include "rtc_base/race_checker.h"
 #include "rtc_base/rate_statistics.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/synchronization/sequence_checker.h"
 #include "rtc_base/thread_annotations.h"
 
 namespace webrtc {
@@ -71,6 +70,8 @@ class RTPSenderVideo {
     // expected to outlive the RTPSenderVideo object they are passed to.
     Clock* clock = nullptr;
     RTPSender* rtp_sender = nullptr;
+    FlexfecSender* flexfec_sender = nullptr;
+    VideoFecGenerator* fec_generator = nullptr;
     // Some FEC data is duplicated here in preparation of moving FEC to
     // the egress stage.
     absl::optional<VideoFecGenerator::FecType> fec_type;
@@ -118,27 +119,14 @@ class RTPSenderVideo {
   // All calls to SendVideo after this call must use video_header compatible
   // with the video_structure.
   void SetVideoStructure(const FrameDependencyStructure* video_structure);
-  // Should only be used by a RTPSenderVideoFrameTransformerDelegate and exists
-  // to ensure correct syncronization.
-  void SetVideoStructureAfterTransformation(
+  void SetVideoStructureUnderLock(
       const FrameDependencyStructure* video_structure);
 
-  // Sets current active VideoLayersAllocation. The allocation will be sent
-  // using the rtp video layers allocation extension. The allocation will be
-  // sent in full on every key frame. The allocation will be sent once on a
-  // none discardable delta frame per call to this method and will not contain
-  // resolution and frame rate.
-  void SetVideoLayersAllocation(VideoLayersAllocation allocation);
-  // Should only be used by a RTPSenderVideoFrameTransformerDelegate and exists
-  // to ensure correct syncronization.
-  void SetVideoLayersAllocationAfterTransformation(
-      VideoLayersAllocation allocation);
+  uint32_t VideoBitrateSent() const;
 
   // Returns the current packetization overhead rate, in bps. Note that this is
   // the payload overhead, eg the VP8 payload headers, not the RTP headers
   // or extension/
-  // TODO(sprang): Consider moving this to RtpSenderEgress so it's in the same
-  // place as the other rate stats.
   uint32_t PacketizationOverheadBps() const;
 
  protected:
@@ -158,16 +146,6 @@ class RTPSenderVideo {
     RateStatistics frame_rate_fp1000s;
     int64_t last_frame_time_ms;
   };
-
-  enum class SendVideoLayersAllocation {
-    kSendWithResolution,
-    kSendWithoutResolution,
-    kDontSend
-  };
-
-  void SetVideoStructureInternal(
-      const FrameDependencyStructure* video_structure);
-  void SetVideoLayersAllocationInternal(VideoLayersAllocation allocation);
 
   void AddRtpHeaderExtensions(
       const RTPVideoHeader& video_header,
@@ -205,14 +183,10 @@ class RTPSenderVideo {
   bool transmit_color_space_next_frame_ RTC_GUARDED_BY(send_checker_);
   std::unique_ptr<FrameDependencyStructure> video_structure_
       RTC_GUARDED_BY(send_checker_);
-  absl::optional<VideoLayersAllocation> allocation_
-      RTC_GUARDED_BY(send_checker_);
-  // Flag indicating if we should send |allocation_|.
-  SendVideoLayersAllocation send_allocation_ RTC_GUARDED_BY(send_checker_);
 
   // Current target playout delay.
   VideoPlayoutDelay current_playout_delay_ RTC_GUARDED_BY(send_checker_);
-  // Flag indicating if we need to send |current_playout_delay_| in order
+  // Flag indicating if we need to propagate |current_playout_delay_| in order
   // to guarantee it gets delivered.
   bool playout_delay_pending_;
   // Set by the field trial WebRTC-ForceSendPlayoutDelay to override the playout
@@ -223,10 +197,13 @@ class RTPSenderVideo {
   Mutex mutex_;
 
   const absl::optional<int> red_payload_type_;
+  VideoFecGenerator* const fec_generator_;
   absl::optional<VideoFecGenerator::FecType> fec_type_;
   const size_t fec_overhead_bytes_;  // Per packet max FEC overhead.
 
   mutable Mutex stats_mutex_;
+  // Bitrate used for video payload and RTP headers.
+  RateStatistics video_bitrate_ RTC_GUARDED_BY(stats_mutex_);
   RateStatistics packetization_overhead_bitrate_ RTC_GUARDED_BY(stats_mutex_);
 
   std::map<int, TemporalLayerStats> frame_stats_by_temporal_layer_

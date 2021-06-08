@@ -48,6 +48,7 @@ ProcessThreadImpl::ProcessThreadImpl(const char* thread_name)
 
 ProcessThreadImpl::~ProcessThreadImpl() {
   RTC_DCHECK(thread_checker_.IsCurrent());
+  RTC_DCHECK(!thread_.get());
   RTC_DCHECK(!stop_);
 
   while (!delayed_tasks_.empty()) {
@@ -68,11 +69,10 @@ void ProcessThreadImpl::Delete() {
   delete this;
 }
 
-// Doesn't need locking, because the contending thread isn't running.
-void ProcessThreadImpl::Start() RTC_NO_THREAD_SAFETY_ANALYSIS {
+void ProcessThreadImpl::Start() {
   RTC_DCHECK(thread_checker_.IsCurrent());
-  RTC_DCHECK(thread_.empty());
-  if (!thread_.empty())
+  RTC_DCHECK(!thread_.get());
+  if (thread_.get())
     return;
 
   RTC_DCHECK(!stop_);
@@ -80,84 +80,47 @@ void ProcessThreadImpl::Start() RTC_NO_THREAD_SAFETY_ANALYSIS {
   for (ModuleCallback& m : modules_)
     m.module->ProcessThreadAttached(this);
 
-  thread_ = rtc::PlatformThread::SpawnJoinable(
-      [this] {
-        CurrentTaskQueueSetter set_current(this);
-        while (Process()) {
-        }
-      },
-      thread_name_);
+  thread_.reset(
+      new rtc::PlatformThread(&ProcessThreadImpl::Run, this, thread_name_));
+  thread_->Start();
 }
 
 void ProcessThreadImpl::Stop() {
   RTC_DCHECK(thread_checker_.IsCurrent());
-  if (thread_.empty())
+  if (!thread_.get())
     return;
 
   {
-    // Need to take lock, for synchronization with `thread_`.
-    MutexLock lock(&mutex_);
+    rtc::CritScope lock(&lock_);
     stop_ = true;
   }
 
   wake_up_.Set();
-  thread_.Finalize();
 
-  StopNoLocks();
-}
-
-// No locking needed, since this is called after the contending thread is
-// stopped.
-void ProcessThreadImpl::StopNoLocks() RTC_NO_THREAD_SAFETY_ANALYSIS {
-  RTC_DCHECK(thread_.empty());
+  thread_->Stop();
   stop_ = false;
 
+  thread_.reset();
   for (ModuleCallback& m : modules_)
     m.module->ProcessThreadAttached(nullptr);
 }
 
 void ProcessThreadImpl::WakeUp(Module* module) {
   // Allowed to be called on any thread.
-  auto holds_mutex = [this] {
-    if (!IsCurrent()) {
-      return false;
+  {
+    rtc::CritScope lock(&lock_);
+    for (ModuleCallback& m : modules_) {
+      if (m.module == module)
+        m.next_callback = kCallProcessImmediately;
     }
-    RTC_DCHECK_RUN_ON(this);
-    return holds_mutex_;
-  };
-  if (holds_mutex()) {
-    // Avoid locking if called on the ProcessThread, via a module's Process),
-    WakeUpNoLocks(module);
-  } else {
-    MutexLock lock(&mutex_);
-    WakeUpInternal(module);
   }
   wake_up_.Set();
 }
 
-// Must be called only indirectly from Process, which already holds the lock.
-void ProcessThreadImpl::WakeUpNoLocks(Module* module)
-    RTC_NO_THREAD_SAFETY_ANALYSIS {
-  RTC_DCHECK_RUN_ON(this);
-  WakeUpInternal(module);
-}
-
-void ProcessThreadImpl::WakeUpInternal(Module* module) {
-  for (ModuleCallback& m : modules_) {
-    if (m.module == module)
-      m.next_callback = kCallProcessImmediately;
-  }
-}
-
 void ProcessThreadImpl::PostTask(std::unique_ptr<QueuedTask> task) {
-  // Allowed to be called on any thread, except from a module's Process method.
-  if (IsCurrent()) {
-    RTC_DCHECK_RUN_ON(this);
-    RTC_DCHECK(!holds_mutex_) << "Calling ProcessThread::PostTask from "
-                                 "Module::Process is not supported";
-  }
+  // Allowed to be called on any thread.
   {
-    MutexLock lock(&mutex_);
+    rtc::CritScope lock(&lock_);
     queue_.push(task.release());
   }
   wake_up_.Set();
@@ -168,7 +131,7 @@ void ProcessThreadImpl::PostDelayedTask(std::unique_ptr<QueuedTask> task,
   int64_t run_at_ms = rtc::TimeMillis() + milliseconds;
   bool recalculate_wakeup_time;
   {
-    MutexLock lock(&mutex_);
+    rtc::CritScope lock(&lock_);
     recalculate_wakeup_time =
         delayed_tasks_.empty() || run_at_ms < delayed_tasks_.top().run_at_ms;
     delayed_tasks_.emplace(run_at_ms, std::move(task));
@@ -186,7 +149,7 @@ void ProcessThreadImpl::RegisterModule(Module* module,
 #if RTC_DCHECK_IS_ON
   {
     // Catch programmer error.
-    MutexLock lock(&mutex_);
+    rtc::CritScope lock(&lock_);
     for (const ModuleCallback& mc : modules_) {
       RTC_DCHECK(mc.module != module)
           << "Already registered here: " << mc.location.ToString()
@@ -200,11 +163,11 @@ void ProcessThreadImpl::RegisterModule(Module* module,
   // Now that we know the module isn't in the list, we'll call out to notify
   // the module that it's attached to the worker thread.  We don't hold
   // the lock while we make this call.
-  if (!thread_.empty())
+  if (thread_.get())
     module->ProcessThreadAttached(this);
 
   {
-    MutexLock lock(&mutex_);
+    rtc::CritScope lock(&lock_);
     modules_.push_back(ModuleCallback(module, from));
   }
 
@@ -219,7 +182,7 @@ void ProcessThreadImpl::DeRegisterModule(Module* module) {
   RTC_DCHECK(module);
 
   {
-    MutexLock lock(&mutex_);
+    rtc::CritScope lock(&lock_);
     modules_.remove_if(
         [&module](const ModuleCallback& m) { return m.module == module; });
   }
@@ -228,13 +191,21 @@ void ProcessThreadImpl::DeRegisterModule(Module* module) {
   module->ProcessThreadAttached(nullptr);
 }
 
+// static
+void ProcessThreadImpl::Run(void* obj) {
+  ProcessThreadImpl* impl = static_cast<ProcessThreadImpl*>(obj);
+  CurrentTaskQueueSetter set_current(impl);
+  while (impl->Process()) {
+  }
+}
+
 bool ProcessThreadImpl::Process() {
   TRACE_EVENT1("webrtc", "ProcessThreadImpl", "name", thread_name_);
   int64_t now = rtc::TimeMillis();
   int64_t next_checkpoint = now + (1000 * 60);
-  RTC_DCHECK_RUN_ON(this);
+
   {
-    MutexLock lock(&mutex_);
+    rtc::CritScope lock(&lock_);
     if (stop_)
       return false;
     for (ModuleCallback& m : modules_) {
@@ -245,8 +216,6 @@ bool ProcessThreadImpl::Process() {
       if (m.next_callback == 0)
         m.next_callback = GetNextCallbackTime(m.module, now);
 
-      // Set to true for the duration of the calls to modules' Process().
-      holds_mutex_ = true;
       if (m.next_callback <= now ||
           m.next_callback == kCallProcessImmediately) {
         {
@@ -261,7 +230,6 @@ bool ProcessThreadImpl::Process() {
         int64_t new_now = rtc::TimeMillis();
         m.next_callback = GetNextCallbackTime(m.module, new_now);
       }
-      holds_mutex_ = false;
 
       if (m.next_callback < next_checkpoint)
         next_checkpoint = m.next_callback;
@@ -280,11 +248,11 @@ bool ProcessThreadImpl::Process() {
     while (!queue_.empty()) {
       QueuedTask* task = queue_.front();
       queue_.pop();
-      mutex_.Unlock();
+      lock_.Leave();
       if (task->Run()) {
         delete task;
       }
-      mutex_.Lock();
+      lock_.Enter();
     }
   }
 

@@ -22,7 +22,6 @@
 
 #include "absl/types/optional.h"
 #include "api/crypto/frame_decryptor_interface.h"
-#include "api/dtls_transport_interface.h"
 #include "api/media_stream_interface.h"
 #include "api/media_types.h"
 #include "api/rtp_parameters.h"
@@ -92,6 +91,13 @@ class RtpReceiverInternal : public RtpReceiverInterface {
 
   static std::vector<rtc::scoped_refptr<MediaStreamInterface>>
   CreateStreamsFromIds(std::vector<std::string> stream_ids);
+
+  static void MaybeAttachFrameDecryptorToMediaChannel(
+      const absl::optional<uint32_t>& ssrc,
+      rtc::Thread* worker_thread,
+      rtc::scoped_refptr<webrtc::FrameDecryptorInterface> frame_decryptor,
+      cricket::MediaChannel* media_channel,
+      bool stopped);
 };
 
 }  // namespace webrtc

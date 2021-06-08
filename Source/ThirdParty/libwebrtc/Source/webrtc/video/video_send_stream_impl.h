@@ -67,7 +67,8 @@ struct PacingConfig {
 // An encoder may deliver frames through the EncodedImageCallback on an
 // arbitrary thread.
 class VideoSendStreamImpl : public webrtc::BitrateAllocatorObserver,
-                            public VideoStreamEncoderInterface::EncoderSink {
+                            public VideoStreamEncoderInterface::EncoderSink,
+                            public VideoBitrateAllocationObserver {
  public:
   VideoSendStreamImpl(
       Clock* clock,
@@ -112,17 +113,11 @@ class VideoSendStreamImpl : public webrtc::BitrateAllocatorObserver,
   // Implements BitrateAllocatorObserver.
   uint32_t OnBitrateUpdated(BitrateAllocationUpdate update) override;
 
-  // Implements VideoStreamEncoderInterface::EncoderSink
   void OnEncoderConfigurationChanged(
       std::vector<VideoStream> streams,
       bool is_svc,
       VideoEncoderConfig::ContentType content_type,
       int min_transmit_bitrate_bps) override;
-
-  void OnBitrateAllocationUpdated(
-      const VideoBitrateAllocation& allocation) override;
-  void OnVideoLayersAllocationUpdated(
-      VideoLayersAllocation allocation) override;
 
   // Implements EncodedImageCallback. The implementation routes encoded frames
   // to the |payload_router_| and |config.pre_encode_callback| if set.
@@ -133,6 +128,10 @@ class VideoSendStreamImpl : public webrtc::BitrateAllocatorObserver,
 
   // Implements EncodedImageCallback.
   void OnDroppedFrame(EncodedImageCallback::DropReason reason) override;
+
+  // Implements VideoBitrateAllocationObserver.
+  void OnBitrateAllocationUpdated(
+      const VideoBitrateAllocation& allocation) override;
 
   // Starts monitoring and sends a keyframe.
   void StartupVideoSendStream();

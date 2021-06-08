@@ -13,9 +13,7 @@ import ast
 import json
 import StringIO
 import os
-import re
 import sys
-import tempfile
 import unittest
 
 import mb
@@ -34,7 +32,6 @@ class FakeMBW(mb.MetaBuildWrapper):
       self.platform = 'win32'
       self.executable = 'c:\\python\\python.exe'
       self.sep = '\\'
-      self.cwd = 'c:\\fake_src\\out\\Default'
     else:
       self.src_dir = '/fake_src'
       self.default_config = '/fake_src/tools_webrtc/mb/mb_config.pyl'
@@ -42,10 +39,8 @@ class FakeMBW(mb.MetaBuildWrapper):
       self.executable = '/usr/bin/python'
       self.platform = 'linux2'
       self.sep = '/'
-      self.cwd = '/fake_src/out/Default'
 
     self.files = {}
-    self.dirs = set()
     self.calls = []
     self.cmds = []
     self.cross_compile = None
@@ -57,24 +52,21 @@ class FakeMBW(mb.MetaBuildWrapper):
     return '$HOME/%s' % path
 
   def Exists(self, path):
-    abs_path = self._AbsPath(path)
-    return (self.files.get(abs_path) is not None or abs_path in self.dirs)
+    return self.files.get(path) is not None
 
   def MaybeMakeDirectory(self, path):
-    abpath = self._AbsPath(path)
-    self.dirs.add(abpath)
+    self.files[path] = True
 
   def PathJoin(self, *comps):
     return self.sep.join(comps)
 
   def ReadFile(self, path):
-    return self.files[self._AbsPath(path)]
+    return self.files[path]
 
   def WriteFile(self, path, contents, force_verbose=False):
     if self.args.dryrun or self.args.verbose or force_verbose:
       self.Print('\nWriting """\\\n%s""" to %s.\n' % (contents, path))
-    abpath = self._AbsPath(path)
-    self.files[abpath] = contents
+    self.files[path] = contents
 
   def Call(self, cmd, env=None, buffer_output=True):
     self.calls.append(cmd)
@@ -91,33 +83,17 @@ class FakeMBW(mb.MetaBuildWrapper):
     else:
       self.out += sep.join(args) + end
 
-  def TempDir(self):
-    tmp_dir = os.path.join(tempfile.gettempdir(), 'mb_test')
-    self.dirs.add(tmp_dir)
-    return tmp_dir
-
   def TempFile(self, mode='w'):
     return FakeFile(self.files)
 
   def RemoveFile(self, path):
-    abpath = self._AbsPath(path)
-    self.files[abpath] = None
+    del self.files[path]
 
   def RemoveDirectory(self, path):
-    abpath = self._AbsPath(path)
-    self.rmdirs.append(abpath)
-    files_to_delete = [f for f in self.files if f.startswith(abpath)]
+    self.rmdirs.append(path)
+    files_to_delete = [f for f in self.files if f.startswith(path)]
     for f in files_to_delete:
       self.files[f] = None
-
-  def _AbsPath(self, path):
-    if not ((self.platform == 'win32' and path.startswith('c:')) or
-            (self.platform != 'win32' and path.startswith('/'))):
-      path = self.PathJoin(self.cwd, path)
-    if self.sep == '\\':
-      return re.sub(r'\\+', r'\\', path)
-    else:
-      return re.sub('/+', '/', path)
 
 
 class FakeFile(object):
@@ -135,12 +111,12 @@ class FakeFile(object):
 
 TEST_CONFIG = """\
 {
-  'builder_groups': {
+  'masters': {
     'chromium': {},
-    'fake_group': {
+    'fake_master': {
       'fake_builder': 'rel_bot',
       'fake_debug_builder': 'debug_goma',
-      'fake_args_bot': '//build/args/bots/fake_group/fake_args_bot.gn',
+      'fake_args_bot': '//build/args/bots/fake_master/fake_args_bot.gn',
       'fake_multi_phase': { 'phase_1': 'phase_1', 'phase_2': 'phase_2'},
       'fake_android_bot': 'android_bot',
     },
@@ -193,27 +169,20 @@ class UnitTest(unittest.TestCase):
         },
       }''')
     mbw.files.setdefault(
-        mbw.ToAbsPath('//build/args/bots/fake_group/fake_args_bot.gn'),
+        mbw.ToAbsPath('//build/args/bots/fake_master/fake_args_bot.gn'),
         'is_debug = false\n')
     if files:
       for path, contents in files.items():
         mbw.files[path] = contents
     return mbw
 
-  def check(self, args, mbw=None, files=None, out=None, err=None, ret=None,
-            env=None):
+  def check(self, args, mbw=None, files=None, out=None, err=None, ret=None):
     if not mbw:
       mbw = self.fake_mbw(files)
 
-    try:
-      prev_env = os.environ.copy()
-      os.environ = env if env else prev_env
-      actual_ret = mbw.Main(args)
-    finally:
-      os.environ = prev_env
-    self.assertEqual(
-        actual_ret, ret,
-        "ret: %s, out: %s, err: %s" % (actual_ret, mbw.out, mbw.err))
+    actual_ret = mbw.Main(args)
+
+    self.assertEqual(actual_ret, ret)
     if out is not None:
       self.assertEqual(mbw.out, out)
     if err is not None:
@@ -269,12 +238,12 @@ class UnitTest(unittest.TestCase):
                   '--check\n', mbw.out)
 
     mbw = self.fake_mbw()
-    self.check(['gen', '-m', 'fake_group', '-b', 'fake_args_bot',
+    self.check(['gen', '-m', 'fake_master', '-b', 'fake_args_bot',
                 '//out/Debug'],
                mbw=mbw, ret=0)
     self.assertEqual(
         mbw.files['/fake_src/out/Debug/args.gn'],
-        'import("//build/args/bots/fake_group/fake_args_bot.gn")\n\n')
+        'import("//build/args/bots/fake_master/fake_args_bot.gn")\n\n')
 
 
   def test_gen_fails(self):
@@ -595,8 +564,8 @@ class UnitTest(unittest.TestCase):
 
   def test_gen_windowed_test_launcher_win(self):
     files = {
-      'c:\\fake_src\\out\\Default\\tmp\\swarming_targets': 'unittests\n',
-      'c:\\fake_src\\testing\\buildbot\\gn_isolate_map.pyl': (
+      '/tmp/swarming_targets': 'unittests\n',
+      '/fake_src/testing/buildbot/gn_isolate_map.pyl': (
           "{'unittests': {"
           "  'label': '//somewhere:unittests',"
           "  'type': 'windowed_test_launcher',"
@@ -610,10 +579,9 @@ class UnitTest(unittest.TestCase):
     mbw = self.fake_mbw(files=files, win32=True)
     self.check(['gen',
                 '-c', 'debug_goma',
-                '--swarming-targets-file',
-                'c:\\fake_src\\out\\Default\\tmp\\swarming_targets',
+                '--swarming-targets-file', '/tmp/swarming_targets',
                 '--isolate-map-file',
-                'c:\\fake_src\\testing\\buildbot\\gn_isolate_map.pyl',
+                '/fake_src/testing/buildbot/gn_isolate_map.pyl',
                 '//out/Default'], mbw=mbw, ret=0)
 
     isolate_file = mbw.files['c:\\fake_src\\out\\Default\\unittests.isolate']
@@ -782,40 +750,23 @@ class UnitTest(unittest.TestCase):
 
   def test_run_swarmed(self):
     files = {
-        '/fake_src/testing/buildbot/gn_isolate_map.pyl':
-        ("{'base_unittests': {"
-         "  'label': '//base:base_unittests',"
-         "  'type': 'console_test_launcher',"
-         "}}\n"),
-        '/fake_src/out/Default/base_unittests.runtime_deps':
-        ("base_unittests\n"),
-        '/fake_src/out/Default/base_unittests.archive.json':
-        ("{\"base_unittests\":\"fake_hash\"}"),
-        '/fake_src/third_party/depot_tools/cipd_manifest.txt':
-        ("# vpython\n"
-         "/some/vpython/pkg  git_revision:deadbeef\n"),
+      '/fake_src/testing/buildbot/gn_isolate_map.pyl': (
+          "{'base_unittests': {"
+          "  'label': '//base:base_unittests',"
+          "  'type': 'raw',"
+          "  'args': [],"
+          "}}\n"
+      ),
+      '/fake_src/out/Default/base_unittests.runtime_deps': (
+          "base_unittests\n"
+      ),
+      'out/Default/base_unittests.archive.json': (
+          "{\"base_unittests\":\"fake_hash\"}"),
     }
-    task_json = json.dumps({'tasks': [{'task_id': '00000'}]})
-    collect_json = json.dumps({'00000': {'results': {}}})
 
     mbw = self.fake_mbw(files=files)
-    mbw.files[mbw.PathJoin(mbw.TempDir(), 'task.json')] = task_json
-    mbw.files[mbw.PathJoin(mbw.TempDir(), 'collect_output.json')] = collect_json
-    original_impl = mbw.ToSrcRelPath
-
-    def to_src_rel_path_stub(path):
-      if path.endswith('base_unittests.archive.json'):
-        return 'base_unittests.archive.json'
-      return original_impl(path)
-
-    mbw.ToSrcRelPath = to_src_rel_path_stub
-
     self.check(['run', '-s', '-c', 'debug_goma', '//out/Default',
                 'base_unittests'], mbw=mbw, ret=0)
-    mbw = self.fake_mbw(files=files)
-    mbw.files[mbw.PathJoin(mbw.TempDir(), 'task.json')] = task_json
-    mbw.files[mbw.PathJoin(mbw.TempDir(), 'collect_output.json')] = collect_json
-    mbw.ToSrcRelPath = to_src_rel_path_stub
     self.check(['run', '-s', '-c', 'debug_goma', '-d', 'os', 'Win7',
                 '//out/Default', 'base_unittests'], mbw=mbw, ret=0)
 
@@ -850,26 +801,26 @@ class UnitTest(unittest.TestCase):
 
   def test_multiple_phases(self):
     # Check that not passing a --phase to a multi-phase builder fails.
-    mbw = self.check(['lookup', '-m', 'fake_group', '-b', 'fake_multi_phase'],
+    mbw = self.check(['lookup', '-m', 'fake_master', '-b', 'fake_multi_phase'],
                      ret=1)
     self.assertIn('Must specify a build --phase', mbw.out)
 
     # Check that passing a --phase to a single-phase builder fails.
-    mbw = self.check(['lookup', '-m', 'fake_group', '-b', 'fake_builder',
+    mbw = self.check(['lookup', '-m', 'fake_master', '-b', 'fake_builder',
                       '--phase', 'phase_1'], ret=1)
     self.assertIn('Must not specify a build --phase', mbw.out)
 
     # Check that passing a wrong phase key to a multi-phase builder fails.
-    mbw = self.check(['lookup', '-m', 'fake_group', '-b', 'fake_multi_phase',
+    mbw = self.check(['lookup', '-m', 'fake_master', '-b', 'fake_multi_phase',
                       '--phase', 'wrong_phase'], ret=1)
     self.assertIn('Phase wrong_phase doesn\'t exist', mbw.out)
 
     # Check that passing a correct phase key to a multi-phase builder passes.
-    mbw = self.check(['lookup', '-m', 'fake_group', '-b', 'fake_multi_phase',
+    mbw = self.check(['lookup', '-m', 'fake_master', '-b', 'fake_multi_phase',
                       '--phase', 'phase_1'], ret=0)
     self.assertIn('phase = 1', mbw.out)
 
-    mbw = self.check(['lookup', '-m', 'fake_group', '-b', 'fake_multi_phase',
+    mbw = self.check(['lookup', '-m', 'fake_master', '-b', 'fake_multi_phase',
                       '--phase', 'phase_2'], ret=0)
     self.assertIn('phase = 2', mbw.out)
 

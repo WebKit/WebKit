@@ -499,7 +499,7 @@ absl::optional<NetEq::DecoderFormat> NetEqImpl::GetDecoderFormat(
 void NetEqImpl::FlushBuffers() {
   MutexLock lock(&mutex_);
   RTC_LOG(LS_VERBOSE) << "FlushBuffers";
-  packet_buffer_->Flush(stats_.get());
+  packet_buffer_->Flush();
   assert(sync_buffer_.get());
   assert(expand_.get());
   sync_buffer_->Flush();
@@ -565,19 +565,19 @@ int NetEqImpl::InsertPacketInternal(const RTPHeader& rtp_header,
     return kInvalidPointer;
   }
 
-  Timestamp receive_time = clock_->CurrentTime();
+  int64_t receive_time_ms = clock_->TimeInMilliseconds();
   stats_->ReceivedPacket();
 
   PacketList packet_list;
   // Insert packet in a packet list.
-  packet_list.push_back([&rtp_header, &payload, &receive_time] {
+  packet_list.push_back([&rtp_header, &payload, &receive_time_ms] {
     // Convert to Packet.
     Packet packet;
     packet.payload_type = rtp_header.payloadType;
     packet.sequence_number = rtp_header.sequenceNumber;
     packet.timestamp = rtp_header.timestamp;
     packet.payload.SetData(payload.data(), payload.size());
-    packet.packet_info = RtpPacketInfo(rtp_header, receive_time);
+    packet.packet_info = RtpPacketInfo(rtp_header, receive_time_ms);
     // Waiting time will be set upon inserting the packet in the buffer.
     RTC_DCHECK(!packet.waiting_time);
     return packet;
@@ -607,7 +607,7 @@ int NetEqImpl::InsertPacketInternal(const RTPHeader& rtp_header,
     // the packet has been successfully inserted into the packet buffer.
 
     // Flush the packet buffer and DTMF buffer.
-    packet_buffer_->Flush(stats_.get());
+    packet_buffer_->Flush();
     dtmf_buffer_->Flush();
 
     // Update audio buffer timestamp.
@@ -680,7 +680,6 @@ int NetEqImpl::InsertPacketInternal(const RTPHeader& rtp_header,
   }
 
   PacketList parsed_packet_list;
-  bool is_dtx = false;
   while (!packet_list.empty()) {
     Packet& packet = packet_list.front();
     const DecoderDatabase::DecoderInfo* info =
@@ -721,7 +720,6 @@ int NetEqImpl::InsertPacketInternal(const RTPHeader& rtp_header,
         for (auto& result : results) {
           RTC_DCHECK(result.frame);
           RTC_DCHECK_GE(result.priority, 0);
-          is_dtx = is_dtx || result.frame->IsDtxPacket();
           if (first) {
             // Re-use the node and move it to parsed_packet_list.
             packet_list.front() = packet_from_result(result);
@@ -746,23 +744,13 @@ int NetEqImpl::InsertPacketInternal(const RTPHeader& rtp_header,
   }
 
   // Insert packets in buffer.
-  const int target_level_ms = controller_->TargetLevelMs();
   const int ret = packet_buffer_->InsertPacketList(
       &parsed_packet_list, *decoder_database_, &current_rtp_payload_type_,
-      &current_cng_rtp_payload_type_, stats_.get(), decoder_frame_length_,
-      last_output_sample_rate_hz_, target_level_ms);
-  bool buffer_flush_occured = false;
+      &current_cng_rtp_payload_type_, stats_.get());
   if (ret == PacketBuffer::kFlushed) {
     // Reset DSP timestamp etc. if packet buffer flushed.
     new_codec_ = true;
     update_sample_rate_and_channels = true;
-    buffer_flush_occured = true;
-  } else if (ret == PacketBuffer::kPartialFlush) {
-    // Forward sync buffer timestamp
-    timestamp_ = packet_buffer_->PeekNextPacket()->timestamp;
-    sync_buffer_->IncreaseEndTimestamp(timestamp_ -
-                                       sync_buffer_->end_timestamp());
-    buffer_flush_occured = true;
   } else if (ret != PacketBuffer::kOK) {
     return kOtherError;
   }
@@ -813,14 +801,10 @@ int NetEqImpl::InsertPacketInternal(const RTPHeader& rtp_header,
       decoder_database_->GetDecoderInfo(main_payload_type);
   assert(dec_info);  // Already checked that the payload type is known.
 
-  NetEqController::PacketArrivedInfo info;
-  info.is_cng_or_dtmf = dec_info->IsComfortNoise() || dec_info->IsDtmf();
-  info.packet_length_samples =
+  const bool last_cng_or_dtmf =
+      dec_info->IsComfortNoise() || dec_info->IsDtmf();
+  const size_t packet_length_samples =
       number_of_primary_packets * decoder_frame_length_;
-  info.main_timestamp = main_timestamp;
-  info.main_sequence_number = main_sequence_number;
-  info.is_dtx = is_dtx;
-  info.buffer_flush = buffer_flush_occured;
   // Only update statistics if incoming packet is not older than last played
   // out packet or RTX handling is enabled, and if new codec flag is not
   // set.
@@ -829,8 +813,9 @@ int NetEqImpl::InsertPacketInternal(const RTPHeader& rtp_header,
        static_cast<int32_t>(main_timestamp - timestamp_) >= 0) &&
       !new_codec_;
 
-  auto relative_delay =
-      controller_->PacketArrived(fs_hz_, should_update_stats, info);
+  auto relative_delay = controller_->PacketArrived(
+      last_cng_or_dtmf, packet_length_samples, should_update_stats,
+      main_sequence_number, main_timestamp, fs_hz_);
   if (relative_delay) {
     stats_->RelativePacketArrivalDelay(relative_delay.value());
   }
@@ -872,7 +857,6 @@ int NetEqImpl::GetAudioInternal(AudioFrame* audio_frame,
                   static_cast<uint32_t>(audio_frame->samples_per_channel_);
     audio_frame->num_channels_ = sync_buffer_->Channels();
     stats_->ExpandedNoiseSamples(output_size_samples_, false);
-    controller_->NotifyMutedState();
     *muted = true;
     return 0;
   }
@@ -1214,11 +1198,6 @@ int NetEqImpl::GetDecision(Operation* operation,
   }
 
   controller_->ExpandDecision(*operation);
-  if ((last_mode_ == Mode::kCodecPlc) && (*operation != Operation::kExpand)) {
-    // Getting out of the PLC expand mode, reporting interruptions.
-    // NetEq PLC reports this metrics in expand.cc
-    stats_->EndExpandEvent(fs_hz_);
-  }
 
   // Check conditions for reset.
   if (new_codec_ || *operation == Operation::kUndefined) {
@@ -1738,7 +1717,7 @@ int NetEqImpl::DoAccelerate(int16_t* decoded_buffer,
     decoded_length = required_samples * num_channels;
   }
 
-  size_t samples_removed = 0;
+  size_t samples_removed;
   Accelerate::ReturnCodes return_code =
       accelerate_->Process(decoded_buffer, decoded_length, fast_accelerate,
                            algorithm_buffer_.get(), &samples_removed);
@@ -1816,7 +1795,7 @@ int NetEqImpl::DoPreemptiveExpand(int16_t* decoded_buffer,
     decoded_length = required_samples * num_channels;
   }
 
-  size_t samples_added = 0;
+  size_t samples_added;
   PreemptiveExpand::ReturnCodes return_code = preemptive_expand_->Process(
       decoded_buffer, decoded_length, old_borrowed_samples_per_channel,
       algorithm_buffer_.get(), &samples_added);
@@ -2164,7 +2143,7 @@ void NetEqImpl::SetSampleRateAndChannels(int fs_hz, size_t channels) {
                                expand_->overlap_length());
 
   normal_.reset(new Normal(fs_hz, decoder_database_.get(), *background_noise_,
-                           expand_.get(), stats_.get()));
+                           expand_.get()));
   accelerate_.reset(
       accelerate_factory_->Create(fs_hz, channels, *background_noise_));
   preemptive_expand_.reset(preemptive_expand_factory_->Create(

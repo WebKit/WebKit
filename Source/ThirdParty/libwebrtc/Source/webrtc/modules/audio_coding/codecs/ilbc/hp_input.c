@@ -16,8 +16,6 @@
 
 ******************************************************************/
 
-#include "modules/audio_coding/codecs/ilbc/hp_input.h"
-
 #include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*

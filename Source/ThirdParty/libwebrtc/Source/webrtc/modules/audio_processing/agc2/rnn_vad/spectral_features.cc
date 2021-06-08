@@ -16,7 +16,6 @@
 #include <numeric>
 
 #include "rtc_base/checks.h"
-#include "rtc_base/numerics/safe_compare.h"
 
 namespace webrtc {
 namespace rnn_vad {
@@ -33,11 +32,11 @@ void UpdateCepstralDifferenceStats(
   RTC_DCHECK(sym_matrix_buf);
   // Compute the new cepstral distance stats.
   std::array<float, kCepstralCoeffsHistorySize - 1> distances;
-  for (int i = 0; i < kCepstralCoeffsHistorySize - 1; ++i) {
-    const int delay = i + 1;
+  for (size_t i = 0; i < kCepstralCoeffsHistorySize - 1; ++i) {
+    const size_t delay = i + 1;
     auto old_cepstral_coeffs = ring_buf.GetArrayView(delay);
     distances[i] = 0.f;
-    for (int k = 0; k < kNumBands; ++k) {
+    for (size_t k = 0; k < kNumBands; ++k) {
       const float c = new_cepstral_coeffs[k] - old_cepstral_coeffs[k];
       distances[i] += c * c;
     }
@@ -49,9 +48,9 @@ void UpdateCepstralDifferenceStats(
 // Computes the first half of the Vorbis window.
 std::array<float, kFrameSize20ms24kHz / 2> ComputeScaledHalfVorbisWindow(
     float scaling = 1.f) {
-  constexpr int kHalfSize = kFrameSize20ms24kHz / 2;
+  constexpr size_t kHalfSize = kFrameSize20ms24kHz / 2;
   std::array<float, kHalfSize> half_window{};
-  for (int i = 0; i < kHalfSize; ++i) {
+  for (size_t i = 0; i < kHalfSize; ++i) {
     half_window[i] =
         scaling *
         std::sin(0.5 * kPi * std::sin(0.5 * kPi * (i + 0.5) / kHalfSize) *
@@ -72,8 +71,8 @@ void ComputeWindowedForwardFft(
   RTC_DCHECK_EQ(frame.size(), 2 * half_window.size());
   // Apply windowing.
   auto in = fft_input_buffer->GetView();
-  for (int i = 0, j = kFrameSize20ms24kHz - 1;
-       rtc::SafeLt(i, half_window.size()); ++i, --j) {
+  for (size_t i = 0, j = kFrameSize20ms24kHz - 1; i < half_window.size();
+       ++i, --j) {
     in[i] = frame[i] * half_window[i];
     in[j] = frame[j] * half_window[i];
   }
@@ -163,7 +162,7 @@ void SpectralFeaturesExtractor::ComputeAvgAndDerivatives(
   RTC_DCHECK_EQ(average.size(), first_derivative.size());
   RTC_DCHECK_EQ(first_derivative.size(), second_derivative.size());
   RTC_DCHECK_LE(average.size(), curr.size());
-  for (int i = 0; rtc::SafeLt(i, average.size()); ++i) {
+  for (size_t i = 0; i < average.size(); ++i) {
     // Average, kernel: [1, 1, 1].
     average[i] = curr[i] + prev1[i] + prev2[i];
     // First derivative, kernel: [1, 0, - 1].
@@ -179,7 +178,7 @@ void SpectralFeaturesExtractor::ComputeNormalizedCepstralCorrelation(
       reference_frame_fft_->GetConstView(), lagged_frame_fft_->GetConstView(),
       bands_cross_corr_);
   // Normalize.
-  for (int i = 0; rtc::SafeLt(i, bands_cross_corr_.size()); ++i) {
+  for (size_t i = 0; i < bands_cross_corr_.size(); ++i) {
     bands_cross_corr_[i] =
         bands_cross_corr_[i] /
         std::sqrt(0.001f + reference_frame_bands_energy_[i] *
@@ -195,9 +194,9 @@ void SpectralFeaturesExtractor::ComputeNormalizedCepstralCorrelation(
 float SpectralFeaturesExtractor::ComputeVariability() const {
   // Compute cepstral variability score.
   float variability = 0.f;
-  for (int delay1 = 0; delay1 < kCepstralCoeffsHistorySize; ++delay1) {
+  for (size_t delay1 = 0; delay1 < kCepstralCoeffsHistorySize; ++delay1) {
     float min_dist = std::numeric_limits<float>::max();
-    for (int delay2 = 0; delay2 < kCepstralCoeffsHistorySize; ++delay2) {
+    for (size_t delay2 = 0; delay2 < kCepstralCoeffsHistorySize; ++delay2) {
       if (delay1 == delay2)  // The distance would be 0.
         continue;
       min_dist =

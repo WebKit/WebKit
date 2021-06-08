@@ -43,21 +43,22 @@ TEST(EventTest, AutoReset) {
 
 class SignalerThread {
  public:
+  SignalerThread() : thread_(&ThreadFn, this, "EventPerf") {}
   void Start(Event* writer, Event* reader) {
     writer_ = writer;
     reader_ = reader;
-    thread_ = PlatformThread::SpawnJoinable(
-        [this] {
-          while (!stop_event_.Wait(0)) {
-            writer_->Set();
-            reader_->Wait(Event::kForever);
-          }
-        },
-        "EventPerf");
+    thread_.Start();
   }
   void Stop() {
     stop_event_.Set();
-    thread_.Finalize();
+    thread_.Stop();
+  }
+  static void ThreadFn(void* param) {
+    auto* me = static_cast<SignalerThread*>(param);
+    while (!me->stop_event_.Wait(0)) {
+      me->writer_->Set();
+      me->reader_->Wait(Event::kForever);
+    }
   }
   Event stop_event_;
   Event* writer_;

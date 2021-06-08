@@ -10,10 +10,10 @@
 
 #include "pc/rtp_parameters_conversion.h"
 
-#include <algorithm>
 #include <cstdint>
 #include <set>
 #include <string>
+#include <unordered_map>
 #include <utility>
 
 #include "api/array_view.h"
@@ -76,7 +76,8 @@ RTCErrorOr<cricket::FeedbackParam> ToCricketFeedbackParam(
       }
       return cricket::FeedbackParam(cricket::kRtcpFbParamTransportCc);
   }
-  RTC_CHECK_NOTREACHED();
+  // Not reached; avoids compile warning.
+  RTC_FATAL();
 }
 
 template <typename C>

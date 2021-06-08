@@ -28,7 +28,6 @@ const char* StreamTypeToString(VideoSendStream::StreamStats::StreamType type) {
     case VideoSendStream::StreamStats::StreamType::kFlexfec:
       return "flexfec";
   }
-  RTC_CHECK_NOTREACHED();
 }
 
 }  // namespace
@@ -51,13 +50,8 @@ std::string VideoSendStream::StreamStats::ToString() const {
   ss << "retransmit_bps: " << retransmit_bitrate_bps << ", ";
   ss << "avg_delay_ms: " << avg_delay_ms << ", ";
   ss << "max_delay_ms: " << max_delay_ms << ", ";
-  if (report_block_data) {
-    ss << "cum_loss: " << report_block_data->report_block().packets_lost
-       << ", ";
-    ss << "max_ext_seq: "
-       << report_block_data->report_block().extended_highest_sequence_number
-       << ", ";
-  }
+  ss << "cum_loss: " << rtcp_stats.packets_lost << ", ";
+  ss << "max_ext_seq: " << rtcp_stats.extended_highest_sequence_number << ", ";
   ss << "nack: " << rtcp_packet_type_counts.nack_packets << ", ";
   ss << "fir: " << rtcp_packet_type_counts.fir_packets << ", ";
   ss << "pli: " << rtcp_packet_type_counts.pli_packets;

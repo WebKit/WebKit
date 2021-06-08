@@ -95,6 +95,11 @@ std::unique_ptr<SSLStreamAdapter> SSLStreamAdapter::Create(
   return std::make_unique<OpenSSLStreamAdapter>(std::move(stream));
 }
 
+SSLStreamAdapter::SSLStreamAdapter(std::unique_ptr<StreamInterface> stream)
+    : StreamAdapterInterface(stream.release()) {}
+
+SSLStreamAdapter::~SSLStreamAdapter() {}
+
 bool SSLStreamAdapter::GetSslCipherSuite(int* cipher_suite) {
   return false;
 }

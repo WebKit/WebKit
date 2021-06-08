@@ -131,7 +131,7 @@ uint16_t ComputeNetworkCostByType(int type,
 }
 
 #if !defined(__native_client__)
-bool IsIgnoredIPv6(bool allow_mac_based_ipv6, const InterfaceAddress& ip) {
+bool IsIgnoredIPv6(const InterfaceAddress& ip) {
   if (ip.family() != AF_INET6) {
     return false;
   }
@@ -144,7 +144,7 @@ bool IsIgnoredIPv6(bool allow_mac_based_ipv6, const InterfaceAddress& ip) {
   }
 
   // Any MAC based IPv6 should be avoided to prevent the MAC tracking.
-  if (IPIsMacBased(ip) && !allow_mac_based_ipv6) {
+  if (IPIsMacBased(ip)) {
     return true;
   }
 
@@ -212,8 +212,7 @@ AdapterType GetAdapterTypeFromName(const char* network_name) {
     return ADAPTER_TYPE_ETHERNET;
   }
 
-  if (MatchTypeNameWithIndexPattern(network_name, "wlan") ||
-      MatchTypeNameWithIndexPattern(network_name, "v4-wlan")) {
+  if (MatchTypeNameWithIndexPattern(network_name, "wlan")) {
     return ADAPTER_TYPE_WIFI;
   }
 
@@ -479,15 +478,11 @@ Network* NetworkManagerBase::GetNetworkFromAddress(
   return nullptr;
 }
 
-BasicNetworkManager::BasicNetworkManager() : BasicNetworkManager(nullptr) {}
+BasicNetworkManager::BasicNetworkManager() {}
 
 BasicNetworkManager::BasicNetworkManager(
     NetworkMonitorFactory* network_monitor_factory)
-    : network_monitor_factory_(network_monitor_factory),
-      allow_mac_based_ipv6_(
-          webrtc::field_trial::IsEnabled("WebRTC-AllowMACBasedIPv6")),
-      bind_using_ifname_(
-          !webrtc::field_trial::IsDisabled("WebRTC-BindUsingInterfaceName")) {}
+    : network_monitor_factory_(network_monitor_factory) {}
 
 BasicNetworkManager::~BasicNetworkManager() {}
 
@@ -540,7 +535,7 @@ void BasicNetworkManager::ConvertIfAddrs(struct ifaddrs* interfaces,
 
     // Special case for IPv6 address.
     if (cursor->ifa_addr->sa_family == AF_INET6) {
-      if (IsIgnoredIPv6(allow_mac_based_ipv6_, ip)) {
+      if (IsIgnoredIPv6(ip)) {
         continue;
       }
       scope_id =
@@ -718,7 +713,7 @@ bool BasicNetworkManager::CreateNetworks(bool include_ignored,
             scope_id = v6_addr->sin6_scope_id;
             ip = IPAddress(v6_addr->sin6_addr);
 
-            if (IsIgnoredIPv6(allow_mac_based_ipv6_, InterfaceAddress(ip))) {
+            if (IsIgnoredIPv6(InterfaceAddress(ip))) {
               continue;
             }
 
@@ -866,15 +861,6 @@ void BasicNetworkManager::StartNetworkMonitor() {
     network_monitor_->SignalNetworksChanged.connect(
         this, &BasicNetworkManager::OnNetworksChanged);
   }
-
-  if (network_monitor_->SupportsBindSocketToNetwork()) {
-    // Set NetworkBinder on SocketServer so that
-    // PhysicalSocket::Bind will call
-    // BasicNetworkManager::BindSocketToNetwork(), (that will lookup interface
-    // name and then call network_monitor_->BindSocketToNetwork()).
-    thread_->socketserver()->set_network_binder(this);
-  }
-
   network_monitor_->Start();
 }
 
@@ -883,13 +869,6 @@ void BasicNetworkManager::StopNetworkMonitor() {
     return;
   }
   network_monitor_->Stop();
-
-  if (network_monitor_->SupportsBindSocketToNetwork()) {
-    // Reset NetworkBinder on SocketServer.
-    if (thread_->socketserver()->network_binder() == this) {
-      thread_->socketserver()->set_network_binder(nullptr);
-    }
-  }
 }
 
 void BasicNetworkManager::OnMessage(Message* msg) {
@@ -969,20 +948,6 @@ void BasicNetworkManager::DumpNetworks() {
                      << ", active ? " << network->active()
                      << ((network->ignored()) ? ", Ignored" : "");
   }
-}
-
-NetworkBindingResult BasicNetworkManager::BindSocketToNetwork(
-    int socket_fd,
-    const IPAddress& address) {
-  RTC_DCHECK_RUN_ON(thread_);
-  std::string if_name;
-  if (bind_using_ifname_) {
-    Network* net = GetNetworkFromAddress(address);
-    if (net != nullptr) {
-      if_name = net->name();
-    }
-  }
-  return network_monitor_->BindSocketToNetwork(socket_fd, address, if_name);
 }
 
 Network::Network(const std::string& name,

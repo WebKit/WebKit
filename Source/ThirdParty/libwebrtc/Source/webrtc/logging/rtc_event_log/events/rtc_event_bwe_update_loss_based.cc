@@ -30,6 +30,14 @@ RtcEventBweUpdateLossBased::RtcEventBweUpdateLossBased(
 
 RtcEventBweUpdateLossBased::~RtcEventBweUpdateLossBased() = default;
 
+RtcEvent::Type RtcEventBweUpdateLossBased::GetType() const {
+  return RtcEvent::Type::BweUpdateLossBased;
+}
+
+bool RtcEventBweUpdateLossBased::IsConfigEvent() const {
+  return false;
+}
+
 std::unique_ptr<RtcEventBweUpdateLossBased> RtcEventBweUpdateLossBased::Copy()
     const {
   return absl::WrapUnique<RtcEventBweUpdateLossBased>(

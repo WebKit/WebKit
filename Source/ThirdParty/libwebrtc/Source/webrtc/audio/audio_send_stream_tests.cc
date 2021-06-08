@@ -188,7 +188,14 @@ class TransportWideSequenceNumberObserver : public AudioSendTest {
 };
 
 TEST_F(AudioSendStreamCallTest, SendsTransportWideSequenceNumbersInFieldTrial) {
+  ScopedFieldTrials field_trials("WebRTC-Audio-SendSideBwe/Enabled/");
   TransportWideSequenceNumberObserver test(/*expect_sequence_number=*/true);
+  RunBaseTest(&test);
+}
+
+TEST_F(AudioSendStreamCallTest,
+       DoesNotSendTransportWideSequenceNumbersPerDefault) {
+  TransportWideSequenceNumberObserver test(/*expect_sequence_number=*/false);
   RunBaseTest(&test);
 }
 

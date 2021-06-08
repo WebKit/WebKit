@@ -158,7 +158,7 @@ void UlpfecReceiverTest::InjectGarbagePacketLength(size_t fec_garbage_offset) {
   std::list<ForwardErrorCorrection::Packet*> fec_packets;
   EncodeFec(media_packets, kNumFecPackets, &fec_packets);
   ByteWriter<uint16_t>::WriteBigEndian(
-      fec_packets.front()->data.MutableData() + fec_garbage_offset, 0x4711);
+      &fec_packets.front()->data[fec_garbage_offset], 0x4711);
 
   // Inject first media packet, then first FEC packet, skipping the second media
   // packet to cause a recovery from the FEC packet.
@@ -392,7 +392,7 @@ TEST_F(UlpfecReceiverTest, PacketNotDroppedTooEarly) {
   delayed_fec = fec_packets.front();
 
   // Fill the FEC decoder. No packets should be dropped.
-  const size_t kNumMediaPacketsBatch2 = 191;
+  const size_t kNumMediaPacketsBatch2 = 46;
   std::list<AugmentedPacket*> augmented_media_packets_batch2;
   ForwardErrorCorrection::PacketList media_packets_batch2;
   for (size_t i = 0; i < kNumMediaPacketsBatch2; ++i) {
@@ -431,7 +431,7 @@ TEST_F(UlpfecReceiverTest, PacketDroppedWhenTooOld) {
   delayed_fec = fec_packets.front();
 
   // Fill the FEC decoder and force the last packet to be dropped.
-  const size_t kNumMediaPacketsBatch2 = 192;
+  const size_t kNumMediaPacketsBatch2 = 48;
   std::list<AugmentedPacket*> augmented_media_packets_batch2;
   ForwardErrorCorrection::PacketList media_packets_batch2;
   for (size_t i = 0; i < kNumMediaPacketsBatch2; ++i) {
@@ -510,33 +510,6 @@ TEST_F(UlpfecReceiverTest, TruncatedPacketWithoutDataPastFirstBlock) {
       0x82, 0x38, 0x2a, 0x21, 0x2a, 0x28, 0x92, 0x38, 0x92, 0x00, 0x00, 0x0a,
       0x3a, 0xc8, 0xa3, 0x3a, 0x27, 0xc4, 0x2a, 0x21, 0x2a, 0x28};
   SurvivesMaliciousPacket(kPacket, sizeof(kPacket), 100);
-}
-
-TEST_F(UlpfecReceiverTest, MediaWithPadding) {
-  const size_t kNumFecPackets = 1;
-  std::list<AugmentedPacket*> augmented_media_packets;
-  ForwardErrorCorrection::PacketList media_packets;
-  PacketizeFrame(2, 0, &augmented_media_packets, &media_packets);
-
-  // Append four bytes of padding to the first media packet.
-  const uint8_t kPadding[] = {0, 0, 0, 4};
-  augmented_media_packets.front()->data.AppendData(kPadding);
-  augmented_media_packets.front()->data.MutableData()[0] |= 1 << 5;  // P bit.
-  augmented_media_packets.front()->header.paddingLength = 4;
-
-  std::list<ForwardErrorCorrection::Packet*> fec_packets;
-  EncodeFec(media_packets, kNumFecPackets, &fec_packets);
-
-  auto it = augmented_media_packets.begin();
-  BuildAndAddRedMediaPacket(augmented_media_packets.front());
-
-  VerifyReconstructedMediaPacket(**it, 1);
-  EXPECT_EQ(0, receiver_fec_->ProcessReceivedFec());
-
-  BuildAndAddRedFecPacket(fec_packets.front());
-  ++it;
-  VerifyReconstructedMediaPacket(**it, 1);
-  EXPECT_EQ(0, receiver_fec_->ProcessReceivedFec());
 }
 
 }  // namespace webrtc

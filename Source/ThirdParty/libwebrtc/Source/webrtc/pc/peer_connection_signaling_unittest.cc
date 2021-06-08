@@ -11,21 +11,18 @@
 // This file contains tests that check the PeerConnection's signaling state
 // machine, as well as tests that check basic, media-agnostic aspects of SDP.
 
-#include <algorithm>
 #include <memory>
 #include <tuple>
 
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/create_peerconnection_factory.h"
-#include "api/jsep_session_description.h"
 #include "api/peer_connection_proxy.h"
 #include "api/video_codecs/builtin_video_decoder_factory.h"
 #include "api/video_codecs/builtin_video_encoder_factory.h"
 #include "pc/peer_connection.h"
 #include "pc/peer_connection_wrapper.h"
 #include "pc/sdp_utils.h"
-#include "pc/webrtc_sdp.h"
 #ifdef WEBRTC_ANDROID
 #include "pc/test/android_test_initializer.h"
 #endif
@@ -538,7 +535,8 @@ TEST_P(PeerConnectionSignalingTest, CreateOffersAndShutdown) {
 
   rtc::scoped_refptr<MockCreateSessionDescriptionObserver> observers[100];
   for (auto& observer : observers) {
-    observer = rtc::make_ref_counted<MockCreateSessionDescriptionObserver>();
+    observer =
+        new rtc::RefCountedObject<MockCreateSessionDescriptionObserver>();
     caller->pc()->CreateOffer(observer, options);
   }
 
@@ -559,7 +557,8 @@ TEST_P(PeerConnectionSignalingTest, CreateOffersAndShutdown) {
 // the WebRtcSessionDescriptionFactory is responsible for it.
 TEST_P(PeerConnectionSignalingTest, CloseCreateOfferAndShutdown) {
   auto caller = CreatePeerConnection();
-  auto observer = rtc::make_ref_counted<MockCreateSessionDescriptionObserver>();
+  rtc::scoped_refptr<MockCreateSessionDescriptionObserver> observer =
+      new rtc::RefCountedObject<MockCreateSessionDescriptionObserver>();
   caller->pc()->Close();
   caller->pc()->CreateOffer(observer, RTCOfferAnswerOptions());
   caller.reset(nullptr);
@@ -686,8 +685,8 @@ TEST_P(PeerConnectionSignalingTest, CreateOfferBlocksSetRemoteDescription) {
   auto offer = caller->CreateOffer(RTCOfferAnswerOptions());
 
   EXPECT_EQ(0u, callee->pc()->GetReceivers().size());
-  auto offer_observer =
-      rtc::make_ref_counted<MockCreateSessionDescriptionObserver>();
+  rtc::scoped_refptr<MockCreateSessionDescriptionObserver> offer_observer(
+      new rtc::RefCountedObject<MockCreateSessionDescriptionObserver>());
   // Synchronously invoke CreateOffer() and SetRemoteDescription(). The
   // SetRemoteDescription() operation should be chained to be executed
   // asynchronously, when CreateOffer() completes.
@@ -842,195 +841,6 @@ TEST_P(PeerConnectionSignalingTest,
       observer->error());
 }
 
-TEST_P(PeerConnectionSignalingTest, UnsupportedContentType) {
-  auto caller = CreatePeerConnection();
-
-  // Call setRemoteDescription with a m= line we don't understand.
-  std::string sdp =
-      "v=0\r\n"
-      "o=- 18446744069414584320 18446462598732840960 IN IP4 127.0.0.1\r\n"
-      "s=-\r\n"
-      "t=0 0\r\n"
-      "m=bogus 9 FOO 0 8\r\n"
-      "c=IN IP4 0.0.0.0\r\n"
-      "a=mid:bogusmid\r\n";
-  std::unique_ptr<webrtc::SessionDescriptionInterface> remote_description =
-      webrtc::CreateSessionDescription(SdpType::kOffer, sdp, nullptr);
-
-  EXPECT_TRUE(caller->SetRemoteDescription(std::move(remote_description)));
-
-  // Assert we respond back with something meaningful.
-  auto answer = caller->CreateAnswer();
-  ASSERT_EQ(answer->description()->contents().size(), 1u);
-  EXPECT_NE(answer->description()
-                ->contents()[0]
-                .media_description()
-                ->as_unsupported(),
-            nullptr);
-  EXPECT_EQ(answer->description()
-                ->contents()[0]
-                .media_description()
-                ->as_unsupported()
-                ->media_type(),
-            "bogus");
-  EXPECT_TRUE(answer->description()->contents()[0].rejected);
-  EXPECT_EQ(answer->description()->contents()[0].mid(), "bogusmid");
-  EXPECT_EQ(
-      answer->description()->contents()[0].media_description()->protocol(),
-      "FOO");
-  EXPECT_FALSE(
-      answer->description()->contents()[0].media_description()->has_codecs());
-
-  EXPECT_TRUE(caller->SetLocalDescription(std::move(answer)));
-
-  // Assert we keep this in susequent offers.
-  auto offer = caller->CreateOffer();
-  EXPECT_EQ(offer->description()
-                ->contents()[0]
-                .media_description()
-                ->as_unsupported()
-                ->media_type(),
-            "bogus");
-  EXPECT_TRUE(offer->description()->contents()[0].rejected);
-  EXPECT_EQ(offer->description()->contents()[0].media_description()->protocol(),
-            "FOO");
-  EXPECT_EQ(offer->description()->contents()[0].mid(), "bogusmid");
-  EXPECT_FALSE(
-      offer->description()->contents()[0].media_description()->has_codecs());
-  EXPECT_TRUE(caller->SetLocalDescription(std::move(offer)));
-}
-
-TEST_P(PeerConnectionSignalingTest, ReceiveFlexFec) {
-  auto caller = CreatePeerConnection();
-
-  std::string sdp =
-      "v=0\r\n"
-      "o=- 8403615332048243445 2 IN IP4 127.0.0.1\r\n"
-      "s=-\r\n"
-      "t=0 0\r\n"
-      "a=group:BUNDLE 0\r\n"
-      "m=video 9 UDP/TLS/RTP/SAVPF 102 122\r\n"
-      "c=IN IP4 0.0.0.0\r\n"
-      "a=rtcp:9 IN IP4 0.0.0.0\r\n"
-      "a=ice-ufrag:IZeV\r\n"
-      "a=ice-pwd:uaZhQD4rYM/Tta2qWBT1Bbt4\r\n"
-      "a=ice-options:trickle\r\n"
-      "a=fingerprint:sha-256 "
-      "D8:6C:3D:FA:23:E2:2C:63:11:2D:D0:86:BE:C4:D0:65:F9:42:F7:1C:06:04:27:E6:"
-      "1C:2C:74:01:8D:50:67:23\r\n"
-      "a=setup:actpass\r\n"
-      "a=mid:0\r\n"
-      "a=sendrecv\r\n"
-      "a=msid:stream track\r\n"
-      "a=rtcp-mux\r\n"
-      "a=rtcp-rsize\r\n"
-      "a=rtpmap:102 VP8/90000\r\n"
-      "a=rtcp-fb:102 goog-remb\r\n"
-      "a=rtcp-fb:102 transport-cc\r\n"
-      "a=rtcp-fb:102 ccm fir\r\n"
-      "a=rtcp-fb:102 nack\r\n"
-      "a=rtcp-fb:102 nack pli\r\n"
-      "a=rtpmap:122 flexfec-03/90000\r\n"
-      "a=fmtp:122 repair-window=10000000\r\n"
-      "a=ssrc-group:FEC-FR 1224551896 1953032773\r\n"
-      "a=ssrc:1224551896 cname:/exJcmhSLpyu9FgV\r\n"
-      "a=ssrc:1953032773 cname:/exJcmhSLpyu9FgV\r\n";
-  std::unique_ptr<webrtc::SessionDescriptionInterface> remote_description =
-      webrtc::CreateSessionDescription(SdpType::kOffer, sdp, nullptr);
-
-  EXPECT_TRUE(caller->SetRemoteDescription(std::move(remote_description)));
-
-  auto answer = caller->CreateAnswer();
-  ASSERT_EQ(answer->description()->contents().size(), 1u);
-  ASSERT_NE(
-      answer->description()->contents()[0].media_description()->as_video(),
-      nullptr);
-  auto codecs = answer->description()
-                    ->contents()[0]
-                    .media_description()
-                    ->as_video()
-                    ->codecs();
-  ASSERT_EQ(codecs.size(), 2u);
-  EXPECT_EQ(codecs[1].name, "flexfec-03");
-
-  EXPECT_TRUE(caller->SetLocalDescription(std::move(answer)));
-}
-
-TEST_P(PeerConnectionSignalingTest, ReceiveFlexFecReoffer) {
-  auto caller = CreatePeerConnection();
-
-  std::string sdp =
-      "v=0\r\n"
-      "o=- 8403615332048243445 2 IN IP4 127.0.0.1\r\n"
-      "s=-\r\n"
-      "t=0 0\r\n"
-      "a=group:BUNDLE 0\r\n"
-      "m=video 9 UDP/TLS/RTP/SAVPF 102 35\r\n"
-      "c=IN IP4 0.0.0.0\r\n"
-      "a=rtcp:9 IN IP4 0.0.0.0\r\n"
-      "a=ice-ufrag:IZeV\r\n"
-      "a=ice-pwd:uaZhQD4rYM/Tta2qWBT1Bbt4\r\n"
-      "a=ice-options:trickle\r\n"
-      "a=fingerprint:sha-256 "
-      "D8:6C:3D:FA:23:E2:2C:63:11:2D:D0:86:BE:C4:D0:65:F9:42:F7:1C:06:04:27:E6:"
-      "1C:2C:74:01:8D:50:67:23\r\n"
-      "a=setup:actpass\r\n"
-      "a=mid:0\r\n"
-      "a=sendrecv\r\n"
-      "a=msid:stream track\r\n"
-      "a=rtcp-mux\r\n"
-      "a=rtcp-rsize\r\n"
-      "a=rtpmap:102 VP8/90000\r\n"
-      "a=rtcp-fb:102 goog-remb\r\n"
-      "a=rtcp-fb:102 transport-cc\r\n"
-      "a=rtcp-fb:102 ccm fir\r\n"
-      "a=rtcp-fb:102 nack\r\n"
-      "a=rtcp-fb:102 nack pli\r\n"
-      "a=rtpmap:35 flexfec-03/90000\r\n"
-      "a=fmtp:35 repair-window=10000000\r\n"
-      "a=ssrc-group:FEC-FR 1224551896 1953032773\r\n"
-      "a=ssrc:1224551896 cname:/exJcmhSLpyu9FgV\r\n"
-      "a=ssrc:1953032773 cname:/exJcmhSLpyu9FgV\r\n";
-  std::unique_ptr<webrtc::SessionDescriptionInterface> remote_description =
-      webrtc::CreateSessionDescription(SdpType::kOffer, sdp, nullptr);
-
-  EXPECT_TRUE(caller->SetRemoteDescription(std::move(remote_description)));
-
-  auto answer = caller->CreateAnswer();
-  ASSERT_EQ(answer->description()->contents().size(), 1u);
-  ASSERT_NE(
-      answer->description()->contents()[0].media_description()->as_video(),
-      nullptr);
-  auto codecs = answer->description()
-                    ->contents()[0]
-                    .media_description()
-                    ->as_video()
-                    ->codecs();
-  ASSERT_EQ(codecs.size(), 2u);
-  EXPECT_EQ(codecs[1].name, "flexfec-03");
-  EXPECT_EQ(codecs[1].id, 35);
-
-  EXPECT_TRUE(caller->SetLocalDescription(std::move(answer)));
-
-  // This generates a collision for AV1 which needs to be remapped.
-  auto offer = caller->CreateOffer(RTCOfferAnswerOptions());
-  auto offer_codecs = offer->description()
-                          ->contents()[0]
-                          .media_description()
-                          ->as_video()
-                          ->codecs();
-  auto flexfec_it = std::find_if(
-      offer_codecs.begin(), offer_codecs.end(),
-      [](const cricket::Codec& codec) { return codec.name == "flexfec-03"; });
-  ASSERT_EQ(flexfec_it->id, 35);
-  auto av1_it = std::find_if(
-      offer_codecs.begin(), offer_codecs.end(),
-      [](const cricket::Codec& codec) { return codec.name == "AV1X"; });
-  if (av1_it != offer_codecs.end()) {
-    ASSERT_NE(av1_it->id, 35);
-  }
-}
-
 INSTANTIATE_TEST_SUITE_P(PeerConnectionSignalingTest,
                          PeerConnectionSignalingTest,
                          Values(SdpSemantics::kPlanB,
@@ -1059,7 +869,7 @@ TEST_F(PeerConnectionSignalingUnifiedPlanTest,
   // waiting for it would not ensure synchronicity.
   RTC_DCHECK(!caller->pc()->GetTransceivers()[0]->mid().has_value());
   caller->pc()->SetLocalDescription(
-      rtc::make_ref_counted<MockSetSessionDescriptionObserver>(),
+      new rtc::RefCountedObject<MockSetSessionDescriptionObserver>(),
       offer.release());
   EXPECT_TRUE(caller->pc()->GetTransceivers()[0]->mid().has_value());
 }
@@ -1087,8 +897,9 @@ TEST_F(PeerConnectionSignalingUnifiedPlanTest,
   // This offer will cause transceiver mids to get assigned.
   auto offer = caller->CreateOffer(RTCOfferAnswerOptions());
 
-  auto offer_observer =
-      rtc::make_ref_counted<ExecuteFunctionOnCreateSessionDescriptionObserver>(
+  rtc::scoped_refptr<ExecuteFunctionOnCreateSessionDescriptionObserver>
+      offer_observer(new rtc::RefCountedObject<
+                     ExecuteFunctionOnCreateSessionDescriptionObserver>(
           [pc = caller->pc()](SessionDescriptionInterface* desc) {
             // By not waiting for the observer's callback we can verify that the
             // operation executed immediately.
@@ -1097,7 +908,7 @@ TEST_F(PeerConnectionSignalingUnifiedPlanTest,
                 new rtc::RefCountedObject<MockSetSessionDescriptionObserver>(),
                 desc);
             EXPECT_TRUE(pc->GetTransceivers()[0]->mid().has_value());
-          });
+          }));
   caller->pc()->CreateOffer(offer_observer, RTCOfferAnswerOptions());
   EXPECT_TRUE_WAIT(offer_observer->was_called(), kWaitTimeout);
 }
@@ -1184,7 +995,8 @@ TEST_F(PeerConnectionSignalingUnifiedPlanTest,
       caller->AddTransceiver(cricket::MEDIA_TYPE_AUDIO, RtpTransceiverInit());
   EXPECT_TRUE(caller->observer()->has_negotiation_needed_event());
 
-  auto observer = rtc::make_ref_counted<MockCreateSessionDescriptionObserver>();
+  rtc::scoped_refptr<MockCreateSessionDescriptionObserver> observer =
+      new rtc::RefCountedObject<MockCreateSessionDescriptionObserver>();
   caller->pc()->CreateOffer(observer, RTCOfferAnswerOptions());
   // For this test to work, the operation has to be pending, i.e. the observer
   // has not yet been invoked.

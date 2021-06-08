@@ -39,8 +39,7 @@ std::string EncodeVarInt(uint64_t input) {
 
 // There is some code duplication between the flavors of this function.
 // For performance's sake, it's best to just keep it.
-std::pair<bool, absl::string_view> DecodeVarInt(absl::string_view input,
-                                                uint64_t* output) {
+size_t DecodeVarInt(absl::string_view input, uint64_t* output) {
   RTC_DCHECK(output);
 
   uint64_t decoded = 0;
@@ -49,11 +48,11 @@ std::pair<bool, absl::string_view> DecodeVarInt(absl::string_view input,
                 << static_cast<uint64_t>(7 * i));
     if (!(input[i] & 0x80)) {
       *output = decoded;
-      return {true, input.substr(i + 1)};
+      return i + 1;
     }
   }
 
-  return {false, input};
+  return 0;
 }
 
 // There is some code duplication between the flavors of this function.
@@ -64,7 +63,7 @@ size_t DecodeVarInt(rtc::BitBuffer* input, uint64_t* output) {
   uint64_t decoded = 0;
   for (size_t i = 0; i < kMaxVarIntLengthBytes; ++i) {
     uint8_t byte;
-    if (!input->ReadUInt8(byte)) {
+    if (!input->ReadUInt8(&byte)) {
       return 0;
     }
     decoded +=

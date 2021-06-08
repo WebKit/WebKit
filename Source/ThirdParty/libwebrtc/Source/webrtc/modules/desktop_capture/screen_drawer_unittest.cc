@@ -48,12 +48,13 @@ void TestScreenDrawerLock(
 
     ~Task() = default;
 
-    void RunTask() {
-      std::unique_ptr<ScreenDrawerLock> lock = ctor_();
+    static void RunTask(void* me) {
+      Task* task = static_cast<Task*>(me);
+      std::unique_ptr<ScreenDrawerLock> lock = task->ctor_();
       ASSERT_TRUE(!!lock);
-      created_->store(true);
+      task->created_->store(true);
       // Wait for the main thread to get the signal of created_.
-      while (!ready_.load()) {
+      while (!task->ready_.load()) {
         SleepMs(1);
       }
       // At this point, main thread should begin to create a second lock. Though
@@ -76,8 +77,8 @@ void TestScreenDrawerLock(
     const rtc::FunctionView<std::unique_ptr<ScreenDrawerLock>()> ctor_;
   } task(&created, ready, ctor);
 
-  auto lock_thread = rtc::PlatformThread::SpawnJoinable(
-      [&task] { task.RunTask(); }, "lock_thread");
+  rtc::PlatformThread lock_thread(&Task::RunTask, &task, "lock_thread");
+  lock_thread.Start();
 
   // Wait for the first lock in Task::RunTask() to be created.
   // TODO(zijiehe): Find a better solution to wait for the creation of the first
@@ -94,6 +95,7 @@ void TestScreenDrawerLock(
   ASSERT_GT(kLockDurationMs, rtc::TimeMillis() - start_ms);
   ctor();
   ASSERT_LE(kLockDurationMs, rtc::TimeMillis() - start_ms);
+  lock_thread.Stop();
 }
 
 }  // namespace

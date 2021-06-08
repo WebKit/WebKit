@@ -16,6 +16,7 @@
 #include <string>
 
 #include "rtc_base/checks.h"
+#include "rtc_base/stream.h"
 
 namespace rtc {
 
@@ -36,23 +37,23 @@ FileRotatingLogSink::FileRotatingLogSink(FileRotatingStream* stream)
 FileRotatingLogSink::~FileRotatingLogSink() {}
 
 void FileRotatingLogSink::OnLogMessage(const std::string& message) {
-  if (!stream_->IsOpen()) {
+  if (stream_->GetState() != SS_OPEN) {
     std::fprintf(stderr, "Init() must be called before adding this sink.\n");
     return;
   }
-  stream_->Write(message.c_str(), message.size());
+  stream_->WriteAll(message.c_str(), message.size(), nullptr, nullptr);
 }
 
 void FileRotatingLogSink::OnLogMessage(const std::string& message,
                                        LoggingSeverity sev,
                                        const char* tag) {
-  if (!stream_->IsOpen()) {
+  if (stream_->GetState() != SS_OPEN) {
     std::fprintf(stderr, "Init() must be called before adding this sink.\n");
     return;
   }
-  stream_->Write(tag, strlen(tag));
-  stream_->Write(": ", 2);
-  stream_->Write(message.c_str(), message.size());
+  stream_->WriteAll(tag, strlen(tag), nullptr, nullptr);
+  stream_->WriteAll(": ", 2, nullptr, nullptr);
+  stream_->WriteAll(message.c_str(), message.size(), nullptr, nullptr);
 }
 
 bool FileRotatingLogSink::Init() {

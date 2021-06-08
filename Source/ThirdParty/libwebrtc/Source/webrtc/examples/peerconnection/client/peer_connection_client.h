@@ -17,6 +17,7 @@
 
 #include "rtc_base/net_helpers.h"
 #include "rtc_base/physical_socket_server.h"
+#include "rtc_base/signal_thread.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 
 typedef std::map<int, std::string> Peers;

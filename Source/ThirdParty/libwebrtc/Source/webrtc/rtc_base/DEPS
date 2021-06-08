@@ -12,7 +12,4 @@ specific_include_rules = {
   "gunit\.h": [
     "+testing/base/public/gunit.h"
   ],
-  "logging\.cc": [
-    "+absl/synchronization"
-  ],
 }

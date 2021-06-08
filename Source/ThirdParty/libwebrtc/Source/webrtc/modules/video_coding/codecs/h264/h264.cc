@@ -47,11 +47,11 @@ bool IsH264CodecSupported() {
 
 }  // namespace
 
-SdpVideoFormat CreateH264Format(H264Profile profile,
-                                H264Level level,
+SdpVideoFormat CreateH264Format(H264::Profile profile,
+                                H264::Level level,
                                 const std::string& packetization_mode) {
   const absl::optional<std::string> profile_string =
-      H264ProfileLevelIdToString(H264ProfileLevelId(profile, level));
+      H264::ProfileLevelIdToString(H264::ProfileLevelId(profile, level));
   RTC_CHECK(profile_string);
   return SdpVideoFormat(
       cricket::kH264CodecName,
@@ -78,14 +78,12 @@ std::vector<SdpVideoFormat> SupportedH264Codecs() {
   //
   // We support both packetization modes 0 (mandatory) and 1 (optional,
   // preferred).
-  return {CreateH264Format(H264Profile::kProfileBaseline, H264Level::kLevel3_1,
-                           "1"),
-          CreateH264Format(H264Profile::kProfileBaseline, H264Level::kLevel3_1,
-                           "0"),
-          CreateH264Format(H264Profile::kProfileConstrainedBaseline,
-                           H264Level::kLevel3_1, "1"),
-          CreateH264Format(H264Profile::kProfileConstrainedBaseline,
-                           H264Level::kLevel3_1, "0")};
+  return {
+      CreateH264Format(H264::kProfileBaseline, H264::kLevel3_1, "1"),
+      CreateH264Format(H264::kProfileBaseline, H264::kLevel3_1, "0"),
+      CreateH264Format(H264::kProfileConstrainedBaseline, H264::kLevel3_1, "1"),
+      CreateH264Format(H264::kProfileConstrainedBaseline, H264::kLevel3_1,
+                       "0")};
 }
 
 std::unique_ptr<H264Encoder> H264Encoder::Create(

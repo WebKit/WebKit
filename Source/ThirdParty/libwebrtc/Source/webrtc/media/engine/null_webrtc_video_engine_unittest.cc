@@ -37,11 +37,12 @@ TEST(NullWebRtcVideoEngineTest, CheckInterface) {
       task_queue_factory.get(), adm,
       webrtc::MockAudioEncoderFactory::CreateUnusedFactory(),
       webrtc::MockAudioDecoderFactory::CreateUnusedFactory(), nullptr,
-      webrtc::AudioProcessingBuilder().Create(), nullptr, trials);
+      webrtc::AudioProcessingBuilder().Create(), trials);
 
   CompositeMediaEngine engine(std::move(audio_engine),
                               std::make_unique<NullWebRtcVideoEngine>());
-  engine.Init();
+
+  EXPECT_TRUE(engine.Init());
 }
 
 }  // namespace cricket

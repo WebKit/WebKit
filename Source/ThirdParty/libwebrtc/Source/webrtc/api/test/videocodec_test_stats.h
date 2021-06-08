@@ -67,7 +67,6 @@ class VideoCodecTestStats {
     int qp = -1;
 
     // Quality.
-    bool quality_analysis_successful = false;
     float psnr_y = 0.0f;
     float psnr_u = 0.0f;
     float psnr_v = 0.0f;

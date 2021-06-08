@@ -50,7 +50,7 @@ TrackWithPeriodicSource CreateTrackWithPeriodicSource(
   periodic_track_source_config.frame_interval_ms = 100;
   periodic_track_source_config.timestamp_offset_ms = rtc::TimeMillis();
   rtc::scoped_refptr<FakePeriodicVideoTrackSource> periodic_track_source =
-      rtc::make_ref_counted<FakePeriodicVideoTrackSource>(
+      new rtc::RefCountedObject<FakePeriodicVideoTrackSource>(
           periodic_track_source_config, /* remote */ false);
   TrackWithPeriodicSource track_with_source;
   track_with_source.track =
@@ -83,7 +83,7 @@ class PeerConnectionAdaptationIntegrationTest : public ::testing::Test {
   rtc::scoped_refptr<PeerConnectionTestWrapper> CreatePcWrapper(
       const char* name) {
     rtc::scoped_refptr<PeerConnectionTestWrapper> pc_wrapper =
-        rtc::make_ref_counted<PeerConnectionTestWrapper>(
+        new rtc::RefCountedObject<PeerConnectionTestWrapper>(
             name, network_thread_.get(), worker_thread_.get());
     PeerConnectionInterface::RTCConfiguration config;
     config.sdp_semantics = SdpSemantics::kUnifiedPlan;

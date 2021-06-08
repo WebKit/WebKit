@@ -44,13 +44,11 @@ struct DataChannelInit {
   //
   // Cannot be set along with |maxRetransmits|.
   // This is called |maxPacketLifeTime| in the WebRTC JS API.
-  // Negative values are ignored, and positive values are clamped to [0-65535]
   absl::optional<int> maxRetransmitTime;
 
   // The max number of retransmissions.
   //
   // Cannot be set along with |maxRetransmitTime|.
-  // Negative values are ignored, and positive values are clamped to [0-65535]
   absl::optional<int> maxRetransmits;
 
   // This is set by the application and opaque to the WebRTC implementation.

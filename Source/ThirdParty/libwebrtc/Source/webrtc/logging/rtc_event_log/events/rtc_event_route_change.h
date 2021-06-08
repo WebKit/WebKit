@@ -19,13 +19,12 @@ namespace webrtc {
 
 class RtcEventRouteChange final : public RtcEvent {
  public:
-  static constexpr Type kType = Type::RouteChangeEvent;
-
   RtcEventRouteChange(bool connected, uint32_t overhead);
   ~RtcEventRouteChange() override;
 
-  Type GetType() const override { return kType; }
-  bool IsConfigEvent() const override { return false; }
+  Type GetType() const override;
+
+  bool IsConfigEvent() const override;
 
   std::unique_ptr<RtcEventRouteChange> Copy() const;
 
@@ -37,21 +36,6 @@ class RtcEventRouteChange final : public RtcEvent {
 
   const bool connected_;
   const uint32_t overhead_;
-};
-
-struct LoggedRouteChangeEvent {
-  LoggedRouteChangeEvent() = default;
-  LoggedRouteChangeEvent(int64_t timestamp_ms,
-                         bool connected,
-                         uint32_t overhead)
-      : timestamp_ms(timestamp_ms), connected(connected), overhead(overhead) {}
-
-  int64_t log_time_us() const { return timestamp_ms * 1000; }
-  int64_t log_time_ms() const { return timestamp_ms; }
-
-  int64_t timestamp_ms;
-  bool connected;
-  uint32_t overhead;
 };
 
 }  // namespace webrtc

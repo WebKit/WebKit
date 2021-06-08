@@ -899,9 +899,9 @@ TEST_P(RtcEventLogCircularBufferTest, KeepsMostRecentEvents) {
 
   auto task_queue_factory = CreateDefaultTaskQueueFactory();
   RtcEventLogFactory rtc_event_log_factory(task_queue_factory.get());
-  // When `log` goes out of scope, it causes the log file to be flushed
+  // When log_dumper goes out of scope, it causes the log file to be flushed
   // to disk.
-  std::unique_ptr<RtcEventLog> log =
+  std::unique_ptr<RtcEventLog> log_dumper =
       rtc_event_log_factory.CreateRtcEventLog(encoding_type_);
 
   for (size_t i = 0; i < kNumEvents; i++) {
@@ -911,18 +911,18 @@ TEST_P(RtcEventLogCircularBufferTest, KeepsMostRecentEvents) {
     // simplicity.
     // We base the various values on the index. We use this for some basic
     // consistency checks when we read back.
-    log->Log(std::make_unique<RtcEventProbeResultSuccess>(
+    log_dumper->Log(std::make_unique<RtcEventProbeResultSuccess>(
         i, kStartBitrate + i * 1000));
     fake_clock->AdvanceTime(TimeDelta::Millis(10));
   }
   int64_t start_time_us = rtc::TimeMicros();
   int64_t utc_start_time_us = rtc::TimeUTCMicros();
-  log->StartLogging(
+  log_dumper->StartLogging(
       std::make_unique<RtcEventLogOutputFile>(temp_filename, 10000000),
       RtcEventLog::kImmediateOutput);
   fake_clock->AdvanceTime(TimeDelta::Millis(10));
   int64_t stop_time_us = rtc::TimeMicros();
-  log->StopLogging();
+  log_dumper->StopLogging();
 
   // Read the generated file from disk.
   ParsedRtcEventLog parsed_log;
@@ -960,9 +960,6 @@ TEST_P(RtcEventLogCircularBufferTest, KeepsMostRecentEvents) {
         RtcEventProbeResultSuccess(first_id + i, first_bitrate_bps + i * 1000),
         probe_success_events[i]);
   }
-
-  // Clean up temporary file - can be pretty slow.
-  remove(temp_filename.c_str());
 }
 
 INSTANTIATE_TEST_SUITE_P(

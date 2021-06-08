@@ -30,6 +30,14 @@ RtcEventVideoReceiveStreamConfig::RtcEventVideoReceiveStreamConfig(
 
 RtcEventVideoReceiveStreamConfig::~RtcEventVideoReceiveStreamConfig() = default;
 
+RtcEvent::Type RtcEventVideoReceiveStreamConfig::GetType() const {
+  return Type::VideoReceiveStreamConfig;
+}
+
+bool RtcEventVideoReceiveStreamConfig::IsConfigEvent() const {
+  return true;
+}
+
 std::unique_ptr<RtcEventVideoReceiveStreamConfig>
 RtcEventVideoReceiveStreamConfig::Copy() const {
   return absl::WrapUnique<RtcEventVideoReceiveStreamConfig>(

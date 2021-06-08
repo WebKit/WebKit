@@ -48,7 +48,6 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/network_monitor.h"
 #include "rtc_base/null_socket_server.h"
-#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/time_utils.h"
 
 #if defined(WEBRTC_LINUX)
@@ -119,6 +118,14 @@ class ScopedSetTrue {
 }  // namespace
 
 namespace rtc {
+
+std::unique_ptr<SocketServer> SocketServer::CreateDefault() {
+#if defined(__native_client__)
+  return std::unique_ptr<SocketServer>(new rtc::NullSocketServer);
+#else
+  return std::unique_ptr<SocketServer>(new rtc::PhysicalSocketServer);
+#endif
+}
 
 PhysicalSocket::PhysicalSocket(PhysicalSocketServer* ss, SOCKET s)
     : ss_(ss),
@@ -274,12 +281,12 @@ int PhysicalSocket::DoConnect(const SocketAddress& connect_addr) {
 }
 
 int PhysicalSocket::GetError() const {
-  webrtc::MutexLock lock(&mutex_);
+  CritScope cs(&crit_);
   return error_;
 }
 
 void PhysicalSocket::SetError(int error) {
-  webrtc::MutexLock lock(&mutex_);
+  CritScope cs(&crit_);
   error_ = error;
 }
 
@@ -328,17 +335,10 @@ int PhysicalSocket::SetOption(Option opt, int value) {
 #if defined(WEBRTC_POSIX)
   if (sopt == IPV6_TCLASS) {
     // Set the IPv4 option in all cases to support dual-stack sockets.
-    // Don't bother checking the return code, as this is expected to fail if
-    // it's not actually dual-stack.
     ::setsockopt(s_, IPPROTO_IP, IP_TOS, (SockOptArg)&value, sizeof(value));
   }
 #endif
-  int result =
-      ::setsockopt(s_, slevel, sopt, (SockOptArg)&value, sizeof(value));
-  if (result != 0) {
-    UpdateLastError();
-  }
-  return result;
+  return ::setsockopt(s_, slevel, sopt, (SockOptArg)&value, sizeof(value));
 }
 
 int PhysicalSocket::Send(const void* pv, size_t cb) {
@@ -766,14 +766,21 @@ uint32_t SocketDispatcher::GetRequestedEvents() {
   return enabled_events();
 }
 
-#if defined(WEBRTC_WIN)
-
-void SocketDispatcher::OnEvent(uint32_t ff, int err) {
+void SocketDispatcher::OnPreEvent(uint32_t ff) {
   if ((ff & DE_CONNECT) != 0)
     state_ = CS_CONNECTED;
 
-  // We set CS_CLOSED from CheckSignalClose.
+#if defined(WEBRTC_WIN)
+// We set CS_CLOSED from CheckSignalClose.
+#elif defined(WEBRTC_POSIX)
+  if ((ff & DE_CLOSE) != 0)
+    state_ = CS_CLOSED;
+#endif
+}
 
+#if defined(WEBRTC_WIN)
+
+void SocketDispatcher::OnEvent(uint32_t ff, int err) {
   int cache_id = id_;
   // Make sure we deliver connect/accept first. Otherwise, consumers may see
   // something like a READ followed by a CONNECT, which would be odd.
@@ -808,12 +815,6 @@ void SocketDispatcher::OnEvent(uint32_t ff, int err) {
 #elif defined(WEBRTC_POSIX)
 
 void SocketDispatcher::OnEvent(uint32_t ff, int err) {
-  if ((ff & DE_CONNECT) != 0)
-    state_ = CS_CONNECTED;
-
-  if ((ff & DE_CLOSE) != 0)
-    state_ = CS_CLOSED;
-
 #if defined(WEBRTC_USE_EPOLL)
   // Remember currently enabled events so we can combine multiple changes
   // into one update call later.
@@ -925,32 +926,22 @@ int SocketDispatcher::Close() {
 }
 
 #if defined(WEBRTC_POSIX)
-// Sets the value of a boolean value to false when signaled.
-class Signaler : public Dispatcher {
+class EventDispatcher : public Dispatcher {
  public:
-  Signaler(PhysicalSocketServer* ss, bool& flag_to_clear)
-      : ss_(ss),
-        afd_([] {
-          std::array<int, 2> afd = {-1, -1};
-
-          if (pipe(afd.data()) < 0) {
-            RTC_LOG(LERROR) << "pipe failed";
-          }
-          return afd;
-        }()),
-        fSignaled_(false),
-        flag_to_clear_(flag_to_clear) {
+  EventDispatcher(PhysicalSocketServer* ss) : ss_(ss), fSignaled_(false) {
+    if (pipe(afd_) < 0)
+      RTC_LOG(LERROR) << "pipe failed";
     ss_->Add(this);
   }
 
-  ~Signaler() override {
+  ~EventDispatcher() override {
     ss_->Remove(this);
     close(afd_[0]);
     close(afd_[1]);
   }
 
   virtual void Signal() {
-    webrtc::MutexLock lock(&mutex_);
+    CritScope cs(&crit_);
     if (!fSignaled_) {
       const uint8_t b[1] = {0};
       const ssize_t res = write(afd_[1], b, sizeof(b));
@@ -961,30 +952,30 @@ class Signaler : public Dispatcher {
 
   uint32_t GetRequestedEvents() override { return DE_READ; }
 
-  void OnEvent(uint32_t ff, int err) override {
+  void OnPreEvent(uint32_t ff) override {
     // It is not possible to perfectly emulate an auto-resetting event with
     // pipes.  This simulates it by resetting before the event is handled.
 
-    webrtc::MutexLock lock(&mutex_);
+    CritScope cs(&crit_);
     if (fSignaled_) {
       uint8_t b[4];  // Allow for reading more than 1 byte, but expect 1.
       const ssize_t res = read(afd_[0], b, sizeof(b));
       RTC_DCHECK_EQ(1, res);
       fSignaled_ = false;
     }
-    flag_to_clear_ = false;
   }
+
+  void OnEvent(uint32_t ff, int err) override { RTC_NOTREACHED(); }
 
   int GetDescriptor() override { return afd_[0]; }
 
   bool IsDescriptorClosed() override { return false; }
 
  private:
-  PhysicalSocketServer* const ss_;
-  const std::array<int, 2> afd_;
-  bool fSignaled_ RTC_GUARDED_BY(mutex_);
-  webrtc::Mutex mutex_;
-  bool& flag_to_clear_;
+  PhysicalSocketServer* ss_;
+  int afd_[2];
+  bool fSignaled_;
+  RecursiveCriticalSection crit_;
 };
 
 #endif  // WEBRTC_POSIX
@@ -1003,18 +994,16 @@ static uint32_t FlagsToEvents(uint32_t events) {
   return ffFD;
 }
 
-// Sets the value of a boolean value to false when signaled.
-class Signaler : public Dispatcher {
+class EventDispatcher : public Dispatcher {
  public:
-  Signaler(PhysicalSocketServer* ss, bool& flag_to_clear)
-      : ss_(ss), flag_to_clear_(flag_to_clear) {
+  EventDispatcher(PhysicalSocketServer* ss) : ss_(ss) {
     hev_ = WSACreateEvent();
     if (hev_) {
       ss_->Add(this);
     }
   }
 
-  ~Signaler() override {
+  ~EventDispatcher() override {
     if (hev_ != nullptr) {
       ss_->Remove(this);
       WSACloseEvent(hev_);
@@ -1029,10 +1018,9 @@ class Signaler : public Dispatcher {
 
   uint32_t GetRequestedEvents() override { return 0; }
 
-  void OnEvent(uint32_t ff, int err) override {
-    WSAResetEvent(hev_);
-    flag_to_clear_ = false;
-  }
+  void OnPreEvent(uint32_t ff) override { WSAResetEvent(hev_); }
+
+  void OnEvent(uint32_t ff, int err) override {}
 
   WSAEVENT GetWSAEvent() override { return hev_; }
 
@@ -1043,9 +1031,23 @@ class Signaler : public Dispatcher {
  private:
   PhysicalSocketServer* ss_;
   WSAEVENT hev_;
-  bool& flag_to_clear_;
 };
 #endif  // WEBRTC_WIN
+
+// Sets the value of a boolean value to false when signaled.
+class Signaler : public EventDispatcher {
+ public:
+  Signaler(PhysicalSocketServer* ss, bool* pf) : EventDispatcher(ss), pf_(pf) {}
+  ~Signaler() override {}
+
+  void OnEvent(uint32_t ff, int err) override {
+    if (pf_)
+      *pf_ = false;
+  }
+
+ private:
+  bool* pf_;
+};
 
 PhysicalSocketServer::PhysicalSocketServer()
     :
@@ -1066,8 +1068,7 @@ PhysicalSocketServer::PhysicalSocketServer()
     // Note that -1 == INVALID_SOCKET, the alias used by later checks.
   }
 #endif
-  // The `fWait_` flag to be cleared by the Signaler.
-  signal_wakeup_ = new Signaler(this, fWait_);
+  signal_wakeup_ = new Signaler(this, &fWait_);
 }
 
 PhysicalSocketServer::~PhysicalSocketServer() {
@@ -1235,6 +1236,7 @@ static void ProcessEvents(Dispatcher* dispatcher,
 
   // Tell the descriptor about the event.
   if (ff != 0) {
+    dispatcher->OnPreEvent(ff);
     dispatcher->OnEvent(ff, errcode);
   }
 }
@@ -1651,6 +1653,7 @@ bool PhysicalSocketServer::Wait(int cmsWait, bool process_io) {
           continue;
         }
         Dispatcher* disp = dispatcher_by_key_.at(key);
+        disp->OnPreEvent(0);
         disp->OnEvent(0, 0);
       } else if (process_io) {
         // Iterate only on the dispatchers whose sockets were passed into
@@ -1721,6 +1724,7 @@ bool PhysicalSocketServer::Wait(int cmsWait, bool process_io) {
               errcode = wsaEvents.iErrorCode[FD_CLOSE_BIT];
             }
             if (ff != 0) {
+              disp->OnPreEvent(ff);
               disp->OnEvent(ff, errcode);
             }
           }

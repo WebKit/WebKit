@@ -24,11 +24,6 @@ namespace {
 // Maximum number of media packets that can be protected in one batch.
 constexpr size_t kMaxMediaPackets = 48;
 
-// Maximum number of media packets tracked by FEC decoder.
-// Maintain a sufficiently larger tracking window than |kMaxMediaPackets|
-// to account for packet reordering in pacer/ network.
-constexpr size_t kMaxTrackedMediaPackets = 4 * kMaxMediaPackets;
-
 // Maximum number of FEC packets stored inside ForwardErrorCorrection.
 constexpr size_t kMaxFecPackets = kMaxMediaPackets;
 
@@ -56,13 +51,13 @@ size_t UlpfecHeaderSize(size_t packet_mask_size) {
 }  // namespace
 
 UlpfecHeaderReader::UlpfecHeaderReader()
-    : FecHeaderReader(kMaxTrackedMediaPackets, kMaxFecPackets) {}
+    : FecHeaderReader(kMaxMediaPackets, kMaxFecPackets) {}
 
 UlpfecHeaderReader::~UlpfecHeaderReader() = default;
 
 bool UlpfecHeaderReader::ReadFecHeader(
     ForwardErrorCorrection::ReceivedFecPacket* fec_packet) const {
-  uint8_t* data = fec_packet->pkt->data.MutableData();
+  uint8_t* data = fec_packet->pkt->data.data();
   if (fec_packet->pkt->data.size() < kPacketMaskOffset) {
     return false;  // Truncated packet.
   }
@@ -113,7 +108,7 @@ void UlpfecHeaderWriter::FinalizeFecHeader(
     const uint8_t* packet_mask,
     size_t packet_mask_size,
     ForwardErrorCorrection::Packet* fec_packet) const {
-  uint8_t* data = fec_packet->data.MutableData();
+  uint8_t* data = fec_packet->data.data();
   // Set E bit to zero.
   data[0] &= 0x7f;
   // Set L bit based on packet mask size. (Note that the packet mask

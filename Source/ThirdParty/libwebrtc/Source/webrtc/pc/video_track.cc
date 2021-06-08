@@ -14,7 +14,6 @@
 #include <vector>
 
 #include "api/notifier.h"
-#include "api/sequence_checker.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/location.h"
 #include "rtc_base/ref_counted_object.h"
@@ -95,7 +94,9 @@ rtc::scoped_refptr<VideoTrack> VideoTrack::Create(
     const std::string& id,
     VideoTrackSourceInterface* source,
     rtc::Thread* worker_thread) {
-  return rtc::make_ref_counted<VideoTrack>(id, source, worker_thread);
+  rtc::RefCountedObject<VideoTrack>* track =
+      new rtc::RefCountedObject<VideoTrack>(id, source, worker_thread);
+  return track;
 }
 
 }  // namespace webrtc

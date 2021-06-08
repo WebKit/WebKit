@@ -16,15 +16,14 @@
 
 ******************************************************************/
 
-#include "modules/audio_coding/codecs/ilbc/ilbc.h"
-
 #include <stdlib.h>
 
-#include "modules/audio_coding/codecs/ilbc/decode.h"
+#include "modules/audio_coding/codecs/ilbc/ilbc.h"
 #include "modules/audio_coding/codecs/ilbc/defines.h"
+#include "modules/audio_coding/codecs/ilbc/init_encode.h"
 #include "modules/audio_coding/codecs/ilbc/encode.h"
 #include "modules/audio_coding/codecs/ilbc/init_decode.h"
-#include "modules/audio_coding/codecs/ilbc/init_encode.h"
+#include "modules/audio_coding/codecs/ilbc/decode.h"
 #include "rtc_base/checks.h"
 
 int16_t WebRtcIlbcfix_EncoderAssign(IlbcEncoderInstance** iLBC_encinst,
@@ -261,10 +260,9 @@ size_t WebRtcIlbcfix_DecodePlc(IlbcDecoderInstance* iLBCdec_inst,
   for (i=0;i<noOfLostFrames;i++) {
     // PLC decoding shouldn't fail, because there is no external input data
     // that can be bad.
-    int result = WebRtcIlbcfix_DecodeImpl(
+    RTC_CHECK(WebRtcIlbcfix_DecodeImpl(
         &decoded[i * ((IlbcDecoder*)iLBCdec_inst)->blockl], &dummy,
-        (IlbcDecoder*)iLBCdec_inst, 0);
-    RTC_CHECK_EQ(result, 0);
+        (IlbcDecoder*)iLBCdec_inst, 0));
   }
   return (noOfLostFrames*((IlbcDecoder*)iLBCdec_inst)->blockl);
 }

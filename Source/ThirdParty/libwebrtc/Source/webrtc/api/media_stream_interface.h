@@ -216,11 +216,6 @@ class AudioTrackSinkInterface {
                   number_of_frames);
   }
 
-  // Returns the number of channels encoded by the sink. This can be less than
-  // the number_of_channels if down-mixing occur. A value of -1 means an unknown
-  // number.
-  virtual int NumPreferredChannels() const { return -1; }
-
  protected:
   virtual ~AudioTrackSinkInterface() {}
 };

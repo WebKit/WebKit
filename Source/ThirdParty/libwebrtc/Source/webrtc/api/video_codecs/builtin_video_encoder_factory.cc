@@ -26,6 +26,18 @@ namespace webrtc {
 
 namespace {
 
+bool IsFormatSupported(const std::vector<SdpVideoFormat>& supported_formats,
+                       const SdpVideoFormat& format) {
+  for (const SdpVideoFormat& supported_format : supported_formats) {
+    if (cricket::IsSameCodec(format.name, format.parameters,
+                             supported_format.name,
+                             supported_format.parameters)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 // This class wraps the internal factory and adds simulcast.
 class BuiltinVideoEncoderFactory : public VideoEncoderFactory {
  public:
@@ -35,8 +47,8 @@ class BuiltinVideoEncoderFactory : public VideoEncoderFactory {
   VideoEncoderFactory::CodecInfo QueryVideoEncoder(
       const SdpVideoFormat& format) const override {
     // Format must be one of the internal formats.
-    RTC_DCHECK(
-        format.IsCodecInList(internal_encoder_factory_->GetSupportedFormats()));
+    RTC_DCHECK(IsFormatSupported(
+        internal_encoder_factory_->GetSupportedFormats(), format));
     VideoEncoderFactory::CodecInfo info;
     return info;
   }
@@ -45,8 +57,8 @@ class BuiltinVideoEncoderFactory : public VideoEncoderFactory {
       const SdpVideoFormat& format) override {
     // Try creating internal encoder.
     std::unique_ptr<VideoEncoder> internal_encoder;
-    if (format.IsCodecInList(
-            internal_encoder_factory_->GetSupportedFormats())) {
+    if (IsFormatSupported(internal_encoder_factory_->GetSupportedFormats(),
+                          format)) {
       internal_encoder = std::make_unique<EncoderSimulcastProxy>(
           internal_encoder_factory_.get(), format);
     }

@@ -15,6 +15,7 @@
 #include <type_traits>
 
 #include "modules/audio_processing/agc2/agc2_common.h"
+#include "modules/audio_processing/agc2/saturation_protector.h"
 #include "modules/audio_processing/agc2/vad_with_level.h"
 #include "modules/audio_processing/include/audio_processing.h"
 
@@ -28,8 +29,12 @@ class AdaptiveModeLevelEstimator {
   AdaptiveModeLevelEstimator(const AdaptiveModeLevelEstimator&) = delete;
   AdaptiveModeLevelEstimator& operator=(const AdaptiveModeLevelEstimator&) =
       delete;
-  AdaptiveModeLevelEstimator(ApmDataDumper* apm_data_dumper,
-                             int adjacent_speech_frames_threshold);
+  AdaptiveModeLevelEstimator(
+      ApmDataDumper* apm_data_dumper,
+      AudioProcessing::Config::GainController2::LevelEstimator level_estimator,
+      int adjacent_speech_frames_threshold,
+      float initial_saturation_margin_db,
+      float extra_saturation_margin_db);
 
   // Updates the level estimation.
   void Update(const VadLevelAnalyzer::Result& vad_data);
@@ -52,9 +57,10 @@ class AdaptiveModeLevelEstimator {
       float denominator;
       float GetRatio() const;
     };
-    // TODO(crbug.com/webrtc/7494): Remove time_to_confidence_ms if redundant.
-    int time_to_confidence_ms;
+    // TODO(crbug.com/webrtc/7494): Remove time_to_full_buffer_ms if redundant.
+    int time_to_full_buffer_ms;
     Ratio level_dbfs;
+    SaturationProtectorState saturation_protector;
   };
   static_assert(std::is_trivially_copyable<LevelEstimatorState>::value, "");
 
@@ -64,7 +70,11 @@ class AdaptiveModeLevelEstimator {
 
   ApmDataDumper* const apm_data_dumper_;
 
+  const AudioProcessing::Config::GainController2::LevelEstimator
+      level_estimator_type_;
   const int adjacent_speech_frames_threshold_;
+  const float initial_saturation_margin_db_;
+  const float extra_saturation_margin_db_;
   LevelEstimatorState preliminary_state_;
   LevelEstimatorState reliable_state_;
   float level_dbfs_;

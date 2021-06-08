@@ -15,12 +15,12 @@
 
 namespace rtc {
 
-DEPRECATED_AsyncInvoker::DEPRECATED_AsyncInvoker()
+AsyncInvoker::AsyncInvoker()
     : pending_invocations_(0),
-      invocation_complete_(make_ref_counted<Event>()),
+      invocation_complete_(new RefCountedObject<Event>()),
       destroying_(false) {}
 
-DEPRECATED_AsyncInvoker::~DEPRECATED_AsyncInvoker() {
+AsyncInvoker::~AsyncInvoker() {
   destroying_.store(true, std::memory_order_relaxed);
   // Messages for this need to be cleared *before* our destructor is complete.
   ThreadManager::Clear(this);
@@ -37,7 +37,7 @@ DEPRECATED_AsyncInvoker::~DEPRECATED_AsyncInvoker() {
   }
 }
 
-void DEPRECATED_AsyncInvoker::OnMessage(Message* msg) {
+void AsyncInvoker::OnMessage(Message* msg) {
   // Get the AsyncClosure shared ptr from this message's data.
   ScopedMessageData<AsyncClosure>* data =
       static_cast<ScopedMessageData<AsyncClosure>*>(msg->pdata);
@@ -46,8 +46,7 @@ void DEPRECATED_AsyncInvoker::OnMessage(Message* msg) {
   delete data;
 }
 
-void DEPRECATED_AsyncInvoker::Flush(Thread* thread,
-                                    uint32_t id /*= MQID_ANY*/) {
+void AsyncInvoker::Flush(Thread* thread, uint32_t id /*= MQID_ANY*/) {
   // If the destructor is waiting for invocations to finish, don't start
   // running even more tasks.
   if (destroying_.load(std::memory_order_relaxed))
@@ -56,7 +55,7 @@ void DEPRECATED_AsyncInvoker::Flush(Thread* thread,
   // Run this on |thread| to reduce the number of context switches.
   if (Thread::Current() != thread) {
     thread->Invoke<void>(RTC_FROM_HERE,
-                         [this, thread, id] { Flush(thread, id); });
+                         Bind(&AsyncInvoker::Flush, this, thread, id));
     return;
   }
 
@@ -68,14 +67,14 @@ void DEPRECATED_AsyncInvoker::Flush(Thread* thread,
   }
 }
 
-void DEPRECATED_AsyncInvoker::Clear() {
+void AsyncInvoker::Clear() {
   ThreadManager::Clear(this);
 }
 
-void DEPRECATED_AsyncInvoker::DoInvoke(const Location& posted_from,
-                                       Thread* thread,
-                                       std::unique_ptr<AsyncClosure> closure,
-                                       uint32_t id) {
+void AsyncInvoker::DoInvoke(const Location& posted_from,
+                            Thread* thread,
+                            std::unique_ptr<AsyncClosure> closure,
+                            uint32_t id) {
   if (destroying_.load(std::memory_order_relaxed)) {
     // Note that this may be expected, if the application is AsyncInvoking
     // tasks that AsyncInvoke other tasks. But otherwise it indicates a race
@@ -88,12 +87,11 @@ void DEPRECATED_AsyncInvoker::DoInvoke(const Location& posted_from,
                new ScopedMessageData<AsyncClosure>(std::move(closure)));
 }
 
-void DEPRECATED_AsyncInvoker::DoInvokeDelayed(
-    const Location& posted_from,
-    Thread* thread,
-    std::unique_ptr<AsyncClosure> closure,
-    uint32_t delay_ms,
-    uint32_t id) {
+void AsyncInvoker::DoInvokeDelayed(const Location& posted_from,
+                                   Thread* thread,
+                                   std::unique_ptr<AsyncClosure> closure,
+                                   uint32_t delay_ms,
+                                   uint32_t id) {
   if (destroying_.load(std::memory_order_relaxed)) {
     // See above comment.
     RTC_LOG(LS_WARNING) << "Tried to invoke while destroying the invoker.";
@@ -103,7 +101,7 @@ void DEPRECATED_AsyncInvoker::DoInvokeDelayed(
                       new ScopedMessageData<AsyncClosure>(std::move(closure)));
 }
 
-AsyncClosure::AsyncClosure(DEPRECATED_AsyncInvoker* invoker)
+AsyncClosure::AsyncClosure(AsyncInvoker* invoker)
     : invoker_(invoker), invocation_complete_(invoker_->invocation_complete_) {
   invoker_->pending_invocations_.fetch_add(1, std::memory_order_relaxed);
 }

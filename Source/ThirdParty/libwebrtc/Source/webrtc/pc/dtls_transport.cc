@@ -12,13 +12,7 @@
 
 #include <utility>
 
-#include "absl/types/optional.h"
-#include "api/sequence_checker.h"
 #include "pc/ice_transport.h"
-#include "rtc_base/checks.h"
-#include "rtc_base/logging.h"
-#include "rtc_base/ref_counted_object.h"
-#include "rtc_base/ssl_certificate.h"
 
 namespace webrtc {
 
@@ -37,7 +31,6 @@ DtlsTransportState TranslateState(cricket::DtlsTransportState internal_state) {
     case cricket::DTLS_TRANSPORT_FAILED:
       return DtlsTransportState::kFailed;
   }
-  RTC_CHECK_NOTREACHED();
 }
 
 }  // namespace
@@ -48,14 +41,11 @@ DtlsTransport::DtlsTransport(
     : owner_thread_(rtc::Thread::Current()),
       info_(DtlsTransportState::kNew),
       internal_dtls_transport_(std::move(internal)),
-      ice_transport_(rtc::make_ref_counted<IceTransportWithPointer>(
+      ice_transport_(new rtc::RefCountedObject<IceTransportWithPointer>(
           internal_dtls_transport_->ice_transport())) {
   RTC_DCHECK(internal_dtls_transport_.get());
-  internal_dtls_transport_->SubscribeDtlsState(
-      [this](cricket::DtlsTransportInternal* transport,
-             cricket::DtlsTransportState state) {
-        OnInternalDtlsState(transport, state);
-      });
+  internal_dtls_transport_->SignalDtlsState.connect(
+      this, &DtlsTransport::OnInternalDtlsState);
   UpdateInformation();
 }
 

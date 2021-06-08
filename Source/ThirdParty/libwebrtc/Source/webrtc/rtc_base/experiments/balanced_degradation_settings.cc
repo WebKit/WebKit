@@ -93,8 +93,7 @@ bool IsValid(const BalancedDegradationSettings::CodecTypeSpecific& config1,
 
 bool IsValid(const std::vector<BalancedDegradationSettings::Config>& configs) {
   if (configs.size() <= 1) {
-    if (configs.size() == 1)
-      RTC_LOG(LS_WARNING) << "Unsupported size, value ignored.";
+    RTC_LOG(LS_WARNING) << "Unsupported size, value ignored.";
     return false;
   }
   for (const auto& config : configs) {

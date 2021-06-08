@@ -14,7 +14,6 @@
 #include <memory>
 
 #include "api/rtc_event_log/rtc_event.h"
-#include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor_config.h"
 
 namespace webrtc {
 
@@ -22,14 +21,13 @@ struct AudioEncoderRuntimeConfig;
 
 class RtcEventAudioNetworkAdaptation final : public RtcEvent {
  public:
-  static constexpr Type kType = Type::AudioNetworkAdaptation;
-
   explicit RtcEventAudioNetworkAdaptation(
       std::unique_ptr<AudioEncoderRuntimeConfig> config);
   ~RtcEventAudioNetworkAdaptation() override;
 
-  Type GetType() const override { return kType; }
-  bool IsConfigEvent() const override { return false; }
+  Type GetType() const override;
+
+  bool IsConfigEvent() const override;
 
   std::unique_ptr<RtcEventAudioNetworkAdaptation> Copy() const;
 
@@ -39,19 +37,6 @@ class RtcEventAudioNetworkAdaptation final : public RtcEvent {
   RtcEventAudioNetworkAdaptation(const RtcEventAudioNetworkAdaptation& other);
 
   const std::unique_ptr<const AudioEncoderRuntimeConfig> config_;
-};
-
-struct LoggedAudioNetworkAdaptationEvent {
-  LoggedAudioNetworkAdaptationEvent() = default;
-  LoggedAudioNetworkAdaptationEvent(int64_t timestamp_us,
-                                    const AudioEncoderRuntimeConfig& config)
-      : timestamp_us(timestamp_us), config(config) {}
-
-  int64_t log_time_us() const { return timestamp_us; }
-  int64_t log_time_ms() const { return timestamp_us / 1000; }
-
-  int64_t timestamp_us;
-  AudioEncoderRuntimeConfig config;
 };
 
 }  // namespace webrtc

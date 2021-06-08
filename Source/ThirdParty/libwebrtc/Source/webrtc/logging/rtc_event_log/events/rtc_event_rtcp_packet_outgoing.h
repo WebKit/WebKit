@@ -23,13 +23,12 @@ namespace webrtc {
 
 class RtcEventRtcpPacketOutgoing final : public RtcEvent {
  public:
-  static constexpr Type kType = Type::RtcpPacketOutgoing;
-
   explicit RtcEventRtcpPacketOutgoing(rtc::ArrayView<const uint8_t> packet);
   ~RtcEventRtcpPacketOutgoing() override;
 
-  Type GetType() const override { return kType; }
-  bool IsConfigEvent() const override { return false; }
+  Type GetType() const override;
+
+  bool IsConfigEvent() const override;
 
   std::unique_ptr<RtcEventRtcpPacketOutgoing> Copy() const;
 

@@ -15,6 +15,8 @@
 
 #include <map>
 
+#include "modules/rtp_rtcp/include/rtcp_statistics.h"
+
 namespace webrtc {
 
 // TODO(nisse): Usefulness of this class is somewhat unclear. The inputs are
@@ -30,9 +32,7 @@ class ReportBlockStats {
   ~ReportBlockStats();
 
   // Updates stats and stores report block.
-  void Store(uint32_t ssrc,
-             int packets_lost,
-             uint32_t extended_highest_sequence_number);
+  void Store(uint32_t ssrc, const RtcpStatistics& rtcp_stats);
 
   // Returns the total fraction of lost packets (or -1 if less than two report
   // blocks have been stored).
@@ -44,6 +44,10 @@ class ReportBlockStats {
     uint32_t extended_highest_sequence_number;
     int32_t packets_lost;
   };
+
+  // Updates the total number of packets/lost packets.
+  // Stores the report.
+  void StoreAndAddPacketIncrement(uint32_t ssrc, const Report& report);
 
   // The total number of packets/lost packets.
   uint32_t num_sequence_numbers_;

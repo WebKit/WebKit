@@ -19,6 +19,7 @@
 #include "api/rtp_parameters.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/deprecation.h"
 
 namespace webrtc {
 

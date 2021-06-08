@@ -16,9 +16,6 @@
 #include <string>
 
 #include "api/array_view.h"
-#include "api/sequence_checker.h"
-#include "rtc_base/synchronization/mutex.h"
-#include "rtc_base/system/no_unique_address.h"
 
 namespace rtc {
 
@@ -50,10 +47,9 @@ class UniqueNumberGenerator {
   bool AddKnownId(TIntegral value);
 
  private:
-  RTC_NO_UNIQUE_ADDRESS webrtc::SequenceChecker sequence_checker_;
   static_assert(std::is_integral<TIntegral>::value, "Must be integral type.");
-  TIntegral counter_ RTC_GUARDED_BY(sequence_checker_);
-  std::set<TIntegral> known_ids_ RTC_GUARDED_BY(sequence_checker_);
+  TIntegral counter_;
+  std::set<TIntegral> known_ids_;
 };
 
 // This class will generate unique ids. Ids are 32 bit unsigned integers.
@@ -80,10 +76,7 @@ class UniqueRandomIdGenerator {
   bool AddKnownId(uint32_t value);
 
  private:
-  // TODO(bugs.webrtc.org/12666): This lock is needed due to an instance in
-  // SdpOfferAnswerHandler being shared between threads.
-  webrtc::Mutex mutex_;
-  std::set<uint32_t> known_ids_ RTC_GUARDED_BY(&mutex_);
+  std::set<uint32_t> known_ids_;
 };
 
 // This class will generate strings. A common use case is for identifiers.
@@ -111,23 +104,18 @@ class UniqueStringGenerator {
 };
 
 template <typename TIntegral>
-UniqueNumberGenerator<TIntegral>::UniqueNumberGenerator() : counter_(0) {
-  sequence_checker_.Detach();
-}
+UniqueNumberGenerator<TIntegral>::UniqueNumberGenerator() : counter_(0) {}
 
 template <typename TIntegral>
 UniqueNumberGenerator<TIntegral>::UniqueNumberGenerator(
     ArrayView<TIntegral> known_ids)
-    : counter_(0), known_ids_(known_ids.begin(), known_ids.end()) {
-  sequence_checker_.Detach();
-}
+    : counter_(0), known_ids_(known_ids.begin(), known_ids.end()) {}
 
 template <typename TIntegral>
 UniqueNumberGenerator<TIntegral>::~UniqueNumberGenerator() {}
 
 template <typename TIntegral>
 TIntegral UniqueNumberGenerator<TIntegral>::GenerateNumber() {
-  RTC_DCHECK_RUN_ON(&sequence_checker_);
   while (true) {
     RTC_CHECK_LT(counter_, std::numeric_limits<TIntegral>::max());
     auto pair = known_ids_.insert(counter_++);
@@ -139,7 +127,6 @@ TIntegral UniqueNumberGenerator<TIntegral>::GenerateNumber() {
 
 template <typename TIntegral>
 bool UniqueNumberGenerator<TIntegral>::AddKnownId(TIntegral value) {
-  RTC_DCHECK_RUN_ON(&sequence_checker_);
   return known_ids_.insert(value).second;
 }
 }  // namespace rtc

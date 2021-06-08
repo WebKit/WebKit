@@ -14,19 +14,20 @@
 
 namespace webrtc {
 namespace rnn_vad {
+namespace test {
 namespace {
 
 // Compare the elements of two given array views.
 template <typename T, std::ptrdiff_t S>
 void ExpectEq(rtc::ArrayView<const T, S> a, rtc::ArrayView<const T, S> b) {
-  for (int i = 0; i < S; ++i) {
+  for (size_t i = 0; i < S; ++i) {
     SCOPED_TRACE(i);
     EXPECT_EQ(a[i], b[i]);
   }
 }
 
 // Test push/read sequences.
-template <typename T, int S, int N>
+template <typename T, size_t S, size_t N>
 void TestRingBuffer() {
   SCOPED_TRACE(N);
   SCOPED_TRACE(S);
@@ -55,7 +56,7 @@ void TestRingBuffer() {
   }
 
   // Check buffer.
-  for (int delay = 2; delay < N; ++delay) {
+  for (size_t delay = 2; delay < N; ++delay) {
     SCOPED_TRACE(delay);
     T expected_value = N - static_cast<T>(delay);
     pushed_array.fill(expected_value);
@@ -63,20 +64,22 @@ void TestRingBuffer() {
   }
 }
 
+}  // namespace
+
 // Check that for different delays, different views are returned.
 TEST(RnnVadTest, RingBufferArrayViews) {
-  constexpr int s = 3;
-  constexpr int n = 4;
+  constexpr size_t s = 3;
+  constexpr size_t n = 4;
   RingBuffer<int, s, n> ring_buf;
   std::array<int, s> pushed_array;
   pushed_array.fill(1);
-  for (int k = 0; k <= n; ++k) {  // Push data n + 1 times.
+  for (size_t k = 0; k <= n; ++k) {  // Push data n + 1 times.
     SCOPED_TRACE(k);
     // Check array views.
-    for (int i = 0; i < n; ++i) {
+    for (size_t i = 0; i < n; ++i) {
       SCOPED_TRACE(i);
       auto view_i = ring_buf.GetArrayView(i);
-      for (int j = i + 1; j < n; ++j) {
+      for (size_t j = i + 1; j < n; ++j) {
         SCOPED_TRACE(j);
         auto view_j = ring_buf.GetArrayView(j);
         EXPECT_NE(view_i, view_j);
@@ -107,6 +110,6 @@ TEST(RnnVadTest, RingBufferFloating) {
   TestRingBuffer<float, 5, 5>();
 }
 
-}  // namespace
+}  // namespace test
 }  // namespace rnn_vad
 }  // namespace webrtc

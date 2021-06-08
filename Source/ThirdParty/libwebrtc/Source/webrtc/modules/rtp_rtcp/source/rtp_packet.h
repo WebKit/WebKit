@@ -30,8 +30,6 @@ class RtpPacket {
   // packet creating and used if available in Parse function.
   // Adding and getting extensions will fail until |extensions| is
   // provided via constructor or IdentifyExtensions function.
-  // |*extensions| is only accessed during construction; the pointer is not
-  // stored.
   RtpPacket();
   explicit RtpPacket(const ExtensionManager* extensions);
   RtpPacket(const RtpPacket&);
@@ -180,10 +178,8 @@ class RtpPacket {
 
   uint16_t SetExtensionLengthMaybeAddZeroPadding(size_t extensions_offset);
 
-  uint8_t* WriteAt(size_t offset) { return buffer_.MutableData() + offset; }
-  void WriteAt(size_t offset, uint8_t byte) {
-    buffer_.MutableData()[offset] = byte;
-  }
+  uint8_t* WriteAt(size_t offset) { return buffer_.data() + offset; }
+  void WriteAt(size_t offset, uint8_t byte) { buffer_.data()[offset] = byte; }
   const uint8_t* ReadAt(size_t offset) const { return buffer_.data() + offset; }
 
   // Header.

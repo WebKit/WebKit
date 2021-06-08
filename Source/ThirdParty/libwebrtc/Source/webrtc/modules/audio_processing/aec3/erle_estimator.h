@@ -55,18 +55,17 @@ class ErleEstimator {
       const std::vector<bool>& converged_filters);
 
   // Returns the most recent subband ERLE estimates.
-  rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> Erle(
-      bool onset_compensated) const {
+  rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> Erle() const {
     return signal_dependent_erle_estimator_
-               ? signal_dependent_erle_estimator_->Erle(onset_compensated)
-               : subband_erle_estimator_.Erle(onset_compensated);
+               ? signal_dependent_erle_estimator_->Erle()
+               : subband_erle_estimator_.Erle();
   }
 
   // Returns the subband ERLE that are estimated during onsets (only used for
   // testing).
-  rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> ErleDuringOnsets()
+  rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> ErleOnsets()
       const {
-    return subband_erle_estimator_.ErleDuringOnsets();
+    return subband_erle_estimator_.ErleOnsets();
   }
 
   // Returns the fullband ERLE estimate.

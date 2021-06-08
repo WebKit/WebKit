@@ -385,11 +385,9 @@ void RenderDelayBufferImpl::ApplyTotalDelay(int delay) {
 void RenderDelayBufferImpl::AlignFromExternalDelay() {
   RTC_DCHECK(config_.delay.use_external_delay_estimator);
   if (external_audio_buffer_delay_) {
-    const int64_t delay = render_call_counter_ - capture_call_counter_ +
-                          *external_audio_buffer_delay_;
-    const int64_t delay_with_headroom =
-        delay - config_.delay.delay_headroom_samples / kBlockSize;
-    ApplyTotalDelay(delay_with_headroom);
+    int64_t delay = render_call_counter_ - capture_call_counter_ +
+                    *external_audio_buffer_delay_;
+    ApplyTotalDelay(delay);
   }
 }
 

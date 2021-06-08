@@ -16,7 +16,6 @@
 #include <memory>
 #include <vector>
 
-#include "api/array_view.h"
 #include "api/audio/audio_frame.h"
 #include "api/audio/audio_mixer.h"
 #include "api/scoped_refptr.h"
@@ -29,22 +28,32 @@
 
 namespace webrtc {
 
+typedef std::vector<AudioFrame*> AudioFrameList;
+
 class AudioMixerImpl : public AudioMixer {
  public:
-  struct SourceStatus;
+  struct SourceStatus {
+    SourceStatus(Source* audio_source, bool is_mixed, float gain)
+        : audio_source(audio_source), is_mixed(is_mixed), gain(gain) {}
+    Source* audio_source = nullptr;
+    bool is_mixed = false;
+    float gain = 0.0f;
+
+    // A frame that will be passed to audio_source->GetAudioFrameWithInfo.
+    AudioFrame audio_frame;
+  };
+
+  using SourceStatusList = std::vector<std::unique_ptr<SourceStatus>>;
 
   // AudioProcessing only accepts 10 ms frames.
   static const int kFrameDurationInMs = 10;
+  enum : int { kMaximumAmountOfMixedAudioSources = 3 };
 
-  static const int kDefaultNumberOfMixedAudioSources = 3;
-
-  static rtc::scoped_refptr<AudioMixerImpl> Create(
-      int max_sources_to_mix = kDefaultNumberOfMixedAudioSources);
+  static rtc::scoped_refptr<AudioMixerImpl> Create();
 
   static rtc::scoped_refptr<AudioMixerImpl> Create(
       std::unique_ptr<OutputRateCalculator> output_rate_calculator,
-      bool use_limiter,
-      int max_sources_to_mix = kDefaultNumberOfMixedAudioSources);
+      bool use_limiter);
 
   ~AudioMixerImpl() override;
 
@@ -63,35 +72,35 @@ class AudioMixerImpl : public AudioMixer {
 
  protected:
   AudioMixerImpl(std::unique_ptr<OutputRateCalculator> output_rate_calculator,
-                 bool use_limiter,
-                 int max_sources_to_mix);
+                 bool use_limiter);
 
  private:
-  struct HelperContainers;
+  // Set mixing frequency through OutputFrequencyCalculator.
+  void CalculateOutputFrequency();
+  // Get mixing frequency.
+  int OutputFrequency() const;
 
   // Compute what audio sources to mix from audio_source_list_. Ramp
   // in and out. Update mixed status. Mixes up to
   // kMaximumAmountOfMixedAudioSources audio sources.
-  rtc::ArrayView<AudioFrame* const> GetAudioFromSources(int output_frequency)
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
+  AudioFrameList GetAudioFromSources() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // The critical section lock guards audio source insertion and
   // removal, which can be done from any thread. The race checker
   // checks that mixing is done sequentially.
   mutable Mutex mutex_;
-
-  const int max_sources_to_mix_;
+  rtc::RaceChecker race_checker_;
 
   std::unique_ptr<OutputRateCalculator> output_rate_calculator_;
+  // The current sample frequency and sample size when mixing.
+  int output_frequency_ RTC_GUARDED_BY(race_checker_);
+  size_t sample_size_ RTC_GUARDED_BY(race_checker_);
 
-  // List of all audio sources.
-  std::vector<std::unique_ptr<SourceStatus>> audio_source_list_
-      RTC_GUARDED_BY(mutex_);
-  const std::unique_ptr<HelperContainers> helper_containers_
-      RTC_GUARDED_BY(mutex_);
+  // List of all audio sources. Note all lists are disjunct
+  SourceStatusList audio_source_list_ RTC_GUARDED_BY(mutex_);  // May be mixed.
 
   // Component that handles actual adding of audio frames.
-  FrameCombiner frame_combiner_;
+  FrameCombiner frame_combiner_ RTC_GUARDED_BY(race_checker_);
 
   RTC_DISALLOW_COPY_AND_ASSIGN(AudioMixerImpl);
 };

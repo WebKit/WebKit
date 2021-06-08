@@ -10,10 +10,6 @@
 
 #include "pc/data_channel_utils.h"
 
-#include <utility>
-
-#include "rtc_base/checks.h"
-
 namespace webrtc {
 
 bool PacketQueue::Empty() const {
@@ -49,6 +45,10 @@ void PacketQueue::Swap(PacketQueue* other) {
   byte_count_ = other_byte_count;
 
   other->packets_.swap(packets_);
+}
+
+bool IsSctpLike(cricket::DataChannelType type) {
+  return type == cricket::DCT_SCTP;
 }
 
 }  // namespace webrtc

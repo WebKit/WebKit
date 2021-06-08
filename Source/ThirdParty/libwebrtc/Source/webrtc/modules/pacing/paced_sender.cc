@@ -58,13 +58,13 @@ PacedSender::~PacedSender() {
 }
 
 void PacedSender::CreateProbeCluster(DataRate bitrate, int cluster_id) {
-  MutexLock lock(&mutex_);
+  rtc::CritScope cs(&critsect_);
   return pacing_controller_.CreateProbeCluster(bitrate, cluster_id);
 }
 
 void PacedSender::Pause() {
   {
-    MutexLock lock(&mutex_);
+    rtc::CritScope cs(&critsect_);
     pacing_controller_.Pause();
   }
 
@@ -77,7 +77,7 @@ void PacedSender::Pause() {
 
 void PacedSender::Resume() {
   {
-    MutexLock lock(&mutex_);
+    rtc::CritScope cs(&critsect_);
     pacing_controller_.Resume();
   }
 
@@ -90,7 +90,7 @@ void PacedSender::Resume() {
 
 void PacedSender::SetCongestionWindow(DataSize congestion_window_size) {
   {
-    MutexLock lock(&mutex_);
+    rtc::CritScope cs(&critsect_);
     pacing_controller_.SetCongestionWindow(congestion_window_size);
   }
   MaybeWakupProcessThread();
@@ -98,7 +98,7 @@ void PacedSender::SetCongestionWindow(DataSize congestion_window_size) {
 
 void PacedSender::UpdateOutstandingData(DataSize outstanding_data) {
   {
-    MutexLock lock(&mutex_);
+    rtc::CritScope cs(&critsect_);
     pacing_controller_.UpdateOutstandingData(outstanding_data);
   }
   MaybeWakupProcessThread();
@@ -106,7 +106,7 @@ void PacedSender::UpdateOutstandingData(DataSize outstanding_data) {
 
 void PacedSender::SetPacingRates(DataRate pacing_rate, DataRate padding_rate) {
   {
-    MutexLock lock(&mutex_);
+    rtc::CritScope cs(&critsect_);
     pacing_controller_.SetPacingRates(pacing_rate, padding_rate);
   }
   MaybeWakupProcessThread();
@@ -117,14 +117,13 @@ void PacedSender::EnqueuePackets(
   {
     TRACE_EVENT0(TRACE_DISABLED_BY_DEFAULT("webrtc"),
                  "PacedSender::EnqueuePackets");
-    MutexLock lock(&mutex_);
+    rtc::CritScope cs(&critsect_);
     for (auto& packet : packets) {
       TRACE_EVENT2(TRACE_DISABLED_BY_DEFAULT("webrtc"),
                    "PacedSender::EnqueuePackets::Loop", "sequence_number",
                    packet->SequenceNumber(), "rtp_timestamp",
                    packet->Timestamp());
 
-      RTC_DCHECK_GE(packet->capture_time_ms(), 0);
       pacing_controller_.EnqueuePacket(std::move(packet));
     }
   }
@@ -132,42 +131,42 @@ void PacedSender::EnqueuePackets(
 }
 
 void PacedSender::SetAccountForAudioPackets(bool account_for_audio) {
-  MutexLock lock(&mutex_);
+  rtc::CritScope cs(&critsect_);
   pacing_controller_.SetAccountForAudioPackets(account_for_audio);
 }
 
 void PacedSender::SetIncludeOverhead() {
-  MutexLock lock(&mutex_);
+  rtc::CritScope cs(&critsect_);
   pacing_controller_.SetIncludeOverhead();
 }
 
 void PacedSender::SetTransportOverhead(DataSize overhead_per_packet) {
-  MutexLock lock(&mutex_);
+  rtc::CritScope cs(&critsect_);
   pacing_controller_.SetTransportOverhead(overhead_per_packet);
 }
 
 TimeDelta PacedSender::ExpectedQueueTime() const {
-  MutexLock lock(&mutex_);
+  rtc::CritScope cs(&critsect_);
   return pacing_controller_.ExpectedQueueTime();
 }
 
 DataSize PacedSender::QueueSizeData() const {
-  MutexLock lock(&mutex_);
+  rtc::CritScope cs(&critsect_);
   return pacing_controller_.QueueSizeData();
 }
 
 absl::optional<Timestamp> PacedSender::FirstSentPacketTime() const {
-  MutexLock lock(&mutex_);
+  rtc::CritScope cs(&critsect_);
   return pacing_controller_.FirstSentPacketTime();
 }
 
 TimeDelta PacedSender::OldestPacketWaitTime() const {
-  MutexLock lock(&mutex_);
+  rtc::CritScope cs(&critsect_);
   return pacing_controller_.OldestPacketWaitTime();
 }
 
 int64_t PacedSender::TimeUntilNextProcess() {
-  MutexLock lock(&mutex_);
+  rtc::CritScope cs(&critsect_);
 
   Timestamp next_send_time = pacing_controller_.NextSendTime();
   TimeDelta sleep_time =
@@ -179,7 +178,7 @@ int64_t PacedSender::TimeUntilNextProcess() {
 }
 
 void PacedSender::Process() {
-  MutexLock lock(&mutex_);
+  rtc::CritScope cs(&critsect_);
   pacing_controller_.ProcessPackets();
 }
 
@@ -199,7 +198,7 @@ void PacedSender::MaybeWakupProcessThread() {
 
 void PacedSender::SetQueueTimeLimit(TimeDelta limit) {
   {
-    MutexLock lock(&mutex_);
+    rtc::CritScope cs(&critsect_);
     pacing_controller_.SetQueueTimeLimit(limit);
   }
   MaybeWakupProcessThread();

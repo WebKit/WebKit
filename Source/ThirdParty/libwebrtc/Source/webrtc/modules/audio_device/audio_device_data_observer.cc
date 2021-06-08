@@ -301,8 +301,9 @@ class ADMWrapper : public AudioDeviceModule, public AudioTransport {
 rtc::scoped_refptr<AudioDeviceModule> CreateAudioDeviceWithDataObserver(
     rtc::scoped_refptr<AudioDeviceModule> impl,
     std::unique_ptr<AudioDeviceDataObserver> observer) {
-  auto audio_device = rtc::make_ref_counted<ADMWrapper>(impl, observer.get(),
-                                                        std::move(observer));
+  rtc::scoped_refptr<ADMWrapper> audio_device(
+      new rtc::RefCountedObject<ADMWrapper>(impl, observer.get(),
+                                            std::move(observer)));
 
   if (!audio_device->IsValid()) {
     return nullptr;
@@ -314,8 +315,8 @@ rtc::scoped_refptr<AudioDeviceModule> CreateAudioDeviceWithDataObserver(
 rtc::scoped_refptr<AudioDeviceModule> CreateAudioDeviceWithDataObserver(
     rtc::scoped_refptr<AudioDeviceModule> impl,
     AudioDeviceDataObserver* legacy_observer) {
-  auto audio_device =
-      rtc::make_ref_counted<ADMWrapper>(impl, legacy_observer, nullptr);
+  rtc::scoped_refptr<ADMWrapper> audio_device(
+      new rtc::RefCountedObject<ADMWrapper>(impl, legacy_observer, nullptr));
 
   if (!audio_device->IsValid()) {
     return nullptr;
@@ -328,8 +329,10 @@ rtc::scoped_refptr<AudioDeviceModule> CreateAudioDeviceWithDataObserver(
     AudioDeviceModule::AudioLayer audio_layer,
     TaskQueueFactory* task_queue_factory,
     std::unique_ptr<AudioDeviceDataObserver> observer) {
-  auto audio_device = rtc::make_ref_counted<ADMWrapper>(
-      audio_layer, task_queue_factory, observer.get(), std::move(observer));
+  rtc::scoped_refptr<ADMWrapper> audio_device(
+      new rtc::RefCountedObject<ADMWrapper>(audio_layer, task_queue_factory,
+                                            observer.get(),
+                                            std::move(observer)));
 
   if (!audio_device->IsValid()) {
     return nullptr;
@@ -342,8 +345,9 @@ rtc::scoped_refptr<AudioDeviceModule> CreateAudioDeviceWithDataObserver(
     AudioDeviceModule::AudioLayer audio_layer,
     TaskQueueFactory* task_queue_factory,
     AudioDeviceDataObserver* legacy_observer) {
-  auto audio_device = rtc::make_ref_counted<ADMWrapper>(
-      audio_layer, task_queue_factory, legacy_observer, nullptr);
+  rtc::scoped_refptr<ADMWrapper> audio_device(
+      new rtc::RefCountedObject<ADMWrapper>(audio_layer, task_queue_factory,
+                                            legacy_observer, nullptr));
 
   if (!audio_device->IsValid()) {
     return nullptr;

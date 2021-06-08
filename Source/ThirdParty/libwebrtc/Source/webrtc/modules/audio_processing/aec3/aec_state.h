@@ -70,10 +70,15 @@ class AecState {
   }
 
   // Returns the ERLE.
-  rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> Erle(
-      bool onset_compensated) const {
-    return erle_estimator_.Erle(onset_compensated);
+  rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> Erle() const {
+    return erle_estimator_.Erle();
   }
+
+  // Returns an offset to apply to the estimation of the residual echo
+  // computation. Returning nullopt means that no offset should be used, while
+  // any other value will be applied as a multiplier to the estimated residual
+  // echo.
+  absl::optional<float> ErleUncertainty() const;
 
   // Returns the fullband ERLE estimate in log2 units.
   float FullBandErleLog2() const { return erle_estimator_.FullbandErleLog2(); }
@@ -206,10 +211,10 @@ class AecState {
         size_t blocks_with_proper_filter_adaptation);
 
    private:
-    const int delay_headroom_blocks_;
+    const int delay_headroom_samples_;
     bool external_delay_reported_ = false;
     std::vector<int> filter_delays_blocks_;
-    int min_filter_delay_;
+    int min_filter_delay_ = 0;
     absl::optional<DelayEstimate> external_delay_;
   } delay_state_;
 

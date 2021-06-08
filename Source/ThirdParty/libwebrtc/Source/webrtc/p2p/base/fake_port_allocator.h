@@ -18,6 +18,7 @@
 #include "p2p/base/basic_packet_socket_factory.h"
 #include "p2p/base/port_allocator.h"
 #include "p2p/base/udp_port.h"
+#include "rtc_base/bind.h"
 #include "rtc_base/net_helpers.h"
 #include "rtc_base/thread.h"
 
@@ -118,8 +119,8 @@ class FakePortAllocatorSession : public PortAllocatorSession {
                                       username(), password(), std::string(),
                                       false));
       RTC_DCHECK(port_);
-      port_->SubscribePortDestroyed(
-          [this](PortInterface* port) { OnPortDestroyed(port); });
+      port_->SignalDestroyed.connect(
+          this, &FakePortAllocatorSession::OnPortDestroyed);
       AddPort(port_.get());
     }
     ++port_config_count_;
@@ -221,7 +222,9 @@ class FakePortAllocator : public cricket::PortAllocator {
       Initialize();
       return;
     }
-    network_thread_->Invoke<void>(RTC_FROM_HERE, [this] { Initialize(); });
+    network_thread_->Invoke<void>(RTC_FROM_HERE,
+                                  rtc::Bind(&PortAllocator::Initialize,
+                                            static_cast<PortAllocator*>(this)));
   }
 
   void SetNetworkIgnoreMask(int network_ignore_mask) override {}

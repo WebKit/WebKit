@@ -35,9 +35,6 @@ constexpr uint32_t kLegacyScreenshareMaxBitrateKbps = 1000;
 // Bitrates for upper simulcast screenshare layer.
 constexpr uint32_t kSimulcastScreenshareMinBitrateKbps = 600;
 constexpr uint32_t kSimulcastScreenshareMaxBitrateKbps = 1250;
-// Default video hysteresis factor: allocatable bitrate for next layer must
-// exceed 20% of min setting in order to be initially turned on.
-const double kDefaultHysteresis = 1.2;
 
 class MockTemporalLayers : public Vp8FrameBufferController {
  public:
@@ -57,6 +54,7 @@ class MockTemporalLayers : public Vp8FrameBufferController {
 class SimulcastRateAllocatorTest : public ::testing::TestWithParam<bool> {
  public:
   SimulcastRateAllocatorTest() {
+    memset(&codec_, 0, sizeof(VideoCodec));
     codec_.codecType = kVideoCodecVP8;
     codec_.minBitrate = kMinBitrateKbps;
     codec_.maxBitrate = kLegacyScreenshareMaxBitrateKbps;
@@ -232,7 +230,6 @@ TEST_F(SimulcastRateAllocatorTest, SingleSimulcastBelowMin) {
 TEST_F(SimulcastRateAllocatorTest, SignalsBwLimited) {
   // Enough to enable all layers.
   const int kVeryBigBitrate = 100000;
-
   // With simulcast, use the min bitrate from the ss spec instead of the global.
   SetupCodec3SL3TL({true, true, true});
   CreateAllocator();
@@ -244,13 +241,10 @@ TEST_F(SimulcastRateAllocatorTest, SignalsBwLimited) {
   EXPECT_TRUE(GetAllocation(codec_.simulcastStream[0].targetBitrate +
                             codec_.simulcastStream[1].minBitrate)
                   .is_bw_limited());
-  EXPECT_FALSE(
-      GetAllocation(
-          codec_.simulcastStream[0].targetBitrate +
-          codec_.simulcastStream[1].targetBitrate +
-          static_cast<uint32_t>(
-              codec_.simulcastStream[2].minBitrate * kDefaultHysteresis + 0.5))
-          .is_bw_limited());
+  EXPECT_FALSE(GetAllocation(codec_.simulcastStream[0].targetBitrate +
+                             codec_.simulcastStream[1].targetBitrate +
+                             codec_.simulcastStream[2].minBitrate)
+                   .is_bw_limited());
   EXPECT_FALSE(GetAllocation(kVeryBigBitrate).is_bw_limited());
 }
 
@@ -346,23 +340,20 @@ TEST_F(SimulcastRateAllocatorTest, OneToThreeStreams) {
     ExpectEqual(expected, GetAllocation(bitrate));
   }
 
-  uint32_t kMinInitialRateTwoLayers =
-      codec_.simulcastStream[0].targetBitrate +
-      static_cast<uint32_t>(codec_.simulcastStream[1].minBitrate *
-                            kDefaultHysteresis);
   {
     // Bitrate above target for first stream, but below min for the next one.
-    const uint32_t bitrate = kMinInitialRateTwoLayers - 1;
+    const uint32_t bitrate = codec_.simulcastStream[0].targetBitrate +
+                             codec_.simulcastStream[1].minBitrate - 1;
     uint32_t expected[] = {bitrate, 0, 0};
     ExpectEqual(expected, GetAllocation(bitrate));
   }
 
   {
     // Just enough for two streams.
-    const uint32_t bitrate = kMinInitialRateTwoLayers;
-    uint32_t expected[] = {
-        codec_.simulcastStream[0].targetBitrate,
-        kMinInitialRateTwoLayers - codec_.simulcastStream[0].targetBitrate, 0};
+    const uint32_t bitrate = codec_.simulcastStream[0].targetBitrate +
+                             codec_.simulcastStream[1].minBitrate;
+    uint32_t expected[] = {codec_.simulcastStream[0].targetBitrate,
+                           codec_.simulcastStream[1].minBitrate, 0};
     ExpectEqual(expected, GetAllocation(bitrate));
   }
 
@@ -375,15 +366,11 @@ TEST_F(SimulcastRateAllocatorTest, OneToThreeStreams) {
     ExpectEqual(expected, GetAllocation(bitrate));
   }
 
-  uint32_t kMinInitialRateThreeLayers =
-      codec_.simulcastStream[0].targetBitrate +
-      codec_.simulcastStream[1].targetBitrate +
-      static_cast<uint32_t>(codec_.simulcastStream[2].minBitrate *
-                            kDefaultHysteresis);
   {
     // First two streams maxed out, but not enough for third. Nowhere to put
     // remaining bits.
-    const uint32_t bitrate = kMinInitialRateThreeLayers - 1;
+    const uint32_t bitrate = codec_.simulcastStream[0].maxBitrate +
+                             codec_.simulcastStream[1].maxBitrate + 499;
     uint32_t expected[] = {codec_.simulcastStream[0].targetBitrate,
                            codec_.simulcastStream[1].maxBitrate, 0};
     ExpectEqual(expected, GetAllocation(bitrate));
@@ -391,12 +378,12 @@ TEST_F(SimulcastRateAllocatorTest, OneToThreeStreams) {
 
   {
     // Just enough for all three streams.
-    const uint32_t bitrate = kMinInitialRateThreeLayers;
-    uint32_t expected[] = {
-        codec_.simulcastStream[0].targetBitrate,
-        codec_.simulcastStream[1].targetBitrate,
-        static_cast<uint32_t>(codec_.simulcastStream[2].minBitrate *
-                              kDefaultHysteresis)};
+    const uint32_t bitrate = codec_.simulcastStream[0].targetBitrate +
+                             codec_.simulcastStream[1].targetBitrate +
+                             codec_.simulcastStream[2].minBitrate;
+    uint32_t expected[] = {codec_.simulcastStream[0].targetBitrate,
+                           codec_.simulcastStream[1].targetBitrate,
+                           codec_.simulcastStream[2].minBitrate};
     ExpectEqual(expected, GetAllocation(bitrate));
   }
 

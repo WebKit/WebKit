@@ -16,6 +16,7 @@
 #include <utility>
 #include <vector>
 
+#include "rtc_base/bind.h"
 #include "rtc_base/event.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/thread.h"

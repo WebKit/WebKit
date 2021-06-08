@@ -41,7 +41,9 @@ enum {
 };
 
 enum VCMVideoProtection {
+  kProtectionNone,
   kProtectionNack,
+  kProtectionFEC,
   kProtectionNackFEC,
 };
 

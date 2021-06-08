@@ -31,7 +31,6 @@ rtc_library("utility") {
 
   deps = [
     "..:module_api",
-    "../../api:sequence_checker",
     "../../api/task_queue",
     "../../common_audio",
     "../../rtc_base:checks",

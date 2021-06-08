@@ -100,8 +100,7 @@ class MatchedFilter {
                 int num_matched_filters,
                 size_t alignment_shift_sub_blocks,
                 float excitation_limit,
-                float smoothing_fast,
-                float smoothing_slow,
+                float smoothing,
                 float matching_filter_threshold);
 
   MatchedFilter() = delete;
@@ -112,8 +111,7 @@ class MatchedFilter {
 
   // Updates the correlation with the values in the capture buffer.
   void Update(const DownsampledRenderBuffer& render_buffer,
-              rtc::ArrayView<const float> capture,
-              bool use_slow_smoothing);
+              rtc::ArrayView<const float> capture);
 
   // Resets the matched filter.
   void Reset();
@@ -142,8 +140,7 @@ class MatchedFilter {
   std::vector<LagEstimate> lag_estimates_;
   std::vector<size_t> filters_offsets_;
   const float excitation_limit_;
-  const float smoothing_fast_;
-  const float smoothing_slow_;
+  const float smoothing_;
   const float matching_filter_threshold_;
 };
 

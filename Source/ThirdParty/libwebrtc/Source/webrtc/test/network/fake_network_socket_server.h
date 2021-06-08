@@ -19,6 +19,7 @@
 #include "rtc_base/event.h"
 #include "rtc_base/socket_server.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/third_party/sigslot/sigslot.h"
 #include "system_wrappers/include/clock.h"
 #include "test/network/network_emulation.h"
 
@@ -27,7 +28,8 @@ namespace test {
 class FakeNetworkSocket;
 
 // FakeNetworkSocketServer must outlive any sockets it creates.
-class FakeNetworkSocketServer : public rtc::SocketServer {
+class FakeNetworkSocketServer : public rtc::SocketServer,
+                                public sigslot::has_slots<> {
  public:
   explicit FakeNetworkSocketServer(EndpointsContainer* endpoints_controller);
   ~FakeNetworkSocketServer() override;
@@ -50,6 +52,8 @@ class FakeNetworkSocketServer : public rtc::SocketServer {
   void Unregister(FakeNetworkSocket* socket);
 
  private:
+  void OnMessageQueueDestroyed();
+
   const EndpointsContainer* endpoints_container_;
   rtc::Event wakeup_;
   rtc::Thread* thread_ = nullptr;

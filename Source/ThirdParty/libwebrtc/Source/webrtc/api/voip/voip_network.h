@@ -18,22 +18,20 @@ namespace webrtc {
 
 // VoipNetwork interface provides any network related interfaces such as
 // processing received RTP/RTCP packet from remote endpoint. This interface
-// requires a ChannelId created via VoipBase interface.
+// requires a ChannelId created via VoipBase interface. Note that using invalid
+// (previously released) ChannelId will silently fail these API calls as it
+// would have released underlying audio components. It's anticipated that caller
+// may be using different thread for network I/O where released channel id is
+// still used to input incoming RTP packets in which case we should silently
+// ignore. The interface is subjected to expand as needed in near future.
 class VoipNetwork {
  public:
   // The data received from the network including RTP header is passed here.
-  // Returns following VoipResult;
-  //  kOk - received RTP packet is processed.
-  //  kInvalidArgument - |channel_id| is invalid.
-  virtual VoipResult ReceivedRTPPacket(
-      ChannelId channel_id,
-      rtc::ArrayView<const uint8_t> rtp_packet) = 0;
+  virtual void ReceivedRTPPacket(ChannelId channel_id,
+                                 rtc::ArrayView<const uint8_t> rtp_packet) = 0;
 
   // The data received from the network including RTCP header is passed here.
-  // Returns following VoipResult;
-  //  kOk - received RTCP packet is processed.
-  //  kInvalidArgument - |channel_id| is invalid.
-  virtual VoipResult ReceivedRTCPPacket(
+  virtual void ReceivedRTCPPacket(
       ChannelId channel_id,
       rtc::ArrayView<const uint8_t> rtcp_packet) = 0;
 

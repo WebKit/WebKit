@@ -11,8 +11,6 @@
 #ifndef PC_SIMULCAST_DESCRIPTION_H_
 #define PC_SIMULCAST_DESCRIPTION_H_
 
-#include <stddef.h>
-
 #include <string>
 #include <vector>
 

@@ -113,6 +113,14 @@ void AecState::GetResidualEchoScaling(
                                           residual_scaling);
 }
 
+absl::optional<float> AecState::ErleUncertainty() const {
+  if (SaturatedEcho()) {
+    return 1.f;
+  }
+
+  return absl::nullopt;
+}
+
 AecState::AecState(const EchoCanceller3Config& config,
                    size_t num_capture_channels)
     : data_dumper_(
@@ -294,9 +302,7 @@ void AecState::Update(
   data_dumper_->DumpRaw("aec3_active_render", active_render);
   data_dumper_->DumpRaw("aec3_erl", Erl());
   data_dumper_->DumpRaw("aec3_erl_time_domain", ErlTimeDomain());
-  data_dumper_->DumpRaw("aec3_erle", Erle(/*onset_compensated=*/false)[0]);
-  data_dumper_->DumpRaw("aec3_erle_onset_compensated",
-                        Erle(/*onset_compensated=*/true)[0]);
+  data_dumper_->DumpRaw("aec3_erle", Erle()[0]);
   data_dumper_->DumpRaw("aec3_usable_linear_estimate", UsableLinearEstimate());
   data_dumper_->DumpRaw("aec3_transparent_mode", TransparentModeActive());
   data_dumper_->DumpRaw("aec3_filter_delay",
@@ -316,11 +322,6 @@ void AecState::Update(
                         external_delay ? 1 : 0);
   data_dumper_->DumpRaw("aec3_filter_tail_freq_resp_est",
                         GetReverbFrequencyResponse());
-  data_dumper_->DumpRaw("aec3_subtractor_y2", subtractor_output[0].y2);
-  data_dumper_->DumpRaw("aec3_subtractor_e2_coarse",
-                        subtractor_output[0].e2_coarse);
-  data_dumper_->DumpRaw("aec3_subtractor_e2_refined",
-                        subtractor_output[0].e2_refined);
 }
 
 AecState::InitialState::InitialState(const EchoCanceller3Config& config)
@@ -353,9 +354,8 @@ void AecState::InitialState::InitialState::Update(bool active_render,
 
 AecState::FilterDelay::FilterDelay(const EchoCanceller3Config& config,
                                    size_t num_capture_channels)
-    : delay_headroom_blocks_(config.delay.delay_headroom_samples / kBlockSize),
-      filter_delays_blocks_(num_capture_channels, delay_headroom_blocks_),
-      min_filter_delay_(delay_headroom_blocks_) {}
+    : delay_headroom_samples_(config.delay.delay_headroom_samples),
+      filter_delays_blocks_(num_capture_channels, 0) {}
 
 void AecState::FilterDelay::Update(
     rtc::ArrayView<const int> analyzer_filter_delay_estimates_blocks,
@@ -373,7 +373,7 @@ void AecState::FilterDelay::Update(
   const bool delay_estimator_may_not_have_converged =
       blocks_with_proper_filter_adaptation < 2 * kNumBlocksPerSecond;
   if (delay_estimator_may_not_have_converged && external_delay_) {
-    const int delay_guess = delay_headroom_blocks_;
+    int delay_guess = delay_headroom_samples_ / kBlockSize;
     std::fill(filter_delays_blocks_.begin(), filter_delays_blocks_.end(),
               delay_guess);
   } else {

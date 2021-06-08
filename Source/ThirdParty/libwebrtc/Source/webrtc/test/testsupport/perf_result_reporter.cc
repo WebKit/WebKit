@@ -12,8 +12,6 @@
 
 #include <vector>
 
-#include "absl/strings/string_view.h"
-
 namespace {
 
 // These characters mess with either the stdout parsing or the dashboard itself.
@@ -23,7 +21,7 @@ const std::vector<std::string>& InvalidCharacters() {
   return kInvalidCharacters;
 }
 
-void CheckForInvalidCharacters(absl::string_view str) {
+void CheckForInvalidCharacters(const std::string& str) {
   for (const auto& invalid : InvalidCharacters()) {
     RTC_CHECK(str.find(invalid) == std::string::npos)
         << "Given invalid character for perf names '" << invalid << "'";
@@ -78,8 +76,8 @@ std::string UnitToString(Unit unit) {
 
 }  // namespace
 
-PerfResultReporter::PerfResultReporter(absl::string_view metric_basename,
-                                       absl::string_view story_name)
+PerfResultReporter::PerfResultReporter(const std::string& metric_basename,
+                                       const std::string& story_name)
     : metric_basename_(metric_basename), story_name_(story_name) {
   CheckForInvalidCharacters(metric_basename_);
   CheckForInvalidCharacters(story_name_);
@@ -87,20 +85,19 @@ PerfResultReporter::PerfResultReporter(absl::string_view metric_basename,
 
 PerfResultReporter::~PerfResultReporter() = default;
 
-void PerfResultReporter::RegisterMetric(absl::string_view metric_suffix,
+void PerfResultReporter::RegisterMetric(const std::string& metric_suffix,
                                         Unit unit) {
   RegisterMetric(metric_suffix, unit, ImproveDirection::kNone);
 }
-void PerfResultReporter::RegisterMetric(absl::string_view metric_suffix,
+void PerfResultReporter::RegisterMetric(const std::string& metric_suffix,
                                         Unit unit,
                                         ImproveDirection improve_direction) {
   CheckForInvalidCharacters(metric_suffix);
-  std::string metric(metric_suffix);
-  RTC_CHECK(metric_map_.count(metric) == 0);
-  metric_map_.insert({std::move(metric), {unit, improve_direction}});
+  RTC_CHECK(metric_map_.count(metric_suffix) == 0);
+  metric_map_.insert({metric_suffix, {unit, improve_direction}});
 }
 
-void PerfResultReporter::AddResult(absl::string_view metric_suffix,
+void PerfResultReporter::AddResult(const std::string& metric_suffix,
                                    size_t value) const {
   auto info = GetMetricInfoOrFail(metric_suffix);
 
@@ -108,7 +105,7 @@ void PerfResultReporter::AddResult(absl::string_view metric_suffix,
               UnitToString(info.unit), kNotImportant, info.improve_direction);
 }
 
-void PerfResultReporter::AddResult(absl::string_view metric_suffix,
+void PerfResultReporter::AddResult(const std::string& metric_suffix,
                                    double value) const {
   auto info = GetMetricInfoOrFail(metric_suffix);
 
@@ -117,7 +114,7 @@ void PerfResultReporter::AddResult(absl::string_view metric_suffix,
 }
 
 void PerfResultReporter::AddResultList(
-    absl::string_view metric_suffix,
+    const std::string& metric_suffix,
     rtc::ArrayView<const double> values) const {
   auto info = GetMetricInfoOrFail(metric_suffix);
 
@@ -126,7 +123,7 @@ void PerfResultReporter::AddResultList(
                   info.improve_direction);
 }
 
-void PerfResultReporter::AddResultMeanAndError(absl::string_view metric_suffix,
+void PerfResultReporter::AddResultMeanAndError(const std::string& metric_suffix,
                                                const double mean,
                                                const double error) {
   auto info = GetMetricInfoOrFail(metric_suffix);
@@ -137,8 +134,8 @@ void PerfResultReporter::AddResultMeanAndError(absl::string_view metric_suffix,
 }
 
 absl::optional<MetricInfo> PerfResultReporter::GetMetricInfo(
-    absl::string_view metric_suffix) const {
-  auto iter = metric_map_.find(std::string(metric_suffix));
+    const std::string& metric_suffix) const {
+  auto iter = metric_map_.find(metric_suffix);
   if (iter == metric_map_.end()) {
     return absl::optional<MetricInfo>();
   }
@@ -147,7 +144,7 @@ absl::optional<MetricInfo> PerfResultReporter::GetMetricInfo(
 }
 
 MetricInfo PerfResultReporter::GetMetricInfoOrFail(
-    absl::string_view metric_suffix) const {
+    const std::string& metric_suffix) const {
   absl::optional<MetricInfo> info = GetMetricInfo(metric_suffix);
   RTC_CHECK(info.has_value())
       << "Attempted to use unregistered metric " << metric_suffix;

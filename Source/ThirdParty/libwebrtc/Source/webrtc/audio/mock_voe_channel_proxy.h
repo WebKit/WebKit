@@ -59,7 +59,6 @@ class MockChannelReceive : public voe::ChannelReceiveInterface {
               (int sample_rate_hz, AudioFrame*),
               (override));
   MOCK_METHOD(int, PreferredSampleRate, (), (const, override));
-  MOCK_METHOD(void, SetSourceTracker, (SourceTracker*), (override));
   MOCK_METHOD(void,
               SetAssociatedSendChannel,
               (const voe::ChannelSendInterface*),

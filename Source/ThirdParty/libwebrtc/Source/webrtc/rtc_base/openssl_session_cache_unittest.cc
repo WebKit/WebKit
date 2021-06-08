@@ -19,28 +19,10 @@
 #include "rtc_base/gunit.h"
 #include "rtc_base/openssl.h"
 
-namespace {
-// Use methods that avoid X509 objects if possible.
-SSL_CTX* NewDtlsContext() {
-#ifdef OPENSSL_IS_BORINGSSL
-  return SSL_CTX_new(DTLS_with_buffers_method());
-#else
-  return SSL_CTX_new(DTLS_method());
-#endif
-}
-SSL_CTX* NewTlsContext() {
-#ifdef OPENSSL_IS_BORINGSSL
-  return SSL_CTX_new(TLS_with_buffers_method());
-#else
-  return SSL_CTX_new(TLS_method());
-#endif
-}
-}  // namespace
-
 namespace rtc {
 
 TEST(OpenSSLSessionCache, DTLSModeSetCorrectly) {
-  SSL_CTX* ssl_ctx = NewDtlsContext();
+  SSL_CTX* ssl_ctx = SSL_CTX_new(DTLSv1_2_client_method());
 
   OpenSSLSessionCache session_cache(SSL_MODE_DTLS, ssl_ctx);
   EXPECT_EQ(session_cache.GetSSLMode(), SSL_MODE_DTLS);
@@ -49,7 +31,7 @@ TEST(OpenSSLSessionCache, DTLSModeSetCorrectly) {
 }
 
 TEST(OpenSSLSessionCache, TLSModeSetCorrectly) {
-  SSL_CTX* ssl_ctx = NewTlsContext();
+  SSL_CTX* ssl_ctx = SSL_CTX_new(TLSv1_2_client_method());
 
   OpenSSLSessionCache session_cache(SSL_MODE_TLS, ssl_ctx);
   EXPECT_EQ(session_cache.GetSSLMode(), SSL_MODE_TLS);
@@ -58,7 +40,7 @@ TEST(OpenSSLSessionCache, TLSModeSetCorrectly) {
 }
 
 TEST(OpenSSLSessionCache, SSLContextSetCorrectly) {
-  SSL_CTX* ssl_ctx = NewDtlsContext();
+  SSL_CTX* ssl_ctx = SSL_CTX_new(DTLSv1_2_client_method());
 
   OpenSSLSessionCache session_cache(SSL_MODE_DTLS, ssl_ctx);
   EXPECT_EQ(session_cache.GetSSLContext(), ssl_ctx);
@@ -67,7 +49,7 @@ TEST(OpenSSLSessionCache, SSLContextSetCorrectly) {
 }
 
 TEST(OpenSSLSessionCache, InvalidLookupReturnsNullptr) {
-  SSL_CTX* ssl_ctx = NewDtlsContext();
+  SSL_CTX* ssl_ctx = SSL_CTX_new(DTLSv1_2_client_method());
 
   OpenSSLSessionCache session_cache(SSL_MODE_DTLS, ssl_ctx);
   EXPECT_EQ(session_cache.LookupSession("Invalid"), nullptr);
@@ -78,7 +60,7 @@ TEST(OpenSSLSessionCache, InvalidLookupReturnsNullptr) {
 }
 
 TEST(OpenSSLSessionCache, SimpleValidSessionLookup) {
-  SSL_CTX* ssl_ctx = NewDtlsContext();
+  SSL_CTX* ssl_ctx = SSL_CTX_new(DTLSv1_2_client_method());
   SSL_SESSION* ssl_session = SSL_SESSION_new(ssl_ctx);
 
   OpenSSLSessionCache session_cache(SSL_MODE_DTLS, ssl_ctx);
@@ -89,7 +71,7 @@ TEST(OpenSSLSessionCache, SimpleValidSessionLookup) {
 }
 
 TEST(OpenSSLSessionCache, AddToExistingReplacesPrevious) {
-  SSL_CTX* ssl_ctx = NewDtlsContext();
+  SSL_CTX* ssl_ctx = SSL_CTX_new(DTLSv1_2_client_method());
   SSL_SESSION* ssl_session_1 = SSL_SESSION_new(ssl_ctx);
   SSL_SESSION* ssl_session_2 = SSL_SESSION_new(ssl_ctx);
 

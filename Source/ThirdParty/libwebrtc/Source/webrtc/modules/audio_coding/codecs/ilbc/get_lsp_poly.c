@@ -16,8 +16,6 @@
 
 ******************************************************************/
 
-#include "modules/audio_coding/codecs/ilbc/get_lsp_poly.h"
-
 #include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*

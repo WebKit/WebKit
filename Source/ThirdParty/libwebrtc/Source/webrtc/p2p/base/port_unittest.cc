@@ -270,8 +270,7 @@ class TestChannel : public sigslot::has_slots<> {
   explicit TestChannel(std::unique_ptr<Port> p1) : port_(std::move(p1)) {
     port_->SignalPortComplete.connect(this, &TestChannel::OnPortComplete);
     port_->SignalUnknownAddress.connect(this, &TestChannel::OnUnknownAddress);
-    port_->SubscribePortDestroyed(
-        [this](PortInterface* port) { OnSrcPortDestroyed(port); });
+    port_->SignalDestroyed.connect(this, &TestChannel::OnSrcPortDestroyed);
   }
 
   int complete_count() { return complete_count_; }
@@ -401,7 +400,7 @@ class PortTest : public ::testing::Test, public sigslot::has_slots<> {
         nat_factory2_(ss_.get(), kNatAddr2, SocketAddress()),
         nat_socket_factory1_(&nat_factory1_),
         nat_socket_factory2_(&nat_factory2_),
-        stun_server_(TestStunServer::Create(ss_.get(), kStunAddr)),
+        stun_server_(TestStunServer::Create(&main_, kStunAddr)),
         turn_server_(&main_, kTurnUdpIntAddr, kTurnUdpExtAddr),
         username_(rtc::CreateRandomString(ICE_UFRAG_LENGTH)),
         password_(rtc::CreateRandomString(ICE_PWD_LENGTH)),
@@ -778,8 +777,7 @@ class PortTest : public ::testing::Test, public sigslot::has_slots<> {
   bool role_conflict() const { return role_conflict_; }
 
   void ConnectToSignalDestroyed(PortInterface* port) {
-    port->SubscribePortDestroyed(
-        [this](PortInterface* port) { OnDestroyed(port); });
+    port->SignalDestroyed.connect(this, &PortTest::OnDestroyed);
   }
 
   void OnDestroyed(PortInterface* port) { ++ports_destroyed_; }
@@ -1726,8 +1724,9 @@ TEST_F(PortTest, TestSendStunMessage) {
   EXPECT_EQ(kDefaultPrflxPriority, priority_attr->value());
   EXPECT_EQ("rfrag:lfrag", username_attr->GetString());
   EXPECT_TRUE(msg->GetByteString(STUN_ATTR_MESSAGE_INTEGRITY) != NULL);
-  EXPECT_EQ(StunMessage::IntegrityStatus::kIntegrityOk,
-            msg->ValidateMessageIntegrity("rpass"));
+  EXPECT_TRUE(StunMessage::ValidateMessageIntegrity(
+      lport->last_stun_buf()->data<char>(), lport->last_stun_buf()->size(),
+      "rpass"));
   const StunUInt64Attribute* ice_controlling_attr =
       msg->GetUInt64(STUN_ATTR_ICE_CONTROLLING);
   ASSERT_TRUE(ice_controlling_attr != NULL);
@@ -1766,8 +1765,9 @@ TEST_F(PortTest, TestSendStunMessage) {
   ASSERT_TRUE(addr_attr != NULL);
   EXPECT_EQ(lport->Candidates()[0].address(), addr_attr->GetAddress());
   EXPECT_TRUE(msg->GetByteString(STUN_ATTR_MESSAGE_INTEGRITY) != NULL);
-  EXPECT_EQ(StunMessage::IntegrityStatus::kIntegrityOk,
-            msg->ValidateMessageIntegrity("rpass"));
+  EXPECT_TRUE(StunMessage::ValidateMessageIntegrity(
+      rport->last_stun_buf()->data<char>(), rport->last_stun_buf()->size(),
+      "rpass"));
   EXPECT_TRUE(msg->GetUInt32(STUN_ATTR_FINGERPRINT) != NULL);
   EXPECT_TRUE(StunMessage::ValidateFingerprint(
       lport->last_stun_buf()->data<char>(), lport->last_stun_buf()->size()));
@@ -1796,8 +1796,9 @@ TEST_F(PortTest, TestSendStunMessage) {
   EXPECT_EQ(STUN_ERROR_SERVER_ERROR, error_attr->code());
   EXPECT_EQ(std::string(STUN_ERROR_REASON_SERVER_ERROR), error_attr->reason());
   EXPECT_TRUE(msg->GetByteString(STUN_ATTR_MESSAGE_INTEGRITY) != NULL);
-  EXPECT_EQ(StunMessage::IntegrityStatus::kIntegrityOk,
-            msg->ValidateMessageIntegrity("rpass"));
+  EXPECT_TRUE(StunMessage::ValidateMessageIntegrity(
+      rport->last_stun_buf()->data<char>(), rport->last_stun_buf()->size(),
+      "rpass"));
   EXPECT_TRUE(msg->GetUInt32(STUN_ATTR_FINGERPRINT) != NULL);
   EXPECT_TRUE(StunMessage::ValidateFingerprint(
       lport->last_stun_buf()->data<char>(), lport->last_stun_buf()->size()));

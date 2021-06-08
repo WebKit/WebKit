@@ -238,12 +238,6 @@ void LibWebRTCProvider::callOnWebRTCSignalingThread(Function<void()>&& callback)
     threads.signalingThread->Post(RTC_FROM_HERE, &threads, 1, new ThreadMessageData(WTFMove(callback)));
 }
 
-rtc::Thread& LibWebRTCProvider::signalingThread()
-{
-    PeerConnectionFactoryAndThreads& threads = staticFactoryAndThreads();
-    return *threads.signalingThread;
-}
-
 void LibWebRTCProvider::setLoggingLevel(WTFLogLevel level)
 {
     setRTCLogging(level);
@@ -270,7 +264,7 @@ rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> LibWebRTCProvider::cr
 {
     auto audioModule = rtc::scoped_refptr<webrtc::AudioDeviceModule>(new rtc::RefCountedObject<LibWebRTCAudioModule>());
 
-    return webrtc::CreatePeerConnectionFactory(networkThread, signalingThread, signalingThread, WTFMove(audioModule), webrtc::CreateBuiltinAudioEncoderFactory(), webrtc::CreateBuiltinAudioDecoderFactory(), createEncoderFactory(), createDecoderFactory(), nullptr, nullptr, nullptr);
+    return webrtc::CreatePeerConnectionFactory(networkThread, signalingThread, signalingThread, WTFMove(audioModule), webrtc::CreateBuiltinAudioEncoderFactory(), webrtc::CreateBuiltinAudioDecoderFactory(), createEncoderFactory(), createDecoderFactory(), nullptr, nullptr);
 }
 
 std::unique_ptr<webrtc::VideoDecoderFactory> LibWebRTCProvider::createDecoderFactory()
@@ -285,8 +279,7 @@ std::unique_ptr<webrtc::VideoEncoderFactory> LibWebRTCProvider::createEncoderFac
 
 void LibWebRTCProvider::setPeerConnectionFactory(rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>&& factory)
 {
-    auto* thread = getStaticFactoryAndThreads(m_useNetworkThreadWithSocketServer).signalingThread.get();
-    m_factory = webrtc::PeerConnectionFactoryProxy::Create(thread, thread, WTFMove(factory));
+    m_factory = webrtc::PeerConnectionFactoryProxy::Create(getStaticFactoryAndThreads(m_useNetworkThreadWithSocketServer).signalingThread.get(), WTFMove(factory));
 }
 
 void LibWebRTCProvider::disableEnumeratingAllNetworkInterfaces()
@@ -360,11 +353,7 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPee
     dependencies.allocator = WTFMove(portAllocator);
     dependencies.async_resolver_factory = WTFMove(asyncResolveFactory);
 
-    auto peerConnectionOrError = m_factory->CreatePeerConnectionOrError(configuration, WTFMove(dependencies));
-    if (!peerConnectionOrError.ok())
-        return nullptr;
-
-    return peerConnectionOrError.MoveValue();
+    return m_factory->CreatePeerConnection(configuration, WTFMove(dependencies));
 }
 
 void LibWebRTCProvider::prepareCertificateGenerator(Function<void(rtc::RTCCertificateGenerator&)>&& callback)

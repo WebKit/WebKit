@@ -113,9 +113,10 @@ class StreamGenerator {
 };
 }  // namespace test
 
-class DelayBasedBweTest : public ::testing::TestWithParam<std::string> {
+class DelayBasedBweTest : public ::testing::Test {
  public:
   DelayBasedBweTest();
+  explicit DelayBasedBweTest(const std::string& field_trial_string);
   ~DelayBasedBweTest() override;
 
  protected:
@@ -175,8 +176,9 @@ class DelayBasedBweTest : public ::testing::TestWithParam<std::string> {
   std::unique_ptr<test::StreamGenerator> stream_generator_;
   int64_t arrival_time_offset_ms_;
   bool first_update_;
-};
 
+  RTC_DISALLOW_COPY_AND_ASSIGN(DelayBasedBweTest);
+};
 }  // namespace webrtc
 
 #endif  // MODULES_CONGESTION_CONTROLLER_GOOG_CC_DELAY_BASED_BWE_UNITTEST_HELPER_H_

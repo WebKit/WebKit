@@ -36,7 +36,7 @@ class DummyPeerConnection : public PeerConnectionInterface {
 
   bool AddStream(MediaStreamInterface* stream) override { return false; }
   void RemoveStream(MediaStreamInterface* stream) override {
-    RTC_CHECK_NOTREACHED();
+    FATAL() << "Not implemented";
   }
 
   RTCErrorOr<rtc::scoped_refptr<RtpSenderInterface>> AddTrack(
@@ -100,17 +100,17 @@ class DummyPeerConnection : public PeerConnectionInterface {
   }
 
   void GetStats(RTCStatsCollectorCallback* callback) override {
-    RTC_CHECK_NOTREACHED();
+    FATAL() << "Not implemented";
   }
   void GetStats(
       rtc::scoped_refptr<RtpSenderInterface> selector,
       rtc::scoped_refptr<RTCStatsCollectorCallback> callback) override {
-    RTC_CHECK_NOTREACHED();
+    FATAL() << "Not implemented";
   }
   void GetStats(
       rtc::scoped_refptr<RtpReceiverInterface> selector,
       rtc::scoped_refptr<RTCStatsCollectorCallback> callback) override {
-    RTC_CHECK_NOTREACHED();
+    FATAL() << "Not implemented";
   }
   void ClearStatsCache() override {}
 
@@ -145,33 +145,33 @@ class DummyPeerConnection : public PeerConnectionInterface {
     return nullptr;
   }
 
-  void RestartIce() override { RTC_CHECK_NOTREACHED(); }
+  void RestartIce() override { FATAL() << "Not implemented"; }
 
   // Create a new offer.
   // The CreateSessionDescriptionObserver callback will be called when done.
   void CreateOffer(CreateSessionDescriptionObserver* observer,
                    const RTCOfferAnswerOptions& options) override {
-    RTC_CHECK_NOTREACHED();
+    FATAL() << "Not implemented";
   }
 
   void CreateAnswer(CreateSessionDescriptionObserver* observer,
                     const RTCOfferAnswerOptions& options) override {
-    RTC_CHECK_NOTREACHED();
+    FATAL() << "Not implemented";
   }
 
   void SetLocalDescription(SetSessionDescriptionObserver* observer,
                            SessionDescriptionInterface* desc) override {
-    RTC_CHECK_NOTREACHED();
+    FATAL() << "Not implemented";
   }
   void SetRemoteDescription(SetSessionDescriptionObserver* observer,
                             SessionDescriptionInterface* desc) override {
-    RTC_CHECK_NOTREACHED();
+    FATAL() << "Not implemented";
   }
   void SetRemoteDescription(
       std::unique_ptr<SessionDescriptionInterface> desc,
       rtc::scoped_refptr<SetRemoteDescriptionObserverInterface> observer)
       override {
-    RTC_CHECK_NOTREACHED();
+    FATAL() << "Not implemented";
   }
 
   PeerConnectionInterface::RTCConfiguration GetConfiguration() override {
@@ -194,8 +194,10 @@ class DummyPeerConnection : public PeerConnectionInterface {
     return RTCError(RTCErrorType::UNSUPPORTED_OPERATION, "Not implemented");
   }
 
-  void SetAudioPlayout(bool playout) override { RTC_CHECK_NOTREACHED(); }
-  void SetAudioRecording(bool recording) override { RTC_CHECK_NOTREACHED(); }
+  void SetAudioPlayout(bool playout) override { FATAL() << "Not implemented"; }
+  void SetAudioRecording(bool recording) override {
+    FATAL() << "Not implemented";
+  }
 
   rtc::scoped_refptr<DtlsTransportInterface> LookupDtlsTransportByMid(
       const std::string& mid) override {
@@ -233,7 +235,7 @@ class DummyPeerConnection : public PeerConnectionInterface {
     return false;
   }
 
-  void StopRtcEventLog() { RTC_CHECK_NOTREACHED(); }
+  void StopRtcEventLog() { FATAL() << "Not implemented"; }
 
   void Close() override {}
 

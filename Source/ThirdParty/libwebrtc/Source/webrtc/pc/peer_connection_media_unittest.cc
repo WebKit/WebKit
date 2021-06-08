@@ -848,9 +848,8 @@ bool HasAnyComfortNoiseCodecs(const cricket::SessionDescription* desc) {
 
 TEST_P(PeerConnectionMediaTest,
        CreateOfferWithNoVoiceActivityDetectionIncludesNoComfortNoiseCodecs) {
-  auto fake_engine = std::make_unique<FakeMediaEngine>();
-  AddComfortNoiseCodecsToSend(fake_engine.get());
-  auto caller = CreatePeerConnectionWithAudioVideo(std::move(fake_engine));
+  auto caller = CreatePeerConnectionWithAudioVideo();
+  AddComfortNoiseCodecsToSend(caller->media_engine());
 
   RTCOfferAnswerOptions options;
   options.voice_activity_detection = false;
@@ -860,47 +859,11 @@ TEST_P(PeerConnectionMediaTest,
 }
 
 TEST_P(PeerConnectionMediaTest,
-       CreateOfferWithVoiceActivityDetectionIncludesComfortNoiseCodecs) {
-  auto fake_engine = std::make_unique<FakeMediaEngine>();
-  AddComfortNoiseCodecsToSend(fake_engine.get());
-  auto caller = CreatePeerConnectionWithAudioVideo(std::move(fake_engine));
-
-  RTCOfferAnswerOptions options;
-  options.voice_activity_detection = true;
-  auto offer = caller->CreateOffer(options);
-
-  EXPECT_TRUE(HasAnyComfortNoiseCodecs(offer->description()));
-}
-
-TEST_P(PeerConnectionMediaTest,
-       CreateAnswerWithVoiceActivityDetectionIncludesNoComfortNoiseCodecs) {
-  auto caller = CreatePeerConnectionWithAudioVideo();
-
-  auto callee_fake_engine = std::make_unique<FakeMediaEngine>();
-  AddComfortNoiseCodecsToSend(callee_fake_engine.get());
-  auto callee =
-      CreatePeerConnectionWithAudioVideo(std::move(callee_fake_engine));
-
-  ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
-
-  RTCOfferAnswerOptions options;
-  options.voice_activity_detection = true;
-  auto answer = callee->CreateAnswer(options);
-
-  EXPECT_FALSE(HasAnyComfortNoiseCodecs(answer->description()));
-}
-
-TEST_P(PeerConnectionMediaTest,
        CreateAnswerWithNoVoiceActivityDetectionIncludesNoComfortNoiseCodecs) {
-  auto caller_fake_engine = std::make_unique<FakeMediaEngine>();
-  AddComfortNoiseCodecsToSend(caller_fake_engine.get());
-  auto caller =
-      CreatePeerConnectionWithAudioVideo(std::move(caller_fake_engine));
-
-  auto callee_fake_engine = std::make_unique<FakeMediaEngine>();
-  AddComfortNoiseCodecsToSend(callee_fake_engine.get());
-  auto callee =
-      CreatePeerConnectionWithAudioVideo(std::move(callee_fake_engine));
+  auto caller = CreatePeerConnectionWithAudioVideo();
+  AddComfortNoiseCodecsToSend(caller->media_engine());
+  auto callee = CreatePeerConnectionWithAudioVideo();
+  AddComfortNoiseCodecsToSend(callee->media_engine());
 
   ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
 
@@ -1771,26 +1734,6 @@ TEST_F(PeerConnectionMediaTestUnifiedPlan,
                          ->codecs();
 
   EXPECT_TRUE(CompareCodecs(video_codecs_vpx_reverse, recv_codecs));
-}
-
-TEST_F(PeerConnectionMediaTestUnifiedPlan,
-       SetCodecPreferencesVoiceActivityDetection) {
-  auto fake_engine = std::make_unique<FakeMediaEngine>();
-  AddComfortNoiseCodecsToSend(fake_engine.get());
-  auto caller = CreatePeerConnectionWithAudio(std::move(fake_engine));
-
-  RTCOfferAnswerOptions options;
-  auto offer = caller->CreateOffer(options);
-  EXPECT_TRUE(HasAnyComfortNoiseCodecs(offer->description()));
-
-  auto transceiver = caller->pc()->GetTransceivers().front();
-  auto capabilities = caller->pc_factory()->GetRtpSenderCapabilities(
-      cricket::MediaType::MEDIA_TYPE_AUDIO);
-  EXPECT_TRUE(transceiver->SetCodecPreferences(capabilities.codecs).ok());
-
-  options.voice_activity_detection = false;
-  offer = caller->CreateOffer(options);
-  EXPECT_FALSE(HasAnyComfortNoiseCodecs(offer->description()));
 }
 
 INSTANTIATE_TEST_SUITE_P(PeerConnectionMediaTest,

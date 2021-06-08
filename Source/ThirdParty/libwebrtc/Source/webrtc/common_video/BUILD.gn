@@ -21,6 +21,7 @@ rtc_library("common_video") {
     "h264/h264_common.h",
     "h264/pps_parser.cc",
     "h264/pps_parser.h",
+    "h264/profile_level_id.h",
     "h264/sps_parser.cc",
     "h264/sps_parser.h",
     "h264/sps_vui_rewriter.cc",
@@ -41,7 +42,6 @@ rtc_library("common_video") {
 
   deps = [
     "../api:scoped_refptr",
-    "../api:sequence_checker",
     "../api/task_queue",
     "../api/units:time_delta",
     "../api/units:timestamp",
@@ -49,9 +49,11 @@ rtc_library("common_video") {
     "../api/video:video_bitrate_allocation",
     "../api/video:video_bitrate_allocator",
     "../api/video:video_frame",
+    "../api/video:video_frame_i420",
+    "../api/video:video_frame_nv12",
     "../api/video:video_rtp_headers",
     "../api/video_codecs:bitstream_parser_api",
-    "../api/video_codecs:video_codecs_api",
+    "../media:rtc_h264_profile_id",
     "../rtc_base",
     "../rtc_base:checks",
     "../rtc_base:rtc_task_queue",
@@ -70,7 +72,7 @@ rtc_source_set("frame_counts") {
   sources = [ "frame_counts.h" ]
 }
 
-if (rtc_include_tests && !build_with_chromium) {
+if (rtc_include_tests) {
   common_video_resources = [ "../resources/foreman_cif.yuv" ]
 
   if (is_ios) {
@@ -89,6 +91,7 @@ if (rtc_include_tests && !build_with_chromium) {
       "frame_rate_estimator_unittest.cc",
       "h264/h264_bitstream_parser_unittest.cc",
       "h264/pps_parser_unittest.cc",
+      "h264/profile_level_id_unittest.cc",
       "h264/sps_parser_unittest.cc",
       "h264/sps_vui_rewriter_unittest.cc",
       "libyuv/libyuv_unittest.cc",
@@ -102,8 +105,9 @@ if (rtc_include_tests && !build_with_chromium) {
       "../api/units:time_delta",
       "../api/video:video_frame",
       "../api/video:video_frame_i010",
+      "../api/video:video_frame_i420",
       "../api/video:video_rtp_headers",
-      "../api/video_codecs:video_codecs_api",
+      "../media:rtc_h264_profile_id",
       "../rtc_base",
       "../rtc_base:checks",
       "../rtc_base:rtc_base_approved",
@@ -115,10 +119,9 @@ if (rtc_include_tests && !build_with_chromium) {
       "../test:test_support",
       "../test:video_test_common",
       "//testing/gtest",
+      "//third_party/abseil-cpp/absl/types:optional",
       "//third_party/libyuv",
     ]
-
-    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 
     data = common_video_resources
     if (is_android) {

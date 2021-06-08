@@ -314,14 +314,15 @@ void EncoderBitrateAdjuster::OnEncoderInfo(
   AdjustRateAllocation(current_rate_control_parameters_);
 }
 
-void EncoderBitrateAdjuster::OnEncodedFrame(DataSize size,
-                                            int spatial_index,
+void EncoderBitrateAdjuster::OnEncodedFrame(const EncodedImage& encoded_image,
                                             int temporal_index) {
   ++frames_since_layout_change_;
   // Detectors may not exist, for instance if ScreenshareLayers is used.
-  auto& detector = overshoot_detectors_[spatial_index][temporal_index];
+  auto& detector =
+      overshoot_detectors_[encoded_image.SpatialIndex().value_or(0)]
+                          [temporal_index];
   if (detector) {
-    detector->OnEncodedFrame(size.bytes(), rtc::TimeMillis());
+    detector->OnEncodedFrame(encoded_image.size(), rtc::TimeMillis());
   }
 }
 

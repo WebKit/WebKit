@@ -19,8 +19,7 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_CB_UPDATE_BEST_INDEX_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_CB_UPDATE_BEST_INDEX_H_
 
-#include <stddef.h>
-#include <stdint.h>
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 void WebRtcIlbcfix_CbUpdateBestIndex(
     int32_t CritNew,        /* (i) New Potentially best Criteria */

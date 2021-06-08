@@ -21,7 +21,6 @@
 
 #include "absl/types/optional.h"
 #include "api/transport/network_types.h"
-#include "api/transport/webrtc_key_value_config.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -55,19 +54,17 @@ class LinkCapacityTracker {
 
 class RttBasedBackoff {
  public:
-  explicit RttBasedBackoff(const WebRtcKeyValueConfig* key_value_config);
+  RttBasedBackoff();
   ~RttBasedBackoff();
   void UpdatePropagationRtt(Timestamp at_time, TimeDelta propagation_rtt);
   TimeDelta CorrectedRtt(Timestamp at_time) const;
 
-  FieldTrialFlag disabled_;
-  FieldTrialParameter<TimeDelta> configured_limit_;
+  FieldTrialParameter<TimeDelta> rtt_limit_;
   FieldTrialParameter<double> drop_fraction_;
   FieldTrialParameter<TimeDelta> drop_interval_;
   FieldTrialParameter<DataRate> bandwidth_floor_;
 
  public:
-  TimeDelta rtt_limit_;
   Timestamp last_propagation_rtt_update_;
   TimeDelta last_propagation_rtt_;
   Timestamp last_packet_sent_;
@@ -76,8 +73,7 @@ class RttBasedBackoff {
 class SendSideBandwidthEstimation {
  public:
   SendSideBandwidthEstimation() = delete;
-  SendSideBandwidthEstimation(const WebRtcKeyValueConfig* key_value_config,
-                              RtcEventLog* event_log);
+  explicit SendSideBandwidthEstimation(RtcEventLog* event_log);
   ~SendSideBandwidthEstimation();
 
   void OnRouteChange();
@@ -99,8 +95,8 @@ class SendSideBandwidthEstimation {
   void UpdateDelayBasedEstimate(Timestamp at_time, DataRate bitrate);
 
   // Call when we receive a RTCP message with a ReceiveBlock.
-  void UpdatePacketsLost(int64_t packets_lost,
-                         int64_t number_of_packets,
+  void UpdatePacketsLost(int packets_lost,
+                         int number_of_packets,
                          Timestamp at_time);
 
   // Call when we receive a RTCP message with a ReceiveBlock.
@@ -130,6 +126,8 @@ class SendSideBandwidthEstimation {
   // After this method returns min_bitrate_history_.front().second contains the
   // min bitrate used during last kBweIncreaseIntervalMs.
   void UpdateMinHistory(Timestamp at_time);
+
+  DataRate MaybeRampupOrBackoff(DataRate new_bitrate, Timestamp at_time);
 
   // Gets the upper limit for the target bitrate. This is the minimum of the
   // delay based limit, the receiver limit and the loss based controller limit.
@@ -190,7 +188,6 @@ class SendSideBandwidthEstimation {
   float high_loss_threshold_;
   DataRate bitrate_threshold_;
   LossBasedBandwidthEstimation loss_based_bandwidth_estimation_;
-  FieldTrialFlag receiver_limit_caps_only_;
 };
 }  // namespace webrtc
 #endif  // MODULES_CONGESTION_CONTROLLER_GOOG_CC_SEND_SIDE_BANDWIDTH_ESTIMATION_H_

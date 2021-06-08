@@ -10,7 +10,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "sdk/objc/base/RTCVideoCodecInfo.h"
+#import <WebRTC/RTCVideoCodecInfo.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

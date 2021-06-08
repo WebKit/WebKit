@@ -17,7 +17,6 @@
 #include <vector>
 
 #include "absl/types/optional.h"
-#include "api/sequence_checker.h"
 #include "api/test/simulated_network.h"
 #include "api/units/data_size.h"
 #include "api/units/timestamp.h"
@@ -25,6 +24,7 @@
 #include "rtc_base/random.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
+#include "rtc_base/thread_checker.h"
 
 namespace webrtc {
 // Implementation of the CoDel active queue management algorithm. Loosely based

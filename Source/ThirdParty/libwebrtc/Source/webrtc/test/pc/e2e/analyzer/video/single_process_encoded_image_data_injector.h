@@ -48,14 +48,15 @@ class SingleProcessEncodedImageDataInjector : public EncodedImageDataInjector,
   // changed.
   EncodedImage InjectData(uint16_t id,
                           bool discard,
-                          const EncodedImage& source) override;
+                          const EncodedImage& source,
+                          int coding_entity_id) override;
 
   void Start(int expected_receivers_count) override {
     MutexLock crit(&lock_);
     expected_receivers_count_ = expected_receivers_count;
   }
-  void AddParticipantInCall() override;
-  EncodedImageExtractionResult ExtractData(const EncodedImage& source) override;
+  EncodedImageExtractionResult ExtractData(const EncodedImage& source,
+                                           int coding_entity_id) override;
 
  private:
   // Contains data required to extract frame id from EncodedImage and restore

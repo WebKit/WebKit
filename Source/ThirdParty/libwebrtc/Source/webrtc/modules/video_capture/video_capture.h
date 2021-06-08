@@ -13,6 +13,7 @@
 
 #include "api/video/video_rotation.h"
 #include "api/video/video_sink_interface.h"
+#include "modules/include/module.h"
 #include "modules/video_capture/video_capture_defines.h"
 
 namespace webrtc {

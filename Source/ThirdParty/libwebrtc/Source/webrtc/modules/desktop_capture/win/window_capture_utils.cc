@@ -24,114 +24,6 @@
 
 namespace webrtc {
 
-namespace {
-
-struct GetWindowListParams {
-  GetWindowListParams(int flags,
-                      LONG ex_style_filters,
-                      DesktopCapturer::SourceList* result)
-      : ignore_untitled(flags & GetWindowListFlags::kIgnoreUntitled),
-        ignore_unresponsive(flags & GetWindowListFlags::kIgnoreUnresponsive),
-        ex_style_filters(ex_style_filters),
-        result(result) {}
-  const bool ignore_untitled;
-  const bool ignore_unresponsive;
-  const LONG ex_style_filters;
-  DesktopCapturer::SourceList* const result;
-};
-
-// If a window is owned by the current process and unresponsive, then making a
-// blocking call such as GetWindowText may lead to a deadlock.
-//
-// https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getwindowtexta#remarks
-bool CanSafelyMakeBlockingCalls(HWND hwnd) {
-  DWORD process_id;
-  GetWindowThreadProcessId(hwnd, &process_id);
-  if (process_id != GetCurrentProcessId() || IsWindowResponding(hwnd)) {
-    return true;
-  }
-
-  return false;
-}
-
-BOOL CALLBACK GetWindowListHandler(HWND hwnd, LPARAM param) {
-  GetWindowListParams* params = reinterpret_cast<GetWindowListParams*>(param);
-  DesktopCapturer::SourceList* list = params->result;
-
-  // Skip invisible and minimized windows
-  if (!IsWindowVisible(hwnd) || IsIconic(hwnd)) {
-    return TRUE;
-  }
-
-  // Skip windows which are not presented in the taskbar,
-  // namely owned window if they don't have the app window style set
-  HWND owner = GetWindow(hwnd, GW_OWNER);
-  LONG exstyle = GetWindowLong(hwnd, GWL_EXSTYLE);
-  if (owner && !(exstyle & WS_EX_APPWINDOW)) {
-    return TRUE;
-  }
-
-  // Filter out windows that match the extended styles the caller has specified,
-  // e.g. WS_EX_TOOLWINDOW for capturers that don't support overlay windows.
-  if (exstyle & params->ex_style_filters) {
-    return TRUE;
-  }
-
-  if (params->ignore_unresponsive && !IsWindowResponding(hwnd)) {
-    return TRUE;
-  }
-
-  DesktopCapturer::Source window;
-  window.id = reinterpret_cast<WindowId>(hwnd);
-
-  // GetWindowText* are potentially blocking operations if |hwnd| is
-  // owned by the current process, and can lead to a deadlock if the message
-  // pump is waiting on this thread. If we've filtered out unresponsive
-  // windows, this is not a concern, but otherwise we need to check if we can
-  // safely make blocking calls.
-  if (params->ignore_unresponsive || CanSafelyMakeBlockingCalls(hwnd)) {
-    const size_t kTitleLength = 500;
-    WCHAR window_title[kTitleLength] = L"";
-    if (GetWindowTextLength(hwnd) != 0 &&
-        GetWindowTextW(hwnd, window_title, kTitleLength) > 0) {
-      window.title = rtc::ToUtf8(window_title);
-    }
-  }
-
-  // Skip windows when we failed to convert the title or it is empty.
-  if (params->ignore_untitled && window.title.empty())
-    return TRUE;
-
-  // Capture the window class name, to allow specific window classes to be
-  // skipped.
-  //
-  // https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-wndclassa
-  // says lpszClassName field in WNDCLASS is limited by 256 symbols, so we don't
-  // need to have a buffer bigger than that.
-  const size_t kMaxClassNameLength = 256;
-  WCHAR class_name[kMaxClassNameLength] = L"";
-  const int class_name_length =
-      GetClassNameW(hwnd, class_name, kMaxClassNameLength);
-  if (class_name_length < 1)
-    return TRUE;
-
-  // Skip Program Manager window.
-  if (wcscmp(class_name, L"Progman") == 0)
-    return TRUE;
-
-  // Skip Start button window on Windows Vista, Windows 7.
-  // On Windows 8, Windows 8.1, Windows 10 Start button is not a top level
-  // window, so it will not be examined here.
-  if (wcscmp(class_name, L"Button") == 0)
-    return TRUE;
-
-  list->push_back(window);
-
-  return TRUE;
-}
-
-}  // namespace
-
 // Prefix used to match the window class for Chrome windows.
 const wchar_t kChromeWindowClassPrefix[] = L"Chrome_WidgetWin_";
 
@@ -273,20 +165,57 @@ bool IsWindowValidAndVisible(HWND window) {
   return IsWindow(window) && IsWindowVisible(window) && !IsIconic(window);
 }
 
-bool IsWindowResponding(HWND window) {
-  // 50ms is chosen in case the system is under heavy load, but it's also not
-  // too long to delay window enumeration considerably.
-  const UINT uTimeoutMs = 50;
-  return SendMessageTimeout(window, WM_NULL, 0, 0, SMTO_ABORTIFHUNG, uTimeoutMs,
-                            nullptr);
-}
+BOOL CALLBACK FilterUncapturableWindows(HWND hwnd, LPARAM param) {
+  DesktopCapturer::SourceList* list =
+      reinterpret_cast<DesktopCapturer::SourceList*>(param);
 
-bool GetWindowList(int flags,
-                   DesktopCapturer::SourceList* windows,
-                   LONG ex_style_filters) {
-  GetWindowListParams params(flags, ex_style_filters, windows);
-  return ::EnumWindows(&GetWindowListHandler,
-                       reinterpret_cast<LPARAM>(&params)) != 0;
+  // Skip windows that are invisible, minimized, have no title, or are owned,
+  // unless they have the app window style set.
+  int len = GetWindowTextLength(hwnd);
+  HWND owner = GetWindow(hwnd, GW_OWNER);
+  LONG exstyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+  if (len == 0 || !IsWindowValidAndVisible(hwnd) ||
+      (owner && !(exstyle & WS_EX_APPWINDOW))) {
+    return TRUE;
+  }
+
+  // Skip unresponsive windows. Set timout with 50ms, in case system is under
+  // heavy load. We could wait longer and have a lower false negative, but that
+  // would delay the the enumeration.
+  const UINT timeout = 50;  // ms
+  if (!SendMessageTimeout(hwnd, WM_NULL, 0, 0, SMTO_ABORTIFHUNG, timeout,
+                          nullptr)) {
+    return TRUE;
+  }
+
+  // Skip the Program Manager window and the Start button.
+  WCHAR class_name[256];
+  const int class_name_length =
+      GetClassNameW(hwnd, class_name, arraysize(class_name));
+  if (class_name_length < 1)
+    return TRUE;
+
+  // Skip Program Manager window and the Start button. This is the same logic
+  // that's used in Win32WindowPicker in libjingle. Consider filtering other
+  // windows as well (e.g. toolbars).
+  if (wcscmp(class_name, L"Progman") == 0 || wcscmp(class_name, L"Button") == 0)
+    return TRUE;
+
+  DesktopCapturer::Source window;
+  window.id = reinterpret_cast<WindowId>(hwnd);
+
+  // Truncate the title if it's longer than 500 characters.
+  WCHAR window_title[500];
+  GetWindowTextW(hwnd, window_title, arraysize(window_title));
+  window.title = rtc::ToUtf8(window_title);
+
+  // Skip windows when we failed to convert the title or it is empty.
+  if (window.title.empty())
+    return TRUE;
+
+  list->push_back(window);
+
+  return TRUE;
 }
 
 // WindowCaptureHelperWin implementation.
@@ -444,13 +373,10 @@ bool WindowCaptureHelperWin::IsWindowCloaked(HWND hwnd) {
 }
 
 bool WindowCaptureHelperWin::EnumerateCapturableWindows(
-    DesktopCapturer::SourceList* results,
-    LONG ex_style_filters) {
-  if (!webrtc::GetWindowList((GetWindowListFlags::kIgnoreUntitled |
-                              GetWindowListFlags::kIgnoreUnresponsive),
-                             results, ex_style_filters)) {
+    DesktopCapturer::SourceList* results) {
+  LPARAM param = reinterpret_cast<LPARAM>(results);
+  if (!EnumWindows(&FilterUncapturableWindows, param))
     return false;
-  }
 
   for (auto it = results->begin(); it != results->end();) {
     if (!IsWindowVisibleOnCurrentDesktop(reinterpret_cast<HWND>(it->id))) {

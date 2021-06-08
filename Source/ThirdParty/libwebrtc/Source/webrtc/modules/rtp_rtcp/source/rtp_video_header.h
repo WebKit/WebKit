@@ -74,16 +74,12 @@ struct RTPVideoHeader {
   VideoContentType content_type = VideoContentType::UNSPECIFIED;
   bool is_first_packet_in_frame = false;
   bool is_last_packet_in_frame = false;
-  bool is_last_frame_in_picture = true;
   uint8_t simulcastIdx = 0;
   VideoCodecType codec = VideoCodecType::kVideoCodecGeneric;
 
   VideoPlayoutDelay playout_delay;
   VideoSendTiming video_timing;
   absl::optional<ColorSpace> color_space;
-  // This field is meant for media quality testing purpose only. When enabled it
-  // carries the webrtc::VideoFrame id field from the sender to the receiver.
-  absl::optional<uint16_t> video_frame_tracking_id;
   RTPVideoTypeHeader video_type_header;
 };
 

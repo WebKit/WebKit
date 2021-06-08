@@ -37,7 +37,7 @@ EncodedImage CreateEncodedImageOfSizeNFilledWithValuesFromX(size_t n,
   return image;
 }
 
-TEST(SingleProcessEncodedImageDataInjectorTest, InjectExtractDiscardFalse) {
+TEST(SingleProcessEncodedImageDataInjector, InjectExtractDiscardFalse) {
   SingleProcessEncodedImageDataInjector injector;
   injector.Start(1);
 
@@ -45,7 +45,7 @@ TEST(SingleProcessEncodedImageDataInjectorTest, InjectExtractDiscardFalse) {
   source.SetTimestamp(123456789);
 
   EncodedImageExtractionResult out =
-      injector.ExtractData(injector.InjectData(512, false, source));
+      injector.ExtractData(injector.InjectData(512, false, source, 1), 2);
   EXPECT_EQ(out.id, 512);
   EXPECT_FALSE(out.discard);
   EXPECT_EQ(out.image.size(), 10ul);
@@ -55,7 +55,7 @@ TEST(SingleProcessEncodedImageDataInjectorTest, InjectExtractDiscardFalse) {
   }
 }
 
-TEST(SingleProcessEncodedImageDataInjectorTest, InjectExtractDiscardTrue) {
+TEST(SingleProcessEncodedImageDataInjector, InjectExtractDiscardTrue) {
   SingleProcessEncodedImageDataInjector injector;
   injector.Start(1);
 
@@ -63,25 +63,24 @@ TEST(SingleProcessEncodedImageDataInjectorTest, InjectExtractDiscardTrue) {
   source.SetTimestamp(123456789);
 
   EncodedImageExtractionResult out =
-      injector.ExtractData(injector.InjectData(512, true, source));
+      injector.ExtractData(injector.InjectData(512, true, source, 1), 2);
   EXPECT_EQ(out.id, 512);
   EXPECT_TRUE(out.discard);
   EXPECT_EQ(out.image.size(), 0ul);
   EXPECT_EQ(out.image.SpatialLayerFrameSize(0).value_or(0), 0ul);
 }
 
-TEST(SingleProcessEncodedImageDataInjectorTest,
-     InjectWithUnsetSpatialLayerSizes) {
+TEST(SingleProcessEncodedImageDataInjector, InjectWithUnsetSpatialLayerSizes) {
   SingleProcessEncodedImageDataInjector injector;
   injector.Start(1);
 
   EncodedImage source = CreateEncodedImageOfSizeNFilledWithValuesFromX(10, 1);
   source.SetTimestamp(123456789);
 
-  EncodedImage intermediate = injector.InjectData(512, false, source);
+  EncodedImage intermediate = injector.InjectData(512, false, source, 1);
   intermediate.SetSpatialIndex(2);
 
-  EncodedImageExtractionResult out = injector.ExtractData(intermediate);
+  EncodedImageExtractionResult out = injector.ExtractData(intermediate, 2);
   EXPECT_EQ(out.id, 512);
   EXPECT_FALSE(out.discard);
   EXPECT_EQ(out.image.size(), 10ul);
@@ -94,21 +93,20 @@ TEST(SingleProcessEncodedImageDataInjectorTest,
   }
 }
 
-TEST(SingleProcessEncodedImageDataInjectorTest,
-     InjectWithZeroSpatialLayerSizes) {
+TEST(SingleProcessEncodedImageDataInjector, InjectWithZeroSpatialLayerSizes) {
   SingleProcessEncodedImageDataInjector injector;
   injector.Start(1);
 
   EncodedImage source = CreateEncodedImageOfSizeNFilledWithValuesFromX(10, 1);
   source.SetTimestamp(123456789);
 
-  EncodedImage intermediate = injector.InjectData(512, false, source);
+  EncodedImage intermediate = injector.InjectData(512, false, source, 1);
   intermediate.SetSpatialIndex(2);
   intermediate.SetSpatialLayerFrameSize(0, 0);
   intermediate.SetSpatialLayerFrameSize(1, 0);
   intermediate.SetSpatialLayerFrameSize(2, 0);
 
-  EncodedImageExtractionResult out = injector.ExtractData(intermediate);
+  EncodedImageExtractionResult out = injector.ExtractData(intermediate, 2);
   EXPECT_EQ(out.id, 512);
   EXPECT_FALSE(out.discard);
   EXPECT_EQ(out.image.size(), 10ul);
@@ -121,7 +119,7 @@ TEST(SingleProcessEncodedImageDataInjectorTest,
   }
 }
 
-TEST(SingleProcessEncodedImageDataInjectorTest, Inject3Extract3) {
+TEST(SingleProcessEncodedImageDataInjector, Inject3Extract3) {
   SingleProcessEncodedImageDataInjector injector;
   injector.Start(1);
 
@@ -135,14 +133,14 @@ TEST(SingleProcessEncodedImageDataInjectorTest, Inject3Extract3) {
   EncodedImage source3 = CreateEncodedImageOfSizeNFilledWithValuesFromX(10, 21);
   source3.SetTimestamp(123456720);
 
-  EncodedImage intermediate1 = injector.InjectData(510, false, source1);
-  EncodedImage intermediate2 = injector.InjectData(520, true, source2);
-  EncodedImage intermediate3 = injector.InjectData(520, false, source3);
+  EncodedImage intermediate1 = injector.InjectData(510, false, source1, 1);
+  EncodedImage intermediate2 = injector.InjectData(520, true, source2, 1);
+  EncodedImage intermediate3 = injector.InjectData(520, false, source3, 1);
 
   // Extract ids in different order.
-  EncodedImageExtractionResult out3 = injector.ExtractData(intermediate3);
-  EncodedImageExtractionResult out1 = injector.ExtractData(intermediate1);
-  EncodedImageExtractionResult out2 = injector.ExtractData(intermediate2);
+  EncodedImageExtractionResult out3 = injector.ExtractData(intermediate3, 2);
+  EncodedImageExtractionResult out1 = injector.ExtractData(intermediate1, 2);
+  EncodedImageExtractionResult out2 = injector.ExtractData(intermediate2, 2);
 
   EXPECT_EQ(out1.id, 510);
   EXPECT_FALSE(out1.discard);
@@ -164,7 +162,7 @@ TEST(SingleProcessEncodedImageDataInjectorTest, Inject3Extract3) {
   }
 }
 
-TEST(SingleProcessEncodedImageDataInjectorTest, InjectExtractFromConcatenated) {
+TEST(SingleProcessEncodedImageDataInjector, InjectExtractFromConcatenated) {
   SingleProcessEncodedImageDataInjector injector;
   injector.Start(1);
 
@@ -176,9 +174,9 @@ TEST(SingleProcessEncodedImageDataInjectorTest, InjectExtractFromConcatenated) {
   source3.SetTimestamp(123456710);
 
   // Inject id into 3 images with same frame id.
-  EncodedImage intermediate1 = injector.InjectData(512, false, source1);
-  EncodedImage intermediate2 = injector.InjectData(512, true, source2);
-  EncodedImage intermediate3 = injector.InjectData(512, false, source3);
+  EncodedImage intermediate1 = injector.InjectData(512, false, source1, 1);
+  EncodedImage intermediate2 = injector.InjectData(512, true, source2, 1);
+  EncodedImage intermediate3 = injector.InjectData(512, false, source3, 1);
 
   // Concatenate them into single encoded image, like it can be done in jitter
   // buffer.
@@ -197,7 +195,7 @@ TEST(SingleProcessEncodedImageDataInjectorTest, InjectExtractFromConcatenated) {
   concatenated.SetSpatialLayerFrameSize(2, intermediate3.size());
 
   // Extract frame id from concatenated image
-  EncodedImageExtractionResult out = injector.ExtractData(concatenated);
+  EncodedImageExtractionResult out = injector.ExtractData(concatenated, 2);
 
   EXPECT_EQ(out.id, 512);
   EXPECT_FALSE(out.discard);
@@ -225,9 +223,9 @@ TEST(SingleProcessEncodedImageDataInjector,
   source3.SetTimestamp(123456710);
 
   // Inject id into 3 images with same frame id.
-  EncodedImage intermediate1 = injector.InjectData(512, true, source1);
-  EncodedImage intermediate2 = injector.InjectData(512, true, source2);
-  EncodedImage intermediate3 = injector.InjectData(512, true, source3);
+  EncodedImage intermediate1 = injector.InjectData(512, true, source1, 1);
+  EncodedImage intermediate2 = injector.InjectData(512, true, source2, 1);
+  EncodedImage intermediate3 = injector.InjectData(512, true, source3, 1);
 
   // Concatenate them into single encoded image, like it can be done in jitter
   // buffer.
@@ -246,7 +244,7 @@ TEST(SingleProcessEncodedImageDataInjector,
   concatenated.SetSpatialLayerFrameSize(2, intermediate3.size());
 
   // Extract frame id from concatenated image
-  EncodedImageExtractionResult out = injector.ExtractData(concatenated);
+  EncodedImageExtractionResult out = injector.ExtractData(concatenated, 2);
 
   EXPECT_EQ(out.id, 512);
   EXPECT_TRUE(out.discard);
@@ -257,15 +255,17 @@ TEST(SingleProcessEncodedImageDataInjector,
   }
 }
 
-TEST(SingleProcessEncodedImageDataInjectorTest, InjectOnceExtractTwice) {
+TEST(SingleProcessEncodedImageDataInjector, InjectOnceExtractTwice) {
   SingleProcessEncodedImageDataInjector injector;
   injector.Start(2);
 
   EncodedImage source = CreateEncodedImageOfSizeNFilledWithValuesFromX(10, 1);
   source.SetTimestamp(123456789);
 
-  EncodedImageExtractionResult out = injector.ExtractData(
-      injector.InjectData(/*id=*/512, /*discard=*/false, source));
+  EncodedImageExtractionResult out =
+      injector.ExtractData(injector.InjectData(/*id=*/512, /*discard=*/false,
+                                               source, /*coding_entity_id=*/1),
+                           /*coding_entity_id=*/2);
   EXPECT_EQ(out.id, 512);
   EXPECT_FALSE(out.discard);
   EXPECT_EQ(out.image.size(), 10ul);
@@ -273,52 +273,10 @@ TEST(SingleProcessEncodedImageDataInjectorTest, InjectOnceExtractTwice) {
   for (int i = 0; i < 10; ++i) {
     EXPECT_EQ(out.image.data()[i], i + 1);
   }
-  out = injector.ExtractData(
-      injector.InjectData(/*id=*/512, /*discard=*/false, source));
-  EXPECT_EQ(out.id, 512);
-  EXPECT_FALSE(out.discard);
-  EXPECT_EQ(out.image.size(), 10ul);
-  EXPECT_EQ(out.image.SpatialLayerFrameSize(0).value_or(0), 0ul);
-  for (int i = 0; i < 10; ++i) {
-    EXPECT_EQ(out.image.data()[i], i + 1);
-  }
-}
-
-TEST(SingleProcessEncodedImageDataInjectorTest, Add1stReceiverAfterStart) {
-  SingleProcessEncodedImageDataInjector injector;
-  injector.Start(0);
-
-  EncodedImage source = CreateEncodedImageOfSizeNFilledWithValuesFromX(10, 1);
-  source.SetTimestamp(123456789);
-  EncodedImage modified_image = injector.InjectData(
-      /*id=*/512, /*discard=*/false, source);
-
-  injector.AddParticipantInCall();
-  EncodedImageExtractionResult out = injector.ExtractData(modified_image);
-
-  EXPECT_EQ(out.id, 512);
-  EXPECT_FALSE(out.discard);
-  EXPECT_EQ(out.image.size(), 10ul);
-  EXPECT_EQ(out.image.SpatialLayerFrameSize(0).value_or(0), 0ul);
-  for (int i = 0; i < 10; ++i) {
-    EXPECT_EQ(out.image.data()[i], i + 1);
-  }
-}
-
-TEST(SingleProcessEncodedImageDataInjectorTest, Add3rdReceiverAfterStart) {
-  SingleProcessEncodedImageDataInjector injector;
-  injector.Start(2);
-
-  EncodedImage source = CreateEncodedImageOfSizeNFilledWithValuesFromX(10, 1);
-  source.SetTimestamp(123456789);
-  EncodedImage modified_image = injector.InjectData(
-      /*id=*/512, /*discard=*/false, source);
-  injector.ExtractData(modified_image);
-
-  injector.AddParticipantInCall();
-  injector.ExtractData(modified_image);
-  EncodedImageExtractionResult out = injector.ExtractData(modified_image);
-
+  out =
+      injector.ExtractData(injector.InjectData(/*id=*/512, /*discard=*/false,
+                                               source, /*coding_entity_id=*/1),
+                           2);
   EXPECT_EQ(out.id, 512);
   EXPECT_FALSE(out.discard);
   EXPECT_EQ(out.image.size(), 10ul);
@@ -338,20 +296,20 @@ EncodedImage DeepCopyEncodedImage(const EncodedImage& source) {
   return copy;
 }
 
-TEST(SingleProcessEncodedImageDataInjectorTest,
-     InjectOnceExtractMoreThenExpected) {
+TEST(SingleProcessEncodedImageDataInjector, InjectOnceExtractMoreThenExpected) {
   SingleProcessEncodedImageDataInjector injector;
   injector.Start(2);
 
   EncodedImage source = CreateEncodedImageOfSizeNFilledWithValuesFromX(10, 1);
   source.SetTimestamp(123456789);
 
-  EncodedImage modified =
-      injector.InjectData(/*id=*/512, /*discard=*/false, source);
+  EncodedImage modified = injector.InjectData(/*id=*/512, /*discard=*/false,
+                                              source, /*coding_entity_id=*/1);
 
-  injector.ExtractData(DeepCopyEncodedImage(modified));
-  injector.ExtractData(DeepCopyEncodedImage(modified));
-  EXPECT_DEATH(injector.ExtractData(DeepCopyEncodedImage(modified)),
+  injector.ExtractData(DeepCopyEncodedImage(modified), /*coding_entity_id=*/2);
+  injector.ExtractData(DeepCopyEncodedImage(modified), /*coding_entity_id=*/2);
+  EXPECT_DEATH(injector.ExtractData(DeepCopyEncodedImage(modified),
+                                    /*coding_entity_id=*/2),
                "Unknown sub_id=0 for frame_id=512");
 }
 #endif  // RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)

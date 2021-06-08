@@ -11,8 +11,6 @@
 #ifndef MODULES_AUDIO_CODING_NETEQ_DECISION_LOGIC_H_
 #define MODULES_AUDIO_CODING_NETEQ_DECISION_LOGIC_H_
 
-#include <memory>
-
 #include "api/neteq/neteq.h"
 #include "api/neteq/neteq_controller.h"
 #include "api/neteq/tick_timer.h"
@@ -31,9 +29,6 @@ class DecisionLogic : public NetEqController {
 
   // Constructor.
   DecisionLogic(NetEqController::Config config);
-  DecisionLogic(NetEqController::Config config,
-                std::unique_ptr<DelayManager> delay_manager,
-                std::unique_ptr<BufferLevelFilter> buffer_level_filter);
 
   ~DecisionLogic() override;
 
@@ -75,15 +70,19 @@ class DecisionLogic : public NetEqController {
   // Adds |value| to |sample_memory_|.
   void AddSampleMemory(int32_t value) override { sample_memory_ += value; }
 
-  int TargetLevelMs() const override { return delay_manager_->TargetDelayMs(); }
+  int TargetLevelMs() const override {
+    return ((delay_manager_->TargetLevel() * packet_length_samples_) >> 8) /
+           rtc::CheckedDivExact(sample_rate_, 1000);
+  }
 
-  absl::optional<int> PacketArrived(int fs_hz,
+  absl::optional<int> PacketArrived(bool last_cng_or_dtmf,
+                                    size_t packet_length_samples,
                                     bool should_update_stats,
-                                    const PacketArrivedInfo& info) override;
+                                    uint16_t main_sequence_number,
+                                    uint32_t main_timestamp,
+                                    int fs_hz) override;
 
-  void RegisterEmptyPacket() override {}
-
-  void NotifyMutedState() override {}
+  void RegisterEmptyPacket() override { delay_manager_->RegisterEmptyPacket(); }
 
   bool SetMaximumDelay(int delay_ms) override {
     return delay_manager_->SetMaximumDelay(delay_ms);
@@ -100,7 +99,7 @@ class DecisionLogic : public NetEqController {
   bool PeakFound() const override { return false; }
 
   int GetFilteredBufferLevel() const override {
-    return buffer_level_filter_->filtered_current_level();
+    return buffer_level_filter_.filtered_current_level();
   }
 
   // Accessors and mutators.
@@ -121,8 +120,8 @@ class DecisionLogic : public NetEqController {
   enum CngState { kCngOff, kCngRfc3389On, kCngInternalOn };
 
   // Updates the |buffer_level_filter_| with the current buffer level
-  // |buffer_size_samples|.
-  void FilterBufferLevel(size_t buffer_size_samples);
+  // |buffer_size_packets|.
+  void FilterBufferLevel(size_t buffer_size_packets);
 
   // Returns the operation given that the next available packet is a comfort
   // noise payload (RFC 3389 only, not codec-internal).
@@ -173,7 +172,7 @@ class DecisionLogic : public NetEqController {
   bool MaxWaitForPacket() const;
 
   std::unique_ptr<DelayManager> delay_manager_;
-  std::unique_ptr<BufferLevelFilter> buffer_level_filter_;
+  BufferLevelFilter buffer_level_filter_;
   const TickTimer* tick_timer_;
   int sample_rate_;
   size_t output_size_samples_;
@@ -187,8 +186,6 @@ class DecisionLogic : public NetEqController {
   std::unique_ptr<TickTimer::Countdown> timescale_countdown_;
   int num_consecutive_expands_ = 0;
   int time_stretched_cn_samples_ = 0;
-  bool last_pack_cng_or_dtmf_ = true;
-  bool buffer_flush_ = false;
   FieldTrialParameter<bool> estimate_dtx_delay_;
   FieldTrialParameter<bool> time_stretch_cn_;
   FieldTrialConstrained<int> target_level_window_ms_;

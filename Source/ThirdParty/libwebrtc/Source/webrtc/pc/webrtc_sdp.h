@@ -22,12 +22,7 @@
 
 #include <string>
 
-#include "api/candidate.h"
-#include "api/jsep.h"
-#include "api/jsep_ice_candidate.h"
-#include "api/jsep_session_description.h"
 #include "media/base/codec.h"
-#include "rtc_base/strings/string_builder.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace cricket {

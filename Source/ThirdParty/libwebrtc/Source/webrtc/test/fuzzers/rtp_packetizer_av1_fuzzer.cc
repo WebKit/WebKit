@@ -35,8 +35,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
 
   // Main function under test: RtpPacketizerAv1's constructor.
   RtpPacketizerAv1 packetizer(fuzz_input.ReadByteArray(fuzz_input.BytesLeft()),
-                              limits, frame_type,
-                              /*is_last_frame_in_picture=*/true);
+                              limits, frame_type);
 
   size_t num_packets = packetizer.NumPackets();
   if (num_packets == 0) {

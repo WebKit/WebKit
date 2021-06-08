@@ -64,11 +64,6 @@ bool IsEnabled(const WebRtcKeyValueConfig* trials, absl::string_view key) {
   return absl::StartsWith(trials->Lookup(key), "Enabled");
 }
 
-bool IsDisabled(const WebRtcKeyValueConfig* trials, absl::string_view key) {
-  RTC_DCHECK(trials != nullptr);
-  return absl::StartsWith(trials->Lookup(key), "Disabled");
-}
-
 bool IsRelayed(const rtc::NetworkRoute& route) {
   return route.local.uses_turn() || route.remote.uses_turn();
 }
@@ -87,7 +82,7 @@ RtpTransportControllerSend::RtpTransportControllerSend(
     : clock_(clock),
       event_log_(event_log),
       bitrate_configurator_(bitrate_config),
-      pacer_started_(false),
+      process_thread_started_(false),
       process_thread_(std::move(process_thread)),
       use_task_queue_pacer_(IsEnabled(trials, "WebRTC-TaskQueuePacer")),
       process_thread_pacer_(use_task_queue_pacer_
@@ -116,7 +111,7 @@ RtpTransportControllerSend::RtpTransportControllerSend(
       reset_feedback_on_route_change_(
           !IsEnabled(trials, "WebRTC-Bwe-NoFeedbackReset")),
       send_side_bwe_with_overhead_(
-          !IsDisabled(trials, "WebRTC-SendSideBwe-WithOverhead")),
+          IsEnabled(trials, "WebRTC-SendSideBwe-WithOverhead")),
       add_pacing_to_cwin_(
           IsEnabled(trials, "WebRTC-AddPacingToCongestionWindowPushback")),
       relay_bandwidth_cap_("relay_cap", DataRate::PlusInfinity()),
@@ -496,13 +491,9 @@ void RtpTransportControllerSend::IncludeOverheadInPacedSender() {
 }
 
 void RtpTransportControllerSend::EnsureStarted() {
-  if (!pacer_started_) {
-    pacer_started_ = true;
-    if (use_task_queue_pacer_) {
-      task_queue_pacer_->EnsureStarted();
-    } else {
-      process_thread_->Start();
-    }
+  if (!use_task_queue_pacer_ && !process_thread_started_) {
+    process_thread_started_ = true;
+    process_thread_->Start();
   }
 }
 

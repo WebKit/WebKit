@@ -11,7 +11,6 @@
 #ifndef PC_RTC_STATS_COLLECTOR_H_
 #define PC_RTC_STATS_COLLECTOR_H_
 
-#include <stdint.h>
 #include <map>
 #include <memory>
 #include <set>
@@ -19,8 +18,6 @@
 #include <vector>
 
 #include "absl/types/optional.h"
-#include "api/data_channel_interface.h"
-#include "api/media_types.h"
 #include "api/scoped_refptr.h"
 #include "api/stats/rtc_stats_collector_callback.h"
 #include "api/stats/rtc_stats_report.h"
@@ -29,19 +26,11 @@
 #include "media/base/media_channel.h"
 #include "pc/data_channel_utils.h"
 #include "pc/peer_connection_internal.h"
-#include "pc/rtp_receiver.h"
-#include "pc/rtp_sender.h"
-#include "pc/rtp_transceiver.h"
-#include "pc/sctp_data_channel.h"
 #include "pc/track_media_info_map.h"
-#include "pc/transport_stats.h"
-#include "rtc_base/checks.h"
 #include "rtc_base/event.h"
 #include "rtc_base/ref_count.h"
-#include "rtc_base/ssl_certificate.h"
 #include "rtc_base/ssl_identity.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
-#include "rtc_base/thread.h"
 #include "rtc_base/time_utils.h"
 
 namespace webrtc {
@@ -53,7 +42,7 @@ class RtpReceiverInternal;
 // Stats are gathered on the signaling, worker and network threads
 // asynchronously. The callback is invoked on the signaling thread. Resulting
 // reports are cached for |cache_lifetime_| ms.
-class RTCStatsCollector : public rtc::RefCountInterface,
+class RTCStatsCollector : public virtual rtc::RefCountInterface,
                           public sigslot::has_slots<> {
  public:
   static rtc::scoped_refptr<RTCStatsCollector> Create(
@@ -226,19 +215,18 @@ class RTCStatsCollector : public rtc::RefCountInterface,
   PrepareTransportCertificateStats_n(
       const std::map<std::string, cricket::TransportStats>&
           transport_stats_by_name) const;
-  // The results are stored in |transceiver_stats_infos_| and |call_stats_|.
-  void PrepareTransceiverStatsInfosAndCallStats_s_w_n();
+  std::vector<RtpTransceiverStatsInfo> PrepareTransceiverStatsInfos_s_w() const;
+  std::set<std::string> PrepareTransportNames_s() const;
 
   // Stats gathering on a particular thread.
   void ProducePartialResultsOnSignalingThread(int64_t timestamp_us);
-  void ProducePartialResultsOnNetworkThread(
-      int64_t timestamp_us,
-      absl::optional<std::string> sctp_transport_name);
+  void ProducePartialResultsOnNetworkThread(int64_t timestamp_us);
   // Merges |network_report_| into |partial_report_| and completes the request.
   // This is a NO-OP if |network_report_| is null.
   void MergeNetworkReport_s();
 
   // Slots for signals (sigslot) that are wired up to |pc_|.
+  void OnRtpDataChannelCreated(RtpDataChannel* channel);
   void OnSctpDataChannelCreated(SctpDataChannel* channel);
   // Slots for signals (sigslot) that are wired up to |channel|.
   void OnDataChannelOpened(DataChannelInterface* channel);
@@ -267,16 +255,12 @@ class RTCStatsCollector : public rtc::RefCountInterface,
   // has updated the value of |network_report_|.
   rtc::Event network_report_event_;
 
-  // Cleared and set in `PrepareTransceiverStatsInfosAndCallStats_s_w_n`,
-  // starting out on the signaling thread, then network. Later read on the
-  // network and signaling threads as part of collecting stats and finally
-  // reset when the work is done. Initially this variable was added and not
-  // passed around as an arguments to avoid copies. This is thread safe due to
-  // how operations are sequenced and we don't start the stats collection
-  // sequence if one is in progress. As a future improvement though, we could
-  // now get rid of the variable and keep the data scoped within a stats
-  // collection sequence.
+  // Set in |GetStatsReport|, read in |ProducePartialResultsOnNetworkThread| and
+  // |ProducePartialResultsOnSignalingThread|, reset after work is complete. Not
+  // passed as arguments to avoid copies. This is thread safe - when we
+  // set/reset we know there are no pending stats requests in progress.
   std::vector<RtpTransceiverStatsInfo> transceiver_stats_infos_;
+  std::set<std::string> transport_names_;
 
   Call::Stats call_stats_;
 

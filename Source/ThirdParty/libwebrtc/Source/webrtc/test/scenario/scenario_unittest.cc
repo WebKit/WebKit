@@ -11,8 +11,6 @@
 
 #include <atomic>
 
-#include "api/test/network_emulation/create_cross_traffic.h"
-#include "api/test/network_emulation/cross_traffic.h"
 #include "test/field_trial.h"
 #include "test/gtest.h"
 #include "test/logging/memory_log_writer.h"
@@ -46,8 +44,8 @@ TEST(ScenarioTest, StartsAndStopsWithoutErrors) {
   s.CreateAudioStream(route->reverse(), audio_stream_config);
 
   RandomWalkConfig cross_traffic_config;
-  s.net()->StartCrossTraffic(CreateRandomWalkCrossTraffic(
-      s.net()->CreateCrossTrafficRoute({alice_net}), cross_traffic_config));
+  s.net()->CreateRandomWalkCrossTraffic(
+      s.net()->CreateTrafficRoute({alice_net}), cross_traffic_config);
 
   s.NetworkDelayedAction({alice_net, bob_net}, 100,
                          [&packet_received] { packet_received = true; });
@@ -148,7 +146,7 @@ TEST(ScenarioTest,
      RetransmitsVideoPacketsInAudioAndVideoCallWithSendSideBweAndLoss) {
   // Make sure audio packets are included in transport feedback.
   test::ScopedFieldTrials override_field_trials(
-      "WebRTC-Audio-ABWENoTWCC/Disabled/");
+      "WebRTC-Audio-SendSideBwe/Enabled/WebRTC-Audio-ABWENoTWCC/Disabled/");
 
   Scenario s;
   CallClientConfig call_client_config;
@@ -182,11 +180,7 @@ TEST(ScenarioTest,
   s.RunFor(TimeDelta::Seconds(10));
   // Make sure retransmissions have happened.
   int retransmit_packets = 0;
-
-  VideoSendStream::Stats stats;
-  alice->SendTask([&]() { stats = video->send()->GetStats(); });
-
-  for (const auto& substream : stats.substreams) {
+  for (const auto& substream : video->send()->GetStats().substreams) {
     retransmit_packets += substream.second.rtp_stats.retransmitted.packets;
   }
   EXPECT_GT(retransmit_packets, 0);

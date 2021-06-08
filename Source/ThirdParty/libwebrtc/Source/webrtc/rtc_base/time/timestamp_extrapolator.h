@@ -13,12 +13,14 @@
 
 #include <stdint.h>
 
+#include "rtc_base/synchronization/rw_lock_wrapper.h"
+
 namespace webrtc {
 
-// Not thread safe.
 class TimestampExtrapolator {
  public:
   explicit TimestampExtrapolator(int64_t start_ms);
+  ~TimestampExtrapolator();
   void Update(int64_t tMs, uint32_t ts90khz);
   int64_t ExtrapolateLocalTime(uint32_t timestamp90khz);
   void Reset(int64_t start_ms);
@@ -26,6 +28,7 @@ class TimestampExtrapolator {
  private:
   void CheckForWrapArounds(uint32_t ts90khz);
   bool DelayChangeDetection(double error);
+  RWLockWrapper* _rwLock;
   double _w[2];
   double _pP[2][2];
   int64_t _startMs;

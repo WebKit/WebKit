@@ -21,18 +21,25 @@ class MemoryLogWriter final : public RtcEventLogOutput {
   explicit MemoryLogWriter(std::map<std::string, std::string>* target,
                            std::string filename)
       : target_(target), filename_(filename) {}
-  ~MemoryLogWriter() final { target_->insert({filename_, std::move(buffer_)}); }
+  ~MemoryLogWriter() final {
+    size_t size;
+    buffer_.GetSize(&size);
+    target_->insert({filename_, std::string(buffer_.GetBuffer(), size)});
+  }
   bool IsActive() const override { return true; }
   bool Write(const std::string& value) override {
-    buffer_.append(value);
-    return true;
+    size_t written;
+    int error;
+    return buffer_.WriteAll(value.data(), value.size(), &written, &error) ==
+           rtc::SR_SUCCESS;
+    RTC_DCHECK_EQ(value.size(), written);
   }
   void Flush() override {}
 
  private:
   std::map<std::string, std::string>* const target_;
   const std::string filename_;
-  std::string buffer_;
+  rtc::MemoryStream buffer_;
 };
 
 class MemoryLogWriterFactory : public LogWriterFactoryInterface {

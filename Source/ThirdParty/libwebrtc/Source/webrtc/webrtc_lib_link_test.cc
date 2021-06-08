@@ -65,10 +65,9 @@ void TestCase1ModularFactory() {
   auto peer_connection_factory =
       webrtc::CreateModularPeerConnectionFactory(std::move(pcf_deps));
   webrtc::PeerConnectionInterface::RTCConfiguration rtc_config;
-  auto result = peer_connection_factory->CreatePeerConnectionOrError(
-      rtc_config, PeerConnectionDependencies(nullptr));
-  // Creation will fail because of null observer, but that's OK.
-  printf("peer_connection creation=%s\n", result.ok() ? "succeeded" : "failed");
+  auto peer_connection = peer_connection_factory->CreatePeerConnection(
+      rtc_config, nullptr, nullptr, nullptr);
+  printf("peer_connection=%s\n", peer_connection == nullptr ? "nullptr" : "ok");
 }
 
 void TestCase2RegularFactory() {
@@ -82,10 +81,9 @@ void TestCase2RegularFactory() {
       std::move(media_deps.video_encoder_factory),
       std::move(media_deps.video_decoder_factory), nullptr, nullptr);
   webrtc::PeerConnectionInterface::RTCConfiguration rtc_config;
-  auto result = peer_connection_factory->CreatePeerConnectionOrError(
-      rtc_config, PeerConnectionDependencies(nullptr));
-  // Creation will fail because of null observer, but that's OK.
-  printf("peer_connection creation=%s\n", result.ok() ? "succeeded" : "failed");
+  auto peer_connection = peer_connection_factory->CreatePeerConnection(
+      rtc_config, nullptr, nullptr, nullptr);
+  printf("peer_connection=%s\n", peer_connection == nullptr ? "nullptr" : "ok");
 }
 
 }  // namespace webrtc

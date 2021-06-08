@@ -77,7 +77,6 @@ bool CoDelSimulation::DropDequeuedPacket(Timestamp now,
       }
       return false;
   }
-  RTC_CHECK_NOTREACHED();
 }
 
 SimulatedNetwork::SimulatedNetwork(Config config, uint64_t random_seed)

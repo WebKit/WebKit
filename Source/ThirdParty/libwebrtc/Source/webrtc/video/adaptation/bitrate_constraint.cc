@@ -8,14 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "video/adaptation/bitrate_constraint.h"
-
+#include <string>
 #include <utility>
-#include <vector>
 
-#include "api/sequence_checker.h"
 #include "call/adaptation/video_stream_adapter.h"
-#include "video/adaptation/video_stream_encoder_resource_manager.h"
+#include "rtc_base/synchronization/sequence_checker.h"
+#include "video/adaptation/bitrate_constraint.h"
 
 namespace webrtc {
 
@@ -44,35 +42,19 @@ bool BitrateConstraint::IsAdaptationUpAllowed(
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   // Make sure bitrate limits are not violated.
   if (DidIncreaseResolution(restrictions_before, restrictions_after)) {
-    if (!encoder_settings_.has_value()) {
-      return true;
-    }
-
     uint32_t bitrate_bps = encoder_target_bitrate_bps_.value_or(0);
-    if (bitrate_bps == 0) {
-      return true;
-    }
-
-    if (VideoStreamEncoderResourceManager::IsSimulcast(
-            encoder_settings_->encoder_config())) {
-      // Resolution bitrate limits usage is restricted to singlecast.
-      return true;
-    }
-
-    absl::optional<int> current_frame_size_px =
-        input_state.single_active_stream_pixels();
-    if (!current_frame_size_px.has_value()) {
-      return true;
-    }
-
     absl::optional<VideoEncoder::ResolutionBitrateLimits> bitrate_limits =
-        encoder_settings_->encoder_info().GetEncoderBitrateLimitsForResolution(
-            // Need some sort of expected resulting pixels to be used
-            // instead of unrestricted.
-            GetHigherResolutionThan(*current_frame_size_px));
-
-    if (bitrate_limits.has_value()) {
-      RTC_DCHECK_GE(bitrate_limits->frame_size_pixels, *current_frame_size_px);
+        encoder_settings_.has_value()
+            ? encoder_settings_->encoder_info()
+                  .GetEncoderBitrateLimitsForResolution(
+                      // Need some sort of expected resulting pixels to be used
+                      // instead of unrestricted.
+                      GetHigherResolutionThan(
+                          input_state.frame_size_pixels().value()))
+            : absl::nullopt;
+    if (bitrate_limits.has_value() && bitrate_bps != 0) {
+      RTC_DCHECK_GE(bitrate_limits->frame_size_pixels,
+                    input_state.frame_size_pixels().value());
       return bitrate_bps >=
              static_cast<uint32_t>(bitrate_limits->min_start_bitrate_bps);
     }

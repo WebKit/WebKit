@@ -11,8 +11,6 @@
 #ifndef PC_DATA_CHANNEL_UTILS_H_
 #define PC_DATA_CHANNEL_UTILS_H_
 
-#include <stddef.h>
-#include <stdint.h>
 #include <deque>
 #include <memory>
 #include <string>
@@ -56,6 +54,8 @@ struct DataChannelStats {
   uint64_t bytes_sent;
   uint64_t bytes_received;
 };
+
+bool IsSctpLike(cricket::DataChannelType type);
 
 }  // namespace webrtc
 

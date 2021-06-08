@@ -146,7 +146,8 @@ AudioProcessing::ChannelLayout LayoutFromChannels(size_t num_channels) {
     case 2:
       return AudioProcessing::kStereo;
     default:
-      RTC_CHECK_NOTREACHED();
+      RTC_CHECK(false);
+      return AudioProcessing::kMono;
   }
 }
 

@@ -8,7 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#import "sdk/objc/api/peerconnection/RTCIceCandidate.h"
+#import <WebRTC/RTCIceCandidate.h>
 
 @interface RTC_OBJC_TYPE (RTCIceCandidate)
 (JSON)

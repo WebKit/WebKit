@@ -13,12 +13,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <utility>
+#include <vector>
 
 #include "absl/types/optional.h"
 #include "api/array_view.h"
-#include "api/ref_counted_base.h"
-#include "api/scoped_refptr.h"
 #include "api/video/video_timing.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
@@ -26,8 +24,6 @@
 
 namespace webrtc {
 // Class to hold rtp packet with metadata for sender side.
-// The metadata is not send over the wire, but packet sender may use it to
-// create rtp header extensions or other data that is sent over the wire.
 class RtpPacketToSend : public RtpPacket {
  public:
   // RtpPacketToSend::Type is deprecated. Use RtpPacketMediaType directly.
@@ -68,13 +64,14 @@ class RtpPacketToSend : public RtpPacket {
   }
   bool allow_retransmission() { return allow_retransmission_; }
 
-  // An application can attach arbitrary data to an RTP packet using
-  // `additional_data`. The additional data does not affect WebRTC processing.
-  rtc::scoped_refptr<rtc::RefCountedBase> additional_data() const {
-    return additional_data_;
+  // Additional data bound to the RTP packet for use in application code,
+  // outside of WebRTC.
+  rtc::ArrayView<const uint8_t> application_data() const {
+    return application_data_;
   }
-  void set_additional_data(rtc::scoped_refptr<rtc::RefCountedBase> data) {
-    additional_data_ = std::move(data);
+
+  void set_application_data(rtc::ArrayView<const uint8_t> data) {
+    application_data_.assign(data.begin(), data.end());
   }
 
   void set_packetization_finish_time_ms(int64_t time) {
@@ -125,7 +122,7 @@ class RtpPacketToSend : public RtpPacket {
   absl::optional<RtpPacketMediaType> packet_type_;
   bool allow_retransmission_ = false;
   absl::optional<uint16_t> retransmitted_sequence_number_;
-  rtc::scoped_refptr<rtc::RefCountedBase> additional_data_;
+  std::vector<uint8_t> application_data_;
   bool is_first_packet_of_frame_ = false;
   bool is_key_frame_ = false;
   bool fec_protect_packet_ = false;

@@ -14,7 +14,7 @@
 
 #import "ARDFileCaptureController.h"
 
-#import "sdk/objc/components/capturer/RTCFileVideoCapturer.h"
+#import <WebRTC/RTCFileVideoCapturer.h>
 
 NS_CLASS_AVAILABLE_IOS(10)
 @interface ARDFileCaptureControllerTests : XCTestCase

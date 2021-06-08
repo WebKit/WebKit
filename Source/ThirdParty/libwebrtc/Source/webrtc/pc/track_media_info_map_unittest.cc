@@ -52,7 +52,8 @@ rtc::scoped_refptr<MockRtpSenderInternal> CreateMockRtpSender(
   } else {
     first_ssrc = 0;
   }
-  auto sender = rtc::make_ref_counted<MockRtpSenderInternal>();
+  rtc::scoped_refptr<MockRtpSenderInternal> sender(
+      new rtc::RefCountedObject<MockRtpSenderInternal>());
   EXPECT_CALL(*sender, track())
       .WillRepeatedly(::testing::Return(std::move(track)));
   EXPECT_CALL(*sender, ssrc()).WillRepeatedly(::testing::Return(first_ssrc));
@@ -68,7 +69,8 @@ rtc::scoped_refptr<MockRtpReceiverInternal> CreateMockRtpReceiver(
     cricket::MediaType media_type,
     std::initializer_list<uint32_t> ssrcs,
     rtc::scoped_refptr<MediaStreamTrackInterface> track) {
-  auto receiver = rtc::make_ref_counted<MockRtpReceiverInternal>();
+  rtc::scoped_refptr<MockRtpReceiverInternal> receiver(
+      new rtc::RefCountedObject<MockRtpReceiverInternal>());
   EXPECT_CALL(*receiver, track())
       .WillRepeatedly(::testing::Return(std::move(track)));
   EXPECT_CALL(*receiver, media_type())

@@ -21,7 +21,7 @@
 
 namespace webrtc {
 
-class RTC_EXPORT VCMEncodedFrame : public EncodedImage {
+class RTC_EXPORT VCMEncodedFrame : protected EncodedImage {
  public:
   VCMEncodedFrame();
   VCMEncodedFrame(const VCMEncodedFrame&);
@@ -33,8 +33,6 @@ class RTC_EXPORT VCMEncodedFrame : public EncodedImage {
   void SetRenderTime(const int64_t renderTimeMs) {
     _renderTimeMs = renderTimeMs;
   }
-
-  VideoPlayoutDelay PlayoutDelay() const { return playout_delay_; }
 
   void SetPlayoutDelay(VideoPlayoutDelay playout_delay) {
     playout_delay_ = playout_delay;
@@ -52,6 +50,7 @@ class RTC_EXPORT VCMEncodedFrame : public EncodedImage {
   using EncodedImage::GetEncodedData;
   using EncodedImage::NtpTimeMs;
   using EncodedImage::PacketInfos;
+  using EncodedImage::Retain;
   using EncodedImage::set_size;
   using EncodedImage::SetColorSpace;
   using EncodedImage::SetEncodedData;
@@ -91,6 +90,10 @@ class RTC_EXPORT VCMEncodedFrame : public EncodedImage {
    */
   EncodedImage::Timing video_timing() const { return timing_; }
   EncodedImage::Timing* video_timing_mutable() { return &timing_; }
+  /**
+   *   True if this frame is complete, false otherwise
+   */
+  bool Complete() const { return _completeFrame; }
   /**
    *   True if there's a frame missing before this frame
    */

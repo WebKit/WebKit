@@ -91,9 +91,8 @@ bool RtpFileSource::OpenFile(const std::string& file_name) {
     return true;
   rtp_reader_.reset(RtpFileReader::Create(RtpFileReader::kPcap, file_name));
   if (!rtp_reader_) {
-    RTC_FATAL()
-        << "Couldn't open input file as either a rtpdump or .pcap. Note "
-        << "that .pcapng is not supported.";
+    RTC_FATAL() << "Couldn't open input file as either a rtpdump or .pcap. Note "
+               "that .pcapng is not supported.";
   }
   return true;
 }

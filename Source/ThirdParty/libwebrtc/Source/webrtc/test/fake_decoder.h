@@ -25,8 +25,6 @@ namespace test {
 
 class FakeDecoder : public VideoDecoder {
  public:
-  enum { kDefaultWidth = 320, kDefaultHeight = 180 };
-
   FakeDecoder();
   explicit FakeDecoder(TaskQueueFactory* task_queue_factory);
   virtual ~FakeDecoder() {}
@@ -43,7 +41,6 @@ class FakeDecoder : public VideoDecoder {
 
   int32_t Release() override;
 
-  DecoderInfo GetDecoderInfo() const override;
   const char* ImplementationName() const override;
 
   static const char* kImplementationName;

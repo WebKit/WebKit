@@ -103,7 +103,6 @@ Ref<RealtimeMediaSource> LibWebRTCRtpReceiverBackend::createSource()
     auto rtcTrack = m_rtcReceiver->track();
     switch (m_rtcReceiver->media_type()) {
     case cricket::MEDIA_TYPE_DATA:
-    case cricket::MEDIA_TYPE_UNSUPPORTED:
         break;
     case cricket::MEDIA_TYPE_AUDIO: {
         rtc::scoped_refptr<webrtc::AudioTrackInterface> audioTrack = static_cast<webrtc::AudioTrackInterface*>(rtcTrack.get());

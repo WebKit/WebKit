@@ -31,7 +31,6 @@ class Thread;
 namespace webrtc {
 
 class AudioDeviceModule;
-class AudioFrameProcessor;
 class AudioProcessing;
 
 // Create a new instance of PeerConnectionFactoryInterface with optional video
@@ -48,8 +47,7 @@ CreatePeerConnectionFactory(
     std::unique_ptr<VideoEncoderFactory> video_encoder_factory,
     std::unique_ptr<VideoDecoderFactory> video_decoder_factory,
     rtc::scoped_refptr<AudioMixer> audio_mixer,
-    rtc::scoped_refptr<AudioProcessing> audio_processing,
-    AudioFrameProcessor* audio_frame_processor);
+    rtc::scoped_refptr<AudioProcessing> audio_processing);
 
 }  // namespace webrtc
 

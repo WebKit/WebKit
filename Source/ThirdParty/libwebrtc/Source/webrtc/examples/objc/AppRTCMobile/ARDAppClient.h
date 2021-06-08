@@ -9,9 +9,8 @@
  */
 
 #import <Foundation/Foundation.h>
-
-#import "sdk/objc/api/peerconnection/RTCPeerConnection.h"
-#import "sdk/objc/api/peerconnection/RTCVideoTrack.h"
+#import <WebRTC/RTCPeerConnection.h>
+#import <WebRTC/RTCVideoTrack.h>
 
 typedef NS_ENUM(NSInteger, ARDAppClientState) {
   // Disconnected from servers.

@@ -465,7 +465,7 @@ TEST_P(PeerConnectionEndToEndTest, CallWithCustomCodec) {
   EXPECT_NE(encoder_id1, encoder_id2);
 }
 
-#ifdef WEBRTC_HAVE_SCTP
+#ifdef HAVE_SCTP
 // Verifies that a DataChannel created before the negotiation can transition to
 // "OPEN" and transfer data.
 TEST_P(PeerConnectionEndToEndTest, CreateDataChannelBeforeNegotiate) {
@@ -735,7 +735,7 @@ TEST_P(PeerConnectionEndToEndTest, TooManyDataChannelsOpenedBeforeConnecting) {
             channels[cricket::kMaxSctpStreams / 2]->state());
 }
 
-#endif  // WEBRTC_HAVE_SCTP
+#endif  // HAVE_SCTP
 
 TEST_P(PeerConnectionEndToEndTest, CanRestartIce) {
   rtc::scoped_refptr<webrtc::AudioDecoderFactory> real_decoder_factory =

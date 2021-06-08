@@ -11,7 +11,7 @@
 #include "logging/rtc_event_log/events/rtc_event_bwe_update_delay_based.h"
 
 #include "absl/memory/memory.h"
-#include "api/network_state_predictor.h"
+#include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 
 namespace webrtc {
 
@@ -27,6 +27,14 @@ RtcEventBweUpdateDelayBased::RtcEventBweUpdateDelayBased(
       detector_state_(other.detector_state_) {}
 
 RtcEventBweUpdateDelayBased::~RtcEventBweUpdateDelayBased() = default;
+
+RtcEvent::Type RtcEventBweUpdateDelayBased::GetType() const {
+  return RtcEvent::Type::BweUpdateDelayBased;
+}
+
+bool RtcEventBweUpdateDelayBased::IsConfigEvent() const {
+  return false;
+}
 
 std::unique_ptr<RtcEventBweUpdateDelayBased> RtcEventBweUpdateDelayBased::Copy()
     const {

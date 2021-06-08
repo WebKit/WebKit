@@ -16,8 +16,7 @@
 #include <queue>
 
 #include "api/rtp_headers.h"
-#include "rtc_base/synchronization/mutex.h"
-#include "rtc_base/thread_annotations.h"
+#include "rtc_base/synchronization/rw_lock_wrapper.h"
 
 namespace webrtc {
 
@@ -71,9 +70,9 @@ class RTPPacket {
 
 class RTPBuffer : public RTPStream {
  public:
-  RTPBuffer() = default;
+  RTPBuffer();
 
-  ~RTPBuffer() = default;
+  ~RTPBuffer();
 
   void Write(const uint8_t payloadType,
              const uint32_t timeStamp,
@@ -90,8 +89,8 @@ class RTPBuffer : public RTPStream {
   bool EndOfFile() const override;
 
  private:
-  mutable Mutex mutex_;
-  std::queue<RTPPacket*> _rtpQueue RTC_GUARDED_BY(&mutex_);
+  RWLockWrapper* _queueRWLock;
+  std::queue<RTPPacket*> _rtpQueue;
 };
 
 class RTPFile : public RTPStream {

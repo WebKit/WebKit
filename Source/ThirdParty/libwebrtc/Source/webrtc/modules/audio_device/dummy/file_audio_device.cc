@@ -216,13 +216,10 @@ int32_t FileAudioDevice::StartPlayout() {
     }
   }
 
-  _ptrThreadPlay = rtc::PlatformThread::SpawnJoinable(
-      [this] {
-        while (PlayThreadProcess()) {
-        }
-      },
-      "webrtc_audio_module_play_thread",
-      rtc::ThreadAttributes().SetPriority(rtc::ThreadPriority::kRealtime));
+  _ptrThreadPlay.reset(new rtc::PlatformThread(
+      PlayThreadFunc, this, "webrtc_audio_module_play_thread",
+      rtc::kRealtimePriority));
+  _ptrThreadPlay->Start();
 
   RTC_LOG(LS_INFO) << "Started playout capture to output file: "
                    << _outputFilename;
@@ -236,8 +233,10 @@ int32_t FileAudioDevice::StopPlayout() {
   }
 
   // stop playout thread first
-  if (!_ptrThreadPlay.empty())
-    _ptrThreadPlay.Finalize();
+  if (_ptrThreadPlay) {
+    _ptrThreadPlay->Stop();
+    _ptrThreadPlay.reset();
+  }
 
   MutexLock lock(&mutex_);
 
@@ -277,13 +276,11 @@ int32_t FileAudioDevice::StartRecording() {
     }
   }
 
-  _ptrThreadRec = rtc::PlatformThread::SpawnJoinable(
-      [this] {
-        while (RecThreadProcess()) {
-        }
-      },
-      "webrtc_audio_module_capture_thread",
-      rtc::ThreadAttributes().SetPriority(rtc::ThreadPriority::kRealtime));
+  _ptrThreadRec.reset(new rtc::PlatformThread(
+      RecThreadFunc, this, "webrtc_audio_module_capture_thread",
+      rtc::kRealtimePriority));
+
+  _ptrThreadRec->Start();
 
   RTC_LOG(LS_INFO) << "Started recording from input file: " << _inputFilename;
 
@@ -296,8 +293,10 @@ int32_t FileAudioDevice::StopRecording() {
     _recording = false;
   }
 
-  if (!_ptrThreadRec.empty())
-    _ptrThreadRec.Finalize();
+  if (_ptrThreadRec) {
+    _ptrThreadRec->Stop();
+    _ptrThreadRec.reset();
+  }
 
   MutexLock lock(&mutex_);
   _recordingFramesLeft = 0;
@@ -438,6 +437,18 @@ void FileAudioDevice::AttachAudioBuffer(AudioDeviceBuffer* audioBuffer) {
   _ptrAudioBuffer->SetPlayoutSampleRate(0);
   _ptrAudioBuffer->SetRecordingChannels(0);
   _ptrAudioBuffer->SetPlayoutChannels(0);
+}
+
+void FileAudioDevice::PlayThreadFunc(void* pThis) {
+  FileAudioDevice* device = static_cast<FileAudioDevice*>(pThis);
+  while (device->PlayThreadProcess()) {
+  }
+}
+
+void FileAudioDevice::RecThreadFunc(void* pThis) {
+  FileAudioDevice* device = static_cast<FileAudioDevice*>(pThis);
+  while (device->RecThreadProcess()) {
+  }
 }
 
 bool FileAudioDevice::PlayThreadProcess() {

@@ -19,7 +19,6 @@
 #include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/desktop_geometry.h"
 #include "rtc_base/checks.h"
-#include "third_party/libyuv/include/libyuv/planar_functions.h"
 
 namespace webrtc {
 
@@ -45,9 +44,11 @@ void DesktopFrame::CopyPixelsFrom(const uint8_t* src_buffer,
   RTC_CHECK(DesktopRect::MakeSize(size()).ContainsRect(dest_rect));
 
   uint8_t* dest = GetFrameDataAtPos(dest_rect.top_left());
-  libyuv::CopyPlane(src_buffer, src_stride, dest, stride(),
-                    DesktopFrame::kBytesPerPixel * dest_rect.width(),
-                    dest_rect.height());
+  for (int y = 0; y < dest_rect.height(); ++y) {
+    memcpy(dest, src_buffer, DesktopFrame::kBytesPerPixel * dest_rect.width());
+    src_buffer += src_stride;
+    dest += stride();
+  }
 }
 
 void DesktopFrame::CopyPixelsFrom(const DesktopFrame& src_frame,
@@ -157,9 +158,11 @@ BasicDesktopFrame::~BasicDesktopFrame() {
 // static
 DesktopFrame* BasicDesktopFrame::CopyOf(const DesktopFrame& frame) {
   DesktopFrame* result = new BasicDesktopFrame(frame.size());
-  libyuv::CopyPlane(frame.data(), frame.stride(), result->data(),
-                    result->stride(), frame.size().width() * kBytesPerPixel,
-                    frame.size().height());
+  for (int y = 0; y < frame.size().height(); ++y) {
+    memcpy(result->data() + y * result->stride(),
+           frame.data() + y * frame.stride(),
+           frame.size().width() * kBytesPerPixel);
+  }
   result->CopyFrameInfoFrom(frame);
   return result;
 }

@@ -12,13 +12,14 @@
 
 #include <tuple>
 
-#include "api/video_codecs/h264_profile_level_id.h"
-#include "api/video_codecs/vp9_profile.h"
+#include "media/base/h264_profile_level_id.h"
+#include "media/base/vp9_profile.h"
 #include "modules/video_coding/codecs/h264/include/h264.h"
 #include "rtc_base/gunit.h"
 
 using cricket::AudioCodec;
 using cricket::Codec;
+using cricket::DataCodec;
 using cricket::FeedbackParam;
 using cricket::kCodecParamAssociatedPayloadType;
 using cricket::kCodecParamMaxBitrate;
@@ -30,8 +31,7 @@ class TestCodec : public Codec {
   TestCodec(int id, const std::string& name, int clockrate)
       : Codec(id, name, clockrate) {}
   TestCodec() : Codec() {}
-  TestCodec(const TestCodec& c) = default;
-  TestCodec& operator=(const TestCodec& c) = default;
+  TestCodec(const TestCodec& c) : Codec(c) {}
 };
 
 TEST(CodecTest, TestCodecOperators) {
@@ -106,12 +106,11 @@ TEST(CodecTest, TestAudioCodecOperators) {
 
 TEST(CodecTest, TestAudioCodecMatches) {
   // Test a codec with a static payload type.
-  AudioCodec c0(34, "A", 44100, 20000, 1);
-  EXPECT_TRUE(c0.Matches(AudioCodec(34, "", 44100, 20000, 1)));
-  EXPECT_TRUE(c0.Matches(AudioCodec(34, "", 44100, 20000, 0)));
-  EXPECT_TRUE(c0.Matches(AudioCodec(34, "", 44100, 0, 0)));
-  EXPECT_TRUE(c0.Matches(AudioCodec(34, "", 0, 0, 0)));
-  EXPECT_FALSE(c0.Matches(AudioCodec(96, "A", 44100, 20000, 1)));
+  AudioCodec c0(95, "A", 44100, 20000, 1);
+  EXPECT_TRUE(c0.Matches(AudioCodec(95, "", 44100, 20000, 1)));
+  EXPECT_TRUE(c0.Matches(AudioCodec(95, "", 44100, 20000, 0)));
+  EXPECT_TRUE(c0.Matches(AudioCodec(95, "", 44100, 0, 0)));
+  EXPECT_TRUE(c0.Matches(AudioCodec(95, "", 0, 0, 0)));
   EXPECT_FALSE(c0.Matches(AudioCodec(96, "", 44100, 20000, 1)));
   EXPECT_FALSE(c0.Matches(AudioCodec(95, "", 55100, 20000, 1)));
   EXPECT_FALSE(c0.Matches(AudioCodec(95, "", 44100, 30000, 1)));
@@ -124,11 +123,7 @@ TEST(CodecTest, TestAudioCodecMatches) {
   EXPECT_TRUE(c1.Matches(AudioCodec(97, "A", 0, 0, 0)));
   EXPECT_TRUE(c1.Matches(AudioCodec(96, "a", 0, 0, 0)));
   EXPECT_TRUE(c1.Matches(AudioCodec(97, "a", 0, 0, 0)));
-  EXPECT_TRUE(c1.Matches(AudioCodec(35, "a", 0, 0, 0)));
-  EXPECT_TRUE(c1.Matches(AudioCodec(42, "a", 0, 0, 0)));
-  EXPECT_TRUE(c1.Matches(AudioCodec(65, "a", 0, 0, 0)));
   EXPECT_FALSE(c1.Matches(AudioCodec(95, "A", 0, 0, 0)));
-  EXPECT_FALSE(c1.Matches(AudioCodec(34, "A", 0, 0, 0)));
   EXPECT_FALSE(c1.Matches(AudioCodec(96, "", 44100, 20000, 2)));
   EXPECT_FALSE(c1.Matches(AudioCodec(96, "A", 55100, 30000, 1)));
 
@@ -206,10 +201,9 @@ TEST(CodecTest, TestVideoCodecEqualsWithDifferentPacketization) {
 
 TEST(CodecTest, TestVideoCodecMatches) {
   // Test a codec with a static payload type.
-  VideoCodec c0(34, "V");
-  EXPECT_TRUE(c0.Matches(VideoCodec(34, "")));
+  VideoCodec c0(95, "V");
+  EXPECT_TRUE(c0.Matches(VideoCodec(95, "")));
   EXPECT_FALSE(c0.Matches(VideoCodec(96, "")));
-  EXPECT_FALSE(c0.Matches(VideoCodec(96, "V")));
 
   // Test a codec with a dynamic payload type.
   VideoCodec c1(96, "V");
@@ -217,12 +211,8 @@ TEST(CodecTest, TestVideoCodecMatches) {
   EXPECT_TRUE(c1.Matches(VideoCodec(97, "V")));
   EXPECT_TRUE(c1.Matches(VideoCodec(96, "v")));
   EXPECT_TRUE(c1.Matches(VideoCodec(97, "v")));
-  EXPECT_TRUE(c1.Matches(VideoCodec(35, "v")));
-  EXPECT_TRUE(c1.Matches(VideoCodec(42, "v")));
-  EXPECT_TRUE(c1.Matches(VideoCodec(65, "v")));
   EXPECT_FALSE(c1.Matches(VideoCodec(96, "")));
   EXPECT_FALSE(c1.Matches(VideoCodec(95, "V")));
-  EXPECT_FALSE(c1.Matches(VideoCodec(34, "V")));
 }
 
 TEST(CodecTest, TestVideoCodecMatchesWithDifferentPacketization) {
@@ -301,6 +291,22 @@ TEST(CodecTest, TestH264CodecMatches) {
     // Does not match since profile-level-id is different.
     EXPECT_FALSE(pli_1_pm_0.Matches(pli_2_pm_0));
   }
+}
+
+TEST(CodecTest, TestDataCodecMatches) {
+  // Test a codec with a static payload type.
+  DataCodec c0(95, "D");
+  EXPECT_TRUE(c0.Matches(DataCodec(95, "")));
+  EXPECT_FALSE(c0.Matches(DataCodec(96, "")));
+
+  // Test a codec with a dynamic payload type.
+  DataCodec c1(96, "D");
+  EXPECT_TRUE(c1.Matches(DataCodec(96, "D")));
+  EXPECT_TRUE(c1.Matches(DataCodec(97, "D")));
+  EXPECT_TRUE(c1.Matches(DataCodec(96, "d")));
+  EXPECT_TRUE(c1.Matches(DataCodec(97, "d")));
+  EXPECT_FALSE(c1.Matches(DataCodec(96, "")));
+  EXPECT_FALSE(c1.Matches(DataCodec(95, "D")));
 }
 
 TEST(CodecTest, TestSetParamGetParamAndRemoveParam) {
@@ -436,10 +442,10 @@ TEST(CodecTest, TestToCodecParameters) {
 
 TEST(CodecTest, H264CostrainedBaselineIsAddedIfH264IsSupported) {
   const std::vector<webrtc::SdpVideoFormat> kExplicitlySupportedFormats = {
-      webrtc::CreateH264Format(webrtc::H264Profile::kProfileBaseline,
-                               webrtc::H264Level::kLevel3_1, "1"),
-      webrtc::CreateH264Format(webrtc::H264Profile::kProfileBaseline,
-                               webrtc::H264Level::kLevel3_1, "0")};
+      webrtc::CreateH264Format(webrtc::H264::kProfileBaseline,
+                               webrtc::H264::kLevel3_1, "1"),
+      webrtc::CreateH264Format(webrtc::H264::kProfileBaseline,
+                               webrtc::H264::kLevel3_1, "0")};
 
   std::vector<webrtc::SdpVideoFormat> supported_formats =
       kExplicitlySupportedFormats;
@@ -447,11 +453,11 @@ TEST(CodecTest, H264CostrainedBaselineIsAddedIfH264IsSupported) {
       &supported_formats);
 
   const webrtc::SdpVideoFormat kH264ConstrainedBasedlinePacketization1 =
-      webrtc::CreateH264Format(webrtc::H264Profile::kProfileConstrainedBaseline,
-                               webrtc::H264Level::kLevel3_1, "1");
+      webrtc::CreateH264Format(webrtc::H264::kProfileConstrainedBaseline,
+                               webrtc::H264::kLevel3_1, "1");
   const webrtc::SdpVideoFormat kH264ConstrainedBasedlinePacketization0 =
-      webrtc::CreateH264Format(webrtc::H264Profile::kProfileConstrainedBaseline,
-                               webrtc::H264Level::kLevel3_1, "0");
+      webrtc::CreateH264Format(webrtc::H264::kProfileConstrainedBaseline,
+                               webrtc::H264::kLevel3_1, "0");
 
   EXPECT_EQ(supported_formats[0], kExplicitlySupportedFormats[0]);
   EXPECT_EQ(supported_formats[1], kExplicitlySupportedFormats[1]);
@@ -476,14 +482,14 @@ TEST(CodecTest, H264CostrainedBaselineIsNotAddedIfH264IsUnsupported) {
 
 TEST(CodecTest, H264CostrainedBaselineNotAddedIfAlreadySpecified) {
   const std::vector<webrtc::SdpVideoFormat> kExplicitlySupportedFormats = {
-      webrtc::CreateH264Format(webrtc::H264Profile::kProfileBaseline,
-                               webrtc::H264Level::kLevel3_1, "1"),
-      webrtc::CreateH264Format(webrtc::H264Profile::kProfileBaseline,
-                               webrtc::H264Level::kLevel3_1, "0"),
-      webrtc::CreateH264Format(webrtc::H264Profile::kProfileConstrainedBaseline,
-                               webrtc::H264Level::kLevel3_1, "1"),
-      webrtc::CreateH264Format(webrtc::H264Profile::kProfileConstrainedBaseline,
-                               webrtc::H264Level::kLevel3_1, "0")};
+      webrtc::CreateH264Format(webrtc::H264::kProfileBaseline,
+                               webrtc::H264::kLevel3_1, "1"),
+      webrtc::CreateH264Format(webrtc::H264::kProfileBaseline,
+                               webrtc::H264::kLevel3_1, "0"),
+      webrtc::CreateH264Format(webrtc::H264::kProfileConstrainedBaseline,
+                               webrtc::H264::kLevel3_1, "1"),
+      webrtc::CreateH264Format(webrtc::H264::kProfileConstrainedBaseline,
+                               webrtc::H264::kLevel3_1, "0")};
 
   std::vector<webrtc::SdpVideoFormat> supported_formats =
       kExplicitlySupportedFormats;

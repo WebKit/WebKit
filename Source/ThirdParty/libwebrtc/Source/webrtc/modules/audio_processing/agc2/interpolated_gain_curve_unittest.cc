@@ -34,7 +34,7 @@ const LimiterDbGainCurve limiter;
 
 }  // namespace
 
-TEST(GainController2InterpolatedGainCurve, CreateUse) {
+TEST(AutomaticGainController2InterpolatedGainCurve, CreateUse) {
   InterpolatedGainCurve igc(&apm_data_dumper, "");
 
   const auto levels = test::LinSpace(
@@ -44,7 +44,7 @@ TEST(GainController2InterpolatedGainCurve, CreateUse) {
   }
 }
 
-TEST(GainController2InterpolatedGainCurve, CheckValidOutput) {
+TEST(AutomaticGainController2InterpolatedGainCurve, CheckValidOutput) {
   InterpolatedGainCurve igc(&apm_data_dumper, "");
 
   const auto levels = test::LinSpace(
@@ -57,7 +57,7 @@ TEST(GainController2InterpolatedGainCurve, CheckValidOutput) {
   }
 }
 
-TEST(GainController2InterpolatedGainCurve, CheckMonotonicity) {
+TEST(AutomaticGainController2InterpolatedGainCurve, CheckMonotonicity) {
   InterpolatedGainCurve igc(&apm_data_dumper, "");
 
   const auto levels = test::LinSpace(
@@ -71,7 +71,7 @@ TEST(GainController2InterpolatedGainCurve, CheckMonotonicity) {
   }
 }
 
-TEST(GainController2InterpolatedGainCurve, CheckApproximation) {
+TEST(AutomaticGainController2InterpolatedGainCurve, CheckApproximation) {
   InterpolatedGainCurve igc(&apm_data_dumper, "");
 
   const auto levels = test::LinSpace(
@@ -84,7 +84,7 @@ TEST(GainController2InterpolatedGainCurve, CheckApproximation) {
   }
 }
 
-TEST(GainController2InterpolatedGainCurve, CheckRegionBoundaries) {
+TEST(AutomaticGainController2InterpolatedGainCurve, CheckRegionBoundaries) {
   InterpolatedGainCurve igc(&apm_data_dumper, "");
 
   const std::vector<double> levels{
@@ -102,7 +102,7 @@ TEST(GainController2InterpolatedGainCurve, CheckRegionBoundaries) {
   EXPECT_EQ(1ul, stats.look_ups_saturation_region);
 }
 
-TEST(GainController2InterpolatedGainCurve, CheckIdentityRegion) {
+TEST(AutomaticGainController2InterpolatedGainCurve, CheckIdentityRegion) {
   constexpr size_t kNumSteps = 10;
   InterpolatedGainCurve igc(&apm_data_dumper, "");
 
@@ -120,7 +120,8 @@ TEST(GainController2InterpolatedGainCurve, CheckIdentityRegion) {
   EXPECT_EQ(0ul, stats.look_ups_saturation_region);
 }
 
-TEST(GainController2InterpolatedGainCurve, CheckNoOverApproximationKnee) {
+TEST(AutomaticGainController2InterpolatedGainCurve,
+     CheckNoOverApproximationKnee) {
   constexpr size_t kNumSteps = 10;
   InterpolatedGainCurve igc(&apm_data_dumper, "");
 
@@ -141,7 +142,8 @@ TEST(GainController2InterpolatedGainCurve, CheckNoOverApproximationKnee) {
   EXPECT_EQ(0ul, stats.look_ups_saturation_region);
 }
 
-TEST(GainController2InterpolatedGainCurve, CheckNoOverApproximationBeyondKnee) {
+TEST(AutomaticGainController2InterpolatedGainCurve,
+     CheckNoOverApproximationBeyondKnee) {
   constexpr size_t kNumSteps = 10;
   InterpolatedGainCurve igc(&apm_data_dumper, "");
 
@@ -162,7 +164,7 @@ TEST(GainController2InterpolatedGainCurve, CheckNoOverApproximationBeyondKnee) {
   EXPECT_EQ(0ul, stats.look_ups_saturation_region);
 }
 
-TEST(GainController2InterpolatedGainCurve,
+TEST(AutomaticGainController2InterpolatedGainCurve,
      CheckNoOverApproximationWithSaturation) {
   constexpr size_t kNumSteps = 3;
   InterpolatedGainCurve igc(&apm_data_dumper, "");
@@ -182,7 +184,7 @@ TEST(GainController2InterpolatedGainCurve,
   EXPECT_EQ(kNumSteps, stats.look_ups_saturation_region);
 }
 
-TEST(GainController2InterpolatedGainCurve, CheckApproximationParams) {
+TEST(AutomaticGainController2InterpolatedGainCurve, CheckApproximationParams) {
   test::InterpolatedParameters parameters =
       test::ComputeInterpolatedGainCurveApproximationParams();
 

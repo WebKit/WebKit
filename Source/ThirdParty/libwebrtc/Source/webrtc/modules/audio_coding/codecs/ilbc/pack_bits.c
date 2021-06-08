@@ -16,8 +16,6 @@
 
 ******************************************************************/
 
-#include "modules/audio_coding/codecs/ilbc/pack_bits.h"
-
 #include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*

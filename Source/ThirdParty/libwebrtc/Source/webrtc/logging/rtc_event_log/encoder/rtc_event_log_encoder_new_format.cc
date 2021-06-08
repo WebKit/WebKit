@@ -12,7 +12,6 @@
 
 #include "absl/types/optional.h"
 #include "api/array_view.h"
-#include "api/network_state_predictor.h"
 #include "logging/rtc_event_log/encoder/blob_encoding.h"
 #include "logging/rtc_event_log/encoder/delta_encoding.h"
 #include "logging/rtc_event_log/encoder/rtc_event_log_encoder_common.h"
@@ -44,6 +43,7 @@
 #include "logging/rtc_event_log/events/rtc_event_video_send_stream_config.h"
 #include "logging/rtc_event_log/rtc_stream_config.h"
 #include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor_config.h"
+#include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 #include "modules/rtp_rtcp/include/rtp_cvo.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/app.h"
@@ -289,7 +289,7 @@ rtclog2::IceCandidatePairEvent::IceCandidatePairEventType ConvertToProtoFormat(
 
 // Copies all RTCP blocks except APP, SDES and unknown from |packet| to
 // |buffer|. |buffer| must have space for at least |packet.size()| bytes.
-size_t RemoveNonAllowlistedRtcpBlocks(const rtc::Buffer& packet,
+size_t RemoveNonWhitelistedRtcpBlocks(const rtc::Buffer& packet,
                                       uint8_t* buffer) {
   RTC_DCHECK(buffer != nullptr);
   rtcp::CommonHeader header;
@@ -316,7 +316,7 @@ size_t RemoveNonAllowlistedRtcpBlocks(const rtc::Buffer& packet,
         // inter-arrival jitter, third-party loss reports, payload-specific
         // feedback and extended reports.
         // TODO(terelius): As an optimization, don't copy anything if all blocks
-        // in the packet are allowlisted types.
+        // in the packet are whitelisted types.
         memcpy(buffer + buffer_length, block_begin, block_size);
         buffer_length += block_size;
         break;
@@ -346,7 +346,7 @@ void EncodeRtcpPacket(rtc::ArrayView<const EventType*> batch,
   {
     std::vector<uint8_t> buffer(base_event->packet().size());
     size_t buffer_length =
-        RemoveNonAllowlistedRtcpBlocks(base_event->packet(), buffer.data());
+        RemoveNonWhitelistedRtcpBlocks(base_event->packet(), buffer.data());
     proto_batch->set_raw_packet(buffer.data(), buffer_length);
   }
 
@@ -375,7 +375,7 @@ void EncodeRtcpPacket(rtc::ArrayView<const EventType*> batch,
     const EventType* event = batch[i + 1];
     scrubed_packets[i].resize(event->packet().size());
     static_assert(sizeof(std::string::value_type) == sizeof(uint8_t), "");
-    const size_t buffer_length = RemoveNonAllowlistedRtcpBlocks(
+    const size_t buffer_length = RemoveNonWhitelistedRtcpBlocks(
         event->packet(), reinterpret_cast<uint8_t*>(&scrubed_packets[i][0]));
     if (buffer_length < event->packet().size()) {
       scrubed_packets[i].resize(buffer_length);
@@ -394,12 +394,12 @@ void EncodeRtpPacket(const std::vector<const EventType*>& batch,
   // Base event
   const EventType* const base_event = batch[0];
   proto_batch->set_timestamp_ms(base_event->timestamp_ms());
-  proto_batch->set_marker(base_event->Marker());
+  proto_batch->set_marker(base_event->header().Marker());
   // TODO(terelius): Is payload type needed?
-  proto_batch->set_payload_type(base_event->PayloadType());
-  proto_batch->set_sequence_number(base_event->SequenceNumber());
-  proto_batch->set_rtp_timestamp(base_event->Timestamp());
-  proto_batch->set_ssrc(base_event->Ssrc());
+  proto_batch->set_payload_type(base_event->header().PayloadType());
+  proto_batch->set_sequence_number(base_event->header().SequenceNumber());
+  proto_batch->set_rtp_timestamp(base_event->header().Timestamp());
+  proto_batch->set_ssrc(base_event->header().Ssrc());
   proto_batch->set_payload_size(base_event->payload_length());
   proto_batch->set_header_size(base_event->header_length());
   proto_batch->set_padding_size(base_event->padding_length());
@@ -408,7 +408,8 @@ void EncodeRtpPacket(const std::vector<const EventType*>& batch,
   absl::optional<uint64_t> base_transport_sequence_number;
   {
     uint16_t seqnum;
-    if (base_event->template GetExtension<TransportSequenceNumber>(&seqnum)) {
+    if (base_event->header().template GetExtension<TransportSequenceNumber>(
+            &seqnum)) {
       proto_batch->set_transport_sequence_number(seqnum);
       base_transport_sequence_number = seqnum;
     }
@@ -417,7 +418,8 @@ void EncodeRtpPacket(const std::vector<const EventType*>& batch,
   absl::optional<uint64_t> unsigned_base_transmission_time_offset;
   {
     int32_t offset;
-    if (base_event->template GetExtension<TransmissionOffset>(&offset)) {
+    if (base_event->header().template GetExtension<TransmissionOffset>(
+            &offset)) {
       proto_batch->set_transmission_time_offset(offset);
       unsigned_base_transmission_time_offset = ToUnsigned(offset);
     }
@@ -426,7 +428,8 @@ void EncodeRtpPacket(const std::vector<const EventType*>& batch,
   absl::optional<uint64_t> base_absolute_send_time;
   {
     uint32_t sendtime;
-    if (base_event->template GetExtension<AbsoluteSendTime>(&sendtime)) {
+    if (base_event->header().template GetExtension<AbsoluteSendTime>(
+            &sendtime)) {
       proto_batch->set_absolute_send_time(sendtime);
       base_absolute_send_time = sendtime;
     }
@@ -435,7 +438,8 @@ void EncodeRtpPacket(const std::vector<const EventType*>& batch,
   absl::optional<uint64_t> base_video_rotation;
   {
     VideoRotation video_rotation;
-    if (base_event->template GetExtension<VideoOrientation>(&video_rotation)) {
+    if (base_event->header().template GetExtension<VideoOrientation>(
+            &video_rotation)) {
       proto_batch->set_video_rotation(
           ConvertVideoRotationToCVOByte(video_rotation));
       base_video_rotation = ConvertVideoRotationToCVOByte(video_rotation);
@@ -447,8 +451,8 @@ void EncodeRtpPacket(const std::vector<const EventType*>& batch,
   {
     bool voice_activity;
     uint8_t audio_level;
-    if (base_event->template GetExtension<AudioLevel>(&voice_activity,
-                                                      &audio_level)) {
+    if (base_event->header().template GetExtension<AudioLevel>(&voice_activity,
+                                                               &audio_level)) {
       RTC_DCHECK_LE(audio_level, 0x7Fu);
       base_audio_level = audio_level;
       proto_batch->set_audio_level(audio_level);
@@ -480,9 +484,9 @@ void EncodeRtpPacket(const std::vector<const EventType*>& batch,
   // marker (RTP base)
   for (size_t i = 0; i < values.size(); ++i) {
     const EventType* event = batch[i + 1];
-    values[i] = event->Marker();
+    values[i] = event->header().Marker();
   }
-  encoded_deltas = EncodeDeltas(base_event->Marker(), values);
+  encoded_deltas = EncodeDeltas(base_event->header().Marker(), values);
   if (!encoded_deltas.empty()) {
     proto_batch->set_marker_deltas(encoded_deltas);
   }
@@ -490,9 +494,9 @@ void EncodeRtpPacket(const std::vector<const EventType*>& batch,
   // payload_type (RTP base)
   for (size_t i = 0; i < values.size(); ++i) {
     const EventType* event = batch[i + 1];
-    values[i] = event->PayloadType();
+    values[i] = event->header().PayloadType();
   }
-  encoded_deltas = EncodeDeltas(base_event->PayloadType(), values);
+  encoded_deltas = EncodeDeltas(base_event->header().PayloadType(), values);
   if (!encoded_deltas.empty()) {
     proto_batch->set_payload_type_deltas(encoded_deltas);
   }
@@ -500,9 +504,9 @@ void EncodeRtpPacket(const std::vector<const EventType*>& batch,
   // sequence_number (RTP base)
   for (size_t i = 0; i < values.size(); ++i) {
     const EventType* event = batch[i + 1];
-    values[i] = event->SequenceNumber();
+    values[i] = event->header().SequenceNumber();
   }
-  encoded_deltas = EncodeDeltas(base_event->SequenceNumber(), values);
+  encoded_deltas = EncodeDeltas(base_event->header().SequenceNumber(), values);
   if (!encoded_deltas.empty()) {
     proto_batch->set_sequence_number_deltas(encoded_deltas);
   }
@@ -510,9 +514,9 @@ void EncodeRtpPacket(const std::vector<const EventType*>& batch,
   // rtp_timestamp (RTP base)
   for (size_t i = 0; i < values.size(); ++i) {
     const EventType* event = batch[i + 1];
-    values[i] = event->Timestamp();
+    values[i] = event->header().Timestamp();
   }
-  encoded_deltas = EncodeDeltas(base_event->Timestamp(), values);
+  encoded_deltas = EncodeDeltas(base_event->header().Timestamp(), values);
   if (!encoded_deltas.empty()) {
     proto_batch->set_rtp_timestamp_deltas(encoded_deltas);
   }
@@ -520,9 +524,9 @@ void EncodeRtpPacket(const std::vector<const EventType*>& batch,
   // ssrc (RTP base)
   for (size_t i = 0; i < values.size(); ++i) {
     const EventType* event = batch[i + 1];
-    values[i] = event->Ssrc();
+    values[i] = event->header().Ssrc();
   }
-  encoded_deltas = EncodeDeltas(base_event->Ssrc(), values);
+  encoded_deltas = EncodeDeltas(base_event->header().Ssrc(), values);
   if (!encoded_deltas.empty()) {
     proto_batch->set_ssrc_deltas(encoded_deltas);
   }
@@ -561,7 +565,8 @@ void EncodeRtpPacket(const std::vector<const EventType*>& batch,
   for (size_t i = 0; i < values.size(); ++i) {
     const EventType* event = batch[i + 1];
     uint16_t seqnum;
-    if (event->template GetExtension<TransportSequenceNumber>(&seqnum)) {
+    if (event->header().template GetExtension<TransportSequenceNumber>(
+            &seqnum)) {
       values[i] = seqnum;
     } else {
       values[i].reset();
@@ -576,7 +581,7 @@ void EncodeRtpPacket(const std::vector<const EventType*>& batch,
   for (size_t i = 0; i < values.size(); ++i) {
     const EventType* event = batch[i + 1];
     int32_t offset;
-    if (event->template GetExtension<TransmissionOffset>(&offset)) {
+    if (event->header().template GetExtension<TransmissionOffset>(&offset)) {
       values[i] = ToUnsigned(offset);
     } else {
       values[i].reset();
@@ -591,7 +596,7 @@ void EncodeRtpPacket(const std::vector<const EventType*>& batch,
   for (size_t i = 0; i < values.size(); ++i) {
     const EventType* event = batch[i + 1];
     uint32_t sendtime;
-    if (event->template GetExtension<AbsoluteSendTime>(&sendtime)) {
+    if (event->header().template GetExtension<AbsoluteSendTime>(&sendtime)) {
       values[i] = sendtime;
     } else {
       values[i].reset();
@@ -606,7 +611,8 @@ void EncodeRtpPacket(const std::vector<const EventType*>& batch,
   for (size_t i = 0; i < values.size(); ++i) {
     const EventType* event = batch[i + 1];
     VideoRotation video_rotation;
-    if (event->template GetExtension<VideoOrientation>(&video_rotation)) {
+    if (event->header().template GetExtension<VideoOrientation>(
+            &video_rotation)) {
       values[i] = ConvertVideoRotationToCVOByte(video_rotation);
     } else {
       values[i].reset();
@@ -622,8 +628,8 @@ void EncodeRtpPacket(const std::vector<const EventType*>& batch,
     const EventType* event = batch[i + 1];
     bool voice_activity;
     uint8_t audio_level;
-    if (event->template GetExtension<AudioLevel>(&voice_activity,
-                                                 &audio_level)) {
+    if (event->header().template GetExtension<AudioLevel>(&voice_activity,
+                                                          &audio_level)) {
       RTC_DCHECK_LE(audio_level, 0x7Fu);
       values[i] = audio_level;
     } else {
@@ -640,8 +646,8 @@ void EncodeRtpPacket(const std::vector<const EventType*>& batch,
     const EventType* event = batch[i + 1];
     bool voice_activity;
     uint8_t audio_level;
-    if (event->template GetExtension<AudioLevel>(&voice_activity,
-                                                 &audio_level)) {
+    if (event->header().template GetExtension<AudioLevel>(&voice_activity,
+                                                          &audio_level)) {
       RTC_DCHECK_LE(audio_level, 0x7Fu);
       values[i] = voice_activity;
     } else {
@@ -817,14 +823,14 @@ std::string RtcEventLogEncoderNewFormat::EncodeBatch(
         case RtcEvent::Type::RtpPacketIncoming: {
           auto* rtc_event =
               static_cast<const RtcEventRtpPacketIncoming* const>(it->get());
-          auto& v = incoming_rtp_packets[rtc_event->Ssrc()];
+          auto& v = incoming_rtp_packets[rtc_event->header().Ssrc()];
           v.emplace_back(rtc_event);
           break;
         }
         case RtcEvent::Type::RtpPacketOutgoing: {
           auto* rtc_event =
               static_cast<const RtcEventRtpPacketOutgoing* const>(it->get());
-          auto& v = outgoing_rtp_packets[rtc_event->Ssrc()];
+          auto& v = outgoing_rtp_packets[rtc_event->header().Ssrc()];
           v.emplace_back(rtc_event);
           break;
         }

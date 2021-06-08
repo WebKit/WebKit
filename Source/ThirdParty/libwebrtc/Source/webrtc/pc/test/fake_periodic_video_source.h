@@ -86,7 +86,7 @@ class FakePeriodicVideoSource final
   }
 
  private:
-  SequenceChecker thread_checker_;
+  rtc::ThreadChecker thread_checker_;
 
   rtc::VideoBroadcaster broadcaster_;
   cricket::FakeFrameSource frame_source_;

@@ -85,14 +85,14 @@ void DxgiDuplicatorController::Release() {
 }
 
 bool DxgiDuplicatorController::IsSupported() {
-  MutexLock lock(&mutex_);
+  rtc::CritScope lock(&lock_);
   return Initialize();
 }
 
 bool DxgiDuplicatorController::RetrieveD3dInfo(D3dInfo* info) {
   bool result = false;
   {
-    MutexLock lock(&mutex_);
+    rtc::CritScope lock(&lock_);
     result = Initialize();
     *info = d3d_info_;
   }
@@ -116,7 +116,7 @@ DxgiDuplicatorController::Result DxgiDuplicatorController::DuplicateMonitor(
 }
 
 DesktopVector DxgiDuplicatorController::dpi() {
-  MutexLock lock(&mutex_);
+  rtc::CritScope lock(&lock_);
   if (Initialize()) {
     return dpi_;
   }
@@ -124,7 +124,7 @@ DesktopVector DxgiDuplicatorController::dpi() {
 }
 
 int DxgiDuplicatorController::ScreenCount() {
-  MutexLock lock(&mutex_);
+  rtc::CritScope lock(&lock_);
   if (Initialize()) {
     return ScreenCountUnlocked();
   }
@@ -133,7 +133,7 @@ int DxgiDuplicatorController::ScreenCount() {
 
 bool DxgiDuplicatorController::GetDeviceNames(
     std::vector<std::string>* output) {
-  MutexLock lock(&mutex_);
+  rtc::CritScope lock(&lock_);
   if (Initialize()) {
     GetDeviceNamesUnlocked(output);
     return true;
@@ -145,7 +145,7 @@ DxgiDuplicatorController::Result DxgiDuplicatorController::DoDuplicate(
     DxgiFrame* frame,
     int monitor_id) {
   RTC_DCHECK(frame);
-  MutexLock lock(&mutex_);
+  rtc::CritScope lock(&lock_);
 
   // The dxgi components and APIs do not update the screen resolution without
   // a reinitialization. So we use the GetDC() function to retrieve the screen
@@ -198,12 +198,12 @@ DxgiDuplicatorController::Result DxgiDuplicatorController::DoDuplicate(
 }
 
 void DxgiDuplicatorController::Unload() {
-  MutexLock lock(&mutex_);
+  rtc::CritScope lock(&lock_);
   Deinitialize();
 }
 
 void DxgiDuplicatorController::Unregister(const Context* const context) {
-  MutexLock lock(&mutex_);
+  rtc::CritScope lock(&lock_);
   if (ContextExpired(context)) {
     // The Context has not been setup after a recent initialization, so it
     // should not been registered in duplicators.

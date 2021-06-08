@@ -50,7 +50,8 @@ VideoStreamDecoderImpl::~VideoStreamDecoderImpl() {
   shut_down_ = true;
 }
 
-void VideoStreamDecoderImpl::OnFrame(std::unique_ptr<EncodedFrame> frame) {
+void VideoStreamDecoderImpl::OnFrame(
+    std::unique_ptr<video_coding::EncodedFrame> frame) {
   if (!bookkeeping_queue_.IsCurrent()) {
     bookkeeping_queue_.PostTask([this, frame = std::move(frame)]() mutable {
       OnFrame(std::move(frame));
@@ -62,10 +63,11 @@ void VideoStreamDecoderImpl::OnFrame(std::unique_ptr<EncodedFrame> frame) {
 
   RTC_DCHECK_RUN_ON(&bookkeeping_queue_);
 
-  int64_t continuous_frame_id = frame_buffer_.InsertFrame(std::move(frame));
-  if (last_continuous_frame_id_ < continuous_frame_id) {
-    last_continuous_frame_id_ = continuous_frame_id;
-    callbacks_->OnContinuousUntil(last_continuous_frame_id_);
+  uint64_t continuous_pid = frame_buffer_.InsertFrame(std::move(frame));
+  video_coding::VideoLayerFrameId continuous_id(continuous_pid, 0);
+  if (last_continuous_id_ < continuous_id) {
+    last_continuous_id_ = continuous_id;
+    callbacks_->OnContinuousUntil(last_continuous_id_);
   }
 }
 
@@ -122,7 +124,8 @@ VideoDecoder* VideoStreamDecoderImpl::GetDecoder(int payload_type) {
   return decoder_.get();
 }
 
-void VideoStreamDecoderImpl::SaveFrameInfo(const EncodedFrame& frame) {
+void VideoStreamDecoderImpl::SaveFrameInfo(
+    const video_coding::EncodedFrame& frame) {
   FrameInfo* frame_info = &frame_info_[next_frame_info_index_];
   frame_info->timestamp = frame.Timestamp();
   frame_info->decode_start_time_ms = rtc::TimeMillis();
@@ -137,7 +140,7 @@ void VideoStreamDecoderImpl::StartNextDecode() {
 
   frame_buffer_.NextFrame(
       max_wait_time, keyframe_required_, &bookkeeping_queue_,
-      [this](std::unique_ptr<EncodedFrame> frame,
+      [this](std::unique_ptr<video_coding::EncodedFrame> frame,
              video_coding::FrameBuffer::ReturnReason res) mutable {
         RTC_DCHECK_RUN_ON(&bookkeeping_queue_);
         OnNextFrameCallback(std::move(frame), res);
@@ -145,7 +148,7 @@ void VideoStreamDecoderImpl::StartNextDecode() {
 }
 
 void VideoStreamDecoderImpl::OnNextFrameCallback(
-    std::unique_ptr<EncodedFrame> frame,
+    std::unique_ptr<video_coding::EncodedFrame> frame,
     video_coding::FrameBuffer::ReturnReason result) {
   switch (result) {
     case video_coding::FrameBuffer::kFrameFound: {
@@ -202,7 +205,7 @@ void VideoStreamDecoderImpl::OnNextFrameCallback(
 }
 
 VideoStreamDecoderImpl::DecodeResult VideoStreamDecoderImpl::DecodeFrame(
-    std::unique_ptr<EncodedFrame> frame) {
+    std::unique_ptr<video_coding::EncodedFrame> frame) {
   RTC_DCHECK(frame);
 
   VideoDecoder* decoder = GetDecoder(frame->PayloadType());
@@ -245,7 +248,7 @@ void VideoStreamDecoderImpl::OnDecodedFrameCallback(
   int64_t decode_stop_time_ms = rtc::TimeMillis();
 
   bookkeeping_queue_.PostTask([this, decode_stop_time_ms, decoded_image,
-                               decode_time_ms, qp]() mutable {
+                               decode_time_ms, qp]() {
     RTC_DCHECK_RUN_ON(&bookkeeping_queue_);
 
     FrameInfo* frame_info = GetFrameInfo(decoded_image.timestamp());
@@ -261,17 +264,14 @@ void VideoStreamDecoderImpl::OnDecodedFrameCallback(
     if (qp)
       callback_info.qp.emplace(*qp);
 
-    if (!decode_time_ms) {
-      decode_time_ms = decode_stop_time_ms - frame_info->decode_start_time_ms;
-    }
-    decoded_image.set_processing_time(
-        {Timestamp::Millis(frame_info->decode_start_time_ms),
-         Timestamp::Millis(frame_info->decode_start_time_ms +
-                           *decode_time_ms)});
-    decoded_image.set_timestamp_us(frame_info->render_time_us);
-    timing_.StopDecodeTimer(*decode_time_ms, decode_stop_time_ms);
+    callback_info.decode_time_ms = decode_time_ms.value_or(
+        decode_stop_time_ms - frame_info->decode_start_time_ms);
 
-    callbacks_->OnDecodedFrame(decoded_image, callback_info);
+    timing_.StopDecodeTimer(*callback_info.decode_time_ms, decode_stop_time_ms);
+
+    VideoFrame copy = decoded_image;
+    copy.set_timestamp_us(frame_info->render_time_us);
+    callbacks_->OnDecodedFrame(copy, callback_info);
   });
 }
 

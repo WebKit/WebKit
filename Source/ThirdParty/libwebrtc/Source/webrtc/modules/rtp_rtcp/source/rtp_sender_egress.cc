@@ -90,9 +90,9 @@ RtpSenderEgress::RtpSenderEgress(const RtpRtcpInterface::Configuration& config,
                                          : absl::nullopt),
       populate_network2_timestamp_(config.populate_network2_timestamp),
       send_side_bwe_with_overhead_(
-          !IsTrialSetTo(config.field_trials,
-                        "WebRTC-SendSideBwe-WithOverhead",
-                        "Disabled")),
+          IsTrialSetTo(config.field_trials,
+                       "WebRTC-SendSideBwe-WithOverhead",
+                       "Enabled")),
       clock_(config.clock),
       packet_history_(packet_history),
       transport_(config.outgoing_transport),
@@ -101,7 +101,11 @@ RtpSenderEgress::RtpSenderEgress(const RtpRtcpInterface::Configuration& config,
       is_audio_(config.audio),
 #endif
       need_rtp_packet_infos_(config.need_rtp_packet_infos),
-      fec_generator_(config.fec_generator),
+      fec_generator_(!IsTrialSetTo(config.field_trials,
+                                   "WebRTC-DeferredFecGeneration",
+                                   "Disabled")
+                         ? config.fec_generator
+                         : nullptr),
       transport_feedback_observer_(config.transport_feedback_callback),
       send_side_delay_observer_(config.send_side_delay_observer),
       send_packet_observer_(config.send_packet_observer),
@@ -172,7 +176,7 @@ void RtpSenderEgress::SendPacket(RtpPacketToSend* packet,
   }
 
   if (fec_generator_ && packet->fec_protect_packet()) {
-    // This packet should be protected by FEC, add it to packet generator.
+    // Deferred fec generation is used, add packet to generator.
     RTC_DCHECK(fec_generator_);
     RTC_DCHECK(packet->packet_type() == RtpPacketMediaType::kVideo);
     absl::optional<std::pair<FecProtectionParams, FecProtectionParams>>
@@ -250,7 +254,8 @@ void RtpSenderEgress::SendPacket(RtpPacketToSend* packet,
     AddPacketToTransportFeedback(*packet_id, *packet, pacing_info);
   }
 
-  options.additional_data = packet->additional_data();
+  options.application_data.assign(packet->application_data().begin(),
+                                  packet->application_data().end());
 
   if (packet->packet_type() != RtpPacketMediaType::kPadding &&
       packet->packet_type() != RtpPacketMediaType::kRetransmission) {
@@ -412,7 +417,6 @@ void RtpSenderEgress::AddPacketToTransportFeedback(
     packet_info.ssrc = ssrc_;
     packet_info.transport_sequence_number = packet_id;
     packet_info.rtp_sequence_number = packet.SequenceNumber();
-    packet_info.rtp_timestamp = packet.Timestamp();
     packet_info.length = packet_size;
     packet_info.pacing_info = pacing_info;
     packet_info.packet_type = packet.packet_type();

@@ -59,7 +59,7 @@ class VideoCodecTestFixture {
   class EncodedFrameChecker {
    public:
     virtual ~EncodedFrameChecker() = default;
-    virtual void CheckEncodedFrame(VideoCodecType codec,
+    virtual void CheckEncodedFrame(webrtc::VideoCodecType codec,
                                    const EncodedImage& encoded_frame) const = 0;
   };
 
@@ -88,17 +88,6 @@ class VideoCodecTestFixture {
 
     // Plain name of YUV file to process without file extension.
     std::string filename;
-    // Dimensions of test clip. Falls back to (codec_settings.width/height) if
-    // not set.
-    absl::optional<int> clip_width;
-    absl::optional<int> clip_height;
-    // Framerate of input clip. Defaults to 30fps if not set.
-    absl::optional<int> clip_fps;
-
-    // The resolution at which psnr/ssim comparisons should be made. Frames
-    // will be scaled to this size if different.
-    absl::optional<int> reference_width;
-    absl::optional<int> reference_height;
 
     // File to process. This must be a video file in the YUV format.
     std::string filepath;
@@ -123,16 +112,16 @@ class VideoCodecTestFixture {
     bool encode_in_real_time = false;
 
     // Codec settings to use.
-    VideoCodec codec_settings;
+    webrtc::VideoCodec codec_settings;
 
     // Name of the codec being tested.
     std::string codec_name;
 
     // H.264 specific settings.
     struct H264CodecSettings {
-      H264Profile profile = H264Profile::kProfileConstrainedBaseline;
+      H264::Profile profile = H264::kProfileConstrainedBaseline;
       H264PacketizationMode packetization_mode =
-          H264PacketizationMode::NonInterleaved;
+          webrtc::H264PacketizationMode::NonInterleaved;
     } h264_codec_settings;
 
     // Custom checker that will be called for each frame.
@@ -149,9 +138,6 @@ class VideoCodecTestFixture {
       bool save_encoded_ivf = false;
       bool save_decoded_y4m = false;
     } visualization_params;
-
-    // Enables quality analysis for dropped frames.
-    bool analyze_quality_of_dropped_frames = false;
   };
 
   virtual ~VideoCodecTestFixture() = default;

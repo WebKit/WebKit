@@ -59,9 +59,6 @@ class UlpfecGenerator : public VideoFecGenerator {
 
   absl::optional<RtpState> GetRtpState() override { return absl::nullopt; }
 
-  // Currently used protection params.
-  const FecProtectionParams& CurrentParams() const;
-
  private:
   struct Params {
     Params();
@@ -93,6 +90,8 @@ class UlpfecGenerator : public VideoFecGenerator {
   // (e.g. (2k,2m) vs (k,m)) are generally more effective at recovering losses.
   bool MinimumMediaPacketsReached() const;
 
+  const FecProtectionParams& CurrentParams() const;
+
   void ResetState();
 
   const int red_payload_type_;
@@ -111,7 +110,7 @@ class UlpfecGenerator : public VideoFecGenerator {
   int num_protected_frames_ RTC_GUARDED_BY(race_checker_);
   int min_num_media_packets_ RTC_GUARDED_BY(race_checker_);
   Params current_params_ RTC_GUARDED_BY(race_checker_);
-  bool media_contains_keyframe_ RTC_GUARDED_BY(race_checker_);
+  bool keyframe_in_process_ RTC_GUARDED_BY(race_checker_);
 
   mutable Mutex mutex_;
   absl::optional<Params> pending_params_ RTC_GUARDED_BY(mutex_);

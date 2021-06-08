@@ -28,8 +28,8 @@
 #import "components/video_frame_buffer/RTCCVPixelBuffer.h"
 #import "helpers.h"
 
-#include "api/video_codecs/h264_profile_level_id.h"
 #include "common_video/h264/h264_bitstream_parser.h"
+#include "common_video/h264/profile_level_id.h"
 #include "common_video/include/bitrate_adjuster.h"
 #include "modules/include/module_common_types.h"
 #include "modules/video_coding/include/video_error_codes.h"
@@ -983,9 +983,10 @@ NSUInteger GetMaxSampleRate(const webrtc::H264::ProfileLevelId &profile_level_id
                                                                   RTCVideoContentTypeUnspecified;
   frame.flags = webrtc::VideoSendTiming::kInvalid;
 
-  _h264BitstreamParser.ParseBitstream(*buffer);
-  auto qp = _h264BitstreamParser.GetLastSliceQp();
-  frame.qp = @(qp.value_or(0));
+  int qp;
+  _h264BitstreamParser.ParseBitstream(buffer->data(), buffer->size());
+  _h264BitstreamParser.GetLastSliceQp(&qp);
+  frame.qp = @(qp);
 
   BOOL res = _callback(frame, codecSpecificInfo, nullptr);
   if (!res) {

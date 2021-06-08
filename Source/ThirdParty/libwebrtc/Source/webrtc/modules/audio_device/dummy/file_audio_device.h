@@ -17,10 +17,13 @@
 #include <string>
 
 #include "modules/audio_device/audio_device_generic.h"
-#include "rtc_base/platform_thread.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/system/file_wrapper.h"
 #include "rtc_base/time_utils.h"
+
+namespace rtc {
+class PlatformThread;
+}  // namespace rtc
 
 namespace webrtc {
 
@@ -142,8 +145,9 @@ class FileAudioDevice : public AudioDeviceGeneric {
   size_t _recordingFramesIn10MS;
   size_t _playoutFramesIn10MS;
 
-  rtc::PlatformThread _ptrThreadRec;
-  rtc::PlatformThread _ptrThreadPlay;
+  // TODO(pbos): Make plain members instead of pointers and stop resetting them.
+  std::unique_ptr<rtc::PlatformThread> _ptrThreadRec;
+  std::unique_ptr<rtc::PlatformThread> _ptrThreadPlay;
 
   bool _playing;
   bool _recording;

@@ -16,8 +16,6 @@
 
 ******************************************************************/
 
-#include "modules/audio_coding/codecs/ilbc/my_corr.h"
-
 #include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*

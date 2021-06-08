@@ -19,7 +19,7 @@ GCC_PREPROCESSOR_DEFINITIONS[sdk=macosx*] = $(inherited) $(GCC_PREPROCESSOR_DEFI
 GCC_PREPROCESSOR_DEFINITIONS_YES = WEBRTC_WEBKIT_MAC_CATALIST
 
 ARM_FILES = *_neon.c arm_cpudetect.c *_arm.c
-X86_FILES = *_sse2.c *_ssse3.c *_sse4.c *_avx2.c *_avx2.cc *_avx.c *.asm
+X86_FILES = *_sse2.c *_ssse3.c *_sse4.c *_avx2.c *_avx.c *.asm
 
 EXCLUDED_SOURCE_FILE_NAMES[arch=x86_64] = $(ARM_FILES) $(EXCLUDED_SOURCE_FILE_NAMES_$(WK_IS_CATALYST));
 EXCLUDED_SOURCE_FILE_NAMES_YES = *_sse4.c *_avx.c;

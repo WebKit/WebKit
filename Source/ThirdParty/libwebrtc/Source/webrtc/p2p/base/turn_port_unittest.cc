@@ -41,7 +41,6 @@
 #include "rtc_base/thread.h"
 #include "rtc_base/time_utils.h"
 #include "rtc_base/virtual_socket_server.h"
-#include "test/field_trial.h"
 #include "test/gtest.h"
 
 using rtc::SocketAddress;
@@ -59,15 +58,6 @@ static const SocketAddress kTurnTcpIntAddr("99.99.99.4",
 static const SocketAddress kTurnUdpExtAddr("99.99.99.5", 0);
 static const SocketAddress kTurnAlternateIntAddr("99.99.99.6",
                                                  cricket::TURN_SERVER_PORT);
-// Port for redirecting to a TCP Web server. Should not work.
-static const SocketAddress kTurnDangerousAddr("99.99.99.7", 81);
-// Port 53 (the DNS port); should work.
-static const SocketAddress kTurnPort53Addr("99.99.99.7", 53);
-// Port 80 (the HTTP port); should work.
-static const SocketAddress kTurnPort80Addr("99.99.99.7", 80);
-// Port 443 (the HTTPS port); should work.
-static const SocketAddress kTurnPort443Addr("99.99.99.7", 443);
-// The default TURN server port.
 static const SocketAddress kTurnIntAddr("99.99.99.7",
                                         cricket::TURN_SERVER_PORT);
 static const SocketAddress kTurnIPv6IntAddr(
@@ -104,15 +94,6 @@ static const cricket::ProtocolAddress kTurnTlsProtoAddr(kTurnTcpIntAddr,
                                                         cricket::PROTO_TLS);
 static const cricket::ProtocolAddress kTurnUdpIPv6ProtoAddr(kTurnUdpIPv6IntAddr,
                                                             cricket::PROTO_UDP);
-static const cricket::ProtocolAddress kTurnDangerousProtoAddr(
-    kTurnDangerousAddr,
-    cricket::PROTO_TCP);
-static const cricket::ProtocolAddress kTurnPort53ProtoAddr(kTurnPort53Addr,
-                                                           cricket::PROTO_TCP);
-static const cricket::ProtocolAddress kTurnPort80ProtoAddr(kTurnPort80Addr,
-                                                           cricket::PROTO_TCP);
-static const cricket::ProtocolAddress kTurnPort443ProtoAddr(kTurnPort443Addr,
-                                                            cricket::PROTO_TCP);
 
 static const unsigned int MSG_TESTFINISH = 0;
 
@@ -255,43 +236,43 @@ class TurnPortTest : public ::testing::Test,
     return &networks_.back();
   }
 
-  bool CreateTurnPort(const std::string& username,
+  void CreateTurnPort(const std::string& username,
                       const std::string& password,
                       const ProtocolAddress& server_address) {
-    return CreateTurnPortWithAllParams(MakeNetwork(kLocalAddr1), username,
-                                       password, server_address, std::string());
+    CreateTurnPortWithAllParams(MakeNetwork(kLocalAddr1), username, password,
+                                server_address, std::string());
   }
-  bool CreateTurnPort(const rtc::SocketAddress& local_address,
+  void CreateTurnPort(const rtc::SocketAddress& local_address,
                       const std::string& username,
                       const std::string& password,
                       const ProtocolAddress& server_address) {
-    return CreateTurnPortWithAllParams(MakeNetwork(local_address), username,
-                                       password, server_address, std::string());
+    CreateTurnPortWithAllParams(MakeNetwork(local_address), username, password,
+                                server_address, std::string());
   }
 
   // Should be identical to CreateTurnPort but specifies an origin value
   // when creating the instance of TurnPort.
-  bool CreateTurnPortWithOrigin(const rtc::SocketAddress& local_address,
+  void CreateTurnPortWithOrigin(const rtc::SocketAddress& local_address,
                                 const std::string& username,
                                 const std::string& password,
                                 const ProtocolAddress& server_address,
                                 const std::string& origin) {
-    return CreateTurnPortWithAllParams(MakeNetwork(local_address), username,
-                                       password, server_address, origin);
+    CreateTurnPortWithAllParams(MakeNetwork(local_address), username, password,
+                                server_address, origin);
   }
 
-  bool CreateTurnPortWithNetwork(rtc::Network* network,
+  void CreateTurnPortWithNetwork(rtc::Network* network,
                                  const std::string& username,
                                  const std::string& password,
                                  const ProtocolAddress& server_address) {
-    return CreateTurnPortWithAllParams(network, username, password,
-                                       server_address, std::string());
+    CreateTurnPortWithAllParams(network, username, password, server_address,
+                                std::string());
   }
 
   // Version of CreateTurnPort that takes all possible parameters; all other
   // helper methods call this, such that "SetIceRole" and "ConnectSignals" (and
   // possibly other things in the future) only happen in one place.
-  bool CreateTurnPortWithAllParams(rtc::Network* network,
+  void CreateTurnPortWithAllParams(rtc::Network* network,
                                    const std::string& username,
                                    const std::string& password,
                                    const ProtocolAddress& server_address,
@@ -300,9 +281,6 @@ class TurnPortTest : public ::testing::Test,
     turn_port_ = TurnPort::Create(
         &main_, &socket_factory_, network, 0, 0, kIceUfrag1, kIcePwd1,
         server_address, credentials, 0, origin, {}, {}, turn_customizer_.get());
-    if (!turn_port_) {
-      return false;
-    }
     // This TURN port will be the controlling.
     turn_port_->SetIceRole(ICEROLE_CONTROLLING);
     ConnectSignals();
@@ -314,7 +292,6 @@ class TurnPortTest : public ::testing::Test,
       turn_port_->SetTlsCertPolicy(
           TlsCertPolicy::TLS_CERT_POLICY_INSECURE_NO_CHECK);
     }
-    return true;
   }
 
   void CreateSharedTurnPort(const std::string& username,
@@ -354,8 +331,8 @@ class TurnPortTest : public ::testing::Test,
         this, &TurnPortTest::OnTurnRefreshResult);
     turn_port_->SignalTurnPortClosed.connect(this,
                                              &TurnPortTest::OnTurnPortClosed);
-    turn_port_->SubscribePortDestroyed(
-        [this](PortInterface* port) { OnTurnPortDestroyed(port); });
+    turn_port_->SignalDestroyed.connect(this,
+                                        &TurnPortTest::OnTurnPortDestroyed);
   }
 
   void CreateUdpPort() { CreateUdpPort(kLocalAddr2); }
@@ -634,11 +611,6 @@ class TurnPortTest : public ::testing::Test,
                                                     Port::ORIGIN_MESSAGE);
     Connection* conn2 = turn_port_->CreateConnection(udp_port_->Candidates()[0],
                                                      Port::ORIGIN_MESSAGE);
-
-    // Increased to 10 minutes, to ensure that the TurnEntry times out before
-    // the TurnPort.
-    turn_port_->set_timeout_delay(10 * 60 * 1000);
-
     ASSERT_TRUE(conn2 != NULL);
     ASSERT_TRUE_SIMULATED_WAIT(turn_create_permission_success_, kSimulatedRtt,
                                fake_clock_);
@@ -655,11 +627,11 @@ class TurnPortTest : public ::testing::Test,
     EXPECT_TRUE_SIMULATED_WAIT(turn_unknown_address_, kSimulatedRtt,
                                fake_clock_);
 
-    // Wait for TurnEntry to expire. Timeout is 5 minutes.
+    // Flush all requests in the invoker to destroy the TurnEntry.
     // Expect that it still processes an incoming ping and signals the
     // unknown address.
     turn_unknown_address_ = false;
-    fake_clock_.AdvanceTime(webrtc::TimeDelta::Seconds(5 * 60));
+    turn_port_->invoker()->Flush(rtc::Thread::Current());
     conn1->Ping(0);
     EXPECT_TRUE_SIMULATED_WAIT(turn_unknown_address_, kSimulatedRtt,
                                fake_clock_);
@@ -958,7 +930,7 @@ TEST_F(TurnPortTest,
   EXPECT_TRUE_SIMULATED_WAIT(turn_error_, kSimulatedRtt, fake_clock_);
   EXPECT_EQ_SIMULATED_WAIT(error_event_.error_code, STUN_ERROR_GLOBAL_FAILURE,
                            kSimulatedRtt, fake_clock_);
-  ASSERT_NE(error_event_.error_text.find('.'), std::string::npos);
+  ASSERT_NE(error_event_.error_text.find("."), std::string::npos);
   ASSERT_NE(error_event_.address.find(kLocalAddr2.HostAsSensitiveURIString()),
             std::string::npos);
   ASSERT_NE(error_event_.port, 0);
@@ -1800,67 +1772,6 @@ TEST_F(TurnPortTest, TestTurnCustomizerAddAttribute) {
 
   // Need to release TURN port before the customizer.
   turn_port_.reset(nullptr);
-}
-
-TEST_F(TurnPortTest, TestOverlongUsername) {
-  std::string overlong_username(513, 'x');
-  RelayCredentials credentials(overlong_username, kTurnPassword);
-  EXPECT_FALSE(
-      CreateTurnPort(overlong_username, kTurnPassword, kTurnTlsProtoAddr));
-}
-
-TEST_F(TurnPortTest, TestTurnDangerousServer) {
-  CreateTurnPort(kTurnUsername, kTurnPassword, kTurnDangerousProtoAddr);
-  ASSERT_FALSE(turn_port_);
-}
-
-TEST_F(TurnPortTest, TestTurnDangerousServerPermits53) {
-  CreateTurnPort(kTurnUsername, kTurnPassword, kTurnPort53ProtoAddr);
-  ASSERT_TRUE(turn_port_);
-}
-
-TEST_F(TurnPortTest, TestTurnDangerousServerPermits80) {
-  CreateTurnPort(kTurnUsername, kTurnPassword, kTurnPort80ProtoAddr);
-  ASSERT_TRUE(turn_port_);
-}
-
-TEST_F(TurnPortTest, TestTurnDangerousServerPermits443) {
-  CreateTurnPort(kTurnUsername, kTurnPassword, kTurnPort443ProtoAddr);
-  ASSERT_TRUE(turn_port_);
-}
-
-TEST_F(TurnPortTest, TestTurnDangerousAlternateServer) {
-  const ProtocolType protocol_type = PROTO_TCP;
-  std::vector<rtc::SocketAddress> redirect_addresses;
-  redirect_addresses.push_back(kTurnDangerousAddr);
-
-  TestTurnRedirector redirector(redirect_addresses);
-
-  turn_server_.AddInternalSocket(kTurnIntAddr, protocol_type);
-  turn_server_.AddInternalSocket(kTurnDangerousAddr, protocol_type);
-  turn_server_.set_redirect_hook(&redirector);
-  CreateTurnPort(kTurnUsername, kTurnPassword,
-                 ProtocolAddress(kTurnIntAddr, protocol_type));
-
-  // Retrieve the address before we run the state machine.
-  const SocketAddress old_addr = turn_port_->server_address().address;
-
-  turn_port_->PrepareAddress();
-  // This should result in an error event.
-  EXPECT_TRUE_SIMULATED_WAIT(error_event_.error_code != 0,
-                             TimeToGetAlternateTurnCandidate(protocol_type),
-                             fake_clock_);
-  // but should NOT result in the port turning ready, and no candidates
-  // should be gathered.
-  EXPECT_FALSE(turn_ready_);
-  ASSERT_EQ(0U, turn_port_->Candidates().size());
-}
-
-TEST_F(TurnPortTest, TestTurnDangerousServerAllowedWithFieldTrial) {
-  webrtc::test::ScopedFieldTrials override_field_trials(
-      "WebRTC-Turn-AllowSystemPorts/Enabled/");
-  CreateTurnPort(kTurnUsername, kTurnPassword, kTurnDangerousProtoAddr);
-  ASSERT_TRUE(turn_port_);
 }
 
 }  // namespace cricket

@@ -12,10 +12,8 @@
 #define TEST_TESTSUPPORT_PERF_TEST_RESULT_WRITER_H_
 
 #include <stdio.h>
-
 #include <string>
 
-#include "absl/strings/string_view.h"
 #include "test/testsupport/perf_test.h"
 
 namespace webrtc {
@@ -27,25 +25,25 @@ class PerfTestResultWriter {
   virtual ~PerfTestResultWriter() = default;
 
   virtual void ClearResults() = 0;
-  virtual void LogResult(absl::string_view graph_name,
-                         absl::string_view trace_name,
+  virtual void LogResult(const std::string& graph_name,
+                         const std::string& trace_name,
                          const double value,
-                         absl::string_view units,
+                         const std::string& units,
                          const bool important,
                          webrtc::test::ImproveDirection improve_direction) = 0;
   virtual void LogResultMeanAndError(
-      absl::string_view graph_name,
-      absl::string_view trace_name,
+      const std::string& graph_name,
+      const std::string& trace_name,
       const double mean,
       const double error,
-      absl::string_view units,
+      const std::string& units,
       const bool important,
       webrtc::test::ImproveDirection improve_direction) = 0;
   virtual void LogResultList(
-      absl::string_view graph_name,
-      absl::string_view trace_name,
+      const std::string& graph_name,
+      const std::string& trace_name,
       const rtc::ArrayView<const double> values,
-      absl::string_view units,
+      const std::string& units,
       const bool important,
       webrtc::test::ImproveDirection improve_direction) = 0;
 

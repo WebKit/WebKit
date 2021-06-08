@@ -11,11 +11,9 @@
 #ifndef P2P_BASE_REGATHERING_CONTROLLER_H_
 #define P2P_BASE_REGATHERING_CONTROLLER_H_
 
-#include <memory>
-
 #include "p2p/base/ice_transport_internal.h"
 #include "p2p/base/port_allocator.h"
-#include "rtc_base/task_utils/pending_task_safety_flag.h"
+#include "rtc_base/async_invoker.h"
 #include "rtc_base/thread.h"
 
 namespace webrtc {
@@ -82,14 +80,20 @@ class BasicRegatheringController : public sigslot::has_slots<> {
   void ScheduleRecurringRegatheringOnFailedNetworks();
   // Cancels regathering scheduled by ScheduleRecurringRegatheringOnAllNetworks.
   void CancelScheduledRecurringRegatheringOnAllNetworks();
+  // Cancels regathering scheduled by
+  // ScheduleRecurringRegatheringOnFailedNetworks.
+  void CancelScheduledRecurringRegatheringOnFailedNetworks();
 
-  // We use a flag to be able to cancel pending regathering operations when
-  // the object goes out of scope or the config changes.
-  std::unique_ptr<ScopedTaskSafety> pending_regathering_;
+  // The following method perform the actual regathering, if the recent port
+  // allocator session has done the initial gathering.
+  void RegatherOnFailedNetworksIfDoneGathering();
+
   Config config_;
   cricket::IceTransportInternal* ice_transport_;
   cricket::PortAllocatorSession* allocator_session_ = nullptr;
-  rtc::Thread* const thread_;
+  bool has_recurring_schedule_on_failed_networks_ = false;
+  rtc::Thread* thread_;
+  rtc::AsyncInvoker invoker_for_failed_networks_;
 };
 
 }  // namespace webrtc

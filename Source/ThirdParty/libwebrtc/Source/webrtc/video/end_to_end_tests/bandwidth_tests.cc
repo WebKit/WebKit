@@ -319,6 +319,7 @@ TEST_F(BandwidthEndToEndTest, ReportsSetEncoderRates) {
   // test, due to the packetization overhead and encoder pushback.
   webrtc::test::ScopedFieldTrials field_trials(
       std::string(field_trial::GetFieldTrialString()) +
+      "WebRTC-SubtractPacketizationOverhead/Disabled/"
       "WebRTC-VideoRateControl/bitrate_adjuster:false/");
   class EncoderRateStatsTest : public test::EndToEndTest,
                                public test::FakeEncoder {

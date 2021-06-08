@@ -61,6 +61,9 @@ struct VoipEngineConfig {
 };
 
 // Creates a VoipEngine instance with provided VoipEngineConfig.
+// This could return nullptr if AudioDeviceModule (ADM) initialization fails
+// during construction of VoipEngine which would render VoipEngine
+// nonfunctional.
 std::unique_ptr<VoipEngine> CreateVoipEngine(VoipEngineConfig config);
 
 }  // namespace webrtc

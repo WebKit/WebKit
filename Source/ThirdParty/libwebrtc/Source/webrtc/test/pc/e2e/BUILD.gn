@@ -13,12 +13,13 @@ if (!build_with_chromium) {
     testonly = true
 
     deps = [
+      ":default_encoded_image_data_injector",
       ":encoded_image_data_injector_api",
       ":example_video_quality_analyzer",
+      ":id_generator",
       ":quality_analyzing_video_decoder",
       ":quality_analyzing_video_encoder",
       ":single_process_encoded_image_data_injector",
-      ":video_frame_tracking_id_injector",
     ]
     if (rtc_include_tests) {
       deps += [
@@ -34,11 +35,11 @@ if (!build_with_chromium) {
       testonly = true
 
       deps = [
+        ":default_encoded_image_data_injector_unittest",
         ":default_video_quality_analyzer_test",
         ":multi_head_queue_test",
         ":peer_connection_e2e_smoke_test",
         ":single_process_encoded_image_data_injector_unittest",
-        ":video_frame_tracking_id_injector_unittest",
       ]
     }
   }
@@ -60,7 +61,6 @@ if (!build_with_chromium) {
       "../../../api/transport:webrtc_key_value_config",
       "../../../api/video_codecs:video_codecs_api",
       "../../../rtc_base",
-      "../../../rtc_base:threading",
     ]
   }
 
@@ -70,6 +70,23 @@ if (!build_with_chromium) {
     sources = [ "analyzer/video/encoded_image_data_injector.h" ]
 
     deps = [ "../../../api/video:encoded_image" ]
+  }
+
+  rtc_library("default_encoded_image_data_injector") {
+    visibility = [ "*" ]
+    testonly = true
+    sources = [
+      "analyzer/video/default_encoded_image_data_injector.cc",
+      "analyzer/video/default_encoded_image_data_injector.h",
+    ]
+
+    deps = [
+      ":encoded_image_data_injector_api",
+      "../../../api/video:encoded_image",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:criticalsection",
+    ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/memory" ]
   }
 
   rtc_library("single_process_encoded_image_data_injector") {
@@ -90,20 +107,14 @@ if (!build_with_chromium) {
     absl_deps = [ "//third_party/abseil-cpp/absl/memory" ]
   }
 
-  rtc_library("video_frame_tracking_id_injector") {
+  rtc_library("id_generator") {
     visibility = [ "*" ]
     testonly = true
     sources = [
-      "analyzer/video/video_frame_tracking_id_injector.cc",
-      "analyzer/video/video_frame_tracking_id_injector.h",
+      "analyzer/video/id_generator.cc",
+      "analyzer/video/id_generator.h",
     ]
-
-    deps = [
-      ":encoded_image_data_injector_api",
-      "../../../api/video:encoded_image",
-      "../../../rtc_base:checks",
-    ]
-    absl_deps = [ "//third_party/abseil-cpp/absl/memory" ]
+    deps = []
   }
 
   rtc_library("simulcast_dummy_buffer_helper") {
@@ -113,7 +124,10 @@ if (!build_with_chromium) {
       "analyzer/video/simulcast_dummy_buffer_helper.cc",
       "analyzer/video/simulcast_dummy_buffer_helper.h",
     ]
-    deps = [ "../../../api/video:video_frame" ]
+    deps = [
+      "../../../api/video:video_frame",
+      "../../../api/video:video_frame_i420",
+    ]
   }
 
   rtc_library("quality_analyzing_video_decoder") {
@@ -125,10 +139,12 @@ if (!build_with_chromium) {
     ]
     deps = [
       ":encoded_image_data_injector_api",
+      ":id_generator",
       ":simulcast_dummy_buffer_helper",
       "../../../api:video_quality_analyzer_api",
       "../../../api/video:encoded_image",
       "../../../api/video:video_frame",
+      "../../../api/video:video_frame_i420",
       "../../../api/video:video_rtp_headers",
       "../../../api/video_codecs:video_codecs_api",
       "../../../modules/video_coding:video_codec_interface",
@@ -151,6 +167,7 @@ if (!build_with_chromium) {
     ]
     deps = [
       ":encoded_image_data_injector_api",
+      ":id_generator",
       "../../../api:video_quality_analyzer_api",
       "../../../api/video:encoded_image",
       "../../../api/video:video_frame",
@@ -174,6 +191,7 @@ if (!build_with_chromium) {
       ]
       deps = [
         ":encoded_image_data_injector_api",
+        ":id_generator",
         ":quality_analyzing_video_decoder",
         ":quality_analyzing_video_encoder",
         ":simulcast_dummy_buffer_helper",
@@ -314,7 +332,6 @@ if (!build_with_chromium) {
         "../../../api/transport:network_control",
         "../../../api/video_codecs:video_codecs_api",
         "../../../rtc_base",
-        "../../../rtc_base:threading",
       ]
       absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
     }
@@ -391,7 +408,6 @@ if (!build_with_chromium) {
         "../../../rtc_base:rtc_base_approved",
         "../../../rtc_base:safe_conversions",
         "../../../rtc_base:task_queue_for_test",
-        "../../../rtc_base:threading",
         "../../../rtc_base/synchronization:mutex",
         "../../../system_wrappers",
         "../../../system_wrappers:field_trial",
@@ -412,12 +428,12 @@ if (!build_with_chromium) {
       ]
     }
 
-    rtc_library("video_frame_tracking_id_injector_unittest") {
+    rtc_library("default_encoded_image_data_injector_unittest") {
       testonly = true
       sources =
-          [ "analyzer/video/video_frame_tracking_id_injector_unittest.cc" ]
+          [ "analyzer/video/default_encoded_image_data_injector_unittest.cc" ]
       deps = [
-        ":video_frame_tracking_id_injector",
+        ":default_encoded_image_data_injector",
         "../../../api/video:encoded_image",
         "../../../rtc_base:rtc_base_approved",
         "../../../test:test_support",
@@ -506,6 +522,7 @@ if (!build_with_chromium) {
         "../../../api:rtp_packet_info",
         "../../../api/video:encoded_image",
         "../../../api/video:video_frame",
+        "../../../api/video:video_frame_i420",
         "../../../common_video",
         "../../../modules/rtp_rtcp:rtp_rtcp_format",
         "../../../rtc_base:stringutils",
@@ -532,9 +549,9 @@ if (!build_with_chromium) {
       "analyzer_helper.h",
     ]
     deps = [
-      "../../../api:sequence_checker",
       "../../../api:track_id_stream_info_map",
       "../../../rtc_base:macromagic",
+      "../../../rtc_base/synchronization:sequence_checker",
     ]
     absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
   }
@@ -628,6 +645,7 @@ if (!build_with_chromium) {
       "../../../api/units:timestamp",
       "../../../api/video:encoded_image",
       "../../../api/video:video_frame",
+      "../../../api/video:video_frame_i420",
       "../../../api/video:video_rtp_headers",
       "../../../common_video",
       "../../../rtc_base:criticalsection",
@@ -685,7 +703,6 @@ if (!build_with_chromium) {
       "../../../api/units:data_size",
       "../../../api/units:timestamp",
       "../../../rtc_base",
-      "../../../rtc_base:ip_address",
       "../../../rtc_base:rtc_event",
       "../../../rtc_base:stringutils",
       "../../../rtc_base/synchronization:mutex",

@@ -10,8 +10,8 @@
 
 #import <Foundation/Foundation.h>
 
-#import "sdk/objc/api/peerconnection/RTCIceCandidate.h"
-#import "sdk/objc/api/peerconnection/RTCSessionDescription.h"
+#import <WebRTC/RTCIceCandidate.h>
+#import <WebRTC/RTCSessionDescription.h>
 
 typedef enum {
   kARDSignalingMessageTypeCandidate,

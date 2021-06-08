@@ -41,17 +41,15 @@ LoggedPacketInfo::LoggedPacketInfo(const LoggedPacketInfo&) = default;
 LoggedPacketInfo::~LoggedPacketInfo() {}
 
 LoggedRtcpPacket::LoggedRtcpPacket(int64_t timestamp_us,
-                                   const std::vector<uint8_t>& packet)
-    : timestamp_us(timestamp_us), raw_data(packet) {}
-
+                                   const uint8_t* packet,
+                                   size_t total_length)
+    : timestamp_us(timestamp_us), raw_data(packet, packet + total_length) {}
 LoggedRtcpPacket::LoggedRtcpPacket(int64_t timestamp_us,
                                    const std::string& packet)
     : timestamp_us(timestamp_us), raw_data(packet.size()) {
   memcpy(raw_data.data(), packet.data(), packet.size());
 }
-
 LoggedRtcpPacket::LoggedRtcpPacket(const LoggedRtcpPacket& rhs) = default;
-
 LoggedRtcpPacket::~LoggedRtcpPacket() = default;
 
 }  // namespace webrtc

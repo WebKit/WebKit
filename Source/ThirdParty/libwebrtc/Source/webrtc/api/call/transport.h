@@ -14,8 +14,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "api/ref_counted_base.h"
-#include "api/scoped_refptr.h"
+#include <vector>
 
 namespace webrtc {
 
@@ -31,7 +30,7 @@ struct PacketOptions {
   int packet_id = -1;
   // Additional data bound to the RTP packet for use in application code,
   // outside of WebRTC.
-  rtc::scoped_refptr<rtc::RefCountedBase> additional_data;
+  std::vector<uint8_t> application_data;
   // Whether this is a retransmission of an earlier packet.
   bool is_retransmit = false;
   bool included_in_feedback = false;

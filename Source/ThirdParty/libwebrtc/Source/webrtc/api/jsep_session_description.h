@@ -23,6 +23,7 @@
 #include "api/jsep.h"
 #include "api/jsep_ice_candidate.h"
 #include "rtc_base/constructor_magic.h"
+#include "rtc_base/deprecation.h"
 
 namespace cricket {
 class SessionDescription;
@@ -47,8 +48,6 @@ class JsepSessionDescription : public SessionDescriptionInterface {
   bool Initialize(std::unique_ptr<cricket::SessionDescription> description,
                   const std::string& session_id,
                   const std::string& session_version);
-
-  virtual std::unique_ptr<SessionDescriptionInterface> Clone() const;
 
   virtual cricket::SessionDescription* description() {
     return description_.get();

@@ -32,6 +32,3 @@ is used for this.
 
 ### PseudoTCP ###
 Very small corpus minimised from the unit tests.
-
-### SCTP ###
-This corpus was extracted from a few manually recorder wireshark dumps.

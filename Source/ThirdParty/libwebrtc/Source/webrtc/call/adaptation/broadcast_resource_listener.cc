@@ -83,8 +83,8 @@ BroadcastResourceListener::CreateAdapterResource() {
   MutexLock lock(&lock_);
   RTC_DCHECK(is_listening_);
   rtc::scoped_refptr<AdapterResource> adapter =
-      rtc::make_ref_counted<AdapterResource>(source_resource_->Name() +
-                                             "Adapter");
+      new rtc::RefCountedObject<AdapterResource>(source_resource_->Name() +
+                                                 "Adapter");
   adapters_.push_back(adapter);
   return adapter;
 }

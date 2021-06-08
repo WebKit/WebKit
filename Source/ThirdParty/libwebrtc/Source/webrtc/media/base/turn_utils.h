@@ -18,6 +18,8 @@
 
 namespace cricket {
 
+struct PacketOptions;
+
 // Finds data location within a TURN Channel Message or TURN Send Indication
 // message.
 bool RTC_EXPORT UnwrapTurnPacket(const uint8_t* packet,

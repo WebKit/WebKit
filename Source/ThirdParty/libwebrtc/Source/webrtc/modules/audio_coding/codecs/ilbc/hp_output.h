@@ -19,8 +19,7 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_HP_OUTPUT_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_HP_OUTPUT_H_
 
-#include <stddef.h>
-#include <stdint.h>
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 // clang-format off
 // Bad job here. https://bugs.llvm.org/show_bug.cgi?id=34274

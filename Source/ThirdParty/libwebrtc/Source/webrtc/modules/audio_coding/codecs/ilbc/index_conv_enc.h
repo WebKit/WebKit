@@ -19,7 +19,7 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_INDEX_CONV_ENC_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_INDEX_CONV_ENC_H_
 
-#include <stdint.h>
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*
  *  Convert the codebook indexes to make the search easier

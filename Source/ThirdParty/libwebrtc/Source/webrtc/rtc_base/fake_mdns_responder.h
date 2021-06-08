@@ -15,17 +15,14 @@
 #include <memory>
 #include <string>
 
+#include "rtc_base/async_invoker.h"
 #include "rtc_base/ip_address.h"
 #include "rtc_base/location.h"
 #include "rtc_base/mdns_responder_interface.h"
-#include "rtc_base/task_utils/to_queued_task.h"
 #include "rtc_base/thread.h"
 
 namespace webrtc {
 
-// This class posts tasks on the given `thread` to invoke callbacks. It's the
-// callback's responsibility to be aware of potential destruction of state it
-// depends on, e.g., using WeakPtrFactory or PendingTaskSafetyFlag.
 class FakeMdnsResponder : public MdnsResponderInterface {
  public:
   explicit FakeMdnsResponder(rtc::Thread* thread) : thread_(thread) {}
@@ -40,8 +37,9 @@ class FakeMdnsResponder : public MdnsResponderInterface {
       name = std::to_string(next_available_id_++) + ".local";
       addr_name_map_[addr] = name;
     }
-    thread_->PostTask(
-        ToQueuedTask([callback, addr, name]() { callback(addr, name); }));
+    invoker_.AsyncInvoke<void>(
+        RTC_FROM_HERE, thread_,
+        [callback, addr, name]() { callback(addr, name); });
   }
   void RemoveNameForAddress(const rtc::IPAddress& addr,
                             NameRemovedCallback callback) override {
@@ -50,7 +48,8 @@ class FakeMdnsResponder : public MdnsResponderInterface {
       addr_name_map_.erase(it);
     }
     bool result = it != addr_name_map_.end();
-    thread_->PostTask(ToQueuedTask([callback, result]() { callback(result); }));
+    invoker_.AsyncInvoke<void>(RTC_FROM_HERE, thread_,
+                               [callback, result]() { callback(result); });
   }
 
   rtc::IPAddress GetMappedAddressForName(const std::string& name) const {
@@ -65,7 +64,8 @@ class FakeMdnsResponder : public MdnsResponderInterface {
  private:
   uint32_t next_available_id_ = 0;
   std::map<rtc::IPAddress, std::string> addr_name_map_;
-  rtc::Thread* const thread_;
+  rtc::Thread* thread_;
+  rtc::AsyncInvoker invoker_;
 };
 
 }  // namespace webrtc

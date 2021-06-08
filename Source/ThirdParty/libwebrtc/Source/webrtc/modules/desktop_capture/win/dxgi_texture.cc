@@ -15,7 +15,6 @@
 #include <wrl/client.h>
 
 #include "modules/desktop_capture/desktop_region.h"
-#include "modules/desktop_capture/win/desktop_capture_utils.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
@@ -50,8 +49,9 @@ bool DxgiTexture::CopyFrom(const DXGI_OUTDUPL_FRAME_INFO& frame_info,
       __uuidof(ID3D11Texture2D),
       reinterpret_cast<void**>(texture.GetAddressOf()));
   if (error.Error() != S_OK || !texture) {
-    RTC_LOG(LS_ERROR) << "Failed to convert IDXGIResource to ID3D11Texture2D: "
-                      << desktop_capture::utils::ComErrorToString(error);
+    RTC_LOG(LS_ERROR) << "Failed to convert IDXGIResource to ID3D11Texture2D, "
+                         "error "
+                      << error.ErrorMessage() << ", code " << error.Error();
     return false;
   }
 

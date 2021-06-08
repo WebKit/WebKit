@@ -32,7 +32,6 @@
 #include "pc/peer_connection_wrapper.h"
 #include "pc/sdp_utils.h"
 #include "pc/test/mock_peer_connection_observers.h"
-#include "pc/usage_pattern.h"
 #include "pc/webrtc_sdp.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
@@ -62,7 +61,7 @@ static const rtc::SocketAddress kPrivateLocalAddress("10.1.1.1", 0);
 static const rtc::SocketAddress kPrivateIpv6LocalAddress("fd12:3456:789a:1::1",
                                                          0);
 
-int MakeUsageFingerprint(std::set<UsageEvent> events) {
+int MakeUsageFingerprint(std::set<PeerConnection::UsageEvent> events) {
   int signature = 0;
   for (const auto it : events) {
     signature |= static_cast<int>(it);
@@ -85,6 +84,18 @@ class PeerConnectionFactoryForUsageHistogramTest
           dependencies.call_factory = CreateCallFactory();
           return dependencies;
         }()) {}
+
+  void ActionsBeforeInitializeForTesting(PeerConnectionInterface* pc) override {
+    PeerConnection* internal_pc = static_cast<PeerConnection*>(pc);
+    if (return_histogram_very_quickly_) {
+      internal_pc->ReturnHistogramVeryQuicklyForTesting();
+    }
+  }
+
+  void ReturnHistogramVeryQuickly() { return_histogram_very_quickly_ = true; }
+
+ private:
+  bool return_histogram_very_quickly_ = false;
 };
 
 class PeerConnectionWrapperForUsageHistogramTest;
@@ -243,13 +254,14 @@ class PeerConnectionUsageHistogramTest : public ::testing::Test {
   }
 
   WrapperPtr CreatePeerConnection() {
-    return CreatePeerConnection(
-        RTCConfiguration(), PeerConnectionFactoryInterface::Options(), nullptr);
+    return CreatePeerConnection(RTCConfiguration(),
+                                PeerConnectionFactoryInterface::Options(),
+                                nullptr, false);
   }
 
   WrapperPtr CreatePeerConnection(const RTCConfiguration& config) {
     return CreatePeerConnection(
-        config, PeerConnectionFactoryInterface::Options(), nullptr);
+        config, PeerConnectionFactoryInterface::Options(), nullptr, false);
   }
 
   WrapperPtr CreatePeerConnectionWithMdns(const RTCConfiguration& config) {
@@ -269,15 +281,15 @@ class PeerConnectionUsageHistogramTest : public ::testing::Test {
     deps.async_resolver_factory = std::move(resolver_factory);
     deps.allocator = std::move(port_allocator);
 
-    return CreatePeerConnection(
-        config, PeerConnectionFactoryInterface::Options(), std::move(deps));
+    return CreatePeerConnection(config,
+                                PeerConnectionFactoryInterface::Options(),
+                                std::move(deps), false);
   }
 
   WrapperPtr CreatePeerConnectionWithImmediateReport() {
-    RTCConfiguration configuration;
-    configuration.report_usage_pattern_delay_ms = 0;
-    return CreatePeerConnection(
-        configuration, PeerConnectionFactoryInterface::Options(), nullptr);
+    return CreatePeerConnection(RTCConfiguration(),
+                                PeerConnectionFactoryInterface::Options(),
+                                nullptr, true);
   }
 
   WrapperPtr CreatePeerConnectionWithPrivateLocalAddresses() {
@@ -287,9 +299,10 @@ class PeerConnectionUsageHistogramTest : public ::testing::Test {
 
     auto port_allocator =
         std::make_unique<cricket::BasicPortAllocator>(fake_network);
+
     return CreatePeerConnection(RTCConfiguration(),
                                 PeerConnectionFactoryInterface::Options(),
-                                std::move(port_allocator));
+                                std::move(port_allocator), false);
   }
 
   WrapperPtr CreatePeerConnectionWithPrivateIpv6LocalAddresses() {
@@ -302,26 +315,33 @@ class PeerConnectionUsageHistogramTest : public ::testing::Test {
 
     return CreatePeerConnection(RTCConfiguration(),
                                 PeerConnectionFactoryInterface::Options(),
-                                std::move(port_allocator));
+                                std::move(port_allocator), false);
   }
 
   WrapperPtr CreatePeerConnection(
       const RTCConfiguration& config,
       const PeerConnectionFactoryInterface::Options factory_options,
-      std::unique_ptr<cricket::PortAllocator> allocator) {
+      std::unique_ptr<cricket::PortAllocator> allocator,
+      bool immediate_report) {
     PeerConnectionDependencies deps(nullptr);
     deps.allocator = std::move(allocator);
 
-    return CreatePeerConnection(config, factory_options, std::move(deps));
+    return CreatePeerConnection(config, factory_options, std::move(deps),
+                                immediate_report);
   }
 
   WrapperPtr CreatePeerConnection(
       const RTCConfiguration& config,
       const PeerConnectionFactoryInterface::Options factory_options,
-      PeerConnectionDependencies deps) {
+      PeerConnectionDependencies deps,
+      bool immediate_report) {
     rtc::scoped_refptr<PeerConnectionFactoryForUsageHistogramTest> pc_factory(
         new PeerConnectionFactoryForUsageHistogramTest());
     pc_factory->SetOptions(factory_options);
+    RTC_CHECK(pc_factory->Initialize());
+    if (immediate_report) {
+      pc_factory->ReturnHistogramVeryQuickly();
+    }
 
     // If no allocator is provided, one will be created using a network manager
     // that uses the host network. This doesn't work on all trybots.
@@ -398,12 +418,16 @@ TEST_F(PeerConnectionUsageHistogramTest, FingerprintAudioVideo) {
   caller->pc()->Close();
   callee->pc()->Close();
   int expected_fingerprint = MakeUsageFingerprint(
-      {UsageEvent::AUDIO_ADDED, UsageEvent::VIDEO_ADDED,
-       UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
-       UsageEvent::SET_REMOTE_DESCRIPTION_SUCCEEDED,
-       UsageEvent::CANDIDATE_COLLECTED, UsageEvent::ADD_ICE_CANDIDATE_SUCCEEDED,
-       UsageEvent::ICE_STATE_CONNECTED, UsageEvent::REMOTE_CANDIDATE_ADDED,
-       UsageEvent::DIRECT_CONNECTION_SELECTED, UsageEvent::CLOSE_CALLED});
+      {PeerConnection::UsageEvent::AUDIO_ADDED,
+       PeerConnection::UsageEvent::VIDEO_ADDED,
+       PeerConnection::UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::SET_REMOTE_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::CANDIDATE_COLLECTED,
+       PeerConnection::UsageEvent::ADD_ICE_CANDIDATE_SUCCEEDED,
+       PeerConnection::UsageEvent::ICE_STATE_CONNECTED,
+       PeerConnection::UsageEvent::REMOTE_CANDIDATE_ADDED,
+       PeerConnection::UsageEvent::DIRECT_CONNECTION_SELECTED,
+       PeerConnection::UsageEvent::CLOSE_CALLED});
   // In this case, we may or may not have PRIVATE_CANDIDATE_COLLECTED,
   // depending on the machine configuration.
   EXPECT_METRIC_EQ(2, webrtc::metrics::NumSamples(kUsagePatternMetric));
@@ -413,7 +437,9 @@ TEST_F(PeerConnectionUsageHistogramTest, FingerprintAudioVideo) {
       webrtc::metrics::NumEvents(
           kUsagePatternMetric,
           expected_fingerprint |
-              static_cast<int>(UsageEvent::PRIVATE_CANDIDATE_COLLECTED)) == 2);
+              static_cast<int>(
+                  PeerConnection::UsageEvent::PRIVATE_CANDIDATE_COLLECTED)) ==
+          2);
 }
 
 // Test getting the usage fingerprint when the caller collects an mDNS
@@ -432,24 +458,32 @@ TEST_F(PeerConnectionUsageHistogramTest, FingerprintWithMdnsCaller) {
   callee->pc()->Close();
 
   int expected_fingerprint_caller = MakeUsageFingerprint(
-      {UsageEvent::AUDIO_ADDED, UsageEvent::VIDEO_ADDED,
-       UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
-       UsageEvent::SET_REMOTE_DESCRIPTION_SUCCEEDED,
-       UsageEvent::CANDIDATE_COLLECTED, UsageEvent::MDNS_CANDIDATE_COLLECTED,
-       UsageEvent::ADD_ICE_CANDIDATE_SUCCEEDED, UsageEvent::ICE_STATE_CONNECTED,
-       UsageEvent::REMOTE_CANDIDATE_ADDED,
-       UsageEvent::DIRECT_CONNECTION_SELECTED, UsageEvent::CLOSE_CALLED});
+      {PeerConnection::UsageEvent::AUDIO_ADDED,
+       PeerConnection::UsageEvent::VIDEO_ADDED,
+       PeerConnection::UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::SET_REMOTE_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::CANDIDATE_COLLECTED,
+       PeerConnection::UsageEvent::MDNS_CANDIDATE_COLLECTED,
+       PeerConnection::UsageEvent::ADD_ICE_CANDIDATE_SUCCEEDED,
+       PeerConnection::UsageEvent::ICE_STATE_CONNECTED,
+       PeerConnection::UsageEvent::REMOTE_CANDIDATE_ADDED,
+       PeerConnection::UsageEvent::DIRECT_CONNECTION_SELECTED,
+       PeerConnection::UsageEvent::CLOSE_CALLED});
 
   // Without a resolver, the callee cannot resolve the received mDNS candidate
   // but can still connect with the caller via a prflx candidate. As a result,
   // the bit for the direct connection should not be logged.
   int expected_fingerprint_callee = MakeUsageFingerprint(
-      {UsageEvent::AUDIO_ADDED, UsageEvent::VIDEO_ADDED,
-       UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
-       UsageEvent::SET_REMOTE_DESCRIPTION_SUCCEEDED,
-       UsageEvent::CANDIDATE_COLLECTED, UsageEvent::ADD_ICE_CANDIDATE_SUCCEEDED,
-       UsageEvent::REMOTE_MDNS_CANDIDATE_ADDED, UsageEvent::ICE_STATE_CONNECTED,
-       UsageEvent::REMOTE_CANDIDATE_ADDED, UsageEvent::CLOSE_CALLED});
+      {PeerConnection::UsageEvent::AUDIO_ADDED,
+       PeerConnection::UsageEvent::VIDEO_ADDED,
+       PeerConnection::UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::SET_REMOTE_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::CANDIDATE_COLLECTED,
+       PeerConnection::UsageEvent::ADD_ICE_CANDIDATE_SUCCEEDED,
+       PeerConnection::UsageEvent::REMOTE_MDNS_CANDIDATE_ADDED,
+       PeerConnection::UsageEvent::ICE_STATE_CONNECTED,
+       PeerConnection::UsageEvent::REMOTE_CANDIDATE_ADDED,
+       PeerConnection::UsageEvent::CLOSE_CALLED});
   EXPECT_METRIC_EQ(2, webrtc::metrics::NumSamples(kUsagePatternMetric));
   EXPECT_METRIC_EQ(1, webrtc::metrics::NumEvents(kUsagePatternMetric,
                                                  expected_fingerprint_caller));
@@ -475,21 +509,29 @@ TEST_F(PeerConnectionUsageHistogramTest, FingerprintWithMdnsCallee) {
   // Similar to the test above, the caller connects with the callee via a prflx
   // candidate.
   int expected_fingerprint_caller = MakeUsageFingerprint(
-      {UsageEvent::AUDIO_ADDED, UsageEvent::VIDEO_ADDED,
-       UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
-       UsageEvent::SET_REMOTE_DESCRIPTION_SUCCEEDED,
-       UsageEvent::CANDIDATE_COLLECTED, UsageEvent::ADD_ICE_CANDIDATE_SUCCEEDED,
-       UsageEvent::REMOTE_MDNS_CANDIDATE_ADDED, UsageEvent::ICE_STATE_CONNECTED,
-       UsageEvent::REMOTE_CANDIDATE_ADDED, UsageEvent::CLOSE_CALLED});
+      {PeerConnection::UsageEvent::AUDIO_ADDED,
+       PeerConnection::UsageEvent::VIDEO_ADDED,
+       PeerConnection::UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::SET_REMOTE_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::CANDIDATE_COLLECTED,
+       PeerConnection::UsageEvent::ADD_ICE_CANDIDATE_SUCCEEDED,
+       PeerConnection::UsageEvent::REMOTE_MDNS_CANDIDATE_ADDED,
+       PeerConnection::UsageEvent::ICE_STATE_CONNECTED,
+       PeerConnection::UsageEvent::REMOTE_CANDIDATE_ADDED,
+       PeerConnection::UsageEvent::CLOSE_CALLED});
 
   int expected_fingerprint_callee = MakeUsageFingerprint(
-      {UsageEvent::AUDIO_ADDED, UsageEvent::VIDEO_ADDED,
-       UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
-       UsageEvent::SET_REMOTE_DESCRIPTION_SUCCEEDED,
-       UsageEvent::CANDIDATE_COLLECTED, UsageEvent::MDNS_CANDIDATE_COLLECTED,
-       UsageEvent::ADD_ICE_CANDIDATE_SUCCEEDED, UsageEvent::ICE_STATE_CONNECTED,
-       UsageEvent::REMOTE_CANDIDATE_ADDED,
-       UsageEvent::DIRECT_CONNECTION_SELECTED, UsageEvent::CLOSE_CALLED});
+      {PeerConnection::UsageEvent::AUDIO_ADDED,
+       PeerConnection::UsageEvent::VIDEO_ADDED,
+       PeerConnection::UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::SET_REMOTE_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::CANDIDATE_COLLECTED,
+       PeerConnection::UsageEvent::MDNS_CANDIDATE_COLLECTED,
+       PeerConnection::UsageEvent::ADD_ICE_CANDIDATE_SUCCEEDED,
+       PeerConnection::UsageEvent::ICE_STATE_CONNECTED,
+       PeerConnection::UsageEvent::REMOTE_CANDIDATE_ADDED,
+       PeerConnection::UsageEvent::DIRECT_CONNECTION_SELECTED,
+       PeerConnection::UsageEvent::CLOSE_CALLED});
   EXPECT_METRIC_EQ(2, webrtc::metrics::NumSamples(kUsagePatternMetric));
   EXPECT_METRIC_EQ(1, webrtc::metrics::NumEvents(kUsagePatternMetric,
                                                  expected_fingerprint_caller));
@@ -497,7 +539,7 @@ TEST_F(PeerConnectionUsageHistogramTest, FingerprintWithMdnsCallee) {
                                                  expected_fingerprint_callee));
 }
 
-#ifdef WEBRTC_HAVE_SCTP
+#ifdef HAVE_SCTP
 TEST_F(PeerConnectionUsageHistogramTest, FingerprintDataOnly) {
   auto caller = CreatePeerConnection();
   auto callee = CreatePeerConnection();
@@ -507,11 +549,15 @@ TEST_F(PeerConnectionUsageHistogramTest, FingerprintDataOnly) {
   caller->pc()->Close();
   callee->pc()->Close();
   int expected_fingerprint = MakeUsageFingerprint(
-      {UsageEvent::DATA_ADDED, UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
-       UsageEvent::SET_REMOTE_DESCRIPTION_SUCCEEDED,
-       UsageEvent::CANDIDATE_COLLECTED, UsageEvent::ADD_ICE_CANDIDATE_SUCCEEDED,
-       UsageEvent::ICE_STATE_CONNECTED, UsageEvent::REMOTE_CANDIDATE_ADDED,
-       UsageEvent::DIRECT_CONNECTION_SELECTED, UsageEvent::CLOSE_CALLED});
+      {PeerConnection::UsageEvent::DATA_ADDED,
+       PeerConnection::UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::SET_REMOTE_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::CANDIDATE_COLLECTED,
+       PeerConnection::UsageEvent::ADD_ICE_CANDIDATE_SUCCEEDED,
+       PeerConnection::UsageEvent::ICE_STATE_CONNECTED,
+       PeerConnection::UsageEvent::REMOTE_CANDIDATE_ADDED,
+       PeerConnection::UsageEvent::DIRECT_CONNECTION_SELECTED,
+       PeerConnection::UsageEvent::CLOSE_CALLED});
   EXPECT_METRIC_EQ(2, webrtc::metrics::NumSamples(kUsagePatternMetric));
   EXPECT_METRIC_TRUE(
       webrtc::metrics::NumEvents(kUsagePatternMetric, expected_fingerprint) ==
@@ -519,26 +565,29 @@ TEST_F(PeerConnectionUsageHistogramTest, FingerprintDataOnly) {
       webrtc::metrics::NumEvents(
           kUsagePatternMetric,
           expected_fingerprint |
-              static_cast<int>(UsageEvent::PRIVATE_CANDIDATE_COLLECTED)) == 2);
+              static_cast<int>(
+                  PeerConnection::UsageEvent::PRIVATE_CANDIDATE_COLLECTED)) ==
+          2);
 }
-#endif  // WEBRTC_HAVE_SCTP
+#endif  // HAVE_SCTP
 #endif  // WEBRTC_ANDROID
 
 TEST_F(PeerConnectionUsageHistogramTest, FingerprintStunTurn) {
   RTCConfiguration configuration;
   PeerConnection::IceServer server;
-  server.urls = {"stun:dummy.stun.server"};
+  server.urls = {"stun:dummy.stun.server/"};
   configuration.servers.push_back(server);
-  server.urls = {"turn:dummy.turn.server"};
+  server.urls = {"turn:dummy.turn.server/"};
   server.username = "username";
   server.password = "password";
   configuration.servers.push_back(server);
   auto caller = CreatePeerConnection(configuration);
   ASSERT_TRUE(caller);
   caller->pc()->Close();
-  int expected_fingerprint = MakeUsageFingerprint(
-      {UsageEvent::STUN_SERVER_ADDED, UsageEvent::TURN_SERVER_ADDED,
-       UsageEvent::CLOSE_CALLED});
+  int expected_fingerprint =
+      MakeUsageFingerprint({PeerConnection::UsageEvent::STUN_SERVER_ADDED,
+                            PeerConnection::UsageEvent::TURN_SERVER_ADDED,
+                            PeerConnection::UsageEvent::CLOSE_CALLED});
   EXPECT_METRIC_EQ(1, webrtc::metrics::NumSamples(kUsagePatternMetric));
   EXPECT_METRIC_EQ(
       1, webrtc::metrics::NumEvents(kUsagePatternMetric, expected_fingerprint));
@@ -547,9 +596,9 @@ TEST_F(PeerConnectionUsageHistogramTest, FingerprintStunTurn) {
 TEST_F(PeerConnectionUsageHistogramTest, FingerprintStunTurnInReconfiguration) {
   RTCConfiguration configuration;
   PeerConnection::IceServer server;
-  server.urls = {"stun:dummy.stun.server"};
+  server.urls = {"stun:dummy.stun.server/"};
   configuration.servers.push_back(server);
-  server.urls = {"turn:dummy.turn.server"};
+  server.urls = {"turn:dummy.turn.server/"};
   server.username = "username";
   server.password = "password";
   configuration.servers.push_back(server);
@@ -557,9 +606,10 @@ TEST_F(PeerConnectionUsageHistogramTest, FingerprintStunTurnInReconfiguration) {
   ASSERT_TRUE(caller);
   ASSERT_TRUE(caller->pc()->SetConfiguration(configuration).ok());
   caller->pc()->Close();
-  int expected_fingerprint = MakeUsageFingerprint(
-      {UsageEvent::STUN_SERVER_ADDED, UsageEvent::TURN_SERVER_ADDED,
-       UsageEvent::CLOSE_CALLED});
+  int expected_fingerprint =
+      MakeUsageFingerprint({PeerConnection::UsageEvent::STUN_SERVER_ADDED,
+                            PeerConnection::UsageEvent::TURN_SERVER_ADDED,
+                            PeerConnection::UsageEvent::CLOSE_CALLED});
   EXPECT_METRIC_EQ(1, webrtc::metrics::NumSamples(kUsagePatternMetric));
   EXPECT_METRIC_EQ(
       1, webrtc::metrics::NumEvents(kUsagePatternMetric, expected_fingerprint));
@@ -574,20 +624,28 @@ TEST_F(PeerConnectionUsageHistogramTest, FingerprintWithPrivateIPCaller) {
   callee->pc()->Close();
 
   int expected_fingerprint_caller = MakeUsageFingerprint(
-      {UsageEvent::AUDIO_ADDED, UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
-       UsageEvent::SET_REMOTE_DESCRIPTION_SUCCEEDED,
-       UsageEvent::CANDIDATE_COLLECTED, UsageEvent::PRIVATE_CANDIDATE_COLLECTED,
-       UsageEvent::ADD_ICE_CANDIDATE_SUCCEEDED, UsageEvent::ICE_STATE_CONNECTED,
-       UsageEvent::REMOTE_CANDIDATE_ADDED,
-       UsageEvent::DIRECT_CONNECTION_SELECTED, UsageEvent::CLOSE_CALLED});
+      {PeerConnection::UsageEvent::AUDIO_ADDED,
+       PeerConnection::UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::SET_REMOTE_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::CANDIDATE_COLLECTED,
+       PeerConnection::UsageEvent::PRIVATE_CANDIDATE_COLLECTED,
+       PeerConnection::UsageEvent::ADD_ICE_CANDIDATE_SUCCEEDED,
+       PeerConnection::UsageEvent::ICE_STATE_CONNECTED,
+       PeerConnection::UsageEvent::REMOTE_CANDIDATE_ADDED,
+       PeerConnection::UsageEvent::DIRECT_CONNECTION_SELECTED,
+       PeerConnection::UsageEvent::CLOSE_CALLED});
 
   int expected_fingerprint_callee = MakeUsageFingerprint(
-      {UsageEvent::AUDIO_ADDED, UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
-       UsageEvent::SET_REMOTE_DESCRIPTION_SUCCEEDED,
-       UsageEvent::CANDIDATE_COLLECTED, UsageEvent::ADD_ICE_CANDIDATE_SUCCEEDED,
-       UsageEvent::REMOTE_PRIVATE_CANDIDATE_ADDED,
-       UsageEvent::ICE_STATE_CONNECTED, UsageEvent::REMOTE_CANDIDATE_ADDED,
-       UsageEvent::DIRECT_CONNECTION_SELECTED, UsageEvent::CLOSE_CALLED});
+      {PeerConnection::UsageEvent::AUDIO_ADDED,
+       PeerConnection::UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::SET_REMOTE_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::CANDIDATE_COLLECTED,
+       PeerConnection::UsageEvent::ADD_ICE_CANDIDATE_SUCCEEDED,
+       PeerConnection::UsageEvent::REMOTE_PRIVATE_CANDIDATE_ADDED,
+       PeerConnection::UsageEvent::ICE_STATE_CONNECTED,
+       PeerConnection::UsageEvent::REMOTE_CANDIDATE_ADDED,
+       PeerConnection::UsageEvent::DIRECT_CONNECTION_SELECTED,
+       PeerConnection::UsageEvent::CLOSE_CALLED});
   EXPECT_METRIC_EQ(2, webrtc::metrics::NumSamples(kUsagePatternMetric));
   EXPECT_METRIC_EQ(1, webrtc::metrics::NumEvents(kUsagePatternMetric,
                                                  expected_fingerprint_caller));
@@ -604,22 +662,30 @@ TEST_F(PeerConnectionUsageHistogramTest, FingerprintWithPrivateIpv6Callee) {
   callee->pc()->Close();
 
   int expected_fingerprint_caller = MakeUsageFingerprint(
-      {UsageEvent::AUDIO_ADDED, UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
-       UsageEvent::SET_REMOTE_DESCRIPTION_SUCCEEDED,
-       UsageEvent::CANDIDATE_COLLECTED, UsageEvent::ADD_ICE_CANDIDATE_SUCCEEDED,
-       UsageEvent::REMOTE_PRIVATE_CANDIDATE_ADDED,
-       UsageEvent::ICE_STATE_CONNECTED, UsageEvent::REMOTE_CANDIDATE_ADDED,
-       UsageEvent::REMOTE_IPV6_CANDIDATE_ADDED,
-       UsageEvent::DIRECT_CONNECTION_SELECTED, UsageEvent::CLOSE_CALLED});
+      {PeerConnection::UsageEvent::AUDIO_ADDED,
+       PeerConnection::UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::SET_REMOTE_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::CANDIDATE_COLLECTED,
+       PeerConnection::UsageEvent::ADD_ICE_CANDIDATE_SUCCEEDED,
+       PeerConnection::UsageEvent::REMOTE_PRIVATE_CANDIDATE_ADDED,
+       PeerConnection::UsageEvent::ICE_STATE_CONNECTED,
+       PeerConnection::UsageEvent::REMOTE_CANDIDATE_ADDED,
+       PeerConnection::UsageEvent::REMOTE_IPV6_CANDIDATE_ADDED,
+       PeerConnection::UsageEvent::DIRECT_CONNECTION_SELECTED,
+       PeerConnection::UsageEvent::CLOSE_CALLED});
 
   int expected_fingerprint_callee = MakeUsageFingerprint(
-      {UsageEvent::AUDIO_ADDED, UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
-       UsageEvent::SET_REMOTE_DESCRIPTION_SUCCEEDED,
-       UsageEvent::CANDIDATE_COLLECTED, UsageEvent::PRIVATE_CANDIDATE_COLLECTED,
-       UsageEvent::IPV6_CANDIDATE_COLLECTED,
-       UsageEvent::ADD_ICE_CANDIDATE_SUCCEEDED,
-       UsageEvent::REMOTE_CANDIDATE_ADDED, UsageEvent::ICE_STATE_CONNECTED,
-       UsageEvent::DIRECT_CONNECTION_SELECTED, UsageEvent::CLOSE_CALLED});
+      {PeerConnection::UsageEvent::AUDIO_ADDED,
+       PeerConnection::UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::SET_REMOTE_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::CANDIDATE_COLLECTED,
+       PeerConnection::UsageEvent::PRIVATE_CANDIDATE_COLLECTED,
+       PeerConnection::UsageEvent::IPV6_CANDIDATE_COLLECTED,
+       PeerConnection::UsageEvent::ADD_ICE_CANDIDATE_SUCCEEDED,
+       PeerConnection::UsageEvent::REMOTE_CANDIDATE_ADDED,
+       PeerConnection::UsageEvent::ICE_STATE_CONNECTED,
+       PeerConnection::UsageEvent::DIRECT_CONNECTION_SELECTED,
+       PeerConnection::UsageEvent::CLOSE_CALLED});
   EXPECT_METRIC_EQ(2, webrtc::metrics::NumSamples(kUsagePatternMetric));
   EXPECT_METRIC_EQ(1, webrtc::metrics::NumEvents(kUsagePatternMetric,
                                                  expected_fingerprint_caller));
@@ -628,7 +694,7 @@ TEST_F(PeerConnectionUsageHistogramTest, FingerprintWithPrivateIpv6Callee) {
 }
 
 #ifndef WEBRTC_ANDROID
-#ifdef WEBRTC_HAVE_SCTP
+#ifdef HAVE_SCTP
 // Test that the usage pattern bits for adding remote (private IPv6) candidates
 // are set when the remote candidates are retrieved from the Offer SDP instead
 // of trickled ICE messages.
@@ -681,20 +747,27 @@ TEST_F(PeerConnectionUsageHistogramTest,
   // with the callee via a prflx candidate and hence no direct connection bit
   // should be set.
   int expected_fingerprint_caller = MakeUsageFingerprint(
-      {UsageEvent::DATA_ADDED, UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
-       UsageEvent::SET_REMOTE_DESCRIPTION_SUCCEEDED,
-       UsageEvent::CANDIDATE_COLLECTED, UsageEvent::PRIVATE_CANDIDATE_COLLECTED,
-       UsageEvent::IPV6_CANDIDATE_COLLECTED, UsageEvent::ICE_STATE_CONNECTED,
-       UsageEvent::CLOSE_CALLED});
+      {PeerConnection::UsageEvent::DATA_ADDED,
+       PeerConnection::UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::SET_REMOTE_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::CANDIDATE_COLLECTED,
+       PeerConnection::UsageEvent::PRIVATE_CANDIDATE_COLLECTED,
+       PeerConnection::UsageEvent::IPV6_CANDIDATE_COLLECTED,
+       PeerConnection::UsageEvent::ICE_STATE_CONNECTED,
+       PeerConnection::UsageEvent::CLOSE_CALLED});
 
   int expected_fingerprint_callee = MakeUsageFingerprint(
-      {UsageEvent::DATA_ADDED, UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
-       UsageEvent::SET_REMOTE_DESCRIPTION_SUCCEEDED,
-       UsageEvent::CANDIDATE_COLLECTED, UsageEvent::MDNS_CANDIDATE_COLLECTED,
-       UsageEvent::REMOTE_CANDIDATE_ADDED,
-       UsageEvent::REMOTE_PRIVATE_CANDIDATE_ADDED,
-       UsageEvent::REMOTE_IPV6_CANDIDATE_ADDED, UsageEvent::ICE_STATE_CONNECTED,
-       UsageEvent::DIRECT_CONNECTION_SELECTED, UsageEvent::CLOSE_CALLED});
+      {PeerConnection::UsageEvent::DATA_ADDED,
+       PeerConnection::UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::SET_REMOTE_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::CANDIDATE_COLLECTED,
+       PeerConnection::UsageEvent::MDNS_CANDIDATE_COLLECTED,
+       PeerConnection::UsageEvent::REMOTE_CANDIDATE_ADDED,
+       PeerConnection::UsageEvent::REMOTE_PRIVATE_CANDIDATE_ADDED,
+       PeerConnection::UsageEvent::REMOTE_IPV6_CANDIDATE_ADDED,
+       PeerConnection::UsageEvent::ICE_STATE_CONNECTED,
+       PeerConnection::UsageEvent::DIRECT_CONNECTION_SELECTED,
+       PeerConnection::UsageEvent::CLOSE_CALLED});
   EXPECT_METRIC_EQ(2, webrtc::metrics::NumSamples(kUsagePatternMetric));
   EXPECT_METRIC_EQ(1, webrtc::metrics::NumEvents(kUsagePatternMetric,
                                                  expected_fingerprint_caller));
@@ -708,13 +781,16 @@ TEST_F(PeerConnectionUsageHistogramTest, NotableUsageNoted) {
   caller->GenerateOfferAndCollectCandidates();
   caller->pc()->Close();
   int expected_fingerprint = MakeUsageFingerprint(
-      {UsageEvent::DATA_ADDED, UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
-       UsageEvent::CANDIDATE_COLLECTED, UsageEvent::CLOSE_CALLED});
+      {PeerConnection::UsageEvent::DATA_ADDED,
+       PeerConnection::UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::CANDIDATE_COLLECTED,
+       PeerConnection::UsageEvent::CLOSE_CALLED});
   EXPECT_METRIC_EQ(1, webrtc::metrics::NumSamples(kUsagePatternMetric));
   EXPECT_METRIC_TRUE(
       expected_fingerprint == ObservedFingerprint() ||
       (expected_fingerprint |
-       static_cast<int>(UsageEvent::PRIVATE_CANDIDATE_COLLECTED)) ==
+       static_cast<int>(
+           PeerConnection::UsageEvent::PRIVATE_CANDIDATE_COLLECTED)) ==
           ObservedFingerprint());
   EXPECT_METRIC_EQ(absl::make_optional(ObservedFingerprint()),
                    caller->observer()->interesting_usage_detected());
@@ -725,8 +801,9 @@ TEST_F(PeerConnectionUsageHistogramTest, NotableUsageOnEventFiring) {
   caller->CreateDataChannel("foo");
   caller->GenerateOfferAndCollectCandidates();
   int expected_fingerprint = MakeUsageFingerprint(
-      {UsageEvent::DATA_ADDED, UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
-       UsageEvent::CANDIDATE_COLLECTED});
+      {PeerConnection::UsageEvent::DATA_ADDED,
+       PeerConnection::UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::CANDIDATE_COLLECTED});
   EXPECT_METRIC_EQ(0, webrtc::metrics::NumSamples(kUsagePatternMetric));
   caller->GetInternalPeerConnection()->RequestUsagePatternReportForTesting();
   EXPECT_METRIC_EQ_WAIT(1, webrtc::metrics::NumSamples(kUsagePatternMetric),
@@ -734,7 +811,8 @@ TEST_F(PeerConnectionUsageHistogramTest, NotableUsageOnEventFiring) {
   EXPECT_METRIC_TRUE(
       expected_fingerprint == ObservedFingerprint() ||
       (expected_fingerprint |
-       static_cast<int>(UsageEvent::PRIVATE_CANDIDATE_COLLECTED)) ==
+       static_cast<int>(
+           PeerConnection::UsageEvent::PRIVATE_CANDIDATE_COLLECTED)) ==
           ObservedFingerprint());
   EXPECT_METRIC_EQ(absl::make_optional(ObservedFingerprint()),
                    caller->observer()->interesting_usage_detected());
@@ -746,8 +824,10 @@ TEST_F(PeerConnectionUsageHistogramTest,
   caller->CreateDataChannel("foo");
   caller->GenerateOfferAndCollectCandidates();
   int expected_fingerprint = MakeUsageFingerprint(
-      {UsageEvent::DATA_ADDED, UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
-       UsageEvent::CANDIDATE_COLLECTED, UsageEvent::CLOSE_CALLED});
+      {PeerConnection::UsageEvent::DATA_ADDED,
+       PeerConnection::UsageEvent::SET_LOCAL_DESCRIPTION_SUCCEEDED,
+       PeerConnection::UsageEvent::CANDIDATE_COLLECTED,
+       PeerConnection::UsageEvent::CLOSE_CALLED});
   EXPECT_METRIC_EQ(0, webrtc::metrics::NumSamples(kUsagePatternMetric));
   caller->pc()->Close();
   EXPECT_METRIC_EQ(1, webrtc::metrics::NumSamples(kUsagePatternMetric));
@@ -758,7 +838,8 @@ TEST_F(PeerConnectionUsageHistogramTest,
   EXPECT_METRIC_TRUE(
       expected_fingerprint == ObservedFingerprint() ||
       (expected_fingerprint |
-       static_cast<int>(UsageEvent::PRIVATE_CANDIDATE_COLLECTED)) ==
+       static_cast<int>(
+           PeerConnection::UsageEvent::PRIVATE_CANDIDATE_COLLECTED)) ==
           ObservedFingerprint());
   // After close, the usage-detection callback should NOT have been called.
   EXPECT_METRIC_FALSE(caller->observer()->interesting_usage_detected());

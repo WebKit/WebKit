@@ -13,15 +13,11 @@
 
 #include <memory>
 
-#include "api/dtls_transport_interface.h"
 #include "api/scoped_refptr.h"
 #include "api/sctp_transport_interface.h"
-#include "media/sctp/sctp_transport_internal.h"
-#include "p2p/base/dtls_transport_internal.h"
+#include "media/sctp/sctp_transport.h"
 #include "pc/dtls_transport.h"
-#include "rtc_base/third_party/sigslot/sigslot.h"
-#include "rtc_base/thread.h"
-#include "rtc_base/thread_annotations.h"
+#include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
 
@@ -52,12 +48,12 @@ class SctpTransport : public SctpTransportInterface,
   // internal() to be functions on the webrtc::SctpTransport interface,
   // and make the internal() function private.
   cricket::SctpTransportInternal* internal() {
-    RTC_DCHECK_RUN_ON(owner_thread_);
+    MutexLock lock(&lock_);
     return internal_sctp_transport_.get();
   }
 
   const cricket::SctpTransportInternal* internal() const {
-    RTC_DCHECK_RUN_ON(owner_thread_);
+    MutexLock lock(&lock_);
     return internal_sctp_transport_.get();
   }
 
@@ -73,12 +69,15 @@ class SctpTransport : public SctpTransportInterface,
   void OnDtlsStateChange(cricket::DtlsTransportInternal* transport,
                          cricket::DtlsTransportState state);
 
-  // NOTE: |owner_thread_| is the thread that the SctpTransport object is
-  // constructed on. In the context of PeerConnection, it's the network thread.
-  rtc::Thread* const owner_thread_;
-  SctpTransportInformation info_ RTC_GUARDED_BY(owner_thread_);
+  // Note - owner_thread never changes, but can't be const if we do
+  // Invoke() on it.
+  rtc::Thread* owner_thread_;
+  mutable Mutex lock_;
+  // Variables accessible off-thread, guarded by lock_
+  SctpTransportInformation info_ RTC_GUARDED_BY(lock_);
   std::unique_ptr<cricket::SctpTransportInternal> internal_sctp_transport_
-      RTC_GUARDED_BY(owner_thread_);
+      RTC_GUARDED_BY(lock_);
+  // Variables only accessed on-thread
   SctpTransportObserverInterface* observer_ RTC_GUARDED_BY(owner_thread_) =
       nullptr;
   rtc::scoped_refptr<DtlsTransport> dtls_transport_

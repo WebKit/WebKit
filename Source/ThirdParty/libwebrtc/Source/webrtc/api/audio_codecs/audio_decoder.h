@@ -136,7 +136,7 @@ class AudioDecoder {
   // with the decoded audio on either side of the concealment.
   // Note: The default implementation of GeneratePlc will be deleted soon. All
   // implementations must provide their own, which can be a simple as a no-op.
-  // TODO(bugs.webrtc.org/9676): Remove default implementation.
+  // TODO(bugs.webrtc.org/9676): Remove default impementation.
   virtual void GeneratePlc(size_t requested_samples_per_channel,
                            rtc::BufferT<int16_t>* concealment_audio);
 

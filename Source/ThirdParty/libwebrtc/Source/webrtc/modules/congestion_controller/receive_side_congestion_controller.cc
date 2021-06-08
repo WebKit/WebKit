@@ -10,7 +10,6 @@
 
 #include "modules/congestion_controller/include/receive_side_congestion_controller.h"
 
-#include "api/units/data_rate.h"
 #include "modules/pacing/packet_router.h"
 #include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 #include "modules/remote_bitrate_estimator/remote_bitrate_estimator_abs_send_time.h"
@@ -121,13 +120,16 @@ void ReceiveSideCongestionController::WrappingBitrateEstimator::
 
 ReceiveSideCongestionController::ReceiveSideCongestionController(
     Clock* clock,
-    RemoteEstimatorProxy::TransportFeedbackSender feedback_sender,
-    RembThrottler::RembSender remb_sender,
+    PacketRouter* packet_router)
+    : ReceiveSideCongestionController(clock, packet_router, nullptr) {}
+
+ReceiveSideCongestionController::ReceiveSideCongestionController(
+    Clock* clock,
+    PacketRouter* packet_router,
     NetworkStateEstimator* network_state_estimator)
-    : remb_throttler_(std::move(remb_sender), clock),
-      remote_bitrate_estimator_(&remb_throttler_, clock),
+    : remote_bitrate_estimator_(packet_router, clock),
       remote_estimator_proxy_(clock,
-                              std::move(feedback_sender),
+                              packet_router,
                               &field_trial_config_,
                               network_state_estimator) {}
 
@@ -182,11 +184,6 @@ int64_t ReceiveSideCongestionController::TimeUntilNextProcess() {
 
 void ReceiveSideCongestionController::Process() {
   remote_bitrate_estimator_.Process();
-}
-
-void ReceiveSideCongestionController::SetMaxDesiredReceiveBitrate(
-    DataRate bitrate) {
-  remb_throttler_.SetMaxDesiredReceiveBitrate(bitrate);
 }
 
 }  // namespace webrtc

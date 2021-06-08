@@ -10,6 +10,8 @@
 
 #include "pc/simulcast_description.h"
 
+#include <utility>
+
 #include "rtc_base/checks.h"
 
 namespace cricket {

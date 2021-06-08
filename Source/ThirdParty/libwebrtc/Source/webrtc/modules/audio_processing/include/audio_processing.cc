@@ -16,9 +16,6 @@
 namespace webrtc {
 namespace {
 
-using Agc1Config = AudioProcessing::Config::GainController1;
-using Agc2Config = AudioProcessing::Config::GainController2;
-
 std::string NoiseSuppressionLevelToString(
     const AudioProcessing::Config::NoiseSuppression::Level& level) {
   switch (level) {
@@ -31,30 +28,36 @@ std::string NoiseSuppressionLevelToString(
     case AudioProcessing::Config::NoiseSuppression::Level::kVeryHigh:
       return "VeryHigh";
   }
-  RTC_CHECK_NOTREACHED();
 }
 
-std::string GainController1ModeToString(const Agc1Config::Mode& mode) {
+std::string GainController1ModeToString(
+    const AudioProcessing::Config::GainController1::Mode& mode) {
   switch (mode) {
-    case Agc1Config::Mode::kAdaptiveAnalog:
+    case AudioProcessing::Config::GainController1::Mode::kAdaptiveAnalog:
       return "AdaptiveAnalog";
-    case Agc1Config::Mode::kAdaptiveDigital:
+    case AudioProcessing::Config::GainController1::Mode::kAdaptiveDigital:
       return "AdaptiveDigital";
-    case Agc1Config::Mode::kFixedDigital:
+    case AudioProcessing::Config::GainController1::Mode::kFixedDigital:
       return "FixedDigital";
   }
-  RTC_CHECK_NOTREACHED();
 }
 
-std::string GainController2NoiseEstimatorToString(
-    const Agc2Config::NoiseEstimator& type) {
-  switch (type) {
-    case Agc2Config::NoiseEstimator::kStationaryNoise:
-      return "StationaryNoise";
-    case Agc2Config::NoiseEstimator::kNoiseFloor:
-      return "NoiseFloor";
+std::string GainController2LevelEstimatorToString(
+    const AudioProcessing::Config::GainController2::LevelEstimator& level) {
+  switch (level) {
+    case AudioProcessing::Config::GainController2::LevelEstimator::kRms:
+      return "Rms";
+    case AudioProcessing::Config::GainController2::LevelEstimator::kPeak:
+      return "Peak";
   }
-  RTC_CHECK_NOTREACHED();
+}
+
+int GetDefaultMaxInternalRate() {
+#ifdef WEBRTC_ARCH_ARM_FAMILY
+  return 32000;
+#else
+  return 48000;
+#endif
 }
 
 }  // namespace
@@ -64,123 +67,57 @@ constexpr int AudioProcessing::kNativeSampleRatesHz[];
 void CustomProcessing::SetRuntimeSetting(
     AudioProcessing::RuntimeSetting setting) {}
 
-bool Agc1Config::operator==(const Agc1Config& rhs) const {
-  const auto& analog_lhs = analog_gain_controller;
-  const auto& analog_rhs = rhs.analog_gain_controller;
-  return enabled == rhs.enabled && mode == rhs.mode &&
-         target_level_dbfs == rhs.target_level_dbfs &&
-         compression_gain_db == rhs.compression_gain_db &&
-         enable_limiter == rhs.enable_limiter &&
-         analog_level_minimum == rhs.analog_level_minimum &&
-         analog_level_maximum == rhs.analog_level_maximum &&
-         analog_lhs.enabled == analog_rhs.enabled &&
-         analog_lhs.startup_min_volume == analog_rhs.startup_min_volume &&
-         analog_lhs.clipped_level_min == analog_rhs.clipped_level_min &&
-         analog_lhs.enable_digital_adaptive ==
-             analog_rhs.enable_digital_adaptive;
-}
-
-bool Agc2Config::AdaptiveDigital::operator==(
-    const Agc2Config::AdaptiveDigital& rhs) const {
-  return enabled == rhs.enabled && dry_run == rhs.dry_run &&
-         noise_estimator == rhs.noise_estimator &&
-         vad_reset_period_ms == rhs.vad_reset_period_ms &&
-         adjacent_speech_frames_threshold ==
-             rhs.adjacent_speech_frames_threshold &&
-         max_gain_change_db_per_second == rhs.max_gain_change_db_per_second &&
-         max_output_noise_level_dbfs == rhs.max_output_noise_level_dbfs &&
-         sse2_allowed == rhs.sse2_allowed && avx2_allowed == rhs.avx2_allowed &&
-         neon_allowed == rhs.neon_allowed;
-}
-
-bool Agc2Config::operator==(const Agc2Config& rhs) const {
-  return enabled == rhs.enabled &&
-         fixed_digital.gain_db == rhs.fixed_digital.gain_db &&
-         adaptive_digital == rhs.adaptive_digital;
-}
-
-bool AudioProcessing::Config::CaptureLevelAdjustment::operator==(
-    const AudioProcessing::Config::CaptureLevelAdjustment& rhs) const {
-  return enabled == rhs.enabled && pre_gain_factor == rhs.pre_gain_factor &&
-         post_gain_factor && rhs.post_gain_factor &&
-         analog_mic_gain_emulation == rhs.analog_mic_gain_emulation;
-}
-
-bool AudioProcessing::Config::CaptureLevelAdjustment::AnalogMicGainEmulation::
-operator==(const AudioProcessing::Config::CaptureLevelAdjustment::
-               AnalogMicGainEmulation& rhs) const {
-  return enabled == rhs.enabled && initial_level == rhs.initial_level;
-}
+AudioProcessing::Config::Pipeline::Pipeline()
+    : maximum_internal_processing_rate(GetDefaultMaxInternalRate()) {}
 
 std::string AudioProcessing::Config::ToString() const {
-  char buf[2048];
+  char buf[1024];
   rtc::SimpleStringBuilder builder(buf);
-  builder
-      << "AudioProcessing::Config{ "
-         "pipeline: { "
-         "maximum_internal_processing_rate: "
-      << pipeline.maximum_internal_processing_rate
-      << ", multi_channel_render: " << pipeline.multi_channel_render
-      << ", multi_channel_capture: " << pipeline.multi_channel_capture
-      << " }, pre_amplifier: { enabled: " << pre_amplifier.enabled
-      << ", fixed_gain_factor: " << pre_amplifier.fixed_gain_factor
-      << " },capture_level_adjustment: { enabled: "
-      << capture_level_adjustment.enabled
-      << ", pre_gain_factor: " << capture_level_adjustment.pre_gain_factor
-      << ", post_gain_factor: " << capture_level_adjustment.post_gain_factor
-      << ", analog_mic_gain_emulation: { enabled: "
-      << capture_level_adjustment.analog_mic_gain_emulation.enabled
-      << ", initial_level: "
-      << capture_level_adjustment.analog_mic_gain_emulation.initial_level
-      << " }}, high_pass_filter: { enabled: " << high_pass_filter.enabled
-      << " }, echo_canceller: { enabled: " << echo_canceller.enabled
-      << ", mobile_mode: " << echo_canceller.mobile_mode
-      << ", enforce_high_pass_filtering: "
-      << echo_canceller.enforce_high_pass_filtering
-      << " }, noise_suppression: { enabled: " << noise_suppression.enabled
-      << ", level: " << NoiseSuppressionLevelToString(noise_suppression.level)
-      << " }, transient_suppression: { enabled: "
-      << transient_suppression.enabled
-      << " }, voice_detection: { enabled: " << voice_detection.enabled
-      << " }, gain_controller1: { enabled: " << gain_controller1.enabled
-      << ", mode: " << GainController1ModeToString(gain_controller1.mode)
-      << ", target_level_dbfs: " << gain_controller1.target_level_dbfs
-      << ", compression_gain_db: " << gain_controller1.compression_gain_db
-      << ", enable_limiter: " << gain_controller1.enable_limiter
-      << ", analog_level_minimum: " << gain_controller1.analog_level_minimum
-      << ", analog_level_maximum: " << gain_controller1.analog_level_maximum
-      << ", analog_gain_controller { enabled: "
-      << gain_controller1.analog_gain_controller.enabled
-      << ", startup_min_volume: "
-      << gain_controller1.analog_gain_controller.startup_min_volume
-      << ", clipped_level_min: "
-      << gain_controller1.analog_gain_controller.clipped_level_min
-      << ", enable_digital_adaptive: "
-      << gain_controller1.analog_gain_controller.enable_digital_adaptive
-      << " }}, gain_controller2: { enabled: " << gain_controller2.enabled
-      << ", fixed_digital: { gain_db: "
-      << gain_controller2.fixed_digital.gain_db
-      << " }, adaptive_digital: { enabled: "
-      << gain_controller2.adaptive_digital.enabled
-      << ", dry_run: " << gain_controller2.adaptive_digital.dry_run
-      << ", noise_estimator: "
-      << GainController2NoiseEstimatorToString(
-             gain_controller2.adaptive_digital.noise_estimator)
-      << ", vad_reset_period_ms: "
-      << gain_controller2.adaptive_digital.vad_reset_period_ms
-      << ", adjacent_speech_frames_threshold: "
-      << gain_controller2.adaptive_digital.adjacent_speech_frames_threshold
-      << ", max_gain_change_db_per_second: "
-      << gain_controller2.adaptive_digital.max_gain_change_db_per_second
-      << ", max_output_noise_level_dbfs: "
-      << gain_controller2.adaptive_digital.max_output_noise_level_dbfs
-      << ", sse2_allowed: " << gain_controller2.adaptive_digital.sse2_allowed
-      << ", avx2_allowed: " << gain_controller2.adaptive_digital.avx2_allowed
-      << ", neon_allowed: " << gain_controller2.adaptive_digital.neon_allowed
-      << "}}, residual_echo_detector: { enabled: "
-      << residual_echo_detector.enabled
-      << " }, level_estimation: { enabled: " << level_estimation.enabled
-      << " }}";
+  builder << "AudioProcessing::Config{ "
+             "pipeline: {"
+             "maximum_internal_processing_rate: "
+          << pipeline.maximum_internal_processing_rate
+          << ", multi_channel_render: " << pipeline.multi_channel_render
+          << ", "
+             ", multi_channel_capture: "
+          << pipeline.multi_channel_capture
+          << "}, "
+             "pre_amplifier: { enabled: "
+          << pre_amplifier.enabled
+          << ", fixed_gain_factor: " << pre_amplifier.fixed_gain_factor
+          << " }, high_pass_filter: { enabled: " << high_pass_filter.enabled
+          << " }, echo_canceller: { enabled: " << echo_canceller.enabled
+          << ", mobile_mode: " << echo_canceller.mobile_mode
+          << ", enforce_high_pass_filtering: "
+          << echo_canceller.enforce_high_pass_filtering
+          << " }, noise_suppression: { enabled: " << noise_suppression.enabled
+          << ", level: "
+          << NoiseSuppressionLevelToString(noise_suppression.level)
+          << " }, transient_suppression: { enabled: "
+          << transient_suppression.enabled
+          << " }, voice_detection: { enabled: " << voice_detection.enabled
+          << " }, gain_controller1: { enabled: " << gain_controller1.enabled
+          << ", mode: " << GainController1ModeToString(gain_controller1.mode)
+          << ", target_level_dbfs: " << gain_controller1.target_level_dbfs
+          << ", compression_gain_db: " << gain_controller1.compression_gain_db
+          << ", enable_limiter: " << gain_controller1.enable_limiter
+          << ", analog_level_minimum: " << gain_controller1.analog_level_minimum
+          << ", analog_level_maximum: " << gain_controller1.analog_level_maximum
+          << " }, gain_controller2: { enabled: " << gain_controller2.enabled
+          << ", fixed_digital: { gain_db: "
+          << gain_controller2.fixed_digital.gain_db
+          << " }, adaptive_digital: { enabled: "
+          << gain_controller2.adaptive_digital.enabled << ", level_estimator: "
+          << GainController2LevelEstimatorToString(
+                 gain_controller2.adaptive_digital.level_estimator)
+          << ", use_saturation_protector: "
+          << gain_controller2.adaptive_digital.use_saturation_protector
+          << ", extra_saturation_margin_db: "
+          << gain_controller2.adaptive_digital.extra_saturation_margin_db
+          << " } }, residual_echo_detector: { enabled: "
+          << residual_echo_detector.enabled
+          << " }, level_estimation: { enabled: " << level_estimation.enabled
+          << " } }";
   return builder.str();
 }
 

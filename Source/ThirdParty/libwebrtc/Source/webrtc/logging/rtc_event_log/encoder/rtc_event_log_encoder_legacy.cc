@@ -15,8 +15,6 @@
 #include <vector>
 
 #include "absl/types/optional.h"
-#include "api/array_view.h"
-#include "api/network_state_predictor.h"
 #include "api/rtp_headers.h"
 #include "api/rtp_parameters.h"
 #include "api/transport/network_types.h"
@@ -40,6 +38,7 @@
 #include "logging/rtc_event_log/events/rtc_event_video_send_stream_config.h"
 #include "logging/rtc_event_log/rtc_stream_config.h"
 #include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor_config.h"
+#include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/app.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/bye.h"
@@ -594,14 +593,14 @@ std::string RtcEventLogEncoderLegacy::EncodeRtcpPacketOutgoing(
 
 std::string RtcEventLogEncoderLegacy::EncodeRtpPacketIncoming(
     const RtcEventRtpPacketIncoming& event) {
-  return EncodeRtpPacket(event.timestamp_us(), event.RawHeader(),
+  return EncodeRtpPacket(event.timestamp_us(), event.header(),
                          event.packet_length(), PacedPacketInfo::kNotAProbe,
                          true);
 }
 
 std::string RtcEventLogEncoderLegacy::EncodeRtpPacketOutgoing(
     const RtcEventRtpPacketOutgoing& event) {
-  return EncodeRtpPacket(event.timestamp_us(), event.RawHeader(),
+  return EncodeRtpPacket(event.timestamp_us(), event.header(),
                          event.packet_length(), event.probe_cluster_id(),
                          false);
 }
@@ -737,7 +736,7 @@ std::string RtcEventLogEncoderLegacy::EncodeRtcpPacket(
 
 std::string RtcEventLogEncoderLegacy::EncodeRtpPacket(
     int64_t timestamp_us,
-    rtc::ArrayView<const uint8_t> header,
+    const webrtc::RtpPacket& header,
     size_t packet_length,
     int probe_cluster_id,
     bool is_incoming) {

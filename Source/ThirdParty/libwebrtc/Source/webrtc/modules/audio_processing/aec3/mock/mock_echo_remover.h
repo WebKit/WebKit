@@ -44,10 +44,6 @@ class MockEchoRemover : public EchoRemover {
               GetMetrics,
               (EchoControl::Metrics * metrics),
               (const, override));
-  MOCK_METHOD(void,
-              SetCaptureOutputUsage,
-              (bool capture_output_used),
-              (override));
 };
 
 }  // namespace test

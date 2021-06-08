@@ -286,9 +286,9 @@ TEST_F(SctpDataChannelTest, OpenMessageSent) {
 
   SetChannelReady();
   EXPECT_GE(webrtc_data_channel_->id(), 0);
-  EXPECT_EQ(webrtc::DataMessageType::kControl,
-            provider_->last_send_data_params().type);
-  EXPECT_EQ(provider_->last_sid(), webrtc_data_channel_->id());
+  EXPECT_EQ(cricket::DMT_CONTROL, provider_->last_send_data_params().type);
+  EXPECT_EQ(provider_->last_send_data_params().ssrc,
+            static_cast<uint32_t>(webrtc_data_channel_->id()));
 }
 
 TEST_F(SctpDataChannelTest, QueuedOpenMessageSent) {
@@ -296,9 +296,9 @@ TEST_F(SctpDataChannelTest, QueuedOpenMessageSent) {
   SetChannelReady();
   provider_->set_send_blocked(false);
 
-  EXPECT_EQ(webrtc::DataMessageType::kControl,
-            provider_->last_send_data_params().type);
-  EXPECT_EQ(provider_->last_sid(), webrtc_data_channel_->id());
+  EXPECT_EQ(cricket::DMT_CONTROL, provider_->last_send_data_params().type);
+  EXPECT_EQ(provider_->last_send_data_params().ssrc,
+            static_cast<uint32_t>(webrtc_data_channel_->id()));
 }
 
 // Tests that the DataChannel created after transport gets ready can enter OPEN
@@ -334,8 +334,8 @@ TEST_F(SctpDataChannelTest, SendUnorderedAfterReceivesOpenAck) {
 
   // Emulates receiving an OPEN_ACK message.
   cricket::ReceiveDataParams params;
-  params.sid = init.id;
-  params.type = webrtc::DataMessageType::kControl;
+  params.ssrc = init.id;
+  params.type = cricket::DMT_CONTROL;
   rtc::CopyOnWriteBuffer payload;
   webrtc::WriteDataChannelOpenAckMessage(&payload);
   dc->OnDataReceived(params, payload);
@@ -360,8 +360,8 @@ TEST_F(SctpDataChannelTest, SendUnorderedAfterReceiveData) {
 
   // Emulates receiving a DATA message.
   cricket::ReceiveDataParams params;
-  params.sid = init.id;
-  params.type = webrtc::DataMessageType::kText;
+  params.ssrc = init.id;
+  params.type = cricket::DMT_TEXT;
   webrtc::DataBuffer buffer("data");
   dc->OnDataReceived(params, buffer.data);
 
@@ -382,8 +382,7 @@ TEST_F(SctpDataChannelTest, OpenWaitsForOpenMesssage) {
   provider_->set_send_blocked(false);
   EXPECT_EQ_WAIT(webrtc::DataChannelInterface::kOpen,
                  webrtc_data_channel_->state(), 1000);
-  EXPECT_EQ(webrtc::DataMessageType::kControl,
-            provider_->last_send_data_params().type);
+  EXPECT_EQ(cricket::DMT_CONTROL, provider_->last_send_data_params().type);
 }
 
 // Tests that close first makes sure all queued data gets sent.
@@ -404,43 +403,42 @@ TEST_F(SctpDataChannelTest, QueuedCloseFlushes) {
   EXPECT_EQ_WAIT(webrtc::DataChannelInterface::kClosed,
                  webrtc_data_channel_->state(), 1000);
   EXPECT_TRUE(webrtc_data_channel_->error().ok());
-  EXPECT_EQ(webrtc::DataMessageType::kText,
-            provider_->last_send_data_params().type);
+  EXPECT_EQ(cricket::DMT_TEXT, provider_->last_send_data_params().type);
 }
 
-// Tests that messages are sent with the right id.
-TEST_F(SctpDataChannelTest, SendDataId) {
+// Tests that messages are sent with the right ssrc.
+TEST_F(SctpDataChannelTest, SendDataSsrc) {
   webrtc_data_channel_->SetSctpSid(1);
   SetChannelReady();
   webrtc::DataBuffer buffer("data");
   EXPECT_TRUE(webrtc_data_channel_->Send(buffer));
-  EXPECT_EQ(1, provider_->last_sid());
+  EXPECT_EQ(1U, provider_->last_send_data_params().ssrc);
 }
 
-// Tests that the incoming messages with wrong ids are rejected.
-TEST_F(SctpDataChannelTest, ReceiveDataWithInvalidId) {
+// Tests that the incoming messages with wrong ssrcs are rejected.
+TEST_F(SctpDataChannelTest, ReceiveDataWithInvalidSsrc) {
   webrtc_data_channel_->SetSctpSid(1);
   SetChannelReady();
 
   AddObserver();
 
   cricket::ReceiveDataParams params;
-  params.sid = 0;
+  params.ssrc = 0;
   webrtc::DataBuffer buffer("abcd");
   webrtc_data_channel_->OnDataReceived(params, buffer.data);
 
   EXPECT_EQ(0U, observer_->messages_received());
 }
 
-// Tests that the incoming messages with right ids are accepted.
-TEST_F(SctpDataChannelTest, ReceiveDataWithValidId) {
+// Tests that the incoming messages with right ssrcs are acceted.
+TEST_F(SctpDataChannelTest, ReceiveDataWithValidSsrc) {
   webrtc_data_channel_->SetSctpSid(1);
   SetChannelReady();
 
   AddObserver();
 
   cricket::ReceiveDataParams params;
-  params.sid = 1;
+  params.ssrc = 1;
   webrtc::DataBuffer buffer("abcd");
 
   webrtc_data_channel_->OnDataReceived(params, buffer.data);
@@ -461,7 +459,7 @@ TEST_F(SctpDataChannelTest, NoMsgSentIfNegotiatedAndNotFromOpenMsg) {
                               rtc::Thread::Current(), rtc::Thread::Current());
 
   EXPECT_EQ_WAIT(webrtc::DataChannelInterface::kOpen, dc->state(), 1000);
-  EXPECT_EQ(0, provider_->last_sid());
+  EXPECT_EQ(0U, provider_->last_send_data_params().ssrc);
 }
 
 // Tests that DataChannel::messages_received() and DataChannel::bytes_received()
@@ -479,7 +477,7 @@ TEST_F(SctpDataChannelTest, VerifyMessagesAndBytesReceived) {
 
   webrtc_data_channel_->SetSctpSid(1);
   cricket::ReceiveDataParams params;
-  params.sid = 1;
+  params.ssrc = 1;
 
   // Default values.
   EXPECT_EQ(0U, webrtc_data_channel_->messages_received());
@@ -526,9 +524,9 @@ TEST_F(SctpDataChannelTest, OpenAckSentIfCreatedFromOpenMessage) {
 
   EXPECT_EQ_WAIT(webrtc::DataChannelInterface::kOpen, dc->state(), 1000);
 
-  EXPECT_EQ(config.id, provider_->last_sid());
-  EXPECT_EQ(webrtc::DataMessageType::kControl,
-            provider_->last_send_data_params().type);
+  EXPECT_EQ(static_cast<unsigned int>(config.id),
+            provider_->last_send_data_params().ssrc);
+  EXPECT_EQ(cricket::DMT_CONTROL, provider_->last_send_data_params().type);
 }
 
 // Tests the OPEN_ACK role assigned by InternalDataChannelInit.
@@ -548,7 +546,7 @@ TEST_F(SctpDataChannelTest, ClosedWhenSendBufferFull) {
   SetChannelReady();
 
   rtc::CopyOnWriteBuffer buffer(1024);
-  memset(buffer.MutableData(), 0, buffer.size());
+  memset(buffer.data(), 0, buffer.size());
 
   webrtc::DataBuffer packet(buffer, true);
   provider_->set_send_blocked(true);
@@ -583,10 +581,10 @@ TEST_F(SctpDataChannelTest, ClosedOnTransportError) {
 TEST_F(SctpDataChannelTest, ClosedWhenReceivedBufferFull) {
   SetChannelReady();
   rtc::CopyOnWriteBuffer buffer(1024);
-  memset(buffer.MutableData(), 0, buffer.size());
+  memset(buffer.data(), 0, buffer.size());
 
   cricket::ReceiveDataParams params;
-  params.sid = 0;
+  params.ssrc = 0;
 
   // Receiving data without having an observer will overflow the buffer.
   for (size_t i = 0; i < 16 * 1024 + 1; ++i) {
@@ -625,7 +623,7 @@ TEST_F(SctpDataChannelTest, TransportDestroyedWhileDataBuffered) {
   SetChannelReady();
 
   rtc::CopyOnWriteBuffer buffer(1024);
-  memset(buffer.MutableData(), 0, buffer.size());
+  memset(buffer.data(), 0, buffer.size());
   webrtc::DataBuffer packet(buffer, true);
 
   // Send a packet while sending is blocked so it ends up buffered.

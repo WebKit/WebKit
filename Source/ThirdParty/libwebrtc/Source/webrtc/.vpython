@@ -52,7 +52,7 @@ wheel: <
 
 wheel: <
   name: "infra/python/wheels/six-py2_py3"
-  version: "version:1.15.0"
+  version: "version:1.10.0"
 >
 wheel: <
   name: "infra/python/wheels/pbr-py2_py3"
@@ -65,10 +65,6 @@ wheel: <
 wheel: <
   name: "infra/python/wheels/mock-py2_py3"
   version: "version:2.0.0"
->
-wheel: <
-  name: "infra/python/wheels/protobuf-py2_py3"
-  version: "version:3.13.0"
 >
 wheel: <
   name: "infra/python/wheels/requests-py2_py3"

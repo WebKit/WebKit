@@ -101,25 +101,25 @@ float TimeMsToDecreaseLevel(int sample_rate_hz,
 }
 }  // namespace
 
-TEST(GainController2FixedDigitalLevelEstimator, EstimatorShouldNotCrash) {
+TEST(AutomaticGainController2LevelEstimator, EstimatorShouldNotCrash) {
   TestLevelEstimator(8000, 1, 0, std::numeric_limits<float>::lowest(),
                      std::numeric_limits<float>::max());
 }
 
-TEST(GainController2FixedDigitalLevelEstimator,
+TEST(AutomaticGainController2LevelEstimator,
      EstimatorShouldEstimateConstantLevel) {
   TestLevelEstimator(10000, 1, kInputLevel, kInputLevel * 0.99,
                      kInputLevel * 1.01);
 }
 
-TEST(GainController2FixedDigitalLevelEstimator,
+TEST(AutomaticGainController2LevelEstimator,
      EstimatorShouldEstimateConstantLevelForManyChannels) {
   constexpr size_t num_channels = 10;
   TestLevelEstimator(20000, num_channels, kInputLevel, kInputLevel * 0.99,
                      kInputLevel * 1.01);
 }
 
-TEST(GainController2FixedDigitalLevelEstimator, TimeToDecreaseForLowLevel) {
+TEST(AutomaticGainController2LevelEstimator, TimeToDecreaseForLowLevel) {
   constexpr float kLevelReductionDb = 25;
   constexpr float kInitialLowLevel = -40;
   constexpr float kExpectedTime = kLevelReductionDb * test::kDecayMs;
@@ -131,8 +131,7 @@ TEST(GainController2FixedDigitalLevelEstimator, TimeToDecreaseForLowLevel) {
   EXPECT_LE(time_to_decrease, kExpectedTime * 1.1);
 }
 
-TEST(GainController2FixedDigitalLevelEstimator,
-     TimeToDecreaseForFullScaleLevel) {
+TEST(AutomaticGainController2LevelEstimator, TimeToDecreaseForFullScaleLevel) {
   constexpr float kLevelReductionDb = 25;
   constexpr float kExpectedTime = kLevelReductionDb * test::kDecayMs;
 
@@ -143,7 +142,7 @@ TEST(GainController2FixedDigitalLevelEstimator,
   EXPECT_LE(time_to_decrease, kExpectedTime * 1.1);
 }
 
-TEST(GainController2FixedDigitalLevelEstimator,
+TEST(AutomaticGainController2LevelEstimator,
      TimeToDecreaseForMultipleChannels) {
   constexpr float kLevelReductionDb = 25;
   constexpr float kExpectedTime = kLevelReductionDb * test::kDecayMs;

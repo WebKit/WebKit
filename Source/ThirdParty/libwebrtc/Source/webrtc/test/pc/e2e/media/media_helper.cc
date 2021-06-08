@@ -64,7 +64,7 @@ MediaHelper::MaybeAddVideo(TestPeer* peer) {
         video_config.content_hint ==
             VideoTrackInterface::ContentHint::kDetailed;
     rtc::scoped_refptr<TestVideoCapturerVideoTrackSource> source =
-        rtc::make_ref_counted<TestVideoCapturerVideoTrackSource>(
+        new rtc::RefCountedObject<TestVideoCapturerVideoTrackSource>(
             std::move(capturer), is_screencast);
     out.push_back(source);
     RTC_LOG(INFO) << "Adding video with video_config.stream_label="

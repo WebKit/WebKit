@@ -32,7 +32,7 @@ constexpr TimeDelta kMinTimeBetweenStatsUpdates = TimeDelta::Millis(1);
 
 TaskQueuePacedSender::TaskQueuePacedSender(
     Clock* clock,
-    PacingController::PacketSender* packet_sender,
+    PacketRouter* packet_router,
     RtcEventLog* event_log,
     const WebRtcKeyValueConfig* field_trials,
     TaskQueueFactory* task_queue_factory,
@@ -40,7 +40,7 @@ TaskQueuePacedSender::TaskQueuePacedSender(
     : clock_(clock),
       hold_back_window_(hold_back_window),
       pacing_controller_(clock,
-                         packet_sender,
+                         packet_router,
                          event_log,
                          field_trials,
                          PacingController::ProcessMode::kDynamic),
@@ -59,14 +59,6 @@ TaskQueuePacedSender::~TaskQueuePacedSender() {
   task_queue_.PostTask([&]() {
     RTC_DCHECK_RUN_ON(&task_queue_);
     is_shutdown_ = true;
-  });
-}
-
-void TaskQueuePacedSender::EnsureStarted() {
-  task_queue_.PostTask([this]() {
-    RTC_DCHECK_RUN_ON(&task_queue_);
-    is_started_ = true;
-    MaybeProcessPackets(Timestamp::MinusInfinity());
   });
 }
 
@@ -144,7 +136,6 @@ void TaskQueuePacedSender::EnqueuePackets(
   task_queue_.PostTask([this, packets_ = std::move(packets)]() mutable {
     RTC_DCHECK_RUN_ON(&task_queue_);
     for (auto& packet : packets_) {
-      RTC_DCHECK_GE(packet->capture_time_ms(), 0);
       pacing_controller_.EnqueuePacket(std::move(packet));
     }
     MaybeProcessPackets(Timestamp::MinusInfinity());
@@ -205,7 +196,7 @@ void TaskQueuePacedSender::MaybeProcessPackets(
     Timestamp scheduled_process_time) {
   RTC_DCHECK_RUN_ON(&task_queue_);
 
-  if (is_shutdown_ || !is_started_) {
+  if (is_shutdown_) {
     return;
   }
 
@@ -233,13 +224,9 @@ void TaskQueuePacedSender::MaybeProcessPackets(
     // If we're probing and there isn't already a wakeup scheduled for the next
     // process time, always post a task and just round sleep time down to
     // nearest millisecond.
-    if (next_process_time.IsMinusInfinity()) {
-      time_to_next_process = TimeDelta::Zero();
-    } else {
-      time_to_next_process =
-          std::max(TimeDelta::Zero(),
-                   (next_process_time - now).RoundDownTo(TimeDelta::Millis(1)));
-    }
+    time_to_next_process =
+        std::max(TimeDelta::Zero(),
+                 (next_process_time - now).RoundDownTo(TimeDelta::Millis(1)));
   } else if (next_process_time_.IsMinusInfinity() ||
              next_process_time <= next_process_time_ - hold_back_window_) {
     // Schedule a new task since there is none currently scheduled

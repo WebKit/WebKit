@@ -11,18 +11,13 @@
 #ifndef PC_DTMF_SENDER_H_
 #define PC_DTMF_SENDER_H_
 
-#include <stdint.h>
-
 #include <string>
 
 #include "api/dtmf_sender_interface.h"
 #include "api/proxy.h"
-#include "api/scoped_refptr.h"
+#include "rtc_base/async_invoker.h"
 #include "rtc_base/constructor_magic.h"
-#include "rtc_base/location.h"
 #include "rtc_base/ref_count.h"
-#include "rtc_base/task_utils/pending_task_safety_flag.h"
-#include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread.h"
 
 // DtmfSender is the native implementation of the RTCDTMFSender defined by
@@ -75,35 +70,32 @@ class DtmfSender : public DtmfSenderInterface, public sigslot::has_slots<> {
  private:
   DtmfSender();
 
-  void QueueInsertDtmf(const rtc::Location& posted_from, uint32_t delay_ms)
-      RTC_RUN_ON(signaling_thread_);
+  void QueueInsertDtmf(const rtc::Location& posted_from, uint32_t delay_ms);
 
   // The DTMF sending task.
-  void DoInsertDtmf() RTC_RUN_ON(signaling_thread_);
+  void DoInsertDtmf();
 
   void OnProviderDestroyed();
 
-  void StopSending() RTC_RUN_ON(signaling_thread_);
+  void StopSending();
 
-  DtmfSenderObserverInterface* observer_ RTC_GUARDED_BY(signaling_thread_);
+  DtmfSenderObserverInterface* observer_;
   rtc::Thread* signaling_thread_;
-  DtmfProviderInterface* provider_ RTC_GUARDED_BY(signaling_thread_);
-  std::string tones_ RTC_GUARDED_BY(signaling_thread_);
-  int duration_ RTC_GUARDED_BY(signaling_thread_);
-  int inter_tone_gap_ RTC_GUARDED_BY(signaling_thread_);
-  int comma_delay_ RTC_GUARDED_BY(signaling_thread_);
-
-  // For cancelling the tasks which feed the DTMF provider one tone at a time.
-  rtc::scoped_refptr<PendingTaskSafetyFlag> safety_flag_ RTC_GUARDED_BY(
-      signaling_thread_) RTC_PT_GUARDED_BY(signaling_thread_) = nullptr;
+  DtmfProviderInterface* provider_;
+  std::string tones_;
+  int duration_;
+  int inter_tone_gap_;
+  int comma_delay_;
+  // Invoker for running delayed tasks which feed the DTMF provider one tone at
+  // a time.
+  rtc::AsyncInvoker dtmf_driver_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(DtmfSender);
 };
 
 // Define proxy for DtmfSenderInterface.
-BEGIN_PRIMARY_PROXY_MAP(DtmfSender)
-
-PROXY_PRIMARY_THREAD_DESTRUCTOR()
+BEGIN_SIGNALING_PROXY_MAP(DtmfSender)
+PROXY_SIGNALING_THREAD_DESTRUCTOR()
 PROXY_METHOD1(void, RegisterObserver, DtmfSenderObserverInterface*)
 PROXY_METHOD0(void, UnregisterObserver)
 PROXY_METHOD0(bool, CanInsertDtmf)

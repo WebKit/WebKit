@@ -51,12 +51,12 @@ void DefaultNetEqTestErrorCallback::OnInsertPacketError(
     const NetEqInput::PacketData& packet) {
   std::cerr << "InsertPacket returned an error." << std::endl;
   std::cerr << "Packet data: " << packet.ToString() << std::endl;
-  RTC_FATAL();
+  FATAL();
 }
 
 void DefaultNetEqTestErrorCallback::OnGetAudioError() {
   std::cerr << "GetAudio returned an error." << std::endl;
-  RTC_FATAL();
+  FATAL();
 }
 
 NetEqTest::NetEqTest(const NetEq::Config& config,
@@ -270,11 +270,6 @@ NetEqTest::SimulationStepResult NetEqTest::RunToNextGetAudio() {
       // End the simulation if the gap is too large. This indicates an issue
       // with the event log file.
       const bool simulation_step_too_large = result.simulation_step_ms > 1000;
-      if (simulation_step_too_large) {
-        // If we don't reset the step time, the large gap will be included in
-        // the simulation time, which can be a large distortion.
-        result.simulation_step_ms = 10;
-      }
       result.is_simulation_finished = simulation_step_too_large ||
                                       no_more_packets_to_decode ||
                                       input_->ended();

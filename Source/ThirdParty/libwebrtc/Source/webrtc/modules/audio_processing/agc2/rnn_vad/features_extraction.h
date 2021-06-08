@@ -16,6 +16,7 @@
 #include "api/array_view.h"
 #include "modules/audio_processing/agc2/biquad_filter.h"
 #include "modules/audio_processing/agc2/rnn_vad/common.h"
+#include "modules/audio_processing/agc2/rnn_vad/pitch_info.h"
 #include "modules/audio_processing/agc2/rnn_vad/pitch_search.h"
 #include "modules/audio_processing/agc2/rnn_vad/sequence_buffer.h"
 #include "modules/audio_processing/agc2/rnn_vad/spectral_features.h"
@@ -26,7 +27,7 @@ namespace rnn_vad {
 // Feature extractor to feed the VAD RNN.
 class FeaturesExtractor {
  public:
-  explicit FeaturesExtractor(const AvailableCpuFeatures& cpu_features);
+  FeaturesExtractor();
   FeaturesExtractor(const FeaturesExtractor&) = delete;
   FeaturesExtractor& operator=(const FeaturesExtractor&) = delete;
   ~FeaturesExtractor();
@@ -52,7 +53,7 @@ class FeaturesExtractor {
   PitchEstimator pitch_estimator_;
   rtc::ArrayView<const float, kFrameSize20ms24kHz> reference_frame_view_;
   SpectralFeaturesExtractor spectral_features_extractor_;
-  int pitch_period_48kHz_;
+  PitchInfo pitch_info_48kHz_;
 };
 
 }  // namespace rnn_vad

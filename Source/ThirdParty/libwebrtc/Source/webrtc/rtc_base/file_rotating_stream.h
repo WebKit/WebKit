@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "rtc_base/constructor_magic.h"
+#include "rtc_base/stream.h"
 #include "rtc_base/system/file_wrapper.h"
 
 namespace rtc {
@@ -26,8 +27,13 @@ namespace rtc {
 // constructor. It rotates the files once the current file is full. The
 // individual file size and the number of files used is configurable in the
 // constructor. Open() must be called before using this stream.
-class FileRotatingStream {
+class FileRotatingStream : public StreamInterface {
  public:
+  // Use this constructor for reading a directory previously written to with
+  // this stream.
+  FileRotatingStream(const std::string& dir_path,
+                     const std::string& file_prefix);
+
   // Use this constructor for writing to a directory. Files in the directory
   // matching the prefix will be deleted on open.
   FileRotatingStream(const std::string& dir_path,
@@ -35,13 +41,20 @@ class FileRotatingStream {
                      size_t max_file_size,
                      size_t num_files);
 
-  virtual ~FileRotatingStream();
+  ~FileRotatingStream() override;
 
-  bool IsOpen() const;
-
-  bool Write(const void* data, size_t data_len);
-  bool Flush();
-  void Close();
+  // StreamInterface methods.
+  StreamState GetState() const override;
+  StreamResult Read(void* buffer,
+                    size_t buffer_len,
+                    size_t* read,
+                    int* error) override;
+  StreamResult Write(const void* data,
+                     size_t data_len,
+                     size_t* written,
+                     int* error) override;
+  bool Flush() override;
+  void Close() override;
 
   // Opens the appropriate file(s). Call this before using the stream.
   bool Open();
@@ -49,8 +62,6 @@ class FileRotatingStream {
   // Disabling buffering causes writes to block until disk is updated. This is
   // enabled by default for performance.
   bool DisableBuffering();
-
-  // Below two methods are public for testing only.
 
   // Returns the path used for the i-th newest file, where the 0th file is the
   // newest file. The file may or may not exist, this is just used for
@@ -61,6 +72,8 @@ class FileRotatingStream {
   size_t GetNumFiles() const { return file_names_.size(); }
 
  protected:
+  size_t GetMaxFileSize() const { return max_file_size_; }
+
   void SetMaxFileSize(size_t size) { max_file_size_ = size; }
 
   size_t GetRotationIndex() const { return rotation_index_; }

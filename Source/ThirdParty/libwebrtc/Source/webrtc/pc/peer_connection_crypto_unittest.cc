@@ -631,7 +631,7 @@ TEST_P(PeerConnectionCryptoDtlsCertGenTest, TestCertificateGeneration) {
       observers;
   for (size_t i = 0; i < concurrent_calls_; i++) {
     rtc::scoped_refptr<MockCreateSessionDescriptionObserver> observer =
-        rtc::make_ref_counted<MockCreateSessionDescriptionObserver>();
+        new rtc::RefCountedObject<MockCreateSessionDescriptionObserver>();
     observers.push_back(observer);
     if (sdp_type_ == SdpType::kOffer) {
       pc->pc()->CreateOffer(observer,

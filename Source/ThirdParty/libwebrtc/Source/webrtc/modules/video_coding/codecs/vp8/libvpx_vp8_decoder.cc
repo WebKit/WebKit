@@ -54,9 +54,13 @@ constexpr bool kIsArm = false;
 #endif
 
 absl::optional<LibvpxVp8Decoder::DeblockParams> DefaultDeblockParams() {
-  return LibvpxVp8Decoder::DeblockParams(/*max_level=*/8,
-                                         /*degrade_qp=*/60,
-                                         /*min_qp=*/30);
+  if (kIsArm) {
+    // For ARM, this is only called when deblocking is explicitly enabled, and
+    // the default strength is set by the ctor.
+    return LibvpxVp8Decoder::DeblockParams();
+  }
+  // For non-arm, don't use the explicit deblocking settings by default.
+  return absl::nullopt;
 }
 
 absl::optional<LibvpxVp8Decoder::DeblockParams>
@@ -236,14 +240,21 @@ int LibvpxVp8Decoder::Decode(const EncodedImage& input_image,
   if (key_frame_required_) {
     if (input_image._frameType != VideoFrameType::kVideoFrameKey)
       return WEBRTC_VIDEO_CODEC_ERROR;
-    key_frame_required_ = false;
+    // We have a key frame - is it complete?
+    if (input_image._completeFrame) {
+      key_frame_required_ = false;
+    } else {
+      return WEBRTC_VIDEO_CODEC_ERROR;
+    }
   }
   // Restrict error propagation using key frame requests.
   // Reset on a key frame refresh.
-  if (input_image._frameType == VideoFrameType::kVideoFrameKey) {
+  if (input_image._frameType == VideoFrameType::kVideoFrameKey &&
+      input_image._completeFrame) {
     propagation_cnt_ = -1;
     // Start count on first loss.
-  } else if (missing_frames && propagation_cnt_ == -1) {
+  } else if ((!input_image._completeFrame || missing_frames) &&
+             propagation_cnt_ == -1) {
     propagation_cnt_ = 0;
   }
   if (propagation_cnt_ >= 0) {
@@ -391,13 +402,6 @@ int LibvpxVp8Decoder::Release() {
   buffer_pool_.Release();
   inited_ = false;
   return ret_val;
-}
-
-VideoDecoder::DecoderInfo LibvpxVp8Decoder::GetDecoderInfo() const {
-  DecoderInfo info;
-  info.implementation_name = "libvpx";
-  info.is_hardware_accelerated = false;
-  return info;
 }
 
 const char* LibvpxVp8Decoder::ImplementationName() const {

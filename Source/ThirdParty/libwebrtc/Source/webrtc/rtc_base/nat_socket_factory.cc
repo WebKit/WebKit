@@ -230,10 +230,10 @@ class NATSocket : public AsyncSocket, public sigslot::has_slots<> {
     return connected_ ? CS_CONNECTED : CS_CLOSED;
   }
   int GetOption(Option opt, int* value) override {
-    return socket_ ? socket_->GetOption(opt, value) : -1;
+    return socket_->GetOption(opt, value);
   }
   int SetOption(Option opt, int value) override {
-    return socket_ ? socket_->SetOption(opt, value) : -1;
+    return socket_->SetOption(opt, value);
   }
 
   void OnConnectEvent(AsyncSocket* socket) {
@@ -428,15 +428,14 @@ NATSocketServer::Translator::Translator(NATSocketServer* server,
   // Create a new private network, and a NATServer running on the private
   // network that bridges to the external network. Also tell the private
   // network to use the same message queue as us.
-  internal_server_ = std::make_unique<VirtualSocketServer>();
-  internal_server_->SetMessageQueue(server_->queue());
-  nat_server_ = std::make_unique<NATServer>(
-      type, internal_server_.get(), int_ip, int_ip, ext_factory, ext_ip);
+  VirtualSocketServer* internal_server = new VirtualSocketServer();
+  internal_server->SetMessageQueue(server_->queue());
+  internal_factory_.reset(internal_server);
+  nat_server_.reset(new NATServer(type, internal_server, int_ip, int_ip,
+                                  ext_factory, ext_ip));
 }
 
-NATSocketServer::Translator::~Translator() {
-  internal_server_->SetMessageQueue(nullptr);
-}
+NATSocketServer::Translator::~Translator() = default;
 
 NATSocketServer::Translator* NATSocketServer::Translator::GetTranslator(
     const SocketAddress& ext_ip) {

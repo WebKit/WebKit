@@ -16,15 +16,12 @@
 #include <utility>
 #include <vector>
 
-#include "modules/desktop_capture/desktop_capture_metrics_helper.h"
-#include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/desktop_frame.h"
 #include "modules/desktop_capture/win/screen_capture_utils.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/time_utils.h"
 #include "rtc_base/trace_event.h"
-#include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
 
@@ -109,7 +106,6 @@ ScreenCapturerWinDirectx::~ScreenCapturerWinDirectx() = default;
 void ScreenCapturerWinDirectx::Start(Callback* callback) {
   RTC_DCHECK(!callback_);
   RTC_DCHECK(callback);
-  RecordCapturerImpl(DesktopCapturerId::kScreenCapturerWinDirectx);
 
   callback_ = callback;
 }
@@ -173,13 +169,8 @@ void ScreenCapturerWinDirectx::CaptureFrame() {
     case DuplicateResult::SUCCEEDED: {
       std::unique_ptr<DesktopFrame> frame =
           frames_.current_frame()->frame()->Share();
-
-      int capture_time_ms = (rtc::TimeNanos() - capture_start_time_nanos) /
-                            rtc::kNumNanosecsPerMillisec;
-      RTC_HISTOGRAM_COUNTS_1000(
-          "WebRTC.DesktopCapture.Win.DirectXCapturerFrameTime",
-          capture_time_ms);
-      frame->set_capture_time_ms(capture_time_ms);
+      frame->set_capture_time_ms((rtc::TimeNanos() - capture_start_time_nanos) /
+                                 rtc::kNumNanosecsPerMillisec);
       frame->set_capturer_id(DesktopCapturerId::kScreenCapturerWinDirectx);
 
       // TODO(julien.isorce): http://crbug.com/945468. Set the icc profile on

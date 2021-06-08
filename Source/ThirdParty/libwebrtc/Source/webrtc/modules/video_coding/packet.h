@@ -17,7 +17,6 @@
 #include "absl/types/optional.h"
 #include "api/rtp_headers.h"
 #include "api/rtp_packet_info.h"
-#include "api/units/timestamp.h"
 #include "api/video/video_frame_type.h"
 #include "modules/rtp_rtcp/source/rtp_generic_frame_descriptor.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
@@ -42,7 +41,7 @@ class VCMPacket {
             const RTPHeader& rtp_header,
             const RTPVideoHeader& video_header,
             int64_t ntp_time_ms,
-            Timestamp receive_time);
+            int64_t receive_time_ms);
 
   ~VCMPacket();
 

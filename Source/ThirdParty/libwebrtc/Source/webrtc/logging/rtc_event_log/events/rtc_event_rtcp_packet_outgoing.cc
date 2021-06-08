@@ -25,6 +25,14 @@ RtcEventRtcpPacketOutgoing::RtcEventRtcpPacketOutgoing(
 
 RtcEventRtcpPacketOutgoing::~RtcEventRtcpPacketOutgoing() = default;
 
+RtcEvent::Type RtcEventRtcpPacketOutgoing::GetType() const {
+  return RtcEvent::Type::RtcpPacketOutgoing;
+}
+
+bool RtcEventRtcpPacketOutgoing::IsConfigEvent() const {
+  return false;
+}
+
 std::unique_ptr<RtcEventRtcpPacketOutgoing> RtcEventRtcpPacketOutgoing::Copy()
     const {
   return absl::WrapUnique<RtcEventRtcpPacketOutgoing>(

@@ -21,6 +21,14 @@ RtcEventAlrState::RtcEventAlrState(const RtcEventAlrState& other)
 
 RtcEventAlrState::~RtcEventAlrState() = default;
 
+RtcEvent::Type RtcEventAlrState::GetType() const {
+  return RtcEvent::Type::AlrStateEvent;
+}
+
+bool RtcEventAlrState::IsConfigEvent() const {
+  return false;
+}
+
 std::unique_ptr<RtcEventAlrState> RtcEventAlrState::Copy() const {
   return absl::WrapUnique<RtcEventAlrState>(new RtcEventAlrState(*this));
 }

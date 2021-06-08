@@ -11,21 +11,15 @@
 #ifndef PC_REMOTE_AUDIO_SOURCE_H_
 #define PC_REMOTE_AUDIO_SOURCE_H_
 
-#include <stdint.h>
-
 #include <list>
 #include <string>
 
 #include "absl/types/optional.h"
 #include "api/call/audio_sink.h"
-#include "api/media_stream_interface.h"
 #include "api/notifier.h"
-#include "media/base/media_channel.h"
 #include "pc/channel.h"
 #include "rtc_base/message_handler.h"
 #include "rtc_base/synchronization/mutex.h"
-#include "rtc_base/thread.h"
-#include "rtc_base/thread_message.h"
 
 namespace rtc {
 struct Message;
@@ -82,7 +76,6 @@ class RemoteAudioSource : public Notifier<AudioSourceInterface>,
  private:
   // These are callbacks from the media engine.
   class AudioDataProxy;
-
   void OnData(const AudioSinkInterface::Data& audio);
   void OnAudioChannelGone();
 

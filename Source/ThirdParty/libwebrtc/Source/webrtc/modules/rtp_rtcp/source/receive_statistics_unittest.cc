@@ -65,13 +65,10 @@ void IncrementSequenceNumber(RtpPacketReceived* packet) {
   IncrementSequenceNumber(packet, 1);
 }
 
-class ReceiveStatisticsTest : public ::testing::TestWithParam<bool> {
+class ReceiveStatisticsTest : public ::testing::Test {
  public:
   ReceiveStatisticsTest()
-      : clock_(0),
-        receive_statistics_(
-            GetParam() ? ReceiveStatistics::Create(&clock_)
-                       : ReceiveStatistics::CreateThreadCompatible(&clock_)) {
+      : clock_(0), receive_statistics_(ReceiveStatistics::Create(&clock_)) {
     packet1_ = CreateRtpPacket(kSsrc1, kPacketSize1);
     packet2_ = CreateRtpPacket(kSsrc2, kPacketSize2);
   }
@@ -83,14 +80,7 @@ class ReceiveStatisticsTest : public ::testing::TestWithParam<bool> {
   RtpPacketReceived packet2_;
 };
 
-INSTANTIATE_TEST_SUITE_P(All,
-                         ReceiveStatisticsTest,
-                         ::testing::Bool(),
-                         [](::testing::TestParamInfo<bool> info) {
-                           return info.param ? "WithMutex" : "WithoutMutex";
-                         });
-
-TEST_P(ReceiveStatisticsTest, TwoIncomingSsrcs) {
+TEST_F(ReceiveStatisticsTest, TwoIncomingSsrcs) {
   receive_statistics_->OnRtpPacket(packet1_);
   IncrementSequenceNumber(&packet1_);
   receive_statistics_->OnRtpPacket(packet2_);
@@ -143,7 +133,7 @@ TEST_P(ReceiveStatisticsTest, TwoIncomingSsrcs) {
   EXPECT_EQ(3u, counters.transmitted.packets);
 }
 
-TEST_P(ReceiveStatisticsTest,
+TEST_F(ReceiveStatisticsTest,
        RtcpReportBlocksReturnsMaxBlocksWhenThereAreMoreStatisticians) {
   RtpPacketReceived packet1 = CreateRtpPacket(kSsrc1, kPacketSize1);
   RtpPacketReceived packet2 = CreateRtpPacket(kSsrc2, kPacketSize1);
@@ -157,7 +147,7 @@ TEST_P(ReceiveStatisticsTest,
   EXPECT_THAT(receive_statistics_->RtcpReportBlocks(2), SizeIs(2));
 }
 
-TEST_P(ReceiveStatisticsTest,
+TEST_F(ReceiveStatisticsTest,
        RtcpReportBlocksReturnsAllObservedSsrcsWithMultipleCalls) {
   RtpPacketReceived packet1 = CreateRtpPacket(kSsrc1, kPacketSize1);
   RtpPacketReceived packet2 = CreateRtpPacket(kSsrc2, kPacketSize1);
@@ -184,7 +174,7 @@ TEST_P(ReceiveStatisticsTest,
               UnorderedElementsAre(kSsrc1, kSsrc2, kSsrc3, kSsrc4));
 }
 
-TEST_P(ReceiveStatisticsTest, ActiveStatisticians) {
+TEST_F(ReceiveStatisticsTest, ActiveStatisticians) {
   receive_statistics_->OnRtpPacket(packet1_);
   IncrementSequenceNumber(&packet1_);
   clock_.AdvanceTimeMilliseconds(1000);
@@ -216,7 +206,7 @@ TEST_P(ReceiveStatisticsTest, ActiveStatisticians) {
   EXPECT_EQ(2u, counters.transmitted.packets);
 }
 
-TEST_P(ReceiveStatisticsTest,
+TEST_F(ReceiveStatisticsTest,
        DoesntCreateRtcpReportBlockUntilFirstReceivedPacketForSsrc) {
   // Creates a statistician object for the ssrc.
   receive_statistics_->EnableRetransmitDetection(kSsrc1, true);
@@ -227,7 +217,7 @@ TEST_P(ReceiveStatisticsTest,
   EXPECT_EQ(1u, receive_statistics_->RtcpReportBlocks(3).size());
 }
 
-TEST_P(ReceiveStatisticsTest, GetReceiveStreamDataCounters) {
+TEST_F(ReceiveStatisticsTest, GetReceiveStreamDataCounters) {
   receive_statistics_->OnRtpPacket(packet1_);
   StreamStatistician* statistician =
       receive_statistics_->GetStatistician(kSsrc1);
@@ -243,7 +233,7 @@ TEST_P(ReceiveStatisticsTest, GetReceiveStreamDataCounters) {
   EXPECT_EQ(2u, counters.transmitted.packets);
 }
 
-TEST_P(ReceiveStatisticsTest, SimpleLossComputation) {
+TEST_F(ReceiveStatisticsTest, SimpleLossComputation) {
   packet1_.SetSequenceNumber(1);
   receive_statistics_->OnRtpPacket(packet1_);
   packet1_.SetSequenceNumber(3);
@@ -266,7 +256,7 @@ TEST_P(ReceiveStatisticsTest, SimpleLossComputation) {
   EXPECT_EQ(20, statistician->GetFractionLostInPercent());
 }
 
-TEST_P(ReceiveStatisticsTest, LossComputationWithReordering) {
+TEST_F(ReceiveStatisticsTest, LossComputationWithReordering) {
   packet1_.SetSequenceNumber(1);
   receive_statistics_->OnRtpPacket(packet1_);
   packet1_.SetSequenceNumber(3);
@@ -289,7 +279,7 @@ TEST_P(ReceiveStatisticsTest, LossComputationWithReordering) {
   EXPECT_EQ(20, statistician->GetFractionLostInPercent());
 }
 
-TEST_P(ReceiveStatisticsTest, LossComputationWithDuplicates) {
+TEST_F(ReceiveStatisticsTest, LossComputationWithDuplicates) {
   // Lose 2 packets, but also receive 1 duplicate. Should actually count as
   // only 1 packet being lost.
   packet1_.SetSequenceNumber(1);
@@ -314,7 +304,7 @@ TEST_P(ReceiveStatisticsTest, LossComputationWithDuplicates) {
   EXPECT_EQ(20, statistician->GetFractionLostInPercent());
 }
 
-TEST_P(ReceiveStatisticsTest, LossComputationWithSequenceNumberWrapping) {
+TEST_F(ReceiveStatisticsTest, LossComputationWithSequenceNumberWrapping) {
   // First, test loss computation over a period that included a sequence number
   // rollover.
   packet1_.SetSequenceNumber(0xfffd);
@@ -354,7 +344,7 @@ TEST_P(ReceiveStatisticsTest, LossComputationWithSequenceNumberWrapping) {
   EXPECT_EQ(28, statistician->GetFractionLostInPercent());
 }
 
-TEST_P(ReceiveStatisticsTest, StreamRestartDoesntCountAsLoss) {
+TEST_F(ReceiveStatisticsTest, StreamRestartDoesntCountAsLoss) {
   receive_statistics_->SetMaxReorderingThreshold(kSsrc1, 200);
 
   packet1_.SetSequenceNumber(0);
@@ -387,7 +377,7 @@ TEST_P(ReceiveStatisticsTest, StreamRestartDoesntCountAsLoss) {
   EXPECT_EQ(0, statistician->GetFractionLostInPercent());
 }
 
-TEST_P(ReceiveStatisticsTest, CountsLossAfterStreamRestart) {
+TEST_F(ReceiveStatisticsTest, CountsLossAfterStreamRestart) {
   receive_statistics_->SetMaxReorderingThreshold(kSsrc1, 200);
 
   packet1_.SetSequenceNumber(0);
@@ -415,7 +405,7 @@ TEST_P(ReceiveStatisticsTest, CountsLossAfterStreamRestart) {
   EXPECT_EQ(0, statistician->GetFractionLostInPercent());
 }
 
-TEST_P(ReceiveStatisticsTest, StreamCanRestartAtSequenceNumberWrapAround) {
+TEST_F(ReceiveStatisticsTest, StreamCanRestartAtSequenceNumberWrapAround) {
   receive_statistics_->SetMaxReorderingThreshold(kSsrc1, 200);
 
   packet1_.SetSequenceNumber(0xffff - 401);
@@ -438,7 +428,7 @@ TEST_P(ReceiveStatisticsTest, StreamCanRestartAtSequenceNumberWrapAround) {
   EXPECT_EQ(1, report_blocks[0].cumulative_lost_signed());
 }
 
-TEST_P(ReceiveStatisticsTest, StreamRestartNeedsTwoConsecutivePackets) {
+TEST_F(ReceiveStatisticsTest, StreamRestartNeedsTwoConsecutivePackets) {
   receive_statistics_->SetMaxReorderingThreshold(kSsrc1, 200);
 
   packet1_.SetSequenceNumber(400);
@@ -468,7 +458,7 @@ TEST_P(ReceiveStatisticsTest, StreamRestartNeedsTwoConsecutivePackets) {
   EXPECT_EQ(4u, report_blocks[0].extended_high_seq_num());
 }
 
-TEST_P(ReceiveStatisticsTest, WrapsAroundExtendedHighestSequenceNumber) {
+TEST_F(ReceiveStatisticsTest, WrapsAroundExtendedHighestSequenceNumber) {
   packet1_.SetSequenceNumber(0xffff);
   receive_statistics_->OnRtpPacket(packet1_);
 
@@ -513,7 +503,8 @@ TEST_P(ReceiveStatisticsTest, WrapsAroundExtendedHighestSequenceNumber) {
   EXPECT_EQ(0x20001u, report_blocks[0].extended_high_seq_num());
 }
 
-TEST_P(ReceiveStatisticsTest, StreamDataCounters) {
+TEST_F(ReceiveStatisticsTest, StreamDataCounters) {
+  receive_statistics_ = ReceiveStatistics::Create(&clock_);
   receive_statistics_->EnableRetransmitDetection(kSsrc1, true);
 
   const size_t kHeaderLength = 20;
@@ -563,7 +554,9 @@ TEST_P(ReceiveStatisticsTest, StreamDataCounters) {
   EXPECT_EQ(counters.retransmitted.packets, 1u);
 }
 
-TEST_P(ReceiveStatisticsTest, LastPacketReceivedTimestamp) {
+TEST_F(ReceiveStatisticsTest, LastPacketReceivedTimestamp) {
+  receive_statistics_ = ReceiveStatistics::Create(&clock_);
+
   clock_.AdvanceTimeMilliseconds(42);
   receive_statistics_->OnRtpPacket(packet1_);
   StreamDataCounters counters = receive_statistics_->GetStatistician(kSsrc1)

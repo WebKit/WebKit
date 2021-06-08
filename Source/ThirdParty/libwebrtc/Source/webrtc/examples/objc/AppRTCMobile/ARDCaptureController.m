@@ -10,7 +10,7 @@
 
 #import "ARDCaptureController.h"
 
-#import "sdk/objc/base/RTCLogging.h"
+#import <WebRTC/RTCLogging.h>
 
 #import "ARDSettingsModel.h"
 

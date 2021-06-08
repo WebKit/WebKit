@@ -283,6 +283,7 @@ int32_t H264EncoderImpl::InitEncode(const VideoCodec* inst,
         CalcBufferSize(VideoType::kI420, codec_.simulcastStream[idx].width,
                        codec_.simulcastStream[idx].height);
     encoded_images_[i].SetEncodedData(EncodedImageBuffer::Create(new_capacity));
+    encoded_images_[i]._completeFrame = true;
     encoded_images_[i]._encodedWidth = codec_.simulcastStream[idx].width;
     encoded_images_[i]._encodedHeight = codec_.simulcastStream[idx].height;
     encoded_images_[i].set_size(0);
@@ -381,19 +382,8 @@ int32_t H264EncoderImpl::Encode(
     return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
   }
 
-  rtc::scoped_refptr<I420BufferInterface> frame_buffer =
+  rtc::scoped_refptr<const I420BufferInterface> frame_buffer =
       input_frame.video_frame_buffer()->ToI420();
-  // The buffer should now be a mapped I420 or I420A format, but some buffer
-  // implementations incorrectly return the wrong buffer format, such as
-  // kNative. As a workaround to this, we perform ToI420() a second time.
-  // TODO(https://crbug.com/webrtc/12602): When Android buffers have a correct
-  // ToI420() implementaion, remove his workaround.
-  if (frame_buffer->type() != VideoFrameBuffer::Type::kI420 &&
-      frame_buffer->type() != VideoFrameBuffer::Type::kI420A) {
-    frame_buffer = frame_buffer->ToI420();
-    RTC_CHECK(frame_buffer->type() == VideoFrameBuffer::Type::kI420 ||
-              frame_buffer->type() == VideoFrameBuffer::Type::kI420A);
-  }
 
   bool send_key_frame = false;
   for (size_t i = 0; i < configurations_.size(); ++i) {
@@ -500,9 +490,9 @@ int32_t H264EncoderImpl::Encode(
     // |encoded_images_[i]._length| == 0.
     if (encoded_images_[i].size() > 0) {
       // Parse QP.
-      h264_bitstream_parser_.ParseBitstream(encoded_images_[i]);
-      encoded_images_[i].qp_ =
-          h264_bitstream_parser_.GetLastSliceQp().value_or(-1);
+      h264_bitstream_parser_.ParseBitstream(encoded_images_[i].data(),
+                                            encoded_images_[i].size());
+      h264_bitstream_parser_.GetLastSliceQp(&encoded_images_[i].qp_);
 
       // Deliver encoded image.
       CodecSpecificInfo codec_specific;
@@ -563,12 +553,6 @@ SEncParamExt H264EncoderImpl::CreateEncoderParams(size_t i) const {
   // |uiIntraPeriod|    - multiple of GOP size
   // |keyFrameInterval| - number of frames
   encoder_params.uiIntraPeriod = configurations_[i].key_frame_interval;
-  // Reuse SPS id if possible. This helps to avoid reset of chromium HW decoder
-  // on each key-frame.
-  // Note that WebRTC resets encoder on resolution change which makes all
-  // EParameterSetStrategy modes except INCREASING_ID (default) essentially
-  // equivalent to CONSTANT_ID.
-  encoder_params.eSpsPpsIdStrategy = SPS_LISTING;
   encoder_params.uiMaxNalSize = 0;
   // Threading model: use auto.
   //  0: auto (dynamic imp. internal encoder)
@@ -639,7 +623,6 @@ VideoEncoder::EncoderInfo H264EncoderImpl::GetEncoderInfo() const {
   info.is_hardware_accelerated = false;
   info.has_internal_source = false;
   info.supports_simulcast = true;
-  info.preferred_pixel_formats = {VideoFrameBuffer::Type::kI420};
   return info;
 }
 

@@ -26,9 +26,7 @@
 #pragma once
 
 #include "WebKitUtilities.h"
-#include "api/video/encoded_image.h"
 #include "api/video_codecs/video_decoder_factory.h"
-#include "rtc_base/ref_counted_object.h"
 
 typedef struct __CVBuffer* CVPixelBufferRef;
 
@@ -57,24 +55,5 @@ void* createLocalVP9Decoder(LocalDecoderCallback);
 void releaseLocalDecoder(LocalDecoder);
 int32_t decodeFrame(LocalDecoder, uint32_t timeStamp, const uint8_t*, size_t);
 void setDecoderFrameSize(LocalDecoder, uint16_t width, uint16_t height);
-
-class WebKitEncodedImageBufferWrapper : public EncodedImageBufferInterface {
-public:
-    static rtc::scoped_refptr<WebKitEncodedImageBufferWrapper> create(uint8_t* data, size_t size) { return rtc::make_ref_counted<WebKitEncodedImageBufferWrapper>(data, size); }
-
-    WebKitEncodedImageBufferWrapper(uint8_t* data, size_t size)
-        : m_data(data)
-        , m_size(size)
-    {
-    }
-
-    const uint8_t* data() const final { return m_data; }
-    uint8_t* data() final { return m_data; }
-    size_t size() const final { return m_size; }
-
- private:
-    uint8_t* m_data { nullptr };
-    size_t m_size { 0 };
-};
 
 }

@@ -21,11 +21,14 @@
 #include "modules/audio_device/mac/audio_mixer_manager_mac.h"
 #include "rtc_base/event.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/platform_thread.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 
 struct PaUtilRingBuffer;
+
+namespace rtc {
+class PlatformThread;
+}  // namespace rtc
 
 namespace webrtc {
 
@@ -268,11 +271,13 @@ class AudioDeviceMac : public AudioDeviceGeneric {
   rtc::Event _stopEventRec;
   rtc::Event _stopEvent;
 
+  // TODO(pbos): Replace with direct members, just start/stop, no need to
+  // recreate the thread.
   // Only valid/running between calls to StartRecording and StopRecording.
-  rtc::PlatformThread capture_worker_thread_;
+  std::unique_ptr<rtc::PlatformThread> capture_worker_thread_;
 
   // Only valid/running between calls to StartPlayout and StopPlayout.
-  rtc::PlatformThread render_worker_thread_;
+  std::unique_ptr<rtc::PlatformThread> render_worker_thread_;
 
   AudioMixerManagerMac _mixerManager;
 

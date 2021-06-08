@@ -70,11 +70,10 @@ class FakeNetworkManager : public NetworkManagerBase,
     ++start_count_;
     if (start_count_ == 1) {
       sent_first_update_ = false;
-      rtc::Thread::Current()->Post(RTC_FROM_HERE, this, kUpdateNetworksMessage);
+      rtc::Thread::Current()->Post(RTC_FROM_HERE, this);
     } else {
       if (sent_first_update_) {
-        rtc::Thread::Current()->Post(RTC_FROM_HERE, this,
-                                     kSignalNetworksMessage);
+        SignalNetworksChanged();
       }
     }
   }
@@ -82,15 +81,7 @@ class FakeNetworkManager : public NetworkManagerBase,
   void StopUpdating() override { --start_count_; }
 
   // MessageHandler interface.
-  void OnMessage(Message* msg) override {
-    if (msg->message_id == kUpdateNetworksMessage) {
-      DoUpdateNetworks();
-    } else if (msg->message_id == kSignalNetworksMessage) {
-      SignalNetworksChanged();
-    } else {
-      RTC_CHECK(false);
-    }
-  }
+  void OnMessage(Message* msg) override { DoUpdateNetworks(); }
 
   using NetworkManagerBase::set_default_local_addresses;
   using NetworkManagerBase::set_enumeration_permission;
@@ -137,9 +128,6 @@ class FakeNetworkManager : public NetworkManagerBase,
   int next_index_ = 0;
   int start_count_ = 0;
   bool sent_first_update_ = false;
-
-  static constexpr uint32_t kUpdateNetworksMessage = 1;
-  static constexpr uint32_t kSignalNetworksMessage = 2;
 
   std::unique_ptr<webrtc::MdnsResponderInterface> mdns_responder_;
 };

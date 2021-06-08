@@ -23,6 +23,14 @@ RtcEventDtlsWritableState::RtcEventDtlsWritableState(
 
 RtcEventDtlsWritableState::~RtcEventDtlsWritableState() = default;
 
+RtcEvent::Type RtcEventDtlsWritableState::GetType() const {
+  return RtcEvent::Type::DtlsWritableState;
+}
+
+bool RtcEventDtlsWritableState::IsConfigEvent() const {
+  return false;
+}
+
 std::unique_ptr<RtcEventDtlsWritableState> RtcEventDtlsWritableState::Copy()
     const {
   return absl::WrapUnique<RtcEventDtlsWritableState>(

@@ -25,6 +25,14 @@ RtcEventProbeResultFailure::RtcEventProbeResultFailure(
       id_(other.id_),
       failure_reason_(other.failure_reason_) {}
 
+RtcEvent::Type RtcEventProbeResultFailure::GetType() const {
+  return RtcEvent::Type::ProbeResultFailure;
+}
+
+bool RtcEventProbeResultFailure::IsConfigEvent() const {
+  return false;
+}
+
 std::unique_ptr<RtcEventProbeResultFailure> RtcEventProbeResultFailure::Copy()
     const {
   return absl::WrapUnique<RtcEventProbeResultFailure>(

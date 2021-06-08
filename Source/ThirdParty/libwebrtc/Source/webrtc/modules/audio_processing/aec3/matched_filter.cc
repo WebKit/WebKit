@@ -307,8 +307,7 @@ MatchedFilter::MatchedFilter(ApmDataDumper* data_dumper,
                              int num_matched_filters,
                              size_t alignment_shift_sub_blocks,
                              float excitation_limit,
-                             float smoothing_fast,
-                             float smoothing_slow,
+                             float smoothing,
                              float matching_filter_threshold)
     : data_dumper_(data_dumper),
       optimization_(optimization),
@@ -320,8 +319,7 @@ MatchedFilter::MatchedFilter(ApmDataDumper* data_dumper,
       lag_estimates_(num_matched_filters),
       filters_offsets_(num_matched_filters, 0),
       excitation_limit_(excitation_limit),
-      smoothing_fast_(smoothing_fast),
-      smoothing_slow_(smoothing_slow),
+      smoothing_(smoothing),
       matching_filter_threshold_(matching_filter_threshold) {
   RTC_DCHECK(data_dumper);
   RTC_DCHECK_LT(0, window_size_sub_blocks);
@@ -342,13 +340,9 @@ void MatchedFilter::Reset() {
 }
 
 void MatchedFilter::Update(const DownsampledRenderBuffer& render_buffer,
-                           rtc::ArrayView<const float> capture,
-                           bool use_slow_smoothing) {
+                           rtc::ArrayView<const float> capture) {
   RTC_DCHECK_EQ(sub_block_size_, capture.size());
   auto& y = capture;
-
-  const float smoothing =
-      use_slow_smoothing ? smoothing_slow_ : smoothing_fast_;
 
   const float x2_sum_threshold =
       filters_[0].size() * excitation_limit_ * excitation_limit_;
@@ -366,27 +360,27 @@ void MatchedFilter::Update(const DownsampledRenderBuffer& render_buffer,
     switch (optimization_) {
 #if defined(WEBRTC_ARCH_X86_FAMILY)
       case Aec3Optimization::kSse2:
-        aec3::MatchedFilterCore_SSE2(x_start_index, x2_sum_threshold, smoothing,
-                                     render_buffer.buffer, y, filters_[n],
-                                     &filters_updated, &error_sum);
+        aec3::MatchedFilterCore_SSE2(x_start_index, x2_sum_threshold,
+                                     smoothing_, render_buffer.buffer, y,
+                                     filters_[n], &filters_updated, &error_sum);
         break;
 #if !defined(WEBRTC_WEBKIT_BUILD)
       case Aec3Optimization::kAvx2:
-        aec3::MatchedFilterCore_AVX2(x_start_index, x2_sum_threshold, smoothing,
-                                     render_buffer.buffer, y, filters_[n],
-                                     &filters_updated, &error_sum);
+        aec3::MatchedFilterCore_AVX2(x_start_index, x2_sum_threshold,
+                                     smoothing_, render_buffer.buffer, y,
+                                     filters_[n], &filters_updated, &error_sum);
         break;
 #endif
 #endif
 #if defined(WEBRTC_HAS_NEON)
       case Aec3Optimization::kNeon:
-        aec3::MatchedFilterCore_NEON(x_start_index, x2_sum_threshold, smoothing,
-                                     render_buffer.buffer, y, filters_[n],
-                                     &filters_updated, &error_sum);
+        aec3::MatchedFilterCore_NEON(x_start_index, x2_sum_threshold,
+                                     smoothing_, render_buffer.buffer, y,
+                                     filters_[n], &filters_updated, &error_sum);
         break;
 #endif
       default:
-        aec3::MatchedFilterCore(x_start_index, x2_sum_threshold, smoothing,
+        aec3::MatchedFilterCore(x_start_index, x2_sum_threshold, smoothing_,
                                 render_buffer.buffer, y, filters_[n],
                                 &filters_updated, &error_sum);
     }

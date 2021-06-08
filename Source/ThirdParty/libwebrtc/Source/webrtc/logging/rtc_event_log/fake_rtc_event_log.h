@@ -16,25 +16,26 @@
 
 #include "api/rtc_event_log/rtc_event.h"
 #include "api/rtc_event_log/rtc_event_log.h"
-#include "rtc_base/synchronization/mutex.h"
-#include "rtc_base/thread_annotations.h"
+#include "rtc_base/async_invoker.h"
+#include "rtc_base/thread.h"
 
 namespace webrtc {
 
 class FakeRtcEventLog : public RtcEventLog {
  public:
-  FakeRtcEventLog() = default;
-  ~FakeRtcEventLog() override = default;
-
+  explicit FakeRtcEventLog(rtc::Thread* thread);
+  ~FakeRtcEventLog() override;
   bool StartLogging(std::unique_ptr<RtcEventLogOutput> output,
                     int64_t output_period_ms) override;
   void StopLogging() override;
   void Log(std::unique_ptr<RtcEvent> event) override;
-  int GetEventCount(RtcEvent::Type event_type);
+  int GetEventCount(RtcEvent::Type event_type) { return count_[event_type]; }
 
  private:
-  Mutex mu_;
-  std::map<RtcEvent::Type, int> count_ RTC_GUARDED_BY(mu_);
+  void IncrementEventCount(RtcEvent::Type event_type) { ++count_[event_type]; }
+  std::map<RtcEvent::Type, int> count_;
+  rtc::Thread* thread_;
+  rtc::AsyncInvoker invoker_;
 };
 
 }  // namespace webrtc

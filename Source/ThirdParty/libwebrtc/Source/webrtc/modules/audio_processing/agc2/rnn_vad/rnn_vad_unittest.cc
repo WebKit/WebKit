@@ -9,12 +9,10 @@
  */
 
 #include <array>
-#include <memory>
 #include <string>
 #include <vector>
 
 #include "common_audio/resampler/push_sinc_resampler.h"
-#include "modules/audio_processing/agc2/cpu_features.h"
 #include "modules/audio_processing/agc2/rnn_vad/features_extraction.h"
 #include "modules/audio_processing/agc2/rnn_vad/rnn.h"
 #include "modules/audio_processing/agc2/rnn_vad/test_utils.h"
@@ -27,12 +25,13 @@
 
 namespace webrtc {
 namespace rnn_vad {
+namespace test {
 namespace {
 
-constexpr int kFrameSize10ms48kHz = 480;
+constexpr size_t kFrameSize10ms48kHz = 480;
 
-void DumpPerfStats(int num_samples,
-                   int sample_rate,
+void DumpPerfStats(size_t num_samples,
+                   size_t sample_rate,
                    double average_us,
                    double standard_deviation) {
   float audio_track_length_ms =
@@ -49,6 +48,8 @@ void DumpPerfStats(int num_samples,
 // constant below to true in order to write new expected output binary files.
 constexpr bool kWriteComputedOutputToFile = false;
 
+}  // namespace
+
 // Avoids that one forgets to set |kWriteComputedOutputToFile| back to false
 // when the expected output files are re-exported.
 TEST(RnnVadTest, CheckWriteComputedOutputIsFalse) {
@@ -56,24 +57,21 @@ TEST(RnnVadTest, CheckWriteComputedOutputIsFalse) {
       << "Cannot land if kWriteComputedOutput is true.";
 }
 
-class RnnVadProbabilityParametrization
-    : public ::testing::TestWithParam<AvailableCpuFeatures> {};
-
 // Checks that the computed VAD probability for a test input sequence sampled at
 // 48 kHz is within tolerance.
-TEST_P(RnnVadProbabilityParametrization, RnnVadProbabilityWithinTolerance) {
+TEST(RnnVadTest, RnnVadProbabilityWithinTolerance) {
   // Init resampler, feature extractor and RNN.
   PushSincResampler decimator(kFrameSize10ms48kHz, kFrameSize10ms24kHz);
-  const AvailableCpuFeatures cpu_features = GetParam();
-  FeaturesExtractor features_extractor(cpu_features);
-  RnnVad rnn_vad(cpu_features);
+  FeaturesExtractor features_extractor;
+  RnnBasedVad rnn_vad;
 
   // Init input samples and expected output readers.
-  std::unique_ptr<FileReader> samples_reader = CreatePcmSamplesReader();
-  std::unique_ptr<FileReader> expected_vad_prob_reader = CreateVadProbsReader();
+  auto samples_reader = CreatePcmSamplesReader(kFrameSize10ms48kHz);
+  auto expected_vad_prob_reader = CreateVadProbsReader();
 
-  // Input length. The last incomplete frame is ignored.
-  const int num_frames = samples_reader->size() / kFrameSize10ms48kHz;
+  // Input length.
+  const size_t num_frames = samples_reader.second;
+  ASSERT_GE(expected_vad_prob_reader.second, num_frames);
 
   // Init buffers.
   std::vector<float> samples_48k(kFrameSize10ms48kHz);
@@ -83,12 +81,12 @@ TEST_P(RnnVadProbabilityParametrization, RnnVadProbabilityWithinTolerance) {
   std::vector<float> expected_vad_prob(num_frames);
 
   // Read expected output.
-  ASSERT_TRUE(expected_vad_prob_reader->ReadChunk(expected_vad_prob));
+  ASSERT_TRUE(expected_vad_prob_reader.first->ReadChunk(expected_vad_prob));
 
   // Compute VAD probabilities on the downsampled input.
   float cumulative_error = 0.f;
-  for (int i = 0; i < num_frames; ++i) {
-    ASSERT_TRUE(samples_reader->ReadChunk(samples_48k));
+  for (size_t i = 0; i < num_frames; ++i) {
+    samples_reader.first->ReadChunk(samples_48k);
     decimator.Resample(samples_48k.data(), samples_48k.size(),
                        samples_24k.data(), samples_24k.size());
     bool is_silence = features_extractor.CheckSilenceComputeFeatures(
@@ -103,7 +101,7 @@ TEST_P(RnnVadProbabilityParametrization, RnnVadProbabilityWithinTolerance) {
   EXPECT_LT(cumulative_error / num_frames, 1e-4f);
 
   if (kWriteComputedOutputToFile) {
-    FileWriter vad_prob_writer("new_vad_prob.dat");
+    BinaryFileWriter<float> vad_prob_writer("new_vad_prob.dat");
     vad_prob_writer.WriteChunk(computed_vad_prob);
   }
 }
@@ -113,35 +111,33 @@ TEST_P(RnnVadProbabilityParametrization, RnnVadProbabilityWithinTolerance) {
 // follows:
 // - on desktop: run the this unit test adding "--logs";
 // - on android: run the this unit test adding "--logcat-output-file".
-TEST_P(RnnVadProbabilityParametrization, DISABLED_RnnVadPerformance) {
+TEST(RnnVadTest, DISABLED_RnnVadPerformance) {
   // PCM samples reader and buffers.
-  std::unique_ptr<FileReader> samples_reader = CreatePcmSamplesReader();
-  // The last incomplete frame is ignored.
-  const int num_frames = samples_reader->size() / kFrameSize10ms48kHz;
+  auto samples_reader = CreatePcmSamplesReader(kFrameSize10ms48kHz);
+  const size_t num_frames = samples_reader.second;
   std::array<float, kFrameSize10ms48kHz> samples;
   // Pre-fetch and decimate samples.
   PushSincResampler decimator(kFrameSize10ms48kHz, kFrameSize10ms24kHz);
   std::vector<float> prefetched_decimated_samples;
   prefetched_decimated_samples.resize(num_frames * kFrameSize10ms24kHz);
-  for (int i = 0; i < num_frames; ++i) {
-    ASSERT_TRUE(samples_reader->ReadChunk(samples));
+  for (size_t i = 0; i < num_frames; ++i) {
+    samples_reader.first->ReadChunk(samples);
     decimator.Resample(samples.data(), samples.size(),
                        &prefetched_decimated_samples[i * kFrameSize10ms24kHz],
                        kFrameSize10ms24kHz);
   }
   // Initialize.
-  const AvailableCpuFeatures cpu_features = GetParam();
-  FeaturesExtractor features_extractor(cpu_features);
+  FeaturesExtractor features_extractor;
   std::array<float, kFeatureVectorSize> feature_vector;
-  RnnVad rnn_vad(cpu_features);
-  constexpr int number_of_tests = 100;
+  RnnBasedVad rnn_vad;
+  constexpr size_t number_of_tests = 100;
   ::webrtc::test::PerformanceTimer perf_timer(number_of_tests);
-  for (int k = 0; k < number_of_tests; ++k) {
+  for (size_t k = 0; k < number_of_tests; ++k) {
     features_extractor.Reset();
     rnn_vad.Reset();
     // Process frames.
     perf_timer.StartTimer();
-    for (int i = 0; i < num_frames; ++i) {
+    for (size_t i = 0; i < num_frames; ++i) {
       bool is_silence = features_extractor.CheckSilenceComputeFeatures(
           {&prefetched_decimated_samples[i * kFrameSize10ms24kHz],
            kFrameSize10ms24kHz},
@@ -149,37 +145,13 @@ TEST_P(RnnVadProbabilityParametrization, DISABLED_RnnVadPerformance) {
       rnn_vad.ComputeVadProbability(feature_vector, is_silence);
     }
     perf_timer.StopTimer();
+    samples_reader.first->SeekBeginning();
   }
   DumpPerfStats(num_frames * kFrameSize10ms24kHz, kSampleRate24kHz,
                 perf_timer.GetDurationAverage(),
                 perf_timer.GetDurationStandardDeviation());
 }
 
-// Finds the relevant CPU features combinations to test.
-std::vector<AvailableCpuFeatures> GetCpuFeaturesToTest() {
-  std::vector<AvailableCpuFeatures> v;
-  v.push_back(NoAvailableCpuFeatures());
-  AvailableCpuFeatures available = GetAvailableCpuFeatures();
-  if (available.avx2 && available.sse2) {
-    v.push_back({/*sse2=*/true, /*avx2=*/true, /*neon=*/false});
-  }
-  if (available.sse2) {
-    v.push_back({/*sse2=*/true, /*avx2=*/false, /*neon=*/false});
-  }
-  if (available.neon) {
-    v.push_back({/*sse2=*/false, /*avx2=*/false, /*neon=*/true});
-  }
-  return v;
-}
-
-INSTANTIATE_TEST_SUITE_P(
-    RnnVadTest,
-    RnnVadProbabilityParametrization,
-    ::testing::ValuesIn(GetCpuFeaturesToTest()),
-    [](const ::testing::TestParamInfo<AvailableCpuFeatures>& info) {
-      return info.param.ToString();
-    });
-
-}  // namespace
+}  // namespace test
 }  // namespace rnn_vad
 }  // namespace webrtc

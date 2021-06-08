@@ -19,7 +19,7 @@
 #ifndef MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_GAIN_QUANT_H_
 #define MODULES_AUDIO_CODING_CODECS_ILBC_MAIN_SOURCE_GAIN_QUANT_H_
 
-#include <stdint.h>
+#include "modules/audio_coding/codecs/ilbc/defines.h"
 
 /*----------------------------------------------------------------*
  *  quantizer for the gain in the gain-shape coding of residual

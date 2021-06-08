@@ -16,10 +16,8 @@
 
 ******************************************************************/
 
-#include "modules/audio_coding/codecs/ilbc/lsf_check.h"
-
-#include "modules/audio_coding/codecs/ilbc/constants.h"
 #include "modules/audio_coding/codecs/ilbc/defines.h"
+#include "modules/audio_coding/codecs/ilbc/constants.h"
 
 /*----------------------------------------------------------------*
  *  check for stability of lsf coefficients

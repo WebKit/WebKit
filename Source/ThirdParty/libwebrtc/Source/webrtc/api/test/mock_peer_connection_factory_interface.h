@@ -22,18 +22,13 @@ namespace webrtc {
 class MockPeerConnectionFactoryInterface final
     : public rtc::RefCountedObject<webrtc::PeerConnectionFactoryInterface> {
  public:
-  static rtc::scoped_refptr<MockPeerConnectionFactoryInterface> Create() {
+  rtc::scoped_refptr<MockPeerConnectionFactoryInterface> Create() {
     return new MockPeerConnectionFactoryInterface();
   }
 
   MOCK_METHOD(void, SetOptions, (const Options&), (override));
   MOCK_METHOD(rtc::scoped_refptr<PeerConnectionInterface>,
               CreatePeerConnection,
-              (const PeerConnectionInterface::RTCConfiguration&,
-               PeerConnectionDependencies),
-              (override));
-  MOCK_METHOD(RTCErrorOr<rtc::scoped_refptr<PeerConnectionInterface>>,
-              CreatePeerConnectionOrError,
               (const PeerConnectionInterface::RTCConfiguration&,
                PeerConnectionDependencies),
               (override));

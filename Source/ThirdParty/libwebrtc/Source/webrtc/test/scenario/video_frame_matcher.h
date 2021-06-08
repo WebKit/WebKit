@@ -52,7 +52,7 @@ class VideoFrameMatcher {
     rtc::scoped_refptr<VideoFrameBuffer> thumb;
     int repeat_count = 0;
   };
-  using DecodedFrame = rtc::FinalRefCountedObject<DecodedFrameBase>;
+  using DecodedFrame = rtc::RefCountedObject<DecodedFrameBase>;
   struct CapturedFrame {
     int id;
     Timestamp capture_time = Timestamp::PlusInfinity();

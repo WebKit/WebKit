@@ -16,12 +16,10 @@
 
 ******************************************************************/
 
-#include "modules/audio_coding/codecs/ilbc/lsf_to_poly.h"
-
-#include "modules/audio_coding/codecs/ilbc/constants.h"
 #include "modules/audio_coding/codecs/ilbc/defines.h"
-#include "modules/audio_coding/codecs/ilbc/get_lsp_poly.h"
 #include "modules/audio_coding/codecs/ilbc/lsf_to_lsp.h"
+#include "modules/audio_coding/codecs/ilbc/get_lsp_poly.h"
+#include "modules/audio_coding/codecs/ilbc/constants.h"
 
 void WebRtcIlbcfix_Lsf2Poly(
     int16_t *a,     /* (o) predictor coefficients (order = 10) in Q12 */

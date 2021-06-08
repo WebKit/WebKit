@@ -14,7 +14,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "absl/base/attributes.h"
 #include "api/scoped_refptr.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "modules/audio_device/include/audio_device.h"
@@ -49,7 +48,7 @@ rtc::scoped_refptr<AudioDeviceModule> CreateAudioDeviceWithDataObserver(
 
 // Creates an ADMWrapper around an ADM instance that registers
 // the provided AudioDeviceDataObserver.
-ABSL_DEPRECATED("")
+RTC_DEPRECATED
 rtc::scoped_refptr<AudioDeviceModule> CreateAudioDeviceWithDataObserver(
     rtc::scoped_refptr<AudioDeviceModule> impl,
     AudioDeviceDataObserver* observer);
@@ -61,7 +60,7 @@ rtc::scoped_refptr<AudioDeviceModule> CreateAudioDeviceWithDataObserver(
     std::unique_ptr<AudioDeviceDataObserver> observer);
 
 // Creates an ADM instance with AudioDeviceDataObserver registered.
-ABSL_DEPRECATED("")
+RTC_DEPRECATED
 rtc::scoped_refptr<AudioDeviceModule> CreateAudioDeviceWithDataObserver(
     const AudioDeviceModule::AudioLayer audio_layer,
     TaskQueueFactory* task_queue_factory,

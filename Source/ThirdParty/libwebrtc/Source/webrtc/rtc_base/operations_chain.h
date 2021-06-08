@@ -20,11 +20,11 @@
 
 #include "absl/types/optional.h"
 #include "api/scoped_refptr.h"
-#include "api/sequence_checker.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/constructor_magic.h"
 #include "rtc_base/ref_count.h"
 #include "rtc_base/ref_counted_object.h"
+#include "rtc_base/synchronization/sequence_checker.h"
 #include "rtc_base/system/no_unique_address.h"
 
 namespace rtc {
@@ -51,15 +51,11 @@ class OperationWithFunctor final : public Operation {
       : functor_(std::forward<FunctorT>(functor)),
         callback_(std::move(callback)) {}
 
-  ~OperationWithFunctor() override {
-#if RTC_DCHECK_IS_ON
-    RTC_DCHECK(has_run_);
-#endif  // RTC_DCHECK_IS_ON
-  }
+  ~OperationWithFunctor() override { RTC_DCHECK(has_run_); }
 
   void Run() override {
-#if RTC_DCHECK_IS_ON
     RTC_DCHECK(!has_run_);
+#ifdef RTC_DCHECK_IS_ON
     has_run_ = true;
 #endif  // RTC_DCHECK_IS_ON
     // The functor being executed may invoke the callback synchronously,
@@ -75,7 +71,7 @@ class OperationWithFunctor final : public Operation {
  private:
   typename std::remove_reference<FunctorT>::type functor_;
   std::function<void()> callback_;
-#if RTC_DCHECK_IS_ON
+#ifdef RTC_DCHECK_IS_ON
   bool has_run_ = false;
 #endif  // RTC_DCHECK_IS_ON
 };
@@ -172,7 +168,7 @@ class OperationsChain final : public RefCountedObject<RefCountInterface> {
 
    private:
     scoped_refptr<OperationsChain> operations_chain_;
-#if RTC_DCHECK_IS_ON
+#ifdef RTC_DCHECK_IS_ON
     bool has_run_ = false;
 #endif  // RTC_DCHECK_IS_ON
 

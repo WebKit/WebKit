@@ -10,8 +10,6 @@
 
 #include "modules/congestion_controller/goog_cc/delay_based_bwe.h"
 
-#include <string>
-
 #include "api/transport/network_types.h"
 #include "modules/congestion_controller/goog_cc/acknowledged_bitrate_estimator.h"
 #include "modules/congestion_controller/goog_cc/delay_based_bwe_unittest_helper.h"
@@ -28,15 +26,7 @@ const PacedPacketInfo kPacingInfo1(1, kNumProbesCluster1, 4000);
 constexpr float kTargetUtilizationFraction = 0.95f;
 }  // namespace
 
-INSTANTIATE_TEST_SUITE_P(
-    ,
-    DelayBasedBweTest,
-    ::testing::Values("", "WebRTC-Bwe-NewInterArrivalDelta/Enabled/"),
-    [](::testing::TestParamInfo<std::string> info) {
-      return info.param == "" ? "Default" : "NewInterArrival";
-    });
-
-TEST_P(DelayBasedBweTest, ProbeDetection) {
+TEST_F(DelayBasedBweTest, ProbeDetection) {
   int64_t now_ms = clock_.TimeInMilliseconds();
 
   // First burst sent at 8 * 1000 / 10 = 800 kbps.
@@ -58,7 +48,7 @@ TEST_P(DelayBasedBweTest, ProbeDetection) {
   EXPECT_GT(bitrate_observer_.latest_bitrate(), 1500000u);
 }
 
-TEST_P(DelayBasedBweTest, ProbeDetectionNonPacedPackets) {
+TEST_F(DelayBasedBweTest, ProbeDetectionNonPacedPackets) {
   int64_t now_ms = clock_.TimeInMilliseconds();
   // First burst sent at 8 * 1000 / 10 = 800 kbps, but with every other packet
   // not being paced which could mess things up.
@@ -75,7 +65,7 @@ TEST_P(DelayBasedBweTest, ProbeDetectionNonPacedPackets) {
   EXPECT_GT(bitrate_observer_.latest_bitrate(), 800000u);
 }
 
-TEST_P(DelayBasedBweTest, ProbeDetectionFasterArrival) {
+TEST_F(DelayBasedBweTest, ProbeDetectionFasterArrival) {
   int64_t now_ms = clock_.TimeInMilliseconds();
   // First burst sent at 8 * 1000 / 10 = 800 kbps.
   // Arriving at 8 * 1000 / 5 = 1600 kbps.
@@ -90,7 +80,7 @@ TEST_P(DelayBasedBweTest, ProbeDetectionFasterArrival) {
   EXPECT_FALSE(bitrate_observer_.updated());
 }
 
-TEST_P(DelayBasedBweTest, ProbeDetectionSlowerArrival) {
+TEST_F(DelayBasedBweTest, ProbeDetectionSlowerArrival) {
   int64_t now_ms = clock_.TimeInMilliseconds();
   // First burst sent at 8 * 1000 / 5 = 1600 kbps.
   // Arriving at 8 * 1000 / 7 = 1142 kbps.
@@ -109,7 +99,7 @@ TEST_P(DelayBasedBweTest, ProbeDetectionSlowerArrival) {
               kTargetUtilizationFraction * 1140000u, 10000u);
 }
 
-TEST_P(DelayBasedBweTest, ProbeDetectionSlowerArrivalHighBitrate) {
+TEST_F(DelayBasedBweTest, ProbeDetectionSlowerArrivalHighBitrate) {
   int64_t now_ms = clock_.TimeInMilliseconds();
   // Burst sent at 8 * 1000 / 1 = 8000 kbps.
   // Arriving at 8 * 1000 / 2 = 4000 kbps.
@@ -128,7 +118,7 @@ TEST_P(DelayBasedBweTest, ProbeDetectionSlowerArrivalHighBitrate) {
               kTargetUtilizationFraction * 4000000u, 10000u);
 }
 
-TEST_P(DelayBasedBweTest, GetExpectedBwePeriodMs) {
+TEST_F(DelayBasedBweTest, GetExpectedBwePeriodMs) {
   auto default_interval = bitrate_estimator_->GetExpectedBwePeriod();
   EXPECT_GT(default_interval.ms(), 0);
   CapacityDropTestHelper(1, true, 333, 0);
@@ -137,45 +127,45 @@ TEST_P(DelayBasedBweTest, GetExpectedBwePeriodMs) {
   EXPECT_NE(interval.ms(), default_interval.ms());
 }
 
-TEST_P(DelayBasedBweTest, InitialBehavior) {
+TEST_F(DelayBasedBweTest, InitialBehavior) {
   InitialBehaviorTestHelper(730000);
 }
 
-TEST_P(DelayBasedBweTest, RateIncreaseReordering) {
+TEST_F(DelayBasedBweTest, RateIncreaseReordering) {
   RateIncreaseReorderingTestHelper(730000);
 }
-TEST_P(DelayBasedBweTest, RateIncreaseRtpTimestamps) {
+TEST_F(DelayBasedBweTest, RateIncreaseRtpTimestamps) {
   RateIncreaseRtpTimestampsTestHelper(622);
 }
 
-TEST_P(DelayBasedBweTest, CapacityDropOneStream) {
+TEST_F(DelayBasedBweTest, CapacityDropOneStream) {
   CapacityDropTestHelper(1, false, 300, 0);
 }
 
-TEST_P(DelayBasedBweTest, CapacityDropPosOffsetChange) {
+TEST_F(DelayBasedBweTest, CapacityDropPosOffsetChange) {
   CapacityDropTestHelper(1, false, 867, 30000);
 }
 
-TEST_P(DelayBasedBweTest, CapacityDropNegOffsetChange) {
+TEST_F(DelayBasedBweTest, CapacityDropNegOffsetChange) {
   CapacityDropTestHelper(1, false, 933, -30000);
 }
 
-TEST_P(DelayBasedBweTest, CapacityDropOneStreamWrap) {
+TEST_F(DelayBasedBweTest, CapacityDropOneStreamWrap) {
   CapacityDropTestHelper(1, true, 333, 0);
 }
 
-TEST_P(DelayBasedBweTest, TestTimestampGrouping) {
+TEST_F(DelayBasedBweTest, TestTimestampGrouping) {
   TestTimestampGroupingTestHelper();
 }
 
-TEST_P(DelayBasedBweTest, TestShortTimeoutAndWrap) {
+TEST_F(DelayBasedBweTest, TestShortTimeoutAndWrap) {
   // Simulate a client leaving and rejoining the call after 35 seconds. This
   // will make abs send time wrap, so if streams aren't timed out properly
   // the next 30 seconds of packets will be out of order.
   TestWrappingHelper(35);
 }
 
-TEST_P(DelayBasedBweTest, TestLongTimeoutAndWrap) {
+TEST_F(DelayBasedBweTest, TestLongTimeoutAndWrap) {
   // Simulate a client leaving and rejoining the call after some multiple of
   // 64 seconds later. This will cause a zero difference in abs send times due
   // to the wrap, but a big difference in arrival time, if streams aren't
@@ -183,7 +173,7 @@ TEST_P(DelayBasedBweTest, TestLongTimeoutAndWrap) {
   TestWrappingHelper(10 * 64);
 }
 
-TEST_P(DelayBasedBweTest, TestInitialOveruse) {
+TEST_F(DelayBasedBweTest, TestInitialOveruse) {
   const DataRate kStartBitrate = DataRate::KilobitsPerSec(300);
   const DataRate kInitialCapacity = DataRate::KilobitsPerSec(200);
   const uint32_t kDummySsrc = 0;
@@ -223,16 +213,15 @@ TEST_P(DelayBasedBweTest, TestInitialOveruse) {
 }
 
 class DelayBasedBweTestWithBackoffTimeoutExperiment : public DelayBasedBweTest {
+ public:
+  DelayBasedBweTestWithBackoffTimeoutExperiment()
+      : DelayBasedBweTest(
+            "WebRTC-BweAimdRateControlConfig/initial_backoff_interval:200ms/") {
+  }
 };
 
-INSTANTIATE_TEST_SUITE_P(
-    ,
-    DelayBasedBweTestWithBackoffTimeoutExperiment,
-    ::testing::Values(
-        "WebRTC-BweAimdRateControlConfig/initial_backoff_interval:200ms/"));
-
 // This test subsumes and improves DelayBasedBweTest.TestInitialOveruse above.
-TEST_P(DelayBasedBweTestWithBackoffTimeoutExperiment, TestInitialOveruse) {
+TEST_F(DelayBasedBweTestWithBackoffTimeoutExperiment, TestInitialOveruse) {
   const DataRate kStartBitrate = DataRate::KilobitsPerSec(300);
   const DataRate kInitialCapacity = DataRate::KilobitsPerSec(200);
   const uint32_t kDummySsrc = 0;

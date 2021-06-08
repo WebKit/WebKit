@@ -13,6 +13,8 @@
 
 #include <map>
 
+#include "rtc_base/deprecation.h"
+
 namespace webrtc {
 
 ///////////////////////////////////////////////////////////////////////////
@@ -115,6 +117,10 @@ struct NetworkStatistics {
   uint16_t currentSecondaryDiscardedRate;
   // average packet waiting time in the jitter buffer (ms)
   int meanWaitingTimeMs;
+  // median packet waiting time in the jitter buffer (ms)
+  int medianWaitingTimeMs;
+  // min packet waiting time in the jitter buffer (ms)
+  int minWaitingTimeMs;
   // max packet waiting time in the jitter buffer (ms)
   int maxWaitingTimeMs;
   // count of the number of buffer flushes

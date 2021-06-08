@@ -157,10 +157,9 @@ class PeerConnectionSimulcastTests : public ::testing::Test {
 
   rtc::scoped_refptr<RtpTransceiverInterface> AddTransceiver(
       PeerConnectionWrapper* pc,
-      const std::vector<SimulcastLayer>& layers,
-      cricket::MediaType media_type = cricket::MEDIA_TYPE_VIDEO) {
+      const std::vector<SimulcastLayer>& layers) {
     auto init = CreateTransceiverInit(layers);
-    return pc->AddTransceiver(media_type, init);
+    return pc->AddTransceiver(cricket::MEDIA_TYPE_VIDEO, init);
   }
 
   SimulcastDescription RemoveSimulcast(SessionDescriptionInterface* sd) {
@@ -555,25 +554,6 @@ TEST_F(PeerConnectionSimulcastTests, NegotiationDoesNotHaveRidExtension) {
                                .size());
   EXPECT_TRUE(local->SetRemoteDescription(std::move(answer), &err)) << err;
   ValidateTransceiverParameters(transceiver, expected_layers);
-}
-
-TEST_F(PeerConnectionSimulcastTests, SimulcastAudioRejected) {
-  auto local = CreatePeerConnectionWrapper();
-  auto remote = CreatePeerConnectionWrapper();
-  auto layers = CreateLayers({"1", "2", "3", "4"}, true);
-  auto transceiver =
-      AddTransceiver(local.get(), layers, cricket::MEDIA_TYPE_AUDIO);
-  // Should only have the first layer.
-  auto parameters = transceiver->sender()->GetParameters();
-  EXPECT_EQ(1u, parameters.encodings.size());
-  EXPECT_THAT(parameters.encodings,
-              ElementsAre(Field("rid", &RtpEncodingParameters::rid, Eq(""))));
-  ExchangeOfferAnswer(local.get(), remote.get(), {});
-  // Still have a single layer after negotiation
-  parameters = transceiver->sender()->GetParameters();
-  EXPECT_EQ(1u, parameters.encodings.size());
-  EXPECT_THAT(parameters.encodings,
-              ElementsAre(Field("rid", &RtpEncodingParameters::rid, Eq(""))));
 }
 
 #if RTC_METRICS_ENABLED

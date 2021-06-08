@@ -41,16 +41,14 @@ class SubbandErleEstimator {
               const std::vector<bool>& converged_filters);
 
   // Returns the ERLE estimate.
-  rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> Erle(
-      bool onset_compensated) const {
-    return onset_compensated && use_onset_detection_ ? erle_onset_compensated_
-                                                     : erle_;
+  rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> Erle() const {
+    return erle_;
   }
 
   // Returns the ERLE estimate at onsets (only used for testing).
-  rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> ErleDuringOnsets()
+  rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> ErleOnsets()
       const {
-    return erle_during_onsets_;
+    return erle_onsets_;
   }
 
   void Dump(const std::unique_ptr<ApmDataDumper>& data_dumper) const;
@@ -84,12 +82,8 @@ class SubbandErleEstimator {
   const std::array<float, kFftLengthBy2Plus1> max_erle_;
   const bool use_min_erle_during_onsets_;
   AccumulatedSpectra accum_spectra_;
-  // ERLE without special handling of render onsets.
   std::vector<std::array<float, kFftLengthBy2Plus1>> erle_;
-  // ERLE lowered during render onsets.
-  std::vector<std::array<float, kFftLengthBy2Plus1>> erle_onset_compensated_;
-  // Estimation of ERLE during render onsets.
-  std::vector<std::array<float, kFftLengthBy2Plus1>> erle_during_onsets_;
+  std::vector<std::array<float, kFftLengthBy2Plus1>> erle_onsets_;
   std::vector<std::array<bool, kFftLengthBy2Plus1>> coming_onset_;
   std::vector<std::array<int, kFftLengthBy2Plus1>> hold_counters_;
 };

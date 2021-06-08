@@ -42,7 +42,6 @@ TEST(VideoCodecTestLibaom, HighBitrateAV1) {
   auto config = CreateConfig("foreman_cif");
   config.SetCodecSettings(cricket::kAv1CodecName, 1, 1, 1, false, true, true,
                           kCifWidth, kCifHeight);
-  config.codec_settings.SetScalabilityMode("NONE");
   config.num_frames = kNumFramesLong;
   auto fixture = CreateVideoCodecTestFixture(config);
 
@@ -51,7 +50,7 @@ TEST(VideoCodecTestLibaom, HighBitrateAV1) {
   std::vector<RateControlThresholds> rc_thresholds = {
       {12, 1, 0, 1, 0.3, 0.1, 0, 1}};
 
-  std::vector<QualityThresholds> quality_thresholds = {{37, 34, 0.94, 0.915}};
+  std::vector<QualityThresholds> quality_thresholds = {{37, 34, 0.94, 0.92}};
 
   fixture->RunTest(rate_profiles, &rc_thresholds, &quality_thresholds, nullptr);
 }
@@ -60,7 +59,6 @@ TEST(VideoCodecTestLibaom, VeryLowBitrateAV1) {
   auto config = CreateConfig("foreman_cif");
   config.SetCodecSettings(cricket::kAv1CodecName, 1, 1, 1, false, true, true,
                           kCifWidth, kCifHeight);
-  config.codec_settings.SetScalabilityMode("NONE");
   auto fixture = CreateVideoCodecTestFixture(config);
 
   std::vector<RateProfile> rate_profiles = {{50, 30, 0}};
@@ -68,7 +66,7 @@ TEST(VideoCodecTestLibaom, VeryLowBitrateAV1) {
   std::vector<RateControlThresholds> rc_thresholds = {
       {15, 8, 75, 2, 2, 2, 2, 1}};
 
-  std::vector<QualityThresholds> quality_thresholds = {{28, 25, 0.70, 0.60}};
+  std::vector<QualityThresholds> quality_thresholds = {{28, 25, 0.70, 0.62}};
 
   fixture->RunTest(rate_profiles, &rc_thresholds, &quality_thresholds, nullptr);
 }
@@ -80,7 +78,6 @@ TEST(VideoCodecTestLibaom, HdAV1) {
   auto config = CreateConfig("ConferenceMotion_1280_720_50");
   config.SetCodecSettings(cricket::kAv1CodecName, 1, 1, 1, false, true, true,
                           kHdWidth, kHdHeight);
-  config.codec_settings.SetScalabilityMode("NONE");
   config.num_frames = kNumFramesLong;
   auto fixture = CreateVideoCodecTestFixture(config);
 
@@ -89,7 +86,7 @@ TEST(VideoCodecTestLibaom, HdAV1) {
   std::vector<RateControlThresholds> rc_thresholds = {
       {13, 3, 0, 1, 0.3, 0.1, 0, 1}};
 
-  std::vector<QualityThresholds> quality_thresholds = {{36, 31.7, 0.93, 0.87}};
+  std::vector<QualityThresholds> quality_thresholds = {{36, 32, 0.93, 0.87}};
 
   fixture->RunTest(rate_profiles, &rc_thresholds, &quality_thresholds, nullptr);
 }

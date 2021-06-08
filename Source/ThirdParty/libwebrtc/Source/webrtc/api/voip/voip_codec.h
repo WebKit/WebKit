@@ -29,21 +29,15 @@ namespace webrtc {
 class VoipCodec {
  public:
   // Set encoder type here along with its payload type to use.
-  // Returns following VoipResult;
-  //  kOk - sending codec is set as provided.
-  //  kInvalidArgument - |channel_id| is invalid.
-  virtual VoipResult SetSendCodec(ChannelId channel_id,
-                                  int payload_type,
-                                  const SdpAudioFormat& encoder_spec) = 0;
+  virtual void SetSendCodec(ChannelId channel_id,
+                            int payload_type,
+                            const SdpAudioFormat& encoder_spec) = 0;
 
   // Set decoder payload type here. In typical offer and answer model,
   // this should be called after payload type has been agreed in media
   // session.  Note that payload type can differ with same codec in each
   // direction.
-  // Returns following VoipResult;
-  //  kOk - receiving codecs are set as provided.
-  //  kInvalidArgument - |channel_id| is invalid.
-  virtual VoipResult SetReceiveCodecs(
+  virtual void SetReceiveCodecs(
       ChannelId channel_id,
       const std::map<int, SdpAudioFormat>& decoder_specs) = 0;
 

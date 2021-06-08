@@ -10,14 +10,8 @@
 
 #import "ARDExternalSampleCapturer.h"
 
-#import "sdk/objc/api/video_frame_buffer/RTCNativeI420Buffer.h"
-#import "sdk/objc/api/video_frame_buffer/RTCNativeMutableI420Buffer.h"
-#import "sdk/objc/base/RTCI420Buffer.h"
-#import "sdk/objc/base/RTCMutableI420Buffer.h"
-#import "sdk/objc/base/RTCMutableYUVPlanarBuffer.h"
-#import "sdk/objc/base/RTCVideoFrameBuffer.h"
-#import "sdk/objc/base/RTCYUVPlanarBuffer.h"
-#import "sdk/objc/components/video_frame_buffer/RTCCVPixelBuffer.h"
+#import <WebRTC/RTCCVPixelBuffer.h>
+#import <WebRTC/RTCVideoFrameBuffer.h>
 
 @implementation ARDExternalSampleCapturer
 

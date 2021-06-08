@@ -186,12 +186,6 @@ void AecDumpImpl::WriteRuntimeSetting(
       setting->set_capture_pre_gain(x);
       break;
     }
-    case AudioProcessing::RuntimeSetting::Type::kCapturePostGain: {
-      float x;
-      runtime_setting.GetFloat(&x);
-      setting->set_capture_post_gain(x);
-      break;
-    }
     case AudioProcessing::RuntimeSetting::Type::
         kCustomRenderProcessingRuntimeSetting: {
       float x;

@@ -661,7 +661,7 @@ class PeerConnectionFactoryForTest : public webrtc::PeerConnectionFactory {
     dependencies.event_log_factory = std::make_unique<RtcEventLogFactory>(
         dependencies.task_queue_factory.get());
 
-    return rtc::make_ref_counted<PeerConnectionFactoryForTest>(
+    return new rtc::RefCountedObject<PeerConnectionFactoryForTest>(
         std::move(dependencies));
   }
 
@@ -683,7 +683,7 @@ class PeerConnectionInterfaceBaseTest : public ::testing::Test {
 #endif
   }
 
-  void SetUp() override {
+  virtual void SetUp() {
     // Use fake audio capture module since we're only testing the interface
     // level, and using a real one could make tests flaky when run in parallel.
     fake_audio_capture_module_ = FakeAudioCaptureModule::Create();
@@ -699,11 +699,7 @@ class PeerConnectionInterfaceBaseTest : public ::testing::Test {
     ASSERT_TRUE(pc_factory_);
     pc_factory_for_test_ =
         PeerConnectionFactoryForTest::CreatePeerConnectionFactoryForTest();
-  }
-
-  void TearDown() override {
-    if (pc_)
-      pc_->Close();
+    pc_factory_for_test_->Initialize();
   }
 
   void CreatePeerConnection() {
@@ -739,10 +735,6 @@ class PeerConnectionInterfaceBaseTest : public ::testing::Test {
   }
 
   void CreatePeerConnection(const RTCConfiguration& config) {
-    if (pc_) {
-      pc_->Close();
-      pc_ = nullptr;
-    }
     std::unique_ptr<cricket::FakePortAllocator> port_allocator(
         new cricket::FakePortAllocator(rtc::Thread::Current(), nullptr));
     port_allocator_ = port_allocator.get();
@@ -879,8 +871,8 @@ class PeerConnectionInterfaceBaseTest : public ::testing::Test {
   bool DoCreateOfferAnswer(std::unique_ptr<SessionDescriptionInterface>* desc,
                            const RTCOfferAnswerOptions* options,
                            bool offer) {
-    auto observer =
-        rtc::make_ref_counted<MockCreateSessionDescriptionObserver>();
+    rtc::scoped_refptr<MockCreateSessionDescriptionObserver> observer(
+        new rtc::RefCountedObject<MockCreateSessionDescriptionObserver>());
     if (offer) {
       pc_->CreateOffer(observer, options ? *options : RTCOfferAnswerOptions());
     } else {
@@ -904,7 +896,8 @@ class PeerConnectionInterfaceBaseTest : public ::testing::Test {
   bool DoSetSessionDescription(
       std::unique_ptr<SessionDescriptionInterface> desc,
       bool local) {
-    auto observer = rtc::make_ref_counted<MockSetSessionDescriptionObserver>();
+    rtc::scoped_refptr<MockSetSessionDescriptionObserver> observer(
+        new rtc::RefCountedObject<MockSetSessionDescriptionObserver>());
     if (local) {
       pc_->SetLocalDescription(observer, desc.release());
     } else {
@@ -930,7 +923,8 @@ class PeerConnectionInterfaceBaseTest : public ::testing::Test {
   // It does not verify the values in the StatReports since a RTCP packet might
   // be required.
   bool DoGetStats(MediaStreamTrackInterface* track) {
-    auto observer = rtc::make_ref_counted<MockStatsObserver>();
+    rtc::scoped_refptr<MockStatsObserver> observer(
+        new rtc::RefCountedObject<MockStatsObserver>());
     if (!pc_->GetStats(observer, track,
                        PeerConnectionInterface::kStatsOutputLevelStandard))
       return false;
@@ -940,8 +934,8 @@ class PeerConnectionInterfaceBaseTest : public ::testing::Test {
 
   // Call the standards-compliant GetStats function.
   bool DoGetRTCStats() {
-    auto callback =
-        rtc::make_ref_counted<webrtc::MockRTCStatsCollectorCallback>();
+    rtc::scoped_refptr<webrtc::MockRTCStatsCollectorCallback> callback(
+        new rtc::RefCountedObject<webrtc::MockRTCStatsCollectorCallback>());
     pc_->GetStats(callback);
     EXPECT_TRUE_WAIT(callback->called(), kTimeout);
     return callback->called();
@@ -1196,8 +1190,8 @@ class PeerConnectionInterfaceBaseTest : public ::testing::Test {
   std::unique_ptr<SessionDescriptionInterface> CreateOfferWithOptions(
       const RTCOfferAnswerOptions& offer_answer_options) {
     RTC_DCHECK(pc_);
-    auto observer =
-        rtc::make_ref_counted<MockCreateSessionDescriptionObserver>();
+    rtc::scoped_refptr<MockCreateSessionDescriptionObserver> observer(
+        new rtc::RefCountedObject<MockCreateSessionDescriptionObserver>());
     pc_->CreateOffer(observer, offer_answer_options);
     EXPECT_EQ_WAIT(true, observer->called(), kTimeout);
     return observer->MoveDescription();
@@ -1899,6 +1893,179 @@ TEST_P(PeerConnectionInterfaceTest, GetRTCStatsBeforeAndAfterCalling) {
   EXPECT_TRUE(DoGetRTCStats());
 }
 
+// This test setup two RTP data channels in loop back.
+TEST_P(PeerConnectionInterfaceTest, TestDataChannel) {
+  RTCConfiguration config;
+  config.enable_rtp_data_channel = true;
+  config.enable_dtls_srtp = false;
+  CreatePeerConnection(config);
+  rtc::scoped_refptr<DataChannelInterface> data1 =
+      pc_->CreateDataChannel("test1", NULL);
+  rtc::scoped_refptr<DataChannelInterface> data2 =
+      pc_->CreateDataChannel("test2", NULL);
+  ASSERT_TRUE(data1 != NULL);
+  std::unique_ptr<MockDataChannelObserver> observer1(
+      new MockDataChannelObserver(data1));
+  std::unique_ptr<MockDataChannelObserver> observer2(
+      new MockDataChannelObserver(data2));
+
+  EXPECT_EQ(DataChannelInterface::kConnecting, data1->state());
+  EXPECT_EQ(DataChannelInterface::kConnecting, data2->state());
+  std::string data_to_send1 = "testing testing";
+  std::string data_to_send2 = "testing something else";
+  EXPECT_FALSE(data1->Send(DataBuffer(data_to_send1)));
+
+  CreateOfferReceiveAnswer();
+  EXPECT_TRUE_WAIT(observer1->IsOpen(), kTimeout);
+  EXPECT_TRUE_WAIT(observer2->IsOpen(), kTimeout);
+
+  EXPECT_EQ(DataChannelInterface::kOpen, data1->state());
+  EXPECT_EQ(DataChannelInterface::kOpen, data2->state());
+  EXPECT_TRUE(data1->Send(DataBuffer(data_to_send1)));
+  EXPECT_TRUE(data2->Send(DataBuffer(data_to_send2)));
+
+  EXPECT_EQ_WAIT(data_to_send1, observer1->last_message(), kTimeout);
+  EXPECT_EQ_WAIT(data_to_send2, observer2->last_message(), kTimeout);
+
+  data1->Close();
+  EXPECT_EQ(DataChannelInterface::kClosing, data1->state());
+  CreateOfferReceiveAnswer();
+  EXPECT_FALSE(observer1->IsOpen());
+  EXPECT_EQ(DataChannelInterface::kClosed, data1->state());
+  EXPECT_TRUE(observer2->IsOpen());
+
+  data_to_send2 = "testing something else again";
+  EXPECT_TRUE(data2->Send(DataBuffer(data_to_send2)));
+
+  EXPECT_EQ_WAIT(data_to_send2, observer2->last_message(), kTimeout);
+}
+
+// This test verifies that sendnig binary data over RTP data channels should
+// fail.
+TEST_P(PeerConnectionInterfaceTest, TestSendBinaryOnRtpDataChannel) {
+  RTCConfiguration config;
+  config.enable_rtp_data_channel = true;
+  config.enable_dtls_srtp = false;
+  CreatePeerConnection(config);
+  rtc::scoped_refptr<DataChannelInterface> data1 =
+      pc_->CreateDataChannel("test1", NULL);
+  rtc::scoped_refptr<DataChannelInterface> data2 =
+      pc_->CreateDataChannel("test2", NULL);
+  ASSERT_TRUE(data1 != NULL);
+  std::unique_ptr<MockDataChannelObserver> observer1(
+      new MockDataChannelObserver(data1));
+  std::unique_ptr<MockDataChannelObserver> observer2(
+      new MockDataChannelObserver(data2));
+
+  EXPECT_EQ(DataChannelInterface::kConnecting, data1->state());
+  EXPECT_EQ(DataChannelInterface::kConnecting, data2->state());
+
+  CreateOfferReceiveAnswer();
+  EXPECT_TRUE_WAIT(observer1->IsOpen(), kTimeout);
+  EXPECT_TRUE_WAIT(observer2->IsOpen(), kTimeout);
+
+  EXPECT_EQ(DataChannelInterface::kOpen, data1->state());
+  EXPECT_EQ(DataChannelInterface::kOpen, data2->state());
+
+  rtc::CopyOnWriteBuffer buffer("test", 4);
+  EXPECT_FALSE(data1->Send(DataBuffer(buffer, true)));
+}
+
+// This test setup a RTP data channels in loop back and test that a channel is
+// opened even if the remote end answer with a zero SSRC.
+TEST_P(PeerConnectionInterfaceTest, TestSendOnlyDataChannel) {
+  RTCConfiguration config;
+  config.enable_rtp_data_channel = true;
+  config.enable_dtls_srtp = false;
+  CreatePeerConnection(config);
+  rtc::scoped_refptr<DataChannelInterface> data1 =
+      pc_->CreateDataChannel("test1", NULL);
+  std::unique_ptr<MockDataChannelObserver> observer1(
+      new MockDataChannelObserver(data1));
+
+  CreateOfferReceiveAnswerWithoutSsrc();
+
+  EXPECT_TRUE_WAIT(observer1->IsOpen(), kTimeout);
+
+  data1->Close();
+  EXPECT_EQ(DataChannelInterface::kClosing, data1->state());
+  CreateOfferReceiveAnswerWithoutSsrc();
+  EXPECT_EQ(DataChannelInterface::kClosed, data1->state());
+  EXPECT_FALSE(observer1->IsOpen());
+}
+
+// This test that if a data channel is added in an answer a receive only channel
+// channel is created.
+TEST_P(PeerConnectionInterfaceTest, TestReceiveOnlyDataChannel) {
+  RTCConfiguration config;
+  config.enable_rtp_data_channel = true;
+  config.enable_dtls_srtp = false;
+
+  CreatePeerConnection(config);
+
+  std::string offer_label = "offer_channel";
+  rtc::scoped_refptr<DataChannelInterface> offer_channel =
+      pc_->CreateDataChannel(offer_label, NULL);
+
+  CreateOfferAsLocalDescription();
+
+  // Replace the data channel label in the offer and apply it as an answer.
+  std::string receive_label = "answer_channel";
+  std::string sdp;
+  EXPECT_TRUE(pc_->local_description()->ToString(&sdp));
+  absl::StrReplaceAll({{offer_label, receive_label}}, &sdp);
+  CreateAnswerAsRemoteDescription(sdp);
+
+  // Verify that a new incoming data channel has been created and that
+  // it is open but can't we written to.
+  ASSERT_TRUE(observer_.last_datachannel_ != NULL);
+  DataChannelInterface* received_channel = observer_.last_datachannel_;
+  EXPECT_EQ(DataChannelInterface::kConnecting, received_channel->state());
+  EXPECT_EQ(receive_label, received_channel->label());
+  EXPECT_FALSE(received_channel->Send(DataBuffer("something")));
+
+  // Verify that the channel we initially offered has been rejected.
+  EXPECT_EQ(DataChannelInterface::kClosed, offer_channel->state());
+
+  // Do another offer / answer exchange and verify that the data channel is
+  // opened.
+  CreateOfferReceiveAnswer();
+  EXPECT_EQ_WAIT(DataChannelInterface::kOpen, received_channel->state(),
+                 kTimeout);
+}
+
+// This test that no data channel is returned if a reliable channel is
+// requested.
+// TODO(perkj): Remove this test once reliable channels are implemented.
+TEST_P(PeerConnectionInterfaceTest, CreateReliableRtpDataChannelShouldFail) {
+  RTCConfiguration rtc_config;
+  rtc_config.enable_rtp_data_channel = true;
+  CreatePeerConnection(rtc_config);
+
+  std::string label = "test";
+  webrtc::DataChannelInit config;
+  config.reliable = true;
+  rtc::scoped_refptr<DataChannelInterface> channel =
+      pc_->CreateDataChannel(label, &config);
+  EXPECT_TRUE(channel == NULL);
+}
+
+// Verifies that duplicated label is not allowed for RTP data channel.
+TEST_P(PeerConnectionInterfaceTest, RtpDuplicatedLabelNotAllowed) {
+  RTCConfiguration config;
+  config.enable_rtp_data_channel = true;
+  CreatePeerConnection(config);
+
+  std::string label = "test";
+  rtc::scoped_refptr<DataChannelInterface> channel =
+      pc_->CreateDataChannel(label, nullptr);
+  EXPECT_NE(channel, nullptr);
+
+  rtc::scoped_refptr<DataChannelInterface> dup_channel =
+      pc_->CreateDataChannel(label, nullptr);
+  EXPECT_EQ(dup_channel, nullptr);
+}
+
 // This tests that a SCTP data channel is returned using different
 // DataChannelInit configurations.
 TEST_P(PeerConnectionInterfaceTest, CreateSctpDataChannel) {
@@ -2016,8 +2183,80 @@ TEST_P(PeerConnectionInterfaceTest, SctpDuplicatedLabelAllowed) {
   EXPECT_NE(dup_channel, nullptr);
 }
 
+// This test verifies that OnRenegotiationNeeded is fired for every new RTP
+// DataChannel.
+TEST_P(PeerConnectionInterfaceTest, RenegotiationNeededForNewRtpDataChannel) {
+  RTCConfiguration rtc_config;
+  rtc_config.enable_rtp_data_channel = true;
+  rtc_config.enable_dtls_srtp = false;
+  CreatePeerConnection(rtc_config);
 
-#ifdef WEBRTC_HAVE_SCTP
+  rtc::scoped_refptr<DataChannelInterface> dc1 =
+      pc_->CreateDataChannel("test1", NULL);
+  EXPECT_TRUE(observer_.renegotiation_needed_);
+  observer_.renegotiation_needed_ = false;
+
+  CreateOfferReceiveAnswer();
+
+  rtc::scoped_refptr<DataChannelInterface> dc2 =
+      pc_->CreateDataChannel("test2", NULL);
+  EXPECT_EQ(observer_.renegotiation_needed_,
+            GetParam() == SdpSemantics::kPlanB);
+}
+
+// This test that a data channel closes when a PeerConnection is deleted/closed.
+TEST_P(PeerConnectionInterfaceTest, DataChannelCloseWhenPeerConnectionClose) {
+  RTCConfiguration rtc_config;
+  rtc_config.enable_rtp_data_channel = true;
+  rtc_config.enable_dtls_srtp = false;
+  CreatePeerConnection(rtc_config);
+
+  rtc::scoped_refptr<DataChannelInterface> data1 =
+      pc_->CreateDataChannel("test1", NULL);
+  rtc::scoped_refptr<DataChannelInterface> data2 =
+      pc_->CreateDataChannel("test2", NULL);
+  ASSERT_TRUE(data1 != NULL);
+  std::unique_ptr<MockDataChannelObserver> observer1(
+      new MockDataChannelObserver(data1));
+  std::unique_ptr<MockDataChannelObserver> observer2(
+      new MockDataChannelObserver(data2));
+
+  CreateOfferReceiveAnswer();
+  EXPECT_TRUE_WAIT(observer1->IsOpen(), kTimeout);
+  EXPECT_TRUE_WAIT(observer2->IsOpen(), kTimeout);
+
+  ReleasePeerConnection();
+  EXPECT_EQ(DataChannelInterface::kClosed, data1->state());
+  EXPECT_EQ(DataChannelInterface::kClosed, data2->state());
+}
+
+// This tests that RTP data channels can be rejected in an answer.
+TEST_P(PeerConnectionInterfaceTest, TestRejectRtpDataChannelInAnswer) {
+  RTCConfiguration rtc_config;
+  rtc_config.enable_rtp_data_channel = true;
+  rtc_config.enable_dtls_srtp = false;
+  CreatePeerConnection(rtc_config);
+
+  rtc::scoped_refptr<DataChannelInterface> offer_channel(
+      pc_->CreateDataChannel("offer_channel", NULL));
+
+  CreateOfferAsLocalDescription();
+
+  // Create an answer where the m-line for data channels are rejected.
+  std::string sdp;
+  EXPECT_TRUE(pc_->local_description()->ToString(&sdp));
+  std::unique_ptr<SessionDescriptionInterface> answer(
+      webrtc::CreateSessionDescription(SdpType::kAnswer, sdp));
+  ASSERT_TRUE(answer);
+  cricket::ContentInfo* data_info =
+      cricket::GetFirstDataContent(answer->description());
+  data_info->rejected = true;
+
+  DoSetRemoteDescription(std::move(answer));
+  EXPECT_EQ(DataChannelInterface::kClosed, offer_channel->state());
+}
+
+#ifdef HAVE_SCTP
 // This tests that SCTP data channels can be rejected in an answer.
 TEST_P(PeerConnectionInterfaceTest, TestRejectSctpDataChannelInAnswer)
 #else
@@ -2072,7 +2311,7 @@ TEST_P(PeerConnectionInterfaceTest, ReceiveFireFoxOffer) {
       cricket::GetFirstVideoContent(pc_->local_description()->description());
   ASSERT_TRUE(content != NULL);
   EXPECT_FALSE(content->rejected);
-#ifdef WEBRTC_HAVE_SCTP
+#ifdef HAVE_SCTP
   content =
       cricket::GetFirstDataContent(pc_->local_description()->description());
   ASSERT_TRUE(content != NULL);
@@ -3355,12 +3594,12 @@ TEST_F(PeerConnectionInterfaceTestPlanB,
 
 // Test that negotiation can succeed with a data channel only, and with the max
 // bundle policy. Previously there was a bug that prevented this.
-#ifdef WEBRTC_HAVE_SCTP
+#ifdef HAVE_SCTP
 TEST_P(PeerConnectionInterfaceTest, DataChannelOnlyOfferWithMaxBundlePolicy) {
 #else
 TEST_P(PeerConnectionInterfaceTest,
        DISABLED_DataChannelOnlyOfferWithMaxBundlePolicy) {
-#endif  // WEBRTC_HAVE_SCTP
+#endif  // HAVE_SCTP
   PeerConnectionInterface::RTCConfiguration config;
   config.bundle_policy = PeerConnectionInterface::kBundlePolicyMaxBundle;
   CreatePeerConnection(config);
@@ -3662,17 +3901,17 @@ TEST_P(PeerConnectionInterfaceTest,
 
 TEST_P(PeerConnectionInterfaceTest, ExtmapAllowMixedIsConfigurable) {
   RTCConfiguration config;
-  // Default behavior is true.
+  // Default behavior is false.
   CreatePeerConnection(config);
   std::unique_ptr<SessionDescriptionInterface> offer;
   ASSERT_TRUE(DoCreateOffer(&offer, nullptr));
-  EXPECT_TRUE(offer->description()->extmap_allow_mixed());
-  // Possible to set to false.
-  config.offer_extmap_allow_mixed = false;
-  CreatePeerConnection(config);
-  offer = nullptr;
-  ASSERT_TRUE(DoCreateOffer(&offer, nullptr));
   EXPECT_FALSE(offer->description()->extmap_allow_mixed());
+  // Possible to set to true.
+  config.offer_extmap_allow_mixed = true;
+  CreatePeerConnection(config);
+  offer.release();
+  ASSERT_TRUE(DoCreateOffer(&offer, nullptr));
+  EXPECT_TRUE(offer->description()->extmap_allow_mixed());
 }
 
 INSTANTIATE_TEST_SUITE_P(PeerConnectionInterfaceTest,
@@ -3684,6 +3923,7 @@ class PeerConnectionMediaConfigTest : public ::testing::Test {
  protected:
   void SetUp() override {
     pcf_ = PeerConnectionFactoryForTest::CreatePeerConnectionFactoryForTest();
+    pcf_->Initialize();
   }
   const cricket::MediaConfig TestCreatePeerConnection(
       const RTCConfiguration& config) {

@@ -25,11 +25,6 @@ namespace {
 // Maximum number of media packets that can be protected in one batch.
 constexpr size_t kMaxMediaPackets = 48;  // Since we are reusing ULPFEC masks.
 
-// Maximum number of media packets tracked by FEC decoder.
-// Maintain a sufficiently larger tracking window than |kMaxMediaPackets|
-// to account for packet reordering in pacer/ network.
-constexpr size_t kMaxTrackedMediaPackets = 4 * kMaxMediaPackets;
-
 // Maximum number of FEC packets stored inside ForwardErrorCorrection.
 constexpr size_t kMaxFecPackets = kMaxMediaPackets;
 
@@ -77,7 +72,7 @@ size_t FlexfecHeaderSize(size_t packet_mask_size) {
 }  // namespace
 
 FlexfecHeaderReader::FlexfecHeaderReader()
-    : FecHeaderReader(kMaxTrackedMediaPackets, kMaxFecPackets) {}
+    : FecHeaderReader(kMaxMediaPackets, kMaxFecPackets) {}
 
 FlexfecHeaderReader::~FlexfecHeaderReader() = default;
 
@@ -90,7 +85,7 @@ bool FlexfecHeaderReader::ReadFecHeader(
     RTC_LOG(LS_WARNING) << "Discarding truncated FlexFEC packet.";
     return false;
   }
-  uint8_t* const data = fec_packet->pkt->data.MutableData();
+  uint8_t* const data = fec_packet->pkt->data.data();
   bool r_bit = (data[0] & 0x80) != 0;
   if (r_bit) {
     RTC_LOG(LS_INFO)
@@ -254,7 +249,7 @@ void FlexfecHeaderWriter::FinalizeFecHeader(
     const uint8_t* packet_mask,
     size_t packet_mask_size,
     ForwardErrorCorrection::Packet* fec_packet) const {
-  uint8_t* data = fec_packet->data.MutableData();
+  uint8_t* data = fec_packet->data.data();
   data[0] &= 0x7f;  // Clear R bit.
   data[0] &= 0xbf;  // Clear F bit.
   ByteWriter<uint8_t>::WriteBigEndian(&data[8], kSsrcCount);
@@ -265,7 +260,8 @@ void FlexfecHeaderWriter::FinalizeFecHeader(
   //
   // We treat the mask parts as unsigned integers with host order endianness
   // in order to simplify the bit shifting between bytes.
-  uint8_t* const written_packet_mask = data + kPacketMaskOffset;
+  uint8_t* const written_packet_mask =
+      fec_packet->data.data() + kPacketMaskOffset;
   if (packet_mask_size == kUlpfecPacketMaskSizeLBitSet) {
     // The packet mask is 48 bits long.
     uint16_t tmp_mask_part0 =

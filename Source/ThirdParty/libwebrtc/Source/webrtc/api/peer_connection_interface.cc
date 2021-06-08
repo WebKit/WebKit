@@ -10,7 +10,8 @@
 
 #include "api/peer_connection_interface.h"
 
-#include <utility>
+#include "api/dtls_transport_interface.h"
+#include "api/sctp_transport_interface.h"
 
 namespace webrtc {
 
@@ -76,34 +77,14 @@ PeerConnectionFactoryInterface::CreatePeerConnection(
     std::unique_ptr<cricket::PortAllocator> allocator,
     std::unique_ptr<rtc::RTCCertificateGeneratorInterface> cert_generator,
     PeerConnectionObserver* observer) {
-  PeerConnectionDependencies dependencies(observer);
-  dependencies.allocator = std::move(allocator);
-  dependencies.cert_generator = std::move(cert_generator);
-  auto result =
-      CreatePeerConnectionOrError(configuration, std::move(dependencies));
-  if (!result.ok()) {
-    return nullptr;
-  }
-  return result.MoveValue();
+  return nullptr;
 }
 
 rtc::scoped_refptr<PeerConnectionInterface>
 PeerConnectionFactoryInterface::CreatePeerConnection(
     const PeerConnectionInterface::RTCConfiguration& configuration,
     PeerConnectionDependencies dependencies) {
-  auto result =
-      CreatePeerConnectionOrError(configuration, std::move(dependencies));
-  if (!result.ok()) {
-    return nullptr;
-  }
-  return result.MoveValue();
-}
-
-RTCErrorOr<rtc::scoped_refptr<PeerConnectionInterface>>
-PeerConnectionFactoryInterface::CreatePeerConnectionOrError(
-    const PeerConnectionInterface::RTCConfiguration& configuration,
-    PeerConnectionDependencies dependencies) {
-  return RTCError(RTCErrorType::INTERNAL_ERROR);
+  return nullptr;
 }
 
 RtpCapabilities PeerConnectionFactoryInterface::GetRtpSenderCapabilities(

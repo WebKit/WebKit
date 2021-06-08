@@ -23,8 +23,8 @@ bool DeactivateTransparentMode() {
   return field_trial::IsEnabled("WebRTC-Aec3TransparentModeKillSwitch");
 }
 
-bool ActivateTransparentModeHmm() {
-  return field_trial::IsEnabled("WebRTC-Aec3TransparentModeHmm");
+bool DeactivateTransparentModeHmm() {
+  return field_trial::IsEnabled("WebRTC-Aec3TransparentModeHmmKillSwitch");
 }
 
 }  // namespace
@@ -230,10 +230,10 @@ std::unique_ptr<TransparentMode> TransparentMode::Create(
   if (config.ep_strength.bounded_erl || DeactivateTransparentMode()) {
     return nullptr;
   }
-  if (ActivateTransparentModeHmm()) {
-    return std::make_unique<TransparentModeImpl>();
+  if (DeactivateTransparentModeHmm()) {
+    return std::make_unique<LegacyTransparentModeImpl>(config);
   }
-  return std::make_unique<LegacyTransparentModeImpl>(config);
+  return std::make_unique<TransparentModeImpl>();
 }
 
 }  // namespace webrtc

@@ -35,7 +35,7 @@
 #include "logging/rtc_event_log/rtc_event_log_parser.h"
 #include "logging/rtc_event_log/rtc_event_log_unittest_helper.h"
 #include "modules/audio_coding/audio_network_adaptor/include/audio_network_adaptor_config.h"
-#include "modules/rtp_rtcp/source/rtcp_packet/bye.h"
+#include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "rtc_base/fake_clock.h"
 #include "rtc_base/random.h"
@@ -1035,44 +1035,6 @@ TEST_P(RtcEventLogEncoderTest, RtcEventRtcpPli) {
   }
 }
 
-TEST_P(RtcEventLogEncoderTest, RtcEventRtcpBye) {
-  if (force_repeated_fields_) {
-    return;
-  }
-
-  rtc::ScopedFakeClock fake_clock;
-  fake_clock.SetTime(Timestamp::Millis(prng_.Rand<uint32_t>()));
-
-  for (auto direction : {kIncomingPacket, kOutgoingPacket}) {
-    std::vector<rtcp::Bye> events(event_count_);
-    std::vector<int64_t> timestamps_us(event_count_);
-    for (size_t i = 0; i < event_count_; ++i) {
-      timestamps_us[i] = rtc::TimeMicros();
-      events[i] = gen_.NewBye();
-      rtc::Buffer buffer = events[i].Build();
-      if (direction == kIncomingPacket) {
-        history_.push_back(
-            std::make_unique<RtcEventRtcpPacketIncoming>(buffer));
-      } else {
-        history_.push_back(
-            std::make_unique<RtcEventRtcpPacketOutgoing>(buffer));
-      }
-      fake_clock.AdvanceTime(TimeDelta::Millis(prng_.Rand(0, 1000)));
-    }
-
-    std::string encoded =
-        encoder_->EncodeBatch(history_.begin(), history_.end());
-    ASSERT_TRUE(parsed_log_.ParseString(encoded).ok());
-
-    const auto& byes = parsed_log_.byes(direction);
-    ASSERT_EQ(byes.size(), event_count_);
-
-    for (size_t i = 0; i < event_count_; ++i) {
-      verifier_.VerifyLoggedBye(timestamps_us[i], events[i], byes[i]);
-    }
-  }
-}
-
 TEST_P(RtcEventLogEncoderTest, RtcEventRtcpNack) {
   if (force_repeated_fields_) {
     return;
@@ -1279,64 +1241,5 @@ INSTANTIATE_TEST_SUITE_P(
                                          RtcEventLog::EncodingType::NewFormat),
                        /* Event count: */ ::testing::Values(1, 2, 10, 100),
                        /* Repeated fields: */ ::testing::Bool()));
-
-class RtcEventLogEncoderSimpleTest
-    : public ::testing::TestWithParam<RtcEventLog::EncodingType> {
- protected:
-  RtcEventLogEncoderSimpleTest() : encoding_(GetParam()) {
-    switch (encoding_) {
-      case RtcEventLog::EncodingType::Legacy:
-        encoder_ = std::make_unique<RtcEventLogEncoderLegacy>();
-        break;
-      case RtcEventLog::EncodingType::NewFormat:
-        encoder_ = std::make_unique<RtcEventLogEncoderNewFormat>();
-        break;
-    }
-  }
-  ~RtcEventLogEncoderSimpleTest() override = default;
-
-  std::deque<std::unique_ptr<RtcEvent>> history_;
-  std::unique_ptr<RtcEventLogEncoder> encoder_;
-  ParsedRtcEventLog parsed_log_;
-  const RtcEventLog::EncodingType encoding_;
-};
-
-TEST_P(RtcEventLogEncoderSimpleTest, RtcEventLargeCompoundRtcpPacketIncoming) {
-  // Create a compound packet containing multiple Bye messages.
-  rtc::Buffer packet;
-  size_t index = 0;
-  for (int i = 0; i < 8; i++) {
-    rtcp::Bye bye;
-    std::string reason(255, 'a');  // Add some arbitrary data.
-    bye.SetReason(reason);
-    bye.SetSenderSsrc(0x12345678);
-    packet.SetSize(packet.size() + bye.BlockLength());
-    bool created =
-        bye.Create(packet.data(), &index, packet.capacity(), nullptr);
-    ASSERT_TRUE(created);
-    ASSERT_EQ(index, packet.size());
-  }
-
-  EXPECT_GT(packet.size(), static_cast<size_t>(IP_PACKET_SIZE));
-  auto event = std::make_unique<RtcEventRtcpPacketIncoming>(packet);
-  history_.push_back(event->Copy());
-  std::string encoded = encoder_->EncodeBatch(history_.begin(), history_.end());
-
-  ParsedRtcEventLog::ParseStatus status = parsed_log_.ParseString(encoded);
-  ASSERT_TRUE(status.ok()) << status.message();
-
-  const auto& incoming_rtcp_packets = parsed_log_.incoming_rtcp_packets();
-  ASSERT_EQ(incoming_rtcp_packets.size(), 1u);
-  ASSERT_EQ(incoming_rtcp_packets[0].rtcp.raw_data.size(), packet.size());
-  EXPECT_EQ(memcmp(incoming_rtcp_packets[0].rtcp.raw_data.data(), packet.data(),
-                   packet.size()),
-            0);
-}
-
-INSTANTIATE_TEST_SUITE_P(
-    LargeCompoundRtcp,
-    RtcEventLogEncoderSimpleTest,
-    ::testing::Values(RtcEventLog::EncodingType::Legacy,
-                      RtcEventLog::EncodingType::NewFormat));
 
 }  // namespace webrtc

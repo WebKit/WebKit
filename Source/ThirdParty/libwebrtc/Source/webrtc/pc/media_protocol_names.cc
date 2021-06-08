@@ -10,9 +10,6 @@
 
 #include "pc/media_protocol_names.h"
 
-#include <ctype.h>
-#include <stddef.h>
-
 namespace cricket {
 
 // There are multiple variants of the RTP protocol stack, including

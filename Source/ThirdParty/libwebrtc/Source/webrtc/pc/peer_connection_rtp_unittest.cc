@@ -919,7 +919,7 @@ TEST_P(PeerConnectionRtpTest,
   auto callee = CreatePeerConnection();
 
   rtc::scoped_refptr<webrtc::MockSetSessionDescriptionObserver> observer =
-      rtc::make_ref_counted<webrtc::MockSetSessionDescriptionObserver>();
+      new rtc::RefCountedObject<webrtc::MockSetSessionDescriptionObserver>();
 
   auto offer = caller->CreateOfferAndSetAsLocal();
   callee->pc()->SetRemoteDescription(observer, offer.release());
@@ -1894,7 +1894,7 @@ TEST_F(PeerConnectionMsidSignalingTest, PureUnifiedPlanToUs) {
 
 class SdpFormatReceivedTest : public PeerConnectionRtpTestUnifiedPlan {};
 
-#ifdef WEBRTC_HAVE_SCTP
+#ifdef HAVE_SCTP
 TEST_F(SdpFormatReceivedTest, DataChannelOnlyIsReportedAsNoTracks) {
   auto caller = CreatePeerConnectionWithUnifiedPlan();
   caller->CreateDataChannel("dc");
@@ -1906,7 +1906,7 @@ TEST_F(SdpFormatReceivedTest, DataChannelOnlyIsReportedAsNoTracks) {
       metrics::Samples("WebRTC.PeerConnection.SdpFormatReceived"),
       ElementsAre(Pair(kSdpFormatReceivedNoTracks, 1)));
 }
-#endif  // WEBRTC_HAVE_SCTP
+#endif  // HAVE_SCTP
 
 TEST_F(SdpFormatReceivedTest, SimpleUnifiedPlanIsReportedAsSimple) {
   auto caller = CreatePeerConnectionWithUnifiedPlan();
@@ -1961,19 +1961,6 @@ TEST_F(SdpFormatReceivedTest, ComplexPlanBIsReportedAsComplexPlanB) {
   EXPECT_METRIC_THAT(
       metrics::Samples("WebRTC.PeerConnection.SdpFormatReceived"),
       ElementsAre(Pair(kSdpFormatReceivedComplexPlanB, 1)));
-}
-
-TEST_F(SdpFormatReceivedTest, AnswerIsReported) {
-  auto caller = CreatePeerConnectionWithPlanB();
-  caller->AddAudioTrack("audio");
-  caller->AddVideoTrack("video");
-  auto callee = CreatePeerConnectionWithUnifiedPlan();
-
-  ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
-  ASSERT_TRUE(caller->SetRemoteDescription(callee->CreateAnswer()));
-  EXPECT_METRIC_THAT(
-      metrics::Samples("WebRTC.PeerConnection.SdpFormatReceivedAnswer"),
-      ElementsAre(Pair(kSdpFormatReceivedSimple, 1)));
 }
 
 // Sender setups in a call.

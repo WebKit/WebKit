@@ -37,6 +37,7 @@ rtc_library("system_wrappers") {
     "../modules:module_api_public",
     "../rtc_base:checks",
     "../rtc_base/synchronization:mutex",
+    "../rtc_base/synchronization:rw_lock_wrapper",
     "../rtc_base/system:arch",
     "../rtc_base/system:rtc_export",
   ]
@@ -108,7 +109,7 @@ rtc_library("metrics") {
   ]
 }
 
-if (rtc_include_tests && !build_with_chromium) {
+if (rtc_include_tests) {
   rtc_test("system_wrappers_unittests") {
     testonly = true
     sources = [
@@ -130,9 +131,8 @@ if (rtc_include_tests && !build_with_chromium) {
       "../test:test_main",
       "../test:test_support",
       "//testing/gtest",
+      "//third_party/abseil-cpp/absl/strings",
     ]
-
-    absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 
     if (is_android) {
       deps += [ "//testing/android/native_test:native_test_support" ]

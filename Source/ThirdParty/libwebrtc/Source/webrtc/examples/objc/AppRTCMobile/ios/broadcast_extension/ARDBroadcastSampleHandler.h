@@ -10,7 +10,7 @@
 
 #import <ReplayKit/ReplayKit.h>
 
-#import "sdk/objc/base/RTCLogging.h"
+#import <WebRTC/RTCLogging.h>
 
 #import "ARDAppClient.h"
 

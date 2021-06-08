@@ -26,8 +26,6 @@ UniqueRandomIdGenerator::UniqueRandomIdGenerator(ArrayView<uint32_t> known_ids)
 UniqueRandomIdGenerator::~UniqueRandomIdGenerator() = default;
 
 uint32_t UniqueRandomIdGenerator::GenerateId() {
-  webrtc::MutexLock lock(&mutex_);
-
   RTC_CHECK_LT(known_ids_.size(), std::numeric_limits<uint32_t>::max() - 1);
   while (true) {
     auto pair = known_ids_.insert(CreateRandomNonZeroId());
@@ -38,7 +36,6 @@ uint32_t UniqueRandomIdGenerator::GenerateId() {
 }
 
 bool UniqueRandomIdGenerator::AddKnownId(uint32_t value) {
-  webrtc::MutexLock lock(&mutex_);
   return known_ids_.insert(value).second;
 }
 

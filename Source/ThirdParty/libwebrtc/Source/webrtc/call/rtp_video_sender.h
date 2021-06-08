@@ -22,7 +22,6 @@
 #include "api/fec_controller.h"
 #include "api/fec_controller_override.h"
 #include "api/rtc_event_log/rtc_event_log.h"
-#include "api/sequence_checker.h"
 #include "api/transport/field_trial_based_config.h"
 #include "api/video_codecs/video_encoder.h"
 #include "call/rtp_config.h"
@@ -40,6 +39,7 @@
 #include "rtc_base/rate_limiter.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
+#include "rtc_base/thread_checker.h"
 
 namespace webrtc {
 
@@ -138,8 +138,7 @@ class RtpVideoSender : public RtpVideoSenderInterface,
 
   void OnBitrateAllocationUpdated(const VideoBitrateAllocation& bitrate)
       RTC_LOCKS_EXCLUDED(mutex_) override;
-  void OnVideoLayersAllocationUpdated(
-      const VideoLayersAllocation& layers) override;
+
   void OnTransportOverheadChanged(size_t transport_overhead_bytes_per_packet)
       RTC_LOCKS_EXCLUDED(mutex_) override;
   void OnBitrateUpdated(BitrateAllocationUpdate update, int framerate)
@@ -169,16 +168,13 @@ class RtpVideoSender : public RtpVideoSenderInterface,
   void ConfigureRids();
   bool NackEnabled() const;
   uint32_t GetPacketizationOverheadRate() const;
-  DataRate CalculateOverheadRate(DataRate data_rate,
-                                 DataSize packet_size,
-                                 DataSize overhead_per_packet,
-                                 Frequency framerate) const;
 
   const FieldTrialBasedConfig field_trials_;
   const bool send_side_bwe_with_overhead_;
-  const bool use_frame_rate_for_overhead_;
+  const bool account_for_packetization_overhead_;
+  const bool use_early_loss_detection_;
   const bool has_packet_feedback_;
-  const bool simulate_vp9_structure_;
+  const bool use_deferred_fec_;
 
   // TODO(holmer): Remove mutex_ once RtpVideoSender runs on the
   // transport task queue.
@@ -186,7 +182,7 @@ class RtpVideoSender : public RtpVideoSenderInterface,
   bool active_ RTC_GUARDED_BY(mutex_);
 
   ProcessThread* module_process_thread_;
-  SequenceChecker module_process_thread_checker_;
+  rtc::ThreadChecker module_process_thread_checker_;
   std::map<uint32_t, RtpState> suspended_ssrcs_;
 
   const std::unique_ptr<FecController> fec_controller_;
