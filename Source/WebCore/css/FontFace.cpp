@@ -443,14 +443,16 @@ void FontFace::fontStateChanged(CSSFontFace& face, CSSFontFace::Status, CSSFontF
         // gone through a load cycle, we can sometimes come back through here and try to resolve the promise again.  
         if (!m_loadedPromise.isFulfilled())
             m_loadedPromise.resolve(*this);
-        deref();
+        if (face.status() != CSSFontFace::Status::Success && face.status() != CSSFontFace::Status::Failure)
+            deref();
         return;
     case CSSFontFace::Status::Failure:
         // FIXME: This check should not be needed, but because FontFace's are sometimes adopted after they have already
         // gone through a load cycle, we can sometimes come back through here and try to resolve the promise again.  
         if (!m_loadedPromise.isFulfilled())
             m_loadedPromise.reject(Exception { NetworkError });
-        deref();
+        if (face.status() != CSSFontFace::Status::Success && face.status() != CSSFontFace::Status::Failure)
+            deref();
         return;
     case CSSFontFace::Status::Pending:
         ASSERT_NOT_REACHED();
