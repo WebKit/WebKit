@@ -1,4 +1,20 @@
 ================
+WebKitGTK 2.33.2
+================
+
+What's new in WebKitGTK 2.33.2?
+
+  - HTTP/2 support when building with libsoup3.
+  - Add API to disable CORS on a web view for particular domains.
+  - Fix rendering on HiDPI /4k screen and scaling.
+  - Improve calculation of initial WebKitWebView size.
+  - Fix rendering of VP9 with transparency.
+  - Remove dependency on glvideoflip and videoflip.
+  - Several fixes on scrolling when async scrolling is enabled.
+  - Ensure WebKitScriptWorld::window-object-cleared signal is always emitted.
+  - Translation updates: Danish, Swedish, Ukrainian.
+
+================
 WebKitGTK 2.33.1
 ================
 
