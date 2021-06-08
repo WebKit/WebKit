@@ -37,7 +37,7 @@ private:
     String extraDefaultStyleSheet() final;
 #if ENABLE(VIDEO)
     String extraMediaControlsStyleSheet() final;
-    Vector<String, 3> mediaControlsScripts() final;
+    Vector<String, 2> mediaControlsScripts() final;
 #endif
 
     bool supportsHover(const RenderStyle&) const final { return true; }

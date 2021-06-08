@@ -30,16 +30,12 @@ class OverflowSupport extends MediaControllerSupport
 
     get mediaEvents()
     {
-        let mediaEvents = [];
-        window["WebKitAdditions.OverflowSupport.prototype.get_mediaEvents"]?.(this, mediaEvents);
-        return mediaEvents;
+        return ["loadstart", "loadedmetadata"];
     }
 
     get tracksToMonitor()
     {
-        let tracksToMonitor = [];
-        window["WebKitAdditions.OverflowSupport.prototype.get_tracksToMonitor"]?.(this, tracksToMonitor);
-        return tracksToMonitor;
+        return [this.mediaController.media.textTracks];
     }
 
     get control()
@@ -57,7 +53,19 @@ class OverflowSupport extends MediaControllerSupport
         this.control.enabled = this.mediaController.canShowMediaControlsContextMenu;
 
         let defaultContextMenuOptions = {};
-        window["WebKitAdditions.OverflowSupport.prototype.syncControl"]?.(this, defaultContextMenuOptions);
+
+        if (!this.mediaController.hidePlaybackRates && (!window.MediaStream || !(this.mediaController.media.srcObject instanceof MediaStream)))
+            defaultContextMenuOptions.includePlaybackRates = true;
+
+        for (let textTrack of this.mediaController.media.textTracks) {
+            if (textTrack.kind !== "chapters")
+                continue;
+
+            if (textTrack.mode === "disabled")
+                textTrack.mode = "hidden";
+            defaultContextMenuOptions.includeChapters = true;
+        }
+
         this.control.defaultContextMenuOptions = defaultContextMenuOptions;
     }
 

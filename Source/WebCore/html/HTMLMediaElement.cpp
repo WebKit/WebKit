@@ -7490,6 +7490,11 @@ void HTMLMediaElement::setMediaControlsMaximumRightContainerButtonCountOverride(
     setControllerJSProperty("maximumRightContainerButtonCountOverride", JSC::jsNumber(count));
 }
 
+void HTMLMediaElement::setMediaControlsHidePlaybackRates(bool hidePlaybackRates)
+{
+    setControllerJSProperty("hidePlaybackRates", JSC::jsBoolean(hidePlaybackRates));
+}
+
 unsigned long long HTMLMediaElement::fileSize() const
 {
     if (m_player)

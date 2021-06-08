@@ -1,3 +1,17 @@
+2021-06-08  Devin Rousso  <drousso@apple.com>
+
+        [Modern Media Controls] upstream new features
+        https://bugs.webkit.org/show_bug.cgi?id=226736
+        <rdar://problem/78957464>
+
+        Reviewed by Eric Carlson.
+
+         - bring the "Audio"/"Languages" tracks menu to iOS
+         - add a new "Playback Speed" menu on iOS and macOS in the overflow menu
+         - add support for showing the most relevant `<track kind="chapters">` in the overflow menu
+
+        * wtf/PlatformEnableCocoa.h:
+
 2021-06-08  Sam Weinig  <weinig@apple.com>
 
         Add copy of std::span so that we can use it pre-moving to c++20

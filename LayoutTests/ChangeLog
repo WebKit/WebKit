@@ -1,3 +1,21 @@
+2021-06-08  Devin Rousso  <drousso@apple.com>
+
+        [Modern Media Controls] upstream new features
+        https://bugs.webkit.org/show_bug.cgi?id=226736
+        <rdar://problem/78957464>
+
+        Reviewed by Eric Carlson.
+
+        * media/modern-media-controls/overflow-button/overflow-button.html: Added.
+        * media/modern-media-controls/overflow-button/overflow-button-expected.txt: Added.
+        * media/modern-media-controls/overflow-support/chapters.html: Added.
+        * media/modern-media-controls/overflow-support/chapters-expected.txt: Added.
+        * media/modern-media-controls/overflow-support/playback-speed.html: Added.
+        * media/modern-media-controls/overflow-support/playback-speed-expected.txt: Added.
+
+        * TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2021-06-08  Antoine Quint  <graouts@webkit.org>
 
         REGRESSION (r256095): Adding a border-radius, border, or box-shadow breaks animations from scale(0)

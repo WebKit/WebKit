@@ -1,0 +1,14 @@
+Testing the OverflowSupport behavior for Playback Speed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS shadowRoot.querySelector('button.overflow') became different from null
+PASS shadowRoot.querySelector('button.overflow').getBoundingClientRect().width became different from 0
+Tapping overflow button...
+Selecting first chapter cue...
+PASS media.currentTime is >= 5
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -97,11 +97,26 @@
 /* Present the element <select multiple> when no <option> items are selected (iOS only) */
 "0 Items" = "0 Items";
 
+/* 0.5× media controls context menu playback speed label */
+"0.5× (Media Controls Menu Playback Speed)" = "0.5×";
+
 /* Present the element <select multiple> when a single <option> is selected (iOS only) */
 "1 Item" = "1 Item";
 
+/* 1× media controls context menu playback speed label */
+"1× (Media Controls Menu Playback Speed)" = "1×";
+
+/* 1.25× media controls context menu playback speed label */
+"1.25× (Media Controls Menu Playback Speed)" = "1.25×";
+
+/* 1.5× media controls context menu playback speed label */
+"1.5× (Media Controls Menu Playback Speed)" = "1.5×";
+
 /* Option in segmented control for choosing list type in text editing */
 "1. 2. 3." = "1. 2. 3.";
+
+/* 2× media controls context menu playback speed label */
+"2× (Media Controls Menu Playback Speed)" = "2×";
 
 /* Menu item title for KEYGEN pop-up menu */
 "2048 (High Grade)" = "2048 (High Grade)";
@@ -705,6 +720,9 @@
 
 /* Media Play context menu item */
 "Play" = "Play";
+
+/* Playback Speed media controls context menu title */
+"Playback Speed (Media Controls Menu)" = "Playback Speed";
 
 /* accessibility help text for enter full screen button */
 "Play movie in full screen mode" = "Play movie in full screen mode";

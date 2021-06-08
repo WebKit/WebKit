@@ -4822,6 +4822,11 @@ void Internals::setMediaControlsMaximumRightContainerButtonCountOverride(HTMLMed
     mediaElement.setMediaControlsMaximumRightContainerButtonCountOverride(count);
 }
 
+void Internals::setMediaControlsHidePlaybackRates(HTMLMediaElement& mediaElement, bool hidePlaybackRates)
+{
+    mediaElement.setMediaControlsHidePlaybackRates(hidePlaybackRates);
+}
+
 #endif // ENABLE(VIDEO)
 
 #if !PLATFORM(COCOA)

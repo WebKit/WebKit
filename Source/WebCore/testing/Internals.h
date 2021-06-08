@@ -752,6 +752,7 @@ public:
 #if ENABLE(VIDEO)
     String getCurrentMediaControlsStatusForElement(HTMLMediaElement&);
     void setMediaControlsMaximumRightContainerButtonCountOverride(HTMLMediaElement&, size_t);
+    void setMediaControlsHidePlaybackRates(HTMLMediaElement&, bool);
 #endif // ENABLE(VIDEO)
 
     String userVisibleString(const DOMURL&);
