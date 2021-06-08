@@ -1,3 +1,32 @@
+2021-06-07  Russell Epstein  <repstein@apple.com>
+
+        Cherry-pick r278501. rdar://problem/78973538
+
+    [AppleWin] JSC build failure
+    https://bugs.webkit.org/show_bug.cgi?id=226659
+    <rdar://78844190>
+    
+    Reviewed by Brent Fulgham.
+    
+    WTF scripts location is not being correctly identified.
+    
+    * Source/cmake/OptionsAppleWin.cmake:
+    
+    
+    git-svn-id: https://svn.webkit.org/repository/webkit/trunk@278501 268f45cc-cd09-0410-ab3c-d52691b4dbfc
+
+    2021-06-04  Per Arne Vollan  <pvollan@apple.com>
+
+            [AppleWin] JSC build failure
+            https://bugs.webkit.org/show_bug.cgi?id=226659
+            <rdar://78844190>
+
+            Reviewed by Brent Fulgham.
+
+            WTF scripts location is not being correctly identified.
+
+            * Source/cmake/OptionsAppleWin.cmake:
+
 2021-05-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Bump libsoup3 version to 2.99.5
