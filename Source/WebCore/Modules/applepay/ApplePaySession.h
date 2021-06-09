@@ -35,10 +35,6 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/ApplePaySessionAdditions.h>
-#endif
-
 namespace JSC {
 class CallFrame;
 class JSGlobalObject;
@@ -175,10 +171,6 @@ private:
 
     const ApplePaySessionPaymentRequest m_paymentRequest;
     unsigned m_version;
-
-#if defined(ApplePaySessionAdditions_declarations)
-    ApplePaySessionAdditions_declarations
-#endif
 };
 
 }
