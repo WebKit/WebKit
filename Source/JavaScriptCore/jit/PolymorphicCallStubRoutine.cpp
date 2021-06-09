@@ -28,6 +28,7 @@
 
 #if ENABLE(JIT)
 
+#include "AccessCase.h"
 #include "CallLinkInfo.h"
 #include "CodeBlock.h"
 #include "FullCodeOrigin.h"
@@ -67,7 +68,7 @@ PolymorphicCallStubRoutine::PolymorphicCallStubRoutine(
     const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& codeRef, VM& vm, const JSCell* owner, CallFrame* callerFrame,
     CallLinkInfo& info, const Vector<PolymorphicCallCase>& cases,
     UniqueArray<uint32_t>&& fastCounts)
-    : GCAwareJITStubRoutine(codeRef, vm)
+    : GCAwareJITStubRoutine(codeRef)
     , m_variants(cases.size())
     , m_fastCounts(WTFMove(fastCounts))
 {
@@ -80,6 +81,7 @@ PolymorphicCallStubRoutine::PolymorphicCallStubRoutine(
             codeBlock->linkIncomingPolymorphicCall(callerFrame, m_callNodes.add(&info));
     }
     WTF::storeStoreFence();
+    makeGCAware(vm);
 }
 
 PolymorphicCallStubRoutine::~PolymorphicCallStubRoutine() { }

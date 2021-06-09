@@ -225,19 +225,19 @@ public:
         return callRegister<CallSignatureType::NativeCall>(targetGPR, tagGPR);
     }
 
-    ALWAYS_INLINE Call call(Address address, PtrTag tag)
+    ALWAYS_INLINE void call(Address address, PtrTag tag)
     {
         ASSERT(tag != CFunctionPtrTag && tag != NoPtrTag);
         ASSERT(!Options::useJITCage() || callerType(tag) == PtrTagCallerType::JIT);
         load64(address, getCachedDataTempRegisterIDAndInvalidate());
-        return call(dataTempRegister, tag);
+        call(dataTempRegister, tag);
     }
 
-    ALWAYS_INLINE Call call(Address address, RegisterID tag)
+    ALWAYS_INLINE void call(Address address, RegisterID tag)
     {
         ASSERT(tag != dataTempRegister);
         load64(address, getCachedDataTempRegisterIDAndInvalidate());
-        return call(dataTempRegister, tag);
+        call(dataTempRegister, tag);
     }
 
     ALWAYS_INLINE void callOperation(const FunctionPtr<OperationPtrTag> operation)

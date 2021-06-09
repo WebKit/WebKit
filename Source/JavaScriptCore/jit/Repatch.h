@@ -70,7 +70,7 @@ void resetGetBy(CodeBlock*, StructureStubInfo&, GetByKind);
 void resetPutByID(CodeBlock*, StructureStubInfo&);
 void resetDelBy(CodeBlock*, StructureStubInfo&, DelByKind);
 void resetInBy(CodeBlock*, StructureStubInfo&, InByKind);
-void resetInstanceOf(StructureStubInfo&);
+void resetInstanceOf(CodeBlock*, StructureStubInfo&);
 void resetCheckPrivateBrand(CodeBlock*, StructureStubInfo&);
 void resetSetPrivateBrand(CodeBlock*, StructureStubInfo&);
 void ftlThunkAwareRepatchCall(CodeBlock*, CodeLocationCall<JSInternalPtrTag>, FunctionPtr<CFunctionPtrTag> newCalleeFunction);

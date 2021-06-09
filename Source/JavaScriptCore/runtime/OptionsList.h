@@ -538,6 +538,8 @@ JS_EXPORT_PRIVATE bool canUseJITCage();
     v(Bool, useSharedArrayBuffer, false, Normal, nullptr) \
     v(Bool, useTopLevelAwait, true, Normal, "allow the await keyword at the top level of a module.") \
     v(Bool, verboseExecutablePoolAllocation, false, Normal, nullptr) \
+    v(Bool, useDataIC, isARM64(), Normal, nullptr) \
+    v(Bool, useDataICInOptimizingJIT, false, Normal, nullptr) \
 
 
 enum OptionEquivalence {

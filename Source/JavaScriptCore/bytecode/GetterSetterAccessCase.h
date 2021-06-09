@@ -53,17 +53,17 @@ public:
 
     void emitDOMJITGetter(AccessGenerationState&, const DOMJIT::GetterSetter*, GPRReg baseForGetGPR);
 
-    static std::unique_ptr<AccessCase> create(
+    static Ref<AccessCase> create(
         VM&, JSCell* owner, AccessType, CacheableIdentifier, PropertyOffset, Structure*,
         const ObjectPropertyConditionSet&, bool viaProxy, WatchpointSet* additionalSet, FunctionPtr<CustomAccessorPtrTag> customGetter,
         JSObject* customSlotBase, std::optional<DOMAttributeAnnotation>, RefPtr<PolyProtoAccessChain>&&);
 
-    static std::unique_ptr<AccessCase> create(VM&, JSCell* owner, AccessType, Structure*, CacheableIdentifier, PropertyOffset,
+    static Ref<AccessCase> create(VM&, JSCell* owner, AccessType, Structure*, CacheableIdentifier, PropertyOffset,
         const ObjectPropertyConditionSet&, RefPtr<PolyProtoAccessChain>&&, bool viaProxy = false,
         FunctionPtr<CustomAccessorPtrTag> customSetter = nullptr, JSObject* customSlotBase = nullptr);
 
     void dumpImpl(PrintStream&, CommaPrinter&) const final;
-    std::unique_ptr<AccessCase> clone() const final;
+    Ref<AccessCase> clone() const final;
 
     ~GetterSetterAccessCase() final;
 

@@ -33,17 +33,17 @@
 
 namespace JSC {
 
-ALWAYS_INLINE MacroAssembler::JumpList JIT::emitLoadForArrayMode(const Instruction* currentInstruction, JITArrayMode arrayMode, PatchableJump& badType)
+ALWAYS_INLINE MacroAssembler::JumpList JIT::emitLoadForArrayMode(const Instruction* currentInstruction, JITArrayMode arrayMode, PatchableJump& badType, ByValInfo* byValInfo)
 {
     switch (arrayMode) {
     case JITInt32:
-        return emitInt32Load(currentInstruction, badType);
+        return emitInt32Load(currentInstruction, badType, byValInfo);
     case JITDouble:
-        return emitDoubleLoad(currentInstruction, badType);
+        return emitDoubleLoad(currentInstruction, badType, byValInfo);
     case JITContiguous:
-        return emitContiguousLoad(currentInstruction, badType);
+        return emitContiguousLoad(currentInstruction, badType, byValInfo);
     case JITArrayStorage:
-        return emitArrayStorageLoad(currentInstruction, badType);
+        return emitArrayStorageLoad(currentInstruction, badType, byValInfo);
     default:
         break;
     }
@@ -127,6 +127,13 @@ ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheck(const Funct
     return call;
 }
 
+ALWAYS_INLINE void JIT::appendCallWithExceptionCheck(Address function)
+{
+    updateTopCallFrame();
+    appendCall(function);
+    exceptionCheck();
+}
+
 #if OS(WINDOWS) && CPU(X86_64)
 ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckAndSlowPathReturnType(const FunctionPtr<CFunctionPtrTag> function)
 {
@@ -156,6 +163,16 @@ ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueRe
     return call;
 }
 
+ALWAYS_INLINE void JIT::appendCallWithExceptionCheckSetJSValueResult(Address function, VirtualRegister dst)
+{
+    appendCallWithExceptionCheck(function);
+#if USE(JSVALUE64)
+    emitPutVirtualRegister(dst, returnValueGPR);
+#else
+    emitStore(dst, returnValueGPR2, returnValueGPR);
+#endif
+}
+
 template<typename Metadata>
 ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueResultWithProfile(Metadata& metadata, const FunctionPtr<CFunctionPtrTag> function, VirtualRegister dst)
 {
@@ -168,6 +185,19 @@ ALWAYS_INLINE MacroAssembler::Call JIT::appendCallWithExceptionCheckSetJSValueRe
     emitStore(dst, returnValueGPR2, returnValueGPR);
 #endif
     return call;
+}
+
+template<typename Metadata>
+ALWAYS_INLINE void JIT::appendCallWithExceptionCheckSetJSValueResultWithProfile(Metadata& metadata, Address function, VirtualRegister dst)
+{
+    appendCallWithExceptionCheck(function);
+#if USE(JSVALUE64)
+    emitValueProfilingSite(metadata, returnValueGPR);
+    emitPutVirtualRegister(dst, returnValueGPR);
+#else
+    emitValueProfilingSite(metadata, JSValueRegs(returnValueGPR2, returnValueGPR));
+    emitStore(dst, returnValueGPR2, returnValueGPR);
+#endif
 }
 
 ALWAYS_INLINE void JIT::linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator& iter, VirtualRegister reg)

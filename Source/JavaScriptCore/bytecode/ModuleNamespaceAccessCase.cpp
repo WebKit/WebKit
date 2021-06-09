@@ -45,18 +45,18 @@ ModuleNamespaceAccessCase::ModuleNamespaceAccessCase(VM& vm, JSCell* owner, Cach
     m_moduleEnvironment.set(vm, owner, moduleEnvironment);
 }
 
-std::unique_ptr<AccessCase> ModuleNamespaceAccessCase::create(VM& vm, JSCell* owner, CacheableIdentifier identifier, JSModuleNamespaceObject* moduleNamespaceObject, JSModuleEnvironment* moduleEnvironment, ScopeOffset scopeOffset)
+Ref<AccessCase> ModuleNamespaceAccessCase::create(VM& vm, JSCell* owner, CacheableIdentifier identifier, JSModuleNamespaceObject* moduleNamespaceObject, JSModuleEnvironment* moduleEnvironment, ScopeOffset scopeOffset)
 {
-    return std::unique_ptr<AccessCase>(new ModuleNamespaceAccessCase(vm, owner, identifier, moduleNamespaceObject, moduleEnvironment, scopeOffset));
+    return adoptRef(*new ModuleNamespaceAccessCase(vm, owner, identifier, moduleNamespaceObject, moduleEnvironment, scopeOffset));
 }
 
 ModuleNamespaceAccessCase::~ModuleNamespaceAccessCase()
 {
 }
 
-std::unique_ptr<AccessCase> ModuleNamespaceAccessCase::clone() const
+Ref<AccessCase> ModuleNamespaceAccessCase::clone() const
 {
-    std::unique_ptr<ModuleNamespaceAccessCase> result(new ModuleNamespaceAccessCase(*this));
+    auto result = adoptRef(*new ModuleNamespaceAccessCase(*this));
     result->resetState();
     return result;
 }

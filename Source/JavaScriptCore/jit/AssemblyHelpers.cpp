@@ -28,6 +28,7 @@
 
 #if ENABLE(JIT)
 
+#include "AccessCase.h"
 #include "JITOperations.h"
 #include "JSArrayBufferView.h"
 #include "JSCJSValueInlines.h"
@@ -652,7 +653,7 @@ void AssemblyHelpers::emitVirtualCall(VM& vm, JSGlobalObject* globalObject, Call
         auto callLocation = linkBuffer.locationOfNearCall<JITCompilationPtrTag>(call);
         linkBuffer.addMainThreadFinalizationTask([=, &vm] () {
             MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunk = virtualThunkFor(vm, *info);
-            info->setSlowStub(GCAwareJITStubRoutine::create(virtualThunk, vm));
+            info->setSlowStub(GCAwareJITStubRoutine::create(vm, virtualThunk));
             MacroAssembler::repatchNearCall(callLocation, CodeLocationLabel<JITStubRoutinePtrTag>(virtualThunk.code()));
         });
     });

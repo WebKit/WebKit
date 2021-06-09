@@ -104,9 +104,13 @@ public:
     static bool isCacheableArrayLength(StructureStubInfo&, JSArray*);
     static bool isCacheableStringLength(StructureStubInfo&);
     static bool generateArrayLength(StructureStubInfo&, JSArray*);
-    static void rewireStubAsJump(StructureStubInfo&, CodeLocationLabel<JITStubRoutinePtrTag>);
     static bool generateSelfInAccess(StructureStubInfo&, Structure*);
     static bool generateStringLength(StructureStubInfo&);
+
+    static void rewireStubAsJumpInAccessNotUsingInlineAccess(CodeBlock*, StructureStubInfo&, CodeLocationLabel<JITStubRoutinePtrTag>);
+    static void rewireStubAsJumpInAccess(CodeBlock*, StructureStubInfo&, CodeLocationLabel<JITStubRoutinePtrTag>);
+    static void resetStubAsJumpInAccessNotUsingInlineAccess(CodeBlock*, StructureStubInfo&);
+    static void resetStubAsJumpInAccess(CodeBlock*, StructureStubInfo&);
 
     // This is helpful when determining the size of an IC on
     // various platforms. When adding a new type of IC, implement

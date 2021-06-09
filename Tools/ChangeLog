@@ -1,3 +1,12 @@
+2021-06-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use DataIC for AccessCase
+        https://bugs.webkit.org/show_bug.cgi?id=226072
+
+        Reviewed by Saam Barati and Filip Pizlo.
+
+        * Scripts/run-jsc-stress-tests:
+
 2021-06-08  Dewei Zhu  <dewei_zhu@apple.com>
 
         Increase http server launch timeout on run-benchmark script.

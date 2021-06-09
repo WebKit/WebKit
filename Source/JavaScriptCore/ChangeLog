@@ -1,3 +1,401 @@
+2021-06-08  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Use DataIC for AccessCase
+        https://bugs.webkit.org/show_bug.cgi?id=226072
+
+        Reviewed by Saam Barati and Filip Pizlo.
+
+        This patch adds non-repatching IC for Baseline JIT in ARM64.
+        This does not work in non-ARM64 architectures (including X64) due to the use of link-register.
+
+        1. We add non-repatching IC, which is enabled only in Baseline due to performance reason. We are using the
+           existing IC in DFG and FTL. Non-repatching includes fast-path, and slow-path's operation function.
+        2. We still keep InlineAccess in all tiers. Removing that causes 0.3 ~ 1.0% regression in Speedometer2. This
+           means that we still need some repatching when we first introduce stubs.
+        3. We add a mechanism to share generated code stubs in non-repatching IC. Currently, getter / setter / custom
+           accessors are excluded since their code relies on JSGlobalObject, CodeBlock etc. which are not included in
+           AccessCase's data structure.
+        4. This patch still relies on that CodeBlock will be destroyed synchronously since we need to ensure that sharing-hash-table
+           does not include already-dead JIT code stubs. We can fix it (e.g. annotating epoch to these stubs, bump them in
+           finalizeUnconditionally), but we avoid doing that to prevent from further enlarging this patch. This patch is already
+           significant in its size.
+        5. Added callOperation(Address) support in CCallHelpers, which can save the target in nonArgGPR0, and call it so that we can use
+           Address including GPR which is also used for arguments.
+
+        Performance is neutral in JetStream2 and Speedometer2. But it offers the way to remove some code generation in Baseline.
+
+        * assembler/MacroAssemblerARM64E.h:
+        (JSC::MacroAssemblerARM64E::call):
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::create):
+        (JSC::AccessCase::createTransition):
+        (JSC::AccessCase::createDelete):
+        (JSC::AccessCase::createCheckPrivateBrand):
+        (JSC::AccessCase::createSetPrivateBrand):
+        (JSC::AccessCase::fromStructureStubInfo):
+        (JSC::AccessCase::clone const):
+        (JSC::AccessCase::generateWithGuard):
+        (JSC::AccessCase::generateImpl):
+        (JSC::AccessCase::canBeShared):
+        * bytecode/AccessCase.h:
+        (JSC::AccessCase::hash const):
+        (JSC::AccessCase::AccessCase):
+        (JSC::SharedJITStubSet::Hash::Key::Key):
+        (JSC::SharedJITStubSet::Hash::Key::isHashTableDeletedValue const):
+        (JSC::SharedJITStubSet::Hash::Key::operator==):
+        (JSC::SharedJITStubSet::Hash::hash):
+        (JSC::SharedJITStubSet::Hash::equal):
+        (JSC::SharedJITStubSet::Searcher::Translator::hash):
+        (JSC::SharedJITStubSet::Searcher::Translator::equal):
+        (JSC::SharedJITStubSet::PointerTranslator::hash):
+        (JSC::SharedJITStubSet::PointerTranslator::equal):
+        (JSC::SharedJITStubSet::add):
+        (JSC::SharedJITStubSet::remove):
+        (JSC::SharedJITStubSet::find):
+        * bytecode/ByValInfo.h:
+        (JSC::ByValInfo::setUp):
+        (JSC::ByValInfo::offsetOfSlowOperation):
+        (JSC::ByValInfo::offsetOfNotIndexJumpTarget):
+        (JSC::ByValInfo::offsetOfBadTypeJumpTarget):
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::initializeDirectCall):
+        (JSC::CallLinkInfo::setDirectCallTarget):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::useDataIC const):
+        * bytecode/GetterSetterAccessCase.cpp:
+        (JSC::GetterSetterAccessCase::create):
+        (JSC::GetterSetterAccessCase::clone const):
+        (JSC::GetterSetterAccessCase::emitDOMJITGetter):
+        * bytecode/GetterSetterAccessCase.h:
+        * bytecode/InlineAccess.cpp:
+        (JSC::getScratchRegister):
+        (JSC::InlineAccess::rewireStubAsJumpInAccessNotUsingInlineAccess):
+        (JSC::InlineAccess::rewireStubAsJumpInAccess):
+        (JSC::InlineAccess::resetStubAsJumpInAccess):
+        (JSC::InlineAccess::resetStubAsJumpInAccessNotUsingInlineAccess):
+        (JSC::InlineAccess::rewireStubAsJump): Deleted.
+        * bytecode/InlineAccess.h:
+        * bytecode/InstanceOfAccessCase.cpp:
+        (JSC::InstanceOfAccessCase::create):
+        (JSC::InstanceOfAccessCase::clone const):
+        * bytecode/InstanceOfAccessCase.h:
+        * bytecode/IntrinsicGetterAccessCase.cpp:
+        (JSC::IntrinsicGetterAccessCase::create):
+        (JSC::IntrinsicGetterAccessCase::clone const):
+        * bytecode/IntrinsicGetterAccessCase.h:
+        * bytecode/ModuleNamespaceAccessCase.cpp:
+        (JSC::ModuleNamespaceAccessCase::create):
+        (JSC::ModuleNamespaceAccessCase::clone const):
+        * bytecode/ModuleNamespaceAccessCase.h:
+        * bytecode/ObjectPropertyConditionSet.h:
+        (JSC::ObjectPropertyConditionSet::hash const):
+        (JSC::ObjectPropertyConditionSet::operator==):
+        (JSC::ObjectPropertyConditionSet::operator!=):
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::AccessGenerationState::installWatchpoint):
+        (JSC::AccessGenerationState::succeed):
+        (JSC::AccessGenerationState::preserveLiveRegistersToStackForCallWithoutExceptions):
+        (JSC::PolymorphicAccess::addCases):
+        (JSC::PolymorphicAccess::addCase):
+        (JSC::PolymorphicAccess::visitWeak const):
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/PolymorphicAccess.h:
+        (JSC::AccessGenerationState::AccessGenerationState):
+        (JSC::AccessGenerationState::preserveLiveRegistersToStackForCallWithoutExceptions):
+        * bytecode/ProxyableAccessCase.cpp:
+        (JSC::ProxyableAccessCase::create):
+        (JSC::ProxyableAccessCase::clone const):
+        * bytecode/ProxyableAccessCase.h:
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::StructureStubInfo):
+        (JSC::StructureStubInfo::addAccessCase):
+        (JSC::StructureStubInfo::reset):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::offsetOfCodePtr):
+        (JSC::StructureStubInfo::offsetOfSlowPathStartLocation):
+        (JSC::StructureStubInfo::offsetOfSlowOperation):
+        (JSC::StructureStubInfo::patchableJump): Deleted.
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::appendCall):
+        * dfg/DFGSlowPathGenerator.h:
+        (JSC::DFG::slowPathICCall):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetById):
+        (JSC::DFG::SpeculativeJIT::compileGetByIdFlush):
+        (JSC::DFG::SpeculativeJIT::compileDeleteById):
+        (JSC::DFG::SpeculativeJIT::compileDeleteByVal):
+        (JSC::DFG::SpeculativeJIT::compileInById):
+        (JSC::DFG::SpeculativeJIT::compileInByVal):
+        (JSC::DFG::SpeculativeJIT::compileGetPrivateNameByVal):
+        (JSC::DFG::SpeculativeJIT::compileGetPrivateNameById):
+        (JSC::DFG::SpeculativeJIT::compilePutPrivateNameById):
+        (JSC::DFG::SpeculativeJIT::compileCheckPrivateBrand):
+        (JSC::DFG::SpeculativeJIT::compileSetPrivateBrand):
+        (JSC::DFG::SpeculativeJIT::compileInstanceOfForCells):
+        (JSC::DFG::SpeculativeJIT::compileInstanceOf):
+        (JSC::DFG::SpeculativeJIT::compilePutByIdFlush):
+        (JSC::DFG::SpeculativeJIT::compilePutById):
+        (JSC::DFG::SpeculativeJIT::compilePutByIdDirect):
+        (JSC::DFG::SpeculativeJIT::cachedPutById):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (JSC::DFG::SpeculativeJIT::appendCall):
+        (JSC::DFG::SpeculativeJIT::appendCallSetResult):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedGetByIdWithThis):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::cachedGetById):
+        (JSC::DFG::SpeculativeJIT::cachedGetByIdWithThis):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::getPrivateName):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePrivateBrandAccess):
+        (JSC::FTL::DFG::LowerDFGToB3::cachedPutById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDelBy):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * ftl/FTLSlowPathCall.cpp:
+        (JSC::FTL::SlowPathCallContext::SlowPathCallContext):
+        (JSC::FTL::SlowPathCallContext::keyWithTarget const):
+        (JSC::FTL::SlowPathCallContext::makeCall):
+        * ftl/FTLSlowPathCall.h:
+        (JSC::FTL::callOperation):
+        * ftl/FTLSlowPathCallKey.cpp:
+        (JSC::FTL::SlowPathCallKey::dump const):
+        * ftl/FTLSlowPathCallKey.h:
+        (JSC::FTL::SlowPathCallKey::SlowPathCallKey):
+        (JSC::FTL::SlowPathCallKey::indirectOffset const):
+        (JSC::FTL::SlowPathCallKey::withCallTarget):
+        (JSC::FTL::SlowPathCallKey::operator== const):
+        (JSC::FTL::SlowPathCallKey::hash const):
+        * ftl/FTLThunks.cpp:
+        (JSC::FTL::genericGenerationThunkGenerator):
+        (JSC::FTL::slowPathCallThunkGenerator):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitVirtualCall):
+        * jit/CCallHelpers.cpp:
+        (JSC::CCallHelpers::emitJITCodeOver):
+        * jit/CCallHelpers.h:
+        (JSC::CCallHelpers::ArgCollection::ArgCollection):
+        (JSC::CCallHelpers::ArgCollection::pushRegArg):
+        (JSC::CCallHelpers::ArgCollection::pushExtraRegArg):
+        (JSC::CCallHelpers::ArgCollection::pushNonArg):
+        (JSC::CCallHelpers::ArgCollection::addGPRArg):
+        (JSC::CCallHelpers::ArgCollection::addGPRExtraArg):
+        (JSC::CCallHelpers::ArgCollection::addStackArg):
+        (JSC::CCallHelpers::ArgCollection::addPoke):
+        (JSC::CCallHelpers::calculatePokeOffset):
+        (JSC::CCallHelpers::pokeForArgument):
+        (JSC::CCallHelpers::stackAligned):
+        (JSC::CCallHelpers::marshallArgumentRegister):
+        (JSC::CCallHelpers::setupArgumentsImpl):
+        (JSC::CCallHelpers::pokeArgumentsAligned):
+        (JSC::CCallHelpers::std::is_integral<CURRENT_ARGUMENT_TYPE>::value):
+        (JSC::CCallHelpers::std::is_pointer<CURRENT_ARGUMENT_TYPE>::value):
+        (JSC::CCallHelpers::setupArgumentsEntryImpl):
+        (JSC::CCallHelpers::setupArguments):
+        (JSC::CCallHelpers::setupArgumentsForIndirectCall):
+        * jit/GCAwareJITStubRoutine.cpp:
+        (JSC::GCAwareJITStubRoutine::GCAwareJITStubRoutine):
+        (JSC::GCAwareJITStubRoutine::makeGCAware):
+        (JSC::GCAwareJITStubRoutine::observeZeroRefCount):
+        (JSC::PolymorphicAccessJITStubRoutine::PolymorphicAccessJITStubRoutine):
+        (JSC::PolymorphicAccessJITStubRoutine::observeZeroRefCount):
+        (JSC::PolymorphicAccessJITStubRoutine::computeHash):
+        (JSC::MarkingGCAwareJITStubRoutine::MarkingGCAwareJITStubRoutine):
+        (JSC::GCAwareJITStubRoutineWithExceptionHandler::GCAwareJITStubRoutineWithExceptionHandler):
+        (JSC::createICJITStubRoutine):
+        (JSC::createJITStubRoutine): Deleted.
+        * jit/GCAwareJITStubRoutine.h:
+        (JSC::GCAwareJITStubRoutine::create):
+        (JSC::PolymorphicAccessJITStubRoutine::cases const):
+        (JSC::PolymorphicAccessJITStubRoutine::weakStructures const):
+        (JSC::PolymorphicAccessJITStubRoutine::hash const):
+        * jit/GPRInfo.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::link):
+        * jit/JIT.h:
+        * jit/JITCall.cpp:
+        (JSC::JIT::emit_op_iterator_open):
+        (JSC::JIT::emitSlow_op_iterator_open):
+        (JSC::JIT::emit_op_iterator_next):
+        (JSC::JIT::emitSlow_op_iterator_next):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::emit_op_iterator_open):
+        (JSC::JIT::emit_op_iterator_next):
+        * jit/JITCode.h:
+        (JSC::JITCode::useDataIC):
+        * jit/JITInlineCacheGenerator.cpp:
+        (JSC::JITInlineCacheGenerator::JITInlineCacheGenerator):
+        (JSC::JITInlineCacheGenerator::finalize):
+        (JSC::JITByIdGenerator::JITByIdGenerator):
+        (JSC::JITByIdGenerator::finalize):
+        (JSC::JITByIdGenerator::generateFastCommon):
+        (JSC::JITGetByIdGenerator::JITGetByIdGenerator):
+        (JSC::JITGetByIdWithThisGenerator::JITGetByIdWithThisGenerator):
+        (JSC::JITPutByIdGenerator::JITPutByIdGenerator):
+        (JSC::JITDelByValGenerator::JITDelByValGenerator):
+        (JSC::JITDelByValGenerator::generateFastPath):
+        (JSC::JITDelByValGenerator::finalize):
+        (JSC::JITDelByIdGenerator::JITDelByIdGenerator):
+        (JSC::JITDelByIdGenerator::generateFastPath):
+        (JSC::JITDelByIdGenerator::finalize):
+        (JSC::JITInByValGenerator::JITInByValGenerator):
+        (JSC::JITInByValGenerator::generateFastPath):
+        (JSC::JITInByValGenerator::finalize):
+        (JSC::JITInByIdGenerator::JITInByIdGenerator):
+        (JSC::JITInstanceOfGenerator::JITInstanceOfGenerator):
+        (JSC::JITInstanceOfGenerator::generateFastPath):
+        (JSC::JITInstanceOfGenerator::finalize):
+        (JSC::JITGetByValGenerator::JITGetByValGenerator):
+        (JSC::JITGetByValGenerator::generateFastPath):
+        (JSC::JITGetByValGenerator::finalize):
+        (JSC::JITPrivateBrandAccessGenerator::JITPrivateBrandAccessGenerator):
+        (JSC::JITPrivateBrandAccessGenerator::generateFastPath):
+        (JSC::JITPrivateBrandAccessGenerator::finalize):
+        * jit/JITInlineCacheGenerator.h:
+        (JSC::JITGetByIdGenerator::JITGetByIdGenerator): Deleted.
+        (JSC::JITGetByIdWithThisGenerator::JITGetByIdWithThisGenerator): Deleted.
+        (JSC::JITPutByIdGenerator::JITPutByIdGenerator): Deleted.
+        (JSC::JITDelByValGenerator::JITDelByValGenerator): Deleted.
+        (JSC::JITDelByValGenerator::slowPathJump const): Deleted.
+        (JSC::JITDelByIdGenerator::JITDelByIdGenerator): Deleted.
+        (JSC::JITDelByIdGenerator::slowPathJump const): Deleted.
+        (JSC::JITInByIdGenerator::JITInByIdGenerator): Deleted.
+        (JSC::JITInstanceOfGenerator::JITInstanceOfGenerator): Deleted.
+        (JSC::JITGetByValGenerator::JITGetByValGenerator): Deleted.
+        (JSC::JITGetByValGenerator::slowPathJump const): Deleted.
+        (JSC::JITPrivateBrandAccessGenerator::JITPrivateBrandAccessGenerator): Deleted.
+        (JSC::JITPrivateBrandAccessGenerator::slowPathJump const): Deleted.
+        * jit/JITInlines.h:
+        (JSC::JIT::emitLoadForArrayMode):
+        (JSC::JIT::appendCallWithExceptionCheck):
+        (JSC::JIT::appendCallWithExceptionCheckSetJSValueResult):
+        (JSC::JIT::appendCallWithExceptionCheckSetJSValueResultWithProfile):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emitSlow_op_instanceof):
+        (JSC::JIT::privateCompileHasIndexedProperty):
+        (JSC::JIT::emit_op_has_enumerable_indexed_property):
+        (JSC::JIT::emitSlow_op_has_enumerable_indexed_property):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::privateCompileHasIndexedProperty):
+        (JSC::JIT::emit_op_has_enumerable_indexed_property):
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::slow_op_get_by_val_prepareCallGenerator):
+        (JSC::JIT::emit_op_get_private_name):
+        (JSC::JIT::emitSlow_op_get_private_name):
+        (JSC::JIT::slow_op_get_private_name_prepareCallGenerator):
+        (JSC::JIT::emit_op_set_private_brand):
+        (JSC::JIT::emitSlow_op_set_private_brand):
+        (JSC::JIT::emit_op_check_private_brand):
+        (JSC::JIT::emitSlow_op_check_private_brand):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitGenericContiguousPutByVal):
+        (JSC::JIT::emitArrayStoragePutByVal):
+        (JSC::JIT::emitPutByValWithCachedId):
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::slow_op_put_by_val_prepareCallGenerator):
+        (JSC::JIT::emit_op_put_private_name):
+        (JSC::JIT::emitSlow_op_put_private_name):
+        (JSC::JIT::slow_op_put_private_name_prepareCallGenerator):
+        (JSC::JIT::emit_op_del_by_id):
+        (JSC::JIT::emitSlow_op_del_by_id):
+        (JSC::JIT::slow_op_del_by_id_prepareCallGenerator):
+        (JSC::JIT::emit_op_del_by_val):
+        (JSC::JIT::emitSlow_op_del_by_val):
+        (JSC::JIT::slow_op_del_by_val_prepareCallGenerator):
+        (JSC::JIT::emit_op_try_get_by_id):
+        (JSC::JIT::emitSlow_op_try_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_direct):
+        (JSC::JIT::emitSlow_op_get_by_id_direct):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_with_this):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::slow_op_get_by_id_prepareCallGenerator):
+        (JSC::JIT::emitSlow_op_get_by_id_with_this):
+        (JSC::JIT::slow_op_get_by_id_with_this_prepareCallGenerator):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        (JSC::JIT::slow_op_put_by_id_prepareCallGenerator):
+        (JSC::JIT::emit_op_in_by_id):
+        (JSC::JIT::emitSlow_op_in_by_id):
+        (JSC::JIT::emit_op_in_by_val):
+        (JSC::JIT::emitSlow_op_in_by_val):
+        (JSC::JIT::privateCompilePutByVal):
+        (JSC::JIT::privateCompilePutPrivateNameWithCachedId):
+        (JSC::JIT::privateCompilePutByValWithCachedId):
+        (JSC::JIT::emitDoubleLoad):
+        (JSC::JIT::emitContiguousLoad):
+        (JSC::JIT::emitArrayStorageLoad):
+        (JSC::JIT::emitIntTypedArrayPutByVal):
+        (JSC::JIT::emitFloatTypedArrayPutByVal):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_del_by_id):
+        (JSC::JIT::emit_op_del_by_val):
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_get_private_name):
+        (JSC::JIT::emit_op_set_private_brand):
+        (JSC::JIT::emit_op_check_private_brand):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emitGenericContiguousPutByVal):
+        (JSC::JIT::emitArrayStoragePutByVal):
+        (JSC::JIT::emit_op_try_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_direct):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_get_by_id_with_this):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emit_op_in_by_id):
+        (JSC::JIT::emit_op_in_by_val):
+        * jit/JITStubRoutine.h:
+        * jit/PolymorphicCallStubRoutine.cpp:
+        (JSC::PolymorphicCallStubRoutine::PolymorphicCallStubRoutine):
+        * jit/Repatch.cpp:
+        (JSC::readPutICCallTarget):
+        (JSC::repatchSlowPathCall):
+        (JSC::tryCacheGetBy):
+        (JSC::repatchGetBy):
+        (JSC::tryCacheArrayGetByVal):
+        (JSC::repatchArrayGetByVal):
+        (JSC::tryCachePutByID):
+        (JSC::repatchPutByID):
+        (JSC::tryCacheDeleteBy):
+        (JSC::repatchDeleteBy):
+        (JSC::tryCacheInBy):
+        (JSC::repatchInBy):
+        (JSC::tryCacheCheckPrivateBrand):
+        (JSC::repatchCheckPrivateBrand):
+        (JSC::tryCacheSetPrivateBrand):
+        (JSC::repatchSetPrivateBrand):
+        (JSC::tryCacheInstanceOf):
+        (JSC::repatchInstanceOf):
+        (JSC::linkSlowFor):
+        (JSC::linkVirtualFor):
+        (JSC::resetGetBy):
+        (JSC::resetPutByID):
+        (JSC::resetDelBy):
+        (JSC::resetInBy):
+        (JSC::resetInstanceOf):
+        (JSC::resetCheckPrivateBrand):
+        (JSC::resetSetPrivateBrand):
+        (JSC::resetPatchableJump): Deleted.
+        * jit/Repatch.h:
+        * runtime/Options.cpp:
+        (JSC::Options::recomputeDependentOptions):
+        * runtime/OptionsList.h:
+        * runtime/StructureIDTable.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        (JSC::VM::~VM):
+        * runtime/VM.h:
+
 2021-06-08  Robin Morisset  <rmorisset@apple.com>
 
         Fix speculated type in speculateNeitherDoubleNorHeapBigIntNorString

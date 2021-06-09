@@ -460,6 +460,7 @@ public:
     static constexpr GPRReg argumentGPR3 = X86Registers::r9; // regT3
 #endif
     static constexpr GPRReg nonArgGPR0 = X86Registers::r10; // regT5 (regT4 on Windows)
+    static constexpr GPRReg nonArgGPR1 = X86Registers::eax; // regT0
     static constexpr GPRReg returnValueGPR = X86Registers::eax; // regT0
     static constexpr GPRReg returnValueGPR2 = X86Registers::edx; // regT1 or regT2
     static constexpr GPRReg nonPreservedNonReturnGPR = X86Registers::r10; // regT5 (regT4 on Windows)
@@ -652,6 +653,7 @@ public:
     static constexpr GPRReg argumentGPR6 = ARM64Registers::x6; // regT6
     static constexpr GPRReg argumentGPR7 = ARM64Registers::x7; // regT7
     static constexpr GPRReg nonArgGPR0 = ARM64Registers::x8; // regT8
+    static constexpr GPRReg nonArgGPR1 = ARM64Registers::x9; // regT9
     static constexpr GPRReg returnValueGPR = ARM64Registers::x0; // regT0
     static constexpr GPRReg returnValueGPR2 = ARM64Registers::x1; // regT1
     static constexpr GPRReg nonPreservedNonReturnGPR = ARM64Registers::x2;

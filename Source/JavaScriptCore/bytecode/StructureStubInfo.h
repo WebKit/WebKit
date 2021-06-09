@@ -88,7 +88,7 @@ public:
     void initPutByIdReplace(const ConcurrentJSLockerBase&, CodeBlock*, Structure* baseObjectStructure, PropertyOffset, CacheableIdentifier);
     void initInByIdSelf(const ConcurrentJSLockerBase&, CodeBlock*, Structure* baseObjectStructure, PropertyOffset, CacheableIdentifier);
 
-    AccessGenerationResult addAccessCase(const GCSafeConcurrentJSLocker&, JSGlobalObject*, CodeBlock*, ECMAMode, CacheableIdentifier, std::unique_ptr<AccessCase>);
+    AccessGenerationResult addAccessCase(const GCSafeConcurrentJSLocker&, JSGlobalObject*, CodeBlock*, ECMAMode, CacheableIdentifier, RefPtr<AccessCase>);
 
     void reset(const ConcurrentJSLockerBase&, CodeBlock*);
 
@@ -132,12 +132,6 @@ public:
         int32_t inlineSize = MacroAssembler::differenceBetweenCodePtr(start, doneLocation);
         ASSERT(inlineSize >= 0);
         return inlineSize;
-    }
-
-    CodeLocationJump<JSInternalPtrTag> patchableJump()
-    { 
-        ASSERT(accessType == AccessType::InstanceOf);
-        return start.jumpAtOffset<JSInternalPtrTag>(0);
     }
 
     JSValueRegs valueRegs() const
@@ -345,19 +339,30 @@ private:
 public:
     CodeLocationLabel<JITStubRoutinePtrTag> start; // This is either the start of the inline IC for *byId caches. or the location of patchable jump for 'instanceof' caches.
     CodeLocationLabel<JSInternalPtrTag> doneLocation;
-    CodeLocationCall<JSInternalPtrTag> slowPathCallLocation;
     CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation;
+
+    union {
+        CodeLocationCall<JSInternalPtrTag> m_slowPathCallLocation;
+        FunctionPtr<OperationPtrTag> m_slowOperation;
+    };
+
+    MacroAssemblerCodePtr<JITStubRoutinePtrTag> m_codePtr;
+
+    static ptrdiff_t offsetOfCodePtr() { return OBJECT_OFFSETOF(StructureStubInfo, m_codePtr); }
+    static ptrdiff_t offsetOfSlowPathStartLocation() { return OBJECT_OFFSETOF(StructureStubInfo, slowPathStartLocation); }
+    static ptrdiff_t offsetOfSlowOperation() { return OBJECT_OFFSETOF(StructureStubInfo, m_slowOperation); }
 
     RegisterSet usedRegisters;
 
-    GPRReg baseGPR;
-    GPRReg valueGPR;
+    GPRReg baseGPR { InvalidGPRReg };
+    GPRReg valueGPR { InvalidGPRReg };
     union {
         GPRReg thisGPR;
         GPRReg prototypeGPR;
         GPRReg propertyGPR;
         GPRReg brandGPR;
     } regs;
+    GPRReg m_stubInfoGPR { InvalidGPRReg };
 #if USE(JSVALUE32_64)
     GPRReg valueTagGPR;
     // FIXME: [32-bits] Check if StructureStubInfo::baseTagGPR is used somewhere.

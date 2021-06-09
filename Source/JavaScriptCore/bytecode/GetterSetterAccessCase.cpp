@@ -47,7 +47,7 @@ GetterSetterAccessCase::GetterSetterAccessCase(VM& vm, JSCell* owner, AccessType
     m_customSlotBase.setMayBeNull(vm, owner, customSlotBase);
 }
 
-std::unique_ptr<AccessCase> GetterSetterAccessCase::create(
+Ref<AccessCase> GetterSetterAccessCase::create(
     VM& vm, JSCell* owner, AccessType type, CacheableIdentifier identifier, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet,
     bool viaProxy, WatchpointSet* additionalSet, FunctionPtr<CustomAccessorPtrTag> customGetter, JSObject* customSlotBase,
     std::optional<DOMAttributeAnnotation> domAttribute, RefPtr<PolyProtoAccessChain>&& prototypeAccessChain)
@@ -61,18 +61,18 @@ std::unique_ptr<AccessCase> GetterSetterAccessCase::create(
         ASSERT_NOT_REACHED();
     };
 
-    std::unique_ptr<GetterSetterAccessCase> result(new GetterSetterAccessCase(vm, owner, type, identifier, offset, structure, conditionSet, viaProxy, additionalSet, customSlotBase, WTFMove(prototypeAccessChain)));
+    auto result = adoptRef(*new GetterSetterAccessCase(vm, owner, type, identifier, offset, structure, conditionSet, viaProxy, additionalSet, customSlotBase, WTFMove(prototypeAccessChain)));
     result->m_domAttribute = domAttribute;
     result->m_customAccessor = customGetter ? FunctionPtr<CustomAccessorPtrTag>(customGetter) : nullptr;
     return result;
 }
 
-std::unique_ptr<AccessCase> GetterSetterAccessCase::create(VM& vm, JSCell* owner, AccessType type, Structure* structure, CacheableIdentifier identifier, PropertyOffset offset,
+Ref<AccessCase> GetterSetterAccessCase::create(VM& vm, JSCell* owner, AccessType type, Structure* structure, CacheableIdentifier identifier, PropertyOffset offset,
     const ObjectPropertyConditionSet& conditionSet, RefPtr<PolyProtoAccessChain>&& prototypeAccessChain, bool viaProxy, 
     FunctionPtr<CustomAccessorPtrTag> customSetter, JSObject* customSlotBase)
 {
     ASSERT(type == Setter || type == CustomValueSetter || type == CustomAccessorSetter);
-    std::unique_ptr<GetterSetterAccessCase> result(new GetterSetterAccessCase(vm, owner, type, identifier, offset, structure, conditionSet, viaProxy, nullptr, customSlotBase, WTFMove(prototypeAccessChain)));
+    auto result = adoptRef(*new GetterSetterAccessCase(vm, owner, type, identifier, offset, structure, conditionSet, viaProxy, nullptr, customSlotBase, WTFMove(prototypeAccessChain)));
     result->m_customAccessor = customSetter ? FunctionPtr<CustomAccessorPtrTag>(customSetter) : nullptr;
     return result;
 }
@@ -91,9 +91,9 @@ GetterSetterAccessCase::GetterSetterAccessCase(const GetterSetterAccessCase& oth
     m_domAttribute = other.m_domAttribute;
 }
 
-std::unique_ptr<AccessCase> GetterSetterAccessCase::clone() const
+Ref<AccessCase> GetterSetterAccessCase::clone() const
 {
-    std::unique_ptr<GetterSetterAccessCase> result(new GetterSetterAccessCase(*this));
+    auto result = adoptRef(*new GetterSetterAccessCase(*this));
     result->resetState();
     return result;
 }
@@ -139,6 +139,8 @@ void GetterSetterAccessCase::emitDOMJITGetter(AccessGenerationState& state, cons
     ScratchRegisterAllocator allocator(stubInfo.usedRegisters);
     allocator.lock(stubInfo.baseRegs());
     allocator.lock(valueRegs);
+    if (stubInfo.m_stubInfoGPR != InvalidGPRReg)
+        allocator.lock(stubInfo.m_stubInfoGPR);
     allocator.lock(scratchGPR);
 
     GPRReg paramBaseGPR = InvalidGPRReg;
@@ -223,6 +225,11 @@ void GetterSetterAccessCase::emitDOMJITGetter(AccessGenerationState& state, cons
     for (FPRReg reg : fpScratch)
         registersToSpillForCCall.set(reg);
     registersToSpillForCCall.exclude(RegisterSet::registersToNotSaveForCCall());
+#if CPU(ARM64)
+    CodeBlock* codeBlock = jit.codeBlock();
+    if (codeBlock->useDataIC())
+        registersToSpillForCCall.set(ARM64Registers::lr);
+#endif
 
     AccessCaseSnippetParams params(state.m_vm, WTFMove(regs), WTFMove(gpScratch), WTFMove(fpScratch));
     snippet->generator()->run(jit, params);

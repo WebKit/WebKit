@@ -36,7 +36,7 @@ namespace JSC {
 class Structure;
 
 #if USE(JSVALUE64)
-typedef uint32_t StructureID;
+using StructureID = uint32_t;
 
 inline StructureID nukedStructureIDBit()
 {
@@ -58,7 +58,7 @@ inline StructureID decontaminate(StructureID id)
     return id & ~nukedStructureIDBit();
 }
 #else // not USE(JSVALUE64)
-typedef Structure* StructureID;
+using StructureID = Structure*;
 
 inline StructureID nukedStructureIDBit()
 {

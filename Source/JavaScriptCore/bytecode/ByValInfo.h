@@ -244,10 +244,8 @@ struct ByValInfo {
     {
     }
 
-    void setUp(CodeLocationJump<JSInternalPtrTag> notIndexJump, CodeLocationJump<JSInternalPtrTag> badTypeJump, CodeLocationLabel<ExceptionHandlerPtrTag> exceptionHandler, JITArrayMode arrayMode, ArrayProfile* arrayProfile, CodeLocationLabel<JSInternalPtrTag> doneTarget, CodeLocationLabel<JSInternalPtrTag> badTypeNextHotPathTarget, CodeLocationLabel<JSInternalPtrTag> slowPathTarget)
+    void setUp(CodeLocationLabel<ExceptionHandlerPtrTag> exceptionHandler, JITArrayMode arrayMode, ArrayProfile* arrayProfile, CodeLocationLabel<JSInternalPtrTag> doneTarget, CodeLocationLabel<JSInternalPtrTag> badTypeNextHotPathTarget, CodeLocationLabel<JSInternalPtrTag> slowPathTarget)
     {
-        this->notIndexJump = notIndexJump;
-        this->badTypeJump = badTypeJump;
         this->exceptionHandler = exceptionHandler;
         this->doneTarget = doneTarget;
         this->badTypeNextHotPathTarget = badTypeNextHotPathTarget;
@@ -262,8 +260,21 @@ struct ByValInfo {
 
     DECLARE_VISIT_AGGREGATE;
 
-    CodeLocationJump<JSInternalPtrTag> notIndexJump;
-    CodeLocationJump<JSInternalPtrTag> badTypeJump;
+    static ptrdiff_t offsetOfSlowOperation() { return OBJECT_OFFSETOF(ByValInfo, m_slowOperation); }
+    static ptrdiff_t offsetOfNotIndexJumpTarget() { return OBJECT_OFFSETOF(ByValInfo, m_notIndexJumpTarget); }
+    static ptrdiff_t offsetOfBadTypeJumpTarget() { return OBJECT_OFFSETOF(ByValInfo, m_badTypeJumpTarget); }
+
+    FunctionPtr<OperationPtrTag> m_slowOperation;
+
+    union {
+        CodeLocationLabel<JITStubRoutinePtrTag> m_notIndexJumpTarget;
+        CodeLocationJump<JSInternalPtrTag> m_notIndexJump;
+    };
+    union {
+        CodeLocationLabel<JITStubRoutinePtrTag> m_badTypeJumpTarget;
+        CodeLocationJump<JSInternalPtrTag> m_badTypeJump;
+    };
+
     CodeLocationLabel<ExceptionHandlerPtrTag> exceptionHandler;
     CodeLocationLabel<JSInternalPtrTag> doneTarget;
     CodeLocationLabel<JSInternalPtrTag> badTypeNextHotPathTarget;

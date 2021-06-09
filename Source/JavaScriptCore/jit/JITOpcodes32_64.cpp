@@ -162,13 +162,15 @@ void JIT::emit_op_instanceof(const Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(proto);
     
     JITInstanceOfGenerator gen(
-        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex),
+        m_codeBlock, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex),
         RegisterSet::stubUnavailableRegisters(),
         regT0, // result
         regT2, // value
         regT1, // proto
+        InvalidGPRReg,
         regT3, regT4); // scratch
     gen.generateFastPath(*this);
+    addSlowCase(gen.slowPathJump());
     m_instanceOfs.append(gen);
     
     emitStoreBool(dst, regT0);
@@ -1183,7 +1185,7 @@ void JIT::privateCompileHasIndexedProperty(ByValInfo* byValInfo, ReturnAddressPt
     
     // FIXME: Add support for other types like TypedArrays and Arguments.
     // See https://bugs.webkit.org/show_bug.cgi?id=135033 and https://bugs.webkit.org/show_bug.cgi?id=135034.
-    JumpList slowCases = emitLoadForArrayMode(currentInstruction, arrayMode, badType);
+    JumpList slowCases = emitLoadForArrayMode(currentInstruction, arrayMode, badType, nullptr);
     move(TrustedImm32(1), regT0);
     Jump done = jump();
 
@@ -1198,7 +1200,7 @@ void JIT::privateCompileHasIndexedProperty(ByValInfo* byValInfo, ReturnAddressPt
         m_codeBlock, patchBuffer, JITStubRoutinePtrTag,
         "Baseline has_indexed_property stub for %s, return point %p", toCString(*m_codeBlock).data(), returnAddress.untaggedValue());
     
-    MacroAssembler::repatchJump(byValInfo->badTypeJump, CodeLocationLabel<JITStubRoutinePtrTag>(byValInfo->stubRoutine->code().code()));
+    MacroAssembler::repatchJump(byValInfo->m_badTypeJump, CodeLocationLabel<JITStubRoutinePtrTag>(byValInfo->stubRoutine->code().code()));
     MacroAssembler::repatchCall(CodeLocationCall<ReturnAddressPtrTag>(MacroAssemblerCodePtr<ReturnAddressPtrTag>(returnAddress)), FunctionPtr<OperationPtrTag>(operationHasIndexedPropertyGeneric));
 }
 
@@ -1234,7 +1236,7 @@ void JIT::emit_op_has_enumerable_indexed_property(const Instruction* currentInst
 
     // FIXME: Add support for other types like TypedArrays and Arguments.
     // See https://bugs.webkit.org/show_bug.cgi?id=135033 and https://bugs.webkit.org/show_bug.cgi?id=135034.
-    JumpList slowCases = emitLoadForArrayMode(currentInstruction, mode, badType);
+    JumpList slowCases = emitLoadForArrayMode(currentInstruction, mode, badType, byValInfo);
     move(TrustedImm32(1), regT0);
 
     addSlowCase(badType);

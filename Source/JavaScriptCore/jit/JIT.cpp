@@ -1265,12 +1265,12 @@ void JIT::link()
 
         for (const auto& byValCompilationInfo : m_byValCompilationInfo) {
             PatchableJump patchableNotIndexJump = byValCompilationInfo.notIndexJump;
-            auto notIndexJump = CodeLocationJump<JSInternalPtrTag>();
+            CodeLocationJump<JSInternalPtrTag> notIndexJump;
             if (Jump(patchableNotIndexJump).isSet())
                 notIndexJump = CodeLocationJump<JSInternalPtrTag>(patchBuffer.locationOf<JSInternalPtrTag>(patchableNotIndexJump));
 
             PatchableJump patchableBadTypeJump = byValCompilationInfo.badTypeJump;
-            auto badTypeJump = CodeLocationJump<JSInternalPtrTag>();
+            CodeLocationJump<JSInternalPtrTag> badTypeJump;
             if (Jump(patchableBadTypeJump).isSet())
                 badTypeJump = CodeLocationJump<JSInternalPtrTag>(patchBuffer.locationOf<JSInternalPtrTag>(byValCompilationInfo.badTypeJump));
 
@@ -1279,14 +1279,19 @@ void JIT::link()
             auto slowPathTarget = CodeLocationLabel<JSInternalPtrTag>(patchBuffer.locationOf<JSInternalPtrTag>(byValCompilationInfo.slowPathTarget));
 
             byValCompilationInfo.byValInfo->setUp(
-                notIndexJump,
-                badTypeJump,
                 exceptionHandler,
                 byValCompilationInfo.arrayMode,
                 byValCompilationInfo.arrayProfile,
                 doneTarget,
                 nextHotPathTarget,
                 slowPathTarget);
+            if (JITCode::useDataIC(JITType::BaselineJIT)) {
+                byValCompilationInfo.byValInfo->m_notIndexJumpTarget = slowPathTarget.retagged<JITStubRoutinePtrTag>();
+                byValCompilationInfo.byValInfo->m_badTypeJumpTarget = slowPathTarget.retagged<JITStubRoutinePtrTag>();
+            } else {
+                byValCompilationInfo.byValInfo->m_notIndexJump = notIndexJump;
+                byValCompilationInfo.byValInfo->m_badTypeJump = badTypeJump;
+            }
         }
     }
 

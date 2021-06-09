@@ -59,10 +59,9 @@ void AccessGenerationResult::dump(PrintStream& out) const
         out.print(":", m_code);
 }
 
-void AccessGenerationState::installWatchpoint(const ObjectPropertyCondition& condition)
+void AccessGenerationState::installWatchpoint(CodeBlock* codeBlock, const ObjectPropertyCondition& condition)
 {
-    WatchpointsOnStructureStubInfo::ensureReferenceAndInstallWatchpoint(
-        watchpoints, jit->codeBlock(), stubInfo, condition);
+    WatchpointsOnStructureStubInfo::ensureReferenceAndInstallWatchpoint(watchpoints, codeBlock, stubInfo, condition);
 }
 
 void AccessGenerationState::restoreScratch()
@@ -73,7 +72,10 @@ void AccessGenerationState::restoreScratch()
 void AccessGenerationState::succeed()
 {
     restoreScratch();
-    success.append(jit->jump());
+    if (jit->codeBlock()->useDataIC())
+        jit->ret();
+    else
+        success.append(jit->jump());
 }
 
 const RegisterSet& AccessGenerationState::liveRegistersForCall()
@@ -126,10 +128,11 @@ auto AccessGenerationState::preserveLiveRegistersToStackForCall(const RegisterSe
     };
 }
 
-auto AccessGenerationState::preserveLiveRegistersToStackForCallWithoutExceptions() -> SpillState
+auto AccessGenerationState::preserveLiveRegistersToStackForCallWithoutExceptions(const RegisterSet& extra) -> SpillState
 {
     RegisterSet liveRegisters = allocator->usedRegisters();
     liveRegisters.exclude(calleeSaveRegisters());
+    liveRegisters.merge(extra);
 
     constexpr unsigned extraStackPadding = 0;
     unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(*jit, liveRegisters, extraStackPadding);
@@ -252,7 +255,7 @@ PolymorphicAccess::~PolymorphicAccess() { }
 
 AccessGenerationResult PolymorphicAccess::addCases(
     const GCSafeConcurrentJSLocker& locker, VM& vm, CodeBlock* codeBlock, StructureStubInfo& stubInfo,
-    Vector<std::unique_ptr<AccessCase>, 2> originalCasesToAdd)
+    Vector<RefPtr<AccessCase>, 2> originalCasesToAdd)
 {
     SuperSamplerScope superSamplerScope(false);
     
@@ -268,9 +271,9 @@ AccessGenerationResult PolymorphicAccess::addCases(
     //   add more things after failure.
     
     // First ensure that the originalCasesToAdd doesn't contain duplicates.
-    Vector<std::unique_ptr<AccessCase>> casesToAdd;
+    Vector<RefPtr<AccessCase>> casesToAdd;
     for (unsigned i = 0; i < originalCasesToAdd.size(); ++i) {
-        std::unique_ptr<AccessCase> myCase = WTFMove(originalCasesToAdd[i]);
+        RefPtr<AccessCase> myCase = WTFMove(originalCasesToAdd[i]);
 
         // Add it only if it is not replaced by the subsequent cases in the list.
         bool found = false;
@@ -287,8 +290,7 @@ AccessGenerationResult PolymorphicAccess::addCases(
         casesToAdd.append(WTFMove(myCase));
     }
 
-    if (PolymorphicAccessInternal::verbose)
-        dataLog("casesToAdd: ", listDump(casesToAdd), "\n");
+    dataLogLnIf(PolymorphicAccessInternal::verbose, "casesToAdd: ", listDump(casesToAdd));
 
     // If there aren't any cases to add, then fail on the grounds that there's no point to generating a
     // new stub that will be identical to the old one. Returning null should tell the caller to just
@@ -339,16 +341,15 @@ AccessGenerationResult PolymorphicAccess::addCases(
         m_list.append(WTFMove(caseToAdd));
     }
     
-    if (PolymorphicAccessInternal::verbose)
-        dataLog("After addCases: m_list: ", listDump(m_list), "\n");
+    dataLogLnIf(PolymorphicAccessInternal::verbose, "After addCases: m_list: ", listDump(m_list));
 
     return AccessGenerationResult::Buffered;
 }
 
 AccessGenerationResult PolymorphicAccess::addCase(
-    const GCSafeConcurrentJSLocker& locker, VM& vm, CodeBlock* codeBlock, StructureStubInfo& stubInfo, std::unique_ptr<AccessCase> newAccess)
+    const GCSafeConcurrentJSLocker& locker, VM& vm, CodeBlock* codeBlock, StructureStubInfo& stubInfo, Ref<AccessCase> newAccess)
 {
-    Vector<std::unique_ptr<AccessCase>, 2> newAccesses;
+    Vector<RefPtr<AccessCase>, 2> newAccesses;
     newAccesses.append(WTFMove(newAccess));
     return addCases(locker, vm, codeBlock, stubInfo, WTFMove(newAccesses));
 }
@@ -359,9 +360,12 @@ bool PolymorphicAccess::visitWeak(VM& vm) const
         if (!at(i).visitWeak(vm))
             return false;
     }
-    for (const WriteBarrier<JSCell>& weakReference : m_weakReferences) {
-        if (!vm.heap.isMarked(weakReference.get()))
-            return false;
+    if (m_stubRoutine) {
+        for (StructureID weakReference : m_stubRoutine->weakStructures()) {
+            Structure* structure = vm.getStructure(weakReference);
+            if (!vm.heap.isMarked(structure))
+                return false;
+        }
     }
     return true;
 }
@@ -419,8 +423,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
 {
     SuperSamplerScope superSamplerScope(false);
     
-    if (PolymorphicAccessInternal::verbose)
-        dataLog("Regenerate with m_list: ", listDump(m_list), "\n");
+    dataLogLnIf(PolymorphicAccessInternal::verbose, "Regenerate with m_list: ", listDump(m_list));
 
     AccessGenerationState state(vm, globalObject, ecmaMode);
 
@@ -440,7 +443,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
     unsigned srcIndex = 0;
     unsigned dstIndex = 0;
     while (srcIndex < m_list.size()) {
-        std::unique_ptr<AccessCase> someCase = WTFMove(m_list[srcIndex++]);
+        RefPtr<AccessCase> someCase = WTFMove(m_list[srcIndex++]);
         
         // If the case had been generated, then we have to keep the original in m_list in case we
         // fail to regenerate. That case may have data structures that are used by the code that it
@@ -491,6 +494,8 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
     if (stubInfo.v.thisTagGPR != InvalidGPRReg)
         allocator.lock(stubInfo.v.thisTagGPR);
 #endif
+    if (stubInfo.m_stubInfoGPR != InvalidGPRReg)
+        allocator.lock(stubInfo.m_stubInfoGPR);
 
     state.scratchGPR = allocator.allocateScratchGPR();
 
@@ -500,12 +505,6 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
             break;
         }
     }
-    
-    CCallHelpers jit(codeBlock);
-    state.jit = &jit;
-
-    state.preservedReusedRegisterState =
-        allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
 
     bool generatedFinalCode = false;
 
@@ -519,14 +518,43 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
         generatedFinalCode = true;
     }
 
-    if (PolymorphicAccessInternal::verbose)
-        dataLog("Optimized cases: ", listDump(cases), "\n");
-    
+    dataLogLnIf(PolymorphicAccessInternal::verbose, "Optimized cases: ", listDump(cases));
+
+    bool doesCalls = false;
+    bool doesJSGetterSetterCalls = false;
+    bool canBeShared = true;
+    Vector<JSCell*> cellsToMark;
+    FixedVector<RefPtr<AccessCase>> keys(cases.size());
+    unsigned index = 0;
+    for (auto& entry : cases) {
+        doesCalls |= entry->doesCalls(vm, &cellsToMark);
+        switch (entry->type()) {
+        case AccessCase::Getter:
+        case AccessCase::Setter:
+            // Getter / Setter relies on stack-pointer adjustment, which is tied to the linked CodeBlock, which makes this code unshareable.
+            canBeShared = false;
+            doesJSGetterSetterCalls = true;
+            break;
+        case AccessCase::CustomValueGetter:
+        case AccessCase::CustomAccessorGetter:
+        case AccessCase::CustomValueSetter:
+        case AccessCase::CustomAccessorSetter:
+            // Custom getter / setter emits JSGlobalObject pointer, which is tied to the linked CodeBlock.
+            canBeShared = false;
+            break;
+        default:
+            break;
+        }
+        keys[index] = entry;
+        ++index;
+    }
+    state.m_doesCalls = doesCalls;
+    state.m_doesJSGetterSetterCalls = doesJSGetterSetterCalls;
+
     // At this point we're convinced that 'cases' contains the cases that we want to JIT now and we
     // won't change that set anymore.
     
     bool allGuardedByStructureCheck = true;
-    bool hasJSGetterSetterCall = false;
     bool needsInt32PropertyCheck = false;
     bool needsStringPropertyCheck = false;
     bool needsSymbolPropertyCheck = false;
@@ -542,10 +570,47 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
         }
         commit(locker, vm, state.watchpoints, codeBlock, stubInfo, *newCase);
         allGuardedByStructureCheck &= newCase->guardedByStructureCheck(stubInfo);
-        if (newCase->type() == AccessCase::Getter || newCase->type() == AccessCase::Setter)
-            hasJSGetterSetterCall = true;
+        if (newCase->usesPolyProto())
+            canBeShared = false;
+    }
+    if (needsSymbolPropertyCheck || needsStringPropertyCheck || needsInt32PropertyCheck)
+        canBeShared = false;
+
+    auto finishCodeGeneration = [&](RefPtr<PolymorphicAccessJITStubRoutine>&& stub) {
+        m_stubRoutine = WTFMove(stub);
+        m_watchpoints = WTFMove(state.watchpoints);
+        dataLogLnIf(PolymorphicAccessInternal::verbose, "Returning: ", m_stubRoutine->code());
+
+        m_list = WTFMove(cases);
+        m_list.shrinkToFit();
+
+        AccessGenerationResult::Kind resultKind;
+        if (m_list.size() >= Options::maxAccessVariantListSize() || generatedFinalCode)
+            resultKind = AccessGenerationResult::GeneratedFinalCode;
+        else
+            resultKind = AccessGenerationResult::GeneratedNewCode;
+
+        return AccessGenerationResult(resultKind, m_stubRoutine->code().code());
+    };
+
+    CCallHelpers jit(codeBlock);
+    state.jit = &jit;
+
+    if (codeBlock->useDataIC()) {
+        if (state.m_doesJSGetterSetterCalls) {
+            // We have no guarantee that stack-pointer is the expected one. This is not a problem if we do not have JS getter / setter calls since stack-pointer is
+            // a callee-save register in the C calling convension. However, our JS executable call does not save stack-pointer. So we are adjusting stack-pointer after
+            // JS getter / setter calls. But this could be different from the initial stack-pointer, and makes PAC tagging broken.
+            // To ensure PAC-tagging work, we first adjust stack-pointer to the appropriate one.
+            jit.addPtr(CCallHelpers::TrustedImm32(codeBlock->stackPointerOffset() * sizeof(Register)), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
+            jit.tagReturnAddress();
+        } else
+            jit.tagReturnAddress();
     }
 
+    state.preservedReusedRegisterState =
+        allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::NoExtraSpace);
+    
     if (cases.isEmpty()) {
         // This is super unlikely, but we make it legal anyway.
         state.failAndRepatch.append(jit.jump());
@@ -690,7 +755,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
 
     CodeBlock* codeBlockThatOwnsExceptionHandlers = nullptr;
     DisposableCallSiteIndex callSiteIndexForExceptionHandling;
-    if (state.needsToRestoreRegistersIfException() && hasJSGetterSetterCall) {
+    if (state.needsToRestoreRegistersIfException() && doesJSGetterSetterCalls) {
         // Emit the exception handler.
         // Note that this code is only reachable when doing genericUnwind from a pure JS getter/setter .
         // Note also that this is not reachable from custom getter/setter. Custom getter/setters will have 
@@ -730,48 +795,63 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
         callSiteIndexForExceptionHandling = state.callSiteIndexForExceptionHandling();
     }
 
+    if (codeBlock->useDataIC()) {
+        failure.link(&jit);
+        // In ARM64, we do not push anything on stack specially.
+        // So we can just jump to the slow-path even though this thunk is called (not jumped).
+        // FIXME: We should tail call to the thunk which calls the slow path function.
+        // And we should eliminate IC slow-path generation in BaselineJIT.
+        jit.farJump(CCallHelpers::Address(stubInfo.m_stubInfoGPR, StructureStubInfo::offsetOfSlowPathStartLocation()), JITStubRoutinePtrTag);
+    }
+
+    RefPtr<PolymorphicAccessJITStubRoutine> stub;
+    FixedVector<StructureID> weakStructures(WTFMove(state.weakStructures));
+    if (codeBlock->useDataIC() && canBeShared) {
+        SharedJITStubSet::Searcher searcher {
+            stubInfo.baseGPR,
+            stubInfo.valueGPR,
+            stubInfo.regs.thisGPR,
+            stubInfo.m_stubInfoGPR,
+            stubInfo.usedRegisters,
+            keys,
+            weakStructures,
+        };
+        stub = vm.m_sharedJITStubs->find(searcher);
+        if (stub) {
+            dataLogLnIf(PolymorphicAccessInternal::verbose, "Found existing code stub ", stub->code());
+            return finishCodeGeneration(WTFMove(stub));
+        }
+    }
+
     LinkBuffer linkBuffer(jit, codeBlock, LinkBuffer::Profile::InlineCache, JITCompilationCanFail);
     if (linkBuffer.didFailToAllocate()) {
-        if (PolymorphicAccessInternal::verbose)
-            dataLog("Did fail to allocate.\n");
+        dataLogLnIf(PolymorphicAccessInternal::verbose, "Did fail to allocate.");
         return AccessGenerationResult::GaveUp;
     }
 
     CodeLocationLabel<JSInternalPtrTag> successLabel = stubInfo.doneLocation;
 
-    linkBuffer.link(state.success, successLabel);
-
-    linkBuffer.link(failure, stubInfo.slowPathStartLocation);
+    if (codeBlock->useDataIC())
+        ASSERT(state.success.empty());
+    else {
+        linkBuffer.link(state.success, successLabel);
+        linkBuffer.link(failure, stubInfo.slowPathStartLocation);
+    }
     
-    if (PolymorphicAccessInternal::verbose)
-        dataLog(FullCodeOrigin(codeBlock, stubInfo.codeOrigin), ": Generating polymorphic access stub for ", listDump(cases), "\n");
+    dataLogLnIf(PolymorphicAccessInternal::verbose, FullCodeOrigin(codeBlock, stubInfo.codeOrigin), ": Generating polymorphic access stub for ", listDump(cases));
 
     MacroAssemblerCodeRef<JITStubRoutinePtrTag> code = FINALIZE_CODE_FOR(
         codeBlock, linkBuffer, JITStubRoutinePtrTag,
         "%s", toCString("Access stub for ", *codeBlock, " ", stubInfo.codeOrigin, " with return point ", successLabel, ": ", listDump(cases)).data());
+    
+    stub = createICJITStubRoutine(code, WTFMove(keys), WTFMove(weakStructures), vm, codeBlock, doesCalls, cellsToMark, WTFMove(state.m_callLinkInfos), codeBlockThatOwnsExceptionHandlers, callSiteIndexForExceptionHandling);
 
-    bool doesCalls = false;
-    Vector<JSCell*> cellsToMark;
-    for (auto& entry : cases)
-        doesCalls |= entry->doesCalls(vm, &cellsToMark);
-    
-    m_stubRoutine = createJITStubRoutine(code, vm, codeBlock, doesCalls, cellsToMark, WTFMove(state.m_callLinkInfos), codeBlockThatOwnsExceptionHandlers, callSiteIndexForExceptionHandling);
-    m_watchpoints = WTFMove(state.watchpoints);
-    if (!state.weakReferences.isEmpty())
-        m_weakReferences = FixedVector<WriteBarrier<JSCell>>(WTFMove(state.weakReferences));
-    if (PolymorphicAccessInternal::verbose)
-        dataLog("Returning: ", code.code(), "\n");
-    
-    m_list = WTFMove(cases);
-    m_list.shrinkToFit();
-    
-    AccessGenerationResult::Kind resultKind;
-    if (m_list.size() >= Options::maxAccessVariantListSize() || generatedFinalCode)
-        resultKind = AccessGenerationResult::GeneratedFinalCode;
-    else
-        resultKind = AccessGenerationResult::GeneratedNewCode;
-    
-    return AccessGenerationResult(resultKind, code.code());
+    if (codeBlock->useDataIC()) {
+        if (canBeShared)
+            vm.m_sharedJITStubs->add(SharedJITStubSet::Hash::Key(stubInfo.baseGPR, stubInfo.valueGPR, stubInfo.regs.thisGPR, stubInfo.m_stubInfoGPR, stubInfo.usedRegisters, stub.get()));
+    }
+
+    return finishCodeGeneration(WTFMove(stub));
 }
 
 void PolymorphicAccess::aboutToDie()

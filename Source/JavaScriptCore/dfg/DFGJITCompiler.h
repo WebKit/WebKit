@@ -154,6 +154,11 @@ public:
         m_calls.append(CallLinkRecord(functionCall, function));
         return functionCall;
     }
+
+    void appendCall(CCallHelpers::Address address)
+    {
+        call(address, OperationPtrTag);
+    }
     
     void exceptionCheck();
 

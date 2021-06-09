@@ -164,13 +164,18 @@ void JIT::emit_op_instanceof(const Instruction* currentInstruction)
     emitJumpSlowCaseIfNotJSCell(regT1, proto);
 
     JITInstanceOfGenerator gen(
-        m_codeBlock, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex),
+        m_codeBlock, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex),
         RegisterSet::stubUnavailableRegisters(),
         regT0, // result
         regT2, // value
         regT1, // proto
+        regT5,
         regT3, regT4); // scratch
     gen.generateFastPath(*this);
+    if (!JITCode::useDataIC(JITType::BaselineJIT))
+        addSlowCase(gen.slowPathJump());
+    else
+        addSlowCase();
     m_instanceOfs.append(gen);
     
     emitPutVirtualRegister(dst);
@@ -186,7 +191,14 @@ void JIT::emitSlow_op_instanceof(const Instruction* currentInstruction, Vector<S
     JITInstanceOfGenerator& gen = m_instanceOfs[m_instanceOfIndex++];
     
     Label coldPathBegin = label();
-    Call call = callOperation(operationInstanceOfOptimize, resultVReg, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), regT2, regT1);
+
+    Call call;
+    if (JITCode::useDataIC(JITType::BaselineJIT)) {
+        gen.stubInfo()->m_slowOperation = operationInstanceOfOptimize;
+        move(TrustedImmPtr(gen.stubInfo()), GPRInfo::nonArgGPR0);
+        callOperation<decltype(operationInstanceOfOptimize)>(Address(GPRInfo::nonArgGPR0, StructureStubInfo::offsetOfSlowOperation()), resultVReg, TrustedImmPtr(m_codeBlock->globalObject()), GPRInfo::nonArgGPR0, regT2, regT1);
+    } else
+        call = callOperation(operationInstanceOfOptimize, resultVReg, TrustedImmPtr(m_codeBlock->globalObject()), gen.stubInfo(), regT2, regT1);
     gen.reportSlowPathCall(coldPathBegin, call);
 }
 
@@ -1804,7 +1816,7 @@ void JIT::privateCompileHasIndexedProperty(ByValInfo* byValInfo, ReturnAddressPt
     
     // FIXME: Add support for other types like TypedArrays and Arguments.
     // See https://bugs.webkit.org/show_bug.cgi?id=135033 and https://bugs.webkit.org/show_bug.cgi?id=135034.
-    JumpList slowCases = emitLoadForArrayMode(currentInstruction, arrayMode, badType);
+    JumpList slowCases = emitLoadForArrayMode(currentInstruction, arrayMode, badType, nullptr);
     move(TrustedImm64(JSValue::encode(jsBoolean(true))), regT0);
     Jump done = jump();
 
@@ -1819,8 +1831,13 @@ void JIT::privateCompileHasIndexedProperty(ByValInfo* byValInfo, ReturnAddressPt
         m_codeBlock, patchBuffer, JITStubRoutinePtrTag,
         "Baseline has_indexed_property stub for %s, return point %p", toCString(*m_codeBlock).data(), returnAddress.untaggedValue());
     
-    MacroAssembler::repatchJump(byValInfo->badTypeJump, CodeLocationLabel<JITStubRoutinePtrTag>(byValInfo->stubRoutine->code().code()));
-    MacroAssembler::repatchCall(CodeLocationCall<ReturnAddressPtrTag>(MacroAssemblerCodePtr<ReturnAddressPtrTag>(returnAddress)), FunctionPtr<OperationPtrTag>(operationHasIndexedPropertyGeneric));
+    if (JITCode::useDataIC(JITType::BaselineJIT)) {
+        byValInfo->m_badTypeJumpTarget = CodeLocationLabel<JITStubRoutinePtrTag>(byValInfo->stubRoutine->code().code());
+        byValInfo->m_slowOperation = operationHasIndexedPropertyGeneric;
+    } else {
+        MacroAssembler::repatchJump(byValInfo->m_badTypeJump, CodeLocationLabel<JITStubRoutinePtrTag>(byValInfo->stubRoutine->code().code()));
+        MacroAssembler::repatchCall(CodeLocationCall<ReturnAddressPtrTag>(MacroAssemblerCodePtr<ReturnAddressPtrTag>(returnAddress)), FunctionPtr<OperationPtrTag>(operationHasIndexedPropertyGeneric));
+    }
 }
 
 void JIT::emit_op_has_enumerable_indexed_property(const Instruction* currentInstruction)
@@ -1854,11 +1871,12 @@ void JIT::emit_op_has_enumerable_indexed_property(const Instruction* currentInst
 
     // FIXME: Add support for other types like TypedArrays and Arguments.
     // See https://bugs.webkit.org/show_bug.cgi?id=135033 and https://bugs.webkit.org/show_bug.cgi?id=135034.
-    JumpList slowCases = emitLoadForArrayMode(currentInstruction, mode, badType);
+    JumpList slowCases = emitLoadForArrayMode(currentInstruction, mode, badType, byValInfo);
     
     move(TrustedImm64(JSValue::encode(jsBoolean(true))), regT0);
 
-    addSlowCase(badType);
+    if (!JITCode::useDataIC(JITType::BaselineJIT))
+        addSlowCase(badType);
     addSlowCase(slowCases);
     
     Label done = label();
@@ -1884,7 +1902,14 @@ void JIT::emitSlow_op_has_enumerable_indexed_property(const Instruction* current
     
     emitGetVirtualRegister(base, regT0);
     emitGetVirtualRegister(property, regT1);
-    Call call = callOperation(operationHasIndexedPropertyDefault, dst, TrustedImmPtr(m_codeBlock->globalObject()), regT0, regT1, byValInfo);
+
+    Call call;
+    if (JITCode::useDataIC(JITType::BaselineJIT)) {
+        byValInfo->m_slowOperation = operationHasIndexedPropertyDefault;
+        move(TrustedImmPtr(byValInfo), GPRInfo::nonArgGPR0);
+        callOperation<decltype(operationHasIndexedPropertyDefault)>(Address(GPRInfo::nonArgGPR0, ByValInfo::offsetOfSlowOperation()), dst, TrustedImmPtr(m_codeBlock->globalObject()), regT0, regT1, GPRInfo::nonArgGPR0);
+    } else
+        call = callOperation(operationHasIndexedPropertyDefault, dst, TrustedImmPtr(m_codeBlock->globalObject()), regT0, regT1, byValInfo);
 
     m_byValCompilationInfo[m_byValInstructionIndex].slowPathTarget = slowPath;
     m_byValCompilationInfo[m_byValInstructionIndex].returnAddress = call;

@@ -175,6 +175,7 @@ class RegisterAtOffsetList;
 class SamplingProfiler;
 #endif
 class ShadowChicken;
+class SharedJITStubSet;
 class ScriptExecutable;
 class SourceProvider;
 class SourceProviderCache;
@@ -846,11 +847,13 @@ public:
 #if ENABLE(JIT)
     std::unique_ptr<JITThunks> jitStubs;
     MacroAssemblerCodeRef<JITThunkPtrTag> getCTIStub(ThunkGenerator);
+    std::unique_ptr<SharedJITStubSet> m_sharedJITStubs;
 
 #endif // ENABLE(JIT)
 #if ENABLE(FTL_JIT)
     std::unique_ptr<FTL::Thunks> ftlThunks;
 #endif
+
     NativeExecutable* getHostFunction(NativeFunction, NativeFunction constructor, const String& name);
     NativeExecutable* getHostFunction(NativeFunction, Intrinsic, NativeFunction constructor, const DOMJIT::Signature*, const String& name);
 

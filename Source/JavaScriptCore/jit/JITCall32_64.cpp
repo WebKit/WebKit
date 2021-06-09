@@ -396,12 +396,14 @@ void JIT::emit_op_iterator_open(const Instruction* instruction)
 
     JITGetByIdGenerator gen(
         m_codeBlock,
+        JITType::BaselineJIT,
         CodeOrigin(m_bytecodeIndex),
         CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())),
         RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromImmortalIdentifier(ident->impl()),
         JSValueRegs(tagIteratorGPR, payloadIteratorGPR),
         nextRegs,
+        InvalidGPRReg,
         AccessType::GetById);
     
     gen.generateFastPath(*this);
@@ -505,12 +507,14 @@ void JIT::emit_op_iterator_next(const Instruction* instruction)
         preservedRegs.add(payloadValueGPR);
         JITGetByIdGenerator gen(
             m_codeBlock,
+            JITType::BaselineJIT,
             CodeOrigin(m_bytecodeIndex),
             CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())),
             preservedRegs,
             CacheableIdentifier::createFromImmortalIdentifier(vm().propertyNames->done.impl()),
             JSValueRegs(tagIterResultGPR, payloadIterResultGPR),
             doneRegs,
+            InvalidGPRReg,
             AccessType::GetById);
         gen.generateFastPath(*this);
         addSlowCase(gen.slowPathJump());
@@ -533,12 +537,14 @@ void JIT::emit_op_iterator_next(const Instruction* instruction)
 
         JITGetByIdGenerator gen(
             m_codeBlock,
+            JITType::BaselineJIT,
             CodeOrigin(m_bytecodeIndex),
             CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())),
             RegisterSet::stubUnavailableRegisters(),
             CacheableIdentifier::createFromImmortalIdentifier(vm().propertyNames->value.impl()),
             JSValueRegs(tagIterResultGPR, payloadIterResultGPR),
             resultRegs,
+            InvalidGPRReg,
             AccessType::GetById);
         gen.generateFastPath(*this);
         addSlowCase(gen.slowPathJump());

@@ -51,11 +51,12 @@ public:
     
     SlowPathCallKey(
         const RegisterSet& set, FunctionPtr<CFunctionPtrTag> callTarget, const RegisterSet& argumentRegisters,
-        ptrdiff_t offset)
+        ptrdiff_t offset, int32_t indirectOffset)
         : m_usedRegisters(set)
         , m_callTarget(callTarget.retagged<OperationPtrTag>())
         , m_argumentRegisters(argumentRegisters)
         , m_offset(offset)
+        , m_indirectOffset(indirectOffset)
     {
     }
     
@@ -63,10 +64,11 @@ public:
     FunctionPtr<OperationPtrTag> callTarget() const { return m_callTarget; }
     const RegisterSet& argumentRegisters() const { return m_argumentRegisters; }
     ptrdiff_t offset() const { return m_offset; }
+    int32_t indirectOffset() const { return m_indirectOffset; }
     
     SlowPathCallKey withCallTarget(FunctionPtr<CFunctionPtrTag> callTarget)
     {
-        return SlowPathCallKey(usedRegisters(), callTarget, argumentRegisters(), offset());
+        return SlowPathCallKey(usedRegisters(), callTarget, argumentRegisters(), offset(), indirectOffset());
     }
     
     void dump(PrintStream&) const;
@@ -76,13 +78,11 @@ public:
     
     SlowPathCallKey(EmptyValueTag)
         : m_usedRegisters(RegisterSet::EmptyValue)
-        , m_offset(0)
     {
     }
     
     SlowPathCallKey(DeletedValueTag)
         : m_usedRegisters(RegisterSet::DeletedValue)
-        , m_offset(0)
     {
     }
     
@@ -93,18 +93,20 @@ public:
     {
         return m_usedRegisters == other.m_usedRegisters
             && m_callTarget == other.m_callTarget
-            && m_offset == other.m_offset;
+            && m_offset == other.m_offset
+            && m_indirectOffset == other.m_indirectOffset;
     }
     unsigned hash() const
     {
-        return m_usedRegisters.hash() + PtrHash<void*>::hash(m_callTarget.executableAddress()) + m_offset;
+        return m_usedRegisters.hash() + PtrHash<void*>::hash(m_callTarget.executableAddress()) + m_offset + m_indirectOffset;
     }
 
 private:
     RegisterSet m_usedRegisters;
     FunctionPtr<OperationPtrTag> m_callTarget;
     RegisterSet m_argumentRegisters;
-    ptrdiff_t m_offset;
+    ptrdiff_t m_offset { 0 };
+    int32_t m_indirectOffset { 0 };
 };
 
 struct SlowPathCallKeyHash {
