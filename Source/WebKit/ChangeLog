@@ -1,3 +1,26 @@
+2021-06-09  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        [GTK] Duplicate WebKitWebView::show-option-menu confuses introspection, should use --warn-error when building gir
+        https://bugs.webkit.org/show_bug.cgi?id=222985
+
+        Reviewed by Adrian Perez de Castro.
+
+        WebKitWebView::show-option-menu has different parameters for GTK than it does for WPE. It
+        seems g-ir-scanner is taking the WPE documentation and merging it with the GTK parameters.
+        We can fix this by moving the introspection comment into platform-specific files.
+
+        Additionally, let's use --warn-error to turn warnings into errors to prevent this from ever
+        happening again, as we already do when generating introspection for JavaScriptCore.
+
+        * PlatformGTK.cmake:
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (webkit_web_view_class_init):
+        * UIProcess/API/glib/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/WebKitWebViewGtk.cpp:
+        (createShowOptionMenuSignal):
+        * UIProcess/API/wpe/WebKitWebViewWPE.cpp:
+        (createShowOptionMenuSignal):
+
 2021-06-09  Peng Liu  <peng.liu6@apple.com>
 
         [iOS] UIDelegate::UIClient::fullscreenMayReturnToInline() is not called when a video exits fullscreen

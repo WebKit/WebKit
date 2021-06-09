@@ -664,6 +664,7 @@ if (ENABLE_INTROSPECTION)
             ${INTROSPECTION_SCANNER}
             --quiet
             --warn-all
+            --warn-error
             --symbol-prefix=webkit
             --identifier-prefix=WebKit
             --namespace=WebKit2
@@ -710,6 +711,7 @@ if (ENABLE_INTROSPECTION)
             ${INTROSPECTION_SCANNER}
             --quiet
             --warn-all
+            --warn-error
             --symbol-prefix=webkit
             --identifier-prefix=WebKit
             --namespace=WebKit2WebExtension
