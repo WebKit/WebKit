@@ -1,3 +1,57 @@
+2021-06-09  Alexander Mikhaylenko  <alexm@gnome.org>
+
+        [GTK4] Add support for navigation gestures
+        https://bugs.webkit.org/show_bug.cgi?id=212327
+
+        Reviewed by Michael Catanzaro.
+
+        Make ViewSnapshotStore store GdkTexture instead of Cairo surfaces
+        for GTK4. Split ViewSnapshotStoreGtk.cpp into GTK3 and GTK4 versions
+        since they don't have much in common.
+
+        When taking a view snapshot, render the web view into a texture.
+
+        When starting a navigation gesture, create a render node from
+        either the texture, or a fallback color, then render that instead
+        of using Cairo.
+
+        Implement the same dimming+shadow as in GTK3. This time don't bother
+        with CSS, the approach we used in GTK3 doesn't work anymore, and since
+        elements like scrollbars aren't themeable anyway it's not very important
+        to preserve that.
+
+        * SourcesGTK.txt:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseTakeViewSnapshot):
+        * UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp:
+        (WebKit::WebAutomationSession::platformGetBase64EncodedPNGData):
+        * UIProcess/ViewGestureController.h:
+        * UIProcess/ViewSnapshotStore.cpp:
+        (WebKit::ViewSnapshotStore::didAddImageToSnapshot):
+        (WebKit::ViewSnapshotStore::willRemoveImageFromSnapshot):
+        * UIProcess/ViewSnapshotStore.h:
+        (WebKit::ViewSnapshot::estimatedImageSizeInBytes const):
+        (WebKit::ViewSnapshot::texture const):
+        (WebKit::ViewSnapshot::imageSizeInBytes const): Renamed to estimatedImageSizeInBytes().
+        * UIProcess/gtk/ViewGestureControllerGtk.cpp:
+        (WebKit::ViewGestureController::beginSwipeGesture):
+        (WebKit::ViewGestureController::snapshot):
+        (WebKit::ViewGestureController::removeSwipeSnapshot):
+        * UIProcess/gtk/ViewSnapshotStoreGtk3.cpp: Copied from Source/WebKit/UIProcess/gtk/ViewSnapshotStoreGtk.cpp.
+        (WebKit::ViewSnapshot::create):
+        (WebKit::ViewSnapshot::ViewSnapshot):
+        (WebKit::ViewSnapshot::hasImage const):
+        (WebKit::ViewSnapshot::clearImage):
+        (WebKit::ViewSnapshot::estimatedImageSizeInBytes const):
+        (WebKit::ViewSnapshot::size const):
+        * UIProcess/gtk/ViewSnapshotStoreGtk4.cpp: Renamed from Source/WebKit/UIProcess/gtk/ViewSnapshotStoreGtk.cpp.
+        (WebKit::ViewSnapshot::create):
+        (WebKit::ViewSnapshot::ViewSnapshot):
+        (WebKit::ViewSnapshot::hasImage const):
+        (WebKit::ViewSnapshot::clearImage):
+        (WebKit::ViewSnapshot::estimatedImageSizeInBytes const):
+        (WebKit::ViewSnapshot::size const):
+
 2021-06-09  Chris Dumez  <cdumez@apple.com>
 
         Rely on SQLiteDatabase::setMaximumSize() for quota management in LocalStorageDatabase

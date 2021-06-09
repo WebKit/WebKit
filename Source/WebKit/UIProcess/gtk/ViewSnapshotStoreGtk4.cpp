@@ -11,7 +11,7 @@
  *    documentation and/or other materials provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,dd
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
  * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
@@ -26,18 +26,18 @@
 #include "config.h"
 #include "ViewSnapshotStore.h"
 
-#include <WebCore/CairoUtilities.h>
+#if USE(GTK4)
 
 namespace WebKit {
 using namespace WebCore;
 
-Ref<ViewSnapshot> ViewSnapshot::create(RefPtr<cairo_surface_t>&& surface)
+Ref<ViewSnapshot> ViewSnapshot::create(GRefPtr<GdkTexture>&& texture)
 {
-    return adoptRef(*new ViewSnapshot(WTFMove(surface)));
+    return adoptRef(*new ViewSnapshot(WTFMove(texture)));
 }
 
-ViewSnapshot::ViewSnapshot(RefPtr<cairo_surface_t>&& surface)
-    : m_surface(WTFMove(surface))
+ViewSnapshot::ViewSnapshot(GRefPtr<GdkTexture>&& texture)
+    : m_texture(WTFMove(texture))
 {
     if (hasImage())
         ViewSnapshotStore::singleton().didAddImageToSnapshot(*this);
@@ -45,7 +45,7 @@ ViewSnapshot::ViewSnapshot(RefPtr<cairo_surface_t>&& surface)
 
 bool ViewSnapshot::hasImage() const
 {
-    return !!m_surface;
+    return m_texture;
 }
 
 void ViewSnapshot::clearImage()
@@ -55,31 +55,34 @@ void ViewSnapshot::clearImage()
 
     ViewSnapshotStore::singleton().willRemoveImageFromSnapshot(*this);
 
-    m_surface = nullptr;
+    m_texture = nullptr;
 }
 
-size_t ViewSnapshot::imageSizeInBytes() const
+size_t ViewSnapshot::estimatedImageSizeInBytes() const
 {
-    if (!m_surface)
+    if (!m_texture)
         return 0;
 
-    cairo_surface_t* surface = m_surface.get();
-    int stride = cairo_image_surface_get_stride(surface);
-    int height = cairo_image_surface_get_width(surface);
+    int width = gdk_texture_get_width(m_texture.get());
+    int height = gdk_texture_get_height(m_texture.get());
 
-    return stride * height;
+    // Unfortunately we don't have a way to get size of a texture in
+    // bytes, so we'll have to make something up. Let's assume that
+    // pixel == 4 bytes.
+    return width * height * 4;
 }
 
 WebCore::IntSize ViewSnapshot::size() const
 {
-    if (!m_surface)
+    if (!m_texture)
         return { };
 
-    cairo_surface_t* surface = m_surface.get();
-    int width = cairo_image_surface_get_width(surface);
-    int height = cairo_image_surface_get_height(surface);
+    int width = gdk_texture_get_width(m_texture.get());
+    int height = gdk_texture_get_height(m_texture.get());
 
     return { width, height };
 }
 
 } // namespace WebKit
+
+#endif

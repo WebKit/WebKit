@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Igalia S.L.
+ * Copyright (C) 2014 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,52 +24,66 @@
  */
 
 #include "config.h"
-#include "WebAutomationSession.h"
-
 #include "ViewSnapshotStore.h"
-#include <WebCore/RefPtrCairo.h>
-#include <cairo/cairo.h>
-#include <wtf/text/Base64.h>
+
+#if !USE(GTK4)
+
+#include <WebCore/CairoUtilities.h>
 
 namespace WebKit {
 using namespace WebCore;
 
-static std::optional<String> base64EncodedPNGData(cairo_surface_t* surface)
+Ref<ViewSnapshot> ViewSnapshot::create(RefPtr<cairo_surface_t>&& surface)
 {
-    if (!surface)
-        return std::nullopt;
-
-    Vector<unsigned char> pngData;
-    cairo_surface_write_to_png_stream(surface, [](void* userData, const unsigned char* data, unsigned length) -> cairo_status_t {
-        auto* pngData = static_cast<Vector<unsigned char>*>(userData);
-        pngData->append(data, length);
-        return CAIRO_STATUS_SUCCESS;
-    }, &pngData);
-
-    if (pngData.isEmpty())
-        return std::nullopt;
-
-    return base64EncodeToString(pngData);
+    return adoptRef(*new ViewSnapshot(WTFMove(surface)));
 }
 
-std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle& handle)
+ViewSnapshot::ViewSnapshot(RefPtr<cairo_surface_t>&& surface)
+    : m_surface(WTFMove(surface))
 {
-    auto bitmap = ShareableBitmap::create(handle, SharedMemory::Protection::ReadOnly);
-    if (!bitmap)
-        return std::nullopt;
-
-    auto surface = bitmap->createCairoSurface();
-    return base64EncodedPNGData(surface.get());
+    if (hasImage())
+        ViewSnapshotStore::singleton().didAddImageToSnapshot(*this);
 }
 
-std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ViewSnapshot& snapshot)
+bool ViewSnapshot::hasImage() const
 {
-#if PLATFORM(GTK) && !USE(GTK4)
-    return base64EncodedPNGData(snapshot.surface());
-#else
-    return std::nullopt;
-#endif
+    return !!m_surface;
+}
+
+void ViewSnapshot::clearImage()
+{
+    if (!hasImage())
+        return;
+
+    ViewSnapshotStore::singleton().willRemoveImageFromSnapshot(*this);
+
+    m_surface = nullptr;
+}
+
+size_t ViewSnapshot::estimatedImageSizeInBytes() const
+{
+    if (!m_surface)
+        return 0;
+
+    cairo_surface_t* surface = m_surface.get();
+    int stride = cairo_image_surface_get_stride(surface);
+    int height = cairo_image_surface_get_width(surface);
+
+    return stride * height;
+}
+
+WebCore::IntSize ViewSnapshot::size() const
+{
+    if (!m_surface)
+        return { };
+
+    cairo_surface_t* surface = m_surface.get();
+    int width = cairo_image_surface_get_width(surface);
+    int height = cairo_image_surface_get_height(surface);
+
+    return { width, height };
 }
 
 } // namespace WebKit
 
+#endif
