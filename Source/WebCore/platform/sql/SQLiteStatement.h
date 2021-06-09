@@ -27,6 +27,7 @@
 
 #include "SQLValue.h"
 #include "SQLiteDatabase.h"
+#include <wtf/Span.h>
 
 struct sqlite3_stmt;
 
@@ -38,7 +39,7 @@ public:
     WEBCORE_EXPORT ~SQLiteStatement();
     WEBCORE_EXPORT SQLiteStatement(SQLiteStatement&&);
     
-    WEBCORE_EXPORT int bindBlob(int index, const void* blob, int size);
+    WEBCORE_EXPORT int bindBlob(int index, Span<const uint8_t>);
     WEBCORE_EXPORT int bindBlob(int index, const String&);
     WEBCORE_EXPORT int bindText(int index, StringView);
     WEBCORE_EXPORT int bindInt(int index, int);
@@ -72,23 +73,8 @@ public:
     WEBCORE_EXPORT String columnBlobAsString(int col);
     WEBCORE_EXPORT Vector<uint8_t> columnBlob(int col);
 
-    class BlobView {
-    public:
-        BlobView() = default;
-        BlobView(const uint8_t* data, size_t size)
-            : m_data(data)
-            , m_size(size)
-        { }
-
-        const uint8_t* data() { return m_data; }
-        size_t size() { return m_size; }
-
-    private:
-        const uint8_t* m_data { nullptr };
-        const size_t m_size { 0 };
-    };
-    // The returned BlobView stays valid until the next step() / reset() or destruction of the statement.
-    BlobView columnBlobView(int col);
+    // The returned Span stays valid until the next step() / reset() or destruction of the statement.
+    Span<const uint8_t> columnBlobAsSpan(int col);
 
     SQLiteDatabase& database() { return m_database; }
     

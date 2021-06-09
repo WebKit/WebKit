@@ -85,14 +85,14 @@ bool SQLiteStatement::executeCommand()
     return step() == SQLITE_DONE;
 }
 
-int SQLiteStatement::bindBlob(int index, const void* blob, int size)
+int SQLiteStatement::bindBlob(int index, Span<const uint8_t> blob)
 {
     ASSERT(index > 0);
     ASSERT(static_cast<unsigned>(index) <= bindParameterCount());
-    ASSERT(blob || !size);
-    ASSERT(size >= 0);
+    ASSERT(blob.data() || !blob.size());
+    ASSERT(blob.size() >= 0);
 
-    return sqlite3_bind_blob(m_statement, index, blob, size, SQLITE_TRANSIENT);
+    return sqlite3_bind_blob(m_statement, index, blob.data(), blob.size(), SQLITE_TRANSIENT);
 }
 
 int SQLiteStatement::bindBlob(int index, const String& text)
@@ -107,7 +107,7 @@ int SQLiteStatement::bindBlob(int index, const String& text)
     else
         characters = upconvertedCharacters;
 
-    return bindBlob(index, characters, text.length() * sizeof(UChar));
+    return bindBlob(index, Span { reinterpret_cast<const uint8_t*>(characters), text.length() * sizeof(UChar) });
 }
 
 int SQLiteStatement::bindText(int index, StringView text)
@@ -282,11 +282,11 @@ String SQLiteStatement::columnBlobAsString(int col)
 
 Vector<uint8_t> SQLiteStatement::columnBlob(int col)
 {
-    auto blobView = columnBlobView(col);
-    return { blobView.data(), blobView.size() };
+    auto span = columnBlobAsSpan(col);
+    return { span.data(), span.size() };
 }
 
-auto SQLiteStatement::columnBlobView(int col) -> BlobView
+Span<const uint8_t> SQLiteStatement::columnBlobAsSpan(int col)
 {
     ASSERT(col >= 0);
 

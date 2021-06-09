@@ -1,3 +1,67 @@
+2021-06-08  Sam Weinig  <weinig@apple.com>
+
+        Adopt WTF::Span in SQLiteStatement
+        https://bugs.webkit.org/show_bug.cgi?id=226773
+
+        Reviewed by Alex Christensen.
+
+        Do some initial adoption of WTF::Span by adopting it in SQLiteStatement.
+        
+        - Removes class BlobView.
+        - Renames columnBlobView to columnBlobAsSpan() (mirrors columnBlobAsString() naming)
+          and have it return a Span<const uint8_t>.
+        - Replace bindBlob(int index, const void* blob, int size) with bindBlob(int index, Span<const uint8_t>).
+
+        Due to implicit construction for types with data() and size() functions (actually anything
+        that std::data() and std::size() can reason about), Vector and SharedBuffer cleanly work
+        to convert to Span of the same underlying type. This means that many callers of bindBlob
+        are now simpler, as instead of doing:
+
+            bindBlob(1, foo->data(), foo->size());
+
+        we instead do:
+
+            bindBlob(1, *foo);
+
+        There is much much more to do to take advantage of this new type, but this is
+        kept intentionally small, as the pulling back the onion can go very deep. 
+
+        * Modules/indexeddb/server/SQLiteIDBBackingStore.cpp:
+        (WebCore::IDBServer::SQLiteIDBBackingStore::migrateIndexInfoTableForIDUpdate):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::migrateIndexRecordsTableForIDUpdate):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addExistingIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::extractExistingDatabaseInfo):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::createIndex):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedHasIndexRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedPutIndexRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::keyExistsInObjectStore):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::deleteRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::addRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getRecord):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getAllObjectStoreRecords):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::uncheckedGetIndexRecordForOneKey):
+        (WebCore::IDBServer::SQLiteIDBBackingStore::getCount):
+        * Modules/indexeddb/server/SQLiteIDBCursor.cpp:
+        (WebCore::IDBServer::SQLiteIDBCursor::bindArguments):
+        (WebCore::IDBServer::SQLiteIDBCursor::resetAndRebindPreIndexStatementIfNecessary):
+        (WebCore::IDBServer::SQLiteIDBCursor::internalFetchNextRecord):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::store):
+        * platform/sql/SQLiteStatement.cpp:
+        (WebCore::SQLiteStatement::bindBlob):
+        (WebCore::SQLiteStatement::columnBlob):
+        (WebCore::SQLiteStatement::columnBlobAsSpan):
+        (WebCore::SQLiteStatement::columnBlobView): Deleted.
+        * platform/sql/SQLiteStatement.h:
+        (WebCore::SQLiteStatement::BlobView::BlobView): Deleted.
+        (WebCore::SQLiteStatement::BlobView::data): Deleted.
+        (WebCore::SQLiteStatement::BlobView::size): Deleted.
+        (): Deleted.
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::RegistrationDatabase::doPushChanges):
+        (WebCore::RegistrationDatabase::importRecords):
+
 2021-06-08  Jean-Yves Avenard  <jya@apple.com>
 
         MediaPlayerPrivateRemote::didLoadingProgress should not send synchronous message to GPU process

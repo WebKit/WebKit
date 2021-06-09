@@ -815,7 +815,7 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
         dataStatement->bindText(2, path);
     } else {
         if (resource->data().size())
-            dataStatement->bindBlob(1, resource->data().data(), resource->data().size());
+            dataStatement->bindBlob(1, resource->data());
     }
     
     if (!dataStatement->executeCommand()) {

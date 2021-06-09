@@ -1,3 +1,14 @@
+2021-06-08  Sam Weinig  <weinig@apple.com>
+
+        Adopt WTF::Span in SQLiteStatement
+        https://bugs.webkit.org/show_bug.cgi?id=226773
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/glib/IconDatabase.cpp:
+        (WebKit::IconDatabase::addIcon):
+        Adopt new bindBlob() signature.
+
 2021-06-08  Jean-Yves Avenard  <jya@apple.com>
 
         MediaPlayerPrivateRemote::didLoadingProgress should not send synchronous message to GPU process

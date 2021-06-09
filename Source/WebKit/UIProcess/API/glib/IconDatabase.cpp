@@ -398,7 +398,7 @@ std::optional<int64_t> IconDatabase::addIcon(const String& iconURL, const Vector
     m_addIconStatement->reset();
 
     auto iconID = m_db.lastInsertRowID();
-    if (m_addIconDataStatement->bindInt64(1, iconID) != SQLITE_OK || m_addIconDataStatement->bindBlob(2, iconData.data(), iconData.size()) != SQLITE_OK) {
+    if (m_addIconDataStatement->bindInt64(1, iconID) != SQLITE_OK || m_addIconDataStatement->bindBlob(2, iconData) != SQLITE_OK) {
         LOG_ERROR("IconDatabase::addIcon failed: %s", m_db.lastErrorMsg());
         return std::nullopt;
     }
