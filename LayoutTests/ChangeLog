@@ -1,3 +1,9 @@
+2021-06-08  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GLIB][WPE] Unreviewed test gardening. Move WPE baseline for WPT test 'report-same-origin-with-cookies.html' to GLIB.
+
+        * platform/glib/imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies-expected.txt: Renamed from LayoutTests/platform/wpe/imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies-expected.txt.
+
 2021-06-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Safari tab pill should toggle visibility when tapping on article text on adventure.com
