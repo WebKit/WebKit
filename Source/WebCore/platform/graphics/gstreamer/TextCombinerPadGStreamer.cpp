@@ -62,12 +62,13 @@ static gboolean webkitTextCombinerPadEvent(GstPad* pad, GstObject* parent, GstEv
         gst_event_parse_tag(event, &tags);
         ASSERT(tags);
 
-        GST_OBJECT_LOCK(pad);
-        if (!combinerPad->priv->tags)
-            combinerPad->priv->tags = adoptGRef(gst_tag_list_copy(tags));
-        else
-            gst_tag_list_insert(combinerPad->priv->tags.get(), tags, GST_TAG_MERGE_REPLACE);
-        GST_OBJECT_UNLOCK(pad);
+        {
+            auto locker = GstObjectLocker(pad);
+            if (!combinerPad->priv->tags)
+                combinerPad->priv->tags = adoptGRef(gst_tag_list_copy(tags));
+            else
+                gst_tag_list_insert(combinerPad->priv->tags.get(), tags, GST_TAG_MERGE_REPLACE);
+        }
 
         g_object_notify_by_pspec(G_OBJECT(pad), sObjProperties[PROP_PAD_TAGS]);
         break;
@@ -82,17 +83,17 @@ static void webkitTextCombinerPadGetProperty(GObject* object, unsigned propertyI
 {
     auto* pad = WEBKIT_TEXT_COMBINER_PAD(object);
     switch (propertyId) {
-    case PROP_PAD_TAGS:
-        GST_OBJECT_LOCK(object);
+    case PROP_PAD_TAGS: {
+        auto locker = GstObjectLocker(object);
         if (pad->priv->tags)
             g_value_take_boxed(value, gst_tag_list_copy(pad->priv->tags.get()));
-        GST_OBJECT_UNLOCK(object);
         break;
-    case PROP_INNER_COMBINER_PAD:
-        GST_OBJECT_LOCK(object);
+    }
+    case PROP_INNER_COMBINER_PAD: {
+        auto locker = GstObjectLocker(object);
         g_value_set_object(value, pad->priv->innerCombinerPad.get());
-        GST_OBJECT_UNLOCK(object);
         break;
+    }
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
         break;
@@ -103,11 +104,11 @@ static void webkitTextCombinerPadSetProperty(GObject* object, guint propertyId, 
 {
     auto* pad = WEBKIT_TEXT_COMBINER_PAD(object);
     switch (propertyId) {
-    case PROP_INNER_COMBINER_PAD:
-        GST_OBJECT_LOCK(object);
+    case PROP_INNER_COMBINER_PAD: {
+        auto locker = GstObjectLocker(object);
         pad->priv->innerCombinerPad = adoptGRef(GST_PAD_CAST(g_value_get_object(value)));
-        GST_OBJECT_UNLOCK(object);
         break;
+    }
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
         break;

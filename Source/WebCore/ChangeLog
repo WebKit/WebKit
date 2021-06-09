@@ -1,3 +1,36 @@
+2021-06-09  Alicia Boya García  <aboya@igalia.com>
+
+        [WTF][GStreamer] Add RAII lockers for 3rd party locks
+        https://bugs.webkit.org/show_bug.cgi?id=225650
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This patch introduces RAII locker classes that wrap GST_OBJECT_LOCK
+        and GST_PAD_STREAM_LOCK to match the style, safety and convenience of
+        locks from WTF.
+
+        This patch also changes all usages of GStreamer locks in the WebKit
+        codebase to use these new lockers.
+
+        This patch introduces no behavior changes.
+
+        * platform/graphics/gstreamer/GStreamerCommon.h:
+        (gstObjectLock):
+        (gstObjectUnlock):
+        (gstPadStreamLock):
+        (gstPadStreamUnlock):
+        (holdGstObjectLock):
+        (holdGstPadStreamLock):
+        * platform/graphics/gstreamer/TextCombinerPadGStreamer.cpp:
+        (webkitTextCombinerPadGetProperty):
+        (webkitTextCombinerPadSetProperty):
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp:
+        (webKitMediaSrcWaitForPadLinkedOrFlush):
+        (webKitMediaSrcLoop):
+        (webKitMediaSrcStreamFlush):
+        (webKitMediaSrcGetUri):
+        (webKitMediaSrcSetUri):
+
 2021-06-09  Chris Dumez  <cdumez@apple.com>
 
         Rely on SQLiteDatabase::setMaximumSize() for quota management in LocalStorageDatabase

@@ -1,3 +1,18 @@
+2021-06-09  Alicia Boya García  <aboya@igalia.com>
+
+        [WTF][GStreamer] Add RAII lockers for 3rd party locks
+        https://bugs.webkit.org/show_bug.cgi?id=225650
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        This patch introduces WTF::ExternalLocker, which allows to lock 3rd
+        party mutexes in a RAII fashion, very similar to WTF::Locker.
+
+        This is used also in WebCore to provide RAII lockers for GStreamer.
+
+        * wtf/Locker.h:
+        (WTF::unlockFunction):
+
 2021-06-08  Alex Christensen  <achristensen@webkit.org>
 
         Move PrivacyStance code from WebKitAdditions
