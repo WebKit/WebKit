@@ -20,25 +20,27 @@ window.internals.setMediaControlsHidePlaybackRates(media, true);
 
 let contextmenu = null;
 
-media.addEventListener("play", function() {
+media.addEventListener("play", async function() {
     media.pause();
 
-    shouldBecomeDifferent("shadowRoot.querySelector('button.overflow')", "null", () => {
-        shouldBecomeDifferent("shadowRoot.querySelector('button.overflow').getBoundingClientRect().width", "0", async () => {
-            debug("Tapping overflow button...");
-            await pressOnElement(shadowRoot.querySelector("button.overflow"));
-            contextmenu = await getTracksContextMenu();
+    await shouldBecomeDifferent("shadowRoot.querySelector('button.overflow')", "null");
 
-            debug("Selecting first chapter cue...");
-            await UIHelper.chooseMenuAction("ipsum");
-            await UIHelper.waitForContextMenuToHide();
+    await shouldBecomeDifferent("shadowRoot.querySelector('button.overflow').getBoundingClientRect().width", "0");
 
-            shouldBeGreaterThanOrEqual("media.currentTime", "5");
+    await shouldBecomeDifferent("media.textTracks[0].mode", "'disabled'");
 
-            media.remove();
-            finishJSTest();
-        });
-    });
+    debug("Tapping overflow button...");
+    await pressOnElement(shadowRoot.querySelector("button.overflow"));
+    contextmenu = await getTracksContextMenu();
+
+    debug("Selecting first chapter cue...");
+    await UIHelper.chooseMenuAction("ipsum");
+    await UIHelper.waitForContextMenuToHide();
+
+    shouldBeGreaterThanOrEqual("media.currentTime", "5");
+
+    media.remove();
+    finishJSTest();
 });
 
 </script>

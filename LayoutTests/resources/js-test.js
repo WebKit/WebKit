@@ -350,6 +350,10 @@ function shouldBecomeEqual(_a, _b, completionHandler)
     }
     return false;
   }
+
+  if (!completionHandler)
+    return new Promise(resolve => setTimeout(_waitForCondition, 0, condition, resolve));
+
   setTimeout(_waitForCondition, 0, condition, completionHandler);
 }
 
@@ -462,6 +466,10 @@ function shouldBecomeDifferent(_a, _b, completionHandler)
     }
     return false;
   }
+
+  if (!completionHandler)
+    return new Promise(resolve => setTimeout(_waitForCondition, 0, condition, resolve));
+
   setTimeout(_waitForCondition, 0, condition, completionHandler);
 }
 

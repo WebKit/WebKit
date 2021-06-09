@@ -1,3 +1,28 @@
+2021-06-09  Devin Rousso  <drousso@apple.com>
+
+        (r278618) media/modern-media-controls/overflow-support/chapters.html is timing out since introduction
+        https://bugs.webkit.org/show_bug.cgi?id=226828
+        <rdar://problem/79084756>
+
+        Unreviewed text fix.
+
+        * media/modern-media-controls/overflow-support/chapters.html:
+        * media/modern-media-controls/overflow-support/chapters-expected.txt:
+        Wait for the `<track kind="chapters">` to load before clicking on the overflow button as
+        otherwise there won't be any chapter cues to display in the contextmenu, meaning that the
+        contextmenu would be empty and therefore not be shown.
+
+        * http/tests/resources/js-test-pre.js:
+        (shouldBecomeEqual):
+        (shouldBecomeDifferent):
+        * resources/js-test-pre.js:
+        (shouldBecomeEqual):
+        (shouldBecomeDifferent):
+        * resources/js-test.js:
+        (shouldBecomeEqual):
+        (shouldBecomeDifferent):
+        Allow for `completionHandler` to not be provided, which will cause the function to return a `Promise`.
+
 2021-06-09  Amir Mark Jr  <amir_mark@apple.com>
 
         REGRESSION (r278630?): [iOS 14] http/tests/ssl/applepay/ApplePayButton.html is a constant failure
