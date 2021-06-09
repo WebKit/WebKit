@@ -13,7 +13,7 @@ if 'image/*' in http_accept:
     )
 
     sys.stdout.flush()
-    with open(os.path.join('/'.join(__file__.split('/')[0:-1]), 'compass.jpg'), 'rb') as fn:
+    with open(os.path.join(os.path.dirname(__file__), 'compass.jpg'), 'rb') as fn:
         sys.stdout.buffer.write(fn.read())
 else:
     sys.stdout.write('Content-Type: text/html\r\n\r\n')

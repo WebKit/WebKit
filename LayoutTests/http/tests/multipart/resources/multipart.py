@@ -25,7 +25,7 @@ while True:
     if img is None:
         break
 
-    with open(os.path.join('/'.join(__file__.split('/')[0:-1]), img), 'rb') as file:
+    with open(os.path.join(os.path.dirname(__file__), img), 'rb') as file:
         images.append(file.read())
     i += 1
 

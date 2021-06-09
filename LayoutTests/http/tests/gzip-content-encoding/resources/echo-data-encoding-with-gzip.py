@@ -18,15 +18,15 @@ sys.stdout.write(
     'Content-Encoding: gzip\r\n'.format(content_type)
 )
 
-with gzip.open(os.path.join('/'.join(__file__.split('/')[0:-1]), 'content.gz'), 'wb') as file:
+with gzip.open(os.path.join(os.path.dirname(__file__), 'content.gz'), 'wb') as file:
     file.write(bytes(q, 'utf-8'))
 
-with open(os.path.join('/'.join(__file__.split('/')[0:-1]), 'content.gz'), 'rb') as file:
+with open(os.path.join(os.path.dirname(__file__), 'content.gz'), 'rb') as file:
     content = file.read()
 
     sys.stdout.write('Content-Length: {}\r\n\r\n'.format(len(content)))
     sys.stdout.flush()
     sys.stdout.buffer.write(content)
 
-if os.path.isfile(os.path.join('/'.join(__file__.split('/')[0:-1]), 'content.gz')):
-    os.remove(os.path.join('/'.join(__file__.split('/')[0:-1]), 'content.gz'))
+if os.path.isfile(os.path.join(os.path.dirname(__file__), 'content.gz')):
+    os.remove(os.path.join(os.path.dirname(__file__), 'content.gz'))

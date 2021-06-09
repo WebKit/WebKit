@@ -9,5 +9,5 @@ sys.stdout.write(
 )
 
 sys.stdout.flush()
-with open(os.path.join('/'.join(__file__.split('/')[0:-1]), 'pass.docx'), 'rb') as file:
+with open(os.path.join(os.path.dirname(__file__), 'pass.docx'), 'rb') as file:
     sys.stdout.buffer.write(file.read())

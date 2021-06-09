@@ -11,7 +11,7 @@ password = ':'.join(credentials[1:])
 if username == 'testusername' and password == 'testpassword':
     sys.stdout.write('Content-Type: image/png\r\n\r\n')
     sys.stdout.flush()
-    with open(os.path.join('/'.join(__file__.split('/')[0:-1]), 'black-square.png'), 'rb') as file:
+    with open(os.path.join(os.path.dirname(__file__), 'black-square.png'), 'rb') as file:
         sys.stdout.buffer.write(file.read())
     sys.exit(0)
 

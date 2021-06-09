@@ -1,3 +1,53 @@
+2021-06-09  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        LayoutTests: Use os.path.dirname() instead of split('/') for Windows Python
+        https://bugs.webkit.org/show_bug.cgi?id=226802
+
+        Reviewed by Jonathan Bedard.
+
+        Windows Python uses backlash for path separator. Use
+        os.path.dirname() to get a parent directory.
+
+        * http/tests/appcache/resources/scope1/cookie-protected-manifest.py:
+        * http/tests/appcache/resources/scope2/cookie-protected-script.py:
+        * http/tests/cache/disk-cache/resources/make-sha1-collision.py:
+        * http/tests/cache/resources/load-and-check-referer.py:
+        * http/tests/cache/resources/post-image-to-verify.py:
+        * http/tests/cookies/multiple-redirect-and-set-cookie.py:
+        (redirect_url):
+        * http/tests/cookies/same-site/resources/fetch-after-navigating-iframe-in-cross-origin-page.py:
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-cross-origin-redirect.py:
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-navigation-from-cross-origin-page.py:
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-navigation-initiated-from-iframe-in-cross-origin-page.py:
+        * http/tests/cookies/same-site/resources/fetch-after-top-level-same-origin-redirect.py:
+        * http/tests/cookies/same-site/resources/fetch-in-same-origin-service-worker.py:
+        * http/tests/gzip-content-encoding/resources/echo-data-encoding-with-gzip.py:
+        * http/tests/media/resources/serve_video.py:
+        * http/tests/misc/resources/404image.py:
+        * http/tests/misc/resources/image-checks-for-accept.py:
+        * http/tests/misc/resources/protected/protected-image.py:
+        * http/tests/multipart/resources/multipart-nodashes.py:
+        * http/tests/multipart/resources/multipart.py:
+        * http/tests/quicklook/resources/word-document-with-csp-block-frame-ancestors.py:
+        * http/tests/referrer-policy/resources/image.py:
+        * http/tests/security/contentSecurityPolicy/resources/image-document-default-src-none-iframe.py:
+        * http/tests/security/mixedContent/resources/subresource/protected-image.py:
+        * http/tests/security/mixedContent/resources/subresource/protected-script.py:
+        * http/tests/security/mixedContent/resources/subresource/protected-stylesheet.py:
+        * http/tests/security/mixedContent/resources/subresource2/protected-image.py:
+        * http/tests/security/resources/abe-allow-credentials.py:
+        * http/tests/security/resources/abe-allow-star.py:
+        * http/tests/security/resources/allow-if-origin.py:
+        * http/tests/security/resources/captions-with-access-control-headers.py:
+        * http/tests/security/resources/image-access-control.py:
+        * http/tests/security/resources/image-credential-check.py:
+        * http/tests/security/resources/loading-subresources.py:
+        * http/tests/security/resources/reference-movie-cross-origin-allow.py:
+        * http/tests/security/resources/subresource1/protected-image.py:
+        * http/tests/security/resources/subresource2/protected-image.py:
+        * http/tests/security/resources/xorigincss1-allow-star.py:
+        * platform/wincairo/TestExpectations:
+
 2021-06-09  Truitt Savell  <tsavell@apple.com>
 
         Skip http/tests/contentextensions/plugin-doesnt-crash.html on arm64

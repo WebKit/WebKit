@@ -35,8 +35,8 @@ if allowCache:
 
 sys.stdout.write(
     'Content-Length: {}\r\n'
-    'Content-Type: {}\r\n\r\n'.format(os.path.getsize(os.path.join('/'.join(__file__.split('/')[0:-1]), name)), contentType)
+    'Content-Type: {}\r\n\r\n'.format(os.path.getsize(os.path.join(os.path.dirname(__file__), name)), contentType)
 )
 sys.stdout.flush()
-with open(os.path.join('/'.join(__file__.split('/')[0:-1]), name), 'rb') as file:
+with open(os.path.join(os.path.dirname(__file__), name), 'rb') as file:
     sys.stdout.buffer.write(file.read())
