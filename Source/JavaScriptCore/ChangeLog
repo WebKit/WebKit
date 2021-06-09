@@ -1,3 +1,22 @@
+2021-06-09  Mikhail R. Gadelha  <mikhail@igalia.com>
+
+        Fix inadvertent tag corruption in functionAddressOf
+        https://bugs.webkit.org/show_bug.cgi?id=226503
+
+        Reviewed by Darin Adler.
+
+        Original patch by Angelos Oikonomopoulos.
+
+        The cast was sign-extending the JSValue address in 32 bits, so that addresses
+        that had the most significant set gave us a sign-extended result in
+        asNumber which was then converted to an invalid NaN by the bitcast.
+
+        Instead, cast the address to uintptr_t, and the result will be promoted
+        uint64_t without sign-extending the address.
+
+        * jsc.cpp:
+        (JSC_DEFINE_HOST_FUNCTION):
+
 2021-06-08  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use DataIC for AccessCase
