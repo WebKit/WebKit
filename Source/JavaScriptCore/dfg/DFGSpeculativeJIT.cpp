@@ -11565,7 +11565,7 @@ void SpeculativeJIT::speculateNotDouble(Edge edge)
 
 void SpeculativeJIT::speculateNeitherDoubleNorHeapBigIntNorString(Edge edge, JSValueRegs regs, GPRReg tempGPR)
 {
-    if (!needsTypeCheck(edge, ~(SpecFullDouble | SpecString)))
+    if (!needsTypeCheck(edge, ~(SpecFullDouble | SpecString | SpecHeapBigInt)))
         return;
 
     MacroAssembler::JumpList done;

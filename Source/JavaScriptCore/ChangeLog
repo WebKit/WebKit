@@ -1,3 +1,15 @@
+2021-06-08  Robin Morisset  <rmorisset@apple.com>
+
+        Fix speculated type in speculateNeitherDoubleNorHeapBigIntNorString
+        https://bugs.webkit.org/show_bug.cgi?id=226786
+
+        Reviewed by Mark Lam.
+
+        I had forgotten the HeapBigInt part.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculateNeitherDoubleNorHeapBigIntNorString):
+
 2021-06-06  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Use ResolvedClosureVar to get brand from scope
