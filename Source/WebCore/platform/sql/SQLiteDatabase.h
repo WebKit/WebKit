@@ -103,7 +103,7 @@ public:
     // These chunks will never be anything other than 512, 1024, 2048, 4096, 8192, 16384, or 32768 bytes in size.
     // setMaximumSize() will round the size down to the next smallest chunk if the passed size doesn't align.
     int64_t maximumSize();
-    void setMaximumSize(int64_t);
+    WEBCORE_EXPORT void setMaximumSize(int64_t);
     
     // Gets the number of unused bytes in the database file.
     int64_t freeSpaceSize();

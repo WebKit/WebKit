@@ -90,6 +90,9 @@ bool LocalStorageDatabase::openDatabase(ShouldCreateDatabase shouldCreateDatabas
         return false;
     }
 
+    if (m_quotaInBytes != WebCore::StorageMap::noQuota)
+        m_database.setMaximumSize(m_quotaInBytes);
+
     return true;
 }
 
@@ -181,14 +184,6 @@ void LocalStorageDatabase::removeItem(const String& key, String& oldValue)
         LOG_ERROR("Failed to delete item in the local storage database - %i", result);
         return;
     }
-
-    if (m_databaseSize) {
-        auto sizeDecrease = key.sizeInBytes() + oldValue.sizeInBytes();
-        if (sizeDecrease >= *m_databaseSize)
-            *m_databaseSize = 0;
-        else
-            *m_databaseSize -= sizeDecrease;
-    }
 }
 
 String LocalStorageDatabase::item(const String& key) const
@@ -222,21 +217,6 @@ void LocalStorageDatabase::setItem(const String& key, const String& value, Strin
 
     oldValue = item(key);
 
-    if (m_quotaInBytes != WebCore::StorageMap::noQuota) {
-        if (!m_databaseSize)
-            m_databaseSize = SQLiteFileSystem::databaseFileSize(m_databasePath);
-        CheckedUint64 newDatabaseSize = *m_databaseSize;
-        newDatabaseSize -= oldValue.sizeInBytes();
-        newDatabaseSize += value.sizeInBytes();
-        if (oldValue.isNull())
-            newDatabaseSize += key.sizeInBytes();
-        if (newDatabaseSize.hasOverflowed() || newDatabaseSize > m_quotaInBytes) {
-            quotaException = true;
-            return;
-        }
-        m_databaseSize = newDatabaseSize;
-    }
-
     auto insertStatement = scopedStatement(m_insertStatement, "INSERT INTO ItemTable VALUES (?, ?)"_s);
     if (!insertStatement) {
         LOG_ERROR("Failed to prepare insert statement - cannot write to local storage database");
@@ -247,8 +227,11 @@ void LocalStorageDatabase::setItem(const String& key, const String& value, Strin
     insertStatement->bindBlob(2, value);
 
     int result = insertStatement->step();
-    if (result != SQLITE_DONE)
+    if (result != SQLITE_DONE) {
         LOG_ERROR("Failed to update item in the local storage database - %i", result);
+        if (result == SQLITE_FULL)
+            quotaException = true;
+    }
 }
 
 bool LocalStorageDatabase::clear()
@@ -268,8 +251,6 @@ bool LocalStorageDatabase::clear()
         LOG_ERROR("Failed to clear all items in the local storage database - %i", result);
         return false;
     }
-
-    m_databaseSize = 0;
 
     return m_database.lastChanges() > 0;
 }
