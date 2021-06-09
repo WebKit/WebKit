@@ -1,5 +1,11 @@
 2021-06-08  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GLIB] Unreviewed test gardening. Update test expectation status of imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html.
+
+        * platform/glib/TestExpectations:
+
+2021-06-08  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Unreviewed test gardening. Emit GTK baselines for several SVG tests.
 
         Other platforms have specific baselines for these tests, including WPE.

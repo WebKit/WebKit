@@ -585,7 +585,7 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-err
 webkit.org/b/210486 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames-after-reappend.html [ Failure Crash Pass ]
 
 webkit.org/b/180803 imported/w3c/web-platform-tests/media-source/mediasource-duration-boundaryconditions.html [ Failure ]
-webkit.org/b/205110 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Failure Crash Pass ]
+webkit.org/b/226804 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Failure ]
 
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-trackdefaultlist.html [ Failure ]
 webkit.org/b/210341 imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode-timestamps.html [ Failure ]
