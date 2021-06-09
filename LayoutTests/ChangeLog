@@ -1,3 +1,22 @@
+2021-06-08  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Unreviewed test gardening. Emit GTK baselines for several SVG tests.
+
+        Other platforms have specific baselines for these tests, including WPE.
+
+        The GTK post-commit bot reports these tests have been consistently
+        failing for the last 4000 revisions, so emiting baselines is the first
+        step to check if these tests are actually passing.
+
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-03-t-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1/animate-elem-22-b-expected.txt: Added.
+        * platform/gtk/svg/text/select-textLength-spacing-squeeze-3-expected.txt: Added.
+        * platform/gtk/svg/text/select-textLength-spacing-stretch-1-expected.txt: Added.
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-squeeze-1-expected.txt: Added.
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-stretch-1-expected.txt: Added.
+        * platform/gtk/svg/text/select-x-list-1-expected.txt: Added.
+        * platform/gtk/svg/text/select-x-list-with-tspans-1-expected.txt: Added.
+
 2021-06-08  Jean-Yves Avenard  <jya@apple.com>
 
         [MSE] Assertion if attempting to perform eviction before playback starts.
