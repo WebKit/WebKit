@@ -1029,7 +1029,7 @@ webkit.org/b/223655 webanimations/transform-transition-with-delay-on-forced-laye
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # AudioContext.
-webkit.org/b/217542 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/processing-after-resume.https.html [ Failure ]
+webkit.org/b/226807 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/processing-after-resume.https.html [ Failure ]
 
 # AudioWorklet.
 webkit.org/b/218010 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-output-channel-count.https.html [ Failure Pass ]
@@ -1755,7 +1755,7 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/a
 webkit.org/b/222638 js/throw-large-string-oom.html [ Pass Timeout ]
 
 # Fails when built with GCC but passes with Clang
-webkit.org/b/218220 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
+webkit.org/b/218220 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure Pass ]
 
 # Console log lines may appear in a different order so we silence them.
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-network-error.sub.html [ DumpJSConsoleLogInStdErr ]
