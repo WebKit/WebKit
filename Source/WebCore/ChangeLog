@@ -1,3 +1,16 @@
+2021-06-09  Eric Carlson  <eric.carlson@apple.com>
+
+        Nullptr crash in MediaSource::updateBufferedIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=226851
+        rdar://79059134
+
+        Reviewed by Devin Rousso.
+
+        No new tests, I was unable to come up with a reproducible case.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::updateBufferedIfNeeded): NULL-check `m_private`.
+
 2021-06-09  Chris Dumez  <cdumez@apple.com>
 
         Avoid some calls to StringView::toString() / StringView::toStringWithoutCopying()
