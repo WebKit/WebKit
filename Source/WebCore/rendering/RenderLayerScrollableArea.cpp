@@ -68,6 +68,7 @@
 #include "ScrollbarTheme.h"
 #include "ScrollingCoordinator.h"
 #include "ShadowRoot.h"
+#include <wtf/SetForScope.h>
 
 namespace WebCore {
 
