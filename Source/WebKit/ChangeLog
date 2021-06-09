@@ -1,3 +1,14 @@
+2021-06-09  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Do not depend on resources provided by the GNOME icon theme
+        https://bugs.webkit.org/show_bug.cgi?id=186767
+
+        Reviewed by Adrian Perez de Castro.
+
+        Covered by existing tests.
+
+        * PlatformGTK.cmake:
+
 2021-06-09  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK4] Add support for navigation gestures

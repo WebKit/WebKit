@@ -546,14 +546,14 @@ add_custom_command(
 
 WEBKIT_BUILD_INSPECTOR_GRESOURCES(${WebKit2Gtk_DERIVED_SOURCES_DIR})
 
-set(WebKitResources
-    "        <file alias=\"css/gtk-theme.css\">gtk-theme.css</file>\n"
-    "        <file alias=\"images/missingImage\">missingImage.png</file>\n"
-    "        <file alias=\"images/missingImage@2x\">missingImage@2x.png</file>\n"
-    "        <file alias=\"images/panIcon\">panIcon.png</file>\n"
-    "        <file alias=\"images/textAreaResizeCorner\">textAreaResizeCorner.png</file>\n"
-    "        <file alias=\"images/textAreaResizeCorner@2x\">textAreaResizeCorner@2x.png</file>\n"
-)
+set(WebKitResources "")
+list(APPEND WebKitResources "<file alias=\"css/gtk-theme.css\">gtk-theme.css</file>\n")
+list(APPEND WebKitResources "<file alias=\"images/missingImage\">missingImage.png</file>\n")
+list(APPEND WebKitResources "<file alias=\"images/missingImage@2x\">missingImage@2x.png</file>\n")
+list(APPEND WebKitResources "<file alias=\"images/missingImage@3x\">missingImage@3x.png</file>\n")
+list(APPEND WebKitResources "<file alias=\"images/panIcon\">panIcon.png</file>\n")
+list(APPEND WebKitResources "<file alias=\"images/textAreaResizeCorner\">textAreaResizeCorner.png</file>\n")
+list(APPEND WebKitResources "<file alias=\"images/textAreaResizeCorner@2x\">textAreaResizeCorner@2x.png</file>\n")
 
 if (ENABLE_WEB_AUDIO)
     list(APPEND WebKitResources
