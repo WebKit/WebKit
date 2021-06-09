@@ -153,7 +153,7 @@ static bool isLoopbackIPAddress(StringView host)
 }
 
 // https://w3c.github.io/webappsec-secure-contexts/#is-origin-trustworthy (Editor's Draft, 17 November 2016)
-static bool shouldTreatAsPotentiallyTrustworthy(const String& protocol, const String& host)
+static bool shouldTreatAsPotentiallyTrustworthy(const String& protocol, StringView host)
 {
     if (LegacySchemeRegistry::shouldTreatURLSchemeAsSecure(protocol))
         return true;

@@ -536,7 +536,7 @@ static RefPtr<CSSValue> consumeFontVariationTag(CSSParserTokenRange& range)
     if (range.peek().type() != StringToken)
         return nullptr;
     
-    auto string = range.consumeIncludingWhitespace().value().toString();
+    auto string = range.consumeIncludingWhitespace().value();
     
     FontTag tag;
     if (string.length() != tag.size())
@@ -2303,9 +2303,11 @@ static RefPtr<CSSValue> consumeAttr(CSSParserTokenRange args, CSSParserContext c
         return nullptr;
     
     CSSParserToken token = args.consumeIncludingWhitespace();
-    auto attrName = token.value().toAtomString();
+    AtomString attrName;
     if (context.isHTMLDocument)
-        attrName = attrName.convertToASCIILowercase();
+        attrName = token.value().convertToASCIILowercaseAtom();
+    else
+        attrName = token.value().toAtomString();
 
     if (!args.atEnd())
         return nullptr;
@@ -3329,23 +3331,20 @@ static bool isGridTrackFixedSized(const CSSValue& value)
     return isGridTrackFixedSized(*minPrimitiveValue) || isGridTrackFixedSized(*maxPrimitiveValue);
 }
 
-static Vector<String> parseGridTemplateAreasColumnNames(const String& gridRowNames)
+static Vector<String> parseGridTemplateAreasColumnNames(StringView gridRowNames)
 {
     ASSERT(!gridRowNames.isEmpty());
     Vector<String> columnNames;
-    // Using StringImpl to avoid checks and indirection in every call to String::operator[].
-    StringImpl& text = *gridRowNames.impl();
-
     StringBuilder areaName;
-    for (unsigned i = 0; i < text.length(); ++i) {
-        if (isCSSSpace(text[i])) {
+    for (auto character : gridRowNames.codeUnits()) {
+        if (isCSSSpace(character)) {
             if (!areaName.isEmpty()) {
                 columnNames.append(areaName.toString());
                 areaName.clear();
             }
             continue;
         }
-        if (text[i] == '.') {
+        if (character == '.') {
             if (areaName == ".")
                 continue;
             if (!areaName.isEmpty()) {
@@ -3353,7 +3352,7 @@ static Vector<String> parseGridTemplateAreasColumnNames(const String& gridRowNam
                 areaName.clear();
             }
         } else {
-            if (!isNameCodePoint(text[i]))
+            if (!isNameCodePoint(character))
                 return Vector<String>();
             if (areaName == ".") {
                 columnNames.append(areaName.toString());
@@ -3361,7 +3360,7 @@ static Vector<String> parseGridTemplateAreasColumnNames(const String& gridRowNam
             }
         }
 
-        areaName.append(text[i]);
+        areaName.append(character);
     }
 
     if (!areaName.isEmpty())
@@ -3370,7 +3369,7 @@ static Vector<String> parseGridTemplateAreasColumnNames(const String& gridRowNam
     return columnNames;
 }
 
-static bool parseGridTemplateAreasRow(const String& gridRowNames, NamedGridAreaMap& gridAreaMap, const size_t rowCount, size_t& columnCount)
+static bool parseGridTemplateAreasRow(StringView gridRowNames, NamedGridAreaMap& gridAreaMap, const size_t rowCount, size_t& columnCount)
 {
     if (gridRowNames.isAllSpecialCharacters<isCSSSpace>())
         return false;
@@ -3595,7 +3594,7 @@ static RefPtr<CSSValue> consumeGridTemplateAreas(CSSParserTokenRange& range)
     size_t columnCount = 0;
 
     while (range.peek().type() == StringToken) {
-        if (!parseGridTemplateAreasRow(range.consumeIncludingWhitespace().value().toString(), gridAreaMap, rowCount, columnCount))
+        if (!parseGridTemplateAreasRow(range.consumeIncludingWhitespace().value(), gridAreaMap, rowCount, columnCount))
             return nullptr;
         ++rowCount;
     }
@@ -5611,7 +5610,7 @@ bool CSSPropertyParser::consumeGridTemplateRowsAndAreasAndColumns(CSSPropertyID 
             templateRows->append(lineNames.releaseNonNull());
 
         // Handle a template-area's row.
-        if (m_range.peek().type() != StringToken || !parseGridTemplateAreasRow(m_range.consumeIncludingWhitespace().value().toString(), gridAreaMap, rowCount, columnCount))
+        if (m_range.peek().type() != StringToken || !parseGridTemplateAreasRow(m_range.consumeIncludingWhitespace().value(), gridAreaMap, rowCount, columnCount))
             return false;
         ++rowCount;
 

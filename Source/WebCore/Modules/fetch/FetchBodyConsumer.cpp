@@ -98,9 +98,7 @@ static HashMap<String, String> parseParameters(StringView input, size_t position
         if (parameterName.length()
             && isValidHTTPToken(parameterName)
             && parameterValue.isAllSpecialCharacters<isHTTPQuotedStringTokenCodePoint>()) {
-            String nameString = parameterName.toString();
-            if (!parameters.contains(nameString))
-                parameters.set(nameString, parameterValue.toString());
+            parameters.ensure(parameterName.toString(), [&] { return parameterValue.toString(); });
         }
     }
     return parameters;

@@ -84,7 +84,7 @@ public: // DOM
 public:
     static Ref<SVGSVGElement> create(const QualifiedName&, Document&);
     static Ref<SVGSVGElement> create(Document&);
-    bool scrollToFragment(const String& fragmentIdentifier);
+    bool scrollToFragment(StringView fragmentIdentifier);
     void resetScrollAnchor();
 
     using SVGGraphicsElement::ref;
@@ -141,9 +141,9 @@ private:
     RefPtr<Frame> frameForCurrentScale() const;
     Ref<NodeList> collectIntersectionOrEnclosureList(SVGRect&, SVGElement*, bool (*checkFunction)(SVGElement&, SVGRect&));
 
-    SVGViewElement* findViewAnchor(const String& fragmentIdentifier) const;
+    SVGViewElement* findViewAnchor(StringView fragmentIdentifier) const;
     SVGSVGElement* findRootAnchor(const SVGViewElement*) const;
-    SVGSVGElement* findRootAnchor(const String&) const;
+    SVGSVGElement* findRootAnchor(StringView) const;
 
     bool m_useCurrentView { false };
     Ref<SMILTimeContainer> m_timeContainer;

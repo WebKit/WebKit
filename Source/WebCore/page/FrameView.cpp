@@ -2209,7 +2209,7 @@ void FrameView::restoreScrollbar()
 bool FrameView::scrollToFragment(const URL& url)
 {
     auto fragmentIdentifier = url.fragmentIdentifier();
-    if (scrollToFragmentInternal(fragmentIdentifier.toString()))
+    if (scrollToFragmentInternal(fragmentIdentifier))
         return true;
 
     if (scrollToFragmentInternal(decodeURLEscapeSequences(fragmentIdentifier)))
@@ -2219,7 +2219,7 @@ bool FrameView::scrollToFragment(const URL& url)
     return false;
 }
 
-bool FrameView::scrollToFragmentInternal(const String& fragmentIdentifier)
+bool FrameView::scrollToFragmentInternal(StringView fragmentIdentifier)
 {
     // If our URL has no ref, then we have no place we need to jump to.
     if (fragmentIdentifier.isNull())

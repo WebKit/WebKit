@@ -2442,9 +2442,11 @@ static std::optional<SRGBA<uint8_t>> parseHexColor(CSSParserTokenRange& range, b
     else {
         if (!acceptQuirkyColors)
             return std::nullopt;
-        if (token.type() == IdentToken)
-            string = token.value().toString(); // e.g. FF0000
-        else if (token.type() == NumberToken || token.type() == DimensionToken) {
+        if (token.type() == IdentToken) {
+            view = token.value(); // e.g. FF0000
+            if (view.length() != 3 && view.length() != 6)
+                return std::nullopt;
+        } else if (token.type() == NumberToken || token.type() == DimensionToken) {
             if (token.numericValueType() != IntegerValueType)
                 return std::nullopt;
             auto numericValue = token.numericValue();
@@ -2457,10 +2459,12 @@ static std::optional<SRGBA<uint8_t>> parseHexColor(CSSParserTokenRange& range, b
                 string = makeString(integerValue, token.value()); // e.g. 0001FF
             if (string.length() < 6)
                 string = makeString(&"000000"[string.length()], string);
-        }
-        if (string.length() != 3 && string.length() != 6)
+
+            if (string.length() != 3 && string.length() != 6)
+                return std::nullopt;
+            view = string;
+        } else
             return std::nullopt;
-        view = string;
     }
     auto result = CSSParser::parseHexColor(view);
     if (!result)
@@ -3559,7 +3563,7 @@ AtomString consumeCounterStyleNameInPrelude(CSSParserTokenRange& prelude)
     if (identMatches<CSSValueDecimal, CSSValueDisc, CSSValueNone>(nameToken.id()))
         return AtomString();
     auto name = nameToken.value();
-    return isPredefinedCounterStyle(nameToken.id()) ? name.convertToASCIILowercase() : name.toString();
+    return isPredefinedCounterStyle(nameToken.id()) ? name.convertToASCIILowercaseAtom() : name.toAtomString();
 }
 
 std::optional<CSSValueID> consumeFontVariantCSS21Raw(CSSParserTokenRange& range)

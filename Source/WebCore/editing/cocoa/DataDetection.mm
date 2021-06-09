@@ -168,7 +168,7 @@ std::optional<DetectedItem> DataDetection::detectItemAroundHitTestResult(const H
 
 bool DataDetection::canBePresentedByDataDetectors(const URL& url)
 {
-    return [PAL::softLink_DataDetectorsCore_DDURLTapAndHoldSchemes() containsObject:(NSString *)url.protocol().toStringWithoutCopying().convertToASCIILowercase()];
+    return [PAL::softLink_DataDetectorsCore_DDURLTapAndHoldSchemes() containsObject:(NSString *)url.protocol().convertToASCIILowercase()];
 }
 
 bool DataDetection::isDataDetectorLink(Element& element)

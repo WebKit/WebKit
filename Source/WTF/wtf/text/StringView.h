@@ -148,6 +148,7 @@ public:
 
     WTF_EXPORT_PRIVATE String convertToASCIILowercase() const;
     WTF_EXPORT_PRIVATE String convertToASCIIUppercase() const;
+    WTF_EXPORT_PRIVATE AtomString convertToASCIILowercaseAtom() const;
 
     bool contains(UChar) const;
     bool contains(CodeUnitMatchFunction) const;

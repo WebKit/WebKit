@@ -698,7 +698,7 @@ ALWAYS_INLINE static Scheme scheme(StringView scheme)
     }
 }
 
-std::optional<String> URLParser::maybeCanonicalizeScheme(const String& scheme)
+std::optional<String> URLParser::maybeCanonicalizeScheme(StringView scheme)
 {
     if (scheme.isEmpty())
         return std::nullopt;

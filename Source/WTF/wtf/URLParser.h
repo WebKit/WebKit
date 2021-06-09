@@ -46,7 +46,7 @@ public:
     WTF_EXPORT_PRIVATE static String serialize(const URLEncodedForm&);
 
     WTF_EXPORT_PRIVATE static bool isSpecialScheme(const String& scheme);
-    WTF_EXPORT_PRIVATE static std::optional<String> maybeCanonicalizeScheme(const String& scheme);
+    WTF_EXPORT_PRIVATE static std::optional<String> maybeCanonicalizeScheme(StringView scheme);
 
     static const UIDNA& internationalDomainNameTranscoder();
     static bool isInUserInfoEncodeSet(UChar);

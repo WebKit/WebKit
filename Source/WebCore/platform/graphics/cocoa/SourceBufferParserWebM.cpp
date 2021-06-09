@@ -446,7 +446,7 @@ public:
 
         auto slashLocation = codecID.find('/');
         auto length = slashLocation == notFound ? codecID.length() - 2 : slashLocation - 2;
-        m_codec = AtomString { codecID.substring(2, length).convertToASCIILowercase() };
+        m_codec = codecID.substring(2, length).convertToASCIILowercaseAtom();
         return *m_codec;
     }
     bool isVideo() const final { return m_track.track_type.is_present() && m_track.track_type.value() == TrackType::kVideo; }
