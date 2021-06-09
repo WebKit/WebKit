@@ -63,14 +63,14 @@ def archive_test_results(configuration, platform, layoutTestResultsDir):
 
     try:
         os.unlink(archiveFile)
-    except OSError, e:
+    except OSError as e:
         if e.errno != 2:
             raise
 
     try:
         # Ensure that layoutTestResultsDir exists since we cannot archive a directory that does not exist
         os.makedirs(layoutTestResultsDir)
-    except OSError, e:
+    except OSError as e:
         if e.errno != 17:
             raise
 
@@ -92,7 +92,7 @@ def archive_test_results(configuration, platform, layoutTestResultsDir):
 
     try:
         shutil.rmtree(layoutTestResultsDir)
-    except OSError, e:
+    except OSError as e:
 
         # Python in Cygwin throws a mysterious exception with errno of 90
         # when removing the layout test result directory after successfully
