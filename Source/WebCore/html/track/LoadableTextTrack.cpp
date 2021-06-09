@@ -48,7 +48,9 @@ LoadableTextTrack::LoadableTextTrack(HTMLTrackElement& track, const String& kind
 
 Ref<LoadableTextTrack> LoadableTextTrack::create(HTMLTrackElement& track, const String& kind, const String& label, const String& language)
 {
-    return adoptRef(*new LoadableTextTrack(track, kind, label, language));
+    auto textTrack = adoptRef(*new LoadableTextTrack(track, kind, label, language));
+    textTrack->suspendIfNeeded();
+    return textTrack;
 }
 
 void LoadableTextTrack::scheduleLoad(const URL& url)

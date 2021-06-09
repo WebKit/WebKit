@@ -462,7 +462,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/EventListenerMap.h
     dom/EventListenerOptions.h
     dom/EventLoop.h
-    dom/EventLoopEventQueue.h
     dom/EventModifierInit.h
     dom/EventNames.h
     dom/EventQueue.h

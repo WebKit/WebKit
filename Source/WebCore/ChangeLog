@@ -1,3 +1,62 @@
+2021-06-08  Chris Dumez  <cdumez@apple.com>
+
+        Drop legacy EventLoopEventQueue class
+        https://bugs.webkit.org/show_bug.cgi?id=226748
+
+        Reviewed by Darin Adler.
+
+        Drop legacy EventLoopEventQueue class which was used by HTMLMediaElement. I added a
+        queueCancellableTaskToDispatchEvent() convenience function on ActiveDOMObject to
+        schedule cancellable events directly on the HTML event loop. The function takes
+        care of keeping the object and its wrapper alive until the event has fired.
+
+        Note that the previous code was using EventLoopEventQueue to dispatch events on
+        other objects than the HTMLMediaElement. This was wrong as it wouldn't take
+        care of keeping the real target's JS wrapper alive to actually dispatch the
+        event. As a result, I had to update a couple of media classes to subclass
+        ActiveDOMObject and the HTMLMediaElement now calls
+        queueCancellableTaskToDispatchEvent() directly on the target.
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ActiveDOMObject.cpp:
+        (WebCore::ActiveDOMObjectEventDispatchTask::ActiveDOMObjectEventDispatchTask):
+        (WebCore::ActiveDOMObject::queueTaskToDispatchEventInternal):
+        (WebCore::ActiveDOMObject::queueCancellableTaskToDispatchEventInternal):
+        * dom/ActiveDOMObject.h:
+        * dom/EventLoopEventQueue.cpp: Removed.
+        * dom/EventLoopEventQueue.h: Removed.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::scheduleEvent):
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues):
+        (WebCore::HTMLMediaElement::cancelPendingEventsAndCallbacks):
+        (WebCore::HTMLMediaElement::mediaPlayerKeyNeeded):
+        (WebCore::HTMLMediaElement::mediaPlayerInitializationDataEncountered):
+        (WebCore::HTMLMediaElement::closeTaskQueues):
+        (WebCore::HTMLMediaElement::virtualHasPendingActivity const):
+        (WebCore::HTMLMediaElement::enqueuePlaybackTargetAvailabilityChangedEvent):
+        (WebCore::HTMLMediaElement::scheduleEventOn):
+        * html/HTMLMediaElement.h:
+        * html/track/InbandTextTrack.cpp:
+        (WebCore::InbandTextTrack::create):
+        * html/track/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::create):
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::TextTrack):
+        (WebCore::TextTrack::create):
+        (WebCore::TextTrack::activeDOMObjectName const):
+        * html/track/TextTrack.h:
+        * html/track/TextTrack.idl:
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::create):
+        (WebCore::TextTrackCue::TextTrackCue):
+        (WebCore::TextTrackCue::activeDOMObjectName const):
+        * html/track/TextTrackCue.h:
+        * html/track/TextTrackCue.idl:
+
 2021-06-08  Devin Rousso  <drousso@apple.com>
 
         Unreviewed, followup to r278630

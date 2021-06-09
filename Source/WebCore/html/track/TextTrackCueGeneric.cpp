@@ -161,7 +161,9 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
 
 Ref<TextTrackCueGeneric> TextTrackCueGeneric::create(ScriptExecutionContext& context, const MediaTime& start, const MediaTime& end, const String& content)
 {
-    return adoptRef(*new TextTrackCueGeneric(downcast<Document>(context), start, end, content));
+    auto cue = adoptRef(*new TextTrackCueGeneric(downcast<Document>(context), start, end, content));
+    cue->suspendIfNeeded();
+    return cue;
 }
 
 TextTrackCueGeneric::TextTrackCueGeneric(Document& document, const MediaTime& start, const MediaTime& end, const String& content)

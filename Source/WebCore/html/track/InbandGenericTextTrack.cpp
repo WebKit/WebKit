@@ -70,7 +70,9 @@ inline InbandGenericTextTrack::InbandGenericTextTrack(Document& document, TextTr
 
 Ref<InbandGenericTextTrack> InbandGenericTextTrack::create(Document& document, TextTrackClient& client, InbandTextTrackPrivate& trackPrivate)
 {
-    return adoptRef(*new InbandGenericTextTrack(document, client, trackPrivate));
+    auto textTrack = adoptRef(*new InbandGenericTextTrack(document, client, trackPrivate));
+    textTrack->suspendIfNeeded();
+    return textTrack;
 }
 
 InbandGenericTextTrack::~InbandGenericTextTrack() = default;

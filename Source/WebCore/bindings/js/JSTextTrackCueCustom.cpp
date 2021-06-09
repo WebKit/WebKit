@@ -43,11 +43,9 @@ bool JSTextTrackCueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> h
     JSTextTrackCue* jsTextTrackCue = jsCast<JSTextTrackCue*>(handle.slot()->asCell());
     TextTrackCue& textTrackCue = jsTextTrackCue->wrapped();
 
-    // If the cue is firing event listeners, its wrapper is reachable because
-    // the wrapper is responsible for marking those event listeners.
-    if (textTrackCue.isFiringEventListeners()) {
+    if (!textTrackCue.isContextStopped() && textTrackCue.hasPendingActivity()) {
         if (UNLIKELY(reason))
-            *reason = "TextTrackCue is firing event listeners";
+            *reason = "TextTrackCue with pending activity";
         return true;
     }
 

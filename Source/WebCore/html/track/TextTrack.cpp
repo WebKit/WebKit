@@ -100,7 +100,7 @@ TextTrack& TextTrack::captionMenuAutomaticItem()
 
 TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language, TextTrackType type)
     : TrackBase(TrackBase::TextTrack, id, label, language)
-    , ContextDestructionObserver(context)
+    , ActiveDOMObject(context)
     , m_client(client)
     , m_trackType(type)
 {
@@ -118,7 +118,9 @@ TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, c
 
 Ref<TextTrack> TextTrack::create(Document* document, TextTrackClient* client, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language)
 {
-    return adoptRef(*new TextTrack(document, client, kind, id, label, language, AddTrack));
+    auto textTrack = adoptRef(*new TextTrack(document, client, kind, id, label, language, AddTrack));
+    textTrack->suspendIfNeeded();
+    return textTrack;
 }
 
 TextTrack::~TextTrack()
@@ -588,6 +590,11 @@ bool TextTrack::isMainProgramContent() const
 bool TextTrack::containsOnlyForcedSubtitles() const
 {
     return m_kind == Kind::Forced;
+}
+
+const char* TextTrack::activeDOMObjectName() const
+{
+    return "TextTrack";
 }
 
 #if ENABLE(MEDIA_SOURCE)

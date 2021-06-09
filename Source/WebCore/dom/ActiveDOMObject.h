@@ -120,10 +120,16 @@ public:
         });
     }
 
-    template<typename EventTargetType, typename EventType>
-    static void queueTaskToDispatchEvent(EventTargetType& target, TaskSource source, Ref<EventType>&& event)
+    template<typename EventTargetType>
+    static void queueTaskToDispatchEvent(EventTargetType& target, TaskSource source, Ref<Event>&& event)
     {
         target.queueTaskToDispatchEventInternal(target, source, WTFMove(event));
+    }
+
+    template<typename EventTargetType>
+    static void queueCancellableTaskToDispatchEvent(EventTargetType& target, TaskSource source, TaskCancellationGroup& cancellationGroup, Ref<Event>&& event)
+    {
+        target.queueCancellableTaskToDispatchEventInternal(target, source, cancellationGroup, WTFMove(event));
     }
 
 protected:
@@ -142,6 +148,7 @@ private:
 
     void queueTaskInEventLoop(TaskSource, Function<void ()>&&);
     void queueTaskToDispatchEventInternal(EventTarget&, TaskSource, Ref<Event>&&);
+    void queueCancellableTaskToDispatchEventInternal(EventTarget&, TaskSource, TaskCancellationGroup&, Ref<Event>&&);
 
     uint64_t m_pendingActivityInstanceCount { 0 };
 #if ASSERT_ENABLED
