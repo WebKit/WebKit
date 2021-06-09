@@ -1,3 +1,17 @@
+2021-06-09  Xan Lopez  <xan@igalia.com>
+
+        [JSC] Fix incorrect register reuse in 32bit after r278568
+        https://bugs.webkit.org/show_bug.cgi?id=226817
+
+        Reviewed by Caio Araujo Neponoceno de Lima.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNotDoubleNeitherDoubleNorHeapBigIntNorStringStrictEquality):
+        The JSVALUE32_64 branch potentially needs both the tag and payload
+        registers for both left/right nodes, so we cannot reuse any of
+        them for the result since the first thing the code does is set it
+        zero. Just remove the Reuse construction.
+
 2021-06-09  Mikhail R. Gadelha  <mikhail@igalia.com>
 
         Fix inadvertent tag corruption in functionAddressOf

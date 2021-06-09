@@ -7385,7 +7385,7 @@ void SpeculativeJIT::compileNotDoubleNeitherDoubleNorHeapBigIntNorStringStrictEq
 #if USE(JSVALUE64)
     GPRTemporary result(this, Reuse, left, right);
 #else
-    GPRTemporary result(this, Reuse, left, PayloadWord);
+    GPRTemporary result(this);
 #endif
     JSValueRegs leftRegs = left.jsValueRegs();
     JSValueRegs rightRegs = right.jsValueRegs();
