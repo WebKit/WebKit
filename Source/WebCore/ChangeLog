@@ -1,3 +1,19 @@
+2021-06-08  Rob Buis  <rbuis@igalia.com>
+
+        CSSOM test for serializing counter() fails
+        https://bugs.webkit.org/show_bug.cgi?id=184256
+
+        Reviewed by Sam Weinig.
+
+        The last CSS component value should be omitted if it is "decimal" [1].
+
+        Behavior matches Firefox and Chrome.
+
+        [1] https://drafts.csswg.org/cssom/#serialize-a-css-component-value
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::formatNumberForCustomCSSText const):
+
 2021-06-08  Sam Weinig  <weinig@apple.com>
 
         Adopt WTF::Span in SQLiteStatement

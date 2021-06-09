@@ -39,7 +39,7 @@ shouldBeEqualToString('ruleWithAttributeSelector.selectorText', 'span[class=\"fo
 shouldBeEqualToString(`getComputedStyle(document.querySelector("span[class='foo bar']")).getPropertyValue("color")`, 'rgb(0, 128, 0)');
 
 var counterRule = styleSheet.rules[4];
-shouldBeEqualToString('counterRule.style.content', 'counters(section, ".", decimal)');
+shouldBeEqualToString('counterRule.style.content', 'counters(section, ".")');
 
 var fontFamilyRule = styleSheet.rules[5];
 shouldBeEqualToString('fontFamilyRule.style.fontFamily', '"Two Infinite Loop", "Cupertino CA"');

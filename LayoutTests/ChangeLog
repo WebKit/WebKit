@@ -1,3 +1,17 @@
+2021-06-08  Rob Buis  <rbuis@igalia.com>
+
+        CSSOM test for serializing counter() fails
+        https://bugs.webkit.org/show_bug.cgi?id=184256
+
+        Reviewed by Sam Weinig.
+
+        Adapt to serialization change.
+
+        * fast/css/counters/counter-cssText-expected.txt:
+        * fast/css/counters/counter-cssText.html:
+        * fast/css/serialization-with-double-quotes-expected.txt:
+        * fast/css/serialization-with-double-quotes.html:
+
 2021-06-08  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB] Unreviewed test gardening. Update test expectation status of imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html.
