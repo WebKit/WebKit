@@ -33,15 +33,19 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
             interface_args.extend(['--interface', self._ip])
         self._server_port = 0
         self._server_process = subprocess.Popen(["python", http_server_path, web_root] + interface_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        max_attempt = 5
+        max_attempt = 7
+        retry_sequence = map(lambda attempt: attempt != max_attempt - 1, range(max_attempt))
         interval = 0.5
         _log.info('Start to fetching the port number of the http server')
-        for attempt in range(max_attempt):
+        for retry in retry_sequence:
             self._find_http_server_port()
             if self._server_port:
                 _log.info('HTTP Server is serving at port: %d', self._server_port)
                 break
-            _log.info('Server port is not found this time, retry after %f seconds' % interval)
+            assert self._server_process.poll() is None, 'HTTP Server Process is not running'
+            if not retry:
+                continue
+            _log.info('Server port is not found this time, retry after {} seconds'.format(interval))
             time.sleep(interval)
             interval *= 2
         else:

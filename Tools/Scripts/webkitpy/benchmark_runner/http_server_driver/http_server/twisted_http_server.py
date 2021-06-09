@@ -11,7 +11,6 @@ script_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file
 if script_dir not in sys.path:
     sys.path.insert(0, script_dir)
 
-from pkg_resources import require, VersionConflict, DistributionNotFound
 from webkitpy.autoinstalled import twisted
 
 from twisted.web import static, server
