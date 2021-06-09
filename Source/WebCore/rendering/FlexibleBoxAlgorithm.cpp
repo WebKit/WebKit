@@ -35,13 +35,13 @@
 
 namespace WebCore {
 
-FlexItem::FlexItem(RenderBox& box, LayoutUnit flexBaseContentSize, LayoutUnit hypotheticalMainContentSize, LayoutUnit mainAxisBorderAndPadding, LayoutUnit mainAxisMargin)
+FlexItem::FlexItem(RenderBox& box, LayoutUnit flexBaseContentSize, LayoutUnit hypotheticalMainContentSize, LayoutUnit mainAxisBorderAndPadding, LayoutUnit mainAxisMargin, bool everHadLayout)
     : box(box)
     , flexBaseContentSize(flexBaseContentSize)
     , hypotheticalMainContentSize(hypotheticalMainContentSize)
     , mainAxisBorderAndPadding(mainAxisBorderAndPadding)
     , mainAxisMargin(mainAxisMargin)
-    , frozen(false)
+    , everHadLayout(everHadLayout)
 {
     ASSERT(!box.isOutOfFlowPositioned());
 }

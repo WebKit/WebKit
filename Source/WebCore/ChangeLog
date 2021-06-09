@@ -1,3 +1,24 @@
+2021-06-09  Alan Bujtas  <zalan@apple.com>
+
+        [Flexbox] FlexItem stays invisible after initial layout
+        https://bugs.webkit.org/show_bug.cgi?id=226778
+
+        Reviewed by Simon Fraser.
+
+        RenderFlexibleBox::layoutAndPlaceChildren() initiates repaint() on newly constructed flex items by checking their everHadLayout bit.
+        This is similar to what we do for regular block layout when block level boxes appear.
+        However flexitems are laid out multiple times, first right after they are constructed in constructFlexItem. This initial layout
+        sets everHadLayout bit to true which makes the check in layoutAndPlaceChildren somewhat late.
+
+        Test: fast/flexbox/repaint-issue-when-flex-item-appears.html
+
+        * rendering/FlexibleBoxAlgorithm.cpp:
+        (WebCore::FlexItem::FlexItem):
+        * rendering/FlexibleBoxAlgorithm.h:
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::constructFlexItem):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren):
+
 2021-06-09  Alexander Mikhaylenko  <alexm@gnome.org>
 
         [GTK4] Add support for navigation gestures
