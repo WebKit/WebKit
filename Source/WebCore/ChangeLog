@@ -1,3 +1,33 @@
+2021-06-08  Jean-Yves Avenard  <jya@apple.com>
+
+        MediaPlayerPrivateRemote::didLoadingProgress should not send synchronous message to GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=226761
+        rdar://78834312
+
+        Reviewed by Eric Carlson.
+
+        Make MediaPlayer::didLoadingProgress method asynchronous. This method is particularly well
+        suited to be made async as there's only one calling point from the HTMLMediaElement that
+        occurs when the progressEventTimer gets fired. As such, when the operation is precisely run
+        isn't particularly relevant as per spec:
+        "While the load is not suspended (see below), every 350ms (±200ms) or for every byte received,
+         whichever is least frequent, queue a media element task given the media element to fire an
+         event named progress at the element.".
+        This allows to make the query to the GPU process async.
+        While we can expect the time to query the GPU process to take less than 200ms on average,
+        there will be no change in the obversable behaviour compare to the previous implementation
+        where the call to the GPU process was synchronous.
+        Covered by existing tests.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::progressEventTimerFired): Use new method definition.
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::didLoadingProgress const):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::didLoadingProgressAsync const): Add default implementation
+        that calls the old sync didLoadingProgress method.
+
 2021-06-08  Chris Dumez  <cdumez@apple.com>
 
         Drop legacy EventLoopEventQueue class

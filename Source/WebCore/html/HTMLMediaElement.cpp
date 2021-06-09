@@ -2782,19 +2782,22 @@ void HTMLMediaElement::progressEventTimerFired()
     if (m_networkState != NETWORK_LOADING)
         return;
 
-    MonotonicTime time = MonotonicTime::now();
-    Seconds timedelta = time - m_previousProgressTime;
-
-    if (m_player->didLoadingProgress()) {
-        scheduleEvent(eventNames().progressEvent);
-        m_previousProgressTime = time;
-        m_sentStalledEvent = false;
-        updateRenderer();
-    } else if (timedelta > 3_s && !m_sentStalledEvent) {
-        scheduleEvent(eventNames().stalledEvent);
-        m_sentStalledEvent = true;
-        setShouldDelayLoadEvent(false);
-    }
+    m_player->didLoadingProgress([this, weakThis = makeWeakPtr(this)](bool progress) {
+        if (!weakThis)
+            return;
+        MonotonicTime time = MonotonicTime::now();
+        Seconds timedelta = time - m_previousProgressTime;
+        if (progress) {
+            scheduleEvent(eventNames().progressEvent);
+            m_previousProgressTime = time;
+            m_sentStalledEvent = false;
+            updateRenderer();
+        } else if (timedelta > 3_s && !m_sentStalledEvent) {
+            scheduleEvent(eventNames().stalledEvent);
+            m_sentStalledEvent = true;
+            setShouldDelayLoadEvent(false);
+        }
+    });
 }
 
 void HTMLMediaElement::rewind(double timeDelta)

@@ -54,7 +54,7 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     AcceleratedRenderingStateChanged(bool canBeAccelerated)
     SetShouldDisableSleep(bool disable)
     SetRate(double rate)
-    DidLoadingProgress() -> (bool flag) Synchronous
+    DidLoadingProgress() -> (bool flag) Async
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     UpdateVideoFullscreenInlineImage()

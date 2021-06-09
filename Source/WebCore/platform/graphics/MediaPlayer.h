@@ -425,7 +425,8 @@ public:
     double seekableTimeRangesLastModifiedTime();
     double liveUpdateInterval();
 
-    bool didLoadingProgress();
+    using DidLoadingProgressCompletionHandler = CompletionHandler<void(bool)>;
+    void didLoadingProgress(DidLoadingProgressCompletionHandler&&) const;
 
     double volume() const;
     void setVolume(double);

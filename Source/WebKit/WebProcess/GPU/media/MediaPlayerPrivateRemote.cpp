@@ -285,9 +285,13 @@ void MediaPlayerPrivateRemote::seekWithTolerance(const MediaTime& time, const Me
 
 bool MediaPlayerPrivateRemote::didLoadingProgress() const
 {
-    bool flag = false;
-    connection().sendSync(Messages::RemoteMediaPlayerProxy::DidLoadingProgress(), Messages::RemoteMediaPlayerProxy::DidLoadingProgress::Reply(flag), m_id);
-    return flag;
+    ASSERT_NOT_REACHED_WITH_MESSAGE("Should always be using didLoadingProgressAsync");
+    return false;
+}
+
+void MediaPlayerPrivateRemote::didLoadingProgressAsync(MediaPlayer::DidLoadingProgressCompletionHandler&& callback) const
+{
+    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::DidLoadingProgress(), WTFMove(callback), m_id);
 }
 
 bool MediaPlayerPrivateRemote::hasVideo() const

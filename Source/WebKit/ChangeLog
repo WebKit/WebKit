@@ -1,3 +1,21 @@
+2021-06-08  Jean-Yves Avenard  <jya@apple.com>
+
+        MediaPlayerPrivateRemote::didLoadingProgress should not send synchronous message to GPU process
+        https://bugs.webkit.org/show_bug.cgi?id=226761
+        rdar://78834312
+
+        Reviewed by Eric Carlson.
+
+        * GPUProcess/media/RemoteMediaPlayerProxy.cpp:
+        (WebKit::RemoteMediaPlayerProxy::didLoadingProgress): Forward call to the actual
+        proxied MediaPlayer.
+        * GPUProcess/media/RemoteMediaPlayerProxy.messages.in: Make message async.
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::didLoadingProgress const): This method should no
+        longer ever be called, but is required as it's pure-virtual.
+        (WebKit::MediaPlayerPrivateRemote::didLoadingProgressAsync const):
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h: Add new didLoadingProgressAsync method.
+
 2021-06-08  Megan Gardner  <megan_gardner@apple.com>
 
         Upstream AppHighlight Observer code

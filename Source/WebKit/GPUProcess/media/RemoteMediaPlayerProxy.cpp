@@ -268,7 +268,7 @@ void RemoteMediaPlayerProxy::setRate(double rate)
 
 void RemoteMediaPlayerProxy::didLoadingProgress(CompletionHandler<void(bool)>&& completionHandler)
 {
-    completionHandler(m_player->didLoadingProgress());
+    m_player->didLoadingProgress(WTFMove(completionHandler));
 }
 
 RefPtr<PlatformMediaResource> RemoteMediaPlayerProxy::requestResource(ResourceRequest&& request, PlatformMediaResourceLoader::LoadOptions options)
