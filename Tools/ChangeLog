@@ -1,3 +1,19 @@
+2021-06-09  Dewei Zhu  <dewei_zhu@apple.com>
+
+        HTTP server should run with the same python executable as run-benchmark script.
+        https://bugs.webkit.org/show_bug.cgi?id=226834
+
+        Reviewed by Jonathan Bedard.
+
+        'SimpleHTTPServerDriver._ensure_http_server_dependencies' will not work if the
+        python version used by run-benchmark is not the same as the one invokes http server.
+
+        Remove python modules no longer needed by http server.
+
+        * Scripts/webkitpy/benchmark_runner/http_server_driver/simple_http_server_driver.py:
+        (SimpleHTTPServerDriver.serve):
+        (SimpleHTTPServerDriver._ensure_http_server_dependencies):
+
 2021-06-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         CISupport/test-result-archive script reports "SyntaxError: invalid syntax" with Python 3

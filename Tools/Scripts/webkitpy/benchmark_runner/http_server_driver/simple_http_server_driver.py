@@ -4,6 +4,7 @@ import logging
 import os
 import re
 import subprocess
+import sys
 import time
 
 from webkitpy.benchmark_runner.http_server_driver.http_server_driver import HTTPServerDriver
@@ -32,7 +33,7 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
         if self._ip:
             interface_args.extend(['--interface', self._ip])
         self._server_port = 0
-        self._server_process = subprocess.Popen(["python", http_server_path, web_root] + interface_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        self._server_process = subprocess.Popen([sys.executable, http_server_path, web_root] + interface_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         max_attempt = 7
         retry_sequence = map(lambda attempt: attempt != max_attempt - 1, range(max_attempt))
         interval = 0.5
@@ -106,5 +107,4 @@ class SimpleHTTPServerDriver(HTTPServerDriver):
 
     def _ensure_http_server_dependencies(self):
         _log.info('Ensure dependencies of http server is satisfied')
-        from pkg_resources import require, VersionConflict, DistributionNotFound
         from webkitpy.autoinstalled import twisted
