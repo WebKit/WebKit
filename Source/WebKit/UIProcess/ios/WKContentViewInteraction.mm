@@ -9315,6 +9315,21 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 
 #if ENABLE(APP_HIGHLIGHTS)
+- (void)setUpAppHighlightMenusIfNeeded
+{
+    if (!_page->preferences().appHighlightsEnabled() || !self.window || !_page->editorState().selectionIsRange)
+        return;
+    
+    for (UIMenuItem *menuItem in [[UIMenuController sharedMenuController] menuItems]) {
+        if ([menuItem action] == @selector(createHighlightInCurrentGroupWithRange:) || [menuItem action] == @selector(createHighlightInNewGroupWithRange:))
+            return;
+    }
+    
+    auto addHighlightCurrentGroupItem = adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToCurrentGroup() action:@selector(createHighlightInCurrentGroupWithRange:)]);
+    auto addHighlightNewGroupItem = adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToNewGroup() action:@selector(createHighlightInNewGroupWithRange:)]);
+    [[UIMenuController sharedMenuController] setMenuItems:@[ addHighlightCurrentGroupItem.get(), addHighlightNewGroupItem.get() ]];
+}
+
 - (void)createHighlightInCurrentGroupWithRange:(id)sender
 {
     _page->createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::No, WebCore::HighlightRequestOriginatedInApp::No);
@@ -9325,7 +9340,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     _page->createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::Yes, WebCore::HighlightRequestOriginatedInApp::No);
 }
 
-#endif
+#endif // ENABLE(APP_HIGHLIGHTS)
 
 - (void)setContinuousSpellCheckingEnabled:(BOOL)enabled
 {
@@ -10234,10 +10249,6 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKContentViewInteractionAdditionsAfter.mm>
-#endif
 
 @end
 

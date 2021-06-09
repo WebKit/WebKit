@@ -49,6 +49,7 @@
 #import "WKErrorInternal.h"
 #import <WebCore/DragItem.h>
 #import <WebCore/GeometryUtilities.h>
+#import <WebCore/HighlightVisibility.h>
 #import <WebCore/LocalCurrentGraphicsContext.h>
 #import <WebCore/NetworkExtensionContentFilter.h>
 #import <WebCore/NotImplemented.h>
@@ -64,6 +65,13 @@
 #if ENABLE(MEDIA_USAGE)
 #import "MediaUsageManagerCocoa.h"
 #endif
+
+#if ENABLE(APP_HIGHLIGHTS)
+#import <Synapse/SYNotesActivationObserver.h>
+
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(Synapse)
+SOFT_LINK_CLASS_OPTIONAL(Synapse, SYNotesActivationObserver)
+#endif // ENABLE(APP_HIGHLIGHTS)
 
 #if USE(APPKIT)
 #import <AppKit/NSImage.h>
@@ -592,6 +600,24 @@ void WebPageProxy::setAppHighlightsVisibility(WebCore::HighlightVisibility appHi
     send(Messages::WebPage::SetAppHighlightsVisibility(appHighlightsVisibility));
 }
 
+bool WebPageProxy::appHighlightsVisibility()
+{
+    if (!m_appHighlightsObserver)
+        setUpHighlightsObserver();
+    return [m_appHighlightsObserver isVisible];
+}
+
+void WebPageProxy::setUpHighlightsObserver()
+{
+    if (m_appHighlightsObserver)
+        return;
+    auto updateAppHighlightsVisibility = ^(BOOL isVisible) {
+        setAppHighlightsVisibility(isVisible ? WebCore::HighlightVisibility::Visible : WebCore::HighlightVisibility::Hidden);
+    };
+    m_appHighlightsObserver = adoptNS([allocSYNotesActivationObserverInstance() initWithHandler:updateAppHighlightsVisibility]);
+    updateAppHighlightsVisibility([m_appHighlightsObserver isVisible]);
+}
+
 #endif
 
 SandboxExtension::HandleArray WebPageProxy::createNetworkExtensionsSandboxExtensions(WebProcessProxy& process)
@@ -691,10 +717,6 @@ NSDictionary *WebPageProxy::contentsOfUserInterfaceItem(NSString *userInterfaceI
 }
 
 } // namespace WebKit
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WebPageProxyCocoaAdditionsAfter.mm>
-#endif
 
 #undef MESSAGE_CHECK_COMPLETION
 #undef MESSAGE_CHECK
