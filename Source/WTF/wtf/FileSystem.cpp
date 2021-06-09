@@ -522,26 +522,6 @@ std::optional<Salt> readOrMakeSalt(const String& path)
 
 #if HAVE(STD_FILESYSTEM) || HAVE(STD_EXPERIMENTAL_FILESYSTEM)
 
-bool fileExists(const String& path)
-{
-    std::error_code ec;
-    // exists() returns false on error so no need to check ec.
-    return std::filesystem::exists(toStdFileSystemPath(path), ec);
-}
-
-bool deleteFile(const String& path)
-{
-    std::error_code ec;
-    auto fsPath = toStdFileSystemPath(path);
-
-    auto fileStatus = std::filesystem::symlink_status(fsPath, ec);
-    if (ec || fileStatus.type() == std::filesystem::file_type::directory)
-        return false;
-
-    // remove() returns false on error so no need to check ec.
-    return std::filesystem::remove(fsPath, ec);
-}
-
 bool deleteEmptyDirectory(const String& path)
 {
     std::error_code ec;
@@ -595,13 +575,6 @@ std::optional<uint64_t> fileSize(const String& path)
     if (ec)
         return std::nullopt;
     return size;
-}
-
-bool makeAllDirectories(const String& path)
-{
-    std::error_code ec;
-    std::filesystem::create_directories(toStdFileSystemPath(path), ec);
-    return !ec;
 }
 
 std::optional<uint64_t> volumeFreeSpace(const String& path)
@@ -728,6 +701,48 @@ String realPath(const String& path)
     return ec ? path : fromStdFileSystemPath(canonicalPath);
 }
 
+Vector<String> listDirectory(const String& path)
+{
+    Vector<String> fileNames;
+    std::error_code ec;
+    auto entries = std::filesystem::directory_iterator(toStdFileSystemPath(path), ec);
+    for (auto it = std::filesystem::begin(entries), end = std::filesystem::end(entries); !ec && it != end; it.increment(ec)) {
+        auto fileName = fromStdFileSystemPath(it->path().filename());
+        if (!fileName.isNull())
+            fileNames.append(WTFMove(fileName));
+    }
+    return fileNames;
+}
+
+#if !ENABLE(FILESYSTEM_POSIX_FAST_PATH)
+
+bool fileExists(const String& path)
+{
+    std::error_code ec;
+    // exists() returns false on error so no need to check ec.
+    return std::filesystem::exists(toStdFileSystemPath(path), ec);
+}
+
+bool deleteFile(const String& path)
+{
+    std::error_code ec;
+    auto fsPath = toStdFileSystemPath(path);
+
+    auto fileStatus = std::filesystem::symlink_status(fsPath, ec);
+    if (ec || fileStatus.type() == std::filesystem::file_type::directory)
+        return false;
+
+    // remove() returns false on error so no need to check ec.
+    return std::filesystem::remove(fsPath, ec);
+}
+
+bool makeAllDirectories(const String& path)
+{
+    std::error_code ec;
+    std::filesystem::create_directories(toStdFileSystemPath(path), ec);
+    return !ec;
+}
+
 String pathByAppendingComponent(const String& path, const String& component)
 {
     return fromStdFileSystemPath(toStdFileSystemPath(path) / toStdFileSystemPath(component));
@@ -741,18 +756,7 @@ String pathByAppendingComponents(StringView path, const Vector<StringView>& comp
     return fromStdFileSystemPath(fsPath);
 }
 
-Vector<String> listDirectory(const String& path)
-{
-    Vector<String> fileNames;
-    std::error_code ec;
-    auto entries = std::filesystem::directory_iterator(toStdFileSystemPath(path), ec);
-    for (auto it = std::filesystem::begin(entries), end = std::filesystem::end(entries); !ec && it != end; it.increment(ec)) {
-        auto fileName = fromStdFileSystemPath(it->path().filename());
-        if (!fileName.isNull())
-            fileNames.append(WTFMove(fileName));
-    }
-    return fileNames;
-}
+#endif
 
 #endif // HAVE(STD_FILESYSTEM) || HAVE(STD_EXPERIMENTAL_FILESYSTEM)
 

@@ -235,5 +235,77 @@ std::optional<int32_t> getFileDeviceId(const CString& fsFile)
     return fileStat.st_dev;
 }
 
+#if ENABLE(FILESYSTEM_POSIX_FAST_PATH)
+
+bool fileExists(const String& path)
+{
+    return access(fileSystemRepresentation(path).data(), F_OK) != -1;
+}
+
+bool deleteFile(const String& path)
+{
+    // unlink(...) returns 0 on successful deletion of the path and non-zero in any other case (including invalid permissions or non-existent file)
+    bool unlinked = !unlink(fileSystemRepresentation(path).data());
+    if (!unlinked && errno != ENOENT)
+        LOG_ERROR("File failed to delete. Error message: %s", strerror(errno));
+
+    return unlinked;
+}
+
+bool makeAllDirectories(const String& path)
+{
+    auto fullPath = fileSystemRepresentation(path);
+    if (!access(fullPath.data(), F_OK))
+        return true;
+
+    char* p = fullPath.mutableData() + 1;
+    int length = fullPath.length();
+    if (p[length - 1] == '/')
+        p[length - 1] = '\0';
+    for (; *p; ++p) {
+        if (*p == '/') {
+            *p = '\0';
+            if (access(fullPath.data(), F_OK)) {
+                if (mkdir(fullPath.data(), S_IRWXU))
+                    return false;
+            }
+            *p = '/';
+        }
+    }
+    if (access(fullPath.data(), F_OK)) {
+        if (mkdir(fullPath.data(), S_IRWXU))
+            return false;
+    }
+
+    return true;
+}
+
+String pathByAppendingComponent(const String& path, const String& component)
+{
+    if (path.endsWith('/'))
+        return path + component;
+    return path + "/" + component;
+}
+
+String pathByAppendingComponents(StringView path, const Vector<StringView>& components)
+{
+    StringBuilder builder;
+    builder.append(path);
+    bool isFirstComponent = true;
+    for (auto& component : components) {
+        if (isFirstComponent) {
+            isFirstComponent = false;
+            if (path.endsWith('/')) {
+                builder.append(component);
+                continue;
+            }
+        }
+        builder.append('/', component);
+    }
+    return builder.toString();
+}
+
+#endif
+
 } // namespace FileSystemImpl
 } // namespace WTF
