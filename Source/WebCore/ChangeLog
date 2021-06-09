@@ -1,3 +1,20 @@
+2021-06-09  Tyler Wilcock  <twilco.o@protonmail.com>
+
+        [css-counter-styles] Mark counter-style descriptors as "descriptor-only"
+        https://bugs.webkit.org/show_bug.cgi?id=226792
+
+        Reviewed by Simon Fraser.
+
+        * css/CSSProperties.json:
+        Mark @counter-style rule descriptors (additive-symbols, fallback, pad,
+        symbols, negative, prefix, range, suffix, system) as "descriptor-only".
+
+        Note that while `speak-as` is also a valid descriptor for
+        @counter-style rules, it is deliberately excluded from this change as
+        it is also a property in the CSS Speech specification.
+
+        https://www.w3.org/TR/css-speech-1/#speaking-props-speak-as
+
 2021-06-09  Alex Christensen  <achristensen@webkit.org>
 
         Performance API: Implement performance.timeOrigin
