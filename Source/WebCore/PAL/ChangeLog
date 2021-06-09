@@ -1,3 +1,12 @@
+2021-06-08  Alex Christensen  <achristensen@webkit.org>
+
+        Move PrivacyStance code from WebKitAdditions
+        https://bugs.webkit.org/show_bug.cgi?id=226774
+
+        Reviewed by Jer Noble.
+
+        * pal/spi/cf/CFNetworkSPI.h:
+
 2021-06-08  Devin Rousso  <drousso@apple.com>
 
         [Payment Request] upstream new features

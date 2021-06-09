@@ -1,3 +1,14 @@
+2021-06-08  Alex Christensen  <achristensen@webkit.org>
+
+        Move PrivacyStance code from WebKitAdditions
+        https://bugs.webkit.org/show_bug.cgi?id=226774
+
+        Reviewed by Jer Noble.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (toPrivacyStance):
+        (-[WKNetworkSessionDelegate URLSession:task:didFinishCollectingMetrics:]):
+
 2021-06-08  Sam Weinig  <weinig@apple.com>
 
         Adopt WTF::Span in SQLiteStatement

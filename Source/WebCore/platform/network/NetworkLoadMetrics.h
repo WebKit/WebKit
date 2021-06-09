@@ -32,18 +32,6 @@
 #include <wtf/persistence/PersistentCoder.h>
 #include <wtf/text/WTFString.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/NetworkLoadMetricsAdditions.h>
-#else
-#define NETWORK_LOAD_METRICS_ADDITIONS_1
-#define NETWORK_LOAD_METRICS_ADDITIONS_2
-#define NETWORK_LOAD_METRICS_ADDITIONS_3
-#define NETWORK_LOAD_METRICS_ADDITIONS_4
-#define NETWORK_LOAD_METRICS_ADDITIONS_5
-#define NETWORK_LOAD_METRICS_ADDITIONS_6
-#define NETWORK_LOAD_METRICS_ADDITIONS_7
-#endif
-
 #if PLATFORM(COCOA)
 OBJC_CLASS NSURLConnection;
 OBJC_CLASS NSURLResponse;
@@ -61,7 +49,13 @@ enum class NetworkLoadPriority : uint8_t {
     Unknown,
 };
 
-NETWORK_LOAD_METRICS_ADDITIONS_1;
+enum class PrivacyStance : uint8_t {
+    Unknown,
+    NotEligible,
+    Proxied,
+    Failed,
+    Direct,
+};
 
 constexpr MonotonicTime reusedTLSConnectionSentinel { MonotonicTime::fromRawSeconds(-1) };
 
@@ -135,7 +129,7 @@ public:
         copy.tlsProtocol = tlsProtocol.isolatedCopy();
         copy.tlsCipher = tlsCipher.isolatedCopy();
         copy.priority = priority;
-        NETWORK_LOAD_METRICS_ADDITIONS_2;
+        copy.privacyStance = privacyStance;
         copy.requestHeaders = requestHeaders.isolatedCopy();
 
         copy.requestHeaderBytesSent = requestHeaderBytesSent;
@@ -173,7 +167,7 @@ public:
             && tlsProtocol == other.tlsProtocol
             && tlsCipher == other.tlsCipher
             && priority == other.priority
-            NETWORK_LOAD_METRICS_ADDITIONS_3
+            && privacyStance == other.privacyStance
             && requestHeaders == other.requestHeaders
             && requestHeaderBytesSent == other.requestHeaderBytesSent
             && requestBodyBytesSent == other.requestBodyBytesSent
@@ -197,7 +191,7 @@ public:
     String tlsCipher;
 
     NetworkLoadPriority priority { NetworkLoadPriority::Unknown };
-    NETWORK_LOAD_METRICS_ADDITIONS_4;
+    PrivacyStance privacyStance { PrivacyStance::Unknown };
 
     HTTPHeaderMap requestHeaders;
 
@@ -242,7 +236,7 @@ void NetworkLoadMetrics::encode(Encoder& encoder) const
     encoder << tlsProtocol;
     encoder << tlsCipher;
     encoder << priority;
-    NETWORK_LOAD_METRICS_ADDITIONS_5;
+    encoder << privacyStance;
     encoder << requestHeaders;
     encoder << requestHeaderBytesSent;
     encoder << requestBodyBytesSent;
@@ -280,7 +274,7 @@ bool NetworkLoadMetrics::decode(Decoder& decoder, NetworkLoadMetrics& metrics)
         && decoder.decode(metrics.tlsProtocol)
         && decoder.decode(metrics.tlsCipher)
         && decoder.decode(metrics.priority)
-        NETWORK_LOAD_METRICS_ADDITIONS_6
+        && decoder.decode(metrics.privacyStance)
         && decoder.decode(metrics.requestHeaders)
         && decoder.decode(metrics.requestHeaderBytesSent)
         && decoder.decode(metrics.requestBodyBytesSent)
@@ -291,4 +285,17 @@ bool NetworkLoadMetrics::decode(Decoder& decoder, NetworkLoadMetrics& metrics)
 
 } // namespace WebCore
 
-NETWORK_LOAD_METRICS_ADDITIONS_7
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::PrivacyStance> {
+    using values = EnumValues<
+        WebCore::PrivacyStance,
+        WebCore::PrivacyStance::Unknown,
+        WebCore::PrivacyStance::NotEligible,
+        WebCore::PrivacyStance::Proxied,
+        WebCore::PrivacyStance::Failed,
+        WebCore::PrivacyStance::Direct
+    >;
+};
+
+}
