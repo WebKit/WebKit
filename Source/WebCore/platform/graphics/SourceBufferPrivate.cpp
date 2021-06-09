@@ -679,14 +679,15 @@ void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t maximu
     // currenTime whichever we hit first.
     auto buffered = m_buffered->ranges();
     uint64_t currentTimeRange = buffered.find(currentTime);
-    if (currentTimeRange == buffered.length() - 1) {
+    if (!buffered.length() || currentTimeRange == buffered.length() - 1) {
 #if !RELEASE_LOG_DISABLED
         ERROR_LOG(LOGIDENTIFIER, "FAILED to free enough after evicting ", initialBufferedSize - totalTrackBufferSizeInBytes());
 #endif
         return;
     }
 
-    MediaTime minimumRangeStart = std::max(currentTime + thirtySeconds, buffered.end(currentTimeRange));
+    MediaTime minimumRangeStart =
+        currentTimeRange == notFound ? currentTime + thirtySeconds : std::max(currentTime + thirtySeconds, buffered.end(currentTimeRange));
 
     rangeEnd = duration;
     if (!rangeEnd.isFinite()) {

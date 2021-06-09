@@ -1,3 +1,14 @@
+2021-06-08  Jean-Yves Avenard  <jya@apple.com>
+
+        [MSE] Assertion if attempting to perform eviction before playback starts.
+        https://bugs.webkit.org/show_bug.cgi?id=226720
+        <rdar://problem/78943223>
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-append-buffer-full-quota-exceeded-error-onstart-expected.txt: Added.
+        * media/media-source/media-source-append-buffer-full-quota-exceeded-error-onstart.html: Added.
+
 2021-06-08  Diego Pino Garcia  <dpino@igalia.com>
 
         [GLIB][WPE] Unreviewed test gardening. Move WPE baseline for WPT test 'report-same-origin-with-cookies.html' to GLIB.
