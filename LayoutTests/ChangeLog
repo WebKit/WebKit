@@ -1,5 +1,11 @@
 2021-06-09  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GTK] Unreviewed test failures. Switch WPT's WOFF2 tests from flakey to image only failure.
+
+        * platform/gtk/TestExpectations:
+
+2021-06-09  Diego Pino Garcia  <dpino@igalia.com>
+
         [GLIB] Unreviewed test gardening. Update test expectations.
 
         - Mark editing/execCommand/switch-list-type-with-orphaned-li.html as flakey.
