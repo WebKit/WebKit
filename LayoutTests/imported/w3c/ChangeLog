@@ -1,3 +1,14 @@
+2021-06-09  Alex Christensen  <achristensen@webkit.org>
+
+        Performance API: Implement performance.timeOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=174862
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/hr-time/idlharness.any-expected.txt:
+        * web-platform-tests/hr-time/idlharness.any.worker-expected.txt:
+        * web-platform-tests/hr-time/window-worker-timeOrigin.window-expected.txt:
+
 2021-06-08  Rob Buis  <rbuis@igalia.com>
 
         CSSOM test for serializing counter() fails
