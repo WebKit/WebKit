@@ -1374,3 +1374,5 @@ webkit.org/b/225667 http/tests/webAPIStatistics/screen-functions-accessed-data-c
 webkit.org/b/225668 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html [ Slow ]
 
 webkit.org/b/225521 [ Release ] media/modern-media-controls/pip-support/pip-support-enabled.html [ Pass Failure ]
+
+webkit.org/b/226783 [ arm64 ] http/tests/contentextensions/plugin-doesnt-crash.html [ Skip ]
