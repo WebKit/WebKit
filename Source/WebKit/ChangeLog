@@ -1,3 +1,19 @@
+2021-06-09  Peng Liu  <peng.liu6@apple.com>
+
+        [iOS] UIDelegate::UIClient::fullscreenMayReturnToInline() is not called when a video exits fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=226785
+
+        Reviewed by Eric Carlson.
+
+        On iOS, `UIDelegate::UIClient::fullscreenMayReturnToInline()` is called when
+        a video exits picture-in-picture, but not when a video exits fullscreen.
+        This patch fixes that.
+
+        We cannot add a regression test for this patch before fixing webkit.org/b/212654.
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenManagerProxy::exitFullscreen):
+
 2021-06-09  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Do not depend on resources provided by the GNOME icon theme
