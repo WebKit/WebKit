@@ -541,7 +541,7 @@ webkit.org/b/221445 fast/text/international/system-language/jp-circled.html [ Sk
 # GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Failure Timeout Pass ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-iceconnectionstatechange-event.html [ Timeout ]
 webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure ]
 webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Timeout Failure Pass ]
 webkit.org/b/191886 fast/mediastream/MediaStream-video-element-remove-track.html [ Failure ]
@@ -2207,7 +2207,7 @@ webkit.org/b/133865 media/W3C/video/networkState/networkState_during_progress.ht
 webkit.org/b/133869 media/video-seek-after-end.html [ Failure Pass ]
 
 webkit.org/b/134576 media/track/audio/audio-track-mkv-vorbis-language.html [ Failure ]
-webkit.org/b/134576 media/track/video/video-track-mkv-theora-selected.html [ Failure Timeout Pass Crash ]
+webkit.org/b/134576 media/track/video/video-track-mkv-theora-selected.html [ Timeout ]
 webkit.org/b/134576 media/track/video/video-track-mkv-theora-language.html [ Failure ]
 webkit.org/b/143478 media/video-page-load-preload-none.html [ Failure ]
 
@@ -2220,7 +2220,7 @@ webkit.org/b/116277 media/video-buffered.html [ Pass Failure  ]
 webkit.org/b/186638 media/video-remote-control-playpause.html [ Failure Timeout Pass ]
 webkit.org/b/186679 media/video-currentTime-delay.html [ Crash Pass Timeout ]
 
-webkit.org/b/198827 media/media-fullscreen-return-to-inline.html [ Timeout Pass Crash ]
+webkit.org/b/198827 media/media-fullscreen-return-to-inline.html [ Timeout ]
 
 webkit.org/b/198830 media/event-attributes.html [ Crash Failure ]
 webkit.org/b/198830 media/track/track-cue-css.html [ ImageOnlyFailure Failure Pass ]
@@ -2240,7 +2240,7 @@ webkit.org/b/210374 http/tests/media/user-gesture-preserved-across-xmlhttpreques
 webkit.org/b/208293 media/video-restricted-invisible-autoplay-allowed-if-audible.html [ Failure ]
 
 
-webkit.org/b/208321 media/muted-video-is-playing-audio.html [ Timeout Pass Crash ]
+webkit.org/b/208321 media/muted-video-is-playing-audio.html [ Timeout ]
 
 http/tests/media/video-preload.html [ Pass Slow ]
 

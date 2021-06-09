@@ -1,5 +1,15 @@
 2021-06-09  Diego Pino Garcia  <dpino@igalia.com>
 
+        [GLIB][GTK] Unreviewed test gardening. Mark flakey tests as timeout only.
+
+        Several tests marked as flakey have been timing out consistently for
+        the last 4000 revisions. Mark state accordingly.
+
+        * platform/glib/TestExpectations:
+        * platform/gtk/TestExpectations:
+
+2021-06-09  Diego Pino Garcia  <dpino@igalia.com>
+
         [GTK] Unreviewed test failures. Switch WPT's WOFF2 tests from flakey to image only failure.
 
         * platform/gtk/TestExpectations:

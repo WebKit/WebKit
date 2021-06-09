@@ -1192,7 +1192,7 @@ webkit.org/b/212821 scrollbars/scrollbar-selectors.html [ Pass Timeout Missing ]
 
 webkit.org/b/212893 http/tests/navigation/page-cache-video.html [ Failure Pass ]
 
-webkit.org/b/213386 fast/images/low-memory-decode.html [ Failure Timeout Pass ]
+webkit.org/b/213386 fast/images/low-memory-decode.html [ Timeout ]
 
 webkit.org/b/213387 imported/w3c/web-platform-tests/html/browsers/offline/introduction-4/event_noupdate.https.html [ Timeout Pass ]
 
