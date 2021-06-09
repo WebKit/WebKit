@@ -194,13 +194,13 @@ webkit.org/b/217946 fast/text/synthetic-oblique.html [ ImageOnlyFailure ]
 
 # Cross-origin credentials.
 webkit.org/b/217947 http/tests/security/mixedContent/insecure-basic-auth-image.https.html [ Failure Pass ]
-webkit.org/b/217947 http/tests/security/mixedContent/insecure-image-redirects-to-basic-auth-secure-image.html [ Failure Pass ]
-webkit.org/b/217947 http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image.https.html [ Failure Pass ]
-webkit.org/b/217947 http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image.https.html [ Failure Pass ]
-webkit.org/b/217947 http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image.https.html [ Failure Pass ]
+webkit.org/b/217947 http/tests/security/mixedContent/insecure-image-redirects-to-basic-auth-secure-image.html [ Failure ]
+webkit.org/b/217947 http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image.https.html [ Failure ]
+webkit.org/b/217947 http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image.https.html [ Failure ]
+webkit.org/b/217947 http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image.https.html [ Failure ]
 
 # WebInspector.
-webkit.org/b/217966 [ Release ] inspector/console/queryHolders.html [ Crash Failure Timeout Pass ]
+webkit.org/b/217966 [ Release ] inspector/console/queryHolders.html [ Failure ]
 webkit.org/b/218367 inspector/page/setScreenSizeOverride.html [ Failure Pass ]
 
 # WebXR is not yet supported in GTK
@@ -455,7 +455,7 @@ webkit.org/b/218368 compositing/backing/solid-color-with-paints-into-ancestor.ht
 webkit.org/b/169917 fast/canvas/webgl/copyBufferSubData.html [ Failure ]
 webkit.org/b/169917 fast/canvas/webgl/getBufferSubData-webgl1.html [ Failure ]
 webkit.org/b/169917 fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
-webkit.org/b/169917 fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
+webkit.org/b/169917 fast/canvas/webgl/oes-vertex-array-object.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/context/premultiplyalpha-test.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/extensions/oes-texture-float.html [ Failure ]
 webkit.org/b/169917 webgl/1.0.3/conformance/textures/copy-tex-image-2d-formats.html [ Failure ]
@@ -1023,7 +1023,7 @@ webkit.org/b/116961 perf/show-hide-table-rows.html [ Failure Pass ]
 webkit.org/b/119253 [ Debug ] js/dfg-osr-entry-hoisted-clobbered-structure-check.html [ Timeout Pass ]
 webkit.org/b/119253 [ Debug ] fast/media/update-media-query-css-parser.html [ Timeout Pass ]
 
-webkit.org/b/127742 fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure Pass ]
+webkit.org/b/127742 fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure ]
 
 # Tests showing flakiness in the bot
 webkit.org/b/132182 css3/calc/transitions-dependent.html [ Failure ]
@@ -1063,7 +1063,7 @@ webkit.org/b/153941 fast/text/control-characters/visible-control-characters-2.xh
 webkit.org/b/153941 fast/text/control-characters/visible-control-characters-3.html [ ImageOnlyFailure Pass ]
 webkit.org/b/153941 fast/text/control-characters/visible-control-characters-3.xhtml [ ImageOnlyFailure Pass ]
 
-webkit.org/b/170337 fast/repaint/obscured-background-no-repaint.html [ Pass Failure ]
+webkit.org/b/170337 fast/repaint/obscured-background-no-repaint.html [ Failure ]
 
 webkit.org/b/171600 css3/filters/composited-during-animation-layertree.html [ Pass Failure ]
 
@@ -1095,7 +1095,7 @@ webkit.org/b/183609 [ Release ] inspector/unit-tests/throttler.html [ Pass Failu
 
 webkit.org/b/183214 compositing/video/poster.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/186136 compositing/animation/layer-for-filling-animation.html [ Failure Pass Timeout ]
+webkit.org/b/186136 compositing/animation/layer-for-filling-animation.html [ Failure ]
 
 # Tests that fail on the EWS queue since we enabled tests there (obsolete). TODO: the failures below should be filed under a different bug).
 webkit.org/b/186638 compositing/repaint/repaint-on-layer-grouping-change.html [ Failure Pass ]
@@ -1586,7 +1586,7 @@ webkit.org/b/107118 fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
 
 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure Pass ]
 
-webkit.org/b/118220 http/tests/cache/partitioned-cache.html [ Failure Pass ]
+webkit.org/b/118220 http/tests/cache/partitioned-cache.html [ Failure ]
 
 webkit.org/b/120596 css3/background/background-repeat-space-border.html [ ImageOnlyFailure ]
 webkit.org/b/120596 css3/background/background-repeat-space-content.html [ ImageOnlyFailure ]
@@ -1961,7 +1961,7 @@ webkit.org/b/218111 compositing/clipping/border-radius-async-overflow-stacking.h
 
 webkit.org/b/219248 imported/w3c/web-platform-tests/uievents/mouse/mouseevent_move_button.html [ Failure ]
 
-webkit.org/b/219250 http/tests/navigation/page-cache-requestAnimationFrame.html [ Failure Pass ]
+webkit.org/b/219250 http/tests/navigation/page-cache-requestAnimationFrame.html [ Failure ]
 
 webkit.org/b/222908 imported/w3c/web-platform-tests/web-animations/timing-model/animations/reverse-running-animation.html [ ImageOnlyFailure ]
 
