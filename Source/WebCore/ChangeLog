@@ -1,3 +1,12 @@
+2021-06-08  Michael Catanzaro  <mcatanzaro@gnome.org>
+
+        Unreviewed, fix new -Wreturn-type warning
+        https://bugs.webkit.org/show_bug.cgi?id=226718
+        <rdar://problem/78947485>
+
+        * rendering/HighlightData.cpp:
+        (WebCore::HighlightData::rangeForTextBox):
+
 2021-06-08  Jean-Yves Avenard  <jya@apple.com>
 
         [MSE] Assertion if attempting to perform eviction before playback starts.
