@@ -1937,3 +1937,5 @@ webkit.org/b/223750 [ Debug ] security/contentSecurityPolicy/plugins-types-allow
 
 webkit.org/b/225686 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-root-001.html [ ImageOnlyFailure ]
 webkit.org/b/225686 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-snap-root-002.html [ ImageOnlyFailure ]
+
+webkit.org/b/226826 http/tests/ssl/applepay/ApplePayButton.html [ Failure ]
