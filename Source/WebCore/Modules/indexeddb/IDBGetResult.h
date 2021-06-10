@@ -103,8 +103,6 @@ public:
     template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, IDBGetResult&);
 
 private:
-    void dataFromBuffer(SharedBuffer&);
-
     static void isolatedCopy(const IDBGetResult& source, IDBGetResult& destination);
 
     IDBValue m_value;

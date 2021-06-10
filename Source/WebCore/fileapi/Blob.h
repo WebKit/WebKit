@@ -75,13 +75,6 @@ public:
         return blob;
     }
 
-    static Ref<Blob> create(ScriptExecutionContext* context, const SharedBuffer& buffer, const String& contentType)
-    {
-        auto blob = adoptRef(*new Blob(context, buffer, contentType));
-        blob->suspendIfNeeded();
-        return blob;
-    }
-
     static Ref<Blob> create(ScriptExecutionContext* context, Vector<uint8_t>&& data, const String& contentType)
     {
         auto blob = adoptRef(*new Blob(context, WTFMove(data), contentType));
@@ -131,7 +124,6 @@ public:
 protected:
     WEBCORE_EXPORT explicit Blob(ScriptExecutionContext*);
     Blob(ScriptExecutionContext&, Vector<BlobPartVariant>&&, const BlobPropertyBag&);
-    Blob(ScriptExecutionContext*, const SharedBuffer&, const String& contentType);
     Blob(ScriptExecutionContext*, Vector<uint8_t>&&, const String& contentType);
 
     enum ReferencingExistingBlobConstructor { referencingExistingBlobConstructor };

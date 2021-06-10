@@ -54,7 +54,7 @@ void NetworkSendQueue::enqueue(const JSC::ArrayBuffer& binaryData, unsigned byte
 {
     if (m_queue.isEmpty()) {
         auto* data = static_cast<const uint8_t*>(binaryData.data());
-        m_writeRawData(data + byteOffset, byteLength);
+        m_writeRawData(Span { data + byteOffset, byteLength });
         return;
     }
     m_queue.append(SharedBuffer::create(static_cast<const uint8_t*>(binaryData.data()) + byteOffset, byteLength));
@@ -93,7 +93,7 @@ void NetworkSendQueue::processMessages()
         switchOn(m_queue.first(), [this](const CString& utf8) {
             m_writeString(utf8);
         }, [this](Ref<SharedBuffer>& data) {
-            m_writeRawData(data->data(), data->size());
+            data->forEachSegment(m_writeRawData);
         }, [this, &shouldStopProcessing](UniqueRef<BlobLoader>& loader) {
             auto errorCode = loader->errorCode();
             if (loader->isLoading() || (errorCode && errorCode.value() == AbortError)) {
@@ -102,7 +102,7 @@ void NetworkSendQueue::processMessages()
             }
 
             if (const auto& result = loader->arrayBufferResult()) {
-                m_writeRawData(static_cast<const uint8_t*>(result->data()), result->byteLength());
+                m_writeRawData(Span { static_cast<const uint8_t*>(result->data()), result->byteLength() });
                 return;
             }
             ASSERT(errorCode);

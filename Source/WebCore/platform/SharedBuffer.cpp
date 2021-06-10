@@ -86,6 +86,16 @@ Ref<SharedBuffer> SharedBuffer::create(Vector<uint8_t>&& vector)
     return adoptRef(*new SharedBuffer(WTFMove(vector)));
 }
 
+static Vector<uint8_t> combineSegmentsData(const SharedBuffer::DataSegmentVector& segments, size_t size)
+{
+    Vector<uint8_t> combinedData;
+    combinedData.reserveInitialCapacity(size);
+    for (auto& segment : segments)
+        combinedData.append(segment.segment->data(), segment.segment->size());
+    ASSERT(combinedData.size() == size);
+    return combinedData;
+}
+
 void SharedBuffer::combineIntoOneSegment() const
 {
 #if ASSERT_ENABLED
@@ -96,11 +106,7 @@ void SharedBuffer::combineIntoOneSegment() const
     if (m_segments.size() <= 1)
         return;
 
-    Vector<uint8_t> combinedData;
-    combinedData.reserveInitialCapacity(m_size);
-    for (const auto& segment : m_segments)
-        combinedData.append(segment.segment->data(), segment.segment->size());
-    ASSERT(combinedData.size() == m_size);
+    auto combinedData = combineSegmentsData(m_segments, m_size);
     m_segments.clear();
     m_segments.append({0, DataSegment::create(WTFMove(combinedData))});
     ASSERT(m_segments.size() == 1);
@@ -109,11 +115,26 @@ void SharedBuffer::combineIntoOneSegment() const
 
 const uint8_t* SharedBuffer::data() const
 {
-    if (!m_segments.size())
+    if (m_segments.isEmpty())
         return nullptr;
     combineIntoOneSegment();
     ASSERT(internallyConsistent());
     return m_segments[0].segment->data();
+}
+
+Vector<uint8_t> SharedBuffer::takeData()
+{
+    if (m_segments.isEmpty())
+        return { };
+
+    Vector<uint8_t> combinedData;
+    if (hasOneSegment() && WTF::holds_alternative<Vector<uint8_t>>(m_segments[0].segment->m_immutableData))
+        combinedData = std::exchange(WTF::get<Vector<uint8_t>>(m_segments[0].segment->m_immutableData), Vector<uint8_t>());
+    else
+        combinedData = combineSegmentsData(m_segments, m_size);
+
+    clear();
+    return combinedData;
 }
 
 SharedBufferDataView SharedBuffer::getSomeData(size_t position) const
@@ -130,10 +151,10 @@ SharedBufferDataView SharedBuffer::getSomeData(size_t position) const
 String SharedBuffer::toHexString() const
 {
     StringBuilder stringBuilder;
-    for (unsigned byteOffset = 0; byteOffset < size(); byteOffset++) {
-        const uint8_t byte = data()[byteOffset];
-        stringBuilder.append(pad('0', 2, hex(byte)));
-    }
+    forEachSegment([&](auto& segment) {
+        for (unsigned i = 0; i < segment.size(); ++i)
+            stringBuilder.append(pad('0', 2, hex(segment[i])));
+    });
     return stringBuilder.toString();
 }
 
@@ -203,6 +224,49 @@ Ref<SharedBuffer> SharedBuffer::copy() const
     ASSERT(clone->internallyConsistent());
     ASSERT(internallyConsistent());
     return clone;
+}
+
+void SharedBuffer::forEachSegment(const Function<void(const Span<const uint8_t>&)>& apply) const
+{
+    for (auto& segment : m_segments)
+        apply(Span { segment.segment->data(), segment.segment->size() });
+}
+
+bool SharedBuffer::startsWith(const Span<const uint8_t>& prefix) const
+{
+    if (prefix.empty())
+        return true;
+
+    if (size() < prefix.size())
+        return false;
+
+    const uint8_t* prefixPtr = prefix.data();
+    size_t remaining = prefix.size();
+    for (auto& segment : m_segments) {
+        size_t amountToCompareThisTime = std::min(remaining, segment.segment->size());
+        if (memcmp(prefixPtr, segment.segment->data(), amountToCompareThisTime))
+            return false;
+        remaining -= amountToCompareThisTime;
+        if (!remaining)
+            return true;
+        prefixPtr += amountToCompareThisTime;
+    }
+    return false;
+}
+
+void SharedBuffer::copyTo(void* destination, size_t length) const
+{
+    ASSERT(length <= size());
+    auto destinationPtr = static_cast<uint8_t*>(destination);
+    auto remaining = std::min(length, size());
+    for (auto& segment : m_segments) {
+        size_t amountToCopyThisTime = std::min(remaining, segment.segment->size());
+        memcpy(destinationPtr, segment.segment->data(), amountToCopyThisTime);
+        remaining -= amountToCopyThisTime;
+        if (!remaining)
+            return;
+        destinationPtr += amountToCopyThisTime;
+    }
 }
 
 bool SharedBuffer::hasOneSegment() const

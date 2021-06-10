@@ -481,14 +481,20 @@ void DocumentThreadableLoader::didFinishLoading(unsigned long identifier)
 
         if (options().filteringPolicy == ResponseFilteringPolicy::Disable) {
             m_client->didReceiveResponse(identifier, response);
-            if (m_resource->resourceBuffer())
-                m_client->didReceiveData(m_resource->resourceBuffer()->data(), m_resource->resourceBuffer()->size());
+            if (auto* buffer = m_resource->resourceBuffer()) {
+                buffer->forEachSegment([&](auto& segment) {
+                    m_client->didReceiveData(segment.data(), segment.size());
+                });
+            }
         } else {
             ASSERT(response.type() == ResourceResponse::Type::Default);
 
             m_client->didReceiveResponse(identifier, ResourceResponse::filter(response, m_options.credentials == FetchOptions::Credentials::Include ? ResourceResponse::PerformExposeAllHeadersCheck::No : ResourceResponse::PerformExposeAllHeadersCheck::Yes));
-            if (m_resource->resourceBuffer())
-                m_client->didReceiveData(m_resource->resourceBuffer()->data(), m_resource->resourceBuffer()->size());
+            if (auto* buffer = m_resource->resourceBuffer()) {
+                buffer->forEachSegment([&](auto& segment) {
+                    m_client->didReceiveData(segment.data(), segment.size());
+                });
+            }
         }
     }
 
@@ -649,8 +655,11 @@ void DocumentThreadableLoader::loadRequest(ResourceRequest&& request, SecurityCh
     }
     didReceiveResponse(identifier, response);
 
-    if (data)
-        didReceiveData(identifier, data->data(), data->size());
+    if (data) {
+        data->forEachSegment([&](auto& segment) {
+            didReceiveData(identifier, segment.data(), segment.size());
+        });
+    }
 
     const auto* timing = response.deprecatedNetworkLoadMetricsOrNull();
     auto resourceTiming = ResourceTiming::fromSynchronousLoad(requestURL, m_options.initiator, loadTiming, timing ? *timing : NetworkLoadMetrics { }, response, securityOrigin());

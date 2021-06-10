@@ -1,3 +1,101 @@
+2021-06-10  Chris Dumez  <cdumez@apple.com>
+
+        Fix some inefficient uses of SharedBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=226857
+
+        Reviewed by Darin Adler.
+
+        Fix some inefficient uses of SharedBuffer:
+        - Avoid calling SharedBuffer::data() whenever possible since this function
+          may have to combine internal segments of SharedBuffer. Added a convenience
+          function on SharedBuffer (forEachSegment()) to get the data pointer / size
+          of each segment.
+        - Avoid some unnecessary construction of SharedBuffer simply to get a Vector.
+          We should construct the Vector directly in such cases. I dropped the
+          Blob factory that took in a SharedBuffer as it was inefficient and frequently
+          called instead of the more efficient factory that takes in a Vector<uint8_t>.
+        - Add convenience functions to SharedBuffer that return a Vector, including one
+          named takeData() that avoids copying the data.
+        - Add convenience functions to SharedBuffer for doing a prefix check or copying
+          to a destination pointer.
+
+        * Modules/async-clipboard/ClipboardItem.cpp:
+        (WebCore::ClipboardItem::blobFromString):
+        * Modules/async-clipboard/ios/ClipboardImageReaderIOS.mm:
+        (WebCore::ClipboardImageReader::readBuffer):
+        * Modules/async-clipboard/mac/ClipboardImageReaderMac.mm:
+        (WebCore::ClipboardImageReader::readBuffer):
+        * Modules/fetch/FetchBodyConsumer.cpp:
+        (WebCore::blobFromData):
+        (WebCore::packageFormData):
+        (WebCore::resolveWithTypeAndData):
+        (WebCore::FetchBodyConsumer::takeAsBlob):
+        * Modules/indexeddb/IDBGetResult.cpp:
+        * Modules/indexeddb/IDBGetResult.h:
+        * Modules/mediarecorder/MediaRecorder.cpp:
+        (WebCore::createDataAvailableEvent):
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::didReceiveRawData):
+        * editing/WebCorePasteboardFileReader.cpp:
+        (WebCore::WebCorePasteboardFileReader::readBuffer):
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::createFragmentForImageAttachment):
+        (WebCore::replaceRichContentWithAttachments):
+        (WebCore::createFragmentAndAddResources):
+        (WebCore::sanitizeMarkupWithArchive):
+        (WebCore::WebContentReader::readImage):
+        (WebCore::attachmentForData):
+        * editing/gtk/WebContentReaderGtk.cpp:
+        (WebCore::WebContentReader::readImage):
+        * fileapi/Blob.cpp:
+        * fileapi/Blob.h:
+        * fileapi/NetworkSendQueue.cpp:
+        (WebCore::NetworkSendQueue::processMessages):
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::updateEnclosingImageWithData):
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::InspectorNetworkAgent::didReceiveResponse):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::continueAfterContentPolicy):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::didFinishLoading):
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::didReceiveDataOrBuffer):
+        * loader/ResourceCryptographicDigest.cpp:
+        (WebCore::cryptographicDigestForSharedBuffer):
+        * loader/ResourceCryptographicDigest.h:
+        * loader/SubresourceIntegrity.cpp:
+        (WebCore::matchIntegrityMetadata):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didFinishLoadingManifest):
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::writeDataToUniqueFileInDirectory):
+        * loader/cache/CachedRawResource.cpp:
+        (WebCore::CachedRawResource::didAddClient):
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::notifyFinished):
+        * platform/SharedBuffer.cpp:
+        (WebCore::combineSegmentsData):
+        (WebCore::SharedBuffer::combineIntoOneSegment const):
+        (WebCore::SharedBuffer::data const):
+        (WebCore::SharedBuffer::takeData):
+        (WebCore::SharedBuffer::toHexString const):
+        (WebCore::SharedBuffer::forEachSegment const):
+        (WebCore::SharedBuffer::startsWith const):
+        (WebCore::SharedBuffer::copyTo const):
+        * platform/SharedBuffer.h:
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore::SharedBuffer::createCFData const):
+        * platform/graphics/displaylists/DisplayListItemBuffer.cpp:
+        (WebCore::DisplayList::ItemBuffer::append):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+        * workers/ScriptBuffer.cpp:
+        (WebCore::ScriptBuffer::toString const):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createResponseBlob):
+
 2021-06-10  Youenn Fablet  <youenn@apple.com> and Victor M. Jaquez L. <vjaquez@igalia.com>
 
         Update libwebrtc to M92

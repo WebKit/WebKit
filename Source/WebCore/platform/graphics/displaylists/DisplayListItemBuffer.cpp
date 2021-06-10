@@ -774,7 +774,7 @@ void ItemBuffer::append(const DisplayListItem& temporaryItem)
     if (requiredSizeForItem)
         m_writingClient->encodeItemInline(temporaryItem, location);
     else
-        memcpy(location, outOfLineItem->data(), dataLength);
+        outOfLineItem->copyTo(location, dataLength);
 
     didAppendData(additionalCapacityForEncodedItem, bufferChanged);
 }

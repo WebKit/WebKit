@@ -1102,8 +1102,11 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
 
     if (!isStopping() && m_substituteData.isValid() && isLoadingMainResource()) {
         auto content = m_substituteData.content();
-        if (content && content->size())
-            dataReceived(content->data(), content->size());
+        if (content && content->size()) {
+            content->forEachSegment([&](auto& segment) {
+                dataReceived(segment.data(), segment.size());
+            });
+        }
         if (isLoadingMainResource())
             finishedLoading();
 

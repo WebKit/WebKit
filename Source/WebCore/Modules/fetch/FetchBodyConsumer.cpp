@@ -41,9 +41,9 @@
 
 namespace WebCore {
 
-static inline Ref<Blob> blobFromData(ScriptExecutionContext* context, const unsigned char* data, unsigned length, const String& contentType)
+static inline Ref<Blob> blobFromData(ScriptExecutionContext* context, Vector<uint8_t>&& data, const String& contentType)
 {
-    return Blob::create(context, Vector { data, length }, Blob::normalizedContentType(contentType));
+    return Blob::create(context, WTFMove(data), Blob::normalizedContentType(contentType));
 }
 
 // https://mimesniff.spec.whatwg.org/#http-quoted-string-token-code-point
@@ -166,7 +166,7 @@ static RefPtr<DOMFormData> packageFormData(ScriptExecutionContext* context, cons
                 contentType = stripLeadingAndTrailingHTTPSpaces(header.substring(contentTypeBegin + contentTypePrefixLength, contentTypeEnd - contentTypeBegin - contentTypePrefixLength));
             }
 
-            form.append(name, File::create(context, Blob::create(context, SharedBuffer::create(bodyBegin, bodyLength).get(), Blob::normalizedContentType(contentType)).get(), filename).get(), filename);
+            form.append(name, File::create(context, Blob::create(context, Vector { bodyBegin, bodyLength }, Blob::normalizedContentType(contentType)).get(), filename).get(), filename);
         }
         return true;
     };
@@ -220,7 +220,7 @@ static void resolveWithTypeAndData(Ref<DeferredPromise>&& promise, FetchBodyCons
         return;
     case FetchBodyConsumer::Type::Blob:
         promise->resolveCallbackValueWithNewlyCreated<IDLInterface<Blob>>([&data, &length, &contentType, context](auto&) {
-            return blobFromData(context, data, length, contentType);
+            return blobFromData(context, { data, length }, contentType);
         });
         return;
     case FetchBodyConsumer::Type::JSON:
@@ -352,8 +352,8 @@ Ref<Blob> FetchBodyConsumer::takeAsBlob(ScriptExecutionContext* context)
     if (!m_buffer)
         return Blob::create(context, Vector<uint8_t>(), Blob::normalizedContentType(m_contentType));
 
-    // FIXME: We should try to move m_buffer to Blob without doing extra copy.
-    return blobFromData(context, m_buffer->data(), m_buffer->size(), m_contentType);
+    auto data = std::exchange(m_buffer, nullptr)->takeData();
+    return blobFromData(context, WTFMove(data), m_contentType);
 }
 
 String FetchBodyConsumer::takeAsText()

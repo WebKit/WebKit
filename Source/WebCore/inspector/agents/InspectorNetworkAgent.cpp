@@ -547,7 +547,9 @@ void InspectorNetworkAgent::didReceiveResponse(unsigned long identifier, Documen
                 m_resourcesData->setResourceContent(requestId, previousResourceData->content(), previousResourceData->base64Encoded());
             else if (previousResourceData->hasBufferedData()) {
                 auto previousBuffer = previousResourceData->buffer();
-                m_resourcesData->maybeAddResourceData(requestId, previousBuffer->data(), previousBuffer->size());
+                previousBuffer->forEachSegment([&](auto& segment) {
+                    m_resourcesData->maybeAddResourceData(requestId, segment.data(), segment.size());
+                });
             }
             
             resourceResponse->setString(Protocol::Network::Response::mimeTypeKey, previousResourceData->mimeType());

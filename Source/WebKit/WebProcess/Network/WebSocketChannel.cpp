@@ -58,9 +58,9 @@ NetworkSendQueue WebSocketChannel::createMessageQueue(Document& document, WebSoc
     return { document, [&channel](auto& utf8String) {
         channel.notifySendFrame(WebSocketFrame::OpCode::OpCodeText, utf8String.dataAsUInt8Ptr(), utf8String.length());
         channel.sendMessage(Messages::NetworkSocketChannel::SendString { IPC::DataReference { utf8String.dataAsUInt8Ptr(), utf8String.length() } }, utf8String.length());
-    }, [&channel](const uint8_t* data, size_t byteLength) {
-        channel.notifySendFrame(WebSocketFrame::OpCode::OpCodeBinary, data, byteLength);
-        channel.sendMessage(Messages::NetworkSocketChannel::SendData { IPC::DataReference { data, byteLength } }, byteLength);
+    }, [&channel](auto& span) {
+        channel.notifySendFrame(WebSocketFrame::OpCode::OpCodeBinary, span.data(), span.size());
+        channel.sendMessage(Messages::NetworkSocketChannel::SendData { IPC::DataReference { span.data(), span.size() } }, span.size());
     }, [&channel](ExceptionCode exceptionCode) {
         auto code = static_cast<int>(exceptionCode);
         channel.fail(makeString("Failed to load Blob: exception code = ", code));
