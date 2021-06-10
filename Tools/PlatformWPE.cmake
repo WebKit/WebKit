@@ -31,7 +31,7 @@ if (DEVELOPER_MODE AND ENABLE_COG)
         GIT_REPOSITORY "${WPE_COG_REPO}"
         GIT_TAG "${WPE_COG_TAG}"
         SOURCE_DIR "${CMAKE_SOURCE_DIR}/Tools/wpe/cog"
-        CMAKE_ARGS "-DCOG_PLATFORM_GTK4=ON"
+        CMAKE_ARGS "-DCOG_PLATFORM_GTK4=ON" "-DCOG_PLATFORM_HEADLESS=ON" "-DCOG_PLATFORM_X11=ON" "-DUSE_SOUP2=${USE_SOUP2}"
         INSTALL_COMMAND "")
     ExternalProject_Add_StepDependencies(cog build WebKit)
 endif ()

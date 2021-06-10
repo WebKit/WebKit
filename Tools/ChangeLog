@@ -1,3 +1,13 @@
+2021-06-10  Philippe Normand  <pnormand@igalia.com>
+
+        [WPE] Enable Cog for developer builds
+        https://bugs.webkit.org/show_bug.cgi?id=224360
+
+        Reviewed by Adrian Perez de Castro.
+
+        * PlatformWPE.cmake: Enable X11 support in Cog. Re-enable headless support in Cog. Map
+        libsoup configuration in Cog with the one used by the WebKit build.
+
 2021-06-10  Truitt Savell  <tsavell@apple.com>
 
         Remove Ews179 and bot279 from configs
