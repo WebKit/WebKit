@@ -545,8 +545,8 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
             style = UNUM_CURRENCY;
             break;
         case CurrencyDisplay::NarrowSymbol:
-            throwTypeError(globalObject, scope, "Failed to initialize NumberFormat since used feature is not supported in the linked ICU version"_s);
-            return;
+            style = UNUM_CURRENCY; // Use the same option to "symbol" since linked-ICU does not support it.
+            break;
         case CurrencyDisplay::Name:
             style = UNUM_CURRENCY_PLURAL;
             break;
@@ -555,13 +555,13 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
         case CurrencySign::Standard:
             break;
         case CurrencySign::Accounting:
-            throwTypeError(globalObject, scope, "Failed to initialize NumberFormat since used feature is not supported in the linked ICU version"_s);
-            return;
+            // Ignore this case since linked ICU does not support it.
+            break;
         }
         break;
     case Style::Unit:
-        throwTypeError(globalObject, scope, "Failed to initialize NumberFormat since used feature is not supported in the linked ICU version"_s);
-        return;
+        // Ignore this case since linked ICU does not support it.
+        break;
     }
 
     switch (m_notation) {
@@ -570,8 +570,8 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     case IntlNotation::Scientific:
     case IntlNotation::Engineering:
     case IntlNotation::Compact:
-        throwTypeError(globalObject, scope, "Failed to initialize NumberFormat since used feature is not supported in the linked ICU version"_s);
-        return;
+        // Ignore this case since linked ICU does not support it.
+        break;
     }
 
     switch (m_signDisplay) {
@@ -580,8 +580,8 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
     case SignDisplay::Never:
     case SignDisplay::Always:
     case SignDisplay::ExceptZero:
-        throwTypeError(globalObject, scope, "Failed to initialize NumberFormat since used feature is not supported in the linked ICU version"_s);
-        return;
+        // Ignore this case since linked ICU does not support it.
+        break;
     }
 
     UErrorCode status = U_ZERO_ERROR;
@@ -611,8 +611,8 @@ void IntlNumberFormat::initializeNumberFormat(JSGlobalObject* globalObject, JSVa
         unum_setAttribute(m_numberFormat.get(), UNUM_MAX_SIGNIFICANT_DIGITS, m_maximumSignificantDigits);
         break;
     case IntlRoundingType::CompactRounding:
-        throwTypeError(globalObject, scope, "Failed to initialize NumberFormat since used feature is not supported in the linked ICU version"_s);
-        return;
+        // Ignore this case since linked ICU does not support it.
+        break;
     }
     unum_setAttribute(m_numberFormat.get(), UNUM_GROUPING_USED, m_useGrouping);
     unum_setAttribute(m_numberFormat.get(), UNUM_ROUNDING_MODE, UNUM_ROUND_HALFUP);
