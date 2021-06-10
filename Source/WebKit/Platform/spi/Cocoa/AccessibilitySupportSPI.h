@@ -33,6 +33,8 @@
 
 WTF_EXTERN_C_BEGIN
 
+extern void _AXSSetReduceMotionEnabled(Boolean enabled);
+extern void _AXSSetDarkenSystemColors(Boolean enabled);
 extern Boolean _AXSKeyRepeatEnabled();
 extern Boolean _AXSApplicationAccessibilityEnabled();
 extern CFStringRef kAXSApplicationAccessibilityEnabledNotification;

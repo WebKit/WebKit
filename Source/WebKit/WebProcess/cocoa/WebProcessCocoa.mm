@@ -86,6 +86,7 @@
 #import <pal/spi/cf/CFUtilitiesSPI.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
+#import <pal/spi/cocoa/AccessibilitySupportSPI.h>
 #import <pal/spi/cocoa/CoreServicesSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
@@ -173,7 +174,7 @@ SOFT_LINK_FRAMEWORK_IN_UMBRELLA(ApplicationServices, HIServices)
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, HIServices, _AXSetAuditTokenIsAuthenticatedCallback, void, (AXAuditTokenIsAuthenticatedCallback callback), (callback))
 #endif
 
-#if ENABLE(CFPREFS_DIRECT_MODE)
+#if HAVE(UPDATE_WEB_ACCESSIBILITY_SETTINGS) && ENABLE(CFPREFS_DIRECT_MODE)
 SOFT_LINK_LIBRARY(libAccessibility)
 SOFT_LINK_OPTIONAL(libAccessibility, _AXSUpdateWebAccessibilitySettings, void, (), ());
 #endif
@@ -1078,6 +1079,14 @@ static const WTF::String& invertColorsPreferenceKey()
 }
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+static const WTF::String& increaseContrastPreferenceKey()
+{
+    static NeverDestroyed<WTF::String> key(MAKE_STATIC_STRING_IMPL("DarkenSystemColors"));
+    return key;
+}
+#endif
+
 static const WTF::String& captionProfilePreferenceKey()
 {
     static NeverDestroyed<WTF::String> key(MAKE_STATIC_STRING_IMPL("MACaptionActiveProfile"));
@@ -1130,8 +1139,17 @@ static void setPreferenceValue(const String& domain, const String& key, id value
     }
 
     if (domain == String(kAXSAccessibilityPreferenceDomain)) {
+#if HAVE(UPDATE_WEB_ACCESSIBILITY_SETTINGS) && ENABLE(CFPREFS_DIRECT_MODE)
         if (_AXSUpdateWebAccessibilitySettingsPtr())
             _AXSUpdateWebAccessibilitySettingsPtr()();
+#elif PLATFORM(IOS_FAMILY)
+        // If the update method is not available, to update the cache inside AccessibilitySupport,
+        // these methods need to be called directly.
+        if (CFEqual(key.createCFString().get(), kAXSReduceMotionPreference) && [value isKindOfClass:[NSNumber class]])
+            _AXSSetReduceMotionEnabled([(NSNumber *)value boolValue]);
+        else if (CFEqual(key.createCFString().get(), increaseContrastPreferenceKey()) && [value isKindOfClass:[NSNumber class]])
+            _AXSSetDarkenSystemColors([(NSNumber *)value boolValue]);
+#endif
     }
     
 #if USE(APPKIT)

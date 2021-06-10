@@ -143,6 +143,7 @@
 		290A9BB91735F63800D71BBC /* OpenNewWindow.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 290A9BB81735F42300D71BBC /* OpenNewWindow.html */; };
 		290F4275172A221C00939FF0 /* custom-protocol-sync-xhr.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 290F4274172A1FDE00939FF0 /* custom-protocol-sync-xhr.html */; };
 		297234B7173AFAC700983601 /* CustomProtocolsInvalidScheme_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 297234B5173AFAC700983601 /* CustomProtocolsInvalidScheme_Bundle.cpp */; };
+		29E06E5E266F3C0600F1A707 /* AccessibilityIncreaseContrast.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29E06E5D266F3C0600F1A707 /* AccessibilityIncreaseContrast.mm */; };
 		2D00065F1C1F589A0088E6A7 /* WKPDFView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D00065D1C1F58940088E6A7 /* WKPDFView.mm */; };
 		2D01D06E23218FEE0039AA3A /* WKWebViewPrintFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D01D06D23218FEE0039AA3A /* WKWebViewPrintFormatter.mm */; };
 		2D08E9372267D0F4002518DA /* ReparentWebViewTimeout.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D08E9362267D0F3002518DA /* ReparentWebViewTimeout.mm */; };
@@ -1921,6 +1922,7 @@
 		29AB8A9F164C735800D49BEC /* CustomProtocolsTest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CustomProtocolsTest.mm; path = WebKitObjC/CustomProtocolsTest.mm; sourceTree = "<group>"; };
 		29AB8AA2164C7A9300D49BEC /* TestBrowsingContextLoadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestBrowsingContextLoadDelegate.mm; sourceTree = "<group>"; };
 		29AB8AA3164C7A9300D49BEC /* TestBrowsingContextLoadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestBrowsingContextLoadDelegate.h; sourceTree = "<group>"; };
+		29E06E5D266F3C0600F1A707 /* AccessibilityIncreaseContrast.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityIncreaseContrast.mm; sourceTree = "<group>"; };
 		2D00065D1C1F58940088E6A7 /* WKPDFView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPDFView.mm; sourceTree = "<group>"; };
 		2D01D06D23218FEE0039AA3A /* WKWebViewPrintFormatter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewPrintFormatter.mm; sourceTree = "<group>"; };
 		2D08E9362267D0F3002518DA /* ReparentWebViewTimeout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ReparentWebViewTimeout.mm; sourceTree = "<group>"; };
@@ -3307,6 +3309,7 @@
 		0F139E741A423A4600F590F5 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				29E06E5D266F3C0600F1A707 /* AccessibilityIncreaseContrast.mm */,
 				C1F4840624EDDB400053ECB8 /* AccessibilityReduceMotion.mm */,
 				E3F8AB91241AB9CE003E2A7E /* AccessibilityRemoteUIApp.mm */,
 				C1F7B7382449083F00124557 /* AGXCompilerService.mm */,
@@ -5723,6 +5726,7 @@
 				5CCB10E4213457E000AC5AF0 /* ShouldGoToBackForwardListItem.mm in Sources */,
 				7CCE7F141A411AE600447C4C /* ShouldKeepCurrentBackForwardListItemInList.cpp in Sources */,
 				37BCA61C1B596BA9002012CA /* ShouldOpenExternalURLsInNewWindowActions.mm in Sources */,
+				29E06E5E266F3C0600F1A707 /* AccessibilityIncreaseContrast.mm in Sources */,
 				7C83E0C51D0A654600FEBCF3 /* ShrinkToFit.mm in Sources */,
 				7CCE7ECD1A411A7E00447C4C /* SimplifyMarkup.mm in Sources */,
 				C149D550242E98DF003EBB12 /* SleepDisabler.mm in Sources */,
