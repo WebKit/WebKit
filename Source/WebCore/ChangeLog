@@ -1,3 +1,43 @@
+2021-06-10  Andres Gonzalez  <andresg_22@apple.com>
+
+        iOS - VoiceOver reads the programmatically associated label instead of the accessible name provided via the aria-label or aria-labelledby attribute
+        https://bugs.webkit.org/show_bug.cgi?id=226534
+        rdar://65935211
+
+        Reviewed by Chris Fleizach.
+
+        The problem is due to VoiceOver retrieving the titleUIElement for the
+        given object, and using the label of that title element as the label of
+        the object in question. The solution in this patch is to only return a
+        title element if the object can have title elements (if exposesTitleUIElement
+        is true). This check was missing in AccessibilityRenderObject::titleUIElement.
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::exposesTitleUIElement const):
+        This method is no longer necessary in the AXCoreObject interface,
+        instead is a virtual in the AXObject class hierarchy.
+
+        * accessibility/AccessibilityObjectInterface.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::titleUIElement const):
+        Checks whether this object can have a title element.
+
+        (WebCore::AccessibilityRenderObject::computeAccessibilityIsIgnored const):
+        (WebCore::AccessibilityRenderObject::accessibilityHitTest const):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/atk/WebKitAccessibleUtil.cpp:
+        (accessibilityTitle):
+        * accessibility/isolatedtree/AXIsolatedObject.cpp:
+        (WebCore::AXIsolatedObject::initializeAttributeData):
+        No need to cache this value any more.
+
+        * accessibility/isolatedtree/AXIsolatedObject.h:
+        * accessibility/isolatedtree/AXIsolatedTree.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        * accessibility/win/AccessibilityObjectWrapperWin.cpp:
+        (WebCore::AccessibilityObjectWrapper::accessibilityAttributeValue):
+
 2021-06-10  Ben Nham  <nham@apple.com>
 
         Only cache GET requests in the memory cache

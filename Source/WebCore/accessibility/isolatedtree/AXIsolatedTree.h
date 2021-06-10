@@ -111,7 +111,6 @@ enum class AXPropertyName : uint16_t {
     EmbeddedImageDescription,
     EstimatedLoadingProgress,
     ExpandedTextValue,
-    ExposesTitleUIElement,
     FileUploadButtonReturnsValueInTitle,
     FocusableAncestor,
     HasARIAValueNow,
