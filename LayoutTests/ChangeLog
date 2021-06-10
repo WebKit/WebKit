@@ -1,3 +1,24 @@
+2021-06-10  Cameron McCormack  <heycam@apple.com>
+
+        Move some Mac MathML test expectation files around
+        https://bugs.webkit.org/show_bug.cgi?id=226868
+        <rdar://78786837>
+
+        Reviewed by Frédéric Wang.
+
+        This should give better forward compatibility for Mac platforms, by
+        making the mac/ directory the default correct one, and the
+        mac-catalina/ and mac-mojave/ ones be exceptions.
+
+        * platform/mac-bigsur/imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001-expected.txt: Removed.
+        * platform/mac-bigsur/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002-expected.txt: Removed.
+        * platform/mac-catalina/imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001-expected.txt: Copied from LayoutTests/platform/mac/imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001-expected.txt.
+        * platform/mac-catalina/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002-expected.txt: Copied from LayoutTests/platform/mac/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002-expected.txt.
+        * platform/mac-mojave/imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001-expected.txt: Copied from LayoutTests/platform/mac/imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001-expected.txt.
+        * platform/mac-mojave/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002-expected.txt: Copied from LayoutTests/platform/mac/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002-expected.txt.
+        * platform/mac/imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001-expected.txt:
+        * platform/mac/imported/w3c/web-platform-tests/mathml/relations/css-styling/padding-border-margin/padding-002-expected.txt:
+
 2021-06-10  Toshio Ogasawara  <toshio.ogasawara@access-company.com>
 
         [MSE] When currentTime is a large value, it takes time to process SourceBufferPrivate::evictCodedFrames().
