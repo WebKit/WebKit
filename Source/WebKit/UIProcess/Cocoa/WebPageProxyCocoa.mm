@@ -39,6 +39,7 @@
 #import "SafeBrowsingWarning.h"
 #import "SharedBufferCopy.h"
 #import "SharedBufferDataReference.h"
+#import "SynapseSPI.h"
 #import "WebContextMenuProxy.h"
 #import "WebPage.h"
 #import "WebPageMessages.h"
@@ -67,11 +68,9 @@
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)
-#import <Synapse/SYNotesActivationObserver.h>
-
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(Synapse)
 SOFT_LINK_CLASS_OPTIONAL(Synapse, SYNotesActivationObserver)
-#endif // ENABLE(APP_HIGHLIGHTS)
+#endif
 
 #if USE(APPKIT)
 #import <AppKit/NSImage.h>

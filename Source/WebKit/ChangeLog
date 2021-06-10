@@ -1,3 +1,14 @@
+2021-06-09  Megan Gardner  <megan_gardner@apple.com>
+
+        Create SPI file for Synapse so external builds will work.
+        https://bugs.webkit.org/show_bug.cgi?id=226844
+
+        Reviewed by Tim Horton.
+
+        * Platform/spi/Cocoa/SynapseSPI.h: Added.
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2021-06-09  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] Duplicate WebKitWebView::show-option-menu confuses introspection, should use --warn-error when building gir
