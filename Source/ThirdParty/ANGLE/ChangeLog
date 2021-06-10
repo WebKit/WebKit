@@ -1,3 +1,21 @@
+2021-06-10  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Make ANGLE library types configurable
+        https://bugs.webkit.org/show_bug.cgi?id=226840
+
+        Reviewed by Kenneth Russell.
+
+        The type for ANGLE's libraries was being hard coded. Now the libraries can be set by
+        specifying the _LIBRARY_TYPE which defaults to STATIC. Windows platforms override this
+        and use SHARED libraries.
+
+        Additionally make compiling ANGLE's EGL library contingent on USE_ANGLE_EGL being enabled
+        since its not used otherwise.
+
+        * CMakeLists.txt:
+        * PlatformFTW.cmake:
+        * PlatformWin.cmake:
+
 2021-06-02  Kyle Piddington  <kpiddington@apple.com>
 
         Add 'mix' override with bool-vectors to MSL translator

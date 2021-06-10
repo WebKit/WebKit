@@ -34,6 +34,12 @@ set(gl_prototypes
     EGL_EGLEXT_PROTOTYPES
 )
 
+# Default library types for ANGLE
+# Override these in Platform*.cmake for your port as needed.
+set(ANGLE_LIBRARY_TYPE STATIC)
+set(GLESv2_LIBRARY_TYPE STATIC)
+set(EGL_LIBRARY_TYPE STATIC)
+
 # ANGLE makes a number of small static libraries that are then joined into a
 # bigger library that is built shared. Rather than making the small libraries
 # there will be a ANGLE whose sources are dependent on whether the library
@@ -118,7 +124,7 @@ add_library(ANGLEFramework INTERFACE)
 add_dependencies(ANGLEFramework GLSLANGHeaders ANGLEHeaders)
 
 if (USE_ANGLE_EGL OR USE_ANGLE_WEBGL)
-    add_library(ANGLE STATIC
+    add_library(ANGLE ${ANGLE_LIBRARY_TYPE}
         ${ANGLE_SOURCES}
         ${libangle_sources}
         ${libangle_headers}
@@ -137,7 +143,7 @@ if (USE_ANGLE_EGL OR USE_ANGLE_WEBGL)
 
     target_compile_definitions(ANGLEFramework INTERFACE ${gl_prototypes})
 
-    add_library(GLESv2 SHARED
+    add_library(GLESv2 ${GLESv2_LIBRARY_TYPE}
         ${libglesv2_sources}
     )
     target_include_directories(GLESv2 PRIVATE ${ANGLE_PRIVATE_INCLUDE_DIRECTORIES})
@@ -146,40 +152,44 @@ if (USE_ANGLE_EGL OR USE_ANGLE_WEBGL)
         LIBGLESV2_IMPLEMENTATION
     )
     target_link_libraries(GLESv2 PRIVATE ${ANGLEGLESv2_LIBRARIES})
+    if (WIN32)
+        # Output library name according to the .def
+        target_sources(GLESv2 PRIVATE src/libGLESv2/libGLESv2_autogen.def)
+        set_target_properties(GLESv2 PROPERTIES OUTPUT_NAME libGLESv2)
+    endif ()
 
     add_library(GLESv2Framework INTERFACE)
     target_link_libraries(GLESv2Framework INTERFACE GLESv2)
     target_include_directories(GLESv2Framework INTERFACE ${ANGLE_FRAMEWORK_HEADERS_DIR})
+    target_compile_definitions(GLESv2Framework INTERFACE USE_SYSTEM_EGL)
     add_library(ANGLE::GLES ALIAS GLESv2Framework)
 
-    add_library(EGL SHARED
-        ${libegl_sources}
-    )
-    target_include_directories(EGL PRIVATE ${ANGLE_PRIVATE_INCLUDE_DIRECTORIES})
-    target_compile_definitions(EGL PRIVATE
-        ${ANGLE_DEFINITIONS}
-        ${gl_prototypes}
-        EGLAPI=
-    )
-    target_link_libraries(EGL PRIVATE GLESv2)
-    set_target_properties(EGL PROPERTIES LINKER_LANGUAGE CXX)
+    if (USE_ANGLE_EGL)
+        add_library(EGL ${EGL_LIBRARY_TYPE}
+            ${libegl_sources}
+        )
+        target_include_directories(EGL PRIVATE ${ANGLE_PRIVATE_INCLUDE_DIRECTORIES})
+        target_compile_definitions(EGL PRIVATE
+            ${ANGLE_DEFINITIONS}
+            ${gl_prototypes}
+            EGLAPI=
+        )
+        target_link_libraries(EGL PRIVATE GLESv2)
+        set_target_properties(EGL PROPERTIES LINKER_LANGUAGE CXX)
+        if (WIN32)
+            # Output library names according to the .def
+            target_sources(EGL PRIVATE src/libEGL/libEGL.def)
+            set_target_properties(EGL PROPERTIES OUTPUT_NAME libEGL)
+        endif ()
 
-    add_library(EGLFramework INTERFACE)
-    target_include_directories(EGLFramework INTERFACE ${ANGLE_FRAMEWORK_HEADERS_DIR}/)
-    target_compile_definitions(EGLFramework INTERFACE ${gl_prototypes})
-    target_link_libraries(EGLFramework INTERFACE EGL)
-    add_library(ANGLE::EGL ALIAS EGLFramework)
-
-    if (WIN32)
-        target_sources(GLESv2 PRIVATE src/libGLESv2/libGLESv2_autogen.def)
-        target_sources(EGL PRIVATE src/libEGL/libEGL.def)
-
-        # Output library names according to the .def
-        set_target_properties(GLESv2 PROPERTIES OUTPUT_NAME libGLESv2)
-        set_target_properties(EGL PROPERTIES OUTPUT_NAME libEGL)
+        add_library(EGLFramework INTERFACE)
+        target_include_directories(EGLFramework INTERFACE ${ANGLE_FRAMEWORK_HEADERS_DIR}/)
+        target_compile_definitions(EGLFramework INTERFACE ${gl_prototypes})
+        target_link_libraries(EGLFramework INTERFACE EGL)
+        add_library(ANGLE::EGL ALIAS EGLFramework)
     endif ()
 else ()
-    add_library(ANGLE STATIC ${ANGLE_SOURCES})
+    add_library(ANGLE ${ANGLE_LIBRARY_TYPE} ${ANGLE_SOURCES})
     target_include_directories(ANGLE PRIVATE ${ANGLE_PRIVATE_INCLUDE_DIRECTORIES})
     target_link_libraries(ANGLE PRIVATE ${CMAKE_DL_LIBS})
     target_compile_definitions(ANGLE PRIVATE
