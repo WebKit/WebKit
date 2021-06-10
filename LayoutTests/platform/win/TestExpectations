@@ -4341,6 +4341,7 @@ webkit.org/b/202949 http/tests/websocket/tests/hybi/non-document-mixed-content-b
 webkit.org/b/202949 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https.html [ Failure ]
 
 webkit.org/b/202954 http/wpt/resource-timing/rt-resources-per-worker.html [ Failure ]
+http/wpt/resource-timing/rt-revalidate-requests-2.html [ Failure ]
 
 webkit.org/b/202951 fast/canvas/drawImage-animated-gif-draws-first-frame-and-no-reset-image.html [ Timeout ]
 

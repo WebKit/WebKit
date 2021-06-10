@@ -65,7 +65,7 @@ class ResourceHandleInternal {
     WTF_MAKE_NONCOPYABLE(ResourceHandleInternal);
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ResourceHandleInternal);
 public:
-    ResourceHandleInternal(ResourceHandle* loader, NetworkingContext* context, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff, bool shouldContentEncodingSniff)
+    ResourceHandleInternal(ResourceHandle* loader, NetworkingContext* context, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff, bool shouldContentEncodingSniff, RefPtr<SecurityOrigin>&& sourceOrigin, bool isMainFrameNavigation)
         : m_context(context)
         , m_client(client)
         , m_firstRequest(request)
@@ -78,6 +78,8 @@ public:
         , m_currentRequest(request)
 #endif
         , m_failureTimer(*loader, &ResourceHandle::failureTimerFired)
+        , m_sourceOrigin(WTFMove(sourceOrigin))
+        , m_isMainFrameNavigation(isMainFrameNavigation)
     {
         const URL& url = m_firstRequest.url();
         m_user = url.user();
@@ -133,7 +135,9 @@ public:
     Box<NetworkLoadMetrics> m_networkLoadMetrics;
     MonotonicTime m_startTime;
     uint16_t m_redirectCount { 0 };
+    bool m_failsTAOCheck { false };
     bool m_hasCrossOriginRedirect { false };
+    bool m_isCrossOrigin { false };
 
 #if PLATFORM(COCOA)
     // We need to keep a reference to the original challenge to be able to cancel it.
@@ -144,6 +148,8 @@ public:
     AuthenticationChallenge m_currentWebChallenge;
     ResourceHandle::FailureType m_scheduledFailureType { ResourceHandle::NoFailure };
     Timer m_failureTimer;
+    RefPtr<SecurityOrigin> m_sourceOrigin;
+    bool m_isMainFrameNavigation { false };
 };
 
 } // namespace WebCore

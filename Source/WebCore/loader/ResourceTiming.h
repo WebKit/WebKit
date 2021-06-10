@@ -49,7 +49,6 @@ public:
     const String& initiator() const { return m_initiator; }
     const ResourceLoadTiming& resourceLoadTiming() const { return m_resourceLoadTiming; }
     const NetworkLoadMetrics& networkLoadMetrics() const { return m_networkLoadMetrics; }
-    bool allowTimingDetails() const { return m_allowTimingDetails; }
     Vector<Ref<PerformanceServerTiming>> populateServerTiming() const;
     ResourceTiming isolatedCopy() const;
 
@@ -58,12 +57,11 @@ public:
 private:
     ResourceTiming(const URL&, const String& initiator, const ResourceLoadTiming&, const NetworkLoadMetrics&, const ResourceResponse&, const SecurityOrigin&);
     ResourceTiming(const URL&, const String& initiator, const ResourceLoadTiming&, const ResourceResponse&, const SecurityOrigin&);
-    ResourceTiming(URL&& url, String&& initiator, const ResourceLoadTiming& resourceLoadTiming, NetworkLoadMetrics&& networkLoadMetrics, bool allowTimingDetails, Vector<ServerTiming>&& serverTiming)
+    ResourceTiming(URL&& url, String&& initiator, const ResourceLoadTiming& resourceLoadTiming, NetworkLoadMetrics&& networkLoadMetrics, Vector<ServerTiming>&& serverTiming)
         : m_url(WTFMove(url))
         , m_initiator(WTFMove(initiator))
         , m_resourceLoadTiming(resourceLoadTiming)
         , m_networkLoadMetrics(WTFMove(networkLoadMetrics))
-        , m_allowTimingDetails(allowTimingDetails)
         , m_serverTiming(WTFMove(serverTiming))
     {
     }
@@ -73,7 +71,6 @@ private:
     String m_initiator;
     ResourceLoadTiming m_resourceLoadTiming;
     NetworkLoadMetrics m_networkLoadMetrics;
-    bool m_allowTimingDetails { false };
     Vector<ServerTiming> m_serverTiming;
 };
 

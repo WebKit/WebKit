@@ -31,7 +31,9 @@
 #include "NetworkingContext.h"
 #include "NotImplemented.h"
 #include "ResourceHandleClient.h"
+#include "SecurityOrigin.h"
 #include "Timer.h"
+#include "TimingAllowOrigin.h"
 #include <algorithm>
 #include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
@@ -75,8 +77,8 @@ void ResourceHandle::registerBuiltinSynchronousLoader(const AtomString& protocol
     builtinResourceHandleSynchronousLoaderMap().add(protocol, loader);
 }
 
-ResourceHandle::ResourceHandle(NetworkingContext* context, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff, bool shouldContentEncodingSniff)
-    : d(makeUnique<ResourceHandleInternal>(this, context, request, client, defersLoading, shouldContentSniff && shouldContentSniffURL(request.url()), shouldContentEncodingSniff))
+ResourceHandle::ResourceHandle(NetworkingContext* context, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff, bool shouldContentEncodingSniff, RefPtr<SecurityOrigin>&& sourceOrigin, bool isMainFrameNavigation)
+    : d(makeUnique<ResourceHandleInternal>(this, context, request, client, defersLoading, shouldContentSniff && shouldContentSniffURL(request.url()), shouldContentEncodingSniff, WTFMove(sourceOrigin), isMainFrameNavigation))
 {
     if (!request.url().isValid()) {
         scheduleFailure(InvalidURLFailure);
@@ -89,12 +91,12 @@ ResourceHandle::ResourceHandle(NetworkingContext* context, const ResourceRequest
     }
 }
 
-RefPtr<ResourceHandle> ResourceHandle::create(NetworkingContext* context, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff, bool shouldContentEncodingSniff)
+RefPtr<ResourceHandle> ResourceHandle::create(NetworkingContext* context, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff, bool shouldContentEncodingSniff, RefPtr<SecurityOrigin>&& sourceOrigin, bool isMainFrameNavigation)
 {
     if (auto constructor = builtinResourceHandleConstructorMap().get(request.url().protocol().toStringWithoutCopying()))
         return constructor(request, client);
 
-    auto newHandle = adoptRef(*new ResourceHandle(context, request, client, defersLoading, shouldContentSniff, shouldContentEncodingSniff));
+    auto newHandle = adoptRef(*new ResourceHandle(context, request, client, defersLoading, shouldContentSniff, shouldContentEncodingSniff, WTFMove(sourceOrigin), isMainFrameNavigation));
 
     if (newHandle->d->m_scheduledFailureType != NoFailure)
         return newHandle;
@@ -133,14 +135,14 @@ void ResourceHandle::failureTimerFired()
     ASSERT_NOT_REACHED();
 }
 
-void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentialsPolicy storedCredentialsPolicy, ResourceError& error, ResourceResponse& response, Vector<uint8_t>& data)
+void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentialsPolicy storedCredentialsPolicy, SecurityOrigin* sourceOrigin, ResourceError& error, ResourceResponse& response, Vector<uint8_t>& data)
 {
     if (auto constructor = builtinResourceHandleSynchronousLoaderMap().get(request.url().protocol().toStringWithoutCopying())) {
         constructor(context, request, storedCredentialsPolicy, error, response, data);
         return;
     }
 
-    platformLoadResourceSynchronously(context, request, storedCredentialsPolicy, error, response, data);
+    platformLoadResourceSynchronously(context, request, storedCredentialsPolicy, sourceOrigin, error, response, data);
 }
 
 ResourceHandleClient* ResourceHandle::client() const
@@ -204,14 +206,34 @@ void ResourceHandle::clearAuthentication()
     d->m_currentWebChallenge.nullify();
 }
 
+bool ResourceHandle::failsTAOCheck() const
+{
+    return d->m_failsTAOCheck;
+}
+
+void ResourceHandle::checkTAO(const ResourceResponse& response)
+{
+    if (d->m_failsTAOCheck)
+        return;
+
+    RefPtr<SecurityOrigin> origin;
+    if (d->m_isMainFrameNavigation)
+        origin = SecurityOrigin::create(firstRequest().url());
+    else
+        origin = d->m_sourceOrigin;
+
+    if (origin)
+        d->m_failsTAOCheck = !passesTimingAllowOriginCheck(response, *origin);
+}
+
 bool ResourceHandle::hasCrossOriginRedirect() const
 {
     return d->m_hasCrossOriginRedirect;
 }
 
-void ResourceHandle::setHasCrossOriginRedirect(bool value)
+void ResourceHandle::markAsHavingCrossOriginRedirect()
 {
-    d->m_hasCrossOriginRedirect = value;
+    d->m_hasCrossOriginRedirect = true;
 }
 
 void ResourceHandle::incrementRedirectCount()

@@ -1,0 +1,8 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS encodedBodySize should be equal to the actual byte size of the content
+PASS encodedBodySize should be equal to the actual byte size of the content when no header present
+PASS encodedBodySize should be equal to the actual byte size of the content when header value is lower than actual content
+TIMEOUT encodedBodySize should be equal to the actual byte size of the content when header value is higher than actual content Test timed out
+

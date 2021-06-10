@@ -1,5 +1,112 @@
 2021-06-10  Alex Christensen  <achristensen@webkit.org>
 
+        Move Timing-Allow-Origin checks to the network process
+        https://bugs.webkit.org/show_bug.cgi?id=226678
+        <rdar://problem/45227788>
+
+        Reviewed by Chris Dumez.
+
+        We tried hard to do it in the web process by keeping track of whether the last redirect was cross-origin
+        and checking the final response and original security origin.  We got many tests to pass, but to get the rest
+        and be correct, we need to check the Timing-Allow-Origin header field of each redirect against the original security origin.
+
+        Tests: imported/w3c/web-platform-tests/resource-timing/SO-XO-SO-redirect-chain-tao.https.html
+               imported/w3c/web-platform-tests/resource-timing/TAO-match.html
+               imported/w3c/web-platform-tests/resource-timing/TAO-null-opaque-origin.html
+               imported/w3c/web-platform-tests/resource-timing/TAO-port-mismatch-means-crossorigin.html
+               imported/w3c/web-platform-tests/resource-timing/connection-reuse.html
+               imported/w3c/web-platform-tests/resource-timing/connection-reuse.https.html
+               imported/w3c/web-platform-tests/resource-timing/cross-origin-start-end-time-with-redirects.html
+               imported/w3c/web-platform-tests/resource-timing/document-domain-no-impact-opener.html
+               imported/w3c/web-platform-tests/resource-timing/entry-attributes.html
+               imported/w3c/web-platform-tests/resource-timing/fetch-cross-origin-redirect.https.html
+               imported/w3c/web-platform-tests/resource-timing/font-timestamps.html
+               imported/w3c/web-platform-tests/resource-timing/iframe-failed-commit.html
+               imported/w3c/web-platform-tests/resource-timing/initiator-type-for-script.html
+               imported/w3c/web-platform-tests/resource-timing/nextHopProtocol-is-tao-protected.https.html
+               imported/w3c/web-platform-tests/resource-timing/object-not-found-after-TAO-cross-origin-redirect.html
+               imported/w3c/web-platform-tests/resource-timing/object-not-found-after-cross-origin-redirect.html
+               imported/w3c/web-platform-tests/resource-timing/redirects.html
+               imported/w3c/web-platform-tests/resource-timing/resource-ignore-data-url.html
+               imported/w3c/web-platform-tests/resource-timing/resource_cached.html
+               imported/w3c/web-platform-tests/resource-timing/resource_timing_content_length.html
+               imported/w3c/web-platform-tests/resource-timing/same-origin-from-cross-origin-redirect.html
+               imported/w3c/web-platform-tests/resource-timing/sizes-redirect-img.html
+
+        * Headers.cmake:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::start):
+        Get a SecurityOrigin for our WebKitLegacy ResourceHandle use like we do in WebLoaderStrategy::scheduleLoadFromNetworkProcess
+        * loader/ResourceTiming.cpp:
+        (WebCore::ResourceTiming::ResourceTiming):
+        (WebCore::ResourceTiming::initServerTiming):
+        (WebCore::ResourceTiming::isolatedCopy const):
+        (WebCore::passesTimingAllowCheck): Deleted.
+        * loader/ResourceTiming.h:
+        (WebCore::ResourceTiming::networkLoadMetrics const):
+        (WebCore::ResourceTiming::ResourceTiming):
+        (WebCore::ResourceTiming::allowTimingDetails const): Deleted.
+        (): Deleted.
+        * page/PerformanceNavigation.cpp:
+        (WebCore::PerformanceNavigation::redirectCount const):
+        * page/PerformanceNavigationTiming.cpp:
+        (WebCore::PerformanceNavigationTiming::sameOriginCheckFails const):
+        (WebCore::PerformanceNavigationTiming::redirectCount const):
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::entryStartTime):
+        (WebCore::entryEndTime):
+        (WebCore::PerformanceResourceTiming::redirectStart const):
+        (WebCore::PerformanceResourceTiming::redirectEnd const):
+        (WebCore::PerformanceResourceTiming::domainLookupStart const):
+        (WebCore::PerformanceResourceTiming::domainLookupEnd const):
+        (WebCore::PerformanceResourceTiming::connectStart const):
+        (WebCore::PerformanceResourceTiming::connectEnd const):
+        (WebCore::PerformanceResourceTiming::secureConnectionStart const):
+        (WebCore::PerformanceResourceTiming::requestStart const):
+        (WebCore::PerformanceResourceTiming::responseStart const):
+        (WebCore::PerformanceResourceTiming::transferSize const):
+        (WebCore::PerformanceResourceTiming::encodedBodySize const):
+        (WebCore::PerformanceResourceTiming::decodedBodySize const):
+        * page/PerformanceTiming.cpp:
+        (WebCore::PerformanceTiming::unloadEventStart const):
+        (WebCore::PerformanceTiming::unloadEventEnd const):
+        (WebCore::PerformanceTiming::redirectStart const):
+        (WebCore::PerformanceTiming::redirectEnd const):
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::BlobResourceHandle):
+        * platform/network/NetworkLoadMetrics.h:
+        (WebCore::NetworkLoadMetrics::isolatedCopy const):
+        (WebCore::NetworkLoadMetrics::operator== const):
+        (WebCore::NetworkLoadMetrics::encode const):
+        (WebCore::NetworkLoadMetrics::decode):
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::ResourceHandle):
+        (WebCore::ResourceHandle::create):
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+        (WebCore::ResourceHandle::isCrossOriginWithoutTAO const):
+        (WebCore::ResourceHandle::markAsCrossOriginWithoutTAO):
+        (WebCore::ResourceHandle::sourceOrigin const):
+        (WebCore::ResourceHandle::hasCrossOriginRedirect const): Deleted.
+        (WebCore::ResourceHandle::setHasCrossOriginRedirect): Deleted.
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/TimingAllowOrigin.cpp: Added.
+        (WebCore::passesTimingAllowOriginCheck):
+        * platform/network/TimingAllowOrigin.h: Added.
+        * platform/network/cocoa/NetworkLoadMetrics.mm:
+        (WebCore::packageTimingData):
+        (WebCore::copyTimingData):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:willSendRequest:redirectResponse:]):
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:didReceiveResponse:]):
+
+2021-06-10  Alex Christensen  <achristensen@webkit.org>
+
         Origin is null in http requests when baseURL has custom scheme on iOS 15.0
         https://bugs.webkit.org/show_bug.cgi?id=226760
         <rdar://79027280>

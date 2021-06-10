@@ -42,6 +42,7 @@
 #include "ResourceHandleClient.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "SecurityOrigin.h"
 #include "SharedBuffer.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/FileSystem.h>
@@ -154,7 +155,7 @@ void BlobResourceHandle::loadResourceSynchronously(BlobData* blobData, const Res
 }
 
 BlobResourceHandle::BlobResourceHandle(BlobData* blobData, const ResourceRequest& request, ResourceHandleClient* client, bool async)
-    : ResourceHandle { nullptr, request, client, false /* defersLoading */, false /* shouldContentSniff */, true /* shouldContentEncodingSniff */ }
+    : ResourceHandle { nullptr, request, client, false /* defersLoading */, false /* shouldContentSniff */, true /* shouldContentEncodingSniff */, nullptr /* sourceOrigin */, false /* isMainFrameNavigation */ }
     , m_blobData { blobData }
     , m_async { async }
 {

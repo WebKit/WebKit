@@ -1,0 +1,14 @@
+Blocked access to external URL https://nonexistent.localhost:9443/
+Blocked access to external URL https://nonexistent.localhost:9443/
+
+
+PASS Precondition
+FAIL Test iframe from non-existent host assert_equals: No iframe entry was fired expected "object" but got "undefined"
+FAIL Test iframe redirecting to non-existent host assert_equals: No iframe entry was fired expected "object" but got "undefined"
+PASS Same-origin iframe that complies with CSP attribute gets reported
+PASS Same-origin iframe that doesn't comply with CSP attribute gets reported
+PASS Cross-origin iframe that complies with CSP attribute gets reported
+PASS Cross-origin iframe that doesn't comply with CSP attribute gets reported
+FAIL Same-origin empty iframe with a 200 status gets reported assert_equals: No iframe entry was fired expected "object" but got "undefined"
+FAIL Cross-origin empty iframe with a 200 status gets reported assert_equals: No iframe entry was fired expected "object" but got "undefined"
+

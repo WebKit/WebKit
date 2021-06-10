@@ -68,8 +68,7 @@ double PerformanceNavigationTiming::millisecondsSinceOrigin(MonotonicTime time) 
 bool PerformanceNavigationTiming::sameOriginCheckFails() const
 {
     // https://www.w3.org/TR/navigation-timing-2/#dfn-same-origin-check
-    return !m_resourceTiming.allowTimingDetails()
-        || m_resourceTiming.networkLoadMetrics().hasCrossOriginRedirect
+    return m_resourceTiming.networkLoadMetrics().hasCrossOriginRedirect
         || !m_documentLoadTiming.hasSameOriginAsPreviousDocument();
 }
 
@@ -124,9 +123,6 @@ PerformanceNavigationTiming::NavigationType PerformanceNavigationTiming::type() 
 
 unsigned short PerformanceNavigationTiming::redirectCount() const
 {
-    if (!m_resourceTiming.allowTimingDetails())
-        return 0;
-
     if (m_resourceTiming.networkLoadMetrics().hasCrossOriginRedirect)
         return 0;
 

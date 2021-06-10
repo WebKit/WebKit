@@ -84,6 +84,8 @@ public:
     void setH2PingCallback(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&) override;
     void setPriority(WebCore::ResourceLoadPriority) override;
 
+    void checkTAO(const WebCore::ResourceResponse&);
+
 private:
     NetworkDataTaskCocoa(NetworkSession&, NetworkDataTaskClient&, const NetworkLoadParameters&);
 
@@ -120,6 +122,7 @@ private:
     bool m_isForMainResourceNavigationForAnyFrame { false };
     bool m_isAlwaysOnLoggingAllowed { false };
     WebCore::ShouldRelaxThirdPartyCookieBlocking m_shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
+    RefPtr<WebCore::SecurityOrigin> m_sourceOrigin;
 };
 
 WebCore::Credential serverTrustCredential(const WebCore::AuthenticationChallenge&);

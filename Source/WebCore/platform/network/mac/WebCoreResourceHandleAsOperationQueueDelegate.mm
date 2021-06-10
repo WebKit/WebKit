@@ -141,6 +141,7 @@ static bool scheduledWithCustomRunLoopMode(const std::optional<SchedulePairHashS
             return;
         }
 
+        ResourceResponse response(redirectResponse.get());
         ResourceRequest redirectRequest = newRequest.get();
         if ([newRequest.get() HTTPBodyStream]) {
             ASSERT(m_handle->firstRequest().httpBody());
@@ -150,10 +151,13 @@ static bool scheduledWithCustomRunLoopMode(const std::optional<SchedulePairHashS
             redirectRequest.clearHTTPContentType();
 
         // Check if the redirected url is allowed to access the redirecting url's timing information.
-        m_handle->setHasCrossOriginRedirect(!WebCore::SecurityOrigin::create(redirectRequest.url())->canRequest(redirectResponse.get().URL));
+        if (!m_handle->hasCrossOriginRedirect() && !WebCore::SecurityOrigin::create(redirectRequest.url())->canRequest(redirectResponse.get().URL))
+            m_handle->markAsHavingCrossOriginRedirect();
+        m_handle->checkTAO(response);
+
         m_handle->incrementRedirectCount();
 
-        m_handle->willSendRequest(WTFMove(redirectRequest), redirectResponse.get(), [self, protectedSelf = WTFMove(protectedSelf)](ResourceRequest&& request) {
+        m_handle->willSendRequest(WTFMove(redirectRequest), WTFMove(response), [self, protectedSelf = WTFMove(protectedSelf)](ResourceRequest&& request) {
             m_requestResult = request.nsURLRequest(HTTPBodyUpdatePolicy::UpdateHTTPBody);
             m_semaphore.signal();
         });
@@ -257,8 +261,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         if ([m_handle->firstRequest().nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) _propertyForKey:@"ForceHTMLMIMEType"])
             [r _setMIMEType:@"text/html"];
 
-        auto metrics = copyTimingData(connection.get(), *m_handle);
         ResourceResponse resourceResponse(r.get());
+        m_handle->checkTAO(resourceResponse);
+
+        auto metrics = copyTimingData(connection.get(), *m_handle);
         resourceResponse.setSource(ResourceResponse::Source::Network);
         resourceResponse.setDeprecatedNetworkLoadMetrics(Box<NetworkLoadMetrics> { metrics });
 
@@ -333,6 +339,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
                 metrics->responseEnd = WallTime::fromRawSeconds(adoptNS([[NSDate alloc] initWithTimeIntervalSinceReferenceDate:responseEndTime]).get().timeIntervalSince1970).approximateMonotonicTime();
             else
                 metrics->responseEnd = metrics->responseStart;
+            metrics->protocol = (NSString *)[timingData objectForKey:@"_kCFNTimingDataNetworkProtocolName"];
             metrics->responseBodyBytesReceived = [[timingData objectForKey:@"_kCFNTimingDataResponseBodyBytesReceived"] unsignedLongLongValue];
             metrics->responseBodyDecodedSize = [[timingData objectForKey:@"_kCFNTimingDataResponseBodyBytesDecoded"] unsignedLongLongValue];
             metrics->markComplete();

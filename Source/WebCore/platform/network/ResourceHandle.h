@@ -83,6 +83,7 @@ class ResourceHandleInternal;
 class NetworkLoadMetrics;
 class ResourceRequest;
 class ResourceResponse;
+class SecurityOrigin;
 class SharedBuffer;
 class SynchronousLoaderMessageQueue;
 class Timer;
@@ -94,8 +95,8 @@ class CurlResourceHandleDelegate;
 
 class ResourceHandle : public RefCounted<ResourceHandle>, public AuthenticationClient {
 public:
-    WEBCORE_EXPORT static RefPtr<ResourceHandle> create(NetworkingContext*, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff, bool shouldContentEncodingSniff);
-    WEBCORE_EXPORT static void loadResourceSynchronously(NetworkingContext*, const ResourceRequest&, StoredCredentialsPolicy, ResourceError&, ResourceResponse&, Vector<uint8_t>& data);
+    WEBCORE_EXPORT static RefPtr<ResourceHandle> create(NetworkingContext*, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff, bool shouldContentEncodingSniff, RefPtr<SecurityOrigin>&& sourceOrigin, bool isMainFrameNavigation);
+    WEBCORE_EXPORT static void loadResourceSynchronously(NetworkingContext*, const ResourceRequest&, StoredCredentialsPolicy, SecurityOrigin*, ResourceError&, ResourceResponse&, Vector<uint8_t>& data);
     WEBCORE_EXPORT virtual ~ResourceHandle();
 
 #if PLATFORM(COCOA) || USE(CFURLCONNECTION)
@@ -174,8 +175,10 @@ public:
     void setNetworkLoadMetrics(Box<NetworkLoadMetrics>&&);
 
     MonotonicTime startTimeBeforeRedirects() const;
+    bool failsTAOCheck() const;
+    void checkTAO(const ResourceResponse&);
     bool hasCrossOriginRedirect() const;
-    void setHasCrossOriginRedirect(bool);
+    void markAsHavingCrossOriginRedirect();
     uint16_t redirectCount() const;
     void incrementRedirectCount();
 
@@ -206,7 +209,7 @@ public:
     static void registerBuiltinSynchronousLoader(const AtomString& protocol, BuiltinSynchronousLoader);
 
 protected:
-    ResourceHandle(NetworkingContext*, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff, bool shouldContentEncodingSniff);
+    ResourceHandle(NetworkingContext*, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff, bool shouldContentEncodingSniff, RefPtr<SecurityOrigin>&& sourceOrigin, bool isMainFrameNavigation);
 
 private:
     enum FailureType {
@@ -222,7 +225,7 @@ private:
     void scheduleFailure(FailureType);
 
     bool start();
-    static void platformLoadResourceSynchronously(NetworkingContext*, const ResourceRequest&, StoredCredentialsPolicy, ResourceError&, ResourceResponse&, Vector<uint8_t>& data);
+    static void platformLoadResourceSynchronously(NetworkingContext*, const ResourceRequest&, StoredCredentialsPolicy, SecurityOrigin*, ResourceError&, ResourceResponse&, Vector<uint8_t>& data);
 
     void refAuthenticationClient() override { ref(); }
     void derefAuthenticationClient() override { deref(); }

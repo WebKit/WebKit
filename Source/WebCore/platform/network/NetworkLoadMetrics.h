@@ -89,6 +89,7 @@ public:
     bool constrained { false };
     bool multipath { false };
     bool isReusedConnection { false };
+    bool failsTAOCheck { false };
     bool hasCrossOriginRedirect { false };
 };
 
@@ -122,6 +123,7 @@ public:
         copy.constrained = constrained;
         copy.multipath = multipath;
         copy.isReusedConnection = isReusedConnection;
+        copy.failsTAOCheck = failsTAOCheck;
         copy.hasCrossOriginRedirect = hasCrossOriginRedirect;
 
         copy.remoteAddress = remoteAddress.isolatedCopy();
@@ -159,6 +161,7 @@ public:
             && constrained == other.constrained
             && multipath == other.multipath
             && isReusedConnection == other.isReusedConnection
+            && failsTAOCheck == other.failsTAOCheck
             && hasCrossOriginRedirect == other.hasCrossOriginRedirect
             && protocol == other.protocol
             && redirectCount == other.redirectCount
@@ -204,7 +207,7 @@ public:
 
 #if PLATFORM(COCOA)
 Box<NetworkLoadMetrics> copyTimingData(NSURLConnection *, const ResourceHandle&);
-WEBCORE_EXPORT Box<NetworkLoadMetrics> copyTimingData(NSURLSessionTaskMetrics *incompleteMetrics, bool hasCrossOriginRedirect);
+WEBCORE_EXPORT Box<NetworkLoadMetrics> copyTimingData(NSURLSessionTaskMetrics *incompleteMetrics, const NetworkLoadMetrics&);
 #endif
 
 template<class Encoder>
@@ -228,6 +231,7 @@ void NetworkLoadMetrics::encode(Encoder& encoder) const
     encoder << constrained;
     encoder << multipath;
     encoder << isReusedConnection;
+    encoder << failsTAOCheck;
     encoder << hasCrossOriginRedirect;
     encoder << protocol;
     encoder << redirectCount;
@@ -266,6 +270,7 @@ bool NetworkLoadMetrics::decode(Decoder& decoder, NetworkLoadMetrics& metrics)
         && decoder.decode(metrics.constrained)
         && decoder.decode(metrics.multipath)
         && decoder.decode(metrics.isReusedConnection)
+        && decoder.decode(metrics.failsTAOCheck)
         && decoder.decode(metrics.hasCrossOriginRedirect)
         && decoder.decode(metrics.protocol)
         && decoder.decode(metrics.redirectCount)

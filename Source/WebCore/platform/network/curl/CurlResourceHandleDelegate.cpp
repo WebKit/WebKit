@@ -36,6 +36,7 @@
 #include "ResourceHandle.h"
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
+#include "SecurityOrigin.h"
 
 #include <wtf/CompletionHandler.h>
 

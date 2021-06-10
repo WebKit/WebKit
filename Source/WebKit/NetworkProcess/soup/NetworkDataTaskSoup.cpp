@@ -864,8 +864,9 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
         redirectedURL.setFragmentIdentifier(request.url().fragmentIdentifier());
     request.setURL(redirectedURL);
 
-    // Check if the redirected url is allowed to access the redirecting url's timing information.
-    m_networkLoadMetrics.hasCrossOriginRedirect = !SecurityOrigin::create(m_currentRequest.url())->canRequest(request.url());
+    m_networkLoadMetrics.hasCrossOriginRedirect = m_networkLoadMetrics.hasCrossOriginRedirect || !SecurityOrigin::create(m_currentRequest.url())->canRequest(request.url());
+    // FIXME: Add TAO checks here and when receiving a response.
+    // This was done on Cocoa platforms in https://bugs.webkit.org/show_bug.cgi?id=226678
 
     // Clear the user agent to ensure a new one is computed.
     auto userAgent = request.httpUserAgent();

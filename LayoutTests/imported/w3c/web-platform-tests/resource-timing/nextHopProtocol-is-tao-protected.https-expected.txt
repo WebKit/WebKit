@@ -1,0 +1,4 @@
+
+FAIL Add TAO-less iframe from remote origin. Make sure nextHopProtocol is the empty string assert_equals: nextHopProtocol should be the empty string expected "" but got "http/1.1"
+PASS Add TAO'd iframe from remote origin. Make sure nextHopProtocol is not the empty string
+

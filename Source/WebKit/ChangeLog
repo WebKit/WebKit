@@ -1,5 +1,29 @@
 2021-06-10  Alex Christensen  <achristensen@webkit.org>
 
+        Move Timing-Allow-Origin checks to the network process
+        https://bugs.webkit.org/show_bug.cgi?id=226678
+        <rdar://problem/45227788>
+
+        Reviewed by Chris Dumez.
+
+        * NetworkProcess/NetworkLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::sendReplyToSynchronousRequest):
+        Pass complete metrics with sync xhr responses.  Many of the tests use sync xhr.
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        (WebKit::NetworkResourceLoader::didFailLoading):
+        (WebKit::NetworkResourceLoader::didRetrieveCacheEntry):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (-[WKNetworkSessionDelegate URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:]):
+        (-[WKNetworkSessionDelegate URLSession:dataTask:didReceiveResponse:completionHandler:]):
+
+2021-06-10  Alex Christensen  <achristensen@webkit.org>
+
         Origin is null in http requests when baseURL has custom scheme on iOS 15.0
         https://bugs.webkit.org/show_bug.cgi?id=226760
 

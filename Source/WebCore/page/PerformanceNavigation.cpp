@@ -78,7 +78,7 @@ unsigned short PerformanceNavigation::redirectCount() const
     if (!metrics)
         return 0;
 
-    if (metrics->hasCrossOriginRedirect)
+    if (metrics->failsTAOCheck)
         return 0;
 
     return metrics->redirectCount;

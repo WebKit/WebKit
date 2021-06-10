@@ -50,7 +50,7 @@ public:
         bool defersLoading = false;
         bool shouldContentSniff = false;
         bool shouldContentEncodingSniff = true;
-        m_handle = WebCore::ResourceHandle::create(networkingContext, request, this, defersLoading, shouldContentSniff, shouldContentEncodingSniff);
+        m_handle = WebCore::ResourceHandle::create(networkingContext, request, this, defersLoading, shouldContentSniff, shouldContentEncodingSniff, nullptr, false);
 
         // If the server never responds, this object will hang around forever.
         // Set a very generous timeout, just in case.

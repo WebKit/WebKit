@@ -51,6 +51,7 @@
 #include "ResourceHandle.h"
 #include "SecurityOrigin.h"
 #include "SharedBuffer.h"
+#include "SubresourceLoader.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 
@@ -241,7 +242,15 @@ void ResourceLoader::start()
     }
 #endif
 
-    m_handle = ResourceHandle::create(frameLoader()->networkingContext(), m_request, this, m_defersLoading, m_options.sniffContent == ContentSniffingPolicy::SniffContent, m_options.sniffContentEncoding == ContentEncodingSniffingPolicy::Sniff);
+    RefPtr<SecurityOrigin> sourceOrigin = is<SubresourceLoader>(*this) ? downcast<SubresourceLoader>(*this).origin() : nullptr;
+    if (!sourceOrigin && frameLoader()) {
+        auto* document = frameLoader()->frame().document();
+        sourceOrigin =  document ? &document->securityOrigin() : nullptr;
+    }
+
+    bool isMainFrameNavigation = frame() && frame()->isMainFrame() && options().mode == FetchOptions::Mode::Navigate;
+
+    m_handle = ResourceHandle::create(frameLoader()->networkingContext(), m_request, this, m_defersLoading, m_options.sniffContent == ContentSniffingPolicy::SniffContent, m_options.sniffContentEncoding == ContentEncodingSniffingPolicy::Sniff, WTFMove(sourceOrigin), isMainFrameNavigation);
 }
 
 void ResourceLoader::setDefersLoading(bool defers)

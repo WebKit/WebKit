@@ -39,6 +39,7 @@
 #include "ResourceHandleInternal.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "SecurityOrigin.h"
 #include "SharedBuffer.h"
 #include <wtf/DateMath.h>
 #include <wtf/HexNumber.h>

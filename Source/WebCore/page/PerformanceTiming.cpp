@@ -67,7 +67,7 @@ unsigned long long PerformanceTiming::unloadEventStart() const
     if (!metrics)
         return 0;
 
-    if (metrics->hasCrossOriginRedirect || !timing->hasSameOriginAsPreviousDocument())
+    if (metrics->failsTAOCheck || !timing->hasSameOriginAsPreviousDocument())
         return 0;
 
     return monotonicTimeToIntegerMilliseconds(timing->unloadEventStart());
@@ -83,7 +83,7 @@ unsigned long long PerformanceTiming::unloadEventEnd() const
     if (!metrics)
         return 0;
 
-    if (metrics->hasCrossOriginRedirect || !timing->hasSameOriginAsPreviousDocument())
+    if (metrics->failsTAOCheck || !timing->hasSameOriginAsPreviousDocument())
         return 0;
 
     return monotonicTimeToIntegerMilliseconds(timing->unloadEventEnd());
@@ -93,7 +93,7 @@ unsigned long long PerformanceTiming::redirectStart() const
 {
     auto* metrics = networkLoadMetrics();
     if (!metrics
-        || metrics->hasCrossOriginRedirect
+        || metrics->failsTAOCheck
         || !metrics->redirectCount)
         return 0;
 
@@ -104,7 +104,7 @@ unsigned long long PerformanceTiming::redirectEnd() const
 {
     auto* metrics = networkLoadMetrics();
     if (!metrics
-        || metrics->hasCrossOriginRedirect
+        || metrics->failsTAOCheck
         || !metrics->redirectCount)
         return 0;
 

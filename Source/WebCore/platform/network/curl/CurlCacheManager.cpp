@@ -35,6 +35,7 @@
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceRequest.h"
+#include "SecurityOrigin.h"
 #include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>

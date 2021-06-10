@@ -1478,6 +1478,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/StorageSessionProvider.h
     platform/network/StoredCredentialsPolicy.h
     platform/network/SynchronousLoaderClient.h
+    platform/network/TimingAllowOrigin.h
 
     platform/sql/SQLValue.h
     platform/sql/SQLiteDatabase.h

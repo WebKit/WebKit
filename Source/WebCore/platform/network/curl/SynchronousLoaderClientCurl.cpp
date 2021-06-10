@@ -31,6 +31,7 @@
 #include "AuthenticationChallenge.h"
 #include "NotImplemented.h"
 #include "ResourceHandleInternal.h"
+#include "SecurityOrigin.h"
 
 namespace WebCore {
 

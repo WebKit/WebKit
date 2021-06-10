@@ -43,6 +43,7 @@
 #include "NetworkStorageSession.h"
 #include "ResourceHandleInternal.h"
 #include "SameSiteInfo.h"
+#include "SecurityOrigin.h"
 #include "SharedBuffer.h"
 #include "SynchronousLoaderClient.h"
 #include "TextEncoding.h"
@@ -365,7 +366,7 @@ void ResourceHandle::restartRequestWithCredential(const ProtectionSpace& protect
     d->m_curlRequest->start();
 }
 
-void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentialsPolicy storedCredentialsPolicy, ResourceError& error, ResourceResponse& response, Vector<uint8_t>& data)
+void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentialsPolicy storedCredentialsPolicy, SecurityOrigin*, ResourceError& error, ResourceResponse& response, Vector<uint8_t>& data)
 {
     ASSERT(isMainThread());
     ASSERT(!request.isEmpty());
@@ -376,7 +377,7 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     bool defersLoading = false;
     bool shouldContentSniff = true;
     bool shouldContentEncodingSniff = true;
-    RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(context, request, &client, defersLoading, shouldContentSniff, shouldContentEncodingSniff));
+    RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(context, request, &client, defersLoading, shouldContentSniff, shouldContentEncodingSniff, nullptr, false));
     handle->d->m_messageQueue = &client.messageQueue();
 
     if (request.url().protocolIsData()) {
