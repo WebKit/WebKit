@@ -1,3 +1,27 @@
+2021-06-10  Alex Christensen  <achristensen@webkit.org>
+
+        Origin is null in http requests when baseURL has custom scheme on iOS 15.0
+        https://bugs.webkit.org/show_bug.cgi?id=226760
+        <rdar://79027280>
+
+        Reviewed by Chris Dumez.
+
+        This fixes a regression from r272469 where I made two mistakes.
+
+        1. I made schemes handled by a WKURLSchemeHandler able to create non-null origins to increase compatibility.
+        I forgot that one can also call loadHTMLString and pass a baseURL that can be a custom scheme.
+        In this case, the custom scheme is also treated as the "origin" so it should be non-null.
+        2. When updateRequestForAccessControl is called in the Network Process, it uses SecurityOrigins that have been
+        serialized and deserialized then passed through the SecurityOrigin constructor, which doesn't know about the
+        registry of custom schemes that are handled for that WKWebView and may deserialize to a different (null) origin.
+        We want to deserialize the origin having been made with the rules of SecurityOrigins in the Web Process, so
+        set its data to be the same as the serialized data.
+
+        I added a unit test to prevent future regression.
+
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::decode):
+
 2021-06-10  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
 
         [Cairo] Fix Path::boundingRectSlowCase when the path is a single MoveTo

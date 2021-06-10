@@ -219,7 +219,7 @@ public:
     template<class Decoder> static RefPtr<SecurityOrigin> decode(Decoder&);
 
 private:
-    SecurityOrigin();
+    WEBCORE_EXPORT SecurityOrigin();
     explicit SecurityOrigin(const URL&);
     explicit SecurityOrigin(const SecurityOrigin*);
 
@@ -276,7 +276,8 @@ template<class Decoder> inline RefPtr<SecurityOrigin> SecurityOrigin::decode(Dec
     if (!data)
         return nullptr;
 
-    auto origin = SecurityOrigin::create(data->protocol, data->host, data->port);
+    auto origin = adoptRef(*new SecurityOrigin);
+    origin->m_data = WTFMove(*data);
 
     if (!decoder.decode(origin->m_domain))
         return nullptr;
