@@ -1,3 +1,12 @@
+2021-06-09  Sergio Villar Senin  <svillar@igalia.com>
+
+        Add email address for Igalia's WebKit layout team to contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=226829
+
+        Reviewed by Simon Fraser.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2021-06-09  Chris Gambrell  <cgambrell@apple.com>
 
         Add personal email to Tools/Scripts/webkitpy/common/config/contributors.json

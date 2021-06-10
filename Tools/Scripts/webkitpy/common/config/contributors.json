@@ -2552,6 +2552,12 @@
          "vollick"
       ]
    },
+   "Igalia Layout Team" : {
+      "emails" : [
+         "webkit-layout-noreply@igalia.com"
+      ],
+      "expertise" : "Flexbox, CSS Grid Layout, CSS Scroll Snap, CSS Containment"
+   },
    "Igor Trindade Oliveira" : {
       "emails" : [
          "igor.oliveira@webkit.org",
