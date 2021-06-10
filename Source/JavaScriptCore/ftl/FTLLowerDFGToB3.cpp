@@ -5892,7 +5892,7 @@ private:
     void compileDelBy(LValue base, SubscriptKind subscriptValue)
     {
         PatchpointValue* patchpoint;
-        if constexpr (kind == DelByKind::Normal) {
+        if constexpr (kind == DelByKind::ById) {
             patchpoint = m_out.patchpoint(Int64);
             patchpoint->append(ConstrainedValue(base, ValueRep::SomeLateRegister));
         } else {
@@ -5933,14 +5933,14 @@ private:
                     slowCases.append(jit.branchIfNotCell(base));
 
                 constexpr auto optimizationFunction = [&] () {
-                    if constexpr (kind == DelByKind::Normal)
+                    if constexpr (kind == DelByKind::ById)
                         return operationDeleteByIdOptimize;
                     else
                         return operationDeleteByValOptimize;
                 }();
 
                 const auto subscript = [&] {
-                    if constexpr (kind == DelByKind::Normal)
+                    if constexpr (kind == DelByKind::ById)
                         return CCallHelpers::TrustedImmPtr(subscriptValue.rawBits());
                     else {
                         ASSERT(scratchGPR != params[2].gpr());
@@ -5951,7 +5951,7 @@ private:
                 }();
 
                 const auto generator = [&] {
-                    if constexpr (kind == DelByKind::Normal) {
+                    if constexpr (kind == DelByKind::ById) {
                         return Box<JITDelByIdGenerator>::create(
                             jit.codeBlock(), JITType::FTLJIT, node->origin.semantic, callSiteIndex,
                             params.unavailableRegisters(), subscriptValue, base,
@@ -6012,7 +6012,7 @@ private:
         switch (m_node->child1().useKind()) {
         case CellUse: {
             LValue base = lowCell(m_node->child1());
-            compileDelBy<DelByKind::Normal>(base, m_node->cacheableIdentifier());
+            compileDelBy<DelByKind::ById>(base, m_node->cacheableIdentifier());
             break;
         }
 
@@ -6052,7 +6052,7 @@ private:
                 DFG_CRASH(m_graph, m_node, "Bad use kind");
                 return;
             }
-            compileDelBy<DelByKind::NormalByVal>(base, subscript);
+            compileDelBy<DelByKind::ByVal>(base, subscript);
             return;
         }
 
@@ -8999,7 +8999,7 @@ private:
         unsigned missNonconfigurable = 0;
 
         for (unsigned i = data.variants.size(); i--;) {
-            DeleteByIdVariant variant = data.variants[i];
+            DeleteByVariant variant = data.variants[i];
             if (!variant.newStructure()) {
                 if (variant.result())
                     ++missConfigurable;
@@ -9025,7 +9025,7 @@ private:
         Vector<SwitchCase, 2> cases;
         RegisteredStructureSet baseSet;
         for (unsigned i = data.variants.size(), block = 0; i--;) {
-            DeleteByIdVariant variant = data.variants[i];
+            DeleteByVariant variant = data.variants[i];
             RegisteredStructure structure = m_graph.registerStructure(variant.oldStructure());
             baseSet.add(structure);
             if (variant.newStructure())
@@ -9041,7 +9041,7 @@ private:
         Vector<ValueFromBlock, 2> results;
 
         for (unsigned i = data.variants.size(), block = 0; i--;) {
-            DeleteByIdVariant variant = data.variants[i];
+            DeleteByVariant variant = data.variants[i];
             if (!variant.newStructure())
                 continue;
 
@@ -12368,7 +12368,7 @@ private:
     {
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         patchpoint->appendSomeRegister(base);
-        if constexpr (kind != InByKind::Normal)
+        if constexpr (kind != InByKind::ById)
             patchpoint->appendSomeRegister(subscriptValue);
         patchpoint->append(m_notCellMask, ValueRep::lateReg(GPRInfo::notCellMaskRegister));
         patchpoint->append(m_numberTag, ValueRep::lateReg(GPRInfo::numberTagRegister));
@@ -12393,14 +12393,14 @@ private:
                 auto base = JSValueRegs(params[1].gpr());
 
                 const auto subscript = [&] {
-                    if constexpr (kind == InByKind::Normal)
+                    if constexpr (kind == InByKind::ById)
                         return CCallHelpers::TrustedImmPtr(subscriptValue.rawBits());
                     else
                         return JSValueRegs(params[2].gpr());
                 }();
 
                 const auto generator = [&] {
-                    if constexpr (kind == InByKind::Normal) {
+                    if constexpr (kind == InByKind::ById) {
                         return Box<JITInByIdGenerator>::create(
                             jit.codeBlock(), JITType::FTLJIT, node->origin.semantic, callSiteIndex,
                             params.unavailableRegisters(), subscriptValue, base,
@@ -12415,7 +12415,7 @@ private:
 
                 CCallHelpers::JumpList slowCases;
                 generator->generateFastPath(jit);
-                if constexpr (kind == InByKind::Normal)
+                if constexpr (kind == InByKind::ById)
                     slowCases.append(generator->slowPathJump());
                 else {
                     if (!JITCode::useDataIC(JITType::FTLJIT))
@@ -12430,7 +12430,7 @@ private:
                         slowCases.link(&jit);
                         CCallHelpers::Label slowPathBegin = jit.label();
                         CCallHelpers::Call slowPathCall;
-                        if constexpr (kind == InByKind::Normal) {
+                        if constexpr (kind == InByKind::ById) {
                             if (JITCode::useDataIC(JITType::FTLJIT)) {
                                 jit.move(CCallHelpers::TrustedImmPtr(generator->stubInfo()), stubInfoGPR);
                                 generator->stubInfo()->m_slowOperation = operationInByIdOptimize;
@@ -12481,12 +12481,12 @@ private:
 
     void compileInById()
     {
-        compileInBy<InByKind::Normal>(lowCell(m_node->child1()), m_node->cacheableIdentifier());
+        compileInBy<InByKind::ById>(lowCell(m_node->child1()), m_node->cacheableIdentifier());
     }
 
     void compileInByVal()
     {
-        compileInBy<InByKind::NormalByVal>(lowCell(m_node->child1()), lowJSValue(m_node->child2()));
+        compileInBy<InByKind::ByVal>(lowCell(m_node->child1()), lowJSValue(m_node->child2()));
     }
 
     void compileHasOwnProperty()

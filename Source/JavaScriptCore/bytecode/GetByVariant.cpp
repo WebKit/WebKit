@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "GetByIdVariant.h"
+#include "GetByVariant.h"
 
 #include "CacheableIdentifierInlines.h"
 #include "CallLinkStatus.h"
@@ -32,14 +32,7 @@
 
 namespace JSC {
 
-GetByIdVariant::GetByIdVariant(
-    CacheableIdentifier identifier,
-    const StructureSet& structureSet, PropertyOffset offset,
-    const ObjectPropertyConditionSet& conditionSet,
-    std::unique_ptr<CallLinkStatus> callLinkStatus,
-    JSFunction* intrinsicFunction,
-    FunctionPtr<CustomAccessorPtrTag> customAccessorGetter,
-    std::unique_ptr<DOMAttributeAnnotation> domAttribute)
+GetByVariant::GetByVariant(CacheableIdentifier identifier, const StructureSet& structureSet, PropertyOffset offset, const ObjectPropertyConditionSet& conditionSet, std::unique_ptr<CallLinkStatus> callLinkStatus, JSFunction* intrinsicFunction, FunctionPtr<CustomAccessorPtrTag> customAccessorGetter, std::unique_ptr<DOMAttributeAnnotation> domAttribute)
     : m_structureSet(structureSet)
     , m_conditionSet(conditionSet)
     , m_offset(offset)
@@ -56,16 +49,16 @@ GetByIdVariant::GetByIdVariant(
     if (intrinsicFunction)
         ASSERT(intrinsic() != NoIntrinsic);
 }
-                     
-GetByIdVariant::~GetByIdVariant() { }
 
-GetByIdVariant::GetByIdVariant(const GetByIdVariant& other)
-    : GetByIdVariant(other.m_identifier)
+GetByVariant::~GetByVariant() { }
+
+GetByVariant::GetByVariant(const GetByVariant& other)
+    : GetByVariant(other.m_identifier)
 {
     *this = other;
 }
 
-GetByIdVariant& GetByIdVariant::operator=(const GetByIdVariant& other)
+GetByVariant& GetByVariant::operator=(const GetByVariant& other)
 {
     m_identifier = other.m_identifier;
     m_structureSet = other.m_structureSet;
@@ -84,7 +77,7 @@ GetByIdVariant& GetByIdVariant::operator=(const GetByIdVariant& other)
     return *this;
 }
 
-inline bool GetByIdVariant::canMergeIntrinsicStructures(const GetByIdVariant& other) const
+inline bool GetByVariant::canMergeIntrinsicStructures(const GetByVariant& other) const
 {
     if (m_intrinsicFunction != other.m_intrinsicFunction)
         return false;
@@ -105,7 +98,7 @@ inline bool GetByIdVariant::canMergeIntrinsicStructures(const GetByIdVariant& ot
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-bool GetByIdVariant::attemptToMerge(const GetByIdVariant& other)
+bool GetByVariant::attemptToMerge(const GetByVariant& other)
 {
     if (!!m_identifier != !!other.m_identifier)
         return false;
@@ -157,23 +150,23 @@ bool GetByIdVariant::attemptToMerge(const GetByIdVariant& other)
 }
 
 template<typename Visitor>
-void GetByIdVariant::visitAggregateImpl(Visitor& visitor)
+void GetByVariant::visitAggregateImpl(Visitor& visitor)
 {
     m_identifier.visitAggregate(visitor);
 }
 
-DEFINE_VISIT_AGGREGATE(GetByIdVariant);
+DEFINE_VISIT_AGGREGATE(GetByVariant);
 
 template<typename Visitor>
-void GetByIdVariant::markIfCheap(Visitor& visitor)
+void GetByVariant::markIfCheap(Visitor& visitor)
 {
     m_structureSet.markIfCheap(visitor);
 }
 
-template void GetByIdVariant::markIfCheap(AbstractSlotVisitor&);
-template void GetByIdVariant::markIfCheap(SlotVisitor&);
+template void GetByVariant::markIfCheap(AbstractSlotVisitor&);
+template void GetByVariant::markIfCheap(SlotVisitor&);
 
-bool GetByIdVariant::finalize(VM& vm)
+bool GetByVariant::finalize(VM& vm)
 {
     if (!m_structureSet.isStillAlive(vm))
         return false;
@@ -186,12 +179,12 @@ bool GetByIdVariant::finalize(VM& vm)
     return true;
 }
 
-void GetByIdVariant::dump(PrintStream& out) const
+void GetByVariant::dump(PrintStream& out) const
 {
     dumpInContext(out, nullptr);
 }
 
-void GetByIdVariant::dumpInContext(PrintStream& out, DumpContext* context) const
+void GetByVariant::dumpInContext(PrintStream& out, DumpContext* context) const
 {
     out.print("<");
     out.print("id='", m_identifier, "', ");

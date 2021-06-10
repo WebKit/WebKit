@@ -34,23 +34,23 @@
 namespace JSC {
 
 enum class GetByKind {
-    Normal,
-    NormalByVal,
-    Try,
-    WithThis,
-    Direct,
+    ById,
+    ByVal,
+    TryById,
+    ByIdWithThis,
+    ByIdDirect,
     PrivateName,
     PrivateNameById,
 };
 
 enum class DelByKind {
-    Normal,
-    NormalByVal
+    ById,
+    ByVal
 };
 
 enum class InByKind {
-    Normal,
-    NormalByVal
+    ById,
+    ByVal
 };
 
 void repatchArrayGetByVal(JSGlobalObject*, CodeBlock*, JSValue base, JSValue index, StructureStubInfo&);

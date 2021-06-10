@@ -37,7 +37,7 @@
 
 namespace JSC {
 
-bool InByStatus::appendVariant(const InByIdVariant& variant)
+bool InByStatus::appendVariant(const InByVariant& variant)
 {
     return appendICStatusVariant(m_variants, variant);
 }
@@ -145,7 +145,7 @@ InByStatus InByStatus::computeForStubInfoWithoutExitSiteFeedback(const Concurren
         CacheableIdentifier identifier = stubInfo->identifier();
         UniquedStringImpl* uid = identifier.uid();
         RELEASE_ASSERT(uid);
-        InByIdVariant variant(WTFMove(identifier));
+        InByVariant variant(WTFMove(identifier));
         unsigned attributes;
         variant.m_offset = structure->getConcurrently(uid, attributes);
         if (!isValidOffset(variant.m_offset))
@@ -172,7 +172,7 @@ InByStatus InByStatus::computeForStubInfoWithoutExitSiteFeedback(const Concurren
             Structure* structure = access.structure();
             if (!structure) {
                 // The null structure cases arise due to array.length. We have no way of creating a
-                // InByIdVariant for those, and we don't really have to since the DFG handles those
+                // InByVariant for those, and we don't really have to since the DFG handles those
                 // cases in FixupPhase using value profiling. That's a bit awkward - we shouldn't
                 // have to use value profiling to discover something that the AccessCase could have
                 // told us. But, it works well enough. So, our only concern here is to not
@@ -197,7 +197,7 @@ InByStatus InByStatus::computeForStubInfoWithoutExitSiteFeedback(const Concurren
                     return InByStatus(TakesSlowPath);
                 }
 
-                InByIdVariant variant(
+                InByVariant variant(
                     access.identifier(), StructureSet(structure), complexGetStatus.offset(),
                     complexGetStatus.conditionSet());
 
@@ -236,7 +236,7 @@ void InByStatus::merge(const InByStatus& other)
             *this = InByStatus(TakesSlowPath);
             return;
         }
-        for (const InByIdVariant& otherVariant : other.m_variants) {
+        for (const InByVariant& otherVariant : other.m_variants) {
             if (!appendVariant(otherVariant)) {
                 *this = InByStatus(TakesSlowPath);
                 return;
@@ -264,7 +264,7 @@ void InByStatus::filter(const StructureSet& structureSet)
 template<typename Visitor>
 void InByStatus::markIfCheap(Visitor& visitor)
 {
-    for (InByIdVariant& variant : m_variants)
+    for (InByVariant& variant : m_variants)
         variant.markIfCheap(visitor);
 }
 
@@ -273,7 +273,7 @@ template void InByStatus::markIfCheap(SlotVisitor&);
 
 bool InByStatus::finalize(VM& vm)
 {
-    for (InByIdVariant& variant : m_variants) {
+    for (InByVariant& variant : m_variants) {
         if (!variant.finalize(vm))
             return false;
     }

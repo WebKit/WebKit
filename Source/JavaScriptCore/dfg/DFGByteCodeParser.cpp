@@ -205,14 +205,14 @@ private:
     template<typename ChecksFunctor>
     bool handleDOMJITCall(Node* callee, Operand result, const DOMJIT::Signature*, int registerOffset, int argumentCountIncludingThis, SpeculatedType prediction, const ChecksFunctor& insertChecks);
     template<typename ChecksFunctor>
-    bool handleIntrinsicGetter(Operand result, SpeculatedType prediction, const GetByIdVariant& intrinsicVariant, Node* thisNode, const ChecksFunctor& insertChecks);
+    bool handleIntrinsicGetter(Operand result, SpeculatedType prediction, const GetByVariant& intrinsicVariant, Node* thisNode, const ChecksFunctor& insertChecks);
     template<typename ChecksFunctor>
     bool handleTypedArrayConstructor(Operand result, InternalFunction*, int registerOffset, int argumentCountIncludingThis, TypedArrayType, const ChecksFunctor& insertChecks);
     template<typename ChecksFunctor>
     bool handleConstantInternalFunction(Node* callTargetNode, Operand result, InternalFunction*, int registerOffset, int argumentCountIncludingThis, CodeSpecializationKind, SpeculatedType, const ChecksFunctor& insertChecks);
     Node* handlePutByOffset(Node* base, unsigned identifier, PropertyOffset, Node* value);
     Node* handleGetByOffset(SpeculatedType, Node* base, unsigned identifierNumber, PropertyOffset, NodeType = GetByOffset);
-    bool handleDOMJITGetter(Operand result, const GetByIdVariant&, Node* thisNode, unsigned identifierNumber, SpeculatedType prediction);
+    bool handleDOMJITGetter(Operand result, const GetByVariant&, Node* thisNode, unsigned identifierNumber, SpeculatedType prediction);
     bool handleModuleNamespaceLoad(VirtualRegister result, SpeculatedType, Node* base, GetByStatus);
 
     template<typename Bytecode>
@@ -239,7 +239,7 @@ private:
     bool checkPresence(JSObject* knownBase, UniquedStringImpl*, PropertyOffset, const StructureSet&);
     void checkPresenceForReplace(Node* base, UniquedStringImpl*, PropertyOffset, const StructureSet&);
     
-    // Works with both GetByIdVariant and the setter form of PutByIdVariant.
+    // Works with both GetByVariant and the setter form of PutByIdVariant.
     template<typename VariantType>
     Node* load(SpeculatedType, Node* base, unsigned identifierNumber, const VariantType&);
 
@@ -3786,7 +3786,7 @@ bool ByteCodeParser::handleDOMJITCall(Node* callTarget, Operand result, const DO
 
 
 template<typename ChecksFunctor>
-bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType prediction, const GetByIdVariant& variant, Node* thisNode, const ChecksFunctor& insertChecks)
+bool ByteCodeParser::handleIntrinsicGetter(Operand result, SpeculatedType prediction, const GetByVariant& variant, Node* thisNode, const ChecksFunctor& insertChecks)
 {
     switch (variant.intrinsic()) {
     case TypedArrayByteLengthIntrinsic: {
@@ -3902,7 +3902,7 @@ static void blessCallDOMGetter(Node* node)
         node->clearFlags(NodeMustGenerate);
 }
 
-bool ByteCodeParser::handleDOMJITGetter(Operand result, const GetByIdVariant& variant, Node* thisNode, unsigned identifierNumber, SpeculatedType prediction)
+bool ByteCodeParser::handleDOMJITGetter(Operand result, const GetByVariant& variant, Node* thisNode, unsigned identifierNumber, SpeculatedType prediction)
 {
     if (!variant.domAttribute())
         return false;
@@ -4628,7 +4628,7 @@ void ByteCodeParser::handleGetById(
     if (Options::useDOMJIT() && getByStatus.isCustom()) {
         ASSERT(getByStatus.numVariants() == 1);
         ASSERT(!getByStatus.makesCalls());
-        GetByIdVariant variant = getByStatus[0];
+        GetByVariant variant = getByStatus[0];
         ASSERT(variant.domAttribute());
         if (handleDOMJITGetter(destination, variant, base, identifierNumber, prediction)) {
             if (UNLIKELY(m_graph.compilation()))
@@ -4664,7 +4664,7 @@ void ByteCodeParser::handleGetById(
         // 1) Emit prototype structure checks for all chains. This could sort of maybe not be
         //    optimal, if there is some rarely executed case in the chain that requires a lot
         //    of checks and those checks are not watchpointable.
-        for (const GetByIdVariant& variant : getByStatus.variants()) {
+        for (const GetByVariant& variant : getByStatus.variants()) {
             if (variant.intrinsic() != NoIntrinsic) {
                 set(destination,
                     addToGraph(getById, OpInfo(identifier), OpInfo(prediction), base));
@@ -4704,7 +4704,7 @@ void ByteCodeParser::handleGetById(
     addToGraph(FilterGetByStatus, OpInfo(m_graph.m_plan.recordedStatuses().addGetByStatus(currentCodeOrigin(), getByStatus)), base);
 
     ASSERT(getByStatus.numVariants() == 1);
-    GetByIdVariant variant = getByStatus[0];
+    GetByVariant variant = getByStatus[0];
     
     Node* loadedValue = load(prediction, base, identifierNumber, variant);
     if (!loadedValue) {
@@ -4800,7 +4800,7 @@ void ByteCodeParser::handleGetPrivateNameById(
 
         Vector<MultiGetByOffsetCase, 2> cases;
 
-        for (const GetByIdVariant& variant : getByStatus.variants()) {
+        for (const GetByVariant& variant : getByStatus.variants()) {
             ASSERT(variant.intrinsic() == NoIntrinsic);
             ASSERT(variant.conditionSet().isEmpty());
 
@@ -4826,7 +4826,7 @@ void ByteCodeParser::handleGetPrivateNameById(
     addToGraph(FilterGetByStatus, OpInfo(m_graph.m_plan.recordedStatuses().addGetByStatus(currentCodeOrigin(), getByStatus)), base);
 
     ASSERT(getByStatus.numVariants() == 1);
-    GetByIdVariant variant = getByStatus[0];
+    GetByVariant variant = getByStatus[0];
 
     Node* loadedValue = load(prediction, base, identifierNumber, variant);
     if (!loadedValue) {
@@ -4868,7 +4868,7 @@ void ByteCodeParser::handleDeleteById(
         bool hasMiss = false;
         bool hasMissNonconfigurable = false;
 
-        for (const DeleteByIdVariant& variant : deleteByStatus.variants()) {
+        for (const DeleteByVariant& variant : deleteByStatus.variants()) {
             m_graph.registerStructure(variant.oldStructure());
             if (variant.newStructure()) {
                 m_graph.registerStructure(variant.newStructure());
@@ -4883,7 +4883,7 @@ void ByteCodeParser::handleDeleteById(
             if ((hasMiss && !hasMissNonconfigurable) || (!hasMiss && hasMissNonconfigurable)) {
                 StructureSet baseSet;
 
-                for (const DeleteByIdVariant& variant : deleteByStatus.variants())
+                for (const DeleteByVariant& variant : deleteByStatus.variants())
                     baseSet.add(variant.oldStructure());
 
                 addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(baseSet)), base);
@@ -4901,7 +4901,7 @@ void ByteCodeParser::handleDeleteById(
     }
 
     ASSERT(deleteByStatus.variants().size() == 1);
-    DeleteByIdVariant variant = deleteByStatus.variants()[0];
+    DeleteByVariant variant = deleteByStatus.variants()[0];
 
     if (!variant.newStructure()) {
         addToGraph(FilterDeleteByStatus, OpInfo(m_graph.m_plan.recordedStatuses().addDeleteByStatus(currentCodeOrigin(), deleteByStatus)), base);
@@ -4946,7 +4946,7 @@ void ByteCodeParser::handleInById(VirtualRegister destination, Node* base, Cache
     if (status.isSimple() && Options::useAccessInlining()) {
         bool allOK = true;
         MatchStructureData* data = m_graph.m_matchStructureData.add();
-        for (const InByIdVariant& variant : status.variants()) {
+        for (const InByVariant& variant : status.variants()) {
             if (!check(variant.conditionSet())) {
                 allOK = false;
                 break;
@@ -6340,14 +6340,14 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* brand = get(bytecode.m_brand);
             bool compiledAsCheckStructure = false;
 
-            CheckPrivateBrandStatus checkStatus = CheckPrivateBrandStatus::computeFor(
-                m_inlineStackTop->m_profiledBlock,
-                m_inlineStackTop->m_baselineMap, m_icContextStack,
-                currentCodeOrigin());
-
             if (!m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)
                 && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)
                 && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)) {
+
+                CheckPrivateBrandStatus checkStatus = CheckPrivateBrandStatus::computeFor(
+                    m_inlineStackTop->m_profiledBlock,
+                    m_inlineStackTop->m_baselineMap, m_icContextStack,
+                    currentCodeOrigin());
 
                 if (CacheableIdentifier identifier = checkStatus.singleIdentifier()) {
                     m_graph.identifiers().ensure(identifier.uid());
@@ -6377,16 +6377,16 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpSetPrivateBrand>();
             Node* base = get(bytecode.m_base);
             Node* brand = get(bytecode.m_brand);
-
             bool inlinedSetPrivateBrand = false;
-            SetPrivateBrandStatus setStatus = SetPrivateBrandStatus::computeFor(
-                m_inlineStackTop->m_profiledBlock,
-                m_inlineStackTop->m_baselineMap, m_icContextStack,
-                currentCodeOrigin());
 
             if (!m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)
                 && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)
                 && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)) {
+
+                SetPrivateBrandStatus setStatus = SetPrivateBrandStatus::computeFor(
+                    m_inlineStackTop->m_profiledBlock,
+                    m_inlineStackTop->m_baselineMap, m_icContextStack,
+                    currentCodeOrigin());
 
                 if (CacheableIdentifier identifier = setStatus.singleIdentifier()) {
                     ASSERT(identifier.isSymbol());
@@ -6640,14 +6640,15 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* base = get(bytecode.m_base);
             Node* property = get(bytecode.m_property);
             bool shouldCompileAsDeleteById = false;
-            DeleteByStatus deleteByStatus = DeleteByStatus::computeFor(
-                m_inlineStackTop->m_profiledBlock,
-                m_inlineStackTop->m_baselineMap, m_icContextStack,
-                currentCodeOrigin());
 
             if (!m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadIdent)
                 && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType)
                 && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadConstantValue)) {
+
+                DeleteByStatus deleteByStatus = DeleteByStatus::computeFor(
+                    m_inlineStackTop->m_profiledBlock,
+                    m_inlineStackTop->m_baselineMap, m_icContextStack,
+                    currentCodeOrigin());
 
                 if (CacheableIdentifier identifier = deleteByStatus.singleIdentifier()) {
                     UniquedStringImpl* uid = identifier.uid();

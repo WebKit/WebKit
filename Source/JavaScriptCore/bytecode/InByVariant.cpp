@@ -25,13 +25,13 @@
  */
 
 #include "config.h"
-#include "InByIdVariant.h"
+#include "InByVariant.h"
 
 #include "CacheableIdentifierInlines.h"
 
 namespace JSC {
 
-InByIdVariant::InByIdVariant(CacheableIdentifier identifier, const StructureSet& structureSet, PropertyOffset offset, const ObjectPropertyConditionSet& conditionSet)
+InByVariant::InByVariant(CacheableIdentifier identifier, const StructureSet& structureSet, PropertyOffset offset, const ObjectPropertyConditionSet& conditionSet)
     : m_structureSet(structureSet)
     , m_conditionSet(conditionSet)
     , m_offset(offset)
@@ -43,7 +43,7 @@ InByIdVariant::InByIdVariant(CacheableIdentifier identifier, const StructureSet&
     }
 }
 
-bool InByIdVariant::attemptToMerge(const InByIdVariant& other)
+bool InByVariant::attemptToMerge(const InByVariant& other)
 {
     if (!!m_identifier != !!other.m_identifier)
         return false;
@@ -74,15 +74,15 @@ bool InByIdVariant::attemptToMerge(const InByIdVariant& other)
 }
 
 template<typename Visitor>
-void InByIdVariant::markIfCheap(Visitor& visitor)
+void InByVariant::markIfCheap(Visitor& visitor)
 {
     m_structureSet.markIfCheap(visitor);
 }
 
-template void InByIdVariant::markIfCheap(AbstractSlotVisitor&);
-template void InByIdVariant::markIfCheap(SlotVisitor&);
+template void InByVariant::markIfCheap(AbstractSlotVisitor&);
+template void InByVariant::markIfCheap(SlotVisitor&);
 
-bool InByIdVariant::finalize(VM& vm)
+bool InByVariant::finalize(VM& vm)
 {
     if (!m_structureSet.isStillAlive(vm))
         return false;
@@ -91,12 +91,12 @@ bool InByIdVariant::finalize(VM& vm)
     return true;
 }
 
-void InByIdVariant::dump(PrintStream& out) const
+void InByVariant::dump(PrintStream& out) const
 {
     dumpInContext(out, nullptr);
 }
 
-void InByIdVariant::dumpInContext(PrintStream& out, DumpContext* context) const
+void InByVariant::dumpInContext(PrintStream& out, DumpContext* context) const
 {
     out.print("<id='", m_identifier, "', ");
     if (!isSet()) {

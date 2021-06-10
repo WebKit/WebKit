@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2018 Yusuke Suzuki <utatane.tea@gmail.com>.
- * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,37 +26,42 @@
 #pragma once
 
 #include "CacheableIdentifier.h"
+#include "CallLinkStatus.h"
 #include "ObjectPropertyConditionSet.h"
 #include "PropertyOffset.h"
 #include "StructureSet.h"
+#include <wtf/Box.h>
 
 namespace JSC {
-namespace DOMJIT {
-class GetterSetter;
-}
 
-class InByStatus;
+class CallLinkStatus;
+class DeleteByStatus;
 struct DumpContext;
 
-class InByIdVariant {
+class DeleteByVariant {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    InByIdVariant(CacheableIdentifier, const StructureSet& = StructureSet(), PropertyOffset = invalidOffset, const ObjectPropertyConditionSet& = ObjectPropertyConditionSet());
+    DeleteByVariant(
+        CacheableIdentifier, bool result,
+        Structure* oldStrucutre, Structure* newStructure, PropertyOffset);
 
-    bool isSet() const { return !!m_structureSet.size(); }
-    explicit operator bool() const { return isSet(); }
-    const StructureSet& structureSet() const { return m_structureSet; }
-    StructureSet& structureSet() { return m_structureSet; }
+    ~DeleteByVariant();
 
-    // A non-empty condition set means that this is a prototype in-hit/in-miss.
-    const ObjectPropertyConditionSet& conditionSet() const { return m_conditionSet; }
+    DeleteByVariant(const DeleteByVariant&);
+    DeleteByVariant& operator=(const DeleteByVariant&);
+
+    Structure* oldStructure() const { return m_oldStructure; }
+    Structure* newStructure() const { return m_newStructure; }
+    bool result() const { return m_result; }
+    bool writesStructures() const;
 
     PropertyOffset offset() const { return m_offset; }
 
-    bool isHit() const { return offset() != invalidOffset; }
+    bool isPropertyUnset() const { return offset() == invalidOffset; }
 
-    bool attemptToMerge(const InByIdVariant& other);
-    
+    bool attemptToMerge(const DeleteByVariant& other);
+
+    DECLARE_VISIT_AGGREGATE;
     template<typename Visitor> void markIfCheap(Visitor&);
     bool finalize(VM&);
 
@@ -66,7 +70,7 @@ public:
 
     CacheableIdentifier identifier() const { return m_identifier; }
 
-    bool overlaps(const InByIdVariant& other)
+    bool overlaps(const DeleteByVariant& other)
     {
         if (!!m_identifier != !!other.m_identifier)
             return true;
@@ -74,14 +78,15 @@ public:
             if (m_identifier != other.m_identifier)
                 return false;
         }
-        return structureSet().overlaps(other.structureSet());
+        return m_oldStructure == other.m_oldStructure;
     }
 
 private:
-    friend class InByStatus;
+    friend class DeleteByStatus;
 
-    StructureSet m_structureSet;
-    ObjectPropertyConditionSet m_conditionSet;
+    bool m_result;
+    Structure* m_oldStructure;
+    Structure* m_newStructure;
     PropertyOffset m_offset;
     CacheableIdentifier m_identifier;
 };

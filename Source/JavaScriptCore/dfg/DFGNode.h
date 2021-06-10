@@ -49,8 +49,8 @@
 #include "DFGUseKind.h"
 #include "DFGVariableAccessData.h"
 #include "DOMJITSignature.h"
-#include "DeleteByIdVariant.h"
-#include "GetByIdVariant.h"
+#include "DeleteByVariant.h"
+#include "GetByVariant.h"
 #include "JSCJSValue.h"
 #include "Operands.h"
 #include "PrivateFieldPutKind.h"
@@ -99,7 +99,7 @@ struct MultiPutByOffsetData {
 
 struct MultiDeleteByOffsetData {
     unsigned identifierNumber;
-    Vector<DeleteByIdVariant, 2> variants;
+    Vector<DeleteByVariant, 2> variants;
 
     bool writesStructures() const;
     bool allVariantsStoreEmpty() const;

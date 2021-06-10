@@ -1,3 +1,118 @@
+2021-06-09  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [JSC] Rename *ByIdVariant to *ByVariant and *ByKind::Normal to *ByKind::ById
+        https://bugs.webkit.org/show_bug.cgi?id=226750
+
+        Reviewed by Yusuke Suzuki.
+
+        Cleanup patch following r278445.
+
+        1. {Get, Delete, In}ByStatus (but not `Put`) have had `Id` removed from their names; likewise, remove `Id`
+           from the names of {Get, Delete, In}ByIdVariant. These are used *before* ByVal has been converted to ById.
+
+        2. The {Get, Del, In}ByKind enum classes shouldn't really call ById `Normal` -- let's say `ById` explicitly.
+
+        3. Bonus: In DFGBytecodeParser, move some *Status::computeFor calls inside the conditional that uses them.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/DeleteByStatus.cpp:
+        (JSC::DeleteByStatus::appendVariant):
+        (JSC::DeleteByStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::DeleteByStatus::visitAggregateImpl):
+        (JSC::DeleteByStatus::markIfCheap):
+        * bytecode/DeleteByStatus.h:
+        * bytecode/DeleteByVariant.cpp: Renamed from Source/JavaScriptCore/bytecode/DeleteByIdVariant.cpp.
+        (JSC::DeleteByVariant::DeleteByVariant):
+        (JSC::DeleteByVariant::~DeleteByVariant):
+        (JSC::DeleteByVariant::operator=):
+        (JSC::DeleteByVariant::attemptToMerge):
+        (JSC::DeleteByVariant::writesStructures const):
+        (JSC::DeleteByVariant::visitAggregateImpl):
+        (JSC::DeleteByVariant::markIfCheap):
+        (JSC::DeleteByVariant::dump const):
+        (JSC::DeleteByVariant::finalize):
+        (JSC::DeleteByVariant::dumpInContext const):
+        * bytecode/DeleteByVariant.h: Renamed from Source/JavaScriptCore/bytecode/DeleteByIdVariant.h.
+        (JSC::DeleteByVariant::overlaps):
+        * bytecode/GetByStatus.cpp:
+        (JSC::GetByStatus::appendVariant):
+        (JSC::GetByStatus::computeFromLLInt):
+        (JSC::GetByStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::GetByStatus::computeFor):
+        (JSC::GetByStatus::merge):
+        (JSC::GetByStatus::visitAggregateImpl):
+        (JSC::GetByStatus::markIfCheap):
+        (JSC::GetByStatus::finalize):
+        * bytecode/GetByStatus.h:
+        * bytecode/GetByVariant.cpp: Renamed from Source/JavaScriptCore/bytecode/GetByIdVariant.cpp.
+        (JSC::GetByVariant::GetByVariant):
+        (JSC::GetByVariant::~GetByVariant):
+        (JSC::GetByVariant::operator=):
+        (JSC::GetByVariant::canMergeIntrinsicStructures const):
+        (JSC::GetByVariant::attemptToMerge):
+        (JSC::GetByVariant::visitAggregateImpl):
+        (JSC::GetByVariant::markIfCheap):
+        (JSC::GetByVariant::finalize):
+        (JSC::GetByVariant::dump const):
+        (JSC::GetByVariant::dumpInContext const):
+        * bytecode/GetByVariant.h: Renamed from Source/JavaScriptCore/bytecode/GetByIdVariant.h.
+        (JSC::GetByVariant::overlaps):
+        * bytecode/InByStatus.cpp:
+        (JSC::InByStatus::appendVariant):
+        (JSC::InByStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::InByStatus::merge):
+        (JSC::InByStatus::markIfCheap):
+        (JSC::InByStatus::finalize):
+        * bytecode/InByStatus.h:
+        * bytecode/InByVariant.cpp: Renamed from Source/JavaScriptCore/bytecode/InByIdVariant.cpp.
+        (JSC::InByVariant::InByVariant):
+        (JSC::InByVariant::attemptToMerge):
+        (JSC::InByVariant::markIfCheap):
+        (JSC::InByVariant::finalize):
+        (JSC::InByVariant::dump const):
+        (JSC::InByVariant::dumpInContext const):
+        * bytecode/InByVariant.h: Renamed from Source/JavaScriptCore/bytecode/InByIdVariant.h.
+        (JSC::InByVariant::overlaps):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::reset):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicGetter):
+        (JSC::DFG::ByteCodeParser::handleDOMJITGetter):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::handleGetPrivateNameById):
+        (JSC::DFG::ByteCodeParser::handleDeleteById):
+        (JSC::DFG::ByteCodeParser::handleInById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (JSC::DFG::ConstantFoldingPhase::emitGetByOffset):
+        (JSC::DFG::ConstantFoldingPhase::emitDeleteByOffset):
+        * dfg/DFGNode.h:
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileDelBy):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDeleteById):
+        (JSC::FTL::DFG::LowerDFGToB3::compileDeleteByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMultiDeleteByOffset):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareStrictEq):
+        * jit/JITOperations.cpp:
+        (JSC::JSC_DEFINE_JIT_OPERATION):
+        * jit/Repatch.cpp:
+        (JSC::appropriateOptimizingGetByFunction):
+        (JSC::appropriateGetByFunction):
+        (JSC::tryCacheGetBy):
+        (JSC::repatchDeleteBy):
+        (JSC::tryCacheInBy):
+        (JSC::repatchInBy):
+        (JSC::resetGetBy):
+        (JSC::resetDelBy):
+        (JSC::resetInBy):
+        * jit/Repatch.h:
+
 2021-06-09  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         clang-cl: JIT.h(966,67): error: no viable conversion from 'JSC::AbstractMacroAssembler<JSC::X86Assembler>::Address' to 'FunctionPtr<CFunctionPtrTag>'

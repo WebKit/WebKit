@@ -30,7 +30,7 @@
 #include "CodeOrigin.h"
 #include "ConcurrentJSLock.h"
 #include "ICStatusMap.h"
-#include "InByIdVariant.h"
+#include "InByVariant.h"
 #include "StubInfoSummary.h"
 
 namespace JSC {
@@ -93,9 +93,9 @@ public:
     bool isSimple() const { return m_state == Simple; }
 
     size_t numVariants() const { return m_variants.size(); }
-    const Vector<InByIdVariant, 1>& variants() const { return m_variants; }
-    const InByIdVariant& at(size_t index) const { return m_variants[index]; }
-    const InByIdVariant& operator[](size_t index) const { return at(index); }
+    const Vector<InByVariant, 1>& variants() const { return m_variants; }
+    const InByVariant& at(size_t index) const { return m_variants[index]; }
+    const InByVariant& operator[](size_t index) const { return at(index); }
 
     bool takesSlowPath() const { return m_state == TakesSlowPath; }
     
@@ -115,11 +115,11 @@ private:
 #if ENABLE(DFG_JIT)
     static InByStatus computeForStubInfoWithoutExitSiteFeedback(const ConcurrentJSLocker&, VM&, StructureStubInfo*);
 #endif
-    bool appendVariant(const InByIdVariant&);
+    bool appendVariant(const InByVariant&);
     void shrinkToFit();
 
     State m_state { NoInformation };
-    Vector<InByIdVariant, 1> m_variants;
+    Vector<InByVariant, 1> m_variants;
 };
 
 } // namespace JSC

@@ -542,7 +542,7 @@ private:
                 alreadyHandled = true; // Don't allow the default constant folder to do things to this.
 
                 for (unsigned i = 0; i < data.variants.size(); ++i) {
-                    DeleteByIdVariant& variant = data.variants[i];
+                    DeleteByVariant& variant = data.variants[i];
 
                     if (!baseValue.contains(m_graph.registerStructure(variant.oldStructure()))) {
                         data.variants[i--] = data.variants.last();
@@ -650,7 +650,7 @@ private:
                 unsigned identifierNumber = m_graph.identifiers().ensure(uid);
                 addFilterStatus();
                 MultiGetByOffsetData* data = m_graph.m_multiGetByOffsetData.add();
-                for (const GetByIdVariant& variant : status.variants()) {
+                for (const GetByVariant& variant : status.variants()) {
                     data->cases.append(
                         MultiGetByOffsetCase(
                             *m_graph.addStructureSet(variant.structureSet()),
@@ -1174,7 +1174,7 @@ private:
         RELEASE_ASSERT_NOT_REACHED();
     }
     
-    void emitGetByOffset(unsigned indexInBlock, Node* node, const AbstractValue& baseValue, const GetByIdVariant& variant, unsigned identifierNumber)
+    void emitGetByOffset(unsigned indexInBlock, Node* node, const AbstractValue& baseValue, const GetByVariant& variant, unsigned identifierNumber)
     {
         Edge childEdge = node->child1();
 
@@ -1285,7 +1285,7 @@ private:
         }
     }
 
-    void emitDeleteByOffset(unsigned indexInBlock, Node* node, const AbstractValue& baseValue, const DeleteByIdVariant& variant, unsigned identifierNumber)
+    void emitDeleteByOffset(unsigned indexInBlock, Node* node, const AbstractValue& baseValue, const DeleteByVariant& variant, unsigned identifierNumber)
     {
         NodeOrigin origin = node->origin;
         DFG_ASSERT(m_graph, node, origin.exitOK);

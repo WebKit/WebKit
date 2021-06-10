@@ -165,15 +165,15 @@ ALWAYS_INLINE static void fireWatchpointsAndClearStubIfNeeded(VM& vm, StructureS
 inline FunctionPtr<CFunctionPtrTag> appropriateOptimizingGetByFunction(GetByKind kind)
 {
     switch (kind) {
-    case GetByKind::Normal:
+    case GetByKind::ById:
         return operationGetByIdOptimize;
-    case GetByKind::WithThis:
+    case GetByKind::ByIdWithThis:
         return operationGetByIdWithThisOptimize;
-    case GetByKind::Try:
+    case GetByKind::TryById:
         return operationTryGetByIdOptimize;
-    case GetByKind::Direct:
+    case GetByKind::ByIdDirect:
         return operationGetByIdDirectOptimize;
-    case GetByKind::NormalByVal:
+    case GetByKind::ByVal:
         return operationGetByValOptimize;
     case GetByKind::PrivateName:
         return operationGetPrivateNameOptimize;
@@ -186,15 +186,15 @@ inline FunctionPtr<CFunctionPtrTag> appropriateOptimizingGetByFunction(GetByKind
 inline FunctionPtr<CFunctionPtrTag> appropriateGetByFunction(GetByKind kind)
 {
     switch (kind) {
-    case GetByKind::Normal:
+    case GetByKind::ById:
         return operationGetById;
-    case GetByKind::WithThis:
+    case GetByKind::ByIdWithThis:
         return operationGetByIdWithThis;
-    case GetByKind::Try:
+    case GetByKind::TryById:
         return operationTryGetById;
-    case GetByKind::Direct:
+    case GetByKind::ByIdDirect:
         return operationGetByIdDirect;
-    case GetByKind::NormalByVal:
+    case GetByKind::ByVal:
         return operationGetByValGeneric;
     case GetByKind::PrivateName:
         return operationGetPrivateName;
@@ -332,9 +332,9 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
                 if (slot.isUnset() && structure->typeInfo().getOwnPropertySlotIsImpureForPropertyAbsence())
                     return GiveUpOnCache;
 
-                // If a kind is GetByKind::Direct or GetByKind::PrivateName, we do not need to investigate prototype chains further.
+                // If a kind is GetByKind::ByIdDirect or GetByKind::PrivateName, we do not need to investigate prototype chains further.
                 // Cacheability just depends on the head structure.
-                if (kind != GetByKind::Direct && !isPrivate) {
+                if (kind != GetByKind::ByIdDirect && !isPrivate) {
                     auto cacheStatus = prepareChainForCaching(globalObject, baseCell, slot);
                     if (!cacheStatus)
                         return GiveUpOnCache;
@@ -383,7 +383,7 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
             if (slot.isCacheableCustom() && slot.domAttribute())
                 domAttribute = slot.domAttribute();
 
-            if (kind == GetByKind::Try) {
+            if (kind == GetByKind::TryById) {
                 AccessCase::AccessType type;
                 if (slot.isCacheableValue())
                     type = AccessCase::Load;
@@ -417,7 +417,7 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
                     else
                         type = AccessCase::CustomValueGetter;
 
-                    if (kind == GetByKind::WithThis && type == AccessCase::CustomAccessorGetter && domAttribute)
+                    if (kind == GetByKind::ByIdWithThis && type == AccessCase::CustomAccessorGetter && domAttribute)
                         return GiveUpOnCache;
 
                     newCase = GetterSetterAccessCase::create(
@@ -438,14 +438,14 @@ static InlineCacheAction tryCacheGetBy(JSGlobalObject* globalObject, CodeBlock* 
             
             RELEASE_ASSERT(result.code());
             switch (kind) {
-            case GetByKind::Normal:
-            case GetByKind::WithThis:
-            case GetByKind::Try:
-            case GetByKind::Direct:
+            case GetByKind::ById:
+            case GetByKind::ByIdWithThis:
+            case GetByKind::TryById:
+            case GetByKind::ByIdDirect:
             case GetByKind::PrivateNameById:
                 InlineAccess::rewireStubAsJumpInAccess(codeBlock, stubInfo, CodeLocationLabel<JITStubRoutinePtrTag>(result.code()));
                 break;
-            case GetByKind::NormalByVal:
+            case GetByKind::ByVal:
             case GetByKind::PrivateName:
                 InlineAccess::rewireStubAsJumpInAccessNotUsingInlineAccess(codeBlock, stubInfo, CodeLocationLabel<JITStubRoutinePtrTag>(result.code()));
                 break;
@@ -915,7 +915,7 @@ void repatchDeleteBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, DeleteP
 
     if (tryCacheDeleteBy(globalObject, codeBlock, slot, baseValue, oldStructure, propertyName, stubInfo, kind, ecmaMode) == GiveUpOnCache) {
         LOG_IC((ICEvent::DelByReplaceWithGeneric, baseValue.classInfoOrNull(globalObject->vm()), Identifier::fromUid(vm, propertyName.uid())));
-        if (kind == DelByKind::Normal)
+        if (kind == DelByKind::ById)
             repatchSlowPathCall(codeBlock, stubInfo, operationDeleteByIdGeneric);
         else
             repatchSlowPathCall(codeBlock, stubInfo, operationDeleteByValGeneric);
@@ -1020,10 +1020,10 @@ static InlineCacheAction tryCacheInBy(
             RELEASE_ASSERT(result.code());
 
             switch (kind) {
-            case InByKind::Normal:
+            case InByKind::ById:
                 InlineAccess::rewireStubAsJumpInAccess(codeBlock, stubInfo, CodeLocationLabel<JITStubRoutinePtrTag>(result.code()));
                 break;
-            case InByKind::NormalByVal:
+            case InByKind::ByVal:
                 InlineAccess::rewireStubAsJumpInAccessNotUsingInlineAccess(codeBlock, stubInfo, CodeLocationLabel<JITStubRoutinePtrTag>(result.code()));
                 break;
             }
@@ -1042,7 +1042,7 @@ void repatchInBy(JSGlobalObject* globalObject, CodeBlock* codeBlock, JSObject* b
 
     if (tryCacheInBy(globalObject, codeBlock, baseObject, propertyName, wasFound, slot, stubInfo, kind) == GiveUpOnCache) {
         LOG_IC((ICEvent::InReplaceWithGeneric, baseObject->classInfo(globalObject->vm()), Identifier::fromUid(vm, propertyName.uid())));
-        if (kind == InByKind::Normal)
+        if (kind == InByKind::ById)
             repatchSlowPathCall(codeBlock, stubInfo, operationInByIdGeneric);
         else
             repatchSlowPathCall(codeBlock, stubInfo, operationInByValGeneric);
@@ -1679,14 +1679,14 @@ void resetGetBy(CodeBlock* codeBlock, StructureStubInfo& stubInfo, GetByKind kin
 {
     repatchSlowPathCall(codeBlock, stubInfo, appropriateOptimizingGetByFunction(kind));
     switch (kind) {
-    case GetByKind::Normal:
-    case GetByKind::WithThis:
-    case GetByKind::Try:
-    case GetByKind::Direct:
+    case GetByKind::ById:
+    case GetByKind::ByIdWithThis:
+    case GetByKind::TryById:
+    case GetByKind::ByIdDirect:
     case GetByKind::PrivateNameById:
         InlineAccess::resetStubAsJumpInAccess(codeBlock, stubInfo);
         break;
-    case GetByKind::NormalByVal:
+    case GetByKind::ByVal:
     case GetByKind::PrivateName:
         InlineAccess::resetStubAsJumpInAccessNotUsingInlineAccess(codeBlock, stubInfo);
         break;
@@ -1719,7 +1719,7 @@ void resetPutByID(CodeBlock* codeBlock, StructureStubInfo& stubInfo)
 
 void resetDelBy(CodeBlock* codeBlock, StructureStubInfo& stubInfo, DelByKind kind)
 {
-    if (kind == DelByKind::Normal)
+    if (kind == DelByKind::ById)
         repatchSlowPathCall(codeBlock, stubInfo, operationDeleteByIdOptimize);
     else
         repatchSlowPathCall(codeBlock, stubInfo, operationDeleteByValOptimize);
@@ -1729,11 +1729,11 @@ void resetDelBy(CodeBlock* codeBlock, StructureStubInfo& stubInfo, DelByKind kin
 void resetInBy(CodeBlock* codeBlock, StructureStubInfo& stubInfo, InByKind kind)
 {
     switch (kind) {
-    case InByKind::Normal:
+    case InByKind::ById:
         repatchSlowPathCall(codeBlock, stubInfo, operationInByIdOptimize);
         InlineAccess::resetStubAsJumpInAccess(codeBlock, stubInfo);
         break;
-    case InByKind::NormalByVal:
+    case InByKind::ByVal:
         repatchSlowPathCall(codeBlock, stubInfo, operationInByValOptimize);
         InlineAccess::resetStubAsJumpInAccessNotUsingInlineAccess(codeBlock, stubInfo);
         break;

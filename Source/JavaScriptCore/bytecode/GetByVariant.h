@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #pragma once
@@ -33,44 +33,60 @@
 #include <wtf/Box.h>
 
 namespace JSC {
+namespace DOMJIT {
+class GetterSetter;
+}
 
 class CallLinkStatus;
-class DeleteByStatus;
+class GetByStatus;
 struct DumpContext;
 
-class DeleteByIdVariant {
+class GetByVariant {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    DeleteByIdVariant(
-        CacheableIdentifier, bool result,
-        Structure* oldStrucutre, Structure* newStructure, PropertyOffset);
+    GetByVariant(
+        CacheableIdentifier,
+        const StructureSet& = StructureSet(), PropertyOffset = invalidOffset,
+        const ObjectPropertyConditionSet& = ObjectPropertyConditionSet(),
+        std::unique_ptr<CallLinkStatus> = nullptr,
+        JSFunction* = nullptr,
+        FunctionPtr<CustomAccessorPtrTag> customAccessorGetter = nullptr,
+        std::unique_ptr<DOMAttributeAnnotation> = nullptr);
 
-    ~DeleteByIdVariant();
+    ~GetByVariant();
+    
+    GetByVariant(const GetByVariant&);
+    GetByVariant& operator=(const GetByVariant&);
+    
+    bool isSet() const { return !!m_structureSet.size(); }
+    explicit operator bool() const { return isSet(); }
+    const StructureSet& structureSet() const { return m_structureSet; }
+    StructureSet& structureSet() { return m_structureSet; }
 
-    DeleteByIdVariant(const DeleteByIdVariant&);
-    DeleteByIdVariant& operator=(const DeleteByIdVariant&);
-
-    Structure* oldStructure() const { return m_oldStructure; }
-    Structure* newStructure() const { return m_newStructure; }
-    bool result() const { return m_result; }
-    bool writesStructures() const;
-
+    // A non-empty condition set means that this is a prototype load.
+    const ObjectPropertyConditionSet& conditionSet() const { return m_conditionSet; }
+    
     PropertyOffset offset() const { return m_offset; }
+    CallLinkStatus* callLinkStatus() const { return m_callLinkStatus.get(); }
+    JSFunction* intrinsicFunction() const { return m_intrinsicFunction; }
+    Intrinsic intrinsic() const { return m_intrinsicFunction ? m_intrinsicFunction->intrinsic() : NoIntrinsic; }
+    FunctionPtr<CustomAccessorPtrTag> customAccessorGetter() const { return m_customAccessorGetter; }
+    DOMAttributeAnnotation* domAttribute() const { return m_domAttribute.get(); }
 
     bool isPropertyUnset() const { return offset() == invalidOffset; }
 
-    bool attemptToMerge(const DeleteByIdVariant& other);
-
+    bool attemptToMerge(const GetByVariant& other);
+    
     DECLARE_VISIT_AGGREGATE;
     template<typename Visitor> void markIfCheap(Visitor&);
     bool finalize(VM&);
-
+    
     void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;
 
     CacheableIdentifier identifier() const { return m_identifier; }
 
-    bool overlaps(const DeleteByIdVariant& other)
+    bool overlaps(const GetByVariant& other)
     {
         if (!!m_identifier != !!other.m_identifier)
             return true;
@@ -78,16 +94,21 @@ public:
             if (m_identifier != other.m_identifier)
                 return false;
         }
-        return m_oldStructure == other.m_oldStructure;
+        return structureSet().overlaps(other.structureSet());
     }
-
+    
 private:
-    friend class DeleteByStatus;
+    friend class GetByStatus;
 
-    bool m_result;
-    Structure* m_oldStructure;
-    Structure* m_newStructure;
+    bool canMergeIntrinsicStructures(const GetByVariant&) const;
+    
+    StructureSet m_structureSet;
+    ObjectPropertyConditionSet m_conditionSet;
     PropertyOffset m_offset;
+    std::unique_ptr<CallLinkStatus> m_callLinkStatus;
+    JSFunction* m_intrinsicFunction;
+    FunctionPtr<CustomAccessorPtrTag> m_customAccessorGetter;
+    std::unique_ptr<DOMAttributeAnnotation> m_domAttribute;
     CacheableIdentifier m_identifier;
 };
 

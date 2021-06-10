@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2018-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,73 +21,52 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
 #include "CacheableIdentifier.h"
-#include "CallLinkStatus.h"
 #include "ObjectPropertyConditionSet.h"
 #include "PropertyOffset.h"
 #include "StructureSet.h"
-#include <wtf/Box.h>
 
 namespace JSC {
 namespace DOMJIT {
 class GetterSetter;
 }
 
-class CallLinkStatus;
-class GetByStatus;
+class InByStatus;
 struct DumpContext;
 
-class GetByIdVariant {
+class InByVariant {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    GetByIdVariant(
-        CacheableIdentifier,
-        const StructureSet& structureSet = StructureSet(), PropertyOffset offset = invalidOffset,
-        const ObjectPropertyConditionSet& = ObjectPropertyConditionSet(),
-        std::unique_ptr<CallLinkStatus> = nullptr,
-        JSFunction* = nullptr,
-        FunctionPtr<CustomAccessorPtrTag> customAccessorGetter = nullptr,
-        std::unique_ptr<DOMAttributeAnnotation> = nullptr);
+    InByVariant(CacheableIdentifier, const StructureSet& = StructureSet(), PropertyOffset = invalidOffset, const ObjectPropertyConditionSet& = ObjectPropertyConditionSet());
 
-    ~GetByIdVariant();
-    
-    GetByIdVariant(const GetByIdVariant&);
-    GetByIdVariant& operator=(const GetByIdVariant&);
-    
     bool isSet() const { return !!m_structureSet.size(); }
     explicit operator bool() const { return isSet(); }
     const StructureSet& structureSet() const { return m_structureSet; }
     StructureSet& structureSet() { return m_structureSet; }
 
-    // A non-empty condition set means that this is a prototype load.
+    // A non-empty condition set means that this is a prototype in-hit/in-miss.
     const ObjectPropertyConditionSet& conditionSet() const { return m_conditionSet; }
-    
+
     PropertyOffset offset() const { return m_offset; }
-    CallLinkStatus* callLinkStatus() const { return m_callLinkStatus.get(); }
-    JSFunction* intrinsicFunction() const { return m_intrinsicFunction; }
-    Intrinsic intrinsic() const { return m_intrinsicFunction ? m_intrinsicFunction->intrinsic() : NoIntrinsic; }
-    FunctionPtr<CustomAccessorPtrTag> customAccessorGetter() const { return m_customAccessorGetter; }
-    DOMAttributeAnnotation* domAttribute() const { return m_domAttribute.get(); }
 
-    bool isPropertyUnset() const { return offset() == invalidOffset; }
+    bool isHit() const { return offset() != invalidOffset; }
 
-    bool attemptToMerge(const GetByIdVariant& other);
+    bool attemptToMerge(const InByVariant& other);
     
-    DECLARE_VISIT_AGGREGATE;
     template<typename Visitor> void markIfCheap(Visitor&);
     bool finalize(VM&);
-    
+
     void dump(PrintStream&) const;
     void dumpInContext(PrintStream&, DumpContext*) const;
 
     CacheableIdentifier identifier() const { return m_identifier; }
 
-    bool overlaps(const GetByIdVariant& other)
+    bool overlaps(const InByVariant& other)
     {
         if (!!m_identifier != !!other.m_identifier)
             return true;
@@ -96,19 +76,13 @@ public:
         }
         return structureSet().overlaps(other.structureSet());
     }
-    
-private:
-    friend class GetByStatus;
 
-    bool canMergeIntrinsicStructures(const GetByIdVariant&) const;
-    
+private:
+    friend class InByStatus;
+
     StructureSet m_structureSet;
     ObjectPropertyConditionSet m_conditionSet;
     PropertyOffset m_offset;
-    std::unique_ptr<CallLinkStatus> m_callLinkStatus;
-    JSFunction* m_intrinsicFunction;
-    FunctionPtr<CustomAccessorPtrTag> m_customAccessorGetter;
-    std::unique_ptr<DOMAttributeAnnotation> m_domAttribute;
     CacheableIdentifier m_identifier;
 };
 

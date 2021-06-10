@@ -24,14 +24,13 @@
  */
 
 #include "config.h"
-#include "DeleteByIdVariant.h"
+#include "DeleteByVariant.h"
 
 #include "CacheableIdentifierInlines.h"
 
 namespace JSC {
 
-DeleteByIdVariant::DeleteByIdVariant(CacheableIdentifier identifier, bool result,
-    Structure* oldStructure, Structure* newStructure, PropertyOffset offset)
+DeleteByVariant::DeleteByVariant(CacheableIdentifier identifier, bool result, Structure* oldStructure, Structure* newStructure, PropertyOffset offset)
     : m_result(result)
     , m_oldStructure(oldStructure)
     , m_newStructure(newStructure)
@@ -45,14 +44,14 @@ DeleteByIdVariant::DeleteByIdVariant(CacheableIdentifier identifier, bool result
         ASSERT(newStructure);
 }
 
-DeleteByIdVariant::~DeleteByIdVariant() { }
+DeleteByVariant::~DeleteByVariant() { }
 
-DeleteByIdVariant::DeleteByIdVariant(const DeleteByIdVariant& other)
+DeleteByVariant::DeleteByVariant(const DeleteByVariant& other)
 {
     *this = other;
 }
 
-DeleteByIdVariant& DeleteByIdVariant::operator=(const DeleteByIdVariant& other)
+DeleteByVariant& DeleteByVariant::operator=(const DeleteByVariant& other)
 {
     m_identifier = other.m_identifier;
     m_result = other.m_result;
@@ -62,7 +61,7 @@ DeleteByIdVariant& DeleteByIdVariant::operator=(const DeleteByIdVariant& other)
     return *this;
 }
 
-bool DeleteByIdVariant::attemptToMerge(const DeleteByIdVariant& other)
+bool DeleteByVariant::attemptToMerge(const DeleteByVariant& other)
 {
     if (!!m_identifier != !!other.m_identifier)
         return false;
@@ -83,21 +82,21 @@ bool DeleteByIdVariant::attemptToMerge(const DeleteByIdVariant& other)
     return true;
 }
 
-bool DeleteByIdVariant::writesStructures() const
+bool DeleteByVariant::writesStructures() const
 {
     return !!newStructure();
 }
 
 template<typename Visitor>
-void DeleteByIdVariant::visitAggregateImpl(Visitor& visitor)
+void DeleteByVariant::visitAggregateImpl(Visitor& visitor)
 {
     m_identifier.visitAggregate(visitor);
 }
 
-DEFINE_VISIT_AGGREGATE(DeleteByIdVariant);
+DEFINE_VISIT_AGGREGATE(DeleteByVariant);
 
 template<typename Visitor>
-void DeleteByIdVariant::markIfCheap(Visitor& visitor)
+void DeleteByVariant::markIfCheap(Visitor& visitor)
 {
     if (m_oldStructure)
         m_oldStructure->markIfCheap(visitor);
@@ -105,15 +104,15 @@ void DeleteByIdVariant::markIfCheap(Visitor& visitor)
         m_newStructure->markIfCheap(visitor);
 }
 
-template void DeleteByIdVariant::markIfCheap(AbstractSlotVisitor&);
-template void DeleteByIdVariant::markIfCheap(SlotVisitor&);
+template void DeleteByVariant::markIfCheap(AbstractSlotVisitor&);
+template void DeleteByVariant::markIfCheap(SlotVisitor&);
 
-void DeleteByIdVariant::dump(PrintStream& out) const
+void DeleteByVariant::dump(PrintStream& out) const
 {
     dumpInContext(out, nullptr);
 }
 
-bool DeleteByIdVariant::finalize(VM& vm)
+bool DeleteByVariant::finalize(VM& vm)
 {
     if (!vm.heap.isMarked(m_oldStructure))
         return false;
@@ -122,7 +121,7 @@ bool DeleteByIdVariant::finalize(VM& vm)
     return true;
 }
 
-void DeleteByIdVariant::dumpInContext(PrintStream& out, DumpContext*) const
+void DeleteByVariant::dumpInContext(PrintStream& out, DumpContext*) const
 {
     out.print("<");
     out.print("id='", m_identifier, "', result=", m_result);

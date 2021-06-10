@@ -548,8 +548,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/CodeType.h
     bytecode/DFGExitProfile.h
     bytecode/DataFormat.h
-    bytecode/DeleteByIdVariant.h
-    bytecode/DeleteByStatus.h
     bytecode/DirectEvalCodeCache.h
     bytecode/ExecutableInfo.h
     bytecode/ExecutableToCodeBlockEdge.h
