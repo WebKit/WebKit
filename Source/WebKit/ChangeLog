@@ -1,3 +1,28 @@
+2021-06-10  Eric Carlson  <eric.carlson@apple.com>
+
+        [Cocoa] Remote video layer should respect video gravity when resizing
+        https://bugs.webkit.org/show_bug.cgi?id=226784
+
+        Reviewed by Jer Noble.
+
+        Tested manually.
+
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp:
+        (WebKit::MediaPlayerPrivateRemote::prepareForPlayback): Pass specify video gravity
+        when creating remote layer.
+        (WebKit::MediaPlayerPrivateRemote::setVideoFullscreenGravity): Remember gravity.
+        * WebProcess/GPU/media/MediaPlayerPrivateRemote.h:
+
+        * WebProcess/GPU/media/VideoLayerRemote.h:
+        * WebProcess/GPU/media/cocoa/VideoLayerRemoteCocoa.h:
+        * WebProcess/GPU/media/cocoa/VideoLayerRemoteCocoa.mm:
+        (-[WKVideoLayerRemote videoGravity]):
+        (-[WKVideoLayerRemote setVideoGravity:]):
+        (-[WKVideoLayerRemote resizePreservingGravity]): Return true when in PiP, fullscreen,
+        or when video gravity is not "resize".
+        (-[WKVideoLayerRemote layoutSublayers]): Preserve aspect ration when appropriate.
+        (WebKit::createVideoLayerRemote):
+
 2021-06-10  Alex Christensen  <achristensen@webkit.org>
 
         Move Timing-Allow-Origin checks to the network process
