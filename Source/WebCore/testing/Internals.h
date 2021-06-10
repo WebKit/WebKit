@@ -169,6 +169,7 @@ public:
     bool nodeNeedsStyleRecalc(Node&);
     String styleChangeType(Node&);
     String description(JSC::JSValue);
+    void log(const String&);
 
     bool isPreloaded(const String& url);
     bool isLoadingFromMemoryCache(const String& url);

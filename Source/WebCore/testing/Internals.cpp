@@ -767,6 +767,11 @@ String Internals::description(JSC::JSValue value)
     return toString(value);
 }
 
+void Internals::log(const String& value)
+{
+    WTFLogAlways("%s", value.utf8().data());
+}
+
 bool Internals::isPreloaded(const String& url)
 {
     Document* document = contextDocument();
