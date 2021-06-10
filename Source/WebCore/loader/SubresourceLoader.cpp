@@ -152,11 +152,6 @@ void SubresourceLoader::startLoading()
 }
 #endif
 
-CachedResource* SubresourceLoader::cachedResource()
-{
-    return m_resource;
-}
-
 void SubresourceLoader::cancelIfNotFinishing()
 {
     if (m_state != Initialized)

@@ -48,6 +48,7 @@ class SchedulePair;
 namespace WebCore {
 
 class AuthenticationChallenge;
+class CachedResource;
 class DocumentLoader;
 class Frame;
 class FrameLoader;
@@ -130,6 +131,8 @@ public:
     bool shouldSniffContentEncoding() const { return m_options.sniffContentEncoding == ContentEncodingSniffingPolicy::Sniff; }
     WEBCORE_EXPORT bool isAllowedToAskUserForCredentials() const;
     WEBCORE_EXPORT bool shouldIncludeCertificateInfo() const;
+    
+    virtual CachedResource* cachedResource() const { return nullptr; }
 
     bool reachedTerminalState() const { return m_reachedTerminalState; }
 

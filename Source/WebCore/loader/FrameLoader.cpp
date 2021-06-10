@@ -3564,7 +3564,7 @@ void FrameLoader::requestFromDelegate(ResourceRequest& request, unsigned long& i
     }
 
     ResourceRequest newRequest(request);
-    notifier().dispatchWillSendRequest(m_documentLoader.get(), identifier, newRequest, ResourceResponse());
+    notifier().dispatchWillSendRequest(m_documentLoader.get(), identifier, newRequest, ResourceResponse(), nullptr);
 
     if (newRequest.isNull())
         error = cancelledError(request);

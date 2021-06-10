@@ -408,7 +408,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
         frameLoader()->notifier().willSendRequest(this, request, redirectResponse);
     }
     else
-        InspectorInstrumentation::willSendRequest(m_frame.get(), m_identifier, m_frame->loader().documentLoader(), request, redirectResponse);
+        InspectorInstrumentation::willSendRequest(m_frame.get(), m_identifier, m_frame->loader().documentLoader(), request, redirectResponse, cachedResource());
 
 #if USE(QUICK_LOOK)
     if (m_documentLoader) {

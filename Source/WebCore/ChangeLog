@@ -1,3 +1,53 @@
+2021-06-10  Ben Nham  <nham@apple.com>
+
+        Only cache GET requests in the memory cache
+        https://bugs.webkit.org/show_bug.cgi?id=226359
+
+        Reviewed by Geoff Garen.
+
+        Test: http/tests/cache/memory-cache-only-caches-get.html
+
+        We only cache GET requests at the disk cache level, but we don't have that same restriction
+        at the memory cache level. We should make the policies match. In particular, in long-running
+        webpages, we're accumulating POSTs from XMLHttpRequests in our memory cache and should stop
+        doing that, since POST response caching is generally not used or expected.
+
+        I also changed InspectorInstrumentation::willSendRequest to take an optional CachedResource
+        parameter because it currently uses InspectorPageAgent::cachedResource to find the resource,
+        which in turn expects to find the resource in the memory cache. That doesn't work anymore
+        for these non-GET requests, so we now pass down the CachedResource explicitly in the cases
+        where that's necessary.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willSendRequestImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::willSendRequest):
+        * inspector/agents/InspectorNetworkAgent.cpp:
+        (WebCore::resourceTypeForCachedResource):
+        (WebCore::InspectorNetworkAgent::willSendRequest):
+        * inspector/agents/InspectorNetworkAgent.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::tryLoadingSubstituteData):
+        (WebCore::DocumentLoader::addSubresourceLoader):
+        (WebCore::DocumentLoader::loadMainResource):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::requestFromDelegate):
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::willSendRequest):
+        (WebCore::ResourceLoadNotifier::dispatchWillSendRequest):
+        * loader/ResourceLoadNotifier.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::willSendRequestInternal):
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::cachedResource const):
+        * loader/SubresourceLoader.cpp:
+        * loader/SubresourceLoader.h:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::update):
+        (WebCore::ApplicationCacheGroup::startLoadingEntry):
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::add):
+
 2021-06-10  Chris Dumez  <cdumez@apple.com>
 
         Replace ReadableStreamChunk struct with a WTF::Span

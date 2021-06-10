@@ -465,7 +465,7 @@ void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLo
     m_frontendDispatcher->requestWillBeSent(requestId, frameId, loaderId, url, buildObjectForResourceRequest(request), sendTimestamp, walltime.secondsSinceEpoch().seconds(), WTFMove(initiatorObject), buildObjectForResourceResponse(redirectResponse, nullptr), WTFMove(typePayload), targetId);
 }
 
-static InspectorPageAgent::ResourceType resourceTypeForCachedResource(CachedResource* resource)
+static InspectorPageAgent::ResourceType resourceTypeForCachedResource(const CachedResource* resource)
 {
     if (resource)
         return InspectorPageAgent::inspectorResourceType(*resource);
@@ -486,9 +486,10 @@ static InspectorPageAgent::ResourceType resourceTypeForLoadType(InspectorInstrum
     return InspectorPageAgent::OtherResource;
 }
 
-void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse)
+void InspectorNetworkAgent::willSendRequest(unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, const CachedResource* cachedResource)
 {
-    auto* cachedResource = loader ? InspectorPageAgent::cachedResource(loader->frame(), request.url()) : nullptr;
+    if (!cachedResource && loader)
+        cachedResource = InspectorPageAgent::cachedResource(loader->frame(), request.url());
     willSendRequest(identifier, loader, request, redirectResponse, resourceTypeForCachedResource(cachedResource));
 }
 
