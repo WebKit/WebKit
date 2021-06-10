@@ -630,16 +630,16 @@ void HTMLElement::applyAspectRatioFromWidthAndHeightAttributesToStyle(MutableSty
     if (!document().settings().aspectRatioOfImgFromWidthAndHeightEnabled())
         return;
 
-    double width = parseValidHTMLFloatingPointNumber(attributeWithoutSynchronization(widthAttr)).value_or(-1);
-    if (width < 0)
+    auto dimensionWidth = parseHTMLDimension(attributeWithoutSynchronization(widthAttr));
+    if (!dimensionWidth || dimensionWidth->type != HTMLDimension::Type::Pixel)
         return;
-    double height = parseValidHTMLFloatingPointNumber(attributeWithoutSynchronization(heightAttr)).value_or(-1);
-    if (height < 0)
+    auto dimensionHeight = parseHTMLDimension(attributeWithoutSynchronization(heightAttr));
+    if (!dimensionHeight || dimensionHeight->type != HTMLDimension::Type::Pixel)
         return;
 
     auto ratioList = CSSValueList::createSlashSeparated();
-    ratioList->append(CSSValuePool::singleton().createValue(width, CSSUnitType::CSS_NUMBER));
-    ratioList->append(CSSValuePool::singleton().createValue(height, CSSUnitType::CSS_NUMBER));
+    ratioList->append(CSSValuePool::singleton().createValue(dimensionWidth->number, CSSUnitType::CSS_NUMBER));
+    ratioList->append(CSSValuePool::singleton().createValue(dimensionHeight->number, CSSUnitType::CSS_NUMBER));
     auto list = CSSValueList::createSpaceSeparated();
     list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueAuto));
     list->append(ratioList);

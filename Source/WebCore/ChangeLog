@@ -1,3 +1,25 @@
+2021-06-09  Cathie Chen  <cathiechen@igalia.com>
+
+        Aspect ratio from width and height attribute is not compatible to string with invalid ends
+        https://bugs.webkit.org/show_bug.cgi?id=226469
+
+        Reviewed by Antti Koivisto.
+
+        The patch follows the steps defined in [1] to parse the dimension values from the attribute values.
+        It adds HTMLDimension to present the dimension value which has two types, Percentage and Pixel.
+        And parseHTMLDimension() follows the specification steps to check validation and parse the dimension
+        value. Currently, it is only used by parsing aspect-ratio from width and height attributes. It will
+        apply to other attributes length parse in the future patch.
+
+        [1] https://html.spec.whatwg.org/#rules-for-parsing-dimension-values
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::applyAspectRatioFromWidthAndHeightAttributesToStyle): Call parseHTMLDimension to get the length values.
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::parseHTMLDimensionNumber):
+        (WebCore::parseHTMLDimension):
+        * html/parser/HTMLParserIdioms.h:
+
 2021-06-09  Andres Gonzalez  <andresg_22@apple.com>
 
         iOS - VoiceOver reads the old heading text when updated with heading.firstChild.data.

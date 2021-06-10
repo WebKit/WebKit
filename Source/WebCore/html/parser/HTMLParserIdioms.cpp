@@ -26,6 +26,7 @@
 #include "HTMLParserIdioms.h"
 
 #include "Decimal.h"
+#include "ParsingUtilities.h"
 #include "QualifiedName.h"
 #include <limits>
 #include <wtf/MathExtras.h>
@@ -473,6 +474,61 @@ AtomString parseHTMLHashNameReference(StringView usemap)
     if (numberSignIndex == notFound)
         return nullAtom();
     return usemap.substring(numberSignIndex + 1).toAtomString();
+}
+
+struct HTMLDimensionParsingResult {
+    double number;
+    unsigned parsedLength;
+};
+
+template <typename CharacterType>
+static std::optional<HTMLDimensionParsingResult> parseHTMLDimensionNumber(const CharacterType* position, unsigned length)
+{
+    if (!length || !position)
+        return std::nullopt;
+
+    const auto* begin = position;
+    const auto* end = position + length;
+    skipWhile<isHTMLSpace>(position, end);
+    if (position == end)
+        return std::nullopt;
+
+    auto* start = position;
+    skipWhile<isASCIIDigit>(position, end);
+    if (start == position)
+        return std::nullopt;
+
+    if (skipExactly(position, end, '.'))
+        skipWhile<isASCIIDigit>(position, end);
+
+    size_t parsedLength = 0;
+    double number = parseDouble(start, position - start, parsedLength);
+    if (!(parsedLength && std::isfinite(number)))
+        return std::nullopt;
+
+    HTMLDimensionParsingResult result;
+    result.number = number;
+    result.parsedLength = position - begin;
+    return result;
+}
+
+std::optional<HTMLDimension> parseHTMLDimension(StringView dimensionString)
+{
+    std::optional<HTMLDimensionParsingResult> result;
+    auto length = dimensionString.length();
+    if (dimensionString.is8Bit())
+        result = parseHTMLDimensionNumber(dimensionString.characters8(), length);
+    else
+        result = parseHTMLDimensionNumber(dimensionString.characters16(), length);
+    if (!result)
+        return std::nullopt;
+
+    HTMLDimension dimension;
+    dimension.number = result->number;
+    dimension.type = HTMLDimension::Type::Pixel;
+    if (result->parsedLength < dimensionString.length() && dimensionString[result->parsedLength] == '%')
+        dimension.type = HTMLDimension::Type::Percentage;
+    return dimension;
 }
 
 }
