@@ -1,3 +1,15 @@
+2021-06-09  Andres Gonzalez  <andresg_22@apple.com>
+
+        iOS - VoiceOver reads the old heading text when updated with heading.firstChild.data.
+        https://bugs.webkit.org/show_bug.cgi?id=226754
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/ios-simulator/heading-text-updates-expected.txt: Added.
+        * accessibility/ios-simulator/heading-text-updates.html: Added.
+        * accessibility/mac/heading-text-updates-expected.txt: Added.
+        * accessibility/mac/heading-text-updates.html: Added.
+
 2021-06-09  Devin Rousso  <drousso@apple.com>
 
         (r278618) media/modern-media-controls/overflow-support/chapters.html is timing out since introduction

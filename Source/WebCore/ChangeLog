@@ -1,3 +1,27 @@
+2021-06-09  Andres Gonzalez  <andresg_22@apple.com>
+
+        iOS - VoiceOver reads the old heading text when updated with heading.firstChild.data.
+        https://bugs.webkit.org/show_bug.cgi?id=226754
+        rdar://44949563
+
+        Reviewed by Chris Fleizach.
+
+        Tests: accessibility/ios-simulator/heading-text-updates.html
+               accessibility/mac/heading-text-updates.html
+
+        The problem was caused by [WebAccessibilityObjectWrapper _accessibilityTraitsFromAncestors]
+        setting the value and label of static text inside headings. since this
+        method is called only on the initialization of the object, the label is
+        never updated when the text changes.
+        The solution is to move the logic to return the label and value of
+        static text inside headings to the accessibilityLabel and accessibilityValue
+        respectively.
+
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper _accessibilityTraitsFromAncestors]):
+        (-[WebAccessibilityObjectWrapper accessibilityLabel]):
+        (-[WebAccessibilityObjectWrapper accessibilityValue]):
+
 2021-06-09  Eric Carlson  <eric.carlson@apple.com>
 
         Nullptr crash in MediaSource::updateBufferedIfNeeded
