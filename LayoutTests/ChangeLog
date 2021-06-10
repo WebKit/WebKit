@@ -1,3 +1,13 @@
+2021-06-09  Rob Buis  <rbuis@igalia.com>
+
+        Null check page in generateCertificate
+        https://bugs.webkit.org/show_bug.cgi?id=226798
+
+        Reviewed by Youenn Fablet.
+
+        * http/wpt/webrtc/RTCPeerConnection-generateCertificate-crash-expected.txt: Added.
+        * http/wpt/webrtc/RTCPeerConnection-generateCertificate-crash.html: Added.
+
 2021-06-09  Andres Gonzalez  <andresg_22@apple.com>
 
         iOS - VoiceOver reads the old heading text when updated with heading.firstChild.data.

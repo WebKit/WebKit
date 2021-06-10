@@ -1,3 +1,17 @@
+2021-06-09  Rob Buis  <rbuis@igalia.com>
+
+        Null check page in generateCertificate
+        https://bugs.webkit.org/show_bug.cgi?id=226798
+
+        Reviewed by Youenn Fablet.
+
+        Null check page in generateCertificate.
+
+        Test: http/wpt/webrtc/RTCPeerConnection-generateCertificate-crash.html
+
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::generateCertificate):
+
 2021-06-09  Cameron McCormack  <heycam@apple.com>
 
         Add window.internals.log()
