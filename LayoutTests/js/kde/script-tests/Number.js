@@ -53,6 +53,7 @@ shouldBe("Number(-0.000056).toFixed(7)","\"-0.0000560\"");
 shouldBe("Number(NaN).toFixed(7)","\"NaN\"");
 shouldBe("Number(Infinity).toFixed(7)","\"Infinity\"");
 shouldBe("Number(-Infinity).toFixed(7)","\"-Infinity\"");
+shouldBe("Number(-100000000000000000000).toFixed(100)","\"-100000000000000000000.0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"");
 shouldBe("Number(Math.pow(10,4)).toFixed(13)","\"10000.0000000000000\"");
 shouldBe("Number(Math.pow(10,17)).toFixed(16)","\"100000000000000000.0000000000000000\"");
 shouldBe("Number(Math.pow(10,18)).toFixed(17)","\"1000000000000000000.00000000000000000\"");
