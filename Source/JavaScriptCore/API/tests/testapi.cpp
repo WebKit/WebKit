@@ -38,6 +38,10 @@
 #include <wtf/Vector.h>
 #include <wtf/text/StringCommon.h>
 
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
+
 extern "C" void configureJSCForTesting();
 extern "C" int testCAPIViaCpp(const char* filter);
 extern "C" void JSSynchronousGarbageCollectForDebugging(JSContextRef);
@@ -147,6 +151,7 @@ public:
     void promiseUnhandledRejection();
     void promiseUnhandledRejectionFromUnhandledRejectionCallback();
     void promiseEarlyHandledRejections();
+    void promiseDrainDoesNotEatExceptions();
     void topCallFrameAccess();
     void markedJSValueArrayAndGC();
     void classDefinitionWithJSSubclass();
@@ -609,6 +614,27 @@ void TestAPI::promiseEarlyHandledRejections()
     check(!callbackCalled, "unhandled rejection callback should not be called for asynchronous early-handled rejection");
 }
 
+void TestAPI::promiseDrainDoesNotEatExceptions()
+{
+#if PLATFORM(COCOA)
+        bool useLegacyDrain = false;
+#if PLATFORM(MAC)
+        useLegacyDrain = applicationSDKVersion() < DYLD_MACOSX_VERSION_12_00;
+#elif PLATFORM(WATCH)
+            // Don't check, JSC isn't API on watch anyway.
+#elif PLATFORM(IOS_FAMILY)
+        useLegacyDrain = applicationSDKVersion() < DYLD_IOS_VERSION_15_0;
+#else
+#error "Unsupported Cocoa Platform"
+#endif
+        if (useLegacyDrain)
+            return;
+#endif
+    ScriptResult result = callFunction("(function() { Promise.resolve().then(() => { throw 2; }); throw 1; })");
+    check(!result, "function should throw an error");
+    check(JSValueIsNumber(context, result.error()) && JSValueToNumber(context, result.error(), nullptr) == 1, "exception payload should have been 1");
+}
+
 void TestAPI::topCallFrameAccess()
 {
     {
@@ -760,16 +786,15 @@ int testCAPIViaCpp(const char* filter)
     RUN(promiseRejectTrue());
     RUN(promiseUnhandledRejection());
     RUN(promiseUnhandledRejectionFromUnhandledRejectionCallback());
+    RUN(promiseDrainDoesNotEatExceptions());
     RUN(promiseEarlyHandledRejections());
     RUN(markedJSValueArrayAndGC());
     RUN(classDefinitionWithJSSubclass());
     RUN(proxyReturnedWithJSSubclassing());
     RUN(testJSObjectSetOnGlobalObjectSubclassDefinition());
 
-    if (tasks.isEmpty()) {
-        dataLogLn("Filtered all tests: ERROR");
-        return 1;
-    }
+    if (tasks.isEmpty())
+        return 0;
 
     Lock lock;
 

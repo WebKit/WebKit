@@ -2730,6 +2730,25 @@ static void testDependenciesMissingImport()
     }
 }
 
+static void testMicrotaskWithFunction()
+{
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+
+        JSValue *globalObject = context.globalObject;
+
+        auto block = ^() {
+            return 1+1;
+        };
+
+        [globalObject setValue:block forProperty:@"setTimeout"];
+        JSValue *arr = [context evaluateScript:@"var arr = []; (async () => { await 1; arr.push(3); })(); arr.push(1); setTimeout(); arr.push(2); arr;"];
+        checkResult(@"arr[0] should be 1", [arr[@0] toInt32] == 1);
+        checkResult(@"arr[1] should be 2", [arr[@1] toInt32] == 2);
+        checkResult(@"arr[2] should be 3", [arr[@2] toInt32] == 3);
+    }
+}
+
 @protocol ToString <JSExport>
 - (NSString *)toString;
 @end
@@ -2847,6 +2866,8 @@ void testObjectiveCAPI(const char* filter)
     RUN(promiseCreateResolved());
     RUN(promiseCreateRejected());
     RUN(parallelPromiseResolveTest());
+
+    RUN(testMicrotaskWithFunction());
 
     if (!filter)
         testObjectiveCAPIMain();
