@@ -20,7 +20,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import inspect
 import time
 from collections import defaultdict
 
@@ -34,12 +33,14 @@ class Memoize(object):
 
     def __call__(self, function):
         def decorator(*args, **kwargs):
+            fargs = function.__code__.co_varnames[:function.__code__.co_argcount]
+
             timeout = self.timeout
-            if 'timeout' not in inspect.getargspec(function).args:
+            if 'timeout' not in fargs:
                 timeout = kwargs.pop('timeout', timeout)
 
             cached = self.cached
-            if 'cached' not in inspect.getargspec(function).args:
+            if 'cached' not in fargs:
                 cached = kwargs.pop('cached', cached)
 
             keyargs = args + tuple(sorted([(key, value) for key, value in kwargs.items()]))
