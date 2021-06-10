@@ -30,6 +30,7 @@
 #include "JSObjectRef.h"
 #include "JSValueRef.h"
 #include "JSObject.h"
+#include <wtf/PlatformCallingConventions.h>
 
 namespace JSC {
 
@@ -199,7 +200,7 @@ private:
     void finishCreation(VM&);
 
     static IsoSubspace* subspaceForImpl(VM&, SubspaceAccess);
-    static JSC_HOST_CALL_ATTRIBUTES EncodedJSValue customToPrimitive(JSGlobalObject*, CallFrame*);
+    static EncodedJSValue JSC_HOST_CALL_ATTRIBUTES customToPrimitive(JSGlobalObject*, CallFrame*);
 
     static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     static bool getOwnPropertySlotByIndex(JSObject*, JSGlobalObject*, unsigned propertyName, PropertySlot&);
