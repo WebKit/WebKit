@@ -34,7 +34,6 @@
 #include "HTTPParsers.h"
 #include "JSBlob.h"
 #include "JSDOMFormData.h"
-#include "ReadableStreamChunk.h"
 #include "TextResourceDecoder.h"
 #include <wtf/StringExtras.h>
 #include <wtf/URLParser.h>
@@ -273,8 +272,8 @@ void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, const String& co
                 return;
             }
 
-            if (auto chunk = result.returnValue())
-                data->append(chunk->data, chunk->size);
+            if (auto* chunk = result.returnValue())
+                data->append(chunk->data(), chunk->size());
             else
                 resolveWithTypeAndData(WTFMove(promise), type, contentType, data->data(), data->size());
         });

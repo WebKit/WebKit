@@ -50,7 +50,7 @@ void ReadableStreamToSharedBufferSink::enqueue(const BufferSource& buffer)
         return;
 
     if (m_callback) {
-        ReadableStreamChunk chunk { buffer.data(), buffer.length() };
+        Span chunk { buffer.data(), buffer.length() };
         m_callback(&chunk);
     }
 }

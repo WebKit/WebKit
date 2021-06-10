@@ -1,5 +1,32 @@
 2021-06-10  Chris Dumez  <cdumez@apple.com>
 
+        Replace ReadableStreamChunk struct with a WTF::Span
+        https://bugs.webkit.org/show_bug.cgi?id=226879
+
+        Reviewed by Alex Christensen.
+
+        Replace ReadableStreamChunk struct with a WTF::Span now that we support
+        Span and they are essentially the same thing.
+
+        * Headers.cmake:
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::addAll):
+        (WebCore::DOMCache::put):
+        * Modules/fetch/FetchBodyConsumer.cpp:
+        (WebCore::FetchBodyConsumer::resolve):
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::BodyLoader::didReceiveData):
+        (WebCore::FetchResponse::BodyLoader::consumeDataByChunk):
+        * Modules/fetch/FetchResponse.h:
+        * Modules/streams/ReadableStreamChunk.h: Removed.
+        * Modules/streams/ReadableStreamSink.cpp:
+        (WebCore::ReadableStreamToSharedBufferSink::enqueue):
+        * Modules/streams/ReadableStreamSink.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * workers/service/context/ServiceWorkerFetch.cpp:
+
+2021-06-10  Chris Dumez  <cdumez@apple.com>
+
         Enable WebPage's release logging in ephemeral sessions
         https://bugs.webkit.org/show_bug.cgi?id=226510
 

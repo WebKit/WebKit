@@ -427,8 +427,8 @@ static JSC::JSPromise* handleResponseOnStreamingAction(JSC::JSGlobalObject* glob
                 return;
             }
 
-            if (auto chunk = result.returnValue())
-                compiler->addBytes(chunk->data, chunk->size);
+            if (auto* chunk = result.returnValue())
+                compiler->addBytes(chunk->data(), chunk->size());
             else
                 compiler->finalize(globalObject);
         });

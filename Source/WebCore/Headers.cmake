@@ -142,7 +142,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/speech/SpeechRecognitionUpdate.h
     Modules/speech/SpeechRecognizer.h
 
-    Modules/streams/ReadableStreamChunk.h
     Modules/streams/ReadableStreamSink.h
     Modules/streams/ReadableStreamSource.h
 
