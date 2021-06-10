@@ -1,3 +1,13 @@
+2021-06-10  Alan Bujtas  <zalan@apple.com>
+
+        ASSERT NOT REACHED in webcore::Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree()
+        https://bugs.webkit.org/show_bug.cgi?id=226866
+        <rdar://problem/79120482>
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2021-06-09  Rob Buis  <rbuis@igalia.com>
 
         Null check page in generateCertificate

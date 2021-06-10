@@ -1199,7 +1199,7 @@ fast/layoutformattingcontext/table-basic-row-baseline-align.html [ ImageOnlyFail
 fast/layoutformattingcontext/table-basic-row-baseline-with-nested-table.html [ ImageOnlyFailure ]
 fast/layoutformattingcontext/table-basic-row-vertical-align-baseline.html [ ImageOnlyFailure ]
 fast/layoutformattingcontext/table-fixed-width-colspans.html [ ImageOnlyFailure ]
-fast/layoutformattingcontext/table-fixed-width-with-max-distribution.html [ ImageOnlyFailure ]
+[ Release ] fast/layoutformattingcontext/table-fixed-width-with-max-distribution.html [ ImageOnlyFailure ]
 fast/layoutformattingcontext/table-flex-width-border-collapse.html [ ImageOnlyFailure ]
 fast/layoutformattingcontext/table-flex-width-colspans.html [ ImageOnlyFailure ]
 fast/layoutformattingcontext/table-simple-border-collapse-with-padding.html [ ImageOnlyFailure ]
