@@ -4879,3 +4879,6 @@ http/wpt/webxr [ Skip ]
 
 # Invalid test. Tests color(lab ...) which has been removed from the standard.
 imported/w3c/web-platform-tests/css/css-color/predefined-013.html [ Skip ]
+
+webkit.org/b/226884 imported/w3c/web-platform-tests/service-workers/service-worker/credentials.https.html [ Failure ]
+webkit.org/b/226884 imported/w3c/web-platform-tests/content-security-policy/reporting/report-only-in-meta.sub.html [ Failure ]
