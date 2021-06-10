@@ -1,7 +1,7 @@
 
 PASS CountQueuingStrategy: Can construct a with a valid high water mark
-FAIL CountQueuingStrategy: Constructor behaves as expected with strange arguments assert_throws_js: construction fails with true function "() => new QueuingStrategy(true)" did not throw
-FAIL CountQueuingStrategy: highWaterMark constructor values are converted per the unrestricted double rules assert_equals: false gets set correctly expected (number) 0 but got (boolean) false
+PASS CountQueuingStrategy: Constructor behaves as expected with strange arguments
+PASS CountQueuingStrategy: highWaterMark constructor values are converted per the unrestricted double rules
 PASS CountQueuingStrategy: size is the same function across all instances
 PASS CountQueuingStrategy: size should have the right name
 FAIL CountQueuingStrategy: subclassing should work correctly assert_equals: constructor.name should be correct expected "SubClass" but got "CountQueuingStrategy"
