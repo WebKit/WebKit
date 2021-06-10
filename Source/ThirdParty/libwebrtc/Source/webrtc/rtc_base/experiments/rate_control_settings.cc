@@ -24,9 +24,12 @@ namespace webrtc {
 
 namespace {
 
-const int kDefaultAcceptedQueueMs = 250;
+const int kDefaultAcceptedQueueMs = 350;
 
 const int kDefaultMinPushbackTargetBitrateBps = 30000;
+
+const char kCongestionWindowDefaultFieldTrialString[] =
+    "QueueSize:350,MinBitrate:30000,DropFrame:true";
 
 const char kUseBaseHeavyVp8Tl3RateAllocationFieldTrialName[] =
     "WebRTC-UseBaseHeavyVP8TL3RateAllocation";
@@ -75,27 +78,29 @@ constexpr char VideoRateControlConfig::kKey[];
 std::unique_ptr<StructParametersParser> VideoRateControlConfig::Parser() {
   // The empty comments ensures that each pair is on a separate line.
   return StructParametersParser::Create(
-      "pacing_factor", &pacing_factor,                        //
-      "alr_probing", &alr_probing,                            //
-      "vp8_qp_max", &vp8_qp_max,                              //
-      "vp8_min_pixels", &vp8_min_pixels,                      //
-      "trust_vp8", &trust_vp8,                                //
-      "trust_vp9", &trust_vp9,                                //
-      "video_hysteresis", &video_hysteresis,                  //
-      "screenshare_hysteresis", &screenshare_hysteresis,      //
-      "probe_max_allocation", &probe_max_allocation,          //
-      "bitrate_adjuster", &bitrate_adjuster,                  //
-      "adjuster_use_headroom", &adjuster_use_headroom,        //
-      "vp8_s0_boost", &vp8_s0_boost,                          //
-      "vp8_base_heavy_tl3_alloc", &vp8_base_heavy_tl3_alloc,  //
-      "vp8_dynamic_rate", &vp8_dynamic_rate,                  //
-      "vp9_dynamic_rate", &vp9_dynamic_rate);
+      "pacing_factor", &pacing_factor,                    //
+      "alr_probing", &alr_probing,                        //
+      "vp8_qp_max", &vp8_qp_max,                          //
+      "vp8_min_pixels", &vp8_min_pixels,                  //
+      "trust_vp8", &trust_vp8,                            //
+      "trust_vp9", &trust_vp9,                            //
+      "video_hysteresis", &video_hysteresis,              //
+      "screenshare_hysteresis", &screenshare_hysteresis,  //
+      "probe_max_allocation", &probe_max_allocation,      //
+      "bitrate_adjuster", &bitrate_adjuster,              //
+      "adjuster_use_headroom", &adjuster_use_headroom,    //
+      "vp8_s0_boost", &vp8_s0_boost,                      //
+      "vp8_base_heavy_tl3_alloc", &vp8_base_heavy_tl3_alloc);
 }
 
 RateControlSettings::RateControlSettings(
-    const WebRtcKeyValueConfig* const key_value_config)
-    : congestion_window_config_(CongestionWindowConfig::Parse(
-          key_value_config->Lookup(CongestionWindowConfig::kKey))) {
+    const WebRtcKeyValueConfig* const key_value_config) {
+  std::string congestion_window_config =
+      key_value_config->Lookup(CongestionWindowConfig::kKey).empty()
+          ? kCongestionWindowDefaultFieldTrialString
+          : key_value_config->Lookup(CongestionWindowConfig::kKey);
+  congestion_window_config_ =
+      CongestionWindowConfig::Parse(congestion_window_config);
   video_config_.vp8_base_heavy_tl3_alloc = IsEnabled(
       key_value_config, kUseBaseHeavyVp8Tl3RateAllocationFieldTrialName);
   ParseHysteresisFactor(key_value_config, kVideoHysteresisFieldTrialname,
@@ -182,16 +187,8 @@ bool RateControlSettings::Vp8BoostBaseLayerQuality() const {
   return video_config_.vp8_s0_boost;
 }
 
-bool RateControlSettings::Vp8DynamicRateSettings() const {
-  return video_config_.vp8_dynamic_rate;
-}
-
 bool RateControlSettings::LibvpxVp9TrustedRateController() const {
   return video_config_.trust_vp9;
-}
-
-bool RateControlSettings::Vp9DynamicRateSettings() const {
-  return video_config_.vp9_dynamic_rate;
 }
 
 double RateControlSettings::GetSimulcastHysteresisFactor(

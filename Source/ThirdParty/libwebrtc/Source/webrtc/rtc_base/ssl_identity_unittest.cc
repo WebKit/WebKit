@@ -65,7 +65,7 @@ const unsigned char kTestCertSha512[] = {
     0x35, 0xce, 0x26, 0x58, 0x4a, 0x33, 0x6d, 0xbc, 0xb6};
 
 // These PEM strings were created by generating an identity with
-// |SSLIdentity::Generate| and invoking |identity->PrivateKeyToPEMString()|,
+// |SSLIdentity::Create| and invoking |identity->PrivateKeyToPEMString()|,
 // |identity->PublicKeyToPEMString()| and
 // |identity->certificate().ToPEMString()|. If the crypto library is updated,
 // and the update changes the string form of the keys, these will have to be
@@ -404,6 +404,21 @@ TEST_F(SSLIdentityTest, FromPEMStringsEC) {
   EXPECT_EQ(kECDSA_PRIVATE_KEY_PEM, identity->PrivateKeyToPEMString());
   EXPECT_EQ(kECDSA_PUBLIC_KEY_PEM, identity->PublicKeyToPEMString());
   EXPECT_EQ(kECDSA_CERT_PEM, identity->certificate().ToPEMString());
+}
+
+TEST_F(SSLIdentityTest, FromPEMChainStrings) {
+  // This doesn't form a valid certificate chain, but that doesn't matter for
+  // the purposes of the test
+  std::string chain(kRSA_CERT_PEM);
+  chain.append(kTestCertificate);
+  std::unique_ptr<SSLIdentity> identity(
+      SSLIdentity::CreateFromPEMChainStrings(kRSA_PRIVATE_KEY_PEM, chain));
+  EXPECT_TRUE(identity);
+  EXPECT_EQ(kRSA_PRIVATE_KEY_PEM, identity->PrivateKeyToPEMString());
+  EXPECT_EQ(kRSA_PUBLIC_KEY_PEM, identity->PublicKeyToPEMString());
+  ASSERT_EQ(2u, identity->cert_chain().GetSize());
+  EXPECT_EQ(kRSA_CERT_PEM, identity->cert_chain().Get(0).ToPEMString());
+  EXPECT_EQ(kTestCertificate, identity->cert_chain().Get(1).ToPEMString());
 }
 
 TEST_F(SSLIdentityTest, CloneIdentityRSA) {

@@ -16,6 +16,7 @@
 #include <memory>
 #include <vector>
 
+#include "api/sequence_checker.h"
 #include "modules/desktop_capture/desktop_capture_options.h"
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_frame.h"
@@ -27,7 +28,6 @@
 #include "modules/desktop_capture/screen_capture_frame_queue.h"
 #include "modules/desktop_capture/screen_capturer_helper.h"
 #include "modules/desktop_capture/shared_desktop_frame.h"
-#include "rtc_base/thread_checker.h"
 
 namespace webrtc {
 
@@ -110,7 +110,7 @@ class ScreenCapturerMac final : public DesktopCapturer {
   DesktopFrameProvider desktop_frame_provider_;
 
   // Start, CaptureFrame and destructor have to called in the same thread.
-  rtc::ThreadChecker thread_checker_;
+  SequenceChecker thread_checker_;
 
   RTC_DISALLOW_COPY_AND_ASSIGN(ScreenCapturerMac);
 };

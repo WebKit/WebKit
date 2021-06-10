@@ -14,8 +14,8 @@
 
 #include <utility>
 
+#include "api/sequence_checker.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/thread_checker.h"
 #include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
@@ -42,7 +42,7 @@ class SharedMemoryFactoryProxy : public SharedMemoryFactory {
   explicit SharedMemoryFactoryProxy(SharedMemoryFactory* factory);
 
   SharedMemoryFactory* factory_ = nullptr;
-  rtc::ThreadChecker thread_checker_;
+  SequenceChecker thread_checker_;
 };
 
 }  // namespace

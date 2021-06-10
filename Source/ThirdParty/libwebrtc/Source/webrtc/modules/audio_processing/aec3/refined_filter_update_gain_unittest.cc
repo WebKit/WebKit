@@ -196,7 +196,8 @@ void RunFilterUpdateTest(int num_blocks_to_process,
     std::array<float, kFftLengthBy2Plus1> erl;
     ComputeErl(optimization, H2[0], erl);
     refined_gain.Compute(render_power, render_signal_analyzer, output[0], erl,
-                         refined_filter.SizePartitions(), saturation, &G);
+                         refined_filter.SizePartitions(), saturation, false,
+                         &G);
     refined_filter.Adapt(*render_delay_buffer->GetRenderBuffer(), G, &h[0]);
 
     // Update the delay.
@@ -247,7 +248,7 @@ TEST(RefinedFilterUpdateGainDeathTest, NullDataOutputGain) {
   erl.fill(0.f);
   EXPECT_DEATH(
       gain.Compute(render_power, analyzer, output, erl,
-                   config.filter.refined.length_blocks, false, nullptr),
+                   config.filter.refined.length_blocks, false, false, nullptr),
       "");
 }
 

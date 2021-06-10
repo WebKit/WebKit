@@ -26,7 +26,8 @@ class FakeDataChannelProvider
         transport_error_(false) {}
   virtual ~FakeDataChannelProvider() {}
 
-  bool SendData(const cricket::SendDataParams& params,
+  bool SendData(int sid,
+                const webrtc::SendDataParams& params,
                 const rtc::CopyOnWriteBuffer& payload,
                 cricket::SendDataResult* result) override {
     RTC_CHECK(ready_to_send_);
@@ -36,11 +37,12 @@ class FakeDataChannelProvider
       return false;
     }
 
-    if (transport_error_ || payload.size() == 0) {
+    if (transport_error_) {
       *result = cricket::SDR_ERROR;
       return false;
     }
 
+    last_sid_ = sid;
     last_send_data_params_ = params;
     return true;
   }
@@ -127,7 +129,8 @@ class FakeDataChannelProvider
 
   void set_transport_error() { transport_error_ = true; }
 
-  cricket::SendDataParams last_send_data_params() const {
+  int last_sid() const { return last_sid_; }
+  const webrtc::SendDataParams& last_send_data_params() const {
     return last_send_data_params_;
   }
 
@@ -144,7 +147,8 @@ class FakeDataChannelProvider
   }
 
  private:
-  cricket::SendDataParams last_send_data_params_;
+  int last_sid_;
+  webrtc::SendDataParams last_send_data_params_;
   bool send_blocked_;
   bool transport_available_;
   bool ready_to_send_;

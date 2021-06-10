@@ -10,7 +10,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import <WebRTC/RTCMacros.h>
+#import "sdk/objc/base/RTCMacros.h"
 
 @class RTC_OBJC_TYPE(RTCLegacyStatsReport);
 

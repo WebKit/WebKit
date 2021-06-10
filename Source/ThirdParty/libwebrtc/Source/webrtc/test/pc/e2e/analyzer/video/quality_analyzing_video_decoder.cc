@@ -26,13 +26,11 @@ namespace webrtc {
 namespace webrtc_pc_e2e {
 
 QualityAnalyzingVideoDecoder::QualityAnalyzingVideoDecoder(
-    int id,
     absl::string_view peer_name,
     std::unique_ptr<VideoDecoder> delegate,
     EncodedImageDataExtractor* extractor,
     VideoQualityAnalyzerInterface* analyzer)
-    : id_(id),
-      peer_name_(peer_name),
+    : peer_name_(peer_name),
       implementation_name_("AnalyzingDecoder-" +
                            std::string(delegate->ImplementationName())),
       delegate_(std::move(delegate)),
@@ -56,7 +54,7 @@ int32_t QualityAnalyzingVideoDecoder::Decode(const EncodedImage& input_image,
   // owner of original buffer will be responsible for deleting it, or extractor
   // can create a new buffer. In such case extractor will be responsible for
   // deleting it.
-  EncodedImageExtractionResult out = extractor_->ExtractData(input_image, id_);
+  EncodedImageExtractionResult out = extractor_->ExtractData(input_image);
 
   if (out.discard) {
     // To partly emulate behavior of Selective Forwarding Unit (SFU) in the
@@ -123,8 +121,10 @@ int32_t QualityAnalyzingVideoDecoder::Release() {
   return result;
 }
 
-bool QualityAnalyzingVideoDecoder::PrefersLateDecoding() const {
-  return delegate_->PrefersLateDecoding();
+VideoDecoder::DecoderInfo QualityAnalyzingVideoDecoder::GetDecoderInfo() const {
+  DecoderInfo info = delegate_->GetDecoderInfo();
+  info.implementation_name = implementation_name_;
+  return info;
 }
 
 const char* QualityAnalyzingVideoDecoder::ImplementationName() const {
@@ -233,12 +233,10 @@ void QualityAnalyzingVideoDecoder::OnFrameDecoded(
 QualityAnalyzingVideoDecoderFactory::QualityAnalyzingVideoDecoderFactory(
     absl::string_view peer_name,
     std::unique_ptr<VideoDecoderFactory> delegate,
-    IdGenerator<int>* id_generator,
     EncodedImageDataExtractor* extractor,
     VideoQualityAnalyzerInterface* analyzer)
     : peer_name_(peer_name),
       delegate_(std::move(delegate)),
-      id_generator_(id_generator),
       extractor_(extractor),
       analyzer_(analyzer) {}
 QualityAnalyzingVideoDecoderFactory::~QualityAnalyzingVideoDecoderFactory() =
@@ -254,19 +252,7 @@ QualityAnalyzingVideoDecoderFactory::CreateVideoDecoder(
     const SdpVideoFormat& format) {
   std::unique_ptr<VideoDecoder> decoder = delegate_->CreateVideoDecoder(format);
   return std::make_unique<QualityAnalyzingVideoDecoder>(
-      id_generator_->GetNextId(), peer_name_, std::move(decoder), extractor_,
-      analyzer_);
-}
-
-std::unique_ptr<VideoDecoder>
-QualityAnalyzingVideoDecoderFactory::LegacyCreateVideoDecoder(
-    const SdpVideoFormat& format,
-    const std::string& receive_stream_id) {
-  std::unique_ptr<VideoDecoder> decoder =
-      delegate_->LegacyCreateVideoDecoder(format, receive_stream_id);
-  return std::make_unique<QualityAnalyzingVideoDecoder>(
-      id_generator_->GetNextId(), peer_name_, std::move(decoder), extractor_,
-      analyzer_);
+      peer_name_, std::move(decoder), extractor_, analyzer_);
 }
 
 }  // namespace webrtc_pc_e2e

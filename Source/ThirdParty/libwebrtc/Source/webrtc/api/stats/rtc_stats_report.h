@@ -19,9 +19,11 @@
 #include <string>
 #include <vector>
 
+#include "api/ref_counted_base.h"
 #include "api/scoped_refptr.h"
 #include "api/stats/rtc_stats.h"
-#include "rtc_base/ref_count.h"
+// TODO(tommi): Remove this include after fixing iwyu issue in chromium.
+// See: third_party/blink/renderer/platform/peerconnection/rtc_stats.cc
 #include "rtc_base/ref_counted_object.h"
 #include "rtc_base/system/rtc_export.h"
 
@@ -29,7 +31,8 @@ namespace webrtc {
 
 // A collection of stats.
 // This is accessible as a map from |RTCStats::id| to |RTCStats|.
-class RTC_EXPORT RTCStatsReport : public rtc::RefCountInterface {
+class RTC_EXPORT RTCStatsReport final
+    : public rtc::RefCountedNonVirtual<RTCStatsReport> {
  public:
   typedef std::map<std::string, std::unique_ptr<const RTCStats>> StatsMap;
 
@@ -84,8 +87,8 @@ class RTC_EXPORT RTCStatsReport : public rtc::RefCountInterface {
   // Removes the stats object from the report, returning ownership of it or null
   // if there is no object with |id|.
   std::unique_ptr<const RTCStats> Take(const std::string& id);
-  // Takes ownership of all the stats in |victim|, leaving it empty.
-  void TakeMembersFrom(rtc::scoped_refptr<RTCStatsReport> victim);
+  // Takes ownership of all the stats in |other|, leaving it empty.
+  void TakeMembersFrom(rtc::scoped_refptr<RTCStatsReport> other);
 
   // Stats iterators. Stats are ordered lexicographically on |RTCStats::id|.
   ConstIterator begin() const;
@@ -107,11 +110,11 @@ class RTC_EXPORT RTCStatsReport : public rtc::RefCountInterface {
   // listing all of its stats objects.
   std::string ToJson() const;
 
-  friend class rtc::RefCountedObject<RTCStatsReport>;
+ protected:
+  friend class rtc::RefCountedNonVirtual<RTCStatsReport>;
+  ~RTCStatsReport() = default;
 
  private:
-  ~RTCStatsReport() override;
-
   int64_t timestamp_us_;
   StatsMap stats_;
 };

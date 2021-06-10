@@ -12,10 +12,10 @@
 
 #import <AVFoundation/AVFoundation.h>
 
-#import <WebRTC/RTCAudioSession.h>
-#import <WebRTC/RTCAudioSessionConfiguration.h>
-#import <WebRTC/RTCDispatcher.h>
-#import <WebRTC/RTCLogging.h>
+#import "sdk/objc/base/RTCLogging.h"
+#import "sdk/objc/components/audio/RTCAudioSession.h"
+#import "sdk/objc/components/audio/RTCAudioSessionConfiguration.h"
+#import "sdk/objc/helpers/RTCDispatcher.h"
 
 #import "ARDAppClient.h"
 #import "ARDMainView.h"

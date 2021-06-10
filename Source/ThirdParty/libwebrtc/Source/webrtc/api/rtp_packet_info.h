@@ -17,6 +17,7 @@
 
 #include "absl/types/optional.h"
 #include "api/rtp_headers.h"
+#include "api/units/timestamp.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -35,8 +36,18 @@ class RTC_EXPORT RtpPacketInfo {
                 uint32_t rtp_timestamp,
                 absl::optional<uint8_t> audio_level,
                 absl::optional<AbsoluteCaptureTime> absolute_capture_time,
-                int64_t receive_time_ms);
+                Timestamp receive_time);
 
+  RtpPacketInfo(const RTPHeader& rtp_header, Timestamp receive_time);
+
+  // TODO(bugs.webrtc.org/12722): Deprecated, remove once downstream projects
+  // are updated.
+  RtpPacketInfo(uint32_t ssrc,
+                std::vector<uint32_t> csrcs,
+                uint32_t rtp_timestamp,
+                absl::optional<uint8_t> audio_level,
+                absl::optional<AbsoluteCaptureTime> absolute_capture_time,
+                int64_t receive_time_ms);
   RtpPacketInfo(const RTPHeader& rtp_header, int64_t receive_time_ms);
 
   RtpPacketInfo(const RtpPacketInfo& other) = default;
@@ -64,8 +75,11 @@ class RTC_EXPORT RtpPacketInfo {
     absolute_capture_time_ = value;
   }
 
-  int64_t receive_time_ms() const { return receive_time_ms_; }
-  void set_receive_time_ms(int64_t value) { receive_time_ms_ = value; }
+  Timestamp receive_time() const { return receive_time_; }
+  void set_receive_time(Timestamp value) { receive_time_ = value; }
+  // TODO(bugs.webrtc.org/12722): Deprecated, remove once downstream projects
+  // are updated.
+  int64_t receive_time_ms() const { return receive_time_.ms(); }
 
  private:
   // Fields from the RTP header:
@@ -83,7 +97,7 @@ class RTC_EXPORT RtpPacketInfo {
   absl::optional<AbsoluteCaptureTime> absolute_capture_time_;
 
   // Local |webrtc::Clock|-based timestamp of when the packet was received.
-  int64_t receive_time_ms_;
+  Timestamp receive_time_;
 };
 
 bool operator==(const RtpPacketInfo& lhs, const RtpPacketInfo& rhs);

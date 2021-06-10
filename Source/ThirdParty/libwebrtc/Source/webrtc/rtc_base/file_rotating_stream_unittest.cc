@@ -72,7 +72,7 @@ class MAYBE_FileRotatingStreamTest : public ::testing::Test {
 
   // Writes the data to the stream and flushes it.
   void WriteAndFlush(const void* data, const size_t data_len) {
-    EXPECT_EQ(SR_SUCCESS, stream_->WriteAll(data, data_len, nullptr, nullptr));
+    EXPECT_TRUE(stream_->Write(data, data_len));
     EXPECT_TRUE(stream_->Flush());
   }
 
@@ -114,11 +114,11 @@ const size_t MAYBE_FileRotatingStreamTest::kMaxFileSize = 2;
 TEST_F(MAYBE_FileRotatingStreamTest, State) {
   Init("FileRotatingStreamTestState", kFilePrefix, kMaxFileSize, 3);
 
-  EXPECT_EQ(SS_CLOSED, stream_->GetState());
+  EXPECT_FALSE(stream_->IsOpen());
   ASSERT_TRUE(stream_->Open());
-  EXPECT_EQ(SS_OPEN, stream_->GetState());
+  EXPECT_TRUE(stream_->IsOpen());
   stream_->Close();
-  EXPECT_EQ(SS_CLOSED, stream_->GetState());
+  EXPECT_FALSE(stream_->IsOpen());
 }
 
 // Tests that nothing is written to file when data of length zero is written.
@@ -277,7 +277,7 @@ class MAYBE_CallSessionFileRotatingStreamTest : public ::testing::Test {
 
   // Writes the data to the stream and flushes it.
   void WriteAndFlush(const void* data, const size_t data_len) {
-    EXPECT_EQ(SR_SUCCESS, stream_->WriteAll(data, data_len, nullptr, nullptr));
+    EXPECT_TRUE(stream_->Write(data, data_len));
     EXPECT_TRUE(stream_->Flush());
   }
 
@@ -334,8 +334,7 @@ TEST_F(MAYBE_CallSessionFileRotatingStreamTest, WriteAndReadLarge) {
   std::unique_ptr<uint8_t[]> buffer(new uint8_t[buffer_size]);
   for (int i = 0; i < 8; i++) {
     memset(buffer.get(), i, buffer_size);
-    EXPECT_EQ(SR_SUCCESS,
-              stream_->WriteAll(buffer.get(), buffer_size, nullptr, nullptr));
+    EXPECT_TRUE(stream_->Write(buffer.get(), buffer_size));
   }
 
   const int expected_vals[] = {0, 1, 2, 6, 7};
@@ -369,8 +368,7 @@ TEST_F(MAYBE_CallSessionFileRotatingStreamTest, WriteAndReadFirstHalf) {
   std::unique_ptr<uint8_t[]> buffer(new uint8_t[buffer_size]);
   for (int i = 0; i < 2; i++) {
     memset(buffer.get(), i, buffer_size);
-    EXPECT_EQ(SR_SUCCESS,
-              stream_->WriteAll(buffer.get(), buffer_size, nullptr, nullptr));
+    EXPECT_TRUE(stream_->Write(buffer.get(), buffer_size));
   }
 
   const int expected_vals[] = {0, 1};

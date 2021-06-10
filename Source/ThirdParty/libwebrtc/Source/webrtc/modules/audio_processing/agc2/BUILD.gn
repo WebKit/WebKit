@@ -15,31 +15,6 @@ group("agc2") {
   ]
 }
 
-rtc_library("level_estimation_agc") {
-  sources = [
-    "adaptive_mode_level_estimator_agc.cc",
-    "adaptive_mode_level_estimator_agc.h",
-  ]
-  configs += [ "..:apm_debug_dump" ]
-  deps = [
-    ":adaptive_digital",
-    ":common",
-    ":gain_applier",
-    ":noise_level_estimator",
-    ":rnn_vad_with_level",
-    "..:api",
-    "..:apm_logging",
-    "..:audio_frame_view",
-    "../../../api:array_view",
-    "../../../common_audio",
-    "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
-    "../../../rtc_base:safe_minmax",
-    "../agc:level_estimation",
-    "../vad",
-  ]
-}
-
 rtc_library("adaptive_digital") {
   sources = [
     "adaptive_agc.cc",
@@ -50,12 +25,15 @@ rtc_library("adaptive_digital") {
     "adaptive_mode_level_estimator.h",
     "saturation_protector.cc",
     "saturation_protector.h",
+    "saturation_protector_buffer.cc",
+    "saturation_protector_buffer.h",
   ]
 
   configs += [ "..:apm_debug_dump" ]
 
   deps = [
     ":common",
+    ":cpu_features",
     ":gain_applier",
     ":noise_level_estimator",
     ":rnn_vad_with_level",
@@ -161,14 +139,35 @@ rtc_library("rnn_vad_with_level") {
     "vad_with_level.cc",
     "vad_with_level.h",
   ]
+
+  defines = []
+  if (rtc_build_with_neon && current_cpu != "arm64") {
+    suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+    cflags = [ "-mfpu=neon" ]
+  }
+
   deps = [
     ":common",
+    ":cpu_features",
     "..:audio_frame_view",
     "../../../api:array_view",
     "../../../common_audio",
     "../../../rtc_base:checks",
     "rnn_vad",
     "rnn_vad:rnn_vad_common",
+  ]
+}
+
+rtc_library("cpu_features") {
+  sources = [
+    "cpu_features.cc",
+    "cpu_features.h",
+  ]
+  visibility = [ "./*" ]
+  deps = [
+    "../../../rtc_base:stringutils",
+    "../../../rtc_base/system:arch",
+    "../../../system_wrappers",
   ]
 }
 
@@ -180,6 +179,7 @@ rtc_library("adaptive_digital_unittests") {
     "adaptive_digital_gain_applier_unittest.cc",
     "adaptive_mode_level_estimator_unittest.cc",
     "gain_applier_unittest.cc",
+    "saturation_protector_buffer_unittest.cc",
     "saturation_protector_unittest.cc",
   ]
   deps = [
@@ -251,6 +251,7 @@ rtc_library("noise_estimator_unittests") {
     "..:apm_logging",
     "..:audio_frame_view",
     "../../../api:array_view",
+    "../../../api:function_view",
     "../../../rtc_base:checks",
     "../../../rtc_base:gunit_helpers",
     "../../../rtc_base:rtc_base_approved",

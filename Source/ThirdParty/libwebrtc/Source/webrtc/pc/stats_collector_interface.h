@@ -18,6 +18,7 @@
 #include <stdint.h>
 
 #include "api/media_stream_interface.h"
+#include "api/stats_types.h"
 
 namespace webrtc {
 
@@ -33,6 +34,8 @@ class StatsCollectorInterface {
   // statistics.
   virtual void RemoveLocalAudioTrack(AudioTrackInterface* audio_track,
                                      uint32_t ssrc) = 0;
+  virtual void GetStats(MediaStreamTrackInterface* track,
+                        StatsReports* reports) = 0;
 };
 
 }  // namespace webrtc

@@ -39,6 +39,7 @@ rtc_library("audio_mixer_impl") {
   deps = [
     ":audio_frame_manipulator",
     "../../api:array_view",
+    "../../api:rtp_packet_info",
     "../../api:scoped_refptr",
     "../../api/audio:audio_frame_api",
     "../../api/audio:audio_mixer_api",
@@ -46,6 +47,7 @@ rtc_library("audio_mixer_impl") {
     "../../common_audio",
     "../../rtc_base:checks",
     "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:safe_conversions",
     "../../rtc_base/synchronization:mutex",
     "../../system_wrappers",
     "../../system_wrappers:metrics",
@@ -104,13 +106,15 @@ if (rtc_include_tests) {
       "audio_mixer_impl_unittest.cc",
       "frame_combiner_unittest.cc",
     ]
-
+    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
     deps = [
       ":audio_frame_manipulator",
       ":audio_mixer_impl",
       ":audio_mixer_test_utils",
       "../../api:array_view",
+      "../../api:rtp_packet_info",
       "../../api/audio:audio_mixer_api",
+      "../../api/units:timestamp",
       "../../audio/utility:audio_frame_operations",
       "../../rtc_base:checks",
       "../../rtc_base:rtc_base_approved",
@@ -119,17 +123,19 @@ if (rtc_include_tests) {
     ]
   }
 
-  rtc_executable("audio_mixer_test") {
-    testonly = true
-    sources = [ "audio_mixer_test.cc" ]
+  if (!build_with_chromium) {
+    rtc_executable("audio_mixer_test") {
+      testonly = true
+      sources = [ "audio_mixer_test.cc" ]
 
-    deps = [
-      ":audio_mixer_impl",
-      "../../api/audio:audio_mixer_api",
-      "../../common_audio",
-      "../../rtc_base:stringutils",
-      "//third_party/abseil-cpp/absl/flags:flag",
-      "//third_party/abseil-cpp/absl/flags:parse",
-    ]
+      deps = [
+        ":audio_mixer_impl",
+        "../../api/audio:audio_mixer_api",
+        "../../common_audio",
+        "../../rtc_base:stringutils",
+        "//third_party/abseil-cpp/absl/flags:flag",
+        "//third_party/abseil-cpp/absl/flags:parse",
+      ]
+    }
   }
 }

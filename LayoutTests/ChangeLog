@@ -1,3 +1,13 @@
+2021-06-10  Youenn Fablet  <youenn@apple.com>
+
+        Update libwebrtc to M92
+        https://bugs.webkit.org/show_bug.cgi?id=226494
+
+        Reviewed by Eric Carlson.
+
+        * webrtc/receiver-track-should-stay-live-even-if-receiver-is-inactive.html:
+        Update test since the backend is now fixed.
+
 2021-06-10  Alan Bujtas  <zalan@apple.com>
 
         ASSERT NOT REACHED in webcore::Layout::LayoutContext::verifyAndOutputMismatchingLayoutTree()

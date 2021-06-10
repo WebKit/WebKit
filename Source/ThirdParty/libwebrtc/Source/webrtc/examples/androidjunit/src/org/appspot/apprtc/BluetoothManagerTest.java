@@ -29,6 +29,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.util.Log;
+import androidx.test.core.app.ApplicationProvider;
 import java.util.ArrayList;
 import java.util.List;
 import org.appspot.apprtc.AppRTCBluetoothManager.State;
@@ -36,7 +37,6 @@ import org.chromium.testing.local.LocalRobolectricTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowLog;
 
@@ -65,7 +65,7 @@ public class BluetoothManagerTest {
   @Before
   public void setUp() {
     ShadowLog.stream = System.out;
-    context = RuntimeEnvironment.application;
+    context = ApplicationProvider.getApplicationContext();
     mockedAppRtcAudioManager = mock(AppRTCAudioManager.class);
     mockedAudioManager = mock(AudioManager.class);
     mockedBluetoothHeadset = mock(BluetoothHeadset.class);

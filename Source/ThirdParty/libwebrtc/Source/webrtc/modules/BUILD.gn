@@ -47,7 +47,7 @@ rtc_source_set("module_fec_api") {
   sources = [ "include/module_fec_types.h" ]
 }
 
-if (rtc_include_tests) {
+if (rtc_include_tests && !build_with_chromium) {
   modules_tests_resources = [
     "../resources/audio_coding/testfile16kHz.pcm",
     "../resources/audio_coding/testfile32kHz.pcm",

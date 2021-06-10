@@ -43,7 +43,7 @@ class FakeInterface : public rtc::RefCountInterface {
 class Fake : public FakeInterface {
  public:
   static rtc::scoped_refptr<Fake> Create() {
-    return new rtc::RefCountedObject<Fake>();
+    return rtc::make_ref_counted<Fake>();
   }
   // Used to verify destructor is called on the correct thread.
   MOCK_METHOD(void, Destroy, ());
@@ -64,20 +64,20 @@ class Fake : public FakeInterface {
 
 // Proxies for the test interface.
 BEGIN_PROXY_MAP(Fake)
-PROXY_WORKER_THREAD_DESTRUCTOR()
+PROXY_SECONDARY_THREAD_DESTRUCTOR()
 PROXY_METHOD0(void, VoidMethod0)
 PROXY_METHOD0(std::string, Method0)
 PROXY_CONSTMETHOD0(std::string, ConstMethod0)
-PROXY_WORKER_METHOD1(std::string, Method1, std::string)
+PROXY_SECONDARY_METHOD1(std::string, Method1, std::string)
 PROXY_CONSTMETHOD1(std::string, ConstMethod1, std::string)
-PROXY_WORKER_METHOD2(std::string, Method2, std::string, std::string)
+PROXY_SECONDARY_METHOD2(std::string, Method2, std::string, std::string)
 END_PROXY_MAP()
 
 // Preprocessor hack to get a proxy class a name different than FakeProxy.
 #define FakeProxy FakeSignalingProxy
 #define FakeProxyWithInternal FakeSignalingProxyWithInternal
-BEGIN_SIGNALING_PROXY_MAP(Fake)
-PROXY_SIGNALING_THREAD_DESTRUCTOR()
+BEGIN_PRIMARY_PROXY_MAP(Fake)
+PROXY_PRIMARY_THREAD_DESTRUCTOR()
 PROXY_METHOD0(void, VoidMethod0)
 PROXY_METHOD0(std::string, Method0)
 PROXY_CONSTMETHOD0(std::string, ConstMethod0)
@@ -270,7 +270,7 @@ class Foo : public FooInterface {
 };
 
 BEGIN_OWNED_PROXY_MAP(Foo)
-PROXY_SIGNALING_THREAD_DESTRUCTOR()
+PROXY_PRIMARY_THREAD_DESTRUCTOR()
 PROXY_METHOD0(void, Bar)
 END_PROXY_MAP()
 

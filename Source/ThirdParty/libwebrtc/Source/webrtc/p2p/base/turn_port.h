@@ -23,15 +23,18 @@
 #include "absl/memory/memory.h"
 #include "p2p/base/port.h"
 #include "p2p/client/basic_port_allocator.h"
-#include "rtc_base/async_invoker.h"
 #include "rtc_base/async_packet_socket.h"
+#include "rtc_base/async_resolver_interface.h"
 #include "rtc_base/ssl_certificate.h"
+#include "rtc_base/task_utils/pending_task_safety_flag.h"
 
 namespace webrtc {
 class TurnCustomizer;
 }
 
 namespace cricket {
+
+const int kMaxTurnUsernameLength = 509;  // RFC 8489 section 14.3
 
 extern const int STUN_ATTR_TURN_LOGGING_ID;
 extern const char TURN_PORT_TYPE[];
@@ -61,6 +64,18 @@ class TurnPort : public Port {
       int server_priority,
       const std::string& origin,
       webrtc::TurnCustomizer* customizer) {
+    // Do basic parameter validation.
+    if (credentials.username.size() > kMaxTurnUsernameLength) {
+      RTC_LOG(LS_ERROR) << "Attempt to use TURN with a too long username "
+                        << "of length " << credentials.username.size();
+      return nullptr;
+    }
+    // Do not connect to low-numbered ports. The default STUN port is 3478.
+    if (!AllowedTurnPort(server_address.address.port())) {
+      RTC_LOG(LS_ERROR) << "Attempt to use TURN to connect to port "
+                        << server_address.address.port();
+      return nullptr;
+    }
     // Using `new` to access a non-public constructor.
     return absl::WrapUnique(new TurnPort(
         thread, factory, network, socket, username, password, server_address,
@@ -102,6 +117,18 @@ class TurnPort : public Port {
       const std::vector<std::string>& tls_elliptic_curves,
       webrtc::TurnCustomizer* customizer,
       rtc::SSLCertificateVerifier* tls_cert_verifier = nullptr) {
+    // Do basic parameter validation.
+    if (credentials.username.size() > kMaxTurnUsernameLength) {
+      RTC_LOG(LS_ERROR) << "Attempt to use TURN with a too long username "
+                        << "of length " << credentials.username.size();
+      return nullptr;
+    }
+    // Do not connect to low-numbered ports. The default STUN port is 3478.
+    if (!AllowedTurnPort(server_address.address.port())) {
+      RTC_LOG(LS_ERROR) << "Attempt to use TURN to connect to port "
+                        << server_address.address.port();
+      return nullptr;
+    }
     // Using `new` to access a non-public constructor.
     return absl::WrapUnique(
         new TurnPort(thread, factory, network, min_port, max_port, username,
@@ -200,9 +227,6 @@ class TurnPort : public Port {
 
   rtc::AsyncPacketSocket* socket() const { return socket_; }
 
-  // For testing only.
-  rtc::AsyncInvoker* invoker() { return &invoker_; }
-
   // Signal with resolved server address.
   // Parameters are port, server address and resolved server address.
   // This signal will be sent only if server address is resolved successfully.
@@ -285,6 +309,7 @@ class TurnPort : public Port {
   typedef std::map<rtc::Socket::Option, int> SocketOptionsMap;
   typedef std::set<rtc::SocketAddress> AttemptedServerSet;
 
+  static bool AllowedTurnPort(int port);
   void OnMessage(rtc::Message* pmsg) override;
 
   bool CreateTurnClientSocket();
@@ -387,8 +412,6 @@ class TurnPort : public Port {
   // The number of retries made due to allocate mismatch error.
   size_t allocate_mismatch_retries_;
 
-  rtc::AsyncInvoker invoker_;
-
   // Optional TurnCustomizer that can modify outgoing messages. Once set, this
   // must outlive the TurnPort's lifetime.
   webrtc::TurnCustomizer* turn_customizer_ = nullptr;
@@ -400,6 +423,8 @@ class TurnPort : public Port {
   // but that is currently so terrible. Fix once constructor is changed
   // to be more easy to work with.
   std::string turn_logging_id_;
+
+  webrtc::ScopedTaskSafety task_safety_;
 
   friend class TurnEntry;
   friend class TurnAllocateRequest;

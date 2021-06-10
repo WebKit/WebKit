@@ -21,7 +21,6 @@ class NullCallbacks : public VideoStreamDecoderInterface::Callbacks {
  public:
   ~NullCallbacks() override = default;
   void OnNonDecodableState() override {}
-  void OnContinuousUntil(const video_coding::VideoLayerFrameId& key) override {}
   void OnDecodedFrame(VideoFrame frame,
                       const VideoStreamDecoderInterface::Callbacks::FrameInfo&
                           frame_info) override {}

@@ -154,7 +154,10 @@ TEST_F(StatsEndToEndTest, GetStats) {
 
     bool CheckSendStats() {
       RTC_DCHECK(send_stream_);
-      VideoSendStream::Stats stats = send_stream_->GetStats();
+
+      VideoSendStream::Stats stats;
+      SendTask(RTC_FROM_HERE, task_queue_,
+               [&]() { stats = send_stream_->GetStats(); });
 
       size_t expected_num_streams =
           kNumSimulcastStreams + expected_send_ssrcs_.size();
@@ -179,9 +182,7 @@ TEST_F(StatsEndToEndTest, GetStats) {
         const VideoSendStream::StreamStats& stream_stats = kv.second;
 
         send_stats_filled_[CompoundKey("StatisticsUpdated", kv.first)] |=
-            stream_stats.rtcp_stats.packets_lost != 0 ||
-            stream_stats.rtcp_stats.extended_highest_sequence_number != 0 ||
-            stream_stats.rtcp_stats.fraction_lost != 0;
+            stream_stats.report_block_data.has_value();
 
         send_stats_filled_[CompoundKey("DataCountersUpdated", kv.first)] |=
             stream_stats.rtp_stats.fec.packets != 0 ||

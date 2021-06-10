@@ -16,7 +16,6 @@
 #include <string>
 
 #include "api/neteq/neteq.h"
-#include "modules/rtp_rtcp/include/rtcp_statistics.h"
 #include "rtc_base/message_digest.h"
 
 namespace webrtc {
@@ -30,7 +29,6 @@ class ResultSink {
   void AddResult(const T* test_results, size_t length);
 
   void AddResult(const NetEqNetworkStatistics& stats);
-  void AddResult(const RtcpStatistics& stats);
 
   void VerifyChecksum(const std::string& ref_check_sum);
 

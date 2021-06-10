@@ -233,13 +233,7 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
       "objc/AppRTCMobile/common/ARDUtilities.m",
     ]
     public_configs = [ ":apprtc_common_config" ]
-
-    if (is_ios) {
-      # iOS must use WebRTC.framework which is dynamically linked.
-      deps = [ "../sdk:framework_objc+link" ]
-    } else {
-      deps = [ "../sdk:mac_framework_objc+link" ]
-    }
+    deps = [ "../sdk:base_objc" ]
   }
 
   config("apprtc_signaling_config") {
@@ -298,17 +292,16 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
     deps = [
       ":apprtc_common",
       ":socketrocket",
+      "../sdk:base_objc",
+      "../sdk:default_codec_factory_objc",
+      "../sdk:file_logger_objc",
+      "../sdk:helpers_objc",
+      "../sdk:mediaconstraints_objc",
+      "../sdk:peerconnectionfactory_base_objc",
+      "../sdk:videocapture_objc",
+      "../sdk:videoframebuffer_objc",
+      "../sdk:videosource_objc",
     ]
-
-    if (is_ios) {
-      # iOS must use WebRTC.framework which is dynamically linked.
-      deps += [
-        "../sdk:framework_objc+link",
-        "../sdk:ios_framework_bundle",
-      ]
-    } else {
-      deps += [ "../sdk:mac_framework_objc+link" ]
-    }
     frameworks = [
       "CoreMedia.framework",
       "QuartzCore.framework",
@@ -347,9 +340,19 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
       deps = [
         ":apprtc_common",
         ":apprtc_signaling",
-        "../sdk:framework_objc+link",
-        "../sdk:ios_framework_bundle",
+        "../sdk:audio_session_objc",
+        "../sdk:base_objc",
+        "../sdk:helpers_objc",
+        "../sdk:mediaconstraints_objc",
+        "../sdk:peerconnectionfactory_base_objc",
+        "../sdk:peerconnectionfactory_base_objc",
+        "../sdk:ui_objc",
+        "../sdk:videocapture_objc",
+        "../sdk:videocodec_objc",
       ]
+      if (rtc_use_metal_rendering) {
+        deps += [ "../sdk:metal_objc" ]
+      }
 
       frameworks = [ "AVFoundation.framework" ]
     }
@@ -539,7 +542,15 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
       deps = [
         ":apprtc_common",
         ":apprtc_signaling",
-        "../sdk:mac_framework_objc+link",
+        "../sdk:base_objc",
+        "../sdk:helpers_objc",
+        "../sdk:mediaconstraints_objc",
+        "../sdk:metal_objc",
+        "../sdk:peerconnectionfactory_base_objc",
+        "../sdk:peerconnectionfactory_base_objc",
+        "../sdk:ui_objc",
+        "../sdk:videocapture_objc",
+        "../sdk:videocodec_objc",
       ]
     }
 
@@ -624,8 +635,9 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
           ":AppRTCMobile_lib",
           ":apprtc_signaling",
           "../rtc_base",
-          "../sdk:framework_objc+link",
-          "../sdk:ios_framework_bundle",
+          "../sdk:mediaconstraints_objc",
+          "../sdk:peerconnectionfactory_base_objc",
+          "../sdk:videocapture_objc",
           "//build/config/ios:xctest",
           "//third_party/ocmock",
         ]
@@ -667,13 +679,15 @@ if (is_linux || is_chromeos || is_win) {
       "../api:scoped_refptr",
       "../api/audio:audio_mixer_api",
       "../api/audio_codecs:audio_codecs_api",
-      "../api/video:video_frame_i420",
+      "../api/video:video_frame",
       "../api/video:video_rtp_headers",
       "../api/video_codecs:video_codecs_api",
       "../media:rtc_media_base",
       "../p2p:rtc_p2p",
       "../pc:video_track_source",
       "../rtc_base:checks",
+      "../rtc_base:net_helpers",
+      "../rtc_base:threading",
       "../rtc_base/third_party/sigslot",
       "../system_wrappers:field_trial",
       "../test:field_trial",
@@ -765,7 +779,11 @@ if (is_linux || is_chromeos || is_win) {
       "../p2p:rtc_p2p",
       "../pc:rtc_pc",
       "../rtc_base",
+      "../rtc_base:ip_address",
       "../rtc_base:rtc_base_approved",
+      "../rtc_base:socket_address",
+      "../rtc_base:socket_server",
+      "../rtc_base:threading",
     ]
   }
   rtc_executable("stunserver") {
@@ -777,6 +795,9 @@ if (is_linux || is_chromeos || is_win) {
       "../pc:rtc_pc",
       "../rtc_base",
       "../rtc_base:rtc_base_approved",
+      "../rtc_base:socket_address",
+      "../rtc_base:socket_server",
+      "../rtc_base:threading",
     ]
   }
 }
@@ -879,6 +900,7 @@ if (is_android) {
       ":AppRTCMobile_javalib",
       "../sdk/android:peerconnection_java",
       "//base:base_java_test_support",
+      "//third_party/androidx:androidx_test_core_java",
       "//third_party/google-truth:google_truth_java",
     ]
 
@@ -900,6 +922,8 @@ if (!build_with_chromium) {
       "../rtc_base",
       "../rtc_base:checks",
       "../rtc_base:rtc_base_approved",
+      "../rtc_base:socket_address",
+      "../rtc_base:threading",
       "//third_party/abseil-cpp/absl/flags:flag",
       "//third_party/abseil-cpp/absl/flags:parse",
     ]

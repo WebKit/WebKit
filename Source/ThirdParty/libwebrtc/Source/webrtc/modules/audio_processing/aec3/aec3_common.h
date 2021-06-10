@@ -28,7 +28,7 @@ enum class Aec3Optimization { kNone, kSse2, kAvx2, kNeon };
 constexpr int kNumBlocksPerSecond = 250;
 
 constexpr int kMetricsReportingIntervalBlocks = 10 * kNumBlocksPerSecond;
-constexpr int kMetricsComputationBlocks = 7;
+constexpr int kMetricsComputationBlocks = 3;
 constexpr int kMetricsCollectionBlocks =
     kMetricsReportingIntervalBlocks - kMetricsComputationBlocks;
 

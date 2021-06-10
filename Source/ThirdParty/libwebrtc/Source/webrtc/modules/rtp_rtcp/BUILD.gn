@@ -52,6 +52,7 @@ rtc_library("rtp_rtcp_format") {
     "source/rtp_packet.h",
     "source/rtp_packet_received.h",
     "source/rtp_packet_to_send.h",
+    "source/rtp_video_layers_allocation_extension.h",
   ]
   sources = [
     "include/report_block_data.cc",
@@ -95,26 +96,29 @@ rtc_library("rtp_rtcp_format") {
     "source/rtp_packet.cc",
     "source/rtp_packet_received.cc",
     "source/rtp_packet_to_send.cc",
+    "source/rtp_video_layers_allocation_extension.cc",
   ]
 
   deps = [
     "..:module_api_public",
     "../../api:array_view",
     "../../api:function_view",
+    "../../api:refcountedbase",
     "../../api:rtp_headers",
     "../../api:rtp_parameters",
+    "../../api:scoped_refptr",
     "../../api/audio_codecs:audio_codecs_api",
     "../../api/transport:network_control",
     "../../api/transport/rtp:dependency_descriptor",
     "../../api/units:time_delta",
+    "../../api/units:timestamp",
     "../../api/video:video_frame",
+    "../../api/video:video_layers_allocation",
     "../../api/video:video_rtp_headers",
     "../../common_video",
     "../../rtc_base:checks",
-    "../../rtc_base:deprecation",
     "../../rtc_base:divide_round",
     "../../rtc_base:rtc_base_approved",
-    "../../rtc_base/system:unused",
     "../../system_wrappers",
     "../video_coding:codec_globals_headers",
   ]
@@ -133,7 +137,6 @@ rtc_library("rtp_rtcp") {
     "include/flexfec_sender.h",
     "include/receive_statistics.h",
     "include/remote_ntp_time_estimator.h",
-    "include/rtp_rtcp.h",  # deprecated
     "include/ulpfec_receiver.h",
     "source/absolute_capture_time_receiver.cc",
     "source/absolute_capture_time_receiver.h",
@@ -143,8 +146,6 @@ rtc_library("rtp_rtcp") {
     "source/active_decode_targets_helper.h",
     "source/create_video_rtp_depacketizer.cc",
     "source/create_video_rtp_depacketizer.h",
-    "source/deprecated/deprecated_rtp_sender_egress.cc",
-    "source/deprecated/deprecated_rtp_sender_egress.h",
     "source/dtmf_queue.cc",
     "source/dtmf_queue.h",
     "source/fec_private_tables_bursty.cc",
@@ -161,6 +162,8 @@ rtc_library("rtp_rtcp") {
     "source/forward_error_correction_internal.h",
     "source/packet_loss_stats.cc",
     "source/packet_loss_stats.h",
+    "source/packet_sequencer.cc",
+    "source/packet_sequencer.h",
     "source/receive_statistics_impl.cc",
     "source/receive_statistics_impl.h",
     "source/remote_ntp_time_estimator.cc",
@@ -189,8 +192,6 @@ rtc_library("rtp_rtcp") {
     "source/rtp_packetizer_av1.cc",
     "source/rtp_packetizer_av1.h",
     "source/rtp_rtcp_config.h",
-    "source/rtp_rtcp_impl.cc",
-    "source/rtp_rtcp_impl.h",
     "source/rtp_rtcp_impl2.cc",
     "source/rtp_rtcp_impl2.h",
     "source/rtp_rtcp_interface.h",
@@ -246,7 +247,6 @@ rtc_library("rtp_rtcp") {
   deps = [
     ":rtp_rtcp_format",
     ":rtp_video_header",
-    "..:module_api",
     "..:module_api_public",
     "..:module_fec_api",
     "../../api:array_view",
@@ -257,6 +257,7 @@ rtc_library("rtp_rtcp") {
     "../../api:rtp_packet_info",
     "../../api:rtp_parameters",
     "../../api:scoped_refptr",
+    "../../api:sequence_checker",
     "../../api:transport_api",
     "../../api/audio_codecs:audio_codecs_api",
     "../../api/crypto:frame_encryptor_interface",
@@ -276,6 +277,7 @@ rtc_library("rtp_rtcp") {
     "../../api/video:video_codec_constants",
     "../../api/video:video_frame",
     "../../api/video:video_frame_type",
+    "../../api/video:video_layers_allocation",
     "../../api/video:video_rtp_headers",
     "../../api/video_codecs:video_codecs_api",
     "../../call:rtp_interfaces",
@@ -284,7 +286,6 @@ rtc_library("rtp_rtcp") {
     "../../logging:rtc_event_rtp_rtcp",
     "../../modules/audio_coding:audio_coding_module_typedefs",
     "../../rtc_base:checks",
-    "../../rtc_base:deprecation",
     "../../rtc_base:divide_round",
     "../../rtc_base:gtest_prod",
     "../../rtc_base:rate_limiter",
@@ -293,7 +294,6 @@ rtc_library("rtp_rtcp") {
     "../../rtc_base:safe_minmax",
     "../../rtc_base/experiments:field_trial_parser",
     "../../rtc_base/synchronization:mutex",
-    "../../rtc_base/synchronization:sequence_checker",
     "../../rtc_base/system:no_unique_address",
     "../../rtc_base/task_utils:pending_task_safety_flag",
     "../../rtc_base/task_utils:repeating_task",
@@ -312,6 +312,39 @@ rtc_library("rtp_rtcp") {
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
     "//third_party/abseil-cpp/absl/types:variant",
+  ]
+}
+
+rtc_source_set("rtp_rtcp_legacy") {
+  sources = [
+    "include/rtp_rtcp.h",
+    "source/deprecated/deprecated_rtp_sender_egress.cc",
+    "source/deprecated/deprecated_rtp_sender_egress.h",
+    "source/rtp_rtcp_impl.cc",
+    "source/rtp_rtcp_impl.h",
+  ]
+  deps = [
+    ":rtp_rtcp",
+    ":rtp_rtcp_format",
+    "..:module_api",
+    "..:module_fec_api",
+    "../../api:rtp_headers",
+    "../../api:transport_api",
+    "../../api/rtc_event_log",
+    "../../api/transport:field_trial_based_config",
+    "../../api/units:data_rate",
+    "../../api/video:video_bitrate_allocation",
+    "../../logging:rtc_event_rtp_rtcp",
+    "../../rtc_base:checks",
+    "../../rtc_base:gtest_prod",
+    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base/synchronization:mutex",
+    "../../system_wrappers",
+    "../remote_bitrate_estimator",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
 
@@ -343,6 +376,7 @@ rtc_library("rtcp_transceiver") {
   ]
   absl_deps = [
     "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/base:core_headers",
     "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
@@ -403,22 +437,24 @@ rtc_library("mock_rtp_rtcp") {
 }
 
 if (rtc_include_tests) {
-  rtc_executable("test_packet_masks_metrics") {
-    testonly = true
+  if (!build_with_chromium) {
+    rtc_executable("test_packet_masks_metrics") {
+      testonly = true
 
-    sources = [
-      "test/testFec/average_residual_loss_xor_codes.h",
-      "test/testFec/test_packet_masks_metrics.cc",
-    ]
+      sources = [
+        "test/testFec/average_residual_loss_xor_codes.h",
+        "test/testFec/test_packet_masks_metrics.cc",
+      ]
 
-    deps = [
-      ":rtp_rtcp",
-      "../../test:fileutils",
-      "../../test:test_main",
-      "../../test:test_support",
-      "//testing/gtest",
-    ]
-  }  # test_packet_masks_metrics
+      deps = [
+        ":rtp_rtcp",
+        "../../test:fileutils",
+        "../../test:test_main",
+        "../../test:test_support",
+        "//testing/gtest",
+      ]
+    }  # test_packet_masks_metrics
+  }
 
   rtc_library("rtp_rtcp_modules_tests") {
     testonly = true
@@ -496,10 +532,12 @@ if (rtc_include_tests) {
       "source/rtp_rtcp_impl2_unittest.cc",
       "source/rtp_rtcp_impl_unittest.cc",
       "source/rtp_sender_audio_unittest.cc",
+      "source/rtp_sender_egress_unittest.cc",
       "source/rtp_sender_unittest.cc",
       "source/rtp_sender_video_unittest.cc",
       "source/rtp_sequence_number_map_unittest.cc",
       "source/rtp_utility_unittest.cc",
+      "source/rtp_video_layers_allocation_extension_unittest.cc",
       "source/source_tracker_unittest.cc",
       "source/time_util_unittest.cc",
       "source/ulpfec_generator_unittest.cc",
@@ -518,6 +556,7 @@ if (rtc_include_tests) {
       ":rtcp_transceiver",
       ":rtp_rtcp",
       ":rtp_rtcp_format",
+      ":rtp_rtcp_legacy",
       "../../api:array_view",
       "../../api:libjingle_peerconnection_api",
       "../../api:mock_frame_encryptor",
@@ -529,12 +568,14 @@ if (rtc_include_tests) {
       "../../api/rtc_event_log",
       "../../api/transport:field_trial_based_config",
       "../../api/transport/rtp:dependency_descriptor",
+      "../../api/units:data_size",
       "../../api/units:timestamp",
       "../../api/video:encoded_image",
       "../../api/video:video_bitrate_allocation",
       "../../api/video:video_bitrate_allocator",
       "../../api/video:video_codec_constants",
       "../../api/video:video_frame",
+      "../../api/video:video_layers_allocation",
       "../../api/video:video_rtp_headers",
       "../../api/video_codecs:video_codecs_api",
       "../../call:rtp_receiver",

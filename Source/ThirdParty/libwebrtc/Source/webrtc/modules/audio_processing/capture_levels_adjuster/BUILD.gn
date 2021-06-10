@@ -1,0 +1,45 @@
+# Copyright (c) 2021 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_library("capture_levels_adjuster") {
+  visibility = [ "*" ]
+
+  sources = [
+    "audio_samples_scaler.cc",
+    "audio_samples_scaler.h",
+    "capture_levels_adjuster.cc",
+    "capture_levels_adjuster.h",
+  ]
+
+  defines = []
+
+  deps = [
+    "..:audio_buffer",
+    "../../../api:array_view",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:safe_minmax",
+  ]
+}
+
+rtc_library("capture_levels_adjuster_unittests") {
+  testonly = true
+
+  sources = [
+    "audio_samples_scaler_unittest.cc",
+    "capture_levels_adjuster_unittest.cc",
+  ]
+  deps = [
+    ":capture_levels_adjuster",
+    "..:audioproc_test_utils",
+    "../../../rtc_base:gunit_helpers",
+    "../../../rtc_base:stringutils",
+    "../../../test:test_support",
+  ]
+}

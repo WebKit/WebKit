@@ -25,7 +25,7 @@ const int64_t kTestTimingFramesDelayMs = 200;
 const uint16_t kTestOutlierFrameSizePercent = 250;
 
 static void CodecSettings(VideoCodecType codec_type, VideoCodec* settings) {
-  memset(settings, 0, sizeof(VideoCodec));
+  *settings = {};
 
   settings->width = kTestWidth;
   settings->height = kTestHeight;

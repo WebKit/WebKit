@@ -80,8 +80,7 @@ bool DebugDumpReplayer::RunNextEvent() {
       break;
     case audioproc::Event::UNKNOWN_EVENT:
       // We do not expect to receive UNKNOWN event.
-      RTC_CHECK(false);
-      return false;
+      RTC_CHECK_NOTREACHED();
   }
   LoadNextMessage();
   return true;

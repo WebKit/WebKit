@@ -188,15 +188,17 @@ RtpGenerator::RtpGenerator(const RtpGeneratorOptions& options)
         PayloadStringToCodecType(video_config.rtp.payload_name);
     if (video_config.rtp.payload_name == cricket::kVp8CodecName) {
       VideoCodecVP8 settings = VideoEncoder::GetDefaultVp8Settings();
-      encoder_config.encoder_specific_settings = new rtc::RefCountedObject<
-          VideoEncoderConfig::Vp8EncoderSpecificSettings>(settings);
+      encoder_config.encoder_specific_settings =
+          rtc::make_ref_counted<VideoEncoderConfig::Vp8EncoderSpecificSettings>(
+              settings);
     } else if (video_config.rtp.payload_name == cricket::kVp9CodecName) {
       VideoCodecVP9 settings = VideoEncoder::GetDefaultVp9Settings();
-      encoder_config.encoder_specific_settings = new rtc::RefCountedObject<
-          VideoEncoderConfig::Vp9EncoderSpecificSettings>(settings);
+      encoder_config.encoder_specific_settings =
+          rtc::make_ref_counted<VideoEncoderConfig::Vp9EncoderSpecificSettings>(
+              settings);
     } else if (video_config.rtp.payload_name == cricket::kH264CodecName) {
       VideoCodecH264 settings = VideoEncoder::GetDefaultH264Settings();
-      encoder_config.encoder_specific_settings = new rtc::RefCountedObject<
+      encoder_config.encoder_specific_settings = rtc::make_ref_counted<
           VideoEncoderConfig::H264EncoderSpecificSettings>(settings);
     }
     encoder_config.video_format.name = video_config.rtp.payload_name;
@@ -217,7 +219,7 @@ RtpGenerator::RtpGenerator(const RtpGeneratorOptions& options)
     }
 
     encoder_config.video_stream_factory =
-        new rtc::RefCountedObject<cricket::EncoderStreamFactory>(
+        rtc::make_ref_counted<cricket::EncoderStreamFactory>(
             video_config.rtp.payload_name, /*max qp*/ 56, /*screencast*/ false,
             /*screenshare enabled*/ false);
 

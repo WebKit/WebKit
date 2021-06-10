@@ -163,6 +163,7 @@ TEST(UntypedFunction, CallFunctionPointerWithRvalueReference) {
 
 TEST(UntypedFunction, CallTrivialWithNoArgs) {
   int arr[] = {1, 2, 3};
+  static_assert(sizeof(arr) <= UntypedFunction::kInlineStorageSize, "");
   auto uf = UntypedFunction::Create<int()>([arr] { return arr[1]; });
   EXPECT_TRUE(uf);
   EXPECT_TRUE(uf.IsTriviallyDestructible());
@@ -171,6 +172,7 @@ TEST(UntypedFunction, CallTrivialWithNoArgs) {
 
 TEST(UntypedFunction, CallLargeTrivialWithNoArgs) {
   int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0};
+  static_assert(sizeof(arr) > UntypedFunction::kInlineStorageSize, "");
   auto uf = UntypedFunction::Create<int()>([arr] { return arr[4]; });
   EXPECT_TRUE(uf);
   EXPECT_FALSE(uf.IsTriviallyDestructible());

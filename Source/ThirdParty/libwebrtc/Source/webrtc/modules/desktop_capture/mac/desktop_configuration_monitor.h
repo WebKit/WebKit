@@ -25,14 +25,14 @@ namespace webrtc {
 
 // The class provides functions to synchronize capturing and display
 // reconfiguring across threads, and the up-to-date MacDesktopConfiguration.
-class DesktopConfigurationMonitor : public rtc::RefCountedBase {
+class DesktopConfigurationMonitor final
+    : public rtc::RefCountedNonVirtual<DesktopConfigurationMonitor> {
  public:
   DesktopConfigurationMonitor();
+  ~DesktopConfigurationMonitor();
+
   // Returns the current desktop configuration.
   MacDesktopConfiguration desktop_configuration();
-
- protected:
-  ~DesktopConfigurationMonitor() override;
 
  private:
   static void DisplaysReconfiguredCallback(CGDirectDisplayID display,

@@ -11,7 +11,6 @@ import os
 import unittest
 import sys
 
-
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PARENT_DIR = os.path.join(SCRIPT_DIR, os.pardir)
 sys.path.append(PARENT_DIR)
@@ -19,46 +18,51 @@ import low_bandwidth_audio_test
 
 
 class TestExtractTestRuns(unittest.TestCase):
-  def _TestLog(self, log, *expected):
-    self.assertEqual(
-        tuple(low_bandwidth_audio_test.ExtractTestRuns(log.splitlines(True))),
-        expected)
+    def _TestLog(self, log, *expected):
+        self.assertEqual(
+            tuple(
+                low_bandwidth_audio_test.ExtractTestRuns(
+                    log.splitlines(True))), expected)
 
-  def testLinux(self):
-    self._TestLog(LINUX_LOG,
-        (None, 'GoodNetworkHighBitrate',
-         '/webrtc/src/resources/voice_engine/audio_tiny16.wav',
-         '/webrtc/src/out/LowBandwidth_GoodNetworkHighBitrate.wav', None),
-        (None, 'Mobile2GNetwork',
-         '/webrtc/src/resources/voice_engine/audio_tiny16.wav',
-         '/webrtc/src/out/LowBandwidth_Mobile2GNetwork.wav', None),
-        (None, 'PCGoodNetworkHighBitrate',
-         '/webrtc/src/resources/voice_engine/audio_tiny16.wav',
-         '/webrtc/src/out/PCLowBandwidth_PCGoodNetworkHighBitrate.wav',
-         '/webrtc/src/out/PCLowBandwidth_perf_48.json'),
-        (None, 'PCMobile2GNetwork',
-         '/webrtc/src/resources/voice_engine/audio_tiny16.wav',
-         '/webrtc/src/out/PCLowBandwidth_PCMobile2GNetwork.wav',
-         '/webrtc/src/out/PCLowBandwidth_perf_48.json'))
+    def testLinux(self):
+        self._TestLog(
+            LINUX_LOG,
+            (None, 'GoodNetworkHighBitrate',
+             '/webrtc/src/resources/voice_engine/audio_tiny16.wav',
+             '/webrtc/src/out/LowBandwidth_GoodNetworkHighBitrate.wav', None),
+            (None, 'Mobile2GNetwork',
+             '/webrtc/src/resources/voice_engine/audio_tiny16.wav',
+             '/webrtc/src/out/LowBandwidth_Mobile2GNetwork.wav', None),
+            (None, 'PCGoodNetworkHighBitrate',
+             '/webrtc/src/resources/voice_engine/audio_tiny16.wav',
+             '/webrtc/src/out/PCLowBandwidth_PCGoodNetworkHighBitrate.wav',
+             '/webrtc/src/out/PCLowBandwidth_perf_48.json'),
+            (None, 'PCMobile2GNetwork',
+             '/webrtc/src/resources/voice_engine/audio_tiny16.wav',
+             '/webrtc/src/out/PCLowBandwidth_PCMobile2GNetwork.wav',
+             '/webrtc/src/out/PCLowBandwidth_perf_48.json'))
 
-  def testAndroid(self):
-    self._TestLog(ANDROID_LOG,
-        ('ddfa6149', 'Mobile2GNetwork',
-         '/sdcard/chromium_tests_root/resources/voice_engine/audio_tiny16.wav',
-         '/sdcard/chromium_tests_root/LowBandwidth_Mobile2GNetwork.wav', None),
-        ('TA99205CNO', 'GoodNetworkHighBitrate',
-         '/sdcard/chromium_tests_root/resources/voice_engine/audio_tiny16.wav',
-         '/sdcard/chromium_tests_root/LowBandwidth_GoodNetworkHighBitrate.wav',
-         None),
-        ('ddfa6149', 'PCMobile2GNetwork',
-         '/sdcard/chromium_tests_root/resources/voice_engine/audio_tiny16.wav',
-         '/sdcard/chromium_tests_root/PCLowBandwidth_PCMobile2GNetwork.wav',
-         '/sdcard/chromium_tests_root/PCLowBandwidth_perf_48.json'),
-        ('TA99205CNO', 'PCGoodNetworkHighBitrate',
-         '/sdcard/chromium_tests_root/resources/voice_engine/audio_tiny16.wav',
-         ('/sdcard/chromium_tests_root/'
-         'PCLowBandwidth_PCGoodNetworkHighBitrate.wav'),
-         '/sdcard/chromium_tests_root/PCLowBandwidth_perf_48.json'))
+    def testAndroid(self):
+        self._TestLog(ANDROID_LOG, (
+            'ddfa6149', 'Mobile2GNetwork',
+            '/sdcard/chromium_tests_root/resources/voice_engine/audio_tiny16.wav',
+            '/sdcard/chromium_tests_root/LowBandwidth_Mobile2GNetwork.wav',
+            None
+        ), (
+            'TA99205CNO', 'GoodNetworkHighBitrate',
+            '/sdcard/chromium_tests_root/resources/voice_engine/audio_tiny16.wav',
+            '/sdcard/chromium_tests_root/LowBandwidth_GoodNetworkHighBitrate.wav',
+            None
+        ), (
+            'ddfa6149', 'PCMobile2GNetwork',
+            '/sdcard/chromium_tests_root/resources/voice_engine/audio_tiny16.wav',
+            '/sdcard/chromium_tests_root/PCLowBandwidth_PCMobile2GNetwork.wav',
+            '/sdcard/chromium_tests_root/PCLowBandwidth_perf_48.json'
+        ), ('TA99205CNO', 'PCGoodNetworkHighBitrate',
+            '/sdcard/chromium_tests_root/resources/voice_engine/audio_tiny16.wav',
+            ('/sdcard/chromium_tests_root/'
+             'PCLowBandwidth_PCGoodNetworkHighBitrate.wav'),
+            '/sdcard/chromium_tests_root/PCLowBandwidth_perf_48.json'))
 
 
 LINUX_LOG = r'''\
@@ -233,6 +237,5 @@ I   16.608s tear_down_device(ddfa6149)  Wrote device cache: /webrtc/src/out/debu
 I   16.608s tear_down_device(TA99205CNO)  Wrote device cache: /webrtc/src/out/debug-android/device_cache_TA99305CMO.json
 '''
 
-
 if __name__ == "__main__":
-  unittest.main()
+    unittest.main()

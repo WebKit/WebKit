@@ -8,21 +8,23 @@
 
 import("../../../../webrtc.gni")
 
-group("conversational_speech") {
-  testonly = true
-  deps = [ ":conversational_speech_generator" ]
-}
+if (!build_with_chromium) {
+  group("conversational_speech") {
+    testonly = true
+    deps = [ ":conversational_speech_generator" ]
+  }
 
-rtc_executable("conversational_speech_generator") {
-  testonly = true
-  sources = [ "generator.cc" ]
-  deps = [
-    ":lib",
-    "../../../../test:fileutils",
-    "../../../../test:test_support",
-    "//third_party/abseil-cpp/absl/flags:flag",
-    "//third_party/abseil-cpp/absl/flags:parse",
-  ]
+  rtc_executable("conversational_speech_generator") {
+    testonly = true
+    sources = [ "generator.cc" ]
+    deps = [
+      ":lib",
+      "../../../../test:fileutils",
+      "../../../../test:test_support",
+      "//third_party/abseil-cpp/absl/flags:flag",
+      "//third_party/abseil-cpp/absl/flags:parse",
+    ]
+  }
 }
 
 rtc_library("lib") {

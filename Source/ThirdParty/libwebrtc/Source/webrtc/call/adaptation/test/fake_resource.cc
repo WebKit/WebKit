@@ -19,7 +19,7 @@ namespace webrtc {
 
 // static
 rtc::scoped_refptr<FakeResource> FakeResource::Create(std::string name) {
-  return new rtc::RefCountedObject<FakeResource>(name);
+  return rtc::make_ref_counted<FakeResource>(name);
 }
 
 FakeResource::FakeResource(std::string name)

@@ -92,7 +92,6 @@ __attribute__((objc_runtime_name("WK_RTCWrappedEncodedImageBuffer")))
     self.encodeFinishMs = encodedImage.timing_.encode_finish_ms;
     self.frameType = static_cast<RTCFrameType>(encodedImage._frameType);
     self.rotation = static_cast<RTCVideoRotation>(encodedImage.rotation_);
-    self.completeFrame = encodedImage._completeFrame;
     self.qp = @(encodedImage.qp_);
     self.contentType = (encodedImage.content_type_ == webrtc::VideoContentType::SCREENSHARE) ?
         RTCVideoContentTypeScreenshare :
@@ -121,7 +120,6 @@ __attribute__((objc_runtime_name("WK_RTCWrappedEncodedImageBuffer")))
   encodedImage.timing_.encode_finish_ms = self.encodeFinishMs;
   encodedImage._frameType = webrtc::VideoFrameType(self.frameType);
   encodedImage.rotation_ = webrtc::VideoRotation(self.rotation);
-  encodedImage._completeFrame = self.completeFrame;
   encodedImage.qp_ = self.qp ? self.qp.intValue : -1;
   encodedImage.content_type_ = (self.contentType == RTCVideoContentTypeScreenshare) ?
       webrtc::VideoContentType::SCREENSHARE :

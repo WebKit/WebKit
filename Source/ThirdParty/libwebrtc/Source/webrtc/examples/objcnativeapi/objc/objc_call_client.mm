@@ -144,7 +144,7 @@ void ObjCCallClient::CreatePeerConnection() {
   // DTLS SRTP has to be disabled for loopback to work.
   config.enable_dtls_srtp = false;
   webrtc::PeerConnectionDependencies pc_dependencies(pc_observer_.get());
-  pc_ = pcf_->CreatePeerConnection(config, std::move(pc_dependencies));
+  pc_ = pcf_->CreatePeerConnectionOrError(config, std::move(pc_dependencies)).MoveValue();
   RTC_LOG(LS_INFO) << "PeerConnection created: " << pc_;
 
   rtc::scoped_refptr<webrtc::VideoTrackInterface> local_video_track =

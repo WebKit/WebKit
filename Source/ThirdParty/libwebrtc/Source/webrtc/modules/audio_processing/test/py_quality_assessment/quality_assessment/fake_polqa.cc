@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
       return 0;
     }
   }
-  FATAL() << kErrorMessage;
+  RTC_FATAL() << kErrorMessage;
 }
 
 }  // namespace test

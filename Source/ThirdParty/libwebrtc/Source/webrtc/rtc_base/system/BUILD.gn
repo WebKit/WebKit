@@ -32,6 +32,19 @@ rtc_library("file_wrapper") {
   ]
 }
 
+if (rtc_include_tests) {
+  rtc_library("file_wrapper_unittests") {
+    testonly = true
+    sources = [ "file_wrapper_unittest.cc" ]
+    deps = [
+      ":file_wrapper",
+      "//rtc_base:checks",
+      "//test:fileutils",
+      "//test:test_support",
+    ]
+  }
+}
+
 rtc_source_set("ignore_warnings") {
   sources = [ "ignore_warnings.h" ]
 }

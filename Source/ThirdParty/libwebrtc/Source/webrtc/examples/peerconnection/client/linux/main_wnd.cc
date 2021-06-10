@@ -32,6 +32,7 @@
 #include "api/video/video_source_interface.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "third_party/libyuv/include/libyuv/convert.h"
 #include "third_party/libyuv/include/libyuv/convert_from.h"
 
 namespace {

@@ -26,6 +26,7 @@
 *_proto_cpp.xml
 *~
 .*.sw?
+.cache
 .cipd
 .clangd
 .classpath

@@ -15,9 +15,9 @@
 #include <utility>
 
 #include "api/scoped_refptr.h"
+#include "api/sequence_checker.h"
 #include "rtc_base/ref_count.h"
 #include "rtc_base/ref_counted_object.h"
-#include "rtc_base/synchronization/sequence_checker.h"
 #include "rtc_base/system/no_unique_address.h"
 
 // The implementation is borrowed from chromium except that it does not

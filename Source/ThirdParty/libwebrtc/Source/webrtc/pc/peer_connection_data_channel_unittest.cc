@@ -193,28 +193,6 @@ class PeerConnectionDataChannelUnifiedPlanTest
       : PeerConnectionDataChannelBaseTest(SdpSemantics::kUnifiedPlan) {}
 };
 
-TEST_P(PeerConnectionDataChannelTest,
-       NoSctpTransportCreatedIfRtpDataChannelEnabled) {
-  RTCConfiguration config;
-  config.enable_rtp_data_channel = true;
-  auto caller = CreatePeerConnectionWithDataChannel(config);
-
-  ASSERT_TRUE(caller->SetLocalDescription(caller->CreateOffer()));
-  EXPECT_FALSE(caller->sctp_transport_factory()->last_fake_sctp_transport());
-}
-
-TEST_P(PeerConnectionDataChannelTest,
-       RtpDataChannelCreatedEvenIfSctpAvailable) {
-  RTCConfiguration config;
-  config.enable_rtp_data_channel = true;
-  PeerConnectionFactoryInterface::Options options;
-  options.disable_sctp_data_channels = false;
-  auto caller = CreatePeerConnectionWithDataChannel(config, options);
-
-  ASSERT_TRUE(caller->SetLocalDescription(caller->CreateOffer()));
-  EXPECT_FALSE(caller->sctp_transport_factory()->last_fake_sctp_transport());
-}
-
 TEST_P(PeerConnectionDataChannelTest, InternalSctpTransportDeletedOnTeardown) {
   auto caller = CreatePeerConnectionWithDataChannel();
 
@@ -311,34 +289,6 @@ TEST_P(PeerConnectionDataChannelTest,
   EXPECT_TRUE(caller->pc()->CreateDataChannel("dc", nullptr));
 }
 
-TEST_P(PeerConnectionDataChannelTest, CreateDataChannelWithSctpDisabledFails) {
-  PeerConnectionFactoryInterface::Options options;
-  options.disable_sctp_data_channels = true;
-  auto caller = CreatePeerConnection(RTCConfiguration(), options);
-
-  EXPECT_FALSE(caller->pc()->CreateDataChannel("dc", nullptr));
-}
-
-// Test that if a callee has SCTP disabled and receives an offer with an SCTP
-// data channel, the data section is rejected and no SCTP transport is created
-// on the callee.
-TEST_P(PeerConnectionDataChannelTest,
-       DataSectionRejectedIfCalleeHasSctpDisabled) {
-  auto caller = CreatePeerConnectionWithDataChannel();
-  PeerConnectionFactoryInterface::Options options;
-  options.disable_sctp_data_channels = true;
-  auto callee = CreatePeerConnection(RTCConfiguration(), options);
-
-  ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
-
-  EXPECT_FALSE(callee->sctp_transport_factory()->last_fake_sctp_transport());
-
-  auto answer = callee->CreateAnswer();
-  auto* data_content = cricket::GetFirstDataContent(answer->description());
-  ASSERT_TRUE(data_content);
-  EXPECT_TRUE(data_content->rejected);
-}
-
 TEST_P(PeerConnectionDataChannelTest, SctpPortPropagatedFromSdpToTransport) {
   constexpr int kNewSendPort = 9998;
   constexpr int kNewRecvPort = 7775;
@@ -352,8 +302,9 @@ TEST_P(PeerConnectionDataChannelTest, SctpPortPropagatedFromSdpToTransport) {
 
   auto answer = callee->CreateAnswer();
   ChangeSctpPortOnDescription(answer->description(), kNewRecvPort);
+  std::string sdp;
+  answer->ToString(&sdp);
   ASSERT_TRUE(callee->SetLocalDescription(std::move(answer)));
-
   auto* callee_transport =
       callee->sctp_transport_factory()->last_fake_sctp_transport();
   ASSERT_TRUE(callee_transport);
@@ -391,29 +342,5 @@ INSTANTIATE_TEST_SUITE_P(PeerConnectionDataChannelTest,
                          PeerConnectionDataChannelTest,
                          Values(SdpSemantics::kPlanB,
                                 SdpSemantics::kUnifiedPlan));
-
-TEST_F(PeerConnectionDataChannelUnifiedPlanTest,
-       ReOfferAfterPeerRejectsDataChannel) {
-  auto caller = CreatePeerConnectionWithDataChannel();
-  PeerConnectionFactoryInterface::Options options;
-  options.disable_sctp_data_channels = true;
-  auto callee = CreatePeerConnection(RTCConfiguration(), options);
-
-  ASSERT_TRUE(caller->ExchangeOfferAnswerWith(callee.get()));
-
-  auto offer = caller->CreateOffer();
-  ASSERT_TRUE(offer);
-  const auto& contents = offer->description()->contents();
-  ASSERT_EQ(1u, contents.size());
-  EXPECT_TRUE(contents[0].rejected);
-
-  ASSERT_TRUE(
-      caller->SetLocalDescription(CloneSessionDescription(offer.get())));
-  ASSERT_TRUE(callee->SetRemoteDescription(std::move(offer)));
-
-  auto answer = callee->CreateAnswerAndSetAsLocal();
-  ASSERT_TRUE(answer);
-  EXPECT_TRUE(caller->SetRemoteDescription(std::move(answer)));
-}
 
 }  // namespace webrtc

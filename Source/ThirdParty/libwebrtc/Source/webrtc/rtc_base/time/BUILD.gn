@@ -17,5 +17,4 @@ rtc_library("timestamp_extrapolator") {
     "timestamp_extrapolator.cc",
     "timestamp_extrapolator.h",
   ]
-  deps = [ "../synchronization:rw_lock_wrapper" ]
 }

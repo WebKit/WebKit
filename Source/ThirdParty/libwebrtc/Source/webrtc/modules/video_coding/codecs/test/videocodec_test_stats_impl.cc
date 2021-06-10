@@ -252,12 +252,6 @@ VideoStatistics VideoCodecTestStatsImpl::SliceAndCalcVideoStatistic(
       video_stat.height =
           std::max(video_stat.height, frame_stat.decoded_height);
 
-      psnr_y.AddSample(frame_stat.psnr_y);
-      psnr_u.AddSample(frame_stat.psnr_u);
-      psnr_v.AddSample(frame_stat.psnr_v);
-      psnr.AddSample(frame_stat.psnr);
-      ssim.AddSample(frame_stat.ssim);
-
       if (video_stat.num_decoded_frames > 1) {
         if (last_successfully_decoded_frame.decoded_width !=
                 frame_stat.decoded_width ||
@@ -269,6 +263,14 @@ VideoStatistics VideoCodecTestStatsImpl::SliceAndCalcVideoStatistic(
 
       frame_decoding_time_us.AddSample(frame_stat.decode_time_us);
       last_successfully_decoded_frame = frame_stat;
+    }
+
+    if (frame_stat.quality_analysis_successful) {
+      psnr_y.AddSample(frame_stat.psnr_y);
+      psnr_u.AddSample(frame_stat.psnr_u);
+      psnr_v.AddSample(frame_stat.psnr_v);
+      psnr.AddSample(frame_stat.psnr);
+      ssim.AddSample(frame_stat.ssim);
     }
 
     if (video_stat.num_input_frames > 0) {

@@ -43,7 +43,6 @@ void VCMEncodedFrame::Reset() {
   _frameType = VideoFrameType::kVideoFrameDelta;
   _encodedWidth = 0;
   _encodedHeight = 0;
-  _completeFrame = false;
   _missingFrame = false;
   set_size(0);
   _codecSpecificInfo.codecType = kVideoCodecGeneric;
@@ -135,6 +134,10 @@ void VCMEncodedFrame::CopyCodecSpecific(const RTPVideoHeader* header) {
       }
       case kVideoCodecH264: {
         _codecSpecificInfo.codecType = kVideoCodecH264;
+        break;
+      }
+      case kVideoCodecAV1: {
+        _codecSpecificInfo.codecType = kVideoCodecAV1;
         break;
       }
       default: {

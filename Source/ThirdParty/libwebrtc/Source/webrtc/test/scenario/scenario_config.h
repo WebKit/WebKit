@@ -129,6 +129,7 @@ struct VideoStreamConfig {
     using Codec = VideoCodecType;
     Codec codec = Codec::kVideoCodecGeneric;
     absl::optional<DataRate> max_data_rate;
+    absl::optional<DataRate> min_data_rate;
     absl::optional<int> max_framerate;
     // Counted in frame count.
     absl::optional<int> key_frame_interval = 3000;
@@ -149,6 +150,7 @@ struct VideoStreamConfig {
 
     DegradationPreference degradation_preference =
         DegradationPreference::MAINTAIN_FRAMERATE;
+    bool suspend_below_min_bitrate = false;
   } encoder;
   struct Stream {
     Stream();

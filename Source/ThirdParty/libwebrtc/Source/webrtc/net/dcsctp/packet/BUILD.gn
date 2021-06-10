@@ -1,0 +1,338 @@
+# Copyright (c) 2021 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+group("packet") {
+  deps = [ ":bounded_io" ]
+}
+
+rtc_source_set("bounded_io") {
+  deps = [
+    "../../../api:array_view",
+    "../../../rtc_base",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+  ]
+  sources = [
+    "bounded_byte_reader.h",
+    "bounded_byte_writer.h",
+  ]
+}
+
+rtc_library("tlv_trait") {
+  deps = [
+    ":bounded_io",
+    "../../../api:array_view",
+    "../../../rtc_base",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/strings:strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+  sources = [
+    "tlv_trait.cc",
+    "tlv_trait.h",
+  ]
+}
+
+rtc_source_set("data") {
+  deps = [
+    "../../../rtc_base",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../common:internal_types",
+    "../public:types",
+  ]
+  sources = [ "data.h" ]
+}
+
+rtc_library("crc32c") {
+  deps = [
+    "../../../api:array_view",
+    "../../../rtc_base",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "//third_party/crc32c",
+  ]
+  sources = [
+    "crc32c.cc",
+    "crc32c.h",
+  ]
+}
+
+rtc_library("parameter") {
+  deps = [
+    ":bounded_io",
+    ":data",
+    ":tlv_trait",
+    "../../../api:array_view",
+    "../../../rtc_base",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../common:internal_types",
+    "../common:math",
+    "../common:str_join",
+    "../public:types",
+  ]
+  sources = [
+    "parameter/add_incoming_streams_request_parameter.cc",
+    "parameter/add_incoming_streams_request_parameter.h",
+    "parameter/add_outgoing_streams_request_parameter.cc",
+    "parameter/add_outgoing_streams_request_parameter.h",
+    "parameter/forward_tsn_supported_parameter.cc",
+    "parameter/forward_tsn_supported_parameter.h",
+    "parameter/heartbeat_info_parameter.cc",
+    "parameter/heartbeat_info_parameter.h",
+    "parameter/incoming_ssn_reset_request_parameter.cc",
+    "parameter/incoming_ssn_reset_request_parameter.h",
+    "parameter/outgoing_ssn_reset_request_parameter.cc",
+    "parameter/outgoing_ssn_reset_request_parameter.h",
+    "parameter/parameter.cc",
+    "parameter/parameter.h",
+    "parameter/reconfiguration_response_parameter.cc",
+    "parameter/reconfiguration_response_parameter.h",
+    "parameter/ssn_tsn_reset_request_parameter.cc",
+    "parameter/ssn_tsn_reset_request_parameter.h",
+    "parameter/state_cookie_parameter.cc",
+    "parameter/state_cookie_parameter.h",
+    "parameter/supported_extensions_parameter.cc",
+    "parameter/supported_extensions_parameter.h",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_library("error_cause") {
+  deps = [
+    ":data",
+    ":parameter",
+    ":tlv_trait",
+    "../../../api:array_view",
+    "../../../rtc_base",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../common:internal_types",
+    "../common:math",
+    "../common:str_join",
+    "../packet:bounded_io",
+    "../public:types",
+  ]
+  sources = [
+    "error_cause/cookie_received_while_shutting_down_cause.cc",
+    "error_cause/cookie_received_while_shutting_down_cause.h",
+    "error_cause/error_cause.cc",
+    "error_cause/error_cause.h",
+    "error_cause/invalid_mandatory_parameter_cause.cc",
+    "error_cause/invalid_mandatory_parameter_cause.h",
+    "error_cause/invalid_stream_identifier_cause.cc",
+    "error_cause/invalid_stream_identifier_cause.h",
+    "error_cause/missing_mandatory_parameter_cause.cc",
+    "error_cause/missing_mandatory_parameter_cause.h",
+    "error_cause/no_user_data_cause.cc",
+    "error_cause/no_user_data_cause.h",
+    "error_cause/out_of_resource_error_cause.cc",
+    "error_cause/out_of_resource_error_cause.h",
+    "error_cause/protocol_violation_cause.cc",
+    "error_cause/protocol_violation_cause.h",
+    "error_cause/restart_of_an_association_with_new_address_cause.cc",
+    "error_cause/restart_of_an_association_with_new_address_cause.h",
+    "error_cause/stale_cookie_error_cause.cc",
+    "error_cause/stale_cookie_error_cause.h",
+    "error_cause/unrecognized_chunk_type_cause.cc",
+    "error_cause/unrecognized_chunk_type_cause.h",
+    "error_cause/unrecognized_parameter_cause.cc",
+    "error_cause/unrecognized_parameter_cause.h",
+    "error_cause/unresolvable_address_cause.cc",
+    "error_cause/unresolvable_address_cause.h",
+    "error_cause/user_initiated_abort_cause.cc",
+    "error_cause/user_initiated_abort_cause.h",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_library("chunk") {
+  deps = [
+    ":data",
+    ":error_cause",
+    ":parameter",
+    ":tlv_trait",
+    "../../../api:array_view",
+    "../../../rtc_base",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../common:math",
+    "../common:str_join",
+    "../packet:bounded_io",
+  ]
+  sources = [
+    "chunk/abort_chunk.cc",
+    "chunk/abort_chunk.h",
+    "chunk/chunk.cc",
+    "chunk/chunk.h",
+    "chunk/cookie_ack_chunk.cc",
+    "chunk/cookie_ack_chunk.h",
+    "chunk/cookie_echo_chunk.cc",
+    "chunk/cookie_echo_chunk.h",
+    "chunk/data_chunk.cc",
+    "chunk/data_chunk.h",
+    "chunk/data_common.h",
+    "chunk/error_chunk.cc",
+    "chunk/error_chunk.h",
+    "chunk/forward_tsn_chunk.cc",
+    "chunk/forward_tsn_chunk.h",
+    "chunk/forward_tsn_common.h",
+    "chunk/heartbeat_ack_chunk.cc",
+    "chunk/heartbeat_ack_chunk.h",
+    "chunk/heartbeat_request_chunk.cc",
+    "chunk/heartbeat_request_chunk.h",
+    "chunk/idata_chunk.cc",
+    "chunk/idata_chunk.h",
+    "chunk/iforward_tsn_chunk.cc",
+    "chunk/iforward_tsn_chunk.h",
+    "chunk/init_ack_chunk.cc",
+    "chunk/init_ack_chunk.h",
+    "chunk/init_chunk.cc",
+    "chunk/init_chunk.h",
+    "chunk/reconfig_chunk.cc",
+    "chunk/reconfig_chunk.h",
+    "chunk/sack_chunk.cc",
+    "chunk/sack_chunk.h",
+    "chunk/shutdown_ack_chunk.cc",
+    "chunk/shutdown_ack_chunk.h",
+    "chunk/shutdown_chunk.cc",
+    "chunk/shutdown_chunk.h",
+    "chunk/shutdown_complete_chunk.cc",
+    "chunk/shutdown_complete_chunk.h",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_library("chunk_validators") {
+  deps = [
+    ":chunk",
+    "../../../rtc_base",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+  ]
+  sources = [
+    "chunk_validators.cc",
+    "chunk_validators.h",
+  ]
+}
+
+rtc_library("sctp_packet") {
+  deps = [
+    ":bounded_io",
+    ":chunk",
+    ":crc32c",
+    "../../../api:array_view",
+    "../../../rtc_base",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+    "../common:internal_types",
+    "../common:math",
+    "../public:types",
+  ]
+  sources = [
+    "sctp_packet.cc",
+    "sctp_packet.h",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/memory:memory",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("dcsctp_packet_unittests") {
+    testonly = true
+
+    deps = [
+      ":bounded_io",
+      ":chunk",
+      ":chunk_validators",
+      ":crc32c",
+      ":error_cause",
+      ":parameter",
+      ":sctp_packet",
+      ":tlv_trait",
+      "../../../api:array_view",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:gunit_helpers",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../test:test_support",
+      "../common:internal_types",
+      "../common:math",
+      "../public:types",
+      "../testing:testing_macros",
+    ]
+    sources = [
+      "bounded_byte_reader_test.cc",
+      "bounded_byte_writer_test.cc",
+      "chunk/abort_chunk_test.cc",
+      "chunk/cookie_ack_chunk_test.cc",
+      "chunk/cookie_echo_chunk_test.cc",
+      "chunk/data_chunk_test.cc",
+      "chunk/error_chunk_test.cc",
+      "chunk/forward_tsn_chunk_test.cc",
+      "chunk/heartbeat_ack_chunk_test.cc",
+      "chunk/heartbeat_request_chunk_test.cc",
+      "chunk/idata_chunk_test.cc",
+      "chunk/iforward_tsn_chunk_test.cc",
+      "chunk/init_ack_chunk_test.cc",
+      "chunk/init_chunk_test.cc",
+      "chunk/reconfig_chunk_test.cc",
+      "chunk/sack_chunk_test.cc",
+      "chunk/shutdown_ack_chunk_test.cc",
+      "chunk/shutdown_chunk_test.cc",
+      "chunk/shutdown_complete_chunk_test.cc",
+      "chunk_validators_test.cc",
+      "crc32c_test.cc",
+      "error_cause/cookie_received_while_shutting_down_cause_test.cc",
+      "error_cause/invalid_mandatory_parameter_cause_test.cc",
+      "error_cause/invalid_stream_identifier_cause_test.cc",
+      "error_cause/missing_mandatory_parameter_cause_test.cc",
+      "error_cause/no_user_data_cause_test.cc",
+      "error_cause/out_of_resource_error_cause_test.cc",
+      "error_cause/protocol_violation_cause_test.cc",
+      "error_cause/restart_of_an_association_with_new_address_cause_test.cc",
+      "error_cause/stale_cookie_error_cause_test.cc",
+      "error_cause/unrecognized_chunk_type_cause_test.cc",
+      "error_cause/unrecognized_parameter_cause_test.cc",
+      "error_cause/unresolvable_address_cause_test.cc",
+      "error_cause/user_initiated_abort_cause_test.cc",
+      "parameter/add_incoming_streams_request_parameter_test.cc",
+      "parameter/add_outgoing_streams_request_parameter_test.cc",
+      "parameter/forward_tsn_supported_parameter_test.cc",
+      "parameter/incoming_ssn_reset_request_parameter_test.cc",
+      "parameter/outgoing_ssn_reset_request_parameter_test.cc",
+      "parameter/parameter_test.cc",
+      "parameter/reconfiguration_response_parameter_test.cc",
+      "parameter/ssn_tsn_reset_request_parameter_test.cc",
+      "parameter/state_cookie_parameter_test.cc",
+      "parameter/supported_extensions_parameter_test.cc",
+      "sctp_packet_test.cc",
+      "tlv_trait_test.cc",
+    ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+  }
+}

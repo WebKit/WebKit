@@ -12,6 +12,7 @@
 
 #include <utility>
 
+#include "modules/desktop_capture/win/desktop_capture_utils.h"
 #include "rtc_base/logging.h"
 
 namespace webrtc {
@@ -38,17 +39,15 @@ bool D3dDevice::Initialize(const ComPtr<IDXGIAdapter>& adapter) {
       nullptr, 0, D3D11_SDK_VERSION, d3d_device_.GetAddressOf(), &feature_level,
       context_.GetAddressOf());
   if (error.Error() != S_OK || !d3d_device_ || !context_) {
-    RTC_LOG(LS_WARNING) << "D3D11CreateDeivce returns error "
-                        << error.ErrorMessage() << " with code "
-                        << error.Error();
+    RTC_LOG(LS_WARNING) << "D3D11CreateDevice returned: "
+                        << desktop_capture::utils::ComErrorToString(error);
     return false;
   }
 
   if (feature_level < D3D_FEATURE_LEVEL_11_0) {
     RTC_LOG(LS_WARNING)
-        << "D3D11CreateDevice returns an instance without DirectX "
-           "11 support, level "
-        << feature_level << ". Following initialization may fail.";
+        << "D3D11CreateDevice returned an instance without DirectX 11 support, "
+        << "level " << feature_level << ". Following initialization may fail.";
     // D3D_FEATURE_LEVEL_11_0 is not officially documented on MSDN to be a
     // requirement of Dxgi duplicator APIs.
   }
@@ -57,9 +56,9 @@ bool D3dDevice::Initialize(const ComPtr<IDXGIAdapter>& adapter) {
   if (error.Error() != S_OK || !dxgi_device_) {
     RTC_LOG(LS_WARNING)
         << "ID3D11Device is not an implementation of IDXGIDevice, "
-           "this usually means the system does not support DirectX "
-           "11. Error "
-        << error.ErrorMessage() << " with code " << error.Error();
+        << "this usually means the system does not support DirectX "
+        << "11. Error received: "
+        << desktop_capture::utils::ComErrorToString(error);
     return false;
   }
 
@@ -73,7 +72,8 @@ std::vector<D3dDevice> D3dDevice::EnumDevices() {
       CreateDXGIFactory1(__uuidof(IDXGIFactory1),
                          reinterpret_cast<void**>(factory.GetAddressOf()));
   if (error.Error() != S_OK || !factory) {
-    RTC_LOG(LS_WARNING) << "Cannot create IDXGIFactory1.";
+    RTC_LOG(LS_WARNING) << "Cannot create IDXGIFactory1: "
+                        << desktop_capture::utils::ComErrorToString(error);
     return std::vector<D3dDevice>();
   }
 
@@ -90,9 +90,8 @@ std::vector<D3dDevice> D3dDevice::EnumDevices() {
       break;
     } else {
       RTC_LOG(LS_WARNING)
-          << "IDXGIFactory1::EnumAdapters returns an unexpected "
-             "error "
-          << error.ErrorMessage() << " with code " << error.Error();
+          << "IDXGIFactory1::EnumAdapters returned an unexpected error: "
+          << desktop_capture::utils::ComErrorToString(error);
     }
   }
   return result;

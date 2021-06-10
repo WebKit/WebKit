@@ -1,0 +1,74 @@
+#!/bin/sh
+#
+# Run the include-what-you-use tool (iwyu) on a file in the webrtc source
+# directory.
+#
+# The script uses a subsequent grep pass to remove #include files from .cc
+# that are also in the .h file, or are problematic to include.
+#
+# To get iwyu on Debian/glinux, do "sudo apt-get install iwyu".
+
+set -e
+set -x
+FILE=$1
+# If you want to exclude files that are in $FILE.h from $FILE.cc, set
+# the following variable to "yes". This is a style guide violation.
+REMOVE_CC_INCLUDES=no
+
+if [ ! -f $FILE ]; then
+  # See if we have the root name of a .cc/.h pair
+  if [ ! -f $FILE.h ]; then
+    echo "$FILE.h not found"
+    exit 1
+  fi
+  FILE_H=$FILE.h
+  if [ ! -f $FILE.cc ]; then
+    echo "$FILE.cc not found"
+    exit 1
+  fi
+  FILE_CC=$FILE.cc
+else
+  # Exact file, no .h file
+  FILE_CC=$FILE
+  FILE_H=""
+fi
+
+# IWYU has a confusing set of exit codes. Discard it.
+iwyu -Xiwyu --no_fwd_decls -D__X86_64__  -DWEBRTC_POSIX -I . \
+  -I third_party/abseil-cpp \
+  -I third_party/googletest/src/googlemock/include \
+  -I third_party/googletest/src/googletest/include \
+  $FILE_CC >& /tmp/includefixes$$ || echo "IWYU done, code $?"
+
+if grep 'fatal error' /tmp/includefixes$$; then
+  echo "iwyu run failed"
+  cat /tmp/includefixes$$
+  rm /tmp/includefixes$$
+  exit 1
+else
+  fix_include < /tmp/includefixes$$ || echo "Some files modified"
+  rm /tmp/includefixes$$
+fi
+
+if [ $REMOVE_CC_INCLUDES == "yes" ]; then
+  if [ -n "$FILE_H" ]; then
+    # Don't include in .cc what's already included in .h
+    grep ^#include $FILE_H | grep -v -f - $FILE_CC > $FILE_CC.new
+  else
+    cp $FILE_CC $FILE_CC.new
+  fi
+  # Don't include stuff on the banlist
+  grep -v -f tools_webrtc/iwyu/iwyu-filter-list $FILE_CC.new > $FILE_CC
+  rm $FILE.ccnew
+else
+  grep -v -f tools_webrtc/iwyu/iwyu-filter-list $FILE_CC > $FILE_CC.new
+  mv $FILE_CC.new $FILE_CC
+fi
+if [ -n "$FILE_H" ]; then
+  grep -v -f tools_webrtc/iwyu/iwyu-filter-list $FILE_H > $FILE_H.new
+  mv $FILE_H.new $FILE_H
+fi
+
+echo "Finished. Check diff, compile and git cl format before uploading."
+
+

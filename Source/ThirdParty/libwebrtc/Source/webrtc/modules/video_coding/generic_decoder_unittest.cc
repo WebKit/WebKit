@@ -115,5 +115,29 @@ TEST_F(GenericDecoderTest, PassesPacketInfosForDelayedDecoders) {
   EXPECT_EQ(decoded_frame->packet_infos().size(), 3U);
 }
 
+TEST_F(GenericDecoderTest, MaxCompositionDelayNotSetByDefault) {
+  VCMEncodedFrame encoded_frame;
+  generic_decoder_.Decode(encoded_frame, clock_.CurrentTime());
+  absl::optional<VideoFrame> decoded_frame = user_callback_.WaitForFrame(10);
+  ASSERT_TRUE(decoded_frame.has_value());
+  EXPECT_FALSE(decoded_frame->max_composition_delay_in_frames());
+}
+
+TEST_F(GenericDecoderTest, MaxCompositionDelayActivatedByPlayoutDelay) {
+  VCMEncodedFrame encoded_frame;
+  // VideoReceiveStream2 would set MaxCompositionDelayInFrames if playout delay
+  // is specified as X,Y, where X=0, Y>0.
+  const VideoPlayoutDelay kPlayoutDelay = {0, 50};
+  constexpr int kMaxCompositionDelayInFrames = 3;  // ~50 ms at 60 fps.
+  encoded_frame.SetPlayoutDelay(kPlayoutDelay);
+  timing_.SetMaxCompositionDelayInFrames(
+      absl::make_optional(kMaxCompositionDelayInFrames));
+  generic_decoder_.Decode(encoded_frame, clock_.CurrentTime());
+  absl::optional<VideoFrame> decoded_frame = user_callback_.WaitForFrame(10);
+  ASSERT_TRUE(decoded_frame.has_value());
+  EXPECT_EQ(kMaxCompositionDelayInFrames,
+            decoded_frame->max_composition_delay_in_frames());
+}
+
 }  // namespace video_coding
 }  // namespace webrtc

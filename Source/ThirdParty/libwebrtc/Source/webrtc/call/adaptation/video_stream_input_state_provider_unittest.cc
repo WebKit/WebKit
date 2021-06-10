@@ -28,6 +28,7 @@ TEST(VideoStreamInputStateProviderTest, DefaultValues) {
   EXPECT_EQ(0, input_state.frames_per_second());
   EXPECT_EQ(VideoCodecType::kVideoCodecGeneric, input_state.video_codec_type());
   EXPECT_EQ(kDefaultMinPixelsPerFrame, input_state.min_pixels_per_frame());
+  EXPECT_EQ(absl::nullopt, input_state.single_active_stream_pixels());
 }
 
 TEST(VideoStreamInputStateProviderTest, ValuesSet) {
@@ -40,14 +41,22 @@ TEST(VideoStreamInputStateProviderTest, ValuesSet) {
   encoder_info.scaling_settings.min_pixels_per_frame = 1337;
   VideoEncoderConfig encoder_config;
   encoder_config.codec_type = VideoCodecType::kVideoCodecVP9;
+  VideoCodec video_codec;
+  video_codec.codecType = VideoCodecType::kVideoCodecVP8;
+  video_codec.numberOfSimulcastStreams = 2;
+  video_codec.simulcastStream[0].active = false;
+  video_codec.simulcastStream[1].active = true;
+  video_codec.simulcastStream[1].width = 111;
+  video_codec.simulcastStream[1].height = 222;
   input_state_provider.OnEncoderSettingsChanged(EncoderSettings(
-      std::move(encoder_info), std::move(encoder_config), VideoCodec()));
+      std::move(encoder_info), std::move(encoder_config), video_codec));
   VideoStreamInputState input_state = input_state_provider.InputState();
   EXPECT_EQ(true, input_state.has_input());
   EXPECT_EQ(42, input_state.frame_size_pixels());
   EXPECT_EQ(123, input_state.frames_per_second());
   EXPECT_EQ(VideoCodecType::kVideoCodecVP9, input_state.video_codec_type());
   EXPECT_EQ(1337, input_state.min_pixels_per_frame());
+  EXPECT_EQ(111 * 222, input_state.single_active_stream_pixels());
 }
 
 }  // namespace webrtc

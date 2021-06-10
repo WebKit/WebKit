@@ -48,6 +48,7 @@ using ::testing::Field;
 using ::testing::InSequence;
 using ::testing::Invoke;
 using ::testing::Ne;
+using ::testing::NiceMock;
 using ::testing::Return;
 using ::testing::StrEq;
 
@@ -120,7 +121,7 @@ std::unique_ptr<MockAudioEncoder> SetupAudioEncoderMock(
 
 rtc::scoped_refptr<MockAudioEncoderFactory> SetupEncoderFactoryMock() {
   rtc::scoped_refptr<MockAudioEncoderFactory> factory =
-      new rtc::RefCountedObject<MockAudioEncoderFactory>();
+      rtc::make_ref_counted<MockAudioEncoderFactory>();
   ON_CALL(*factory.get(), GetSupportedEncoders())
       .WillByDefault(Return(std::vector<AudioCodecSpec>(
           std::begin(kCodecSpecs), std::end(kCodecSpecs))));
@@ -153,7 +154,7 @@ struct ConfigHelper {
         audio_processing_(
             use_null_audio_processing
                 ? nullptr
-                : new rtc::RefCountedObject<MockAudioProcessing>()),
+                : rtc::make_ref_counted<NiceMock<MockAudioProcessing>>()),
         bitrate_allocator_(&limit_observer_),
         worker_queue_(task_queue_factory_->CreateTaskQueue(
             "ConfigHelper_worker_queue",
@@ -164,8 +165,7 @@ struct ConfigHelper {
     AudioState::Config config;
     config.audio_mixer = AudioMixerImpl::Create();
     config.audio_processing = audio_processing_;
-    config.audio_device_module =
-        new rtc::RefCountedObject<MockAudioDeviceModule>();
+    config.audio_device_module = rtc::make_ref_counted<MockAudioDeviceModule>();
     audio_state_ = AudioState::Create(config);
 
     SetupDefaultChannelSend(audio_bwe_enabled);
@@ -421,7 +421,6 @@ TEST(AudioSendStreamTest, SetMuted) {
 }
 
 TEST(AudioSendStreamTest, AudioBweCorrectObjectsOnChannelProxy) {
-  ScopedFieldTrials field_trials("WebRTC-Audio-SendSideBwe/Enabled/");
   for (bool use_null_audio_processing : {false, true}) {
     ConfigHelper helper(true, true, use_null_audio_processing);
     auto send_stream = helper.CreateAudioSendStream();
@@ -523,14 +522,12 @@ TEST(AudioSendStreamTest, GetStatsAudioLevel) {
 
 TEST(AudioSendStreamTest, SendCodecAppliesAudioNetworkAdaptor) {
   for (bool use_null_audio_processing : {false, true}) {
-    ConfigHelper helper(false, true, use_null_audio_processing);
+    ConfigHelper helper(true, true, use_null_audio_processing);
     helper.config().send_codec_spec =
         AudioSendStream::Config::SendCodecSpec(0, kOpusFormat);
     const std::string kAnaConfigString = "abcde";
     const std::string kAnaReconfigString = "12345";
 
-    helper.config().rtp.extensions.push_back(RtpExtension(
-        RtpExtension::kTransportSequenceNumberUri, kTransportSequenceNumberId));
     helper.config().audio_network_adaptor_config = kAnaConfigString;
 
     EXPECT_CALL(helper.mock_encoder_factory(), MakeAudioEncoderMock(_, _, _, _))
@@ -559,12 +556,10 @@ TEST(AudioSendStreamTest, SendCodecAppliesAudioNetworkAdaptor) {
 
 TEST(AudioSendStreamTest, AudioNetworkAdaptorReceivesOverhead) {
   for (bool use_null_audio_processing : {false, true}) {
-    ConfigHelper helper(false, true, use_null_audio_processing);
+    ConfigHelper helper(true, true, use_null_audio_processing);
     helper.config().send_codec_spec =
         AudioSendStream::Config::SendCodecSpec(0, kOpusFormat);
     const std::string kAnaConfigString = "abcde";
-    helper.config().rtp.extensions.push_back(RtpExtension(
-        RtpExtension::kTransportSequenceNumberUri, kTransportSequenceNumberId));
 
     EXPECT_CALL(helper.mock_encoder_factory(), MakeAudioEncoderMock(_, _, _, _))
         .WillOnce(Invoke(
@@ -647,7 +642,6 @@ TEST(AudioSendStreamTest, DoesNotPassHigherBitrateThanMaxBitrate) {
 }
 
 TEST(AudioSendStreamTest, SSBweTargetInRangeRespected) {
-  ScopedFieldTrials field_trials("WebRTC-Audio-SendSideBwe/Enabled/");
   for (bool use_null_audio_processing : {false, true}) {
     ConfigHelper helper(true, true, use_null_audio_processing);
     auto send_stream = helper.CreateAudioSendStream();
@@ -666,7 +660,6 @@ TEST(AudioSendStreamTest, SSBweTargetInRangeRespected) {
 
 TEST(AudioSendStreamTest, SSBweFieldTrialMinRespected) {
   ScopedFieldTrials field_trials(
-      "WebRTC-Audio-SendSideBwe/Enabled/"
       "WebRTC-Audio-Allocation/min:6kbps,max:64kbps/");
   for (bool use_null_audio_processing : {false, true}) {
     ConfigHelper helper(true, true, use_null_audio_processing);
@@ -684,7 +677,6 @@ TEST(AudioSendStreamTest, SSBweFieldTrialMinRespected) {
 
 TEST(AudioSendStreamTest, SSBweFieldTrialMaxRespected) {
   ScopedFieldTrials field_trials(
-      "WebRTC-Audio-SendSideBwe/Enabled/"
       "WebRTC-Audio-Allocation/min:6kbps,max:64kbps/");
   for (bool use_null_audio_processing : {false, true}) {
     ConfigHelper helper(true, true, use_null_audio_processing);
@@ -702,8 +694,6 @@ TEST(AudioSendStreamTest, SSBweFieldTrialMaxRespected) {
 
 TEST(AudioSendStreamTest, SSBweWithOverhead) {
   ScopedFieldTrials field_trials(
-      "WebRTC-Audio-SendSideBwe/Enabled/"
-      "WebRTC-SendSideBwe-WithOverhead/Enabled/"
       "WebRTC-Audio-LegacyOverhead/Disabled/");
   for (bool use_null_audio_processing : {false, true}) {
     ConfigHelper helper(true, true, use_null_audio_processing);
@@ -725,8 +715,6 @@ TEST(AudioSendStreamTest, SSBweWithOverhead) {
 
 TEST(AudioSendStreamTest, SSBweWithOverheadMinRespected) {
   ScopedFieldTrials field_trials(
-      "WebRTC-Audio-SendSideBwe/Enabled/"
-      "WebRTC-SendSideBwe-WithOverhead/Enabled/"
       "WebRTC-Audio-LegacyOverhead/Disabled/"
       "WebRTC-Audio-Allocation/min:6kbps,max:64kbps/");
   for (bool use_null_audio_processing : {false, true}) {
@@ -747,8 +735,6 @@ TEST(AudioSendStreamTest, SSBweWithOverheadMinRespected) {
 
 TEST(AudioSendStreamTest, SSBweWithOverheadMaxRespected) {
   ScopedFieldTrials field_trials(
-      "WebRTC-Audio-SendSideBwe/Enabled/"
-      "WebRTC-SendSideBwe-WithOverhead/Enabled/"
       "WebRTC-Audio-LegacyOverhead/Disabled/"
       "WebRTC-Audio-Allocation/min:6kbps,max:64kbps/");
   for (bool use_null_audio_processing : {false, true}) {
@@ -808,7 +794,6 @@ TEST(AudioSendStreamTest, DontRecreateEncoder) {
 }
 
 TEST(AudioSendStreamTest, ReconfigureTransportCcResetsFirst) {
-  ScopedFieldTrials field_trials("WebRTC-Audio-SendSideBwe/Enabled/");
   for (bool use_null_audio_processing : {false, true}) {
     ConfigHelper helper(false, true, use_null_audio_processing);
     auto send_stream = helper.CreateAudioSendStream();
@@ -937,7 +922,7 @@ TEST(AudioSendStreamTest, ReconfigureWithFrameEncryptor) {
     auto new_config = helper.config();
 
     rtc::scoped_refptr<FrameEncryptorInterface> mock_frame_encryptor_0(
-        new rtc::RefCountedObject<MockFrameEncryptor>());
+        rtc::make_ref_counted<MockFrameEncryptor>());
     new_config.frame_encryptor = mock_frame_encryptor_0;
     EXPECT_CALL(*helper.channel_send(), SetFrameEncryptor(Ne(nullptr)))
         .Times(1);
@@ -950,7 +935,7 @@ TEST(AudioSendStreamTest, ReconfigureWithFrameEncryptor) {
     // Updating frame encryptor to a new object should force a call to the
     // proxy.
     rtc::scoped_refptr<FrameEncryptorInterface> mock_frame_encryptor_1(
-        new rtc::RefCountedObject<MockFrameEncryptor>());
+        rtc::make_ref_counted<MockFrameEncryptor>());
     new_config.frame_encryptor = mock_frame_encryptor_1;
     new_config.crypto_options.sframe.require_frame_encryption = true;
     EXPECT_CALL(*helper.channel_send(), SetFrameEncryptor(Ne(nullptr)))

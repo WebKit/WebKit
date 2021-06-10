@@ -117,6 +117,45 @@ class JsepSessionDescriptionTest : public ::testing::Test {
   std::unique_ptr<JsepSessionDescription> jsep_desc_;
 };
 
+TEST_F(JsepSessionDescriptionTest, CloneDefault) {
+  auto new_desc = jsep_desc_->Clone();
+  EXPECT_EQ(jsep_desc_->type(), new_desc->type());
+  std::string old_desc_string;
+  std::string new_desc_string;
+  EXPECT_TRUE(jsep_desc_->ToString(&old_desc_string));
+  EXPECT_TRUE(new_desc->ToString(&new_desc_string));
+  EXPECT_EQ(old_desc_string, new_desc_string);
+  EXPECT_EQ(jsep_desc_->session_id(), new_desc->session_id());
+  EXPECT_EQ(jsep_desc_->session_version(), new_desc->session_version());
+}
+
+TEST_F(JsepSessionDescriptionTest, CloneWithCandidates) {
+  cricket::Candidate candidate_v4(
+      cricket::ICE_CANDIDATE_COMPONENT_RTP, "udp",
+      rtc::SocketAddress("192.168.1.5", 1234), kCandidatePriority, "", "",
+      cricket::STUN_PORT_TYPE, kCandidateGeneration, kCandidateFoundation);
+  cricket::Candidate candidate_v6(
+      cricket::ICE_CANDIDATE_COMPONENT_RTP, "udp",
+      rtc::SocketAddress("::1", 1234), kCandidatePriority, "", "",
+      cricket::LOCAL_PORT_TYPE, kCandidateGeneration, kCandidateFoundation);
+
+  JsepIceCandidate jice_v4("audio", 0, candidate_v4);
+  JsepIceCandidate jice_v6("audio", 0, candidate_v6);
+  JsepIceCandidate jice_v4_video("video", 0, candidate_v4);
+  JsepIceCandidate jice_v6_video("video", 0, candidate_v6);
+  ASSERT_TRUE(jsep_desc_->AddCandidate(&jice_v4));
+  ASSERT_TRUE(jsep_desc_->AddCandidate(&jice_v6));
+  ASSERT_TRUE(jsep_desc_->AddCandidate(&jice_v4_video));
+  ASSERT_TRUE(jsep_desc_->AddCandidate(&jice_v6_video));
+  auto new_desc = jsep_desc_->Clone();
+  EXPECT_EQ(jsep_desc_->type(), new_desc->type());
+  std::string old_desc_string;
+  std::string new_desc_string;
+  EXPECT_TRUE(jsep_desc_->ToString(&old_desc_string));
+  EXPECT_TRUE(new_desc->ToString(&new_desc_string));
+  EXPECT_EQ(old_desc_string, new_desc_string);
+}
+
 // Test that number_of_mediasections() returns the number of media contents in
 // a session description.
 TEST_F(JsepSessionDescriptionTest, CheckSessionDescription) {

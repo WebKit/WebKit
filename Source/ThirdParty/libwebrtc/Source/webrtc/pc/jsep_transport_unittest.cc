@@ -48,8 +48,7 @@ rtc::scoped_refptr<webrtc::IceTransportInterface> CreateIceTransport(
     return nullptr;
   }
 
-  return new rtc::RefCountedObject<FakeIceTransportWrapper>(
-      std::move(internal));
+  return rtc::make_ref_counted<FakeIceTransportWrapper>(std::move(internal));
 }
 
 class JsepTransport2Test : public ::testing::Test, public sigslot::has_slots<> {
@@ -118,8 +117,7 @@ class JsepTransport2Test : public ::testing::Test, public sigslot::has_slots<> {
         kTransportName, /*local_certificate=*/nullptr, std::move(ice),
         std::move(rtcp_ice), std::move(unencrypted_rtp_transport),
         std::move(sdes_transport), std::move(dtls_srtp_transport),
-        /*datagram_rtp_transport=*/nullptr, std::move(rtp_dtls_transport),
-        std::move(rtcp_dtls_transport),
+        std::move(rtp_dtls_transport), std::move(rtcp_dtls_transport),
         /*sctp_transport=*/nullptr);
 
     signal_rtcp_mux_active_received_ = false;

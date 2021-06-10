@@ -207,7 +207,8 @@ void DesktopAndCursorComposer::OnCaptureResult(
     DesktopCapturer::Result result,
     std::unique_ptr<DesktopFrame> frame) {
   if (frame && cursor_) {
-    if (frame->rect().Contains(cursor_position_) &&
+    if (!frame->may_contain_cursor() &&
+        frame->rect().Contains(cursor_position_) &&
         !desktop_capturer_->IsOccluded(cursor_position_)) {
       DesktopVector relative_position =
           cursor_position_.subtract(frame->top_left());
@@ -228,6 +229,7 @@ void DesktopAndCursorComposer::OnCaptureResult(
       previous_cursor_rect_ = frame_with_cursor->cursor_rect();
       cursor_changed_ = false;
       frame = std::move(frame_with_cursor);
+      frame->set_may_contain_cursor(true);
     }
   }
 

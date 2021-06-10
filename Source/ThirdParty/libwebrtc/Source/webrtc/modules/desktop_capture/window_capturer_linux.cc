@@ -14,7 +14,7 @@
 #include "modules/desktop_capture/desktop_capturer.h"
 
 #if defined(WEBRTC_USE_PIPEWIRE)
-#include "modules/desktop_capture/linux/window_capturer_pipewire.h"
+#include "modules/desktop_capture/linux/base_capturer_pipewire.h"
 #endif  // defined(WEBRTC_USE_PIPEWIRE)
 
 #if defined(WEBRTC_USE_X11)
@@ -28,7 +28,7 @@ std::unique_ptr<DesktopCapturer> DesktopCapturer::CreateRawWindowCapturer(
     const DesktopCaptureOptions& options) {
 #if defined(WEBRTC_USE_PIPEWIRE)
   if (options.allow_pipewire() && DesktopCapturer::IsRunningUnderWayland()) {
-    return WindowCapturerPipeWire::CreateRawWindowCapturer(options);
+    return BaseCapturerPipeWire::CreateRawCapturer(options);
   }
 #endif  // defined(WEBRTC_USE_PIPEWIRE)
 

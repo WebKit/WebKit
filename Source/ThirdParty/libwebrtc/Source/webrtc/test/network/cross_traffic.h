@@ -15,41 +15,34 @@
 #include <map>
 #include <memory>
 
+#include "api/sequence_checker.h"
+#include "api/test/network_emulation_manager.h"
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "rtc_base/random.h"
-#include "rtc_base/synchronization/sequence_checker.h"
-#include "test/network/traffic_route.h"
+#include "test/network/network_emulation.h"
 #include "test/scenario/column_printer.h"
 
 namespace webrtc {
 namespace test {
 
-struct RandomWalkConfig {
-  int random_seed = 1;
-  DataRate peak_rate = DataRate::KilobitsPerSec(100);
-  DataSize min_packet_size = DataSize::Bytes(200);
-  TimeDelta min_packet_interval = TimeDelta::Millis(1);
-  TimeDelta update_interval = TimeDelta::Millis(200);
-  double variance = 0.6;
-  double bias = -0.1;
-};
-
-class RandomWalkCrossTraffic {
+class RandomWalkCrossTraffic final : public CrossTrafficGenerator {
  public:
-  RandomWalkCrossTraffic(RandomWalkConfig config, TrafficRoute* traffic_route);
+  RandomWalkCrossTraffic(RandomWalkConfig config,
+                         CrossTrafficRoute* traffic_route);
   ~RandomWalkCrossTraffic();
 
-  void Process(Timestamp at_time);
+  void Process(Timestamp at_time) override;
+  TimeDelta GetProcessInterval() const override;
   DataRate TrafficRate() const;
   ColumnPrinter StatsPrinter();
 
  private:
   SequenceChecker sequence_checker_;
   const RandomWalkConfig config_;
-  TrafficRoute* const traffic_route_ RTC_PT_GUARDED_BY(sequence_checker_);
+  CrossTrafficRoute* const traffic_route_ RTC_PT_GUARDED_BY(sequence_checker_);
   webrtc::Random random_ RTC_GUARDED_BY(sequence_checker_);
 
   Timestamp last_process_time_ RTC_GUARDED_BY(sequence_checker_) =
@@ -62,28 +55,21 @@ class RandomWalkCrossTraffic {
   DataSize pending_size_ RTC_GUARDED_BY(sequence_checker_) = DataSize::Zero();
 };
 
-struct PulsedPeaksConfig {
-  DataRate peak_rate = DataRate::KilobitsPerSec(100);
-  DataSize min_packet_size = DataSize::Bytes(200);
-  TimeDelta min_packet_interval = TimeDelta::Millis(1);
-  TimeDelta send_duration = TimeDelta::Millis(100);
-  TimeDelta hold_duration = TimeDelta::Millis(2000);
-};
-
-class PulsedPeaksCrossTraffic {
+class PulsedPeaksCrossTraffic final : public CrossTrafficGenerator {
  public:
   PulsedPeaksCrossTraffic(PulsedPeaksConfig config,
-                          TrafficRoute* traffic_route);
+                          CrossTrafficRoute* traffic_route);
   ~PulsedPeaksCrossTraffic();
 
-  void Process(Timestamp at_time);
+  void Process(Timestamp at_time) override;
+  TimeDelta GetProcessInterval() const override;
   DataRate TrafficRate() const;
   ColumnPrinter StatsPrinter();
 
  private:
   SequenceChecker sequence_checker_;
   const PulsedPeaksConfig config_;
-  TrafficRoute* const traffic_route_ RTC_PT_GUARDED_BY(sequence_checker_);
+  CrossTrafficRoute* const traffic_route_ RTC_PT_GUARDED_BY(sequence_checker_);
 
   Timestamp last_update_time_ RTC_GUARDED_BY(sequence_checker_) =
       Timestamp::MinusInfinity();
@@ -149,23 +135,17 @@ class TcpMessageRouteImpl final : public TcpMessageRoute {
   TimeDelta last_rtt_ = TimeDelta::Zero();
 };
 
-struct FakeTcpConfig {
-  DataSize packet_size = DataSize::Bytes(1200);
-  DataSize send_limit = DataSize::PlusInfinity();
-  TimeDelta process_interval = TimeDelta::Millis(200);
-  TimeDelta packet_timeout = TimeDelta::Seconds(1);
-};
-
 class FakeTcpCrossTraffic
-    : public TwoWayFakeTrafficRoute<int, int>::TrafficHandlerInterface {
+    : public TwoWayFakeTrafficRoute<int, int>::TrafficHandlerInterface,
+      public CrossTrafficGenerator {
  public:
-  FakeTcpCrossTraffic(Clock* clock,
-                      FakeTcpConfig config,
+  FakeTcpCrossTraffic(FakeTcpConfig config,
                       EmulatedRoute* send_route,
                       EmulatedRoute* ret_route);
-  void Start(TaskQueueBase* task_queue);
-  void Stop();
-  void Process(Timestamp at_time);
+
+  TimeDelta GetProcessInterval() const override;
+  void Process(Timestamp at_time) override;
+
   void OnRequest(int sequence_number, Timestamp at_time) override;
   void OnResponse(int sequence_number, Timestamp at_time) override;
 
@@ -174,7 +154,6 @@ class FakeTcpCrossTraffic
   void SendPackets(Timestamp at_time);
 
  private:
-  Clock* const clock_;
   const FakeTcpConfig conf_;
   TwoWayFakeTrafficRoute<int, int> route_;
 
@@ -187,7 +166,6 @@ class FakeTcpCrossTraffic
   Timestamp last_reduction_time_ = Timestamp::MinusInfinity();
   TimeDelta last_rtt_ = TimeDelta::Zero();
   DataSize total_sent_ = DataSize::Zero();
-  RepeatingTaskHandle repeating_task_handle_;
 };
 
 }  // namespace test

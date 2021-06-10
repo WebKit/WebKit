@@ -613,13 +613,13 @@ TEST_F(ForcedFallbackTestEnabled, FallbackIsEndedForNonValidSettings) {
   EncodeFrameAndVerifyLastName("libvpx");
 
   // Re-initialize encoder with invalid setting, expect no fallback.
-  codec_.VP8()->numberOfTemporalLayers = 2;
+  codec_.numberOfSimulcastStreams = 2;
   InitEncode(kWidth, kHeight);
   EXPECT_EQ(1, fake_encoder_->init_encode_count_);
   EncodeFrameAndVerifyLastName("fake-encoder");
 
   // Re-initialize encoder with valid setting.
-  codec_.VP8()->numberOfTemporalLayers = 1;
+  codec_.numberOfSimulcastStreams = 1;
   InitEncode(kWidth, kHeight);
   EXPECT_EQ(1, fake_encoder_->init_encode_count_);
   EncodeFrameAndVerifyLastName("libvpx");
@@ -853,11 +853,15 @@ class PreferTemporalLayersFallbackTest : public ::testing::Test {
 
  protected:
   void SetSupportsLayers(VideoEncoder::EncoderInfo* info, bool tl_enabled) {
-    info->fps_allocation[0].clear();
     int num_layers = 1;
     if (tl_enabled) {
       num_layers = codec_settings.VP8()->numberOfTemporalLayers;
     }
+    SetNumLayers(info, num_layers);
+  }
+
+  void SetNumLayers(VideoEncoder::EncoderInfo* info, int num_layers) {
+    info->fps_allocation[0].clear();
     for (int i = 0; i < num_layers; ++i) {
       info->fps_allocation[0].push_back(
           VideoEncoder::EncoderInfo::kMaxFramerateFraction >>
@@ -908,6 +912,15 @@ TEST_F(PreferTemporalLayersFallbackTest, UsesMainWhenNeitherSupportsTemporal) {
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
             wrapper_->InitEncode(&codec_settings, kSettings));
   EXPECT_EQ(wrapper_->GetEncoderInfo().implementation_name, "hw");
+}
+
+TEST_F(PreferTemporalLayersFallbackTest, UsesFallbackWhenLayersAreUndefined) {
+  codec_settings.VP8()->numberOfTemporalLayers = 2;
+  SetNumLayers(&hw_info_, 1);
+  SetNumLayers(&sw_info_, 0);
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
+            wrapper_->InitEncode(&codec_settings, kSettings));
+  EXPECT_EQ(wrapper_->GetEncoderInfo().implementation_name, "sw");
 }
 
 TEST_F(PreferTemporalLayersFallbackTest, PrimesEncoderOnSwitch) {

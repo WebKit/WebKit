@@ -10,8 +10,8 @@
 
 #import "ARDStatsBuilder.h"
 
-#import <WebRTC/RTCLegacyStatsReport.h>
-#import <WebRTC/RTCMacros.h>
+#import "sdk/objc/api/peerconnection/RTCLegacyStatsReport.h"
+#import "sdk/objc/base/RTCMacros.h"
 
 #import "ARDBitrateTracker.h"
 #import "ARDUtilities.h"

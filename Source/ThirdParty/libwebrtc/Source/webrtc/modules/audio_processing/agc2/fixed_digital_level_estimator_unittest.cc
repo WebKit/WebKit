@@ -101,25 +101,25 @@ float TimeMsToDecreaseLevel(int sample_rate_hz,
 }
 }  // namespace
 
-TEST(AutomaticGainController2LevelEstimator, EstimatorShouldNotCrash) {
+TEST(GainController2FixedDigitalLevelEstimator, EstimatorShouldNotCrash) {
   TestLevelEstimator(8000, 1, 0, std::numeric_limits<float>::lowest(),
                      std::numeric_limits<float>::max());
 }
 
-TEST(AutomaticGainController2LevelEstimator,
+TEST(GainController2FixedDigitalLevelEstimator,
      EstimatorShouldEstimateConstantLevel) {
   TestLevelEstimator(10000, 1, kInputLevel, kInputLevel * 0.99,
                      kInputLevel * 1.01);
 }
 
-TEST(AutomaticGainController2LevelEstimator,
+TEST(GainController2FixedDigitalLevelEstimator,
      EstimatorShouldEstimateConstantLevelForManyChannels) {
   constexpr size_t num_channels = 10;
   TestLevelEstimator(20000, num_channels, kInputLevel, kInputLevel * 0.99,
                      kInputLevel * 1.01);
 }
 
-TEST(AutomaticGainController2LevelEstimator, TimeToDecreaseForLowLevel) {
+TEST(GainController2FixedDigitalLevelEstimator, TimeToDecreaseForLowLevel) {
   constexpr float kLevelReductionDb = 25;
   constexpr float kInitialLowLevel = -40;
   constexpr float kExpectedTime = kLevelReductionDb * test::kDecayMs;
@@ -131,7 +131,8 @@ TEST(AutomaticGainController2LevelEstimator, TimeToDecreaseForLowLevel) {
   EXPECT_LE(time_to_decrease, kExpectedTime * 1.1);
 }
 
-TEST(AutomaticGainController2LevelEstimator, TimeToDecreaseForFullScaleLevel) {
+TEST(GainController2FixedDigitalLevelEstimator,
+     TimeToDecreaseForFullScaleLevel) {
   constexpr float kLevelReductionDb = 25;
   constexpr float kExpectedTime = kLevelReductionDb * test::kDecayMs;
 
@@ -142,7 +143,7 @@ TEST(AutomaticGainController2LevelEstimator, TimeToDecreaseForFullScaleLevel) {
   EXPECT_LE(time_to_decrease, kExpectedTime * 1.1);
 }
 
-TEST(AutomaticGainController2LevelEstimator,
+TEST(GainController2FixedDigitalLevelEstimator,
      TimeToDecreaseForMultipleChannels) {
   constexpr float kLevelReductionDb = 25;
   constexpr float kExpectedTime = kLevelReductionDb * test::kDecayMs;

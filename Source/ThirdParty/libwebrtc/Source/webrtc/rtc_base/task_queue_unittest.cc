@@ -21,7 +21,6 @@
 #include <vector>
 
 #include "absl/memory/memory.h"
-#include "rtc_base/bind.h"
 #include "rtc_base/event.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "rtc_base/time_utils.h"
@@ -67,7 +66,7 @@ TEST(TaskQueueTest, DISABLED_PostDelayedHighRes) {
   webrtc::TaskQueueForTest queue(kQueueName, TaskQueue::Priority::HIGH);
 
   uint32_t start = Time();
-  queue.PostDelayedTask(Bind(&CheckCurrent, &event, &queue), 3);
+  queue.PostDelayedTask([&event, &queue] { CheckCurrent(&event, &queue); }, 3);
   EXPECT_TRUE(event.Wait(1000));
   uint32_t end = TimeMillis();
   // These tests are a little relaxed due to how "powerful" our test bots can

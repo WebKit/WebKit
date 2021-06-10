@@ -53,8 +53,9 @@ std::unique_ptr<Packet> WriteHeader(const uint8_t* packet_mask,
   UlpfecHeaderWriter writer;
   std::unique_ptr<Packet> written_packet(new Packet());
   written_packet->data.SetSize(kMediaPacketLength);
+  uint8_t* data = written_packet->data.MutableData();
   for (size_t i = 0; i < written_packet->data.size(); ++i) {
-    written_packet->data[i] = i;  // Actual content doesn't matter.
+    data[i] = i;  // Actual content doesn't matter.
   }
   writer.FinalizeFecHeader(kMediaSsrc, kMediaStartSeqNum, packet_mask,
                            packet_mask_size, written_packet.get());
@@ -85,7 +86,8 @@ void VerifyHeaders(size_t expected_fec_header_size,
   EXPECT_EQ(written_packet.data.size() - expected_fec_header_size,
             read_packet.protection_length);
   EXPECT_EQ(0, memcmp(expected_packet_mask,
-                      &read_packet.pkt->data[read_packet.packet_mask_offset],
+                      read_packet.pkt->data.MutableData() +
+                          read_packet.packet_mask_offset,
                       read_packet.packet_mask_size));
   // Verify that the call to ReadFecHeader did not tamper with the payload.
   EXPECT_EQ(0, memcmp(written_packet.data.data() + expected_fec_header_size,
@@ -147,8 +149,9 @@ TEST(UlpfecHeaderWriterTest, FinalizesSmallHeader) {
   auto packet_mask = GeneratePacketMask(packet_mask_size, 0xabcd);
   Packet written_packet;
   written_packet.data.SetSize(kMediaPacketLength);
+  uint8_t* data = written_packet.data.MutableData();
   for (size_t i = 0; i < written_packet.data.size(); ++i) {
-    written_packet.data[i] = i;
+    data[i] = i;
   }
 
   UlpfecHeaderWriter writer;
@@ -171,8 +174,9 @@ TEST(UlpfecHeaderWriterTest, FinalizesLargeHeader) {
   auto packet_mask = GeneratePacketMask(packet_mask_size, 0xabcd);
   Packet written_packet;
   written_packet.data.SetSize(kMediaPacketLength);
+  uint8_t* data = written_packet.data.MutableData();
   for (size_t i = 0; i < written_packet.data.size(); ++i) {
-    written_packet.data[i] = i;
+    data[i] = i;
   }
 
   UlpfecHeaderWriter writer;

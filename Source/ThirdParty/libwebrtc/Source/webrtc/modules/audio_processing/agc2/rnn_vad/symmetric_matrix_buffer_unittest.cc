@@ -15,13 +15,12 @@
 
 namespace webrtc {
 namespace rnn_vad {
-namespace test {
 namespace {
 
-template <typename T, size_t S>
+template <typename T, int S>
 void CheckSymmetry(const SymmetricMatrixBuffer<T, S>* sym_matrix_buf) {
-  for (size_t row = 0; row < S - 1; ++row)
-    for (size_t col = row + 1; col < S; ++col)
+  for (int row = 0; row < S - 1; ++row)
+    for (int col = row + 1; col < S; ++col)
       EXPECT_EQ(sym_matrix_buf->GetValue(row, col),
                 sym_matrix_buf->GetValue(col, row));
 }
@@ -30,12 +29,12 @@ using PairType = std::pair<int, int>;
 
 // Checks that the symmetric matrix buffer contains any pair with a value equal
 // to the given one.
-template <size_t S>
+template <int S>
 bool CheckPairsWithValueExist(
     const SymmetricMatrixBuffer<PairType, S>* sym_matrix_buf,
     const int value) {
-  for (size_t row = 0; row < S - 1; ++row) {
-    for (size_t col = row + 1; col < S; ++col) {
+  for (int row = 0; row < S - 1; ++row) {
+    for (int col = row + 1; col < S; ++col) {
       auto p = sym_matrix_buf->GetValue(row, col);
       if (p.first == value || p.second == value)
         return true;
@@ -44,15 +43,13 @@ bool CheckPairsWithValueExist(
   return false;
 }
 
-}  // namespace
-
 // Test that shows how to combine RingBuffer and SymmetricMatrixBuffer to
 // efficiently compute pair-wise scores. This test verifies that the evolution
 // of a SymmetricMatrixBuffer instance follows that of RingBuffer.
 TEST(RnnVadTest, SymmetricMatrixBufferUseCase) {
   // Instance a ring buffer which will be fed with a series of integer values.
   constexpr int kRingBufSize = 10;
-  RingBuffer<int, 1, static_cast<size_t>(kRingBufSize)> ring_buf;
+  RingBuffer<int, 1, kRingBufSize> ring_buf;
   // Instance a symmetric matrix buffer for the ring buffer above. It stores
   // pairs of integers with which this test can easily check that the evolution
   // of RingBuffer and SymmetricMatrixBuffer match.
@@ -81,8 +78,8 @@ TEST(RnnVadTest, SymmetricMatrixBufferUseCase) {
     CheckSymmetry(&sym_matrix_buf);
     // Check that the pairs resulting from the content in the ring buffer are
     // in the right position.
-    for (size_t delay1 = 0; delay1 < kRingBufSize - 1; ++delay1) {
-      for (size_t delay2 = delay1 + 1; delay2 < kRingBufSize; ++delay2) {
+    for (int delay1 = 0; delay1 < kRingBufSize - 1; ++delay1) {
+      for (int delay2 = delay1 + 1; delay2 < kRingBufSize; ++delay2) {
         const auto t1 = ring_buf.GetArrayView(delay1)[0];
         const auto t2 = ring_buf.GetArrayView(delay2)[0];
         ASSERT_LE(t2, t1);
@@ -93,7 +90,7 @@ TEST(RnnVadTest, SymmetricMatrixBufferUseCase) {
     }
     // Check that every older element in the ring buffer still has a
     // corresponding pair in the symmetric matrix buffer.
-    for (size_t delay = 1; delay < kRingBufSize; ++delay) {
+    for (int delay = 1; delay < kRingBufSize; ++delay) {
       const auto t_prev = ring_buf.GetArrayView(delay)[0];
       EXPECT_TRUE(CheckPairsWithValueExist(&sym_matrix_buf, t_prev));
     }
@@ -105,6 +102,6 @@ TEST(RnnVadTest, SymmetricMatrixBufferUseCase) {
   }
 }
 
-}  // namespace test
+}  // namespace
 }  // namespace rnn_vad
 }  // namespace webrtc

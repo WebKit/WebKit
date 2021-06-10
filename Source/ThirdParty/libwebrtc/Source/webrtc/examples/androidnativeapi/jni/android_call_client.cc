@@ -179,9 +179,9 @@ void AndroidCallClient::CreatePeerConnection() {
   config.sdp_semantics = webrtc::SdpSemantics::kUnifiedPlan;
   // DTLS SRTP has to be disabled for loopback to work.
   config.enable_dtls_srtp = false;
-  pc_ = pcf_->CreatePeerConnection(config, nullptr /* port_allocator */,
-                                   nullptr /* cert_generator */,
-                                   pc_observer_.get());
+  webrtc::PeerConnectionDependencies deps(pc_observer_.get());
+  pc_ = pcf_->CreatePeerConnectionOrError(config, std::move(deps)).MoveValue();
+
   RTC_LOG(LS_INFO) << "PeerConnection created: " << pc_;
 
   rtc::scoped_refptr<webrtc::VideoTrackInterface> local_video_track =

@@ -1,0 +1,63 @@
+# Copyright (c) 2021 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_source_set("strong_alias") {
+  sources = [ "strong_alias.h" ]
+}
+
+rtc_source_set("types") {
+  deps = [
+    ":strong_alias",
+    "../../../api:array_view",
+  ]
+  sources = [
+    "dcsctp_message.h",
+    "dcsctp_options.h",
+    "types.h",
+  ]
+}
+
+rtc_source_set("socket") {
+  deps = [
+    ":types",
+    "../../../api:array_view",
+    "../../../rtc_base",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:rtc_base_approved",
+  ]
+  sources = [
+    "dcsctp_socket.h",
+    "packet_observer.h",
+    "timeout.h",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("dcsctp_public_unittests") {
+    testonly = true
+
+    deps = [
+      ":strong_alias",
+      ":types",
+      "../../../rtc_base:checks",
+      "../../../rtc_base:gunit_helpers",
+      "../../../rtc_base:rtc_base_approved",
+      "../../../test:test_support",
+    ]
+    sources = [
+      "strong_alias_test.cc",
+      "types_test.cc",
+    ]
+  }
+}

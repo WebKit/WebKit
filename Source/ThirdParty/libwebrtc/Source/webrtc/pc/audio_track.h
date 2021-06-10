@@ -14,9 +14,9 @@
 #include <string>
 
 #include "api/media_stream_interface.h"
+#include "api/media_stream_track.h"
 #include "api/scoped_refptr.h"
-#include "pc/media_stream_track.h"
-#include "rtc_base/thread_checker.h"
+#include "api/sequence_checker.h"
 
 namespace webrtc {
 
@@ -53,7 +53,7 @@ class AudioTrack : public MediaStreamTrack<AudioTrackInterface>,
 
  private:
   const rtc::scoped_refptr<AudioSourceInterface> audio_source_;
-  rtc::ThreadChecker thread_checker_;
+  SequenceChecker thread_checker_;
 };
 
 }  // namespace webrtc

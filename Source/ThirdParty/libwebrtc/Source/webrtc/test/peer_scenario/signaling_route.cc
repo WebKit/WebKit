@@ -41,7 +41,7 @@ struct IceMessage {
 
 void StartIceSignalingForRoute(PeerScenarioClient* caller,
                                PeerScenarioClient* callee,
-                               TrafficRoute* send_route) {
+                               CrossTrafficRoute* send_route) {
   caller->handlers()->on_ice_candidate.push_back(
       [=](const IceCandidateInterface* candidate) {
         IceMessage msg(candidate);
@@ -56,8 +56,8 @@ void StartIceSignalingForRoute(PeerScenarioClient* caller,
 void StartSdpNegotiation(
     PeerScenarioClient* caller,
     PeerScenarioClient* callee,
-    TrafficRoute* send_route,
-    TrafficRoute* ret_route,
+    CrossTrafficRoute* send_route,
+    CrossTrafficRoute* ret_route,
     std::function<void(SessionDescriptionInterface* offer)> munge_offer,
     std::function<void(SessionDescriptionInterface*)> modify_offer,
     std::function<void(const SessionDescriptionInterface&)> exchange_finished) {
@@ -80,8 +80,8 @@ void StartSdpNegotiation(
 
 SignalingRoute::SignalingRoute(PeerScenarioClient* caller,
                                PeerScenarioClient* callee,
-                               TrafficRoute* send_route,
-                               TrafficRoute* ret_route)
+                               CrossTrafficRoute* send_route,
+                               CrossTrafficRoute* ret_route)
     : caller_(caller),
       callee_(callee),
       send_route_(send_route),

@@ -20,8 +20,6 @@ rtc_library("rtc_api_video_unittests") {
     "..:video_adaptation",
     "..:video_bitrate_allocation",
     "..:video_frame",
-    "..:video_frame_i420",
-    "..:video_frame_nv12",
     "..:video_rtp_headers",
     "../../../test:frame_utils",
     "../../../test:test_support",

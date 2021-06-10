@@ -25,11 +25,11 @@
 #include "api/rtc_error.h"
 #include "api/rtp_receiver_interface.h"
 #include "api/scoped_refptr.h"
+#include "api/sequence_checker.h"
 #include "pc/test/fake_audio_capture_module.h"
 #include "pc/test/fake_video_track_renderer.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread.h"
-#include "rtc_base/thread_checker.h"
 
 class PeerConnectionTestWrapper
     : public webrtc::PeerConnectionObserver,
@@ -120,7 +120,7 @@ class PeerConnectionTestWrapper
   std::string name_;
   rtc::Thread* const network_thread_;
   rtc::Thread* const worker_thread_;
-  rtc::ThreadChecker pc_thread_checker_;
+  webrtc::SequenceChecker pc_thread_checker_;
   rtc::scoped_refptr<webrtc::PeerConnectionInterface> peer_connection_;
   rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>
       peer_connection_factory_;

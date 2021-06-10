@@ -23,10 +23,6 @@
 namespace webrtc {
 namespace {
 
-bool ModelReverbInNonlinearMode() {
-  return !field_trial::IsEnabled("WebRTC-Aec3NonlinearModeReverbKillSwitch");
-}
-
 constexpr float kDefaultTransparentModeGain = 0.01f;
 
 float GetTransparentModeGain() {
@@ -47,6 +43,13 @@ float GetLateReflectionsDefaultModeGain(
     return 0.1f;
   }
   return config.default_gain;
+}
+
+bool UseErleOnsetCompensationInDominantNearend(
+    const EchoCanceller3Config::EpStrength& config) {
+  return config.erle_onset_compensation_in_dominant_nearend ||
+         field_trial::IsEnabled(
+             "WebRTC-Aec3UseErleOnsetCompensationInDominantNearend");
 }
 
 // Computes the indexes that will be used for computing spectral power over
@@ -84,22 +87,6 @@ void LinearEstimate(
     for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
       RTC_DCHECK_LT(0.f, erle[ch][k]);
       R2[ch][k] = S2_linear[ch][k] / erle[ch][k];
-    }
-  }
-}
-
-// Estimates the residual echo power based on an uncertainty estimate of the
-// echo return loss enhancement (ERLE) and the linear power estimate.
-void LinearEstimate(
-    rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> S2_linear,
-    float erle_uncertainty,
-    rtc::ArrayView<std::array<float, kFftLengthBy2Plus1>> R2) {
-  RTC_DCHECK_EQ(S2_linear.size(), R2.size());
-
-  const size_t num_capture_channels = R2.size();
-  for (size_t ch = 0; ch < num_capture_channels; ++ch) {
-    for (size_t k = 0; k < kFftLengthBy2Plus1; ++k) {
-      R2[ch][k] = S2_linear[ch][k] * erle_uncertainty;
     }
   }
 }
@@ -177,7 +164,8 @@ ResidualEchoEstimator::ResidualEchoEstimator(const EchoCanceller3Config& config,
           GetEarlyReflectionsDefaultModeGain(config_.ep_strength)),
       late_reflections_general_gain_(
           GetLateReflectionsDefaultModeGain(config_.ep_strength)),
-      model_reverb_in_nonlinear_mode_(ModelReverbInNonlinearMode()) {
+      erle_onset_compensation_in_dominant_nearend_(
+          UseErleOnsetCompensationInDominantNearend(config_.ep_strength)) {
   Reset();
 }
 
@@ -188,6 +176,7 @@ void ResidualEchoEstimator::Estimate(
     const RenderBuffer& render_buffer,
     rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> S2_linear,
     rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> Y2,
+    bool dominant_nearend,
     rtc::ArrayView<std::array<float, kFftLengthBy2Plus1>> R2) {
   RTC_DCHECK_EQ(R2.size(), Y2.size());
   RTC_DCHECK_EQ(R2.size(), S2_linear.size());
@@ -206,12 +195,9 @@ void ResidualEchoEstimator::Estimate(
         std::copy(Y2[ch].begin(), Y2[ch].end(), R2[ch].begin());
       }
     } else {
-      absl::optional<float> erle_uncertainty = aec_state.ErleUncertainty();
-      if (erle_uncertainty) {
-        LinearEstimate(S2_linear, *erle_uncertainty, R2);
-      } else {
-        LinearEstimate(S2_linear, aec_state.Erle(), R2);
-      }
+      const bool onset_compensated =
+          erle_onset_compensation_in_dominant_nearend_ || !dominant_nearend;
+      LinearEstimate(S2_linear, aec_state.Erle(onset_compensated), R2);
     }
 
     AddReverb(ReverbType::kLinear, aec_state, render_buffer, R2);
@@ -245,7 +231,8 @@ void ResidualEchoEstimator::Estimate(
       NonLinearEstimate(echo_path_gain, X2, R2);
     }
 
-    if (model_reverb_in_nonlinear_mode_ && !aec_state.TransparentModeActive()) {
+    if (config_.echo_model.model_reverb_in_nonlinear_mode &&
+        !aec_state.TransparentModeActive()) {
       AddReverb(ReverbType::kNonLinear, aec_state, render_buffer, R2);
     }
   }

@@ -212,10 +212,10 @@ void StatsBasedNetworkQualityMetricsReporter::ReportStats(
     const NetworkLayerStats& network_layer_stats,
     int64_t packet_loss,
     const Timestamp& end_time) {
-  ReportResult("bytes_dropped", pc_label,
+  ReportResult("bytes_discarded_no_receiver", pc_label,
                network_layer_stats.stats->BytesDropped().bytes(),
                "sizeInBytes");
-  ReportResult("packets_dropped", pc_label,
+  ReportResult("packets_discarded_no_receiver", pc_label,
                network_layer_stats.stats->PacketsDropped(), "unitless");
 
   ReportResult("payload_bytes_received", pc_label,

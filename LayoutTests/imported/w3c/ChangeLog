@@ -1,3 +1,15 @@
+2021-06-10  Youenn Fablet  <youenn@apple.com>
+
+        Update libwebrtc to M92
+        https://bugs.webkit.org/show_bug.cgi?id=226494
+
+        Reviewed by Eric Carlson.
+
+        * web-platform-tests/webrtc/datachannel-emptystring-expected.txt:
+        * web-platform-tests/webrtc/protocol/rtp-payloadtypes-expected.txt:
+        * web-platform-tests/webrtc/protocol/unknown-mediatypes-expected.txt:
+        * web-platform-tests/webrtc/receiver-track-live.https-expected.txt:
+
 2021-06-09  Cathie Chen  <cathiechen@igalia.com>
 
         Aspect ratio from width and height attribute is not compatible to string with invalid ends

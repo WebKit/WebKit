@@ -24,10 +24,14 @@ namespace webrtc_function_impl {
 
 using FunVoid = void();
 
+// Inline storage size is this many machine words.
+enum : size_t { kInlineStorageWords = 4 };
+
 union VoidUnion {
   void* void_ptr;
   FunVoid* fun_ptr;
-  typename std::aligned_storage<4 * sizeof(uintptr_t)>::type inline_storage;
+  typename std::aligned_storage<kInlineStorageWords * sizeof(uintptr_t)>::type
+      inline_storage;
 };
 
 // Returns the number of elements of the `inline_storage` array required to
@@ -74,6 +78,16 @@ struct CallHelpers<RetT(ArgT...)> {
 // size.
 class UntypedFunction final {
  public:
+  // Callables of at most this size can be stored inline, if they are trivial.
+  // (Useful in tests and benchmarks; avoid using this in production code.)
+  enum : size_t {
+    kInlineStorageSize = sizeof(webrtc_function_impl::VoidUnion::inline_storage)
+  };
+  static_assert(kInlineStorageSize ==
+                    webrtc_function_impl::kInlineStorageWords *
+                        sizeof(uintptr_t),
+                "");
+
   // The *UntypedFunctionArgs structs are used to transfer arguments from
   // PrepareArgs() to Create(). They are trivial, but may own heap allocations,
   // so make sure to pass them to Create() exactly once!
@@ -85,6 +99,8 @@ class UntypedFunction final {
   // other.
   template <size_t N>
   struct TrivialUntypedFunctionArgs {
+    static_assert(N >= 1, "");
+    static_assert(N <= webrtc_function_impl::kInlineStorageWords, "");
     // We use an uintptr_t array here instead of std::aligned_storage, because
     // the former can be efficiently passed in registers when using
     // TrivialUntypedFunctionArgs as a function argument. (We can't do the same
@@ -125,13 +141,10 @@ class UntypedFunction final {
           !std::is_same<UntypedFunction,
                         typename std::remove_cv<F_deref>::type>::value &&
 
-          // Only for trivial callables that will fit in
-          // VoidUnion::inline_storage.
+          // Only for trivial callables that will fit in inline storage.
           std::is_trivially_move_constructible<F_deref>::value &&
           std::is_trivially_destructible<F_deref>::value &&
-          sizeof(F_deref) <=
-              sizeof(webrtc_function_impl::VoidUnion::inline_storage)>::type* =
-          nullptr,
+          sizeof(F_deref) <= kInlineStorageSize>::type* = nullptr,
       size_t InlineSize = webrtc_function_impl::InlineStorageSize<F_deref>()>
   static TrivialUntypedFunctionArgs<InlineSize> PrepareArgs(F&& f) {
     // The callable is trivial and small enough, so we just store its bytes
@@ -154,30 +167,29 @@ class UntypedFunction final {
   // Create function for lambdas and other callables that are nontrivial or
   // large; it accepts every type of argument except those noted in its
   // enable_if call.
-  template <
-      typename Signature,
-      typename F,
-      typename F_deref = typename std::remove_reference<F>::type,
-      typename std::enable_if<
-          // Not for function pointers; we have another overload for that below.
-          !std::is_function<
-              typename std::remove_pointer<F_deref>::type>::value &&
+  template <typename Signature,
+            typename F,
+            typename F_deref = typename std::remove_reference<F>::type,
+            typename std::enable_if<
+                // Not for function pointers; we have another overload for that
+                // below.
+                !std::is_function<
+                    typename std::remove_pointer<F_deref>::type>::value &&
 
-          // Not for nullptr; we have a constructor for that below.
-          !std::is_same<std::nullptr_t,
-                        typename std::remove_cv<F>::type>::value &&
+                // Not for nullptr; we have a constructor for that below.
+                !std::is_same<std::nullptr_t,
+                              typename std::remove_cv<F>::type>::value &&
 
-          // Not for UntypedFunction objects; use move construction or
-          // assignment.
-          !std::is_same<UntypedFunction,
-                        typename std::remove_cv<F_deref>::type>::value &&
+                // Not for UntypedFunction objects; use move construction or
+                // assignment.
+                !std::is_same<UntypedFunction,
+                              typename std::remove_cv<F_deref>::type>::value &&
 
-          // Only for nontrivial callables, or callables that won't fit in
-          // VoidUnion::inline_storage.
-          !(std::is_trivially_move_constructible<F_deref>::value &&
-            std::is_trivially_destructible<F_deref>::value &&
-            sizeof(F_deref) <= sizeof(webrtc_function_impl::VoidUnion::
-                                          inline_storage))>::type* = nullptr>
+                // Only for nontrivial callables, or callables that won't fit in
+                // inline storage.
+                !(std::is_trivially_move_constructible<F_deref>::value &&
+                  std::is_trivially_destructible<F_deref>::value &&
+                  sizeof(F_deref) <= kInlineStorageSize)>::type* = nullptr>
   static NontrivialUntypedFunctionArgs PrepareArgs(F&& f) {
     // The callable is either nontrivial or too large, so we can't keep it
     // in the inline storage; use the heap instead.

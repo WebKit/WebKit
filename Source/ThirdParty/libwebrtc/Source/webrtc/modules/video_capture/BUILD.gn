@@ -27,17 +27,14 @@ rtc_library("video_capture_module") {
   ]
 
   deps = [
-    "..:module_api",
     "../../api:scoped_refptr",
     "../../api/video:video_frame",
-    "../../api/video:video_frame_i420",
     "../../api/video:video_rtp_headers",
     "../../common_video",
     "../../media:rtc_media_base",
     "../../rtc_base:rtc_base_approved",
     "../../rtc_base:stringutils",
     "../../rtc_base/synchronization:mutex",
-    "../../rtc_base/synchronization:rw_lock_wrapper",
     "../../system_wrappers",
     "//third_party/libyuv",
   ]
@@ -132,7 +129,6 @@ if (!build_with_chromium) {
         ":video_capture_module",
         "../../api:scoped_refptr",
         "../../api/video:video_frame",
-        "../../api/video:video_frame_i420",
         "../../api/video:video_rtp_headers",
         "../../common_video",
         "../../rtc_base:rtc_base_approved",

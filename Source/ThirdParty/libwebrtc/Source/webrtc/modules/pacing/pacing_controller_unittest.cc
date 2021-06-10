@@ -1429,7 +1429,8 @@ TEST_P(PacingControllerTest, ProbingWithInsertedPackets) {
   EXPECT_NEAR((packets_sent - 1) * kPacketSize * 8000 /
                   (clock_.TimeInMilliseconds() - start),
               kFirstClusterRate.bps(), kProbingErrorMargin.bps());
-  EXPECT_EQ(0, packet_sender.padding_sent());
+  // Probing always starts with a small padding packet.
+  EXPECT_EQ(1, packet_sender.padding_sent());
 
   clock_.AdvanceTime(TimeUntilNextProcess());
   start = clock_.TimeInMilliseconds();
@@ -1738,7 +1739,6 @@ TEST_P(PacingControllerTest, OwnedPacketPrioritizedOnType) {
 }
 
 TEST_P(PacingControllerTest, SmallFirstProbePacket) {
-  ScopedFieldTrials trial("WebRTC-Pacer-SmallFirstProbePacket/Enabled/");
   MockPacketSender callback;
   pacer_ = std::make_unique<PacingController>(&clock_, &callback, nullptr,
                                               nullptr, GetParam());
@@ -2106,10 +2106,7 @@ TEST_P(PacingControllerTest, PaddingTargetAccountsForPaddingRate) {
   AdvanceTimeAndProcess();
 }
 
-TEST_P(PacingControllerTest, SendsDeferredFecPackets) {
-  ScopedFieldTrials trial("WebRTC-DeferredFecGeneration/Enabled/");
-  SetUp();
-
+TEST_P(PacingControllerTest, SendsFecPackets) {
   const uint32_t kSsrc = 12345;
   const uint32_t kFlexSsrc = 54321;
   uint16_t sequence_number = 1234;

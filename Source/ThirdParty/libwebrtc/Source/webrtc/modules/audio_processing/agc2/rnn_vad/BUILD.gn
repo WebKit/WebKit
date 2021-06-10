@@ -17,6 +17,7 @@ rtc_library("rnn_vad") {
     "rnn.h",
   ]
 
+  defines = []
   if (rtc_build_with_neon && current_cpu != "arm64") {
     suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
     cflags = [ "-mfpu=neon" ]
@@ -24,16 +25,17 @@ rtc_library("rnn_vad") {
 
   deps = [
     ":rnn_vad_common",
+    ":rnn_vad_layers",
     ":rnn_vad_lp_residual",
     ":rnn_vad_pitch",
     ":rnn_vad_sequence_buffer",
     ":rnn_vad_spectral_features",
     "..:biquad_filter",
+    "..:cpu_features",
     "../../../../api:array_view",
-    "../../../../api:function_view",
     "../../../../rtc_base:checks",
-    "../../../../rtc_base:logging",
-    "../../../../rtc_base/system:arch",
+    "../../../../rtc_base:safe_compare",
+    "../../../../rtc_base:safe_conversions",
     "//third_party/rnnoise:rnn_vad",
   ]
 }
@@ -51,16 +53,13 @@ rtc_library("rnn_vad_auto_correlation") {
   ]
 }
 
-rtc_library("rnn_vad_common") {
+rtc_source_set("rnn_vad_common") {
   # TODO(alessiob): Make this target visibility private.
   visibility = [
     ":*",
     "..:rnn_vad_with_level",
   ]
-  sources = [
-    "common.cc",
-    "common.h",
-  ]
+  sources = [ "common.h" ]
   deps = [
     "../../../../rtc_base/system:arch",
     "../../../../system_wrappers",
@@ -75,23 +74,100 @@ rtc_library("rnn_vad_lp_residual") {
   deps = [
     "../../../../api:array_view",
     "../../../../rtc_base:checks",
+    "../../../../rtc_base:safe_compare",
   ]
+}
+
+rtc_source_set("rnn_vad_layers") {
+  sources = [
+    "rnn_fc.cc",
+    "rnn_fc.h",
+    "rnn_gru.cc",
+    "rnn_gru.h",
+  ]
+
+  defines = []
+  if (rtc_build_with_neon && current_cpu != "arm64") {
+    suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+    cflags = [ "-mfpu=neon" ]
+  }
+
+  deps = [
+    ":rnn_vad_common",
+    ":vector_math",
+    "..:cpu_features",
+    "../../../../api:array_view",
+    "../../../../api:function_view",
+    "../../../../rtc_base:checks",
+    "../../../../rtc_base:safe_conversions",
+    "//third_party/rnnoise:rnn_vad",
+  ]
+  if (current_cpu == "x86" || current_cpu == "x64") {
+    deps += [ ":vector_math_avx2" ]
+  }
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
+}
+
+rtc_source_set("vector_math") {
+  sources = [ "vector_math.h" ]
+  deps = [
+    "..:cpu_features",
+    "../../../../api:array_view",
+    "../../../../rtc_base:checks",
+    "../../../../rtc_base:safe_conversions",
+    "../../../../rtc_base/system:arch",
+  ]
+}
+
+if (current_cpu == "x86" || current_cpu == "x64") {
+  rtc_library("vector_math_avx2") {
+    sources = [ "vector_math_avx2.cc" ]
+    if (is_win) {
+      cflags = [ "/arch:AVX2" ]
+    } else {
+      cflags = [
+        "-mavx2",
+        "-mfma",
+      ]
+    }
+    deps = [
+      ":vector_math",
+      "../../../../api:array_view",
+      "../../../../rtc_base:checks",
+      "../../../../rtc_base:safe_conversions",
+    ]
+  }
 }
 
 rtc_library("rnn_vad_pitch") {
   sources = [
-    "pitch_info.h",
     "pitch_search.cc",
     "pitch_search.h",
     "pitch_search_internal.cc",
     "pitch_search_internal.h",
   ]
+
+  defines = []
+  if (rtc_build_with_neon && current_cpu != "arm64") {
+    suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+    cflags = [ "-mfpu=neon" ]
+  }
+
   deps = [
     ":rnn_vad_auto_correlation",
     ":rnn_vad_common",
+    ":vector_math",
+    "..:cpu_features",
     "../../../../api:array_view",
     "../../../../rtc_base:checks",
+    "../../../../rtc_base:gtest_prod",
+    "../../../../rtc_base:safe_compare",
+    "../../../../rtc_base:safe_conversions",
+    "../../../../rtc_base/system:arch",
   ]
+  if (current_cpu == "x86" || current_cpu == "x64") {
+    deps += [ ":vector_math_avx2" ]
+  }
 }
 
 rtc_source_set("rnn_vad_ring_buffer") {
@@ -123,6 +199,7 @@ rtc_library("rnn_vad_spectral_features") {
     ":rnn_vad_symmetric_matrix_buffer",
     "../../../../api:array_view",
     "../../../../rtc_base:checks",
+    "../../../../rtc_base:safe_compare",
     "../../utility:pffft_wrapper",
   ]
 }
@@ -132,6 +209,7 @@ rtc_source_set("rnn_vad_symmetric_matrix_buffer") {
   deps = [
     "../../../../api:array_view",
     "../../../../rtc_base:checks",
+    "../../../../rtc_base:safe_compare",
   ]
 }
 
@@ -148,8 +226,7 @@ if (rtc_include_tests) {
       "../../../../api:array_view",
       "../../../../api:scoped_refptr",
       "../../../../rtc_base:checks",
-      "../../../../rtc_base/system:arch",
-      "../../../../system_wrappers",
+      "../../../../rtc_base:safe_compare",
       "../../../../test:fileutils",
       "../../../../test:test_support",
     ]
@@ -181,17 +258,28 @@ if (rtc_include_tests) {
       "pitch_search_internal_unittest.cc",
       "pitch_search_unittest.cc",
       "ring_buffer_unittest.cc",
+      "rnn_fc_unittest.cc",
+      "rnn_gru_unittest.cc",
       "rnn_unittest.cc",
       "rnn_vad_unittest.cc",
       "sequence_buffer_unittest.cc",
       "spectral_features_internal_unittest.cc",
       "spectral_features_unittest.cc",
       "symmetric_matrix_buffer_unittest.cc",
+      "vector_math_unittest.cc",
     ]
+
+    defines = []
+    if (rtc_build_with_neon && current_cpu != "arm64") {
+      suppressed_configs += [ "//build/config/compiler:compiler_arm_fpu" ]
+      cflags = [ "-mfpu=neon" ]
+    }
+
     deps = [
       ":rnn_vad",
       ":rnn_vad_auto_correlation",
       ":rnn_vad_common",
+      ":rnn_vad_layers",
       ":rnn_vad_lp_residual",
       ":rnn_vad_pitch",
       ":rnn_vad_ring_buffer",
@@ -199,16 +287,24 @@ if (rtc_include_tests) {
       ":rnn_vad_spectral_features",
       ":rnn_vad_symmetric_matrix_buffer",
       ":test_utils",
+      ":vector_math",
+      "..:cpu_features",
       "../..:audioproc_test_utils",
       "../../../../api:array_view",
       "../../../../common_audio/",
       "../../../../rtc_base:checks",
       "../../../../rtc_base:logging",
+      "../../../../rtc_base:safe_compare",
+      "../../../../rtc_base:safe_conversions",
+      "../../../../rtc_base:stringutils",
       "../../../../rtc_base/system:arch",
       "../../../../test:test_support",
       "../../utility:pffft_wrapper",
       "//third_party/rnnoise:rnn_vad",
     ]
+    if (current_cpu == "x86" || current_cpu == "x64") {
+      deps += [ ":vector_math_avx2" ]
+    }
     absl_deps = [ "//third_party/abseil-cpp/absl/memory" ]
     data = unittest_resources
     if (is_ios) {
@@ -216,18 +312,22 @@ if (rtc_include_tests) {
     }
   }
 
-  rtc_executable("rnn_vad_tool") {
-    testonly = true
-    sources = [ "rnn_vad_tool.cc" ]
-    deps = [
-      ":rnn_vad",
-      ":rnn_vad_common",
-      "../../../../api:array_view",
-      "../../../../common_audio",
-      "../../../../rtc_base:rtc_base_approved",
-      "../../../../test:test_support",
-      "//third_party/abseil-cpp/absl/flags:flag",
-      "//third_party/abseil-cpp/absl/flags:parse",
-    ]
+  if (!build_with_chromium) {
+    rtc_executable("rnn_vad_tool") {
+      testonly = true
+      sources = [ "rnn_vad_tool.cc" ]
+      deps = [
+        ":rnn_vad",
+        ":rnn_vad_common",
+        "..:cpu_features",
+        "../../../../api:array_view",
+        "../../../../common_audio",
+        "../../../../rtc_base:rtc_base_approved",
+        "../../../../rtc_base:safe_compare",
+        "../../../../test:test_support",
+        "//third_party/abseil-cpp/absl/flags:flag",
+        "//third_party/abseil-cpp/absl/flags:parse",
+      ]
+    }
   }
 }

@@ -25,6 +25,7 @@
 
 #include "WebKitVP8Decoder.h"
 
+#include "WebKitDecoder.h"
 #include "WebKitDecoderReceiver.h"
 #include "modules/video_coding/codecs/vp8/libvpx_vp8_decoder.h"
 #include "rtc_base/logging.h"
@@ -172,10 +173,10 @@ static OSStatus decodeVP8DecoderFrameFromContiguousBlock(WebKitVP8Decoder& decod
     RTC_DCHECK(!decoder.m_receiver->currentFrame());
     decoder.m_receiver->setCurrentFrame(frame);
 
-    EncodedImage image { reinterpret_cast<uint8_t*>(data), size, size };
+    EncodedImage image;
+    image.SetEncodedData(WebKitEncodedImageBufferWrapper::create(reinterpret_cast<uint8_t*>(data), size));
     // We set those values as VP8DecoderImpl checks for getting a full key frame as first frame.
     image._frameType = VideoFrameType::kVideoFrameKey;
-    image._completeFrame = true;
     auto error = decoder.m_instance->Decode(image, false, 0);
     if (error)
         return decoder.m_receiver->decoderFailed(error);

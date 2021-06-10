@@ -24,8 +24,8 @@
 // should add support for it starting from C++20. Among clang compilers,
 // clang-cl doesn't support it yet and support is unclear also when the target
 // platform is iOS.
-#if (defined(__clang__) && !defined(_MSC_VER) && !defined(WEBRTC_IOS) && !defined(WEBRTC_MAC)) || \
-    __cplusplus > 201703L
+#if ((defined(__clang__) && !defined(_MSC_VER) && !defined(WEBRTC_MAC)) || \
+     __cplusplus > 201703L)
 // NOLINTNEXTLINE(whitespace/braces)
 #define RTC_NO_UNIQUE_ADDRESS [[no_unique_address]]
 #else

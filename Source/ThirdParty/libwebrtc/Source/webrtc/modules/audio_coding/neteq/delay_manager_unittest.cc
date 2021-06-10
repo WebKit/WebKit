@@ -16,6 +16,7 @@
 
 #include <memory>
 
+#include "absl/types/optional.h"
 #include "modules/audio_coding/neteq/histogram.h"
 #include "modules/audio_coding/neteq/mock/mock_histogram.h"
 #include "modules/audio_coding/neteq/mock/mock_statistics_calculator.h"
@@ -29,25 +30,22 @@ namespace webrtc {
 namespace {
 constexpr int kMaxNumberOfPackets = 240;
 constexpr int kMinDelayMs = 0;
+constexpr int kMaxHistoryMs = 2000;
 constexpr int kTimeStepMs = 10;
 constexpr int kFs = 8000;
 constexpr int kFrameSizeMs = 20;
 constexpr int kTsIncrement = kFrameSizeMs * kFs / 1000;
 constexpr int kMaxBufferSizeMs = kMaxNumberOfPackets * kFrameSizeMs;
 constexpr int kDefaultHistogramQuantile = 1020054733;
-constexpr int kMaxIat = 64;
+constexpr int kNumBuckets = 100;
 constexpr int kForgetFactor = 32745;
 }  // namespace
-
-using ::testing::_;
-using ::testing::Return;
 
 class DelayManagerTest : public ::testing::Test {
  protected:
   DelayManagerTest();
   virtual void SetUp();
   void RecreateDelayManager();
-  void SetPacketAudioLength(int lengt_ms);
   absl::optional<int> InsertNextPacket();
   void IncreaseTime(int inc_ms);
 
@@ -55,15 +53,13 @@ class DelayManagerTest : public ::testing::Test {
   TickTimer tick_timer_;
   MockStatisticsCalculator stats_;
   MockHistogram* mock_histogram_;
-  uint16_t seq_no_;
   uint32_t ts_;
-  bool enable_rtx_handling_ = false;
   bool use_mock_histogram_ = false;
+  absl::optional<int> resample_interval_ms_;
 };
 
 DelayManagerTest::DelayManagerTest()
     : dm_(nullptr),
-      seq_no_(0x1234),
       ts_(0x12345678) {}
 
 void DelayManagerTest::SetUp() {
@@ -72,24 +68,20 @@ void DelayManagerTest::SetUp() {
 
 void DelayManagerTest::RecreateDelayManager() {
   if (use_mock_histogram_) {
-    mock_histogram_ = new MockHistogram(kMaxIat, kForgetFactor);
+    mock_histogram_ = new MockHistogram(kNumBuckets, kForgetFactor);
     std::unique_ptr<Histogram> histogram(mock_histogram_);
-    dm_ = std::make_unique<DelayManager>(
-        kMaxNumberOfPackets, kMinDelayMs, kDefaultHistogramQuantile,
-        enable_rtx_handling_, &tick_timer_, std::move(histogram));
+    dm_ = std::make_unique<DelayManager>(kMaxNumberOfPackets, kMinDelayMs,
+                                         kDefaultHistogramQuantile,
+                                         resample_interval_ms_, kMaxHistoryMs,
+                                         &tick_timer_, std::move(histogram));
   } else {
-    dm_ = DelayManager::Create(kMaxNumberOfPackets, kMinDelayMs,
-                               enable_rtx_handling_, &tick_timer_);
+    dm_ = DelayManager::Create(kMaxNumberOfPackets, kMinDelayMs, &tick_timer_);
   }
-}
-
-void DelayManagerTest::SetPacketAudioLength(int lengt_ms) {
-  dm_->SetPacketAudioLength(lengt_ms);
+  dm_->SetPacketAudioLength(kFrameSizeMs);
 }
 
 absl::optional<int> DelayManagerTest::InsertNextPacket() {
-  auto relative_delay = dm_->Update(seq_no_, ts_, kFs);
-  seq_no_ += 1;
+  auto relative_delay = dm_->Update(ts_, kFs);
   ts_ += kTsIncrement;
   return relative_delay;
 }
@@ -105,98 +97,66 @@ TEST_F(DelayManagerTest, CreateAndDestroy) {
   // object.
 }
 
-TEST_F(DelayManagerTest, SetPacketAudioLength) {
-  const int kLengthMs = 30;
-  EXPECT_EQ(0, dm_->SetPacketAudioLength(kLengthMs));
-  EXPECT_EQ(-1, dm_->SetPacketAudioLength(-1));  // Illegal parameter value.
-}
-
 TEST_F(DelayManagerTest, UpdateNormal) {
-  SetPacketAudioLength(kFrameSizeMs);
   // First packet arrival.
   InsertNextPacket();
   // Advance time by one frame size.
   IncreaseTime(kFrameSizeMs);
   // Second packet arrival.
   InsertNextPacket();
-  EXPECT_EQ(1 << 8, dm_->TargetLevel());  // In Q8.
-  EXPECT_EQ(1, dm_->base_target_level());
-  int lower, higher;
-  dm_->BufferLimits(&lower, &higher);
-  // Expect |lower| to be 75% of target level, and |higher| to be target level,
-  // but also at least 20 ms higher than |lower|, which is the limiting case
-  // here.
-  EXPECT_EQ((1 << 8) * 3 / 4, lower);
-  EXPECT_EQ(lower + (20 << 8) / kFrameSizeMs, higher);
+  EXPECT_EQ(20, dm_->TargetDelayMs());
 }
 
 TEST_F(DelayManagerTest, UpdateLongInterArrivalTime) {
-  SetPacketAudioLength(kFrameSizeMs);
   // First packet arrival.
   InsertNextPacket();
   // Advance time by two frame size.
   IncreaseTime(2 * kFrameSizeMs);
   // Second packet arrival.
   InsertNextPacket();
-  EXPECT_EQ(2 << 8, dm_->TargetLevel());  // In Q8.
-  EXPECT_EQ(2, dm_->base_target_level());
-  int lower, higher;
-  dm_->BufferLimits(&lower, &higher);
-  // Expect |lower| to be 75% of target level, and |higher| to be target level,
-  // but also at least 20 ms higher than |lower|, which is the limiting case
-  // here.
-  EXPECT_EQ((2 << 8) * 3 / 4, lower);
-  EXPECT_EQ(lower + (20 << 8) / kFrameSizeMs, higher);
+  EXPECT_EQ(40, dm_->TargetDelayMs());
 }
 
 TEST_F(DelayManagerTest, MaxDelay) {
-  const int kExpectedTarget = 5;
-  const int kTimeIncrement = kExpectedTarget * kFrameSizeMs;
-  SetPacketAudioLength(kFrameSizeMs);
+  const int kExpectedTarget = 5 * kFrameSizeMs;
   // First packet arrival.
   InsertNextPacket();
   // Second packet arrival.
-  IncreaseTime(kTimeIncrement);
+  IncreaseTime(kExpectedTarget);
   InsertNextPacket();
 
   // No limit is set.
-  EXPECT_EQ(kExpectedTarget << 8, dm_->TargetLevel());
+  EXPECT_EQ(kExpectedTarget, dm_->TargetDelayMs());
 
-  int kMaxDelayPackets = kExpectedTarget - 2;
-  int kMaxDelayMs = kMaxDelayPackets * kFrameSizeMs;
+  const int kMaxDelayMs = 3 * kFrameSizeMs;
   EXPECT_TRUE(dm_->SetMaximumDelay(kMaxDelayMs));
-  IncreaseTime(kTimeIncrement);
+  IncreaseTime(kFrameSizeMs);
   InsertNextPacket();
-  EXPECT_EQ(kMaxDelayPackets << 8, dm_->TargetLevel());
+  EXPECT_EQ(kMaxDelayMs, dm_->TargetDelayMs());
 
   // Target level at least should be one packet.
   EXPECT_FALSE(dm_->SetMaximumDelay(kFrameSizeMs - 1));
 }
 
 TEST_F(DelayManagerTest, MinDelay) {
-  const int kExpectedTarget = 5;
-  const int kTimeIncrement = kExpectedTarget * kFrameSizeMs;
-  SetPacketAudioLength(kFrameSizeMs);
+  const int kExpectedTarget = 5 * kFrameSizeMs;
   // First packet arrival.
   InsertNextPacket();
   // Second packet arrival.
-  IncreaseTime(kTimeIncrement);
+  IncreaseTime(kExpectedTarget);
   InsertNextPacket();
 
   // No limit is applied.
-  EXPECT_EQ(kExpectedTarget << 8, dm_->TargetLevel());
+  EXPECT_EQ(kExpectedTarget, dm_->TargetDelayMs());
 
-  int kMinDelayPackets = kExpectedTarget + 2;
-  int kMinDelayMs = kMinDelayPackets * kFrameSizeMs;
+  int kMinDelayMs = 7 * kFrameSizeMs;
   dm_->SetMinimumDelay(kMinDelayMs);
   IncreaseTime(kFrameSizeMs);
   InsertNextPacket();
-  EXPECT_EQ(kMinDelayPackets << 8, dm_->TargetLevel());
+  EXPECT_EQ(kMinDelayMs, dm_->TargetDelayMs());
 }
 
 TEST_F(DelayManagerTest, BaseMinimumDelayCheckValidRange) {
-  SetPacketAudioLength(kFrameSizeMs);
-
   // Base minimum delay should be between [0, 10000] milliseconds.
   EXPECT_FALSE(dm_->SetBaseMinimumDelay(-1));
   EXPECT_FALSE(dm_->SetBaseMinimumDelay(10001));
@@ -207,7 +167,6 @@ TEST_F(DelayManagerTest, BaseMinimumDelayCheckValidRange) {
 }
 
 TEST_F(DelayManagerTest, BaseMinimumDelayLowerThanMinimumDelay) {
-  SetPacketAudioLength(kFrameSizeMs);
   constexpr int kBaseMinimumDelayMs = 100;
   constexpr int kMinimumDelayMs = 200;
 
@@ -221,7 +180,6 @@ TEST_F(DelayManagerTest, BaseMinimumDelayLowerThanMinimumDelay) {
 }
 
 TEST_F(DelayManagerTest, BaseMinimumDelayGreaterThanMinimumDelay) {
-  SetPacketAudioLength(kFrameSizeMs);
   constexpr int kBaseMinimumDelayMs = 70;
   constexpr int kMinimumDelayMs = 30;
 
@@ -235,7 +193,6 @@ TEST_F(DelayManagerTest, BaseMinimumDelayGreaterThanMinimumDelay) {
 }
 
 TEST_F(DelayManagerTest, BaseMinimumDelayGreaterThanBufferSize) {
-  SetPacketAudioLength(kFrameSizeMs);
   constexpr int kBaseMinimumDelayMs = kMaxBufferSizeMs + 1;
   constexpr int kMinimumDelayMs = 12;
   constexpr int kMaximumDelayMs = 20;
@@ -262,7 +219,6 @@ TEST_F(DelayManagerTest, BaseMinimumDelayGreaterThanBufferSize) {
 }
 
 TEST_F(DelayManagerTest, BaseMinimumDelayGreaterThanMaximumDelay) {
-  SetPacketAudioLength(kFrameSizeMs);
   constexpr int kMaximumDelayMs = 400;
   constexpr int kBaseMinimumDelayMs = kMaximumDelayMs + 1;
   constexpr int kMinimumDelayMs = 20;
@@ -280,7 +236,6 @@ TEST_F(DelayManagerTest, BaseMinimumDelayGreaterThanMaximumDelay) {
 }
 
 TEST_F(DelayManagerTest, BaseMinimumDelayLowerThanMaxSize) {
-  SetPacketAudioLength(kFrameSizeMs);
   constexpr int kMaximumDelayMs = 400;
   constexpr int kBaseMinimumDelayMs = kMaximumDelayMs - 1;
   constexpr int kMinimumDelayMs = 20;
@@ -301,8 +256,6 @@ TEST_F(DelayManagerTest, MinimumDelayMemorization) {
   // minimum delay then minimum delay is still memorized. This allows to
   // restore effective minimum delay to memorized minimum delay value when we
   // decrease base minimum delay.
-  SetPacketAudioLength(kFrameSizeMs);
-
   constexpr int kBaseMinimumDelayMsLow = 10;
   constexpr int kMinimumDelayMs = 20;
   constexpr int kBaseMinimumDelayMsHigh = 30;
@@ -323,33 +276,29 @@ TEST_F(DelayManagerTest, MinimumDelayMemorization) {
 }
 
 TEST_F(DelayManagerTest, BaseMinimumDelay) {
-  const int kExpectedTarget = 5;
-  const int kTimeIncrement = kExpectedTarget * kFrameSizeMs;
-  SetPacketAudioLength(kFrameSizeMs);
+  const int kExpectedTarget = 5 * kFrameSizeMs;
   // First packet arrival.
   InsertNextPacket();
   // Second packet arrival.
-  IncreaseTime(kTimeIncrement);
+  IncreaseTime(kExpectedTarget);
   InsertNextPacket();
 
   // No limit is applied.
-  EXPECT_EQ(kExpectedTarget << 8, dm_->TargetLevel());
+  EXPECT_EQ(kExpectedTarget, dm_->TargetDelayMs());
 
-  constexpr int kBaseMinimumDelayPackets = kExpectedTarget + 2;
-  constexpr int kBaseMinimumDelayMs = kBaseMinimumDelayPackets * kFrameSizeMs;
+  constexpr int kBaseMinimumDelayMs = 7 * kFrameSizeMs;
   EXPECT_TRUE(dm_->SetBaseMinimumDelay(kBaseMinimumDelayMs));
   EXPECT_EQ(dm_->GetBaseMinimumDelay(), kBaseMinimumDelayMs);
 
   IncreaseTime(kFrameSizeMs);
   InsertNextPacket();
   EXPECT_EQ(dm_->GetBaseMinimumDelay(), kBaseMinimumDelayMs);
-  EXPECT_EQ(kBaseMinimumDelayPackets << 8, dm_->TargetLevel());
+  EXPECT_EQ(kBaseMinimumDelayMs, dm_->TargetDelayMs());
 }
 
-TEST_F(DelayManagerTest, BaseMinimumDealyAffectTargetLevel) {
+TEST_F(DelayManagerTest, BaseMinimumDelayAffectsTargetDelay) {
   const int kExpectedTarget = 5;
   const int kTimeIncrement = kExpectedTarget * kFrameSizeMs;
-  SetPacketAudioLength(kFrameSizeMs);
   // First packet arrival.
   InsertNextPacket();
   // Second packet arrival.
@@ -357,7 +306,7 @@ TEST_F(DelayManagerTest, BaseMinimumDealyAffectTargetLevel) {
   InsertNextPacket();
 
   // No limit is applied.
-  EXPECT_EQ(kExpectedTarget << 8, dm_->TargetLevel());
+  EXPECT_EQ(kTimeIncrement, dm_->TargetDelayMs());
 
   // Minimum delay is lower than base minimum delay, that is why base minimum
   // delay is used to calculate target level.
@@ -375,88 +324,19 @@ TEST_F(DelayManagerTest, BaseMinimumDealyAffectTargetLevel) {
   IncreaseTime(kFrameSizeMs);
   InsertNextPacket();
   EXPECT_EQ(dm_->GetBaseMinimumDelay(), kBaseMinimumDelayMs);
-  EXPECT_EQ(kBaseMinimumDelayPackets << 8, dm_->TargetLevel());
-}
-
-TEST_F(DelayManagerTest, EnableRtxHandling) {
-  enable_rtx_handling_ = true;
-  use_mock_histogram_ = true;
-  RecreateDelayManager();
-  EXPECT_TRUE(mock_histogram_);
-
-  // Insert first packet.
-  SetPacketAudioLength(kFrameSizeMs);
-  InsertNextPacket();
-
-  // Insert reordered packet.
-  EXPECT_CALL(*mock_histogram_, Add(2));
-  dm_->Update(seq_no_ - 3, ts_ - 3 * kFrameSizeMs, kFs);
-
-  // Insert another reordered packet.
-  EXPECT_CALL(*mock_histogram_, Add(1));
-  dm_->Update(seq_no_ - 2, ts_ - 2 * kFrameSizeMs, kFs);
-
-  // Insert the next packet in order and verify that the inter-arrival time is
-  // estimated correctly.
-  IncreaseTime(kFrameSizeMs);
-  EXPECT_CALL(*mock_histogram_, Add(0));
-  InsertNextPacket();
-}
-
-// Tests that skipped sequence numbers (simulating empty packets) are handled
-// correctly.
-// TODO(jakobi): Make delay manager independent of sequence numbers.
-TEST_F(DelayManagerTest, EmptyPacketsReported) {
-  SetPacketAudioLength(kFrameSizeMs);
-  // First packet arrival.
-  InsertNextPacket();
-
-  // Advance time by one frame size.
-  IncreaseTime(kFrameSizeMs);
-
-  // Advance the sequence number by 5, simulating that 5 empty packets were
-  // received, but never inserted.
-  seq_no_ += 10;
-  for (int j = 0; j < 10; ++j) {
-    dm_->RegisterEmptyPacket();
-  }
-
-  // Second packet arrival.
-  InsertNextPacket();
-
-  EXPECT_EQ(1 << 8, dm_->TargetLevel());  // In Q8.
-}
-
-// Same as above, but do not call RegisterEmptyPacket. Target level stays the
-// same.
-TEST_F(DelayManagerTest, EmptyPacketsNotReported) {
-  SetPacketAudioLength(kFrameSizeMs);
-  // First packet arrival.
-  InsertNextPacket();
-
-  // Advance time by one frame size.
-  IncreaseTime(kFrameSizeMs);
-
-  // Advance the sequence number by 10, simulating that 10 empty packets were
-  // received, but never inserted.
-  seq_no_ += 10;
-
-  // Second packet arrival.
-  InsertNextPacket();
-
-  EXPECT_EQ(1 << 8, dm_->TargetLevel());  // In Q8.
+  EXPECT_EQ(kBaseMinimumDelayMs, dm_->TargetDelayMs());
 }
 
 TEST_F(DelayManagerTest, Failures) {
   // Wrong sample rate.
-  EXPECT_EQ(absl::nullopt, dm_->Update(0, 0, -1));
+  EXPECT_EQ(absl::nullopt, dm_->Update(0, -1));
   // Wrong packet size.
   EXPECT_EQ(-1, dm_->SetPacketAudioLength(0));
   EXPECT_EQ(-1, dm_->SetPacketAudioLength(-1));
 
   // Minimum delay higher than a maximum delay is not accepted.
-  EXPECT_TRUE(dm_->SetMaximumDelay(10));
-  EXPECT_FALSE(dm_->SetMinimumDelay(20));
+  EXPECT_TRUE(dm_->SetMaximumDelay(20));
+  EXPECT_FALSE(dm_->SetMinimumDelay(40));
 
   // Maximum delay less than minimum delay is not accepted.
   EXPECT_TRUE(dm_->SetMaximumDelay(100));
@@ -510,7 +390,6 @@ TEST_F(DelayManagerTest, RelativeArrivalDelay) {
   use_mock_histogram_ = true;
   RecreateDelayManager();
 
-  SetPacketAudioLength(kFrameSizeMs);
   InsertNextPacket();
 
   IncreaseTime(kFrameSizeMs);
@@ -519,21 +398,42 @@ TEST_F(DelayManagerTest, RelativeArrivalDelay) {
 
   IncreaseTime(2 * kFrameSizeMs);
   EXPECT_CALL(*mock_histogram_, Add(1));  // 20ms delayed.
-  dm_->Update(seq_no_, ts_, kFs);
+  dm_->Update(ts_, kFs);
 
   IncreaseTime(2 * kFrameSizeMs);
   EXPECT_CALL(*mock_histogram_, Add(2));  // 40ms delayed.
-  dm_->Update(seq_no_ + 1, ts_ + kTsIncrement, kFs);
+  dm_->Update(ts_ + kTsIncrement, kFs);
 
   EXPECT_CALL(*mock_histogram_, Add(1));  // Reordered, 20ms delayed.
-  dm_->Update(seq_no_, ts_, kFs);
+  dm_->Update(ts_, kFs);
+}
+
+TEST_F(DelayManagerTest, ReorderedPackets) {
+  use_mock_histogram_ = true;
+  RecreateDelayManager();
+
+  // Insert first packet.
+  InsertNextPacket();
+
+  // Insert reordered packet.
+  EXPECT_CALL(*mock_histogram_, Add(4));
+  dm_->Update(ts_ - 5 * kTsIncrement, kFs);
+
+  // Insert another reordered packet.
+  EXPECT_CALL(*mock_histogram_, Add(1));
+  dm_->Update(ts_ - 2 * kTsIncrement, kFs);
+
+  // Insert the next packet in order and verify that the relative delay is
+  // estimated based on the first inserted packet.
+  IncreaseTime(4 * kFrameSizeMs);
+  EXPECT_CALL(*mock_histogram_, Add(3));
+  InsertNextPacket();
 }
 
 TEST_F(DelayManagerTest, MaxDelayHistory) {
   use_mock_histogram_ = true;
   RecreateDelayManager();
 
-  SetPacketAudioLength(kFrameSizeMs);
   InsertNextPacket();
 
   // Insert 20 ms iat delay in the delay history.
@@ -547,11 +447,10 @@ TEST_F(DelayManagerTest, MaxDelayHistory) {
   IncreaseTime(kMaxHistoryMs + kFrameSizeMs);
   ts_ += kFs * kMaxHistoryMs / 1000;
   EXPECT_CALL(*mock_histogram_, Add(0));  // Not delayed.
-  dm_->Update(seq_no_, ts_, kFs);
+  dm_->Update(ts_, kFs);
 }
 
 TEST_F(DelayManagerTest, RelativeArrivalDelayStatistic) {
-  SetPacketAudioLength(kFrameSizeMs);
   EXPECT_EQ(absl::nullopt, InsertNextPacket());
   IncreaseTime(kFrameSizeMs);
   EXPECT_EQ(0, InsertNextPacket());
@@ -560,37 +459,30 @@ TEST_F(DelayManagerTest, RelativeArrivalDelayStatistic) {
   EXPECT_EQ(20, InsertNextPacket());
 }
 
-TEST_F(DelayManagerTest, DecelerationTargetLevelOffset) {
-  SetPacketAudioLength(kFrameSizeMs);
+TEST_F(DelayManagerTest, ResamplePacketDelays) {
+  use_mock_histogram_ = true;
+  resample_interval_ms_ = 500;
+  RecreateDelayManager();
 
-  // Deceleration target level offset follows the value hardcoded in
-  // delay_manager.cc.
-  constexpr int kDecelerationTargetLevelOffsetMs = 85 << 8;  // In Q8.
-  // Border value where |x * 3/4 = target_level - x|.
-  constexpr int kBoarderTargetLevel = kDecelerationTargetLevelOffsetMs * 4;
-  {
-    // Test that for a low target level, default behaviour is intact.
-    const int target_level_ms = kBoarderTargetLevel / kFrameSizeMs - 1;
+  // The histogram should be updated once with the maximum delay observed for
+  // the following sequence of packets.
+  EXPECT_CALL(*mock_histogram_, Add(5)).Times(1);
 
-    int lower, higher;  // In Q8.
-    dm_->BufferLimits(target_level_ms, &lower, &higher);
+  EXPECT_EQ(absl::nullopt, InsertNextPacket());
 
-    // Default behaviour of taking 75% of target level.
-    EXPECT_EQ(target_level_ms * 3 / 4, lower);
-    EXPECT_EQ(target_level_ms, higher);
+  IncreaseTime(kFrameSizeMs);
+  EXPECT_EQ(0, InsertNextPacket());
+  IncreaseTime(3 * kFrameSizeMs);
+  EXPECT_EQ(2 * kFrameSizeMs, InsertNextPacket());
+  IncreaseTime(4 * kFrameSizeMs);
+  EXPECT_EQ(5 * kFrameSizeMs, InsertNextPacket());
+
+  for (int i = 4; i >= 0; --i) {
+    EXPECT_EQ(i * kFrameSizeMs, InsertNextPacket());
   }
-
-  {
-    // Test that for the high target level, |lower| is below target level by
-    // fixed |kOffset|.
-    const int target_level_ms = kBoarderTargetLevel / kFrameSizeMs + 1;
-
-    int lower, higher;  // In Q8.
-    dm_->BufferLimits(target_level_ms, &lower, &higher);
-
-    EXPECT_EQ(target_level_ms - kDecelerationTargetLevelOffsetMs / kFrameSizeMs,
-              lower);
-    EXPECT_EQ(target_level_ms, higher);
+  for (int i = 0; i < *resample_interval_ms_ / kFrameSizeMs; ++i) {
+    IncreaseTime(kFrameSizeMs);
+    EXPECT_EQ(0, InsertNextPacket());
   }
 }
 

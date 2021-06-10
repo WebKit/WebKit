@@ -52,8 +52,8 @@ for a particular build directory, and what set of flags (`GYP_DEFINES` or `gn
 args`) to use.
 
 A config can either be specified directly (useful for testing) or by specifying
-the master name and builder name (useful on the bots so that they do not need
-to specify a config directly and can be hidden from the details).
+the builder group name and builder name (useful on the bots so that they do not
+need to specify a config directly and can be hidden from the details).
 
 See the [user guide](user_guide.md#mb_config.pyl) for details.
 

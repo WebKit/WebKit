@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "api/fec_controller_override.h"
+#include "api/sequence_checker.h"
 #include "api/task_queue/task_queue_factory.h"
 #include "api/video/encoded_image.h"
 #include "api/video/video_bitrate_allocation.h"
@@ -26,7 +27,6 @@
 #include "api/video_codecs/video_encoder.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "rtc_base/synchronization/mutex.h"
-#include "rtc_base/synchronization/sequence_checker.h"
 #include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/clock.h"
 

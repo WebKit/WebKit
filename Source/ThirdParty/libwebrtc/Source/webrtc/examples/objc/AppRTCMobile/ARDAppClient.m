@@ -10,23 +10,23 @@
 
 #import "ARDAppClient+Internal.h"
 
-#import <WebRTC/RTCAudioTrack.h>
-#import <WebRTC/RTCCameraVideoCapturer.h>
-#import <WebRTC/RTCConfiguration.h>
-#import <WebRTC/RTCDefaultVideoDecoderFactory.h>
-#import <WebRTC/RTCDefaultVideoEncoderFactory.h>
-#import <WebRTC/RTCFileLogger.h>
-#import <WebRTC/RTCFileVideoCapturer.h>
-#import <WebRTC/RTCIceServer.h>
-#import <WebRTC/RTCLogging.h>
-#import <WebRTC/RTCMediaConstraints.h>
-#import <WebRTC/RTCMediaStream.h>
-#import <WebRTC/RTCPeerConnectionFactory.h>
-#import <WebRTC/RTCRtpSender.h>
-#import <WebRTC/RTCRtpTransceiver.h>
-#import <WebRTC/RTCTracing.h>
-#import <WebRTC/RTCVideoSource.h>
-#import <WebRTC/RTCVideoTrack.h>
+#import "sdk/objc/api/peerconnection/RTCAudioTrack.h"
+#import "sdk/objc/api/peerconnection/RTCConfiguration.h"
+#import "sdk/objc/api/peerconnection/RTCFileLogger.h"
+#import "sdk/objc/api/peerconnection/RTCIceServer.h"
+#import "sdk/objc/api/peerconnection/RTCMediaConstraints.h"
+#import "sdk/objc/api/peerconnection/RTCMediaStream.h"
+#import "sdk/objc/api/peerconnection/RTCPeerConnectionFactory.h"
+#import "sdk/objc/api/peerconnection/RTCRtpSender.h"
+#import "sdk/objc/api/peerconnection/RTCRtpTransceiver.h"
+#import "sdk/objc/api/peerconnection/RTCTracing.h"
+#import "sdk/objc/api/peerconnection/RTCVideoSource.h"
+#import "sdk/objc/api/peerconnection/RTCVideoTrack.h"
+#import "sdk/objc/base/RTCLogging.h"
+#import "sdk/objc/components/capturer/RTCCameraVideoCapturer.h"
+#import "sdk/objc/components/capturer/RTCFileVideoCapturer.h"
+#import "sdk/objc/components/video_codec/RTCDefaultVideoDecoderFactory.h"
+#import "sdk/objc/components/video_codec/RTCDefaultVideoEncoderFactory.h"
 
 #import "ARDAppEngineClient.h"
 #import "ARDExternalSampleCapturer.h"
@@ -634,7 +634,14 @@ static int const kKbpsMultiplier = 1000;
     case kARDSignalingMessageTypeCandidate: {
       ARDICECandidateMessage *candidateMessage =
           (ARDICECandidateMessage *)message;
-      [_peerConnection addIceCandidate:candidateMessage.candidate];
+      __weak ARDAppClient *weakSelf = self;
+      [_peerConnection addIceCandidate:candidateMessage.candidate
+                     completionHandler:^(NSError *error) {
+                       ARDAppClient *strongSelf = weakSelf;
+                       if (error) {
+                         [strongSelf.delegate appClient:strongSelf didError:error];
+                       }
+                     }];
       break;
     }
     case kARDSignalingMessageTypeCandidateRemoval: {

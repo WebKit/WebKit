@@ -14,7 +14,7 @@
 
 namespace webrtc {
 
-TEST(AutomaticGainController2Common, TestLinSpace) {
+TEST(GainController2TestingCommon, LinSpace) {
   std::vector<double> points1 = test::LinSpace(-1.0, 2.0, 4);
   const std::vector<double> expected_points1{{-1.0, 0.0, 1.0, 2.0}};
   EXPECT_EQ(expected_points1, points1);

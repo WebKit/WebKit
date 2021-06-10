@@ -19,3 +19,6 @@ BreakBeforeTernaryOperators: false
 IndentWrappedFunctionNames: true
 ContinuationIndentWidth: 4
 ObjCSpaceBeforeProtocolList: true
+---
+Language: Cpp
+IncludeBlocks: Regroup

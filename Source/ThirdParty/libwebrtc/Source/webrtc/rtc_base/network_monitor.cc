@@ -10,6 +10,8 @@
 
 #include "rtc_base/network_monitor.h"
 
+#include "rtc_base/checks.h"
+
 namespace rtc {
 
 const char* NetworkPreferenceToString(NetworkPreference preference) {
@@ -19,6 +21,7 @@ const char* NetworkPreferenceToString(NetworkPreference preference) {
     case NetworkPreference::NOT_PREFERRED:
       return "NOT_PREFERRED";
   }
+  RTC_CHECK_NOTREACHED();
 }
 
 NetworkMonitorInterface::NetworkMonitorInterface() {}

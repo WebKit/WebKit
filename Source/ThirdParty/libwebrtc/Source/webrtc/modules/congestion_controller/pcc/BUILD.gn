@@ -98,7 +98,7 @@ rtc_library("bitrate_controller") {
   absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
-if (rtc_include_tests) {
+if (rtc_include_tests && !build_with_chromium) {
   rtc_library("pcc_unittests") {
     testonly = true
     sources = [

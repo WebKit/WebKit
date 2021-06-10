@@ -60,8 +60,7 @@ class InterArrival {
           first_timestamp(0),
           timestamp(0),
           first_arrival_ms(-1),
-          complete_time_ms(-1),
-          last_system_time_ms(0) {}
+          complete_time_ms(-1) {}
 
     bool IsFirstPacket() const { return complete_time_ms == -1; }
 

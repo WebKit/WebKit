@@ -27,11 +27,26 @@ namespace webrtc {
 bool GetScreenList(DesktopCapturer::SourceList* screens,
                    std::vector<std::string>* device_names = nullptr);
 
+// Converts a device index (which are returned by |GetScreenList|) into an
+// HMONITOR.
+bool GetHmonitorFromDeviceIndex(const DesktopCapturer::SourceId device_index,
+                                HMONITOR* hmonitor);
+
+// Returns true if |monitor| represents a valid display
+// monitor. Consumers should recheck the validity of HMONITORs before use if a
+// WM_DISPLAYCHANGE message has been received.
+bool IsMonitorValid(const HMONITOR monitor);
+
+// Returns the rect of the monitor identified by |monitor|, relative to the
+// primary display's top-left. On failure, returns an empty rect.
+DesktopRect GetMonitorRect(const HMONITOR monitor);
+
 // Returns true if |screen| is a valid screen. The screen device key is
 // returned through |device_key| if the screen is valid. The device key can be
 // used in GetScreenRect to verify the screen matches the previously obtained
 // id.
-bool IsScreenValid(DesktopCapturer::SourceId screen, std::wstring* device_key);
+bool IsScreenValid(const DesktopCapturer::SourceId screen,
+                   std::wstring* device_key);
 
 // Get the rect of the entire system in system coordinate system. I.e. the
 // primary monitor always starts from (0, 0).
@@ -40,7 +55,7 @@ DesktopRect GetFullscreenRect();
 // Get the rect of the screen identified by |screen|, relative to the primary
 // display's top-left. If the screen device key does not match |device_key|, or
 // the screen does not exist, or any error happens, an empty rect is returned.
-RTC_EXPORT DesktopRect GetScreenRect(DesktopCapturer::SourceId screen,
+RTC_EXPORT DesktopRect GetScreenRect(const DesktopCapturer::SourceId screen,
                                      const std::wstring& device_key);
 
 }  // namespace webrtc

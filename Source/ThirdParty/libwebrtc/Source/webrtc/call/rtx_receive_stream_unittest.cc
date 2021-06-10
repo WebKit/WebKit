@@ -194,9 +194,9 @@ TEST(RtxReceiveStreamTest, PropagatesArrivalTime) {
   RtxReceiveStream rtx_sink(&media_sink, PayloadTypeMapping(), kMediaSSRC);
   RtpPacketReceived rtx_packet(nullptr);
   EXPECT_TRUE(rtx_packet.Parse(rtc::ArrayView<const uint8_t>(kRtxPacket)));
-  rtx_packet.set_arrival_time_ms(123);
-  EXPECT_CALL(media_sink,
-              OnRtpPacket(Property(&RtpPacketReceived::arrival_time_ms, 123)));
+  rtx_packet.set_arrival_time(Timestamp::Millis(123));
+  EXPECT_CALL(media_sink, OnRtpPacket(Property(&RtpPacketReceived::arrival_time,
+                                               Timestamp::Millis(123))));
   rtx_sink.OnRtpPacket(rtx_packet);
 }
 

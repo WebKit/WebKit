@@ -45,10 +45,6 @@ class MockVideoStreamEncoder : public VideoStreamEncoderInterface {
               (override));
   MOCK_METHOD(void, OnFrame, (const VideoFrame&), (override));
   MOCK_METHOD(void,
-              SetBitrateAllocationObserver,
-              (VideoBitrateAllocationObserver*),
-              (override));
-  MOCK_METHOD(void,
               SetFecControllerOverride,
               (FecControllerOverride*),
               (override));

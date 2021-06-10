@@ -260,8 +260,6 @@ void AcmReceiver::GetNetworkStatistics(
     acm_stat->currentSecondaryDiscardedRate =
         neteq_stat.secondary_discarded_rate;
     acm_stat->meanWaitingTimeMs = neteq_stat.mean_waiting_time_ms;
-    acm_stat->medianWaitingTimeMs = neteq_stat.median_waiting_time_ms;
-    acm_stat->minWaitingTimeMs = neteq_stat.min_waiting_time_ms;
     acm_stat->maxWaitingTimeMs = neteq_stat.max_waiting_time_ms;
   } else {
     neteq_stat = neteq_->CurrentNetworkStatistics();
@@ -272,8 +270,6 @@ void AcmReceiver::GetNetworkStatistics(
     acm_stat->currentSecondaryDecodedRate = 0;
     acm_stat->currentSecondaryDiscardedRate = 0;
     acm_stat->meanWaitingTimeMs = -1;
-    acm_stat->medianWaitingTimeMs = -1;
-    acm_stat->minWaitingTimeMs = -1;
     acm_stat->maxWaitingTimeMs = 1;
   }
   acm_stat->currentBufferSize = neteq_stat.current_buffer_size_ms;

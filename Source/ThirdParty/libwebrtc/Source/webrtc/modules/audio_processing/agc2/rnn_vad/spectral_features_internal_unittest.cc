@@ -19,13 +19,13 @@
 #include "api/array_view.h"
 #include "modules/audio_processing/agc2/rnn_vad/test_utils.h"
 #include "modules/audio_processing/utility/pffft_wrapper.h"
+#include "rtc_base/numerics/safe_compare.h"
 // TODO(bugs.webrtc.org/8948): Add when the issue is fixed.
 // #include "test/fpe_observer.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 namespace rnn_vad {
-namespace test {
 namespace {
 
 // Generates the values for the array named |kOpusBandWeights24kHz20ms| in the
@@ -34,21 +34,19 @@ namespace {
 std::vector<float> ComputeTriangularFiltersWeights() {
   constexpr auto kOpusScaleNumBins24kHz20ms = GetOpusScaleNumBins24kHz20ms();
   const auto& v = kOpusScaleNumBins24kHz20ms;  // Alias.
-  const size_t num_weights = std::accumulate(
-      kOpusScaleNumBins24kHz20ms.begin(), kOpusScaleNumBins24kHz20ms.end(), 0);
+  const int num_weights = std::accumulate(kOpusScaleNumBins24kHz20ms.begin(),
+                                          kOpusScaleNumBins24kHz20ms.end(), 0);
   std::vector<float> weights(num_weights);
-  size_t next_fft_coeff_index = 0;
-  for (size_t band = 0; band < v.size(); ++band) {
-    const size_t band_size = v[band];
-    for (size_t j = 0; j < band_size; ++j) {
+  int next_fft_coeff_index = 0;
+  for (int band = 0; rtc::SafeLt(band, v.size()); ++band) {
+    const int band_size = v[band];
+    for (int j = 0; rtc::SafeLt(j, band_size); ++j) {
       weights[next_fft_coeff_index + j] = static_cast<float>(j) / band_size;
     }
     next_fft_coeff_index += band_size;
   }
   return weights;
 }
-
-}  // namespace
 
 // Checks that the values returned by GetOpusScaleNumBins24kHz20ms() match the
 // Opus scale frequency boundaries.
@@ -58,7 +56,7 @@ TEST(RnnVadTest, TestOpusScaleBoundaries) {
       3200, 4000, 4800, 5600, 6800, 8000, 9600, 12000, 15600, 20000};
   constexpr auto kOpusScaleNumBins24kHz20ms = GetOpusScaleNumBins24kHz20ms();
   int prev = 0;
-  for (size_t i = 0; i < kOpusScaleNumBins24kHz20ms.size(); ++i) {
+  for (int i = 0; rtc::SafeLt(i, kOpusScaleNumBins24kHz20ms.size()); ++i) {
     int boundary =
         kBandFrequencyBoundariesHz[i] * kFrameSize20ms24kHz / kSampleRate24kHz;
     EXPECT_EQ(kOpusScaleNumBins24kHz20ms[i], boundary - prev);
@@ -72,8 +70,8 @@ TEST(RnnVadTest, TestOpusScaleBoundaries) {
 // is updated accordingly.
 TEST(RnnVadTest, DISABLED_TestOpusScaleWeights) {
   auto weights = ComputeTriangularFiltersWeights();
-  size_t i = 0;
-  for (size_t band_size : GetOpusScaleNumBins24kHz20ms()) {
+  int i = 0;
+  for (int band_size : GetOpusScaleNumBins24kHz20ms()) {
     SCOPED_TRACE(band_size);
     rtc::ArrayView<float> band_weights(weights.data() + i, band_size);
     float prev = -1.f;
@@ -98,7 +96,7 @@ TEST(RnnVadTest, SpectralCorrelatorValidOutput) {
   // Compute and check output.
   SpectralCorrelator e;
   e.ComputeAutoCorrelation(in_view, out);
-  for (size_t i = 0; i < kOpusBands24kHz; ++i) {
+  for (int i = 0; i < kOpusBands24kHz; ++i) {
     SCOPED_TRACE(i);
     EXPECT_GT(out[i], 0.f);
   }
@@ -157,6 +155,6 @@ TEST(RnnVadTest, ComputeDctWithinTolerance) {
   }
 }
 
-}  // namespace test
+}  // namespace
 }  // namespace rnn_vad
 }  // namespace webrtc

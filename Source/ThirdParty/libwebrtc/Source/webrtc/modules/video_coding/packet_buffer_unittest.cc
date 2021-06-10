@@ -19,7 +19,6 @@
 #include "common_video/h264/h264_common.h"
 #include "modules/video_coding/frame_object.h"
 #include "rtc_base/random.h"
-#include "system_wrappers/include/clock.h"
 #include "test/field_trial.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -100,10 +99,7 @@ void PrintTo(const PacketBufferInsertResult& result, std::ostream* os) {
 
 class PacketBufferTest : public ::testing::Test {
  protected:
-  PacketBufferTest()
-      : rand_(0x7732213),
-        clock_(0),
-        packet_buffer_(&clock_, kStartSize, kMaxSize) {}
+  PacketBufferTest() : rand_(0x7732213), packet_buffer_(kStartSize, kMaxSize) {}
 
   uint16_t Rand() { return rand_.Rand<uint16_t>(); }
 
@@ -133,7 +129,6 @@ class PacketBufferTest : public ::testing::Test {
   }
 
   Random rand_;
-  SimulatedClock clock_;
   PacketBuffer packet_buffer_;
 };
 
@@ -614,67 +609,6 @@ TEST_F(PacketBufferTest, ContinuousSeqNumDoubleMarkerBit) {
   Insert(2, kKeyFrame, kNotFirst, kNotLast);
   Insert(1, kKeyFrame, kFirst, kLast);
   EXPECT_THAT(Insert(3, kKeyFrame, kNotFirst, kLast).packets, IsEmpty());
-}
-
-TEST_F(PacketBufferTest, PacketTimestamps) {
-  absl::optional<int64_t> packet_ms;
-  absl::optional<int64_t> packet_keyframe_ms;
-
-  packet_ms = packet_buffer_.LastReceivedPacketMs();
-  packet_keyframe_ms = packet_buffer_.LastReceivedKeyframePacketMs();
-  EXPECT_FALSE(packet_ms);
-  EXPECT_FALSE(packet_keyframe_ms);
-
-  int64_t keyframe_ms = clock_.TimeInMilliseconds();
-  Insert(100, kKeyFrame, kFirst, kLast, {}, /*timestamp=*/1000);
-  packet_ms = packet_buffer_.LastReceivedPacketMs();
-  packet_keyframe_ms = packet_buffer_.LastReceivedKeyframePacketMs();
-  EXPECT_TRUE(packet_ms);
-  EXPECT_TRUE(packet_keyframe_ms);
-  EXPECT_EQ(keyframe_ms, *packet_ms);
-  EXPECT_EQ(keyframe_ms, *packet_keyframe_ms);
-
-  clock_.AdvanceTimeMilliseconds(100);
-  int64_t delta_ms = clock_.TimeInMilliseconds();
-  Insert(101, kDeltaFrame, kFirst, kLast, {}, /*timestamp=*/2000);
-  packet_ms = packet_buffer_.LastReceivedPacketMs();
-  packet_keyframe_ms = packet_buffer_.LastReceivedKeyframePacketMs();
-  EXPECT_TRUE(packet_ms);
-  EXPECT_TRUE(packet_keyframe_ms);
-  EXPECT_EQ(delta_ms, *packet_ms);
-  EXPECT_EQ(keyframe_ms, *packet_keyframe_ms);
-
-  packet_buffer_.Clear();
-  packet_ms = packet_buffer_.LastReceivedPacketMs();
-  packet_keyframe_ms = packet_buffer_.LastReceivedKeyframePacketMs();
-  EXPECT_FALSE(packet_ms);
-  EXPECT_FALSE(packet_keyframe_ms);
-}
-
-TEST_F(PacketBufferTest,
-       LastReceivedKeyFrameReturnsReceiveTimeOfALastReceivedPacketOfAKeyFrame) {
-  clock_.AdvanceTimeMilliseconds(100);
-  Insert(/*seq_num=*/100, kKeyFrame, kFirst, kNotLast, {}, /*timestamp=*/1000);
-  EXPECT_EQ(packet_buffer_.LastReceivedKeyframePacketMs(),
-            clock_.TimeInMilliseconds());
-
-  clock_.AdvanceTimeMilliseconds(100);
-  Insert(/*seq_num=*/102, kDeltaFrame, kNotFirst, kLast, {},
-         /*timestamp=*/1000);
-  EXPECT_EQ(packet_buffer_.LastReceivedKeyframePacketMs(),
-            clock_.TimeInMilliseconds());
-
-  clock_.AdvanceTimeMilliseconds(100);
-  Insert(/*seq_num=*/101, kDeltaFrame, kNotFirst, kNotLast, {},
-         /*timestamp=*/1000);
-  EXPECT_EQ(packet_buffer_.LastReceivedKeyframePacketMs(),
-            clock_.TimeInMilliseconds());
-
-  clock_.AdvanceTimeMilliseconds(100);
-  Insert(/*seq_num=*/103, kDeltaFrame, kFirst, kNotLast, {},
-         /*timestamp=*/2000);
-  EXPECT_EQ(packet_buffer_.LastReceivedKeyframePacketMs(),
-            clock_.TimeInMilliseconds() - 100);
 }
 
 TEST_F(PacketBufferTest, IncomingCodecChange) {

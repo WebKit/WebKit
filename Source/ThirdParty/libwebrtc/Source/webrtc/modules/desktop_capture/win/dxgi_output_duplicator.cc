@@ -18,6 +18,7 @@
 
 #include <algorithm>
 
+#include "modules/desktop_capture/win/desktop_capture_utils.h"
 #include "modules/desktop_capture/win/dxgi_texture_mapping.h"
 #include "modules/desktop_capture/win/dxgi_texture_staging.h"
 #include "rtc_base/checks.h"
@@ -103,9 +104,8 @@ bool DxgiOutputDuplicator::DuplicateOutput() {
       output_->DuplicateOutput(static_cast<IUnknown*>(device_.d3d_device()),
                                duplication_.GetAddressOf());
   if (error.Error() != S_OK || !duplication_) {
-    RTC_LOG(LS_WARNING)
-        << "Failed to duplicate output from IDXGIOutput1, error "
-        << error.ErrorMessage() << ", with code " << error.Error();
+    RTC_LOG(LS_WARNING) << "Failed to duplicate output from IDXGIOutput1: "
+                        << desktop_capture::utils::ComErrorToString(error);
     return false;
   }
 
@@ -113,9 +113,8 @@ bool DxgiOutputDuplicator::DuplicateOutput() {
   duplication_->GetDesc(&desc_);
   if (desc_.ModeDesc.Format != DXGI_FORMAT_B8G8R8A8_UNORM) {
     RTC_LOG(LS_ERROR) << "IDXGIDuplicateOutput does not use RGBA (8 bit) "
-                         "format, which is required by downstream components, "
-                         "format is "
-                      << desc_.ModeDesc.Format;
+                      << "format, which is required by downstream components, "
+                      << "format is " << desc_.ModeDesc.Format;
     return false;
   }
 
@@ -123,7 +122,7 @@ bool DxgiOutputDuplicator::DuplicateOutput() {
       static_cast<int>(desc_.ModeDesc.Height) != desktop_rect_.height()) {
     RTC_LOG(LS_ERROR)
         << "IDXGIDuplicateOutput does not return a same size as its "
-           "IDXGIOutput1, size returned by IDXGIDuplicateOutput is "
+        << "IDXGIOutput1, size returned by IDXGIDuplicateOutput is "
         << desc_.ModeDesc.Width << " x " << desc_.ModeDesc.Height
         << ", size returned by IDXGIOutput1 is " << desktop_rect_.width()
         << " x " << desktop_rect_.height();
@@ -140,9 +139,8 @@ bool DxgiOutputDuplicator::ReleaseFrame() {
   RTC_DCHECK(duplication_);
   _com_error error = duplication_->ReleaseFrame();
   if (error.Error() != S_OK) {
-    RTC_LOG(LS_ERROR) << "Failed to release frame from IDXGIOutputDuplication, "
-                         "error"
-                      << error.ErrorMessage() << ", code " << error.Error();
+    RTC_LOG(LS_ERROR) << "Failed to release frame from IDXGIOutputDuplication: "
+                      << desktop_capture::utils::ComErrorToString(error);
     return false;
   }
   return true;
@@ -166,8 +164,8 @@ bool DxgiOutputDuplicator::Duplicate(Context* context,
   _com_error error = duplication_->AcquireNextFrame(
       kAcquireTimeoutMs, &frame_info, resource.GetAddressOf());
   if (error.Error() != S_OK && error.Error() != DXGI_ERROR_WAIT_TIMEOUT) {
-    RTC_LOG(LS_ERROR) << "Failed to capture frame, error "
-                      << error.ErrorMessage() << ", code " << error.Error();
+    RTC_LOG(LS_ERROR) << "Failed to capture frame: "
+                      << desktop_capture::utils::ComErrorToString(error);
     return false;
   }
 
@@ -269,7 +267,7 @@ bool DxgiOutputDuplicator::DoDetectUpdatedRegion(
   if (frame_info.TotalMetadataBufferSize == 0) {
     // This should not happen, since frame_info.AccumulatedFrames > 0.
     RTC_LOG(LS_ERROR) << "frame_info.AccumulatedFrames > 0, "
-                         "but TotalMetadataBufferSize == 0";
+                      << "but TotalMetadataBufferSize == 0";
     return false;
   }
 
@@ -285,8 +283,8 @@ bool DxgiOutputDuplicator::DoDetectUpdatedRegion(
   _com_error error = duplication_->GetFrameMoveRects(
       static_cast<UINT>(metadata_.size()), move_rects, &buff_size);
   if (error.Error() != S_OK) {
-    RTC_LOG(LS_ERROR) << "Failed to get move rectangles, error "
-                      << error.ErrorMessage() << ", code " << error.Error();
+    RTC_LOG(LS_ERROR) << "Failed to get move rectangles: "
+                      << desktop_capture::utils::ComErrorToString(error);
     return false;
   }
   move_rects_count = buff_size / sizeof(DXGI_OUTDUPL_MOVE_RECT);
@@ -296,8 +294,8 @@ bool DxgiOutputDuplicator::DoDetectUpdatedRegion(
   error = duplication_->GetFrameDirtyRects(
       static_cast<UINT>(metadata_.size()) - buff_size, dirty_rects, &buff_size);
   if (error.Error() != S_OK) {
-    RTC_LOG(LS_ERROR) << "Failed to get dirty rectangles, error "
-                      << error.ErrorMessage() << ", code " << error.Error();
+    RTC_LOG(LS_ERROR) << "Failed to get dirty rectangles: "
+                      << desktop_capture::utils::ComErrorToString(error);
     return false;
   }
   dirty_rects_count = buff_size / sizeof(RECT);

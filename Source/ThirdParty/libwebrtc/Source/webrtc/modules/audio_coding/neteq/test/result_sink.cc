@@ -47,15 +47,6 @@ void Convert(const webrtc::NetEqNetworkStatistics& stats_raw,
   stats->set_max_waiting_time_ms(stats_raw.max_waiting_time_ms);
 }
 
-void Convert(const webrtc::RtcpStatistics& stats_raw,
-             webrtc::neteq_unittest::RtcpStatistics* stats) {
-  stats->set_fraction_lost(stats_raw.fraction_lost);
-  stats->set_cumulative_lost(stats_raw.packets_lost);
-  stats->set_extended_max_sequence_number(
-      stats_raw.extended_highest_sequence_number);
-  stats->set_jitter(stats_raw.jitter);
-}
-
 void AddMessage(FILE* file,
                 rtc::MessageDigest* digest,
                 const std::string& message) {
@@ -89,19 +80,6 @@ ResultSink::~ResultSink() {
 void ResultSink::AddResult(const NetEqNetworkStatistics& stats_raw) {
 #ifdef WEBRTC_NETEQ_UNITTEST_BITEXACT
   neteq_unittest::NetEqNetworkStatistics stats;
-  Convert(stats_raw, &stats);
-
-  std::string stats_string;
-  ASSERT_TRUE(stats.SerializeToString(&stats_string));
-  AddMessage(output_fp_, digest_.get(), stats_string);
-#else
-  FAIL() << "Writing to reference file requires Proto Buffer.";
-#endif  // WEBRTC_NETEQ_UNITTEST_BITEXACT
-}
-
-void ResultSink::AddResult(const RtcpStatistics& stats_raw) {
-#ifdef WEBRTC_NETEQ_UNITTEST_BITEXACT
-  neteq_unittest::RtcpStatistics stats;
   Convert(stats_raw, &stats);
 
   std::string stats_string;

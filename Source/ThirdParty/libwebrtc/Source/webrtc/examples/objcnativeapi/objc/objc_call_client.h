@@ -18,8 +18,8 @@
 
 #include "api/peer_connection_interface.h"
 #include "api/scoped_refptr.h"
+#include "api/sequence_checker.h"
 #include "rtc_base/synchronization/mutex.h"
-#include "rtc_base/thread_checker.h"
 
 @class RTC_OBJC_TYPE(RTCVideoCapturer);
 @protocol RTC_OBJC_TYPE
@@ -57,7 +57,7 @@ class ObjCCallClient {
   void CreatePeerConnection() RTC_RUN_ON(thread_checker_);
   void Connect() RTC_RUN_ON(thread_checker_);
 
-  rtc::ThreadChecker thread_checker_;
+  webrtc::SequenceChecker thread_checker_;
 
   bool call_started_ RTC_GUARDED_BY(thread_checker_);
 

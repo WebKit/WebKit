@@ -28,17 +28,23 @@ namespace {
 
 class VideoWriter final : public rtc::VideoSinkInterface<VideoFrame> {
  public:
-  VideoWriter(test::VideoFrameWriter* video_writer)
-      : video_writer_(video_writer) {}
+  VideoWriter(test::VideoFrameWriter* video_writer, int sampling_modulo)
+      : video_writer_(video_writer), sampling_modulo_(sampling_modulo) {}
   ~VideoWriter() override = default;
 
   void OnFrame(const VideoFrame& frame) override {
+    if (frames_counter_++ % sampling_modulo_ != 0) {
+      return;
+    }
     bool result = video_writer_->WriteFrame(frame);
     RTC_CHECK(result) << "Failed to write frame";
   }
 
  private:
-  test::VideoFrameWriter* video_writer_;
+  test::VideoFrameWriter* const video_writer_;
+  const int sampling_modulo_;
+
+  int64_t frames_counter_ = 0;
 };
 
 class AnalyzingFramePreprocessor
@@ -84,8 +90,7 @@ VideoQualityAnalyzerInjectionHelper::VideoQualityAnalyzerInjectionHelper(
     EncodedImageDataExtractor* extractor)
     : analyzer_(std::move(analyzer)),
       injector_(injector),
-      extractor_(extractor),
-      encoding_entities_id_generator_(std::make_unique<IntIdGenerator>(1)) {
+      extractor_(extractor) {
   RTC_DCHECK(injector_);
   RTC_DCHECK(extractor_);
 }
@@ -101,8 +106,7 @@ VideoQualityAnalyzerInjectionHelper::WrapVideoEncoderFactory(
     const {
   return std::make_unique<QualityAnalyzingVideoEncoderFactory>(
       peer_name, std::move(delegate), bitrate_multiplier,
-      std::move(stream_required_spatial_index),
-      encoding_entities_id_generator_.get(), injector_, analyzer_.get());
+      std::move(stream_required_spatial_index), injector_, analyzer_.get());
 }
 
 std::unique_ptr<VideoDecoderFactory>
@@ -110,8 +114,7 @@ VideoQualityAnalyzerInjectionHelper::WrapVideoDecoderFactory(
     absl::string_view peer_name,
     std::unique_ptr<VideoDecoderFactory> delegate) const {
   return std::make_unique<QualityAnalyzingVideoDecoderFactory>(
-      peer_name, std::move(delegate), encoding_entities_id_generator_.get(),
-      extractor_, analyzer_.get());
+      peer_name, std::move(delegate), extractor_, analyzer_.get());
 }
 
 std::unique_ptr<test::TestVideoCapturer::FramePreprocessor>
@@ -122,7 +125,8 @@ VideoQualityAnalyzerInjectionHelper::CreateFramePreprocessor(
   test::VideoFrameWriter* writer =
       MaybeCreateVideoWriter(config.input_dump_file_name, config);
   if (writer) {
-    sinks.push_back(std::make_unique<VideoWriter>(writer));
+    sinks.push_back(std::make_unique<VideoWriter>(
+        writer, config.input_dump_sampling_modulo));
   }
   if (config.show_on_screen) {
     sinks.push_back(absl::WrapUnique(
@@ -225,7 +229,8 @@ VideoQualityAnalyzerInjectionHelper::PopulateSinks(
   test::VideoFrameWriter* writer =
       MaybeCreateVideoWriter(config.output_dump_file_name, config);
   if (writer) {
-    sinks.push_back(std::make_unique<VideoWriter>(writer));
+    sinks.push_back(std::make_unique<VideoWriter>(
+        writer, config.output_dump_sampling_modulo));
   }
   if (config.show_on_screen) {
     sinks.push_back(absl::WrapUnique(

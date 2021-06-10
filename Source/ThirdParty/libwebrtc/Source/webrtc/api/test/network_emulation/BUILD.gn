@@ -12,6 +12,7 @@ rtc_library("network_emulation") {
   visibility = [ "*" ]
 
   sources = [
+    "cross_traffic.h",
     "network_emulation_interfaces.cc",
     "network_emulation_interfaces.h",
   ]
@@ -20,11 +21,32 @@ rtc_library("network_emulation") {
     "../..:array_view",
     "../../../rtc_base",
     "../../../rtc_base:checks",
+    "../../../rtc_base:ip_address",
     "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:socket_address",
     "../../numerics",
+    "../../task_queue",
     "../../units:data_rate",
     "../../units:data_size",
+    "../../units:time_delta",
     "../../units:timestamp",
   ]
   absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+}
+
+rtc_library("create_cross_traffic") {
+  visibility = [ "*" ]
+  testonly = true
+
+  sources = [
+    "create_cross_traffic.cc",
+    "create_cross_traffic.h",
+  ]
+
+  deps = [
+    ":network_emulation",
+    "../..:network_emulation_manager_api",
+    "../../../rtc_base/task_utils:repeating_task",
+    "../../../test/network:emulated_network",
+  ]
 }

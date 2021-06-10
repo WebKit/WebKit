@@ -36,6 +36,7 @@ namespace {
 
 using ::testing::_;
 using ::testing::FloatEq;
+using ::testing::NiceMock;
 using ::testing::Return;
 
 AudioDecodingCallStats MakeAudioDecodeStatsForTest() {
@@ -67,13 +68,13 @@ const std::pair<int, SdpAudioFormat> kReceiveCodec = {
     123,
     {"codec_name_recv", 96000, 0}};
 const NetworkStatistics kNetworkStats = {
-    123, 456, false, 789012, 3456, 123, 456, 789, 543, 123, 432, 321, 123, 101,
-    789, 12,  345,   678,    901,  0,   -1,  -1,  -1,  -1,  0,   0,   0,   0};
+    123, 456, false, 789012, 3456, 123, 456, 789, 543, 123, 432, 321, 123,
+    101, 789, 12,    345,    678,  901, 0,   -1,  -1,  0,   0,   0,   0};
 const AudioDecodingCallStats kAudioDecodeStats = MakeAudioDecodeStatsForTest();
 
 struct ConfigHelper {
   explicit ConfigHelper(bool use_null_audio_processing)
-      : ConfigHelper(new rtc::RefCountedObject<MockAudioMixer>(),
+      : ConfigHelper(rtc::make_ref_counted<MockAudioMixer>(),
                      use_null_audio_processing) {}
 
   ConfigHelper(rtc::scoped_refptr<MockAudioMixer> audio_mixer,
@@ -86,9 +87,9 @@ struct ConfigHelper {
     config.audio_processing =
         use_null_audio_processing
             ? nullptr
-            : new rtc::RefCountedObject<MockAudioProcessing>();
+            : rtc::make_ref_counted<NiceMock<MockAudioProcessing>>();
     config.audio_device_module =
-        new rtc::RefCountedObject<testing::NiceMock<MockAudioDeviceModule>>();
+        rtc::make_ref_counted<testing::NiceMock<MockAudioDeviceModule>>();
     audio_state_ = AudioState::Create(config);
 
     channel_receive_ = new ::testing::StrictMock<MockChannelReceive>();
@@ -105,6 +106,7 @@ struct ConfigHelper {
         }));
     EXPECT_CALL(*channel_receive_, SetDepacketizerToDecoderFrameTransformer(_))
         .Times(1);
+    EXPECT_CALL(*channel_receive_, SetSourceTracker(_));
 
     stream_config_.rtp.local_ssrc = kLocalSsrc;
     stream_config_.rtp.remote_ssrc = kRemoteSsrc;
@@ -115,7 +117,7 @@ struct ConfigHelper {
         RtpExtension::kTransportSequenceNumberUri, kTransportSequenceNumberId));
     stream_config_.rtcp_send_transport = &rtcp_send_transport_;
     stream_config_.decoder_factory =
-        new rtc::RefCountedObject<MockAudioDecoderFactory>;
+        rtc::make_ref_counted<MockAudioDecoderFactory>();
   }
 
   std::unique_ptr<internal::AudioReceiveStream> CreateAudioReceiveStream() {
@@ -356,14 +358,14 @@ TEST(AudioReceiveStreamTest, ReconfigureWithFrameDecryptor) {
 
     auto new_config_0 = helper.config();
     rtc::scoped_refptr<FrameDecryptorInterface> mock_frame_decryptor_0(
-        new rtc::RefCountedObject<MockFrameDecryptor>());
+        rtc::make_ref_counted<MockFrameDecryptor>());
     new_config_0.frame_decryptor = mock_frame_decryptor_0;
 
     recv_stream->Reconfigure(new_config_0);
 
     auto new_config_1 = helper.config();
     rtc::scoped_refptr<FrameDecryptorInterface> mock_frame_decryptor_1(
-        new rtc::RefCountedObject<MockFrameDecryptor>());
+        rtc::make_ref_counted<MockFrameDecryptor>());
     new_config_1.frame_decryptor = mock_frame_decryptor_1;
     new_config_1.crypto_options.sframe.require_frame_encryption = true;
     recv_stream->Reconfigure(new_config_1);

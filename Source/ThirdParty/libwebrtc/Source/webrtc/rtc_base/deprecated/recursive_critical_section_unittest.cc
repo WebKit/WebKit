@@ -329,33 +329,28 @@ class PerfTestData {
 
 class PerfTestThread {
  public:
-  PerfTestThread() : thread_(&ThreadFunc, this, "CsPerf") {}
-
   void Start(PerfTestData* data, int repeats, int id) {
-    RTC_DCHECK(!thread_.IsRunning());
     RTC_DCHECK(!data_);
     data_ = data;
     repeats_ = repeats;
     my_id_ = id;
-    thread_.Start();
+    thread_ = PlatformThread::SpawnJoinable(
+        [this] {
+          for (int i = 0; i < repeats_; ++i)
+            data_->AddToCounter(my_id_);
+        },
+        "CsPerf");
   }
 
   void Stop() {
-    RTC_DCHECK(thread_.IsRunning());
     RTC_DCHECK(data_);
-    thread_.Stop();
+    thread_.Finalize();
     repeats_ = 0;
     data_ = nullptr;
     my_id_ = 0;
   }
 
  private:
-  static void ThreadFunc(void* param) {
-    PerfTestThread* me = static_cast<PerfTestThread*>(param);
-    for (int i = 0; i < me->repeats_; ++i)
-      me->data_->AddToCounter(me->my_id_);
-  }
-
   PlatformThread thread_;
   PerfTestData* data_ = nullptr;
   int repeats_ = 0;

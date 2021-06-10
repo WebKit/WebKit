@@ -15,7 +15,6 @@
 #include <string>
 #include <vector>
 
-#include "rtc_base/memory_stream.h"
 #include "test/logging/log_writer.h"
 
 namespace webrtc {

@@ -154,8 +154,6 @@ static inline void fillInboundRtpStreamStats(RTCStatsReport::InboundRtpStreamSta
         stats.pliCount = *rtcStats.pli_count;
     if (rtcStats.nack_count.is_defined())
         stats.nackCount = *rtcStats.nack_count;
-    if (rtcStats.sli_count.is_defined())
-        stats.sliCount = *rtcStats.sli_count;
     if (rtcStats.estimated_playout_timestamp.is_defined())
         stats.estimatedPlayoutTimestamp = *rtcStats.estimated_playout_timestamp;
     if (rtcStats.jitter_buffer_delay.is_defined())
@@ -275,8 +273,6 @@ static inline void fillOutboundRtpStreamStats(RTCStatsReport::OutboundRtpStreamS
         stats.firCount = *rtcStats.fir_count;
     if (rtcStats.pli_count.is_defined())
         stats.pliCount = *rtcStats.pli_count;
-    if (rtcStats.sli_count.is_defined())
-        stats.sliCount = *rtcStats.sli_count;
 
     if (rtcStats.track_id.is_defined())
         stats.trackId = fromStdString(*rtcStats.track_id);
@@ -473,8 +469,6 @@ static inline void fillRTCIceCandidateStats(RTCStatsReport::IceCandidateStats& s
         stats.priority = *rtcStats.priority;
     if (rtcStats.url.is_defined())
         stats.url = fromStdString(*rtcStats.url);
-    if (rtcStats.deleted.is_defined())
-        stats.deleted = *rtcStats.deleted;
 }
 
 static inline void fillRTCCertificateStats(RTCStatsReport::CertificateStats& stats, const webrtc::RTCCertificateStats& rtcStats)

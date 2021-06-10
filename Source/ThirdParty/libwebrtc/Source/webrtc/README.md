@@ -23,8 +23,9 @@ native API header files.
  * Master source code repo: https://webrtc.googlesource.com/src
  * Samples and reference apps: https://github.com/webrtc
  * Mailing list: http://groups.google.com/group/discuss-webrtc
- * Continuous build: http://build.chromium.org/p/client.webrtc
- * [Coding style guide](style-guide.md)
+ * Continuous build: https://ci.chromium.org/p/webrtc/g/ci/console
+ * [Coding style guide](g3doc/style-guide.md)
  * [Code of conduct](CODE_OF_CONDUCT.md)
+ * [Reporting bugs](docs/bug-reporting.md)
 
 [native-dev]: https://webrtc.googlesource.com/src/+/refs/heads/master/docs/native-code/index.md

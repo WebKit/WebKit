@@ -12,7 +12,6 @@
 #include <utility>
 
 #include "api/array_view.h"
-#include "api/video/video_stream_encoder_create.h"
 #include "api/video/video_stream_encoder_settings.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
 #include "modules/rtp_rtcp/source/rtp_header_extension_size.h"
@@ -23,13 +22,13 @@
 #include "rtc_base/task_utils/to_queued_task.h"
 #include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/field_trial.h"
+#include "video/adaptation/overuse_frame_detector.h"
 #include "video/video_send_stream_impl.h"
+#include "video/video_stream_encoder.h"
 
 namespace webrtc {
 
 namespace {
-
-constexpr char kTargetBitrateRtcpFieldTrial[] = "WebRTC-Target-Bitrate-Rtcp";
 
 size_t CalculateMaxHeaderSize(const RtpConfig& config) {
   size_t header_size = kRtpHeaderSize;
@@ -62,6 +61,22 @@ size_t CalculateMaxHeaderSize(const RtpConfig& config) {
   return header_size;
 }
 
+VideoStreamEncoder::BitrateAllocationCallbackType
+GetBitrateAllocationCallbackType(const VideoSendStream::Config& config) {
+  if (webrtc::RtpExtension::FindHeaderExtensionByUri(
+          config.rtp.extensions,
+          webrtc::RtpExtension::kVideoLayersAllocationUri)) {
+    return VideoStreamEncoder::BitrateAllocationCallbackType::
+        kVideoLayersAllocation;
+  }
+  if (field_trial::IsEnabled("WebRTC-Target-Bitrate-Rtcp")) {
+    return VideoStreamEncoder::BitrateAllocationCallbackType::
+        kVideoBitrateAllocation;
+  }
+  return VideoStreamEncoder::BitrateAllocationCallbackType::
+      kVideoBitrateAllocationWhenScreenSharing;
+}
+
 }  // namespace
 
 namespace internal {
@@ -88,9 +103,11 @@ VideoSendStream::VideoSendStream(
   RTC_DCHECK(config_.encoder_settings.encoder_factory);
   RTC_DCHECK(config_.encoder_settings.bitrate_allocator_factory);
 
-  video_stream_encoder_ =
-      CreateVideoStreamEncoder(clock, task_queue_factory, num_cpu_cores,
-                               &stats_proxy_, config_.encoder_settings);
+  video_stream_encoder_ = std::make_unique<VideoStreamEncoder>(
+      clock, num_cpu_cores, &stats_proxy_, config_.encoder_settings,
+      std::make_unique<OveruseFrameDetector>(&stats_proxy_), task_queue_factory,
+      GetBitrateAllocationCallbackType(config_));
+
   // TODO(srte): Initialization should not be done posted on a task queue.
   // Note that the posted task must not outlive this scope since the closure
   // references local variables.
@@ -113,13 +130,6 @@ VideoSendStream::VideoSendStream(
   // it was created on.
   thread_sync_event_.Wait(rtc::Event::kForever);
   send_stream_->RegisterProcessThread(module_process_thread);
-  // TODO(sprang): Enable this also for regular video calls by default, if it
-  // works well.
-  if (encoder_config.content_type == VideoEncoderConfig::ContentType::kScreen ||
-      field_trial::IsEnabled(kTargetBitrateRtcpFieldTrial)) {
-    video_stream_encoder_->SetBitrateAllocationObserver(send_stream_.get());
-  }
-
   ReconfigureVideoEncoder(std::move(encoder_config));
 }
 
@@ -159,7 +169,7 @@ void VideoSendStream::UpdateActiveSimulcastLayers(
 
 void VideoSendStream::Start() {
   RTC_DCHECK_RUN_ON(&thread_checker_);
-  RTC_LOG(LS_INFO) << "VideoSendStream::Start";
+  RTC_DLOG(LS_INFO) << "VideoSendStream::Start";
   VideoSendStreamImpl* send_stream = send_stream_.get();
   worker_queue_->PostTask([this, send_stream] {
     send_stream->Start();
@@ -174,7 +184,7 @@ void VideoSendStream::Start() {
 
 void VideoSendStream::Stop() {
   RTC_DCHECK_RUN_ON(&thread_checker_);
-  RTC_LOG(LS_INFO) << "VideoSendStream::Stop";
+  RTC_DLOG(LS_INFO) << "VideoSendStream::Stop";
   VideoSendStreamImpl* send_stream = send_stream_.get();
   worker_queue_->PostTask([send_stream] { send_stream->Stop(); });
 }
@@ -199,10 +209,8 @@ void VideoSendStream::SetSource(
 }
 
 void VideoSendStream::ReconfigureVideoEncoder(VideoEncoderConfig config) {
-  // TODO(perkj): Some test cases in VideoSendStreamTest call
-  // ReconfigureVideoEncoder from the network thread.
-  // RTC_DCHECK_RUN_ON(&thread_checker_);
-  RTC_DCHECK(content_type_ == config.content_type);
+  RTC_DCHECK_RUN_ON(&thread_checker_);
+  RTC_DCHECK_EQ(content_type_, config.content_type);
   video_stream_encoder_->ConfigureEncoder(
       std::move(config),
       config_.rtp.max_packet_size - CalculateMaxHeaderSize(config_.rtp));

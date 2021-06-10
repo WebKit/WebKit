@@ -14,24 +14,19 @@
 
 namespace webrtc {
 
-ScreenCapturerHelper::ScreenCapturerHelper()
-    : invalid_region_lock_(RWLockWrapper::CreateRWLock()), log_grid_size_(0) {}
-
-ScreenCapturerHelper::~ScreenCapturerHelper() {}
-
 void ScreenCapturerHelper::ClearInvalidRegion() {
-  WriteLockScoped scoped_invalid_region_lock(*invalid_region_lock_);
+  MutexLock scoped_invalid_region_lock(&invalid_region_mutex_);
   invalid_region_.Clear();
 }
 
 void ScreenCapturerHelper::InvalidateRegion(
     const DesktopRegion& invalid_region) {
-  WriteLockScoped scoped_invalid_region_lock(*invalid_region_lock_);
+  MutexLock scoped_invalid_region_lock(&invalid_region_mutex_);
   invalid_region_.AddRegion(invalid_region);
 }
 
 void ScreenCapturerHelper::InvalidateScreen(const DesktopSize& size) {
-  WriteLockScoped scoped_invalid_region_lock(*invalid_region_lock_);
+  MutexLock scoped_invalid_region_lock(&invalid_region_mutex_);
   invalid_region_.AddRect(DesktopRect::MakeSize(size));
 }
 
@@ -39,7 +34,7 @@ void ScreenCapturerHelper::TakeInvalidRegion(DesktopRegion* invalid_region) {
   invalid_region->Clear();
 
   {
-    WriteLockScoped scoped_invalid_region_lock(*invalid_region_lock_);
+    MutexLock scoped_invalid_region_lock(&invalid_region_mutex_);
     invalid_region->Swap(&invalid_region_);
   }
 

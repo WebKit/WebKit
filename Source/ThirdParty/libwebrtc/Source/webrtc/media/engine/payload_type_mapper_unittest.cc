@@ -46,13 +46,8 @@ TEST_F(PayloadTypeMapperTest, StaticPayloadTypes) {
 }
 
 TEST_F(PayloadTypeMapperTest, WebRTCPayloadTypes) {
-  // Tests that the payload mapper knows about the audio and data formats we've
+  // Tests that the payload mapper knows about the audio formats we've
   // been using in WebRTC, with their hard coded values.
-  auto data_mapping = [this](const char* name) {
-    return mapper_.FindMappingFor({name, 0, 0});
-  };
-  EXPECT_EQ(kGoogleRtpDataCodecPlType, data_mapping(kGoogleRtpDataCodecName));
-
   EXPECT_EQ(102, mapper_.FindMappingFor({kIlbcCodecName, 8000, 1}));
   EXPECT_EQ(103, mapper_.FindMappingFor({kIsacCodecName, 16000, 1}));
   EXPECT_EQ(104, mapper_.FindMappingFor({kIsacCodecName, 32000, 1}));

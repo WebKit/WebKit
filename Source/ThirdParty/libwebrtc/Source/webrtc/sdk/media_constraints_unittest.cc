@@ -23,7 +23,6 @@ bool Matches(const PeerConnectionInterface::RTCConfiguration& a,
   return a.disable_ipv6 == b.disable_ipv6 &&
          a.audio_jitter_buffer_max_packets ==
              b.audio_jitter_buffer_max_packets &&
-         a.enable_rtp_data_channel == b.enable_rtp_data_channel &&
          a.screencast_min_bitrate == b.screencast_min_bitrate &&
          a.combined_audio_video_bwe == b.combined_audio_video_bwe &&
          a.enable_dtls_srtp == b.enable_dtls_srtp &&

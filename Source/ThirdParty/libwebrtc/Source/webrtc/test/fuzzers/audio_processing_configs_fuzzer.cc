@@ -16,6 +16,7 @@
 #include "api/task_queue/default_task_queue_factory.h"
 #include "modules/audio_processing/aec_dump/aec_dump_factory.h"
 #include "modules/audio_processing/include/audio_processing.h"
+#include "modules/audio_processing/test/audio_processing_builder_for_testing.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/numerics/safe_minmax.h"
 #include "rtc_base/task_queue.h"
@@ -108,7 +109,7 @@ std::unique_ptr<AudioProcessing> CreateApm(test::FuzzDataHelper* fuzz_data,
   config.Set<ExperimentalNs>(new ExperimentalNs(exp_ns));
 
   std::unique_ptr<AudioProcessing> apm(
-      AudioProcessingBuilder()
+      AudioProcessingBuilderForTesting()
           .SetEchoControlFactory(std::move(echo_control_factory))
           .Create(config));
 

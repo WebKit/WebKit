@@ -28,20 +28,19 @@ bool SelectedWindowContext::IsSelectedWindowValid() const {
 }
 
 bool SelectedWindowContext::IsWindowOwnedBySelectedWindow(HWND hwnd) const {
-  // This check works for drop-down menus & dialog pop-up windows. It doesn't
-  // work for context menus or tooltips, which are handled differently below.
+  // This check works for drop-down menus & dialog pop-up windows.
   if (GetAncestor(hwnd, GA_ROOTOWNER) == selected_window_) {
     return true;
   }
 
-  // Some pop-up windows aren't owned (e.g. context menus, tooltips); treat
-  // windows that belong to the same thread as owned.
-  DWORD enumerated_window_process_id = 0;
-  DWORD enumerated_window_thread_id =
-      GetWindowThreadProcessId(hwnd, &enumerated_window_process_id);
-  return enumerated_window_thread_id != 0 &&
-         enumerated_window_process_id == selected_window_process_id_ &&
-         enumerated_window_thread_id == selected_window_thread_id_;
+  // Assume that all other windows are unrelated to the selected window.
+  // This will cause some windows that are actually related to be missed,
+  // e.g. context menus and tool-tips, but avoids the risk of capturing
+  // unrelated windows. Using heuristics such as matching the thread and
+  // process Ids suffers from false-positives, e.g. in multi-document
+  // applications.
+
+  return false;
 }
 
 bool SelectedWindowContext::IsWindowOverlappingSelectedWindow(HWND hwnd) const {

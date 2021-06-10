@@ -83,7 +83,7 @@ class IvfFileReaderTest : public ::testing::Test {
                      bool use_capture_tims_ms,
                      int spatial_layers_count) {
     ASSERT_TRUE(frame);
-    EXPECT_EQ(frame->SpatialIndex(), spatial_layers_count);
+    EXPECT_EQ(frame->SpatialIndex(), spatial_layers_count - 1);
     if (use_capture_tims_ms) {
       EXPECT_EQ(frame->capture_time_ms_, static_cast<int64_t>(frame_index));
       EXPECT_EQ(frame->Timestamp(), static_cast<int64_t>(90 * frame_index));

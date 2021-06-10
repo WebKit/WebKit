@@ -20,125 +20,93 @@ constexpr int kHistorySize = 1 << 13;
 
 TEST(DecodedFramesHistory, RequestOnEmptyHistory) {
   DecodedFramesHistory history(kHistorySize);
-  EXPECT_EQ(history.WasDecoded({1234, 0}), false);
+  EXPECT_EQ(history.WasDecoded(1234), false);
 }
 
 TEST(DecodedFramesHistory, FindsLastDecodedFrame) {
   DecodedFramesHistory history(kHistorySize);
-  history.InsertDecoded({1234, 0}, 0);
-  EXPECT_EQ(history.WasDecoded({1234, 0}), true);
+  history.InsertDecoded(1234, 0);
+  EXPECT_EQ(history.WasDecoded(1234), true);
 }
 
 TEST(DecodedFramesHistory, FindsPreviousFrame) {
   DecodedFramesHistory history(kHistorySize);
-  history.InsertDecoded({1234, 0}, 0);
-  history.InsertDecoded({1235, 0}, 0);
-  EXPECT_EQ(history.WasDecoded({1234, 0}), true);
+  history.InsertDecoded(1234, 0);
+  history.InsertDecoded(1235, 0);
+  EXPECT_EQ(history.WasDecoded(1234), true);
 }
 
 TEST(DecodedFramesHistory, ReportsMissingFrame) {
   DecodedFramesHistory history(kHistorySize);
-  history.InsertDecoded({1234, 0}, 0);
-  history.InsertDecoded({1236, 0}, 0);
-  EXPECT_EQ(history.WasDecoded({1235, 0}), false);
+  history.InsertDecoded(1234, 0);
+  history.InsertDecoded(1236, 0);
+  EXPECT_EQ(history.WasDecoded(1235), false);
 }
 
 TEST(DecodedFramesHistory, ClearsHistory) {
   DecodedFramesHistory history(kHistorySize);
-  history.InsertDecoded({1234, 0}, 0);
+  history.InsertDecoded(1234, 0);
   history.Clear();
-  EXPECT_EQ(history.WasDecoded({1234, 0}), false);
+  EXPECT_EQ(history.WasDecoded(1234), false);
   EXPECT_EQ(history.GetLastDecodedFrameId(), absl::nullopt);
   EXPECT_EQ(history.GetLastDecodedFrameTimestamp(), absl::nullopt);
 }
 
-TEST(DecodedFramesHistory, HandlesMultipleLayers) {
-  DecodedFramesHistory history(kHistorySize);
-  history.InsertDecoded({1234, 0}, 0);
-  history.InsertDecoded({1234, 1}, 0);
-  history.InsertDecoded({1235, 0}, 0);
-  history.InsertDecoded({1236, 0}, 0);
-  history.InsertDecoded({1236, 1}, 0);
-  EXPECT_EQ(history.WasDecoded({1235, 0}), true);
-  EXPECT_EQ(history.WasDecoded({1235, 1}), false);
-}
-
-TEST(DecodedFramesHistory, HandlesNewLayer) {
-  DecodedFramesHistory history(kHistorySize);
-  history.InsertDecoded({1234, 0}, 0);
-  history.InsertDecoded({1234, 1}, 0);
-  history.InsertDecoded({1235, 0}, 0);
-  history.InsertDecoded({1235, 1}, 0);
-  history.InsertDecoded({1236, 0}, 0);
-  history.InsertDecoded({1236, 1}, 0);
-  EXPECT_EQ(history.WasDecoded({1234, 2}), false);
-}
-
-TEST(DecodedFramesHistory, HandlesSkippedLayer) {
-  DecodedFramesHistory history(kHistorySize);
-  history.InsertDecoded({1234, 0}, 0);
-  history.InsertDecoded({1234, 2}, 0);
-  history.InsertDecoded({1235, 0}, 0);
-  history.InsertDecoded({1235, 1}, 0);
-  EXPECT_EQ(history.WasDecoded({1234, 1}), false);
-  EXPECT_EQ(history.WasDecoded({1235, 1}), true);
-}
-
 TEST(DecodedFramesHistory, HandlesBigJumpInPictureId) {
   DecodedFramesHistory history(kHistorySize);
-  history.InsertDecoded({1234, 0}, 0);
-  history.InsertDecoded({1235, 0}, 0);
-  history.InsertDecoded({1236, 0}, 0);
-  history.InsertDecoded({1236 + kHistorySize / 2, 0}, 0);
-  EXPECT_EQ(history.WasDecoded({1234, 0}), true);
-  EXPECT_EQ(history.WasDecoded({1237, 0}), false);
+  history.InsertDecoded(1234, 0);
+  history.InsertDecoded(1235, 0);
+  history.InsertDecoded(1236, 0);
+  history.InsertDecoded(1236 + kHistorySize / 2, 0);
+  EXPECT_EQ(history.WasDecoded(1234), true);
+  EXPECT_EQ(history.WasDecoded(1237), false);
 }
 
 TEST(DecodedFramesHistory, ForgetsTooOldHistory) {
   DecodedFramesHistory history(kHistorySize);
-  history.InsertDecoded({1234, 0}, 0);
-  history.InsertDecoded({1235, 0}, 0);
-  history.InsertDecoded({1236, 0}, 0);
-  history.InsertDecoded({1236 + kHistorySize * 2, 0}, 0);
-  EXPECT_EQ(history.WasDecoded({1234, 0}), false);
-  EXPECT_EQ(history.WasDecoded({1237, 0}), false);
+  history.InsertDecoded(1234, 0);
+  history.InsertDecoded(1235, 0);
+  history.InsertDecoded(1236, 0);
+  history.InsertDecoded(1236 + kHistorySize * 2, 0);
+  EXPECT_EQ(history.WasDecoded(1234), false);
+  EXPECT_EQ(history.WasDecoded(1237), false);
 }
 
 TEST(DecodedFramesHistory, ReturnsLastDecodedFrameId) {
   DecodedFramesHistory history(kHistorySize);
   EXPECT_EQ(history.GetLastDecodedFrameId(), absl::nullopt);
-  history.InsertDecoded({1234, 0}, 0);
-  EXPECT_EQ(history.GetLastDecodedFrameId(), VideoLayerFrameId(1234, 0));
-  history.InsertDecoded({1235, 0}, 0);
-  EXPECT_EQ(history.GetLastDecodedFrameId(), VideoLayerFrameId(1235, 0));
+  history.InsertDecoded(1234, 0);
+  EXPECT_EQ(history.GetLastDecodedFrameId(), 1234);
+  history.InsertDecoded(1235, 0);
+  EXPECT_EQ(history.GetLastDecodedFrameId(), 1235);
 }
 
 TEST(DecodedFramesHistory, ReturnsLastDecodedFrameTimestamp) {
   DecodedFramesHistory history(kHistorySize);
   EXPECT_EQ(history.GetLastDecodedFrameTimestamp(), absl::nullopt);
-  history.InsertDecoded({1234, 0}, 12345);
+  history.InsertDecoded(1234, 12345);
   EXPECT_EQ(history.GetLastDecodedFrameTimestamp(), 12345u);
-  history.InsertDecoded({1235, 0}, 12366);
+  history.InsertDecoded(1235, 12366);
   EXPECT_EQ(history.GetLastDecodedFrameTimestamp(), 12366u);
 }
 
 TEST(DecodedFramesHistory, NegativePictureIds) {
   DecodedFramesHistory history(kHistorySize);
-  history.InsertDecoded({-1234, 0}, 12345);
-  history.InsertDecoded({-1233, 0}, 12366);
-  EXPECT_EQ(history.GetLastDecodedFrameId()->picture_id, -1233);
+  history.InsertDecoded(-1234, 12345);
+  history.InsertDecoded(-1233, 12366);
+  EXPECT_EQ(*history.GetLastDecodedFrameId(), -1233);
 
-  history.InsertDecoded({-1, 0}, 12377);
-  history.InsertDecoded({0, 0}, 12388);
-  EXPECT_EQ(history.GetLastDecodedFrameId()->picture_id, 0);
+  history.InsertDecoded(-1, 12377);
+  history.InsertDecoded(0, 12388);
+  EXPECT_EQ(*history.GetLastDecodedFrameId(), 0);
 
-  history.InsertDecoded({1, 0}, 12399);
-  EXPECT_EQ(history.GetLastDecodedFrameId()->picture_id, 1);
+  history.InsertDecoded(1, 12399);
+  EXPECT_EQ(*history.GetLastDecodedFrameId(), 1);
 
-  EXPECT_EQ(history.WasDecoded({-1234, 0}), true);
-  EXPECT_EQ(history.WasDecoded({-1, 0}), true);
-  EXPECT_EQ(history.WasDecoded({0, 0}), true);
-  EXPECT_EQ(history.WasDecoded({1, 0}), true);
+  EXPECT_EQ(history.WasDecoded(-1234), true);
+  EXPECT_EQ(history.WasDecoded(-1), true);
+  EXPECT_EQ(history.WasDecoded(0), true);
+  EXPECT_EQ(history.WasDecoded(1), true);
 }
 
 }  // namespace

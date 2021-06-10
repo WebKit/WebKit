@@ -27,7 +27,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
       std::min(size, static_cast<size_t>(IP_PACKET_SIZE));
   packet.pkt->data.SetSize(packet_size);
   packet.pkt->data.EnsureCapacity(IP_PACKET_SIZE);
-  memcpy(packet.pkt->data.data(), data, packet_size);
+  memcpy(packet.pkt->data.MutableData(), data, packet_size);
 
   FlexfecHeaderReader flexfec_reader;
   flexfec_reader.ReadFecHeader(&packet);

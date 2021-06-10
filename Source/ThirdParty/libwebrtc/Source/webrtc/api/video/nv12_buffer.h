@@ -56,6 +56,14 @@ class RTC_EXPORT NV12Buffer : public NV12BufferInterface {
   // are resolved in a better way. Or in the mean time, use SetBlack.
   void InitializeData();
 
+  // Scale the cropped area of |src| to the size of |this| buffer, and
+  // write the result into |this|.
+  void CropAndScaleFrom(const NV12BufferInterface& src,
+                        int offset_x,
+                        int offset_y,
+                        int crop_width,
+                        int crop_height);
+
  protected:
   NV12Buffer(int width, int height);
   NV12Buffer(int width, int height, int stride_y, int stride_uv);

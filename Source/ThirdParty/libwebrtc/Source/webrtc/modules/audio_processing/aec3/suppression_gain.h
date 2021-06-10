@@ -47,8 +47,13 @@ class SuppressionGain {
       const RenderSignalAnalyzer& render_signal_analyzer,
       const AecState& aec_state,
       const std::vector<std::vector<std::vector<float>>>& render,
+      bool clock_drift,
       float* high_bands_gain,
       std::array<float, kFftLengthBy2Plus1>* low_band_gain);
+
+  bool IsDominantNearend() {
+    return dominant_nearend_detector_->IsNearendState();
+  }
 
   // Toggles the usage of the initial state.
   void SetInitialState(bool state);
@@ -76,6 +81,7 @@ class SuppressionGain {
           suppressor_input,
       rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> residual_echo,
       rtc::ArrayView<const std::array<float, kFftLengthBy2Plus1>> comfort_noise,
+      bool clock_drift,
       std::array<float, kFftLengthBy2Plus1>* gain);
 
   void GetMinGain(rtc::ArrayView<const float> weighted_residual_echo,

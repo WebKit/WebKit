@@ -20,8 +20,7 @@ class RTCStatsObtainer : public RTCStatsCollectorCallback {
  public:
   static rtc::scoped_refptr<RTCStatsObtainer> Create(
       rtc::scoped_refptr<const RTCStatsReport>* report_ptr = nullptr) {
-    return rtc::scoped_refptr<RTCStatsObtainer>(
-        new rtc::RefCountedObject<RTCStatsObtainer>(report_ptr));
+    return rtc::make_ref_counted<RTCStatsObtainer>(report_ptr);
   }
 
   void OnStatsDelivered(
@@ -43,7 +42,7 @@ class RTCStatsObtainer : public RTCStatsCollectorCallback {
       : report_ptr_(report_ptr) {}
 
  private:
-  rtc::ThreadChecker thread_checker_;
+  SequenceChecker thread_checker_;
   rtc::scoped_refptr<const RTCStatsReport> report_;
   rtc::scoped_refptr<const RTCStatsReport>* report_ptr_;
 };

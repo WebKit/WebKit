@@ -36,6 +36,7 @@ rtc_library("rtp_replayer") {
     "../../../test:rtp_test_utils",
     "../../../test:run_test",
     "../../../test:run_test_interface",
+    "../../../test:test_common",
     "../../../test:test_renderer",
     "../../../test:test_support",
     "../../../test:video_test_common",

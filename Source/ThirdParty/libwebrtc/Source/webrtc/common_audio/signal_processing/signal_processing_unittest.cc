@@ -289,6 +289,12 @@ TEST(SplTest, MinMaxOperationsTest) {
             WebRtcSpl_MinValueW32(vector32, kVectorSize));
   EXPECT_EQ(kVectorSize - 1, WebRtcSpl_MinIndexW16(vector16, kVectorSize));
   EXPECT_EQ(kVectorSize - 1, WebRtcSpl_MinIndexW32(vector32, kVectorSize));
+  EXPECT_EQ(WEBRTC_SPL_WORD16_MIN,
+            WebRtcSpl_MaxAbsElementW16(vector16, kVectorSize));
+  int16_t min_value, max_value;
+  WebRtcSpl_MinMaxW16(vector16, kVectorSize, &min_value, &max_value);
+  EXPECT_EQ(WEBRTC_SPL_WORD16_MIN, min_value);
+  EXPECT_EQ(12334, max_value);
 
   // Test the cases where maximum values have to be caught
   // outside of the unrolled loops in ARM-Neon.
@@ -306,6 +312,11 @@ TEST(SplTest, MinMaxOperationsTest) {
   EXPECT_EQ(kVectorSize - 1, WebRtcSpl_MaxAbsIndexW16(vector16, kVectorSize));
   EXPECT_EQ(kVectorSize - 1, WebRtcSpl_MaxIndexW16(vector16, kVectorSize));
   EXPECT_EQ(kVectorSize - 1, WebRtcSpl_MaxIndexW32(vector32, kVectorSize));
+  EXPECT_EQ(WEBRTC_SPL_WORD16_MAX,
+            WebRtcSpl_MaxAbsElementW16(vector16, kVectorSize));
+  WebRtcSpl_MinMaxW16(vector16, kVectorSize, &min_value, &max_value);
+  EXPECT_EQ(-29871, min_value);
+  EXPECT_EQ(WEBRTC_SPL_WORD16_MAX, max_value);
 
   // Test the cases where multiple maximum and minimum values are present.
   vector16[1] = WEBRTC_SPL_WORD16_MAX;
@@ -332,6 +343,43 @@ TEST(SplTest, MinMaxOperationsTest) {
   EXPECT_EQ(1u, WebRtcSpl_MaxIndexW32(vector32, kVectorSize));
   EXPECT_EQ(6u, WebRtcSpl_MinIndexW16(vector16, kVectorSize));
   EXPECT_EQ(6u, WebRtcSpl_MinIndexW32(vector32, kVectorSize));
+  EXPECT_EQ(WEBRTC_SPL_WORD16_MIN,
+            WebRtcSpl_MaxAbsElementW16(vector16, kVectorSize));
+  WebRtcSpl_MinMaxW16(vector16, kVectorSize, &min_value, &max_value);
+  EXPECT_EQ(WEBRTC_SPL_WORD16_MIN, min_value);
+  EXPECT_EQ(WEBRTC_SPL_WORD16_MAX, max_value);
+
+  // Test a one-element vector.
+  int16_t single_element_vector = 0;
+  EXPECT_EQ(0, WebRtcSpl_MaxAbsValueW16(&single_element_vector, 1));
+  EXPECT_EQ(0, WebRtcSpl_MaxValueW16(&single_element_vector, 1));
+  EXPECT_EQ(0, WebRtcSpl_MinValueW16(&single_element_vector, 1));
+  EXPECT_EQ(0u, WebRtcSpl_MaxAbsIndexW16(&single_element_vector, 1));
+  EXPECT_EQ(0u, WebRtcSpl_MaxIndexW16(&single_element_vector, 1));
+  EXPECT_EQ(0u, WebRtcSpl_MinIndexW16(&single_element_vector, 1));
+  EXPECT_EQ(0, WebRtcSpl_MaxAbsElementW16(&single_element_vector, 1));
+  WebRtcSpl_MinMaxW16(&single_element_vector, 1, &min_value, &max_value);
+  EXPECT_EQ(0, min_value);
+  EXPECT_EQ(0, max_value);
+
+  // Test a two-element vector with the values WEBRTC_SPL_WORD16_MIN and
+  // WEBRTC_SPL_WORD16_MAX.
+  int16_t two_element_vector[2] = {WEBRTC_SPL_WORD16_MIN,
+                                   WEBRTC_SPL_WORD16_MAX};
+  EXPECT_EQ(WEBRTC_SPL_WORD16_MAX,
+            WebRtcSpl_MaxAbsValueW16(two_element_vector, 2));
+  EXPECT_EQ(WEBRTC_SPL_WORD16_MAX,
+            WebRtcSpl_MaxValueW16(two_element_vector, 2));
+  EXPECT_EQ(WEBRTC_SPL_WORD16_MIN,
+            WebRtcSpl_MinValueW16(two_element_vector, 2));
+  EXPECT_EQ(0u, WebRtcSpl_MaxAbsIndexW16(two_element_vector, 2));
+  EXPECT_EQ(1u, WebRtcSpl_MaxIndexW16(two_element_vector, 2));
+  EXPECT_EQ(0u, WebRtcSpl_MinIndexW16(two_element_vector, 2));
+  EXPECT_EQ(WEBRTC_SPL_WORD16_MIN,
+            WebRtcSpl_MaxAbsElementW16(two_element_vector, 2));
+  WebRtcSpl_MinMaxW16(two_element_vector, 2, &min_value, &max_value);
+  EXPECT_EQ(WEBRTC_SPL_WORD16_MIN, min_value);
+  EXPECT_EQ(WEBRTC_SPL_WORD16_MAX, max_value);
 }
 
 TEST(SplTest, VectorOperationsTest) {

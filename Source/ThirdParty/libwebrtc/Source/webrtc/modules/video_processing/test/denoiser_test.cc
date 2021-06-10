@@ -27,26 +27,6 @@
 
 namespace webrtc {
 
-TEST(VideoDenoiserTest, CopyMem) {
-  std::unique_ptr<DenoiserFilter> df_c(DenoiserFilter::Create(false, nullptr));
-  std::unique_ptr<DenoiserFilter> df_sse_neon(
-      DenoiserFilter::Create(true, nullptr));
-  uint8_t src[16 * 16], dst[16 * 16];
-  for (int i = 0; i < 16; ++i) {
-    for (int j = 0; j < 16; ++j) {
-      src[i * 16 + j] = i * 16 + j;
-    }
-  }
-
-  memset(dst, 0, 16 * 16);
-  df_c->CopyMem16x16(src, 16, dst, 16);
-  EXPECT_EQ(0, memcmp(src, dst, 16 * 16));
-
-  memset(dst, 0, 16 * 16);
-  df_sse_neon->CopyMem16x16(src, 16, dst, 16);
-  EXPECT_EQ(0, memcmp(src, dst, 16 * 16));
-}
-
 TEST(VideoDenoiserTest, Variance) {
   std::unique_ptr<DenoiserFilter> df_c(DenoiserFilter::Create(false, nullptr));
   std::unique_ptr<DenoiserFilter> df_sse_neon(

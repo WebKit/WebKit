@@ -14,12 +14,12 @@
 #include <stdint.h>
 
 #include "absl/types/optional.h"
+#include "api/sequence_checker.h"
 #include "api/transport/network_types.h"
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "modules/pacing/paced_sender.h"
 #include "rtc_base/constructor_magic.h"
-#include "rtc_base/synchronization/sequence_checker.h"
 #include "rtc_base/system/no_unique_address.h"
 
 namespace webrtc {

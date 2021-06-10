@@ -10,11 +10,11 @@
 
 #import "ARDVideoCallViewController.h"
 
-#import <WebRTC/RTCAudioSession.h>
-#import <WebRTC/RTCCameraVideoCapturer.h>
-#import <WebRTC/RTCDispatcher.h>
-#import <WebRTC/RTCLogging.h>
-#import <WebRTC/RTCMediaConstraints.h>
+#import "sdk/objc/api/peerconnection/RTCMediaConstraints.h"
+#import "sdk/objc/base/RTCLogging.h"
+#import "sdk/objc/components/audio/RTCAudioSession.h"
+#import "sdk/objc/components/capturer/RTCCameraVideoCapturer.h"
+#import "sdk/objc/helpers/RTCDispatcher.h"
 
 #import "ARDAppClient.h"
 #import "ARDCaptureController.h"
