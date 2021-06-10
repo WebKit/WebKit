@@ -1,3 +1,18 @@
+2021-06-10  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [Cairo] Fix Path::boundingRectSlowCase when the path is a single MoveTo
+        https://bugs.webkit.org/show_bug.cgi?id=226613
+
+        Cairo says there is no bounding rectangle in this case, whereas the SVG
+        standard says there it should be a zero-size rectangle at the moved-to
+        point. This fixes the recently added test
+        fast/svg/bounding-rect-for-path-with-only-move-command.html
+
+        Reviewed by Fujii Hironori.
+
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::boundingRectSlowCase const):
+
 2021-06-10  Chris Dumez  <cdumez@apple.com>
 
         Fix incorrect check in AudioNode.disconnect()
