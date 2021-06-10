@@ -109,7 +109,7 @@ void WebDataListSuggestionsDropdownIOS::show(WebCore::DataListSuggestionInformat
     WebCore::DataListSuggestionActivationType type = information.activationType;
 
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    if ([m_contentView _formControlRefreshEnabled]) {
+    if (m_contentView._shouldUseContextMenusForFormControls) {
         m_suggestionsControl = adoptNS([[WKDataListSuggestionsDropdown alloc] initWithInformation:WTFMove(information) inView:m_contentView]);
         [m_suggestionsControl showSuggestionsDropdown:*this activationType:type];
         return;

@@ -1,3 +1,33 @@
+2021-06-10  Aditya Keerthi  <akeerthi@apple.com>
+
+        [iOS] VinylWall app crashes when tapping on 'format' dropdown menu in 'Add Record' menu
+        https://bugs.webkit.org/show_bug.cgi?id=226886
+        <rdar://problem/77207322>
+
+        Reviewed by Tim Horton.
+
+        The VinylWall app contains a WKWebView, and uses <select> to let users
+        choose options. With the new form controls on iOS, tapping on a <select>
+        presents a UIContextMenuInteraction, rather than a picker wheel or
+        popover. However, UIContextMenuInteraction is not supported on apps
+        linked against an SDK older than iOS 14, resulting in this crash.
+
+        To fix, perform a linked-on-or-after check before showing the new UI
+        for <select> and <input type=text> with a <datalist>. If the check
+        fails, fallback to the old UI. We already have this check in place for
+        other context menus in `-[WKContentView _shouldUseContextMenus]`, so we
+        reuse that method.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _shouldShowAutomaticKeyboardUIIgnoringInputMode]):
+        (-[WKContentView _elementTypeRequiresAccessoryView:]):
+        (-[WKContentView _shouldUseContextMenusForFormControls]):
+        * UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm:
+        (WebKit::WebDataListSuggestionsDropdownIOS::show):
+        * UIProcess/ios/forms/WKFormSelectControl.mm:
+        (-[WKFormSelectControl initWithView:]):
+
 2021-06-10  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r277820): Trackpad interaction in Web Content is not working on iOS or macCatalyst

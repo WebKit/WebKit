@@ -2190,7 +2190,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
         return NO;
     case WebKit::InputType::Select: {
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
-        if ([self _formControlRefreshEnabled])
+        if (self._shouldUseContextMenusForFormControls)
             return NO;
 #endif
         return !WebKit::currentUserInterfaceIdiomIsPadOrMac();
@@ -3263,7 +3263,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
         return false;
     case WebKit::InputType::Select: {
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
-        if ([self _formControlRefreshEnabled])
+        if (self._shouldUseContextMenusForFormControls)
             return NO;
 #endif
         return !WebKit::currentUserInterfaceIdiomIsPadOrMac();
@@ -7648,6 +7648,14 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 {
 #if HAVE(LINK_PREVIEW) && USE(UICONTEXTMENU)
     return linkedOnOrAfter(WebCore::SDKVersion::FirstThatHasUIContextMenuInteraction);
+#endif
+    return NO;
+}
+
+- (BOOL)_shouldUseContextMenusForFormControls
+{
+#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+    return self._formControlRefreshEnabled && self._shouldUseContextMenus;
 #endif
     return NO;
 }

@@ -76,7 +76,7 @@ CGFloat adjustedFontSize(CGFloat textWidth, UIFont *font, CGFloat initialFontSiz
     RetainPtr<NSObject <WKFormControl>> control;
 
 #if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    if ([view _formControlRefreshEnabled]) {
+    if (view._shouldUseContextMenusForFormControls) {
         if (view.focusedElementInformation.isMultiSelect)
             control = adoptNS([[WKSelectMultiplePicker alloc] initWithView:view]);
         else
