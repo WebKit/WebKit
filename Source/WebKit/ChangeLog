@@ -1,5 +1,22 @@
 2021-06-10  Chris Dumez  <cdumez@apple.com>
 
+        Do some hardening in XPCServiceEventHandler()
+        https://bugs.webkit.org/show_bug.cgi?id=226860
+        <rdar://66837596>
+
+        Reviewed by Geoffrey Garen.
+
+        Do some hardening in XPCServiceEventHandler() to deal with unexpected values and add
+        some more logging as well.
+
+        * Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm:
+        (WebKit::XPCServiceEventHandler):
+        * WebProcess/cocoa/HandleXPCEndpointMessages.h:
+        * WebProcess/cocoa/HandleXPCEndpointMessages.mm:
+        (WebKit::handleXPCEndpointMessages):
+
+2021-06-10  Chris Dumez  <cdumez@apple.com>
+
         Enable WebPage's release logging in ephemeral sessions
         https://bugs.webkit.org/show_bug.cgi?id=226510
 

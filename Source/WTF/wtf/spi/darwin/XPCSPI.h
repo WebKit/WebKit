@@ -154,6 +154,7 @@ void xpc_dictionary_set_string(xpc_object_t, const char* key, const char* string
 void xpc_dictionary_set_uint64(xpc_object_t, const char* key, uint64_t value);
 void xpc_dictionary_set_value(xpc_object_t, const char* key, xpc_object_t value);
 xpc_type_t xpc_get_type(xpc_object_t);
+const char* xpc_type_get_name(xpc_type_t);
 void xpc_main(xpc_connection_handler_t);
 const char* xpc_string_get_string_ptr(xpc_object_t);
 os_transaction_t os_transaction_create(const char *description);
