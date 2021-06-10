@@ -1,3 +1,44 @@
+2021-06-10  Chris Dumez  <cdumez@apple.com>
+
+        Enable WebPage's release logging in ephemeral sessions
+        https://bugs.webkit.org/show_bug.cgi?id=226510
+
+        Reviewed by Eric Carlson.
+
+        Enable WebPage's release logging in ephemeral sessions. Our release logging doesn't contain
+        anything sensitive and not having this logging makes it hard to debug issues in apps using
+        ephemeral sessions.
+
+        * Modules/applepay/PaymentCoordinator.cpp:
+        (WebCore::PaymentCoordinator::supportsVersion const):
+        (WebCore::PaymentCoordinator::canMakePayments):
+        (WebCore::PaymentCoordinator::canMakePaymentsWithActiveCard):
+        (WebCore::PaymentCoordinator::openPaymentSetup):
+        (WebCore::PaymentCoordinator::beginPaymentSession):
+        (WebCore::PaymentCoordinator::completeMerchantValidation):
+        (WebCore::PaymentCoordinator::completeShippingMethodSelection):
+        (WebCore::PaymentCoordinator::completeShippingContactSelection):
+        (WebCore::PaymentCoordinator::completePaymentMethodSelection):
+        (WebCore::PaymentCoordinator::completePaymentMethodModeChange):
+        (WebCore::PaymentCoordinator::completePaymentSession):
+        (WebCore::PaymentCoordinator::abortPaymentSession):
+        (WebCore::PaymentCoordinator::cancelPaymentSession):
+        (WebCore::PaymentCoordinator::validateMerchant):
+        (WebCore::PaymentCoordinator::didAuthorizePayment):
+        (WebCore::PaymentCoordinator::didSelectPaymentMethod):
+        (WebCore::PaymentCoordinator::didSelectShippingMethod):
+        (WebCore::PaymentCoordinator::didSelectShippingContact):
+        (WebCore::PaymentCoordinator::didChangePaymentMethodMode):
+        (WebCore::PaymentCoordinator::didCancelPaymentSession):
+        (WebCore::PaymentCoordinator::shouldEnableApplePayAPIs const):
+        (WebCore::PaymentCoordinator::setApplePayIsActiveIfAllowed const):
+        (WebCore::PaymentCoordinator::shouldAllowUserAgentScripts const):
+        (WebCore::PaymentCoordinator::getSetupFeatures):
+        (WebCore::PaymentCoordinator::beginApplePaySetup):
+        (WebCore::PaymentCoordinator::endApplePaySetup):
+        * Modules/applepay/PaymentCoordinatorClient.h:
+        * testing/MockPaymentCoordinator.h:
+
 2021-06-10  Youenn Fablet  <youenn@apple.com>
 
         CountQueuingStrategy.constructor misses checking the type of init param

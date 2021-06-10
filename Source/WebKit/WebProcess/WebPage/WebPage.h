@@ -466,7 +466,6 @@ public:
     void removeWebEditCommand(WebUndoStepID);
     bool isInRedo() const { return m_isInRedo; }
 
-    bool isAlwaysOnLoggingAllowed() const;
     void setActivePopupMenu(WebPopupMenu*);
 
     void setHiddenPageDOMTimerThrottlingIncreaseLimit(Seconds limit)

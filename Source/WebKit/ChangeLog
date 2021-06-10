@@ -1,3 +1,37 @@
+2021-06-10  Chris Dumez  <cdumez@apple.com>
+
+        Enable WebPage's release logging in ephemeral sessions
+        https://bugs.webkit.org/show_bug.cgi?id=226510
+
+        Reviewed by Eric Carlson.
+
+        Enable WebPage's release logging in ephemeral sessions. Our release logging doesn't contain
+        anything sensitive and not having this logging makes it hard to debug issues in apps using
+        ephemeral sessions.
+
+        * WebProcess/ApplePay/WebPaymentCoordinator.cpp:
+        * WebProcess/ApplePay/WebPaymentCoordinator.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_lastNavigationWasAppBound):
+        (WebKit::WebPage::close):
+        (WebKit::WebPage::freezeLayerTree):
+        (WebKit::WebPage::unfreezeLayerTree):
+        (WebKit::WebPage::layerVolatilityTimerFired):
+        (WebKit::WebPage::markLayersVolatile):
+        (WebKit::WebPage::cancelMarkLayersVolatile):
+        (WebKit::WebPage::touchEventSync):
+        (WebKit::WebPage::didReceivePolicyDecision):
+        (WebKit::WebPage::setIsTakingSnapshotsForApplicationSuspension):
+        (WebKit::WebPage::suspend):
+        (WebKit::WebPage::resume):
+        (WebKit::WebPage::runJavaScript):
+        (WebKit::WebPage::runJavaScriptInFrameInScriptWorld):
+        (WebKit::WebPage::updatePreferences):
+        (WebKit::WebPage::registerURLSchemeHandler):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getPositionInformation):
+
 2021-06-10  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, early May 2021 edition

@@ -112,8 +112,6 @@ private:
 
     bool isMockPaymentCoordinator() const final { return true; }
 
-    bool isAlwaysOnLoggingAllowed() const final { return true; }
-
     void getSetupFeatures(const ApplePaySetupConfiguration&, const URL&, CompletionHandler<void(Vector<Ref<ApplePaySetupFeature>>&&)>&&) final;
     void beginApplePaySetup(const ApplePaySetupConfiguration&, const URL&, Vector<RefPtr<ApplePaySetupFeature>>&&, CompletionHandler<void(bool)>&&) final;
 
