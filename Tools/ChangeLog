@@ -1,3 +1,13 @@
+2021-06-10  Truitt Savell  <tsavell@apple.com>
+
+        Remove Ews179 and bot279 from configs
+        https://bugs.webkit.org/show_bug.cgi?id=226855
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/build-webkit-org/config.json:
+        * CISupport/ews-build/config.json:
+
 2021-06-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove useDataICInOptimizingJIT option

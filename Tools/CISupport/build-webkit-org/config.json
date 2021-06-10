@@ -14,7 +14,6 @@
                     { "name": "bot140", "platform": "mac-bigsur" },
                     { "name": "bot141", "platform": "mac-bigsur" },
                     { "name": "bot142", "platform": "mac-bigsur" },
-                    { "name": "bot279", "platform": "mac-bigsur" },
                     { "name": "bot302", "platform": "mac-bigsur" },
                     { "name": "bot603", "platform": "mac-bigsur" },
                     { "name": "bot632", "platform": "mac-bigsur" },
@@ -138,7 +137,7 @@
                           "bigsur-release-tests-test262", "bigsur-release-tests-wk1", "bigsur-release-tests-wk2", "bigsur-release-applesilicon-tests-wk1",
                           "bigsur-release-applesilicon-tests-wk2", "bigsur-applesilicon-release-tests-jsc", "bigsur-release-tests-wk2-webgl"
                       ],
-                      "workernames": ["bot279", "bot121", "bot124"]
+                      "workernames": ["bot121", "bot124"]
                     },
                     { "name": "Apple-BigSur-Release-Test262-Tests", "factory": "Test262Factory", "builddir": "bigsur-release-tests-test262",
                       "platform": "mac-bigsur", "configuration": "release", "architectures": ["x86_64", "arm64"],
