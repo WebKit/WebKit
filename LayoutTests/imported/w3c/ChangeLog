@@ -1,3 +1,19 @@
+2021-06-10  Chris Dumez  <cdumez@apple.com>
+
+        REGRESSION: service-workers/service-worker/credentials.https.html and content-security-policy/reporting/report-only-in-meta.sub.html failing together constantly.
+        https://bugs.webkit.org/show_bug.cgi?id=226884
+        <rdar://problem/79148983>
+
+        Reviewed by Geoffrey Garen.
+
+        Resync set-cookie.py from upsteam WPT 7f913d9d12a54858 as it had a hard-coded
+        expiration for the cookie (which has just passed).
+
+        * web-platform-tests/content-security-policy/reporting/support/set-cookie.py:
+        (main):
+        * web-platform-tests/cookies/resources/set-cookie.py:
+        (main):
+
 2021-06-10  Alex Christensen  <achristensen@webkit.org>
 
         Move Timing-Allow-Origin checks to the network process
