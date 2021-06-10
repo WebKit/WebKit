@@ -1,3 +1,14 @@
+2021-06-10  Chris Dumez  <cdumez@apple.com>
+
+        Fix incorrect check in AudioNode.disconnect()
+        https://bugs.webkit.org/show_bug.cgi?id=226818
+        <rdar://problem/79076999>
+
+        Reviewed by Eric Carlson.
+
+        * Modules/webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::disconnect):
+
 2021-06-10  Toshio Ogasawara  <toshio.ogasawara@access-company.com>
 
         [MSE] When currentTime is a large value, it takes time to process SourceBufferPrivate::evictCodedFrames().
