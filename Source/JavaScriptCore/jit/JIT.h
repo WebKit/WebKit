@@ -954,17 +954,6 @@ namespace JSC {
                 return appendCallWithExceptionCheck(operation);
             return appendCallWithExceptionCheckAndSlowPathReturnType(operation);
         }
-
-        template<typename OperationType, typename... Args>
-        void callOperation(Address target, Args... args)
-        {
-            setupArgumentsForIndirectCall<OperationType>(target, args...);
-            // x64 Windows cannot use standard call when the return type is larger than 64 bits.
-            if constexpr (is64BitType<typename FunctionTraits<OperationType>::ResultType>::value)
-                appendCallWithExceptionCheck(Address(GPRInfo::nonArgGPR0, target.offset));
-            else
-                appendCallWithExceptionCheckAndSlowPathReturnType(Address(GPRInfo::nonArgGPR0, target.offset));
-        }
 #else // OS(WINDOWS) && CPU(X86_64)
         template<typename OperationType, typename... Args>
         MacroAssembler::Call callOperation(OperationType operation, Args... args)
@@ -972,14 +961,18 @@ namespace JSC {
             setupArguments<OperationType>(args...);
             return appendCallWithExceptionCheck(operation);
         }
+#endif // OS(WINDOWS) && CPU(X86_64)
 
         template<typename OperationType, typename... Args>
         void callOperation(Address target, Args... args)
         {
+#if OS(WINDOWS) && CPU(X86_64)
+            // x64 Windows cannot use standard call when the return type is larger than 64 bits.
+            static_assert(is64BitType<typename FunctionTraits<OperationType>::ResultType>::value);
+#endif
             setupArgumentsForIndirectCall<OperationType>(target, args...);
             appendCallWithExceptionCheck(Address(GPRInfo::nonArgGPR0, target.offset));
         }
-#endif // OS(WINDOWS) && CPU(X86_64)
 
         template<typename Metadata, typename OperationType, typename... Args>
         std::enable_if_t<FunctionTraits<OperationType>::hasResult, MacroAssembler::Call>
