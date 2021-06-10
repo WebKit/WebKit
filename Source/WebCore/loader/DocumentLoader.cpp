@@ -687,7 +687,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
     if (!didReceiveRedirectResponse)
         return completionHandler(WTFMove(newRequest));
 
-    auto navigationPolicyCompletionHandler = [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (ResourceRequest&& request, WeakPtr<FormState>&&, NavigationPolicyDecision navigationPolicyDecision) mutable {
+    auto navigationPolicyCompletionHandler = [this, protectedThis = makeRef(*this), protectedFrame = makeRef(*m_frame), completionHandler = WTFMove(completionHandler)] (ResourceRequest&& request, WeakPtr<FormState>&&, NavigationPolicyDecision navigationPolicyDecision) mutable {
         m_waitingForNavigationPolicy = false;
         switch (navigationPolicyDecision) {
         case NavigationPolicyDecision::IgnoreLoad:
@@ -1114,6 +1114,9 @@ void DocumentLoader::commitLoad(const char* data, int length)
 
 ResourceError DocumentLoader::interruptedForPolicyChangeError() const
 {
+    if (!frameLoader())
+        return {};
+
     return frameLoader()->client().interruptedForPolicyChangeError(request());
 }
 
