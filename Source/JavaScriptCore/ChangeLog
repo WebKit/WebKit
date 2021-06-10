@@ -1,3 +1,21 @@
+2021-06-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        [JSC] Remove useDataICInOptimizingJIT option
+        https://bugs.webkit.org/show_bug.cgi?id=226862
+
+        Reviewed by Mark Lam.
+
+        Originally this option is added to fix performance problem when using DataIC in DFG / FTL.
+        But it turned out that that performance regression was caused due to disablement of InlineAccess when
+        using DataIC. With the configuration using DataIC and InlineAccess, we do not observe performance regression.
+        So, let's just drop this option.
+
+        * jit/JITCode.h:
+        (JSC::JITCode::useDataIC):
+        * runtime/Options.cpp:
+        (JSC::Options::recomputeDependentOptions):
+        * runtime/OptionsList.h:
+
 2021-06-10  Adrian Perez de Castro  <aperez@igalia.com>
 
         Non-unified build fixes, early May 2021 edition
