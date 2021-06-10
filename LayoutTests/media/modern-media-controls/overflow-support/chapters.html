@@ -18,24 +18,32 @@ const shadowRoot = window.internals.shadowRoot(media);
 
 window.internals.setMediaControlsHidePlaybackRates(media, true);
 
-let contextmenu = null;
+async function checkTimeout(description, promise, ms)
+{
+    let result = await Promise.race([
+        promise.then(() => true),
+        UIHelper.delayFor(ms ?? 1000).then(() => false),
+    ]);
+    if (!result)
+        debug(`TIMEOUT: ${description}`);
+}
 
 media.addEventListener("play", async function() {
     media.pause();
 
-    await shouldBecomeDifferent("shadowRoot.querySelector('button.overflow')", "null");
+    await checkTimeout("button added", shouldBecomeDifferent("shadowRoot.querySelector('button.overflow')", "null"));
 
-    await shouldBecomeDifferent("shadowRoot.querySelector('button.overflow').getBoundingClientRect().width", "0");
+    await checkTimeout("button visible", shouldBecomeDifferent("shadowRoot.querySelector('button.overflow').getBoundingClientRect().width", "0"));
 
-    await shouldBecomeDifferent("media.textTracks[0].mode", "'disabled'");
+    await checkTimeout("chapters loaded", shouldBecomeDifferent("media.textTracks[0].mode", "'disabled'"));
 
     debug("Tapping overflow button...");
-    await pressOnElement(shadowRoot.querySelector("button.overflow"));
-    contextmenu = await getTracksContextMenu();
+    await checkTimeout("clicked button", pressOnElement(shadowRoot.querySelector("button.overflow")));
+    await checkTimeout("contextmenu shown", UIHelper.waitForContextMenuToShow());
 
     debug("Selecting first chapter cue...");
-    await UIHelper.chooseMenuAction("ipsum");
-    await UIHelper.waitForContextMenuToHide();
+    await checkTimeout("contextmenu action", UIHelper.chooseMenuAction("ipsum"));
+    await checkTimeout("contextmenu hidden", UIHelper.waitForContextMenuToHide());
 
     shouldBeGreaterThanOrEqual("media.currentTime", "5");
 
