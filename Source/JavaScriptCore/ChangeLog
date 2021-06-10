@@ -1,3 +1,18 @@
+2021-06-10  Mark Lam  <mark.lam@apple.com>
+
+        Another speculative build fix for Win32.
+        https://bugs.webkit.org/show_bug.cgi?id=226880
+        rdar://79124858
+
+        Reviewed by Keith Miller.
+
+        We're getting reports of "warning C4206: nonstandard extension used: translation
+        unit is empty" turning into a build error on Win32 ports.  By design, we rely on
+        #define flags to make some translation units empty.  Hence, we don't want this
+        warning to turn into an error.
+
+        * config.h:
+
 2021-06-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         [JSC] Remove useDataICInOptimizingJIT option
