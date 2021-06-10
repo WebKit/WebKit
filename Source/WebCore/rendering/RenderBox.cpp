@@ -3121,7 +3121,7 @@ std::optional<LayoutUnit> RenderBox::computeIntrinsicLogicalContentHeightUsing(L
 {
     // FIXME: The CSS sizing spec is considering changing what min-content/max-content should resolve to.
     // If that happens, this code will have to change.
-    if (logicalHeightLength.isMinContent() || logicalHeightLength.isMaxContent() || logicalHeightLength.isFitContent() || logicalHeightLength.isMinIntrinsic()) {
+    if (logicalHeightLength.isMinContent() || logicalHeightLength.isMaxContent() || logicalHeightLength.isFitContent() || logicalHeightLength.isLegacyIntrinsic()) {
         if (intrinsicContentHeight && style().boxSizing() == BoxSizing::BorderBox)
             return intrinsicContentHeight.value() + borderAndPaddingLogicalHeight();
         return intrinsicContentHeight;
@@ -3138,7 +3138,7 @@ std::optional<LayoutUnit> RenderBox::computeContentAndScrollbarLogicalHeightUsin
         return heightType == MinSize ? std::optional<LayoutUnit>(0) : std::nullopt;
     // FIXME: The CSS sizing spec is considering changing what min-content/max-content should resolve to.
     // If that happens, this code will have to change.
-    if (height.isIntrinsic() || height.isMinIntrinsic())
+    if (height.isIntrinsic() || height.isLegacyIntrinsic())
         return computeIntrinsicLogicalContentHeightUsing(height, intrinsicContentHeight, borderAndPaddingLogicalHeight());
     if (height.isFixed())
         return LayoutUnit(height.value());
