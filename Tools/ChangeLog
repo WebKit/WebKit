@@ -1,3 +1,13 @@
+2021-06-09  Chris Gambrell  <cgambrell@apple.com>
+
+        Add personal email to Tools/Scripts/webkitpy/common/config/contributors.json
+        https://bugs.webkit.org/show_bug.cgi?id=226845
+        <rdar://problem/79095492>
+
+        Reviewed by Jonathan Bedard.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2021-06-09  Dewei Zhu  <dewei_zhu@apple.com>
 
         HTTP server should run with the same python executable as run-benchmark script.
