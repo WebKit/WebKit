@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ThemeTypes.h"
+#include <optional>
 #include <wtf/Forward.h>
 
 namespace WebCore {

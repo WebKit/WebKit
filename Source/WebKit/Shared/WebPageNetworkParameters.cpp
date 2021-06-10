@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebPageNetworkParameters.h"
 
+#include "ArgumentCoders.h"
+
 namespace WebKit {
 
 void WebPageNetworkParameters::encode(IPC::Encoder& encoder) const

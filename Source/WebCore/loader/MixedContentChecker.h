@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include <optional>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 

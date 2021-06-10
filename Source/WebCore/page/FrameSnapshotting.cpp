@@ -41,7 +41,6 @@
 #include "Page.h"
 #include "RenderObject.h"
 #include "Settings.h"
-#include <wtf/OptionSet.h>
 
 namespace WebCore {
 

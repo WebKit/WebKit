@@ -55,6 +55,7 @@
 #include "SVGNames.h"
 #include "SVGURIReference.h"
 #include "Settings.h"
+#include "ShadowRoot.h"
 #include "Text.h"
 #include "WebAnimationTypes.h"
 #include <wtf/RobinHoodHashSet.h>

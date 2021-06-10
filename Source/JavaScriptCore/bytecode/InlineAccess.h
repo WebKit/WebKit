@@ -32,6 +32,7 @@
 
 namespace JSC {
 
+class CodeBlock;
 class JSArray;
 class Structure;
 class StructureStubInfo;

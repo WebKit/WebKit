@@ -28,6 +28,7 @@
 
 #if ENABLE(JIT)
 
+#include "CCallHelpers.h"
 #include "CacheableIdentifierInlines.h"
 #include "CodeBlock.h"
 #include "InlineAccess.h"

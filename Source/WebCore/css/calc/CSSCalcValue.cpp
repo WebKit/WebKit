@@ -37,6 +37,7 @@
 #include "CSSCalcNegateNode.h"
 #include "CSSCalcOperationNode.h"
 #include "CSSCalcPrimitiveValueNode.h"
+#include "CSSCalcSymbolTable.h"
 #include "CSSParser.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValueMappings.h"

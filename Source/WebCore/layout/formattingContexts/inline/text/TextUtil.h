@@ -38,6 +38,7 @@ class RenderStyle;
 namespace Layout {
 
 class LegacyInlineTextBox;
+class InlineTextBox;
 class InlineTextItem;
 
 class TextUtil {

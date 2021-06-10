@@ -30,6 +30,7 @@
 #include "DocumentMarkerController.h"
 #include "Editor.h"
 #include "ElementRuleCollector.h"
+#include "HighlightData.h"
 #include "HighlightRegister.h"
 #include "RenderBoxModelObject.h"
 #include "RenderText.h"

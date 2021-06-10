@@ -1,3 +1,30 @@
+2021-06-10  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Non-unified build fixes, early May 2021 edition
+        https://bugs.webkit.org/show_bug.cgi?id=226763
+
+        Unreviewed non-unified build fixes.
+
+        * css/calc/CSSCalcValue.cpp: Add missing CSSCalcSymbolTable.h header.
+        * layout/formattingContexts/inline/text/TextUtil.h: Add missing forward declaration for
+        InlineTextBox class.
+        * loader/MixedContentChecker.h: Add missing <optional> header.
+        * page/FrameSnapshotting.cpp: Remove unneeded inclusion of DestinationColorSpace.h and
+        wtf/OptionSet.h headers.
+        * page/FrameSnapshotting.h: Add mission DestinationColorSpace.h and wtf/OptionSet.h headers,
+        remove now unneeded wtf/Forward.h heeder and forward declaration for the
+        DestinationColorSpace class.
+        * platform/DateComponents.h: Add missing <optional> header, remove unneeded <limits> header.
+        * platform/Theme.h: Add missin <optional> header.
+        * platform/graphics/HEVCUtilities.h: Ditto.
+        * rendering/HighlightData.h: Add missing forward declaration for the RenderText class.
+        * rendering/MarkedText.cpp: Add missing HighlightData.h header.
+        * rendering/RenderLineBoxList.cpp: Add missing inclusion of the LegacyInlineElementBox.h
+        header.
+        * style/StyleAdjuster.cpp: Add missing ShadowRoot.h header.
+        * svg/SVGToOTFFontConversion.h: Add missing <optional> header.
+        * workers/service/ServiceWorkerClientQueryOptions.h: Ditto.
+
 2021-06-09  Rob Buis  <rbuis@igalia.com>
 
         Null check page in generateCertificate

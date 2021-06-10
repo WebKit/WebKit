@@ -32,7 +32,7 @@
 #include "DestinationColorSpace.h"
 #include "PixelFormat.h"
 #include <memory>
-#include <wtf/Forward.h>
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 
