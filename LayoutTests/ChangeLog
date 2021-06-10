@@ -1,3 +1,13 @@
+2021-06-10  Toshio Ogasawara  <toshio.ogasawara@access-company.com>
+
+        [MSE] When currentTime is a large value, it takes time to process SourceBufferPrivate::evictCodedFrames().
+        https://bugs.webkit.org/show_bug.cgi?id=226867
+
+        Reviewed by Eric Carlson.
+
+        * media/media-source/media-source-evict-codedframe-large-currenttime-expected.txt: Added.
+        * media/media-source/media-source-evict-codedframe-large-currenttime.html: Added.
+
 2021-06-10  Truitt Savell  <tsavell@apple.com>
 
         Skip tiled-drawing/scrolling/non-fast-region/wheel-event-plugin.html for arm64

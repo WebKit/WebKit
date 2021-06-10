@@ -653,7 +653,20 @@ void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t maximu
     DEBUG_LOG(LOGIDENTIFIER, "currentTime = ", currentTime, ", require ", initialBufferedSize + newDataSize, " bytes, maximum buffer size is ", maximumBufferSize);
 #endif
 
-    MediaTime rangeStart = MediaTime::zeroTime();
+    MediaTime rangeStart = MediaTime::invalidTime();
+
+    for (auto& trackBuffer : m_trackBufferMap.values()) {
+        auto iter = trackBuffer.get().samples.presentationOrder().findSampleContainingOrAfterPresentationTime(MediaTime::zeroTime());
+        if (iter != trackBuffer.get().samples.presentationOrder().end()) {
+            MediaTime startTime = iter->first;
+            if (rangeStart.isInvalid() || startTime < rangeStart)
+                rangeStart = startTime;
+        }
+    }
+
+    if (rangeStart.isInvalid())
+        rangeStart = MediaTime::zeroTime();
+
     MediaTime rangeEnd = rangeStart + thirtySeconds;
     while (rangeStart < maximumRangeEnd) {
         // 4. For each range in removal ranges, run the coded frame removal algorithm with start and

@@ -1,3 +1,18 @@
+2021-06-10  Toshio Ogasawara  <toshio.ogasawara@access-company.com>
+
+        [MSE] When currentTime is a large value, it takes time to process SourceBufferPrivate::evictCodedFrames().
+        https://bugs.webkit.org/show_bug.cgi?id=226867
+
+        Reviewed by Eric Carlson.
+
+        SourceBufferPrivate::evictCodedFrames() now starts with the earliest PTS value
+        in trackBuffer instead of MediaTime::zeroTime() to avoid unnecessary loops.
+
+        Test: media/media-source/media-source-evict-codedframe-large-currenttime.html
+
+        * platform/graphics/SourceBufferPrivate.cpp:
+        (WebCore::SourceBufferPrivate::evictCodedFrames):
+
 2021-06-10  Andres Gonzalez  <andresg_22@apple.com>
 
         iOS - VoiceOver reads the programmatically associated label instead of the accessible name provided via the aria-label or aria-labelledby attribute
