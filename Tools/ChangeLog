@@ -1,3 +1,17 @@
+2021-06-11  Jonathan Bedard  <jbedard@apple.com>
+
+        [check-webkit-style] failing in JS checker due to python byte string
+        https://bugs.webkit.org/show_bug.cgi?id=226925
+        <rdar://problem/79166108>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/style/checkers/jstest.py:
+        (map_functions_to_dict): Use byte regexes.
+        (strip_trailing_blank_lines_and_comments): Ditto.
+        * Scripts/webkitpy/style/checkers/jstest_unittest.py:
+        (JSTestCheckerTestCase.test_map_functions_to_dict): Test content should be bytes.
+
 2021-06-11  Truitt Savell  <tsavell@apple.com>
 
         Remove ews129 instead of ews179

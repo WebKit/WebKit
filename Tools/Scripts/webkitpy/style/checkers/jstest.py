@@ -25,6 +25,7 @@
 
 import re
 
+from webkitcorepy import string_utils
 from webkitpy.common.system.systemhost import SystemHost
 
 ALL_JS_TEST_FUNCTION_FILES = [
@@ -60,8 +61,8 @@ def map_functions_to_dict(content):
     Args:
       content: A multi-line string containing JavaScript source to be split into individual function definitions.
     """
-    functions = re.split(r'^function\s+', content, flags=re.MULTILINE)
-    function_name_regex = re.compile(r'^(?P<name>\w+)\s*\(', flags=re.MULTILINE)
+    functions = re.split(br'^function\s+', content, flags=re.MULTILINE)
+    function_name_regex = re.compile(br'^(?P<name>\w+)\s*\(', flags=re.MULTILINE)
     result = {}
     for f in functions:
         match = function_name_regex.match(f)
@@ -77,11 +78,11 @@ def strip_trailing_blank_lines_and_comments(function):
         function: A multi-line string representing the source for one JavaScript function, less the "function" keyword.
     """
     lines = function.splitlines(True)
-    blank_line_regex = re.compile(r'^\s*$')
-    comment_line_regex = re.compile(r'^\s*//.*$')
+    blank_line_regex = re.compile(br'^\s*$')
+    comment_line_regex = re.compile(br'^\s*//.*$')
     while blank_line_regex.search(lines[-1]) or comment_line_regex.search(lines[-1]):
         del lines[-1]
-    return ''.join(lines)
+    return b''.join(lines)
 
 
 class JSTestChecker(object):
@@ -136,5 +137,5 @@ class JSTestChecker(object):
                 if function_name in baseline_function_map.keys() and function_name in test_function_map.keys():
                     if baseline_function_map[function_name] != test_function_map[function_name]:
                         error_message = "Changes to function {0}() should be kept in sync with {1}.".format(
-                            function_name, path)
+                            string_utils.decode(function_name), path)
                         self._handle_style_error(0, 'jstest/function_equality', 5, error_message)
