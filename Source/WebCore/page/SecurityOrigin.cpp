@@ -172,7 +172,7 @@ static bool shouldTreatAsPotentiallyTrustworthy(const String& protocol, StringVi
 
 bool shouldTreatAsPotentiallyTrustworthy(const URL& url)
 {
-    return shouldTreatAsPotentiallyTrustworthy(url.protocol().toStringWithoutCopying(), url.host().toStringWithoutCopying());
+    return shouldTreatAsPotentiallyTrustworthy(url.protocol().toStringWithoutCopying(), url.host());
 }
 
 SecurityOrigin::SecurityOrigin(const URL& url)
