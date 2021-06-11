@@ -39,8 +39,8 @@
 #include "WorkerGlobalScope.h"
 #include <wtf/IsoMallocInlines.h>
 
-#define REGISTRATION_RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(m_container->isAlwaysOnLoggingAllowed(), ServiceWorker, "%p - ServiceWorkerRegistration::" fmt, this, ##__VA_ARGS__)
-#define REGISTRATION_RELEASE_LOG_ERROR_IF_ALLOWED(fmt, ...) RELEASE_LOG_ERROR_IF(m_container->isAlwaysOnLoggingAllowed(), ServiceWorker, "%p - ServiceWorkerRegistration::" fmt, this, ##__VA_ARGS__)
+#define REGISTRATION_RELEASE_LOG(fmt, ...) RELEASE_LOG(ServiceWorker, "%p - ServiceWorkerRegistration::" fmt, this, ##__VA_ARGS__)
+#define REGISTRATION_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR(ServiceWorker, "%p - ServiceWorkerRegistration::" fmt, this, ##__VA_ARGS__)
 
 namespace WebCore {
 
@@ -71,7 +71,7 @@ ServiceWorkerRegistration::ServiceWorkerRegistration(ScriptExecutionContext& con
     if (m_registrationData.activeWorker)
         m_activeWorker = ServiceWorker::getOrCreate(context, WTFMove(*m_registrationData.activeWorker));
 
-    REGISTRATION_RELEASE_LOG_IF_ALLOWED("ServiceWorkerRegistration: ID %llu, installing=%llu, waiting=%llu, active=%llu", identifier().toUInt64(), m_installingWorker ? m_installingWorker->identifier().toUInt64() : 0, m_waitingWorker ? m_waitingWorker->identifier().toUInt64() : 0, m_activeWorker ? m_activeWorker->identifier().toUInt64() : 0);
+    REGISTRATION_RELEASE_LOG("ServiceWorkerRegistration: ID %llu, installing=%llu, waiting=%llu, active=%llu", identifier().toUInt64(), m_installingWorker ? m_installingWorker->identifier().toUInt64() : 0, m_waitingWorker ? m_waitingWorker->identifier().toUInt64() : 0, m_activeWorker ? m_activeWorker->identifier().toUInt64() : 0);
 
     m_container->addRegistration(*this);
 
@@ -165,15 +165,15 @@ void ServiceWorkerRegistration::updateStateFromServer(ServiceWorkerRegistrationS
 {
     switch (state) {
     case ServiceWorkerRegistrationState::Installing:
-        REGISTRATION_RELEASE_LOG_IF_ALLOWED("updateStateFromServer: Setting registration %llu installing worker to %llu", identifier().toUInt64(), serviceWorker ? serviceWorker->identifier().toUInt64() : 0);
+        REGISTRATION_RELEASE_LOG("updateStateFromServer: Setting registration %llu installing worker to %llu", identifier().toUInt64(), serviceWorker ? serviceWorker->identifier().toUInt64() : 0);
         m_installingWorker = WTFMove(serviceWorker);
         break;
     case ServiceWorkerRegistrationState::Waiting:
-        REGISTRATION_RELEASE_LOG_IF_ALLOWED("updateStateFromServer: Setting registration %llu waiting worker to %llu", identifier().toUInt64(), serviceWorker ? serviceWorker->identifier().toUInt64() : 0);
+        REGISTRATION_RELEASE_LOG("updateStateFromServer: Setting registration %llu waiting worker to %llu", identifier().toUInt64(), serviceWorker ? serviceWorker->identifier().toUInt64() : 0);
         m_waitingWorker = WTFMove(serviceWorker);
         break;
     case ServiceWorkerRegistrationState::Active:
-        REGISTRATION_RELEASE_LOG_IF_ALLOWED("updateStateFromServer: Setting registration %llu active worker to %llu", identifier().toUInt64(), serviceWorker ? serviceWorker->identifier().toUInt64() : 0);
+        REGISTRATION_RELEASE_LOG("updateStateFromServer: Setting registration %llu active worker to %llu", identifier().toUInt64(), serviceWorker ? serviceWorker->identifier().toUInt64() : 0);
         m_activeWorker = WTFMove(serviceWorker);
         break;
     }
@@ -184,7 +184,7 @@ void ServiceWorkerRegistration::queueTaskToFireUpdateFoundEvent()
     if (isContextStopped())
         return;
 
-    REGISTRATION_RELEASE_LOG_IF_ALLOWED("fireUpdateFoundEvent: Firing updatefound event for registration %llu", identifier().toUInt64());
+    REGISTRATION_RELEASE_LOG("fireUpdateFoundEvent: Firing updatefound event for registration %llu", identifier().toUInt64());
 
     queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().updatefoundEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }

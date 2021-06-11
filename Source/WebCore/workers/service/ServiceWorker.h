@@ -82,8 +82,6 @@ private:
     const char* activeDOMObjectName() const final;
     void stop() final;
 
-    bool isAlwaysOnLoggingAllowed() const;
-
     SWClientConnection& swConnection();
 
     ServiceWorkerData m_data;

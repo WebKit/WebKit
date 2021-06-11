@@ -1,3 +1,48 @@
+2021-06-11  Chris Dumez  <cdumez@apple.com>
+
+        Enable more release logging in WebCore for ephemeral sessions
+        https://bugs.webkit.org/show_bug.cgi?id=226940
+
+        Reviewed by Geoffrey Garen.
+
+        Enable more release logging in WebCore for ephemeral sessions, to faciliate
+        debugging.
+
+        * Modules/webaudio/AudioContext.cpp:
+        * loader/PolicyChecker.cpp:
+        (WebCore::FrameLoader::PolicyChecker::checkNavigationPolicy):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scheduleResizeEventIfNeeded):
+        (WebCore::FrameView::paintContents):
+        (WebCore::FrameView::fireLayoutRelatedMilestonesIfNeeded):
+        * page/PerformanceMonitor.cpp:
+        (WebCore::PerformanceMonitor::measurePostLoadCPUUsage):
+        (WebCore::PerformanceMonitor::measurePostLoadMemoryUsage):
+        (WebCore::PerformanceMonitor::measurePostBackgroundingMemoryUsage):
+        (WebCore::PerformanceMonitor::measurePostBackgroundingCPUUsage):
+        (WebCore::PerformanceMonitor::measureCPUUsageInActivityState):
+        * workers/service/ServiceWorker.cpp:
+        (WebCore::ServiceWorker::ServiceWorker):
+        (WebCore::ServiceWorker::updateState):
+        (WebCore::ServiceWorker::isAlwaysOnLoggingAllowed const): Deleted.
+        * workers/service/ServiceWorker.h:
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::addRegistration):
+        (WebCore::ServiceWorkerContainer::unregisterRegistration):
+        (WebCore::ServiceWorkerContainer::updateRegistration):
+        (WebCore::ServiceWorkerContainer::jobFailedWithException):
+        (WebCore::ServiceWorkerContainer::jobResolvedWithRegistration):
+        (WebCore::ServiceWorkerContainer::jobResolvedWithUnregistrationResult):
+        (WebCore::ServiceWorkerContainer::startScriptFetchForJob):
+        (WebCore::ServiceWorkerContainer::jobFinishedLoadingScript):
+        (WebCore::ServiceWorkerContainer::jobFailedLoadingScript):
+        (WebCore::ServiceWorkerContainer::isAlwaysOnLoggingAllowed const): Deleted.
+        * workers/service/ServiceWorkerContainer.h:
+        * workers/service/ServiceWorkerRegistration.cpp:
+        (WebCore::ServiceWorkerRegistration::ServiceWorkerRegistration):
+        (WebCore::ServiceWorkerRegistration::updateStateFromServer):
+        (WebCore::ServiceWorkerRegistration::queueTaskToFireUpdateFoundEvent):
+
 2021-06-11  Patrick Angle  <pangle@apple.com>
 
         Web Inspector: Add instrumentation to node destruction for InspectorDOMAgent
