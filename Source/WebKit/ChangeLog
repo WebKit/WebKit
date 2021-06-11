@@ -1,5 +1,30 @@
 2021-06-11  Chris Dumez  <cdumez@apple.com>
 
+        Regression(r276653) We're going to disk more often for local storage operations
+        https://bugs.webkit.org/show_bug.cgi?id=226832
+
+        Reviewed by Darin Adler.
+
+        We're going to disk more often for local storage operations since r276653 because we no
+        longer keep items in memory. This results in a slightly increased power usage on one of
+        our benchmarks. As a first step to improve this, I am reintroducing a cache of the items
+        in memory, as long as the values are not too large (1Kb limit). We still go to disk to
+        look up values that are larger than 1Kb to avoid regressing memory usage.
+
+        * NetworkProcess/WebStorage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::openDatabase):
+        (WebKit::LocalStorageDatabase::items const):
+        (WebKit::LocalStorageDatabase::removeItem):
+        (WebKit::LocalStorageDatabase::item const):
+        (WebKit::LocalStorageDatabase::itemBypassingCache const):
+        (WebKit::LocalStorageDatabase::setItem):
+        (WebKit::LocalStorageDatabase::clear):
+        (WebKit::LocalStorageDatabase::close):
+        (WebKit::LocalStorageDatabase::databaseIsEmpty const):
+        * NetworkProcess/WebStorage/LocalStorageDatabase.h:
+
+2021-06-11  Chris Dumez  <cdumez@apple.com>
+
         Enable WebProcess' release logging in ephemeral sessions
         https://bugs.webkit.org/show_bug.cgi?id=226927
 

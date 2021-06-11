@@ -38,7 +38,8 @@
 namespace WebKit {
 using namespace WebCore;
 
-static const ASCIILiteral getItemsQueryString { "SELECT key, value FROM ItemTable"_s };
+constexpr auto getItemsQueryString { "SELECT key, value FROM ItemTable"_s };
+constexpr unsigned maximumSizeForValuesKeptInMemory { 1024 }; // 1 KB
 
 Ref<LocalStorageDatabase> LocalStorageDatabase::create(String&& databasePath, unsigned quotaInBytes)
 {
@@ -61,8 +62,11 @@ LocalStorageDatabase::~LocalStorageDatabase()
 bool LocalStorageDatabase::openDatabase(ShouldCreateDatabase shouldCreateDatabase)
 {
     ASSERT(!RunLoop::isMain());
-    if (!FileSystem::fileExists(m_databasePath) && shouldCreateDatabase == ShouldCreateDatabase::No)
-        return true;
+    if (!FileSystem::fileExists(m_databasePath)) {
+        if (shouldCreateDatabase == ShouldCreateDatabase::No)
+            return true;
+        m_items = HashMap<String, String> { };
+    }
 
     if (m_databasePath.isEmpty()) {
         LOG_ERROR("Filename for local storage database is empty - cannot open for persistent storage");
@@ -140,19 +144,31 @@ HashMap<String, String> LocalStorageDatabase::items() const
     if (!m_database.isOpen())
         return { };
 
+    HashMap<String, String> items;
+    if (m_items) {
+        items.reserveInitialCapacity(m_items->size());
+        for (auto& entry : *m_items) {
+            auto value = entry.value.isNull() ? itemBypassingCache(entry.key) : entry.value;
+            items.add(entry.key, WTFMove(value));
+        }
+        return items;
+    }
+
     auto query = scopedStatement(m_getItemsStatement, getItemsQueryString);
     if (!query) {
         LOG_ERROR("Unable to select items from ItemTable for local storage");
         return { };
     }
 
-    HashMap<String, String> items;
+    m_items = HashMap<String, String> { };
     int result = query->step();
     while (result == SQLITE_ROW) {
         String key = query->columnText(0);
         String value = query->columnBlobAsString(1);
-        if (!key.isNull() && !value.isNull())
+        if (!key.isNull() && !value.isNull()) {
+            m_items->add(key, value.sizeInBytes() > maximumSizeForValuesKeptInMemory ? String() : value);
             items.add(WTFMove(key), WTFMove(value));
+        }
         result = query->step();
     }
 
@@ -184,6 +200,9 @@ void LocalStorageDatabase::removeItem(const String& key, String& oldValue)
         LOG_ERROR("Failed to delete item in the local storage database - %i", result);
         return;
     }
+
+    if (m_items)
+        m_items->remove(key);
 }
 
 String LocalStorageDatabase::item(const String& key) const
@@ -192,6 +211,20 @@ String LocalStorageDatabase::item(const String& key) const
     if (!m_database.isOpen())
         return { };
 
+    if (m_items) {
+        // Use find() instead of get() since a null String is a valid value here.
+        auto it = m_items->find(key);
+        if (it == m_items->end())
+            return { };
+        if (!it->value.isNull())
+            return it->value;
+        // The value is too large and needs to be fetched from the database.
+    }
+    return itemBypassingCache(key);
+}
+
+String LocalStorageDatabase::itemBypassingCache(const String& key) const
+{
     auto query = scopedStatement(m_getItemStatement, "SELECT value FROM ItemTable WHERE key=?"_s);
     if (!query) {
         LOG_ERROR("Unable to get item from ItemTable for local storage");
@@ -231,13 +264,20 @@ void LocalStorageDatabase::setItem(const String& key, const String& value, Strin
         LOG_ERROR("Failed to update item in the local storage database - %i", result);
         if (result == SQLITE_FULL)
             quotaException = true;
+        return;
     }
+
+    if (m_items)
+        m_items->set(key, value.sizeInBytes() > maximumSizeForValuesKeptInMemory ? String() : value);
 }
 
 bool LocalStorageDatabase::clear()
 {
     ASSERT(!RunLoop::isMain());
     if (!m_database.isOpen())
+        return false;
+
+    if (m_items && m_items->isEmpty())
         return false;
 
     auto clearStatement = scopedStatement(m_clearStatement, "DELETE FROM ItemTable"_s);
@@ -250,6 +290,11 @@ bool LocalStorageDatabase::clear()
     if (result != SQLITE_DONE) {
         LOG_ERROR("Failed to clear all items in the local storage database - %i", result);
         return false;
+    }
+
+    if (m_items) {
+        m_items->clear();
+        return true;
     }
 
     return m_database.lastChanges() > 0;
@@ -269,6 +314,7 @@ void LocalStorageDatabase::close()
     m_getItemStatement = nullptr;
     m_getItemsStatement = nullptr;
     m_deleteItemStatement = nullptr;
+    m_items = std::nullopt;
 
     if (m_database.isOpen())
         m_database.close();
@@ -282,6 +328,9 @@ bool LocalStorageDatabase::databaseIsEmpty() const
     ASSERT(!RunLoop::isMain());
     if (!m_database.isOpen())
         return false;
+
+    if (m_items)
+        return m_items->isEmpty();
 
     auto query = m_database.prepareStatement("SELECT COUNT(*) FROM ItemTable"_s);
     if (!query) {

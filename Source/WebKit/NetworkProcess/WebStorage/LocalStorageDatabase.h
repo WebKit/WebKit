@@ -62,12 +62,18 @@ private:
     bool migrateItemTableIfNeeded();
     bool databaseIsEmpty() const;
 
+    String itemBypassingCache(const String& key) const;
+
     WebCore::SQLiteStatementAutoResetScope scopedStatement(std::unique_ptr<WebCore::SQLiteStatement>&, ASCIILiteral query) const;
 
     String m_databasePath;
     mutable WebCore::SQLiteDatabase m_database;
     const unsigned m_quotaInBytes { 0 };
     bool m_isClosed { false };
+
+    // Cached version of the items in memory.
+    // If the value is too large to keep in memory, we store a null String.
+    mutable std::optional<HashMap<String, String>> m_items;
 
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_clearStatement;
     mutable std::unique_ptr<WebCore::SQLiteStatement> m_insertStatement;
