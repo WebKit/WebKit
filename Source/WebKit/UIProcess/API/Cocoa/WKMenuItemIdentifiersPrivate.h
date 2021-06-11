@@ -55,6 +55,10 @@ WK_EXPORT extern NSString * const _WKMenuItemIdentifierToggleFullScreen WK_API_A
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierShareMenu WK_API_AVAILABLE(macos(10.12), ios(10.0));
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierSpeechMenu WK_API_AVAILABLE(macos(10.12), ios(10.0));
 
+WK_EXPORT extern NSString * const _WKMenuItemIdentifierAddHighlightToCurrentQuickNote WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+WK_EXPORT extern NSString * const _WKMenuItemIdentifierAddHighlightToNewQuickNote WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+// FIXME: remove below after staging complete.
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierAddHighlightToCurrentGroup WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 WK_EXPORT extern NSString * const _WKMenuItemIdentifierAddHighlightToNewGroup WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 

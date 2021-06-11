@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AppHighlight.h"
 #include "AppHighlightRangeData.h"
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
@@ -41,8 +42,6 @@ class Document;
 class SharedBuffer;
 class StaticRange;
 class Highlight;
-
-enum class CreateNewGroupForHighlight : bool;
 
 enum class RestoreWithTextSearch : bool { No, Yes };
 

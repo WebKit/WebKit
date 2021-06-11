@@ -3860,9 +3860,9 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 - (id)targetForAction:(SEL)action withSender:(id)sender
 {
 #if ENABLE(APP_HIGHLIGHTS)
-    if (action == @selector(createHighlightInCurrentGroupWithRange:))
+    if (action == @selector(createHighlightForCurrentQuickNoteWithRange:))
         return self.shouldAllowAppHighlightCreation && _page->appHighlightsVisibility() ? self : nil;
-    if (action == @selector(createHighlightInNewGroupWithRange:))
+    if (action == @selector(createHighlightForNewQuickNoteWithRange:))
         return self.shouldAllowAppHighlightCreation && !_page->appHighlightsVisibility() ? self : nil;
 #endif
     return [_webView targetForAction:action withSender:sender];
@@ -9329,21 +9329,21 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
         return;
     
     for (UIMenuItem *menuItem in [[UIMenuController sharedMenuController] menuItems]) {
-        if ([menuItem action] == @selector(createHighlightInCurrentGroupWithRange:) || [menuItem action] == @selector(createHighlightInNewGroupWithRange:))
+        if ([menuItem action] == @selector(createHighlightForCurrentQuickNoteWithRange:) || [menuItem action] == @selector(createHighlightForNewQuickNoteWithRange:))
             return;
     }
     
-    auto addHighlightCurrentGroupItem = adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToCurrentGroup() action:@selector(createHighlightInCurrentGroupWithRange:)]);
-    auto addHighlightNewGroupItem = adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToNewGroup() action:@selector(createHighlightInNewGroupWithRange:)]);
-    [[UIMenuController sharedMenuController] setMenuItems:@[ addHighlightCurrentGroupItem.get(), addHighlightNewGroupItem.get() ]];
+    auto addHighlightCurrentQuickNoteItem = adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToCurrentQuickNote() action:@selector(createHighlightForCurrentQuickNoteWithRange:)]);
+    auto addHighlightNewQuickNoteItem = adoptNS([[UIMenuItem alloc] initWithTitle:WebCore::contextMenuItemTagAddHighlightToNewQuickNote() action:@selector(createHighlightForNewQuickNoteWithRange:)]);
+    [[UIMenuController sharedMenuController] setMenuItems:@[ addHighlightCurrentQuickNoteItem.get(), addHighlightNewQuickNoteItem.get() ]];
 }
 
-- (void)createHighlightInCurrentGroupWithRange:(id)sender
+- (void)createHighlightForCurrentQuickNoteWithRange:(id)sender
 {
     _page->createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::No, WebCore::HighlightRequestOriginatedInApp::No);
 }
 
-- (void)createHighlightInNewGroupWithRange:(id)sender
+- (void)createHighlightForNewQuickNoteWithRange:(id)sender
 {
     _page->createAppHighlightInSelectedRange(WebCore::CreateNewGroupForHighlight::Yes, WebCore::HighlightRequestOriginatedInApp::No);
 }

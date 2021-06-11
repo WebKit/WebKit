@@ -509,10 +509,10 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
         return kWKContextMenuItemTagMediaPlayPause;
     case WebCore::ContextMenuItemTagMediaMute:
         return kWKContextMenuItemTagMediaMute;
-    case WebCore::ContextMenuItemTagAddHighlightToCurrentGroup:
-        return kWKContextMenuItemTagAddHighlightToCurrentGroup;
-    case WebCore::ContextMenuItemTagAddHighlightToNewGroup:
-        return kWKContextMenuItemTagAddHighlightToNewGroup;
+    case WebCore::ContextMenuItemTagAddHighlightToCurrentQuickNote:
+        return kWKContextMenuItemTagAddHighlightToCurrentQuickNote;
+    case WebCore::ContextMenuItemTagAddHighlightToNewQuickNote:
+        return kWKContextMenuItemTagAddHighlightToNewQuickNote;
 #if PLATFORM(COCOA)
     case WebCore::ContextMenuItemTagCorrectSpellingAutomatically:
         return kWKContextMenuItemTagCorrectSpellingAutomatically;
@@ -711,10 +711,10 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
         return WebCore::ContextMenuItemTagMediaPlayPause;
     case kWKContextMenuItemTagMediaMute:
         return WebCore::ContextMenuItemTagMediaMute;
-    case kWKContextMenuItemTagAddHighlightToCurrentGroup:
-        return WebCore::ContextMenuItemTagAddHighlightToCurrentGroup;
-    case kWKContextMenuItemTagAddHighlightToNewGroup:
-        return WebCore::ContextMenuItemTagAddHighlightToNewGroup;
+    case kWKContextMenuItemTagAddHighlightToCurrentQuickNote:
+        return WebCore::ContextMenuItemTagAddHighlightToCurrentQuickNote;
+    case kWKContextMenuItemTagAddHighlightToNewQuickNote:
+        return WebCore::ContextMenuItemTagAddHighlightToNewQuickNote;
 #if PLATFORM(COCOA)
     case kWKContextMenuItemTagCorrectSpellingAutomatically:
         return WebCore::ContextMenuItemTagCorrectSpellingAutomatically;

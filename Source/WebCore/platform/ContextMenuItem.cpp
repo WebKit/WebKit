@@ -229,8 +229,8 @@ bool isValidContextMenuAction(ContextMenuAction action)
     case ContextMenuAction::ContextMenuItemTagTextDirectionDefault:
     case ContextMenuAction::ContextMenuItemTagTextDirectionLeftToRight:
     case ContextMenuAction::ContextMenuItemTagTextDirectionRightToLeft:
-    case ContextMenuAction::ContextMenuItemTagAddHighlightToCurrentGroup:
-    case ContextMenuAction::ContextMenuItemTagAddHighlightToNewGroup:
+    case ContextMenuAction::ContextMenuItemTagAddHighlightToCurrentQuickNote:
+    case ContextMenuAction::ContextMenuItemTagAddHighlightToNewQuickNote:
 #if PLATFORM(COCOA)
     case ContextMenuAction::ContextMenuItemTagCorrectSpellingAutomatically:
     case ContextMenuAction::ContextMenuItemTagSubstitutionsMenu:

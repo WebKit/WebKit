@@ -123,8 +123,8 @@ enum {
     kWKContextMenuItemTagToggleVideoFullscreen,
     kWKContextMenuItemTagShareMenu,
     kWKContextMenuItemTagToggleVideoEnhancedFullscreen,
-    kWKContextMenuItemTagAddHighlightToCurrentGroup,
-    kWKContextMenuItemTagAddHighlightToNewGroup,
+    kWKContextMenuItemTagAddHighlightToCurrentQuickNote,
+    kWKContextMenuItemTagAddHighlightToNewQuickNote,
     kWKContextMenuItemTagRevealImage,
     kWKContextMenuItemTagTranslate,
     kWKContextMenuItemBaseApplicationTag = 10000

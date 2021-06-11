@@ -85,18 +85,18 @@ TEST(WebKit, AppHighlightsInImageOverlays)
     [webView stringByEvaluatingJavaScript:@"selectImageOverlay()"];
     [webView waitForNextPresentationUpdate];
 
-    auto createHighlightInCurrentGroupWithRangeSelector = NSSelectorFromString(@"createHighlightInCurrentGroupWithRange:");
-    auto createHighlightInNewGroupWithRangeSelector = NSSelectorFromString(@"createHighlightInNewGroupWithRange:");
+    auto createHighlightForCurrentQuickNoteWithRangeSelector = NSSelectorFromString(@"createHighlightForCurrentQuickNoteWithRange:");
+    auto createHighlightForNewQuickNoteWithRangeSelector = NSSelectorFromString(@"createHighlightForNewQuickNoteWithRange:");
 
     auto contentView = [webView textInputContentView];
-    EXPECT_NULL([contentView targetForAction:createHighlightInCurrentGroupWithRangeSelector withSender:nil]);
-    EXPECT_NULL([contentView targetForAction:createHighlightInNewGroupWithRangeSelector withSender:nil]);
+    EXPECT_NULL([contentView targetForAction:createHighlightForCurrentQuickNoteWithRangeSelector withSender:nil]);
+    EXPECT_NULL([contentView targetForAction:createHighlightForNewQuickNoteWithRangeSelector withSender:nil]);
 
     [webView synchronouslyLoadTestPageNamed:@"simple"];
     [webView selectAll:nil];
     [webView waitForNextPresentationUpdate];
-    EXPECT_EQ([contentView targetForAction:createHighlightInCurrentGroupWithRangeSelector withSender:nil], contentView);
-    EXPECT_EQ([contentView targetForAction:createHighlightInNewGroupWithRangeSelector withSender:nil], contentView);
+    EXPECT_EQ([contentView targetForAction:createHighlightForCurrentQuickNoteWithRangeSelector withSender:nil], contentView);
+    EXPECT_EQ([contentView targetForAction:createHighlightForNewQuickNoteWithRangeSelector withSender:nil], contentView);
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS) && ENABLE(APP_HIGHLIGHTS)

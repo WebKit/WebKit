@@ -1,3 +1,47 @@
+2021-06-11  Megan Gardner  <megan_gardner@apple.com>
+
+        Rename AppHighlight group to QuickNote to correctly reflect feature.
+        https://bugs.webkit.org/show_bug.cgi?id=226888
+
+        Reviewed by Tim Horton.
+
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * Shared/API/c/WKContextMenuItemTypes.h:
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        (WebKit::toImpl):
+        * UIProcess/API/Cocoa/WKMenuItemIdentifiers.mm:
+        * UIProcess/API/Cocoa/WKMenuItemIdentifiersPrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _storeAppHighlight:]):
+        (-[WKWebView _addAppHighlightInNewGroup:originatedInApp:]):
+        (-[WKWebView _addAppHighlightInNewQuickNote:originatedInApp:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/Cocoa/_WKAppHighlightDelegate.h:
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::createAppHighlightInSelectedRange):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::contextMenuItemSelected):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView targetForAction:withSender:]):
+        (-[WKContentView setUpAppHighlightMenusIfNeeded]):
+        (-[WKContentView createHighlightForCurrentQuickNoteWithRange:]):
+        (-[WKContentView createHighlightForNewQuickNoteWithRange:]):
+        (-[WKContentView createHighlightInCurrentGroupWithRange:]): Deleted.
+        (-[WKContentView createHighlightInNewGroupWithRange:]): Deleted.
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::menuItemIdentifier):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::storeAppHighlight const):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createAppHighlightInSelectedRange):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::highlightIsNewQuickNote const):
+        (WebKit::WebPage::highlightIsNewGroup const): Deleted.
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2021-06-11  Michael Catanzaro  <mcatanzaro@gnome.org>
 
         [GTK] Crash when dragging an account node above WebView

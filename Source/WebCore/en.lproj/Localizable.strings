@@ -130,6 +130,9 @@
 /* WKErrorJavaScriptExceptionOccurred description */
 "A JavaScript exception occurred" = "A JavaScript exception occurred";
 
+/* Add to Quick Note context menu item. */
+"Add to Quick Note" = "Add to Quick Note";
+
 /* Label for the add money with Apple Pay button. */
 "Add money with Apple Pay" = "Add money with Apple Pay";
 
@@ -624,6 +627,9 @@
 
 /* Media Mute context menu item */
 "Mute" = "Mute";
+
+/* New Quick Note context menu item. */
+"New Quick Note" = "New Quick Note";
 
 /* No Guesses Found context menu item */
 "No Guesses Found" = "No Guesses Found";

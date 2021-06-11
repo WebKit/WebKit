@@ -37,6 +37,9 @@ NSString * const _WKMenuItemIdentifierGoBack = @"WKMenuItemIdentifierGoBack";
 NSString * const _WKMenuItemIdentifierGoForward = @"WKMenuItemIdentifierGoForward";
 NSString * const _WKMenuItemIdentifierInspectElement = @"WKMenuItemIdentifierInspectElement";
 NSString * const _WKMenuItemIdentifierLookUp = @"WKMenuItemIdentifierLookUp";
+NSString * const _WKMenuItemIdentifierAddHighlightToCurrentQuickNote = @"WKMenuItemIdentifierAddHighlightToCurrentQuickNote";
+NSString * const _WKMenuItemIdentifierAddHighlightToNewQuickNote = @"WKMenuItemIdentifierAddHighlightToNewQuickNote";
+// FIXME: Remove below after staging complete
 NSString * const _WKMenuItemIdentifierAddHighlightToCurrentGroup = @"WKMenuItemIdentifierAddHighlightToCurrentGroup";
 NSString * const _WKMenuItemIdentifierAddHighlightToNewGroup = @"WKMenuItemIdentifierAddHighlightToNewGroup";
 

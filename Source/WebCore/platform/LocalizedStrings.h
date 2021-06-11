@@ -51,8 +51,8 @@ namespace WebCore {
     String copyImageUnknownFileLabel();
 #endif
 #if ENABLE(APP_HIGHLIGHTS)
-    WEBCORE_EXPORT String contextMenuItemTagAddHighlightToCurrentGroup();
-    WEBCORE_EXPORT String contextMenuItemTagAddHighlightToNewGroup();
+    WEBCORE_EXPORT String contextMenuItemTagAddHighlightToCurrentQuickNote();
+    WEBCORE_EXPORT String contextMenuItemTagAddHighlightToNewQuickNote();
 #endif
 
 #if ENABLE(CONTEXT_MENUS)

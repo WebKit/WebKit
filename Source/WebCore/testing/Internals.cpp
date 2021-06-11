@@ -6091,8 +6091,8 @@ bool Internals::hasSandboxIOKitOpenAccessToClass(const String& process, const St
 Vector<String> Internals::appHighlightContextMenuItemTitles() const
 {
     return {{
-        contextMenuItemTagAddHighlightToCurrentGroup(),
-        contextMenuItemTagAddHighlightToNewGroup(),
+        contextMenuItemTagAddHighlightToCurrentQuickNote(),
+        contextMenuItemTagAddHighlightToNewQuickNote(),
     }};
 }
 
