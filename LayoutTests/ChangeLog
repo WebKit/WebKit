@@ -1,3 +1,25 @@
+2021-06-11  Diego Pino Garcia  <dpino@igalia.com>
+
+        [GTK] Test css3/filters/composited-during-animation-layertree.html is flaky since r214292
+        https://bugs.webkit.org/show_bug.cgi?id=171600
+
+        Reviewed by Adrian Perez de Castro.
+
+        The general baseline for this test was empty. Updated it with the
+        results of iOS. I also removed the test failure from iOS TestExpectations.
+
+        The test is marked as flaky in Mac because sometimes it produces empty
+        results (webkit.org/b/95622). I don't touch the Mac baseline and leave
+        the test as flaky in Mac TestExpectations.
+
+        Finally, I moved the current baseline that exists for WPE to GLIB, as
+        WebKitGTK produces the same results.
+
+        * css3/filters/composited-during-animation-layertree-expected.txt:
+        * platform/glib/css3/filters/composited-during-animation-layertree-expected.txt: Renamed from LayoutTests/platform/wpe/css3/filters/composited-during-animation-layertree-expected.txt.
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+
 2021-06-11  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebGL context image buffer accumulates the NativeImage contents when drawn to RemoteImageBufferProxy
