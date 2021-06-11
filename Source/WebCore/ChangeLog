@@ -1,3 +1,24 @@
+2021-06-11  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Add fast-path for binding security check of DOMWindow
+        https://bugs.webkit.org/show_bug.cgi?id=226930
+
+        Reviewed by Geoffrey Garen.
+
+        The security check[1] must pass if the current JSDOMGlobalObject is the same to the accessed JSDOMWindow.
+        This clarification paves the way to emit JIT code which removes this security check when the lexical and
+        accessed JSGlobalObjects are the same.
+
+        [1]: https://html.spec.whatwg.org/multipage/browsers.html#integration-with-idl
+
+        * bindings/js/JSDOMBindingSecurity.cpp:
+        (WebCore::BindingSecurity::shouldAllowAccessToDOMWindow):
+        * bindings/js/JSDOMBindingSecurity.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateAttributeGetterBodyDefinition):
+        (GenerateAttributeSetterBodyDefinition):
+        (GenerateOperationBodyDefinition):
+
 2021-06-11  Jonathan Bedard  <jbedard@apple.com>
 
         [Monterey] Support building WebKit

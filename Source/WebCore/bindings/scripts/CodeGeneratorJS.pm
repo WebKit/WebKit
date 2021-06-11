@@ -5210,10 +5210,11 @@ sub GenerateAttributeGetterBodyDefinition
     }
 
     if ($needSecurityCheck) {
-        AddToImplIncludes("JSDOMBindingSecurity.h", $conditional);
         if ($interface->type->name eq "DOMWindow") {
-            push(@$outputArray, "    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(&lexicalGlobalObject, thisObject.wrapped(), ThrowSecurityError);\n");
+            AddToImplIncludes("JSDOMBindingSecurityInlines.h", $conditional);
+            push(@$outputArray, "    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(&lexicalGlobalObject, thisObject, ThrowSecurityError);\n");
         } else {
+            AddToImplIncludes("JSDOMBindingSecurity.h", $conditional);
             push(@$outputArray, "    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(&lexicalGlobalObject, thisObject.wrapped().window(), ThrowSecurityError);\n");
         }
         push(@$outputArray, "    EXCEPTION_ASSERT_UNUSED(throwScope, !throwScope.exception() || !shouldAllowAccess);\n");
@@ -5367,10 +5368,11 @@ sub GenerateAttributeSetterBodyDefinition
     GenerateCustomElementReactionsStackIfNeeded($outputArray, $attribute, "lexicalGlobalObject");
 
     if ($needSecurityCheck) {
-        AddToImplIncludes("JSDOMBindingSecurity.h", $conditional);
         if ($interface->type->name eq "DOMWindow") {
-            push(@$outputArray, "    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(&lexicalGlobalObject, thisObject.wrapped(), ThrowSecurityError);\n");
+            AddToImplIncludes("JSDOMBindingSecurityInlines.h", $conditional);
+            push(@$outputArray, "    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(&lexicalGlobalObject, thisObject, ThrowSecurityError);\n");
         } else {
+            AddToImplIncludes("JSDOMBindingSecurity.h", $conditional);
             push(@$outputArray, "    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(&lexicalGlobalObject, thisObject.wrapped().window(), ThrowSecurityError);\n");
         }
         push(@$outputArray, "    EXCEPTION_ASSERT_UNUSED(throwScope, !throwScope.exception() || !shouldAllowAccess);\n");
@@ -5579,10 +5581,11 @@ sub GenerateOperationBodyDefinition
         if ($interface->extendedAttributes->{CheckSecurity} and !$operation->extendedAttributes->{DoNotCheckSecurity}) {
             assert("Security checks are not supported for static operations.") if $operation->isStatic;
             
-            AddToImplIncludes("JSDOMBindingSecurity.h", $conditional);
             if ($interface->type->name eq "DOMWindow") {
-                push(@$outputArray, "    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, castedThis->wrapped(), ThrowSecurityError);\n");
+                AddToImplIncludes("JSDOMBindingSecurityInlines.h", $conditional);
+                push(@$outputArray, "    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, *castedThis, ThrowSecurityError);\n");
             } else {
+                AddToImplIncludes("JSDOMBindingSecurity.h", $conditional);
                 push(@$outputArray, "    bool shouldAllowAccess = BindingSecurity::shouldAllowAccessToDOMWindow(lexicalGlobalObject, castedThis->wrapped().window(), ThrowSecurityError);\n");
             }
             push(@$outputArray, "    EXCEPTION_ASSERT_UNUSED(throwScope, !throwScope.exception() || !shouldAllowAccess);\n");
