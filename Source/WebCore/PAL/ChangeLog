@@ -1,5 +1,15 @@
 2021-06-11  Jonathan Bedard  <jbedard@apple.com>
 
+        [Monterey] Support building WebKit (Follow-up fix)
+        https://bugs.webkit.org/show_bug.cgi?id=226846
+        <rdar://problem/79095148>
+
+        Unreviewed build fix.
+
+        * pal/spi/mac/QuickLookMacSPI.h:
+
+2021-06-11  Jonathan Bedard  <jbedard@apple.com>
+
         [Monterey] Support building WebKit
         https://bugs.webkit.org/show_bug.cgi?id=226846
         <rdar://problem/79095148>
