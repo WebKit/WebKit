@@ -1,3 +1,18 @@
+2021-06-11  Eleni Maria Stea  <estea@igalia.com>
+
+        ANGLE EGL and GLES libraries should link with lib dl.
+        https://bugs.webkit.org/show_bug.cgi?id=226920
+
+        Reviewed by Kenneth Russell.
+
+        GLES and EGL that are generated from ANGLE should link
+        with libdl because they use dlsym and dlopen. Also,
+        with the updated CMakeLists.txt we can safely link with libEGL
+        when USE_ANGLE_WEBGL is set because the symbols of EGL are now
+        found.
+
+        * CMakeLists.txt:
+
 2021-06-10  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Make ANGLE library types configurable

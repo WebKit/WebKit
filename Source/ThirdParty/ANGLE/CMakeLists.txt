@@ -151,7 +151,9 @@ if (USE_ANGLE_EGL OR USE_ANGLE_WEBGL)
         ${no_gl_prototypes}
         LIBGLESV2_IMPLEMENTATION
     )
-    target_link_libraries(GLESv2 PRIVATE ${ANGLEGLESv2_LIBRARIES})
+
+    target_link_libraries(GLESv2 PRIVATE ${ANGLEGLESv2_LIBRARIES} ${CMAKE_DL_LIBS})
+
     if (WIN32)
         # Output library name according to the .def
         target_sources(GLESv2 PRIVATE src/libGLESv2/libGLESv2_autogen.def)
@@ -174,7 +176,9 @@ if (USE_ANGLE_EGL OR USE_ANGLE_WEBGL)
             ${gl_prototypes}
             EGLAPI=
         )
-        target_link_libraries(EGL PRIVATE GLESv2)
+
+        target_link_libraries(EGL PRIVATE GLESv2 ${CMAKE_DL_LIBS})
+
         set_target_properties(EGL PROPERTIES LINKER_LANGUAGE CXX)
         if (WIN32)
             # Output library names according to the .def
