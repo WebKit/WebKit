@@ -1,4 +1,20 @@
 =================
+WPE WebKit 2.33.2
+=================
+
+What's new in WPE WebKit 2.33.2?
+
+  - HTTP/2 support when building with libsoup3.
+  - Add API to disable CORS on a web view for particular domains.
+  - Remove dependency on the GStreamer glvideoflip and videoflip elements.
+  - Support building with the uClibc C standard library.
+  - Ensure WebKitScriptWorld::window-object-cleared signal is always emitted.
+  - Fix rendering of VP9 with transparency.
+  - Fix handling of elements with position:sticky in RTL layers with scroll
+	overflow.
+  - Fix handling of 2D axis input events.
+
+=================
 WPE WebKit 2.33.1
 =================
 
