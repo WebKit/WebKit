@@ -1,3 +1,33 @@
+2021-06-10  Chris Dumez  <cdumez@apple.com>
+
+        CARingBuffer::frameOffset() makes incorrect assumptions about the frame count
+        https://bugs.webkit.org/show_bug.cgi?id=226253
+        <rdar://problem/78463453>
+
+        Reviewed by Eric Carlson.
+
+        CARingBuffer::frameOffset() was trying to avoid doing a `frameNumber % m_frameCount`
+        modulo operation by doing a `frameNumber & (m_frameCount - 1)`. However, this bitwise
+        operation is only equivalent if m_frameCount is a power of 2. It isn't enforced
+        anywhere that the frameCount is a power of 2. As a matter of fact, we frequently use
+        2*sampleRate which is often 2*44100=88200, which is NOT a power of 2.
+
+        When adding logging, I saw frameOffset(512) returning 0 for a frameCount of 88200, which
+        made no sense. It was causing offset0 and offset1 in CARingBuffer::fetchInternal() to
+        be both 0 (even though startRead was 0 and endRead was 512) and it was leading the
+        function to make bad computations.
+
+        To address the issue, I updated CARingBuffer::frameOffset() to use a simple modulo
+        operation. It is safer as it makes no assumption on the frame count and it is more
+        readable. If we're worried about the performance, we could alternatively round up the
+        frameCount to the next power of 2 and keep using the bitwise operation, but I am
+        personally do not think it is worth it.
+
+        * platform/audio/cocoa/CARingBuffer.cpp:
+        (WebCore::CARingBuffer::initializeAfterAllocation):
+        * platform/audio/cocoa/CARingBuffer.h:
+        (WebCore::CARingBuffer::frameOffset):
+
 2021-06-10  Yury Semikhatsky  <yurys@chromium.org>
 
         [REGRESSION][Curl] Network::ResourceTiming are broken after r278391

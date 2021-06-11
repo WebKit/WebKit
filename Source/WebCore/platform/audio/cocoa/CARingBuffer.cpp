@@ -98,7 +98,6 @@ void CARingBuffer::initializeAfterAllocation(const CAAudioStreamDescription& for
     m_channelCount = format.numberOfChannelStreams();
     m_bytesPerFrame = format.bytesPerFrame();
     m_frameCount = frameCount;
-    m_frameCountMask = frameCount - 1;
     m_capacityBytes = computeCapacityBytes(format, frameCount);
 
     m_pointers.resize(m_channelCount);
