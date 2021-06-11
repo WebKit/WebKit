@@ -1,3 +1,21 @@
+2021-06-10  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] Can't open WebInspector UI since r277787
+        https://bugs.webkit.org/show_bug.cgi?id=226908
+
+        Reviewed by Don Olmstead.
+
+        r277787 (Bug 226001) changed the return type of
+        WebURLSchemeTask::request() from const WebCore::ResourceRequest&
+        to WebCore::ResourceRequest.
+
+        InspectorResourceURLSchemeHandler::platformStartTask shouldn't
+        hold the reference of the temporary object.
+
+        * UIProcess/Inspector/win/InspectorResourceURLSchemeHandler.cpp:
+        (WebKit::InspectorResourceURLSchemeHandler::platformStartTask):
+        Changed the type of requestURL from auto& to auto to copy the URL.
+
 2021-06-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Live Text] Add a mechanism to regenerate text in an image element when it changes dimensions
