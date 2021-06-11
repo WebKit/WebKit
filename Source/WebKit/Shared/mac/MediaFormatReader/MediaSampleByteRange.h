@@ -45,12 +45,12 @@ public:
     MediaTime decodeTime() const final { return m_decodeTime; }
     MediaTime duration() const final { return m_duration; }
     size_t sizeInBytes() const final { return m_sizeInBytes; }
-    FloatSize presentationSize() const final { return m_presentationSize; }
+    WebCore::FloatSize presentationSize() const final { return m_presentationSize; }
     SampleFlags flags() const final { return m_flags; }
     std::optional<ByteRange> byteRange() const final { return m_byteRange; }
 
     AtomString trackID() const final;
-    PlatformSample platformSample() final;
+    WebCore::PlatformSample platformSample() final;
     void offsetTimestampsBy(const MediaTime&) final;
     void setTimestamps(const MediaTime&, const MediaTime&) final;
 
@@ -63,7 +63,7 @@ private:
     ByteRange m_byteRange;
     uint64_t m_trackID;
     size_t m_sizeInBytes;
-    FloatSize m_presentationSize;
+    WebCore::FloatSize m_presentationSize;
     RetainPtr<MTPluginByteSourceRef> m_byteSource;
     RetainPtr<CMFormatDescriptionRef> m_formatDescription;
     SampleFlags m_flags;

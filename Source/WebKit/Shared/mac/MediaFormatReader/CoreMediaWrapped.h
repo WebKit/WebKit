@@ -29,6 +29,8 @@
 
 #include <pal/spi/cocoa/MediaToolboxSPI.h>
 #include <wtf/ForbidHeapAllocation.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/cf/TypeCastsCF.h>
 
 namespace WebKit {
