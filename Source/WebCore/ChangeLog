@@ -1,3 +1,24 @@
+2021-06-11  Imanol Fernandez  <ifernandez@igalia.com>
+
+        Implement Encode/Decode templates for WebXR InputSources
+        https://bugs.webkit.org/show_bug.cgi?id=226923
+
+        Reviewed by Sam Weinig.
+
+        Process WebXR InputSources in PlatformXR FrameData Encode/Decode templates.
+
+        Tested by WebXR WPT.
+
+        * platform/xr/PlatformXR.h:
+        (PlatformXR::Device::FrameData::InputSourceButton::encode const):
+        (PlatformXR::Device::FrameData::InputSourceButton::decode):
+        (PlatformXR::Device::FrameData::InputSourcePose::encode const):
+        (PlatformXR::Device::FrameData::InputSourcePose::decode):
+        (PlatformXR::Device::FrameData::InputSource::encode const):
+        (PlatformXR::Device::FrameData::InputSource::decode):
+        (PlatformXR::Device::FrameData::encode const):
+        (PlatformXR::Device::FrameData::decode):
+
 2021-06-11  Chris Dumez  <cdumez@apple.com>
 
         Enable more release logging in WebCore for ephemeral sessions
