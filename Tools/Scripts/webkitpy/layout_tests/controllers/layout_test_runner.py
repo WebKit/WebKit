@@ -312,7 +312,7 @@ class Worker(object):
                 break
             Worker.instance.run_test(input, shard.name)
 
-        _log.debug('{} finished test group'.format(TaskPool.Process.name))
+        _log.debug('finished test group')
 
         if self._driver and self._driver.has_crashed():
             self._kill_driver()
@@ -364,7 +364,7 @@ class Worker(object):
         return additional_results
 
     def stop(self):
-        _log.debug('{} cleaning up'.format(TaskPool.Process.name))
+        _log.debug('cleaning up')
         self._kill_driver()
 
     def _timeout(self, test_input):
@@ -389,7 +389,7 @@ class Worker(object):
         driver = self._driver
         self._driver = None
         if driver:
-            _log.debug('{} killing driver'.format(TaskPool.Process.name))
+            _log.debug('killing driver')
             driver.stop()
 
     def _run_test_with_or_without_timeout(self, test_input, timeout, stop_when_done):
@@ -408,13 +408,13 @@ class Worker(object):
                 self._batch_count = 0
 
             # Print the error message(s).
-            _log.debug('{} {} failed:'.format(TaskPool.Process.name, test_name))
+            _log.debug('{} failed:'.format(test_name))
             for f in result.failures:
-                _log.debug('{}  {}'.format(TaskPool.Process.name, f.message()))
+                _log.debug('{}'.format(f.message()))
         elif result.type == test_expectations.SKIP:
-            _log.debug('{} {} skipped'.format(TaskPool.Process.name, test_name))
+            _log.debug('{} skipped'.format(test_name))
         else:
-            _log.debug("{} {} passed".format(TaskPool.Process.name, test_name))
+            _log.debug("{} passed".format(test_name))
 
     def _run_test_in_another_thread(self, test_input, thread_timeout_sec, stop_when_done):
         """Run a test in a separate thread, enforcing a hard time limit.

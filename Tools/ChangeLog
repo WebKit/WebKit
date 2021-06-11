@@ -1,3 +1,17 @@
+2021-06-11  Jonathan Bedard  <jbedard@apple.com>
+
+        REGRESSION (r278454): [run-webkit-tests] worker is printed twice for each test in debug logging
+        https://bugs.webkit.org/show_bug.cgi?id=226895
+        <rdar://problem/79164077>
+
+        Reviewed by Dewei Zhu.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (Worker.run_tests): Strip process names from debug logs.
+        (Worker.stop): Ditto.
+        (Worker._kill_driver): Ditto.
+        (Worker._clean_up_after_test): Ditto.
+
 2021-06-10  Alex Christensen  <achristensen@webkit.org>
 
         Origin is null in http requests when baseURL has custom scheme on iOS 15.0
