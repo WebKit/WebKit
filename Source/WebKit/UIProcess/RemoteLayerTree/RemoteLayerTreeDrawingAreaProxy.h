@@ -58,8 +58,6 @@ public:
     
     bool hasDebugIndicator() const { return !!m_debugIndicatorLayerTreeHost; }
 
-    bool isAlwaysOnLoggingAllowed() const;
-
     CALayer *layerWithIDForTesting(uint64_t) const;
 
 private:

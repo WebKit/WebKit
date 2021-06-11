@@ -481,8 +481,6 @@ private:
 
     void processDidTerminateOrFailedToLaunch(ProcessTerminationReason);
 
-    bool isReleaseLoggingAllowed() const;
-
     // IPC::Connection::Client
     friend class WebConnectionToWebProcess;
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

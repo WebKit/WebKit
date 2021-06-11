@@ -174,7 +174,7 @@
 #import <pal/spi/ios/GraphicsServicesSPI.h>
 #import <wtf/cocoa/Entitlements.h>
 
-#define RELEASE_LOG_IF_ALLOWED(...) RELEASE_LOG_IF(_page && _page->isAlwaysOnLoggingAllowed(), ViewState, __VA_ARGS__)
+#define WKWEBVIEW_RELEASE_LOG(...) RELEASE_LOG_IF(ViewState, __VA_ARGS__)
 #endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(MAC)
@@ -3647,4 +3647,4 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 @end
 
-#undef RELEASE_LOG_IF_ALLOWED
+#undef WKWEBVIEW_RELEASE_LOG
