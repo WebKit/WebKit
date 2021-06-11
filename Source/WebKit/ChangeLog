@@ -1,3 +1,17 @@
+2021-06-11  Alex Christensen  <achristensen@webkit.org>
+
+        Don't include certificate info in WebURLSchemeTask::didReceiveResponse
+        https://bugs.webkit.org/show_bug.cgi?id=226939
+        <rdar://79178335>
+
+        Reviewed by Chris Dumez.
+
+        This call was introduced in r215384 but is unused since WKURLSchemeTask isn't used for HTTPS.
+        It is causing hangs sometimes, so let's drop it.
+
+        * UIProcess/WebURLSchemeTask.cpp:
+        (WebKit::WebURLSchemeTask::didReceiveResponse):
+
 2021-06-11  Jonathan Bedard  <jbedard@apple.com>
 
         [Monterey] Support building WebKit
