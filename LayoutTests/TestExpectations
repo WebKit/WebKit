@@ -4890,3 +4890,5 @@ http/wpt/webxr [ Skip ]
 
 # Invalid test. Tests color(lab ...) which has been removed from the standard.
 imported/w3c/web-platform-tests/css/css-color/predefined-013.html [ Skip ]
+
+webkit.org/b/226942 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiobuffersourcenode-interface/active-processing.https.html [ Pass Failure ]
