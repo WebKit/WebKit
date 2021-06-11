@@ -1,3 +1,10 @@
+2021-06-11  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed non-unified build fixes.
+
+        * loader/ResourceCryptographicDigest.cpp: Add missing SharedBuffer.h header.
+        * platform/network/soup/ResourceHandleSoup.cpp: Add missing SecurityOrigin.h header.
+
 2021-06-11  Kimmo Kinnunen  <kkinnunen@apple.com>
 
         WebGL context image buffer accumulates the NativeImage contents when drawn to RemoteImageBufferProxy

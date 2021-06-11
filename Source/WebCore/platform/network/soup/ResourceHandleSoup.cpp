@@ -42,6 +42,7 @@
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceResponse.h"
+#include "SecurityOrigin.h"
 #include "SharedBuffer.h"
 #include "SoupNetworkSession.h"
 #include "TextEncoding.h"

@@ -27,6 +27,7 @@
 #include "ResourceCryptographicDigest.h"
 
 #include "ParsingUtilities.h"
+#include "SharedBuffer.h"
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringParsingBuffer.h>
