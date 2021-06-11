@@ -793,6 +793,7 @@ std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics(MonotonicTim
 
     NetworkLoadMetrics networkLoadMetrics;
 
+    networkLoadMetrics.fetchStart = startTime;
     networkLoadMetrics.domainLookupStart = startTime;
     networkLoadMetrics.domainLookupEnd = startTime + Seconds(nameLookup);
     networkLoadMetrics.connectStart = networkLoadMetrics.domainLookupEnd;
