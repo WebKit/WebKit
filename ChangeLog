@@ -1,3 +1,17 @@
+2021-06-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [CMake][GTK][WPE] Improve error message when libsoup3 is not found
+        https://bugs.webkit.org/show_bug.cgi?id=226905
+
+        Reviewed by Adrian Perez de Castro.
+
+        When libsoup 3 is not found be more clear about the problem and
+        offer possible workaround to continue the build.
+
+        * Source/cmake/FindLibSoup.cmake:
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+
 2021-06-10  Philippe Normand  <pnormand@igalia.com>
 
         [WPE] Enable Cog for developer builds
