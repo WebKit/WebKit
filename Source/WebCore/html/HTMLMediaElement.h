@@ -667,6 +667,7 @@ private:
     void mediaPlayerWillInitializeMediaEngine() final;
     void mediaPlayerDidInitializeMediaEngine() final;
     void mediaPlayerReloadAndResumePlaybackIfNeeded() final;
+    void mediaPlayerQueueTaskOnEventLoop(Function<void()>&&) final;
 
     void scheduleMediaEngineWasUpdated();
     void mediaEngineWasUpdated();

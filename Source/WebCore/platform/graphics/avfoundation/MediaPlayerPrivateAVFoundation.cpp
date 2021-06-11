@@ -1052,6 +1052,13 @@ bool MediaPlayerPrivateAVFoundation::isUnsupportedMIMEType(const String& type)
     return false;
 }
 
+void MediaPlayerPrivateAVFoundation::queueTaskOnEventLoop(Function<void()>&& task)
+{
+    ASSERT(isMainThread());
+    if (m_player)
+        m_player->queueTaskOnEventLoop(WTFMove(task));
+}
+
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& MediaPlayerPrivateAVFoundation::logChannel() const
 {

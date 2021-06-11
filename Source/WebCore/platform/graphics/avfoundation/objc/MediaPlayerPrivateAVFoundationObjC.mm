@@ -3578,7 +3578,10 @@ NSArray* playerKVOProperties()
 - (void)metadataLoaded
 {
     ensureOnMainThread([self, strongSelf = retainPtr(self)] {
-        callOnMainThread([player = m_player] {
+        if (!m_player)
+            return;
+
+        m_player->queueTaskOnEventLoop([player = m_player] {
             if (player)
                 player->metadataLoaded();
         });
@@ -3589,7 +3592,10 @@ NSArray* playerKVOProperties()
 {
     UNUSED_PARAM(unusedNotification);
     ensureOnMainThread([self, strongSelf = retainPtr(self)] {
-        callOnMainThread([player = m_player] {
+        if (!m_player)
+            return;
+
+        m_player->queueTaskOnEventLoop([player = m_player] {
             if (player)
                 player->didEnd();
         });
@@ -3599,7 +3605,10 @@ NSArray* playerKVOProperties()
 - (void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary *)change context:(MediaPlayerAVFoundationObservationContext)context
 {
     ensureOnMainThread([self, strongSelf = retainPtr(self), keyPath = retainPtr(keyPath), change = retainPtr(change), object = retainPtr(object), context]() mutable {
-        callOnMainThread([player = m_player, keyPath = WTFMove(keyPath), change = WTFMove(change), object = WTFMove(object), context] {
+        if (!m_player)
+            return;
+
+        m_player->queueTaskOnEventLoop([player = m_player, keyPath = WTFMove(keyPath), change = WTFMove(change), object = WTFMove(object), context] {
             if (!player)
                 return;
 
@@ -3698,7 +3707,10 @@ NSArray* playerKVOProperties()
     UNUSED_PARAM(output);
 
     ensureOnMainThread([self, strongSelf = retainPtr(self), strings = retainPtr(strings), nativeSamples = retainPtr(nativeSamples), itemTime]() mutable {
-        callOnMainThread([player = m_player, strings = WTFMove(strings), nativeSamples = WTFMove(nativeSamples), itemTime] {
+        if (!m_player)
+            return;
+
+        m_player->queueTaskOnEventLoop([player = m_player, strings = WTFMove(strings), nativeSamples = WTFMove(nativeSamples), itemTime] {
             if (!player)
                 return;
 
@@ -3715,7 +3727,10 @@ NSArray* playerKVOProperties()
     UNUSED_PARAM(output);
 
     ensureOnMainThread([self, strongSelf = retainPtr(self)] {
-        callOnMainThread([player = m_player] {
+        if (!m_player)
+            return;
+
+        m_player->queueTaskOnEventLoop([player = m_player] {
             if (player)
                 player->flushCues();
         });
@@ -3731,7 +3746,7 @@ NSArray* playerKVOProperties()
     if (!m_player || !metadataGroups)
         return;
 
-    callOnMainThread([player = m_player, metadataGroups = retainPtr(metadataGroups), currentTime = m_player->currentMediaTime()] {
+    m_player->queueTaskOnEventLoop([player = m_player, metadataGroups = retainPtr(metadataGroups), currentTime = m_player->currentMediaTime()] {
         if (!player)
             return;
 
@@ -3752,7 +3767,7 @@ NSArray* playerKVOProperties()
     if (!m_player || !metadataGroups)
         return;
 
-    callOnMainThread([player = m_player, metadataGroups = retainPtr(metadataGroups), currentTime = m_player->currentMediaTime()] {
+    m_player->queueTaskOnEventLoop([player = m_player, metadataGroups = retainPtr(metadataGroups), currentTime = m_player->currentMediaTime()] {
         if (!player)
             return;
 
@@ -3779,7 +3794,10 @@ NSArray* playerKVOProperties()
         return NO;
 
     ensureOnMainThread([self, strongSelf = retainPtr(self), loadingRequest = retainPtr(loadingRequest)]() mutable {
-        callOnMainThread([player = m_player, loadingRequest = WTFMove(loadingRequest)] {
+        if (!m_player)
+            return;
+
+        m_player->queueTaskOnEventLoop([player = m_player, loadingRequest = WTFMove(loadingRequest)] {
             if (!player) {
                 [loadingRequest finishLoadingWithError:nil];
                 return;
@@ -3805,7 +3823,10 @@ NSArray* playerKVOProperties()
 {
     UNUSED_PARAM(resourceLoader);
     ensureOnMainThread([self, strongSelf = retainPtr(self), loadingRequest = retainPtr(loadingRequest)]() mutable {
-        callOnMainThread([player = m_player, loadingRequest = WTFMove(loadingRequest)] {
+        if (!m_player)
+            return;
+
+        m_player->queueTaskOnEventLoop([player = m_player, loadingRequest = WTFMove(loadingRequest)] {
 
             ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 

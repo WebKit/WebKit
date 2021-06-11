@@ -605,6 +605,12 @@ void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
     client().mediaPlayerDidInitializeMediaEngine();
 }
 
+void MediaPlayer::queueTaskOnEventLoop(Function<void()>&& task)
+{
+    ASSERT(isMainThread());
+    client().mediaPlayerQueueTaskOnEventLoop(WTFMove(task));
+}
+
 bool MediaPlayer::hasAvailableVideoFrame() const
 {
     return m_private->hasAvailableVideoFrame();
