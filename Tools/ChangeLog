@@ -1,3 +1,18 @@
+2021-06-11  Devin Rousso  <drousso@apple.com>
+
+        Add an option to Copy WebKit Permalink that automatically opens the URL in the default browser for Sublime Text
+        https://bugs.webkit.org/show_bug.cgi?id=226933
+
+        Reviewed by Tim Horton.
+
+        Usually the step right after copying the permalink is to open a browser and enter it. Having
+        a setting that causes the plugin to do that automatically would save some time and effort.
+
+        * CopyPermalink/Sublime Text/CopyWebKitPermalink/CopyWebKitPermalink.py:
+        (Settings.automatically_open_in_browser): Added.
+        (CopyWebKitPermalinkCommand.run):
+        * CopyPermalink/Sublime Text/CopyWebKitPermalink/CopyWebKitPermalink.sublime-settings:
+
 2021-06-11  Jonathan Bedard  <jbedard@apple.com>
 
         [check-webkit-style] failing in JS checker due to python byte string

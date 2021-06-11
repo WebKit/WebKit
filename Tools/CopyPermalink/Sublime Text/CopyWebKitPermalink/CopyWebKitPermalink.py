@@ -25,6 +25,7 @@ import re
 import sublime
 import sublime_plugin
 import subprocess
+import webbrowser
 
 global s_settings
 
@@ -51,6 +52,14 @@ class Settings(object):
     @include_revision.setter
     def include_revision(self, value):
         self._set('include_revision', value)
+
+    @property
+    def automatically_open_in_browser(self):
+        return self._get('automatically_open_in_browser', default=False)
+
+    @automatically_open_in_browser.setter
+    def automatically_open_in_browser(self, value):
+        self._set('automatically_open_in_browser', value)
 
     def _get(self, key, default=None):
         if key not in self._cache:
@@ -83,7 +92,10 @@ class CopyWebKitPermalinkCommand(sublime_plugin.TextCommand):
 
         path = self.path_relative_to_repository_root_for_path(document_path)
         revision_info = self.revision_info_for_path(document_path)
-        sublime.set_clipboard(self.permalink_for_path(path, line_number, revision_info, annotate_blame))
+        permalink = self.permalink_for_path(path, line_number, revision_info, annotate_blame)
+        sublime.set_clipboard(permalink)
+        if s_settings.automatically_open_in_browser:
+            webbrowser.open(permalink)
 
     def is_enabled(self):
         return len(self.view.sel()) > 0 and bool(self.view.file_name())
