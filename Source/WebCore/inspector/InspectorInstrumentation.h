@@ -125,6 +125,7 @@ public:
     static void didInsertDOMNode(Document&, Node&);
     static void willRemoveDOMNode(Document&, Node&);
     static void didRemoveDOMNode(Document&, Node&);
+    static void willDestroyDOMNode(Node&);
     static void nodeLayoutContextChanged(Node&, RenderObject*);
     static void willModifyDOMAttr(Document&, Element&, const AtomString& oldValue, const AtomString& newValue);
     static void didModifyDOMAttr(Document&, Element&, const AtomString& name, const AtomString& value);
@@ -350,6 +351,7 @@ private:
     static void didInsertDOMNodeImpl(InstrumentingAgents&, Node&);
     static void willRemoveDOMNodeImpl(InstrumentingAgents&, Node&);
     static void didRemoveDOMNodeImpl(InstrumentingAgents&, Node&);
+    static void willDestroyDOMNodeImpl(InstrumentingAgents&, Node&);
     static void nodeLayoutContextChangedImpl(InstrumentingAgents&, Node&, RenderObject*);
     static void willModifyDOMAttrImpl(InstrumentingAgents&, Element&, const AtomString& oldValue, const AtomString& newValue);
     static void didModifyDOMAttrImpl(InstrumentingAgents&, Element&, const AtomString& name, const AtomString& value);
@@ -599,6 +601,13 @@ inline void InspectorInstrumentation::didRemoveDOMNode(Document& document, Node&
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(document))
         didRemoveDOMNodeImpl(*agents, node);
+}
+
+inline void InspectorInstrumentation::willDestroyDOMNode(Node& node)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (auto* agents = instrumentingAgents(node.document()))
+        willDestroyDOMNodeImpl(*agents, node);
 }
 
 inline void InspectorInstrumentation::nodeLayoutContextChanged(Node& node, RenderObject* newRenderer)

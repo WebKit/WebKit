@@ -276,6 +276,13 @@ void PageDOMDebuggerAgent::didRemoveDOMNode(Node& node)
     m_domNodeRemovedBreakpoints.removeIf(nodeContainsBreakpointOwner);
 }
 
+void PageDOMDebuggerAgent::willDestroyDOMNode(Node& node)
+{
+    // This can be called in response to GC.
+    // DOM Node destruction should be treated as if the node was removed from the DOM tree.
+    didRemoveDOMNode(node);
+}
+
 void PageDOMDebuggerAgent::willModifyDOMAttr(Element& element)
 {
     if (!m_debuggerAgent->breakpointsActive())

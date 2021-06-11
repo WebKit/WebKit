@@ -288,6 +288,7 @@ InspectorDOMAgent::InspectorDOMAgent(PageAgentContext& context, InspectorOverlay
     , m_backendDispatcher(Inspector::DOMBackendDispatcher::create(context.backendDispatcher, this))
     , m_inspectedPage(context.inspectedPage)
     , m_overlay(overlay)
+    , m_destroyedNodesTimer(*this, &InspectorDOMAgent::destroyedNodesTimerFired)
 #if ENABLE(VIDEO)
     , m_mediaMetricsTimer(*this, &InspectorDOMAgent::mediaMetricsTimerFired)
 #endif
@@ -353,6 +354,11 @@ void InspectorDOMAgent::reset()
     if (m_revalidateStyleAttrTask)
         m_revalidateStyleAttrTask->reset();
     m_document = nullptr;
+
+    m_destroyedDetachedNodeIdentifiers.clear();
+    m_destroyedAttachedNodeIdentifiers.clear();
+    if (m_destroyedNodesTimer.isActive())
+        m_destroyedNodesTimer.stop();
 }
 
 void InspectorDOMAgent::setDocument(Document* document)
@@ -372,56 +378,46 @@ void InspectorDOMAgent::setDocument(Document* document)
         m_frontendDispatcher->documentUpdated();
 }
 
-void InspectorDOMAgent::releaseDanglingNodes()
+Protocol::DOM::NodeId InspectorDOMAgent::bind(Node& node)
 {
-    m_danglingNodeToIdMaps.clear();
-}
-
-Protocol::DOM::NodeId InspectorDOMAgent::bind(Node* node, NodeToIdMap* nodesMap)
-{
-    auto id = nodesMap->get(node);
-    if (id)
+    return m_nodeToId.ensure(&node, [&] {
+        auto id = m_lastNodeId++;
+        m_idToNode.set(id, &node);
         return id;
-    id = m_lastNodeId++;
-    nodesMap->set(node, id);
-    m_idToNode.set(id, node);
-    m_idToNodesMap.set(id, nodesMap);
-    return id;
+    }).iterator->value;
 }
 
-void InspectorDOMAgent::unbind(Node* node, NodeToIdMap* nodesMap)
+void InspectorDOMAgent::unbind(Node& node)
 {
-    auto id = nodesMap->get(node);
+    auto id = m_nodeToId.take(&node);
     if (!id)
         return;
 
     m_idToNode.remove(id);
 
-    if (node->isFrameOwnerElement()) {
-        const HTMLFrameOwnerElement* frameOwner = static_cast<const HTMLFrameOwnerElement*>(node);
+    if (node.isFrameOwnerElement()) {
+        const HTMLFrameOwnerElement* frameOwner = static_cast<const HTMLFrameOwnerElement*>(&node);
         if (Document* contentDocument = frameOwner->contentDocument())
-            unbind(contentDocument, nodesMap);
+            unbind(*contentDocument);
     }
 
-    if (is<Element>(*node)) {
-        Element& element = downcast<Element>(*node);
+    if (is<Element>(node)) {
+        Element& element = downcast<Element>(node);
         if (ShadowRoot* root = element.shadowRoot())
-            unbind(root, nodesMap);
+            unbind(*root);
         if (PseudoElement* beforeElement = element.beforePseudoElement())
-            unbind(beforeElement, nodesMap);
+            unbind(*beforeElement);
         if (PseudoElement* afterElement = element.afterPseudoElement())
-            unbind(afterElement, nodesMap);
+            unbind(*afterElement);
     }
-
-    nodesMap->remove(node);
 
     if (auto* cssAgent = m_instrumentingAgents.enabledCSSAgent())
-        cssAgent->didRemoveDOMNode(*node, id);
+        cssAgent->didRemoveDOMNode(node, id);
 
     if (m_childrenRequested.remove(id)) {
         // FIXME: Would be better to do this iteratively rather than recursively.
-        for (Node* child = innerFirstChild(node); child; child = innerNextSibling(child))
-            unbind(child, nodesMap);
+        for (Node* child = innerFirstChild(&node); child; child = innerNextSibling(child))
+            unbind(*child);
     }
 }
 
@@ -499,7 +495,7 @@ Protocol::ErrorStringOr<Ref<Protocol::DOM::Node>> InspectorDOMAgent::getDocument
     reset();
     m_document = document;
 
-    auto root = buildObjectForNode(m_document.get(), 2, &m_documentNodeToIdMap);
+    auto root = buildObjectForNode(m_document.get(), 2);
 
     if (m_nodeToFocus)
         focusNode();
@@ -513,8 +509,6 @@ void InspectorDOMAgent::pushChildNodesToFrontend(Protocol::DOM::NodeId nodeId, i
     if (!node || (node->nodeType() != Node::ELEMENT_NODE && node->nodeType() != Node::DOCUMENT_NODE && node->nodeType() != Node::DOCUMENT_FRAGMENT_NODE))
         return;
 
-    NodeToIdMap* nodeMap = m_idToNodesMap.get(nodeId);
-
     if (m_childrenRequested.contains(nodeId)) {
         if (depth <= 1)
             return;
@@ -522,7 +516,7 @@ void InspectorDOMAgent::pushChildNodesToFrontend(Protocol::DOM::NodeId nodeId, i
         depth--;
 
         for (node = innerFirstChild(node); node; node = innerNextSibling(node)) {
-            auto childNodeId = nodeMap->get(node);
+            auto childNodeId = boundNodeId(node);
             ASSERT(childNodeId);
             pushChildNodesToFrontend(childNodeId, depth);
         }
@@ -530,17 +524,16 @@ void InspectorDOMAgent::pushChildNodesToFrontend(Protocol::DOM::NodeId nodeId, i
         return;
     }
 
-    auto children = buildArrayForContainerChildren(node, depth, nodeMap);
+    auto children = buildArrayForContainerChildren(node, depth);
     m_frontendDispatcher->setChildNodes(nodeId, WTFMove(children));
 }
 
 void InspectorDOMAgent::discardBindings()
 {
-    m_documentNodeToIdMap.clear();
+    m_nodeToId.clear();
     m_idToNode.clear();
     m_dispatchedEvents.clear();
     m_eventListenerEntries.clear();
-    releaseDanglingNodes();
     m_childrenRequested.clear();
 }
 
@@ -653,51 +646,48 @@ Protocol::DOM::NodeId InspectorDOMAgent::pushNodePathToFrontend(Protocol::ErrorS
     }
 
     // FIXME: <https://webkit.org/b/213499> Web Inspector: allow DOM nodes to be instrumented at any point, regardless of whether the main document has also been instrumented
-    if (!m_documentNodeToIdMap.contains(m_document)) {
+    if (!m_nodeToId.contains(m_document.get())) {
         errorString = "Document must have been requested"_s;
         return 0;
     }
 
     // Return id in case the node is known.
-    if (auto result = m_documentNodeToIdMap.get(nodeToPush))
+    if (auto result = boundNodeId(nodeToPush))
         return result;
 
     Node* node = nodeToPush;
     Vector<Node*> path;
-    NodeToIdMap* danglingMap = 0;
 
     while (true) {
         Node* parent = innerParentNode(node);
         if (!parent) {
             // Node being pushed is detached -> push subtree root.
-            auto newMap = makeUnique<NodeToIdMap>();
-            danglingMap = newMap.get();
-            m_danglingNodeToIdMaps.append(newMap.release());
             auto children = JSON::ArrayOf<Protocol::DOM::Node>::create();
-            children->addItem(buildObjectForNode(node, 0, danglingMap));
+            children->addItem(buildObjectForNode(node, 0));
             m_frontendDispatcher->setChildNodes(0, WTFMove(children));
             break;
         } else {
             path.append(parent);
-            if (m_documentNodeToIdMap.get(parent))
+            if (boundNodeId(parent))
                 break;
-            else
-                node = parent;
+            node = parent;
         }
     }
 
-    NodeToIdMap* map = danglingMap ? danglingMap : &m_documentNodeToIdMap;
     for (int i = path.size() - 1; i >= 0; --i) {
-        auto nodeId = map->get(path.at(i));
+        auto nodeId = boundNodeId(path.at(i));
         ASSERT(nodeId);
         pushChildNodesToFrontend(nodeId);
     }
-    return map->get(nodeToPush);
+    return boundNodeId(nodeToPush);
 }
 
 Protocol::DOM::NodeId InspectorDOMAgent::boundNodeId(const Node* node)
 {
-    return m_documentNodeToIdMap.get(const_cast<Node*>(node));
+    if (!m_nodeToId.isValidKey(node))
+        return 0;
+
+    return m_nodeToId.get(node);
 }
 
 Protocol::ErrorStringOr<void> InspectorDOMAgent::setAttributeValue(Protocol::DOM::NodeId nodeId, const String& name, const String& value)
@@ -1711,9 +1701,9 @@ static String computeContentSecurityPolicySHA256Hash(const Element& element)
     return makeString("sha256-", base64Encoded(digest.data(), digest.size()));
 }
 
-Ref<Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* node, int depth, NodeToIdMap* nodesMap)
+Ref<Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* node, int depth)
 {
-    auto id = bind(node, nodesMap);
+    auto id = bind(*node);
     String nodeName;
     String localName;
     String nodeValue;
@@ -1755,7 +1745,7 @@ Ref<Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* node, int d
     if (node->isContainerNode()) {
         int nodeCount = innerChildNodeCount(node);
         value->setChildNodeCount(nodeCount);
-        auto children = buildArrayForContainerChildren(node, depth, nodesMap);
+        auto children = buildArrayForContainerChildren(node, depth);
         if (children->length() > 0)
             value->setChildren(WTFMove(children));
     }
@@ -1774,17 +1764,17 @@ Ref<Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* node, int d
         value->setAttributes(buildArrayForElementAttributes(&element));
         if (is<HTMLFrameOwnerElement>(element)) {
             if (auto* document = downcast<HTMLFrameOwnerElement>(element).contentDocument())
-                value->setContentDocument(buildObjectForNode(document, 0, nodesMap));
+                value->setContentDocument(buildObjectForNode(document, 0));
         }
 
         if (ShadowRoot* root = element.shadowRoot()) {
             auto shadowRoots = JSON::ArrayOf<Protocol::DOM::Node>::create();
-            shadowRoots->addItem(buildObjectForNode(root, 0, nodesMap));
+            shadowRoots->addItem(buildObjectForNode(root, 0));
             value->setShadowRoots(WTFMove(shadowRoots));
         }
 
         if (is<HTMLTemplateElement>(element))
-            value->setTemplateContent(buildObjectForNode(&downcast<HTMLTemplateElement>(element).content(), 0, nodesMap));
+            value->setTemplateContent(buildObjectForNode(&downcast<HTMLTemplateElement>(element).content(), 0));
 
         if (is<HTMLStyleElement>(element) || (is<HTMLScriptElement>(element) && !element.hasAttributeWithoutSynchronization(HTMLNames::srcAttr)))
             value->setContentSecurityPolicyHash(computeContentSecurityPolicySHA256Hash(element));
@@ -1798,7 +1788,7 @@ Ref<Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* node, int d
             if (pseudoElementType(element.pseudoId(), &pseudoType))
                 value->setPseudoType(pseudoType);
         } else {
-            if (auto pseudoElements = buildArrayForPseudoElements(element, nodesMap))
+            if (auto pseudoElements = buildArrayForPseudoElements(element))
                 value->setPseudoElements(pseudoElements.releaseNonNull());
         }
     } else if (is<Document>(*node)) {
@@ -1838,31 +1828,31 @@ Ref<JSON::ArrayOf<String>> InspectorDOMAgent::buildArrayForElementAttributes(Ele
     return attributesValue;
 }
 
-Ref<JSON::ArrayOf<Protocol::DOM::Node>> InspectorDOMAgent::buildArrayForContainerChildren(Node* container, int depth, NodeToIdMap* nodesMap)
+Ref<JSON::ArrayOf<Protocol::DOM::Node>> InspectorDOMAgent::buildArrayForContainerChildren(Node* container, int depth)
 {
     auto children = JSON::ArrayOf<Protocol::DOM::Node>::create();
     if (depth == 0) {
         // Special-case the only text child - pretend that container's children have been requested.
         Node* firstChild = container->firstChild();
         if (firstChild && firstChild->nodeType() == Node::TEXT_NODE && !firstChild->nextSibling()) {
-            children->addItem(buildObjectForNode(firstChild, 0, nodesMap));
-            m_childrenRequested.add(bind(container, nodesMap));
+            children->addItem(buildObjectForNode(firstChild, 0));
+            m_childrenRequested.add(bind(*container));
         }
         return children;
     }
 
     Node* child = innerFirstChild(container);
     depth--;
-    m_childrenRequested.add(bind(container, nodesMap));
+    m_childrenRequested.add(bind(*container));
 
     while (child) {
-        children->addItem(buildObjectForNode(child, depth, nodesMap));
+        children->addItem(buildObjectForNode(child, depth));
         child = innerNextSibling(child);
     }
     return children;
 }
 
-RefPtr<JSON::ArrayOf<Protocol::DOM::Node>> InspectorDOMAgent::buildArrayForPseudoElements(const Element& element, NodeToIdMap* nodesMap)
+RefPtr<JSON::ArrayOf<Protocol::DOM::Node>> InspectorDOMAgent::buildArrayForPseudoElements(const Element& element)
 {
     PseudoElement* beforeElement = element.beforePseudoElement();
     PseudoElement* afterElement = element.afterPseudoElement();
@@ -1871,9 +1861,9 @@ RefPtr<JSON::ArrayOf<Protocol::DOM::Node>> InspectorDOMAgent::buildArrayForPseud
 
     auto pseudoElements = JSON::ArrayOf<Protocol::DOM::Node>::create();
     if (beforeElement)
-        pseudoElements->addItem(buildObjectForNode(beforeElement, 0, nodesMap));
+        pseudoElements->addItem(buildObjectForNode(beforeElement, 0));
     if (afterElement)
-        pseudoElements->addItem(buildObjectForNode(afterElement, 0, nodesMap));
+        pseudoElements->addItem(buildObjectForNode(afterElement, 0));
     return pseudoElements;
 }
 
@@ -2362,18 +2352,18 @@ void InspectorDOMAgent::didCommitLoad(Document* document)
     if (!frameOwner)
         return;
 
-    auto frameOwnerId = m_documentNodeToIdMap.get(frameOwner);
+    auto frameOwnerId = boundNodeId(frameOwner.get());
     if (!frameOwnerId)
         return;
 
     // Re-add frame owner element together with its new children.
-    auto parentId = m_documentNodeToIdMap.get(innerParentNode(frameOwner.get()));
+    auto parentId = boundNodeId(innerParentNode(frameOwner.get()));
     m_frontendDispatcher->childNodeRemoved(parentId, frameOwnerId);
-    unbind(frameOwner.get(), &m_documentNodeToIdMap);
+    unbind(*frameOwner);
 
-    auto value = buildObjectForNode(frameOwner.get(), 0, &m_documentNodeToIdMap);
+    auto value = buildObjectForNode(frameOwner.get(), 0);
     Node* previousSibling = innerPreviousSibling(frameOwner.get());
-    auto prevId = previousSibling ? m_documentNodeToIdMap.get(previousSibling) : 0;
+    auto prevId = boundNodeId(previousSibling);
     m_frontendDispatcher->childNodeInserted(parentId, prevId, WTFMove(value));
 }
 
@@ -2428,13 +2418,11 @@ void InspectorDOMAgent::didInsertDOMNode(Node& node)
         return;
 
     // We could be attaching existing subtree. Forget the bindings.
-    unbind(&node, &m_documentNodeToIdMap);
+    unbind(node);
 
     ContainerNode* parent = node.parentNode();
-    if (!parent)
-        return;
 
-    auto parentId = m_documentNodeToIdMap.get(parent);
+    auto parentId = boundNodeId(parent);
     // Return if parent is not mapped yet.
     if (!parentId)
         return;
@@ -2445,8 +2433,8 @@ void InspectorDOMAgent::didInsertDOMNode(Node& node)
     } else {
         // Children have been requested -> return value of a new child.
         Node* prevSibling = innerPreviousSibling(&node);
-        auto prevId = prevSibling ? m_documentNodeToIdMap.get(prevSibling) : 0;
-        auto value = buildObjectForNode(&node, 0, &m_documentNodeToIdMap);
+        auto prevId = boundNodeId(prevSibling);
+        auto value = buildObjectForNode(&node, 0);
         m_frontendDispatcher->childNodeInserted(parentId, prevId, WTFMove(value));
     }
 }
@@ -2458,19 +2446,63 @@ void InspectorDOMAgent::didRemoveDOMNode(Node& node)
 
     ContainerNode* parent = node.parentNode();
 
+    auto parentId = boundNodeId(parent);
     // If parent is not mapped yet -> ignore the event.
-    if (!m_documentNodeToIdMap.contains(parent))
+    if (!parentId)
         return;
 
-    auto parentId = m_documentNodeToIdMap.get(parent);
-
+    // FIXME: <webkit.org/b/189687> Preserve DOM.NodeId if a node is removed and re-added
     if (!m_childrenRequested.contains(parentId)) {
         // No children are mapped yet -> only notify on changes of hasChildren.
         if (innerChildNodeCount(parent) == 1)
             m_frontendDispatcher->childNodeCountUpdated(parentId, 0);
     } else
-        m_frontendDispatcher->childNodeRemoved(parentId, m_documentNodeToIdMap.get(&node));
-    unbind(&node, &m_documentNodeToIdMap);
+        m_frontendDispatcher->childNodeRemoved(parentId, boundNodeId(&node));
+    unbind(node);
+}
+
+void InspectorDOMAgent::willDestroyDOMNode(Node& node)
+{
+    if (containsOnlyHTMLWhitespace(&node))
+        return;
+
+    auto nodeId = m_nodeToId.take(&node);
+    if (!nodeId)
+        return;
+
+    m_idToNode.remove(nodeId);
+    m_childrenRequested.remove(nodeId);
+
+    if (auto* cssAgent = m_instrumentingAgents.enabledCSSAgent())
+        cssAgent->didRemoveDOMNode(node, nodeId);
+
+    // This can be called in response to GC. Due to the single-process model used in WebKit1, the
+    // event must be dispatched from a timer to prevent the frontend from making JS allocations
+    // while the GC is still active.
+
+    // FIXME: <webkit.org/b/189687> Unify m_destroyedAttachedNodeIdentifiers and m_destroyedDetachedNodeIdentifiers.
+    if (auto parentId = boundNodeId(node.parentNode()))
+        m_destroyedAttachedNodeIdentifiers.append({ parentId, nodeId });
+    else
+        m_destroyedDetachedNodeIdentifiers.append(nodeId);
+
+    if (!m_destroyedNodesTimer.isActive())
+        m_destroyedNodesTimer.startOneShot(0_s);
+}
+
+void InspectorDOMAgent::destroyedNodesTimerFired()
+{
+    for (auto& [parentId, nodeId] : std::exchange(m_destroyedAttachedNodeIdentifiers, { })) {
+        if (!m_childrenRequested.contains(parentId)) {
+            auto* parent = nodeForId(parentId);
+            if (parent && innerChildNodeCount(parent) == 1)
+                m_frontendDispatcher->childNodeCountUpdated(parentId, 0);
+        } else
+            m_frontendDispatcher->childNodeRemoved(parentId, nodeId);
+    }
+    
+    for (auto nodeId : std::exchange(m_destroyedDetachedNodeIdentifiers, { }))
+        m_frontendDispatcher->willDestroyDOMNode(nodeId);
 }
 
 void InspectorDOMAgent::willModifyDOMAttr(Element&, const AtomString& oldValue, const AtomString& newValue)
@@ -2525,7 +2557,7 @@ void InspectorDOMAgent::styleAttributeInvalidated(const Vector<Element*>& elemen
 
 void InspectorDOMAgent::characterDataModified(CharacterData& characterData)
 {
-    auto id = m_documentNodeToIdMap.get(&characterData);
+    auto id = boundNodeId(&characterData);
     if (!id) {
         // Push text node if it is being created.
         didInsertDOMNode(characterData);
@@ -2536,7 +2568,7 @@ void InspectorDOMAgent::characterDataModified(CharacterData& characterData)
 
 void InspectorDOMAgent::didInvalidateStyleAttr(Element& element)
 {
-    auto id = m_documentNodeToIdMap.get(&element);
+    auto id = boundNodeId(&element);
     if (!id)
         return;
 
@@ -2547,22 +2579,22 @@ void InspectorDOMAgent::didInvalidateStyleAttr(Element& element)
 
 void InspectorDOMAgent::didPushShadowRoot(Element& host, ShadowRoot& root)
 {
-    auto hostId = m_documentNodeToIdMap.get(&host);
+    auto hostId = boundNodeId(&host);
     if (hostId)
-        m_frontendDispatcher->shadowRootPushed(hostId, buildObjectForNode(&root, 0, &m_documentNodeToIdMap));
+        m_frontendDispatcher->shadowRootPushed(hostId, buildObjectForNode(&root, 0));
 }
 
 void InspectorDOMAgent::willPopShadowRoot(Element& host, ShadowRoot& root)
 {
-    auto hostId = m_documentNodeToIdMap.get(&host);
-    auto rootId = m_documentNodeToIdMap.get(&root);
+    auto hostId = boundNodeId(&host);
+    auto rootId = boundNodeId(&root);
     if (hostId && rootId)
         m_frontendDispatcher->shadowRootPopped(hostId, rootId);
 }
 
 void InspectorDOMAgent::didChangeCustomElementState(Element& element)
 {
-    auto elementId = m_documentNodeToIdMap.get(&element);
+    auto elementId = boundNodeId(&element);
     if (!elementId)
         return;
 
@@ -2589,27 +2621,27 @@ void InspectorDOMAgent::pseudoElementCreated(PseudoElement& pseudoElement)
     if (!parent)
         return;
 
-    auto parentId = m_documentNodeToIdMap.get(parent);
+    auto parentId = boundNodeId(parent);
     if (!parentId)
         return;
 
     pushChildNodesToFrontend(parentId, 1);
-    m_frontendDispatcher->pseudoElementAdded(parentId, buildObjectForNode(&pseudoElement, 0, &m_documentNodeToIdMap));
+    m_frontendDispatcher->pseudoElementAdded(parentId, buildObjectForNode(&pseudoElement, 0));
 }
 
 void InspectorDOMAgent::pseudoElementDestroyed(PseudoElement& pseudoElement)
 {
-    auto pseudoElementId = m_documentNodeToIdMap.get(&pseudoElement);
+    auto pseudoElementId = boundNodeId(&pseudoElement);
     if (!pseudoElementId)
         return;
 
     // If a PseudoElement is bound, its parent element must have been bound.
     Element* parent = pseudoElement.hostElement();
     ASSERT(parent);
-    auto parentId = m_documentNodeToIdMap.get(parent);
+    auto parentId = boundNodeId(parent);
     ASSERT(parentId);
 
-    unbind(&pseudoElement, &m_documentNodeToIdMap);
+    unbind(pseudoElement);
     m_frontendDispatcher->pseudoElementRemoved(parentId, pseudoElementId);
 }
 

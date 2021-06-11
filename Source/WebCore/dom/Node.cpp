@@ -50,6 +50,7 @@
 #include "HTMLStyleElement.h"
 #include "InputEvent.h"
 #include "InspectorController.h"
+#include "InspectorInstrumentation.h"
 #include "KeyboardEvent.h"
 #include "Logging.h"
 #include "MutationEvent.h"
@@ -348,6 +349,8 @@ Node::~Node()
     ASSERT(m_refCountAndParentBit == s_refCountIncrement);
     ASSERT(m_deletionHasBegun);
     ASSERT(!m_adoptionIsRequired);
+
+    InspectorInstrumentation::willDestroyDOMNode(*this);
 
 #ifndef NDEBUG
     if (!ignoreSet().remove(*this))

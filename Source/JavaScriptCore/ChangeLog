@@ -1,3 +1,17 @@
+2021-06-11  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Add instrumentation to node destruction for InspectorDOMAgent
+        https://bugs.webkit.org/show_bug.cgi?id=226624
+
+        Reviewed by Devin Rousso.
+
+        Add new `DOM.willDestroyDOMNode` event to inform the frontend of DOM nodes that no longer exist, even if they
+        weren't in the DOM tree. This work serves as a prelude to <https://webkit.org/b/189687> (Web Inspector: preserve
+        DOM.NodeId if a node is removed and re-added) to eventually only forget about nodes upon destruction, instead of
+        removal from the DOM tree.
+
+        * inspector/protocol/DOM.json:
+
 2021-06-11  Yijia Huang  <yijia_huang@apple.com>
 
         Air ARM64 sub32 opcode should indicate that it zero-extends its result

@@ -44,12 +44,10 @@ public:
     ~PageConsoleAgent();
 
     // ConsoleBackendDispatcherHandler
-    Inspector::Protocol::ErrorStringOr<void> clearMessages();
     Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Console::Channel>>> getLoggingChannels();
     Inspector::Protocol::ErrorStringOr<void> setLoggingChannelLevel(Inspector::Protocol::Console::ChannelSource, Inspector::Protocol::Console::ChannelLevel);
 
 private:
-    InstrumentingAgents& m_instrumentingAgents;
     Page& m_inspectedPage;
 };
 

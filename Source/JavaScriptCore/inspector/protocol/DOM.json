@@ -679,6 +679,13 @@
             ]
         },
         {
+            "name": "willDestroyDOMNode",
+            "description": "Fired when a detached DOM node is about to be destroyed. Currently, this event will only be fired when a DOM node that is detached is about to be destructed.",
+            "parameters": [
+                { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node that will be destroyed." }
+            ]
+        },
+        {
             "name": "shadowRootPushed",
             "description": "Called when shadow root is pushed into the element.",
             "targetTypes": ["page"],

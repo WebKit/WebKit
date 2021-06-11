@@ -1,3 +1,69 @@
+2021-06-11  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Add instrumentation to node destruction for InspectorDOMAgent
+        https://bugs.webkit.org/show_bug.cgi?id=226624
+
+        Reviewed by Devin Rousso.
+
+        Test: inspector/dom/willDestroyDOMNode.html
+
+        Add instrumentation for destruction of nodes in order to cease instrumenting nodes and inform the frontend that
+        the node no longer exists. This work serves as a prelude to <https://webkit.org/b/189687> (Web Inspector:
+        preserve DOM.NodeId if a node is removed and re-added) to eventually only forget about nodes upon destruction,
+        instead of removal from the DOM tree. Additionally, the storage of nodes is simplified down to two inverse maps,
+        one that maps `Node` to `NodeId`, and another that maps `NodeId` to `Node`. These are kept in sync throughout,
+        and both attached and detached nodes are now handled as part of these two maps of Nodes.
+
+        * dom/Node.cpp:
+        (WebCore::Node::~Node):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willDestroyDOMNodeImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didRemoveDOMNode):
+        (WebCore::InspectorInstrumentation::willDestroyDOMNode):
+        * inspector/agents/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::didRemoveDOMNode):
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::reset):
+        (WebCore::InspectorDOMAgent::bind):
+        (WebCore::InspectorDOMAgent::unbind):
+        (WebCore::InspectorDOMAgent::getDocument):
+        (WebCore::InspectorDOMAgent::pushChildNodesToFrontend):
+        (WebCore::InspectorDOMAgent::discardBindings):
+        (WebCore::InspectorDOMAgent::pushNodePathToFrontend):
+        (WebCore::InspectorDOMAgent::boundNodeId):
+        - Add a check that the `Node*` is a valid key (not `nullptr`) before getting its id.
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        (WebCore::InspectorDOMAgent::buildArrayForContainerChildren):
+        (WebCore::InspectorDOMAgent::buildArrayForPseudoElements):
+        (WebCore::InspectorDOMAgent::didCommitLoad):
+        (WebCore::InspectorDOMAgent::didInsertDOMNode):
+        (WebCore::InspectorDOMAgent::didRemoveDOMNode):
+        (WebCore::InspectorDOMAgent::willDestroyDOMNode):
+        (WebCore::InspectorDOMAgent::destroyedNodesTimerFired):
+        - Added instrumentation point for DOM nodes being destroyed so they can be removed from the agent, and the
+        frontend can also be informed of their ceasing to exist.
+        (WebCore::InspectorDOMAgent::characterDataModified):
+        (WebCore::InspectorDOMAgent::didInvalidateStyleAttr):
+        (WebCore::InspectorDOMAgent::didPushShadowRoot):
+        (WebCore::InspectorDOMAgent::willPopShadowRoot):
+        (WebCore::InspectorDOMAgent::didChangeCustomElementState):
+        (WebCore::InspectorDOMAgent::pseudoElementCreated):
+        (WebCore::InspectorDOMAgent::pseudoElementDestroyed):
+        (WebCore::InspectorDOMAgent::releaseDanglingNodes): Deleted.
+        - Removed usage of NodeToIdMap and nested maps of nodes throughout in favor of two inverse maps for relating
+        `Node`s and `NodeId`s. Because there is now a single set of canonical node maps, we no longer to to pass a
+        NodeToIdMap throughout the agent.
+        * inspector/agents/InspectorDOMAgent.h:
+        * inspector/agents/page/PageConsoleAgent.cpp:
+        (WebCore::PageConsoleAgent::PageConsoleAgent):
+        (WebCore::PageConsoleAgent::clearMessages):
+        * inspector/agents/page/PageConsoleAgent.h:
+        * inspector/agents/page/PageDOMDebuggerAgent.cpp:
+        (WebCore::PageDOMDebuggerAgent::willDestroyDOMNode):
+        * inspector/agents/page/PageDOMDebuggerAgent.h:
+
 2021-06-11  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Add fast-path for binding security check of DOMWindow

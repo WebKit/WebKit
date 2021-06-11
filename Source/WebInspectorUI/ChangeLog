@@ -1,3 +1,22 @@
+2021-06-11  Patrick Angle  <pangle@apple.com>
+
+        Web Inspector: Add instrumentation to node destruction for InspectorDOMAgent
+        https://bugs.webkit.org/show_bug.cgi?id=226624
+
+        Reviewed by Devin Rousso.
+
+        Listen for the new `DOM.willDestroyDOMNode` event in order to cleanup and remaining references to that Node.
+        This work serves as a prelude to <https://webkit.org/b/189687> (Web Inspector: preserve DOM.NodeId if a node is
+        removed and re-added) to eventually only forget about nodes upon destruction, instead of removal from the DOM
+        tree.
+
+        * UserInterface/Controllers/DOMManager.js:
+        (WI.DOMManager.prototype.willDestroyDOMNode):
+        * UserInterface/Protocol/DOMObserver.js:
+        (WI.DOMObserver.prototype.willDestroyDOMNode):
+        * UserInterface/Views/DOMTreeUpdater.js:
+        (WI.DOMTreeUpdater.prototype._nodeRemoved):
+
 2021-06-08  Razvan Caliman  <rcaliman@apple.com>
 
         Web Inspector: Styles panel slow to render when inspecting node with many inherited CSS variables
