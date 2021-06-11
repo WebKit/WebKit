@@ -44,7 +44,31 @@ extern CFStringRef _AXSCopyPathForAccessibilityBundle(CFStringRef bundle);
 
 #if PLATFORM(IOS_FAMILY)
 extern CFStringRef kAXSReduceMotionPreference;
+
 extern CFStringRef kAXSReduceMotionChangedNotification;
+extern CFStringRef kAXSIncreaseButtonLegibilityNotification;
+extern CFStringRef kAXSEnhanceTextLegibilityChangedNotification;
+extern CFStringRef kAXSDarkenSystemColorsEnabledNotification;
+extern CFStringRef kAXSInvertColorsEnabledNotification;
+
+typedef enum {
+    AXValueStateInvalid = -2,
+    AXValueStateEmpty = -1,
+    AXValueStateOff,
+    AXValueStateOn
+} AXValueState;
+
+extern AXValueState _AXSReduceMotionEnabledApp(CFStringRef appID);
+extern AXValueState _AXSIncreaseButtonLegibilityApp(CFStringRef appID);
+extern AXValueState _AXSEnhanceTextLegibilityEnabledApp(CFStringRef appID);
+extern AXValueState _AXDarkenSystemColorsApp(CFStringRef appID);
+extern AXValueState _AXSInvertColorsEnabledApp(CFStringRef appID);
+
+extern void _AXSSetReduceMotionEnabledApp(AXValueState enabled, CFStringRef appID);
+extern void _AXSSetIncreaseButtonLegibilityApp(AXValueState enabled, CFStringRef appID);
+extern void _AXSSetEnhanceTextLegibilityEnabledApp(AXValueState enabled, CFStringRef appID);
+extern void _AXSSetDarkenSystemColorsApp(AXValueState enabled, CFStringRef appID);
+extern void _AXSInvertColorsSetEnabledApp(AXValueState enabled, CFStringRef appID);
 #endif
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(FULL_KEYBOARD_ACCESS)

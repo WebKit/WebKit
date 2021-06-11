@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebProcess.h"
 
+#import "AccessibilitySupportSPI.h"
 #import "GPUProcessConnectionParameters.h"
 #import "LegacyCustomProtocolManager.h"
 #import "LogInitialization.h"
@@ -448,6 +449,8 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     
     if (!parameters.maximumIOSurfaceSize.isEmpty())
         WebCore::IOSurface::setMaximumSize(parameters.maximumIOSurfaceSize);
+
+    accessibilityPreferencesDidChange(parameters.accessibilityPreferences);
 }
 
 void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParameters&& parameters)
@@ -1035,6 +1038,18 @@ void WebProcess::backlightLevelDidChange(float backlightLevel)
         });
 }
 #endif
+
+void WebProcess::accessibilityPreferencesDidChange(const AccessibilityPreferences& preferences)
+{
+#if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
+    auto appID = CFSTR("com.apple.WebKit.WebContent");
+    _AXSSetReduceMotionEnabledApp(preferences.reduceMotionEnabled ? AXValueStateOn : AXValueStateOff, appID);
+    _AXSSetIncreaseButtonLegibilityApp(preferences.increaseButtonLegibility ? AXValueStateOn : AXValueStateOff, appID);
+    _AXSSetEnhanceTextLegibilityEnabledApp(preferences.enhanceTextLegibility ? AXValueStateOn : AXValueStateOff, appID);
+    _AXSSetDarkenSystemColorsApp(preferences.darkenSystemColors ? AXValueStateOn : AXValueStateOff, appID);
+    _AXSInvertColorsSetEnabledApp(preferences.invertColorsEnabled ? AXValueStateOn : AXValueStateOff, appID);
+#endif
+}
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 void WebProcess::colorPreferencesDidChange()

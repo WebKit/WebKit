@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AccessibilityPreferences.h"
 #include "CacheModel.h"
 #include "SandboxExtension.h"
 #include "TextCheckerState.h"
@@ -243,6 +244,8 @@ struct WebProcessCreationParameters {
 #if HAVE(IOSURFACE)
     WebCore::IntSize maximumIOSurfaceSize;
 #endif
+    
+    AccessibilityPreferences accessibilityPreferences;
 };
 
 } // namespace WebKit

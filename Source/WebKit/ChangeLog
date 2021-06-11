@@ -1,3 +1,32 @@
+2021-06-10  Per Arne Vollan  <pvollan@apple.com>
+
+        [iOS] Sync Accessibility preferences
+        https://bugs.webkit.org/show_bug.cgi?id=226738
+        <rdar://77922839>
+
+        Reviewed by Brent Fulgham.
+
+        Implement Per-App Accessibility preferences on iOS. The Per-App Accessibility preferences in the WebContent process
+        should reflect the values in the UI process. This is addressed by syncing the values between the two processes on
+        startup of the WebContent process, and when the values change.
+
+        * Platform/spi/Cocoa/AccessibilitySupportSPI.h:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        (WebKit::WebProcessPool::accessibilityPreferencesChangedCallback):
+        (WebKit::WebProcessPool::registerNotificationObservers):
+        (WebKit::WebProcessPool::unregisterNotificationObservers):
+        * UIProcess/WebProcessPool.h:
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::accessibilityPreferencesDidChange):
+
 2021-06-10  Sihui Liu  <sihui_liu@apple.com>
 
         Regression(r278449): add null check for completionHandler in WebIDBServer::close
