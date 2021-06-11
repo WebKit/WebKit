@@ -1,5 +1,17 @@
 2021-06-11  Robert Jenner  <jenner@apple.com>
 
+        [LayoutTests] Delete unused LayoutTests/webaudio resources
+        https://bugs.webkit.org/show_bug.cgi?id=226843
+
+        Reviewed by Jonathan Bedard.
+
+        * webaudio/resources/convolution-testing.js: Removed.
+        * webaudio/resources/javascriptaudionode-testing.js: Removed.
+        * webaudio/resources/note-grain-on-testing.js: Removed.
+        * webaudio/resources/scriptprocessornode-testing.js: Removed.
+
+2021-06-11  Robert Jenner  <jenner@apple.com>
+
         [LayoutTests] Delete unused LayoutTests/tiled-drawing resources
         https://bugs.webkit.org/show_bug.cgi?id=226842
 
