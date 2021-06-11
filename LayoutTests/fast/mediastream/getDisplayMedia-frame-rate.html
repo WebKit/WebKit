@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>getDisplayMedia and frame rate</title>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+        <script src="resources/getDisplayMedia-utils.js"></script>
+    </head>
+    <body>
+        <script>
+promise_test(async () => {
+    if (!window.internals)
+        return;
+
+    const stream = await callGetDisplayMedia({ video: true });
+    internals.observeMediaStreamTrack(stream.getVideoTracks()[0]);
+    let currentCount = internals.trackVideoSampleCount;
+    while (currentCount === internals.trackVideoSampleCount)
+        await new Promise(resolve => setTimeout(resolve, 50));
+}, "Ensure getDisplayMedia generate frames");
+        </script>
+    </body>
+</html>
