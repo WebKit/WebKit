@@ -112,7 +112,7 @@
 #include "DataDetectionResultsStorage.h"
 #endif
 
-#define RELEASE_LOG_ERROR_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), channel, "%p - Frame::" fmt, this, ##__VA_ARGS__)
+#define FRAME_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - Frame::" fmt, this, ##__VA_ARGS__)
 
 namespace WebCore {
 
@@ -680,7 +680,7 @@ void Frame::injectUserScriptImmediately(DOMWrapperWorld& world, const UserScript
     if (loader().client().shouldEnableInAppBrowserPrivacyProtections()) {
         if (auto* document = this->document())
             document->addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "Ignoring user script injection for non-app bound domain."_s);
-        RELEASE_LOG_ERROR_IF_ALLOWED(Loading, "injectUserScriptImmediately: Ignoring user script injection for non app-bound domain");
+        FRAME_RELEASE_LOG_ERROR(Loading, "injectUserScriptImmediately: Ignoring user script injection for non app-bound domain");
         return;
     }
     loader().client().notifyPageOfAppBoundBehavior();
@@ -1044,11 +1044,6 @@ void Frame::deviceOrPageScaleFactorChanged()
         root->compositor().deviceOrPageScaleFactorChanged();
 }
 
-bool Frame::isAlwaysOnLoggingAllowed() const
-{
-    return page() && page()->isAlwaysOnLoggingAllowed();
-}
-
 void Frame::dropChildren()
 {
     ASSERT(isMainFrame());
@@ -1146,4 +1141,4 @@ DataDetectionResultsStorage& Frame::dataDetectionResults()
 
 } // namespace WebCore
 
-#undef RELEASE_LOG_ERROR_IF_ALLOWED
+#undef FRAME_RELEASE_LOG_ERROR

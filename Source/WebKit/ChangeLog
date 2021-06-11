@@ -1,5 +1,26 @@
 2021-06-11  Chris Dumez  <cdumez@apple.com>
 
+        Enable release logging in ephemeral sessions for parts of WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=226929
+
+        Reviewed by Eric Carlson.
+
+        Enable release logging in ephemeral sessions for parts of WebCore, to facilitate debugging.
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::willSendRequest):
+        (WebKit::WebResourceLoader::didReceiveResponse):
+        (WebKit::WebResourceLoader::didReceiveData):
+        (WebKit::WebResourceLoader::didFinishResourceLoad):
+        (WebKit::WebResourceLoader::serviceWorkerDidNotHandle):
+        (WebKit::WebResourceLoader::didFailResourceLoad):
+        (WebKit::WebResourceLoader::didBlockAuthenticationChallenge):
+        (WebKit::WebResourceLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied):
+        (WebKit::WebResourceLoader::didReceiveResource):
+        * WebProcess/Network/WebResourceLoader.h:
+
+2021-06-11  Chris Dumez  <cdumez@apple.com>
+
         Regression(r276653) We're going to disk more often for local storage operations
         https://bugs.webkit.org/show_bug.cgi?id=226832
 

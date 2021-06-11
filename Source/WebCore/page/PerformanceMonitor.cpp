@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-#define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(m_page.isAlwaysOnLoggingAllowed(), channel, "%p - PerformanceMonitor::" fmt, this, ##__VA_ARGS__)
+#define RELEASE_LOG_IF_ALLOWED(channel, fmt, ...) RELEASE_LOG_IF(m_page.sessionID().isAlwaysOnLoggingAllowed(), channel, "%p - PerformanceMonitor::" fmt, this, ##__VA_ARGS__)
 
 static constexpr const Seconds cpuUsageMeasurementDelay { 5_s };
 static constexpr const Seconds postLoadCPUUsageMeasurementDuration { 10_s };

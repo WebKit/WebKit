@@ -303,8 +303,6 @@ public:
     void resumeActiveDOMObjectsAndAnimations();
     bool activeDOMObjectsAndAnimationsSuspended() const { return m_activeDOMObjectsAndAnimationsSuspendedCount > 0; }
 
-    WEBCORE_EXPORT bool isAlwaysOnLoggingAllowed() const;
-
     void didPrewarmLocalStorage();
     bool mayPrewarmLocalStorage() const;
 

@@ -414,8 +414,6 @@ public:
     void setReferrerPolicy(ReferrerPolicy);
     ReferrerPolicy referrerPolicy() const final { return m_referrerPolicy.value_or(ReferrerPolicy::NoReferrerWhenDowngrade); }
 
-    bool isAlwaysOnLoggingAllowed() const;
-
     WEBCORE_EXPORT DocumentType* doctype() const;
 
     WEBCORE_EXPORT DOMImplementation& implementation();

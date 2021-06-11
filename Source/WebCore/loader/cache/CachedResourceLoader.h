@@ -164,8 +164,6 @@ public:
 
     ResourceTimingInformation& resourceTimingInformation() { return m_resourceTimingInfo; }
 
-    bool isAlwaysOnLoggingAllowed() const;
-
     KeepaliveRequestTracker& keepaliveRequestTracker() { return m_keepaliveRequestTracker; }
 
     Vector<CachedResource*> visibleResourcesToPrioritize();

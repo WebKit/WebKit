@@ -71,8 +71,6 @@ public:
 
     void detachFromCoreLoader();
 
-    bool isAlwaysOnLoggingAllowed() const;
-
 private:
     WebResourceLoader(Ref<WebCore::ResourceLoader>&&, const TrackingParameters&);
 

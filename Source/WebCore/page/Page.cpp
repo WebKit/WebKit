@@ -3137,11 +3137,6 @@ void Page::setResourceUsageOverlayVisible(bool visible)
 }
 #endif
 
-bool Page::isAlwaysOnLoggingAllowed() const
-{
-    return m_sessionID.isAlwaysOnLoggingAllowed();
-}
-
 String Page::captionUserPreferencesStyleSheet()
 {
     return m_captionUserPreferencesStyleSheet;

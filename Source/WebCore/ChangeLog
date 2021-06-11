@@ -1,3 +1,103 @@
+2021-06-11  Chris Dumez  <cdumez@apple.com>
+
+        Enable release logging in ephemeral sessions for parts of WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=226929
+
+        Reviewed by Eric Carlson.
+
+        Enable release logging in ephemeral sessions for parts of WebCore, to facilitate debugging.
+
+        * dom/Document.cpp:
+        (WebCore::Document::canNavigate):
+        * dom/Document.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::setRequest):
+        (WebCore::DocumentLoader::setMainDocumentError):
+        (WebCore::DocumentLoader::mainReceivedError):
+        (WebCore::DocumentLoader::frameDestroyed):
+        (WebCore::DocumentLoader::stopLoading):
+        (WebCore::DocumentLoader::notifyFinished):
+        (WebCore::DocumentLoader::willSendRequest):
+        (WebCore::DocumentLoader::tryLoadingSubstituteData):
+        (WebCore::DocumentLoader::disallowDataRequest const):
+        (WebCore::DocumentLoader::continueAfterContentPolicy):
+        (WebCore::DocumentLoader::attachToFrame):
+        (WebCore::DocumentLoader::detachFromFrame):
+        (WebCore::DocumentLoader::startLoadingMainResource):
+        (WebCore::DocumentLoader::loadMainResource):
+        (WebCore::DocumentLoader::cancelMainResourceLoad):
+        * loader/DocumentLoader.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::changeLocation):
+        (WebCore::FrameLoader::loadURLIntoChildFrame):
+        (WebCore::FrameLoader::loadArchive):
+        (WebCore::FrameLoader::loadInSameDocument):
+        (WebCore::FrameLoader::prepareForLoadStart):
+        (WebCore::FrameLoader::setupForReplace):
+        (WebCore::FrameLoader::loadFrameRequest):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::loadWithNavigationAction):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::clearProvisionalLoadForPolicyCheck):
+        (WebCore::FrameLoader::reloadWithOverrideEncoding):
+        (WebCore::FrameLoader::reload):
+        (WebCore::FrameLoader::stopAllLoaders):
+        (WebCore::FrameLoader::stopForBackForwardCache):
+        (WebCore::FrameLoader::setDocumentLoader):
+        (WebCore::FrameLoader::setPolicyDocumentLoader):
+        (WebCore::FrameLoader::setProvisionalDocumentLoader):
+        (WebCore::FrameLoader::setState):
+        (WebCore::FrameLoader::clearProvisionalLoad):
+        (WebCore::FrameLoader::transitionToCommitted):
+        (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        (WebCore::FrameLoader::loadPostRequest):
+        (WebCore::FrameLoader::continueFragmentScrollAfterNavigationPolicy):
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+        (WebCore::FrameLoader::retryAfterFailedCacheOnlyMainResourceLoad):
+        * loader/FrameLoader.h:
+        * loader/ProgressTracker.cpp:
+        (WebCore::ProgressTracker::progressStarted):
+        (WebCore::ProgressTracker::progressCompleted):
+        (WebCore::ProgressTracker::finalProgressComplete):
+        * loader/ProgressTracker.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::init):
+        (WebCore::ResourceLoader::loadDataURL):
+        (WebCore::ResourceLoader::willSendRequestInternal):
+        (WebCore::ResourceLoader::didReceiveResponse):
+        (WebCore::ResourceLoader::didFinishLoading):
+        (WebCore::ResourceLoader::didFinishLoadingOnePart):
+        (WebCore::ResourceLoader::didFail):
+        (WebCore::ResourceLoader::willSendRequestAsync):
+        (WebCore::ResourceLoader::wasBlocked):
+        (WebCore::ResourceLoader::cannotShowURL):
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::frame const):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::init):
+        (WebCore::SubresourceLoader::willSendRequestInternal):
+        (WebCore::SubresourceLoader::didReceiveResponse):
+        (WebCore::SubresourceLoader::didFinishLoading):
+        (WebCore::SubresourceLoader::didFail):
+        (WebCore::SubresourceLoader::willCancel):
+        (WebCore::SubresourceLoader::notifyDone):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+        (WebCore::CachedResource::redirectReceived):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::canRequestAfterRedirection const):
+        (WebCore::CachedResourceLoader::requestResource):
+        * loader/cache/CachedResourceLoader.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::injectUserScriptImmediately):
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        * page/Page.cpp:
+        * page/Page.h:
+        * page/PerformanceMonitor.cpp:
+
 2021-06-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Live Text] Text selection inside image elements should not be cleared upon resize
