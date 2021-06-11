@@ -1,0 +1,39 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL Canvas to Context2D Canvas Memory Test</title>
+<link rel="stylesheet" href="resources/webgl_test_files/resources/js-test-style.css"/>
+<script src="resources/webgl_test_files//js/js-test-pre.js"></script>
+<script src="resources/webgl_test_files//js/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<canvas id="canvas2d" width="40" height="40"></canvas>
+<script>
+"use strict";
+description("This test checking that drawing WebGL canvas to Context2D canvas with drawImage does not use unbounded amount of memory.");
+var wtu = WebGLTestUtils;
+var canvas2d = document.getElementById("canvas2d");
+var ctx2d = canvas2d.getContext("2d");
+var canvasWebGL = document.createElement("canvas");
+canvasWebGL.width = 4000;
+canvasWebGL.height = 4000;
+var gl = wtu.create3DContext(canvasWebGL);
+if (!gl) {
+    testFailed("context does not exist");
+} else {
+    gl.clearColor(0.25, 0.5, 0.75, 1);
+    for (var count = 0; count < 25; count++) {
+        ctx2d.clearRect(0, 0, canvas2d.width, canvas2d.height);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        ctx2d.drawImage(canvasWebGL, 0, 0, canvas2d.width, canvas2d.height);
+        wtu.checkCanvasRect(ctx2d, 0, 0, canvas2d.width, canvas2d.height, [64, 128, 192, 255], "drawImage: Should be [64, 128, 192, 255]", 2);
+    }
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR);
+    debug("");
+    finishTest();
+}
+</script>
+</body>
+</html>

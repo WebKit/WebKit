@@ -1,3 +1,17 @@
+2021-06-11  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL context image buffer accumulates the NativeImage contents when drawn to RemoteImageBufferProxy
+        https://bugs.webkit.org/show_bug.cgi?id=226813
+        <rdar://77421966>
+
+        Reviewed by Simon Fraser.
+
+        Add a test that should crash on some devices with low
+        memory limits.
+
+        * webgl/draw-webgl-to-context2d-memory-test-expected.txt: Added.
+        * webgl/draw-webgl-to-context2d-memory-test.html: Added.
+
 2021-06-10  Sam Weinig  <weinig@apple.com>
 
         Nothing is keeping navigator.xr alive during GC

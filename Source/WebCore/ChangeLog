@@ -1,3 +1,20 @@
+2021-06-11  Kimmo Kinnunen  <kkinnunen@apple.com>
+
+        WebGL context image buffer accumulates the NativeImage contents when drawn to RemoteImageBufferProxy
+        https://bugs.webkit.org/show_bug.cgi?id=226813
+        <rdar://77421966>
+
+        Reviewed by Simon Fraser.
+
+        Add a workaround to flush WebGL element image buffer before
+        every new frame in order to clear the WebContent process side
+        NativeImage caches.
+
+        Test: webgl/draw-webgl-to-context2d-memory-test.html
+
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::paintRenderingResultsToCanvas):
+
 2021-06-10  Chris Dumez  <cdumez@apple.com>
 
         CARingBuffer::frameOffset() makes incorrect assumptions about the frame count
