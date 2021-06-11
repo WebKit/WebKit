@@ -73,7 +73,9 @@ static void didCreateConnection(WKContextRef, WKConnectionRef connectionRef, con
         [delegate processGroup:processGroup didCreateConnectionToWebProcessPlugIn:wrapper(*WebKit::toImpl(connectionRef))];
 }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 static void setUpConnectionClient(WKProcessGroup *processGroup, WKContextRef contextRef)
+ALLOW_DEPRECATED_DECLARATIONS_END
 {
     WKContextConnectionClientV0 connectionClient;
     memset(&connectionClient, 0, sizeof(connectionClient));
@@ -101,7 +103,9 @@ static WKTypeRef getInjectedBundleInitializationUserData(WKContextRef, const voi
     return 0;
 }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 static void setUpInjectedBundleClient(WKProcessGroup *processGroup, WKContextRef contextRef)
+ALLOW_DEPRECATED_DECLARATIONS_END
 {
     WKContextInjectedBundleClientV1 injectedBundleClient;
     memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
@@ -169,7 +173,9 @@ static void didUpdateHistoryTitle(WKContextRef, WKPageRef pageRef, WKStringRef t
         [historyDelegate browsingContextController:controller didUpdateHistoryTitle:wrapper(*WebKit::toImpl(titleRef)) forURL:wrapper(*WebKit::toImpl(urlRef))];
 }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 static void setUpHistoryClient(WKProcessGroup *processGroup, WKContextRef contextRef)
+ALLOW_DEPRECATED_DECLARATIONS_END
 {
     WKContextHistoryClientV0 historyClient;
     memset(&historyClient, 0, sizeof(historyClient));

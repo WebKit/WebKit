@@ -1,3 +1,29 @@
+2021-06-11  Jonathan Bedard  <jbedard@apple.com>
+
+        [Monterey] Support building WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=226846
+        <rdar://problem/79095148>
+
+        Reviewed by Tim Horton.
+
+        * Platform/cocoa/TextRecognitionUtilities.mm: Import VisionKitSPI.h.
+        * Platform/spi/Cocoa/VisionKitSPI.h: Added.
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (setUpPageLoaderClient): Allow deprecated declarations.
+        (setUpPagePolicyClient): Ditto.
+        * UIProcess/API/Cocoa/WKConnection.mm:
+        (setUpClient): Allow deprecated declarations.
+        * UIProcess/API/Cocoa/WKProcessGroup.mm:
+        (setUpConnectionClient): Allow deprecated declarations.
+        (setUpInjectedBundleClient): Ditto.
+        (setUpHistoryClient): Ditto.
+        * UIProcess/API/Cocoa/WKWebViewTesting.mm:
+        (-[WKWebView _createMediaSessionCoordinatorForTesting:completionHandler:]): Explicitly define second arugment
+        to avoid 'missing field' compilation error.
+        * UIProcess/Cocoa/WebViewImpl.mm: Import VisionKitSPI.h.
+        * UIProcess/ios/WKContentViewInteraction.mm: Ditto.
+        * WebKit.xcodeproj/project.pbxproj: Ditto.
+
 2021-06-11  Chris Dumez  <cdumez@apple.com>
 
         Enable release logging in ephemeral sessions for parts of WebCore

@@ -81,11 +81,15 @@ SecIdentityRef SecIdentityCreate(CFAllocatorRef, SecCertificateRef, SecKeyRef);
 SecAccessControlRef SecAccessControlCreateFromData(CFAllocatorRef, CFDataRef, CFErrorRef*);
 CFDataRef SecAccessControlCopyData(SecAccessControlRef);
 
+CFDataRef SecKeyCopySubjectPublicKeyInfo(SecKeyRef);
+
 #if PLATFORM(MAC)
 #include <Security/SecAsn1Types.h>
 CFStringRef SecTaskCopySigningIdentifier(SecTaskRef, CFErrorRef *);
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 extern const SecAsn1Template kSecAsn1AlgorithmIDTemplate[];
 extern const SecAsn1Template kSecAsn1SubjectPublicKeyInfoTemplate[];
+ALLOW_DEPRECATED_DECLARATIONS_END
 uint32_t SecTaskGetCodeSignStatus(SecTaskRef);
 #endif
 

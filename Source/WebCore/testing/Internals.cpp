@@ -5650,6 +5650,9 @@ void Internals::installImageOverlay(Element& element, Vector<ImageOverlayLine>&&
         lines.map([] (auto& line) -> TextRecognitionLineData {
             return makeDataForLine(line);
         })
+#if ENABLE(DATA_DETECTION)
+        , Vector<TextRecognitionDataDetector>()
+#endif
     });
 #else
     UNUSED_PARAM(lines);

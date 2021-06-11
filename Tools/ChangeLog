@@ -1,3 +1,16 @@
+2021-06-11  Jonathan Bedard  <jbedard@apple.com>
+
+        [Monterey] Support building WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=226846
+        <rdar://problem/79095148>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Add CoreCryptoSPI.h.
+        * TestWebKitAPI/Tests/WebCore/cocoa/CoreCryptoSPI.h: Added.
+        * TestWebKitAPI/Tests/WebCore/cocoa/PrivateClickMeasurementCocoa.mm: Import CoreCryptoSPI.h.
+        * TestWebKitAPI/Tests/WebKitCocoa/EventAttribution.mm: Ditto.
+
 2021-06-11  Devin Rousso  <drousso@apple.com>
 
         Add an option to Copy WebKit Permalink that automatically opens the URL in the default browser for Sublime Text

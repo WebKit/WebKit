@@ -439,7 +439,9 @@ static void processDidCrash(WKPageRef page, const void* clientInfo)
         [(id <WKBrowsingContextLoadDelegatePrivate>)loadDelegate browsingContextControllerWebProcessDidCrash:browsingContext];
 }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 static void setUpPageLoaderClient(WKBrowsingContextController *browsingContext, WebKit::WebPageProxy& page)
+ALLOW_DEPRECATED_DECLARATIONS_END
 {
     WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));
@@ -476,7 +478,9 @@ static BlockPtr<void(WKPolicyDecision)> makePolicyDecisionBlock(WKFramePolicyLis
     });
 }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 static void setUpPagePolicyClient(WKBrowsingContextController *browsingContext, WebKit::WebPageProxy& page)
+ALLOW_DEPRECATED_DECLARATIONS_END
 {
     WKPagePolicyClientInternal policyClient;
     memset(&policyClient, 0, sizeof(policyClient));

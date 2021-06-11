@@ -28,8 +28,7 @@
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-#import <VisionKitCore/VKImageAnalysis_WebKit.h>
-#import <VisionKitCore/VKQuad.h>
+#import "VisionKitSPI.h"
 #import <WebCore/TextRecognitionResult.h>
 #import <pal/spi/cocoa/FeatureFlagsSPI.h>
 

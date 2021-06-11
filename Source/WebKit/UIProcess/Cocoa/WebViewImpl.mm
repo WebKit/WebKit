@@ -146,11 +146,7 @@
 #include "MediaSessionCoordinatorProxyPrivate.h"
 #endif
 
-#if ENABLE(IMAGE_ANALYSIS)
-#import <VisionKitCore/VKImageAnalysis_WebKit.h>
-#import <VisionKitCore/VKImageAnalyzer.h>
-#import <VisionKitCore/VKQuad.h>
-#endif // ENABLE(IMAGE_ANALYSIS)
+#import "VisionKitSPI.h"
 
 #if HAVE(TRANSLATION_UI_SERVICES)
 #import <TranslationUIServices/LTUITranslationViewController.h>

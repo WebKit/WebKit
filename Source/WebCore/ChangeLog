@@ -1,3 +1,17 @@
+2021-06-11  Jonathan Bedard  <jbedard@apple.com>
+
+        [Monterey] Support building WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=226846
+        <rdar://problem/79095148>
+
+        Reviewed by Tim Horton.
+
+        Covered by exisiting tests.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::installImageOverlay): Explicitly define second arugment
+        to avoid 'missing field' compilation error.
+
 2021-06-11  Chris Dumez  <cdumez@apple.com>
 
         Enable release logging in ephemeral sessions for parts of WebCore

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -813,6 +813,7 @@
 		312CC9F2215B06F100DE40CA /* HighPerformanceGPUManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 31ABA79C215AF9E000C90E31 /* HighPerformanceGPUManager.h */; };
 		3131261F148FF82C00BA2A39 /* NotificationPermissionRequestManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3131261A148FF82B00BA2A39 /* NotificationPermissionRequestManager.h */; };
 		31312621148FF82C00BA2A39 /* WebNotificationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3131261C148FF82B00BA2A39 /* WebNotificationManager.h */; };
+		3155EE0D2673F4F00085E59A /* VisionKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 3155EE0C2673F4EF0085E59A /* VisionKitSPI.h */; };
 		3157135F2040A9B20084F9CF /* SystemPreviewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3157135D2040A9B20084F9CF /* SystemPreviewController.h */; };
 		316B8B642054B55800BD4A62 /* WKSystemPreviewView.h in Headers */ = {isa = PBXBuildFile; fileRef = 316B8B622054B55800BD4A62 /* WKSystemPreviewView.h */; };
 		317FE7C51C487A6C00A0CA89 /* APIExperimentalFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 317FE7C21C487A6600A0CA89 /* APIExperimentalFeature.h */; };
@@ -3550,6 +3551,7 @@
 		3131261D148FF82C00BA2A39 /* WebNotificationManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebNotificationManager.messages.in; sourceTree = "<group>"; };
 		314888FE1D91B11D00377042 /* WKTextChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKTextChecker.cpp; sourceTree = "<group>"; };
 		314888FF1D91B11D00377042 /* WKTextChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKTextChecker.h; sourceTree = "<group>"; };
+		3155EE0C2673F4EF0085E59A /* VisionKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisionKitSPI.h; sourceTree = "<group>"; };
 		3157135C2040A9B20084F9CF /* SystemPreviewControllerCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemPreviewControllerCocoa.mm; sourceTree = "<group>"; };
 		3157135D2040A9B20084F9CF /* SystemPreviewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemPreviewController.h; sourceTree = "<group>"; };
 		31607F3819627002009B87DA /* LegacySessionStateCoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacySessionStateCoding.h; sourceTree = "<group>"; };
@@ -7908,6 +7910,7 @@
 		3754D5411B3A2998003A4C7F /* Cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				3155EE0C2673F4EF0085E59A /* VisionKitSPI.h */,
 				E3CAAA432413278A00CED2E2 /* AccessibilitySupportSPI.h */,
 				572EBBDC25392181000552B3 /* AppAttestSPI.h */,
 				57FABB0E25817CF00059DC95 /* AuthenticationServicesCoreSPI.h */,
@@ -12035,6 +12038,7 @@
 				93B2614E227D14B100B97A76 /* LocalStorageDatabase.h in Headers */,
 				93B2614F227D14B100B97A76 /* LocalStorageDatabaseTracker.h in Headers */,
 				46BEB6DB22FB9D4800269867 /* LocalStorageNamespace.h in Headers */,
+				3155EE0D2673F4F00085E59A /* VisionKitSPI.h in Headers */,
 				51A7F2F3125BF820008AEB1D /* Logging.h in Headers */,
 				0FDCD7F71D47E92A009F08BC /* LogInitialization.h in Headers */,
 				1A6D86C21DF75265007745E8 /* MachMessage.h in Headers */,

@@ -177,8 +177,7 @@
 #if ENABLE(IMAGE_ANALYSIS)
 
 // FIXME: This should be pulled out into a separate softlinking header (either in PAL or WebKit2).
-#import <VisionKitCore/VKImageAnalysis_WebKit.h>
-#import <VisionKitCore/VKImageAnalyzer.h>
+#import "VisionKitSPI.h"
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(VisionKitCore)
 SOFT_LINK_CLASS_OPTIONAL(VisionKitCore, VKImageAnalyzer)
 SOFT_LINK_CLASS_OPTIONAL(VisionKitCore, VKImageAnalyzerRequest)
