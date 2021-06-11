@@ -1,5 +1,18 @@
 2021-06-11  Robert Jenner  <jenner@apple.com>
 
+        [LayoutTests] Delete unused LayoutTests/js resources
+        https://bugs.webkit.org/show_bug.cgi?id=226796
+
+        Reviewed by Jonathan Bedard.
+
+        * js/dom/modules/resources/module-will-fire-beforeload.js: Removed.
+        * js/kde/resources/KNOWN_FAILURES: Removed.
+        * js/mozilla/resources/js-test-post-async.js: Removed.
+        * js/mozilla/resources/js-test-post-function.js: Removed.
+        * js/mozilla/resources/js-test-post-n.js: Removed.
+
+2021-06-11  Robert Jenner  <jenner@apple.com>
+
         [LayoutTests] Delete unused LayoutTests/css3 resources
         https://bugs.webkit.org/show_bug.cgi?id=226827
 
