@@ -1,3 +1,13 @@
+2021-06-11  Alex Christensen  <achristensen@webkit.org>
+
+        EventSource.constructor throws an exception when the url param is an empty string
+        https://bugs.webkit.org/show_bug.cgi?id=226635
+
+        Reviewed by Yusuke Suzuki.
+
+        * fast/eventsource/eventsource-constructor-expected.txt:
+        * fast/eventsource/eventsource-constructor.html:
+
 2021-06-11  Diego Pino Garcia  <dpino@igalia.com>
 
         [GTK] Test css3/filters/composited-during-animation-layertree.html is flaky since r214292

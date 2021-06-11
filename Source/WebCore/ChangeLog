@@ -1,3 +1,13 @@
+2021-06-11  Alex Christensen  <achristensen@webkit.org>
+
+        EventSource.constructor throws an exception when the url param is an empty string
+        https://bugs.webkit.org/show_bug.cgi?id=226635
+
+        Reviewed by Yusuke Suzuki.
+
+        * page/EventSource.cpp:
+        (WebCore::EventSource::create):
+
 2021-06-11  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed non-unified build fixes.
