@@ -689,7 +689,7 @@ bool DataDetection::isDataDetectorElement(const Element& element)
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-Ref<HTMLElement> DataDetection::createElementForImageOverlay(Document& document, const TextRecognitionDataDetector& info)
+Ref<HTMLDivElement> DataDetection::createElementForImageOverlay(Document& document, const TextRecognitionDataDetector& info)
 {
     auto container = HTMLDivElement::create(document);
     if (auto frame = makeRefPtr(document.frame())) {

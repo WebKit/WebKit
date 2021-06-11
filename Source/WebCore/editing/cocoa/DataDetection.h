@@ -40,7 +40,7 @@ OBJC_CLASS NSDictionary;
 namespace WebCore {
 
 class Document;
-class HTMLElement;
+class HTMLDivElement;
 class HitTestResult;
 class QualifiedName;
 struct TextRecognitionDataDetector;
@@ -67,7 +67,7 @@ public:
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-    static Ref<HTMLElement> createElementForImageOverlay(Document&, const TextRecognitionDataDetector&);
+    static Ref<HTMLDivElement> createElementForImageOverlay(Document&, const TextRecognitionDataDetector&);
 #endif
 
     static const String& dataDetectorURLProtocol();

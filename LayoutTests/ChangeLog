@@ -1,3 +1,13 @@
+2021-06-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Live Text] Text selection inside image elements should not be cleared upon resize
+        https://bugs.webkit.org/show_bug.cgi?id=226911
+
+        Reviewed by Tim Horton.
+
+        * fast/images/text-recognition/mac/image-overlay-maintain-selection-during-size-change-expected.txt: Added.
+        * fast/images/text-recognition/mac/image-overlay-maintain-selection-during-size-change.html: Added.
+
 2021-06-11  Cathie Chen  <cathiechen@igalia.com>
 
         Use HTMLDimension to parse different HTML attribute length values

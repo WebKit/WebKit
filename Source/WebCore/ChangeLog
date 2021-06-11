@@ -1,3 +1,35 @@
+2021-06-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Live Text] Text selection inside image elements should not be cleared upon resize
+        https://bugs.webkit.org/show_bug.cgi?id=226911
+
+        Reviewed by Tim Horton.
+
+        Refactor `HTMLElement::updateWithTextRecognitionResult`, such that it doesn't tear down and recreate the host
+        element's shadow DOM structure in the case where the extant DOM elements are compatible with the given text
+        recognition result. This prevents us from removing or inserting DOM elements in the case where an image element
+        is resized (and thus adjusts its shadow DOM content using the updated size), which in turn prevents us from
+        clearing out the text selection.
+
+        Test: fast/images/text-recognition/mac/image-overlay-maintain-selection-during-size-change.html
+
+        * editing/cocoa/DataDetection.h:
+        * editing/cocoa/DataDetection.mm:
+
+        Make this helper method return an HTMLDivElement instead of just an HTMLElement.
+
+        (WebCore::DataDetection::createElementForImageOverlay):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::updateWithTextRecognitionResult):
+
+        Split this method into two logical parts: the first builds up a TextRecognitionElements struct that contains
+        references to all connected elements in the image element's shadow DOM that require style updates due to the
+        new size; the second uses this TextRecognitionElements information to compute the new CSS transforms to apply to
+        each of the data detector, line containers, and text containers underneath each line container element.
+
+        Importantly, in step (1), we avoid regenerating shadow DOM content in the case where the DOM elements already
+        exist in their expected places within the shadow DOM.
+
 2021-06-11  Megan Gardner  <megan_gardner@apple.com>
 
         Rename AppHighlight group to QuickNote to correctly reflect feature.
