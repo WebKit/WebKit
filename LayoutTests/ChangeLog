@@ -1,3 +1,13 @@
+2021-06-10  Arcady Goldmints-Orlov  <agoldmints@igalia.com>
+
+        [GLIB] Unreviewed test gardening, mark some WebGL tests as passing
+        https://bugs.webkit.org/show_bug.cgi?id=226847
+
+        These tests appear to pass consistently on both GTK and WPE now.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2021-06-10  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION: service-workers/service-worker/credentials.https.html and content-security-policy/reporting/report-only-in-meta.sub.html failing together constantly.

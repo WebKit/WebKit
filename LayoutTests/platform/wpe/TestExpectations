@@ -962,12 +962,6 @@ webkit.org/b/204676 webgl/1.0.3/conformance/more/functions/readPixelsBadArgs.htm
 webkit.org/b/204676 webgl/1.0.3/conformance/more/functions/texImage2DHTML.html [ Failure ]
 webkit.org/b/204676 webgl/1.0.3/conformance/more/functions/texSubImage2DHTML.html [ Failure ]
 #  Timing out:
-Bug(WPE) webgl/1.0.3/conformance/extensions/oes-texture-half-float-with-video.html [ Timeout ]
-Bug(WPE) webgl/1.0.3/conformance/textures/texture-upload-size.html [ Timeout ]
-Bug(WPE) webgl/1.0.3/conformance/extensions/oes-texture-float-with-video.html [ Timeout ]
-Bug(WPE) webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Timeout ]
-Bug(WPE) webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Timeout ]
-Bug(WPE) webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Timeout ]
 Bug(WPE) webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Timeout ]
 webkit.org/b/204676 webgl/1.0.3/conformance/glsl/constructors/glsl-construct-bvec2.html [ Timeout ]
 webkit.org/b/204676 webgl/1.0.3/conformance/glsl/constructors/glsl-construct-ivec2.html [ Timeout ]
