@@ -176,6 +176,8 @@ perf
 webkit.org/b/113598 animations/animation-delay-changed.html [ Pass Failure ]
 webkit.org/b/113599 svg/animations/reinserting-svg-into-document.html [ Pass Failure ]
 
+webkit.org/b/174180 svg/animations/smil-leak-elements.svg [ Pass Failure ]
+
 webkit.org/b/184608 [ Debug ] animations/added-while-suspended.html [ Skip ]
 webkit.org/b/184608 [ Debug ] transitions/created-while-suspended.html [ Skip ]
 
