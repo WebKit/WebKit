@@ -1,3 +1,12 @@
+2021-06-11  Truitt Savell  <tsavell@apple.com>
+
+        Remove ews129 instead of ews179
+        https://bugs.webkit.org/show_bug.cgi?id=226855
+
+        Reviewed by Jonathan Bedard.
+
+        * CISupport/ews-build/config.json:
+
 2021-06-11  Megan Gardner  <megan_gardner@apple.com>
 
         Rename AppHighlight group to QuickNote to correctly reflect feature.

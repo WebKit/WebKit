@@ -202,10 +202,6 @@
       "platform": "mac-catalina"
     },
     {
-      "name": "ews129",
-      "platform": "mac-bigsur"
-    },
-    {
       "name": "ews150",
       "platform": "*"
     },
@@ -320,6 +316,10 @@
     },
     {
       "name": "ews178",
+      "platform": "mac-bigsur"
+    },
+    {
+      "name": "ews179",
       "platform": "mac-bigsur"
     },
     {
@@ -460,7 +460,7 @@
       "configuration": "debug",
       "architectures": ["arm64"],
       "triggered_by": ["macos-applesilicon-big-sur-debug-build-ews"],
-      "workernames": [ "ews173", "ews174", "ews175", "ews176", "ews177", "ews178", "ews180"]
+      "workernames": [ "ews173", "ews174", "ews175", "ews176", "ews177", "ews178", "ews179", "ews180"]
     },
     {
       "name": "macOS-Catalina-Release-Build-EWS",
