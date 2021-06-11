@@ -1016,36 +1016,44 @@ void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Element* befo
     }
 }
 
-void HTMLElement::addHTMLLengthToStyle(MutableStyleProperties& style, CSSPropertyID propertyID, const String& value)
+void HTMLElement::addHTMLLengthToStyle(MutableStyleProperties& style, CSSPropertyID propertyID, StringView value, AllowPercentage allowPercentage, UseCSSPXAsUnitType useCSSPX, IsMultiLength isMultiLength)
 {
-    // FIXME: This function should not spin up the CSS parser, but should instead just figure out the correct
-    // length unit and make the appropriate parsed value.
-
-    if (StringImpl* string = value.impl()) {
-        unsigned parsedLength = 0;
-
-        while (parsedLength < string->length() && (*string)[parsedLength] <= ' ')
-            ++parsedLength;
-
-        for (; parsedLength < string->length(); ++parsedLength) {
-            UChar cc = (*string)[parsedLength];
-            if (cc > '9')
-                break;
-            if (cc < '0') {
-                if (cc == '%' || cc == '*')
-                    ++parsedLength;
-                if (cc != '.')
-                    break;
-            }
-        }
-
-        if (parsedLength != string->length()) {
-            addPropertyToPresentationalHintStyle(style, propertyID, string->substring(0, parsedLength));
-            return;
-        }
+    auto dimensionValue = isMultiLength == IsMultiLength::No ? parseHTMLDimension(value) : parseHTMLMultiLength(value);
+    if (!dimensionValue)
+        return;
+    if (dimensionValue->type == HTMLDimension::Type::Percentage) {
+        if (allowPercentage == AllowPercentage::Yes)
+            addPropertyToPresentationalHintStyle(style, propertyID, dimensionValue->number, CSSUnitType::CSS_PERCENTAGE);
+        return;
     }
+    if (useCSSPX == UseCSSPXAsUnitType::Yes)
+        addPropertyToPresentationalHintStyle(style, propertyID, dimensionValue->number, CSSUnitType::CSS_PX);
+    else
+        addPropertyToPresentationalHintStyle(style, propertyID, dimensionValue->number, CSSUnitType::CSS_NUMBER);
+}
 
-    addPropertyToPresentationalHintStyle(style, propertyID, value);
+// https://www.w3.org/TR/html4/sgml/dtd.html#Length, including pixel and percentage values.
+void HTMLElement::addHTMLLengthToStyle(MutableStyleProperties& style, CSSPropertyID propertyID, StringView value)
+{
+    addHTMLLengthToStyle(style, propertyID, value, AllowPercentage::Yes, UseCSSPXAsUnitType::Yes, IsMultiLength::No);
+}
+
+// https://www.w3.org/TR/html4/sgml/dtd.html#MultiLength, including pixel, percentage, and relative values.
+void HTMLElement::addHTMLMultiLengthToStyle(MutableStyleProperties& style, CSSPropertyID propertyID, StringView value)
+{
+    addHTMLLengthToStyle(style, propertyID, value, AllowPercentage::Yes, UseCSSPXAsUnitType::Yes, IsMultiLength::Yes);
+}
+
+// https://www.w3.org/TR/html4/sgml/dtd.html#Pixels, including pixel value.
+void HTMLElement::addHTMLPixelsToStyle(MutableStyleProperties& style, CSSPropertyID propertyID, StringView value)
+{
+    addHTMLLengthToStyle(style, propertyID, value, AllowPercentage::No, UseCSSPXAsUnitType::Yes, IsMultiLength::No);
+}
+
+// This is specific to <marquee> attributes, including pixel and CSS_NUMBER values.
+void HTMLElement::addHTMLNumberToStyle(MutableStyleProperties& style, CSSPropertyID propertyID, StringView value)
+{
+    addHTMLLengthToStyle(style, propertyID, value, AllowPercentage::Yes, UseCSSPXAsUnitType::No, IsMultiLength::No);
 }
 
 // Color parsing that matches HTML's "rules for parsing a legacy color value"

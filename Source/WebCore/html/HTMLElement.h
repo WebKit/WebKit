@@ -150,7 +150,11 @@ public:
 protected:
     HTMLElement(const QualifiedName& tagName, Document&, ConstructionType);
 
-    void addHTMLLengthToStyle(MutableStyleProperties&, CSSPropertyID, const String& value);
+    void addHTMLLengthToStyle(MutableStyleProperties&, CSSPropertyID, StringView value);
+    void addHTMLMultiLengthToStyle(MutableStyleProperties&, CSSPropertyID, StringView value);
+    void addHTMLPixelsToStyle(MutableStyleProperties&, CSSPropertyID, StringView value);
+    void addHTMLNumberToStyle(MutableStyleProperties&, CSSPropertyID, StringView value);
+
     void addHTMLColorToStyle(MutableStyleProperties&, CSSPropertyID, const String& color);
 
     void applyAspectRatioFromWidthAndHeightAttributesToStyle(MutableStyleProperties&);
@@ -182,6 +186,11 @@ private:
 
     static void populateEventHandlerNameMap(EventHandlerNameMap&, const QualifiedName* const table[], size_t tableSize);
     static EventHandlerNameMap createEventHandlerNameMap();
+
+    enum class AllowPercentage : bool { No, Yes };
+    enum class UseCSSPXAsUnitType : bool { No, Yes };
+    enum class IsMultiLength : bool { No, Yes };
+    void addHTMLLengthToStyle(MutableStyleProperties&, CSSPropertyID, StringView value, AllowPercentage, UseCSSPXAsUnitType, IsMultiLength);
 };
 
 inline HTMLElement::HTMLElement(const QualifiedName& tagName, Document& document, ConstructionType type = CreateHTMLElement)

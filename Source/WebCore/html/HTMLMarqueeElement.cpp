@@ -95,13 +95,13 @@ void HTMLMarqueeElement::collectPresentationalHintsForAttribute(const QualifiedN
             addHTMLLengthToStyle(style, CSSPropertyWebkitMarqueeIncrement, value);
     } else if (name == scrolldelayAttr) {
         if (!value.isEmpty())
-            addHTMLLengthToStyle(style, CSSPropertyWebkitMarqueeSpeed, value);
+            addHTMLNumberToStyle(style, CSSPropertyWebkitMarqueeSpeed, value);
     } else if (name == loopAttr) {
         if (!value.isEmpty()) {
             if (value == "-1" || equalLettersIgnoringASCIICase(value, "infinite"))
                 addPropertyToPresentationalHintStyle(style, CSSPropertyWebkitMarqueeRepetition, CSSValueInfinite);
             else
-                addHTMLLengthToStyle(style, CSSPropertyWebkitMarqueeRepetition, value);
+                addHTMLNumberToStyle(style, CSSPropertyWebkitMarqueeRepetition, value);
         }
     } else if (name == behaviorAttr) {
         if (!value.isEmpty())

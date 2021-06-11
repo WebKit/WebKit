@@ -326,7 +326,7 @@ void HTMLTableElement::collectPresentationalHintsForAttribute(const QualifiedNam
             addPropertyToPresentationalHintStyle(style, CSSPropertyVerticalAlign, value);
     } else if (name == cellspacingAttr) {
         if (!value.isEmpty())
-            addHTMLLengthToStyle(style, CSSPropertyBorderSpacing, value);
+            addHTMLPixelsToStyle(style, CSSPropertyBorderSpacing, value);
     } else if (name == vspaceAttr) {
         addHTMLLengthToStyle(style, CSSPropertyMarginTop, value);
         addHTMLLengthToStyle(style, CSSPropertyMarginBottom, value);

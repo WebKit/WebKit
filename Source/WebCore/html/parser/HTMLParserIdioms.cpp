@@ -512,7 +512,8 @@ static std::optional<HTMLDimensionParsingResult> parseHTMLDimensionNumber(const 
     return result;
 }
 
-std::optional<HTMLDimension> parseHTMLDimension(StringView dimensionString)
+enum class IsMultiLength : bool { No, Yes };
+static std::optional<HTMLDimension> parseHTMLDimensionInternal(StringView dimensionString, IsMultiLength isMultiLength)
 {
     std::optional<HTMLDimensionParsingResult> result;
     auto length = dimensionString.length();
@@ -523,12 +524,26 @@ std::optional<HTMLDimension> parseHTMLDimension(StringView dimensionString)
     if (!result)
         return std::nullopt;
 
+    // The relative_length is not supported, here to make sure number + * does not map to number
+    if (isMultiLength == IsMultiLength::Yes && result->parsedLength < length && dimensionString[result->parsedLength] == '*')
+        return std::nullopt;
+
     HTMLDimension dimension;
     dimension.number = result->number;
     dimension.type = HTMLDimension::Type::Pixel;
     if (result->parsedLength < dimensionString.length() && dimensionString[result->parsedLength] == '%')
         dimension.type = HTMLDimension::Type::Percentage;
     return dimension;
+}
+
+std::optional<HTMLDimension> parseHTMLDimension(StringView dimensionString)
+{
+    return parseHTMLDimensionInternal(dimensionString, IsMultiLength::No);
+}
+
+std::optional<HTMLDimension> parseHTMLMultiLength(StringView multiLengthString)
+{
+    return parseHTMLDimensionInternal(multiLengthString, IsMultiLength::Yes);
 }
 
 }

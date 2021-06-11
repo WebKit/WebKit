@@ -1,3 +1,36 @@
+2021-06-11  Cathie Chen  <cathiechen@igalia.com>
+
+        Use HTMLDimension to parse different HTML attribute length values
+        https://bugs.webkit.org/show_bug.cgi?id=226810
+
+        Reviewed by Darin Adler.
+
+        This patch uses HTMLDimension to parse different kind of html length values which are defined in [1].
+        Then according the length types to determine if the value is valid.
+
+        [1] https://www.w3.org/TR/html4/sgml/dtd.html#Length
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::addHTMLLengthToStyle):
+        (WebCore::HTMLElement::addHTMLLengthToStyle): Add HTMLLength (including percentage values and pixel values) to style.
+        (WebCore::HTMLElement::addHTMLMultiLengthToStyle): Add MultiLength (including percentage, pixel and relative values) to style.
+        (WebCore::HTMLElement::addHTMLPixelsToStyle): Add pixel values to style.
+        (WebCore::HTMLElement::addHTMLNumberToStyle): Add number (including percentage values and numbers) to style.
+        * html/HTMLElement.h:
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::collectPresentationalHintsForAttribute): <img>'s width and height attributes are multiLength.
+        * html/HTMLMarqueeElement.cpp:
+        (WebCore::HTMLMarqueeElement::collectPresentationalHintsForAttribute): scrolldelayAttr and loopAttr are numbers.
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::collectPresentationalHintsForAttribute): <col>'s width and height attributes are multiLength.
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::collectPresentationalHintsForAttribute): <table>'s cellspacingAttr only supports pixel values.
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::parseHTMLDimensionInternal):
+        (WebCore::parseHTMLDimension):
+        (WebCore::parseHTMLMultiLength): MultiLength doesn't support relative_length (number + *), but make sure relative_length not be treated as a pixel value.
+        * html/parser/HTMLParserIdioms.h:
+
 2021-06-11  Youenn Fablet  <youenn@apple.com>
 
         getDisplayMedia API doesn't work

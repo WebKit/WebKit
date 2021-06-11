@@ -93,6 +93,7 @@ struct HTMLDimension {
     Type type;
 };
 std::optional<HTMLDimension> parseHTMLDimension(StringView);
+std::optional<HTMLDimension> parseHTMLMultiLength(StringView);
 
 // Inline implementations of some of the functions declared above.
 
