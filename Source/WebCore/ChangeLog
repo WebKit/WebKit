@@ -1,3 +1,53 @@
+2021-06-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Live Text] Add a mechanism to regenerate text in an image element when it changes dimensions
+        https://bugs.webkit.org/show_bug.cgi?id=226858
+        rdar://77522786
+
+        Reviewed by Devin Rousso.
+
+        Push `m_elementsWithTextRecognitionResults` from WebPage down to Page, and additionally keep track of a
+        TextRecognitionResult per element, as well as the size of the element at the time when we last injected text
+        recognition results. Use this information to tell elements to update their OCR text containers if their
+        dimenions have changed since the last update, after finishing a rendering update.
+
+        Test: fast/images/text-recognition/image-overlay-size-change.html
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::updateWithTextRecognitionResult):
+
+        Refactor this to take a `const TextRecognitionResult&` instead of a `TextRecognitionResult&&`, since this method
+        doesn't actually take ownership of the TextRecognitionResult. This allows us to avoid explicitly copying a
+        TextRecognitionResult when calling this method from `Page::updateElementsWithTextRecognitionResults`. Also, add
+        a CacheTextRecognitionResults enum flag as an argument, to avoid entering `Page::cacheTextRecognitionResult`
+        every time we update a resized element in `Page::updateElementsWithTextRecognitionResults`; since we know that
+        the dimensions are the only thing that changed, we simply update the cached dimensions.
+
+        Call into `Page::cacheTextRecognitionResult` to store per-element TextRecognitionResults when we
+        finish injecting the OCR text and data detectors into the image element.
+
+        * html/HTMLElement.h:
+        * page/Page.cpp:
+        (WebCore::Page::didCommitLoad):
+
+        Clear out both `m_textRecognitionResultsByElement` and `m_elementsWithTextRecognitionResults`.
+
+        (WebCore::Page::doAfterUpdateRendering):
+
+        At the end of each rendering update, go through `m_elementsWithTextRecognitionResults` and check if any of the
+        elements' dimensions have changed; if so, tell those elements to re-update their OCR text quads and data
+        detectors in the UA shadow tree.
+
+        (WebCore::Page::resetTextRecognitionResults):
+        (WebCore::Page::updateElementsWithTextRecognitionResults):
+        (WebCore::Page::hasCachedTextRecognitionResult const):
+        (WebCore::Page::cacheTextRecognitionResult):
+
+        Add the element to `m_elementsWithTextRecognitionResults` and `m_textRecognitionResultsByElement`, appending a
+        new entry to `m_textRecognitionResultsByElement` only if necessary.
+
+        * page/Page.h:
+
 2021-06-10  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION: (r278544) [ Mac-wk1 ] media/media-continues-playing-after-replace-source.html is a flaky failure

@@ -136,6 +136,7 @@
 #include "StyleScope.h"
 #include "SubframeLoader.h"
 #include "TextIterator.h"
+#include "TextRecognitionResult.h"
 #include "TextResourceDecoder.h"
 #include "UserContentProvider.h"
 #include "UserContentURLPattern.h"
@@ -1274,6 +1275,10 @@ void Page::didCommitLoad()
 
     resetSeenPlugins();
     resetSeenMediaEngines();
+
+#if ENABLE(IMAGE_ANALYSIS)
+    resetTextRecognitionResults();
+#endif
 }
 
 void Page::didFinishLoad()
@@ -1659,6 +1664,10 @@ void Page::doAfterUpdateRendering()
     forEachDocument([] (Document& document) {
         document.updateTextTrackRepresentationImageIfNeeded();
     });
+#endif
+
+#if ENABLE(IMAGE_ANALYSIS)
+    updateElementsWithTextRecognitionResults();
 #endif
 
     prioritizeVisibleResources();
@@ -3602,5 +3611,62 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
     }
     return ts;
 }
+
+#if ENABLE(IMAGE_ANALYSIS)
+
+void Page::updateElementsWithTextRecognitionResults()
+{
+    if (m_textRecognitionResultsByElement.isEmpty())
+        return;
+
+    m_textRecognitionResultsByElement.removeAllMatching([](auto& elementAndResult) {
+        return !elementAndResult.first;
+    });
+
+    for (auto& [element, resultAndSize] : m_textRecognitionResultsByElement) {
+        if (!element || !element->isConnected())
+            continue;
+
+        auto protectedElement = makeRef(*element);
+        auto& [result, offsetSize] = resultAndSize;
+        IntSize newOffsetSize { protectedElement->offsetWidth(), protectedElement->offsetHeight() };
+        if (offsetSize == newOffsetSize)
+            continue;
+
+        offsetSize = newOffsetSize;
+        protectedElement->updateWithTextRecognitionResult(result, HTMLElement::CacheTextRecognitionResults::No);
+    }
+}
+
+bool Page::hasCachedTextRecognitionResult(const HTMLElement& element) const
+{
+    return m_elementsWithTextRecognitionResults.contains(element);
+}
+
+void Page::cacheTextRecognitionResult(const HTMLElement& element, const IntSize& offsetSize, const TextRecognitionResult& result)
+{
+    m_elementsWithTextRecognitionResults.add(element);
+
+    auto index = m_textRecognitionResultsByElement.findMatching([&](auto& elementAndResult) {
+        return elementAndResult.first == &element;
+    });
+
+    if (index == notFound)
+        m_textRecognitionResultsByElement.append({ makeWeakPtr(element), { result, offsetSize } });
+    else
+        m_textRecognitionResultsByElement[index].second = { result, offsetSize };
+
+    m_textRecognitionResultsByElement.removeAllMatching([](auto& elementAndResult) {
+        return !elementAndResult.first;
+    });
+}
+
+void Page::resetTextRecognitionResults()
+{
+    m_textRecognitionResultsByElement.clear();
+    m_elementsWithTextRecognitionResults.clear();
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 } // namespace WebCore

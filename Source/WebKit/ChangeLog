@@ -1,3 +1,20 @@
+2021-06-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Live Text] Add a mechanism to regenerate text in an image element when it changes dimensions
+        https://bugs.webkit.org/show_bug.cgi?id=226858
+        rdar://77522786
+
+        Reviewed by Devin Rousso.
+
+        Push `m_elementsWithTextRecognitionResults` from `WebKit::WebPage` down to `WebCore::Page`. See WebCore
+        ChangeLog for more details.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didCommitLoad):
+        (WebKit::WebPage::requestTextRecognition):
+        (WebKit::WebPage::updateWithTextRecognitionResult):
+        * WebProcess/WebPage/WebPage.h:
+
 2021-06-10  Per Arne Vollan  <pvollan@apple.com>
 
         [iOS] Sync Accessibility preferences

@@ -1331,7 +1331,7 @@ bool HTMLElement::isImageOverlayText(const Node& node)
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-void HTMLElement::updateWithTextRecognitionResult(TextRecognitionResult&& result)
+void HTMLElement::updateWithTextRecognitionResult(const TextRecognitionResult& result, CacheTextRecognitionResults cacheTextRecognitionResults)
 {
     RefPtr<HTMLDivElement> previousContainer;
     if (auto shadowRoot = userAgentShadowRoot(); shadowRoot && hasImageOverlay()) {
@@ -1509,6 +1509,11 @@ void HTMLElement::updateWithTextRecognitionResult(TextRecognitionResult&& result
 
     if (auto frame = makeRefPtr(document().frame()))
         frame->eventHandler().scheduleCursorUpdate();
+
+    if (cacheTextRecognitionResults == CacheTextRecognitionResults::Yes) {
+        if (auto* page = document().page())
+            page->cacheTextRecognitionResult(*this, containerSize, result);
+    }
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)

@@ -6290,7 +6290,6 @@ void WebPage::didCommitLoad(WebFrame* frame)
             completionHandler({ });
     }
     m_elementsPendingTextRecognition.clear();
-    m_elementsWithTextRecognitionResults.clear();
 #endif
 
 #if ENABLE(RESOURCE_LOAD_STATISTICS)
@@ -7396,11 +7395,11 @@ void WebPage::requestTextRecognition(WebCore::Element& element, CompletionHandle
         return;
     }
 
-    if (m_elementsWithTextRecognitionResults.contains(element)) {
+    auto htmlElement = makeRef(downcast<HTMLElement>(element));
+    if (corePage()->hasCachedTextRecognitionResult(htmlElement.get())) {
         if (completion) {
-            ASSERT(is<HTMLElement>(element));
             RefPtr<Element> imageOverlayHost;
-            if (is<HTMLElement>(element) && downcast<HTMLElement>(element).hasImageOverlay())
+            if (htmlElement->hasImageOverlay())
                 imageOverlayHost = makeRefPtr(element);
             completion(WTFMove(imageOverlayHost));
         }
@@ -7466,8 +7465,7 @@ void WebPage::requestTextRecognition(WebCore::Element& element, CompletionHandle
             return;
 
         auto& htmlElement = downcast<HTMLElement>(*protectedElement);
-        htmlElement.updateWithTextRecognitionResult(WTFMove(result));
-        protectedPage->m_elementsWithTextRecognitionResults.add(htmlElement);
+        htmlElement.updateWithTextRecognitionResult(result);
 
         auto matchIndex = protectedPage->m_elementsPendingTextRecognition.findMatching([&] (auto& elementAndCompletionHandlers) {
             return elementAndCompletionHandlers.first == &htmlElement;
@@ -7484,7 +7482,7 @@ void WebPage::requestTextRecognition(WebCore::Element& element, CompletionHandle
     });
 }
 
-void WebPage::updateWithTextRecognitionResult(TextRecognitionResult&& result, const ElementContext& context, const FloatPoint& location, CompletionHandler<void(TextRecognitionUpdateResult)>&& completionHandler)
+void WebPage::updateWithTextRecognitionResult(const TextRecognitionResult& result, const ElementContext& context, const FloatPoint& location, CompletionHandler<void(TextRecognitionUpdateResult)>&& completionHandler)
 {
     auto elementToUpdate = elementForContext(context);
     if (!is<HTMLElement>(elementToUpdate)) {
@@ -7492,7 +7490,7 @@ void WebPage::updateWithTextRecognitionResult(TextRecognitionResult&& result, co
         return;
     }
 
-    downcast<HTMLElement>(*elementToUpdate).updateWithTextRecognitionResult(WTFMove(result));
+    downcast<HTMLElement>(*elementToUpdate).updateWithTextRecognitionResult(result);
     auto hitTestResult = corePage()->mainFrame().eventHandler().hitTestResultAtPoint(roundedIntPoint(location), {
         HitTestRequest::Type::ReadOnly,
         HitTestRequest::Type::Active,
