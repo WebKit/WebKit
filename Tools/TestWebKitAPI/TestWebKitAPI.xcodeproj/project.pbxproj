@@ -49,7 +49,6 @@
 		04DB2396235E43EC00328F17 /* BumpPointerAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0451A5A6235E438E009DF945 /* BumpPointerAllocator.cpp */; };
 		0711DF52226A95FC003DD2F7 /* AVFoundationSoftLinkTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0711DF51226A95FB003DD2F7 /* AVFoundationSoftLinkTest.mm */; };
 		0713704A265320E500CA2C9A /* AudioBufferSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07137049265320E500CA2C9A /* AudioBufferSize.mm */; };
-		0713705526532E3900CA2C9A /* audio-buffer-size.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0713705426532E3900CA2C9A /* audio-buffer-size.html */; };
 		07492B3B1DF8B14C00633DE1 /* EnumerateMediaDevices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07492B3A1DF8AE2D00633DE1 /* EnumerateMediaDevices.cpp */; };
 		07492B3C1DF8B86600633DE1 /* enumerateMediaDevices.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 07492B391DF8ADA400633DE1 /* enumerateMediaDevices.html */; };
 		074994421EA5034B000DA44E /* getUserMedia.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 4A410F4D19AF7BEF002EBAB5 /* getUserMedia.html */; };
@@ -1384,7 +1383,6 @@
 				F42BD7D9245CC508001E207A /* attributedStringNewlineAtEndOfDocument.html in Copy Resources */,
 				7C9ED98B17A19F4B00E4DC33 /* attributedStringStrikethrough.html in Copy Resources */,
 				37137E4B21124D01002BEEA4 /* AttrStyle.html in Copy Resources */,
-				0713705526532E3900CA2C9A /* audio-buffer-size.html in Copy Resources */,
 				46F03C1C255B2D5A00AA51C5 /* audio-context-playing.html in Copy Resources */,
 				CD9E292E1C90C33F000BB800 /* audio-only.html in Copy Resources */,
 				C944160021430E8900B1EDDA /* audio-with-controls.html in Copy Resources */,
@@ -1784,7 +1782,6 @@
 		0451A5A6235E438E009DF945 /* BumpPointerAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BumpPointerAllocator.cpp; sourceTree = "<group>"; };
 		0711DF51226A95FB003DD2F7 /* AVFoundationSoftLinkTest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFoundationSoftLinkTest.mm; sourceTree = "<group>"; };
 		07137049265320E500CA2C9A /* AudioBufferSize.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AudioBufferSize.mm; sourceTree = "<group>"; };
-		0713705426532E3900CA2C9A /* audio-buffer-size.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = "audio-buffer-size.html"; path = "Tests/WebKit/audio-buffer-size.html"; sourceTree = "<group>"; };
 		0746645722FF62D000E3451A /* AccessibilityTestSupportProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AccessibilityTestSupportProtocol.h; sourceTree = "<group>"; };
 		0746645822FF630500E3451A /* AccessibilityTestPlugin.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityTestPlugin.mm; sourceTree = "<group>"; };
 		07492B391DF8ADA400633DE1 /* enumerateMediaDevices.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = enumerateMediaDevices.html; sourceTree = "<group>"; };
@@ -1886,6 +1883,7 @@
 		1CF59AE021E68925006E37EC /* ForceLightAppearanceInBundle_Bundle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ForceLightAppearanceInBundle_Bundle.mm; sourceTree = "<group>"; };
 		1CF59AE421E696FB006E37EC /* dark-mode.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "dark-mode.html"; sourceTree = "<group>"; };
 		1D12BEBF245BEF85004C0B7A /* ExitPiPOnSuspendVideoElement.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ExitPiPOnSuspendVideoElement.mm; sourceTree = "<group>"; };
+		1D5BE6AD2673EC5F00CB0B12 /* audio-buffer-size.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "audio-buffer-size.html"; sourceTree = "<group>"; };
 		1D67BFD92433DFD8006B5047 /* two-videos.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "two-videos.html"; sourceTree = "<group>"; };
 		1D67BFDB2433E0A7006B5047 /* PreemptVideoFullscreen.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PreemptVideoFullscreen.mm; sourceTree = "<group>"; };
 		1DAA52CB243BE621001A3159 /* one-video.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "one-video.html"; sourceTree = "<group>"; };
@@ -3208,7 +3206,6 @@
 		08FB7794FE84155DC02AAC07 /* TestWebKitAPI */ = {
 			isa = PBXGroup;
 			children = (
-				0713705426532E3900CA2C9A /* audio-buffer-size.html */,
 				49AEEF682407276F00C87E4C /* Info.plist */,
 				5C9D922622D7DD7B008E9266 /* Derived Sources */,
 				5C9D921D22D7DBF7008E9266 /* Sources.txt */,
@@ -4530,6 +4527,7 @@
 				93D3D19B17B1A7B000C7C415 /* all-content-in-one-iframe.html */,
 				F6B7BE9617469B7E008A3445 /* associate-form-controls.html */,
 				11C2598C21FA618D004C9E23 /* async-script-load.html */,
+				1D5BE6AD2673EC5F00CB0B12 /* audio-buffer-size.html */,
 				C9C9A91A21DED24D00FDE96E /* audio-with-play-button.html */,
 				76E182DE15475A8300F1FADD /* auto-submitting-form.html */,
 				C9C60E631E53A9BA006DA181 /* autoplay-check-frame.html */,
@@ -5200,7 +5198,6 @@
 				AD7C434D1DD2A54E0026888B /* Expected.cpp in Sources */,
 				A310827221F296FF00C28B97 /* FileSystem.cpp in Sources */,
 				E3210519261979F300157C67 /* FixedVector.cpp in Sources */,
-				BCA30C7E266D2F43000D230C /* Span.cpp in Sources */,
 				9310CD381EF708FB0050FFE0 /* Function.cpp in Sources */,
 				6BFD294C1D5E6C1D008EC968 /* HashCountedSet.cpp in Sources */,
 				933D631D1FCB76200032ECD6 /* Hasher.cpp in Sources */,
@@ -5251,6 +5248,7 @@
 				E373D7911F2CF35200C6FAAF /* Signals.cpp in Sources */,
 				33C2C9C12651F5B900E407F6 /* SmallSet.cpp in Sources */,
 				93FCDB34263631560046DD7D /* SortedArrayMap.cpp in Sources */,
+				BCA30C7E266D2F43000D230C /* Span.cpp in Sources */,
 				FE2BCDC72470FDA300DEC33B /* StdLibExtras.cpp in Sources */,
 				7C83DF321D0A590C00FEBCF3 /* StringBuilder.cpp in Sources */,
 				7CD4C26E1E2C0E6E00929470 /* StringConcatenate.cpp in Sources */,
