@@ -1,3 +1,27 @@
+2021-06-11  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Batch local storage database writes using transactions
+        https://bugs.webkit.org/show_bug.cgi?id=226938
+
+        Reviewed by Geoff Garen.
+
+        Batch local storage writes using transactions, to improve performance
+        and reduce disk writes. In this patch, we use a simple time-based
+        approach where we batch transactions happening in the same 500ms
+        period.
+
+        * NetworkProcess/WebStorage/LocalStorageDatabase.cpp:
+        (WebKit::LocalStorageDatabase::create):
+        (WebKit::LocalStorageDatabase::LocalStorageDatabase):
+        (WebKit::LocalStorageDatabase::startTransactionIfNecessary):
+        (WebKit::LocalStorageDatabase::removeItem):
+        (WebKit::LocalStorageDatabase::setItem):
+        (WebKit::LocalStorageDatabase::clear):
+        (WebKit::LocalStorageDatabase::close):
+        * NetworkProcess/WebStorage/LocalStorageDatabase.h:
+        * NetworkProcess/WebStorage/StorageArea.cpp:
+        (WebKit::StorageArea::ensureDatabase const):
+
 2021-06-11  Alex Christensen  <achristensen@webkit.org>
 
         Don't include certificate info in WebURLSchemeTask::didReceiveResponse

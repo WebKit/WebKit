@@ -40,14 +40,16 @@ using namespace WebCore;
 
 constexpr auto getItemsQueryString { "SELECT key, value FROM ItemTable"_s };
 constexpr unsigned maximumSizeForValuesKeptInMemory { 1024 }; // 1 KB
+constexpr Seconds transactionDuration { 500_ms };
 
-Ref<LocalStorageDatabase> LocalStorageDatabase::create(String&& databasePath, unsigned quotaInBytes)
+Ref<LocalStorageDatabase> LocalStorageDatabase::create(Ref<WorkQueue>&& workQueue, String&& databasePath, unsigned quotaInBytes)
 {
-    return adoptRef(*new LocalStorageDatabase(WTFMove(databasePath), quotaInBytes));
+    return adoptRef(*new LocalStorageDatabase(WTFMove(workQueue), WTFMove(databasePath), quotaInBytes));
 }
 
-LocalStorageDatabase::LocalStorageDatabase(String&& databasePath, unsigned quotaInBytes)
-    : m_databasePath(WTFMove(databasePath))
+LocalStorageDatabase::LocalStorageDatabase(Ref<WorkQueue>&& workQueue, String&& databasePath, unsigned quotaInBytes)
+    : m_workQueue(WTFMove(workQueue))
+    , m_databasePath(WTFMove(databasePath))
     , m_quotaInBytes(quotaInBytes)
 {
     ASSERT(!RunLoop::isMain());
@@ -98,6 +100,21 @@ bool LocalStorageDatabase::openDatabase(ShouldCreateDatabase shouldCreateDatabas
         m_database.setMaximumSize(m_quotaInBytes);
 
     return true;
+}
+
+void LocalStorageDatabase::startTransactionIfNecessary()
+{
+    if (!m_transaction)
+        m_transaction = makeUnique<SQLiteTransaction>(m_database);
+
+    if (m_transaction->inProgress())
+        return;
+
+    m_transaction->begin();
+    m_workQueue->dispatchAfter(transactionDuration, [weakThis = makeWeakPtr(*this)] {
+        if (weakThis)
+            weakThis->m_transaction->commit();
+    });
 }
 
 bool LocalStorageDatabase::migrateItemTableIfNeeded()
@@ -184,6 +201,7 @@ void LocalStorageDatabase::removeItem(const String& key, String& oldValue)
     if (!m_database.isOpen())
         return;
 
+    startTransactionIfNecessary();
     oldValue = item(key);
     if (oldValue.isNull())
         return;
@@ -248,6 +266,7 @@ void LocalStorageDatabase::setItem(const String& key, const String& value, Strin
     if (!m_database.isOpen())
         return;
 
+    startTransactionIfNecessary();
     oldValue = item(key);
 
     auto insertStatement = scopedStatement(m_insertStatement, "INSERT INTO ItemTable VALUES (?, ?)"_s);
@@ -280,6 +299,7 @@ bool LocalStorageDatabase::clear()
     if (m_items && m_items->isEmpty())
         return false;
 
+    startTransactionIfNecessary();
     auto clearStatement = scopedStatement(m_clearStatement, "DELETE FROM ItemTable"_s);
     if (!clearStatement) {
         LOG_ERROR("Failed to prepare clear statement - cannot write to local storage database");
@@ -300,6 +320,12 @@ bool LocalStorageDatabase::clear()
     return m_database.lastChanges() > 0;
 }
 
+void LocalStorageDatabase::flushToDisk()
+{
+    if (m_transaction)
+        m_transaction->commit();
+}
+
 void LocalStorageDatabase::close()
 {
     ASSERT(!RunLoop::isMain());
@@ -315,6 +341,8 @@ void LocalStorageDatabase::close()
     m_getItemsStatement = nullptr;
     m_deleteItemStatement = nullptr;
     m_items = std::nullopt;
+    if (auto transaction = std::exchange(m_transaction, nullptr))
+        transaction->commit();
 
     if (m_database.isOpen())
         m_database.close();

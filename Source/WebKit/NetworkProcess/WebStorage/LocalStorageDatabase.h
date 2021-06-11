@@ -27,18 +27,21 @@
 
 #include <WebCore/SQLiteDatabase.h>
 #include <wtf/HashMap.h>
+#include <wtf/WeakPtr.h>
+#include <wtf/WorkQueue.h>
 
 namespace WebCore {
 class SQLiteStatementAutoResetScope;
+class SQLiteTransaction;
 
 struct SecurityOriginData;
 }
 
 namespace WebKit {
 
-class LocalStorageDatabase : public RefCounted<LocalStorageDatabase> {
+class LocalStorageDatabase : public RefCounted<LocalStorageDatabase>, public CanMakeWeakPtr<LocalStorageDatabase> {
 public:
-    static Ref<LocalStorageDatabase> create(String&& databasePath, unsigned quotaInBytes);
+    static Ref<LocalStorageDatabase> create(Ref<WorkQueue>&&, String&& databasePath, unsigned quotaInBytes);
     ~LocalStorageDatabase();
 
     HashMap<String, String> items() const;
@@ -51,14 +54,16 @@ public:
     // Will block until all pending changes have been written to disk.
     void close();
 
+    void flushToDisk();
     void handleLowMemoryWarning();
 
 private:
-    LocalStorageDatabase(String&& databasePath, unsigned quotaInBytes);
+    LocalStorageDatabase(Ref<WorkQueue>&&, String&& databasePath, unsigned quotaInBytes);
 
     enum class ShouldCreateDatabase : bool { No, Yes };
     bool openDatabase(ShouldCreateDatabase);
 
+    void startTransactionIfNecessary();
     bool migrateItemTableIfNeeded();
     bool databaseIsEmpty() const;
 
@@ -66,8 +71,10 @@ private:
 
     WebCore::SQLiteStatementAutoResetScope scopedStatement(std::unique_ptr<WebCore::SQLiteStatement>&, ASCIILiteral query) const;
 
+    Ref<WorkQueue> m_workQueue;
     String m_databasePath;
     mutable WebCore::SQLiteDatabase m_database;
+    std::unique_ptr<WebCore::SQLiteTransaction> m_transaction;
     const unsigned m_quotaInBytes { 0 };
     bool m_isClosed { false };
 

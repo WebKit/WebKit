@@ -175,7 +175,7 @@ LocalStorageDatabase& StorageArea::ensureDatabase() const
     // We open the database here even if we've already imported our items to ensure that the database is open if we need to write to it.
     if (!m_localStorageDatabase) {
         auto* localStorageDatabaseTracker = m_localStorageNamespace->storageManager()->localStorageDatabaseTracker();
-        m_localStorageDatabase = LocalStorageDatabase::create(localStorageDatabaseTracker->databasePath(m_securityOrigin), m_quotaInBytes);
+        m_localStorageDatabase = LocalStorageDatabase::create(m_queue.copyRef(), localStorageDatabaseTracker->databasePath(m_securityOrigin), m_quotaInBytes);
         m_localStorageDatabase->openIfExisting();
     }
     return *m_localStorageDatabase;
@@ -197,6 +197,12 @@ void StorageArea::close()
         return;
 
     m_localStorageDatabase->close();
+}
+
+void StorageArea::syncToDatabase()
+{
+    if (m_localStorageDatabase)
+        m_localStorageDatabase->flushToDisk();
 }
 
 void StorageArea::handleLowMemoryWarning()

@@ -71,6 +71,7 @@ public:
 
     void close();
 
+    void syncToDatabase();
     void handleLowMemoryWarning();
 
 private:
