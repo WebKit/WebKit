@@ -1,3 +1,22 @@
+2021-06-11  Alex Christensen  <achristensen@webkit.org>
+
+        Partition CrossOriginPreflightResultCache by SessionID
+        https://bugs.webkit.org/show_bug.cgi?id=226910
+
+        Reviewed by Youenn Fablet.
+
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::validatePreflightResponse):
+        * loader/CrossOriginAccessControl.h:
+        * loader/CrossOriginPreflightChecker.cpp:
+        (WebCore::CrossOriginPreflightChecker::validatePreflightResponse):
+        * loader/CrossOriginPreflightResultCache.cpp:
+        (WebCore::CrossOriginPreflightResultCache::appendEntry):
+        (WebCore::CrossOriginPreflightResultCache::canSkipPreflight):
+        * loader/CrossOriginPreflightResultCache.h:
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::makeCrossOriginAccessRequest):
+
 2021-06-11  Chris Dumez  <cdumez@apple.com>
 
         Use SharedBuffer!=() in CachedResource::tryReplaceEncodedData()

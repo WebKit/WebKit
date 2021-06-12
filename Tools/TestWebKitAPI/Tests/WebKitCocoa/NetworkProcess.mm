@@ -145,3 +145,50 @@ TEST(NetworkProcess, TerminateWhenUnused)
     while ([WKWebsiteDataStore _defaultNetworkProcessExists])
         TestWebKitAPI::Util::spinRunLoop();
 }
+
+TEST(NetworkProcess, CORSPreflightCachePartitioned)
+{
+    using namespace TestWebKitAPI;
+    size_t preflightRequestsReceived { 0 };
+    HTTPServer server([&] (Connection connection) {
+        connection.receiveHTTPRequest([&, connection] (Vector<char>&& request) {
+            const char* expectedRequestBegin = "OPTIONS / HTTP/1.1\r\n";
+            EXPECT_TRUE(!memcmp(request.data(), expectedRequestBegin, strlen(expectedRequestBegin)));
+            EXPECT_TRUE(strnstr(request.data(), "Origin: http://example.com\r\n", request.size()));
+            EXPECT_TRUE(strnstr(request.data(), "Access-Control-Request-Method: DELETE\r\n", request.size()));
+            
+            const char* response =
+            "HTTP/1.1 204 No Content\r\n"
+            "Access-Control-Allow-Origin: http://example.com\r\n"
+            "Access-Control-Allow-Methods: OPTIONS, GET, POST, DELETE\r\n"
+            "Cache-Control: max-age=604800\r\n\r\n";
+            connection.send(response, [&, connection] {
+                connection.receiveHTTPRequest([&, connection] (Vector<char>&& request) {
+                    const char* expectedRequestBegin = "DELETE / HTTP/1.1\r\n";
+                    EXPECT_TRUE(!memcmp(request.data(), expectedRequestBegin, strlen(expectedRequestBegin)));
+                    EXPECT_TRUE(strnstr(request.data(), "Origin: http://example.com\r\n", request.size()));
+                    const char* response =
+                    "HTTP/1.1 200 OK\r\n"
+                    "Content-Length: 2\r\n\r\n"
+                    "hi";
+                    connection.send(response, [&, connection] {
+                        preflightRequestsReceived++;
+                    });
+                });
+            });
+        });
+    });
+    NSString *html = [NSString stringWithFormat:@"<script>var xhr = new XMLHttpRequest();xhr.open('DELETE', 'http://localhost:%d/');xhr.send()</script>", server.port()];
+    NSURL *baseURL = [NSURL URLWithString:@"http://example.com/"];
+    auto firstWebView = adoptNS([WKWebView new]);
+    [firstWebView loadHTMLString:html baseURL:baseURL];
+    while (preflightRequestsReceived != 1)
+        TestWebKitAPI::Util::spinRunLoop();
+
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    configuration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    auto secondWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [secondWebView loadHTMLString:html baseURL:baseURL];
+    while (preflightRequestsReceived != 2)
+        TestWebKitAPI::Util::spinRunLoop();
+}

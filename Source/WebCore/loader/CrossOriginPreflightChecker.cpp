@@ -61,13 +61,20 @@ CrossOriginPreflightChecker::~CrossOriginPreflightChecker()
 void CrossOriginPreflightChecker::validatePreflightResponse(DocumentThreadableLoader& loader, ResourceRequest&& request, unsigned long identifier, const ResourceResponse& response)
 {
     auto* frame = loader.document().frame();
-    ASSERT(frame);
+    if (!frame) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
 
-    auto result = WebCore::validatePreflightResponse(request, response, loader.options().storedCredentialsPolicy, loader.securityOrigin(), &CrossOriginAccessControlCheckDisabler::singleton());
+    auto* page = loader.document().page();
+    if (!page) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto result = WebCore::validatePreflightResponse(page->sessionID(), request, response, loader.options().storedCredentialsPolicy, loader.securityOrigin(), &CrossOriginAccessControlCheckDisabler::singleton());
     if (!result) {
-        if (auto* document = frame->document())
-            document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, result.error());
-
+        loader.document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, result.error());
         loader.preflightFailure(identifier, ResourceError(errorDomainWebKitInternal, 0, request.url(), result.error(), ResourceError::Type::AccessControl));
         return;
     }
