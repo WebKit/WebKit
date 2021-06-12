@@ -174,22 +174,7 @@
 #import "PepperUICoreSPI.h"
 #endif
 
-#if ENABLE(IMAGE_ANALYSIS)
-
-// FIXME: This should be pulled out into a separate softlinking header (either in PAL or WebKit2).
-#import "VisionKitSPI.h"
-SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(VisionKitCore)
-SOFT_LINK_CLASS_OPTIONAL(VisionKitCore, VKImageAnalyzer)
-SOFT_LINK_CLASS_OPTIONAL(VisionKitCore, VKImageAnalyzerRequest)
-
-// FIXME: Remove this once <rdar://72480459> is in the SDK.
-@interface VKImageAnalyzerRequest (Staging_72480459)
-@property (nonatomic) NSURL *imageURL;
-@property (nonatomic) NSURL *pageURL;
-@end
-
-#endif // ENABLE(IMAGE_ANALYSIS)
-
+#import <pal/cocoa/VisionKitCoreSoftLink.h>
 #import <pal/ios/ManagedConfigurationSoftLink.h>
 #import <pal/ios/QuickLookSoftLink.h>
 
@@ -880,7 +865,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _imageAnalysisDeferringGestureRecognizer = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);
     [_imageAnalysisDeferringGestureRecognizer setName:@"Deferrer for image analysis"];
     [_imageAnalysisDeferringGestureRecognizer setImmediatelyFailsAfterTouchEnd:YES];
-    [_imageAnalysisDeferringGestureRecognizer setEnabled:WebKit::isLiveTextEnabled()];
+    [_imageAnalysisDeferringGestureRecognizer setEnabled:WebKit::isLiveTextAvailableAndEnabled()];
 #endif
 
     for (WKDeferringGestureRecognizer *gesture in self.deferringGestures) {
@@ -9913,7 +9898,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (bool)actionSheetAssistant:(WKActionSheetAssistant *)assistant shouldIncludeShowTextActionForElement:(_WKActivatedElementInfo *)element
 {
-    return WebKit::isLiveTextEnabled() && _hasSelectableTextInImage;
+    return WebKit::isLiveTextAvailableAndEnabled() && _hasSelectableTextInImage;
 }
 
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant showTextForImage:(UIImage *)image imageURL:(NSURL *)imageURL title:(NSString *)title imageBounds:(CGRect)imageBounds
@@ -9923,7 +9908,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (bool)actionSheetAssistant:(WKActionSheetAssistant *)assistant shouldIncludeLookUpImageActionForElement:(_WKActivatedElementInfo *)element
 {
-    return WebKit::isLiveTextEnabled() && _hasVisualSearchResults;
+    return WebKit::isLiveTextAvailableAndEnabled() && _hasVisualSearchResults;
 }
 
 - (void)actionSheetAssistant:(WKActionSheetAssistant *)assistant lookUpImage:(UIImage *)image imageURL:(NSURL *)imageURL title:(NSString *)title imageBounds:(CGRect)imageBounds
@@ -9938,7 +9923,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 - (VKImageAnalyzer *)imageAnalyzer
 {
     if (!_imageAnalyzer)
-        _imageAnalyzer = adoptNS([allocVKImageAnalyzerInstance() init]);
+        _imageAnalyzer = adoptNS([PAL::allocVKImageAnalyzerInstance() init]);
     return _imageAnalyzer.get();
 }
 
@@ -9949,7 +9934,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (void)_setUpImageAnalysis
 {
-    if (!WebKit::isLiveTextEnabled())
+    if (!WebKit::isLiveTextAvailableAndEnabled())
         return;
 
     _pendingImageAnalysisRequestIdentifier = std::nullopt;
@@ -9973,7 +9958,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (void)_tearDownImageAnalysis
 {
-    if (!WebKit::isLiveTextEnabled())
+    if (!WebKit::isLiveTextAvailableAndEnabled())
         return;
 
     [_imageAnalysisGestureRecognizer setDelegate:nil];
@@ -10007,7 +9992,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (RetainPtr<VKImageAnalyzerRequest>)createImageAnalysisRequest:(VKAnalysisTypes)analysisTypes image:(UIImage *)image imageURL:(NSURL *)imageURL
 {
-    auto request = adoptNS([allocVKImageAnalyzerRequestInstance() initWithImage:image orientation:VKImageOrientationUp requestType:analysisTypes]);
+    auto request = adoptNS([PAL::allocVKImageAnalyzerRequestInstance() initWithImage:image orientation:VKImageOrientationUp requestType:analysisTypes]);
     [request setImageURL:imageURL];
     [request setPageURL:[NSURL _web_URLWithWTFString:_page->currentURL()]];
     return request;
@@ -10063,7 +10048,7 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 
 - (void)imageAnalysisGestureDidBegin:(WKImageAnalysisGestureRecognizer *)gestureRecognizer
 {
-    ASSERT(WebKit::isLiveTextEnabled());
+    ASSERT(WebKit::isLiveTextAvailableAndEnabled());
 
     auto requestIdentifier = WebKit::ImageAnalysisRequestIdentifier::generate();
 

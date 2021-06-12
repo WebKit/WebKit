@@ -25,19 +25,13 @@
 
 #pragma once
 
-#if ENABLE(IMAGE_ANALYSIS)
+#if HAVE(VK_IMAGE_ANALYSIS)
 
-@class VKImageAnalysis;
+#import <pal/spi/cocoa/VisionKitCoreSPI.h>
+#import <wtf/SoftLinking.h>
 
-namespace WebCore {
-struct TextRecognitionResult;
-}
+SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, VisionKitCore)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, VKImageAnalyzer)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, VKImageAnalyzerRequest)
 
-namespace WebKit {
-
-bool isLiveTextAvailableAndEnabled();
-WebCore::TextRecognitionResult makeTextRecognitionResult(VKImageAnalysis *);
-
-}
-
-#endif // ENABLE(IMAGE_ANALYSIS)
+#endif // HAVE(VK_IMAGE_ANALYSIS)

@@ -1,3 +1,38 @@
+2021-06-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Clean up some VisionKitCore soft linking code in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=226941
+
+        Reviewed by Tim Horton.
+
+        Remove softlinking macros from several files in WebKit; instead, import and use the new PAL soft-linking helper
+        functions. Additionally, move a couple of staging forward declarations into the non-internal SDK section of the
+        VisionKitCore SPI header.
+
+        * Platform/cocoa/TextRecognitionUtilities.h:
+        * Platform/cocoa/TextRecognitionUtilities.mm:
+        (WebKit::isLiveTextEnabled):
+        (WebKit::isLiveTextAvailableAndEnabled):
+
+        Additionally replace `isLiveTextEnabled` with `isLiveTextAvailableAndEnabled`, and have it check for the
+        presence of the VisionKitCore framework in addition to whether the system feature flag is enabled (at least,
+        when building with the internal SDK).
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::ensureImageAnalyzer):
+        (WebKit::createImageAnalysisRequest):
+        (WebKit::WebViewImpl::requestTextRecognition):
+        (WebKit::WebViewImpl::computeHasVisualSearchResults):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setUpInteraction]):
+        (-[WKContentView actionSheetAssistant:shouldIncludeShowTextActionForElement:]):
+        (-[WKContentView actionSheetAssistant:shouldIncludeLookUpImageActionForElement:]):
+        (-[WKContentView imageAnalyzer]):
+        (-[WKContentView _setUpImageAnalysis]):
+        (-[WKContentView _tearDownImageAnalysis]):
+        (-[WKContentView createImageAnalysisRequest:image:imageURL:]):
+        (-[WKContentView imageAnalysisGestureDidBegin:]):
+
 2021-06-11  Alex Christensen  <achristensen@webkit.org>
 
         Partition CrossOriginPreflightResultCache by SessionID

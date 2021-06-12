@@ -23,21 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
 
-#if ENABLE(IMAGE_ANALYSIS)
+#if HAVE(VK_IMAGE_ANALYSIS)
 
-@class VKImageAnalysis;
+#import <pal/spi/cocoa/VisionKitCoreSPI.h>
+#import <wtf/SoftLinking.h>
 
-namespace WebCore {
-struct TextRecognitionResult;
-}
+SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, VisionKitCore, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, VisionKitCore, VKImageAnalyzer, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, VisionKitCore, VKImageAnalyzerRequest, PAL_EXPORT)
 
-namespace WebKit {
-
-bool isLiveTextAvailableAndEnabled();
-WebCore::TextRecognitionResult makeTextRecognitionResult(VKImageAnalysis *);
-
-}
-
-#endif // ENABLE(IMAGE_ANALYSIS)
+#endif // HAVE(VK_IMAGE_ANALYSIS)

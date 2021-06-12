@@ -1,3 +1,19 @@
+2021-06-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Cocoa] Clean up some VisionKitCore soft linking code in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=226941
+
+        Reviewed by Tim Horton.
+
+        Move softlinking code out of implementation files in WebKit (see WebKit/ChangeLog for details), and into
+        dedicated VisionKitCore SPI and soft-linking headers in PAL.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/PlatformMac.cmake:
+        * pal/cocoa/VisionKitCoreSoftLink.h: Copied from Source/WebKit/Platform/cocoa/TextRecognitionUtilities.h.
+        * pal/cocoa/VisionKitCoreSoftLink.mm: Copied from Source/WebKit/Platform/cocoa/TextRecognitionUtilities.h.
+        * pal/spi/cocoa/VisionKitCoreSPI.h: Renamed from Source/WebKit/Platform/spi/Cocoa/VisionKitSPI.h.
+
 2021-06-11  Jonathan Bedard  <jbedard@apple.com>
 
         [Monterey] Support building WebKit (Follow-up fix)

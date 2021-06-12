@@ -28,10 +28,16 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <VisionKitCore/VKImageAnalysis_WebKit.h>
-#import <VisionKitCore/VKImageAnalyzer.h>
-#import <VisionKitCore/VKQuad.h>
+#import <VisionKitCore/VisionKitCore.h>
 
 #else
+
+#import <CoreGraphics/CoreGraphics.h>
+#import <Foundation/Foundation.h>
+
+#if PLATFORM(IOS_FAMILY)
+#import <UIKit/UIKit.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -47,10 +53,9 @@ typedef NS_OPTIONS(NSUInteger, VKAnalysisTypes) {
     VKAnalysisTypeAll = NSUIntegerMax,
 };
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS_FAMILY)
 
 typedef UIImage VKImageClass;
-
 typedef UIImageOrientation VKImageOrientation;
 
 #define VKImageOrientationUp            UIImageOrientationUp
@@ -89,15 +94,19 @@ typedef NS_ENUM(NSInteger, VKImageOrientation) {
 
 @interface VKImageAnalyzerRequest : NSObject <NSCopying, VKFeedbackAssetsProvider>
 - (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithImage:(VKImageClass *)image requestType:(VKAnalysisTypes)analysisType;
+- (instancetype)initWithImage:(VKImageClass *)image orientation:(VKImageOrientation)orientation requestType:(VKAnalysisTypes)analysisType;
 - (instancetype)initWithCGImage:(CGImageRef)image orientation:(VKImageOrientation)orientation requestType:(VKAnalysisTypes)analysisType;
+@end
+
+@interface VKImageAnalyzerRequest (VI)
+@property (nonatomic) NSURL *imageURL;
+@property (nonatomic) NSURL *pageURL;
 @end
 
 @interface VKImageAnalyzer : NSObject
 @property (nonatomic, strong, nullable) dispatch_queue_t callbackQueue;
-- (VKImageAnalysisRequestID)processRequest:(VKImageAnalyzerRequest *)request
-                           progressHandler:(void (^_Nullable)(double progress))progressHandler
-                         completionHandler:(void (^)(VKImageAnalysis* _Nullable analysis, NSError * _Nullable error))completionHandler;
+- (VKImageAnalysisRequestID)processRequest:(VKImageAnalyzerRequest *)request progressHandler:(void (^_Nullable)(double progress))progressHandler completionHandler:(void (^)(VKImageAnalysis *_Nullable analysis, NSError *_Nullable error))completionHandler;
+- (void)cancelAllRequests;
 @end
 
 @interface VKQuad : NSObject <NSCopying, NSSecureCoding>
@@ -118,9 +127,9 @@ typedef NS_ENUM(NSInteger, VKImageOrientation) {
 @end
 
 @interface VKImageAnalysis (WebKitSPI)
-@property (nonatomic, readonly) NSArray <VKWKLineInfo *> *allLines;
+@property (nonatomic, readonly) NSArray<VKWKLineInfo *> *allLines;
 #if PLATFORM(IOS)
-@property (nonatomic) UIMenu * mrcMenu;
+@property (nonatomic) UIMenu *mrcMenu;
 #endif
 @end
 
@@ -128,4 +137,4 @@ NS_ASSUME_NONNULL_END
 
 #endif
 
-#endif
+#endif // HAVE(VK_IMAGE_ANALYSIS)

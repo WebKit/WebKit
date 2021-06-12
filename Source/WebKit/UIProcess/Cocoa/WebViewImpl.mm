@@ -146,8 +146,6 @@
 #include "MediaSessionCoordinatorProxyPrivate.h"
 #endif
 
-#import "VisionKitSPI.h"
-
 #if HAVE(TRANSLATION_UI_SERVICES)
 #import <TranslationUIServices/LTUITranslationViewController.h>
 
@@ -160,6 +158,7 @@ SOFT_LINK_CLASS_OPTIONAL(TranslationUIServices, LTUITranslationViewController)
 #endif
 
 #import <pal/cocoa/RevealSoftLink.h>
+#import <pal/cocoa/VisionKitCoreSoftLink.h>
 #import <pal/mac/DataDetectorsSoftLink.h>
 
 #if HAVE(TOUCH_BAR) && ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
@@ -187,23 +186,13 @@ WTF_DECLARE_CF_TYPE_TRAIT(CGImage);
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(VisionKitCore)
-SOFT_LINK_CLASS_OPTIONAL(VisionKitCore, VKImageAnalyzer)
-SOFT_LINK_CLASS_OPTIONAL(VisionKitCore, VKImageAnalyzerRequest)
-
-// FIXME: Remove this once <rdar://72480459> is in the SDK.
-@interface VKImageAnalyzerRequest (Staging_72480459)
-@property (nonatomic) NSURL *imageURL;
-@property (nonatomic) NSURL *pageURL;
-@end
-
 namespace WebKit {
 
 VKImageAnalyzer *WebViewImpl::ensureImageAnalyzer()
 {
     if (!m_imageAnalyzer) {
         m_imageAnalyzerQueue = WorkQueue::create("WebKit image analyzer queue");
-        m_imageAnalyzer = adoptNS([allocVKImageAnalyzerInstance() init]);
+        m_imageAnalyzer = adoptNS([PAL::allocVKImageAnalyzerInstance() init]);
         [m_imageAnalyzer setCallbackQueue:m_imageAnalyzerQueue->dispatchQueue()];
     }
     return m_imageAnalyzer.get();
@@ -211,7 +200,7 @@ VKImageAnalyzer *WebViewImpl::ensureImageAnalyzer()
 
 static RetainPtr<VKImageAnalyzerRequest> createImageAnalysisRequest(CGImageRef image, const URL& imageURL, const URL& pageURL, VKAnalysisTypes types)
 {
-    auto request = adoptNS([allocVKImageAnalyzerRequestInstance() initWithCGImage:image orientation:VKImageOrientationUp requestType:types]);
+    auto request = adoptNS([PAL::allocVKImageAnalyzerRequestInstance() initWithCGImage:image orientation:VKImageOrientationUp requestType:types]);
     [request setImageURL:imageURL];
     [request setPageURL:pageURL];
     return request;
@@ -219,7 +208,7 @@ static RetainPtr<VKImageAnalyzerRequest> createImageAnalysisRequest(CGImageRef i
 
 void WebViewImpl::requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completion)
 {
-    if (!isLiveTextEnabled()) {
+    if (!isLiveTextAvailableAndEnabled()) {
         completion({ });
         return;
     }
@@ -243,7 +232,7 @@ void WebViewImpl::requestTextRecognition(const URL& imageURL, const ShareableBit
 
 void WebViewImpl::computeHasVisualSearchResults(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&& completion)
 {
-    if (!isLiveTextEnabled()) {
+    if (!isLiveTextAvailableAndEnabled()) {
         completion(false);
         return;
     }
