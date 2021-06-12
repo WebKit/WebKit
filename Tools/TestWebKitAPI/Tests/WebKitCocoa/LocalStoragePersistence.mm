@@ -34,6 +34,7 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/WKWebsiteDataStoreRef.h>
 #import <WebKit/WebKit.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKit/_WKUserStyleSheet.h>
@@ -111,6 +112,12 @@ TEST(WKWebView, LocalStorageProcessCrashes)
     receivedScriptMessage = false;
     TestWebKitAPI::Util::run(&receivedScriptMessage);
     EXPECT_WK_STREQ(@"session:storage", [lastScriptMessage body]);
+
+    readyToContinue = false;
+    WKWebsiteDataStoreSyncLocalStorage((WKWebsiteDataStoreRef)configuration.get().websiteDataStore, nullptr, [](void*) {
+        readyToContinue = true;
+    });
+    TestWebKitAPI::Util::run(&readyToContinue);
 
     [configuration.get().websiteDataStore _terminateNetworkProcess];
 
