@@ -138,8 +138,17 @@ typedef void (^PUICQuickboardCompletionBlock)(NSAttributedString * _Nullable);
 @interface PUICButton : UIButton
 @end
 
+typedef NS_ENUM(NSUInteger, PUICQuickboardAction) {
+    PUICQuickboardActionAddNumber = 7,
+};
+
+#if HAVE(PUIC_BUTTON_TYPE_PILL)
+extern UIButtonType const PUICButtonTypePill;
+#endif
+
 @interface PUICQuickboardListTrayButton : PUICButton
 - (instancetype)initWithFrame:(CGRect)frame tintColor:(nullable UIColor *)tintColor defaultHeight:(CGFloat)defaultHeight;
+@property (nonatomic) PUICQuickboardAction action;
 @end
 
 @interface PUICTableViewCell : UITableViewCell

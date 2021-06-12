@@ -64,12 +64,14 @@ static NSString *textSuggestionCellReuseIdentifier = @"WebKitQuickboardTextSugge
     if ([self.delegate numericInputModeForListViewController:self] == WKNumberPadInputModeNone)
         return @[ ];
 
-    UIImage *numberPadButtonIcon = [PUICResources imageNamed:@"QuickboardAddPhoneNumber" inBundle:[NSBundle bundleWithIdentifier:@"com.apple.PepperUICore"] shouldCache:YES];
-
+#if HAVE(PUIC_BUTTON_TYPE_PILL)
+    auto numberPadButton = retainPtr([PUICQuickboardListTrayButton buttonWithType:PUICButtonTypePill]);
+#else
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     auto numberPadButton = adoptNS([[PUICQuickboardListTrayButton alloc] initWithFrame:CGRectZero tintColor:nil defaultHeight:self.specs.defaultButtonHeight]);
     ALLOW_DEPRECATED_DECLARATIONS_END
-    [numberPadButton setImage:numberPadButtonIcon forState:UIControlStateNormal];
+#endif
+    [numberPadButton setAction:PUICQuickboardActionAddNumber];
     [numberPadButton addTarget:self action:@selector(presentNumberPadViewController) forControlEvents:UIControlEventTouchUpInside];
     return @[ numberPadButton.get() ];
 }

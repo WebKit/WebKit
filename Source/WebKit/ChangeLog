@@ -1,3 +1,19 @@
+2021-06-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Number pad button is missing its image when tapping on <input type=tel> in watchOS 8
+        https://bugs.webkit.org/show_bug.cgi?id=226955
+
+        Reviewed by Darin Adler.
+
+        After some recent PepperUICore changes, the Quickboard button for presenting the number pad when focusing a
+        telephone input on watchOS 8 is missing its icon image. To fix this, stop using deprecated SPI for creating
+        the list tray button, and instead use `+[PUICQuickboardListTrayButton buttonWithType:]` and `-setAction:` to
+        create and set up the button.
+
+        * Platform/spi/watchos/PepperUICoreSPI.h:
+        * UIProcess/ios/forms/WKTextInputListViewController.mm:
+        (-[WKTextInputListViewController additionalTrayButtons]):
+
 2021-06-12  Peng Liu  <peng.liu6@apple.com>
 
         REGRESSION (r278374): [Big Sur] ASSERTION FAILED: !isInRoutingArbitrationForToken(token) in WebCore::SharedRoutingArbitrator::beginRoutingArbitrationForToken()

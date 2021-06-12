@@ -1,3 +1,14 @@
+2021-06-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Number pad button is missing its image when tapping on <input type=tel> in watchOS 8
+        https://bugs.webkit.org/show_bug.cgi?id=226955
+
+        Reviewed by Darin Adler.
+
+        Add compile-time flags to guard the presence of `PUICQuickboardController` and `PUICButtonTypePill`.
+
+        * wtf/PlatformHave.h:
+
 2021-06-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add WeakHashMap
