@@ -1218,17 +1218,13 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
         return;
     }
 
-    _page->callAfterNextPresentationUpdate([callSnapshotRect = WTFMove(callSnapshotRect), handler](WebKit::CallbackBase::Error error) mutable {
+    _page->callAfterNextPresentationUpdate([callSnapshotRect = WTFMove(callSnapshotRect), handler](WebKit::CallbackBase::Error error) {
         if (error != WebKit::CallbackBase::Error::None) {
             tracePoint(TakeSnapshotEnd, snapshotFailedTraceValue);
             handler(nil, createNSError(WKErrorUnknown).get());
             return;
         }
-
-        // Wait for the next flush to ensure the latest IOSurfaces are pushed to backboardd before taking the snapshot.
-        [CATransaction addCommitHandler:[callSnapshotRect = WTFMove(callSnapshotRect)] {
-            callSnapshotRect();
-        } forPhase:kCATransactionPhasePostCommit];
+        callSnapshotRect();
     });
 #endif
 }

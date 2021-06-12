@@ -1,3 +1,17 @@
+2021-06-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, reverting r278754.
+
+        Caused 5 TestWebKitAPI.WKWebView.SnapshotImage* tests to time
+        out on iOS
+
+        Reverted changeset:
+
+        "takeSnapshotWithConfiguration() should wait for the next
+        flush before it does callSnapshotRect()"
+        https://bugs.webkit.org/show_bug.cgi?id=226257
+        https://commits.webkit.org/r278754
+
 2021-06-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Cocoa] Clean up some VisionKitCore soft linking code in WebKit
