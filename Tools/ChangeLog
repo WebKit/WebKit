@@ -1,3 +1,17 @@
+2021-06-11  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][DumpRenderTree] --no-timeout switch doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=226913
+
+        Reviewed by Don Olmstead.
+
+        r177542 added a variable 'useTimeoutWatchdog', but used nowhere.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        * DumpRenderTree/win/DumpRenderTreeWin.h:
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        (TestRunner::setWaitToDump): Check useTimeoutWatchdog to start the timer.
+
 2021-06-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add WeakHashMap
