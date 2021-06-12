@@ -1,3 +1,21 @@
+2021-06-11  Chris Dumez  <cdumez@apple.com>
+
+        Lazily compute SecurityOrigin::m_isPotentiallyTrustworthy for performance
+        https://bugs.webkit.org/show_bug.cgi?id=226946
+
+        Reviewed by Alex Christensen.
+
+        We currently initialize m_isPotentiallyTrustworthy in the SecurityOrigin constructor.
+        However, it is a bit expensive to compute and shows on profiles, and we often don't
+        actually use this data member. As a result, this patch makes it so that
+        SecurityOrigin::m_isPotentiallyTrustworthy gets computed lazily.
+
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        (WebCore::SecurityOrigin::isPotentiallyTrustworthy const):
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::isPotentiallyTrustworthy const): Deleted.
+
 2021-06-10  Yusuke Suzuki  <ysuzuki@apple.com>
 
         Use DOMConstructor array instead of HashMap since window constructor property access is critical

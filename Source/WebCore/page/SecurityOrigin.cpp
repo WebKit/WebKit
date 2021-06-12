@@ -190,8 +190,6 @@ SecurityOrigin::SecurityOrigin(const URL& url)
 
     if (m_canLoadLocalResources)
         m_filePath = url.fileSystemPath(); // In case enforceFilePathSeparation() is called.
-
-    m_isPotentiallyTrustworthy = shouldTreatAsPotentiallyTrustworthy(url);
 }
 
 SecurityOrigin::SecurityOrigin()
@@ -489,6 +487,13 @@ bool SecurityOrigin::isMatchingRegistrableDomainSuffix(const String& domainSuffi
 #else
     return true;
 #endif
+}
+
+bool SecurityOrigin::isPotentiallyTrustworthy() const
+{
+    if (!m_isPotentiallyTrustworthy)
+        m_isPotentiallyTrustworthy = shouldTreatAsPotentiallyTrustworthy(m_data.protocol, m_data.host);
+    return *m_isPotentiallyTrustworthy;
 }
 
 void SecurityOrigin::grantLoadLocalResources()
