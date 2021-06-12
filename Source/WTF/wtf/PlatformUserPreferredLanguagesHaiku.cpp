@@ -57,7 +57,7 @@ static String platformLanguage()
 	return locale.String();
 }
 
-Vector<String> platformUserPreferredLanguages()
+Vector<String> platformUserPreferredLanguages(WTF::ShouldMinimizeLanguages)
 {
     Vector<String> userPreferredLanguages;
     userPreferredLanguages.append(platformLanguage());
