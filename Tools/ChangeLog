@@ -1,3 +1,28 @@
+2021-06-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add WeakHashMap
+        https://bugs.webkit.org/show_bug.cgi?id=226872
+
+        Reviewed by Geoffrey Garen.
+
+        Added unit tests for WeakHashMap.
+
+        * TestWebKitAPI/Tests/WTF/WeakPtr.cpp:
+        (TestWebKitAPI::computeSizeOfWeakHashSet): Deleted the unused variant.
+        (WTF_WeakPtr.WeakHashSetExpansion): Deleted the superflous for loop.
+        (TestWebKitAPI::computeSizeOfWeakHashMap): Added.
+        (TestWebKitAPI::ValueObject): Added.
+        (TestWebKitAPI::ValueObject::create):
+        (TestWebKitAPI::ValueObject::~ValueObject):
+        (TestWebKitAPI::ValueObject::ValueObject):
+        (WTF_WeakPtr.WeakHashMapBasic): Added.
+        (WTF_WeakPtr.WeakHashMapConstObjects): Added.
+        (WTF_WeakPtr.WeakHashMapExpansion): Added.
+        (WTF_WeakPtr.WeakHashMapRemoveNullReferences): Added.
+        (TestWebKitAPI::collectKeyValuePairsUsingIterators): Added.
+        (WTF_WeakPtr.WeakHashMapIterators): Added.
+        (WTF_WeakPtr.WeakHashMapAmortizedCleanup): Added.
+
 2021-06-11  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed small API test failure fix after r278786.

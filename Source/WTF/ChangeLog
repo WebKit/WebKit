@@ -1,3 +1,53 @@
+2021-06-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add WeakHashMap
+        https://bugs.webkit.org/show_bug.cgi?id=226872
+
+        Reviewed by Geoffrey Garen.
+
+        Added WeakHashMap which deletes entries during rehashing and amortized over time (based on
+        the number of read & write accesses done on a given WeakHashMap instance).
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/WeakHashMap.h: Added.
+        (WTF::WeakHashMap): Added.
+        (WTF::WeakHashMap::PeekKeyValuePairTraits): Added.
+        (WTF::WeakHashMap::PeekType): Added.
+        (WTF::WeakHashMap::PeekPtrType): Added. Unlike a regular HashMap, we need to fake the iterator
+        pointer value with this struct since key-value pair doesn't exist in HashTable itself as it stores
+        Ref<WeakRefImpl> instead.
+        (WTF::WeakHashMap::WeakHashMapIteratorBase): Added. Has a bunch of helper functions so that
+        WeakHashMapIterator and WeakHashMapConstIterator can share the code.
+        (WTF::WeakHashMap::WeakHashMapIterator): Added.
+        (WTF::WeakHashMap::WeakHashMapConstIterator): Added.
+        (WTF::WeakHashMap::AddResult): Added.
+        (WTF::WeakHashMap::begin): Added.
+        (WTF::WeakHashMap::end): Added.
+        (WTF::WeakHashMap::add): Added.
+        (WTF::WeakHashMap::set): Added.
+        (WTF::WeakHashMap::find): Added.
+        (WTF::WeakHashMap::contains): Added.
+        (WTF::WeakHashMap::get): Added.
+        (WTF::WeakHashMap::remove): Added.
+        (WTF::WeakHashMap::removeIf): Added.
+        (WTF::WeakHashMap::clear): Added.
+        (WTF::WeakHashMap::capacity): Added.
+        (WTF::WeakHashMap::isEmptyIgnoringNullReferences): Added. This is akin to WeakHashSet::computesEmpty.
+        Per prior discussion, we intend to rename WeakHashSet's version to this name as well for clarity.
+        Note that this function will clear the hash table completely if the map is semantically empty
+        but HashTable contains null references as keys.
+        (WTF::WeakHashMap::hasNullReferences): Added. Triggers amortized cleanup based on the number
+        of iterations performed. If there are no null references, it resets m_operationCountSinceLastCleanup.
+        (WTF::WeakHashMap::computeSize): Added.
+        (WTF::WeakHashMap::removeNullReferences): Added. Since WeakHashMap doesn't eagerly delete the value
+        when the key goes away, this function should be called when values held onto by WeakRefImpl with
+        the nullptr back pointer should be deleted en masse.
+        (WTF::WeakHashMap::checkConsistency): Added.
+        (WTF::WeakHashMap::makeKeyImpl): Added.
+        (WTF::WeakHashMap::keyImplIfExists): Added.
+        * wtf/WeakPtr.h:
+
 2021-06-11  Jonathan Bedard  <jbedard@apple.com>
 
         [Monterey] Support building WebKit

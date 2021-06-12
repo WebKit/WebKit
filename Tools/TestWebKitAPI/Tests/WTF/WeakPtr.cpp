@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include "Test.h"
+#include <wtf/WeakHashMap.h>
 #include <wtf/WeakHashSet.h>
 
 namespace TestWebKitAPI {
@@ -38,6 +39,7 @@ struct WeakPtrCounter {
 };
 
 template<typename T> using CanMakeWeakPtr = WTF::CanMakeWeakPtr<T, WeakPtrFactoryInitialization::Lazy, WeakPtrCounter>;
+template<typename T, typename U> using WeakHashMap = WTF::WeakHashMap<T, U, WeakPtrCounter>;
 template<typename T> using WeakHashSet = WTF::WeakHashSet<T, WeakPtrCounter>;
 template<typename T> using WeakPtr = WTF::WeakPtr<T, WeakPtrCounter>;
 template<typename T> using WeakPtrFactory = WTF::WeakPtrFactory<T, WeakPtrCounter>;
@@ -342,17 +344,6 @@ TEST(WTF_WeakPtr, DerivedConstructAndAssignConst)
 }
 
 template <typename T>
-unsigned computeSizeOfWeakHashSet(const HashSet<WeakPtr<T>>& set)
-{
-    unsigned size = 0;
-    for (auto& item : set) {
-        UNUSED_PARAM(item);
-        size++;
-    }
-    return size;
-}
-
-template <typename T>
 unsigned computeSizeOfWeakHashSet(const WeakHashSet<T>& set)
 {
     unsigned size = 0;
@@ -567,7 +558,7 @@ TEST(WTF_WeakPtr, WeakHashSetExpansion)
     }
     EXPECT_EQ(s_baseWeakReferences, 0u);
 
-    for (unsigned i = 0; i < 1; ++i) {
+    {
         WeakHashSet<Base> weakHashSet;
         Vector<std::unique_ptr<Base>> objects;
         Vector<std::unique_ptr<Base>> otherObjects;
@@ -777,6 +768,951 @@ TEST(WTF_WeakPtr, WeakHashSetComputeSize)
         EXPECT_EQ(s_baseWeakReferences, objectsCount);
         EXPECT_EQ(weakHashSet.computeSize(), 0u);
         EXPECT_EQ(s_baseWeakReferences, 0u);
+    }
+}
+
+template <typename T, typename U>
+unsigned computeSizeOfWeakHashMap(const WeakHashMap<T, U>& map)
+{
+    unsigned size = 0;
+    for (auto item : map) {
+        UNUSED_PARAM(item);
+        size++;
+    }
+    return size;
+}
+
+struct ValueObject : public RefCounted<ValueObject> {
+public:
+
+    static Ref<ValueObject> create(int value) { return adoptRef(*new ValueObject(value)); }
+
+    ~ValueObject() { ASSERT(s_count); --s_count; }
+
+    int value;
+
+    static unsigned s_count;
+
+private:
+    ValueObject(unsigned short value)
+        : value(value)
+    {
+        ++s_count;
+    }
+};
+
+unsigned ValueObject::s_count = 0;
+
+TEST(WTF_WeakPtr, WeakHashMapBasic)
+{
+    {
+        WeakHashMap<Base, int> weakHashMap;
+        Base object;
+        EXPECT_FALSE(weakHashMap.contains(object));
+        EXPECT_EQ(s_baseWeakReferences, 0u);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 0u);
+        weakHashMap.set(object, 34);
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 1u);
+        EXPECT_TRUE(weakHashMap.contains(object));
+        EXPECT_EQ(weakHashMap.get(object), 34);
+        weakHashMap.add(object, 12);
+        EXPECT_TRUE(weakHashMap.contains(object));
+        EXPECT_EQ(weakHashMap.get(object), 34);
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 1u);
+        weakHashMap.set(object, 7);
+        EXPECT_TRUE(weakHashMap.contains(object));
+        EXPECT_EQ(weakHashMap.get(object), 7);
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 1u);
+        weakHashMap.checkConsistency();
+    }
+    EXPECT_EQ(s_baseWeakReferences, 0u);
+
+    {
+        WeakHashMap<Base, int> weakHashMap;
+        {
+            Base object;
+            EXPECT_FALSE(weakHashMap.contains(object));
+            EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 0u);
+            EXPECT_EQ(s_baseWeakReferences, 0u);
+            weakHashMap.add(object, 7);
+            EXPECT_TRUE(weakHashMap.contains(object));
+            EXPECT_EQ(weakHashMap.get(object), 7);
+            EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 1u);
+            EXPECT_EQ(s_baseWeakReferences, 1u);
+        }
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 0u);
+        weakHashMap.checkConsistency();
+    }
+    EXPECT_EQ(s_baseWeakReferences, 0u);
+
+    {
+        WeakHashMap<Base, int> weakHashMap;
+        {
+            Base object1;
+            Base object2;
+            EXPECT_FALSE(weakHashMap.contains(object1));
+            EXPECT_EQ(weakHashMap.get(object1), 0);
+            EXPECT_FALSE(weakHashMap.contains(object2));
+            EXPECT_EQ(weakHashMap.get(object2), 0);
+            EXPECT_EQ(s_baseWeakReferences, 0u);
+            EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 0u);
+            weakHashMap.add(object1, 3);
+            EXPECT_TRUE(weakHashMap.contains(object1));
+            EXPECT_EQ(weakHashMap.get(object1), 3);
+            EXPECT_FALSE(weakHashMap.contains(object2));
+            EXPECT_EQ(weakHashMap.get(object2), 0);
+            EXPECT_EQ(s_baseWeakReferences, 1u);
+            EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 1u);
+            weakHashMap.add(object2, 24);
+            EXPECT_TRUE(weakHashMap.contains(object1));
+            EXPECT_EQ(weakHashMap.get(object1), 3);
+            EXPECT_TRUE(weakHashMap.contains(object2));
+            EXPECT_EQ(weakHashMap.get(object2), 24);
+            EXPECT_EQ(s_baseWeakReferences, 2u);
+            EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 2u);
+            weakHashMap.remove(object1);
+            EXPECT_FALSE(weakHashMap.contains(object1));
+            EXPECT_EQ(weakHashMap.get(object1), 0);
+            EXPECT_TRUE(weakHashMap.contains(object2));
+            EXPECT_EQ(weakHashMap.get(object2), 24);
+            EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 1u);
+        }
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 0u);
+        weakHashMap.checkConsistency();
+    }
+    EXPECT_EQ(s_baseWeakReferences, 0u);
+
+    {
+        WeakHashMap<Base, Ref<ValueObject>> weakHashMap;
+        Base object1;
+        Base object2;
+        Base object3;
+        EXPECT_FALSE(weakHashMap.contains(object1));
+        EXPECT_EQ(weakHashMap.get(object1), nullptr);
+        EXPECT_FALSE(weakHashMap.contains(object2));
+        EXPECT_EQ(weakHashMap.get(object2), nullptr);
+        EXPECT_FALSE(weakHashMap.contains(object3));
+        EXPECT_EQ(weakHashMap.get(object3), nullptr);
+        EXPECT_EQ(s_baseWeakReferences, 0u);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 0u);
+        weakHashMap.add(object1, ValueObject::create(100));
+        weakHashMap.add(object2, ValueObject::create(200));
+        EXPECT_EQ(s_baseWeakReferences, 2u);
+        EXPECT_EQ(ValueObject::s_count, 2u);
+        EXPECT_TRUE(weakHashMap.contains(object1));
+        EXPECT_EQ(weakHashMap.get(object1)->value, 100);
+        EXPECT_TRUE(weakHashMap.contains(object2));
+        EXPECT_EQ(weakHashMap.get(object2)->value, 200);
+        EXPECT_FALSE(weakHashMap.contains(object3));
+        EXPECT_EQ(weakHashMap.get(object3), nullptr);
+        EXPECT_EQ(s_baseWeakReferences, 2u);
+        EXPECT_EQ(ValueObject::s_count, 2u);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 2u);
+        weakHashMap.remove(object1);
+        EXPECT_FALSE(weakHashMap.contains(object1));
+        EXPECT_EQ(weakHashMap.get(object1), nullptr);
+        EXPECT_TRUE(weakHashMap.contains(object2));
+        EXPECT_EQ(weakHashMap.get(object2)->value, 200);
+        EXPECT_FALSE(weakHashMap.contains(object3));
+        EXPECT_EQ(weakHashMap.get(object3), nullptr);
+        EXPECT_EQ(s_baseWeakReferences, 2u); // Because object2 holds onto WeakReference.
+        EXPECT_EQ(ValueObject::s_count, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 1u);
+        weakHashMap.remove(object3);
+        EXPECT_FALSE(weakHashMap.contains(object1));
+        EXPECT_EQ(weakHashMap.get(object1), nullptr);
+        EXPECT_TRUE(weakHashMap.contains(object2));
+        EXPECT_EQ(weakHashMap.get(object2)->value, 200);
+        EXPECT_FALSE(weakHashMap.contains(object3));
+        EXPECT_EQ(weakHashMap.get(object3), nullptr);
+        EXPECT_EQ(s_baseWeakReferences, 2u);
+        EXPECT_EQ(ValueObject::s_count, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 1u);
+        weakHashMap.add(object2, ValueObject::create(210));
+        EXPECT_FALSE(weakHashMap.contains(object1));
+        EXPECT_EQ(weakHashMap.get(object1), nullptr);
+        EXPECT_TRUE(weakHashMap.contains(object2));
+        EXPECT_EQ(weakHashMap.get(object2)->value, 200);
+        EXPECT_FALSE(weakHashMap.contains(object3));
+        EXPECT_EQ(weakHashMap.get(object3), nullptr);
+        EXPECT_EQ(s_baseWeakReferences, 2u);
+        EXPECT_EQ(ValueObject::s_count, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 1u);
+        weakHashMap.set(object2, ValueObject::create(220));
+        EXPECT_FALSE(weakHashMap.contains(object1));
+        EXPECT_EQ(weakHashMap.get(object1), nullptr);
+        EXPECT_TRUE(weakHashMap.contains(object2));
+        EXPECT_EQ(weakHashMap.get(object2)->value, 220);
+        EXPECT_FALSE(weakHashMap.contains(object3));
+        EXPECT_EQ(weakHashMap.get(object3), nullptr);
+        EXPECT_EQ(s_baseWeakReferences, 2u);
+        EXPECT_EQ(ValueObject::s_count, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 1u);
+        weakHashMap.remove(object2);
+        EXPECT_FALSE(weakHashMap.contains(object1));
+        EXPECT_EQ(weakHashMap.get(object1), nullptr);
+        EXPECT_FALSE(weakHashMap.contains(object2));
+        EXPECT_EQ(weakHashMap.get(object2), nullptr);
+        EXPECT_FALSE(weakHashMap.contains(object3));
+        EXPECT_EQ(weakHashMap.get(object3), nullptr);
+        EXPECT_EQ(s_baseWeakReferences, 2u);
+        EXPECT_EQ(ValueObject::s_count, 0u);
+        weakHashMap.checkConsistency();
+    }
+    EXPECT_EQ(s_baseWeakReferences, 0u);
+    EXPECT_EQ(ValueObject::s_count, 0u);
+}
+
+TEST(WTF_WeakPtr, WeakHashMapConstObjects)
+{
+    {
+        WeakHashMap<Base, Ref<ValueObject>> weakHashMap;
+        const Base object;
+        EXPECT_FALSE(weakHashMap.contains(object));
+        EXPECT_EQ(s_baseWeakReferences, 0u);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 0u);
+        weakHashMap.add(object, ValueObject::create(3));
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 1u);
+        EXPECT_TRUE(weakHashMap.contains(object));
+        EXPECT_EQ(weakHashMap.get(object)->value, 3);
+        weakHashMap.checkConsistency();
+        weakHashMap.add(object, ValueObject::create(7));
+        EXPECT_TRUE(weakHashMap.contains(object));
+        EXPECT_EQ(weakHashMap.get(object)->value, 3);
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 1u);
+        weakHashMap.checkConsistency();
+        weakHashMap.set(object, ValueObject::create(11));
+        EXPECT_TRUE(weakHashMap.contains(object));
+        EXPECT_EQ(weakHashMap.get(object)->value, 11);
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 1u);
+        weakHashMap.checkConsistency();
+        weakHashMap.remove(object);
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 0u);
+        EXPECT_FALSE(weakHashMap.contains(object));
+        EXPECT_EQ(weakHashMap.get(object), nullptr);
+    }
+
+    {
+        WeakHashMap<Base, String> weakHashMap;
+        const Derived object;
+        EXPECT_FALSE(weakHashMap.contains(object));
+        EXPECT_TRUE(weakHashMap.get(object).isNull());
+        EXPECT_EQ(s_baseWeakReferences, 0u);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 0u);
+        weakHashMap.add(object, "hello"_s);
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 1u);
+        EXPECT_TRUE(weakHashMap.contains(object));
+        EXPECT_STREQ(weakHashMap.get(object).utf8().data(), "hello");
+        weakHashMap.checkConsistency();
+        weakHashMap.add(object, "world"_s);
+        EXPECT_TRUE(weakHashMap.contains(object));
+        EXPECT_STREQ(weakHashMap.get(object).utf8().data(), "hello");
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 1u);
+        weakHashMap.checkConsistency();
+        weakHashMap.set(object, "WebKit"_s);
+        EXPECT_TRUE(weakHashMap.contains(object));
+        EXPECT_STREQ(weakHashMap.get(object).utf8().data(), "WebKit");
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 1u);
+        weakHashMap.checkConsistency();
+        weakHashMap.remove(object);
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 0u);
+        EXPECT_FALSE(weakHashMap.contains(object));
+        EXPECT_TRUE(weakHashMap.get(object).isNull());
+    }
+
+    {
+        WeakHashMap<Base, int> weakHashMap;
+        const Derived object;
+        EXPECT_FALSE(weakHashMap.contains(object));
+        EXPECT_EQ(weakHashMap.get(object), 0);
+        EXPECT_EQ(s_baseWeakReferences, 0u);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 0u);
+        weakHashMap.checkConsistency();
+        weakHashMap.add(object, 3);
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 1u);
+        EXPECT_TRUE(weakHashMap.contains(object));
+        EXPECT_EQ(weakHashMap.get(object), 3);
+        weakHashMap.checkConsistency();
+        weakHashMap.add(object, 7);
+        EXPECT_TRUE(weakHashMap.contains(object));
+        EXPECT_EQ(weakHashMap.get(object), 3);
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 1u);
+        weakHashMap.checkConsistency();
+        weakHashMap.set(object, 11);
+        EXPECT_TRUE(weakHashMap.contains(object));
+        EXPECT_EQ(weakHashMap.get(object), 11);
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 1u);
+        weakHashMap.checkConsistency();
+        weakHashMap.remove(object);
+        EXPECT_FALSE(weakHashMap.contains(object));
+        EXPECT_EQ(weakHashMap.get(object), 0);
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 0u);
+    }
+}
+
+TEST(WTF_WeakPtr, WeakHashMapExpansion)
+{
+    unsigned initialCapacity;
+    static constexpr unsigned maxLoadCap = 3;
+    {
+        WeakHashMap<Base, int> weakHashMap;
+        Base object;
+        EXPECT_EQ(s_baseWeakReferences, 0u);
+        weakHashMap.add(object, 1);
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        initialCapacity = weakHashMap.capacity();
+    }
+    EXPECT_EQ(s_baseWeakReferences, 0u);
+
+    for (unsigned testCount = 0; testCount < 10; ++testCount) {
+        WeakHashMap<Base, unsigned> weakHashMap;
+        Vector<std::unique_ptr<Base>> objects;
+        Vector<std::unique_ptr<Base>> otherObjects;
+
+        EXPECT_EQ(weakHashMap.capacity(), 0u);
+        EXPECT_TRUE(initialCapacity / maxLoadCap);
+        for (unsigned i = 0; i < initialCapacity / maxLoadCap; ++i) {
+            auto object = makeUnique<Base>();
+            weakHashMap.add(*object, i);
+            objects.append(WTFMove(object));
+            otherObjects.append(makeUnique<Base>());
+            weakHashMap.checkConsistency();
+        }
+        EXPECT_EQ(s_baseWeakReferences, otherObjects.size());
+        EXPECT_EQ(weakHashMap.capacity(), initialCapacity);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), objects.size());
+        for (unsigned i = 0; i < otherObjects.size(); ++i) {
+            EXPECT_TRUE(weakHashMap.contains(*objects[i]));
+            EXPECT_EQ(weakHashMap.get(*objects[i]), i);
+            EXPECT_FALSE(weakHashMap.contains(*otherObjects[i]));
+        }
+        objects.clear();
+        weakHashMap.checkConsistency();
+        EXPECT_EQ(s_baseWeakReferences, otherObjects.size());
+        EXPECT_EQ(weakHashMap.capacity(), initialCapacity);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 0u);
+        for (auto& object : otherObjects)
+            EXPECT_FALSE(weakHashMap.contains(*object));
+        unsigned i = 100;
+        for (auto& object : otherObjects) {
+            weakHashMap.add(*object, i);
+            weakHashMap.checkConsistency();
+            ++i;
+        }
+        EXPECT_EQ(weakHashMap.capacity(), initialCapacity);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), otherObjects.size());
+        i = 100;
+        for (auto& object : otherObjects) {
+            EXPECT_TRUE(weakHashMap.contains(*object));
+            EXPECT_EQ(weakHashMap.get(*object), i);
+            ++i;
+        }
+    }
+    EXPECT_EQ(s_baseWeakReferences, 0u);
+
+    for (unsigned testCount = 0; testCount < 10; ++testCount) {
+        WeakHashMap<Base, Ref<ValueObject>> weakHashMap;
+        Vector<std::unique_ptr<Base>> objects;
+        EXPECT_EQ(weakHashMap.capacity(), 0u);
+        unsigned objectCount = initialCapacity * 2;
+        for (unsigned i = 0; i < objectCount; ++i) {
+            auto object = makeUnique<Base>();
+            weakHashMap.set(*object, ValueObject::create(100 + i));
+            objects.append(WTFMove(object));
+            weakHashMap.checkConsistency();
+        }
+        unsigned originalCapacity = weakHashMap.capacity();
+        EXPECT_EQ(s_baseWeakReferences, objects.size());
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), objects.size());
+
+        int i = 100;
+        for (auto& object : objects) {
+            EXPECT_TRUE(weakHashMap.contains(*object));
+            EXPECT_EQ(weakHashMap.get(*object)->value, i);
+            ++i;
+        }
+
+        objects.clear();
+        weakHashMap.checkConsistency();
+        EXPECT_EQ(s_baseWeakReferences, objectCount);
+        EXPECT_EQ(weakHashMap.capacity(), originalCapacity);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), 0u);
+    }
+}
+
+TEST(WTF_WeakPtr, WeakHashMapIsEmptyIgnoringNullReferences)
+{
+    {
+        WeakHashMap<Base, int> weakHashMap;
+        {
+            Base object;
+            EXPECT_EQ(s_baseWeakReferences, 0u);
+            EXPECT_FALSE(weakHashMap.hasNullReferences());
+            EXPECT_TRUE(weakHashMap.isEmptyIgnoringNullReferences());
+            weakHashMap.add(object, 1);
+            EXPECT_EQ(s_baseWeakReferences, 1u);
+            EXPECT_FALSE(weakHashMap.hasNullReferences());
+            EXPECT_FALSE(weakHashMap.isEmptyIgnoringNullReferences());
+            weakHashMap.checkConsistency();
+            weakHashMap.set(object, 2);
+            EXPECT_EQ(s_baseWeakReferences, 1u);
+            EXPECT_FALSE(weakHashMap.hasNullReferences());
+            EXPECT_FALSE(weakHashMap.isEmptyIgnoringNullReferences());
+            weakHashMap.checkConsistency();
+            weakHashMap.add(object, 3);
+            EXPECT_EQ(s_baseWeakReferences, 1u);
+            EXPECT_FALSE(weakHashMap.hasNullReferences());
+            EXPECT_FALSE(weakHashMap.isEmptyIgnoringNullReferences());
+            weakHashMap.checkConsistency();
+        }
+        EXPECT_TRUE(weakHashMap.hasNullReferences());
+        EXPECT_TRUE(weakHashMap.isEmptyIgnoringNullReferences());
+        EXPECT_EQ(s_baseWeakReferences, 0u);
+        EXPECT_FALSE(weakHashMap.hasNullReferences());
+        weakHashMap.checkConsistency();
+    }
+
+    {
+        WeakHashMap<Base, int> weakHashMap;
+        Base object1;
+        EXPECT_EQ(s_baseWeakReferences, 0u);
+        EXPECT_FALSE(weakHashMap.hasNullReferences());
+        EXPECT_TRUE(weakHashMap.isEmptyIgnoringNullReferences());
+        weakHashMap.checkConsistency();
+        weakHashMap.add(object1, 100);
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_FALSE(weakHashMap.hasNullReferences());
+        EXPECT_FALSE(weakHashMap.isEmptyIgnoringNullReferences());
+        weakHashMap.checkConsistency();
+        {
+            Base object2;
+            weakHashMap.add(object2, 200);
+            EXPECT_EQ(s_baseWeakReferences, 2u);
+            EXPECT_FALSE(weakHashMap.hasNullReferences());
+            EXPECT_FALSE(weakHashMap.isEmptyIgnoringNullReferences());
+            weakHashMap.checkConsistency();
+        }
+        EXPECT_EQ(s_baseWeakReferences, 2u);
+        EXPECT_TRUE(weakHashMap.hasNullReferences());
+        EXPECT_FALSE(weakHashMap.isEmptyIgnoringNullReferences());
+        weakHashMap.checkConsistency();
+        weakHashMap.remove(object1);
+        EXPECT_TRUE(weakHashMap.isEmptyIgnoringNullReferences());
+        weakHashMap.checkConsistency();
+    }
+
+    {
+        WeakHashMap<Base, Ref<ValueObject>> weakHashMap;
+        Vector<std::unique_ptr<Base>> objects;
+        auto firstObject = makeUnique<Base>();
+        int value = 1;
+        weakHashMap.set(*firstObject, ValueObject::create(value++));
+        do {
+            auto object = makeUnique<Base>();
+            weakHashMap.set(*object, ValueObject::create(value++));
+            objects.append(WTFMove(object));
+        } while (&weakHashMap.begin()->key == firstObject.get());
+
+        EXPECT_EQ(ValueObject::s_count, objects.size() + 1);
+        EXPECT_EQ(s_baseWeakReferences, objects.size() + 1);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), objects.size() + 1);
+        EXPECT_FALSE(weakHashMap.hasNullReferences());
+        EXPECT_FALSE(weakHashMap.isEmptyIgnoringNullReferences());
+        firstObject = nullptr;
+        EXPECT_TRUE(weakHashMap.hasNullReferences());
+        EXPECT_FALSE(weakHashMap.isEmptyIgnoringNullReferences());
+        EXPECT_EQ(s_baseWeakReferences, objects.size() + 1);
+        EXPECT_EQ(computeSizeOfWeakHashMap(weakHashMap), objects.size());
+        objects.clear();
+        EXPECT_TRUE(weakHashMap.hasNullReferences());
+        EXPECT_TRUE(weakHashMap.isEmptyIgnoringNullReferences());
+        weakHashMap.clear();
+        EXPECT_FALSE(weakHashMap.hasNullReferences());
+        EXPECT_TRUE(weakHashMap.isEmptyIgnoringNullReferences());
+    }
+}
+
+TEST(WTF_WeakPtr, WeakHashMapRemoveNullReferences)
+{
+    {
+        WeakHashMap<Base, int> weakHashMap;
+        {
+            Base object;
+            weakHashMap.checkConsistency();
+            EXPECT_EQ(s_baseWeakReferences, 0u);
+            EXPECT_FALSE(weakHashMap.hasNullReferences());
+
+            weakHashMap.removeNullReferences();
+            weakHashMap.checkConsistency();
+            EXPECT_EQ(s_baseWeakReferences, 0u);
+            EXPECT_FALSE(weakHashMap.hasNullReferences());
+
+            weakHashMap.add(object, 1);
+            weakHashMap.checkConsistency();
+            EXPECT_EQ(s_baseWeakReferences, 1u);
+            EXPECT_FALSE(weakHashMap.hasNullReferences());
+
+            weakHashMap.removeNullReferences();
+            weakHashMap.checkConsistency();
+            EXPECT_EQ(s_baseWeakReferences, 1u);
+            EXPECT_FALSE(weakHashMap.hasNullReferences());
+
+            weakHashMap.set(object, 2);
+            weakHashMap.checkConsistency();
+            EXPECT_EQ(s_baseWeakReferences, 1u);
+            EXPECT_FALSE(weakHashMap.hasNullReferences());
+
+            weakHashMap.removeNullReferences();
+            weakHashMap.checkConsistency();
+            EXPECT_EQ(s_baseWeakReferences, 1u);
+            EXPECT_FALSE(weakHashMap.hasNullReferences());
+
+            weakHashMap.set(object, 3);
+            weakHashMap.checkConsistency();
+            EXPECT_EQ(s_baseWeakReferences, 1u);
+            EXPECT_FALSE(weakHashMap.hasNullReferences());
+        }
+        weakHashMap.checkConsistency();
+        EXPECT_EQ(s_baseWeakReferences, 1u);
+        EXPECT_TRUE(weakHashMap.hasNullReferences());
+
+        weakHashMap.removeNullReferences();
+        weakHashMap.checkConsistency();
+        EXPECT_EQ(s_baseWeakReferences, 0u);
+        EXPECT_FALSE(weakHashMap.hasNullReferences());
+    }
+
+    {
+        WeakHashMap<Base, RefPtr<ValueObject>> weakHashMap;
+        Vector<std::unique_ptr<Derived>> objects;
+
+        for (unsigned i = 0; i < 50; ++i) {
+            auto key = makeUnique<Derived>();
+            weakHashMap.add(*key, ValueObject::create(i + 100));
+            objects.append(WTFMove(key));
+        }
+        EXPECT_EQ(ValueObject::s_count, 50U);
+        EXPECT_EQ(s_baseWeakReferences, 50U);
+        EXPECT_FALSE(weakHashMap.hasNullReferences());
+        weakHashMap.checkConsistency();
+
+        weakHashMap.removeNullReferences();
+        EXPECT_EQ(ValueObject::s_count, 50U);
+        EXPECT_EQ(s_baseWeakReferences, 50U);
+        EXPECT_FALSE(weakHashMap.hasNullReferences());
+        weakHashMap.checkConsistency();
+
+        for (unsigned i = 0; i < 50; ++i) {
+            if (i % 2)
+                objects[i] = nullptr;
+        }
+
+        weakHashMap.removeNullReferences();
+        EXPECT_EQ(ValueObject::s_count, 25U);
+        EXPECT_EQ(s_baseWeakReferences, 25U);
+        EXPECT_FALSE(weakHashMap.hasNullReferences());
+        weakHashMap.checkConsistency();
+
+        bool seen[50] = { false };
+        for (auto keyValue : weakHashMap) {
+            int rawValue = keyValue.value->value;
+            EXPECT_TRUE(rawValue >= 100 && rawValue < 150);
+            EXPECT_EQ((rawValue - 100) % 2, 0);
+            unsigned index = rawValue - 100;
+            EXPECT_FALSE(seen[index]);
+            seen[index] = true;
+            EXPECT_EQ(&keyValue.key, objects[index].get());
+            EXPECT_EQ(weakHashMap.get(keyValue.key), keyValue.value.get());
+        }
+        for (unsigned i = 0; i < 50; ++i) {
+            bool shouldBePresent = !(i % 2);
+            EXPECT_EQ(seen[i], shouldBePresent);
+        }
+
+        objects.clear();
+        weakHashMap.removeNullReferences();
+        EXPECT_EQ(ValueObject::s_count, 0U);
+        EXPECT_EQ(s_baseWeakReferences, 0U);
+        EXPECT_FALSE(weakHashMap.hasNullReferences());
+        weakHashMap.checkConsistency();
+    }
+}
+
+template <typename KeyType, typename ValueType, typename Map>
+auto collectKeyValuePairsUsingIterators(Map& map)
+{
+    HashSet<std::pair<KeyType, ValueType>> pairs;
+    for (auto it = map.begin(); it != map.end(); ++it) {
+        std::pair keyValuePair { &it->key, it.get()->value };
+        EXPECT_FALSE(pairs.contains(keyValuePair));
+        pairs.add(keyValuePair);
+    }
+    return pairs;
+};
+
+TEST(WTF_WeakPtr, WeakHashMapIterators)
+{
+    {
+        WeakHashMap<Base, int> weakHashMap;
+        {
+            Base object1;
+            Derived object2;
+            Base object3;
+            Derived object4;
+            weakHashMap.checkConsistency();
+            weakHashMap.add(object1, 1);
+            weakHashMap.add(object2, 2);
+            weakHashMap.add(object3, 3);
+            weakHashMap.add(object4, 4);
+            EXPECT_EQ(s_baseWeakReferences, 4u);
+            EXPECT_EQ(weakHashMap.computeSize(), 4u);
+            EXPECT_FALSE(weakHashMap.hasNullReferences());
+
+            const auto& constMap = weakHashMap;
+            auto pairs = collectKeyValuePairsUsingIterators<Base*, int>(constMap);
+            EXPECT_EQ(pairs.size(), 4u);
+            EXPECT_TRUE(pairs.contains(std::pair { &object1, 1 }));
+            EXPECT_TRUE(pairs.contains(std::pair { &object2, 2 }));
+            EXPECT_TRUE(pairs.contains(std::pair { &object3, 3 }));
+            EXPECT_TRUE(pairs.contains(std::pair { &object4, 4 }));
+
+            weakHashMap.remove(object2);
+            weakHashMap.remove(object3);
+            EXPECT_EQ(s_baseWeakReferences, 4u);
+            EXPECT_FALSE(weakHashMap.hasNullReferences());
+
+            pairs = collectKeyValuePairsUsingIterators<Base*, int>(constMap);
+            EXPECT_EQ(pairs.size(), 2u);
+            EXPECT_TRUE(pairs.contains(std::pair { &object1, 1 }));
+            EXPECT_FALSE(pairs.contains(std::pair { &object2, 2 }));
+            EXPECT_FALSE(pairs.contains(std::pair { &object3, 3 }));
+            EXPECT_TRUE(pairs.contains(std::pair { &object4, 4 }));
+        }
+        EXPECT_EQ(s_baseWeakReferences, 2u);
+        EXPECT_TRUE(weakHashMap.hasNullReferences());
+
+        auto pairs = collectKeyValuePairsUsingIterators<Base*, int>(weakHashMap);
+        EXPECT_EQ(pairs.size(), 0u);
+    }
+
+    {
+        WeakHashMap<Base, int> weakHashMap;
+        {
+            Vector<std::unique_ptr<Base>> objects;
+            for (unsigned i = 0; i < 50; ++i) {
+                if (i % 2)
+                    objects.append(makeUnique<Derived>());
+                else
+                    objects.append(makeUnique<Base>());
+                weakHashMap.set(*objects.last(), i);
+            }
+            weakHashMap.checkConsistency();
+            EXPECT_EQ(s_baseWeakReferences, 50u);
+            EXPECT_FALSE(weakHashMap.hasNullReferences());
+            EXPECT_EQ(weakHashMap.computeSize(), 50u);
+
+            for (auto it = weakHashMap.begin(); it != weakHashMap.end(); ++it) {
+                auto keyValue = *it;
+                if (keyValue.value % 6)
+                    continue;
+                keyValue.value *= 51;
+            }
+
+            weakHashMap.removeIf([](auto& keyValue) { return !(keyValue.value % 5); });
+            weakHashMap.checkConsistency();
+            EXPECT_EQ(s_baseWeakReferences, 50u);
+            EXPECT_FALSE(weakHashMap.hasNullReferences());
+
+            auto pairs = collectKeyValuePairsUsingIterators<Base*, int>(weakHashMap);
+            ASSERT(pairs.size(), 40U);
+            for (unsigned i = 0; i < 50; ++i) {
+                if (!(i % 5))
+                    EXPECT_TRUE(WTF::allOf(pairs, [&](auto& item) { return item.first != objects[i].get(); }));
+                else if (!(i % 6))
+                    EXPECT_TRUE(pairs.contains(std::pair { objects[i].get(), i * 51 }));
+                else
+                    EXPECT_TRUE(pairs.contains(std::pair { objects[i].get(), i }));
+            }
+
+            for (unsigned i = 0; i < 50; ++i) {
+                if (!(i % 5) || !(i % 9))
+                    objects[i] = nullptr;
+            }
+            EXPECT_EQ(s_baseWeakReferences, 40u);
+            weakHashMap.checkConsistency();
+
+            pairs = collectKeyValuePairsUsingIterators<Base*, int>(weakHashMap);
+            ASSERT(pairs.size(), 36U);
+            for (unsigned i = 0; i < 50; ++i) {
+                if (!(i % 5) || !(i % 9))
+                    EXPECT_TRUE(WTF::allOf(pairs, [&](auto& item) { return item.first != objects[i].get(); }));
+                else if (!(i % 6))
+                    EXPECT_TRUE(pairs.contains(std::pair { objects[i].get(), i * 51 }));
+                else
+                    EXPECT_TRUE(pairs.contains(std::pair { objects[i].get(), i }));
+            }
+            weakHashMap.removeNullReferences();
+            EXPECT_EQ(s_baseWeakReferences, 36u);
+            EXPECT_FALSE(weakHashMap.hasNullReferences());
+            ASSERT(pairs.size(), weakHashMap.computeSize());
+            weakHashMap.checkConsistency();
+        }
+        EXPECT_EQ(s_baseWeakReferences, 36u);
+        weakHashMap.checkConsistency();
+        EXPECT_TRUE(weakHashMap.hasNullReferences());
+
+        auto pairs = collectKeyValuePairsUsingIterators<Base*, int>(weakHashMap);
+        EXPECT_EQ(pairs.size(), 0u);
+
+        EXPECT_EQ(s_baseWeakReferences, 0u); // Iterating over WeakHashMap should have triggerd amortized deletion.
+        weakHashMap.checkConsistency();
+        EXPECT_FALSE(weakHashMap.hasNullReferences());
+    }
+
+    {
+        WeakHashMap<Base, Ref<ValueObject>> weakHashMap;
+        {
+            Vector<std::pair<std::unique_ptr<Base>, RefPtr<ValueObject>>> objects;
+            for (unsigned i = 0; i < 50; ++i) {
+                if (i % 2)
+                    objects.append(std::pair { makeUnique<Derived>(), ValueObject::create(i * 83) });
+                else
+                    objects.append(std::pair { makeUnique<Base>(), ValueObject::create(i) });
+                objects.last().first->dummy = 0;
+                if (i < 25)
+                    weakHashMap.add(*objects.last().first, *objects.last().second);
+            }
+            weakHashMap.checkConsistency();
+            EXPECT_EQ(s_baseWeakReferences, 25u);
+            EXPECT_FALSE(weakHashMap.hasNullReferences());
+            EXPECT_EQ(weakHashMap.computeSize(), 25u);
+
+            for (unsigned i = 0; i < 50; ++i) {
+                auto it = weakHashMap.find(*objects[i].first);
+                if (i < 25) {
+                    EXPECT_TRUE(it != weakHashMap.end());
+                    EXPECT_EQ(it->key.dummy, 0);
+                    if (i % 9)
+                        continue;
+                } else
+                    EXPECT_TRUE(it == weakHashMap.end());
+                weakHashMap.remove(it);
+                weakHashMap.checkConsistency();
+            }
+
+            EXPECT_EQ(s_baseWeakReferences, 25u);
+            EXPECT_FALSE(weakHashMap.hasNullReferences());
+            EXPECT_EQ(weakHashMap.computeSize(), 22u);
+            for (int i = 0; i < 25; ++i) {
+                auto it = weakHashMap.find(*objects[i].first);
+                if (!(i % 9)) {
+                    EXPECT_TRUE(it == weakHashMap.end());
+                    continue;
+                }
+
+                EXPECT_EQ(&it.get()->key, objects[i].first.get());
+                EXPECT_EQ(it.get()->key.dummy, 0);
+                if (i % 2) {
+                    it.get()->key.dummy = i * 11;
+                    EXPECT_EQ(it.get()->value->value, i * 83);
+                } else
+                    EXPECT_EQ(it.get()->value->value, i);
+
+                if (!(i % 4))
+                    objects[i].first = nullptr;
+            }
+
+            weakHashMap.checkConsistency();
+            EXPECT_EQ(s_baseWeakReferences, 25u);
+            EXPECT_TRUE(weakHashMap.hasNullReferences());
+            for (int i = 0; i < 25; ++i) {
+                if (!(i % 4))
+                    continue;
+                auto it = weakHashMap.find(*objects[i].first);
+                if (!(i % 9)) {
+                    EXPECT_TRUE(it == weakHashMap.end());
+                    continue;
+                }
+                EXPECT_EQ(&(*it).key, objects[i].first.get());
+                if (i % 2) {
+                    EXPECT_EQ((*it).key.dummy, i * 11);
+                    EXPECT_EQ((*it).value->value, i * 83);
+                } else {
+                    EXPECT_EQ((*it).key.dummy, 0);
+                    it->key.dummy = i * 31;
+                    EXPECT_EQ((*it).value->value, i);
+                }
+            }
+            weakHashMap.checkConsistency();
+            EXPECT_EQ(weakHashMap.computeSize(), 16u);
+            for (int i = 0; i < 25; ++i) {
+                if (!(i % 4))
+                    continue;
+                auto it = weakHashMap.find(*objects[i].first);
+                if (!(i % 9)) {
+                    EXPECT_TRUE(it == weakHashMap.end());
+                    continue;
+                }
+                EXPECT_EQ(&it->key, objects[i].first.get());
+                auto keyValue = it.get();
+                if (i % 2) {
+                    EXPECT_EQ(keyValue->key.dummy, i * 11);
+                    EXPECT_EQ(keyValue->value->value, i * 83);
+                } else {
+                    EXPECT_EQ((*keyValue).key.dummy, i * 31);
+                    EXPECT_EQ((*keyValue).value->value, i);
+                }
+            }
+        }
+        EXPECT_EQ(s_baseWeakReferences, 16u);
+        EXPECT_TRUE(weakHashMap.hasNullReferences());
+        auto pairs = collectKeyValuePairsUsingIterators<Base*, Ref<ValueObject>>(weakHashMap);
+        EXPECT_EQ(pairs.size(), 0U);
+        weakHashMap.removeNullReferences();
+        EXPECT_FALSE(weakHashMap.hasNullReferences());
+        EXPECT_EQ(s_baseWeakReferences, 0U);
+    }
+}
+
+TEST(WTF_WeakPtr, WeakHashMapAmortizedCleanup)
+{
+    {
+        WeakHashMap<Base, int> weakHashMap;
+        {
+            Vector<std::unique_ptr<Base>> objects;
+            for (unsigned i = 0; i < 50; ++i) {
+                if (i % 2)
+                    objects.append(makeUnique<Derived>());
+                else
+                    objects.append(makeUnique<Base>());
+                weakHashMap.set(*objects.last(), i);
+            }
+            for (unsigned i = 0; i < 4; ++i)
+                collectKeyValuePairsUsingIterators<Base*, int>(weakHashMap);
+            weakHashMap.checkConsistency();
+            EXPECT_EQ(s_baseWeakReferences, 50u);
+            EXPECT_FALSE(weakHashMap.hasNullReferences());
+            EXPECT_EQ(weakHashMap.computeSize(), 50u);
+            
+            for (unsigned i = 0; i < 50; ++i) {
+                if (!(i % 5))
+                    objects[i] = nullptr;
+            }
+            weakHashMap.checkConsistency();
+            EXPECT_EQ(s_baseWeakReferences, 50u);
+            EXPECT_TRUE(weakHashMap.hasNullReferences());
+
+            for (unsigned i = 0; i < 4; ++i)
+                collectKeyValuePairsUsingIterators<Base*, int>(weakHashMap);
+
+            weakHashMap.checkConsistency();
+            EXPECT_EQ(s_baseWeakReferences, 40u);
+            EXPECT_FALSE(weakHashMap.hasNullReferences());
+
+            for (unsigned i = 0; i < 50; ++i) {
+                if (!(i % 9))
+                    objects[i] = nullptr;
+            }
+
+            weakHashMap.checkConsistency();
+            EXPECT_EQ(s_baseWeakReferences, 40u);
+            EXPECT_TRUE(weakHashMap.hasNullReferences());
+
+            for (unsigned i = 0; i < 4; ++i)
+                collectKeyValuePairsUsingIterators<Base*, int>(weakHashMap);
+
+            weakHashMap.checkConsistency();
+            EXPECT_EQ(s_baseWeakReferences, 36u);
+            EXPECT_FALSE(weakHashMap.hasNullReferences());
+        }
+    }
+
+    {
+        WeakHashMap<Base, Ref<ValueObject>> weakHashMap;
+        {
+            Vector<std::unique_ptr<Base>> objects;
+            for (unsigned i = 0; i < 50; ++i) {
+                objects.append(makeUnique<Derived>());
+                weakHashMap.set(*objects.last(), ValueObject::create(i));
+            }
+            weakHashMap.checkConsistency();
+            EXPECT_EQ(s_baseWeakReferences, 50u);
+            EXPECT_EQ(ValueObject::s_count, 50u);
+            EXPECT_FALSE(weakHashMap.hasNullReferences());
+            EXPECT_EQ(weakHashMap.computeSize(), 50u);
+            
+            for (unsigned i = 0; i < 50; ++i) {
+                if (!(i % 7))
+                    objects[i] = nullptr;
+            }
+            weakHashMap.checkConsistency();
+            EXPECT_TRUE(weakHashMap.hasNullReferences());
+            EXPECT_EQ(s_baseWeakReferences, 50u);
+            EXPECT_EQ(ValueObject::s_count, 50u);
+
+            for (unsigned i = 0; i < 10; ++i) {
+                for (auto& ptr : objects) {
+                    if (!ptr)
+                        continue;
+                    auto it = weakHashMap.find(*ptr);
+                    EXPECT_TRUE(it != weakHashMap.end());
+                }
+            }
+            weakHashMap.checkConsistency();
+            EXPECT_EQ(s_baseWeakReferences, 42u);
+            EXPECT_EQ(ValueObject::s_count, 42u);
+            EXPECT_FALSE(weakHashMap.hasNullReferences());
+
+            for (unsigned i = 0; i < 50; ++i) {
+                if (!(i % 3))
+                    objects[i] = nullptr;
+            }
+            weakHashMap.checkConsistency();
+            EXPECT_EQ(s_baseWeakReferences, 42u);
+            EXPECT_EQ(ValueObject::s_count, 42u);
+            EXPECT_TRUE(weakHashMap.hasNullReferences());
+
+            for (unsigned i = 0; i < 4; ++i) {
+                int objectIndex = 0;
+                for (auto& ptr : objects) {
+                    if (ptr) {
+                        auto result = weakHashMap.add(*ptr, ValueObject::create(objectIndex * 51));
+                        EXPECT_EQ(result.iterator->value->value, objectIndex);
+                    }
+                    ++objectIndex;
+                }
+            }
+            weakHashMap.checkConsistency();
+            EXPECT_EQ(s_baseWeakReferences, 28u);
+            EXPECT_EQ(ValueObject::s_count, 28u);
+            EXPECT_FALSE(weakHashMap.hasNullReferences());
+            EXPECT_EQ(weakHashMap.computeSize(), 28u);
+        }
+        weakHashMap.checkConsistency();
+        EXPECT_EQ(s_baseWeakReferences, 28u);
+        EXPECT_EQ(ValueObject::s_count, 28u);
+        EXPECT_TRUE(weakHashMap.hasNullReferences());
+
+        EXPECT_TRUE(weakHashMap.isEmptyIgnoringNullReferences());
+        weakHashMap.checkConsistency();
+        EXPECT_EQ(s_baseWeakReferences, 0u);
+        EXPECT_EQ(ValueObject::s_count, 0u);
+        EXPECT_FALSE(weakHashMap.hasNullReferences());
     }
 }
 

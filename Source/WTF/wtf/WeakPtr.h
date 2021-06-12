@@ -119,6 +119,7 @@ public:
     void clear() { m_impl = nullptr; }
 
 private:
+    template<typename, typename, typename> friend class WeakHashMap;
     template<typename, typename> friend class WeakHashSet;
     template<typename, typename> friend class WeakPtr;
     template<typename, typename> friend class WeakPtrFactory;
@@ -193,6 +194,7 @@ public:
 
 private:
     template<typename, typename> friend class WeakHashSet;
+    template<typename, typename, typename> friend class WeakHashMap;
 
     mutable RefPtr<WeakPtrImpl<Counter>> m_impl;
 #if ASSERT_ENABLED
