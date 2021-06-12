@@ -31,6 +31,7 @@
 #include "JSDOMConvertNumbers.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "ScriptExecutionContext.h"
@@ -154,7 +155,7 @@ JSObject* JSTestNamedSetterWithIndexedGetter::prototype(VM& vm, JSDOMGlobalObjec
 
 JSValue JSTestNamedSetterWithIndexedGetter::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestNamedSetterWithIndexedGetterDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestNamedSetterWithIndexedGetterDOMConstructor, DOMConstructorID::TestNamedSetterWithIndexedGetter>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestNamedSetterWithIndexedGetter::destroy(JSC::JSCell* cell)

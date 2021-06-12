@@ -34,6 +34,7 @@
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMGlobalObject.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "JSTestCEReactionsStringifier.h"
@@ -175,7 +176,7 @@ JSObject* JSTestCEReactions::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 
 JSValue JSTestCEReactions::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestCEReactionsDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestCEReactionsDOMConstructor, DOMConstructorID::TestCEReactions>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestCEReactions::destroy(JSC::JSCell* cell)

@@ -28,6 +28,7 @@
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvertNumbers.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "ScriptExecutionContext.h"
@@ -474,7 +475,7 @@ JSObject* JSTestConditionalIncludes::prototype(VM& vm, JSDOMGlobalObject& global
 
 JSValue JSTestConditionalIncludes::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestConditionalIncludesDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestConditionalIncludesDOMConstructor, DOMConstructorID::TestConditionalIncludes>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestConditionalIncludes::destroy(JSC::JSCell* cell)

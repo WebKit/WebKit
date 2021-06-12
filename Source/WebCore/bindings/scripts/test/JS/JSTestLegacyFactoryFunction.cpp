@@ -29,6 +29,7 @@
 #include "JSDOMConvertInterface.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMLegacyFactoryFunction.h"
 #include "JSDOMWrapperCache.h"
 #include "ScriptExecutionContext.h"
@@ -193,12 +194,12 @@ JSObject* JSTestLegacyFactoryFunction::prototype(VM& vm, JSDOMGlobalObject& glob
 
 JSValue JSTestLegacyFactoryFunction::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestLegacyFactoryFunctionDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestLegacyFactoryFunctionDOMConstructor, DOMConstructorID::TestLegacyFactoryFunction>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 JSValue JSTestLegacyFactoryFunction::getLegacyFactoryFunction(VM& vm, JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestLegacyFactoryFunctionLegacyFactoryFunction>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestLegacyFactoryFunctionLegacyFactoryFunction, DOMConstructorID::TestLegacyFactoryFunctionLegacyFactory>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestLegacyFactoryFunction::destroy(JSC::JSCell* cell)

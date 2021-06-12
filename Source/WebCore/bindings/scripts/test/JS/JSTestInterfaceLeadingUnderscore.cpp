@@ -28,6 +28,7 @@
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMWrapperCache.h"
 #include "ScriptExecutionContext.h"
 #include "WebCoreJSClientData.h"
@@ -144,7 +145,7 @@ JSObject* JSTestInterfaceLeadingUnderscore::prototype(VM& vm, JSDOMGlobalObject&
 
 JSValue JSTestInterfaceLeadingUnderscore::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestInterfaceLeadingUnderscoreDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestInterfaceLeadingUnderscoreDOMConstructor, DOMConstructorID::TestInterfaceLeadingUnderscore>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestInterfaceLeadingUnderscore::destroy(JSC::JSCell* cell)

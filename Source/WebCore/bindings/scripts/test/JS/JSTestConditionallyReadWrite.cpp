@@ -33,6 +33,7 @@
 #include "JSDOMConvertPromise.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMGlobalObject.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMWrapperCache.h"
 #include "JSNode.h"
 #include "RuntimeEnabledFeatures.h"
@@ -259,7 +260,7 @@ JSObject* JSTestConditionallyReadWrite::prototype(VM& vm, JSDOMGlobalObject& glo
 
 JSValue JSTestConditionallyReadWrite::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestConditionallyReadWriteDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestConditionallyReadWriteDOMConstructor, DOMConstructorID::TestConditionallyReadWrite>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestConditionallyReadWrite::destroy(JSC::JSCell* cell)

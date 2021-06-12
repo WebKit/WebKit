@@ -34,6 +34,7 @@
 #include "JSDOMConvertNumbers.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "JSNode.h"
@@ -174,7 +175,7 @@ JSObject* JSTestDomainSecurity::prototype(VM& vm, JSDOMGlobalObject& globalObjec
 
 JSValue JSTestDomainSecurity::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestDomainSecurityDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestDomainSecurityDOMConstructor, DOMConstructorID::TestDomainSecurity>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestDomainSecurity::destroy(JSC::JSCell* cell)

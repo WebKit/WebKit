@@ -27,6 +27,7 @@
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "ScriptExecutionContext.h"
@@ -147,7 +148,7 @@ JSObject* JSTestStringifierAnonymousOperation::prototype(VM& vm, JSDOMGlobalObje
 
 JSValue JSTestStringifierAnonymousOperation::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestStringifierAnonymousOperationDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestStringifierAnonymousOperationDOMConstructor, DOMConstructorID::TestStringifierAnonymousOperation>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestStringifierAnonymousOperation::destroy(JSC::JSCell* cell)

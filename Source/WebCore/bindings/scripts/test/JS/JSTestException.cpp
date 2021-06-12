@@ -28,6 +28,7 @@
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMWrapperCache.h"
 #include "ScriptExecutionContext.h"
 #include "WebCoreJSClientData.h"
@@ -144,7 +145,7 @@ JSObject* JSTestException::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 
 JSValue JSTestException::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestExceptionDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestExceptionDOMConstructor, DOMConstructorID::TestException>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestException::destroy(JSC::JSCell* cell)

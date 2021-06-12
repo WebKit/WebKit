@@ -27,6 +27,7 @@
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMWrapperCache.h"
 #include "ScriptExecutionContext.h"
 #include "WebCoreJSClientData.h"
@@ -142,7 +143,7 @@ JSObject* JSTestIndexedSetterThrowingException::prototype(VM& vm, JSDOMGlobalObj
 
 JSValue JSTestIndexedSetterThrowingException::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestIndexedSetterThrowingExceptionDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestIndexedSetterThrowingExceptionDOMConstructor, DOMConstructorID::TestIndexedSetterThrowingException>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestIndexedSetterThrowingException::destroy(JSC::JSCell* cell)

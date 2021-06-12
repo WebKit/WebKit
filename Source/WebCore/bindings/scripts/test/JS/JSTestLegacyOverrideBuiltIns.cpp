@@ -30,6 +30,7 @@
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMGlobalObject.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "JSNode.h"
@@ -151,7 +152,7 @@ JSObject* JSTestLegacyOverrideBuiltIns::prototype(VM& vm, JSDOMGlobalObject& glo
 
 JSValue JSTestLegacyOverrideBuiltIns::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestLegacyOverrideBuiltInsDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestLegacyOverrideBuiltInsDOMConstructor, DOMConstructorID::TestLegacyOverrideBuiltIns>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestLegacyOverrideBuiltIns::destroy(JSC::JSCell* cell)

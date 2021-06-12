@@ -1,3 +1,197 @@
+2021-06-10  Yusuke Suzuki  <ysuzuki@apple.com>
+
+        Use DOMConstructor array instead of HashMap since window constructor property access is critical
+        https://bugs.webkit.org/show_bug.cgi?id=226909
+
+        Reviewed by Filip Pizlo.
+
+        window.XXX constructor access is relatively frequently done. But its implementation is using HashMap lookup even though
+        we are successfully caching the custom property accesses. This patch stop using HashMap and instead using array by
+        collecting all constructors at build time. # of constructors are 774 in macOS build.
+
+        preprocess-idls.pl collects all constructors and assign DOMConstructor::XXX enum to each constructor. And it also counts
+        the number of constructors & create DOMConstructors class which holds array of constructors.
+
+        We also remove locking for JSDOMGlobalObject::m_constructors since it is no longer HashTable, so GC can safely access to
+        these fields.
+
+        * CMakeLists.txt:
+        * DerivedSources-output.xcfilelist:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::JSDOMGlobalObject):
+        (WebCore::JSDOMGlobalObject::visitChildrenImpl):
+        * bindings/js/JSDOMGlobalObject.h:
+        (WebCore::getDOMConstructor): Deleted.
+        * bindings/js/JSDOMGlobalObjectInlines.h: Added.
+        (WebCore::getDOMConstructor):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        (GenerateCallbackImplementationContent):
+        * bindings/scripts/preprocess-idls.pl:
+        * bindings/scripts/test/JS/JSDOMWindow.cpp:
+        (WebCore::JSDOMWindow::getConstructor):
+        * bindings/scripts/test/JS/JSDedicatedWorkerGlobalScope.cpp:
+        (WebCore::JSDedicatedWorkerGlobalScope::getConstructor):
+        * bindings/scripts/test/JS/JSExposedToWorkerAndWindow.cpp:
+        (WebCore::JSExposedToWorkerAndWindow::getConstructor):
+        * bindings/scripts/test/JS/JSPaintWorkletGlobalScope.cpp:
+        (WebCore::JSPaintWorkletGlobalScope::getConstructor):
+        * bindings/scripts/test/JS/JSServiceWorkerGlobalScope.cpp:
+        (WebCore::JSServiceWorkerGlobalScope::getConstructor):
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        (WebCore::JSTestCEReactions::getConstructor):
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        (WebCore::JSTestCEReactionsStringifier::getConstructor):
+        * bindings/scripts/test/JS/JSTestCallTracer.cpp:
+        (WebCore::JSTestCallTracer::getConstructor):
+        * bindings/scripts/test/JS/JSTestCallbackInterface.cpp:
+        (WebCore::JSTestCallbackInterface::getConstructor):
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        (WebCore::JSTestClassWithJSBuiltinConstructor::getConstructor):
+        * bindings/scripts/test/JS/JSTestConditionalIncludes.cpp:
+        (WebCore::JSTestConditionalIncludes::getConstructor):
+        * bindings/scripts/test/JS/JSTestConditionallyReadWrite.cpp:
+        (WebCore::JSTestConditionallyReadWrite::getConstructor):
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        (WebCore::JSTestDOMJIT::getConstructor):
+        * bindings/scripts/test/JS/JSTestDefaultToJSON.cpp:
+        (WebCore::JSTestDefaultToJSON::getConstructor):
+        * bindings/scripts/test/JS/JSTestDefaultToJSONFilteredByExposed.cpp:
+        (WebCore::JSTestDefaultToJSONFilteredByExposed::getConstructor):
+        * bindings/scripts/test/JS/JSTestDefaultToJSONIndirectInheritance.cpp:
+        (WebCore::JSTestDefaultToJSONIndirectInheritance::getConstructor):
+        * bindings/scripts/test/JS/JSTestDefaultToJSONInherit.cpp:
+        (WebCore::JSTestDefaultToJSONInherit::getConstructor):
+        * bindings/scripts/test/JS/JSTestDefaultToJSONInheritFinal.cpp:
+        (WebCore::JSTestDefaultToJSONInheritFinal::getConstructor):
+        * bindings/scripts/test/JS/JSTestDelegateToSharedSyntheticAttribute.cpp:
+        (WebCore::JSTestDelegateToSharedSyntheticAttribute::getConstructor):
+        * bindings/scripts/test/JS/JSTestDomainSecurity.cpp:
+        (WebCore::JSTestDomainSecurity::getConstructor):
+        * bindings/scripts/test/JS/JSTestEnabledBySetting.cpp:
+        (WebCore::JSTestEnabledBySetting::getConstructor):
+        * bindings/scripts/test/JS/JSTestEnabledForContext.cpp:
+        (WebCore::JSTestEnabledForContext::getConstructor):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::JSTestEventConstructor::getConstructor):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::JSTestEventTarget::getConstructor):
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::JSTestException::getConstructor):
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        (WebCore::JSTestGenerateIsReachable::getConstructor):
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        (WebCore::JSTestGlobalObject::getConstructor):
+        * bindings/scripts/test/JS/JSTestIndexedSetterNoIdentifier.cpp:
+        (WebCore::JSTestIndexedSetterNoIdentifier::getConstructor):
+        * bindings/scripts/test/JS/JSTestIndexedSetterThrowingException.cpp:
+        (WebCore::JSTestIndexedSetterThrowingException::getConstructor):
+        * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.cpp:
+        (WebCore::JSTestIndexedSetterWithIdentifier::getConstructor):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterface::getConstructor):
+        * bindings/scripts/test/JS/JSTestInterfaceLeadingUnderscore.cpp:
+        (WebCore::JSTestInterfaceLeadingUnderscore::getConstructor):
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        (WebCore::JSTestIterable::getConstructor):
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        (WebCore::JSTestJSBuiltinConstructor::getConstructor):
+        * bindings/scripts/test/JS/JSTestLegacyFactoryFunction.cpp:
+        (WebCore::JSTestLegacyFactoryFunction::getConstructor):
+        (WebCore::JSTestLegacyFactoryFunction::getLegacyFactoryFunction):
+        * bindings/scripts/test/JS/JSTestLegacyOverrideBuiltIns.cpp:
+        (WebCore::JSTestLegacyOverrideBuiltIns::getConstructor):
+        * bindings/scripts/test/JS/JSTestMapLike.cpp:
+        (WebCore::JSTestMapLike::getConstructor):
+        * bindings/scripts/test/JS/JSTestMapLikeWithOverriddenOperations.cpp:
+        (WebCore::JSTestMapLikeWithOverriddenOperations::getConstructor):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.cpp:
+        (WebCore::JSTestNamedAndIndexedSetterNoIdentifier::getConstructor):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.cpp:
+        (WebCore::JSTestNamedAndIndexedSetterThrowingException::getConstructor):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.cpp:
+        (WebCore::JSTestNamedAndIndexedSetterWithIdentifier::getConstructor):
+        * bindings/scripts/test/JS/JSTestNamedDeleterNoIdentifier.cpp:
+        (WebCore::JSTestNamedDeleterNoIdentifier::getConstructor):
+        * bindings/scripts/test/JS/JSTestNamedDeleterThrowingException.cpp:
+        (WebCore::JSTestNamedDeleterThrowingException::getConstructor):
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.cpp:
+        (WebCore::JSTestNamedDeleterWithIdentifier::getConstructor):
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIndexedGetter.cpp:
+        (WebCore::JSTestNamedDeleterWithIndexedGetter::getConstructor):
+        * bindings/scripts/test/JS/JSTestNamedGetterCallWith.cpp:
+        (WebCore::JSTestNamedGetterCallWith::getConstructor):
+        * bindings/scripts/test/JS/JSTestNamedGetterNoIdentifier.cpp:
+        (WebCore::JSTestNamedGetterNoIdentifier::getConstructor):
+        * bindings/scripts/test/JS/JSTestNamedGetterWithIdentifier.cpp:
+        (WebCore::JSTestNamedGetterWithIdentifier::getConstructor):
+        * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.cpp:
+        (WebCore::JSTestNamedSetterNoIdentifier::getConstructor):
+        * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.cpp:
+        (WebCore::JSTestNamedSetterThrowingException::getConstructor):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.cpp:
+        (WebCore::JSTestNamedSetterWithIdentifier::getConstructor):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.cpp:
+        (WebCore::JSTestNamedSetterWithIndexedGetter::getConstructor):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.cpp:
+        (WebCore::JSTestNamedSetterWithIndexedGetterAndSetter::getConstructor):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithLegacyOverrideBuiltIns.cpp:
+        (WebCore::JSTestNamedSetterWithLegacyOverrideBuiltIns::getConstructor):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithLegacyUnforgeableProperties.cpp:
+        (WebCore::JSTestNamedSetterWithLegacyUnforgeableProperties::getConstructor):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns.cpp:
+        (WebCore::JSTestNamedSetterWithLegacyUnforgeablePropertiesAndLegacyOverrideBuiltIns::getConstructor):
+        * bindings/scripts/test/JS/JSTestNamespaceObject.cpp:
+        (WebCore::JSTestNamespaceObject::getConstructor):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSTestNode::getConstructor):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObj::getConstructor):
+        * bindings/scripts/test/JS/JSTestOperationConditional.cpp:
+        (WebCore::JSTestOperationConditional::getConstructor):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::JSTestOverloadedConstructors::getConstructor):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        (WebCore::JSTestOverloadedConstructorsWithSequence::getConstructor):
+        * bindings/scripts/test/JS/JSTestPluginInterface.cpp:
+        (WebCore::JSTestPluginInterface::getConstructor):
+        * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.cpp:
+        (WebCore::JSTestPromiseRejectionEvent::getConstructor):
+        * bindings/scripts/test/JS/JSTestReadOnlyMapLike.cpp:
+        (WebCore::JSTestReadOnlyMapLike::getConstructor):
+        * bindings/scripts/test/JS/JSTestReadOnlySetLike.cpp:
+        (WebCore::JSTestReadOnlySetLike::getConstructor):
+        * bindings/scripts/test/JS/JSTestReportExtraMemoryCost.cpp:
+        (WebCore::JSTestReportExtraMemoryCost::getConstructor):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterface::getConstructor):
+        * bindings/scripts/test/JS/JSTestSetLike.cpp:
+        (WebCore::JSTestSetLike::getConstructor):
+        * bindings/scripts/test/JS/JSTestSetLikeWithOverriddenOperations.cpp:
+        (WebCore::JSTestSetLikeWithOverriddenOperations::getConstructor):
+        * bindings/scripts/test/JS/JSTestStringifier.cpp:
+        (WebCore::JSTestStringifier::getConstructor):
+        * bindings/scripts/test/JS/JSTestStringifierAnonymousOperation.cpp:
+        (WebCore::JSTestStringifierAnonymousOperation::getConstructor):
+        * bindings/scripts/test/JS/JSTestStringifierNamedOperation.cpp:
+        (WebCore::JSTestStringifierNamedOperation::getConstructor):
+        * bindings/scripts/test/JS/JSTestStringifierOperationImplementedAs.cpp:
+        (WebCore::JSTestStringifierOperationImplementedAs::getConstructor):
+        * bindings/scripts/test/JS/JSTestStringifierOperationNamedToString.cpp:
+        (WebCore::JSTestStringifierOperationNamedToString::getConstructor):
+        * bindings/scripts/test/JS/JSTestStringifierReadOnlyAttribute.cpp:
+        (WebCore::JSTestStringifierReadOnlyAttribute::getConstructor):
+        * bindings/scripts/test/JS/JSTestStringifierReadWriteAttribute.cpp:
+        (WebCore::JSTestStringifierReadWriteAttribute::getConstructor):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::JSTestTypedefs::getConstructor):
+        * bindings/scripts/test/JS/JSWorkerGlobalScope.cpp:
+        (WebCore::JSWorkerGlobalScope::getConstructor):
+        * bindings/scripts/test/JS/JSWorkletGlobalScope.cpp:
+        (WebCore::JSWorkletGlobalScope::getConstructor):
+
 2021-06-11  Alex Christensen  <achristensen@webkit.org>
 
         Partition CrossOriginPreflightResultCache by SessionID

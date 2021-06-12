@@ -28,6 +28,7 @@
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "JSTestSubObj.h"
@@ -268,7 +269,7 @@ JSObject* JSTestEnabledBySetting::prototype(VM& vm, JSDOMGlobalObject& globalObj
 
 JSValue JSTestEnabledBySetting::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestEnabledBySettingDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestEnabledBySettingDOMConstructor, DOMConstructorID::TestEnabledBySetting>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestEnabledBySetting::destroy(JSC::JSCell* cell)

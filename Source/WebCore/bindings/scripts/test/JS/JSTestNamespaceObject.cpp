@@ -33,6 +33,7 @@
 #include "JSDOMConvertNumbers.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "JSTestObj.h"
@@ -145,7 +146,7 @@ void JSTestNamespaceObject::finishCreation(VM& vm)
 
 JSValue JSTestNamespaceObject::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestNamespaceObjectDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestNamespaceObjectDOMConstructor, DOMConstructorID::TestNamespaceObject>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestNamespaceObject::destroy(JSC::JSCell* cell)

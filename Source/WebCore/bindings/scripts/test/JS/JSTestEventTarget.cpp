@@ -30,6 +30,7 @@
 #include "JSDOMConvertNumbers.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMGlobalObject.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "JSNode.h"
@@ -150,7 +151,7 @@ JSObject* JSTestEventTarget::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 
 JSValue JSTestEventTarget::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestEventTargetDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestEventTargetDOMConstructor, DOMConstructorID::TestEventTarget>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 bool JSTestEventTarget::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, PropertySlot& slot)

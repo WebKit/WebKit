@@ -26,6 +26,7 @@
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMWrapperCache.h"
 #include "JSPluginElementFunctions.h"
 #include "ScriptExecutionContext.h"
@@ -141,7 +142,7 @@ JSObject* JSTestPluginInterface::prototype(VM& vm, JSDOMGlobalObject& globalObje
 
 JSValue JSTestPluginInterface::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestPluginInterfaceDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestPluginInterfaceDOMConstructor, DOMConstructorID::TestPluginInterface>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestPluginInterface::destroy(JSC::JSCell* cell)

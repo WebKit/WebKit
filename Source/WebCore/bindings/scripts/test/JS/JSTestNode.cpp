@@ -36,6 +36,7 @@
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMGlobalObject.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMIterator.h"
 #include "JSDOMOperation.h"
 #include "JSDOMOperationReturningPromise.h"
@@ -255,7 +256,7 @@ JSObject* JSTestNode::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 
 JSValue JSTestNode::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestNodeDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestNodeDOMConstructor, DOMConstructorID::TestNode>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(jsTestNodeConstructor, (JSGlobalObject* lexicalGlobalObject, EncodedJSValue thisValue, PropertyName))

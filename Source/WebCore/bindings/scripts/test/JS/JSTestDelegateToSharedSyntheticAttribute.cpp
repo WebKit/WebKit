@@ -29,6 +29,7 @@
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMWrapperCache.h"
 #include "ScriptExecutionContext.h"
 #include "WebCoreJSClientData.h"
@@ -152,7 +153,7 @@ JSObject* JSTestDelegateToSharedSyntheticAttribute::prototype(VM& vm, JSDOMGloba
 
 JSValue JSTestDelegateToSharedSyntheticAttribute::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestDelegateToSharedSyntheticAttributeDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestDelegateToSharedSyntheticAttributeDOMConstructor, DOMConstructorID::TestDelegateToSharedSyntheticAttribute>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestDelegateToSharedSyntheticAttribute::destroy(JSC::JSCell* cell)

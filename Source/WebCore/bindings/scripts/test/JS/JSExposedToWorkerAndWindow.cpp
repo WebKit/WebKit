@@ -28,6 +28,7 @@
 #include "JSDOMConvertInterface.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMGlobalObject.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "JSTestObj.h"
@@ -207,7 +208,7 @@ JSObject* JSExposedToWorkerAndWindow::prototype(VM& vm, JSDOMGlobalObject& globa
 
 JSValue JSExposedToWorkerAndWindow::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSExposedToWorkerAndWindowDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSExposedToWorkerAndWindowDOMConstructor, DOMConstructorID::ExposedToWorkerAndWindow>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSExposedToWorkerAndWindow::destroy(JSC::JSCell* cell)

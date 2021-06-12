@@ -32,6 +32,7 @@
 #include "JSDOMConvertNumbers.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMMapLike.h"
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
@@ -174,7 +175,7 @@ JSObject* JSTestMapLikeWithOverriddenOperations::prototype(VM& vm, JSDOMGlobalOb
 
 JSValue JSTestMapLikeWithOverriddenOperations::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestMapLikeWithOverriddenOperationsDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestMapLikeWithOverriddenOperationsDOMConstructor, DOMConstructorID::TestMapLikeWithOverriddenOperations>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestMapLikeWithOverriddenOperations::destroy(JSC::JSCell* cell)

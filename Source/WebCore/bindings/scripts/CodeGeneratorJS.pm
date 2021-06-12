@@ -4765,15 +4765,16 @@ sub GenerateImplementation
     }
 
     if (!$interface->extendedAttributes->{LegacyNoInterfaceObject}) {
+        AddToImplIncludes("JSDOMGlobalObjectInlines.h");
         push(@implContent, "JSValue ${className}::getConstructor(VM& vm, const JSGlobalObject* globalObject)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    return getDOMConstructor<${className}DOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));\n");
+        push(@implContent, "    return getDOMConstructor<${className}DOMConstructor, DOMConstructorID::${interfaceName}>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));\n");
         push(@implContent, "}\n\n");
 
         if ($interface->extendedAttributes->{LegacyFactoryFunction}) {
             push(@implContent, "JSValue ${className}::getLegacyFactoryFunction(VM& vm, JSGlobalObject* globalObject)\n");
             push(@implContent, "{\n");
-            push(@implContent, "    return getDOMConstructor<${className}LegacyFactoryFunction>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));\n");
+            push(@implContent, "    return getDOMConstructor<${className}LegacyFactoryFunction, DOMConstructorID::${interfaceName}LegacyFactory>(vm, *jsCast<JSDOMGlobalObject*>(globalObject));\n");
             push(@implContent, "}\n\n");
         }
     }
@@ -6459,9 +6460,10 @@ sub GenerateCallbackImplementationContent
 
         GenerateConstructorDefinitions($contentRef, $className, "", $visibleName, $interfaceOrCallback);
 
+        AddToImplIncludes("JSDOMGlobalObjectInlines.h");
         push(@$contentRef, "JSValue ${className}::getConstructor(VM& vm, const JSGlobalObject* globalObject)\n");
         push(@$contentRef, "{\n");
-        push(@$contentRef, "    return getDOMConstructor<${className}DOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));\n");
+        push(@$contentRef, "    return getDOMConstructor<${className}DOMConstructor, DOMConstructorID::${name}>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));\n");
         push(@$contentRef, "}\n\n");
     }
 

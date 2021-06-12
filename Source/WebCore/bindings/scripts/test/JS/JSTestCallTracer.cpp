@@ -36,6 +36,7 @@
 #include "JSDOMConvertUnion.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMGlobalObject.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "JSNode.h"
@@ -197,7 +198,7 @@ JSObject* JSTestCallTracer::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 
 JSValue JSTestCallTracer::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestCallTracerDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestCallTracerDOMConstructor, DOMConstructorID::TestCallTracer>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestCallTracer::destroy(JSC::JSCell* cell)

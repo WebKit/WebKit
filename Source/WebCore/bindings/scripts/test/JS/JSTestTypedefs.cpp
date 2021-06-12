@@ -40,6 +40,7 @@
 #include "JSDOMConvertUnion.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMGlobalObject.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "JSSVGPoint.h"
@@ -263,7 +264,7 @@ JSObject* JSTestTypedefs::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 
 JSValue JSTestTypedefs::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestTypedefsDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestTypedefsDOMConstructor, DOMConstructorID::TestTypedefs>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestTypedefs::destroy(JSC::JSCell* cell)

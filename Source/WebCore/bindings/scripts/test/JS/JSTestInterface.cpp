@@ -33,6 +33,7 @@
 #include "JSDOMConvertInterface.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMIterator.h"
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
@@ -500,7 +501,7 @@ JSObject* JSTestInterface::prototype(VM& vm, JSDOMGlobalObject& globalObject)
 
 JSValue JSTestInterface::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestInterfaceDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestInterfaceDOMConstructor, DOMConstructorID::TestInterface>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestInterface::destroy(JSC::JSCell* cell)

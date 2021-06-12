@@ -31,6 +31,7 @@
 #include "JSDOMConvertBase.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "ScriptExecutionContext.h"
@@ -168,7 +169,7 @@ JSObject* JSTestNamedSetterWithLegacyUnforgeableProperties::prototype(VM& vm, JS
 
 JSValue JSTestNamedSetterWithLegacyUnforgeableProperties::getConstructor(VM& vm, const JSGlobalObject* globalObject)
 {
-    return getDOMConstructor<JSTestNamedSetterWithLegacyUnforgeablePropertiesDOMConstructor>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
+    return getDOMConstructor<JSTestNamedSetterWithLegacyUnforgeablePropertiesDOMConstructor, DOMConstructorID::TestNamedSetterWithLegacyUnforgeableProperties>(vm, *jsCast<const JSDOMGlobalObject*>(globalObject));
 }
 
 void JSTestNamedSetterWithLegacyUnforgeableProperties::destroy(JSC::JSCell* cell)
