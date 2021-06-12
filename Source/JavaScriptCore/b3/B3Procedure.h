@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -258,7 +258,11 @@ public:
     JS_EXPORT_PRIVATE RegisterAtOffsetList calleeSaveRegisterAtOffsetList() const;
 
     PCToOriginMap& pcToOriginMap() { return m_pcToOriginMap; }
-    PCToOriginMap releasePCToOriginMap() { return WTFMove(m_pcToOriginMap); }
+    PCToOriginMap releasePCToOriginMap()
+    {
+        RELEASE_ASSERT(needsPCToOriginMap());
+        return WTFMove(m_pcToOriginMap);
+    }
 
     JS_EXPORT_PRIVATE void setWasmBoundsCheckGenerator(RefPtr<WasmBoundsCheckGenerator>);
 
@@ -270,6 +274,11 @@ public:
 
     JS_EXPORT_PRIVATE RegisterSet mutableGPRs();
     JS_EXPORT_PRIVATE RegisterSet mutableFPRs();
+
+    void setNeedsPCToOriginMap() { m_needsPCToOriginMap = true; }
+    bool needsPCToOriginMap() { return m_needsPCToOriginMap; }
+
+    JS_EXPORT_PRIVATE void freeUnneededB3ValuesAfterLowering();
 
 private:
     friend class BlockInsertionSet;
@@ -287,16 +296,17 @@ private:
     std::unique_ptr<BackwardsCFG> m_backwardsCFG;
     std::unique_ptr<BackwardsDominators> m_backwardsDominators;
     HashSet<ValueKey> m_fastConstants;
-    unsigned m_numEntrypoints { 1 };
     const char* m_lastPhaseName;
     std::unique_ptr<OpaqueByproducts> m_byproducts;
     std::unique_ptr<Air::Code> m_code;
     RefPtr<SharedTask<void(PrintStream&, Origin)>> m_originPrinter;
     const void* m_frontendData;
     PCToOriginMap m_pcToOriginMap;
+    unsigned m_numEntrypoints { 1 };
     unsigned m_optLevel { defaultOptLevel() };
     bool m_needsUsedRegisters { true };
     bool m_hasQuirks { false };
+    bool m_needsPCToOriginMap { false };
 };
     
 } } // namespace JSC::B3

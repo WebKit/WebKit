@@ -56,6 +56,7 @@ static void defaultPrologueGenerator(CCallHelpers& jit, Code& code)
 Code::Code(Procedure& proc)
     : m_proc(proc)
     , m_cfg(new CFG(*this))
+    , m_preserveB3Origins(proc.needsPCToOriginMap() || Options::dumpAirGraphAtEachPhase() || Options::dumpFTLDisassembly())
     , m_lastPhaseName("initial")
     , m_defaultPrologueGenerator(createSharedTask<PrologueGeneratorFunction>(&defaultPrologueGenerator))
 {
